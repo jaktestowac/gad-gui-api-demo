@@ -35,7 +35,7 @@ No account needed - but your project will be deleted in 5 days.
 
 After clicking button below wait a minute or two to finish deployment.
 
-[![Remix on Glitch](https://cdn.glitch.me/2703baf2-b643-4da7-ab91-7ee2a2d00b5b%2Fremix-button-v2.svg)](https://glitch.com/edit/#!/import/github/jaktestowac/rest-api-demo-v2)
+[![Remix on Glitch](https://cdn.glitch.me/2703baf2-b643-4da7-ab91-7ee2a2d00b5b%2Fremix-button-v2.svg)](https://glitch.com/edit/#!/import/github/jaktestowac/gad-gui-rest-demo)
 
 To see website:
 
@@ -48,7 +48,7 @@ To see website:
 - Create free account on: https://dashboard.render.com/register
 - After successfull registration hit the button:
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/jaktestowac/rest-api-demo-v2)
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/jaktestowac/gad-gui-rest-demo)
 
 - name your app
 - hit `Applay`
