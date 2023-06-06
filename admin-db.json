@@ -1,0 +1,28 @@
+{
+  "plugins": [
+    {
+      "id": 1,
+      "name": "data-csv",
+      "status": "on",
+      "version": 1.5
+    },
+    {
+      "id": 2,
+      "name": "sql",
+      "status": "off",
+      "version": 2.1
+    },
+    {
+      "id": 3,
+      "name": "wordpress",
+      "status": "off",
+      "version": 4.1
+    },
+    {
+      "id": 4,
+      "name": "json-parser",
+      "status": "off",
+      "version": 2.2
+    }
+  ]
+}

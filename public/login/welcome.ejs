@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>🦎 GAD | Welcome</title>
+    <link rel="icon" href="./favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+      integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay"
+      crossorigin="anonymous"
+    />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+    <link rel="stylesheet" href="./css/controls.css" />
+    <link rel="stylesheet" href="./css/style.css" />
+  </head>
+  <body>
+    <header>
+      <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+        <h1 id="menu-main-gui" class="nav-menu"></h1>
+      </div>
+    </header>
+    <div id="container"></div>
+    <div id="containerComments"></div>
+    <br />
+    <br />
+    <br />
+    <div
+      class="container"
+      id="pageHeader"
+      style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center"
+    >
+      <div class="welcome">
+        <h2 data-testid="hello">Hi <%=username%>!</h2>
+        <h2 id="countDown" data-testid="countDown"></h2>
+        <a href="/logout">
+          <button id="btnLogoutWelcome" data-testid="logoutButton" class="button-primary">Logout</button>
+        </a>
+        <a href="/users.html" id="btnEditLink">
+          <button class="button-primary">My profile</button>
+        </a>
+        <a href="/users.html" id="btnArticlesLink">
+          <button class="button-primary">My articles</button>
+        </a>
+      </div>
+    </div>
+  </body>
+  <br />
+  <br />
+  <br />
+  <script type="text/javascript" src="js/common.js"></script>
+  <script type="text/javascript" src="js/welcome.js"></script>
+  <script type="text/javascript" src="version.js"></script>
+  <script type="text/javascript" src="username.js"></script>
+  <script type="text/javascript" src="cookieExpiration.js"></script>
+</html>

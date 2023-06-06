@@ -1,0 +1,1876 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "🦎 GAD ",
+    "description": "This is a sample REST server form jaktestowac.pl team.",
+    "termsOfService": "http://jaktestowac.pl/",
+    "version": "1.3.3"
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  },
+  "servers": [
+    {
+      "url": "/api"
+    },
+    {
+      "url": "http://localhost:3000/api"
+    }
+  ],
+  "tags": [
+    {
+      "name": "authentication",
+      "description": "Authentication section - possibility to login as a user"
+    },
+    {
+      "name": "users",
+      "description": "Users"
+    },
+    {
+      "name": "articles",
+      "description": "Articles (blog entries) with lot of contents"
+    },
+    {
+      "name": "comments",
+      "description": "Comments"
+    },
+    {
+      "name": "search",
+      "description": "Search, filter, pagination for given objects"
+    },
+    {
+      "name": "other",
+      "description": "Other operations"
+    },
+    {
+      "name": "stats",
+      "description": "Statistics"
+    }
+  ],
+  "paths": {
+    "/login": {
+      "post": {
+        "tags": ["authentication"],
+        "summary": "Login as user to receive token",
+        "operationId": "userLogin",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserLoginData"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserLoginToken"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid data supplied",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/articles": {
+      "get": {
+        "tags": ["articles"],
+        "summary": "Get articles",
+        "operationId": "getArticles",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Articles"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["articles"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Add article",
+        "operationId": "postArticle",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ArticleUpdate"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "201": {
+            "description": "Article created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Article"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - malformed JSON",
+            "content": {}
+          },
+          "422": {
+            "description": "Invalid article supplied",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/articles/{id}": {
+      "get": {
+        "tags": ["articles"],
+        "summary": "Find article by ID",
+        "description": "Returns a single article",
+        "operationId": "getArticleById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of article to return",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Article"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Article not found",
+            "content": {}
+          }
+        }
+      },
+      "put": {
+        "tags": ["articles"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Updates an article",
+        "description": "Updates an article.",
+        "operationId": "putArticle",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of article that need to be updated",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Updated article object",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ArticleUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Article updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Article"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Article created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Article"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - malformed JSON",
+            "content": {}
+          },
+          "404": {
+            "description": "Article not found",
+            "content": {}
+          },
+          "422": {
+            "description": "Invalid article supplied",
+            "content": {}
+          }
+        }
+      },
+      "patch": {
+        "tags": ["articles"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Updates an article",
+        "description": "Updates an article.",
+        "operationId": "patchArticle",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of article that need to be updated",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Updated article object",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ArticleUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Article updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Article"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - malformed JSON",
+            "content": {}
+          },
+          "404": {
+            "description": "Article not found",
+            "content": {}
+          },
+          "422": {
+            "description": "Invalid article supplied",
+            "content": {}
+          }
+        }
+      },
+      "delete": {
+        "tags": ["articles"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Deletes an article",
+        "operationId": "deleteArticle",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Article id to delete",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Article deleted",
+            "content": {}
+          },
+          "404": {
+            "description": "Article not found",
+            "content": {}
+          }
+        }
+      },
+      "head": {
+        "tags": ["articles"],
+        "summary": "Info about article",
+        "operationId": "headArticle",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of article to return",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Article exists",
+            "content": {}
+          },
+          "400": {
+            "description": "Invalid ID supplied",
+            "content": {}
+          },
+          "404": {
+            "description": "Article not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": ["users"],
+        "summary": "Get users",
+        "operationId": "getUsers",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Users"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["users"],
+        "summary": "Create user",
+        "operationId": "postUser",
+        "requestBody": {
+          "description": "Creats user object",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "User created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - malformed JSON",
+            "content": {}
+          },
+          "409": {
+            "description": "Conflict - Invalid user email",
+            "content": {}
+          },
+          "422": {
+            "description": "Invalid user supplied",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "tags": ["users"],
+        "summary": "Find user by ID",
+        "description": "Returns a single user",
+        "operationId": "getUserById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of User to return",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid user id supplied",
+            "content": {}
+          },
+          "404": {
+            "description": "User not found",
+            "content": {}
+          }
+        }
+      },
+      "put": {
+        "tags": ["users"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Updates user",
+        "description": "Updates user.",
+        "operationId": "putUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id of user that need to be updated",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Updated user object",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "User updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "User created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - malformed JSON",
+            "content": {}
+          },
+          "404": {
+            "description": "User not found",
+            "content": {}
+          },
+          "422": {
+            "description": "Invalid user supplied",
+            "content": {}
+          }
+        }
+      },
+      "patch": {
+        "tags": ["users"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Updates user",
+        "description": "Updates user.",
+        "operationId": "patchUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of user that need to be updated",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Updated user object",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "User updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - malformed JSON",
+            "content": {}
+          },
+          "404": {
+            "description": "User not found",
+            "content": {}
+          },
+          "422": {
+            "description": "Invalid user supplied",
+            "content": {}
+          }
+        }
+      },
+      "delete": {
+        "tags": ["users"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Deletes a user",
+        "operationId": "deleteUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "User id to delete",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User deleted",
+            "content": {}
+          },
+          "404": {
+            "description": "User not found",
+            "content": {}
+          }
+        }
+      },
+      "head": {
+        "tags": ["users"],
+        "summary": "Info about user",
+        "operationId": "headUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of user to return",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User exists",
+            "content": {}
+          },
+          "400": {
+            "description": "Invalid user ID",
+            "content": {}
+          },
+          "404": {
+            "description": "User not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/comments": {
+      "get": {
+        "tags": ["comments"],
+        "summary": "Get comments",
+        "operationId": "getComments",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comments"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["comments"],
+        "summary": "Create comment",
+        "operationId": "createComment",
+        "requestBody": {
+          "description": "Created Comment object",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommentUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Comment created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comment"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - malformed JSON",
+            "content": {}
+          },
+          "422": {
+            "description": "Invalid comment supplied",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/comments/{id}": {
+      "get": {
+        "tags": ["comments"],
+        "summary": "Find comments by ID",
+        "description": "Returns a single comment",
+        "operationId": "getCommentById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of comment to return",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comment"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid comment id supplied",
+            "content": {}
+          },
+          "404": {
+            "description": "Comment not found",
+            "content": {}
+          }
+        }
+      },
+      "put": {
+        "tags": ["comments"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Updates comment",
+        "description": "Updates comment.",
+        "operationId": "putComment",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of comment that need to be updated",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Updated comment object",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommentUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Comment updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comment"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Comment created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comment"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - malformed JSON",
+            "content": {}
+          },
+          "404": {
+            "description": "Comment not found",
+            "content": {}
+          },
+          "422": {
+            "description": "Invalid comment supplied",
+            "content": {}
+          }
+        }
+      },
+      "patch": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": ["comments"],
+        "summary": "Updates comment",
+        "description": "Updates comment.",
+        "operationId": "patchComment",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of comment that need to be updated",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Updated comment object",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommentUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Comment updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comment"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - malformed JSON",
+            "content": {}
+          },
+          "404": {
+            "description": "Comment not found",
+            "content": {}
+          },
+          "422": {
+            "description": "Invalid comment supplied",
+            "content": {}
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": ["comments"],
+        "summary": "Deletes a comment",
+        "operationId": "deleteComment",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Comment id to delete",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Comment deleted",
+            "content": {}
+          },
+          "404": {
+            "description": "Comment not found",
+            "content": {}
+          }
+        }
+      },
+      "head": {
+        "tags": ["comments"],
+        "summary": "Info about comment",
+        "operationId": "headComment",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of comment to return",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Comment exists",
+            "content": {}
+          },
+          "400": {
+            "description": "Invalid comment ID",
+            "content": {}
+          },
+          "404": {
+            "description": "Comment not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/articles?": {
+      "get": {
+        "tags": ["search"],
+        "summary": "Get articles with query",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "Free search articles."
+          },
+          {
+            "in": "query",
+            "name": "id",
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "required": false,
+            "description": "Id of article."
+          },
+          {
+            "in": "query",
+            "name": "user_id",
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "required": false,
+            "description": "Id of user, creator of article."
+          },
+          {
+            "in": "query",
+            "name": "date",
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "Date of article creation."
+          },
+          {
+            "in": "query",
+            "name": "_sort",
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "Sort with given attribute (user_id, title, id), use it with _order."
+          },
+          {
+            "in": "query",
+            "name": "_order",
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "Order default ascending (asc) for descending use desc."
+          },
+          {
+            "in": "query",
+            "name": "_limit",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false,
+            "allowEmptyValue": true,
+            "description": "Limit returned items. By default empty limit is 10."
+          },
+          {
+            "in": "query",
+            "name": "_page",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false,
+            "description": "Page number when using _limit."
+          },
+          {
+            "in": "query",
+            "name": "_start",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false,
+            "description": "How many items should be skipped."
+          },
+          {
+            "in": "query",
+            "name": "_end",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false,
+            "description": "How many to show after _start."
+          },
+          {
+            "in": "query",
+            "name": "_embed",
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "Embed depending objects (comments)."
+          },
+          {
+            "in": "query",
+            "name": "_expand",
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "Expand depending objects (user)."
+          }
+        ],
+        "operationId": "getArticlesQuery",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Articles"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users?": {
+      "get": {
+        "tags": ["search"],
+        "summary": "Get users with query",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "Free search users."
+          },
+          {
+            "in": "query",
+            "name": "id",
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "required": false,
+            "description": "Id of user."
+          },
+          {
+            "in": "query",
+            "name": "firstname",
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "First name of user."
+          },
+          {
+            "in": "query",
+            "name": "lastname",
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "Last name of user."
+          },
+          {
+            "in": "query",
+            "name": "email",
+            "schema": {
+              "type": "string",
+              "format": "email"
+            },
+            "required": false,
+            "description": "User email."
+          },
+          {
+            "in": "query",
+            "name": "_sort",
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "Sort with given attribute (user_id, title, id), use it with _order."
+          },
+          {
+            "in": "query",
+            "name": "_order",
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "Order default ascending (asc) for descending use desc."
+          },
+          {
+            "in": "query",
+            "name": "_limit",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false,
+            "allowEmptyValue": true,
+            "description": "Limit returned items. By default empty limit is 10."
+          },
+          {
+            "in": "query",
+            "name": "_page",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false,
+            "description": "Page number when using _limit."
+          },
+          {
+            "in": "query",
+            "name": "_start",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false,
+            "description": "How many items should be skipped."
+          },
+          {
+            "in": "query",
+            "name": "_end",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false,
+            "description": "How many to show after _start."
+          },
+          {
+            "in": "query",
+            "name": "_embed",
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "Embed depending objects (articles, comments)."
+          }
+        ],
+        "operationId": "getUsersQuery",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Users"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/comments?": {
+      "get": {
+        "tags": ["search"],
+        "summary": "Get comments with query",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "Free search comments."
+          },
+          {
+            "in": "query",
+            "name": "id",
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "required": false,
+            "description": "Id of comment."
+          },
+          {
+            "in": "query",
+            "name": "user_id",
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "required": false,
+            "description": "Id of user."
+          },
+          {
+            "in": "query",
+            "name": "article_id",
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "required": false,
+            "description": "Id fo article."
+          },
+          {
+            "in": "query",
+            "name": "date",
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "Date of comment creation."
+          },
+          {
+            "in": "query",
+            "name": "_sort",
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "Sort with given attribute (user_id, title, id), use it with _order."
+          },
+          {
+            "in": "query",
+            "name": "_order",
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "Order default ascending (asc) for descending use desc."
+          },
+          {
+            "in": "query",
+            "name": "_limit",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false,
+            "allowEmptyValue": true,
+            "description": "Limit returned items. By default empty limit is 10."
+          },
+          {
+            "in": "query",
+            "name": "_page",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false,
+            "description": "Page number when using _limit."
+          },
+          {
+            "in": "query",
+            "name": "_start",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false,
+            "description": "How many items should be skipped."
+          },
+          {
+            "in": "query",
+            "name": "_end",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false,
+            "description": "How many to show after _start."
+          },
+          {
+            "in": "query",
+            "name": "_expand",
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "Expand depending objects (user, article)."
+          }
+        ],
+        "operationId": "getCommentsQuery",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comments"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/images/user": {
+      "get": {
+        "tags": ["other"],
+        "summary": "Get user pictures",
+        "operationId": "getUserPictures",
+        "responses": {
+          "200": {
+            "description": "Images received",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/images/posts": {
+      "get": {
+        "tags": ["other"],
+        "summary": "Get articles pictures",
+        "operationId": "getArticlesPictures",
+        "responses": {
+          "200": {
+            "description": "Images received",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/restoreDB": {
+      "get": {
+        "tags": ["other"],
+        "summary": "Restore DB",
+        "operationId": "restoreDB",
+        "responses": {
+          "201": {
+            "description": "Database with sample data restored",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/restoreEmptyDB": {
+      "get": {
+        "tags": ["other"],
+        "summary": "Restore Empty DB",
+        "operationId": "restoreEmptyDB",
+        "responses": {
+          "201": {
+            "description": "Empty database restored",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/stats/users": {
+      "get": {
+        "tags": ["stats"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "chartType",
+            "schema": {
+              "type": "string",
+              "enum": ["table", "pie", "chart"]
+            },
+            "required": true,
+            "description": "Chart type"
+          }
+        ],
+        "summary": "Get user stats",
+        "operationId": "getUserstats",
+        "responses": {
+          "200": {
+            "description": "User stats received",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/stats/articles": {
+      "get": {
+        "tags": ["stats"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "chartType",
+            "schema": {
+              "type": "string",
+              "enum": ["table", "pie", "chart"]
+            },
+            "required": true,
+            "description": "Chart type"
+          }
+        ],
+        "summary": "Get article stats",
+        "operationId": "getArticleStats",
+        "responses": {
+          "200": {
+            "description": "Article stats received",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/stats/publish/articles": {
+      "get": {
+        "tags": ["stats"],
+        "summary": "Get article publish stats",
+        "operationId": "getArticlePublishStats",
+        "responses": {
+          "200": {
+            "description": "Article publish stats received",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/stats/publish/comments": {
+      "get": {
+        "tags": ["stats"],
+        "summary": "Get comments publish stats",
+        "operationId": "getCommentsPublishStats",
+        "responses": {
+          "200": {
+            "description": "Comments publish stats received",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/random/article": {
+      "get": {
+        "tags": ["random"],
+        "summary": "Get random article",
+        "operationId": "getRandomArticle",
+        "responses": {
+          "200": {
+            "description": "Article received",
+            "content": {}
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "Article": {
+        "type": "object",
+        "required": ["user_id", "title", "body", "date"],
+        "properties": {
+          "id": {
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "user_id": {
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "title": {
+            "type": "string",
+            "description": "Title"
+          },
+          "body": {
+            "type": "string",
+            "description": "Article body"
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "example": "2024-06-30T15:44:31Z"
+          },
+          "image": {
+            "type": "string",
+            "description": "Image path"
+          }
+        },
+        "xml": {
+          "name": "Article"
+        }
+      },
+      "Articles": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Article"
+        }
+      },
+      "ArticleUpdate": {
+        "type": "object",
+        "required": ["user_id", "title", "body", "date"],
+        "properties": {
+          "user_id": {
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "title": {
+            "type": "string",
+            "description": "Title"
+          },
+          "body": {
+            "type": "string",
+            "description": "Article body"
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "example": "2024-06-30T15:44:31Z"
+          },
+          "image": {
+            "type": "string",
+            "description": "Image path"
+          }
+        },
+        "xml": {
+          "name": "Article"
+        }
+      },
+      "Comment": {
+        "type": "object",
+        "required": ["user_id", "article_id", "body", "date"],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "article_id": {
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "user_id": {
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "body": {
+            "type": "string",
+            "description": "Comment body"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-06-30T15:44:31Z"
+          }
+        },
+        "xml": {
+          "name": "Comment"
+        }
+      },
+      "Comments": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Comment"
+        }
+      },
+      "CommentUpdate": {
+        "type": "object",
+        "properties": {
+          "article_id": {
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "user_id": {
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "body": {
+            "type": "string",
+            "description": "Comment body"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-06-30T15:44:31Z"
+          }
+        },
+        "xml": {
+          "name": "Comment"
+        }
+      },
+      "Users": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/User"
+        }
+      },
+      "User": {
+        "type": "object",
+        "required": ["email", "firstname", "lastname", "avatar"],
+        "properties": {
+          "id": {
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "firstname": {
+            "type": "string"
+          },
+          "lastname": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string",
+            "format": "password"
+          },
+          "avatar": {
+            "type": "string"
+          }
+        },
+        "xml": {
+          "name": "User"
+        }
+      },
+      "UserUpdate": {
+        "type": "object",
+        "required": ["email", "firstname", "lastname", "avatar"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "firstname": {
+            "type": "string"
+          },
+          "lastname": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string",
+            "format": "password"
+          },
+          "avatar": {
+            "type": "string"
+          }
+        },
+        "xml": {
+          "name": "User"
+        }
+      },
+      "UserLoginToken": {
+        "type": "object",
+        "required": ["access_token"],
+        "properties": {
+          "access_token": {
+            "type": "string"
+          }
+        },
+        "xml": {
+          "name": "UserLoginToken"
+        }
+      },
+      "UserLoginData": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "xml": {
+          "name": "UserLoginData"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,58 @@
+<html>
+  <head>
+    <title>🦎 GAD | Swagger</title>
+    <link rel="icon" href="../data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+      integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay"
+      crossorigin="anonymous"
+    />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/controls.css" />
+  </head>
+
+  <body>
+    <header>
+      <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+        <h1>
+          <a href=".." style="text-decoration: none; color: inherit">🦎 GAD </a>
+          <a href="./index.html">
+            <button id="btnTools" class="button-primary">Tools</button>
+          </a>
+          <a href="./swagger.html">
+            <button id="btnSwagger" class="button-primary">Swagger</button>
+          </a>
+          <!-- <a href="./swagger-v2.html">
+                <button id="btnSwagger" class="button-disabled" disabled readOnly>Swagger (JWT)</button>
+            </a> -->
+        </h1>
+        <span style="display: flex; align-items: center; justify-self: end; padding-right: 20px">
+          <a href="https://jaktestowac.pl" style="text-decoration: none; color: white" target="_blank" rel="noopener">
+            <img
+              src="../data/icons/favicon.png"
+              style="width: 30px !important; height: 30px !important; padding: 0"
+              alt=""
+          /></a>
+          <a
+            href="https://jaktestowac.pl"
+            style="text-decoration: none; color: white; padding: 10px"
+            target="_blank"
+            rel="noopener"
+            >jaktestowac.pl</a
+          >
+        </span>
+      </div>
+    </header>
+    <main>
+      <div id="main_content">
+        <iframe src="../swagger/index-v2.html" width="100%" height="100%">
+          Sorry your browser does not support inline frames.
+        </iframe>
+      </div>
+    </main>
+    <script type="text/javascript" src="index.js"></script>
+  </body>
+</html>

@@ -1,0 +1,458 @@
+const articlesEndpoint = "../../api/articles";
+const usersEndpoint = "../../api/users";
+const pictureListEndpoint = "../../api/images/posts";
+let picList = [];
+let users = [];
+let articlesData = [];
+
+let articleUserId;
+let totalElementCount = 0;
+let searchPhrase = undefined;
+
+function getId() {
+  let id = undefined;
+  const cookies = document.cookie.split(";");
+  for (let cookie of cookies) {
+    cookie = cookie.trim();
+    if (cookie.startsWith("id=")) {
+      id = cookie.split("=")[1];
+    }
+  }
+  return id;
+}
+
+function isAuthorized(id) {
+  return id?.toString() === getId() || getId() === "admin";
+}
+
+function getBearerToken() {
+  let token = undefined;
+  const cookies = document.cookie.split(";");
+  for (let cookie of cookies) {
+    cookie = cookie.trim();
+    if (cookie.startsWith("token=")) {
+      token = cookie.split("=")[1];
+    }
+  }
+  return `Bearer ${token}`;
+}
+
+function formatHeaders() {
+  const headers = {
+    Authorization: getBearerToken(),
+  };
+  return headers;
+}
+
+const fetchData = {
+  headers: {
+    "Content-Type": "application/json",
+  },
+  credentials: "include",
+};
+
+async function issueGetRequest(limit = 6, page = 1, searchPhrase = undefined, onlyDisplay = false) {
+  // get data from the server:
+
+  if (!onlyDisplay) {
+    let articlesEndpointPaged = `${articlesEndpoint}?_limit=${limit}&_page=${page}&_sort=date&_order=desc`;
+
+    if (search_user_id !== undefined) {
+      articlesEndpointPaged += `&user_id=${search_user_id}`;
+    }
+
+    if (searchPhrase !== undefined && searchPhrase.length > 0) {
+      articlesEndpointPaged += `&q=${searchPhrase}`;
+    }
+    const results = await Promise.all(
+      [articlesEndpointPaged].map((url) =>
+        fetch(url, { headers: formatHeaders() }, fetchData).then((r) => {
+          totalElementCount = r.headers.get("X-Total-Count");
+          return r.json();
+        })
+      )
+    );
+    articlesData = results[0];
+
+    const userIds = [];
+    for (let i = 0; i < articlesData.length; i++) {
+      if (articlesData[i].user_id !== undefined && !userIds.includes(articlesData[i].user_id)) {
+        userIds.push(articlesData[i].user_id);
+      }
+    }
+    userIds.push(getId());
+    const queryId = `${userIds.join("&id=")}`;
+    const userUrlQuery = `${usersEndpoint}?id=${queryId}`;
+
+    const userResults = await Promise.all(
+      [userUrlQuery].map((url) => fetch(url, { headers: formatHeaders() }, fetchData).then((r) => r.json()))
+    );
+
+    users = userResults[0];
+
+    for (let i = 0; i < articlesData.length; i++) {
+      for (let j = 0; j < users.length; j++) {
+        if (users[j].id?.toString() === articlesData[i].user_id?.toString()) {
+          articlesData[i].user_name = `${users[j].firstname}`;
+          if (getId()) articlesData[i].user_name += ` ${users[j].lastname}`;
+          articlesData[i].user_id = users[j].id;
+          break;
+        }
+      }
+      if (articlesData[i].user_name === undefined) {
+        //        const userUrl = `${usersEndpoint}/${articlesData[i].user_id}`;
+        //        const userResults = await Promise.all(
+        //          [userUrl].map((url) => fetch(url, { headers: formatHeaders() }, fetchData).then((r) => r.json()))
+        //        );
+        //
+        //        users = userResults[0];
+
+        for (let j = 0; j < users.length; j++) {
+          if (users[j].id?.toString() === articlesData[i].user_id?.toString()) {
+            articlesData[i].user_name = `${users[j].firstname} ${users[j].lastname}`;
+            articlesData[i].user_id = users[j].id;
+            break;
+          }
+        }
+      }
+      if (articlesData[i].user_name === undefined) {
+        articlesData[i].user_name = "Unknown user";
+      }
+    }
+    // sort articles by date:
+    articlesData.sort(function (a, b) {
+      let dateA = new Date(a.date),
+        dateB = new Date(b.date);
+      return dateB - dateA;
+    });
+  }
+  displayPostsData(articlesData);
+  attachEventHandlers(getId());
+
+  if (search_user_id !== undefined) {
+    const foundUser = users.find((user) => `${user.id}` === search_user_id);
+
+    if (foundUser !== undefined) {
+      document.querySelector(
+        "#postsByUserName"
+      ).innerHTML = `<b>Articles by ${foundUser.firstname} ${foundUser.lastname}</b>`;
+      const btnArticles = document.querySelector("#btnArticles");
+      btnArticles.disabled = false;
+      btnArticles.classList.remove("button-disabled");
+      btnArticles.classList.add("button-primary");
+
+      document.title = `🦎 GAD | Articles by ${foundUser.firstname} ${foundUser.lastname}`;
+    }
+  }
+}
+
+const attachEventHandlers = (user_id) => {
+  if (user_id === undefined) {
+    return;
+  }
+
+  appendMenu(articlesAdditionalMenu);
+
+  document.querySelector("#add-new").onclick = () => {
+    window.scrollTo(0, 0);
+    const container = document.querySelector(".add-new-panel");
+    container.querySelector(".body").value = "";
+    container.querySelector(".title").value = "";
+    let index = 0;
+    for (element of picList) {
+      let opt = document.createElement("option");
+      opt.value = element;
+      opt.innerHTML = element; // whatever property it has
+
+      container.querySelector(".image").appendChild(opt);
+      index++;
+    }
+    index = 0;
+    for (element of users) {
+      if (isAuthorized(element.id)) {
+        let opt = document.createElement("option");
+        opt.value = element.id;
+        opt.innerHTML = `${element.firstname} ${element.lastname}`;
+
+        container.querySelector(".user").appendChild(opt);
+        index++;
+      }
+    }
+    presentPicture();
+    container.classList.add("active");
+  };
+  document.querySelector(".close").onclick = () => {
+    document.querySelector(".add-new-panel").classList.remove("active");
+  };
+  document.querySelector(".add-new-panel .cancel").onclick = () => {
+    document.querySelector(".add-new-panel").classList.remove("active");
+  };
+  document.querySelector(".update.save").onclick = handleCreate;
+  document.querySelector("#add-new").disabled = false;
+};
+
+let alertElement = document.querySelector(".alert");
+
+const showResponseOnDelete = (response) => {
+  if (response.status === 200) {
+    showMessage("Article was deleted", false);
+  } else {
+    showMessage("Article was not deleted", true);
+  }
+};
+
+const showResponseOnUpdate = (response) => {
+  if (response.status === 200) {
+    showMessage("Article was updated", false);
+  } else {
+    showMessage("Article was not updated", true);
+  }
+};
+
+const showResponse = (response) => {
+  if (response.status === 201) {
+    showMessage("Article was created", false);
+  } else {
+    showMessage("Article was not created", true);
+  }
+};
+
+const showResponseAndRedirect = (response) => {
+  if (response.status === 201) {
+    document.querySelector(".update").disabled = true;
+    document.querySelector(".cancel").disabled = true;
+    // showMessage("Article was created", false);
+    response.json().then((data) => {
+      const articleId = data.id;
+      setTimeout(function () {
+        window.location.href = `/article.html?id=${articleId}&msg=Article was created`;
+      }, 0);
+    });
+  } else {
+    showMessage("Article was not created", true);
+  }
+};
+
+const showMessage = (message, isError = false) => {
+  alertElement.innerHTML = message;
+  alertElement.classList.remove("alert-error", "alert-success");
+  if (isError) {
+    alertElement.classList.add("alert-error");
+  } else {
+    alertElement.classList.add("alert-success");
+  }
+  let newMessageElement = alertElement.cloneNode(true);
+  alertElement.parentNode.replaceChild(newMessageElement, alertElement);
+  alertElement = newMessageElement;
+};
+
+function pad(num, size = 2) {
+  num = num.toString();
+  while (num.length < size) num = "0" + num;
+  return num;
+}
+
+const handleCreate = () => {
+  const container = document.querySelector(".add-new-panel");
+
+  const today = new Date();
+  const date = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}T${pad(
+    today.getHours()
+  )}:${pad(today.getMinutes())}:${pad(today.getSeconds())}Z`;
+
+  data = {
+    title: container.querySelector(".title").value,
+    body: container.querySelector(".body").value,
+    user_id: container.querySelector(".user").value,
+    date: date,
+    image: `.\\data\\images\\256\\${container.querySelector(".image").value}`,
+  };
+  issueArticleRequest(data, issueGetRequest, searchPhrase);
+  // document.querySelector(".add-new-panel").classList.remove("active");
+};
+
+const issueArticleRequest = (data, responseHandler) => {
+  // create data on the server:
+  console.log("POST request:", articlesEndpoint, data);
+  fetch(articlesEndpoint, {
+    method: "post",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+    body: JSON.stringify(data),
+  }).then((response) => showResponseAndRedirect(response));
+  // .then(responseHandler);
+};
+const attachFormEventHandlers = (item, container) => {
+  container.querySelector(".update").onclick = handleUpdate;
+  container.querySelector(".cancel").onclick = () => {
+    container.innerHTML = getItemHTML(item);
+    attachEventHandlers();
+  };
+};
+const getImagesHTML = (image) => {
+  let htmlData = "";
+  if (image !== undefined) {
+    htmlData += `<div align="center" ><img src="${image}" /></div>`;
+    //        for (image of images) {
+    //            htmlData += `<img src="${image}" />`;
+    //            htmlData += `<br>`
+    //        }
+  }
+  return htmlData;
+};
+
+//        <label>id:</label><span>${item.id}</span><br>
+const getItemHTML = (item) => {
+  return `<div id="article${item.id}" data-testid="article-${item.id}">
+        <a href="article.html?id=${item.id}" id="gotoArticle${item.id}" data-testid="article-${
+    item.id
+  }-link">${getImagesHTML(item.image)}</a><br>
+        <div align="center" data-testid="article-${item.id}-title"><strong><a href="article.html?id=${item.id}">${
+    item.title
+  }</a></strong></div><br>
+        <label>user:</label><span><a href="user.html?id=${item.user_id}" id="gotoUser${item.user_id}-${
+    item.id
+  }" data-testid="article-${item.id}-user">${item.user_name}</a></span>
+  <br>
+        <label>date:</label><span data-testid="article-${item.id}-date">${item.date
+    .replace("T", " ")
+    .replace("Z", "")}</span><br>
+        <label></label><span data-testid="article-${item.id}-body">${item.body?.substring(0, 200)} (...)</span><br>
+        <span><a href="article.html?id=${item.id}" id="seeArticle${item.id}">See More...</a></span><br>
+    </div>`;
+};
+
+function presentPicture() {
+  const userPicture = document.querySelector(".userPicture");
+  userPicture.src = `.\\data\\images\\256\\${document.querySelector(".image").value}`;
+}
+
+const displayPostsData = (data) => {
+  const container = document.querySelector("#container");
+  container.innerHTML = "";
+  for (item of data) {
+    displayItem(item, container);
+  }
+  if (data.length === 0) {
+    container.innerHTML += `
+        <div align="center"><h1 style="text-align: center;"data-testid="no-results">No data</h1></div>
+    `;
+  }
+};
+
+const displayItem = (item, container) => {
+  itemHTML = getItemHTML(item);
+  container.innerHTML += `
+        <div class="card-wrapper" >${itemHTML}</div>
+    `;
+};
+
+async function getPictureList() {
+  picList = await Promise.all(
+    [pictureListEndpoint].map((url) => fetch(url, { headers: formatHeaders() }).then((r) => r.json()))
+  );
+  picList = picList[0];
+  picList.sort(function () {
+    return 0.5 - Math.random();
+  });
+}
+
+let current_page = 1;
+let records_per_page = 6;
+
+function getParams() {
+  var values = {};
+  var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+    values[key] = value;
+  });
+  return values;
+}
+
+let search_user_id = getParams()["user_id"];
+
+getPictureList();
+updatePerPage();
+issueGetRequest(records_per_page, current_page, searchPhrase).then(() => changePage(current_page, true));
+
+// pagination:
+
+function changeItemsPerPage() {
+  updatePerPage();
+  current_page = 1;
+  changePage(current_page);
+}
+
+function updatePerPage() {
+  let options = document.getElementById("perPage");
+  records_per_page = options.value;
+}
+
+function prevPage() {
+  if (current_page > 1) {
+    current_page--;
+    changePage(current_page);
+  }
+}
+
+function nextPage() {
+  if (current_page < numPages()) {
+    current_page++;
+    changePage(current_page);
+  }
+}
+
+function changePage(page, onlyDisplay = false) {
+  let btnNext = document.getElementById("btnNext");
+  let btnPrev = document.getElementById("btnPrev");
+  let container = document.getElementById("container");
+  let pageSpan = document.getElementById("page");
+  let pagesTotal = document.getElementById("pagesTotal");
+
+  // Validate page
+  if (page < 1) page = 1;
+  if (page > numPages()) page = numPages();
+
+  container.innerHTML = "";
+
+  // let articlesDataForPage = [];
+  // for (let i = (page - 1) * records_per_page; i < page * records_per_page && i < articlesData.length; i++) {
+  //   articlesDataForPage.push(articlesData[i]);
+  // }
+  pageSpan.innerHTML = page;
+  pagesTotal.innerHTML = numPages();
+
+  if (page == 1) {
+    // btnPrev.style.visibility = "hidden";
+    btnPrev.disabled = true;
+    btnPrev.style.color = "grey";
+  } else {
+    // btnPrev.style.visibility = "visible";
+    btnPrev.disabled = false;
+    btnPrev.style.color = "#0275d8";
+  }
+
+  if (page == numPages()) {
+    // btnNext.style.visibility = "hidden";
+    btnNext.disabled = true;
+    btnNext.style.color = "grey";
+  } else {
+    // btnNext.style.visibility = "visible";
+    btnNext.disabled = false;
+    btnNext.style.color = "#0275d8";
+  }
+  issueGetRequest(records_per_page, page, searchPhrase, onlyDisplay);
+}
+
+function numPages() {
+  return Math.ceil(totalElementCount / records_per_page);
+}
+menuButtonDisable("btnArticles");
+
+function seachByText() {
+  let searchInput = document.getElementById("search-input");
+  searchPhrase = searchInput.value;
+  issueGetRequest(records_per_page, current_page, searchPhrase).then(() => changePage(current_page, true));
+}
