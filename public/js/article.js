@@ -465,7 +465,7 @@ const handleCommentCreate = () => {
     today.getHours()
   )}:${pad(today.getMinutes())}:${pad(today.getSeconds())}Z`;
 
-  const id = getCookieId();
+  const id = parseInt(getCookieId());
   data = {
     article_id: article_id,
     body: container.querySelector("#body").value,
