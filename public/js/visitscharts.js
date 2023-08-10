@@ -98,7 +98,7 @@ const displayData = (limit = 0) => {
       height: 400,
       vAxis: {
         minValue: 0,
-      format: "0",
+        format: "0",
       },
       legend: { position: "left", textStyle: { fontSize: 10 } },
     };
@@ -129,48 +129,6 @@ const displayData = (limit = 0) => {
   }
 };
 
-const CSV_SEP = ";";
-const jsonToCSV = (object) => {
-  console.log(object);
-  let csv = "";
-  if (!Array.isArray(object)) {
-    csv = Object.entries(Object.entries(object)[0][1])
-      .map((e) => e[0])
-      .join(CSV_SEP);
-    csv += "\r\n";
-  }
-
-  for (const [k, v] of Object.entries(object)) {
-    csv += Object.values(v).join(CSV_SEP) + "\r\n";
-  }
-  return csv;
-};
-
-const download = (filename, data) => {
-  let text = "NO DATA";
-  if (filename.includes("csv")) {
-    text = jsonToCSV(data);
-  } else if (filename.includes("json")) {
-    text = JSON.stringify(data, null, 4);
-  }
-
-  var element = document.createElement("a");
-  element.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(text));
-  element.setAttribute("download", filename);
-  element.style.display = "none";
-  document.body.appendChild(element);
-  element.click();
-  document.body.removeChild(element);
-};
-
-function getParams() {
-  var values = {};
-  var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-    values[key] = value;
-  });
-  return values;
-}
-
 function invokeChart(type) {
   chartType = type;
   issueGetRequest();
@@ -192,15 +150,6 @@ function changeMinValue() {
   displayData(minValueElement.value);
 }
 
-function generatePDF() {
-  const element = document.getElementById("tableChart");
-  var opt = {
-    margin: 1,
-    filename: "visit_stats.pdf",
-    image: { type: "jpeg", quality: 0.98 },
-    html2canvas: { scale: 1 },
-    jsPDF: { unit: "mm", format: "a3", orientation: "portrait" },
-  };
-  // Docs: https://github.com/eKoopmans/html2pdf.js
-  html2pdf().set(opt).from(element).save();
+function generateChartPDF(filename) {
+  generatePDF(filename, "tableChart");
 }

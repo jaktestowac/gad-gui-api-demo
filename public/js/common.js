@@ -62,15 +62,14 @@ const addMainMenuAndFooter = () => {
   const navMenu = document.querySelector(".nav-menu");
 
   avatar = getCookieAvatar();
-  console.log(avatar);
 
-  if (avatar !== undefined && avatar.length > 0) {
+  if (avatar !== undefined && avatar !== null && avatar.length > 0) {
     if ("#menu-main-api") {
       const avatarElement = document.querySelector("#avatar");
-      avatarElement.src = `./../${avatar}`;
+      if (avatarElement) avatarElement.src = `./../${avatar}`;
     } else {
       const avatarElement = document.querySelector("#avatar");
-      avatarElement.src = avatar;
+      if (avatarElement) avatarElement.src = avatar;
     }
   }
 
@@ -257,6 +256,30 @@ const footerHTML = (date) => {
 </div>
 </footer>
 `;
+};
+
+function getParams() {
+  var values = {};
+  var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+    values[key] = value;
+  });
+  return values;
+}
+
+const CSV_SEP = ";";
+const jsonToCSV = (object) => {
+  let csv = "";
+  if (!Array.isArray(object)) {
+    csv = Object.entries(Object.entries(object)[0][1])
+      .map((e) => e[0])
+      .join(CSV_SEP);
+    csv += "\r\n";
+  }
+
+  for (const [k, v] of Object.entries(object)) {
+    csv += Object.values(v).join(CSV_SEP) + "\r\n";
+  }
+  return csv;
 };
 
 addMainMenuAndFooter();

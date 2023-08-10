@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="css/controls.css" />
     <link rel="stylesheet" href="css/style.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- https://sheetjs.com/ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   </head>
   <body>
     <header>
@@ -87,7 +89,7 @@
                 ><button disabled id="btnDownloadCommentsDataJson" class="button-primary">JSON</button></a
               >
               <button
-                onclick="generatePDF()"
+                onclick="generateChartPDF('user_stats.pdf')"
                 id="btnDownloadPdfCommentsData"
                 class="button-primary"
                 data-testid="download-pdf"
@@ -117,11 +119,15 @@
         <a id="downloadTableDataJson"
           ><button disabled id="btnDownloadTableDataJson" class="button-primary">JSON</button></a
         >
+        <a id="downloadTableDataXlsx"
+          ><button disabled id="btnDownloadTableDataXlsx" class="button-primary">Xlsx</button></a
+        >
       </div>
     </div>
   </body>
   <script src="https://www.gstatic.com/charts/loader.js"></script>
   <script type="text/javascript" src="js/common.js"></script>
+  <script type="text/javascript" src="js/helpers/reports.js"></script>
   <script type="text/javascript" src="js/userstats.js"></script>
   <script type="text/javascript" src="version.js"></script>
   <script type="text/javascript" src="username.js"></script>

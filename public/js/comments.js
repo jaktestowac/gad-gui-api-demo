@@ -55,7 +55,7 @@ const fetchData = {
   credentials: "include",
 };
 
-async function issueGetRequest(limit = 6, page = 1, searchPhrase = undefined, onlyDisplay = false) {
+async function issueGetRequest(limit = 6, page = 1, searchPhrase = undefined, onlyDisplay = false, displayDelay = 0) {
   displayLoading();
   // get data from the server:
   if (!onlyDisplay) {
@@ -73,54 +73,10 @@ async function issueGetRequest(limit = 6, page = 1, searchPhrase = undefined, on
         })
       )
     );
+
     userComments = results[0];
 
-    const articleIds = [];
-    for (let i = 0; i < userComments.length; i++) {
-      if (userComments[i].article_id !== undefined && !articleIds.includes(userComments[i].article_id)) {
-        articleIds.push(userComments[i].article_id);
-      }
-    }
-    const articlesQueryId = `${articleIds.join("&id=")}`;
-    const articlesUrlQuery = `${articlesEndpoint}?id=${articlesQueryId}`;
-
-    const articleResults = await Promise.all(
-      [articlesUrlQuery].map((url) => fetch(url, { headers: formatHeaders() }, fetchData).then((r) => r.json()))
-    );
-    articlesData = articleResults[0];
-
-    const userIds = [];
-    for (let i = 0; i < userComments.length; i++) {
-      if (userComments[i].user_id !== undefined && !userIds.includes(userComments[i].user_id)) {
-        userIds.push(userComments[i].user_id);
-      }
-    }
-    userIds.push(getId());
-
-    const userQueryId = `${userIds.join("&id=")}`;
-    const userUrlQuery = `${usersEndpoint}?id=${userQueryId}`;
-
-    const userResults = await Promise.all(
-      [userUrlQuery].map((url) => fetch(url, { headers: formatHeaders() }, fetchData).then((r) => r.json()))
-    );
-    usersData = userResults[0];
-
-    const tempUserData = {};
-    const tempArticleData = {};
-
-    for (let j = 0; j < usersData.length; j++) {
-      const user_name = `${usersData[j].firstname} ${usersData[j].lastname}`;
-      tempUserData[usersData[j].id.toString()] = user_name;
-    }
-
-    for (let i = 0; i < articlesData.length; i++) {
-      tempArticleData[articlesData[i].id.toString()] = articlesData[i];
-    }
-
-    for (let j = 0; j < userComments.length; j++) {
-      userComments[j].user_name = tempUserData[userComments[j].user_id.toString()];
-      userComments[j].article = tempArticleData[userComments[j].article_id.toString()];
-    }
+    await processCommentsData(userComments);
   }
   userComments.sort(function (a, b) {
     let dateA = new Date(a.date),
@@ -129,7 +85,56 @@ async function issueGetRequest(limit = 6, page = 1, searchPhrase = undefined, on
   });
   allComments = userComments;
   hideLoading();
-  displayCommentsData(userComments);
+  await displayCommentsData(userComments, displayDelay);
+}
+
+async function processCommentsData(userComments) {
+  const articleIds = [];
+  for (let i = 0; i < userComments.length; i++) {
+    if (userComments[i].article_id !== undefined && !articleIds.includes(userComments[i].article_id)) {
+      articleIds.push(userComments[i].article_id);
+    }
+  }
+  const articlesQueryId = `${articleIds.join("&id=")}`;
+  const articlesUrlQuery = `${articlesEndpoint}?id=${articlesQueryId}`;
+
+  const articleResults = await Promise.all(
+    [articlesUrlQuery].map((url) => fetch(url, { headers: formatHeaders() }, fetchData).then((r) => r.json()))
+  );
+  articlesData = articleResults[0];
+
+  const userIds = [];
+  for (let i = 0; i < userComments.length; i++) {
+    if (userComments[i].user_id !== undefined && !userIds.includes(userComments[i].user_id)) {
+      userIds.push(userComments[i].user_id);
+    }
+  }
+  userIds.push(getId());
+
+  const userQueryId = `${userIds.join("&id=")}`;
+  const userUrlQuery = `${usersEndpoint}?id=${userQueryId}`;
+
+  const userResults = await Promise.all(
+    [userUrlQuery].map((url) => fetch(url, { headers: formatHeaders() }, fetchData).then((r) => r.json()))
+  );
+  usersData = userResults[0];
+
+  const tempUserData = {};
+  const tempArticleData = {};
+
+  for (let j = 0; j < usersData.length; j++) {
+    const user_name = `${usersData[j].firstname} ${usersData[j].lastname}`;
+    tempUserData[usersData[j].id.toString()] = user_name;
+  }
+
+  for (let i = 0; i < articlesData.length; i++) {
+    tempArticleData[articlesData[i].id.toString()] = articlesData[i];
+  }
+
+  for (let j = 0; j < userComments.length; j++) {
+    userComments[j].user_name = tempUserData[userComments[j].user_id.toString()];
+    userComments[j].article = tempArticleData[userComments[j].article_id.toString()];
+  }
 }
 
 // const getItemHTML = (item) => {
@@ -170,18 +175,25 @@ const getCommentHTML = (comment) => {
     </div>`;
 };
 
-const displayCommentsData = (data) => {
+const sleep = (time) => new Promise((res) => setTimeout(res, time));
+
+async function displayCommentsData(data, delay = 0) {
   const container = document.querySelector("#container");
   container.innerHTML = "";
   for (item of data) {
     displayItem(item, container);
+
+    // delay displaying next element:
+    if (delay !== undefined && delay > 0) {
+      await sleep(delay).then((msg) => console.log(msg));
+    }
   }
   if (data.length === 0) {
     container.innerHTML += `
         <div align="center"><h1 style="text-align: center;"data-testid="no-results">No data</h1></div>
     `;
   }
-};
+}
 
 const displayItem = (item, container) => {
   if (item !== undefined && item.article !== undefined) {
@@ -262,8 +274,13 @@ function numPages() {
 let current_page = 1;
 let records_per_page = 12;
 
+// TODO:INVOKE_BUG: stability issue - change this to slowly display new comments // issue on front-end
+const displayDelay = 0; // [ms]
+
 updatePerPage();
-issueGetRequest(records_per_page, current_page, searchPhrase).then(() => changePage(current_page, true));
+issueGetRequest(records_per_page, current_page, searchPhrase, false, displayDelay).then(() =>
+  changePage(current_page, true)
+);
 menuButtonDisable("btnComments");
 
 function seachByText() {

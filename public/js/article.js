@@ -284,14 +284,6 @@ const displayItem = (item, container) => {
   container.innerHTML += `<div align="center" ><div class="card-wrapper-wide" align="left">${itemHTML}</div></div>`;
 };
 
-function getParams() {
-  var values = {};
-  var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-    values[key] = value;
-  });
-  return values;
-}
-
 let alertElement = document.querySelector(".alert");
 
 const showMessage = (message, isError = false) => {
@@ -590,17 +582,6 @@ const attachEventHandlers = (id = "") => {
   if (document.querySelector("#btnDownloadPdf")) {
     document.querySelector("#btnDownloadPdf").disabled = false;
   }
-};
-
-const CSV_SEP = ";";
-const jsonToCSV = (object) => {
-  let csv = Object.entries(Object.entries(object)[0][1])
-    .map((e) => e[0])
-    .join(CSV_SEP);
-  for (const [k, v] of Object.entries(object)) {
-    csv += "\r\n" + Object.values(v).join(CSV_SEP);
-  }
-  return csv;
 };
 
 const download = (filename) => {

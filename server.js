@@ -71,7 +71,7 @@ const customRoutes = (req, res, next) => {
       const urlParts = urlEnds.split("/");
       let articleId = urlParts[urlParts.length - 1];
 
-      if (!articleId?.includes("&_") && articleId !== undefined && articleId.length >= 0) {
+      if (!articleId?.includes("&_") && !articleId?.includes("?") && articleId !== undefined && articleId.length > 0) {
         if (visitsPerArticle[articleId] === undefined) {
           visitsPerArticle[articleId] = 0;
         }
@@ -85,7 +85,7 @@ const customRoutes = (req, res, next) => {
       const urlParts = urlEnds.split("/");
       let commentId = urlParts[urlParts.length - 1];
 
-      if (!commentId?.includes("&_") && commentId !== undefined && commentId.length >= 0) {
+      if (!commentId?.includes("&_") && !commentId?.includes("?") && commentId !== undefined && commentId.length > 0) {
         if (visitsPerComment[commentId] === undefined) {
           visitsPerComment[commentId] = 0;
         }
@@ -99,12 +99,14 @@ const customRoutes = (req, res, next) => {
       const urlParts = urlEnds.split("/");
       let userId = urlParts[urlParts.length - 1];
 
-      if (visitsPerUsers[userId] === undefined) {
-        visitsPerUsers[userId] = 0;
-      }
+      if (!userId?.includes("&_") && !userId?.includes("?") && userId !== undefined && userId.length > 0) {
+        if (visitsPerUsers[userId] === undefined) {
+          visitsPerUsers[userId] = 0;
+        }
 
-      visitsPerUsers[userId]++;
-      logDebug(`[visits] userId:${userId} with visits:${visitsPerUsers[userId]}`);
+        visitsPerUsers[userId]++;
+        logDebug(`[visits] userId: "${userId}" with visits:${visitsPerUsers[userId]}`);
+      }
       next();
     } else {
       next();

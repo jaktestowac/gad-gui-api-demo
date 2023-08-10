@@ -58,48 +58,6 @@ const displayData = () => {
   document.querySelector("#tableChart").style.visibility = "visible";
 };
 
-const CSV_SEP = ";";
-const jsonToCSV = (object) => {
-  console.log(object);
-  let csv = "";
-  if (!Array.isArray(object)) {
-    csv = Object.entries(Object.entries(object)[0][1])
-      .map((e) => e[0])
-      .join(CSV_SEP);
-    csv += "\r\n";
-  }
-
-  for (const [k, v] of Object.entries(object)) {
-    csv += Object.values(v).join(CSV_SEP) + "\r\n";
-  }
-  return csv;
-};
-
-const download = (filename, data) => {
-  let text = "NO DATA";
-  if (filename.includes("csv")) {
-    text = jsonToCSV(data);
-  } else if (filename.includes("json")) {
-    text = JSON.stringify(data, null, 4);
-  }
-
-  var element = document.createElement("a");
-  element.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(text));
-  element.setAttribute("download", filename);
-  element.style.display = "none";
-  document.body.appendChild(element);
-  element.click();
-  document.body.removeChild(element);
-};
-
-function getParams() {
-  var values = {};
-  var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-    values[key] = value;
-  });
-  return values;
-}
-
 function invokeChart(type) {
   chartType = type;
   issueGetRequest();

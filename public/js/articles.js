@@ -363,14 +363,6 @@ async function getPictureList() {
 let current_page = 1;
 let records_per_page = 6;
 
-function getParams() {
-  var values = {};
-  var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-    values[key] = value;
-  });
-  return values;
-}
-
 let search_user_id = getParams()["user_id"];
 
 getPictureList();

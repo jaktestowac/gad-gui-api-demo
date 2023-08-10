@@ -67,7 +67,12 @@
               <a id="downloadVisitsDataJson"
                 ><button disabled id="btnDownloadVisitsDataJson" class="button-primary">JSON</button></a
               >
-              <button onclick="generatePDF()" id="btnDownloadPdf" class="button-primary" data-testid="download-pdf">
+              <button
+                onclick="generateChartPDF('visit_stats.pdf')"
+                id="btnDownloadPdf"
+                class="button-primary"
+                data-testid="download-pdf"
+              >
                 PDF
               </button>
             </div>
@@ -78,5 +83,7 @@
 
     <script src="https://www.gstatic.com/charts/loader.js"></script>
   </body>
+  <script type="text/javascript" src="js/common.js"></script>
   <script type="text/javascript" src="js/visitscharts.js"></script>
+  <script type="text/javascript" src="js/helpers/reports.js"></script>
 </html>

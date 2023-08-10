@@ -314,14 +314,6 @@ const displayForm = (item, container) => {
     `;
 };
 
-function getParams() {
-  var values = {};
-  var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-    values[key] = value;
-  });
-  return values;
-}
-
 const comment_id = getParams()["id"];
 const msg = getParams()["msg"];
 if (comment_id !== undefined) {
