@@ -1,6 +1,12 @@
 const FILE_TYPE = "application/json";
 let fileContent = "";
 const articlesEndpoint = "../../api/articles";
+const sampleArticleJson = {
+  title: "MY_TITLE",
+  body: "MY_BODY",
+  date: "2022-05-20T05:38:12Z",
+  image: ".\\data\\images\\256\\chuttersnap-9cCeS9Sg6nU-unsplash.jpg",
+};
 
 function getId() {
   let id = undefined;
@@ -43,6 +49,7 @@ const handleCreate = () => {
   }
   fileContent.date = date;
   fileContent.id = undefined;
+  fileContent.user_id = getId();
   issueArticleRequest(fileContent);
 };
 
@@ -109,6 +116,10 @@ function pad(num, size = 2) {
 }
 
 const attachEventHandlers = (user_id) => {
+  document.querySelector("#btnDownloadSampleJson").onclick = () => {
+    download("sample_article.json", sampleArticleJson);
+  };
+
   if (user_id === undefined) {
     return;
   }

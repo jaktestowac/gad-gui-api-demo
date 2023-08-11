@@ -260,7 +260,7 @@ const validations = (req, res, next) => {
         let userId = req.body["user_id"];
 
         const foundUser = dbDataJson["users"].find((user) => {
-          if (user["id"]?.toString() === userId.toString() && user["email"] === verifyTokenResult.email) {
+          if (user["id"]?.toString() === userId?.toString() && user["email"] === verifyTokenResult.email) {
             return user;
           }
         });
