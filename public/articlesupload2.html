@@ -31,22 +31,28 @@
     <div id="container"></div>
     <div align="center">
       <h2>Upload New Article</h2>
-      You can upload new article using .json file. Just drag and drop the file!
 
       <br /><br />
       <div id="uploads"></div>
-      <div class="dropzone" id="dropzone">Drop Here</div>
-      <br />
+
       <a id="downloadSampleJson"
         ><button id="btnDownloadSampleJson" class="button-primary" data-testid="downloadBtn">
           Download Sample JSON
         </button></a
       >
-      <button type="button" class="update save" id="uploadBtn" data-testid="uploadBtn" disabled>Upload</button>
-      <a href="./articles.html" class="menu-link">
-        <button type="button" class="cancel">Cancel</button>
-      </a>
       <br />
+      <br />
+      <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" class="button-secondary" name="jsonFile" id="jsonFile" />
+        <br />
+        <br /><input
+          type="button"
+          value="Upload"
+          class="button-primary"
+          data-testid="uploadBtn"
+          onclick="uploadFile()"
+        />
+      </form>
       <br />
       <div id="infoContainer"></div>
     </div>

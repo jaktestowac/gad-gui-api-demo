@@ -191,6 +191,7 @@ const handleUpdate = (ev) => {
   const id = ev.target.getAttribute("data-id");
   const container = ev.target.parentElement.parentElement;
   const user_id = container.querySelector("#user_id").value;
+  // #BUG004: user_id and article_id is a string
   const data = {
     body: container.querySelector("#body").value,
     id: container.querySelector("#id").value,

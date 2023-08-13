@@ -131,7 +131,8 @@ async function addUserNameToComments(comments) {
   for (let index = 0; index < comments.length; index++) {
     const comment = comments[index];
 
-    const userData = usersData.find((x) => x.id === comment.user_id);
+    // TODO:INVOKE_BUG: remove toString() to get Unknown User in some cases #BUG004
+    const userData = usersData.find((x) => x.id?.toString() === comment.user_id?.toString());
 
     if (userData === undefined || userData.firstname === undefined) {
       user_name = "Unknown user";
@@ -363,6 +364,8 @@ const showResponseOnUpdate = (response, item) => {
   }
 };
 
+// TODO:INVOKE_BUG: current article is deleted, but not the comments.
+// If You add new article with this ID - it will have comments from deleted article
 const issueDeleteRequest = (id, responseHandler) => {
   // delete data on the server:
   const url = articlesEndpoint + "/" + id;

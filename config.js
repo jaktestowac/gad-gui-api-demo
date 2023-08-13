@@ -36,6 +36,8 @@ const superAdminUserPass = "a";
 const dateRegexp = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/; // e.g. 2016-01-19T15:21:32Z
 const emailRegexp = /^\S+@\S+\.\S+$/;
 
+const uploadSizeLimitBytes = 1000;
+
 const sleepTime = {
   perOneGetComment: 30,
   perOneGetCommentMin: 25,
@@ -65,4 +67,5 @@ module.exports = {
   dateRegexp,
   emailRegexp,
   sleepTime,
+  uploadSizeLimitBytes,
 };

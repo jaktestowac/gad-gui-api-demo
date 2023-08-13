@@ -1,35 +1,27 @@
 const jwt = require("jsonwebtoken");
-const fs = require("fs");
 const {
   JWT_SECRET_KEY,
   tokenExpiresIn,
-  authUserDb,
   superAdminTokenExpiresIn,
   cookieMaxAge,
   superAdminCookieMaxAge,
   keepSignInCookieMaxAge,
   keepSignInTokenExpiresIn,
-} = require("./config");
-const {
-  addSecondsToDate
-} = require("./helpers");
+} = require("../config");
+const { addSecondsToDate } = require("./helpers");
 const { logDebug } = require("./loggerApi");
-
-function userDb() {
-  return JSON.parse(fs.readFileSync(authUserDb, "UTF-8"));
-}
+const { userDb } = require("../db.helper");
 
 // Create a token from a payload
 function createToken(payload, isSuperAdmin = false, keepSignIn = false) {
-
   if (isSuperAdmin) {
     return jwt.sign(payload, JWT_SECRET_KEY, { expiresIn: superAdminTokenExpiresIn });
   } else {
     let expires = tokenExpiresIn;
-      if (keepSignIn) {
-        expires = keepSignInTokenExpiresIn;
-      }
-    console.log(expires)
+    if (keepSignIn) {
+      expires = keepSignInTokenExpiresIn;
+    }
+    console.log(expires);
     return jwt.sign(payload, JWT_SECRET_KEY, { expiresIn: expires });
   }
 }
@@ -53,19 +45,19 @@ function verifyToken(token) {
 
 // Check if the user exists in database
 function isAuthenticated({ email, password }) {
-  return userDb().users.findIndex((user) => user.email === email && user.password === password) !== -1;
+  return userDb().findIndex((user) => user.email === email && user.password === password) !== -1;
 }
 
 function getJwtExpiryDate(seconds) {
-    try {
-          const startDate = new Date();
-          startDate.setMinutes(startDate.getMinutes() - startDate.getTimezoneOffset())
-          startDate.setUTCSeconds(seconds);
-          return startDate;
-      } catch (error) {
-          logDebug('getJwtExpiryDate: error:', error);
-          return '[error]';
-      }
+  try {
+    const startDate = new Date();
+    startDate.setMinutes(startDate.getMinutes() - startDate.getTimezoneOffset());
+    startDate.setUTCSeconds(seconds);
+    return startDate;
+  } catch (error) {
+    logDebug("getJwtExpiryDate: error:", error);
+    return "[error]";
+  }
 }
 
 module.exports = {

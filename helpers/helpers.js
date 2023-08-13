@@ -1,12 +1,25 @@
 const seedrandom = require("seedrandom");
 const { logDebug } = require("./loggerApi");
 const pluginStatuses = ["on", "off", "obsolete"];
-const { characters, adminUserEmail, adminUserPass, superAdminUserEmail, superAdminUserPass } = require("./config");
+const { characters, adminUserEmail, adminUserPass, superAdminUserEmail, superAdminUserPass } = require("../config");
 
 function formatErrorResponse(message, details = undefined, id = undefined) {
   const body = { error: { message: message, details: details }, id };
   logDebug("formatErrorResponse:", body);
   return body;
+}
+
+function formatInvalidFieldErrorResponse(isValid, all_fields) {
+  return formatErrorResponse(
+    `One of field is invalid (empty, invalid or too long) or there are some additional fields: ${isValid.error}`,
+    all_fields
+  );
+}
+
+function getIdFromUrl(urlEnds) {
+  const urlParts = urlEnds.split("/");
+  let id = urlParts[urlParts.length - 1];
+  return id;
 }
 
 function getRandomIdBasedOnDay(length = 32) {
@@ -176,7 +189,7 @@ function parsePublishStats(dbDataJson, type = "comments") {
   const monthly = {};
   const daily = {};
   let entriesData;
-  
+
   if (type === "articles") {
     entriesData = dbDataJson["articles"];
   }
@@ -228,7 +241,6 @@ function addSecondsToDate(date, seconds) {
   return date;
 }
 
-
 module.exports = {
   addSecondsToDate,
   getRandomIntBasedOnDay,
@@ -237,6 +249,7 @@ module.exports = {
   tomorrow,
   pluginStatuses,
   formatErrorResponse,
+  formatInvalidFieldErrorResponse,
   getRandomInt,
   sleep,
   isAdminUser,
@@ -245,4 +258,5 @@ module.exports = {
   parseUserStats,
   parseArticleStats,
   parsePublishStats,
+  getIdFromUrl,
 };

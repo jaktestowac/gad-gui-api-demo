@@ -1,6 +1,7 @@
 const FILE_TYPE = "application/json";
 let fileContent = "";
 const articlesEndpoint = "../../api/articles";
+const articlesUploadEndpoint = "../../api/articles/upload";
 const sampleArticleJson = {
   title: "MY_TITLE",
   body: "MY_BODY",
@@ -125,42 +126,89 @@ const attachEventHandlers = (user_id) => {
   }
   var dropzone = document.getElementById("dropzone");
 
-  dropzone.ondrop = function (e) {
-    e.preventDefault();
-    this.className = "dropzone";
-  };
+  if (dropzone) {
+    dropzone.ondrop = function (e) {
+      e.preventDefault();
+      this.className = "dropzone";
+    };
 
-  dropzone.ondragover = function () {
-    this.className = "dropzone dragover";
-    return false;
-  };
+    dropzone.ondragover = function () {
+      this.className = "dropzone dragover";
+      return false;
+    };
 
-  dropzone.ondragleave = function () {
-    this.className = "dropzone";
-  };
+    dropzone.ondragleave = function () {
+      this.className = "dropzone";
+    };
 
-  dropzone.ondrop = function (event) {
-    const [item] = event.dataTransfer.items;
-    const itemData = item.getAsFile();
-    itemData.text().then((data) => {
-      if (itemData.type === FILE_TYPE) {
-        const container = document.querySelector("#infoContainer");
-        container.innerHTML = `File "${itemData.name}" ready`;
-        fileContent = data;
-        document.querySelector("#uploadBtn").disabled = false;
-      } else {
-        const container = document.querySelector("#infoContainer");
-        container.innerHTML = `Invalid file type! Must be ${FILE_TYPE}`;
-        document.querySelector("#uploadBtn").disabled = true;
-      }
-    });
+    dropzone.ondrop = function (event) {
+      const [item] = event.dataTransfer.items;
+      const itemData = item.getAsFile();
+      itemData.text().then((data) => {
+        if (itemData.type === FILE_TYPE) {
+          const container = document.querySelector("#infoContainer");
+          container.innerHTML = `File "${itemData.name}" ready`;
+          fileContent = data;
+          document.querySelector("#uploadBtn").disabled = false;
+        } else {
+          const container = document.querySelector("#infoContainer");
+          container.innerHTML = `Invalid file type! Must be ${FILE_TYPE}`;
+          document.querySelector("#uploadBtn").disabled = true;
+        }
+      });
+    };
 
     document.querySelector("#uploadBtn").onclick = () => {
       handleCreate();
     };
     event.preventDefault();
     this.className = "dropzone";
-  };
+  }
 };
 
 attachEventHandlers(getId());
+
+function uploadFile() {
+  const fileInput = document.getElementById("jsonFile");
+  const file = fileInput.files[0];
+  if (file && file.type === "application/json") {
+    const formData = new FormData();
+    formData.append("jsonFile", file);
+
+    fetch(articlesUploadEndpoint, {
+      method: "POST",
+      body: formData,
+      headers: {
+        Authorization: getBearerToken(),
+        userid: getId(),
+      },
+    })
+      .then((response) => {
+        if (response.ok) {
+          const container = document.querySelector("#infoContainer");
+          container.innerHTML = "JSON file uploaded successfully!";
+          response.json().then((json) => {
+            const container = document.querySelector("#infoContainer");
+            container.innerHTML = `JSON file uploaded successfully!. <br/><a href="/article.html?id=${json?.id}" >
+            <button id="btnArticle" data-testid="article" class="button-primary" style="margin:2px;">Visit uploaded article</button>
+          </a>`;
+          });
+        } else {
+          const container = document.querySelector("#infoContainer");
+          container.innerHTML = "JSON file upload failed.";
+          response.json().then((json) => {
+            const container = document.querySelector("#infoContainer");
+            container.innerHTML = `JSON file upload failed. <br/>${json?.error?.message}`;
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("Error uploading JSON file:", error);
+        const container = document.querySelector("#infoContainer");
+        container.innerHTML = "JSON file upload failed.";
+      });
+  } else {
+    const container = document.querySelector("#infoContainer");
+    container.innerHTML = "Please select a valid JSON file.";
+  }
+}

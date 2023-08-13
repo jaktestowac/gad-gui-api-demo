@@ -1,100 +1,35 @@
-const fs = require("fs");
 const path = require("path");
 const {
-  pluginStatuses,
   formatErrorResponse,
-  isAnyAdminUser,
   sleep,
   parseUserStats,
   parseArticleStats,
   parsePublishStats,
   getRandomInt,
-} = require("./helpers");
-const { verifyToken, getJwtExpiryDate } = require("./jwtauth");
-const { logDebug } = require("./loggerApi");
-const { dbPath, adminUserEmail, superAdminUserEmail, dateRegexp, emailRegexp, sleepTime } = require("./config");
-
-const mandatory_non_empty_fields_user = ["firstname", "lastname", "email", "avatar"];
-const all_fields_user = ["id", "firstname", "lastname", "email", "avatar", "password", "birthdate"];
-const mandatory_non_empty_fields_article = ["user_id", "title", "body", "date"];
-const all_fields_article = ["id", "user_id", "title", "body", "date", "image"];
-const mandatory_non_empty_fields_comment = ["user_id", "article_id", "body", "date"];
-const all_fields_comment = ["id", "user_id", "article_id", "body", "date"];
-const all_fields_plugin = ["id", "name", "status", "version"];
-const mandatory_non_empty_fields_plugin = ["name", "status", "version"];
-
-function is_plugin_status_valid(body) {
-  if (pluginStatuses.findIndex((status) => status === body["status"]) === -1) {
-    return false;
-  }
-  return true;
-}
-
-function are_mandatory_fields_valid(body, mandatory_non_empty_fields) {
-  for (let index = 0; index < mandatory_non_empty_fields.length; index++) {
-    const element = mandatory_non_empty_fields[index];
-    if (body[element] === undefined || body[element] === "" || body[element]?.length === 0) {
-      logDebug(`Field validation: field ${element} not valid ${body[element]}`);
-      return false;
-    }
-  }
-  return true;
-}
-
-function are_all_fields_valid(
-  body,
-  all_possible_fields,
-  mandatory_non_empty_fields,
-  max_field_length = 10000,
-  max_title_length = 128
-) {
-  const keys = Object.keys(body);
-  let error = "";
-  for (let index = 0; index < keys.length; index++) {
-    const key = keys[index];
-    if (!all_possible_fields.includes(key)) {
-      error = `Field validation: ${key} not in ${all_possible_fields}`;
-      logDebug(error);
-      return { status: false, error };
-    }
-    const element = body[key];
-    if (element?.toString().length > max_field_length) {
-      error = `Field validation: ${key} longer than ${max_field_length}`;
-      logDebug(error);
-      return { status: false, error };
-    }
-    if (key.toLowerCase() === "title" && element?.toString().length > max_title_length) {
-      error = `Field validation: ${key} longer than ${max_title_length}`;
-      logDebug(error);
-      return { status: false, error };
-    }
-    if (mandatory_non_empty_fields.includes(key)) {
-      if (element === undefined || element?.toString().length === 0) {
-        logDebug("Body:", body);
-        error = `Field validation: ${key} is empty! Mandatory fields: ${mandatory_non_empty_fields}`;
-        logDebug(error);
-        return { status: false, error };
-      }
-    }
-    if (key === "date") {
-      if (!validateDate(element)) {
-        logDebug("Body:", body);
-        error = `Field validation: ${key} has invalid format!`;
-        logDebug(error);
-        return { status: false, error };
-      }
-    }
-  }
-  return { status: true, error };
-}
-
-const validateEmail = (email) => {
-  return email.match(emailRegexp);
-};
-
-const validateDate = (date) => {
-  return date.match(dateRegexp);
-};
+  formatInvalidFieldErrorResponse,
+  getIdFromUrl,
+} = require("./helpers/helpers");
+const { verifyToken, getJwtExpiryDate } = require("./helpers/jwtauth");
+const { logDebug } = require("./helpers/loggerApi");
+const { adminUserEmail, superAdminUserEmail, sleepTime } = require("./config");
+const {
+  all_fields_article,
+  all_fields_comment,
+  all_fields_user,
+  are_all_fields_valid,
+  are_mandatory_fields_valid,
+  mandatory_non_empty_fields_article,
+  mandatory_non_empty_fields_comment,
+  mandatory_non_empty_fields_user,
+  validateEmail,
+} = require("./helpers/validation.helpers");
+const { userDb, articlesDb, fullDb } = require("./db.helper");
+const {
+  searchForArticle,
+  searchForUserWithToken,
+  searchForComment,
+  searchForUser,
+} = require("./helpers/db-operation.helpers");
 
 const verifyAccessToken = (req, res, endopint = "endpoint", url = "") => {
   const authorization = req.headers["authorization"];
@@ -158,8 +93,7 @@ const validations = (req, res, next) => {
     }
 
     if (req.method === "GET" && urlEnds.includes("api/stats/users")) {
-      const dbData = fs.readFileSync(path.join(__dirname, dbPath), "utf8");
-      const dbDataJson = JSON.parse(dbData);
+      const dbDataJson = fullDb();
 
       const dataType = urlEnds.split("?chartType=");
       const stats = parseUserStats(dbDataJson, dataType[1] ?? "");
@@ -167,8 +101,7 @@ const validations = (req, res, next) => {
       res.status(200).json(stats);
       return;
     } else if (req.method === "GET" && urlEnds.includes("api/stats/articles")) {
-      const dbData = fs.readFileSync(path.join(__dirname, dbPath), "utf8");
-      const dbDataJson = JSON.parse(dbData);
+      const dbDataJson = fullDb();
 
       const dataType = urlEnds.split("?chartType=");
       const stats = parseArticleStats(dbDataJson, dataType[1] ?? "");
@@ -176,26 +109,21 @@ const validations = (req, res, next) => {
       res.status(200).json(stats);
       return;
     } else if (req.method === "GET" && urlEnds.includes("api/stats/publish/articles")) {
-      const dbData = fs.readFileSync(path.join(__dirname, dbPath), "utf8");
-      const dbDataJson = JSON.parse(dbData);
+      const dbDataJson = fullDb();
 
       const stats = parsePublishStats(dbDataJson, "articles");
 
       res.status(200).json(stats);
       return;
     } else if (req.method === "GET" && urlEnds.includes("api/stats/publish/comments")) {
-      const dbData = fs.readFileSync(path.join(__dirname, dbPath), "utf8");
-      const dbDataJson = JSON.parse(dbData);
+      const dbDataJson = fullDb();
 
       const stats = parsePublishStats(dbDataJson, "comments");
 
       res.status(200).json(stats);
       return;
     } else if (req.method === "GET" && urlEnds.includes("api/random/article")) {
-      const dbData = fs.readFileSync(path.join(__dirname, dbPath), "utf8");
-      const dbDataJson = JSON.parse(dbData);
-
-      const articles = dbDataJson["articles"];
+      const articles = articlesDb();
       const article = articles[Math.floor(Math.random() * articles.length)];
       logDebug("Random article:", article);
       res.status(200).json(article);
@@ -204,18 +132,11 @@ const validations = (req, res, next) => {
 
     if (req.method !== "GET" && req.method !== "POST" && urlEnds.includes("/api/users") && !isAdmin) {
       // begin: check user auth
-      const urlParts = urlEnds.split("/");
-      let userId = urlParts[urlParts.length - 1];
+      let userId = getIdFromUrl(urlEnds);
       const verifyTokenResult = verifyAccessToken(req, res, "users", req.url);
       if (!verifyTokenResult) return;
 
-      const dbData = fs.readFileSync(path.join(__dirname, dbPath), "utf8");
-      const dbDataJson = JSON.parse(dbData);
-      const foundUserFromToken = dbDataJson["users"].find((user) => {
-        if (user["id"]?.toString() === userId?.toString() && user["email"] === verifyTokenResult.email) {
-          return user;
-        }
-      });
+      const foundUserFromToken = searchForUserWithToken(userId, verifyTokenResult);
 
       if (foundUserFromToken === undefined) {
         res.status(401).send(formatErrorResponse("Access token for given user is invalid!"));
@@ -223,47 +144,36 @@ const validations = (req, res, next) => {
       }
       // end: check user auth
     }
-    if (req.method !== "GET" && urlEnds?.includes("/api/articles") && !isAdmin) {
+    if (urlEnds?.includes("/api/articles/upload") && !isAdmin) {
+      // begin: check user auth
+      const verifyTokenResult = verifyAccessToken(req, res, "articles", req.url);
+      if (!verifyTokenResult) return;
+      const foundUser = searchForUserWithToken(req.headers["userid"], verifyTokenResult);
+
+      if (foundUser === undefined) {
+        res.status(401).send(formatErrorResponse("Access token for given user is invalid!"));
+        return;
+      }
+    } else if (req.method !== "GET" && urlEnds?.includes("/api/articles") && !isAdmin) {
       // begin: check user auth
       const verifyTokenResult = verifyAccessToken(req, res, "articles", req.url);
       if (!verifyTokenResult) return;
 
-      const dbData = fs.readFileSync(path.join(__dirname, dbPath), "utf8");
-      const dbDataJson = JSON.parse(dbData);
-
       if (req.method !== "POST") {
-        const urlParts = urlEnds?.split("/");
         let articleId = req.body["id"];
         if (articleId === undefined) {
-          articleId = urlParts[urlParts.length - 1];
+          articleId = getIdFromUrl(urlEnds);
         }
-        const foundArticle = dbDataJson["articles"].find((article) => {
-          if (article["id"]?.toString() === articleId?.toString()) {
-            return article;
-          }
-        });
 
-        const foundUser = dbDataJson["users"].find((user) => {
-          if (
-            user["id"]?.toString() === foundArticle?.user_id?.toString() &&
-            user["email"] === verifyTokenResult.email
-          ) {
-            return user;
-          }
-        });
+        const foundArticle = searchForArticle(articleId);
+        const foundUser = searchForUserWithToken(foundArticle?.user_id, verifyTokenResult);
 
         if (foundUser === undefined) {
           res.status(401).send(formatErrorResponse("Access token for given user is invalid!"));
           return;
         }
       } else {
-        let userId = req.body["user_id"];
-
-        const foundUser = dbDataJson["users"].find((user) => {
-          if (user["id"]?.toString() === userId?.toString() && user["email"] === verifyTokenResult.email) {
-            return user;
-          }
-        });
+        const foundUser = searchForUserWithToken(req.body["user_id"], verifyTokenResult);
 
         if (foundUser === undefined) {
           res.status(401).send(formatErrorResponse("Access token for given user is invalid!"));
@@ -277,26 +187,10 @@ const validations = (req, res, next) => {
       const verifyTokenResult = verifyAccessToken(req, res, "comments", req.url);
       if (!verifyTokenResult) return;
 
-      const dbData = fs.readFileSync(path.join(__dirname, dbPath), "utf8");
-      const dbDataJson = JSON.parse(dbData);
-
       if (req.method !== "POST") {
-        const urlParts = urlEnds.split("/");
-        let articleId = urlParts[urlParts.length - 1];
-        const foundComment = dbDataJson["comments"].find((article) => {
-          if (article["id"]?.toString() === articleId?.toString()) {
-            return article;
-          }
-        });
-
-        const foundUser = dbDataJson["users"].find((user) => {
-          if (
-            user["id"]?.toString() === foundComment?.user_id?.toString() &&
-            user["email"] === verifyTokenResult.email
-          ) {
-            return user;
-          }
-        });
+        let commentId = getIdFromUrl(urlEnds);
+        const foundComment = searchForComment(commentId);
+        const foundUser = searchForUserWithToken(foundComment?.user_id, verifyTokenResult);
 
         if (foundUser === undefined) {
           res.status(401).send(formatErrorResponse("Access token for given user is invalid!"));
@@ -321,26 +215,17 @@ const validations = (req, res, next) => {
       // validate all fields:
       const isValid = are_all_fields_valid(req.body, all_fields_user, mandatory_non_empty_fields_user);
       if (!isValid.status) {
-        res
-          .status(422)
-          .send(
-            formatErrorResponse(
-              `One of field is invalid (empty, invalid or too long) or there are some additional fields: ${isValid.error}`,
-              all_fields_user
-            )
-          );
+        res.status(422).send();
         return;
       }
-      const dbData = fs.readFileSync(path.join(__dirname, dbPath), "utf8");
-      if (dbData.includes(req.body["email"])) {
+      if (userDb().includes(req.body["email"])) {
         res.status(409).send(formatErrorResponse("Email not unique"));
         return;
       }
       logDebug("Register User: SUCCESS:", { urlEnds, email: req.body["email"] });
     }
     if (req.method === "PUT" && urlEnds.includes("/api/users/")) {
-      const urlParts = urlEnds.split("/");
-      let userId = urlParts[urlParts.length - 1];
+      let userId = getIdFromUrl(urlEnds);
       // validate mandatory fields:
       if (!are_mandatory_fields_valid(req.body, mandatory_non_empty_fields_user)) {
         res.status(422).send(formatErrorResponse("One of mandatory field is missing", mandatory_non_empty_fields_user));
@@ -349,19 +234,11 @@ const validations = (req, res, next) => {
       // validate all fields:
       const isValid = are_all_fields_valid(req.body, all_fields_user, mandatory_non_empty_fields_user);
       if (!isValid.status) {
-        res
-          .status(422)
-          .send(
-            formatErrorResponse(
-              `One of field is invalid (empty, invalid or too long) or there are some additional fields: ${isValid.error}`,
-              all_fields_user
-            )
-          );
+        res.status(422).send(formatInvalidFieldErrorResponse(isValid, all_fields_user));
         return;
       }
-      const dbData = fs.readFileSync(path.join(__dirname, dbPath), "utf8");
-      const dbDataJson = JSON.parse(dbData);
-      const foundMail = dbDataJson["users"].find((user) => {
+
+      const foundMail = userDb().find((user) => {
         if (user["id"]?.toString() !== userId?.toString() && user["email"] === req.body["email"]) {
           return user;
         }
@@ -370,11 +247,8 @@ const validations = (req, res, next) => {
         res.status(409).send(formatErrorResponse("Email not unique"));
         return;
       }
-      const foundUser = dbDataJson["users"].find((user) => {
-        if (user["id"]?.toString() === userId?.toString()) {
-          return user;
-        }
-      });
+      const foundUser = searchForUser(userId);
+
       if (foundUser === undefined) {
         req.method = "POST";
         req.url = req.url.replace(`/${userId}`, "");
@@ -393,14 +267,7 @@ const validations = (req, res, next) => {
       // validate all fields:
       const isValid = are_all_fields_valid(req.body, all_fields_user, mandatory_non_empty_fields_user);
       if (!isValid.status) {
-        res
-          .status(422)
-          .send(
-            formatErrorResponse(
-              `One of field is invalid (empty, invalid or too long) or there are some additional fields: ${isValid.error}`,
-              all_fields_user
-            )
-          );
+        res.status(422).send(formatInvalidFieldErrorResponse(isValid, all_fields_user));
         return;
       }
     }
@@ -408,30 +275,16 @@ const validations = (req, res, next) => {
       // validate all fields:
       const isValid = are_all_fields_valid(req.body, all_fields_comment, mandatory_non_empty_fields_comment);
       if (!isValid.status) {
-        res
-          .status(422)
-          .send(
-            formatErrorResponse(
-              `One of field is invalid (empty, invalid or too long) or there are some additional fields: ${isValid.error}`,
-              all_fields_comment
-            )
-          );
+        res.status(422).send(formatInvalidFieldErrorResponse(isValid, all_fields_comment));
         return;
       }
-      const dbData = fs.readFileSync(path.join(__dirname, dbPath), "utf8");
-      const dbDataJson = JSON.parse(dbData);
 
       let commentId;
       if (req.method !== "POST") {
-        const urlParts = urlEnds.split("/");
-        commentId = urlParts[urlParts.length - 1];
+        commentId = getIdFromUrl(urlEnds);
       }
 
-      const foundComment = dbDataJson["comments"].find((comment) => {
-        if (comment["id"]?.toString() === commentId?.toString()) {
-          return comment;
-        }
-      });
+      const foundComment = searchForComment(commentId);
 
       if (req.method === "PUT" && foundComment === undefined) {
         req.method = "POST";
@@ -452,19 +305,12 @@ const validations = (req, res, next) => {
       // validate all fields:
       const isValid = are_all_fields_valid(req.body, all_fields_comment, mandatory_non_empty_fields_comment);
       if (!isValid.status) {
-        res
-          .status(422)
-          .send(
-            formatErrorResponse(
-              `One of field is invalid (empty, invalid or too long) or there are some additional fields: ${isValid.error}`,
-              all_fields_comment
-            )
-          );
+        res.status(422).send(formatInvalidFieldErrorResponse(isValid, all_fields_comment));
         return;
       }
     }
 
-    if (req.method === "POST" && urlEnds.includes("/api/articles") && !isAdmin) {
+    if (req.method === "POST" && urlEnds.includes("/api/articles") && !urlEnds.includes("/upload") && !isAdmin) {
       if (!are_mandatory_fields_valid(req.body, mandatory_non_empty_fields_article)) {
         res
           .status(422)
@@ -474,14 +320,7 @@ const validations = (req, res, next) => {
       // validate all fields:
       const isValid = are_all_fields_valid(req.body, all_fields_article, mandatory_non_empty_fields_article);
       if (!isValid.status) {
-        res
-          .status(422)
-          .send(
-            formatErrorResponse(
-              `One of field is invalid (empty, invalid or too long) or there are some additional fields: ${isValid.error}`,
-              all_fields_article
-            )
-          );
+        res.status(422).send(formatInvalidFieldErrorResponse(isValid, all_fields_article));
         return;
       }
     }
@@ -489,14 +328,7 @@ const validations = (req, res, next) => {
       // validate all fields:
       const isValid = are_all_fields_valid(req.body, all_fields_article, mandatory_non_empty_fields_article);
       if (!isValid.status) {
-        res
-          .status(422)
-          .send(
-            formatErrorResponse(
-              `One of field is invalid (empty, invalid or too long) or there are some additional fields: ${isValid.error}`,
-              all_fields_article
-            )
-          );
+        res.status(422).send(formatInvalidFieldErrorResponse(isValid, all_fields_article));
         return;
       }
     }
@@ -511,26 +343,13 @@ const validations = (req, res, next) => {
       // validate all fields:
       const isValid = are_all_fields_valid(req.body, all_fields_article, mandatory_non_empty_fields_article);
       if (!isValid.status) {
-        res
-          .status(422)
-          .send(
-            formatErrorResponse(
-              `One of field is invalid (empty, invalid or too long) or there are some additional fields: ${isValid.error}`,
-              all_fields_article
-            )
-          );
+        res.status(422).send(formatInvalidFieldErrorResponse(isValid, all_fields_article));
         return;
       }
-      const dbData = fs.readFileSync(path.join(__dirname, dbPath), "utf8");
-      const dbDataJson = JSON.parse(dbData);
 
-      const urlParts = urlEnds.split("/");
-      let articleId = urlParts[urlParts.length - 1];
-      const foundArticle = dbDataJson["articles"].find((article) => {
-        if (article["id"]?.toString() === articleId?.toString()) {
-          return article;
-        }
-      });
+      let articleId = getIdFromUrl(urlEnds);
+      const foundArticle = searchForArticle(articleId);
+
       if (foundArticle === undefined) {
         req.method = "POST";
         req.url = req.url.replace(`/${articleId}`, "");

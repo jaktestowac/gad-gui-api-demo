@@ -1,36 +1,116 @@
 const jsonServer = require("./json-server");
-const { validations, validateEmail } = require("./validators");
+const { validations } = require("./validators");
 const fs = require("fs");
-const { verifyToken, createToken, isAuthenticated, prepareCookieMaxAge } = require("./jwtauth");
-const { defaultPort, dbPath, dbRestorePath, dbEmptyRestorePath, adminUserEmail } = require("./config");
+const { createToken, isAuthenticated, prepareCookieMaxAge } = require("./helpers/jwtauth");
+const {
+  defaultPort,
+  dbPath,
+  dbRestorePath,
+  dbEmptyRestorePath,
+  adminUserEmail,
+  uploadSizeLimitBytes,
+} = require("./config");
 const cookieparser = require("cookie-parser");
 const helmet = require("helmet");
 const express = require("express");
 const ejs = require("ejs");
+const formidable = require("formidable");
 
 const server = jsonServer.create();
 const router = jsonServer.router(dbPath);
 const path = require("path");
-const { pluginStatuses, formatErrorResponse, isAnyAdminUser, isSuperAdminUser } = require("./helpers");
-const { logDebug } = require("./loggerApi");
-const { getRandomVisitsForEntities } = require("./randomDataGenerator");
+const {
+  pluginStatuses,
+  formatErrorResponse,
+  isAnyAdminUser,
+  isSuperAdminUser,
+  getIdFromUrl,
+} = require("./helpers/helpers");
+const { logDebug } = require("./helpers/loggerApi");
+const { getRandomVisitsForEntities } = require("./helpers/randomDataGenerator");
 const { hostname } = require("os");
+const {
+  are_all_fields_valid,
+  mandatory_non_empty_fields_article,
+  all_fields_article,
+} = require("./helpers/validation.helpers");
+const { articlesDb, commentsDb, userDb, fullDb } = require("./db.helper");
 const middlewares = jsonServer.defaults();
 
 const port = process.env.PORT || defaultPort;
 
-const visitsPerArticle = getRandomVisitsForEntities(
-  JSON.parse(fs.readFileSync(path.join(__dirname, dbPath), "utf8")).articles
-);
-const visitsPerComment = getRandomVisitsForEntities(
-  JSON.parse(fs.readFileSync(path.join(__dirname, dbPath), "utf8")).comments
-);
-const visitsPerUsers = getRandomVisitsForEntities(
-  JSON.parse(fs.readFileSync(path.join(__dirname, dbPath), "utf8")).users
-);
+const visitsPerArticle = getRandomVisitsForEntities(articlesDb());
+const visitsPerComment = getRandomVisitsForEntities(commentsDb());
+const visitsPerUsers = getRandomVisitsForEntities(userDb());
+
+const customRoutesAfterAuth = (req, res, next) => {
+  try {
+    if (req.method === "POST" && req.url.endsWith("/api/articles/upload")) {
+      const form = new formidable.IncomingForm();
+      form.multiples = true;
+      uploadDir = path.join(__dirname, "uploads");
+      form.uploadDir = uploadDir;
+      let userId = req.headers["userid"];
+
+      form.on("progress", function (bytesReceived, bytesExpected) {
+        console.log(bytesReceived, bytesExpected, uploadSizeLimitBytes);
+        if (bytesReceived > uploadSizeLimitBytes) {
+          throw new Error(`File too big. Actual: ${bytesReceived}, Max: ${uploadSizeLimitBytes}`);
+        }
+      });
+      form.parse(req, async (err, fields, files) => {
+        if (err) {
+          res.status(400).send(formatErrorResponse(`There was an error parsing the file: ${err.message}`));
+          return;
+        }
+
+        const file = files.jsonFile[0];
+
+        // TODO:INVOKE_BUG: same file name might cause file overwrite in parallel scenarios
+        const fileName = `uploaded.json`;
+        const newFullFilePath = path.join(uploadDir, fileName);
+
+        logDebug("Renaming files:", { file, from: file.filepath, to: newFullFilePath });
+        try {
+          fs.renameSync(file.filepath, newFullFilePath);
+          const fileDataRaw = fs.readFileSync(newFullFilePath, "utf8");
+          const fileData = JSON.parse(fileDataRaw);
+          fileData["user_id"] = userId;
+          const isValid = are_all_fields_valid(fileData, all_fields_article, mandatory_non_empty_fields_article);
+          if (!isValid.status) {
+            logDebug("[articles/upload] Error after validation:", { error: isValid.error });
+            res
+              .status(422)
+              .send(
+                formatErrorResponse(
+                  `One of field is invalid (empty, invalid or too long) or there are some additional fields: ${isValid.error}`,
+                  all_fields_article
+                )
+              );
+            return;
+          }
+          req.method = "POST";
+          req.url = req.url.replace(`/api/articles/upload`, "/api/articles");
+          req.body = fileData;
+          next();
+        } catch (error) {
+          logDebug("[articles/upload] Error:", error);
+          res.status(500).send(formatErrorResponse("There was an error during file creation"));
+          return;
+        }
+      });
+    } else {
+      next();
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(formatErrorResponse("Fatal error. Please contact administrator."));
+  }
+};
 
 const customRoutes = (req, res, next) => {
   try {
+    const urlEnds = req.url.replace(/\/\/+/g, "/");
     if (req.method === "GET" && req.url.endsWith("/restoreDB")) {
       const db = JSON.parse(fs.readFileSync(path.join(__dirname, dbRestorePath), "utf8"));
       router.db.setState(db);
@@ -42,7 +122,7 @@ const customRoutes = (req, res, next) => {
       logDebug("Restore empty DB was successful");
       res.status(201).send({ message: "Empty Database successfully restored" });
     } else if (req.method === "GET" && req.url.endsWith("/db")) {
-      const dbData = JSON.parse(fs.readFileSync(path.join(__dirname, dbPath), "utf8"));
+      const dbData = fullDb();
       res.json(dbData);
       req.body = dbData;
     } else if (req.method === "GET" && req.url.endsWith("/images/user")) {
@@ -67,9 +147,7 @@ const customRoutes = (req, res, next) => {
       res.json(visitsPerUsers);
       req.body = visitsPerUsers;
     } else if (req.url.includes("/api/articles") && req.method === "GET") {
-      const urlEnds = req.url.replace(/\/\/+/g, "/");
-      const urlParts = urlEnds.split("/");
-      let articleId = urlParts[urlParts.length - 1];
+      let articleId = getIdFromUrl(urlEnds);
 
       if (!articleId?.includes("&_") && !articleId?.includes("?") && articleId !== undefined && articleId.length > 0) {
         if (visitsPerArticle[articleId] === undefined) {
@@ -81,9 +159,7 @@ const customRoutes = (req, res, next) => {
       }
       next();
     } else if (req.url.includes("/api/comments") && req.method === "GET") {
-      const urlEnds = req.url.replace(/\/\/+/g, "/");
-      const urlParts = urlEnds.split("/");
-      let commentId = urlParts[urlParts.length - 1];
+      let commentId = getIdFromUrl(urlEnds);
 
       if (!commentId?.includes("&_") && !commentId?.includes("?") && commentId !== undefined && commentId.length > 0) {
         if (visitsPerComment[commentId] === undefined) {
@@ -95,9 +171,7 @@ const customRoutes = (req, res, next) => {
       }
       next();
     } else if (req.url.includes("/api/users") && req.method === "GET") {
-      const urlEnds = req.url.replace(/\/\/+/g, "/");
-      const urlParts = urlEnds.split("/");
-      let userId = urlParts[urlParts.length - 1];
+      let userId = getIdFromUrl(urlEnds);
 
       if (!userId?.includes("&_") && !userId?.includes("?") && userId !== undefined && userId.length > 0) {
         if (visitsPerUsers[userId] === undefined) {
@@ -276,10 +350,7 @@ server.post("/process_login", (req, res) => {
 
   let foundUser = undefined;
   if (!isAdmin) {
-    const dbData = fs.readFileSync(path.join(__dirname, dbPath), "utf8");
-    const dbDataJson = JSON.parse(dbData);
-
-    foundUser = dbDataJson["users"].find((user) => {
+    foundUser = userDb().find((user) => {
       if (user["email"]?.toString() === username) {
         return user;
       }
@@ -351,6 +422,7 @@ server.get("/logout", (req, res) => {
 
 server.use(customRoutes);
 server.use(validations);
+server.use(customRoutesAfterAuth);
 server.use("/api", router);
 
 router.render = function (req, res) {
