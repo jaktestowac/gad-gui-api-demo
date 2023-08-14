@@ -29,7 +29,7 @@ function sendData() {
   try {
     birthdate = `${new Date(birthdate).toISOString()}`.split(".")[0] + "Z";
   } catch (ex) {
-    // TODO:
+    // TODO:INVOKE_BUG: nothing is done in case of invalid birth date
   }
   const userData = {
     firstname: document.querySelector(".firstname").value,
@@ -40,7 +40,6 @@ function sendData() {
     avatar: `.\\data\\users\\${document.querySelector(".avatar").value}`,
   };
 
-  console.log(userData);
   fetch("/api/users", {
     method: "post",
     headers: {

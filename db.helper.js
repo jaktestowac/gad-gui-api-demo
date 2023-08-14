@@ -21,9 +21,14 @@ function commentsDb() {
   return db["comments"];
 }
 
+function randomDbEntry(db) {
+  return db[Math.floor(Math.random() * db.length)];
+}
+
 module.exports = {
   userDb,
   articlesDb,
   commentsDb,
   fullDb,
+  randomDbEntry,
 };

@@ -68,7 +68,6 @@ const issueArticleRequest = (data) => {
   })
     .then((response) => {
       response.json().then((data) => {
-        console.log(data);
         document.querySelector("#uploadBtn").disabled = true;
         const container = document.querySelector("#infoContainer");
         if (response.status === 201) {

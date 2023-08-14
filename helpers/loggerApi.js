@@ -6,6 +6,15 @@ function logDebug(msg, obj) {
   }
 }
 
+function logError(msg, obj) {
+  if (obj === undefined) {
+    console.log(`[error] ${msg}`);
+  } else {
+    console.log(`[error] ${msg}`, JSON.stringify(obj));
+  }
+}
+
 module.exports = {
   logDebug,
+  logError
 };

@@ -1,5 +1,5 @@
 const { dateRegexp, emailRegexp } = require("../config");
-const { logDebug } = require("./loggerApi");
+const { logDebug, logError } = require("./loggerApi");
 
 const mandatory_non_empty_fields_user = ["firstname", "lastname", "email", "avatar"];
 const all_fields_user = ["id", "firstname", "lastname", "email", "avatar", "password", "birthdate"];
@@ -44,34 +44,34 @@ function are_all_fields_valid(
   for (let index = 0; index < keys.length; index++) {
     const key = keys[index];
     if (!all_possible_fields.includes(key)) {
-      error = `Field validation: ${key} not in ${all_possible_fields}`;
-      logDebug(error);
+      error = `Field validation: "${key}" not in [${all_possible_fields}]`;
+      logError(error);
       return { status: false, error };
     }
     const element = body[key];
     if (element?.toString().length > max_field_length) {
-      error = `Field validation: ${key} longer than ${max_field_length}`;
-      logDebug(error);
+      error = `Field validation: "${key}" longer than "${max_field_length}"`;
+      logError(error);
       return { status: false, error };
     }
     if (key.toLowerCase() === "title" && element?.toString().length > max_title_length) {
-      error = `Field validation: ${key} longer than ${max_title_length}`;
-      logDebug(error);
+      error = `Field validation: "${key}" longer than "${max_title_length}"`;
+      logError(error);
       return { status: false, error };
     }
     if (mandatory_non_empty_fields.includes(key)) {
       if (element === undefined || element?.toString().length === 0) {
         logDebug("Body:", body);
-        error = `Field validation: ${key} is empty! Mandatory fields: ${mandatory_non_empty_fields}`;
-        logDebug(error);
+        error = `Field validation: "${key}" is empty! Mandatory fields: [${mandatory_non_empty_fields}]`;
+        logError(error);
         return { status: false, error };
       }
     }
     if (key === "date") {
       if (!validateDate(element)) {
         logDebug("Body:", body);
-        error = `Field validation: ${key} has invalid format!`;
-        logDebug(error);
+        error = `Field validation: "${key}" has invalid format!`;
+        logError(error);
         return { status: false, error };
       }
     }

@@ -8,12 +8,19 @@ function formatErrorResponse(message, details = undefined, id = undefined) {
   logDebug("formatErrorResponse:", body);
   return body;
 }
+function formatInvalidTokenErrorResponse() {
+  return formatErrorResponse("Access token for given user is invalid!");
+}
 
 function formatInvalidFieldErrorResponse(isValid, all_fields) {
   return formatErrorResponse(
     `One of field is invalid (empty, invalid or too long) or there are some additional fields: ${isValid.error}`,
     all_fields
   );
+}
+
+function formatMissingFieldErrorResponse(all_fields) {
+  return formatErrorResponse("One of mandatory field is missing", all_fields);
 }
 
 function getIdFromUrl(urlEnds) {
@@ -250,6 +257,8 @@ module.exports = {
   pluginStatuses,
   formatErrorResponse,
   formatInvalidFieldErrorResponse,
+  formatMissingFieldErrorResponse,
+  formatInvalidTokenErrorResponse,
   getRandomInt,
   sleep,
   isAdminUser,

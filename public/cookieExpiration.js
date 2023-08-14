@@ -1,3 +1,5 @@
+const { logDebug } = require("../helpers/loggerApi");
+
 function getCookieExpired() {
   let expires = undefined;
   const cookies = document.cookie.split(";");
@@ -27,11 +29,11 @@ var x = setInterval(function () {
   } else if (distance < 0) {
     clearInterval(x);
     document.getElementById("countDown").innerHTML = "Session will expire in: EXPIRED";
-    console.log("Redirecting...");
+    logDebug("Redirecting...");
     window.location.href = "/login";
   } else {
     document.getElementById("countDown").innerHTML = "";
-    console.log("Redirecting...");
+    logDebug("Redirecting...");
     window.location.href = "/login";
   }
 }, 1000);

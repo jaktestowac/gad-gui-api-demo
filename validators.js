@@ -8,9 +8,11 @@ const {
   getRandomInt,
   formatInvalidFieldErrorResponse,
   getIdFromUrl,
+  formatMissingFieldErrorResponse,
+  formatInvalidTokenErrorResponse,
 } = require("./helpers/helpers");
 const { verifyToken, getJwtExpiryDate } = require("./helpers/jwtauth");
-const { logDebug } = require("./helpers/loggerApi");
+const { logDebug, logError } = require("./helpers/loggerApi");
 const { adminUserEmail, superAdminUserEmail, sleepTime } = require("./config");
 const {
   all_fields_article,
@@ -30,6 +32,13 @@ const {
   searchForComment,
   searchForUser,
 } = require("./helpers/db-operation.helpers");
+const {
+  HTTP_UNPROCESSABLE_ENTITY,
+  HTTP_UNAUTHORIZED,
+  HTTP_INTERNAL_SERVER_ERROR,
+  HTTP_OK,
+  HTTP_CONFLICT,
+} = require("./helpers/response.helpers");
 
 const verifyAccessToken = (req, res, endopint = "endpoint", url = "") => {
   const authorization = req.headers["authorization"];
@@ -39,7 +48,7 @@ const verifyAccessToken = (req, res, endopint = "endpoint", url = "") => {
 
   // when chceking admin we do not send response
   if (endopint !== "isAdmin" && verifyTokenResult instanceof Error) {
-    res.status(401).send(formatErrorResponse("Access token not provided!"));
+    res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
     return false;
   }
   logDebug(`[${endopint}][${url}] verifyTokenResult:`, verifyTokenResult);
@@ -76,8 +85,8 @@ const validations = (req, res, next) => {
       try {
         JSON.parse(req.body);
       } catch (error) {
-        logDebug(`Error: ${JSON.stringify(error)}`);
-        res.status(400).send(formatErrorResponse("Bad request - malformed JSON"));
+        logError(`Error: ${JSON.stringify(error)}`);
+        res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Bad request - malformed JSON"));
         return;
       }
     }
@@ -89,44 +98,31 @@ const validations = (req, res, next) => {
         logDebug("isAdmin:", isAdmin);
       }
     } catch (error) {
-      logDebug(`Error: check if admin: ${JSON.stringify(error)}`);
+      logError(`Error: check if admin: ${JSON.stringify(error)}`);
     }
 
     if (req.method === "GET" && urlEnds.includes("api/stats/users")) {
-      const dbDataJson = fullDb();
-
       const dataType = urlEnds.split("?chartType=");
-      const stats = parseUserStats(dbDataJson, dataType[1] ?? "");
-
-      res.status(200).json(stats);
+      const stats = parseUserStats(fullDb(), dataType[1] ?? "");
+      res.status(HTTP_OK).json(stats);
       return;
     } else if (req.method === "GET" && urlEnds.includes("api/stats/articles")) {
-      const dbDataJson = fullDb();
-
       const dataType = urlEnds.split("?chartType=");
-      const stats = parseArticleStats(dbDataJson, dataType[1] ?? "");
-
-      res.status(200).json(stats);
+      const stats = parseArticleStats(fullDb(), dataType[1] ?? "");
+      res.status(HTTP_OK).json(stats);
       return;
     } else if (req.method === "GET" && urlEnds.includes("api/stats/publish/articles")) {
-      const dbDataJson = fullDb();
-
-      const stats = parsePublishStats(dbDataJson, "articles");
-
-      res.status(200).json(stats);
+      const stats = parsePublishStats(fullDb(), "articles");
+      res.status(HTTP_OK).json(stats);
       return;
     } else if (req.method === "GET" && urlEnds.includes("api/stats/publish/comments")) {
-      const dbDataJson = fullDb();
-
-      const stats = parsePublishStats(dbDataJson, "comments");
-
-      res.status(200).json(stats);
+      const stats = parsePublishStats(fullDb(), "comments");
+      res.status(HTTP_OK).json(stats);
       return;
     } else if (req.method === "GET" && urlEnds.includes("api/random/article")) {
-      const articles = articlesDb();
-      const article = articles[Math.floor(Math.random() * articles.length)];
+      const article = randomDbEntry(articlesDb());
       logDebug("Random article:", article);
-      res.status(200).json(article);
+      res.status(HTTP_OK).json(article);
       return;
     }
 
@@ -139,7 +135,7 @@ const validations = (req, res, next) => {
       const foundUserFromToken = searchForUserWithToken(userId, verifyTokenResult);
 
       if (foundUserFromToken === undefined) {
-        res.status(401).send(formatErrorResponse("Access token for given user is invalid!"));
+        res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
         return;
       }
       // end: check user auth
@@ -151,7 +147,7 @@ const validations = (req, res, next) => {
       const foundUser = searchForUserWithToken(req.headers["userid"], verifyTokenResult);
 
       if (foundUser === undefined) {
-        res.status(401).send(formatErrorResponse("Access token for given user is invalid!"));
+        res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
         return;
       }
     } else if (req.method !== "GET" && urlEnds?.includes("/api/articles") && !isAdmin) {
@@ -169,14 +165,14 @@ const validations = (req, res, next) => {
         const foundUser = searchForUserWithToken(foundArticle?.user_id, verifyTokenResult);
 
         if (foundUser === undefined) {
-          res.status(401).send(formatErrorResponse("Access token for given user is invalid!"));
+          res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
           return;
         }
       } else {
         const foundUser = searchForUserWithToken(req.body["user_id"], verifyTokenResult);
 
         if (foundUser === undefined) {
-          res.status(401).send(formatErrorResponse("Access token for given user is invalid!"));
+          res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
           return;
         }
       }
@@ -193,7 +189,7 @@ const validations = (req, res, next) => {
         const foundUser = searchForUserWithToken(foundComment?.user_id, verifyTokenResult);
 
         if (foundUser === undefined) {
-          res.status(401).send(formatErrorResponse("Access token for given user is invalid!"));
+          res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
           return;
         }
       }
@@ -204,22 +200,22 @@ const validations = (req, res, next) => {
       logDebug("Register User: attempt:", { urlEnds, email: req.body["email"] });
       // validate mandatory fields:
       if (!are_mandatory_fields_valid(req.body, mandatory_non_empty_fields_user)) {
-        res.status(422).send(formatErrorResponse("One of mandatory field is missing", mandatory_non_empty_fields_user));
+        res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_user));
         return;
       }
       // validate email:
       if (!validateEmail(req.body["email"])) {
-        res.status(422).send(formatErrorResponse("Invalid email"));
+        res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatErrorResponse("Invalid email"));
         return;
       }
       // validate all fields:
       const isValid = are_all_fields_valid(req.body, all_fields_user, mandatory_non_empty_fields_user);
       if (!isValid.status) {
-        res.status(422).send();
+        res.status(HTTP_UNPROCESSABLE_ENTITY).send();
         return;
       }
       if (userDb().includes(req.body["email"])) {
-        res.status(409).send(formatErrorResponse("Email not unique"));
+        res.status(HTTP_CONFLICT).send(formatErrorResponse("Email not unique"));
         return;
       }
       logDebug("Register User: SUCCESS:", { urlEnds, email: req.body["email"] });
@@ -228,13 +224,13 @@ const validations = (req, res, next) => {
       let userId = getIdFromUrl(urlEnds);
       // validate mandatory fields:
       if (!are_mandatory_fields_valid(req.body, mandatory_non_empty_fields_user)) {
-        res.status(422).send(formatErrorResponse("One of mandatory field is missing", mandatory_non_empty_fields_user));
+        res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_user));
         return;
       }
       // validate all fields:
       const isValid = are_all_fields_valid(req.body, all_fields_user, mandatory_non_empty_fields_user);
       if (!isValid.status) {
-        res.status(422).send(formatInvalidFieldErrorResponse(isValid, all_fields_user));
+        res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidFieldErrorResponse(isValid, all_fields_user));
         return;
       }
 
@@ -244,7 +240,7 @@ const validations = (req, res, next) => {
         }
       });
       if (foundMail !== undefined) {
-        res.status(409).send(formatErrorResponse("Email not unique"));
+        res.status(HTTP_CONFLICT).send(formatErrorResponse("Email not unique"));
         return;
       }
       const foundUser = searchForUser(userId);
@@ -267,7 +263,7 @@ const validations = (req, res, next) => {
       // validate all fields:
       const isValid = are_all_fields_valid(req.body, all_fields_user, mandatory_non_empty_fields_user);
       if (!isValid.status) {
-        res.status(422).send(formatInvalidFieldErrorResponse(isValid, all_fields_user));
+        res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidFieldErrorResponse(isValid, all_fields_user));
         return;
       }
     }
@@ -275,7 +271,7 @@ const validations = (req, res, next) => {
       // validate all fields:
       const isValid = are_all_fields_valid(req.body, all_fields_comment, mandatory_non_empty_fields_comment);
       if (!isValid.status) {
-        res.status(422).send(formatInvalidFieldErrorResponse(isValid, all_fields_comment));
+        res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidFieldErrorResponse(isValid, all_fields_comment));
         return;
       }
 
@@ -297,30 +293,26 @@ const validations = (req, res, next) => {
     }
     if (req.method === "POST" && urlEnds.includes("/api/comments")) {
       if (!are_mandatory_fields_valid(req.body, mandatory_non_empty_fields_comment)) {
-        res
-          .status(422)
-          .send(formatErrorResponse("One of mandatory field is missing", mandatory_non_empty_fields_comment));
+        res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_comment));
         return;
       }
       // validate all fields:
       const isValid = are_all_fields_valid(req.body, all_fields_comment, mandatory_non_empty_fields_comment);
       if (!isValid.status) {
-        res.status(422).send(formatInvalidFieldErrorResponse(isValid, all_fields_comment));
+        res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidFieldErrorResponse(isValid, all_fields_comment));
         return;
       }
     }
 
     if (req.method === "POST" && urlEnds.includes("/api/articles") && !urlEnds.includes("/upload") && !isAdmin) {
       if (!are_mandatory_fields_valid(req.body, mandatory_non_empty_fields_article)) {
-        res
-          .status(422)
-          .send(formatErrorResponse("One of mandatory field is missing", mandatory_non_empty_fields_article));
+        res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_article));
         return;
       }
       // validate all fields:
       const isValid = are_all_fields_valid(req.body, all_fields_article, mandatory_non_empty_fields_article);
       if (!isValid.status) {
-        res.status(422).send(formatInvalidFieldErrorResponse(isValid, all_fields_article));
+        res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidFieldErrorResponse(isValid, all_fields_article));
         return;
       }
     }
@@ -328,22 +320,20 @@ const validations = (req, res, next) => {
       // validate all fields:
       const isValid = are_all_fields_valid(req.body, all_fields_article, mandatory_non_empty_fields_article);
       if (!isValid.status) {
-        res.status(422).send(formatInvalidFieldErrorResponse(isValid, all_fields_article));
+        res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidFieldErrorResponse(isValid, all_fields_article));
         return;
       }
     }
     if (req.method === "PUT" && urlEnds.includes("/api/articles") && !isAdmin) {
       if (!are_mandatory_fields_valid(req.body, mandatory_non_empty_fields_article)) {
-        res
-          .status(422)
-          .send(formatErrorResponse("One of mandatory field is missing", mandatory_non_empty_fields_article));
+        res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_article));
 
         return;
       }
       // validate all fields:
       const isValid = are_all_fields_valid(req.body, all_fields_article, mandatory_non_empty_fields_article);
       if (!isValid.status) {
-        res.status(422).send(formatInvalidFieldErrorResponse(isValid, all_fields_article));
+        res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidFieldErrorResponse(isValid, all_fields_article));
         return;
       }
 
@@ -374,8 +364,8 @@ const validations = (req, res, next) => {
       next();
     }
   } catch (error) {
-    console.log(error);
-    res.status(500).send(formatErrorResponse("Fatal error. Please contact administrator."));
+    logError("Fatal error. Please contact administrator.", { error });
+    res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Fatal error. Please contact administrator."));
   }
 };
 

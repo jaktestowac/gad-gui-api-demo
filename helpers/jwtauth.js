@@ -9,7 +9,7 @@ const {
   keepSignInTokenExpiresIn,
 } = require("../config");
 const { addSecondsToDate } = require("./helpers");
-const { logDebug } = require("./loggerApi");
+const { logDebug, logError } = require("./loggerApi");
 const { userDb } = require("../db.helper");
 
 // Create a token from a payload
@@ -21,7 +21,7 @@ function createToken(payload, isSuperAdmin = false, keepSignIn = false) {
     if (keepSignIn) {
       expires = keepSignInTokenExpiresIn;
     }
-    console.log(expires);
+    logDebug("createToken:", { expires });
     return jwt.sign(payload, JWT_SECRET_KEY, { expiresIn: expires });
   }
 }
@@ -55,7 +55,7 @@ function getJwtExpiryDate(seconds) {
     startDate.setUTCSeconds(seconds);
     return startDate;
   } catch (error) {
-    logDebug("getJwtExpiryDate: error:", error);
+    logError("getJwtExpiryDate: error:", error);
     return "[error]";
   }
 }

@@ -77,7 +77,6 @@ async function issueGetRandomRequest() {
   const articlesData = await Promise.all(
     [randomArticleEndpoint].map((url) => fetch(url, { headers: formatHeaders() }).then((r) => r.json()))
   );
-  console.log(articlesData);
   articleData = articlesData[0];
   return articleData;
 }

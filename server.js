@@ -26,7 +26,7 @@ const {
   isSuperAdminUser,
   getIdFromUrl,
 } = require("./helpers/helpers");
-const { logDebug } = require("./helpers/loggerApi");
+const { logDebug, logError } = require("./helpers/loggerApi");
 const { getRandomVisitsForEntities } = require("./helpers/randomDataGenerator");
 const { hostname } = require("os");
 const {
@@ -35,6 +35,14 @@ const {
   all_fields_article,
 } = require("./helpers/validation.helpers");
 const { articlesDb, commentsDb, userDb, fullDb } = require("./db.helper");
+const {
+  HTTP_UNPROCESSABLE_ENTITY,
+  HTTP_INTERNAL_SERVER_ERROR,
+  HTTP_CREATED,
+  HTTP_BAD_REQUEST,
+  HTTP_OK,
+  HTTP_UNAUTHORIZED,
+} = require("./helpers/response.helpers");
 const middlewares = jsonServer.defaults();
 
 const port = process.env.PORT || defaultPort;
@@ -53,14 +61,14 @@ const customRoutesAfterAuth = (req, res, next) => {
       let userId = req.headers["userid"];
 
       form.on("progress", function (bytesReceived, bytesExpected) {
-        console.log(bytesReceived, bytesExpected, uploadSizeLimitBytes);
+        logDebug("formidable data received:", { bytesReceived, bytesExpected, uploadSizeLimitBytes });
         if (bytesReceived > uploadSizeLimitBytes) {
-          throw new Error(`File too big. Actual: ${bytesReceived}, Max: ${uploadSizeLimitBytes}`);
+          throw new Error(`File too big. Actual: ${bytesExpected} bytes, Max: ${uploadSizeLimitBytes} bytes`);
         }
       });
       form.parse(req, async (err, fields, files) => {
         if (err) {
-          res.status(400).send(formatErrorResponse(`There was an error parsing the file: ${err.message}`));
+          res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(`There was an error parsing the file: ${err.message}`));
           return;
         }
 
@@ -78,9 +86,9 @@ const customRoutesAfterAuth = (req, res, next) => {
           fileData["user_id"] = userId;
           const isValid = are_all_fields_valid(fileData, all_fields_article, mandatory_non_empty_fields_article);
           if (!isValid.status) {
-            logDebug("[articles/upload] Error after validation:", { error: isValid.error });
+            logError("[articles/upload] Error after validation:", { error: isValid.error });
             res
-              .status(422)
+              .status(HTTP_UNPROCESSABLE_ENTITY)
               .send(
                 formatErrorResponse(
                   `One of field is invalid (empty, invalid or too long) or there are some additional fields: ${isValid.error}`,
@@ -94,8 +102,8 @@ const customRoutesAfterAuth = (req, res, next) => {
           req.body = fileData;
           next();
         } catch (error) {
-          logDebug("[articles/upload] Error:", error);
-          res.status(500).send(formatErrorResponse("There was an error during file creation"));
+          logError("[articles/upload] Error:", error);
+          res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("There was an error during file creation"));
           return;
         }
       });
@@ -103,8 +111,8 @@ const customRoutesAfterAuth = (req, res, next) => {
       next();
     }
   } catch (error) {
-    console.log(error);
-    res.status(500).send(formatErrorResponse("Fatal error. Please contact administrator."));
+    logError("Fatal error. Please contact administrator.", { error });
+    res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Fatal error. Please contact administrator."));
   }
 };
 
@@ -115,12 +123,12 @@ const customRoutes = (req, res, next) => {
       const db = JSON.parse(fs.readFileSync(path.join(__dirname, dbRestorePath), "utf8"));
       router.db.setState(db);
       logDebug("Restore DB was successful");
-      res.status(201).send({ message: "Database successfully restored" });
+      res.status(HTTP_CREATED).send({ message: "Database successfully restored" });
     } else if (req.method === "GET" && req.url.endsWith("/restoreEmptyDB")) {
       const db = JSON.parse(fs.readFileSync(path.join(__dirname, dbEmptyRestorePath), "utf8"));
       router.db.setState(db);
       logDebug("Restore empty DB was successful");
-      res.status(201).send({ message: "Empty Database successfully restored" });
+      res.status(HTTP_CREATED).send({ message: "Empty Database successfully restored" });
     } else if (req.method === "GET" && req.url.endsWith("/db")) {
       const dbData = fullDb();
       res.json(dbData);
@@ -186,8 +194,8 @@ const customRoutes = (req, res, next) => {
       next();
     }
   } catch (error) {
-    console.log(error);
-    res.status(500).send(formatErrorResponse("Fatal error. Please contact administrator."));
+    logError("Fatal error. Please contact administrator.", { error });
+    res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Fatal error. Please contact administrator."));
   }
 };
 
@@ -208,14 +216,14 @@ function replaceContents(file, replacement, cb) {
 //   const { email, password } = req.body;
 
 //   if (!validateEmail(email)) {
-//     const status = 422;
+//     const status = HTTP_UNPROCESSABLE_ENTITY;
 //     const message = "Invalid email";
 //     res.status(status).json({ status, message });
 //     return;
 //   }
 
 //   if (isAuthenticated({ email, password }) === true) {
-//     const status = 401;
+//     const status = HTTP_UNAUTHORIZED;
 //     const message = "Email and Password already exist";
 //     res.status(status).json({ status, message });
 //     return;
@@ -223,7 +231,7 @@ function replaceContents(file, replacement, cb) {
 
 //   fs.readFile(authUserDb, (err, data) => {
 //     if (err) {
-//       const status = 401;
+//       const status = HTTP_UNAUTHORIZED;
 //       const message = err;
 //       res.status(status).json({ status, message });
 //       return;
@@ -240,7 +248,7 @@ function replaceContents(file, replacement, cb) {
 //     var writeData = fs.writeFile(authUserDb, JSON.stringify(data), (err, result) => {
 //       // WRITE
 //       if (err) {
-//         const status = 401;
+//         const status = HTTP_UNAUTHORIZED;
 //         const message = err;
 //         res.status(status).json({ status, message });
 //         return;
@@ -251,7 +259,7 @@ function replaceContents(file, replacement, cb) {
 //   // Create token for new user
 //   const access_token = createToken({ email, password });
 //   logDebug("Access Token:", email, password, access_token);
-//   res.status(200).json({ access_token });
+//   res.status(HTTP_OK).json({ access_token });
 // });
 
 // Login to one of the users from ./users.json
@@ -265,15 +273,14 @@ server.post("/api/login", (req, res) => {
   isAdmin = isAdmin || isSuperAdmin;
 
   if (isAuthenticated({ email, password }) === false && !isAdmin) {
-    const status = 401;
     const message = "Incorrect email or password";
-    res.status(status).json({ status, message });
+    res.status(HTTP_UNAUTHORIZED).json({ status: HTTP_UNAUTHORIZED, message });
     return;
   }
   const cookieMaxAge = prepareCookieMaxAge(isAdmin, keepSignIn);
   const access_token = createToken({ email, data: "TBD" }, isAdmin, keepSignIn);
   logDebug("Access Token:", { email, password, access_token, cookieMaxAge, isAdmin });
-  res.status(200).json({ access_token });
+  res.status(HTTP_OK).json({ access_token });
 });
 
 server.use(helmet());
@@ -409,11 +416,11 @@ server.get("/logout", (req, res) => {
 //       access_token = access_token.split(" ")[1];
 //       verifyTokenResult = verifyToken(access_token);
 //       if (verifyTokenResult instanceof Error) {
-//         res.status(401).send(formatErrorResponse(`Access token not provided: ${verifyTokenResult?.name}`));
+//         res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse(`Access token not provided: ${verifyTokenResult?.name}`));
 //         return;
 //       }
 //     } catch (err) {
-//       res.status(401).send(formatErrorResponse("Error access token is revoked"));
+//       res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Error access token is revoked"));
 //       return;
 //     }
 //   }
