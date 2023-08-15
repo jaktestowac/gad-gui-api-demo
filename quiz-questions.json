@@ -40,16 +40,6 @@
     "correctAnswers": ["Black-box testing"]
   },
   {
-    "question": "What is the purpose of regression testing?",
-    "options": [
-      "To test new features",
-      "To ensure backward compatibility",
-      "To test security vulnerabilities",
-      "To test hardware components"
-    ],
-    "correctAnswers": ["To ensure backward compatibility"]
-  },
-  {
     "question": "Which phase of the software development life cycle involves gathering requirements from stakeholders?",
     "options": ["Testing phase", "Design phase", "Implementation phase", "Requirements gathering phase"],
     "correctAnswers": ["Requirements gathering phase"]
@@ -230,5 +220,520 @@
     "question": "What is a test harness in software testing?",
     "options": ["A tool to generate test data", "A test environment", "A type of test case", "A test report"],
     "correctAnswers": ["A test environment"]
+  },
+  {
+    "question": "What does QA stand for in software development?",
+    "options": ["Quality Analysis", "Quick Action", "Quality Assessment", "Quality Assurance"],
+    "correctAnswers": ["Quality Assurance"]
+  },
+  {
+    "question": "What is the primary purpose of smoke testing?",
+    "options": [
+      "Testing all features thoroughly",
+      "Verifying system security",
+      "Identifying critical defects early",
+      "Testing user interfaces"
+    ],
+    "correctAnswers": ["Identifying critical defects early"]
+  },
+  {
+    "question": "What is the role of a test plan?",
+    "options": ["Tracking defects", "Executing test cases", "Outlining testing approach", "Creating user interfaces"],
+    "correctAnswers": ["Outlining testing approach"]
+  },
+  {
+    "question": "Which type of testing aims to uncover defects by randomly testing different scenarios?",
+    "options": ["Black-box testing", "Regression testing", "Ad-hoc testing", "Unit testing"],
+    "correctAnswers": ["Ad-hoc testing"]
+  },
+  {
+    "question": "What is the purpose of security testing?",
+    "options": [
+      "Testing system performance",
+      "Verifying user interfaces",
+      "Identifying security vulnerabilities",
+      "Testing code syntax"
+    ],
+    "correctAnswers": ["Identifying security vulnerabilities"]
+  },
+  {
+    "question": "What is the main goal of usability testing?",
+    "options": [
+      "Testing user interfaces",
+      "Ensuring software quality",
+      "Evaluating user experience",
+      "Testing system performance"
+    ],
+    "correctAnswers": ["Evaluating user experience"]
+  },
+  {
+    "question": "What is the purpose of exploratory testing?",
+    "options": [
+      "Automating test cases",
+      "Testing specific functionalities",
+      "Ad-hoc testing to find defects",
+      "Writing test scripts"
+    ],
+    "correctAnswers": ["Ad-hoc testing to find defects"]
+  },
+  {
+    "question": "What is the goal of performance testing?",
+    "options": [
+      "Testing code correctness",
+      "Finding defects",
+      "Evaluating system responsiveness",
+      "Ensuring backward compatibility"
+    ],
+    "correctAnswers": ["Evaluating system responsiveness"]
+  },
+  {
+    "question": "What is the goal of unit testing?",
+    "options": [
+      "To test the entire system",
+      "To test individual components",
+      "To test user interfaces",
+      "To test system performance"
+    ],
+    "correctAnswers": ["To test individual components"]
+  },
+  {
+    "question": "What is the primary purpose of a test case?",
+    "options": ["To find defects", "To design user interfaces", "To write code", "To optimize system performance"],
+    "correctAnswers": ["To find defects"]
+  },
+  {
+    "question": "What is the role of a QA (Quality Assurance) team?",
+    "options": [
+      "To write code",
+      "To test software manually",
+      "To create user interfaces",
+      "To ensure software quality"
+    ],
+    "correctAnswers": ["To ensure software quality"]
+  },
+  {
+    "question": "Which type of testing involves testing different combinations of inputs?",
+    "options": ["Positive testing", "Negative testing", "Boundary testing", "Combinatorial testing"],
+    "correctAnswers": ["Combinatorial testing"]
+  },
+  {
+    "question": "What is the main goal of performance testing?",
+    "options": [
+      "To verify code correctness",
+      "To find defects in the software",
+      "To evaluate user experience",
+      "To assess system responsiveness"
+    ],
+    "correctAnswers": ["To assess system responsiveness"]
+  },
+  {
+    "question": "What is the purpose of load testing?",
+    "options": [
+      "To evaluate security vulnerabilities",
+      "To test user interfaces",
+      "To assess system performance under normal load",
+      "To evaluate system performance under heavy load"
+    ],
+    "correctAnswers": ["To evaluate system performance under heavy load"]
+  },
+  {
+    "question": "What does a bug report typically contain?",
+    "options": [
+      "Code for fixing the bug",
+      "Detailed information about the defect",
+      "User opinions about the defect",
+      "Proposed design changes"
+    ],
+    "correctAnswers": ["Detailed information about the defect"]
+  },
+  {
+    "question": "Which type of testing focuses on the end-to-end functionality of a system?",
+    "options": ["Unit testing", "Integration testing", "System testing", "Performance testing"],
+    "correctAnswers": ["System testing"]
+  },
+  {
+    "question": "What is the primary goal of acceptance testing?",
+    "options": [
+      "To find defects in the software",
+      "To evaluate system performance",
+      "To verify user satisfaction",
+      "To assess code quality"
+    ],
+    "correctAnswers": ["To verify user satisfaction"]
+  },
+  {
+    "question": "What is the purpose of regression testing?",
+    "options": [
+      "To test new features",
+      "To test code syntax",
+      "To test changes to existing code",
+      "To test user interfaces"
+    ],
+    "correctAnswers": ["To test changes to existing code"]
+  },
+  {
+    "question": "What does ISTQB stand for?",
+    "options": [
+      "International System Testing and Quality Board",
+      "International Software Testing and Quality Bureau",
+      "International System Testing Qualification Body",
+      "International Software Testing Qualifications Board"
+    ],
+    "correctAnswers": ["International Software Testing Qualifications Board"]
+  },
+  {
+    "question": "What is the primary goal of the ISTQB certification program?",
+    "options": [
+      "To certify software developers",
+      "To certify project managers",
+      "To provide resources for coding",
+      "To certify software testers"
+    ],
+    "correctAnswers": ["To certify software testers"]
+  },
+  {
+    "question": "What are the three levels of ISTQB certification?",
+    "options": [
+      "Foundation, Advanced, Expert",
+      "Basic, Intermediate, Advanced",
+      "Beginner, Intermediate, Professional",
+      "Essential, Advanced, Master"
+    ],
+    "correctAnswers": ["Foundation, Advanced, Expert"]
+  },
+  {
+    "question": "What is the purpose of the ISTQB Foundation Level certification?",
+    "options": [
+      "To certify expert testers",
+      "To provide basic knowledge of testing principles",
+      "To certify project managers",
+      "To provide coding skills"
+    ],
+    "correctAnswers": ["To provide basic knowledge of testing principles"]
+  },
+  {
+    "question": "Which type of testing involves testing a component in isolation from the rest of the system?",
+    "options": ["Unit testing", "System testing", "Integration testing", "Acceptance testing"],
+    "correctAnswers": ["Unit testing"]
+  },
+  {
+    "question": "What is the role of a test plan in ISTQB?",
+    "options": [
+      "To create user interfaces",
+      "To execute test cases",
+      "To outline the testing approach",
+      "To track defects"
+    ],
+    "correctAnswers": ["To outline the testing approach"]
+  },
+  {
+    "question": "Which ISTQB level focuses on advanced testing topics like security, usability, and more?",
+    "options": ["Foundation Level", "Intermediate Level", "Advanced Level", "Expert Level"],
+    "correctAnswers": ["Advanced Level"]
+  },
+  {
+    "question": "What is the primary purpose of test management in ISTQB?",
+    "options": [
+      "Writing code",
+      "Creating user interfaces",
+      "Developing new software",
+      "Planning, coordinating, and controlling testing activities"
+    ],
+    "correctAnswers": ["Planning, coordinating, and controlling testing activities"]
+  },
+  {
+    "question": "What is the main goal of risk-based testing?",
+    "options": [
+      "To test new features",
+      "To test user interfaces",
+      "To evaluate system performance",
+      "To focus testing efforts based on risk assessment"
+    ],
+    "correctAnswers": ["To focus testing efforts based on risk assessment"]
+  },
+  {
+    "question": "What is the purpose of the ISTQB Agile Extension certification?",
+    "options": [
+      "To certify agile project managers",
+      "To certify agile developers",
+      "To provide resources for agile coding",
+      "To certify agile testers"
+    ],
+    "correctAnswers": ["To certify agile testers"]
+  },
+  {
+    "question": "What is Scrum?",
+    "options": [
+      "A type of testing",
+      "A software development framework",
+      "A programming language",
+      "A project management tool"
+    ],
+    "correctAnswers": ["A software development framework"]
+  },
+  {
+    "question": "What is a Sprint in Scrum?",
+    "options": ["A type of bug", "A type of test case", "A time-boxed iteration", "A programming concept"],
+    "correctAnswers": ["A time-boxed iteration"]
+  },
+  {
+    "question": "What is the role of a Scrum Master?",
+    "options": [
+      "Developing software",
+      "Creating user interfaces",
+      "Managing the project schedule",
+      "Facilitating the Scrum process"
+    ],
+    "correctAnswers": ["Facilitating the Scrum process"]
+  },
+  {
+    "question": "What are the three main roles in Scrum?",
+    "options": [
+      "Product Owner, Developer, Manager",
+      "Scrum Master, Manager, Tester",
+      "Scrum Master, Developer, Tester",
+      "Product Owner, Scrum Master, Developer"
+    ],
+    "correctAnswers": ["Product Owner, Scrum Master, Developer"]
+  },
+  {
+    "question": "What is the primary purpose of a Daily Scrum (Stand-up) meeting?",
+    "options": [
+      "Reviewing user stories",
+      "Identifying defects",
+      "Updating the project schedule",
+      "Discussing progress and planning for the day"
+    ],
+    "correctAnswers": ["Discussing progress and planning for the day"]
+  },
+  {
+    "question": "What is a Product Backlog in Scrum?",
+    "options": [
+      "A list of completed tasks",
+      "A list of user stories and features",
+      "A list of defects",
+      "A project management tool"
+    ],
+    "correctAnswers": ["A list of user stories and features"]
+  },
+  {
+    "question": "What is the Sprint Retrospective in Scrum?",
+    "options": [
+      "A testing phase",
+      "A meeting to review the sprint",
+      "A programming concept",
+      "A tool for code optimization"
+    ],
+    "correctAnswers": ["A meeting to review the sprint"]
+  },
+  {
+    "question": "What is the role of the Product Owner in Scrum?",
+    "options": [
+      "Managing the team",
+      "Writing code",
+      "Creating user interfaces",
+      "Defining and prioritizing the product backlog"
+    ],
+    "correctAnswers": ["Defining and prioritizing the product backlog"]
+  },
+  {
+    "question": "What is the main benefit of using Scrum?",
+    "options": [
+      "Faster development with less effort",
+      "Perfect software quality",
+      "Predictable project timelines",
+      "Flexibility and adaptability"
+    ],
+    "correctAnswers": ["Flexibility and adaptability"]
+  },
+  {
+    "question": "What is a Sprint Review in Scrum?",
+    "options": [
+      "A testing phase",
+      "A meeting to review the sprint",
+      "A programming concept",
+      "A tool for code optimization"
+    ],
+    "correctAnswers": ["A meeting to review the sprint"]
+  },
+  {
+    "question": "What is test automation?",
+    "options": [
+      "Manual testing of software",
+      "Writing test scripts for software",
+      "Creating user interfaces",
+      "Managing databases"
+    ],
+    "correctAnswers": ["Writing test scripts for software"]
+  },
+  {
+    "question": "What is the main advantage of test automation?",
+    "options": ["Slower testing process", "Reduced test coverage", "Increased test efficiency", "Higher defect count"],
+    "correctAnswers": ["Increased test efficiency"]
+  },
+  {
+    "question": "What is the purpose of a test automation framework?",
+    "options": [
+      "To slow down testing processes",
+      "To create user interfaces",
+      "To organize and standardize automated tests",
+      "To find defects"
+    ],
+    "correctAnswers": ["To organize and standardize automated tests"]
+  },
+  {
+    "question": "What is a test script in test automation?",
+    "options": [
+      "A plan for manual testing",
+      "A sequence of automated test steps",
+      "A bug report",
+      "A project management tool"
+    ],
+    "correctAnswers": ["A sequence of automated test steps"]
+  },
+  {
+    "question": "What is the primary goal of regression testing in test automation?",
+    "options": [
+      "To test new features",
+      "To find defects in the software",
+      "To evaluate user experience",
+      "To ensure code correctness after changes"
+    ],
+    "correctAnswers": ["To ensure code correctness after changes"]
+  },
+  {
+    "question": "Which type of testing is particularly suitable for automation?",
+    "options": ["Exploratory testing", "Usability testing", "Ad-hoc testing", "Regression testing"],
+    "correctAnswers": ["Regression testing"]
+  },
+  {
+    "question": "What is the role of a test automation tool?",
+    "options": [
+      "To write code for software",
+      "To facilitate manual testing",
+      "To automate the execution of test cases",
+      "To create user interfaces"
+    ],
+    "correctAnswers": ["To automate the execution of test cases"]
+  },
+  {
+    "question": "What is the purpose of data-driven testing in test automation?",
+    "options": [
+      "To use fewer test cases",
+      "To eliminate defects",
+      "To test user interfaces",
+      "To use multiple sets of test data"
+    ],
+    "correctAnswers": ["To use multiple sets of test data"]
+  },
+  {
+    "question": "What is the main goal of keyword-driven testing?",
+    "options": [
+      "To automate user interfaces",
+      "To use fewer test cases",
+      "To use code snippets for testing",
+      "To use business-readable keywords for test steps"
+    ],
+    "correctAnswers": ["To use business-readable keywords for test steps"]
+  },
+  {
+    "question": "What is the main benefit of continuous integration with test automation?",
+    "options": [
+      "Slower development process",
+      "Lower defect count",
+      "Faster feedback on code changes",
+      "Reduced test coverage"
+    ],
+    "correctAnswers": ["Faster feedback on code changes"]
+  },
+  {
+    "question": "What is the purpose of test automation?",
+    "options": [
+      "To manually test software",
+      "To write code for software",
+      "To automate user interfaces",
+      "To automate the execution of test cases"
+    ],
+    "correctAnswers": ["To automate the execution of test cases"]
+  },
+  {
+    "question": "What is a test automation framework?",
+    "options": [
+      "A type of bug tracking tool",
+      "A project management tool",
+      "A set of guidelines and practices for test automation",
+      "A tool for manual testing"
+    ],
+    "correctAnswers": ["A set of guidelines and practices for test automation"]
+  },
+  {
+    "question": "What is a test script in test automation?",
+    "options": [
+      "A sequence of automated test steps",
+      "A plan for manual testing",
+      "A document containing user feedback",
+      "A tool for writing code"
+    ],
+    "correctAnswers": ["A sequence of automated test steps"]
+  },
+  {
+    "question": "What is the primary advantage of test automation?",
+    "options": ["Increased test time", "Higher defect count", "Improved test efficiency", "Manual test execution"],
+    "correctAnswers": ["Improved test efficiency"]
+  },
+  {
+    "question": "What is the main goal of regression testing in test automation?",
+    "options": [
+      "To find defects in new features",
+      "To test code syntax",
+      "To evaluate user experience",
+      "To ensure code correctness after changes"
+    ],
+    "correctAnswers": ["To ensure code correctness after changes"]
+  },
+  {
+    "question": "Which type of testing is best suited for automation?",
+    "options": ["Usability testing", "Exploratory testing", "Ad-hoc testing", "Regression testing"],
+    "correctAnswers": ["Regression testing"]
+  },
+  {
+    "question": "What is the role of a test automation tool?",
+    "options": [
+      "To create user interfaces",
+      "To automate the execution of test cases",
+      "To facilitate manual testing",
+      "To write code for software"
+    ],
+    "correctAnswers": ["To automate the execution of test cases"]
+  },
+  {
+    "question": "What is data-driven testing in test automation?",
+    "options": [
+      "Testing with a limited dataset",
+      "Automating data entry",
+      "Using multiple sets of test data",
+      "Testing using one set of data"
+    ],
+    "correctAnswers": ["Using multiple sets of test data"]
+  },
+  {
+    "question": "What is keyword-driven testing?",
+    "options": [
+      "Testing using keywords as passwords",
+      "Automating user interfaces with keywords",
+      "Using code snippets for testing",
+      "Using business-readable keywords for test steps"
+    ],
+    "correctAnswers": ["Using business-readable keywords for test steps"]
+  },
+  {
+    "question": "What is the benefit of integrating test automation with continuous integration (CI)?",
+    "options": [
+      "Lower defect count",
+      "Slower feedback on code changes",
+      "Faster code deployment",
+      "Reduced test coverage"
+    ],
+    "correctAnswers": ["Faster code deployment"]
   }
 ]
