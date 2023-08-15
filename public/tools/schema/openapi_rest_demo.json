@@ -46,6 +46,10 @@
     {
       "name": "stats",
       "description": "Statistics"
+    },
+    {
+      "name": "quiz",
+      "description": "Sample Quiz"
     }
   ],
   "paths": {
@@ -1608,7 +1612,32 @@
         "responses": {
           "200": {
             "description": "Quiz questions received",
-            "content": {}
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuizQuestions"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/quiz/questions/count": {
+      "get": {
+        "tags": ["quiz"],
+        "summary": "Get number of questions",
+        "operationId": "getQuestionCount",
+        "responses": {
+          "200": {
+            "description": "Number of questions received",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuizQuestionCount"
+                }
+              }
+            }
           }
         }
       }
@@ -1635,8 +1664,14 @@
         },
         "responses": {
           "200": {
-            "description": "Quiz answer checked",
-            "content": {}
+            "description": "Validation of quiz answer",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuizAnswerValidation"
+                }
+              }
+            }
           }
         }
       }
@@ -1917,6 +1952,24 @@
           "name": "UserLoginData"
         }
       },
+      "QuizQuestions": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["question", "options"],
+          "properties": {
+            "question": {
+              "type": "string"
+            },
+            "options": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
       "QuizAnswer": {
         "type": "object",
         "required": ["questionText", "selectedAnswers"],
@@ -1926,6 +1979,24 @@
           },
           "selectedAnswers": {
             "type": "string"
+          }
+        }
+      },
+      "QuizAnswerValidation": {
+        "type": "object",
+        "required": ["isCorrect"],
+        "properties": {
+          "isCorrect": {
+            "type": "boolean"
+          }
+        }
+      },
+      "QuizQuestionCount": {
+        "type": "object",
+        "required": ["count"],
+        "properties": {
+          "count": {
+            "type": "number"
           }
         }
       }
