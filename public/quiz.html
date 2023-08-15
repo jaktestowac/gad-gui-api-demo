@@ -33,21 +33,24 @@
       <h1>Quiz</h1>
       <div id="quiz-container">
         <div id="question-container">
-          <p id="question-text"></p>
+          <div id="question-text-container">
+            <p id="question-text"></p>
+          </div>
+          <div id="options-container">
+            <label><input type="checkbox" class="option-checkbox" /> <span class="option-text"></span></label><br />
+            <label><input type="checkbox" class="option-checkbox" /> <span class="option-text"></span></label><br />
+            <label><input type="checkbox" class="option-checkbox" /> <span class="option-text"></span></label><br />
+            <label><input type="checkbox" class="option-checkbox" /> <span class="option-text"></span></label
+            ><br /><br />
+            <button class="button-primary" data-testid="checkAnswer" onclick="checkAnswer()">Submit</button>
+          </div>
         </div>
-        <div id="options-container">
-          <label><input type="checkbox" class="option-checkbox" /> <span class="option-text"></span></label><br />
-          <label><input type="checkbox" class="option-checkbox" /> <span class="option-text"></span></label><br />
-          <label><input type="checkbox" class="option-checkbox" /> <span class="option-text"></span></label><br />
-          <label><input type="checkbox" class="option-checkbox" /> <span class="option-text"></span></label><br /><br />
-          <button class="button-primary" data-testid="checkAnswer" onclick="checkAnswer()">Submit</button>
+        <div id="score-container">
+          <p>Score: <span id="score">0</span></p>
         </div>
-      </div>
-      <div id="score-container">
-        <p>Score: <span id="score">0</span></p>
-      </div>
-      <div id="question-counter">
-        <p>Question: <span id="current-question">1</span> / <span id="total-questions">0</span></p>
+        <div id="question-counter">
+          <p>Question: <span id="current-question">1</span> / <span id="total-questions">0</span></p>
+        </div>
       </div>
       <br />
       <div id="infoContainer"></div>

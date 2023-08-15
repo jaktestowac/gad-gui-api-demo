@@ -53,7 +53,7 @@ async function issueGetRequest() {
   );
   questionsData = questionsData[0];
   if (questionsData.status !== 200) {
-    quizContainer.textContent = "Please log in and return to this page.";
+    quizContainer.innerHTML = "<strong>⛔ Please log in and return to this page ⛔</strong>";
   } else {
     questionsData = questionsData.json;
     showQuestion();
@@ -120,37 +120,25 @@ async function checkAnswer() {
       if (currentQuestionIndex < questionsData.length) {
         showQuestion();
       } else {
-        displayFinalScore();
+        displayFinalScore(score);
       }
     });
   });
 }
 
-// function checkAnswer() {
-//   const selectedAnswers = [];
-//   for (let i = 0; i < optionCheckboxes.length; i++) {
-//     if (optionCheckboxes[i].checked) {
-//       selectedAnswers.push(optionTexts[i].textContent);
-//     }
-//   }
-
-//   const isCorrect = arraysEqual(selectedAnswers, getQuestionCorrectAnswers(currentQuestionIndex));
-
-//   if (isCorrect) {
-//     score++;
-//     scoreElement.textContent = score;
-//   }
-
-//   currentQuestionIndex++;
-//   if (currentQuestionIndex < questionsData.length) {
-//     showQuestion();
-//   } else {
-//     displayFinalScore();
-//   }
-// }
-
-function displayFinalScore() {
-  quizContainer.textContent = "Congratulations! You've completed the quiz. Your score: " + score + " points!";
+function displayFinalScore(score) {
+  questionContainer.innerHTML = `<strong>Congratulations! You've completed the quiz. Your score: ${score} points!</strong><br><br>`;
+  if (score === questionsData.length) {
+    questionContainer.innerHTML += `Congratulations!<br>You got a perfect score!<br>You're a true expert in this field!🏆🥇`;
+  } else if (score >= questionsData.length * 0.8) {
+    questionContainer.innerHTML += `Great job!<br>You scored excellently on the quiz.<br>Your knowledge is impressive!🥈`;
+  } else if (score >= questionsData.length * 0.5) {
+    questionContainer.innerHTML += `Well done!<br>You've got a good score on the quiz.<br>Keep up the good work!🥉`;
+  } else if (score >= questionsData.length * 0.3) {
+    questionContainer.innerHTML += `Nice effort!<br>Your score shows a decent understanding of the topic.<br>Keep learning!👏`;
+  } else if (score === 0) {
+    questionContainer.innerHTML += `Good start!<br>There's room for improvement.<br>Keep studying and practicing for better results next time!📚`;
+  }
 }
 
 function arraysEqual(arr1, arr2) {

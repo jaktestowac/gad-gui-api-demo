@@ -59,6 +59,11 @@ function getOnlyQuestions(numberOfQuestions) {
   });
 }
 
+function countAvailableQuestions() {
+  let questions = getQuestions();
+  return questions.length;
+}
+
 module.exports = {
   getQuestions,
   getOnlyQuestions,
@@ -66,4 +71,5 @@ module.exports = {
   arraysEqual,
   checkAnswer,
   findQuestion,
+  countAvailableQuestions,
 };

@@ -39,7 +39,7 @@ const {
   HTTP_OK,
   HTTP_CONFLICT,
 } = require("./helpers/response.helpers");
-const { getQuestions, checkAnswer, getOnlyQuestions } = require("./helpers/quiz.helpers");
+const { checkAnswer, getOnlyQuestions, countAvailableQuestions } = require("./helpers/quiz.helpers");
 
 const verifyAccessToken = (req, res, endopint = "endpoint", url = "") => {
   const authorization = req.headers["authorization"];
@@ -130,6 +130,10 @@ const validations = (req, res, next) => {
       return;
     }
 
+    if (req.method === "GET" && req.url.endsWith("/api/quiz/questions/count")) {
+      res.status(HTTP_OK).json({ count: countAvailableQuestions() });
+      return;
+    }
     if (req.method === "GET" && req.url.endsWith("/api/quiz/questions")) {
       // begin: check user auth
       const verifyTokenResult = verifyAccessToken(req, res, "quiz", req.url);
