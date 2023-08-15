@@ -2,39 +2,6 @@ const endpoint = "../../api/users";
 const pictureListEndpoint = "../../api/images/user";
 let picList = [];
 
-function getId() {
-  let id = undefined;
-  const cookies = document.cookie.split(";");
-  for (let cookie of cookies) {
-    cookie = cookie.trim();
-    if (cookie.startsWith("id=")) {
-      id = cookie.split("=")[1];
-    }
-  }
-  return id;
-}
-function isAuthorized(id) {
-  return id?.toString() === getId() || getId() === "admin";
-}
-function getBearerToken() {
-  let token = undefined;
-  const cookies = document.cookie.split(";");
-  for (let cookie of cookies) {
-    cookie = cookie.trim();
-    if (cookie.startsWith("token=")) {
-      token = cookie.split("=")[1];
-    }
-  }
-  return `Bearer ${token}`;
-}
-
-function formatHeaders() {
-  const headers = {
-    Authorization: getBearerToken(),
-  };
-  return headers;
-}
-
 const fetchData = {
   headers: {
     "Content-Type": "application/json",

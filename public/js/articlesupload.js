@@ -9,34 +9,6 @@ const sampleArticleJson = {
   image: ".\\data\\images\\256\\chuttersnap-9cCeS9Sg6nU-unsplash.jpg",
 };
 
-function getId() {
-  let id = undefined;
-  const cookies = document.cookie.split(";");
-  for (let cookie of cookies) {
-    cookie = cookie.trim();
-    if (cookie.startsWith("id=")) {
-      id = cookie.split("=")[1];
-    }
-  }
-  return id;
-}
-
-function isAuthorized(id) {
-  return id?.toString() === getId() || getId() === "admin";
-}
-
-function getBearerToken() {
-  let token = undefined;
-  const cookies = document.cookie.split(";");
-  for (let cookie of cookies) {
-    cookie = cookie.trim();
-    if (cookie.startsWith("token=")) {
-      token = cookie.split("=")[1];
-    }
-  }
-  return `Bearer ${token}`;
-}
-
 const handleCreate = () => {
   const today = new Date();
   const date = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}T${pad(

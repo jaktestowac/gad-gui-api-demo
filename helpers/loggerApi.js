@@ -14,7 +14,16 @@ function logError(msg, obj) {
   }
 }
 
+function logWarn(msg, obj) {
+  if (obj === undefined) {
+    console.log(`[warning] ${msg}`);
+  } else {
+    console.log(`[warning] ${msg}`, JSON.stringify(obj));
+  }
+}
+
 module.exports = {
   logDebug,
-  logError
+  logError,
+  logWarn,
 };

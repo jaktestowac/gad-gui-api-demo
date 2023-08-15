@@ -1,0 +1,234 @@
+[
+  {
+    "question": "What does HTML stand for?",
+    "options": [
+      "Hyper Text Markup Language",
+      "High Tech Machine Learning",
+      "Home Tool Management Language",
+      "Hyper Transfer Markup Language"
+    ],
+    "correctAnswers": ["Hyper Text Markup Language"]
+  },
+  {
+    "question": "Which programming language is commonly used for web development?",
+    "options": ["Python", "Java", "C++", "JavaScript"],
+    "correctAnswers": ["JavaScript"]
+  },
+  {
+    "question": "What is the purpose of CSS?",
+    "options": ["To create databases", "To style web pages", "To perform calculations", "To manage server-side logic"],
+    "correctAnswers": ["To style web pages"]
+  },
+  {
+    "question": "What does API stand for?",
+    "options": [
+      "Advanced Programming Interface",
+      "Application Process Integration",
+      "Automated Program Interaction",
+      "Application Programming Interface"
+    ],
+    "correctAnswers": ["Application Programming Interface"]
+  },
+  {
+    "question": "Which type of testing focuses on individual units or components of a software?",
+    "options": ["Integration testing", "System testing", "Unit testing", "Acceptance testing"],
+    "correctAnswers": ["Unit testing"]
+  },
+  {
+    "question": "Which testing technique involves testing a software application without knowing its internal code?",
+    "options": ["White-box testing", "Gray-box testing", "Black-box testing", "Clear-box testing"],
+    "correctAnswers": ["Black-box testing"]
+  },
+  {
+    "question": "What is the purpose of regression testing?",
+    "options": [
+      "To test new features",
+      "To ensure backward compatibility",
+      "To test security vulnerabilities",
+      "To test hardware components"
+    ],
+    "correctAnswers": ["To ensure backward compatibility"]
+  },
+  {
+    "question": "Which phase of the software development life cycle involves gathering requirements from stakeholders?",
+    "options": ["Testing phase", "Design phase", "Implementation phase", "Requirements gathering phase"],
+    "correctAnswers": ["Requirements gathering phase"]
+  },
+  {
+    "question": "Which term refers to the practice of finding and fixing defects or issues in software?",
+    "options": ["Debugging", "Coding", "Optimization", "Refactoring"],
+    "correctAnswers": ["Debugging"]
+  },
+  {
+    "question": "What is the purpose of version control systems like Git?",
+    "options": [
+      "To manage databases",
+      "To create user interfaces",
+      "To write documentation",
+      "To track changes in code"
+    ],
+    "correctAnswers": ["To track changes in code"]
+  },
+  {
+    "question": "What is the purpose of software testing?",
+    "options": ["To write code", "To create user interfaces", "To manage databases", "To find defects"],
+    "correctAnswers": ["To find defects"]
+  },
+  {
+    "question": "Which type of testing verifies that a system works as expected?",
+    "options": ["Negative testing", "Positive testing", "Random testing", "Exploratory testing"],
+    "correctAnswers": ["Positive testing"]
+  },
+  {
+    "question": "What is the main goal of load testing?",
+    "options": [
+      "Testing user interface design",
+      "Testing system security",
+      "Testing system performance under load",
+      "Testing code syntax"
+    ],
+    "correctAnswers": ["Testing system performance under load"]
+  },
+  {
+    "question": "What is the role of a test plan in software testing?",
+    "options": ["To write code", "To execute test cases", "To track defects", "To outline testing approach"],
+    "correctAnswers": ["To outline testing approach"]
+  },
+  {
+    "question": "Which testing phase is conducted by end-users to ensure the software meets their requirements?",
+    "options": ["Unit testing", "Integration testing", "System testing", "User acceptance testing"],
+    "correctAnswers": ["User acceptance testing"]
+  },
+  {
+    "question": "What is the purpose of exploratory testing?",
+    "options": [
+      "Testing software under load",
+      "Testing specific functionalities",
+      "Ad-hoc testing to explore defects",
+      "Testing system performance"
+    ],
+    "correctAnswers": ["Ad-hoc testing to explore defects"]
+  },
+  {
+    "question": "What is the difference between white-box testing and black-box testing?",
+    "options": [
+      "There is no difference",
+      "White-box tests interfaces, black-box tests code",
+      "White-box tests internal code, black-box tests external behavior",
+      "White-box tests visual design, black-box tests usability"
+    ],
+    "correctAnswers": ["White-box tests internal code, black-box tests external behavior"]
+  },
+  {
+    "question": "What is the purpose of smoke testing?",
+    "options": [
+      "Testing software performance",
+      "Testing for security vulnerabilities",
+      "Testing critical functionalities",
+      "Testing user interfaces"
+    ],
+    "correctAnswers": ["Testing critical functionalities"]
+  },
+  {
+    "question": "What is regression testing?",
+    "options": [
+      "Testing new features",
+      "Testing user interfaces",
+      "Testing changes to existing code",
+      "Testing system performance"
+    ],
+    "correctAnswers": ["Testing changes to existing code"]
+  },
+  {
+    "question": "What is the difference between manual testing and automated testing?",
+    "options": [
+      "There is no difference",
+      "Manual testing uses tools, automated testing is done by humans",
+      "Manual testing requires coding, automated testing uses predefined scripts",
+      "Manual testing is done by humans, automated testing uses tools or scripts"
+    ],
+    "correctAnswers": ["Manual testing is done by humans, automated testing uses tools or scripts"]
+  },
+  {
+    "question": "What is the purpose of a test case?",
+    "options": ["To create user interfaces", "To write code", "To find defects", "To manage databases"],
+    "correctAnswers": ["To find defects"]
+  },
+  {
+    "question": "Which type of testing focuses on testing the entire system as a whole?",
+    "options": ["Unit testing", "Integration testing", "System testing", "Acceptance testing"],
+    "correctAnswers": ["System testing"]
+  },
+  {
+    "question": "What is the goal of stress testing?",
+    "options": [
+      "Testing system performance under normal load",
+      "Testing user interfaces",
+      "Testing code syntax",
+      "Testing system performance under extreme load"
+    ],
+    "correctAnswers": ["Testing system performance under extreme load"]
+  },
+  {
+    "question": "What is the primary purpose of a bug report?",
+    "options": ["To create user interfaces", "To track defects", "To write code", "To manage databases"],
+    "correctAnswers": ["To track defects"]
+  },
+  {
+    "question": "What is the role of a QA (Quality Assurance) team in software development?",
+    "options": [
+      "Writing code",
+      "Testing code syntax",
+      "Ensuring software meets quality standards",
+      "Creating user interfaces"
+    ],
+    "correctAnswers": ["Ensuring software meets quality standards"]
+  },
+  {
+    "question": "What is the goal of security testing?",
+    "options": [
+      "Testing user interfaces",
+      "Ensuring software is delivered on time",
+      "Identifying security vulnerabilities",
+      "Testing system performance"
+    ],
+    "correctAnswers": ["Identifying security vulnerabilities"]
+  },
+  {
+    "question": "What is the difference between functional testing and non-functional testing?",
+    "options": [
+      "Functional testing focuses on user interfaces, non-functional testing focuses on code",
+      "Functional testing ensures code correctness, non-functional testing checks system behavior",
+      "Functional testing tests system performance, non-functional testing verifies usability",
+      "Functional testing checks system behavior, non-functional testing addresses attributes like performance and security"
+    ],
+    "correctAnswers": [
+      "Functional testing checks system behavior, non-functional testing addresses attributes like performance and security"
+    ]
+  },
+  {
+    "question": "What is the purpose of usability testing?",
+    "options": [
+      "Testing code syntax",
+      "Ensuring backward compatibility",
+      "Testing system performance",
+      "Evaluating user experience"
+    ],
+    "correctAnswers": ["Evaluating user experience"]
+  },
+  {
+    "question": "What is the main goal of test automation?",
+    "options": [
+      "Writing code faster",
+      "Reducing the need for manual testing",
+      "Creating user interfaces",
+      "Testing system performance"
+    ],
+    "correctAnswers": ["Reducing the need for manual testing"]
+  },
+  {
+    "question": "What is a test harness in software testing?",
+    "options": ["A tool to generate test data", "A test environment", "A type of test case", "A test report"],
+    "correctAnswers": ["A test environment"]
+  }
+]

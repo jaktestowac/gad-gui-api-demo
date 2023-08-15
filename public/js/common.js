@@ -11,6 +11,18 @@ function getCookieEmail() {
   return email;
 }
 
+function getCookieId() {
+  let id = undefined;
+  const cookies = document.cookie.split(";");
+  for (let cookie of cookies) {
+    cookie = cookie.trim();
+    if (cookie.startsWith("id=")) {
+      id = cookie.split("=")[1];
+    }
+  }
+  return id;
+}
+
 function getCookieAvatar() {
   let avatar = undefined;
   const cookies = document.cookie.split(";");
@@ -281,5 +293,40 @@ const jsonToCSV = (object) => {
   }
   return csv;
 };
+
+function getId() {
+  let id = undefined;
+  const cookies = document.cookie.split(";");
+  for (let cookie of cookies) {
+    cookie = cookie.trim();
+    if (cookie.startsWith("id=")) {
+      id = cookie.split("=")[1];
+    }
+  }
+  return id;
+}
+
+function getBearerToken() {
+  let token = undefined;
+  const cookies = document.cookie.split(";");
+  for (let cookie of cookies) {
+    cookie = cookie.trim();
+    if (cookie.startsWith("token=")) {
+      token = cookie.split("=")[1];
+    }
+  }
+  return `Bearer ${token}`;
+}
+
+function isAuthorized(id) {
+  return id?.toString() === getId() || getId() === "admin";
+}
+
+function formatHeaders() {
+  const headers = {
+    Authorization: getBearerToken(),
+  };
+  return headers;
+}
 
 addMainMenuAndFooter();

@@ -1594,6 +1594,52 @@
           }
         }
       }
+    },
+    "/quiz/questions": {
+      "get": {
+        "tags": ["quiz"],
+        "summary": "Get quiz questions",
+        "operationId": "getQuizQuestions",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Quiz questions received",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/quiz/questions/check": {
+      "post": {
+        "tags": ["quiz"],
+        "summary": "Check quiz answer for question",
+        "operationId": "checkQuizAnswer",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuizAnswer"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Quiz answer checked",
+            "content": {}
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1869,6 +1915,18 @@
         },
         "xml": {
           "name": "UserLoginData"
+        }
+      },
+      "QuizAnswer": {
+        "type": "object",
+        "required": ["questionText", "selectedAnswers"],
+        "properties": {
+          "questionText": {
+            "type": "string"
+          },
+          "selectedAnswers": {
+            "type": "string"
+          }
         }
       }
     }
