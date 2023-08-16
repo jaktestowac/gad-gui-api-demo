@@ -264,8 +264,8 @@ function replaceContents(file, replacement, cb) {
 
 // Login to one of the users from ./users.json
 server.post("/api/login", (req, res) => {
-  logDebug("login endpoint called; request body:");
   const { email, password, keepSignIn } = req.body;
+  logDebug("login: endpoint called:", { email, password, keepSignIn });
 
   let isAdmin = isAnyAdminUser(email, password);
   let isSuperAdmin = isSuperAdminUser(email, password);
@@ -279,7 +279,7 @@ server.post("/api/login", (req, res) => {
   }
   const cookieMaxAge = prepareCookieMaxAge(isAdmin, keepSignIn);
   const access_token = createToken({ email, data: "TBD" }, isAdmin, keepSignIn);
-  logDebug("Access Token:", { email, password, access_token, cookieMaxAge, isAdmin });
+  logDebug("login: access token:", { email, password, access_token, cookieMaxAge, isAdmin });
   res.status(HTTP_OK).json({ access_token });
 });
 
@@ -353,7 +353,7 @@ server.post("/process_login", (req, res) => {
   }
   const cookieMaxAge = prepareCookieMaxAge(isSuperAdmin, keepSignIn);
   const access_token = createToken({ email: username, data: "TBD" }, isSuperAdmin, keepSignIn);
-  logDebug("{ cookieMaxAge, isAdmin, isSuperAdmin }:", { cookieMaxAge, isAdmin, isSuperAdmin });
+  logDebug("process_login: { cookieMaxAge, isAdmin, isSuperAdmin }:", { cookieMaxAge, isAdmin, isSuperAdmin });
 
   let foundUser = undefined;
   if (!isAdmin) {
@@ -365,7 +365,7 @@ server.post("/process_login", (req, res) => {
   } else {
     foundUser = { firstname: adminUserEmail, username: adminUserEmail, id: adminUserEmail };
   }
-  logDebug("Access Token:", { email: username, password, access_token, cookieMaxAge, isAdmin });
+  logDebug("process_login: Access Token:", { email: username, password, access_token, cookieMaxAge, isAdmin });
 
   // saving the data to the cookies
   res.cookie("firstname", foundUser.firstname, {

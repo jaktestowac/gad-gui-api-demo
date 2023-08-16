@@ -12,7 +12,7 @@ const {
   formatInvalidTokenErrorResponse,
 } = require("./helpers/helpers");
 const { verifyToken, getJwtExpiryDate } = require("./helpers/jwtauth");
-const { logDebug, logError, logWarn } = require("./helpers/loggerApi");
+const { logDebug, logError, logWarn, logTrace } = require("./helpers/loggerApi");
 const { adminUserEmail, superAdminUserEmail, sleepTime } = require("./config");
 const {
   all_fields_article,
@@ -52,12 +52,12 @@ const verifyAccessToken = (req, res, endopint = "endpoint", url = "") => {
     res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
     return false;
   }
-  logDebug(`[${endopint}] verifyTokenResult:`, { verifyTokenResult, url });
+  logTrace(`[${endopint}] verifyTokenResult:`, { verifyTokenResult, url });
 
   if (verifyTokenResult?.exp !== undefined) {
     const current_time = Date.now() / 1000;
     const diff = Math.round(verifyTokenResult.exp - current_time);
-    logDebug(`[${endopint}] getJwtExpiryDate:`, {
+    logTrace(`[${endopint}] getJwtExpiryDate:`, {
       current_time: current_time,
       exp: verifyTokenResult.exp,
       diff,

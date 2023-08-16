@@ -38,6 +38,15 @@ const emailRegexp = /^\S+@\S+\.\S+$/;
 
 const uploadSizeLimitBytes = 1000;
 
+// simple log levels
+const logLevels = {
+  ERROR: 1,
+  WARNING: 2,
+  DEBUG: 4,
+  TRACE: 5,
+};
+const currentLogLevel = logLevels.DEBUG;
+
 const sleepTime = {
   perOneGetComment: 30,
   perOneGetCommentMin: 25,
@@ -68,4 +77,6 @@ module.exports = {
   emailRegexp,
   sleepTime,
   uploadSizeLimitBytes,
+  currentLogLevel,
+  logLevels,
 };

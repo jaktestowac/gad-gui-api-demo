@@ -271,10 +271,10 @@
     "options": [
       "Automating test cases",
       "Testing specific functionalities",
-      "Ad-hoc testing to find defects",
+      "Ad-hoc testing to explore defects",
       "Writing test scripts"
     ],
-    "correctAnswers": ["Ad-hoc testing to find defects"]
+    "correctAnswers": ["Ad-hoc testing to explore defects"]
   },
   {
     "question": "What is the goal of performance testing?",
@@ -325,16 +325,6 @@
       "To assess system responsiveness"
     ],
     "correctAnswers": ["To assess system responsiveness"]
-  },
-  {
-    "question": "What is the purpose of load testing?",
-    "options": [
-      "To evaluate security vulnerabilities",
-      "To test user interfaces",
-      "To assess system performance under normal load",
-      "To evaluate system performance under heavy load"
-    ],
-    "correctAnswers": ["To evaluate system performance under heavy load"]
   },
   {
     "question": "What does a bug report typically contain?",
@@ -735,5 +725,105 @@
       "Reduced test coverage"
     ],
     "correctAnswers": ["Faster code deployment"]
+  },
+  {
+    "question": "What is non-functional testing?",
+    "options": [
+      "Testing individual components",
+      "Testing user interfaces",
+      "Testing system performance",
+      "Testing attributes like performance and usability"
+    ],
+    "correctAnswers": ["Testing attributes like performance and usability"]
+  },
+  {
+    "question": "What does performance testing focus on?",
+    "options": [
+      "Verifying code correctness",
+      "Ensuring user satisfaction",
+      "Testing system behavior",
+      "Evaluating system responsiveness and speed"
+    ],
+    "correctAnswers": ["Evaluating system responsiveness and speed"]
+  },
+  {
+    "question": "What is the goal of usability testing?",
+    "options": [
+      "Testing code syntax",
+      "Ensuring software security",
+      "Evaluating user experience",
+      "Testing system performance"
+    ],
+    "correctAnswers": ["Evaluating user experience"]
+  },
+  {
+    "question": "What is the purpose of security testing?",
+    "options": [
+      "Testing user interfaces",
+      "Ensuring backward compatibility",
+      "Identifying security vulnerabilities",
+      "Testing system performance"
+    ],
+    "correctAnswers": ["Identifying security vulnerabilities"]
+  },
+  {
+    "question": "What does compatibility testing check?",
+    "options": [
+      "Code correctness",
+      "System performance",
+      "Usability of the software",
+      "How the software behaves in different environments"
+    ],
+    "correctAnswers": ["How the software behaves in different environments"]
+  },
+  {
+    "question": "What is the main goal of stress testing?",
+    "options": [
+      "Testing system performance under normal load",
+      "Testing code syntax",
+      "Testing system performance under extreme load",
+      "Testing user interfaces"
+    ],
+    "correctAnswers": ["Testing system performance under extreme load"]
+  },
+  {
+    "question": "What does reliability testing assess?",
+    "options": [
+      "Software features",
+      "User satisfaction",
+      "System performance",
+      "Software stability under different conditions"
+    ],
+    "correctAnswers": ["Software stability under different conditions"]
+  },
+  {
+    "question": "What is the purpose of load testing?",
+    "options": [
+      "Evaluating security vulnerabilities",
+      "Testing user interfaces",
+      "Testing system performance under normal load",
+      "Testing system performance under heavy load"
+    ],
+    "correctAnswers": ["Testing system performance under heavy load"]
+  },
+  {
+    "question": "What is the goal of scalability testing?",
+    "options": [
+      "Testing individual components",
+      "Testing code correctness",
+      "Testing system performance under normal load",
+      "Evaluating system's capability to handle increased load"
+    ],
+    "correctAnswers": ["Evaluating system's capability to handle increased load"]
+  },
+  {
+    "question": "What does non-functional testing focus on?",
+    "options": [
+      "Finding defects in code",
+      "Testing user interfaces",
+      "Testing system behavior",
+      "Testing software attributes like performance, security, and usability"
+    ],
+    "correctAnswers": ["Testing software attributes like performance, security, and usability"]
   }
 ]
