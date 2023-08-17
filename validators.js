@@ -71,6 +71,9 @@ const verifyAccessToken = (req, res, endopint = "endpoint", url = "") => {
   return verifyTokenResult;
 };
 
+const quizHighScores = {};
+const quizTempScores = {};
+
 const validations = (req, res, next) => {
   let isAdmin = false;
 
@@ -142,6 +145,31 @@ const validations = (req, res, next) => {
       res.status(HTTP_OK).json(getOnlyQuestions(10));
       return;
     }
+    if (req.method === "GET" && req.url.endsWith("/api/quiz/start")) {
+      const verifyTokenResult = verifyAccessToken(req, res, "quiz", req.url);
+      if (!verifyTokenResult) return;
+
+      quizTempScores[verifyTokenResult?.email] = 0;
+      logDebug("Quiz started:", { email: verifyTokenResult?.email, quizTempScores });
+      res.status(HTTP_OK).json({});
+      return;
+    }
+    if (req.method === "GET" && req.url.endsWith("/api/quiz/stop")) {
+      const verifyTokenResult = verifyAccessToken(req, res, "quiz", req.url);
+      if (!verifyTokenResult) return;
+
+      logDebug("Quiz stopped:", { email: verifyTokenResult?.email, quizTempScores, quizHighScores });
+      quizHighScores[verifyTokenResult?.email] = quizTempScores[verifyTokenResult?.email];
+      quizTempScores[verifyTokenResult?.email] = 0;
+      logDebug("Quiz stopped - final:", { email: verifyTokenResult?.email, quizTempScores, quizHighScores });
+      res.status(HTTP_OK).json({ highScore: quizHighScores[verifyTokenResult?.email] });
+      return;
+    }
+    if (req.method === "GET" && req.url.endsWith("/api/quiz/highscores")) {
+      logDebug("Quiz highScores:", { quizHighScores });
+      res.status(HTTP_OK).json({ highScore: quizHighScores });
+      return;
+    }
     if (req.method === "POST" && req.url.endsWith("/api/quiz/questions/check")) {
       // begin: check user auth
       const verifyTokenResult = verifyAccessToken(req, res, "quiz", req.url);
@@ -151,8 +179,20 @@ const validations = (req, res, next) => {
       const selectedAnswers = req.body["selectedAnswers"];
 
       const isCorrect = checkAnswer(selectedAnswers, questionText);
+      logTrace("Quiz checkAnswer:", { questionText, selectedAnswers });
 
-      res.status(HTTP_OK).json({ isCorrect });
+      // TODO:INVOKE_BUG: score is saved per email. If You start 2x quiz on one user - You can get more points.
+      if (quizTempScores[verifyTokenResult?.email] === undefined) {
+        quizTempScores[verifyTokenResult?.email] = 0;
+      }
+      quizTempScores[verifyTokenResult?.email] += isCorrect ? 1 : 0;
+      if (isCorrect) {
+        logTrace("Quiz: user scores:", {
+          email: verifyTokenResult?.email,
+          score: quizTempScores[verifyTokenResult?.email],
+        });
+      }
+      res.status(HTTP_OK).json({ isCorrect, score: quizTempScores[verifyTokenResult?.email] });
       return;
     }
 

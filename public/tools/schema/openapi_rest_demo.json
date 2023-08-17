@@ -1599,6 +1599,66 @@
         }
       }
     },
+    "/quiz/start": {
+      "get": {
+        "tags": ["quiz"],
+        "summary": "Start quiz",
+        "operationId": "startQuiz",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Quiz started"
+          }
+        }
+      }
+    },
+    "/quiz/stop": {
+      "get": {
+        "tags": ["quiz"],
+        "summary": "Stop quiz",
+        "operationId": "stopQuiz",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Quiz stopped",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuizHighScore"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/quiz/highscores": {
+      "get": {
+        "tags": ["quiz"],
+        "summary": "Get quiz high scores",
+        "operationId": "getQuizhighscores",
+        "responses": {
+          "200": {
+            "description": "Quiz high scores",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuizHighScore"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/quiz/questions": {
       "get": {
         "tags": ["quiz"],
@@ -1988,6 +2048,19 @@
         "properties": {
           "isCorrect": {
             "type": "boolean"
+          },
+          "score": {
+            "type": "number"
+          }
+        }
+      },
+      "QuizHighScore": {
+        "type": "object",
+        "properties": {
+          "highScores": {
+            "type": "object",
+            "additionalProperties": {},
+            "example": { "email@test.test": 1 }
           }
         }
       },

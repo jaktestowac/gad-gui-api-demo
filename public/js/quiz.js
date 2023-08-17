@@ -1,9 +1,12 @@
 const questionsEndpoint = "../../api/quiz/questions";
 const questionsCheckEndpoint = "../../api/quiz/questions/check";
+const quizStartEndpoint = "../../api/quiz/start";
+const quizStopEndpoint = "../../api/quiz/stop";
 
 let questionsData = [];
 
 const questionContainer = document.getElementById("question-container");
+const startButton = document.getElementById("start-button");
 const quizContainer = document.getElementById("quiz-container");
 const questionText = document.getElementById("question-text");
 const optionsContainer = document.getElementById("options-container");
@@ -74,6 +77,24 @@ async function issueCheckAnswerRequest(selectedAnswers) {
   });
 }
 
+async function issueStartRequest() {
+  fetch(quizStartEndpoint, {
+    method: "GET",
+    headers: {
+      Authorization: getBearerToken(),
+    },
+  });
+}
+
+async function issueStopRequest() {
+  fetch(quizStopEndpoint, {
+    method: "GET",
+    headers: {
+      Authorization: getBearerToken(),
+    },
+  });
+}
+
 function showQuestion() {
   const currentQuestionText = getQuestionText(currentQuestionIndex);
   questionText.textContent = currentQuestionText;
@@ -110,17 +131,21 @@ async function checkAnswer() {
     },
   }).then((response) => {
     response.json().then((json) => {
-      const isCorrect = json["isCorrect"] ?? false;
-      if (isCorrect) {
-        score++;
-        scoreElement.textContent = score;
-      }
-
+      // Old logic with score on UI:
+      // const isCorrect = json["isCorrect"] ?? false;
+      // if (isCorrect) {
+      //   score++;
+      //   scoreElement.textContent = score;
+      // }
+      score = json["score"];
+      scoreElement.textContent = score;
       currentQuestionIndex++;
       if (currentQuestionIndex < questionsData.length) {
         showQuestion();
       } else {
-        displayFinalScore(score);
+        issueStopRequest().then(() => {
+          displayFinalScore(score);
+        });
       }
     });
   });
@@ -136,7 +161,7 @@ function displayFinalScore(score) {
     questionContainer.innerHTML += `Well done!<br>You've got a good score on the quiz.<br>Keep up the good work!🥉`;
   } else if (score >= questionsData.length * 0.3) {
     questionContainer.innerHTML += `Nice effort!<br>Your score shows a decent understanding of the topic.<br>Keep learning!👏`;
-  } else if (score === 0) {
+  } else {
     questionContainer.innerHTML += `Good start!<br>There's room for improvement.<br>Keep studying and practicing for better results next time!📚`;
   }
 }
@@ -149,4 +174,10 @@ function arraysEqual(arr1, arr2) {
   return true;
 }
 
-issueGetRequest();
+questionContainer.style.visibility = "collapse";
+async function startQuiz() {
+  await issueStartRequest();
+  await issueGetRequest();
+  questionContainer.style.visibility = "visible";
+  startButton.style.visibility = "collapse";
+}
