@@ -161,7 +161,7 @@ const validations = (req, res, next) => {
       logDebug("Quiz stopped:", { email: verifyTokenResult?.email, quizTempScores, quizHighScores });
       quizHighScores[verifyTokenResult?.email] = quizTempScores[verifyTokenResult?.email];
       quizTempScores[verifyTokenResult?.email] = 0;
-      logDebug("Quiz stopped - final:", { email: verifyTokenResult?.email, quizTempScores, quizHighScores });
+      logDebug("Quiz stopped - final:", { email: verifyTokenResult?.email, quizHighScores });
       res.status(HTTP_OK).json({ highScore: quizHighScores[verifyTokenResult?.email] });
       return;
     }
