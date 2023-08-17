@@ -1,6 +1,6 @@
 const fs = require("fs");
 const { logWarn } = require("./loggerApi");
-const quizDataPath = "./quiz-questions.json";
+const { quizDataPath } = require("../config");
 
 function shuffleArray(array) {
   const shuffledArray = [...array];

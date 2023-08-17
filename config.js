@@ -21,10 +21,11 @@ const tokenExpiresIn = `${tokenExpirationInMinutes}m`;
 const superAdminTokenExpiresIn = `${superAdminTokenExpirationInMinutes}m`;
 const keepSignInTokenExpiresIn = `${5 * 24 * superAdminTokenExpirationInMinutes}m`;
 
-const authUserDb = "./db.json";
-const dbPath = "./db.json";
-const dbRestorePath = "./db-base.json";
-const dbEmptyRestorePath = "./db-empty.json";
+const authUserDb = "./db/db.json";
+const dbPath = "./db/db.json";
+const dbRestorePath = "./db/db-base.json";
+const dbEmptyRestorePath = "./db/db-empty.json";
+const quizDataPath = "./db/quiz-questions.json";
 const defaultPort = 3000;
 
 const adminUserEmail = "admin";
@@ -79,4 +80,5 @@ module.exports = {
   uploadSizeLimitBytes,
   currentLogLevel,
   logLevels,
+  quizDataPath,
 };
