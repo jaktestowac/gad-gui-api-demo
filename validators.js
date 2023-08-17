@@ -25,7 +25,7 @@ const {
   mandatory_non_empty_fields_user,
   validateEmail,
 } = require("./helpers/validation.helpers");
-const { userDb, articlesDb, fullDb } = require("./db.helper");
+const { userDb, articlesDb, fullDb } = require("./helpers/db.helpers");
 const {
   searchForArticle,
   searchForUserWithToken,
@@ -158,11 +158,13 @@ const validations = (req, res, next) => {
       const verifyTokenResult = verifyAccessToken(req, res, "quiz", req.url);
       if (!verifyTokenResult) return;
 
-      logDebug("Quiz stopped:", { email: verifyTokenResult?.email, quizTempScores, quizHighScores });
-      quizHighScores[verifyTokenResult?.email] = quizTempScores[verifyTokenResult?.email];
-      quizTempScores[verifyTokenResult?.email] = 0;
-      logDebug("Quiz stopped - final:", { email: verifyTokenResult?.email, quizHighScores });
-      res.status(HTTP_OK).json({ highScore: quizHighScores[verifyTokenResult?.email] });
+      const email = verifyTokenResult?.email;
+      logDebug("Quiz stopped:", { email, quizTempScores, quizHighScores });
+      if (quizTempScores[email] > quizHighScores[email]) quizHighScores[email] = quizTempScores[email];
+
+      quizTempScores[email] = 0;
+      logDebug("Quiz stopped - final:", { email, quizHighScores });
+      res.status(HTTP_OK).json({ highScore: quizHighScores[email] });
       return;
     }
     if (req.method === "GET" && req.url.endsWith("/api/quiz/highscores")) {

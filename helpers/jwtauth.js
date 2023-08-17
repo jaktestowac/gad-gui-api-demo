@@ -10,7 +10,7 @@ const {
 } = require("../config");
 const { addSecondsToDate } = require("./helpers");
 const { logDebug, logError } = require("./loggerApi");
-const { userDb } = require("../db.helper");
+const { userDb } = require("./db.helpers");
 
 // Create a token from a payload
 function createToken(payload, isSuperAdmin = false, keepSignIn = false) {

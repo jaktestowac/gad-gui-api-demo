@@ -34,7 +34,7 @@ const {
   mandatory_non_empty_fields_article,
   all_fields_article,
 } = require("./helpers/validation.helpers");
-const { articlesDb, commentsDb, userDb, fullDb } = require("./db.helper");
+const { articlesDb, commentsDb, userDb, fullDb } = require("./helpers/db.helpers");
 const {
   HTTP_UNPROCESSABLE_ENTITY,
   HTTP_INTERNAL_SERVER_ERROR,

@@ -1,4 +1,4 @@
-const { userDb, articlesDb, commentsDb } = require("../db.helper");
+const { userDb, articlesDb, commentsDb } = require("./db.helpers");
 
 function searchForUserWithToken(userId, verifyTokenResult) {
   const foundUser = userDb().find((user) => {

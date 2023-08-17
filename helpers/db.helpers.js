@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { authUserDb } = require("./config");
+const { authUserDb } = require("../config");
 
 function fullDb() {
   const db = JSON.parse(fs.readFileSync(authUserDb, "UTF-8"));

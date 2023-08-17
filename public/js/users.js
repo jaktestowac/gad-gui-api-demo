@@ -11,7 +11,6 @@ const fetchData = {
 
 const issueGetRequest = () => {
   // get data from the server:
-  console.log("GET request:", endpoint);
   fetch(endpoint, { headers: formatHeaders() })
     .then((response) => response.json())
     .then(displayData)
