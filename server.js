@@ -363,7 +363,12 @@ server.post("/process_login", (req, res) => {
       }
     });
   } else {
-    foundUser = { firstname: adminUserEmail, username: adminUserEmail, id: adminUserEmail };
+    foundUser = {
+      firstname: adminUserEmail,
+      username: adminUserEmail,
+      id: adminUserEmail,
+      avatar: ".\\data\\users\\face_admin.png",
+    };
   }
   logDebug("process_login: Access Token:", { email: username, password, access_token, cookieMaxAge, isAdmin });
 
