@@ -1,4 +1,3 @@
-const path = require("path");
 const {
   formatErrorResponse,
   sleep,
@@ -102,7 +101,7 @@ const validations = (req, res, next) => {
       let verifyTokenResult = verifyAccessToken(req, res, "isAdmin", req.url);
       if (verifyTokenResult?.email === adminUserEmail || verifyTokenResult?.email === superAdminUserEmail) {
         isAdmin = true;
-        logDebug("isAdmin:", isAdmin);
+        logDebug("validations: isAdmin:", isAdmin);
       }
     } catch (error) {
       logError(`Error: check if admin: ${JSON.stringify(error)}`);
@@ -160,7 +159,9 @@ const validations = (req, res, next) => {
 
       const email = verifyTokenResult?.email;
       logDebug("Quiz stopped:", { email, quizTempScores, quizHighScores });
-      if (quizTempScores[email] > quizHighScores[email]) quizHighScores[email] = quizTempScores[email];
+      if (quizHighScores[email] === undefined || quizTempScores[email] >= quizHighScores[email]) {
+        quizHighScores[email] = quizTempScores[email];
+      }
 
       quizTempScores[email] = 0;
       logDebug("Quiz stopped - final:", { email, quizHighScores });
