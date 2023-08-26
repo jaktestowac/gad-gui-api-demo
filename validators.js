@@ -10,8 +10,7 @@ const {
   formatMissingFieldErrorResponse,
   formatInvalidTokenErrorResponse,
 } = require("./helpers/helpers");
-const { verifyToken, getJwtExpiryDate } = require("./helpers/jwtauth");
-const { logDebug, logError, logWarn, logTrace } = require("./helpers/loggerApi");
+const { logDebug, logError } = require("./helpers/loggerApi");
 const { adminUserEmail, superAdminUserEmail, sleepTime } = require("./config");
 const {
   all_fields_article,
@@ -23,6 +22,7 @@ const {
   mandatory_non_empty_fields_comment,
   mandatory_non_empty_fields_user,
   validateEmail,
+  verifyAccessToken,
 } = require("./helpers/validation.helpers");
 const { userDb, articlesDb, fullDb } = require("./helpers/db.helpers");
 const {
@@ -38,41 +38,8 @@ const {
   HTTP_OK,
   HTTP_CONFLICT,
 } = require("./helpers/response.helpers");
-const { checkAnswer, getOnlyQuestions, countAvailableQuestions } = require("./helpers/quiz.helpers");
-const { getRandomWord, checkLetter } = require("./helpers/hangman.helper");
-
-const verifyAccessToken = (req, res, endopint = "endpoint", url = "") => {
-  const authorization = req.headers["authorization"];
-  let access_token = undefined ? "" : authorization?.split(" ")[1];
-
-  let verifyTokenResult = verifyToken(access_token);
-
-  // when checking admin we do not send response
-  if (endopint !== "isAdmin" && verifyTokenResult instanceof Error) {
-    res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
-    return false;
-  }
-  logTrace(`[${endopint}] verifyTokenResult:`, { verifyTokenResult, url });
-
-  if (verifyTokenResult?.exp !== undefined) {
-    const current_time = Date.now() / 1000;
-    const diff = Math.round(verifyTokenResult.exp - current_time);
-    logTrace(`[${endopint}] getJwtExpiryDate:`, {
-      current_time: current_time,
-      exp: verifyTokenResult.exp,
-      diff,
-      expiryDate: getJwtExpiryDate(diff),
-    });
-    if (current_time > verifyTokenResult?.exp) {
-      logWarn(`[${endopint}] getJwt Expired`);
-    }
-  }
-
-  return verifyTokenResult;
-};
-
-const quizHighScores = {};
-const quizTempScores = {};
+const { handleHangman } = require("./helpers/hangman-endpoint.helper");
+const { handleQuiz } = require("./helpers/quiz-endpoint.helper");
 
 const validations = (req, res, next) => {
   let isAdmin = false;
@@ -133,87 +100,13 @@ const validations = (req, res, next) => {
       return;
     }
 
-    // TODO: do validation on backend
-    if (req.method === "GET" && req.url.endsWith("/api/hangman/random")) {
-      const randomWord = getRandomWord();
-      res.status(HTTP_OK).json({ word: randomWord });
-      return;
-    }
-    if (req.method === "POST" && req.url.endsWith("/api/hangman/check")) {
-      const letter = req.body["letter"];
-      const word = req.body["word"];
-
-      const indices = checkLetter(letter, word);
-      logTrace("Hangman checkAnswer:", { letter, indices });
-
-      res.status(HTTP_OK).json({ indices });
+    if (req.url.includes("/api/hangman")) {
+      handleHangman(req, res);
       return;
     }
 
-    if (req.method === "GET" && req.url.endsWith("/api/quiz/questions/count")) {
-      res.status(HTTP_OK).json({ count: countAvailableQuestions() });
-      return;
-    }
-    if (req.method === "GET" && req.url.endsWith("/api/quiz/questions")) {
-      // begin: check user auth
-      const verifyTokenResult = verifyAccessToken(req, res, "quiz", req.url);
-      if (!verifyTokenResult) return;
-
-      res.status(HTTP_OK).json(getOnlyQuestions(10));
-      return;
-    }
-    if (req.method === "GET" && req.url.endsWith("/api/quiz/start")) {
-      const verifyTokenResult = verifyAccessToken(req, res, "quiz", req.url);
-      if (!verifyTokenResult) return;
-
-      quizTempScores[verifyTokenResult?.email] = 0;
-      logDebug("Quiz started:", { email: verifyTokenResult?.email, quizTempScores });
-      res.status(HTTP_OK).json({});
-      return;
-    }
-    if (req.method === "GET" && req.url.endsWith("/api/quiz/stop")) {
-      const verifyTokenResult = verifyAccessToken(req, res, "quiz", req.url);
-      if (!verifyTokenResult) return;
-
-      const email = verifyTokenResult?.email;
-      logDebug("Quiz stopped:", { email, quizTempScores, quizHighScores });
-      if (quizHighScores[email] === undefined || quizTempScores[email] >= quizHighScores[email]) {
-        quizHighScores[email] = quizTempScores[email];
-      }
-
-      quizTempScores[email] = 0;
-      logDebug("Quiz stopped - final:", { email, quizHighScores });
-      res.status(HTTP_OK).json({ highScore: quizHighScores[email] });
-      return;
-    }
-    if (req.method === "GET" && req.url.endsWith("/api/quiz/highscores")) {
-      logDebug("Quiz highScores:", { quizHighScores });
-      res.status(HTTP_OK).json({ highScore: quizHighScores });
-      return;
-    }
-    if (req.method === "POST" && req.url.endsWith("/api/quiz/questions/check")) {
-      // begin: check user auth
-      const verifyTokenResult = verifyAccessToken(req, res, "quiz", req.url);
-      if (!verifyTokenResult) return;
-
-      const questionText = req.body["questionText"];
-      const selectedAnswers = req.body["selectedAnswers"];
-
-      const isCorrect = checkAnswer(selectedAnswers, questionText);
-      logTrace("Quiz checkAnswer:", { questionText, selectedAnswers });
-
-      // TODO:INVOKE_BUG: score is saved per email. If You start 2x quiz on one user - You can get more points.
-      if (quizTempScores[verifyTokenResult?.email] === undefined) {
-        quizTempScores[verifyTokenResult?.email] = 0;
-      }
-      quizTempScores[verifyTokenResult?.email] += isCorrect ? 1 : 0;
-      if (isCorrect) {
-        logTrace("Quiz: user scores:", {
-          email: verifyTokenResult?.email,
-          score: quizTempScores[verifyTokenResult?.email],
-        });
-      }
-      res.status(HTTP_OK).json({ isCorrect, score: quizTempScores[verifyTokenResult?.email] });
+    if (req.url.includes("/api/quiz")) {
+      handleQuiz(req, res);
       return;
     }
 

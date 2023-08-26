@@ -1,5 +1,7 @@
 const { dateRegexp, emailRegexp } = require("../config");
-const { logDebug, logError } = require("./loggerApi");
+const { formatErrorResponse } = require("./helpers");
+const { verifyToken, getJwtExpiryDate } = require("./jwtauth");
+const { logDebug, logError, logTrace, logWarn } = require("./loggerApi");
 
 const mandatory_non_empty_fields_user = ["firstname", "lastname", "email", "avatar"];
 const all_fields_user = ["id", "firstname", "lastname", "email", "avatar", "password", "birthdate"];
@@ -87,6 +89,36 @@ const validateDate = (date) => {
   return date.match(dateRegexp);
 };
 
+const verifyAccessToken = (req, res, endopint = "endpoint", url = "") => {
+  const authorization = req.headers["authorization"];
+  let access_token = undefined ? "" : authorization?.split(" ")[1];
+
+  let verifyTokenResult = verifyToken(access_token);
+
+  // when checking admin we do not send response
+  if (endopint !== "isAdmin" && verifyTokenResult instanceof Error) {
+    res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
+    return false;
+  }
+  logTrace(`[${endopint}] verifyTokenResult:`, { verifyTokenResult, url });
+
+  if (verifyTokenResult?.exp !== undefined) {
+    const current_time = Date.now() / 1000;
+    const diff = Math.round(verifyTokenResult.exp - current_time);
+    logTrace(`[${endopint}] getJwtExpiryDate:`, {
+      current_time: current_time,
+      exp: verifyTokenResult.exp,
+      diff,
+      expiryDate: getJwtExpiryDate(diff),
+    });
+    if (current_time > verifyTokenResult?.exp) {
+      logWarn(`[${endopint}] getJwt Expired`);
+    }
+  }
+
+  return verifyTokenResult;
+};
+
 module.exports = {
   validateDate,
   validateEmail,
@@ -101,4 +133,5 @@ module.exports = {
   all_fields_comment,
   mandatory_non_empty_fields_plugin,
   all_fields_plugin,
+  verifyAccessToken,
 };

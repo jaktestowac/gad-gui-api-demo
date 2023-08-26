@@ -1737,6 +1737,25 @@
       }
     }
   },
+  "/hangman/random": {
+    "get": {
+      "tags": ["hangman"],
+      "summary": "Get random word",
+      "operationId": "getRandomWord",
+      "responses": {
+        "200": {
+          "description": "Random word",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/hangmanRandomWord"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "components": {
     "securitySchemes": {
       "bearerAuth": {
@@ -2070,6 +2089,15 @@
         "properties": {
           "count": {
             "type": "number"
+          }
+        }
+      },
+      "hangmanRandomWord": {
+        "type": "object",
+        "required": ["word"],
+        "properties": {
+          "count": {
+            "word": "string"
           }
         }
       }
