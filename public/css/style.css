@@ -411,3 +411,25 @@ input[type="submit"]:hover {
   border-style: solid;
   border-width: 1px;
 }
+
+#hangman {
+  font-family: monospace !important;
+  margin-left: 45%;
+  white-space: pre  !important;
+}
+
+#word {
+  font-size: 24px;
+  margin: 10px;
+  font-family: monospace !important;
+  white-space: pre  !important;
+}
+
+#letters {
+  margin: 10px;
+}
+
+.letter {
+  width: 36px;
+  height: 42px;
+}

@@ -26,6 +26,7 @@ const dbPath = "./db/db.json";
 const dbRestorePath = "./db/db-base.json";
 const dbEmptyRestorePath = "./db/db-empty.json";
 const quizDataPath = "./db/quiz-questions.json";
+const hangmanDataPath = "./db/hangman-words.json";
 const defaultPort = 3000;
 
 const adminUserEmail = "admin";
@@ -81,4 +82,5 @@ module.exports = {
   currentLogLevel,
   logLevels,
   quizDataPath,
+  hangmanDataPath,
 };

@@ -39,6 +39,7 @@ const {
   HTTP_CONFLICT,
 } = require("./helpers/response.helpers");
 const { checkAnswer, getOnlyQuestions, countAvailableQuestions } = require("./helpers/quiz.helpers");
+const { getRandomWord, checkLetter } = require("./helpers/hangman.helper");
 
 const verifyAccessToken = (req, res, endopint = "endpoint", url = "") => {
   const authorization = req.headers["authorization"];
@@ -129,6 +130,23 @@ const validations = (req, res, next) => {
       const article = randomDbEntry(articlesDb());
       logDebug("Random article:", article);
       res.status(HTTP_OK).json(article);
+      return;
+    }
+
+    // TODO: do validation on backend
+    if (req.method === "GET" && req.url.endsWith("/api/hangman/random")) {
+      const randomWord = getRandomWord();
+      res.status(HTTP_OK).json({ word: randomWord });
+      return;
+    }
+    if (req.method === "POST" && req.url.endsWith("/api/hangman/check")) {
+      const letter = req.body["letter"];
+      const word = req.body["word"];
+
+      const indices = checkLetter(letter, word);
+      logTrace("Hangman checkAnswer:", { letter, indices });
+
+      res.status(HTTP_OK).json({ indices });
       return;
     }
 

@@ -1,15 +1,9 @@
 const fs = require("fs");
 const { logWarn } = require("./loggerApi");
 const { quizDataPath } = require("../config");
+const { shuffleArray } = require("./helpers");
 
-function shuffleArray(array) {
-  const shuffledArray = [...array];
-  for (let i = shuffledArray.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
-  }
-  return shuffledArray;
-}
+
 
 function arraysEqual(arr1, arr2) {
   if (arr1.length !== arr2.length) return false;
@@ -67,7 +61,6 @@ function countAvailableQuestions() {
 module.exports = {
   getQuestions,
   getOnlyQuestions,
-  shuffleArray,
   arraysEqual,
   checkAnswer,
   findQuestion,
