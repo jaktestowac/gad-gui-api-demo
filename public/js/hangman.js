@@ -68,7 +68,7 @@ function handleLetterClick(letter) {
   updateWordDisplay();
 
   if (hiddenWord.join("").toLowerCase() === selectedWord.toLowerCase()) {
-    displayFinalScore(true, wrongAttempts);
+    displayFinalScore(true, wrongAttempts, selectedWord);
   } else if (wrongAttempts === maxAttempts) {
     displayFinalScore(false, wrongAttempts, selectedWord);
   }
@@ -107,7 +107,7 @@ function displayFinalScore(success, attempts, selectedWord) {
   infoContainer.style.visibility = "visible";
   if (success) {
     let score = (maxAttempts - attempts) * 5 + selectedWord.length * 3;
-    infoContainer.innerHTML = `<strong>Congratulations! Only ${attempts} attempts! Score: $${score}</strong>`;
+    infoContainer.innerHTML = `<strong>Congratulations! Only ${attempts} attempts! Score: ${score}</strong>`;
   } else {
     infoContainer.innerHTML = `<strong>You failed! Selected word was: ${selectedWord}</strong>`;
   }
