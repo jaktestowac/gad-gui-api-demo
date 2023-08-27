@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>🦎 GAD | Game: Hangman</title>
+    <title>🦎 GAD | Game: Matcher</title>
     <link rel="icon" href="./data/icons/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
@@ -28,27 +28,32 @@
         style="position: unset !important; margin: 60px 0px 0px 0px"
       ></div>
     </div>
-    <div id="container"></div>
-    <pre id="hangman">
- _________
- |       |
- |       O
- |      /|\
- |      / \
-_|_
-</pre
-    >
     <div align="center">
-      <button class="button-primary" id="start-button" data-testid="startButton" onclick="startQuiz()">Start</button>
-      <div id="info-container"></div>
-
-      <div id="game-container">
-        <pre id="word"></pre>
-        <div id="letters"></div>
+      <h2>Matching Tests Game</h2>
+      <p>Drag descriptions to their respective categories👇</p>
+      <button class="button-primary" data-testid="check" id="checkButton">Check Matches</button>
+      <h3>Categories</h3>
+    </div>
+    <div class="categories">
+      <div class="category" id="category1">
+        <h2 class="name"></h2>
+      </div>
+      <div class="category" id="category2">
+        <h2 class="name"></h2>
+      </div>
+      <div class="category" id="category3">
+        <h2 class="name"></h2>
       </div>
     </div>
+    <div align="center">
+      <div id="info-container"></div>
+      <h3>Descriptions</h3>
+    </div>
+    <div align="center">
+      <div class="descriptions" id="descriptions"></div>
+    </div>
   </body>
-  <script type="text/javascript" src="js/hangman.js"></script>
+  <script type="text/javascript" src="js/matcher.js"></script>
   <script type="text/javascript" src="js/common.js"></script>
   <script type="text/javascript" src="js/helpers/reports.js"></script>
   <script type="text/javascript" src="version.js"></script>
