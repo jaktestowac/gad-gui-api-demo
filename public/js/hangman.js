@@ -35,12 +35,6 @@ async function selectWord() {
   }
 }
 
-// function selectWord() {
-//   const randomIndex = Math.floor(Math.random() * words.length);
-//   selectedWord = words[randomIndex].toUpperCase();
-//   hiddenWord = Array(selectedWord.length).fill("_");
-// }
-
 function updateWordDisplay() {
   const wordDisplay = document.getElementById("word");
   wordDisplay.textContent = hiddenWord.join(" ");
@@ -112,7 +106,8 @@ function updateLetterButtons() {
 function displayFinalScore(success, attempts, selectedWord) {
   infoContainer.style.visibility = "visible";
   if (success) {
-    infoContainer.innerHTML = `<strong>Congratulations! Only ${attempts} attempts!</strong>`;
+    let score = (maxAttempts - attempts) * 5 + selectedWord.length * 3;
+    infoContainer.innerHTML = `<strong>Congratulations! Only ${attempts} attempts! Score: $${score}</strong>`;
   } else {
     infoContainer.innerHTML = `<strong>You failed! Selected word was: ${selectedWord}</strong>`;
   }
