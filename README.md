@@ -1,11 +1,30 @@
 # Introduction
 
-This application was prepared and developed **only for testing purposes**. It provides:
+This application (called **🦎 GAD**) was prepared and developed **only for testing purposes**. It provides:
 
 - GUI
-- API
+- REST API
+- Swagger Doc
 
-All data (such as users and other entities) are stored in json file.
+This application contains simple logic, statistics, charts, games, different resources, **deliberately prepared bugs**🐛 and various challenges.
+
+Thanks to this configuration, we are able to **reflect real project reality**😉
+
+P.S. In addition, the application has some **serious design flaws** - I wonder if you will notice them?😉
+
+# Features
+
+Features of **🦎 GAD**:
+
+- **GUI** (front-end)
+- **REST API** (back-end)
+- **Swagger** Doc
+- Simple **DataBase** (json) with REST API endpoints to clear/restore all data
+- **Authentication** and **Authorization**
+- **User** <-> resources logic (calculations, statistics)
+- Diffrerent **data prezentation** (charts, tables etc.)
+- **Challenging elements for test automation** (iframes, file uploads, drag&drop, logic on front-end and back-end etc.)
+- Admins "backoffice" with additional tools and functionalities
 
 # Deployment
 
