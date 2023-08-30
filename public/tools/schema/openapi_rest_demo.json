@@ -1735,20 +1735,20 @@
           }
         }
       }
-    }
-  },
-  "/hangman/random": {
-    "get": {
-      "tags": ["hangman"],
-      "summary": "Get random word",
-      "operationId": "getRandomWord",
-      "responses": {
-        "200": {
-          "description": "Random word",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/hangmanRandomWord"
+    },
+    "/hangman/random": {
+      "get": {
+        "tags": ["hangman"],
+        "summary": "Get random word",
+        "operationId": "getRandomWord",
+        "responses": {
+          "200": {
+            "description": "Random word",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HangmanRandomWord"
+                }
               }
             }
           }
@@ -2092,7 +2092,7 @@
           }
         }
       },
-      "hangmanRandomWord": {
+      "HangmanRandomWord": {
         "type": "object",
         "required": ["word"],
         "properties": {
