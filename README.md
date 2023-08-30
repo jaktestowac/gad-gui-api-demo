@@ -91,7 +91,13 @@ On local environment:
 
 ### Running
 
-Just run following command:
+Just run following command to get latest image:
+
+```
+docker run -p 3000:3000 -d jaktestowac/gad
+```
+
+or specific version:
 
 ```
 docker run -p 3000:3000 -d jaktestowac/gad:2.1
