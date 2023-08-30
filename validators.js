@@ -38,8 +38,8 @@ const {
   HTTP_OK,
   HTTP_CONFLICT,
 } = require("./helpers/response.helpers");
-const { handleHangman } = require("./helpers/hangman-endpoint.helper");
-const { handleQuiz } = require("./helpers/quiz-endpoint.helper");
+const { handleHangman } = require("./helpers/hangman-endpoint.helpers");
+const { handleQuiz } = require("./helpers/quiz-endpoint.helpers");
 
 const validations = (req, res, next) => {
   let isAdmin = false;

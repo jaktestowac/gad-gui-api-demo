@@ -1,4 +1,4 @@
-const { getRandomWord, checkLetter } = require("./hangman.helper");
+const { getRandomWord, checkLetter } = require("./hangman.helpers");
 const { logTrace, logDebug } = require("./loggerApi");
 const { HTTP_NOT_FOUND, HTTP_OK } = require("./response.helpers");
 
