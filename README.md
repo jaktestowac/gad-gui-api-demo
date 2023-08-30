@@ -33,6 +33,7 @@ Instructions how to deploy presented service to various free hosting sites.
 - [Deploy to Local](#deploy-to-local)
 - [Deploy to Glitch](#deploy-to-glitch)
 - [Deploy to Render](#deploy-to-render)
+- [Deploy using Docker image](#deploy-using-docker-image)
 
 ## Deploy on **Local**
 
@@ -74,3 +75,29 @@ To see website:
 - wait a while and click link to project `GUI API Demo`
 - click link to open app (under porject name and repository)
 - enjoy 750 free hours of service per month
+
+## Deploy using Docker image
+
+This method can be used:
+
+- locally
+- in CI/CD services (GitHub Actions, GitLab CI etc.)
+
+### Prerequisits:
+
+On local environment:
+
+- latest Docker is installed
+
+### Running
+
+Just run following command:
+
+```
+docker run -p 3000:3000 -d jaktestowac/gad:2.1
+```
+
+Application should be running under http://localhost:3000/
+
+Image is available at:
+[hub.docker.com/repository/docker/jaktestowac](https://hub.docker.com/repository/docker/jaktestowac/gad/general)
