@@ -2,6 +2,7 @@ const { dateRegexp, emailRegexp } = require("../config");
 const { formatErrorResponse } = require("./helpers");
 const { verifyToken, getJwtExpiryDate } = require("./jwtauth");
 const { logDebug, logError, logTrace, logWarn } = require("./loggerApi");
+const { HTTP_UNAUTHORIZED } = require("./response.helpers");
 
 const mandatory_non_empty_fields_user = ["firstname", "lastname", "email", "avatar"];
 const all_fields_user = ["id", "firstname", "lastname", "email", "avatar", "password", "birthdate"];
@@ -94,6 +95,7 @@ const verifyAccessToken = (req, res, endopint = "endpoint", url = "") => {
   let access_token = undefined ? "" : authorization?.split(" ")[1];
 
   let verifyTokenResult = verifyToken(access_token);
+  logTrace(`[${endopint}] verifyAccessToken:`, { access_token, verifyTokenResult, authorization });
 
   // when checking admin we do not send response
   if (endopint !== "isAdmin" && verifyTokenResult instanceof Error) {

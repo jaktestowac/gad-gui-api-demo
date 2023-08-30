@@ -10,7 +10,7 @@ const {
   formatMissingFieldErrorResponse,
   formatInvalidTokenErrorResponse,
 } = require("./helpers/helpers");
-const { logDebug, logError } = require("./helpers/loggerApi");
+const { logDebug, logError, logTrace } = require("./helpers/loggerApi");
 const { adminUserEmail, superAdminUserEmail, sleepTime } = require("./config");
 const {
   all_fields_article,
@@ -101,16 +101,17 @@ const validations = (req, res, next) => {
     }
 
     if (req.url.includes("/api/hangman")) {
-      handleHangman(req, res);
+      res = handleHangman(req, res);
       return;
     }
 
     if (req.url.includes("/api/quiz")) {
-      handleQuiz(req, res);
+      res = handleQuiz(req, res);
       return;
     }
 
     if (req.method !== "GET" && req.method !== "POST" && urlEnds.includes("/api/users") && !isAdmin) {
+      logTrace("Validators: Check user auth", { url: urlEnds });
       // begin: check user auth
       let userId = getIdFromUrl(urlEnds);
       const verifyTokenResult = verifyAccessToken(req, res, "users", req.url);
@@ -350,7 +351,7 @@ const validations = (req, res, next) => {
       next();
     }
   } catch (error) {
-    logError("Fatal error. Please contact administrator.", { error });
+    logError("Fatal error. Please contact administrator.", { error: JSON.stringify(error) });
     res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Fatal error. Please contact administrator."));
   }
 };
