@@ -11,7 +11,9 @@ const {
   formatInvalidTokenErrorResponse,
 } = require("./helpers/helpers");
 const { logDebug, logError, logTrace } = require("./helpers/loggerApi");
-const { adminUserEmail, superAdminUserEmail, sleepTime } = require("./config");
+const { getConfigValue, configInstance, resetConfig, setConfigValue } = require("./config/configSingleton");
+const { ConfigKeys } = require("./config/enums");
+
 const {
   all_fields_article,
   all_fields_comment,
@@ -68,7 +70,10 @@ const validations = (req, res, next) => {
     // check if admin:
     try {
       let verifyTokenResult = verifyAccessToken(req, res, "isAdmin", req.url);
-      if (verifyTokenResult?.email === adminUserEmail || verifyTokenResult?.email === superAdminUserEmail) {
+      if (
+        verifyTokenResult?.email === getConfigValue(ConfigKeys.ADMIN_USER_EMAIL) ||
+        verifyTokenResult?.email === getConfigValue(ConfigKeys.SUPER_ADMIN_USER_EMAIL)
+      ) {
         isAdmin = true;
         logDebug("validations: isAdmin:", isAdmin);
       }
@@ -98,6 +103,37 @@ const validations = (req, res, next) => {
       const article = randomDbEntry(articlesDb());
       logDebug("Random article:", article);
       res.status(HTTP_OK).json(article);
+      return;
+    } else if (req.method === "GET" && urlEnds.endsWith("api/config")) {
+      res.status(HTTP_OK).json(configInstance);
+      return;
+    } else if (req.method === "POST" && urlEnds.endsWith("api/config")) {
+      const invalidKeys = [];
+
+      // check if key is correct:
+      for (const key in req.body) {
+        const currentValue = getConfigValue(key);
+        if (currentValue === undefined) {
+          invalidKeys.push(key);
+        }
+      }
+
+      // if all keys are correct - set values; otherwise - return error
+      if (invalidKeys.length > 0) {
+        res.status(HTTP_UNPROCESSABLE_ENTITY).json({ invalidKeys });
+      } else {
+        for (const key in req.body) {
+          const currentValue = getConfigValue(key);
+          logDebug(`Setting "${key}": from "${currentValue}" to "${req.body[key]}"`);
+          setConfigValue(key, req.body[key]);
+        }
+        res.status(HTTP_OK).json({});
+      }
+
+      return;
+    } else if (req.method === "GET" && urlEnds.includes("api/config/reset")) {
+      resetConfig();
+      res.status(HTTP_OK).json({});
       return;
     }
 
@@ -341,9 +377,14 @@ const validations = (req, res, next) => {
     if (req.method === "GET" && urlEnds.includes("api/comments")) {
       let comments = urlEnds.split("_limit=")[1];
       comments = comments?.split("&")[0];
-      let timeout = sleepTime.perOneGetComment;
+      let timeout = getConfigValue(ConfigKeys.SLEEP_TIME_PER_ONE_GET_COMMENT);
       if (comments !== undefined) {
-        timeout = comments * getRandomInt(sleepTime.perOneGetCommentMin, sleepTime.perOneGetCommentMax);
+        timeout =
+          comments *
+          getRandomInt(
+            getConfigValue(ConfigKeys.SLEEP_TIME_PER_ONE_GET_COMMENT_MIN),
+            getConfigValue(ConfigKeys.SLEEP_TIME_PER_ONE_GET_COMMENT_MAX)
+          );
         logDebug(`[DELAY] Waiting for ${timeout} [ms] to load ${comments} comments`);
       }
       logDebug(`[DELAY] Waiting for ${timeout} [ms] for ${urlEnds}`);

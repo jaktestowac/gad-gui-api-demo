@@ -1,7 +1,8 @@
-const { currentLogLevel, logLevels } = require("../config");
+const { getConfigValue } = require("../config/configSingleton");
+const { ConfigKeys, LogLevels } = require("../config/enums");
 
 function logDebug(msg, obj) {
-  if (currentLogLevel < logLevels.DEBUG) return;
+  if (getConfigValue(ConfigKeys.CURRENT_LOG_LEVEL) < LogLevels.DEBUG) return;
 
   if (obj === undefined) {
     console.log(`[DEBUG] ${msg}`);
@@ -11,7 +12,7 @@ function logDebug(msg, obj) {
 }
 
 function logTrace(msg, obj) {
-  if (currentLogLevel < logLevels.TRACE) return;
+  if (getConfigValue(ConfigKeys.CURRENT_LOG_LEVEL) < LogLevels.TRACE) return;
 
   if (obj === undefined) {
     console.log(`[TRACE] ${msg}`);
@@ -21,7 +22,7 @@ function logTrace(msg, obj) {
 }
 
 function logError(msg, obj) {
-  if (currentLogLevel < logLevels.ERROR) return;
+  if (getConfigValue(ConfigKeys.CURRENT_LOG_LEVEL) < LogLevels.ERROR) return;
 
   if (obj === undefined) {
     console.log(`[ERROR] ${msg}`);
@@ -31,7 +32,7 @@ function logError(msg, obj) {
 }
 
 function logWarn(msg, obj) {
-  if (currentLogLevel < logLevels.WARNING) return;
+  if (getConfigValue(ConfigKeys.CURRENT_LOG_LEVEL) < LogLevels.WARNING) return;
 
   if (obj === undefined) {
     console.log(`[WARN] ${msg}`);

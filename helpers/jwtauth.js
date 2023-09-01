@@ -1,46 +1,42 @@
 const jwt = require("jsonwebtoken");
-const {
-  JWT_SECRET_KEY,
-  tokenExpiresIn,
-  superAdminTokenExpiresIn,
-  cookieMaxAge,
-  superAdminCookieMaxAge,
-  keepSignInCookieMaxAge,
-  keepSignInTokenExpiresIn,
-} = require("../config");
-const { addSecondsToDate } = require("./helpers");
 const { logDebug, logError } = require("./loggerApi");
 const { userDb } = require("./db.helpers");
+const { getConfigValue } = require("../config/configSingleton");
+const { ConfigKeys } = require("../config/enums");
 
 // Create a token from a payload
 function createToken(payload, isSuperAdmin = false, keepSignIn = false) {
   if (isSuperAdmin) {
-    return jwt.sign(payload, JWT_SECRET_KEY, { expiresIn: superAdminTokenExpiresIn });
+    return jwt.sign(payload, getConfigValue(ConfigKeys.JWT_SECRET_KEY), {
+      expiresIn: getConfigValue(ConfigKeys.SUPER_ADMIN_TOKEN_EXPIRES_IN),
+    });
   } else {
-    let expires = tokenExpiresIn;
+    let expires = getConfigValue(ConfigKeys.TOKEN_EXPIRES_IN);
     if (keepSignIn) {
-      expires = keepSignInTokenExpiresIn;
+      expires = getConfigValue(ConfigKeys.KEEP_SIGNIN_TOKEN_EXPIRES_IN);
     }
     logDebug("createToken:", { expires });
-    return jwt.sign(payload, JWT_SECRET_KEY, { expiresIn: expires });
+    return jwt.sign(payload, getConfigValue(ConfigKeys.JWT_SECRET_KEY), { expiresIn: expires });
   }
 }
 
 function prepareCookieMaxAge(isSuperAdmin = false, keepSignIn = false) {
   if (keepSignIn === "true" || keepSignIn === true) {
-    return keepSignInCookieMaxAge;
+    return getConfigValue(ConfigKeys.KEEP_SIGNIN_COOKIE_MAX_AGE);
   }
 
   if (isSuperAdmin) {
-    return superAdminCookieMaxAge;
+    return getConfigValue(ConfigKeys.SUPER_ADMIN_COOKIE_MAX_AGE);
   } else {
-    return cookieMaxAge;
+    return getConfigValue(ConfigKeys.COOKIE_MAX_AGE);
   }
 }
 
 // Verify the token
 function verifyToken(token) {
-  return jwt.verify(token, JWT_SECRET_KEY, (err, decode) => (decode !== undefined ? decode : err));
+  return jwt.verify(token, getConfigValue(ConfigKeys.JWT_SECRET_KEY), (err, decode) =>
+    decode !== undefined ? decode : err
+  );
 }
 
 // Check if the user exists in database

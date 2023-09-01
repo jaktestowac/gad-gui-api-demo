@@ -1,4 +1,5 @@
-const { dateRegexp, emailRegexp } = require("../config");
+const { getConfigValue } = require("../config/configSingleton");
+const { ConfigKeys } = require("../config/enums");
 const { formatErrorResponse } = require("./helpers");
 const { verifyToken, getJwtExpiryDate } = require("./jwtauth");
 const { logDebug, logError, logTrace, logWarn } = require("./loggerApi");
@@ -83,11 +84,11 @@ function are_all_fields_valid(
 }
 
 const validateEmail = (email) => {
-  return email.match(emailRegexp);
+  return email.match(getConfigValue(ConfigKeys.EMAIL_REGEXP));
 };
 
 const validateDate = (date) => {
-  return date.match(dateRegexp);
+  return date.match(getConfigValue(ConfigKeys.DATE_REGEXP));
 };
 
 const verifyAccessToken = (req, res, endopint = "endpoint", url = "") => {

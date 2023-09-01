@@ -1,7 +1,8 @@
 const seedrandom = require("seedrandom");
 const { logDebug } = require("./loggerApi");
 const pluginStatuses = ["on", "off", "obsolete"];
-const { characters, adminUserEmail, adminUserPass, superAdminUserEmail, superAdminUserPass } = require("../config");
+const { getConfigValue } = require("../config/configSingleton");
+const { ConfigKeys } = require("../config/enums");
 
 function formatErrorResponse(message, details = undefined, id = undefined) {
   const body = { error: { message: message, details: details }, id };
@@ -31,10 +32,10 @@ function getIdFromUrl(urlEnds) {
 
 function getRandomIdBasedOnDay(length = 32) {
   var result = "";
-  var charactersLength = characters.length;
+  var charactersLength = getConfigValue(ConfigKeys.CHARACTERS).length;
   const generator = seedrandom(formatYmd(new Date()));
   for (var i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(generator() * charactersLength));
+    result += getConfigValue(ConfigKeys.CHARACTERS).charAt(Math.floor(generator() * charactersLength));
   }
   return result;
 }
@@ -68,11 +69,14 @@ function sleep(ms) {
 }
 
 function isAdminUser(email, pass) {
-  return email === adminUserEmail && pass === adminUserPass;
+  return email === getConfigValue(ConfigKeys.ADMIN_USER_EMAIL) && pass === getConfigValue(ConfigKeys.ADMIN_USER_PASS);
 }
 
 function isSuperAdminUser(email, pass) {
-  return email === superAdminUserEmail && pass === superAdminUserPass;
+  return (
+    email === getConfigValue(ConfigKeys.SUPER_ADMIN_USER_EMAIL) &&
+    pass === getConfigValue(ConfigKeys.SUPER_ADMIN_USER_PASS)
+  );
 }
 
 function isAnyAdminUser(email, pass) {

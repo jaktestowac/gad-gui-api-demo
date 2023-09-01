@@ -2,14 +2,9 @@ const jsonServer = require("./json-server");
 const { validations } = require("./validators");
 const fs = require("fs");
 const { createToken, isAuthenticated, prepareCookieMaxAge } = require("./helpers/jwtauth");
-const {
-  defaultPort,
-  dbPath,
-  dbRestorePath,
-  dbEmptyRestorePath,
-  adminUserEmail,
-  uploadSizeLimitBytes,
-} = require("./config");
+const { getConfigValue } = require("./config/configSingleton");
+const { ConfigKeys } = require("./config/enums");
+
 const cookieparser = require("cookie-parser");
 const helmet = require("helmet");
 const express = require("express");
@@ -17,7 +12,7 @@ const ejs = require("ejs");
 const formidable = require("formidable");
 
 const server = jsonServer.create();
-const router = jsonServer.router(dbPath);
+const router = jsonServer.router(getConfigValue(ConfigKeys.DB_PATH));
 const path = require("path");
 const {
   pluginStatuses,
@@ -45,7 +40,7 @@ const {
 } = require("./helpers/response.helpers");
 const middlewares = jsonServer.defaults();
 
-const port = process.env.PORT || defaultPort;
+const port = process.env.PORT || getConfigValue(ConfigKeys.DEFAULT_PORT);
 
 const visitsPerArticle = getRandomVisitsForEntities(articlesDb());
 const visitsPerComment = getRandomVisitsForEntities(commentsDb());
@@ -120,12 +115,14 @@ const customRoutes = (req, res, next) => {
   try {
     const urlEnds = req.url.replace(/\/\/+/g, "/");
     if (req.method === "GET" && req.url.endsWith("/restoreDB")) {
-      const db = JSON.parse(fs.readFileSync(path.join(__dirname, dbRestorePath), "utf8"));
+      const db = JSON.parse(fs.readFileSync(path.join(__dirname, getConfigValue(ConfigKeys.DB_RESTORE_PATH)), "utf8"));
       router.db.setState(db);
       logDebug("Restore DB was successful");
       res.status(HTTP_CREATED).send({ message: "Database successfully restored" });
     } else if (req.method === "GET" && req.url.endsWith("/restoreEmptyDB")) {
-      const db = JSON.parse(fs.readFileSync(path.join(__dirname, dbEmptyRestorePath), "utf8"));
+      const db = JSON.parse(
+        fs.readFileSync(path.join(__dirname, getConfigValue(ConfigKeys.DB_EMPTY_RESTORE_PATH)), "utf8")
+      );
       router.db.setState(db);
       logDebug("Restore empty DB was successful");
       res.status(HTTP_CREATED).send({ message: "Empty Database successfully restored" });
@@ -364,9 +361,9 @@ server.post("/process_login", (req, res) => {
     });
   } else {
     foundUser = {
-      firstname: adminUserEmail,
-      username: adminUserEmail,
-      id: adminUserEmail,
+      firstname: getConfigValue(ConfigKeys.ADMIN_USER_EMAIL),
+      username: getConfigValue(ConfigKeys.ADMIN_USER_EMAIL),
+      id: getConfigValue(ConfigKeys.ADMIN_USER_EMAIL),
       avatar: ".\\data\\users\\face_admin.png",
     };
   }

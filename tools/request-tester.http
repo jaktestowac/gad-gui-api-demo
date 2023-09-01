@@ -37,3 +37,21 @@ content-type: application/json
         "avatar": ".\\data\\users\\face_1591133479.7144732.jpg"
     }
 ]
+
+### Config
+ 
+GET http://localhost:3000/api/config
+
+### Config
+ 
+GET http://localhost:3000/api/config/reset
+
+### Config
+POST http://localhost:3000/api/config
+content-type: application/json
+ 
+{
+    "tokenExpirationInMinutes": 1,
+    "cookieMaxAge": 60000,
+    "tokenExpiresIn": "1m"
+}

@@ -1,23 +1,24 @@
 const fs = require("fs");
-const { authUserDb } = require("../config");
+const { getConfigValue } = require("../config/configSingleton");
+const { ConfigKeys } = require("../config/enums");
 
 function fullDb() {
-  const db = JSON.parse(fs.readFileSync(authUserDb, "UTF-8"));
+  const db = JSON.parse(fs.readFileSync(getConfigValue(ConfigKeys.AUTH_USER_DB), "UTF-8"));
   return db;
 }
 
 function userDb() {
-  const db = JSON.parse(fs.readFileSync(authUserDb, "UTF-8"));
+  const db = JSON.parse(fs.readFileSync(getConfigValue(ConfigKeys.AUTH_USER_DB), "UTF-8"));
   return db["users"];
 }
 
 function articlesDb() {
-  const db = JSON.parse(fs.readFileSync(authUserDb, "UTF-8"));
+  const db = JSON.parse(fs.readFileSync(getConfigValue(ConfigKeys.AUTH_USER_DB), "UTF-8"));
   return db["articles"];
 }
 
 function commentsDb() {
-  const db = JSON.parse(fs.readFileSync(authUserDb, "UTF-8"));
+  const db = JSON.parse(fs.readFileSync(getConfigValue(ConfigKeys.AUTH_USER_DB), "UTF-8"));
   return db["comments"];
 }
 
