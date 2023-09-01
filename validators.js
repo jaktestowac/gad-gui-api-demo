@@ -37,6 +37,7 @@ const {
   HTTP_INTERNAL_SERVER_ERROR,
   HTTP_OK,
   HTTP_CONFLICT,
+  HTTP_BAD_REQUEST,
 } = require("./helpers/response.helpers");
 const { handleHangman } = require("./helpers/hangman-endpoint.helpers");
 const { handleQuiz } = require("./helpers/quiz-endpoint.helpers");
@@ -351,7 +352,7 @@ const validations = (req, res, next) => {
       next();
     }
   } catch (error) {
-    logError("Fatal error. Please contact administrator.", { error: JSON.stringify(error) });
+    logError("Fatal error. Please contact administrator.", { error: JSON.stringify(error), stack: error.stack });
     res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Fatal error. Please contact administrator."));
   }
 };

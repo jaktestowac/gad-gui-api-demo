@@ -1,0 +1,39 @@
+### Get /:
+ 
+GET http://localhost:3000/
+ 
+### Get all users:
+ 
+GET http://localhost:3000/api/users
+ 
+### Get one user:
+ 
+GET http://localhost:3000/api/users/1
+
+### Create user:
+POST http://localhost:3000/api/users
+content-type: application/json
+ 
+{
+    "id": 1,
+    "email": "****",
+    "firstname": "Moses",
+    "lastname": "****",
+    "password": "****",
+    "avatar": ".\\data\\users\\face_1591133479.7144732.jpg"
+}
+
+### 
+PUT http://localhost:3000/api/users
+content-type: application/json
+ 
+[
+    {
+        "id": 1,
+        "email": "****",
+        "firstname": "Moses",
+        "lastname": "****",
+        "password": "****",
+        "avatar": ".\\data\\users\\face_1591133479.7144732.jpg"
+    }
+]
