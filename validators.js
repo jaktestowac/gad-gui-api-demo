@@ -352,7 +352,10 @@ const validations = (req, res, next) => {
       next();
     }
   } catch (error) {
-    logError("Fatal error. Please contact administrator.", { error: JSON.stringify(error), stack: error.stack });
+    logError("Fatal error. Please contact administrator.", {
+      error,
+      stack: error.stack,
+    });
     res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Fatal error. Please contact administrator."));
   }
 };
