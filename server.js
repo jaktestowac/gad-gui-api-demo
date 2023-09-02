@@ -56,6 +56,7 @@ const customRoutesAfterAuth = (req, res, next) => {
       let userId = req.headers["userid"];
 
       form.on("progress", function (bytesReceived, bytesExpected) {
+        const uploadSizeLimitBytes = getConfigValue(ConfigKeys.UPLOAD_SIZE_LIMIT_BYTES);
         logDebug("formidable data received:", { bytesReceived, bytesExpected, uploadSizeLimitBytes });
         if (bytesReceived > uploadSizeLimitBytes) {
           throw new Error(`File too big. Actual: ${bytesExpected} bytes, Max: ${uploadSizeLimitBytes} bytes`);
@@ -106,7 +107,10 @@ const customRoutesAfterAuth = (req, res, next) => {
       next();
     }
   } catch (error) {
-    logError("Fatal error. Please contact administrator.", { error });
+    logError("Fatal error. Please contact administrator.", {
+      error,
+      stack: error.stack,
+    });
     res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Fatal error. Please contact administrator."));
   }
 };
@@ -191,7 +195,10 @@ const customRoutes = (req, res, next) => {
       next();
     }
   } catch (error) {
-    logError("Fatal error. Please contact administrator.", { error });
+    logError("Fatal error. Please contact administrator.", {
+      error,
+      stack: error.stack,
+    });
     res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Fatal error. Please contact administrator."));
   }
 };

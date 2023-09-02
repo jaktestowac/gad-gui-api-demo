@@ -51,7 +51,10 @@ function getJwtExpiryDate(seconds) {
     startDate.setUTCSeconds(seconds);
     return startDate;
   } catch (error) {
-    logError("getJwtExpiryDate: error:", error);
+    logError("getJwtExpiryDate: error:", {
+      error,
+      stack: error.stack,
+    });
     return "[error]";
   }
 }
