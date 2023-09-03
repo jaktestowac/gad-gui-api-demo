@@ -3,12 +3,14 @@ const { logDebug } = require("./loggerApi");
 const pluginStatuses = ["on", "off", "obsolete"];
 const { getConfigValue } = require("../config/configSingleton");
 const { ConfigKeys } = require("../config/enums");
+const { formatYmd } = require("./datetime.helpers");
 
 function formatErrorResponse(message, details = undefined, id = undefined) {
   const body = { error: { message: message, details: details }, id };
   logDebug("formatErrorResponse:", body);
   return body;
 }
+
 function formatInvalidTokenErrorResponse() {
   return formatErrorResponse("Access token for given user is invalid!");
 }
@@ -46,15 +48,6 @@ function getRandomIntBasedOnDay() {
 
   return randomValue.toString().replace(".", "");
 }
-
-function tomorrow() {
-  const today = new Date();
-  const tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  return formatYmd(tomorrow);
-}
-
-const formatYmd = (date) => date.toISOString().slice(0, 10);
 
 const getRandomInt = (min, max) => {
   min = Math.ceil(min);
@@ -247,11 +240,6 @@ function parsePublishStats(dbDataJson, type = "comments") {
   };
 }
 
-function addSecondsToDate(date, seconds) {
-  date.setSeconds(date.getSeconds() + seconds);
-  return date;
-}
-
 function shuffleArray(array) {
   const shuffledArray = [...array];
   for (let i = shuffledArray.length - 1; i > 0; i--) {
@@ -262,11 +250,8 @@ function shuffleArray(array) {
 }
 
 module.exports = {
-  addSecondsToDate,
   getRandomIntBasedOnDay,
   getRandomIdBasedOnDay,
-  formatYmd,
-  tomorrow,
   pluginStatuses,
   formatErrorResponse,
   formatInvalidFieldErrorResponse,

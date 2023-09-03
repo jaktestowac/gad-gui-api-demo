@@ -3,6 +3,9 @@ const { LogLevels } = require("./enums");
 const config = {
   adminUserEmail: "admin",
   adminUserPass: "admin",
+  superAdminUserEmail: "super",
+  superAdminUserPass: "a",
+
   bearerToken: "Bearer SecretToken",
   basicAuth: "Basic dXNlcjpwYXNz", // user:pass
   characters: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
@@ -30,12 +33,11 @@ const config = {
   quizDataPath: "./db/quiz-questions.json",
   hangmanDataPath: "./db/hangman-words.json",
   defaultPort: 3000,
-  superAdminUserEmail: "super",
-  superAdminUserPass: "a",
   dateRegexp: /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/, // e.g. 2016-01-19T15:21:32Z
   emailRegexp: /^\S+@\S+\.\S+$/,
   uploadSizeLimitBytes: 1000,
   currentLogLevel: LogLevels.DEBUG,
+  publicLogsEnabled: false,
   sleepTimePerOneGetComment: 30,
   sleepTimePerOneGetCommentMin: 25,
   sleepTimePerOneGetCommentMax: 50,

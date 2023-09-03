@@ -38,6 +38,7 @@ const ConfigKeys = {
   SLEEP_TIME_PER_ONE_GET_COMMENT: "sleepTimePerOneGetComment",
   SLEEP_TIME_PER_ONE_GET_COMMENT_MIN: "sleepTimePerOneGetCommentMin",
   SLEEP_TIME_PER_ONE_GET_COMMENT_MAX: "sleepTimePerOneGetCommentMax",
+  PUBLIC_LOGS_ENABLED: "publicLogsEnabled",
 };
 
 module.exports = {

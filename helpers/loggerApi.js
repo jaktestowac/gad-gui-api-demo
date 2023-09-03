@@ -1,13 +1,33 @@
 const { getConfigValue } = require("../config/configSingleton");
 const { ConfigKeys, LogLevels } = require("../config/enums");
+const { getCurrentDateTime } = require("./datetime.helpers");
+const { LimitedList } = require("./limitedList");
+
+const logList = new LimitedList(100);
+
+function getLogs() {
+  return logList;
+}
+
+function logMsg(level, message) {
+  const msg = `${level} ${message}`;
+  console.log(msg);
+  logList.addItem(`[${getCurrentDateTime()}]${msg}`);
+}
+
+function logMsgAndData(level, message, obj) {
+  const msg = `${level} ${message} - ${JSON.stringify(obj)}`;
+  console.log(msg);
+  logList.addItem(`[${getCurrentDateTime()}]${msg}`);
+}
 
 function logDebug(msg, obj) {
   if (getConfigValue(ConfigKeys.CURRENT_LOG_LEVEL) < LogLevels.DEBUG) return;
 
   if (obj === undefined) {
-    console.log(`[DEBUG] ${msg}`);
+    logMsg("[DEBUG]", msg);
   } else {
-    console.log(`[DEBUG] ${msg}`, JSON.stringify(obj));
+    logMsgAndData("[DEBUG]", msg, obj);
   }
 }
 
@@ -15,9 +35,9 @@ function logTrace(msg, obj) {
   if (getConfigValue(ConfigKeys.CURRENT_LOG_LEVEL) < LogLevels.TRACE) return;
 
   if (obj === undefined) {
-    console.log(`[TRACE] ${msg}`);
+    logMsg("[TRACE]", msg);
   } else {
-    console.log(`[TRACE] ${msg}`, JSON.stringify(obj));
+    logMsgAndData("[TRACE]", msg, obj);
   }
 }
 
@@ -25,9 +45,9 @@ function logError(msg, obj) {
   if (getConfigValue(ConfigKeys.CURRENT_LOG_LEVEL) < LogLevels.ERROR) return;
 
   if (obj === undefined) {
-    console.log(`[ERROR] ${msg}`);
+    logMsg("[ERROR]", msg);
   } else {
-    console.log(`[ERROR] ${msg}`, JSON.stringify(obj));
+    logMsgAndData("[ERROR]", msg, obj);
   }
 }
 
@@ -35,9 +55,9 @@ function logWarn(msg, obj) {
   if (getConfigValue(ConfigKeys.CURRENT_LOG_LEVEL) < LogLevels.WARNING) return;
 
   if (obj === undefined) {
-    console.log(`[WARN] ${msg}`);
+    logMsg("[WARN]", msg);
   } else {
-    console.log(`[WARN] ${msg}`, JSON.stringify(obj));
+    logMsgAndData("[WARN]", msg, obj);
   }
 }
 
@@ -46,4 +66,5 @@ module.exports = {
   logError,
   logWarn,
   logTrace,
+  getLogs,
 };

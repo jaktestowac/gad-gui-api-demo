@@ -10,8 +10,8 @@ const {
   formatMissingFieldErrorResponse,
   formatInvalidTokenErrorResponse,
 } = require("./helpers/helpers");
-const { logDebug, logError, logTrace } = require("./helpers/loggerApi");
-const { getConfigValue, configInstance, resetConfig, setConfigValue } = require("./config/configSingleton");
+const { logDebug, logError, logTrace, getLogs } = require("./helpers/loggerApi");
+const { getConfigValue } = require("./config/configSingleton");
 const { ConfigKeys } = require("./config/enums");
 
 const {
@@ -43,6 +43,7 @@ const {
 } = require("./helpers/response.helpers");
 const { handleHangman } = require("./helpers/hangman-endpoint.helpers");
 const { handleQuiz } = require("./helpers/quiz-endpoint.helpers");
+const { handleConfig } = require("./helpers/config-endpoint.helpers");
 
 const validations = (req, res, next) => {
   let isAdmin = false;
@@ -104,44 +105,23 @@ const validations = (req, res, next) => {
       logDebug("Random article:", article);
       res.status(HTTP_OK).json(article);
       return;
-    } else if (req.method === "GET" && urlEnds.endsWith("api/config")) {
-      res.status(HTTP_OK).json(configInstance);
-      return;
-    } else if (req.method === "POST" && urlEnds.endsWith("api/config")) {
-      const invalidKeys = [];
-
-      // check if key is correct:
-      for (const key in req.body) {
-        const currentValue = getConfigValue(key);
-        if (currentValue === undefined) {
-          invalidKeys.push(key);
-        }
-      }
-
-      // if all keys are correct - set values; otherwise - return error
-      if (invalidKeys.length > 0) {
-        res.status(HTTP_UNPROCESSABLE_ENTITY).json({ invalidKeys });
+    } else if (req.method === "GET" && urlEnds.includes("api/logs")) {
+      if (getConfigValue(ConfigKeys.PUBLIC_LOGS_ENABLED)) {
+        res.status(HTTP_OK).json({ logs: getLogs() });
       } else {
-        for (const key in req.body) {
-          const currentValue = getConfigValue(key);
-          logDebug(`Setting "${key}": from "${currentValue}" to "${req.body[key]}"`);
-          setConfigValue(key, req.body[key]);
-        }
         res.status(HTTP_OK).json({});
       }
-
-      return;
-    } else if (req.method === "GET" && urlEnds.includes("api/config/reset")) {
-      resetConfig();
-      res.status(HTTP_OK).json({});
       return;
     }
 
+    if (req.url.includes("/api/config")) {
+      res = handleConfig(req, res);
+      return;
+    }
     if (req.url.includes("/api/hangman")) {
       res = handleHangman(req, res);
       return;
     }
-
     if (req.url.includes("/api/quiz")) {
       res = handleQuiz(req, res);
       return;

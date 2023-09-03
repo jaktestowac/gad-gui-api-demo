@@ -96,14 +96,13 @@ const verifyAccessToken = (req, res, endopint = "endpoint", url = "") => {
   let access_token = undefined ? "" : authorization?.split(" ")[1];
 
   let verifyTokenResult = verifyToken(access_token);
-  logTrace(`[${endopint}] verifyAccessToken:`, { access_token, verifyTokenResult, authorization });
+  logTrace(`[${endopint}] verifyAccessToken:`, { access_token, verifyTokenResult, authorization, url });
 
   // when checking admin we do not send response
   if (endopint !== "isAdmin" && verifyTokenResult instanceof Error) {
     res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
     return false;
   }
-  logTrace(`[${endopint}] verifyTokenResult:`, { verifyTokenResult, url });
 
   if (verifyTokenResult?.exp !== undefined) {
     const current_time = Date.now() / 1000;
