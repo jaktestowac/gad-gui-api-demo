@@ -1,4 +1,4 @@
-const { getConfigValue } = require("../config/configSingleton");
+const { getConfigValue } = require("../config/configManager");
 const { ConfigKeys } = require("../config/enums");
 const { formatErrorResponse } = require("./helpers");
 const { verifyToken, getJwtExpiryDate } = require("./jwtauth");

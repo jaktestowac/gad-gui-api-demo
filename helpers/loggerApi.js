@@ -1,4 +1,4 @@
-const { getConfigValue } = require("../config/configSingleton");
+const { getConfigValue } = require("../config/configManager");
 const { ConfigKeys, LogLevels } = require("../config/enums");
 const { getCurrentDateTime } = require("./datetime.helpers");
 const { LimitedList } = require("./limitedList");

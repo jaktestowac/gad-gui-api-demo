@@ -1,11 +1,13 @@
 const { config } = require("./config");
-const { ConfigKeys } = require("./enums");
+const { bugConfig } = require("./bugConfig");
+const { ConfigKeys, BugConfigKeys } = require("./enums");
 
-const ConfigSingleton = (function () {
+const ConfigManager = (function () {
   let instance;
 
   function createInstance() {
     const configCopy = { ...config };
+    const bugConfigCopy = { ...bugConfig };
 
     function getConfigValue(key) {
       if (configCopy[key] === undefined) {
@@ -14,12 +16,29 @@ const ConfigSingleton = (function () {
       return configCopy[key];
     }
 
+    function getBugConfigValue(key) {
+      if (bugConfigCopy[key] === undefined) {
+        console.log(`> BugConfig: Warning! Value of "${key}" is "${bugConfigCopy[key]}"`);
+      }
+      return bugConfigCopy[key];
+    }
+
     function setConfigValue(key, value) {
       configCopy[key] = value;
       return configCopy[key];
     }
 
+    function setBugConfigValue(key, value) {
+      bugConfigCopy[key] = value;
+      return bugConfigCopy[key];
+    }
+
     function resetConfig() {
+      reset(configCopy, config);
+      reset(bugConfigCopy, bugConfig);
+    }
+
+    function reset(configCopy, config) {
       for (const key in config) {
         if (configCopy[key] !== config[key]) {
           console.log(`> Config: Reverting: "${key}" - from "${configCopy[key]}" to "${config[key]}"`);
@@ -28,11 +47,16 @@ const ConfigSingleton = (function () {
       }
     }
 
-    function selfCheck() {
-      console.log("> Config: Running Self Check...");
+    function fullSelfCheck() {
+      selfCheck(ConfigKeys, configCopy, "Config");
+      selfCheck(BugConfigKeys, bugConfigCopy, "BugConfig");
+    }
+
+    function selfCheck(configKeys, configCopy, msg) {
+      console.log(`> ${msg}: Running Self Check...`);
       const emptyList = [];
-      for (const key in ConfigKeys) {
-        value = configCopy[ConfigKeys[key]];
+      for (const key in configKeys) {
+        let value = configCopy[configKeys[key]];
 
         if (value === undefined) {
           emptyList.push(key);
@@ -43,7 +67,7 @@ const ConfigSingleton = (function () {
       }
 
       const keys = Object.keys(configCopy);
-      const enumValues = Object.values(ConfigKeys);
+      const enumValues = Object.values(configKeys);
       for (const key of keys) {
         if (!enumValues.includes(key)) {
           emptyList.push(key);
@@ -52,16 +76,18 @@ const ConfigSingleton = (function () {
       if (emptyList.length > 0) {
         throw new Error(`INVALID KEYS - there are values in config but not in enums:\r\n${emptyList}\r\n`);
       }
-      console.log("> Config: Self Check Done!");
+      console.log(`> ${msg}: Self Check Done...`);
     }
 
     return {
+      configCopy,
+      bugConfigCopy,
       getConfigValue,
       setConfigValue,
       resetConfig,
-      ConfigKeys,
-      selfCheck,
-      configCopy,
+      getBugConfigValue,
+      setBugConfigValue,
+      fullSelfCheck,
     };
   }
 
@@ -75,12 +101,14 @@ const ConfigSingleton = (function () {
   };
 })();
 
-const configInstance = ConfigSingleton.getInstance();
-configInstance.selfCheck();
+const configInstance = ConfigManager.getInstance();
+configInstance.fullSelfCheck();
 
 module.exports = {
   configInstance,
   getConfigValue: configInstance.getConfigValue,
   setConfigValue: configInstance.setConfigValue,
   resetConfig: configInstance.resetConfig,
+  getBugConfigValue: configInstance.getBugConfigValue,
+  setBugConfigValue: configInstance.setBugConfigValue,
 };

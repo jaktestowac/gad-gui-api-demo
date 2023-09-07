@@ -11,7 +11,7 @@ const {
   formatInvalidTokenErrorResponse,
 } = require("./helpers/helpers");
 const { logDebug, logError, logTrace, getLogs } = require("./helpers/loggerApi");
-const { getConfigValue } = require("./config/configSingleton");
+const { getConfigValue } = require("./config/configManager");
 const { ConfigKeys } = require("./config/enums");
 
 const {

@@ -70,5 +70,13 @@ content-type: application/json
     "publicLogsEnabled": true
 }
 
+### Config - change bugs
+POST http://localhost:3000/api/config/bugs
+content-type: application/json
+ 
+{
+    "bug001": true
+}
+
 ### Get logs
 GET http://localhost:3000/api/logs

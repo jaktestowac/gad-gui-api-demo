@@ -41,7 +41,12 @@ const ConfigKeys = {
   PUBLIC_LOGS_ENABLED: "publicLogsEnabled",
 };
 
+const BugConfigKeys = {
+  BUG001: "bug001",
+};
+
 module.exports = {
   LogLevels,
   ConfigKeys,
+  BugConfigKeys,
 };

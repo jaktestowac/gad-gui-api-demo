@@ -1,6 +1,6 @@
 const fs = require("fs");
 const { shuffleArray } = require("./helpers");
-const { getConfigValue } = require("../config/configSingleton");
+const { getConfigValue } = require("../config/configManager");
 const { ConfigKeys } = require("../config/enums");
 
 function getWords() {

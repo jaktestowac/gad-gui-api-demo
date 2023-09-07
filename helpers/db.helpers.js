@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { getConfigValue } = require("../config/configSingleton");
+const { getConfigValue } = require("../config/configManager");
 const { ConfigKeys } = require("../config/enums");
 
 function fullDb() {

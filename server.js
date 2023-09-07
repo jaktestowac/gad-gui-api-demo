@@ -2,7 +2,7 @@ const jsonServer = require("./json-server");
 const { validations } = require("./validators");
 const fs = require("fs");
 const { createToken, isAuthenticated, prepareCookieMaxAge } = require("./helpers/jwtauth");
-const { getConfigValue } = require("./config/configSingleton");
+const { getConfigValue } = require("./config/configManager");
 const { ConfigKeys } = require("./config/enums");
 
 const cookieparser = require("cookie-parser");

@@ -1,7 +1,7 @@
 const seedrandom = require("seedrandom");
 const { logDebug } = require("./loggerApi");
 const pluginStatuses = ["on", "off", "obsolete"];
-const { getConfigValue } = require("../config/configSingleton");
+const { getConfigValue } = require("../config/configManager");
 const { ConfigKeys } = require("../config/enums");
 const { formatYmd } = require("./datetime.helpers");
 
