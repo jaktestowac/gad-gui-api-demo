@@ -1,0 +1,42 @@
+### Config - get all
+GET http://localhost:3000/api/config
+
+### Config Reset
+GET http://localhost:3000/api/config/reset
+
+### Config - change log level
+POST http://localhost:3000/api/config
+content-type: application/json
+ 
+{
+    "currentLogLevel": 5
+}
+
+### Config - change token and cookies
+POST http://localhost:3000/api/config
+content-type: application/json
+ 
+{
+    "tokenExpirationInMinutes": 1,
+    "cookieMaxAge": 60000,
+    "tokenExpiresIn": "1m"
+}
+
+### Config - change publicLogsEnabled
+POST http://localhost:3000/api/config
+content-type: application/json
+ 
+{
+    "publicLogsEnabled": true
+}
+
+### Config - change bugs
+POST http://localhost:3000/api/config/bugs
+content-type: application/json
+ 
+{
+    "bug001": true
+}
+
+### Get logs
+GET http://localhost:3000/api/logs

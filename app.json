@@ -1,8 +1,8 @@
 {
-  "name": "REST API jaktestowac.pl Demo",
-  "version": "1.0.0",
-  "description": "Simple json-base database to deploy to Heroku",
-  "repository": "https://github.com/jaktestowac/rest-api-demo",
-  "keywords": ["json-server, heroku, node, REST API"],
+  "name": "GAD",
+  "version": "2.1.3",
+  "description": "Simple application prepared and developed only for testing purposes",
+  "repository": "https://github.com/jaktestowac/gad-gui-api-demo",
+  "keywords": ["json-server, node, REST API"],
   "author": "jaktestowac.pl"
 }

@@ -14,13 +14,6 @@ const all_fields_comment = ["id", "user_id", "article_id", "body", "date"];
 const all_fields_plugin = ["id", "name", "status", "version"];
 const mandatory_non_empty_fields_plugin = ["name", "status", "version"];
 
-function is_plugin_status_valid(body) {
-  if (pluginStatuses.findIndex((status) => status === body["status"]) === -1) {
-    return false;
-  }
-  return true;
-}
-
 function are_mandatory_fields_valid(body, mandatory_non_empty_fields) {
   for (let index = 0; index < mandatory_non_empty_fields.length; index++) {
     const element = mandatory_non_empty_fields[index];
@@ -91,15 +84,15 @@ const validateDate = (date) => {
   return date.match(getConfigValue(ConfigKeys.DATE_REGEXP));
 };
 
-const verifyAccessToken = (req, res, endopint = "endpoint", url = "") => {
+const verifyAccessToken = (req, res, endpoint = "endpoint", url = "") => {
   const authorization = req.headers["authorization"];
-  let access_token = undefined ? "" : authorization?.split(" ")[1];
+  let access_token = authorization?.split(" ")[1];
 
   let verifyTokenResult = verifyToken(access_token);
-  logTrace(`[${endopint}] verifyAccessToken:`, { access_token, verifyTokenResult, authorization, url });
+  logTrace(`[${endpoint}] verifyAccessToken:`, { access_token, verifyTokenResult, authorization, url });
 
   // when checking admin we do not send response
-  if (endopint !== "isAdmin" && verifyTokenResult instanceof Error) {
+  if (endpoint !== "isAdmin" && verifyTokenResult instanceof Error) {
     res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
     return false;
   }
@@ -107,14 +100,14 @@ const verifyAccessToken = (req, res, endopint = "endpoint", url = "") => {
   if (verifyTokenResult?.exp !== undefined) {
     const current_time = Date.now() / 1000;
     const diff = Math.round(verifyTokenResult.exp - current_time);
-    logTrace(`[${endopint}] getJwtExpiryDate:`, {
+    logTrace(`[${endpoint}] getJwtExpiryDate:`, {
       current_time: current_time,
       exp: verifyTokenResult.exp,
       diff,
       expiryDate: getJwtExpiryDate(diff),
     });
     if (current_time > verifyTokenResult?.exp) {
-      logWarn(`[${endopint}] getJwt Expired`);
+      logWarn(`[${endpoint}] getJwt Expired`);
     }
   }
 
@@ -126,7 +119,6 @@ module.exports = {
   validateEmail,
   are_all_fields_valid,
   are_mandatory_fields_valid,
-  is_plugin_status_valid,
   mandatory_non_empty_fields_user,
   all_fields_user,
   all_fields_article,

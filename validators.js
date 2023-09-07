@@ -26,7 +26,7 @@ const {
   validateEmail,
   verifyAccessToken,
 } = require("./helpers/validation.helpers");
-const { userDb, articlesDb, fullDb } = require("./helpers/db.helpers");
+const { userDb, articlesDb, fullDb, randomDbEntry } = require("./helpers/db.helpers");
 const {
   searchForArticle,
   searchForUserWithToken,

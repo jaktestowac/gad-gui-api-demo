@@ -71,7 +71,7 @@ To see website:
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/jaktestowac/gad-gui-api-demo)
 
 - name your app
-- hit `Applay`
+- hit `Apply`
 - wait a while and click link to project `GUI API Demo`
 - click link to open app (under porject name and repository)
 - enjoy 750 free hours of service per month

@@ -167,7 +167,7 @@ const handlePartialUpdate = (ev) => {
 
 const handleCreate = () => {
   const container = document.querySelector(".add-new-panel");
-  data = {
+  let data = {
     firstname: container.querySelector(".firstname").value,
     lastname: container.querySelector(".lastname").value,
     email: container.querySelector(".email").value,
@@ -197,31 +197,31 @@ const actionAfterDelete = () => {
 const attachEventHandlers = (id = "") => {
   if (!isAuthorized(id)) {
     // TODO: remove icons and methods if user is not logged
-    for (elem of document.querySelectorAll(".editName")) {
+    for (let elem of document.querySelectorAll(".editName")) {
       elem.disabled = true;
       elem.style.visibility = "hidden";
     }
-    for (elem of document.querySelectorAll(".delete")) {
+    for (let elem of document.querySelectorAll(".delete")) {
       elem.disabled = true;
       elem.style.visibility = "hidden";
     }
-    for (elem of document.querySelectorAll(".edit")) {
+    for (let elem of document.querySelectorAll(".edit")) {
       elem.disabled = true;
       elem.style.visibility = "hidden";
     }
-    for (elem of document.querySelectorAll(".emailEdit")) {
+    for (let elem of document.querySelectorAll(".emailEdit")) {
       elem.disabled = true;
       elem.style.visibility = "hidden";
     }
     return;
   }
-  for (elem of document.querySelectorAll(".delete")) {
+  for (let elem of document.querySelectorAll(".delete")) {
     elem.onclick = handleDelete;
   }
-  for (elem of document.querySelectorAll(".edit")) {
+  for (let elem of document.querySelectorAll(".edit")) {
     elem.onclick = showEditForm;
   }
-  for (elem of document.querySelectorAll(".emailEdit")) {
+  for (let elem of document.querySelectorAll(".emailEdit")) {
     elem.onclick = showEmailEditForm;
   }
   //    document.querySelector('#add-new').onclick = () => {
@@ -231,7 +231,6 @@ const attachEventHandlers = (id = "") => {
   //        container.classList.add('active');
   //    };
   document.querySelector(".close").onclick = () => {
-    console.log(1213);
     document.querySelector(".add-new-panel").classList.remove("active");
     removeConfirmExitPage();
   };
@@ -409,7 +408,7 @@ const getItemHTML = (item) => {
 };
 
 const displayItem = (item, container) => {
-  itemHTML = getItemHTML(item);
+  let itemHTML = getItemHTML(item);
   container.innerHTML += `
         <div class="card-wrapper">${itemHTML}</div>
     `;

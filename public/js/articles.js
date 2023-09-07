@@ -124,7 +124,7 @@ const attachEventHandlers = (user_id) => {
     container.querySelector(".body").value = "";
     container.querySelector(".title").value = "";
     let index = 0;
-    for (element of picList) {
+    for (let element of picList) {
       let opt = document.createElement("option");
       opt.value = element;
       opt.innerHTML = element; // whatever property it has
@@ -133,7 +133,7 @@ const attachEventHandlers = (user_id) => {
       index++;
     }
     index = 0;
-    for (element of users) {
+    for (let element of users) {
       if (isAuthorized(element.id)) {
         let opt = document.createElement("option");
         opt.value = element.id;
@@ -225,7 +225,7 @@ const handleCreate = () => {
     today.getHours()
   )}:${pad(today.getMinutes())}:${pad(today.getSeconds())}Z`;
 
-  data = {
+  let data = {
     title: container.querySelector(".title").value,
     body: container.querySelector(".body").value,
     user_id: container.querySelector(".user").value,
@@ -250,13 +250,7 @@ const issueArticleRequest = (data, responseHandler) => {
   }).then((response) => showResponseAndRedirect(response));
   // .then(responseHandler);
 };
-const attachFormEventHandlers = (item, container) => {
-  container.querySelector(".update").onclick = handleUpdate;
-  container.querySelector(".cancel").onclick = () => {
-    container.innerHTML = getItemHTML(item);
-    attachEventHandlers();
-  };
-};
+
 const getImagesHTML = (image) => {
   let htmlData = "";
   if (image !== undefined) {
@@ -298,7 +292,7 @@ function presentPicture() {
 const displayPostsData = (data) => {
   const container = document.querySelector("#container");
   container.innerHTML = "";
-  for (item of data) {
+  for (let item of data) {
     displayItem(item, container);
   }
   if (data.length === 0) {
@@ -309,7 +303,7 @@ const displayPostsData = (data) => {
 };
 
 const displayItem = (item, container) => {
-  itemHTML = getItemHTML(item);
+  let itemHTML = getItemHTML(item);
   container.innerHTML += `
         <div class="card-wrapper" >${itemHTML}</div>
     `;

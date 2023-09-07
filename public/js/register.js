@@ -78,7 +78,7 @@ async function getPictureList() {
     return 0.5 - Math.random();
   });
   let index = 0;
-  for (element of picList) {
+  for (let element of picList) {
     var opt = document.createElement("option");
     opt.value = element;
     opt.innerHTML = element; // whatever property it has

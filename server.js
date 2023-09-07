@@ -8,7 +8,6 @@ const { ConfigKeys } = require("./config/enums");
 const cookieparser = require("cookie-parser");
 const helmet = require("helmet");
 const express = require("express");
-const ejs = require("ejs");
 const formidable = require("formidable");
 
 const server = jsonServer.create();
@@ -23,7 +22,6 @@ const {
 } = require("./helpers/helpers");
 const { logDebug, logError } = require("./helpers/loggerApi");
 const { getRandomVisitsForEntities } = require("./helpers/randomDataGenerator");
-const { hostname } = require("os");
 const {
   are_all_fields_valid,
   mandatory_non_empty_fields_article,
@@ -51,7 +49,7 @@ const customRoutesAfterAuth = (req, res, next) => {
     if (req.method === "POST" && req.url.endsWith("/api/articles/upload")) {
       const form = new formidable.IncomingForm();
       form.multiples = true;
-      uploadDir = path.join(__dirname, "uploads");
+      let uploadDir = path.join(__dirname, "uploads");
       form.uploadDir = uploadDir;
       let userId = req.headers["userid"];
 
@@ -205,14 +203,6 @@ const customRoutes = (req, res, next) => {
 
 server.use(middlewares);
 server.use(jsonServer.bodyParser);
-
-// Replace content of two file with another (i.e. db restoration)
-function replaceContents(file, replacement, cb) {
-  fs.readFile(replacement, (err, contents) => {
-    if (err) return cb(err);
-    fs.writeFile(file, contents, cb);
-  });
-}
 
 // // Register New User
 // server.post("/api/register", (req, res) => {
@@ -477,7 +467,7 @@ router.render = function (req, res) {
 var serverApp = server.listen(port, () => {
   logDebug(`Test Custom Data API listening on ${port}!`);
   var address = serverApp.address().address;
-  address = address == "::" ? "localhost" : host;
+  address = address == "::" ? "localhost" : "localhost";
   logDebug(`Visit it on -> http://${address}:${port}`);
   logDebug(`🎉 Your custom REST API service is up and running!!!`);
 });

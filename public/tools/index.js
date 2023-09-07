@@ -5,7 +5,7 @@ fetch("/api/db")
   .then((data) => {
     const urls = [];
     let count = 0;
-    for (endpoint in data) {
+    for (let endpoint in data) {
       count += data[endpoint].length;
       urls.push(`<a href="/api/${endpoint}">/${endpoint}</a><sup>${data[endpoint].length}x</sup>`);
     }

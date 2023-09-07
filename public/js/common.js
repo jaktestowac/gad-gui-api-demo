@@ -42,7 +42,7 @@ const addMainMenuAndFooter = () => {
   let mainNavMenu = document.querySelector(".main-nav-menu");
   if (document.querySelector("#menu-main-gui-login")) {
     mainNavMenu.innerHTML = hamburgerMenu() + mainNavMenu.innerHTML;
-    path = "..";
+    let path = "..";
     menuContainerLeft = document.querySelector("#menu-main-gui-login");
     menuContainerLeft.innerHTML = logoGAD(path) + mainGUIMenuHTML(path);
     if (email) menuContainerLeft.innerHTML += mainGUIMenuHTMLLogged(path);
@@ -57,7 +57,7 @@ const addMainMenuAndFooter = () => {
   }
   if (document.querySelector("#menu-main-api")) {
     mainNavMenu.innerHTML = hamburgerMenu() + mainNavMenu.innerHTML;
-    path = "..";
+    let path = "..";
     menuContainerLeft = document.querySelector("#menu-main-api");
     menuContainerLeft.innerHTML = logoGAD(path) + mainAPIMenuHTML;
     menuContainerLeft.insertAdjacentHTML("afterend", rightMenu(path));
@@ -72,11 +72,12 @@ const addMainMenuAndFooter = () => {
 
   const hamburger = document.querySelector(".hamburger");
   const navMenu = document.querySelector(".nav-menu");
+  const menuMainApi = document.querySelector("#menu-main-api");
 
-  avatar = getCookieAvatar();
+  let avatar = getCookieAvatar();
 
   if (avatar !== undefined && avatar !== null && avatar.length > 0) {
-    if ("#menu-main-api") {
+    if (menuMainApi !== undefined) {
       const avatarElement = document.querySelector("#avatar");
       if (avatarElement) avatarElement.src = `./../${avatar}`;
     } else {

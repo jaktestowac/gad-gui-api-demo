@@ -3,7 +3,6 @@ const usersEndpoint = "../../api/users";
 const commentsEndpoint = "../../api/comments";
 const randomArticleEndpoint = "../../api/random/article";
 let user_name = "Unknown";
-let users = [];
 let article_id = undefined;
 let articleData;
 let articleDataForExport;
@@ -168,7 +167,7 @@ const getCommentsHTML = (comments) => {
         <span>No Comments</span><br>
     </div>`;
   } else {
-    for (item of comments) {
+    for (let item of comments) {
       htmlData += getCommentHTML(item);
       htmlData += `<hr><br>`;
     }
@@ -188,7 +187,7 @@ const getCommentHTML = (comments) => {
   }">${comments.user_name}</a></span><br>
         <label>date:</label><span>${comments.date.replace("T", " ").replace("Z", "")}</span><br>
         <label>comment:</label><span>${comments.body}</span><br>
-        <span><a href="comment.html?id=${item.id}" id="gotoComment${item.id}">See More...</a></span><br>
+        <span><a href="comment.html?id=${comments.id}" id="gotoComment${comments.id}">See More...</a></span><br>
     </div>`;
 };
 
@@ -212,11 +211,11 @@ const displayArticlesData = (data) => {
 };
 
 const displayComments = (item, container) => {
-  itemHTML = getCommentsHTML(item.comments);
+  let itemHTML = getCommentsHTML(item.comments);
   container.innerHTML += `<div align="center" ><div class="card-wrapper-wide" align="left">${itemHTML}</div></div><br>`;
 };
 const displayItem = (item, container) => {
-  itemHTML = getItemHTML(item);
+  let itemHTML = getItemHTML(item);
   container.innerHTML += `<div align="center" ><div class="card-wrapper-wide" align="left">${itemHTML}</div></div>`;
 };
 
@@ -238,7 +237,6 @@ const showMessage = (message, isError = false) => {
 const issuePatchRequest = (id, data, responseHandler) => {
   // update data on the server:
   const url = articlesEndpoint + "/" + id;
-  console.log("PATCH request:", url, data);
   fetch(url, {
     method: "PATCH",
     headers: {
@@ -258,7 +256,6 @@ const issuePatchRequest = (id, data, responseHandler) => {
 const issuePutRequest = (id, data, responseHandler) => {
   // update data on the server:
   const url = articlesEndpoint + "/" + id;
-  console.log("PUT request:", url, data);
   fetch(url, {
     method: "put",
     headers: {
@@ -315,7 +312,6 @@ const issueDeleteRequest = (id, responseHandler) => {
 
 const issueArticlePostRequest = (data, responseHandler) => {
   // create data on the server:
-  console.log("POST request:", articlesEndpoint, data);
   fetch(articlesEndpoint, {
     method: "post",
     headers: {
@@ -328,7 +324,6 @@ const issueArticlePostRequest = (data, responseHandler) => {
 };
 const issueCommentPostRequest = (data, responseHandler, basicAuth) => {
   // create data on the server:
-  console.log("POST request:", commentsEndpoint, data);
   fetch(commentsEndpoint, {
     method: "post",
     headers: {
@@ -396,7 +391,7 @@ const handleCommentCreate = () => {
   )}:${pad(today.getMinutes())}:${pad(today.getSeconds())}Z`;
 
   const id = parseInt(getCookieId());
-  data = {
+  const data = {
     article_id: article_id,
     body: container.querySelector("#body").value,
     user_id: id,
@@ -459,15 +454,15 @@ const attachEventHandlers = (id = "") => {
   }
   if (!isAuthorized(id)) {
     // TODO: remove icons and methods if user is not logged
-    for (elem of document.querySelectorAll(".editName")) {
+    for (let elem of document.querySelectorAll(".editName")) {
       elem.disabled = true;
       elem.style.visibility = "hidden";
     }
-    for (elem of document.querySelectorAll(".delete")) {
+    for (let elem of document.querySelectorAll(".delete")) {
       elem.disabled = true;
       elem.style.visibility = "hidden";
     }
-    for (elem of document.querySelectorAll(".edit")) {
+    for (let elem of document.querySelectorAll(".edit")) {
       elem.disabled = true;
       elem.style.visibility = "hidden";
     }
@@ -485,15 +480,15 @@ const attachEventHandlers = (id = "") => {
     }
     return;
   } else {
-    for (elem of document.querySelectorAll(".delete")) {
+    for (let elem of document.querySelectorAll(".delete")) {
       elem.onclick = handleDelete;
       elem.disabled = false;
     }
-    for (elem of document.querySelectorAll(".edit")) {
+    for (let elem of document.querySelectorAll(".edit")) {
       elem.onclick = showEditForm;
       elem.disabled = false;
     }
-    for (elem of document.querySelectorAll(".editName")) {
+    for (let elem of document.querySelectorAll(".editName")) {
       elem.onclick = showEditNameForm;
       elem.disabled = false;
     }

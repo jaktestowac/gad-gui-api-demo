@@ -1,6 +1,7 @@
 const { getRandomWord, checkLetter } = require("./hangman.helpers");
 const { logTrace, logDebug } = require("./loggerApi");
 const { HTTP_NOT_FOUND, HTTP_OK } = require("./response.helpers");
+const { verifyAccessToken } = require("./validation.helpers");
 
 const hangmanHighScores = {};
 const hangmanTempScores = {};
@@ -39,7 +40,7 @@ function handleHangman(req, res) {
     hangmanTempScores[verifyTokenResult?.email] = { selectedWord: randomWord, wrongAttempts: 0 };
 
     logDebug("handleHangman:Hangman started:", { email: verifyTokenResult?.email, hangmanTempScores });
-    res.status(HTTP_OK).json({ selectedWordLength: selectedWord.length });
+    res.status(HTTP_OK).json({ selectedWordLength: randomWord.length });
   } else if (req.method === "GET" && req.url.endsWith("/api/v2/hangman/stop")) {
     const verifyTokenResult = verifyAccessToken(req, res, "hangman", req.url);
     if (!verifyTokenResult) return;
@@ -49,7 +50,7 @@ function handleHangman(req, res) {
 
     let score =
       (maxAttempts - hangmanTempScores[email].wrongAttempts) * 5 + hangmanTempScores[email].selectedWord.length * 3;
-    if (wrongAttempts < maxAttempts) {
+    if (hangmanTempScores[email].wrongAttempts < maxAttempts) {
       hangmanHighScores[email] += score;
     }
 
@@ -59,7 +60,7 @@ function handleHangman(req, res) {
     logDebug("handleHangman:Hangman highScores:", { hangmanHighScores });
     res.status(HTTP_OK).json({ highScore: hangmanHighScores });
   } else {
-    res.status(HTTP_NOT_FOUND).json({ indices });
+    res.status(HTTP_NOT_FOUND).json({});
   }
   return;
 }

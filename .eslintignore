@@ -1,0 +1,7 @@
+package-lock.json
+node_modules
+swagger*
+swagger.html
+jquery-*.js
+validate.js
+uploads

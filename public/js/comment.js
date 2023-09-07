@@ -84,7 +84,7 @@ const displayCommentData = (item) => {
 };
 
 const displayItem = (item, container) => {
-  itemHTML = getItemHTML(item);
+  let itemHTML = getItemHTML(item);
   container.innerHTML += `<div align="center" ><div class="card-wrapper-wide" align="left" style="width:600px;">${itemHTML}</div></div>`;
 };
 
@@ -176,7 +176,7 @@ const handleUpdate = (ev) => {
 
 const handleCreate = () => {
   const container = document.querySelector(".add-new-panel");
-  data = {
+  let data = {
     title: container.querySelector("#title").value,
     body: container.querySelector("#body").value,
   };
@@ -200,28 +200,28 @@ const actionAfterDelete = () => {
 const attachEventHandlers = (id = "") => {
   if (!isAuthorized(id)) {
     // TODO: remove icons and methods if user is not logged
-    for (elem of document.querySelectorAll(".editName")) {
+    for (let elem of document.querySelectorAll(".editName")) {
       elem.disabled = true;
       elem.style.visibility = "hidden";
     }
-    for (elem of document.querySelectorAll(".delete")) {
+    for (let elem of document.querySelectorAll(".delete")) {
       elem.disabled = true;
       elem.style.visibility = "hidden";
     }
-    for (elem of document.querySelectorAll(".edit")) {
+    for (let elem of document.querySelectorAll(".edit")) {
       elem.disabled = true;
       elem.style.visibility = "hidden";
     }
-    for (elem of document.querySelectorAll(".emailEdit")) {
+    for (let elem of document.querySelectorAll(".emailEdit")) {
       elem.disabled = true;
       elem.style.visibility = "hidden";
     }
     return;
   }
-  for (elem of document.querySelectorAll(".delete")) {
+  for (let elem of document.querySelectorAll(".delete")) {
     elem.onclick = handleDelete;
   }
-  for (elem of document.querySelectorAll(".edit")) {
+  for (let elem of document.querySelectorAll(".edit")) {
     elem.onclick = showEditForm;
   }
   //    document.querySelector('#add-new').onclick = () => {
