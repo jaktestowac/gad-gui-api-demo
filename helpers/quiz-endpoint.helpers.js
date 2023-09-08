@@ -34,6 +34,7 @@ function handleQuiz(req, res) {
     }
 
     if (isBugDisabled(BugConfigKeys.BUG_QUIZ_002)) {
+      // clear quizTempScores before quiz:
       quizTempScores[email] = 0;
     }
     logDebug("handleQuiz:Quiz stopped - final:", { email, quizHighScores });
@@ -57,6 +58,7 @@ function handleQuiz(req, res) {
     }
 
     if (isBugDisabled(BugConfigKeys.BUG_QUIZ_001)) {
+      // add points for correct answer
       quizTempScores[verifyTokenResult?.email] += isCorrect ? 1 : 0;
     }
 

@@ -15,7 +15,7 @@ const all_fields_plugin = ["id", "name", "status", "version"];
 const mandatory_non_empty_fields_plugin = ["name", "status", "version"];
 
 function are_mandatory_fields_present(body, mandatory_non_empty_fields) {
-  if (isBugEnabled(BugConfigKeys.BUG_CHARTS_004)) {
+  if (isBugEnabled(BugConfigKeys.BUG_VALIDATION_001)) {
     return true;
   }
 
@@ -36,6 +36,9 @@ function are_all_fields_valid(
   max_field_length = 10000,
   max_title_length = 128
 ) {
+  if (isBugEnabled(BugConfigKeys.BUG_VALIDATION_002)) {
+    max_title_length = 0;
+  }
   if (body?.length !== undefined && body?.length > 0) {
     return { status: false, error: "Wrong JSON structure" };
   }

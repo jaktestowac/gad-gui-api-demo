@@ -116,8 +116,8 @@ function parseUserStats(dbDataJson, dataType) {
     articlesDataForChart.push([userIdToName[user_id], articlesPerUser[user_id]]);
   }
 
-  // TODO:INVOKE_BUG: comment this if to break stats charts when there are no data
   if (isBugDisabled(BugConfigKeys.BUG_CHARTS_001)) {
+    // if there are no articlesData stats - prepare empty array
     if (articlesData.length === 0) {
       articlesDataForChart = [];
     }
@@ -127,8 +127,8 @@ function parseUserStats(dbDataJson, dataType) {
     commentsDataForChart.push([userIdToName[user_id], commentsPerUser[user_id]]);
   }
 
-  // TODO:INVOKE_BUG: comment this if to break stats charts when there are no data
   if (isBugDisabled(BugConfigKeys.BUG_CHARTS_002)) {
+    // if there are no commentsData stats - prepare empty array
     if (commentsData.length === 0) {
       commentsDataForChart = [];
     }
