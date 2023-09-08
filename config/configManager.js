@@ -104,6 +104,14 @@ const ConfigManager = (function () {
 const configInstance = ConfigManager.getInstance();
 configInstance.fullSelfCheck();
 
+function isBugDisabled(bugEnum) {
+  return configInstance.getBugConfigValue(bugEnum) === false;
+}
+
+function isBugEnabled(bugEnum) {
+  return configInstance.getBugConfigValue(bugEnum) === true;
+}
+
 module.exports = {
   configInstance,
   getConfigValue: configInstance.getConfigValue,
@@ -111,4 +119,6 @@ module.exports = {
   resetConfig: configInstance.resetConfig,
   getBugConfigValue: configInstance.getBugConfigValue,
   setBugConfigValue: configInstance.setBugConfigValue,
+  isBugDisabled,
+  isBugEnabled,
 };

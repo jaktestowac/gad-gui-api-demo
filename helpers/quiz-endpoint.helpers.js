@@ -1,3 +1,5 @@
+const { isBugDisabled } = require("../config/configManager");
+const { BugConfigKeys } = require("../config/enums");
 const { logDebug, logTrace } = require("./loggerApi");
 const { countAvailableQuestions, getOnlyQuestions, checkAnswer } = require("./quiz.helpers");
 const { HTTP_NOT_FOUND, HTTP_OK } = require("./response.helpers");
@@ -31,7 +33,9 @@ function handleQuiz(req, res) {
       quizHighScores[email] = quizTempScores[email];
     }
 
-    quizTempScores[email] = 0;
+    if (isBugDisabled(BugConfigKeys.BUG_QUIZ_002)) {
+      quizTempScores[email] = 0;
+    }
     logDebug("handleQuiz:Quiz stopped - final:", { email, quizHighScores });
     res.status(HTTP_OK).json({ highScore: quizHighScores[email] });
   } else if (req.method === "GET" && req.url.endsWith("/api/quiz/highscores")) {
@@ -51,7 +55,11 @@ function handleQuiz(req, res) {
     if (quizTempScores[verifyTokenResult?.email] === undefined) {
       quizTempScores[verifyTokenResult?.email] = 0;
     }
-    quizTempScores[verifyTokenResult?.email] += isCorrect ? 1 : 0;
+
+    if (isBugDisabled(BugConfigKeys.BUG_QUIZ_001)) {
+      quizTempScores[verifyTokenResult?.email] += isCorrect ? 1 : 0;
+    }
+
     if (isCorrect) {
       logTrace("handleQuiz:Quiz: user scores:", {
         email: verifyTokenResult?.email,

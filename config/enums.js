@@ -42,7 +42,13 @@ const ConfigKeys = {
 };
 
 const BugConfigKeys = {
-  BUG001: "bug001",
+  BUG_CHARTS_001: "bug_charts_001",
+  BUG_CHARTS_002: "bug_charts_002",
+  BUG_CHARTS_003: "bug_charts_003",
+  BUG_VALIDATION_001: "bug_validation_001",
+  BUG_QUIZ_001: "bug_quiz_001",
+  BUG_QUIZ_002: "bug_quiz_002",
+  BUG_QUIZ_003: "bug_quiz_003",
 };
 
 module.exports = {

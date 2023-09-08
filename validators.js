@@ -19,7 +19,7 @@ const {
   all_fields_comment,
   all_fields_user,
   are_all_fields_valid,
-  are_mandatory_fields_valid,
+  are_mandatory_fields_present,
   mandatory_non_empty_fields_article,
   mandatory_non_empty_fields_comment,
   mandatory_non_empty_fields_user,
@@ -145,7 +145,7 @@ const validations = (req, res, next) => {
     if (req.method === "POST" && urlEnds.includes("/api/users")) {
       logDebug("Register User: attempt:", { urlEnds, email: req.body["email"] });
       // validate mandatory fields:
-      if (!are_mandatory_fields_valid(req.body, mandatory_non_empty_fields_user)) {
+      if (!are_mandatory_fields_present(req.body, mandatory_non_empty_fields_user)) {
         res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_user));
         return;
       }
@@ -169,7 +169,7 @@ const validations = (req, res, next) => {
     if (req.method === "PUT" && urlEnds.includes("/api/users/")) {
       let userId = getIdFromUrl(urlEnds);
       // validate mandatory fields:
-      if (!are_mandatory_fields_valid(req.body, mandatory_non_empty_fields_user)) {
+      if (!are_mandatory_fields_present(req.body, mandatory_non_empty_fields_user)) {
         res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_user));
         return;
       }
@@ -255,7 +255,7 @@ const validations = (req, res, next) => {
 
     if (req.method === "POST" && urlEnds.includes("/api/articles") && !urlEnds.includes("/upload") && !isAdmin) {
       // validate mandatory fields:
-      if (!are_mandatory_fields_valid(req.body, mandatory_non_empty_fields_article)) {
+      if (!are_mandatory_fields_present(req.body, mandatory_non_empty_fields_article)) {
         res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_article));
         return;
       }
@@ -276,7 +276,7 @@ const validations = (req, res, next) => {
     }
     if (req.method === "PUT" && urlEnds.includes("/api/articles") && !isAdmin) {
       // validate mandatory fields:
-      if (!are_mandatory_fields_valid(req.body, mandatory_non_empty_fields_article)) {
+      if (!are_mandatory_fields_present(req.body, mandatory_non_empty_fields_article)) {
         res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_article));
         return;
       }
@@ -343,7 +343,7 @@ const validations = (req, res, next) => {
     }
     if (req.method === "POST" && urlEnds.includes("/api/comments")) {
       // validate mandatory fields:
-      if (!are_mandatory_fields_valid(req.body, mandatory_non_empty_fields_comment)) {
+      if (!are_mandatory_fields_present(req.body, mandatory_non_empty_fields_comment)) {
         res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_comment));
         return;
       }

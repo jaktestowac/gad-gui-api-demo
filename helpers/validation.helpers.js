@@ -1,5 +1,5 @@
-const { getConfigValue } = require("../config/configManager");
-const { ConfigKeys } = require("../config/enums");
+const { getConfigValue, isBugEnabled } = require("../config/configManager");
+const { ConfigKeys, BugConfigKeys } = require("../config/enums");
 const { formatErrorResponse } = require("./helpers");
 const { verifyToken, getJwtExpiryDate } = require("./jwtauth");
 const { logDebug, logError, logTrace, logWarn } = require("./loggerApi");
@@ -14,7 +14,11 @@ const all_fields_comment = ["id", "user_id", "article_id", "body", "date"];
 const all_fields_plugin = ["id", "name", "status", "version"];
 const mandatory_non_empty_fields_plugin = ["name", "status", "version"];
 
-function are_mandatory_fields_valid(body, mandatory_non_empty_fields) {
+function are_mandatory_fields_present(body, mandatory_non_empty_fields) {
+  if (isBugEnabled(BugConfigKeys.BUG_CHARTS_004)) {
+    return true;
+  }
+
   for (let index = 0; index < mandatory_non_empty_fields.length; index++) {
     const element = mandatory_non_empty_fields[index];
     if (body[element] === undefined || body[element] === "" || body[element]?.length === 0) {
@@ -118,7 +122,7 @@ module.exports = {
   validateDate,
   validateEmail,
   are_all_fields_valid,
-  are_mandatory_fields_valid,
+  are_mandatory_fields_present,
   mandatory_non_empty_fields_user,
   all_fields_user,
   all_fields_article,

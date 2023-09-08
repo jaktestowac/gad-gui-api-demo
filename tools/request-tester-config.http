@@ -35,7 +35,8 @@ POST http://localhost:3000/api/config/bugs
 content-type: application/json
  
 {
-    "bug001": true
+    "bug_charts_001": true,
+    "bug_charts_002": true
 }
 
 ### Get logs
