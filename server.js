@@ -2,7 +2,7 @@ const jsonServer = require("./json-server");
 const { validations } = require("./validators");
 const fs = require("fs");
 const { createToken, isAuthenticated, prepareCookieMaxAge } = require("./helpers/jwtauth");
-const { getConfigValue } = require("./config/configManager");
+const { getConfigValue } = require("./config/config-manager");
 const { ConfigKeys } = require("./config/enums");
 
 const cookieparser = require("cookie-parser");
@@ -20,8 +20,7 @@ const {
   isSuperAdminUser,
   getIdFromUrl,
 } = require("./helpers/helpers");
-const { logDebug, logError } = require("./helpers/loggerApi");
-const { getRandomVisitsForEntities } = require("./helpers/randomDataGenerator");
+const { logDebug, logError, logTrace } = require("./helpers/logger-api");
 const {
   are_all_fields_valid,
   mandatory_non_empty_fields_article,
@@ -36,6 +35,7 @@ const {
   HTTP_OK,
   HTTP_UNAUTHORIZED,
 } = require("./helpers/response.helpers");
+const { getRandomVisitsForEntities } = require("./helpers/random-data.generator");
 const middlewares = jsonServer.defaults();
 
 const port = process.env.PORT || getConfigValue(ConfigKeys.DEFAULT_PORT);
@@ -432,11 +432,12 @@ server.use(customRoutesAfterAuth);
 server.use("/api", router);
 
 router.render = function (req, res) {
-  if (req.method === "GET" && req.url.includes("/users")) {
+  if (req.method === "GET" && req.url.includes("users")) {
     const users = res.locals.data;
     let loggedUser = req.cookies.id;
     let usersMapped;
-    if (users.length > 0) {
+    logTrace("User anonymization:", { length: users.length, loggedUser });
+    if (users?.length > 0) {
       usersMapped = users.map((user) => {
         if (!loggedUser) {
           user.lastname = "****";

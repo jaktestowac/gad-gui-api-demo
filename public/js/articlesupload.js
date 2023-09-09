@@ -28,7 +28,6 @@ const handleCreate = () => {
 
 const issueArticleRequest = (data) => {
   // create data on the server:
-  console.log("POST request:", articlesEndpoint, data);
   fetch(articlesEndpoint, {
     method: "post",
     headers: {

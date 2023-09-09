@@ -2,13 +2,6 @@ const usersEndpoint = "../../api/users";
 let alertElement = document.querySelector(".alert");
 let usersData;
 
-const fetchData = {
-  headers: {
-    "Content-Type": "application/json",
-  },
-  credentials: "include",
-};
-
 async function issueGetRequest(user_id) {
   const userUrl = `${usersEndpoint}/${user_id}`;
   usersData = await Promise.all([userUrl].map((url) => fetch(url, { headers: formatHeaders() }).then((r) => r.json())));
@@ -41,14 +34,6 @@ const showResponseOnUpdate = (response) => {
   }
 };
 
-const showResponse = (response) => {
-  if (response.status === 201) {
-    showMessage("User was created", false);
-  } else {
-    showMessage("User was not created", true);
-  }
-};
-
 const showMessage = (message, isError = false) => {
   alertElement.innerHTML = message;
   alertElement.classList.remove("alert-error", "alert-success");
@@ -65,7 +50,6 @@ const showMessage = (message, isError = false) => {
 const issuePutRequest = (id, data, responseHandler) => {
   // update data on the server:
   const url = usersEndpoint + "/" + id;
-  console.log("PUT request:", url, data);
   fetch(url, {
     method: "put",
     headers: {
@@ -85,7 +69,6 @@ const issuePutRequest = (id, data, responseHandler) => {
 const issuePatchRequest = (id, data, responseHandler) => {
   // update data on the server:
   const url = usersEndpoint + "/" + id;
-  console.log("PATCH request:", url, data);
   fetch(url, {
     method: "PATCH",
     headers: {
@@ -105,13 +88,11 @@ const issuePatchRequest = (id, data, responseHandler) => {
 const issueDeleteRequest = (id, responseHandler) => {
   // delete data on the server:
   const url = usersEndpoint + "/" + id;
-  console.log("DELETE request:", url);
   fetch(url, { method: "delete", headers: formatHeaders() }).then(responseHandler);
 };
 
 const issuePostRequest = (data, responseHandler) => {
   // create data on the server:
-  console.log("POST request:", usersEndpoint, data);
   fetch(usersEndpoint, {
     method: "post",
     headers: {

@@ -5,7 +5,6 @@ let picList = [];
 let users = [];
 let articlesData = [];
 
-let articleUserId;
 let totalElementCount = 0;
 let searchPhrase = undefined;
 
@@ -123,16 +122,13 @@ const attachEventHandlers = (user_id) => {
     const container = document.querySelector(".add-new-panel");
     container.querySelector(".body").value = "";
     container.querySelector(".title").value = "";
-    let index = 0;
     for (let element of picList) {
       let opt = document.createElement("option");
       opt.value = element;
       opt.innerHTML = element; // whatever property it has
 
       container.querySelector(".image").appendChild(opt);
-      index++;
     }
-    index = 0;
     for (let element of users) {
       if (isAuthorized(element.id)) {
         let opt = document.createElement("option");
@@ -140,7 +136,6 @@ const attachEventHandlers = (user_id) => {
         opt.innerHTML = `${element.firstname} ${element.lastname}`;
 
         container.querySelector(".user").appendChild(opt);
-        index++;
       }
     }
     presentPicture();
@@ -158,29 +153,29 @@ const attachEventHandlers = (user_id) => {
 
 let alertElement = document.querySelector(".alert");
 
-const showResponseOnDelete = (response) => {
-  if (response.status === 200) {
-    showMessage("Article was deleted", false);
-  } else {
-    showMessage("Article was not deleted", true);
-  }
-};
+// const showResponseOnDelete = (response) => {
+//   if (response.status === 200) {
+//     showMessage("Article was deleted", false);
+//   } else {
+//     showMessage("Article was not deleted", true);
+//   }
+// };
 
-const showResponseOnUpdate = (response) => {
-  if (response.status === 200) {
-    showMessage("Article was updated", false);
-  } else {
-    showMessage("Article was not updated", true);
-  }
-};
+// const showResponseOnUpdate = (response) => {
+//   if (response.status === 200) {
+//     showMessage("Article was updated", false);
+//   } else {
+//     showMessage("Article was not updated", true);
+//   }
+// };
 
-const showResponse = (response) => {
-  if (response.status === 201) {
-    showMessage("Article was created", false);
-  } else {
-    showMessage("Article was not created", true);
-  }
-};
+// const showResponse = (response) => {
+//   if (response.status === 201) {
+//     showMessage("Article was created", false);
+//   } else {
+//     showMessage("Article was not created", true);
+//   }
+// };
 
 const showResponseAndRedirect = (response) => {
   if (response.status === 201) {
@@ -238,7 +233,6 @@ const handleCreate = () => {
 
 const issueArticleRequest = (data, responseHandler) => {
   // create data on the server:
-  console.log("POST request:", articlesEndpoint, data);
   fetch(articlesEndpoint, {
     method: "post",
     headers: {

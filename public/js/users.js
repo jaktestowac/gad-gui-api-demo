@@ -2,13 +2,6 @@ const endpoint = "../../api/users";
 const pictureListEndpoint = "../../api/images/user";
 let picList = [];
 
-const fetchData = {
-  headers: {
-    "Content-Type": "application/json",
-  },
-  credentials: "include",
-};
-
 const issueGetRequest = () => {
   // get data from the server:
   fetch(endpoint, { headers: formatHeaders() })
@@ -17,48 +10,46 @@ const issueGetRequest = () => {
     .then(attachEventHandlers);
 };
 
-const issuePutRequest = (id, data, responseHandler) => {
-  // update data on the server:
-  const url = endpoint + "/" + id;
-  console.log("PUT request:", url, data);
-  fetch(url, {
-    method: "put",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      Authorization: getBearerToken(),
-    },
-    body: JSON.stringify(data),
-  })
-    .then((response) => {
-      showResponseOnUpdate(response);
-      return response.json();
-    })
-    .then(responseHandler);
-};
-const issuePatchRequest = (id, data, responseHandler) => {
-  // update data on the server:
-  const url = endpoint + "/" + id;
-  console.log("PATCH request:", url, data);
-  fetch(url, {
-    method: "PATCH",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      Authorization: getBearerToken(),
-    },
-    body: JSON.stringify(data),
-  })
-    .then((response) => {
-      showResponseOnUpdate(response);
-      return response.json();
-    })
-    .then(responseHandler);
-};
+// const issuePutRequest = (id, data, responseHandler) => {
+//   // update data on the server:
+//   const url = endpoint + "/" + id;
+//   fetch(url, {
+//     method: "put",
+//     headers: {
+//       Accept: "application/json",
+//       "Content-Type": "application/json",
+//       Authorization: getBearerToken(),
+//     },
+//     body: JSON.stringify(data),
+//   })
+//     .then((response) => {
+//       showResponseOnUpdate(response);
+//       return response.json();
+//     })
+//     .then(responseHandler);
+// };
+// const issuePatchRequest = (id, data, responseHandler) => {
+//   // update data on the server:
+//   const url = endpoint + "/" + id;
+//   fetch(url, {
+//     method: "PATCH",
+//     headers: {
+//       Accept: "application/json",
+//       "Content-Type": "application/json",
+//       Authorization: getBearerToken(),
+//     },
+//     body: JSON.stringify(data),
+//   })
+//     .then((response) => {
+//       showResponseOnUpdate(response);
+//       return response.json();
+//     })
+//     .then(responseHandler);
+// };
+
 const issueDeleteRequest = (id, responseHandler) => {
   // delete data on the server:
   const url = endpoint + "/" + id;
-  console.log("DELETE request:", url);
   fetch(url, { method: "delete", headers: formatHeaders() })
     .then((response) => {
       showResponseOnDelete(response);
@@ -69,7 +60,6 @@ const issueDeleteRequest = (id, responseHandler) => {
 
 const issuePostRequest = (data, responseHandler) => {
   // create data on the server:
-  console.log("POST request:", endpoint, data);
   fetch(endpoint, {
     method: "post",
     headers: {
@@ -93,13 +83,13 @@ const showResponseOnDelete = (response) => {
   }
 };
 
-const showResponseOnUpdate = (response) => {
-  if (response.status === 200) {
-    showMessage("User was updated", false);
-  } else {
-    showMessage("User was not updated", true);
-  }
-};
+// const showResponseOnUpdate = (response) => {
+//   if (response.status === 200) {
+//     showMessage("User was updated", false);
+//   } else {
+//     showMessage("User was not updated", true);
+//   }
+// };
 
 const showResponse = (response) => {
   if (response.status === 201) {
@@ -122,38 +112,38 @@ const showMessage = (message, isError = false) => {
   alertElement = newMessageElement;
 };
 
-const handleUpdate = (ev) => {
-  const id = ev.target.getAttribute("data-id");
-  const container = ev.target.parentElement.parentElement;
-  const data = {
-    firstname: container.querySelector("#firstname").value,
-    lastname: container.querySelector("#lastname").value,
-    email: container.querySelector("#email").value,
-    avatar: container.querySelector("#avatar").value,
-  };
-  const callback = (item) => {
-    if (item["error"] === undefined) {
-      container.innerHTML = getItemHTML(item);
-    }
-    attachEventHandlers();
-  };
-  issuePutRequest(id, data, callback);
-};
+// const handleUpdate = (ev) => {
+//   const id = ev.target.getAttribute("data-id");
+//   const container = ev.target.parentElement.parentElement;
+//   const data = {
+//     firstname: container.querySelector("#firstname").value,
+//     lastname: container.querySelector("#lastname").value,
+//     email: container.querySelector("#email").value,
+//     avatar: container.querySelector("#avatar").value,
+//   };
+//   const callback = (item) => {
+//     if (item["error"] === undefined) {
+//       container.innerHTML = getItemHTML(item);
+//     }
+//     attachEventHandlers();
+//   };
+//   issuePutRequest(id, data, callback);
+// };
 
-const handlePartialUpdate = (ev) => {
-  const id = ev.target.getAttribute("data-id");
-  const container = ev.target.parentElement.parentElement;
-  const data = {
-    email: container.querySelector("#email").value,
-  };
-  const callback = (item) => {
-    if (item["error"] === undefined) {
-      container.innerHTML = getItemHTML(item);
-    }
-    attachEventHandlers();
-  };
-  issuePatchRequest(id, data, callback);
-};
+// const handlePartialUpdate = (ev) => {
+//   const id = ev.target.getAttribute("data-id");
+//   const container = ev.target.parentElement.parentElement;
+//   const data = {
+//     email: container.querySelector("#email").value,
+//   };
+//   const callback = (item) => {
+//     if (item["error"] === undefined) {
+//       container.innerHTML = getItemHTML(item);
+//     }
+//     attachEventHandlers();
+//   };
+//   issuePatchRequest(id, data, callback);
+// };
 
 const handleCreate = () => {
   const container = document.querySelector(".add-new-panel");
@@ -270,9 +260,6 @@ const showEmailEditForm = (ev) => {
   return false;
 };
 
-{
-  /* <input type="text" id="email" value="${item.email}"><br> */
-}
 const displayForm = (item, container) => {
   container.innerHTML = `
         <div style="margin-top:7px;">

@@ -5,9 +5,9 @@ const {
   configInstance,
   getBugConfigValue,
   setBugConfigValue,
-} = require("../config/configManager");
-const { logDebug } = require("./loggerApi");
-const { HTTP_OK, HTTP_UNPROCESSABLE_ENTITY } = require("./response.helpers");
+} = require("../config/config-manager");
+const { logDebug } = require("../helpers/logger-api");
+const { HTTP_OK, HTTP_UNPROCESSABLE_ENTITY } = require("../helpers/response.helpers");
 
 function handleConfig(req, res) {
   if (req.url.includes("api/config/bugs")) {

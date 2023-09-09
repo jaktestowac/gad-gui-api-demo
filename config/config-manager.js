@@ -1,5 +1,6 @@
-const { config } = require("./config");
-const { bugConfig } = require("./bugConfig");
+/* eslint-disable no-console */
+const { config } = require("./config-general");
+const { bugConfig } = require("./config-bugs");
 const { ConfigKeys, BugConfigKeys } = require("./enums");
 
 const ConfigManager = (function () {

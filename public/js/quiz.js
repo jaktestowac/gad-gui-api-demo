@@ -9,12 +9,9 @@ const questionContainer = document.getElementById("question-container");
 const startButton = document.getElementById("start-button");
 const quizContainer = document.getElementById("quiz-container");
 const questionText = document.getElementById("question-text");
-const optionsContainer = document.getElementById("options-container");
 const optionCheckboxes = document.querySelectorAll(".option-checkbox");
 const optionTexts = document.querySelectorAll(".option-text");
-const scoreContainer = document.getElementById("score-container");
 const scoreElement = document.getElementById("score");
-const questionCounter = document.getElementById("question-counter");
 const currentQuestionElement = document.getElementById("current-question");
 const totalQuestionsElement = document.getElementById("total-questions");
 
@@ -35,9 +32,6 @@ function getQuestionText(idx) {
 }
 function getQuestionOptions(idx) {
   return questionsData[idx].options;
-}
-function getQuestionCorrectAnswers(idx) {
-  return questionsData[idx].correctAnswers;
 }
 
 async function issueGetRequest() {
@@ -61,20 +55,6 @@ async function issueGetRequest() {
     questionsData = questionsData.json;
     showQuestion();
   }
-}
-
-async function issueCheckAnswerRequest(selectedAnswers) {
-  const data = {
-    questionText: getQuestionText(currentQuestionIndex),
-    selectedAnswers,
-  };
-  fetch(questionsCheckEndpoint, {
-    method: "POST",
-    body: data,
-    headers: {
-      Authorization: getBearerToken(),
-    },
-  });
 }
 
 async function issueStartRequest() {
@@ -166,15 +146,8 @@ function displayFinalScore(score) {
   }
 }
 
-function arraysEqual(arr1, arr2) {
-  if (arr1.length !== arr2.length) return false;
-  for (let i = 0; i < arr1.length; i++) {
-    if (arr1[i] !== arr2[i]) return false;
-  }
-  return true;
-}
-
 questionContainer.style.visibility = "collapse";
+
 async function startQuiz() {
   await issueStartRequest();
   await issueGetRequest();

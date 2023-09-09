@@ -1,9 +1,9 @@
-const { isBugDisabled } = require("../config/configManager");
+const { isBugDisabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
-const { logDebug, logTrace } = require("./loggerApi");
-const { countAvailableQuestions, getOnlyQuestions, checkAnswer } = require("./quiz.helpers");
-const { HTTP_NOT_FOUND, HTTP_OK } = require("./response.helpers");
-const { verifyAccessToken } = require("./validation.helpers");
+const { logDebug, logTrace } = require("../helpers/logger-api");
+const { countAvailableQuestions, getOnlyQuestions, checkAnswer } = require("../helpers/quiz.helpers");
+const { HTTP_NOT_FOUND, HTTP_OK } = require("../helpers/response.helpers");
+const { verifyAccessToken } = require("../helpers/validation.helpers");
 
 const quizHighScores = {};
 const quizTempScores = {};

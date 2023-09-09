@@ -301,7 +301,6 @@ const showResponseOnUpdate = (response, item) => {
 const issueDeleteRequest = (id, responseHandler) => {
   // delete data on the server:
   const url = articlesEndpoint + "/" + id;
-  console.log("DELETE request:", url);
   fetch(url, { method: "delete", headers: formatHeaders() })
     .then((response) => {
       showResponseOnDelete(response, "Article");
@@ -322,14 +321,13 @@ const issueArticlePostRequest = (data, responseHandler) => {
     body: JSON.stringify(data),
   }).then(responseHandler);
 };
-const issueCommentPostRequest = (data, responseHandler, basicAuth) => {
+const issueCommentPostRequest = (data, responseHandler) => {
   // create data on the server:
   fetch(commentsEndpoint, {
     method: "post",
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
-      // Authorization: `Basic ${basicAuth}`, // TODO: changed to bearer
       Authorization: getBearerToken(),
     },
     body: JSON.stringify(data),

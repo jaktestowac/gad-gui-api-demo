@@ -101,8 +101,14 @@ async function processCommentsData(userComments) {
   }
 
   for (let j = 0; j < userComments.length; j++) {
-    userComments[j].user_name = tempUserData[userComments[j].user_id.toString()];
-    userComments[j].article = tempArticleData[userComments[j].article_id.toString()];
+    const user_id = userComments[j].user_id;
+    const article_id = userComments[j].article_id;
+    if (user_id) {
+      userComments[j].user_name = tempUserData[user_id.toString()];
+    } else {
+      userComments[j].user_name = "[Unknown]";
+    }
+    userComments[j].article = tempArticleData[article_id.toString()];
   }
 }
 

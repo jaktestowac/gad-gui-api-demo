@@ -41,6 +41,12 @@
         "articleAdditionalMenuOnPage": "readonly",
         "appendElementOnTop": "readonly",
         "injectLink": "readonly",
-        "getCookieEmail": "readonly"
+        "getCookieEmail": "readonly",
+        "additionalData": "readonly",
+        "changeMinValue": "readonly",
+        "generateChartPDF": "readonly",
+        "checkAnswer": "readonly",
+        "startQuiz": "readonly",
+        "changeItemsPerPage": "readonly"
     }
 }

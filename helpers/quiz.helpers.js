@@ -1,7 +1,7 @@
 const fs = require("fs");
-const { logWarn } = require("./loggerApi");
+const { logWarn } = require("./logger-api");
 const { shuffleArray } = require("./helpers");
-const { getConfigValue } = require("../config/configManager");
+const { getConfigValue } = require("../config/config-manager");
 const { ConfigKeys } = require("../config/enums");
 
 function arraysEqual(arr1, arr2) {

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const faker = require("faker");
 const db = require("../db-base.json");
 const fs = require("fs");

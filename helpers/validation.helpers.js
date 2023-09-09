@@ -1,8 +1,8 @@
-const { getConfigValue, isBugEnabled } = require("../config/configManager");
+const { getConfigValue, isBugEnabled } = require("../config/config-manager");
 const { ConfigKeys, BugConfigKeys } = require("../config/enums");
 const { formatErrorResponse } = require("./helpers");
 const { verifyToken, getJwtExpiryDate } = require("./jwtauth");
-const { logDebug, logError, logTrace, logWarn } = require("./loggerApi");
+const { logDebug, logError, logTrace, logWarn } = require("./logger-api");
 const { HTTP_UNAUTHORIZED } = require("./response.helpers");
 
 const mandatory_non_empty_fields_user = ["firstname", "lastname", "email", "avatar"];
@@ -49,23 +49,23 @@ function are_all_fields_valid(
     const key = keys[index];
     if (!all_possible_fields.includes(key)) {
       error = `Field validation: "${key}" not in [${all_possible_fields}]`;
-      logError(error);
+      logError("are_all_fields_valid:", error);
       return { status: false, error };
     }
     const element = body[key];
     if (element?.toString().length > max_field_length) {
       error = `Field validation: "${key}" longer than "${max_field_length}"`;
-      logError(error);
+      logError("are_all_fields_valid:", error);
       return { status: false, error };
     }
     if (key.toLowerCase() === "title" && element?.toString().length > max_title_length) {
       error = `Field validation: "${key}" longer than "${max_title_length}"`;
-      logError(error);
+      logError("are_all_fields_valid:", error);
       return { status: false, error };
     }
     if (mandatory_non_empty_fields.includes(key)) {
       if (element === undefined || element?.toString().length === 0) {
-        logDebug("Body:", body);
+        logDebug("are_all_fields_valid: Body:", body);
         error = `Field validation: "${key}" is empty! Mandatory fields: [${mandatory_non_empty_fields}]`;
         logError(error);
         return { status: false, error };
@@ -73,7 +73,7 @@ function are_all_fields_valid(
     }
     if (key === "date") {
       if (!validateDate(element)) {
-        logDebug("Body:", body);
+        logDebug("are_all_fields_valid: Body:", body);
         error = `Field validation: "${key}" has invalid format!`;
         logError(error);
         return { status: false, error };
