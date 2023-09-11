@@ -5,6 +5,12 @@ describe("Endpoint /users", () => {
   const baseUrl = "/api/users";
 
   beforeAll(async () => {
+    try {
+      request(serverApp).get("/api/restoreDB").expect(201);
+    } catch (error) {
+      console.log(error);
+    }
+
     // Lover log level to WARNING:
     const requestBody = {
       currentLogLevel: 2,
@@ -13,12 +19,6 @@ describe("Endpoint /users", () => {
     expect(response.status).toEqual(200);
   });
   afterAll(() => {
-    try {
-      request(serverApp).get("/api/restoreDB").expect(200);
-    } catch (error) {
-      console.log(error);
-    }
-
     serverApp.close();
   });
   describe("Without auth", () => {
@@ -48,9 +48,67 @@ describe("Endpoint /users", () => {
       expect(response.status).toEqual(200);
       expect(response.body).toEqual(expectedData);
     });
-    test("POST /users", () => {
-      return request(serverApp).post(baseUrl).send({}).expect(422);
+
+    describe("POST /users", () => {
+      test("empty payload", () => {
+        return request(serverApp).post(baseUrl).send({}).expect(422);
+      });
+      test("valid registration", async () => {
+        // Arrange:
+        const testUserData = {
+          email: "user@example.com",
+          firstname: "string",
+          lastname: "string",
+          password: "string",
+          avatar: "string",
+        };
+
+        // Act:
+        const response = await request(serverApp).post(baseUrl).send(testUserData);
+
+        // Assert:
+        expect(response.status).toEqual(201);
+        testUserData.id = response.body.id;
+        expect(response.body).toEqual(testUserData);
+      });
+      test("invalid email", async () => {
+        // Arrange:
+        const testUserData = {
+          email: "userexample.com",
+          firstname: "string",
+          lastname: "string",
+          password: "string",
+          avatar: "string",
+        };
+
+        // Act:
+        const response = await request(serverApp).post(baseUrl).send(testUserData);
+
+        // Assert:
+        expect(response.status).toEqual(422);
+      });
+      ["firstname", "lastname", "email", "avatar"].forEach((field) => {
+        test(`missing mandatory field - ${field}`, async () => {
+          // Arrange:
+          const testUserData = {
+            email: "userexample.com",
+            firstname: "string",
+            lastname: "string",
+            password: "string",
+            avatar: "string",
+          };
+
+          testUserData[field] = undefined;
+
+          // Act:
+          const response = await request(serverApp).post(baseUrl).send(testUserData);
+
+          // Assert:
+          expect(response.status).toEqual(422);
+        });
+      });
     });
+
     test("PUT /users", () => {
       return request(serverApp).put(baseUrl).send({}).expect(401);
     });

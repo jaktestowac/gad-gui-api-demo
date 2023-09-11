@@ -5,6 +5,12 @@ describe("Endpoint /comments", () => {
   const baseUrl = "/api/comments";
 
   beforeAll(async () => {
+    try {
+      request(serverApp).get("/api/restoreDB").expect(201);
+    } catch (error) {
+      console.log(error);
+    }
+
     // Lover log level to WARNING:
     const requestBody = {
       currentLogLevel: 2,
@@ -13,12 +19,6 @@ describe("Endpoint /comments", () => {
     expect(response.status).toEqual(200);
   });
   afterAll(() => {
-    try {
-      request(serverApp).get("/api/restoreDB").expect(200);
-    } catch (error) {
-      console.log(error);
-    }
-
     serverApp.close();
   });
   describe("Without auth", () => {

@@ -5,6 +5,12 @@ describe("Endpoint /other", () => {
   const baseUrl = "/api";
 
   beforeAll(async () => {
+    try {
+      request(serverApp).get("/api/restoreDB").expect(201);
+    } catch (error) {
+      console.log(error);
+    }
+
     // Lover log level to WARNING:
     const requestBody = {
       currentLogLevel: 2,
@@ -14,12 +20,6 @@ describe("Endpoint /other", () => {
   });
 
   afterAll(() => {
-    try {
-      request(serverApp).get("/api/restoreDB").expect(200);
-    } catch (error) {
-      console.log(error);
-    }
-
     serverApp.close();
   });
 
