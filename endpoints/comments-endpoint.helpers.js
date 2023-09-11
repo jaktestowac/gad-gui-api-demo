@@ -47,9 +47,7 @@ function handleComments(req, res, isAdmin, next) {
     }
   }
   if (req.method !== "GET" && req.method !== "HEAD" && urlEnds.includes("/api/comments") && !isAdmin) {
-    // begin: check user auth
     const verifyTokenResult = verifyAccessToken(req, res, "comments", req.url);
-    if (!verifyTokenResult) return;
 
     if (req.method !== "POST") {
       let commentId = getIdFromUrl(urlEnds);
@@ -61,7 +59,6 @@ function handleComments(req, res, isAdmin, next) {
         return;
       }
     }
-    // end: check user auth
   }
   if (req.method === "POST" && urlEnds.includes("/api/comments")) {
     // validate mandatory fields:
@@ -91,8 +88,6 @@ function handleComments(req, res, isAdmin, next) {
     }
     logDebug(`[DELAY] Waiting for ${timeout} [ms] for ${urlEnds}`);
     sleep(timeout).then(() => next());
-  } else {
-    next();
   }
   return;
 }

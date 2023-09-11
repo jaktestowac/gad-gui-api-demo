@@ -98,15 +98,15 @@ const validations = (req, res, next) => {
     }
 
     if (req.url.includes("/api/config")) {
-      res = handleConfig(req, res);
+      handleConfig(req, res);
       return;
     }
     if (req.url.includes("/api/hangman")) {
-      res = handleHangman(req, res);
+      handleHangman(req, res);
       return;
     }
     if (req.url.includes("/api/quiz")) {
-      res = handleQuiz(req, res);
+      handleQuiz(req, res);
       return;
     }
 
@@ -118,7 +118,6 @@ const validations = (req, res, next) => {
       !isAdmin
     ) {
       logTrace("Validators: Check user auth", { url: urlEnds });
-      // begin: check user auth
       let userId = getIdFromUrl(urlEnds);
       const verifyTokenResult = verifyAccessToken(req, res, "users", req.url);
       if (!verifyTokenResult) return;
@@ -129,20 +128,36 @@ const validations = (req, res, next) => {
         res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
         return;
       }
-      // end: check user auth
+    }
+
+    if (
+      (urlEnds?.includes("/api/articles/upload") && !isAdmin) ||
+      (req.method !== "GET" && req.method !== "HEAD" && urlEnds?.includes("/api/articles") && !isAdmin)
+    ) {
+      const verifyTokenResult = verifyAccessToken(req, res, "articles", req.url);
+      if (!verifyTokenResult) return;
+    }
+
+    if (req.method !== "GET" && req.method !== "HEAD" && urlEnds.includes("/api/comments") && !isAdmin) {
+      const verifyTokenResult = verifyAccessToken(req, res, "articles", req.url);
+      if (!verifyTokenResult) return;
     }
 
     if (req.url.includes("/api/users")) {
-      res = handleUsers(req, res);
+      handleUsers(req, res);
     }
 
     if (req.url.includes("/api/articles")) {
-      res = handleArticles(req, res, isAdmin);
+      handleArticles(req, res, isAdmin);
     }
 
     if (req.url.includes("/api/comments")) {
-      res = handleComments(req, res, isAdmin, next);
-    } else {
+      handleComments(req, res, isAdmin, next);
+    }
+
+    logTrace("Returning:", { statusCode: res.statusCode, headersSent: res.headersSent, urlEnds });
+
+    if (res.headersSent !== true) {
       next();
     }
   } catch (error) {

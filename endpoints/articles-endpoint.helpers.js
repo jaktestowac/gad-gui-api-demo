@@ -18,19 +18,16 @@ function handleArticles(req, res, isAdmin) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
 
   if (urlEnds?.includes("/api/articles/upload") && !isAdmin) {
-    // begin: check user auth
     const verifyTokenResult = verifyAccessToken(req, res, "articles", req.url);
-    if (!verifyTokenResult) return;
     const foundUser = searchForUserWithToken(req.headers["userid"], verifyTokenResult);
 
     if (foundUser === undefined) {
       res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
       return;
     }
-  } else if (req.method !== "GET" && req.method !== "HEAD" && urlEnds?.includes("/api/articles") && !isAdmin) {
-    // begin: check user auth
+  }
+  if (req.method !== "GET" && req.method !== "HEAD" && urlEnds?.includes("/api/articles") && !isAdmin) {
     const verifyTokenResult = verifyAccessToken(req, res, "articles", req.url);
-    if (!verifyTokenResult) return;
 
     if (req.method !== "POST") {
       let articleId = req.body["id"];

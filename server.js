@@ -101,7 +101,8 @@ const customRoutesAfterAuth = (req, res, next) => {
           return;
         }
       });
-    } else {
+    }
+    if (res.headersSent !== true) {
       next();
     }
   } catch (error) {
@@ -164,7 +165,6 @@ const customRoutes = (req, res, next) => {
         visitsPerArticle[articleId]++;
         logDebug(`[visits] articleId: "${articleId}" with visits:${visitsPerArticle[articleId]}`);
       }
-      next();
     } else if (req.url.includes("/api/comments") && req.method === "GET") {
       let commentId = getIdFromUrl(urlEnds);
 
@@ -176,7 +176,6 @@ const customRoutes = (req, res, next) => {
         visitsPerComment[commentId]++;
         logDebug(`[visits] commentId: "${commentId}" with visits:${visitsPerComment[commentId]}`);
       }
-      next();
     } else if (req.url.includes("/api/users") && req.method === "GET") {
       let userId = getIdFromUrl(urlEnds);
 
@@ -188,8 +187,8 @@ const customRoutes = (req, res, next) => {
         visitsPerUsers[userId]++;
         logDebug(`[visits] userId: "${userId}" with visits:${visitsPerUsers[userId]}`);
       }
-      next();
-    } else {
+    }
+    if (res.headersSent !== true) {
       next();
     }
   } catch (error) {
