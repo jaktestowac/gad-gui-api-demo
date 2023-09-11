@@ -4,15 +4,17 @@ const fs = require("fs");
 const { createToken, isAuthenticated, prepareCookieMaxAge } = require("./helpers/jwtauth");
 const { getConfigValue } = require("./config/config-manager");
 const { ConfigKeys } = require("./config/enums");
+const path = require("path");
 
 const cookieparser = require("cookie-parser");
 const helmet = require("helmet");
 const express = require("express");
 const formidable = require("formidable");
+const { articlesDb, commentsDb, userDb, fullDb, getDbPath } = require("./helpers/db.helpers");
 
 const server = jsonServer.create();
-const router = jsonServer.router(getConfigValue(ConfigKeys.DB_PATH));
-const path = require("path");
+const router = jsonServer.router(getDbPath(getConfigValue(ConfigKeys.DB_PATH)));
+
 const {
   pluginStatuses,
   formatErrorResponse,
@@ -26,7 +28,6 @@ const {
   mandatory_non_empty_fields_article,
   all_fields_article,
 } = require("./helpers/validation.helpers");
-const { articlesDb, commentsDb, userDb, fullDb } = require("./helpers/db.helpers");
 const {
   HTTP_UNPROCESSABLE_ENTITY,
   HTTP_INTERNAL_SERVER_ERROR,
@@ -471,3 +472,7 @@ var serverApp = server.listen(port, () => {
   logDebug(`Visit it on -> http://${address}:${port}`);
   logDebug(`🎉 Your custom REST API service is up and running!!!`);
 });
+
+module.exports = {
+  serverApp,
+};

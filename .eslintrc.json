@@ -47,6 +47,10 @@
         "generateChartPDF": "readonly",
         "checkAnswer": "readonly",
         "startQuiz": "readonly",
-        "changeItemsPerPage": "readonly"
+        "changeItemsPerPage": "readonly",
+        "describe": "readonly",
+        "test": "readonly",
+        "afterAll": "readonly",
+        "expect": "readonly"
     }
 }

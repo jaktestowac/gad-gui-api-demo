@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "rnd": "node ./tools/generateData.js",
-    "pretty": "npx prettier --write ."
+    "pretty": "npx prettier --write .",
+    "test": "cross-env NODE_ENV=test PORT=3002 jest --testTimeout=10000 --detectOpenHandles"
   },
   "keywords": [
     "json-server, node, REST API"
@@ -40,9 +41,5 @@
   },
   "engines": {
     "node": ">=16.x"
-  },
-  "devDependencies": {
-    "eslint": "^8.48.0",
-    "eslint-plugin-html": "^7.1.0"
   }
 }
