@@ -51,6 +51,8 @@
         "describe": "readonly",
         "test": "readonly",
         "afterAll": "readonly",
+        "beforeEach": "readonly",
+        "beforeAll": "readonly",
         "expect": "readonly"
     }
 }
