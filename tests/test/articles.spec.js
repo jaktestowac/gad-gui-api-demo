@@ -1,5 +1,5 @@
 const { request, expect, baseArticlesUrl } = require("./config.js");
-const { authUser } = require("./helpers/data.helpers.js");
+const { authUser, generateValidArticleData, validExistingArticle } = require("./helpers/data.helpers.js");
 const { setupEnv, gracefulQuit } = require("./helpers/helpers.js");
 
 describe("Endpoint /articles", () => {
@@ -26,14 +26,7 @@ describe("Endpoint /articles", () => {
 
       it("GET /articles/:id", async () => {
         // Arrange:
-        const expectedData = {
-          id: 1,
-          title: "How to write effective test cases",
-          body: "Test cases are the backbone of any testing process. They define what to test, how to test, and what to expect. Writing effective test cases can save time, effort, and resources. Here are some tips for writing effective test cases:\n- Use clear and concise language\n- Follow a consistent format and structure\n- Include preconditions, steps, expected results, and postconditions\n- Cover positive, negative, and boundary scenarios\n- Prioritize test cases based on risk and importance\n- Review and update test cases regularly",
-          user_id: 1,
-          date: "2021-07-13T16:35:00Z",
-          image: ".\\data\\images\\256\\chuttersnap-9cCeS9Sg6nU-unsplash.jpg",
-        };
+        const expectedData = validExistingArticle;
 
         // Act:
         const response = await request.get("/api/articles/1");
@@ -80,11 +73,17 @@ describe("Endpoint /articles", () => {
       // TODO:
     });
 
+    describe("DELETE /articles", async () => {
+      // TODO:
+    });
+
     describe("With auth", () => {
       let headers;
+      let userId;
       beforeEach(async () => {
         const data = await authUser();
         headers = data.headers;
+        userId = data.userId;
       });
 
       it("GET /articles", async () => {
@@ -98,14 +97,7 @@ describe("Endpoint /articles", () => {
 
       it("GET /articles/:id", async () => {
         // Arrange:
-        const expectedData = {
-          id: 1,
-          title: "How to write effective test cases",
-          body: "Test cases are the backbone of any testing process. They define what to test, how to test, and what to expect. Writing effective test cases can save time, effort, and resources. Here are some tips for writing effective test cases:\n- Use clear and concise language\n- Follow a consistent format and structure\n- Include preconditions, steps, expected results, and postconditions\n- Cover positive, negative, and boundary scenarios\n- Prioritize test cases based on risk and importance\n- Review and update test cases regularly",
-          user_id: 1,
-          date: "2021-07-13T16:35:00Z",
-          image: ".\\data\\images\\256\\chuttersnap-9cCeS9Sg6nU-unsplash.jpg",
-        };
+        const expectedData = validExistingArticle;
 
         // Act:
         const response = await request.get(`${baseUrl}/1`).set(headers);
@@ -113,6 +105,104 @@ describe("Endpoint /articles", () => {
         // Assert:
         expect(response.status).to.equal(200);
         expect(response.body).to.deep.equal(expectedData);
+      });
+
+      it("POST /articles - create valid article", async () => {
+        // Arrange:
+        const testData = generateValidArticleData();
+        testData.user_id = userId;
+
+        // Act:
+        const response = await request.post(baseUrl).set(headers).send(testData);
+
+        // Assert:
+        expect(response.status).to.equal(201);
+        testData.id = response.body.id;
+        expect(response.body).to.deep.equal(testData);
+      });
+
+      it("POST /articles - create valid article - max title length", async () => {
+        // Arrange:
+        const testData = generateValidArticleData(128);
+        testData.user_id = userId;
+
+        // Act:
+        const response = await request.post(baseUrl).set(headers).send(testData);
+
+        // Assert:
+        expect(response.status).to.equal(201);
+        testData.id = response.body.id;
+        expect(response.body).to.deep.equal(testData);
+      });
+
+      it("POST /articles - create article - length of title field exceeded", async () => {
+        // Arrange:
+        const testData = generateValidArticleData(129);
+        testData.user_id = userId;
+
+        // Act:
+        const response = await request.post(baseUrl).set(headers).send(testData);
+
+        // Assert:
+        expect(response.status).to.equal(422);
+      });
+
+      it("POST /articles - create valid article - max body length", async () => {
+        // Arrange:
+        const testData = generateValidArticleData(128, 10000);
+        testData.user_id = userId;
+
+        // Act:
+        const response = await request.post(baseUrl).set(headers).send(testData);
+
+        // Assert:
+        expect(response.status).to.equal(201);
+        testData.id = response.body.id;
+        expect(response.body).to.deep.equal(testData);
+      });
+
+      it("POST /articles - create article - length of body field exceeded", async () => {
+        // Arrange:
+        const testData = generateValidArticleData(128, 10001);
+        testData.user_id = userId;
+
+        // Act:
+        const response = await request.post(baseUrl).set(headers).send(testData);
+
+        // Assert:
+        expect(response.status).to.equal(422);
+      });
+
+      ["title", "body", "date"].forEach((field) => {
+        it(`POST /articles - missing mandatory field - ${field}`, async () => {
+          // Arrange:
+          const testData = generateValidArticleData();
+          testData.user_id = userId;
+
+          testData[field] = undefined;
+
+          // Act:
+          const response = await request.post(baseUrl).set(headers).send(testData);
+
+          // Assert:
+          expect(response.status).to.equal(422);
+        });
+      });
+
+      ["user_id"].forEach((field) => {
+        it(`POST /articles - missing mandatory field - ${field}`, async () => {
+          // Arrange:
+          const testData = generateValidArticleData();
+          testData.user_id = userId;
+
+          testData[field] = undefined;
+
+          // Act:
+          const response = await request.post(baseUrl).set(headers).send(testData);
+
+          // Assert:
+          expect(response.status).to.equal(401);
+        });
       });
 
       it("HEAD /articles", () => {

@@ -1,5 +1,5 @@
 const { request, expect, baseCommentsUrl } = require("./config.js");
-const { authUser } = require("./helpers/data.helpers.js");
+const { authUser, validExistingComment } = require("./helpers/data.helpers.js");
 const { gracefulQuit, setupEnv } = require("./helpers/helpers.js");
 
 describe("Endpoint /comments", () => {
@@ -25,13 +25,7 @@ describe("Endpoint /comments", () => {
 
     it("GET /comments/:id", async () => {
       // Arrange:
-      const expectedData = {
-        id: 1,
-        article_id: 1,
-        user_id: 3,
-        body: "I loved your insights on usability testing. It's crucial to ensure that the software meets the needs of the end users. Have you encountered any interesting user feedback during usability testing that led to significant improvements in the product?",
-        date: "2021-11-30T14:44:22Z",
-      };
+      const expectedData = validExistingComment;
 
       // Act:
       const response = await request.get(`${baseUrl}/1`);
@@ -78,6 +72,10 @@ describe("Endpoint /comments", () => {
     // TODO:
   });
 
+  describe("DELETE /comments", async () => {
+    // TODO:
+  });
+
   describe("With auth", () => {
     let headers;
 
@@ -97,13 +95,7 @@ describe("Endpoint /comments", () => {
 
     it("GET /comments/:id", async () => {
       // Arrange:
-      const expectedData = {
-        id: 1,
-        article_id: 1,
-        user_id: 3,
-        body: "I loved your insights on usability testing. It's crucial to ensure that the software meets the needs of the end users. Have you encountered any interesting user feedback during usability testing that led to significant improvements in the product?",
-        date: "2021-11-30T14:44:22Z",
-      };
+      const expectedData = validExistingComment;
 
       // Act:
       const response = await request.get(`${baseUrl}/1`).set(headers);

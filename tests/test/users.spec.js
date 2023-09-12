@@ -1,5 +1,5 @@
 const { gracefulQuit, setupEnv } = require("./helpers/helpers.js");
-const { baseUsersUrl, request, expect } = require("./config.js");
+const { baseUsersUrl, request, expect, faker } = require("./config.js");
 const {
   prepareUniqueLoggedUser,
   authUser,
@@ -96,6 +96,21 @@ describe("Endpoint /users", async () => {
           const testUserData = generateValidUserData();
 
           testUserData[field] = undefined;
+
+          // Act:
+          const response = await request.post(baseUrl).send(testUserData);
+
+          // Assert:
+          expect(response.status).to.equal(422);
+        });
+      });
+
+      ["firstname", "lastname", "email", "avatar"].forEach((field) => {
+        it(`length of field exceeded - ${field}`, async () => {
+          // Arrange:
+          const testUserData = generateValidUserData();
+
+          testUserData[field] = faker.string.alphanumeric(5000) + "@test." + faker.string.alphanumeric(4995);
 
           // Act:
           const response = await request.post(baseUrl).send(testUserData);
@@ -210,6 +225,7 @@ describe("Endpoint /users", async () => {
       expect(response.status).to.equal(200);
     });
   });
+
   describe("DELETE /users", () => {
     let headers;
     let userId;
