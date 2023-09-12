@@ -1,4 +1,4 @@
-const { request, expect, faker, baseUsersUrl, baseArticlesUrl } = require("../config");
+const { request, expect, faker, baseUsersUrl, baseArticlesUrl, baseCommentsUrl } = require("../config");
 const { sleep } = require("./helpers");
 
 const validExistingUser = {
@@ -34,6 +34,16 @@ function generateValidUserData() {
     lastname: "string",
     password: "string",
     avatar: "string",
+  };
+  return testData;
+}
+
+function generateValidCommentData() {
+  const testData = {
+    article_id: 1,
+    user_id: 1,
+    body: faker.lorem.sentences(),
+    date: "2021-11-30T14:44:22Z",
   };
   return testData;
 }
@@ -128,6 +138,7 @@ async function prepareUniqueArticle(headers, userId) {
 
   expect(response.status).to.equal(201);
   articleId = response.body.id;
+  testData.id = articleId;
   await sleep(200); // wait for user registration // server is slow
 
   return {
@@ -136,12 +147,32 @@ async function prepareUniqueArticle(headers, userId) {
   };
 }
 
+async function prepareUniqueComment(headers, userId, articleId) {
+  const testData = generateValidCommentData();
+  testData.user_id = userId;
+  testData.article_id = articleId;
+
+  const response = await request.post(baseCommentsUrl).set(headers).send(testData);
+
+  expect(response.status).to.equal(201);
+  commentId = response.body.id;
+  testData.id = commentId;
+  await sleep(200); // wait for user registration // server is slow
+
+  return {
+    testData,
+    commentId,
+  };
+}
+
 module.exports = {
   prepareUniqueLoggedUser,
   prepareUniqueArticle,
+  prepareUniqueComment,
   authUser,
   generateValidUserData,
   generateValidArticleData,
+  generateValidCommentData,
   validExistingUser,
   validExistingComment,
   validExistingArticle,

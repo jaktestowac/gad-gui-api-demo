@@ -172,6 +172,21 @@ describe("Endpoint /articles", () => {
         expect(response.body).to.deep.equal(testData);
       });
 
+      it("POST /articles - create valid article (with id in body)", async () => {
+        // Arrange:
+        const testData = generateValidArticleData();
+        testData.user_id = userId;
+        testData.id = 1;
+
+        // Act:
+        const response = await request.post(baseUrl).set(headers).send(testData);
+
+        // Assert:
+        expect(response.status).to.equal(201);
+        testData.id = response.body.id;
+        expect(response.body).to.deep.equal(testData);
+      });
+
       it("POST /articles - create valid article - max title length", async () => {
         // Arrange:
         const testData = generateValidArticleData(128);

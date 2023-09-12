@@ -1,5 +1,10 @@
 const { request, expect, baseCommentsUrl } = require("./config.js");
-const { authUser, validExistingComment } = require("./helpers/data.helpers.js");
+const {
+  authUser,
+  validExistingComment,
+  prepareUniqueComment,
+  generateValidCommentData,
+} = require("./helpers/data.helpers.js");
 const { gracefulQuit, setupEnv } = require("./helpers/helpers.js");
 
 describe("Endpoint /comments", () => {
@@ -77,15 +82,89 @@ describe("Endpoint /comments", () => {
   });
 
   describe("DELETE /comments", async () => {
-    // TODO:
-  });
-
-  describe("With auth", () => {
     let headers;
+    let userId;
+    let articleId;
+    let commentId;
 
     beforeEach(async () => {
       const data = await authUser();
       headers = data.headers;
+      userId = data.userId;
+      articleId = 1;
+
+      const commentData = await prepareUniqueComment(headers, userId, articleId);
+      commentId = commentData.commentId;
+    });
+
+    it("DELETE /comments/:id", async () => {
+      // Act:
+      const response = await request.delete(`${baseUrl}/${commentId}`).set(headers);
+
+      // Assert:
+      expect(response.status, JSON.stringify(response.body)).to.equal(200);
+
+      // Act:
+      const responseGet = await request.get(`${baseUrl}/${commentId}`).set(headers);
+
+      // Assert:
+      expect(responseGet.status).to.equal(404);
+    });
+
+    it("DELETE /comments/:id - non existing comment", async () => {
+      // Act:
+      const response = await request.delete(`${baseUrl}/1234213`).set(headers);
+
+      // Assert:
+      expect(response.status).to.equal(401);
+    });
+
+    it("DELETE /comments/:id - not my comment", async () => {
+      // Act:
+      const response = await request.delete(`${baseUrl}/1`).set(headers);
+
+      // Assert:
+      expect(response.status).to.equal(401);
+    });
+  });
+
+  describe("With auth", () => {
+    let headers;
+    let userId;
+
+    beforeEach(async () => {
+      const data = await authUser();
+      headers = data.headers;
+      userId = data.userId;
+    });
+
+    it("POST /comments - create valid comment", async () => {
+      const testData = generateValidCommentData();
+      testData.user_id = userId;
+      testData.article_id = 1;
+
+      // Act:
+      const response = await request.post(baseCommentsUrl).set(headers).send(testData);
+
+      // Assert:
+      expect(response.status).to.equal(201);
+      testData.id = response.body.id;
+      expect(response.body).to.deep.equal(testData);
+    });
+
+    it("POST /comments - create valid comment (with id in body)", async () => {
+      const testData = generateValidCommentData();
+      testData.user_id = userId;
+      testData.article_id = 1;
+      testData.id = 1;
+
+      // Act:
+      const response = await request.post(baseCommentsUrl).set(headers).send(testData);
+
+      // Assert:
+      expect(response.status).to.equal(201);
+      testData.id = response.body.id;
+      expect(response.body).to.deep.equal(testData);
     });
 
     it("GET /comments", async () => {

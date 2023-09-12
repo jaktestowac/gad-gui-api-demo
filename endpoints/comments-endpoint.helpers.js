@@ -1,5 +1,5 @@
-const { getConfigValue } = require("../config/config-manager");
-const { ConfigKeys } = require("../config/enums");
+const { getConfigValue, isBugDisabled } = require("../config/config-manager");
+const { ConfigKeys, BugConfigKeys } = require("../config/enums");
 const { searchForComment, searchForUserWithToken } = require("../helpers/db-operation.helpers");
 const {
   formatInvalidFieldErrorResponse,
@@ -46,6 +46,7 @@ function handleComments(req, res, isAdmin, next) {
       req.body.id = commentId;
     }
   }
+
   if (req.method !== "GET" && req.method !== "HEAD" && urlEnds.includes("/api/comments") && !isAdmin) {
     const verifyTokenResult = verifyAccessToken(req, res, "comments", req.url);
 
@@ -60,6 +61,7 @@ function handleComments(req, res, isAdmin, next) {
       }
     }
   }
+
   if (req.method === "POST" && urlEnds.includes("/api/comments")) {
     // validate mandatory fields:
     if (!are_mandatory_fields_present(req.body, mandatory_non_empty_fields_comment)) {
@@ -72,7 +74,13 @@ function handleComments(req, res, isAdmin, next) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidFieldErrorResponse(isValid, all_fields_comment));
       return;
     }
+
+    if (isBugDisabled(BugConfigKeys.BUG_VALIDATION_004)) {
+      // remove id - otherwise - 500: Error: Insert failed, duplicate id
+      req.body.id = undefined;
+    }
   }
+
   if (req.method === "GET" && urlEnds.includes("api/comments")) {
     let comments = urlEnds.split("_limit=")[1];
     comments = comments?.split("&")[0];

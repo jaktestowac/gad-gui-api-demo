@@ -1,3 +1,5 @@
+const { isBugDisabled } = require("../config/config-manager");
+const { BugConfigKeys } = require("../config/enums");
 const { searchForUserWithToken, searchForArticle } = require("../helpers/db-operation.helpers");
 const {
   formatInvalidTokenErrorResponse,
@@ -26,6 +28,7 @@ function handleArticles(req, res, isAdmin) {
       return;
     }
   }
+
   if (req.method !== "GET" && req.method !== "HEAD" && urlEnds?.includes("/api/articles") && !isAdmin) {
     const verifyTokenResult = verifyAccessToken(req, res, "articles", req.url);
 
@@ -64,7 +67,13 @@ function handleArticles(req, res, isAdmin) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidFieldErrorResponse(isValid, all_fields_article));
       return;
     }
+
+    if (isBugDisabled(BugConfigKeys.BUG_VALIDATION_003)) {
+      // remove id - otherwise - 500: Error: Insert failed, duplicate id
+      req.body.id = undefined;
+    }
   }
+
   if (req.method === "PATCH" && urlEnds.includes("/api/articles") && !isAdmin) {
     // validate all fields:
     const isValid = are_all_fields_valid(req.body, all_fields_article, mandatory_non_empty_fields_article);
@@ -73,6 +82,7 @@ function handleArticles(req, res, isAdmin) {
       return;
     }
   }
+
   if (req.method === "PUT" && urlEnds.includes("/api/articles") && !isAdmin) {
     // validate mandatory fields:
     if (!are_mandatory_fields_present(req.body, mandatory_non_empty_fields_article)) {
