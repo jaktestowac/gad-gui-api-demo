@@ -1,5 +1,10 @@
 const { request, expect, baseArticlesUrl } = require("./config.js");
-const { authUser, generateValidArticleData, validExistingArticle } = require("./helpers/data.helpers.js");
+const {
+  authUser,
+  generateValidArticleData,
+  validExistingArticle,
+  prepareUniqueArticle,
+} = require("./helpers/data.helpers.js");
 const { setupEnv, gracefulQuit } = require("./helpers/helpers.js");
 
 describe("Endpoint /articles", () => {
@@ -60,8 +65,12 @@ describe("Endpoint /articles", () => {
         return request.patch(`${baseUrl}/1`).send({}).expect(401);
       });
 
+      it("DELETE /articles", () => {
+        return request.delete(baseUrl).expect(401);
+      });
+
       it("DELETE /articles/:id", () => {
-        return request.delete(`${baseUrl}/1`).send({}).expect(401);
+        return request.delete(`${baseUrl}/1`).expect(401);
       });
 
       it("HEAD /articles", () => {
@@ -74,12 +83,54 @@ describe("Endpoint /articles", () => {
     });
 
     describe("DELETE /articles", async () => {
-      // TODO:
+      let headers;
+      let userId;
+      let articleId;
+
+      beforeEach(async () => {
+        const data = await authUser();
+        headers = data.headers;
+        userId = data.userId;
+
+        const articleData = await prepareUniqueArticle(headers, userId);
+        articleId = articleData.articleId;
+      });
+
+      it("DELETE /articles/:id", async () => {
+        // Act:
+        const response = await request.delete(`${baseUrl}/${articleId}`).set(headers);
+
+        // Assert:
+        expect(response.status, JSON.stringify(response.body)).to.equal(200);
+
+        // Act:
+        const responseGet = await request.get(`${baseUrl}/${articleId}`).set(headers);
+
+        // Assert:
+        expect(responseGet.status).to.equal(404);
+      });
+
+      it("DELETE /articles/:id - non existing article", async () => {
+        // Act:
+        const response = await request.delete(`${baseUrl}/1234213`).set(headers);
+
+        // Assert:
+        expect(response.status).to.equal(401);
+      });
+
+      it("DELETE /articles/:id - not my article", async () => {
+        // Act:
+        const response = await request.delete(`${baseUrl}/1`).set(headers);
+
+        // Assert:
+        expect(response.status).to.equal(401);
+      });
     });
 
     describe("With auth", () => {
       let headers;
       let userId;
+
       beforeEach(async () => {
         const data = await authUser();
         headers = data.headers;

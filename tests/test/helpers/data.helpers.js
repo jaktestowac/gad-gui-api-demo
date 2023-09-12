@@ -1,4 +1,4 @@
-const { request, expect, faker, baseUsersUrl } = require("../config");
+const { request, expect, faker, baseUsersUrl, baseArticlesUrl } = require("../config");
 const { sleep } = require("./helpers");
 
 const validExistingUser = {
@@ -120,8 +120,25 @@ async function prepareUniqueLoggedUser() {
   };
 }
 
+async function prepareUniqueArticle(headers, userId) {
+  const testData = generateValidArticleData();
+  testData.user_id = userId;
+
+  const response = await request.post(baseArticlesUrl).set(headers).send(testData);
+
+  expect(response.status).to.equal(201);
+  articleId = response.body.id;
+  await sleep(200); // wait for user registration // server is slow
+
+  return {
+    testData,
+    articleId,
+  };
+}
+
 module.exports = {
   prepareUniqueLoggedUser,
+  prepareUniqueArticle,
   authUser,
   generateValidUserData,
   generateValidArticleData,

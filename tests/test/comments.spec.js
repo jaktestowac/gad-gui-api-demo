@@ -60,7 +60,11 @@ describe("Endpoint /comments", () => {
     });
 
     it("DELETE /comments/:id", () => {
-      return request.delete(`${baseUrl}/1`).send({}).expect(401);
+      return request.delete(`${baseUrl}/1`).expect(401);
+    });
+
+    it("DELETE /comments", () => {
+      return request.delete(baseUrl).expect(401);
     });
 
     it("HEAD /comments", () => {
