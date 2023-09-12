@@ -1,69 +1,67 @@
 const request = require("supertest");
 const { serverApp } = require("../../server.js");
+let expect = require("chai").expect;
 
 describe("Endpoint /quiz", () => {
   const baseUrl = "/api/quiz";
 
-  beforeAll(async () => {
-    try {
-      request(serverApp).get("/api/restoreDB").expect(201);
-    } catch (error) {
-      console.log(error);
-    }
+  before(async () => {
+    const restoreResponse = await request(serverApp).get("/api/restoreDB");
+    expect(restoreResponse.status).to.equal(201);
 
-    // Lover log level to WARNING:
+    // Lower log level to WARNING:
     const requestBody = {
       currentLogLevel: 2,
     };
     const response = await request(serverApp).post("/api/config").send(requestBody);
-    expect(response.status).toEqual(200);
+    expect(response.status).to.equal(200);
   });
 
-  afterAll(() => {
+  after(() => {
     serverApp.close();
   });
 
   describe("Without auth", () => {
-    test("start", () => {
+    it("start", () => {
       return request(serverApp).get(`${baseUrl}/start`).expect(401);
     });
 
-    test("stop", () => {
+    it("stop", () => {
       return request(serverApp).get(`${baseUrl}/stop`).expect(401);
     });
 
-    test("highscores", () => {
+    it("highscores", () => {
       return request(serverApp).get(`${baseUrl}/highscores`).expect(200);
     });
 
-    test("questions", () => {
+    it("questions", () => {
       return request(serverApp).get(`${baseUrl}/questions`).expect(401);
     });
 
-    test("questions/count", async () => {
+    it("questions/count", async () => {
       // Act:
       const response = await request(serverApp).get(`${baseUrl}/questions/count`);
 
       // Assert:
-      expect(response.status).toEqual(200);
-      expect(response.body.count).toBeGreaterThan(1);
+      expect(response.status).to.equal(200);
+      expect(response.body.count).to.be.greaterThan(1);
     });
 
-    test("questions/check", () => {
+    it("questions/check", () => {
       return request(serverApp).post(`${baseUrl}/questions/check`).send({}).expect(401);
     });
   });
 
   describe("With auth", () => {
     let headers;
-    beforeAll(async () => {
+    before(async () => {
       const email = "Danial.Dicki@dicki.test";
       const password = "test2";
       const response = await request(serverApp).post("/api/login").send({
         email,
         password,
       });
-      expect(response.status).toEqual(200);
+      expect(response.status).to.equal(200);
 
       const token = response.body.access_token;
       headers = {
@@ -73,36 +71,36 @@ describe("Endpoint /quiz", () => {
       };
     });
 
-    test("start", () => {
+    it("start", () => {
       return request(serverApp).get(`${baseUrl}/start`).set(headers).expect(200);
     });
 
-    test("stop", () => {
+    it("stop", () => {
       return request(serverApp).get(`${baseUrl}/stop`).set(headers).expect(200);
     });
 
-    test("highscores", () => {
+    it("highscores", () => {
       return request(serverApp).get(`${baseUrl}/highscores`).set(headers).expect(200);
     });
 
-    test("questions", () => {
+    it("questions", () => {
       return request(serverApp).get(`${baseUrl}/questions`).set(headers).expect(200);
     });
 
-    test("start", () => {
+    it("start", () => {
       return request(serverApp).get(`${baseUrl}/stop`).set(headers).expect(200);
     });
 
-    test("questions/count", async () => {
+    it("questions/count", async () => {
       // Act:
       const response = await request(serverApp).get(`${baseUrl}/questions/count`).set(headers);
 
       // Assert:
-      expect(response.status).toEqual(200);
-      expect(response.body.count).toBeGreaterThan(1);
+      expect(response.status).to.equal(200);
+      expect(response.body.count).to.be.greaterThan(1);
     });
 
-    test("questions/check - incorrect", async () => {
+    it("questions/check - incorrect", async () => {
       // Arrange:
       const requestBody = {
         questionText: "string",
@@ -120,11 +118,11 @@ describe("Endpoint /quiz", () => {
         .set(headers)
         .expect(200);
       // Assert:
-      expect(response.status).toEqual(200);
-      expect(response.body).toEqual(expectedBody);
+      expect(response.status).to.equal(200);
+      expect(response.body).to.deep.equal(expectedBody);
     });
 
-    test("questions/check - correct", async () => {
+    it("questions/check - correct", async () => {
       // Arrange:
       const requestBody = {
         questionText: "What does HTML stand for?",
@@ -142,8 +140,8 @@ describe("Endpoint /quiz", () => {
         .set(headers)
         .expect(200);
       // Assert:
-      expect(response.status).toEqual(200);
-      expect(response.body).toEqual(expectedBody);
+      expect(response.status).to.equal(200);
+      expect(response.body).to.deep.equal(expectedBody);
     });
   });
 });

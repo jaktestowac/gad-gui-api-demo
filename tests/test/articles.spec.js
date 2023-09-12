@@ -1,40 +1,38 @@
 const request = require("supertest");
 const { serverApp } = require("../../server.js");
+let expect = require("chai").expect;
 
 describe("Endpoint /articles", () => {
   const baseUrl = "/api/articles";
 
-  beforeAll(async () => {
-    try {
-      request(serverApp).get("/api/restoreDB").expect(201);
-    } catch (error) {
-      console.log(error);
-    }
+  before(async () => {
+    const restoreResponse = await request(serverApp).get("/api/restoreDB");
+    expect(restoreResponse.status).to.equal(201);
 
-    // Lover log level to WARNING:
+    // Lower log level to WARNING:
     const requestBody = {
       currentLogLevel: 2,
     };
     const response = await request(serverApp).post("/api/config").send(requestBody);
-    expect(response.status).toEqual(200);
+    expect(response.status).to.equal(200);
   });
 
-  afterAll(() => {
+  after(() => {
     serverApp.close();
   });
 
   describe("Without auth", () => {
     describe("GET /:resources", () => {
-      test("GET /articles", async () => {
+      it("GET /articles", async () => {
         // Act:
         const response = await request(serverApp).get("/api/articles");
 
         // Assert:
-        expect(response.status).toEqual(200);
-        expect(response.body.length).toBeGreaterThan(1);
+        expect(response.status).to.equal(200);
+        expect(response.body.length).to.be.greaterThan(1);
       });
 
-      test("GET /articles/:id", async () => {
+      it("GET /articles/:id", async () => {
         // Arrange:
         const expectedData = {
           id: 1,
@@ -49,39 +47,39 @@ describe("Endpoint /articles", () => {
         const response = await request(serverApp).get("/api/articles/1");
 
         // Assert:
-        expect(response.status).toEqual(200);
-        expect(response.body).toEqual(expectedData);
+        expect(response.status).to.equal(200);
+        expect(response.body).to.deep.equal(expectedData);
       });
 
-      test("GET /articles/:id - non existing article", async () => {
+      it("GET /articles/:id - non existing article", async () => {
         // Act:
         const response = await request(serverApp).get(`${baseUrl}/112312312`);
 
         // Assert:
-        expect(response.status).toEqual(404);
+        expect(response.status).to.equal(404);
       });
 
-      test("POST /articles", () => {
+      it("POST /articles", () => {
         return request(serverApp).post(baseUrl).send({}).expect(401);
       });
 
-      test("PUT /articles", () => {
+      it("PUT /articles", () => {
         return request(serverApp).put(baseUrl).send({}).expect(401);
       });
 
-      test("PUT /articles/:id", () => {
+      it("PUT /articles/:id", () => {
         return request(serverApp).put(`${baseUrl}/1`).send({}).expect(401);
       });
 
-      test("PATCH /articles/:id", () => {
+      it("PATCH /articles/:id", () => {
         return request(serverApp).patch(`${baseUrl}/1`).send({}).expect(401);
       });
 
-      test("DELETE /articles/:id", () => {
+      it("DELETE /articles/:id", () => {
         return request(serverApp).delete(`${baseUrl}/1`).send({}).expect(401);
       });
 
-      test("HEAD /articles", () => {
+      it("HEAD /articles", () => {
         return request(serverApp).head(`${baseUrl}/1`).expect(200);
       });
     });
@@ -95,7 +93,7 @@ describe("Endpoint /articles", () => {
           email,
           password,
         });
-        expect(response.status).toEqual(200);
+        expect(response.status).to.equal(200);
 
         const token = response.body.access_token;
         headers = {
@@ -105,16 +103,16 @@ describe("Endpoint /articles", () => {
         };
       });
 
-      test("GET /articles", async () => {
+      it("GET /articles", async () => {
         // Act:
         const response = await request(serverApp).get(baseUrl).set(headers);
 
         // Assert:
-        expect(response.status).toEqual(200);
-        expect(response.body.length).toBeGreaterThan(1);
+        expect(response.status).to.equal(200);
+        expect(response.body.length).to.be.greaterThan(1);
       });
 
-      test("GET /articles/:id", async () => {
+      it("GET /articles/:id", async () => {
         // Arrange:
         const expectedData = {
           id: 1,
@@ -129,11 +127,11 @@ describe("Endpoint /articles", () => {
         const response = await request(serverApp).get(`${baseUrl}/1`).set(headers);
 
         // Assert:
-        expect(response.status).toEqual(200);
-        expect(response.body).toEqual(expectedData);
+        expect(response.status).to.equal(200);
+        expect(response.body).to.deep.equal(expectedData);
       });
 
-      test("HEAD /articles", () => {
+      it("HEAD /articles", () => {
         return request(serverApp).head(`${baseUrl}/1`).set(headers).expect(200);
       });
     });
