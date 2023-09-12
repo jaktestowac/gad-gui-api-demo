@@ -133,6 +133,10 @@ describe("Endpoint /users", async () => {
       return request.patch(`${baseUrl}/1`).send({}).expect(401);
     });
 
+    it("PATCH /users", () => {
+      return request.patch(baseUrl).send({}).expect(401);
+    });
+
     it("DELETE /users", () => {
       return request.delete(baseUrl).expect(401);
     });

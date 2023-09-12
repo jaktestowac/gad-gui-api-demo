@@ -61,6 +61,10 @@ describe("Endpoint /articles", () => {
         return request.put(`${baseUrl}/1`).send({}).expect(401);
       });
 
+      it("PATCH /articles", () => {
+        return request.patch(baseUrl).send({}).expect(401);
+      });
+
       it("PATCH /articles/:id", () => {
         return request.patch(`${baseUrl}/1`).send({}).expect(401);
       });

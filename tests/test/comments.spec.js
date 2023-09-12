@@ -64,6 +64,10 @@ describe("Endpoint /comments", () => {
       return request.patch(`${baseUrl}/1`).send({}).expect(401);
     });
 
+    it("PATCH /comments", () => {
+      return request.patch(baseUrl).send({}).expect(401);
+    });
+
     it("DELETE /comments/:id", () => {
       return request.delete(`${baseUrl}/1`).expect(401);
     });
