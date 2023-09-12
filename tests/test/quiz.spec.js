@@ -1,46 +1,37 @@
-const request = require("supertest");
-const { serverApp } = require("../../server.js");
-let expect = require("chai").expect;
+const { expect, request, baseQuizUrl } = require("./config");
+const { gracefulQuit, setupEnv } = require("./helpers/helpers");
 
 describe("Endpoint /quiz", () => {
-  const baseUrl = "/api/quiz";
+  const baseUrl = baseQuizUrl;
 
   before(async () => {
-    const restoreResponse = await request(serverApp).get("/api/restoreDB");
-    expect(restoreResponse.status).to.equal(201);
-
-    // Lower log level to WARNING:
-    const requestBody = {
-      currentLogLevel: 2,
-    };
-    const response = await request(serverApp).post("/api/config").send(requestBody);
-    expect(response.status).to.equal(200);
+    await setupEnv();
   });
 
   after(() => {
-    serverApp.close();
+    gracefulQuit();
   });
 
   describe("Without auth", () => {
     it("start", () => {
-      return request(serverApp).get(`${baseUrl}/start`).expect(401);
+      return request.get(`${baseUrl}/start`).expect(401);
     });
 
     it("stop", () => {
-      return request(serverApp).get(`${baseUrl}/stop`).expect(401);
+      return request.get(`${baseUrl}/stop`).expect(401);
     });
 
     it("highscores", () => {
-      return request(serverApp).get(`${baseUrl}/highscores`).expect(200);
+      return request.get(`${baseUrl}/highscores`).expect(200);
     });
 
     it("questions", () => {
-      return request(serverApp).get(`${baseUrl}/questions`).expect(401);
+      return request.get(`${baseUrl}/questions`).expect(401);
     });
 
     it("questions/count", async () => {
       // Act:
-      const response = await request(serverApp).get(`${baseUrl}/questions/count`);
+      const response = await request.get(`${baseUrl}/questions/count`);
 
       // Assert:
       expect(response.status).to.equal(200);
@@ -48,7 +39,7 @@ describe("Endpoint /quiz", () => {
     });
 
     it("questions/check", () => {
-      return request(serverApp).post(`${baseUrl}/questions/check`).send({}).expect(401);
+      return request.post(`${baseUrl}/questions/check`).send({}).expect(401);
     });
   });
 
@@ -57,7 +48,7 @@ describe("Endpoint /quiz", () => {
     before(async () => {
       const email = "Danial.Dicki@dicki.test";
       const password = "test2";
-      const response = await request(serverApp).post("/api/login").send({
+      const response = await request.post("/api/login").send({
         email,
         password,
       });
@@ -72,28 +63,28 @@ describe("Endpoint /quiz", () => {
     });
 
     it("start", () => {
-      return request(serverApp).get(`${baseUrl}/start`).set(headers).expect(200);
+      return request.get(`${baseUrl}/start`).set(headers).expect(200);
     });
 
     it("stop", () => {
-      return request(serverApp).get(`${baseUrl}/stop`).set(headers).expect(200);
+      return request.get(`${baseUrl}/stop`).set(headers).expect(200);
     });
 
     it("highscores", () => {
-      return request(serverApp).get(`${baseUrl}/highscores`).set(headers).expect(200);
+      return request.get(`${baseUrl}/highscores`).set(headers).expect(200);
     });
 
     it("questions", () => {
-      return request(serverApp).get(`${baseUrl}/questions`).set(headers).expect(200);
+      return request.get(`${baseUrl}/questions`).set(headers).expect(200);
     });
 
     it("start", () => {
-      return request(serverApp).get(`${baseUrl}/stop`).set(headers).expect(200);
+      return request.get(`${baseUrl}/stop`).set(headers).expect(200);
     });
 
     it("questions/count", async () => {
       // Act:
-      const response = await request(serverApp).get(`${baseUrl}/questions/count`).set(headers);
+      const response = await request.get(`${baseUrl}/questions/count`).set(headers);
 
       // Assert:
       expect(response.status).to.equal(200);
@@ -112,11 +103,7 @@ describe("Endpoint /quiz", () => {
       };
 
       // Act:
-      const response = await request(serverApp)
-        .post(`${baseUrl}/questions/check`)
-        .send(requestBody)
-        .set(headers)
-        .expect(200);
+      const response = await request.post(`${baseUrl}/questions/check`).send(requestBody).set(headers).expect(200);
       // Assert:
       expect(response.status).to.equal(200);
       expect(response.body).to.deep.equal(expectedBody);
@@ -134,11 +121,7 @@ describe("Endpoint /quiz", () => {
       };
 
       // Act:
-      const response = await request(serverApp)
-        .post(`${baseUrl}/questions/check`)
-        .send(requestBody)
-        .set(headers)
-        .expect(200);
+      const response = await request.post(`${baseUrl}/questions/check`).send(requestBody).set(headers).expect(200);
       // Assert:
       expect(response.status).to.equal(200);
       expect(response.body).to.deep.equal(expectedBody);

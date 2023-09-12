@@ -1,31 +1,22 @@
-const request = require("supertest");
-const { serverApp } = require("../../server.js");
-let expect = require("chai").expect;
+const { expect, request, baseStatsUrl } = require("./config");
+const { gracefulQuit, setupEnv } = require("./helpers/helpers");
 
 describe("Endpoint /stats", () => {
-  const baseUrl = "/api/stats";
+  const baseUrl = baseStatsUrl;
 
   before(async () => {
-    const restoreResponse = await request(serverApp).get("/api/restoreDB");
-    expect(restoreResponse.status).to.equal(201);
-
-    // Lower log level to WARNING:
-    const requestBody = {
-      currentLogLevel: 2,
-    };
-    const response = await request(serverApp).post("/api/config").send(requestBody);
-    expect(response.status).to.equal(200);
+    await setupEnv();
   });
 
   after(() => {
-    serverApp.close();
+    gracefulQuit();
   });
 
   describe("Without auth", async () => {
     describe("/users", async () => {
       it("GET /users", async () => {
         // Act:
-        const response = await request(serverApp).get(`${baseUrl}/users`);
+        const response = await request.get(`${baseUrl}/users`);
 
         // Assert:
         expect(response.status).to.equal(200);
@@ -36,7 +27,7 @@ describe("Endpoint /stats", () => {
 
       it("GET /users chartType=table", async () => {
         // Act:
-        const response = await request(serverApp).get(`${baseUrl}/users?chartType=table`);
+        const response = await request.get(`${baseUrl}/users?chartType=table`);
 
         // Assert:
         expect(response.status).to.equal(200);
@@ -47,7 +38,7 @@ describe("Endpoint /stats", () => {
 
       it("GET /users chartType=pie", async () => {
         // Act:
-        const response = await request(serverApp).get(`${baseUrl}/users?chartType=pie`);
+        const response = await request.get(`${baseUrl}/users?chartType=pie`);
 
         // Assert:
         expect(response.status).to.equal(200);
@@ -58,7 +49,7 @@ describe("Endpoint /stats", () => {
 
       it("GET /users chartType=chart", async () => {
         // Act:
-        const response = await request(serverApp).get(`${baseUrl}/users?chartType=chart`);
+        const response = await request.get(`${baseUrl}/users?chartType=chart`);
 
         // Assert:
         expect(response.status).to.equal(200);
@@ -70,7 +61,7 @@ describe("Endpoint /stats", () => {
     describe("/articles", () => {
       it("GET /articles", async () => {
         // Act:
-        const response = await request(serverApp).get(`${baseUrl}/articles`);
+        const response = await request.get(`${baseUrl}/articles`);
 
         // Assert:
         expect(response.status).to.equal(200);
@@ -79,7 +70,7 @@ describe("Endpoint /stats", () => {
 
       it("GET /articles chartType=table", async () => {
         // Act:
-        const response = await request(serverApp).get(`${baseUrl}/articles?chartType=table`);
+        const response = await request.get(`${baseUrl}/articles?chartType=table`);
 
         // Assert:
         expect(response.status).to.equal(200);
@@ -89,7 +80,7 @@ describe("Endpoint /stats", () => {
 
       it("GET /articles chartType=pie", async () => {
         // Act:
-        const response = await request(serverApp).get(`${baseUrl}/articles?chartType=pie`);
+        const response = await request.get(`${baseUrl}/articles?chartType=pie`);
 
         // Assert:
         expect(response.status).to.equal(200);
@@ -98,7 +89,7 @@ describe("Endpoint /stats", () => {
 
       it("GET /articles chartType=chart", async () => {
         // Act:
-        const response = await request(serverApp).get(`${baseUrl}/articles?chartType=chart`);
+        const response = await request.get(`${baseUrl}/articles?chartType=chart`);
 
         // Assert:
         expect(response.status).to.equal(200);
@@ -108,7 +99,7 @@ describe("Endpoint /stats", () => {
     describe("/publish/articles", () => {
       it("GET /publish/articles", async () => {
         // Act:
-        const response = await request(serverApp).get(`${baseUrl}/publish/articles`);
+        const response = await request.get(`${baseUrl}/publish/articles`);
 
         // Assert:
         expect(response.status).to.equal(200);
@@ -120,7 +111,7 @@ describe("Endpoint /stats", () => {
     describe("/publish/comments", () => {
       it("GET /publish/comments", async () => {
         // Act:
-        const response = await request(serverApp).get(`${baseUrl}/publish/comments`);
+        const response = await request.get(`${baseUrl}/publish/comments`);
 
         // Assert:
         expect(response.status).to.equal(200);
@@ -131,23 +122,7 @@ describe("Endpoint /stats", () => {
     });
   });
 
-  // describe("With auth", () => {
-  //   let headers;
-  //   before(async () => {
-  //     const email = "Danial.Dicki@dicki.test";
-  //     const password = "test2";
-  //     const response = await request(serverApp).post("/api/login").send({
-  //       email,
-  //       password,
-  //     });
-  //     expect(response.status).to.equal(200);
-
-  //     const token = response.body.access_token;
-  //     headers = {
-  //       Accept: "application/json",
-  //       "Content-Type": "application/json",
-  //       Authorization: `Bearer ${token}`,
-  //     };
-  //   });
-  // });
+  describe("With auth", () => {
+    // TODO:
+  });
 });

@@ -1,33 +1,21 @@
-const request = require("supertest");
-const { serverApp } = require("../../server.js");
-let expect = require("chai").expect;
+const { expect, request, baseApiUrl } = require("./config");
+const { gracefulQuit, setupEnv } = require("./helpers/helpers");
 
 describe("Endpoint /other", () => {
-  const baseUrl = "/api";
+  const baseUrl = baseApiUrl;
 
   before(async () => {
-    const restoreResponse = await request(serverApp).get("/api/restoreDB");
-    expect(restoreResponse.status).to.equal(201);
-
-    // Lower log level to WARNING:
-    const requestBody = {
-      currentLogLevel: 2,
-    };
-    const response = await request(serverApp).post("/api/config").send(requestBody);
-    expect(response.status).to.equal(200);
+    await setupEnv();
   });
 
-  after(async () => {
-    const restoreResponse = await request(serverApp).get("/api/restoreDB");
-    expect(restoreResponse.status).to.equal(201);
-
-    serverApp.close();
+  after(() => {
+    gracefulQuit();
   });
 
   describe("Without auth", () => {
     it("GET /images/user", async () => {
       // Act:
-      const response = await request(serverApp).get(`${baseUrl}/images/user`);
+      const response = await request.get(`${baseUrl}/images/user`);
 
       // Assert:
       expect(response.status).to.equal(200);
@@ -36,7 +24,7 @@ describe("Endpoint /other", () => {
 
     it("GET /images/posts", async () => {
       // Act:
-      const response = await request(serverApp).get(`${baseUrl}/images/posts`);
+      const response = await request.get(`${baseUrl}/images/posts`);
 
       // Assert:
       expect(response.status).to.equal(200);
@@ -45,7 +33,7 @@ describe("Endpoint /other", () => {
 
     it("GET /restoreEmptyDB", async () => {
       // Act:
-      const response = await request(serverApp).get(`${baseUrl}/restoreEmptyDB`);
+      const response = await request.get(`${baseUrl}/restoreEmptyDB`);
 
       // Assert:
       expect(response.status).to.equal(201);
@@ -53,7 +41,7 @@ describe("Endpoint /other", () => {
 
     it("GET /restoreDB", async () => {
       // Act:
-      const response = await request(serverApp).get(`${baseUrl}/restoreDB`);
+      const response = await request.get(`${baseUrl}/restoreDB`);
 
       // Assert:
       expect(response.status).to.equal(201);

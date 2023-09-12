@@ -1,30 +1,21 @@
-const request = require("supertest");
-const { serverApp } = require("../../server.js");
-let expect = require("chai").expect;
+const { expect, request, baseHangmanUrl } = require("./config");
+const { gracefulQuit, setupEnv } = require("./helpers/helpers");
 
 describe("Endpoint /hangman", () => {
-  const baseUrl = "/api/hangman";
+  const baseUrl = baseHangmanUrl
 
   before(async () => {
-    const restoreResponse = await request(serverApp).get("/api/restoreDB");
-    expect(restoreResponse.status).to.equal(201);
-
-    // Lower log level to WARNING:
-    const requestBody = {
-      currentLogLevel: 2,
-    };
-    const response = await request(serverApp).post("/api/config").send(requestBody);
-    expect(response.status).to.equal(200);
+    await setupEnv();
   });
 
   after(() => {
-    serverApp.close();
+    gracefulQuit();
   });
 
   describe("Without auth", () => {
     it("GET /random", async () => {
       // Act:
-      const response = await request(serverApp).get(`${baseUrl}/random`);
+      const response = await request.get(`${baseUrl}/random`);
 
       // Assert:
       expect(response.status).to.equal(200);
@@ -37,7 +28,7 @@ describe("Endpoint /hangman", () => {
     before(async () => {
       const email = "Danial.Dicki@dicki.test";
       const password = "test2";
-      const response = await request(serverApp).post("/api/login").send({
+      const response = await request.post("/api/login").send({
         email,
         password,
       });
@@ -53,7 +44,7 @@ describe("Endpoint /hangman", () => {
 
     it("GET /random", async () => {
       // Act:
-      const response = await request(serverApp).get(`${baseUrl}/random`).set(headers);
+      const response = await request.get(`${baseUrl}/random`).set(headers);
 
       // Assert:
       expect(response.status).to.equal(200);

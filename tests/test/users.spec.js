@@ -1,32 +1,22 @@
-const request = require("supertest");
-const { serverApp } = require("../../server.js");
-const { faker } = require("@faker-js/faker");
-const { sleep } = require("./helpers.js");
-let expect = require("chai").expect;
+const { gracefulQuit, setupEnv } = require("./helpers/helpers.js");
+const { baseUsersUrl, request, faker, expect } = require("./config.js");
+const { prepareUniqueLoggedUser, authUser } = require("./helpers/data.helpers.js");
 
 describe("Endpoint /users", async () => {
-  const baseUrl = "/api/users";
+  const baseUrl = baseUsersUrl;
 
   before(async () => {
-    const restoreResponse = await request(serverApp).get("/api/restoreDB");
-    expect(restoreResponse.status).to.equal(201);
-
-    // Lower log level to WARNING:
-    const requestBody = {
-      currentLogLevel: 2,
-    };
-    const response = await request(serverApp).post("/api/config").send(requestBody);
-    expect(response.status).to.equal(200);
+    await setupEnv();
   });
 
   after(() => {
-    serverApp.close();
+    gracefulQuit();
   });
 
-  describe("Without auth", () => {
+  describe("Without auth", async () => {
     it("GET /users", async () => {
       // Act:
-      const response = await request(serverApp).get(baseUrl);
+      const response = await request.get(baseUrl);
 
       // Assert:
       expect(response.status).to.equal(200);
@@ -45,7 +35,7 @@ describe("Endpoint /users", async () => {
       };
 
       // Act:
-      const response = await request(serverApp).get(`${baseUrl}/1`);
+      const response = await request.get(`${baseUrl}/1`);
 
       // Assert:
       expect(response.status).to.equal(200);
@@ -54,7 +44,7 @@ describe("Endpoint /users", async () => {
 
     it("GET /users/:id - non existing user", async () => {
       // Act:
-      const response = await request(serverApp).get(`${baseUrl}/112312312`);
+      const response = await request.get(`${baseUrl}/112312312`);
 
       // Assert:
       expect(response.status).to.equal(404);
@@ -62,7 +52,7 @@ describe("Endpoint /users", async () => {
 
     describe("POST /users", () => {
       it("empty payload", () => {
-        return request(serverApp).post(baseUrl).send({}).expect(422);
+        return request.post(baseUrl).send({}).expect(422);
       });
 
       it("valid registration", async () => {
@@ -76,7 +66,7 @@ describe("Endpoint /users", async () => {
         };
 
         // Act:
-        const response = await request(serverApp).post(baseUrl).send(testUserData);
+        const response = await request.post(baseUrl).send(testUserData);
 
         // Assert:
         expect(response.status).to.equal(201);
@@ -93,11 +83,11 @@ describe("Endpoint /users", async () => {
           password: "string",
           avatar: "string",
         };
-        const response = await request(serverApp).post(baseUrl).send(testUserData);
+        const response = await request.post(baseUrl).send(testUserData);
         expect(response.status).to.equal(201);
 
         // Act:
-        const responseAgain = await request(serverApp).post(baseUrl).send(testUserData);
+        const responseAgain = await request.post(baseUrl).send(testUserData);
 
         // Assert:
         expect(responseAgain.status).to.equal(201);
@@ -113,7 +103,7 @@ describe("Endpoint /users", async () => {
         };
 
         // Act:
-        const response = await request(serverApp).post(baseUrl).send(testUserData);
+        const response = await request.post(baseUrl).send(testUserData);
 
         // Assert:
         expect(response.status).to.equal(422);
@@ -133,7 +123,7 @@ describe("Endpoint /users", async () => {
           testUserData[field] = undefined;
 
           // Act:
-          const response = await request(serverApp).post(baseUrl).send(testUserData);
+          const response = await request.post(baseUrl).send(testUserData);
 
           // Assert:
           expect(response.status).to.equal(422);
@@ -142,23 +132,23 @@ describe("Endpoint /users", async () => {
     });
 
     it("PUT /users", () => {
-      return request(serverApp).put(baseUrl).send({}).expect(401);
+      return request.put(baseUrl).send({}).expect(401);
     });
 
     it("PUT /users/:id", () => {
-      return request(serverApp).put(`${baseUrl}/1`).send({}).expect(401);
+      return request.put(`${baseUrl}/1`).send({}).expect(401);
     });
 
     it("PATCH /users/:id", () => {
-      return request(serverApp).patch(`${baseUrl}/1`).send({}).expect(401);
+      return request.patch(`${baseUrl}/1`).send({}).expect(401);
     });
 
     it("DELETE /users/:id", () => {
-      return request(serverApp).delete(`${baseUrl}/1`).send({}).expect(401);
+      return request.delete(`${baseUrl}/1`).send({}).expect(401);
     });
 
     it("HEAD /users", () => {
-      return request(serverApp).head(`${baseUrl}/1`).expect(200);
+      return request.head(`${baseUrl}/1`).expect(200);
     });
   });
 
@@ -166,28 +156,13 @@ describe("Endpoint /users", async () => {
     let headers;
 
     beforeEach(async () => {
-      const restoreResponse = await request(serverApp).get("/api/restoreDB");
-      expect(restoreResponse.status).to.equal(201);
-
-      const email = "Danial.Dicki@dicki.test";
-      const password = "test2";
-      const response = await request(serverApp).post("/api/login").send({
-        email,
-        password,
-      });
-      expect(response.status).to.equal(200);
-
-      const token = response.body.access_token;
-      headers = {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      };
+      const data = await authUser();
+      headers = data.headers;
     });
 
     it("GET /users", async () => {
       // Act:
-      const response = await request(serverApp).get(baseUrl).set(headers);
+      const response = await request.get(baseUrl).set(headers);
 
       // Assert:
       expect(response.status).to.equal(200);
@@ -206,7 +181,7 @@ describe("Endpoint /users", async () => {
       };
 
       // Act:
-      const response = await request(serverApp).get(`${baseUrl}/1`).set(headers);
+      const response = await request.get(`${baseUrl}/1`).set(headers);
 
       // Assert:
       expect(response.status).to.equal(200);
@@ -224,7 +199,7 @@ describe("Endpoint /users", async () => {
       };
 
       // Act:
-      const response = await request(serverApp).post(baseUrl).send(testUserData).set(headers);
+      const response = await request.post(baseUrl).send(testUserData).set(headers);
 
       // Assert:
       expect(response.status).to.equal(201);
@@ -233,51 +208,25 @@ describe("Endpoint /users", async () => {
     });
 
     it("HEAD /users", () => {
-      return request(serverApp).head(`${baseUrl}/1`).set(headers).expect(200);
+      return request.head(`${baseUrl}/1`).set(headers).expect(200);
     });
   });
 
-  describe("UPDATE /users", async () => {
+  describe("MODIFY /users", async () => {
     let headers;
     let userId;
     let testUserData;
 
     beforeEach(async () => {
-      const restoreResponse = await request(serverApp).get("/api/restoreDB");
-      expect(restoreResponse.status).to.equal(201);
-
-      // Arrange:
-      testUserData = {
-        email: faker.internet.email({ provider: "example.test.test" }),
-        firstname: "string",
-        lastname: "string",
-        password: "string",
-        avatar: "string",
-      };
-      const response = await request(serverApp).post(baseUrl).send(testUserData);
-      expect(response.status).to.equal(201);
-      userId = response.body.id;
-
-      await sleep(100); // wait for user registration // server is slow
-
-      const responseLogin = await request(serverApp).post("/api/login").send({
-        email: testUserData.email,
-        password: testUserData.password,
-      });
-
-      expect(responseLogin.status, JSON.stringify(responseLogin.body)).to.equal(200);
-
-      const token = responseLogin.body.access_token;
-      headers = {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      };
+      const data = await prepareUniqueLoggedUser();
+      headers = data.headers;
+      userId = data.userId;
+      testUserData = data.testUserData;
     });
 
     it("PUT /users", async () => {
       // Act:
-      const response = await request(serverApp).put(`${baseUrl}/${userId}`).set(headers).send(testUserData);
+      const response = await request.put(`${baseUrl}/${userId}`).set(headers).send(testUserData);
 
       // Assert:
       expect(response.status).to.equal(200);
@@ -285,7 +234,7 @@ describe("Endpoint /users", async () => {
 
     it("PUT /users/:id", async () => {
       // Act:
-      const response = await request(serverApp).put(`${baseUrl}/${userId}`).set(headers).send(testUserData);
+      const response = await request.put(`${baseUrl}/${userId}`).set(headers).send(testUserData);
 
       // Assert:
       expect(response.status).to.equal(200);
@@ -293,7 +242,7 @@ describe("Endpoint /users", async () => {
 
     it("PATCH /users/:id", async () => {
       // Act:
-      const response = await request(serverApp).patch(`${baseUrl}/${userId}`).set(headers).send(testUserData);
+      const response = await request.patch(`${baseUrl}/${userId}`).set(headers).send(testUserData);
 
       // Assert:
       expect(response.status).to.equal(200);
@@ -304,38 +253,14 @@ describe("Endpoint /users", async () => {
     let userId;
 
     beforeEach(async () => {
-      const restoreResponse = await request(serverApp).get("/api/restoreDB");
-      expect(restoreResponse.status).to.equal(201);
-
-      // Arrange:
-      const testUserData = {
-        email: faker.internet.email({ provider: "example.test.test" }),
-        firstname: "string",
-        lastname: "string",
-        password: "string",
-        avatar: "string",
-      };
-      const response = await request(serverApp).post(baseUrl).send(testUserData);
-      expect(response.status).to.equal(201);
-      userId = response.body.id;
-
-      const responseLogin = await request(serverApp).post("/api/login").send({
-        email: testUserData.email,
-        password: testUserData.password,
-      });
-      expect(responseLogin.status, JSON.stringify(responseLogin.body)).to.equal(200);
-
-      const token = responseLogin.body.access_token;
-      headers = {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      };
+      const data = await prepareUniqueLoggedUser();
+      headers = data.headers;
+      userId = data.userId;
     });
 
     it("DELETE /users/:id - self delete", async () => {
       // Act:
-      const responseDel = await request(serverApp).delete(`${baseUrl}/${userId}`).set(headers);
+      const responseDel = await request.delete(`${baseUrl}/${userId}`).set(headers);
 
       // Assert:
       expect(responseDel.status).to.equal(200);
@@ -343,7 +268,7 @@ describe("Endpoint /users", async () => {
 
     it("DELETE /users/:id - attempt of delete of other user", async () => {
       // Act:
-      const responseDel = await request(serverApp).delete(`${baseUrl}/1`).set(headers);
+      const responseDel = await request.delete(`${baseUrl}/1`).set(headers);
 
       // Assert:
       expect(responseDel.status).to.equal(401);
@@ -351,7 +276,7 @@ describe("Endpoint /users", async () => {
 
     it("DELETE /users/:id - attempt of delete of not existing user", async () => {
       // Act:
-      const responseDel = await request(serverApp).delete(`${baseUrl}/112323212`).set(headers);
+      const responseDel = await request.delete(`${baseUrl}/112323212`).set(headers);
 
       // Assert:
       expect(responseDel.status).to.equal(401);

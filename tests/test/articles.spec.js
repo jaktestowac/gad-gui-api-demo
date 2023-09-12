@@ -1,31 +1,22 @@
-const request = require("supertest");
-const { serverApp } = require("../../server.js");
-let expect = require("chai").expect;
+const { request, expect, baseArticlesUrl } = require("./config.js");
+const { setupEnv, gracefulQuit } = require("./helpers/helpers.js");
 
 describe("Endpoint /articles", () => {
-  const baseUrl = "/api/articles";
+  const baseUrl = baseArticlesUrl;
 
   before(async () => {
-    const restoreResponse = await request(serverApp).get("/api/restoreDB");
-    expect(restoreResponse.status).to.equal(201);
-
-    // Lower log level to WARNING:
-    const requestBody = {
-      currentLogLevel: 2,
-    };
-    const response = await request(serverApp).post("/api/config").send(requestBody);
-    expect(response.status).to.equal(200);
+    await setupEnv();
   });
 
   after(() => {
-    serverApp.close();
+    gracefulQuit();
   });
 
   describe("Without auth", () => {
     describe("GET /:resources", () => {
       it("GET /articles", async () => {
         // Act:
-        const response = await request(serverApp).get("/api/articles");
+        const response = await request.get("/api/articles");
 
         // Assert:
         expect(response.status).to.equal(200);
@@ -44,7 +35,7 @@ describe("Endpoint /articles", () => {
         };
 
         // Act:
-        const response = await request(serverApp).get("/api/articles/1");
+        const response = await request.get("/api/articles/1");
 
         // Assert:
         expect(response.status).to.equal(200);
@@ -53,35 +44,39 @@ describe("Endpoint /articles", () => {
 
       it("GET /articles/:id - non existing article", async () => {
         // Act:
-        const response = await request(serverApp).get(`${baseUrl}/112312312`);
+        const response = await request.get(`${baseUrl}/112312312`);
 
         // Assert:
         expect(response.status).to.equal(404);
       });
 
       it("POST /articles", () => {
-        return request(serverApp).post(baseUrl).send({}).expect(401);
+        return request.post(baseUrl).send({}).expect(401);
       });
 
       it("PUT /articles", () => {
-        return request(serverApp).put(baseUrl).send({}).expect(401);
+        return request.put(baseUrl).send({}).expect(401);
       });
 
       it("PUT /articles/:id", () => {
-        return request(serverApp).put(`${baseUrl}/1`).send({}).expect(401);
+        return request.put(`${baseUrl}/1`).send({}).expect(401);
       });
 
       it("PATCH /articles/:id", () => {
-        return request(serverApp).patch(`${baseUrl}/1`).send({}).expect(401);
+        return request.patch(`${baseUrl}/1`).send({}).expect(401);
       });
 
       it("DELETE /articles/:id", () => {
-        return request(serverApp).delete(`${baseUrl}/1`).send({}).expect(401);
+        return request.delete(`${baseUrl}/1`).send({}).expect(401);
       });
 
       it("HEAD /articles", () => {
-        return request(serverApp).head(`${baseUrl}/1`).expect(200);
+        return request.head(`${baseUrl}/1`).expect(200);
       });
+    });
+
+    describe("MODIFY /articles", async () => {
+      // TODO:
     });
 
     describe("With auth", () => {
@@ -89,7 +84,7 @@ describe("Endpoint /articles", () => {
       beforeEach(async () => {
         const email = "Danial.Dicki@dicki.test";
         const password = "test2";
-        const response = await request(serverApp).post("/api/login").send({
+        const response = await request.post("/api/login").send({
           email,
           password,
         });
@@ -105,7 +100,7 @@ describe("Endpoint /articles", () => {
 
       it("GET /articles", async () => {
         // Act:
-        const response = await request(serverApp).get(baseUrl).set(headers);
+        const response = await request.get(baseUrl).set(headers);
 
         // Assert:
         expect(response.status).to.equal(200);
@@ -124,7 +119,7 @@ describe("Endpoint /articles", () => {
         };
 
         // Act:
-        const response = await request(serverApp).get(`${baseUrl}/1`).set(headers);
+        const response = await request.get(`${baseUrl}/1`).set(headers);
 
         // Assert:
         expect(response.status).to.equal(200);
@@ -132,7 +127,7 @@ describe("Endpoint /articles", () => {
       });
 
       it("HEAD /articles", () => {
-        return request(serverApp).head(`${baseUrl}/1`).set(headers).expect(200);
+        return request.head(`${baseUrl}/1`).set(headers).expect(200);
       });
     });
   });
