@@ -175,9 +175,23 @@ describe("Endpoint /users", async () => {
       expect(response.body).to.deep.equal(expectedData);
     });
 
-    it("POST /users", async () => {
+    it("POST /users - create valid user", async () => {
       // Arrange:
       const testUserData = generateValidUserData();
+
+      // Act:
+      const response = await request.post(baseUrl).send(testUserData).set(headers);
+
+      // Assert:
+      expect(response.status).to.equal(201);
+      testUserData.id = response.body.id;
+      expect(response.body).to.deep.equal(testUserData);
+    });
+
+    it("POST /users - create valid user (with id in body)", async () => {
+      // Arrange:
+      const testUserData = generateValidUserData();
+      testUserData.id = 1;
 
       // Act:
       const response = await request.post(baseUrl).send(testUserData).set(headers);

@@ -1,3 +1,5 @@
+const { isBugDisabled } = require("../config/config-manager");
+const { BugConfigKeys } = require("../config/enums");
 const { searchForUser } = require("../helpers/db-operation.helpers");
 const { userDb } = require("../helpers/db.helpers");
 const {
@@ -26,23 +28,33 @@ function handleUsers(req, res) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_user));
       return;
     }
+
     // validate email:
     if (!validateEmail(req.body["email"])) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatErrorResponse("Invalid email"));
       return;
     }
+
     // validate all fields:
     const isValid = are_all_fields_valid(req.body, all_fields_user, mandatory_non_empty_fields_user);
     if (!isValid.status) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send();
       return;
     }
+
     if (userDb().includes(req.body["email"])) {
       res.status(HTTP_CONFLICT).send(formatErrorResponse("Email not unique"));
       return;
     }
+
+    if (isBugDisabled(BugConfigKeys.BUG_VALIDATION_005)) {
+      // remove id - otherwise - 500: Error: Insert failed, duplicate id
+      req.body.id = undefined;
+    }
+
     logDebug("Register User: SUCCESS:", { urlEnds, email: req.body["email"] });
   }
+
   if (req.method === "PUT" && urlEnds.includes("/api/users/")) {
     let userId = getIdFromUrl(urlEnds);
     // validate mandatory fields:
@@ -50,6 +62,7 @@ function handleUsers(req, res) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_user));
       return;
     }
+
     // validate all fields:
     const isValid = are_all_fields_valid(req.body, all_fields_user, mandatory_non_empty_fields_user);
     if (!isValid.status) {
@@ -62,6 +75,7 @@ function handleUsers(req, res) {
         return user;
       }
     });
+
     if (foundMail !== undefined) {
       res.status(HTTP_CONFLICT).send(formatErrorResponse("Email not unique"));
       return;
@@ -82,6 +96,7 @@ function handleUsers(req, res) {
       }
     }
   }
+
   if (req.method === "PATCH" && urlEnds.includes("/api/users")) {
     // validate all fields:
     const isValid = are_all_fields_valid(req.body, all_fields_user, mandatory_non_empty_fields_user);
