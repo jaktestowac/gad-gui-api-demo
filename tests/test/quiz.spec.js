@@ -1,4 +1,5 @@
 const { expect, request, baseQuizUrl } = require("./config");
+const { authUser } = require("./helpers/data.helpers");
 const { gracefulQuit, setupEnv } = require("./helpers/helpers");
 
 describe("Endpoint /quiz", () => {
@@ -46,20 +47,8 @@ describe("Endpoint /quiz", () => {
   describe("With auth", () => {
     let headers;
     before(async () => {
-      const email = "Danial.Dicki@dicki.test";
-      const password = "test2";
-      const response = await request.post("/api/login").send({
-        email,
-        password,
-      });
-      expect(response.status).to.equal(200);
-
-      const token = response.body.access_token;
-      headers = {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      };
+      const data = await authUser();
+      headers = data.headers;
     });
 
     it("start", () => {

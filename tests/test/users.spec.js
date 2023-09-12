@@ -1,6 +1,11 @@
 const { gracefulQuit, setupEnv } = require("./helpers/helpers.js");
-const { baseUsersUrl, request, faker, expect } = require("./config.js");
-const { prepareUniqueLoggedUser, authUser } = require("./helpers/data.helpers.js");
+const { baseUsersUrl, request, expect } = require("./config.js");
+const {
+  prepareUniqueLoggedUser,
+  authUser,
+  validExistingUser,
+  generateValidUserData,
+} = require("./helpers/data.helpers.js");
 
 describe("Endpoint /users", async () => {
   const baseUrl = baseUsersUrl;
@@ -25,14 +30,7 @@ describe("Endpoint /users", async () => {
 
     it("GET /users/:id - existing user", async () => {
       // Arrange:
-      const expectedData = {
-        avatar: ".\\data\\users\\face_1591133479.7144732.jpg",
-        email: "****",
-        firstname: "Moses",
-        id: 1,
-        lastname: "****",
-        password: "****",
-      };
+      const expectedData = validExistingUser;
 
       // Act:
       const response = await request.get(`${baseUrl}/1`);
@@ -57,13 +55,7 @@ describe("Endpoint /users", async () => {
 
       it("valid registration", async () => {
         // Arrange:
-        const testUserData = {
-          email: faker.internet.email({ provider: "example.test.test" }),
-          firstname: "string",
-          lastname: "string",
-          password: "string",
-          avatar: "string",
-        };
+        const testUserData = generateValidUserData();
 
         // Act:
         const response = await request.post(baseUrl).send(testUserData);
@@ -76,13 +68,7 @@ describe("Endpoint /users", async () => {
 
       it("invalid registration - same email", async () => {
         // Arrange:
-        const testUserData = {
-          email: faker.internet.email({ provider: "example.test.test" }),
-          firstname: "string",
-          lastname: "string",
-          password: "string",
-          avatar: "string",
-        };
+        const testUserData = generateValidUserData();
         const response = await request.post(baseUrl).send(testUserData);
         expect(response.status).to.equal(201);
 
@@ -94,13 +80,8 @@ describe("Endpoint /users", async () => {
       });
       it("invalid email", async () => {
         // Arrange:
-        const testUserData = {
-          email: "example.test.test",
-          firstname: "string",
-          lastname: "string",
-          password: "string",
-          avatar: "string",
-        };
+        const testUserData = generateValidUserData();
+        testUserData.email = "abcd";
 
         // Act:
         const response = await request.post(baseUrl).send(testUserData);
@@ -112,13 +93,7 @@ describe("Endpoint /users", async () => {
       ["firstname", "lastname", "email", "avatar"].forEach((field) => {
         it(`missing mandatory field - ${field}`, async () => {
           // Arrange:
-          const testUserData = {
-            email: faker.internet.email({ provider: "example.test.test" }),
-            firstname: "string",
-            lastname: "string",
-            password: "string",
-            avatar: "string",
-          };
+          const testUserData = generateValidUserData();
 
           testUserData[field] = undefined;
 
@@ -171,14 +146,7 @@ describe("Endpoint /users", async () => {
 
     it("GET /users/:id", async () => {
       // Arrange:
-      const expectedData = {
-        avatar: ".\\data\\users\\face_1591133479.7144732.jpg",
-        email: "****",
-        firstname: "Moses",
-        id: 1,
-        lastname: "****",
-        password: "****",
-      };
+      const expectedData = validExistingUser;
 
       // Act:
       const response = await request.get(`${baseUrl}/1`).set(headers);
@@ -190,13 +158,7 @@ describe("Endpoint /users", async () => {
 
     it("POST /users", async () => {
       // Arrange:
-      const testUserData = {
-        email: faker.internet.email({ provider: "example.test.test" }),
-        firstname: "string",
-        lastname: "string",
-        password: "string",
-        avatar: "string",
-      };
+      const testUserData = generateValidUserData();
 
       // Act:
       const response = await request.post(baseUrl).send(testUserData).set(headers);

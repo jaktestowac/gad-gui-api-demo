@@ -1,6 +1,26 @@
 const { request, expect, faker, baseUsersUrl } = require("../config");
 const { sleep } = require("./helpers");
 
+const validExistingUser = {
+  avatar: ".\\data\\users\\face_1591133479.7144732.jpg",
+  email: "****",
+  firstname: "Moses",
+  id: 1,
+  lastname: "****",
+  password: "****",
+};
+
+function generateValidUserData() {
+  const testUserData = {
+    email: faker.internet.email({ provider: "example.test.test" }),
+    firstname: "string",
+    lastname: "string",
+    password: "string",
+    avatar: "string",
+  };
+  return testUserData;
+}
+
 async function authUser() {
   const restoreResponse = await request.get("/api/restoreDB");
   expect(restoreResponse.status).to.equal(201);
@@ -66,4 +86,6 @@ async function prepareUniqueLoggedUser() {
 module.exports = {
   prepareUniqueLoggedUser,
   authUser,
+  generateValidUserData,
+  validExistingUser,
 };

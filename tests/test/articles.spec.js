@@ -1,4 +1,5 @@
 const { request, expect, baseArticlesUrl } = require("./config.js");
+const { authUser } = require("./helpers/data.helpers.js");
 const { setupEnv, gracefulQuit } = require("./helpers/helpers.js");
 
 describe("Endpoint /articles", () => {
@@ -82,20 +83,8 @@ describe("Endpoint /articles", () => {
     describe("With auth", () => {
       let headers;
       beforeEach(async () => {
-        const email = "Danial.Dicki@dicki.test";
-        const password = "test2";
-        const response = await request.post("/api/login").send({
-          email,
-          password,
-        });
-        expect(response.status).to.equal(200);
-
-        const token = response.body.access_token;
-        headers = {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        };
+        const data = await authUser();
+        headers = data.headers;
       });
 
       it("GET /articles", async () => {
