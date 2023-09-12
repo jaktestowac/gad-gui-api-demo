@@ -52,6 +52,7 @@ describe("Endpoint /hangman", () => {
         Authorization: `Bearer ${token}`,
       };
     });
+
     test("GET /random", async () => {
       // Act:
       const response = await request(serverApp).get(`${baseUrl}/random`).set(headers);

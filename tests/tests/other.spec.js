@@ -20,6 +20,12 @@ describe("Endpoint /other", () => {
   });
 
   afterAll(() => {
+    try {
+      request(serverApp).get("/api/restoreDB").expect(201);
+    } catch (error) {
+      console.log(error);
+    }
+
     serverApp.close();
   });
 
@@ -32,6 +38,7 @@ describe("Endpoint /other", () => {
       expect(response.status).toEqual(200);
       expect(response.body.length).toBeGreaterThan(1);
     });
+
     test("GET /images/posts", async () => {
       // Act:
       const response = await request(serverApp).get(`${baseUrl}/images/posts`);
@@ -40,6 +47,7 @@ describe("Endpoint /other", () => {
       expect(response.status).toEqual(200);
       expect(response.body.length).toBeGreaterThan(1);
     });
+
     test("GET /restoreEmptyDB", async () => {
       // Act:
       const response = await request(serverApp).get(`${baseUrl}/restoreEmptyDB`);
@@ -47,6 +55,7 @@ describe("Endpoint /other", () => {
       // Assert:
       expect(response.status).toEqual(201);
     });
+
     test("GET /restoreDB", async () => {
       // Act:
       const response = await request(serverApp).get(`${baseUrl}/restoreDB`);

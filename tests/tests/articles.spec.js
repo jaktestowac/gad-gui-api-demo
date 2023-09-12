@@ -18,6 +18,7 @@ describe("Endpoint /articles", () => {
     const response = await request(serverApp).post("/api/config").send(requestBody);
     expect(response.status).toEqual(200);
   });
+
   afterAll(() => {
     serverApp.close();
   });
@@ -32,6 +33,7 @@ describe("Endpoint /articles", () => {
         expect(response.status).toEqual(200);
         expect(response.body.length).toBeGreaterThan(1);
       });
+
       test("GET /articles/:id", async () => {
         // Arrange:
         const expectedData = {
@@ -51,25 +53,39 @@ describe("Endpoint /articles", () => {
         expect(response.body).toEqual(expectedData);
       });
 
+      test("GET /articles/:id - non existing article", async () => {
+        // Act:
+        const response = await request(serverApp).get(`${baseUrl}/112312312`);
+
+        // Assert:
+        expect(response.status).toEqual(404);
+      });
+
       test("POST /articles", () => {
         return request(serverApp).post(baseUrl).send({}).expect(401);
       });
+
       test("PUT /articles", () => {
         return request(serverApp).put(baseUrl).send({}).expect(401);
       });
+
       test("PUT /articles/:id", () => {
         return request(serverApp).put(`${baseUrl}/1`).send({}).expect(401);
       });
+
       test("PATCH /articles/:id", () => {
         return request(serverApp).patch(`${baseUrl}/1`).send({}).expect(401);
       });
+
       test("DELETE /articles/:id", () => {
         return request(serverApp).delete(`${baseUrl}/1`).send({}).expect(401);
       });
+
       test("HEAD /articles", () => {
         return request(serverApp).head(`${baseUrl}/1`).expect(200);
       });
     });
+
     describe("With auth", () => {
       let headers;
       beforeEach(async () => {
@@ -88,6 +104,7 @@ describe("Endpoint /articles", () => {
           Authorization: `Bearer ${token}`,
         };
       });
+
       test("GET /articles", async () => {
         // Act:
         const response = await request(serverApp).get(baseUrl).set(headers);
@@ -96,6 +113,7 @@ describe("Endpoint /articles", () => {
         expect(response.status).toEqual(200);
         expect(response.body.length).toBeGreaterThan(1);
       });
+
       test("GET /articles/:id", async () => {
         // Arrange:
         const expectedData = {
@@ -114,6 +132,7 @@ describe("Endpoint /articles", () => {
         expect(response.status).toEqual(200);
         expect(response.body).toEqual(expectedData);
       });
+
       test("HEAD /articles", () => {
         return request(serverApp).head(`${baseUrl}/1`).set(headers).expect(200);
       });

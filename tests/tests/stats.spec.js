@@ -35,6 +35,7 @@ describe("Endpoint /stats", () => {
         expect(response.body.articlesDataForChart).not.toBeUndefined();
         expect(response.body.commentsDataForChart).not.toBeUndefined();
       });
+
       test("GET /users chartType=table", async () => {
         // Act:
         const response = await request(serverApp).get(`${baseUrl}/users?chartType=table`);
@@ -45,6 +46,7 @@ describe("Endpoint /stats", () => {
         expect(response.body.articlesPerUser).not.toBeUndefined();
         expect(response.body.commentsPerUser).not.toBeUndefined();
       });
+
       test("GET /users chartType=pie", async () => {
         // Act:
         const response = await request(serverApp).get(`${baseUrl}/users?chartType=pie`);
@@ -55,6 +57,7 @@ describe("Endpoint /stats", () => {
         expect(response.body.commentsDataForChart).not.toBeUndefined();
         expect(response.body.userIdToName).not.toBeUndefined();
       });
+
       test("GET /users chartType=chart", async () => {
         // Act:
         const response = await request(serverApp).get(`${baseUrl}/users?chartType=chart`);
@@ -75,6 +78,7 @@ describe("Endpoint /stats", () => {
         expect(response.status).toEqual(200);
         expect(response.body.articlesDataForChart).not.toBeUndefined();
       });
+
       test("GET /articles chartType=table", async () => {
         // Act:
         const response = await request(serverApp).get(`${baseUrl}/articles?chartType=table`);
@@ -84,6 +88,7 @@ describe("Endpoint /stats", () => {
         expect(response.body.articleIdToTitle).not.toBeUndefined();
         expect(response.body.commentsPerArticle).not.toBeUndefined();
       });
+
       test("GET /articles chartType=pie", async () => {
         // Act:
         const response = await request(serverApp).get(`${baseUrl}/articles?chartType=pie`);
@@ -92,6 +97,7 @@ describe("Endpoint /stats", () => {
         expect(response.status).toEqual(200);
         expect(response.body.articlesDataForChart).not.toBeUndefined();
       });
+
       test("GET /articles chartType=chart", async () => {
         // Act:
         const response = await request(serverApp).get(`${baseUrl}/articles?chartType=chart`);

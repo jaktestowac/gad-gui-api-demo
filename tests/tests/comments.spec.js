@@ -18,9 +18,11 @@ describe("Endpoint /comments", () => {
     const response = await request(serverApp).post("/api/config").send(requestBody);
     expect(response.status).toEqual(200);
   });
+  
   afterAll(() => {
     serverApp.close();
   });
+
   describe("Without auth", () => {
     test("GET /comments", async () => {
       // Act:
@@ -30,6 +32,7 @@ describe("Endpoint /comments", () => {
       expect(response.status).toEqual(200);
       expect(response.body.length).toBeGreaterThan(1);
     });
+
     test("GET /comments/:id", async () => {
       // Arrange:
       const expectedData = {
@@ -47,27 +50,43 @@ describe("Endpoint /comments", () => {
       expect(response.status).toEqual(200);
       expect(response.body).toEqual(expectedData);
     });
+
+    test("GET /comments/:id - non existing comment", async () => {
+      // Act:
+      const response = await request(serverApp).get(`${baseUrl}/112312312`);
+
+      // Assert:
+      expect(response.status).toEqual(404);
+    });
+
     test("POST /comments", () => {
       return request(serverApp).post(baseUrl).send({}).expect(401);
     });
+
     test("PUT /comments", () => {
       return request(serverApp).put(baseUrl).send({}).expect(401);
     });
+
     test("PUT /comments/:id", () => {
       return request(serverApp).put(`${baseUrl}/1`).send({}).expect(401);
     });
+
     test("PATCH /comments/:id", () => {
       return request(serverApp).patch(`${baseUrl}/1`).send({}).expect(401);
     });
+
     test("DELETE /comments/:id", () => {
       return request(serverApp).delete(`${baseUrl}/1`).send({}).expect(401);
     });
+
     test("HEAD /comments", () => {
       return request(serverApp).head(`${baseUrl}/1`).expect(200);
     });
   });
+
   describe("With auth", () => {
     let headers;
+
     beforeEach(async () => {
       const email = "Danial.Dicki@dicki.test";
       const password = "test2";
@@ -84,6 +103,7 @@ describe("Endpoint /comments", () => {
         Authorization: `Bearer ${token}`,
       };
     });
+
     test("GET /comments", async () => {
       // Act:
       const response = await request(serverApp).get(baseUrl).set(headers);
@@ -92,6 +112,7 @@ describe("Endpoint /comments", () => {
       expect(response.status).toEqual(200);
       expect(response.body.length).toBeGreaterThan(1);
     });
+
     test("GET /comments/:id", async () => {
       // Arrange:
       const expectedData = {
@@ -109,6 +130,7 @@ describe("Endpoint /comments", () => {
       expect(response.status).toEqual(200);
       expect(response.body).toEqual(expectedData);
     });
+
     test("HEAD /comments", () => {
       return request(serverApp).head(`${baseUrl}/1`).set(headers).expect(200);
     });
