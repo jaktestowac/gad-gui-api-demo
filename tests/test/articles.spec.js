@@ -1,4 +1,4 @@
-const { request, expect, baseArticlesUrl } = require("./config.js");
+const { request, expect, baseArticlesUrl, faker } = require("./config.js");
 const {
   authUser,
   generateValidArticleData,
@@ -205,18 +205,6 @@ describe("Endpoint /articles", () => {
         expect(response.body).to.deep.equal(testData);
       });
 
-      it("POST /articles - create article - length of title field exceeded", async () => {
-        // Arrange:
-        const testData = generateValidArticleData(129);
-        testData.user_id = userId;
-
-        // Act:
-        const response = await request.post(baseUrl).set(headers).send(testData);
-
-        // Assert:
-        expect(response.status).to.equal(422);
-      });
-
       it("POST /articles - create valid article - max body length", async () => {
         // Arrange:
         const testData = generateValidArticleData(128, 10000);
@@ -231,16 +219,20 @@ describe("Endpoint /articles", () => {
         expect(response.body).to.deep.equal(testData);
       });
 
-      it("POST /articles - create article - length of body field exceeded", async () => {
-        // Arrange:
-        const testData = generateValidArticleData(128, 10001);
-        testData.user_id = userId;
+      ["title", "body", "date"].forEach((field) => {
+        it(`POST /articles - length of field exceeded - ${field}`, async () => {
+          // Arrange:
+          const testData = generateValidArticleData();
+          testData.user_id = userId;
 
-        // Act:
-        const response = await request.post(baseUrl).set(headers).send(testData);
+          testData[field] = faker.string.alphanumeric(10001);
 
-        // Assert:
-        expect(response.status).to.equal(422);
+          // Act:
+          const response = await request.post(baseUrl).set(headers).send(testData);
+
+          // Assert:
+          expect(response.status).to.equal(422);
+        });
       });
 
       ["title", "body", "date"].forEach((field) => {

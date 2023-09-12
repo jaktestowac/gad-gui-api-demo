@@ -1,4 +1,4 @@
-const { request, expect, baseCommentsUrl } = require("./config.js");
+const { request, expect, baseCommentsUrl, faker } = require("./config.js");
 const {
   authUser,
   validExistingComment,
@@ -169,6 +169,38 @@ describe("Endpoint /comments", () => {
       expect(response.status).to.equal(201);
       testData.id = response.body.id;
       expect(response.body).to.deep.equal(testData);
+    });
+
+    ["user_id", "article_id", "body", "date"].forEach((field) => {
+      it(`POST /comments - missing mandatory field - ${field}`, async () => {
+        // Arrange:
+        const testData = generateValidCommentData();
+        testData.user_id = userId;
+
+        testData[field] = undefined;
+
+        // Act:
+        const response = await request.post(baseUrl).set(headers).send(testData);
+
+        // Assert:
+        expect(response.status).to.equal(422);
+      });
+    });
+
+    ["user_id", "article_id", "body", "date"].forEach((field) => {
+      it(`POST /comments - length of field exceeded - ${field}`, async () => {
+        // Arrange:
+        const testData = generateValidCommentData();
+        testData.user_id = userId;
+
+        testData[field] = faker.string.alphanumeric(10001);
+
+        // Act:
+        const response = await request.post(baseUrl).set(headers).send(testData);
+
+        // Assert:
+        expect(response.status).to.equal(422);
+      });
     });
 
     it("GET /comments", async () => {
