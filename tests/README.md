@@ -1,6 +1,10 @@
 # About
 
-Tests for GAD.
+Tests for **🦎 GAD**. Based on:
+
+- mocha
+- chai
+- supertest
 
 # How to
 
