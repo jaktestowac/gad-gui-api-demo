@@ -1,4 +1,4 @@
-const { request, expect, faker, baseUsersUrl, baseArticlesUrl, baseCommentsUrl } = require("../config");
+const { request, expect, faker, baseUsersUrl, baseArticlesUrl, baseCommentsUrl, sleepTime } = require("../config");
 const { sleep } = require("./helpers");
 
 const validExistingUser = {
@@ -30,9 +30,9 @@ const validExistingComment = {
 function generateValidUserData() {
   const testData = {
     email: faker.internet.email({ provider: "example.test.test" }),
-    firstname: "string",
-    lastname: "string",
-    password: "string",
+    firstname: faker.person.firstName(),
+    lastname: faker.person.lastName(),
+    password: faker.internet.password(),
     avatar: "string",
   };
   return testData;
@@ -107,7 +107,7 @@ async function prepareUniqueLoggedUser() {
   expect(response.status).to.equal(201);
   const userId = response.body.id;
 
-  await sleep(200); // wait for user registration // server is slow
+  await sleep(sleepTime); // wait for user registration // server is slow
 
   const responseLogin = await request.post("/api/login").send({
     email: testUserData.email,
@@ -139,7 +139,7 @@ async function prepareUniqueArticle(headers, userId) {
   expect(response.status).to.equal(201);
   articleId = response.body.id;
   testData.id = articleId;
-  await sleep(200); // wait for user registration // server is slow
+  await sleep(sleepTime); // wait for user registration // server is slow
 
   return {
     testData,
@@ -157,7 +157,7 @@ async function prepareUniqueComment(headers, userId, articleId) {
   expect(response.status).to.equal(201);
   commentId = response.body.id;
   testData.id = commentId;
-  await sleep(200); // wait for user registration // server is slow
+  await sleep(sleepTime); // wait for user registration // server is slow
 
   return {
     testData,

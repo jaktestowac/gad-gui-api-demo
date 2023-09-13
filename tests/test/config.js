@@ -11,6 +11,8 @@ const baseQuizUrl = "/api/quiz";
 const baseStatsUrl = "/api/stats";
 const baseCommentsUrl = "/api/comments";
 
+const sleepTime = 500; // in ms
+
 module.exports = {
   expect,
   request,
@@ -22,4 +24,5 @@ module.exports = {
   baseQuizUrl,
   baseStatsUrl,
   baseCommentsUrl,
+  sleepTime,
 };

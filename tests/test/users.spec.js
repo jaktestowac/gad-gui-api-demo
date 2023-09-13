@@ -214,37 +214,86 @@ describe("Endpoint /users", async () => {
   describe("MODIFY /users", async () => {
     let headers;
     let userId;
+    let baseUserData;
     let testUserData;
 
     beforeEach(async () => {
       const data = await prepareUniqueLoggedUser();
       headers = data.headers;
       userId = data.userId;
-      testUserData = data.testUserData;
+      baseUserData = data.testUserData;
+
+      testUserData = generateValidUserData();
+      testUserData.id = userId;
     });
 
     it("PUT /users", async () => {
       // Act:
-      const response = await request.put(`${baseUrl}/${userId}`).set(headers).send(testUserData);
+      const response = await request.put(baseUrl).set(headers).send(testUserData);
 
       // Assert:
-      expect(response.status).to.equal(200);
+      expect(response.status).to.equal(401);
     });
 
-    it("PUT /users/:id", async () => {
+    it("PUT /users/:id - update", async () => {
       // Act:
       const response = await request.put(`${baseUrl}/${userId}`).set(headers).send(testUserData);
 
       // Assert:
       expect(response.status).to.equal(200);
+      testUserData.id = response.body.id;
+      expect(response.body).to.deep.equal(testUserData);
     });
 
-    it("PATCH /users/:id", async () => {
+    it("PUT /users/:id - update different user", async () => {
+      // Act:
+      const response = await request.put(`${baseUrl}/1`).set(headers).send(testUserData);
+
+      // Assert:
+      expect(response.status).to.equal(401);
+    });
+
+    it("PATCH /users/:id - full update", async () => {
       // Act:
       const response = await request.patch(`${baseUrl}/${userId}`).set(headers).send(testUserData);
 
       // Assert:
       expect(response.status).to.equal(200);
+      testUserData.id = response.body.id;
+      expect(response.body).to.deep.equal(testUserData);
+    });
+
+    it("PATCH /users/:id - full update different user", async () => {
+      // Act:
+      const response = await request.patch(`${baseUrl}/1`).set(headers).send(testUserData);
+
+      // Assert:
+      expect(response.status).to.equal(401);
+    });
+
+    it("PATCH /users/:id - update partial", async () => {
+      // Arrange:
+      const testPartialUserData = { firstname: testUserData.firstname };
+
+      // Act:
+      const response = await request.patch(`${baseUrl}/${userId}`).set(headers).send(testPartialUserData);
+
+      // Assert:
+      expect(response.status).to.equal(200);
+      baseUserData.firstname = testPartialUserData.firstname;
+      baseUserData.id = response.body.id;
+      expect(response.body).to.deep.equal(baseUserData);
+    });
+
+    it("PATCH /users/:id - partial update different user", async () => {
+      // Arrange:
+      const testPartialUserData = { firstname: testUserData.firstname };
+
+      // Act:
+      const response = await request.patch(`${baseUrl}/1`).set(headers).send(testPartialUserData);
+
+      // Assert:
+      expect(response.status).to.equal(401);
     });
   });
 

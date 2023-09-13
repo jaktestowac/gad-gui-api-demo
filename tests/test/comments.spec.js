@@ -4,6 +4,7 @@ const {
   validExistingComment,
   prepareUniqueComment,
   generateValidCommentData,
+  prepareUniqueArticle,
 } = require("./helpers/data.helpers.js");
 const { gracefulQuit, setupEnv } = require("./helpers/helpers.js");
 
@@ -82,7 +83,80 @@ describe("Endpoint /comments", () => {
   });
 
   describe("MODIFY /comments", async () => {
-    // TODO:
+    let headers;
+    let userId;
+    let articleId;
+    let commentId;
+    let testCommentData;
+
+    beforeEach(async () => {
+      const data = await authUser();
+      headers = data.headers;
+      userId = data.userId;
+
+      const articleData = await prepareUniqueArticle(headers, userId);
+      articleId = articleData.articleId;
+      const commentData = await prepareUniqueComment(headers, userId, articleId);
+
+      commentId = commentData.commentId;
+      testCommentData = generateValidCommentData();
+      testCommentData.id = commentId;
+      testCommentData.article_id = articleId;
+      testCommentData.user_id = userId;
+    });
+
+    // TODO: investigate and fix server behaviour
+    it.skip("PUT /comments", async () => {
+      // Act:
+      const response = await request.put(baseUrl).set(headers).send(testCommentData);
+
+      // Assert:
+      expect(response.status).to.equal(201);
+    });
+
+    it("PUT /comments/:id - update", async () => {
+      // Act:
+      const response = await request.put(`${baseUrl}/${commentId}`).set(headers).send(testCommentData);
+
+      // Assert:
+      expect(response.status).to.equal(200);
+      testCommentData.id = response.body.id;
+      expect(response.body).to.deep.equal(testCommentData);
+    });
+
+    it("PUT /comments/:id - update different comment", async () => {
+      // Act:
+      const response = await request.put(`${baseUrl}/1`).set(headers).send(testCommentData);
+
+      // Assert:
+      expect(response.status).to.equal(401);
+    });
+
+    it("PATCH /comments/:id - full update", async () => {
+      // Act:
+      const response = await request.patch(`${baseUrl}/${commentId}`).set(headers).send(testCommentData);
+
+      // Assert:
+      expect(response.status).to.equal(200);
+      testCommentData.id = response.body.id;
+      expect(response.body).to.deep.equal(testCommentData);
+    });
+
+    it("PATCH /comments/:id - full update different comment", async () => {
+      // Act:
+      const response = await request.patch(`${baseUrl}/1`).set(headers).send(testCommentData);
+
+      // Assert:
+      expect(response.status).to.equal(401);
+    });
+
+    it("PATCH /comments", async () => {
+      // Act:
+      const response = await request.patch(baseUrl).set(headers).send(testCommentData);
+
+      // Assert:
+      expect(response.status).to.equal(404);
+    });
   });
 
   describe("DELETE /comments", async () => {

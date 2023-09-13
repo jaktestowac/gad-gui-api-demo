@@ -6,8 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "rnd": "node ./tools/generateData.js",
-    "pretty": "npx prettier --write .",
-    "test": "cross-env NODE_ENV=test PORT=3002 jest --testTimeout=10000 --detectOpenHandles"
+    "pretty": "npx prettier --write ."
   },
   "keywords": [
     "json-server, node, REST API"

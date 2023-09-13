@@ -139,7 +139,7 @@ const validations = (req, res, next) => {
     }
 
     if (req.method !== "GET" && req.method !== "HEAD" && urlEnds.includes("/api/comments") && !isAdmin) {
-      const verifyTokenResult = verifyAccessToken(req, res, "articles", req.url);
+      const verifyTokenResult = verifyAccessToken(req, res, "comments", req.url);
       if (!verifyTokenResult) return;
     }
 
@@ -155,9 +155,10 @@ const validations = (req, res, next) => {
       handleComments(req, res, isAdmin, next);
     }
 
-    logTrace("Returning:", { statusCode: res.statusCode, headersSent: res.headersSent, urlEnds });
+    logTrace("Returning:", { statusCode: res.statusCode, headersSent: res.headersSent, urlEnds, method: req.method });
 
     if (res.headersSent !== true) {
+      logTrace("Processing with next()...");
       next();
     }
   } catch (error) {

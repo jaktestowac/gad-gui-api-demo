@@ -83,7 +83,74 @@ describe("Endpoint /articles", () => {
     });
 
     describe("MODIFY /articles", async () => {
-      // TODO:
+      let headers;
+      let userId;
+      let articleId;
+      let testArticleData;
+
+      beforeEach(async () => {
+        const data = await authUser();
+        headers = data.headers;
+        userId = data.userId;
+
+        const articleData = await prepareUniqueArticle(headers, userId);
+        articleId = articleData.articleId;
+        testArticleData = generateValidArticleData();
+        testArticleData.user_id = userId;
+      });
+
+      // TODO: investigate and fix server behaviour
+      it.skip("PUT /articles", async () => {
+        // Act:
+        const response = await request.put(baseUrl).set(headers).send(testArticleData);
+
+        // Assert:
+        expect(response.status).to.equal(201);
+      });
+
+      it("PUT /articles/:id - update", async () => {
+        // Act:
+        const response = await request.put(`${baseUrl}/${articleId}`).set(headers).send(testArticleData);
+
+        // Assert:
+        expect(response.status).to.equal(200);
+        testArticleData.id = response.body.id;
+        expect(response.body).to.deep.equal(testArticleData);
+      });
+
+      it("PUT /articles/:id - update different article", async () => {
+        // Act:
+        const response = await request.put(`${baseUrl}/1`).set(headers).send(testArticleData);
+
+        // Assert:
+        expect(response.status).to.equal(401);
+      });
+
+      it("PATCH /articles/:id - full update", async () => {
+        // Act:
+        const response = await request.patch(`${baseUrl}/${articleId}`).set(headers).send(testArticleData);
+
+        // Assert:
+        expect(response.status).to.equal(200);
+        testArticleData.id = response.body.id;
+        expect(response.body).to.deep.equal(testArticleData);
+      });
+
+      it("PATCH /articles - full update not existing", async () => {
+        // Act:
+        const response = await request.patch(baseUrl).set(headers).send(testArticleData);
+
+        // Assert:
+        expect(response.status).to.equal(404);
+      });
+
+      it("PATCH /articles/:id - full update different article", async () => {
+        // Act:
+        const response = await request.patch(`${baseUrl}/1`).set(headers).send(testArticleData);
+
+        // Assert:
+        expect(response.status).to.equal(401);
+      });
     });
 
     describe("DELETE /articles", async () => {

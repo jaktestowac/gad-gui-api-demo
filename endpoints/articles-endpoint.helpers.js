@@ -7,6 +7,7 @@ const {
   formatMissingFieldErrorResponse,
   formatInvalidFieldErrorResponse,
 } = require("../helpers/helpers");
+const { logTrace } = require("../helpers/logger-api");
 const { HTTP_UNAUTHORIZED, HTTP_UNPROCESSABLE_ENTITY } = require("../helpers/response.helpers");
 const {
   verifyAccessToken,
@@ -38,15 +39,25 @@ function handleArticles(req, res, isAdmin) {
         articleId = getIdFromUrl(urlEnds);
       }
 
+      logTrace("handleArticles:", { method: req.method, urlEnds, articleId });
+
       const foundArticle = searchForArticle(articleId);
       const foundUser = searchForUserWithToken(foundArticle?.user_id, verifyTokenResult);
 
-      if (foundUser === undefined) {
+      logTrace("handleArticles: foundUser and user_id:", { foundUser, user_id: foundArticle?.user_id });
+
+      if (foundUser === undefined && foundArticle !== undefined) {
+        res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+        return;
+      }
+      if (foundUser === undefined && foundArticle === undefined && req.method === "DELETE") {
         res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
         return;
       }
     } else {
       const foundUser = searchForUserWithToken(req.body["user_id"], verifyTokenResult);
+
+      logTrace("handleArticles:", { method: req.method, urlEnds, foundUser, user_id: req.body["user_id"] });
 
       if (foundUser === undefined) {
         res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
@@ -72,6 +83,7 @@ function handleArticles(req, res, isAdmin) {
       // remove id - otherwise - 500: Error: Insert failed, duplicate id
       req.body.id = undefined;
     }
+    logTrace("handleArticles:POST:", { method: req.method, urlEnds, articleId: req.body.id });
   }
 
   if (req.method === "PATCH" && urlEnds.includes("/api/articles") && !isAdmin) {
@@ -99,13 +111,21 @@ function handleArticles(req, res, isAdmin) {
     let articleId = getIdFromUrl(urlEnds);
     const foundArticle = searchForArticle(articleId);
 
+    if (articleId === "articles") {
+      articleId = "";
+    }
+
+    logTrace("handleArticles:PUT:", { method: req.method, articleId });
+
     if (foundArticle === undefined) {
       req.method = "POST";
       req.url = req.url.replace(`/${articleId}`, "");
-      if (parseInt(articleId).toString() === articleId) {
-        articleId = parseInt(articleId);
-      }
-      req.body.id = articleId;
+      req.body.id = undefined;
+      logTrace("handleArticles:PUT -> POST:", {
+        method: req.method,
+        url: req.url,
+        body: req.body,
+      });
     }
   }
 

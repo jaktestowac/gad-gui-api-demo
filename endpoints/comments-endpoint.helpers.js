@@ -9,7 +9,7 @@ const {
   getRandomInt,
   sleep,
 } = require("../helpers/helpers");
-const { logDebug } = require("../helpers/logger-api");
+const { logDebug, logTrace } = require("../helpers/logger-api");
 const { HTTP_UNPROCESSABLE_ENTITY, HTTP_UNAUTHORIZED } = require("../helpers/response.helpers");
 const {
   are_all_fields_valid,
@@ -36,6 +36,7 @@ function handleComments(req, res, isAdmin, next) {
     }
 
     const foundComment = searchForComment(commentId);
+    logTrace("handleComments:", { method: req.method, commentId, urlEnds });
 
     if (req.method === "PUT" && foundComment === undefined) {
       req.method = "POST";
@@ -44,6 +45,7 @@ function handleComments(req, res, isAdmin, next) {
         commentId = parseInt(commentId);
       }
       req.body.id = commentId;
+      logTrace("handleComments:PUT:", { method: req.method, commentId, urlEnds });
     }
   }
 
@@ -55,7 +57,13 @@ function handleComments(req, res, isAdmin, next) {
       const foundComment = searchForComment(commentId);
       const foundUser = searchForUserWithToken(foundComment?.user_id, verifyTokenResult);
 
-      if (foundUser === undefined) {
+      logTrace("handleComments:", { method: req.method, commentId, urlEnds });
+
+      if (foundUser === undefined && foundComment !== undefined) {
+        res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+        return;
+      }
+      if (foundUser === undefined && foundComment === undefined && req.method === "DELETE") {
         res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
         return;
       }
