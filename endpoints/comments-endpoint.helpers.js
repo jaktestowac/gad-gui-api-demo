@@ -1,13 +1,11 @@
-const { getConfigValue, isBugDisabled } = require("../config/config-manager");
-const { ConfigKeys, BugConfigKeys } = require("../config/enums");
+const { isBugDisabled } = require("../config/config-manager");
+const { BugConfigKeys } = require("../config/enums");
 const { searchForComment, searchForUserWithToken } = require("../helpers/db-operation.helpers");
 const {
   formatInvalidFieldErrorResponse,
   getIdFromUrl,
   formatInvalidTokenErrorResponse,
   formatMissingFieldErrorResponse,
-  getRandomInt,
-  sleep,
 } = require("../helpers/helpers");
 const { logDebug, logTrace } = require("../helpers/logger-api");
 const { HTTP_UNPROCESSABLE_ENTITY, HTTP_UNAUTHORIZED } = require("../helpers/response.helpers");
@@ -19,7 +17,7 @@ const {
   are_mandatory_fields_present,
 } = require("../helpers/validation.helpers");
 
-function handleComments(req, res, isAdmin, next) {
+function handleComments(req, res, isAdmin) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
 
   if (req.method !== "GET" && req.method !== "HEAD" && urlEnds.includes("/api/comments")) {
@@ -89,22 +87,6 @@ function handleComments(req, res, isAdmin, next) {
     }
   }
 
-  if (req.method === "GET" && urlEnds.includes("api/comments")) {
-    let comments = urlEnds.split("_limit=")[1];
-    comments = comments?.split("&")[0];
-    let timeout = getConfigValue(ConfigKeys.SLEEP_TIME_PER_ONE_GET_COMMENT);
-    if (comments !== undefined) {
-      timeout =
-        comments *
-        getRandomInt(
-          getConfigValue(ConfigKeys.SLEEP_TIME_PER_ONE_GET_COMMENT_MIN),
-          getConfigValue(ConfigKeys.SLEEP_TIME_PER_ONE_GET_COMMENT_MAX)
-        );
-      logDebug(`[DELAY] Waiting for ${timeout} [ms] to load ${comments} comments`);
-    }
-    logDebug(`[DELAY] Waiting for ${timeout} [ms] for ${urlEnds}`);
-    sleep(timeout).then(() => next());
-  }
   return;
 }
 

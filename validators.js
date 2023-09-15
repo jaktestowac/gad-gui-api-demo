@@ -5,6 +5,8 @@ const {
   parsePublishStats,
   getIdFromUrl,
   formatInvalidTokenErrorResponse,
+  getRandomInt,
+  sleep,
 } = require("./helpers/helpers");
 const { logDebug, logError, logTrace, getLogs } = require("./helpers/logger-api");
 const { getConfigValue } = require("./config/config-manager");
@@ -152,14 +154,33 @@ const validations = (req, res, next) => {
     }
 
     if (req.url.includes("/api/comments")) {
-      handleComments(req, res, isAdmin, next);
+      handleComments(req, res, isAdmin);
     }
 
     logTrace("Returning:", { statusCode: res.statusCode, headersSent: res.headersSent, urlEnds, method: req.method });
 
     if (res.headersSent !== true) {
       logTrace("Processing with next()...");
-      next();
+
+      if (req.method === "GET" && urlEnds.includes("api/comments")) {
+        let commentsLimit = urlEnds.split("_limit=")[1];
+        commentsLimit = commentsLimit?.split("&")[0];
+        let timeout = getConfigValue(ConfigKeys.SLEEP_TIME_PER_ONE_GET_COMMENT);
+        logTrace(`[DELAY] Getting sleep time:`, { commentsLimit, timeout });
+        if (commentsLimit !== undefined) {
+          timeout =
+            commentsLimit *
+            getRandomInt(
+              getConfigValue(ConfigKeys.SLEEP_TIME_PER_ONE_GET_COMMENT_MIN),
+              getConfigValue(ConfigKeys.SLEEP_TIME_PER_ONE_GET_COMMENT_MAX)
+            );
+          logDebug(`[DELAY] Waiting for ${timeout} [ms] to load ${commentsLimit} comments`);
+        }
+        logDebug(`[DELAY] Waiting for ${timeout} [ms] for ${urlEnds}`);
+        sleep(timeout).then(() => next());
+      } else {
+        next();
+      }
     }
   } catch (error) {
     logError("Fatal error. Please contact administrator.", {
