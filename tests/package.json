@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test-jest": "cross-env NODE_ENV=test PORT=3002 jest --testTimeout=10000 --detectOpenHandles",
-    "test": "cross-env NODE_ENV=test PORT=3002 mocha"
+    "test": "cross-env NODE_ENV=test PORT=3002 mocha --require hooks.js"
   },
   "author": "jaktestowac.pl",
   "license": "ISC",

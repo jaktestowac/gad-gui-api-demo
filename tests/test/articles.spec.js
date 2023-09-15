@@ -126,6 +126,18 @@ describe("Endpoint /articles", () => {
         expect(response.status).to.equal(401);
       });
 
+      ["title", "body", "date"].forEach((field) => {
+        it(`PUT /articles/:id - missing mandatory field - ${field}`, async () => {
+          // Arrange:
+          testArticleData[field] = undefined;
+
+          // Act:
+          const response = await request.put(`${baseUrl}/${articleId}`).set(headers).send(testArticleData);
+
+          // Assert:
+          expect(response.status).to.equal(422);
+        });
+      });
       it("PATCH /articles/:id - full update", async () => {
         // Act:
         const response = await request.patch(`${baseUrl}/${articleId}`).set(headers).send(testArticleData);
@@ -134,6 +146,19 @@ describe("Endpoint /articles", () => {
         expect(response.status).to.equal(200);
         testArticleData.id = response.body.id;
         expect(response.body).to.deep.equal(testArticleData);
+      });
+
+      ["title", "body", "date"].forEach((field) => {
+        it(`PATCH /articles/:id - full update with invalid data - ${field}`, async () => {
+          const testData = { ...testArticleData };
+          testData[field] = faker.string.alphanumeric(10001);
+
+          // Act:
+          const response = await request.patch(`${baseUrl}/${articleId}`).set(headers).send(testData);
+
+          // Assert:
+          expect(response.status).to.equal(422);
+        });
       });
 
       it("PATCH /articles - full update not existing", async () => {

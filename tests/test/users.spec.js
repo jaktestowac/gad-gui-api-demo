@@ -245,6 +245,20 @@ describe("Endpoint /users", async () => {
       expect(response.body).to.deep.equal(testUserData);
     });
 
+    ["firstname", "lastname", "email", "avatar"].forEach((field) => {
+      it(`PUT /users/:id - update with missing mandatory field - ${field}`, async () => {
+        // Arrange:
+        const testUserData = generateValidUserData();
+
+        testUserData[field] = undefined;
+
+        // Act:
+        const response = await request.put(`${baseUrl}/${userId}`).set(headers).send(testUserData);
+
+        // Assert:
+        expect(response.status).to.equal(422);
+      });
+    });
     it("PUT /users/:id - update different user", async () => {
       // Act:
       const response = await request.put(`${baseUrl}/1`).set(headers).send(testUserData);
@@ -283,6 +297,22 @@ describe("Endpoint /users", async () => {
       baseUserData.firstname = testPartialUserData.firstname;
       baseUserData.id = response.body.id;
       expect(response.body).to.deep.equal(baseUserData);
+    });
+
+    it("PATCH /users/:id - update partial with invalid data", async () => {
+      // Arrange:
+      const testPartialUserData = { firstname: faker.string.alphanumeric(10001) };
+
+      // Act:
+      const response = await request.patch(`${baseUrl}/${userId}`).set(headers).send(testPartialUserData);
+
+      // Assert:
+      expect(response.status).to.equal(422);
+
+      const responseGet = await request.get(`${baseUrl}/${userId}`).set(headers);
+
+      expect(responseGet.status).to.equal(200);
+      expect(responseGet.body.firstname).to.deep.equal(baseUserData.firstname);
     });
 
     it("PATCH /users/:id - partial update different user", async () => {

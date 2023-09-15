@@ -98,9 +98,9 @@ async function prepareUniqueLoggedUser() {
 
   const testUserData = {
     email: faker.internet.email({ provider: "example.test.test" }),
-    firstname: "string",
-    lastname: "string",
-    password: "string",
+    firstname: faker.person.firstName(),
+    lastname: faker.person.lastName(),
+    password: faker.internet.password(),
     avatar: "string",
   };
   const response = await request.post(baseUsersUrl).send(testUserData);
@@ -139,6 +139,7 @@ async function prepareUniqueArticle(headers, userId) {
   expect(response.status).to.equal(201);
   articleId = response.body.id;
   testData.id = articleId;
+
   await sleep(sleepTime); // wait for user registration // server is slow
 
   return {
@@ -157,6 +158,7 @@ async function prepareUniqueComment(headers, userId, articleId) {
   expect(response.status).to.equal(201);
   commentId = response.body.id;
   testData.id = commentId;
+
   await sleep(sleepTime); // wait for user registration // server is slow
 
   return {

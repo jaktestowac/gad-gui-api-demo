@@ -132,6 +132,16 @@ describe("Endpoint /comments", () => {
       expect(response.status).to.equal(401);
     });
 
+    it("PATCH /comments/:id - full update with invalid fields", async () => {
+      const newData = { ...testCommentData };
+      newData.body = faker.string.alphanumeric(10001);
+      // Act:
+      const response = await request.patch(`${baseUrl}/${commentId}`).set(headers).send(newData);
+
+      // Assert:
+      expect(response.status).to.equal(422);
+    });
+
     it("PATCH /comments/:id - full update", async () => {
       // Act:
       const response = await request.patch(`${baseUrl}/${commentId}`).set(headers).send(testCommentData);
