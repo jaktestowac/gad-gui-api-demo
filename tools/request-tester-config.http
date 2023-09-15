@@ -22,14 +22,6 @@ content-type: application/json
     "tokenExpiresIn": "1m"
 }
 
-### Config - change publicLogsEnabled
-POST http://localhost:3000/api/config
-content-type: application/json
- 
-{
-    "publicLogsEnabled": true
-}
-
 ### Config - change bugs
 POST http://localhost:3000/api/config/bugs
 content-type: application/json
@@ -37,6 +29,14 @@ content-type: application/json
 {
     "bug_charts_001": true,
     "bug_charts_002": true
+}
+
+### Config - change publicLogsEnabled
+POST http://localhost:3000/api/config
+content-type: application/json
+ 
+{
+    "publicLogsEnabled": true
 }
 
 ### Get logs
