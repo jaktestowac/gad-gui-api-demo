@@ -27,8 +27,8 @@ function commentsDb() {
   return db["comments"];
 }
 
-function quizDb() {
-  const db = JSON.parse(fs.readFileSync(getDbPath(getConfigValue(ConfigKeys.QUIZ_DATA_PATH), "UTF-8")));
+function quizQuestionsDb() {
+  const db = JSON.parse(fs.readFileSync(getDbPath(getConfigValue(ConfigKeys.QUIZ_QUESTIONS_PATH), "UTF-8")));
   return db;
 }
 
@@ -45,7 +45,7 @@ module.exports = {
   userDb,
   articlesDb,
   commentsDb,
-  quizDb,
+  quizQuestionsDb,
   hangmanDb,
   fullDb,
   randomDbEntry,

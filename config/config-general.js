@@ -30,7 +30,8 @@ const config = {
   dbPath: "./db/db.json",
   dbRestorePath: "./db/db-base.json",
   dbEmptyRestorePath: "./db/db-empty.json",
-  quizDataPath: "./db/quiz-questions.json",
+  quizQuestionsPath: "./db/quiz-questions.json",
+  quizDbPath: "./db/quiz-questions.json",
   hangmanDataPath: "./db/hangman-words.json",
   defaultPort: 3000,
   dateRegexp: /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/, // e.g. 2016-01-19T15:21:32Z

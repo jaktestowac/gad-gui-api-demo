@@ -3,7 +3,7 @@ const { logWarn } = require("./logger-api");
 const { shuffleArray } = require("./helpers");
 const { getConfigValue } = require("../config/config-manager");
 const { ConfigKeys } = require("../config/enums");
-const { quizDb } = require("./db.helpers");
+const { quizQuestionsDb } = require("./db.helpers");
 
 function arraysEqual(arr1, arr2) {
   if (arr1.length !== arr2.length) return false;
@@ -27,7 +27,7 @@ function checkAnswer(selectedAnswers, questionText) {
 }
 
 function findQuestion(questionText) {
-  let questions = quizDb(getConfigValue(ConfigKeys.QUIZ_DATA_PATH));
+  let questions = quizQuestionsDb(getConfigValue(ConfigKeys.QUIZ_QUESTIONS_PATH));
   const foundQuestionObj = questions.find((questionObj) => {
     if (questionText === questionObj.question) {
       return questionObj;
@@ -37,7 +37,7 @@ function findQuestion(questionText) {
 }
 
 function getQuestions(numberOfQuestions) {
-  let questions = quizDb(getConfigValue(ConfigKeys.QUIZ_DATA_PATH));
+  let questions = quizQuestionsDb(getConfigValue(ConfigKeys.QUIZ_QUESTIONS_PATH));
   if (numberOfQuestions !== undefined && numberOfQuestions < questions.length) {
     let shuffledQuestions = shuffleArray(questions);
     return shuffledQuestions.slice(0, numberOfQuestions);
