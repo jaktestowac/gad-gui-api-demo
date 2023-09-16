@@ -32,6 +32,17 @@ function quizQuestionsDb() {
   return db;
 }
 
+function getQuizHighScoresDb() {
+  const db = JSON.parse(fs.readFileSync(getDbPath(getConfigValue(ConfigKeys.QUIZ_DB_PATH), "UTF-8")));
+  return db;
+}
+
+function saveQuizHighScoresDb(data, gameId) {
+  const db = getQuizHighScoresDb();
+  db["scores"][gameId] = data;
+  fs.writeFileSync(getDbPath(getConfigValue(ConfigKeys.QUIZ_DB_PATH)), JSON.stringify(db, null, 4));
+}
+
 function hangmanDb() {
   const db = JSON.parse(fs.readFileSync(getDbPath(getConfigValue(ConfigKeys.HANGMAN_DATA_PATH), "UTF-8")));
   return db;
@@ -50,4 +61,6 @@ module.exports = {
   fullDb,
   randomDbEntry,
   getDbPath,
+  getQuizHighScoresDb,
+  saveQuizHighScoresDb,
 };

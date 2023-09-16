@@ -1,5 +1,7 @@
 const { isBugDisabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
+const { saveGameHighScores } = require("../helpers/db-operation.helpers");
+const { getQuizHighScoresDb } = require("../helpers/db.helpers");
 const { logDebug, logTrace } = require("../helpers/logger-api");
 const { countAvailableQuestions, getOnlyQuestions, checkAnswer } = require("../helpers/quiz.helpers");
 const { HTTP_NOT_FOUND, HTTP_OK } = require("../helpers/response.helpers");
@@ -39,7 +41,21 @@ function handleQuiz(req, res) {
     }
     logDebug("handleQuiz:Quiz stopped - final:", { email, quizHighScores });
     res.status(HTTP_OK).json({ highScore: quizHighScores[email] });
+
+    // TODO: v2:
+    // logDebug("handleQuiz:Quiz stopped:", { email, quizTempScores });
+    // const quizHighScore = saveGameHighScores("quiz", email, quizTempScores[email]);
+
+    // if (isBugDisabled(BugConfigKeys.BUG_QUIZ_002)) {
+    //   // clear quizTempScores before quiz:
+    //   quizTempScores[email] = 0;
+    // }
+
+    // logDebug("handleQuiz:Quiz stopped - final:", { email, quizHighScore });
+    // res.status(HTTP_OK).json({ highScore: quizHighScore });
   } else if (req.method === "GET" && req.url.endsWith("/api/quiz/highscores")) {
+    // TODO: v2:
+    // const quizHighScores = getQuizHighScoresDb();
     logDebug("handleQuiz:Quiz highScores:", { quizHighScores });
     res.status(HTTP_OK).json({ highScore: quizHighScores });
   } else if (req.method === "POST" && req.url.endsWith("/api/quiz/questions/check")) {

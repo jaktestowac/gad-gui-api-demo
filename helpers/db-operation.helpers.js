@@ -1,4 +1,4 @@
-const { userDb, articlesDb, commentsDb } = require("./db.helpers");
+const { userDb, articlesDb, commentsDb, getQuizHighScoresDb, saveQuizHighScoresDb } = require("./db.helpers");
 
 function searchForUserWithToken(userId, verifyTokenResult) {
   const foundUser = userDb().find((user) => {
@@ -45,10 +45,54 @@ function searchForComment(commentId) {
   return foundComment;
 }
 
+function getGameByName(name) {
+  const foundGame = getQuizHighScoresDb()["games"].find((game) => {
+    if (game["name"]?.toString().toLowerCase() === name.toLowerCase()) {
+      return game;
+    }
+  });
+  return foundGame;
+}
+
+function getGameIdByName(name) {
+  const foundGame = getGameByName(name);
+  return foundGame["id"];
+}
+
+function getGameHighScoresByGameName(name) {
+  const quizHighScores = getQuizHighScoresDb();
+  const gameId = getGameIdByName(name);
+
+  let scores = quizHighScores["scores"][gameId];
+
+  if (scores == undefined) {
+    scores = {};
+  }
+
+  return scores;
+}
+
+function saveGameHighScores(gameName, userEmail, score) {
+  const quizHighScores = getGameHighScoresByGameName(gameName);
+  const gameId = getGameIdByName(gameName);
+  const foundUser = searchForUserWithEmail(userEmail);
+  const userId = foundUser.id;
+
+  if (quizHighScores[userId] === undefined || score >= quizHighScores[userId]) {
+    quizHighScores[userId] =score;
+  }
+
+  saveQuizHighScoresDb(quizHighScores, gameId);
+  return quizHighScores[userId];
+}
+
 module.exports = {
   searchForUserWithToken,
   searchForUserWithEmail,
   searchForUser,
   searchForArticle,
   searchForComment,
+  getGameIdByName,
+  getGameHighScoresByGameName,
+  saveGameHighScores,
 };
