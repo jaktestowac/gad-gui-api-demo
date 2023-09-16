@@ -163,18 +163,18 @@ const validations = (req, res, next) => {
       logTrace("Processing with next()...");
 
       if (req.method === "GET" && urlEnds.includes("api/comments")) {
-        let commentsLimit = urlEnds.split("_limit=")[1];
-        commentsLimit = commentsLimit?.split("&")[0];
+        let limit = urlEnds.split("_limit=")[1];
+        limit = limit?.split("&")[0];
         let timeout = getConfigValue(ConfigKeys.SLEEP_TIME_PER_ONE_GET_COMMENT);
-        logTrace(`[DELAY] Getting sleep time:`, { commentsLimit, timeout });
-        if (commentsLimit !== undefined) {
+        logTrace(`[DELAY] Getting sleep time:`, { limit, timeout });
+        if (limit !== undefined) {
           timeout =
-            commentsLimit *
+            limit *
             getRandomInt(
               getConfigValue(ConfigKeys.SLEEP_TIME_PER_ONE_GET_COMMENT_MIN),
               getConfigValue(ConfigKeys.SLEEP_TIME_PER_ONE_GET_COMMENT_MAX)
             );
-          logDebug(`[DELAY] Waiting for ${timeout} [ms] to load ${commentsLimit} comments`);
+          logDebug(`[DELAY] Waiting for ${timeout} [ms] to load ${limit} comments`);
         }
         logDebug(`[DELAY] Waiting for ${timeout} [ms] for ${urlEnds}`);
         sleep(timeout).then(() => next());
