@@ -1,5 +1,5 @@
 const jsonServer = require("./json-server");
-const { validations } = require("./validators");
+const { validations } = require("./routes/validations.route");
 const fs = require("fs");
 const { createToken, isAuthenticated, prepareCookieMaxAge } = require("./helpers/jwtauth");
 const { getConfigValue } = require("./config/config-manager");
@@ -9,7 +9,6 @@ const path = require("path");
 const cookieparser = require("cookie-parser");
 const helmet = require("helmet");
 const express = require("express");
-const formidable = require("formidable");
 const { articlesDb, commentsDb, userDb, fullDb, getDbPath } = require("./helpers/db.helpers");
 
 const server = jsonServer.create();
@@ -23,20 +22,9 @@ const {
   getIdFromUrl,
 } = require("./helpers/helpers");
 const { logDebug, logError, logTrace } = require("./helpers/logger-api");
-const {
-  are_all_fields_valid,
-  mandatory_non_empty_fields_article,
-  all_fields_article,
-} = require("./helpers/validation.helpers");
-const {
-  HTTP_UNPROCESSABLE_ENTITY,
-  HTTP_INTERNAL_SERVER_ERROR,
-  HTTP_CREATED,
-  HTTP_BAD_REQUEST,
-  HTTP_OK,
-  HTTP_UNAUTHORIZED,
-} = require("./helpers/response.helpers");
+const { HTTP_INTERNAL_SERVER_ERROR, HTTP_CREATED, HTTP_OK, HTTP_UNAUTHORIZED } = require("./helpers/response.helpers");
 const { getRandomVisitsForEntities } = require("./helpers/random-data.generator");
+const { articlesUpload } = require("./routes/articles-upload.route");
 const middlewares = jsonServer.defaults();
 
 const port = process.env.PORT || getConfigValue(ConfigKeys.DEFAULT_PORT);
@@ -44,76 +32,6 @@ const port = process.env.PORT || getConfigValue(ConfigKeys.DEFAULT_PORT);
 const visitsPerArticle = getRandomVisitsForEntities(articlesDb());
 const visitsPerComment = getRandomVisitsForEntities(commentsDb());
 const visitsPerUsers = getRandomVisitsForEntities(userDb());
-
-const customRoutesAfterAuth = (req, res, next) => {
-  try {
-    if (req.method === "POST" && req.url.endsWith("/api/articles/upload")) {
-      const form = new formidable.IncomingForm();
-      form.multiples = true;
-      let uploadDir = path.join(__dirname, "uploads");
-      form.uploadDir = uploadDir;
-      let userId = req.headers["userid"];
-
-      form.on("progress", function (bytesReceived, bytesExpected) {
-        const uploadSizeLimitBytes = getConfigValue(ConfigKeys.UPLOAD_SIZE_LIMIT_BYTES);
-        logDebug("formidable data received:", { bytesReceived, bytesExpected, uploadSizeLimitBytes });
-        if (bytesReceived > uploadSizeLimitBytes) {
-          throw new Error(`File too big. Actual: ${bytesExpected} bytes, Max: ${uploadSizeLimitBytes} bytes`);
-        }
-      });
-      form.parse(req, async (err, fields, files) => {
-        if (err) {
-          res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(`There was an error parsing the file: ${err.message}`));
-          return;
-        }
-
-        const file = files.jsonFile[0];
-
-        // TODO:INVOKE_BUG: same file name might cause file overwrite in parallel scenarios
-        const fileName = `uploaded.json`;
-        const newFullFilePath = path.join(uploadDir, fileName);
-
-        logDebug("Renaming files:", { file, from: file.filepath, to: newFullFilePath });
-        try {
-          fs.renameSync(file.filepath, newFullFilePath);
-          const fileDataRaw = fs.readFileSync(newFullFilePath, "utf8");
-          const fileData = JSON.parse(fileDataRaw);
-          fileData["user_id"] = userId;
-          const isValid = are_all_fields_valid(fileData, all_fields_article, mandatory_non_empty_fields_article);
-          if (!isValid.status) {
-            logError("[articles/upload] Error after validation:", { error: isValid.error });
-            res
-              .status(HTTP_UNPROCESSABLE_ENTITY)
-              .send(
-                formatErrorResponse(
-                  `One of field is invalid (empty, invalid or too long) or there are some additional fields: ${isValid.error}`,
-                  all_fields_article
-                )
-              );
-            return;
-          }
-          req.method = "POST";
-          req.url = req.url.replace(`/api/articles/upload`, "/api/articles");
-          req.body = fileData;
-          next();
-        } catch (error) {
-          logError("[articles/upload] Error:", error);
-          res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("There was an error during file creation"));
-          return;
-        }
-      });
-    }
-    if (res.headersSent !== true) {
-      next();
-    }
-  } catch (error) {
-    logError("Fatal error. Please contact administrator.", {
-      error,
-      stack: error.stack,
-    });
-    res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Fatal error. Please contact administrator."));
-  }
-};
 
 const customRoutes = (req, res, next) => {
   try {
@@ -428,7 +346,7 @@ server.get("/logout", (req, res) => {
 
 server.use(customRoutes);
 server.use(validations);
-server.use(customRoutesAfterAuth);
+server.use(articlesUpload);
 server.use("/api", router);
 
 router.render = function (req, res) {

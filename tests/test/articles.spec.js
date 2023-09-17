@@ -53,6 +53,10 @@ describe("Endpoint /articles", () => {
         return request.post(baseUrl).send({}).expect(401);
       });
 
+      it("POST /articles/upload", () => {
+        return request.post(`${baseUrl}/upload`).send({}).expect(401);
+      });
+
       it("PUT /articles", () => {
         return request.put(baseUrl).send({}).expect(401);
       });
@@ -357,6 +361,21 @@ describe("Endpoint /articles", () => {
           // Assert:
           expect(response.status).to.equal(401);
         });
+      });
+
+      it.skip("POST /articles/upload", async () => {
+        // TODO: prepare proper data
+
+        // Arrange:
+        const testData = generateValidArticleData();
+        const newHeaders = { ...headers };
+        newHeaders["userid"] = userId;
+
+        // Act:
+        const response = await request.post(`${baseUrl}/upload`).set(headers).send(testData);
+
+        // Assert:
+        expect(response.status).to.equal(201);
       });
 
       it("HEAD /articles", () => {

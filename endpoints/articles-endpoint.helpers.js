@@ -7,7 +7,7 @@ const {
   formatMissingFieldErrorResponse,
   formatInvalidFieldErrorResponse,
 } = require("../helpers/helpers");
-const { logTrace } = require("../helpers/logger-api");
+const { logTrace, logWarn } = require("../helpers/logger-api");
 const { HTTP_UNAUTHORIZED, HTTP_UNPROCESSABLE_ENTITY } = require("../helpers/response.helpers");
 const {
   verifyAccessToken,
@@ -28,6 +28,8 @@ function handleArticles(req, res, isAdmin) {
       res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
       return;
     }
+
+    return;
   }
 
   if (req.method !== "GET" && req.method !== "HEAD" && urlEnds?.includes("/api/articles") && !isAdmin) {
@@ -55,9 +57,16 @@ function handleArticles(req, res, isAdmin) {
         return;
       }
     } else {
-      const foundUser = searchForUserWithToken(req.body["user_id"], verifyTokenResult);
+      let userId = req.body["user_id"];
 
-      logTrace("handleArticles:", { method: req.method, urlEnds, foundUser, user_id: req.body["user_id"] });
+      if (userId === undefined) {
+        logWarn("User ID is not defined", { method: req.method, url: req.url, userIdInHeader: req.headers["userid"] });
+        userId = req.headers["userid"];
+      }
+
+      const foundUser = searchForUserWithToken(userId, verifyTokenResult);
+
+      logTrace("handleArticles:", { method: req.method, urlEnds, foundUser, userId });
 
       if (foundUser === undefined) {
         res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
