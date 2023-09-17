@@ -4,13 +4,6 @@ GET http://localhost:3000/api/config
 ### Config Reset
 GET http://localhost:3000/api/config/reset
 
-### Config - change log level
-POST http://localhost:3000/api/config
-content-type: application/json
- 
-{
-    "currentLogLevel": 5
-}
 
 ### Config - change token and cookies
 POST http://localhost:3000/api/config
@@ -29,6 +22,14 @@ content-type: application/json
 {
     "bug_charts_001": true,
     "bug_charts_002": true
+}
+
+### Config - change log level
+POST http://localhost:3000/api/config
+content-type: application/json
+ 
+{
+    "currentLogLevel": 5
 }
 
 ### Config - change publicLogsEnabled
