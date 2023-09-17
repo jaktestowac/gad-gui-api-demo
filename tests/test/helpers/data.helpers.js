@@ -137,7 +137,7 @@ async function prepareUniqueArticle(headers, userId) {
   const response = await request.post(baseArticlesUrl).set(headers).send(testData);
 
   expect(response.status).to.equal(201);
-  articleId = response.body.id;
+  const articleId = response.body.id;
   testData.id = articleId;
 
   await sleep(sleepTime); // wait for user registration // server is slow
@@ -156,7 +156,7 @@ async function prepareUniqueComment(headers, userId, articleId) {
   const response = await request.post(baseCommentsUrl).set(headers).send(testData);
 
   expect(response.status).to.equal(201);
-  commentId = response.body.id;
+  const commentId = response.body.id;
   testData.id = commentId;
 
   await sleep(sleepTime); // wait for user registration // server is slow

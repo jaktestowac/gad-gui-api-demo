@@ -7,7 +7,7 @@ const {
   formatInvalidTokenErrorResponse,
   formatMissingFieldErrorResponse,
 } = require("../helpers/helpers");
-const { logDebug, logTrace } = require("../helpers/logger-api");
+const { logTrace } = require("../helpers/logger-api");
 const { HTTP_UNPROCESSABLE_ENTITY, HTTP_UNAUTHORIZED } = require("../helpers/response.helpers");
 const {
   are_all_fields_valid,

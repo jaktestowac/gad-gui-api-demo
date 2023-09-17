@@ -21,3 +21,11 @@ and then run tests:
 ```
 npm run test
 ```
+
+# ESlint
+
+To check problems run:
+
+```
+npx eslint . --ext .js --ext .html --max-warnings=0
+```

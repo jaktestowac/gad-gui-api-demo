@@ -1,5 +1,5 @@
 const { serverApp } = require("../../../server");
-const { request, expect, faker, baseUsersUrl } = require("../config");
+const { request, expect } = require("../config");
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));

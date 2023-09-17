@@ -1,7 +1,5 @@
 const { isBugDisabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
-const { saveGameHighScores } = require("../helpers/db-operation.helpers");
-const { getQuizHighScoresDb } = require("../helpers/db.helpers");
 const { logDebug, logTrace } = require("../helpers/logger-api");
 const { countAvailableQuestions, getOnlyQuestions, checkAnswer } = require("../helpers/quiz.helpers");
 const { HTTP_NOT_FOUND, HTTP_OK } = require("../helpers/response.helpers");

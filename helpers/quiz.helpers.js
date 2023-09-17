@@ -1,4 +1,3 @@
-const fs = require("fs");
 const { logWarn } = require("./logger-api");
 const { shuffleArray } = require("./helpers");
 const { getConfigValue } = require("../config/config-manager");

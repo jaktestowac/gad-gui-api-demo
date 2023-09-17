@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const { request, expect } = require("./test/config");
 
 exports.mochaHooks = {
