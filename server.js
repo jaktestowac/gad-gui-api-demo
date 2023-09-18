@@ -1,41 +1,30 @@
 const jsonServer = require("./json-server");
 const { validations } = require("./routes/validations.route");
-const fs = require("fs");
 const { createToken, isAuthenticated, prepareCookieMaxAge } = require("./helpers/jwtauth");
 const { getConfigValue } = require("./config/config-manager");
 const { ConfigKeys } = require("./config/enums");
+const fs = require("fs");
 const path = require("path");
 
 const cookieparser = require("cookie-parser");
 const helmet = require("helmet");
 const express = require("express");
-const { articlesDb, commentsDb, userDb, fullDb, getDbPath } = require("./helpers/db.helpers");
+const { userDb, getDbPath } = require("./helpers/db.helpers");
 
 const server = jsonServer.create();
 const router = jsonServer.router(getDbPath(getConfigValue(ConfigKeys.DB_PATH)));
 
-const {
-  pluginStatuses,
-  formatErrorResponse,
-  isAnyAdminUser,
-  isSuperAdminUser,
-  getIdFromUrl,
-} = require("./helpers/helpers");
+const { formatErrorResponse, isAnyAdminUser, isSuperAdminUser } = require("./helpers/helpers");
 const { logDebug, logError, logTrace } = require("./helpers/logger-api");
 const { HTTP_INTERNAL_SERVER_ERROR, HTTP_CREATED, HTTP_OK, HTTP_UNAUTHORIZED } = require("./helpers/response.helpers");
-const { getRandomVisitsForEntities } = require("./helpers/random-data.generator");
 const { articlesUpload } = require("./routes/articles-upload.route");
+const { customRoutes } = require("./routes/custom.route");
 const middlewares = jsonServer.defaults();
 
 const port = process.env.PORT || getConfigValue(ConfigKeys.DEFAULT_PORT);
 
-const visitsPerArticle = getRandomVisitsForEntities(articlesDb());
-const visitsPerComment = getRandomVisitsForEntities(commentsDb());
-const visitsPerUsers = getRandomVisitsForEntities(userDb());
-
-const customRoutes = (req, res, next) => {
+const clearDbRoutes = (req, res, next) => {
   try {
-    const urlEnds = req.url.replace(/\/\/+/g, "/");
     if (req.method === "GET" && req.url.endsWith("/restoreDB")) {
       const db = JSON.parse(fs.readFileSync(path.join(__dirname, getConfigValue(ConfigKeys.DB_RESTORE_PATH)), "utf8"));
       router.db.setState(db);
@@ -48,64 +37,6 @@ const customRoutes = (req, res, next) => {
       router.db.setState(db);
       logDebug("Restore empty DB was successful");
       res.status(HTTP_CREATED).send({ message: "Empty Database successfully restored" });
-    } else if (req.method === "GET" && req.url.endsWith("/db")) {
-      const dbData = fullDb();
-      res.json(dbData);
-      req.body = dbData;
-    } else if (req.method === "GET" && req.url.endsWith("/images/user")) {
-      let files = fs.readdirSync(path.join(__dirname, "/public/data/users"));
-      files = files.filter((file) => !file.startsWith("face_"));
-      res.json(files);
-      req.body = files;
-    } else if (req.method === "GET" && req.url.endsWith("/images/posts")) {
-      const files = fs.readdirSync(path.join(__dirname, "/public/data/images/256"));
-      res.json(files);
-      req.body = files;
-    } else if (req.method === "GET" && req.url.endsWith("/pluginstatuses")) {
-      res.json(pluginStatuses);
-      req.body = pluginStatuses;
-    } else if (req.method === "GET" && req.url.endsWith("/api/visits/articles")) {
-      res.json(visitsPerArticle);
-      req.body = visitsPerArticle;
-    } else if (req.method === "GET" && req.url.endsWith("/api/visits/comments")) {
-      res.json(visitsPerComment);
-      req.body = visitsPerComment;
-    } else if (req.method === "GET" && req.url.endsWith("/api/visits/users")) {
-      res.json(visitsPerUsers);
-      req.body = visitsPerUsers;
-    } else if (req.url.includes("/api/articles") && req.method === "GET") {
-      let articleId = getIdFromUrl(urlEnds);
-
-      if (!articleId?.includes("&_") && !articleId?.includes("?") && articleId !== undefined && articleId.length > 0) {
-        if (visitsPerArticle[articleId] === undefined) {
-          visitsPerArticle[articleId] = 0;
-        }
-
-        visitsPerArticle[articleId]++;
-        logDebug(`[visits] articleId: "${articleId}" with visits:${visitsPerArticle[articleId]}`);
-      }
-    } else if (req.url.includes("/api/comments") && req.method === "GET") {
-      let commentId = getIdFromUrl(urlEnds);
-
-      if (!commentId?.includes("&_") && !commentId?.includes("?") && commentId !== undefined && commentId.length > 0) {
-        if (visitsPerComment[commentId] === undefined) {
-          visitsPerComment[commentId] = 0;
-        }
-
-        visitsPerComment[commentId]++;
-        logDebug(`[visits] commentId: "${commentId}" with visits:${visitsPerComment[commentId]}`);
-      }
-    } else if (req.url.includes("/api/users") && req.method === "GET") {
-      let userId = getIdFromUrl(urlEnds);
-
-      if (!userId?.includes("&_") && !userId?.includes("?") && userId !== undefined && userId.length > 0) {
-        if (visitsPerUsers[userId] === undefined) {
-          visitsPerUsers[userId] = 0;
-        }
-
-        visitsPerUsers[userId]++;
-        logDebug(`[visits] userId: "${userId}" with visits:${visitsPerUsers[userId]}`);
-      }
     }
     if (res.headersSent !== true) {
       next();
@@ -344,6 +275,7 @@ server.get("/logout", (req, res) => {
 //   next();
 // });
 
+server.use(clearDbRoutes);
 server.use(customRoutes);
 server.use(validations);
 server.use(articlesUpload);
