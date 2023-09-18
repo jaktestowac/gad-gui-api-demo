@@ -1,10 +1,19 @@
-const { fullDb, articlesDb, commentsDb, userDb } = require("../helpers/db.helpers");
-const { formatErrorResponse, getIdFromUrl, pluginStatuses } = require("../helpers/helpers");
-const { logError, logDebug } = require("../helpers/logger-api");
-const { HTTP_INTERNAL_SERVER_ERROR } = require("../helpers/response.helpers");
+const { fullDb, articlesDb, commentsDb, userDb, randomDbEntry } = require("../helpers/db.helpers");
+const {
+  formatErrorResponse,
+  getIdFromUrl,
+  pluginStatuses,
+  parsePublishStats,
+  parseArticleStats,
+  parseUserStats,
+} = require("../helpers/helpers");
+const { logError, logDebug, getLogs } = require("../helpers/logger-api");
+const { HTTP_INTERNAL_SERVER_ERROR, HTTP_OK } = require("../helpers/response.helpers");
 const fs = require("fs");
 const path = require("path");
 const { getRandomVisitsForEntities } = require("../helpers/random-data.generator");
+const { getConfigValue } = require("../config/config-manager");
+const { ConfigKeys } = require("../config/enums");
 
 const visitsPerArticle = getRandomVisitsForEntities(articlesDb());
 const visitsPerComment = getRandomVisitsForEntities(commentsDb());
@@ -13,6 +22,37 @@ const visitsPerUsers = getRandomVisitsForEntities(userDb());
 const customRoutes = (req, res, next) => {
   try {
     const urlEnds = req.url.replace(/\/\/+/g, "/");
+    if (req.method === "GET" && urlEnds.includes("api/stats/users")) {
+      const dataType = urlEnds.split("?chartType=");
+      const stats = parseUserStats(fullDb(), dataType[1] ?? "");
+      res.status(HTTP_OK).json(stats);
+      return;
+    } else if (req.method === "GET" && urlEnds.includes("api/stats/articles")) {
+      const dataType = urlEnds.split("?chartType=");
+      const stats = parseArticleStats(fullDb(), dataType[1] ?? "");
+      res.status(HTTP_OK).json(stats);
+      return;
+    } else if (req.method === "GET" && urlEnds.includes("api/stats/publish/articles")) {
+      const stats = parsePublishStats(fullDb(), "articles");
+      res.status(HTTP_OK).json(stats);
+      return;
+    } else if (req.method === "GET" && urlEnds.includes("api/stats/publish/comments")) {
+      const stats = parsePublishStats(fullDb(), "comments");
+      res.status(HTTP_OK).json(stats);
+      return;
+    } else if (req.method === "GET" && urlEnds.includes("api/random/article")) {
+      const article = randomDbEntry(articlesDb());
+      logDebug("Random article:", article);
+      res.status(HTTP_OK).json(article);
+      return;
+    } else if (req.method === "GET" && urlEnds.includes("api/logs")) {
+      if (getConfigValue(ConfigKeys.PUBLIC_LOGS_ENABLED)) {
+        res.status(HTTP_OK).json({ logs: getLogs() });
+      } else {
+        res.status(HTTP_OK).json({});
+      }
+      return;
+    }
     if (req.method === "GET" && req.url.endsWith("/db")) {
       const dbData = fullDb();
       res.json(dbData);

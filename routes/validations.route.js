@@ -67,37 +67,6 @@ const validations = (req, res, next) => {
       });
     }
 
-    if (req.method === "GET" && urlEnds.includes("api/stats/users")) {
-      const dataType = urlEnds.split("?chartType=");
-      const stats = parseUserStats(fullDb(), dataType[1] ?? "");
-      res.status(HTTP_OK).json(stats);
-      return;
-    } else if (req.method === "GET" && urlEnds.includes("api/stats/articles")) {
-      const dataType = urlEnds.split("?chartType=");
-      const stats = parseArticleStats(fullDb(), dataType[1] ?? "");
-      res.status(HTTP_OK).json(stats);
-      return;
-    } else if (req.method === "GET" && urlEnds.includes("api/stats/publish/articles")) {
-      const stats = parsePublishStats(fullDb(), "articles");
-      res.status(HTTP_OK).json(stats);
-      return;
-    } else if (req.method === "GET" && urlEnds.includes("api/stats/publish/comments")) {
-      const stats = parsePublishStats(fullDb(), "comments");
-      res.status(HTTP_OK).json(stats);
-      return;
-    } else if (req.method === "GET" && urlEnds.includes("api/random/article")) {
-      const article = randomDbEntry(articlesDb());
-      logDebug("Random article:", article);
-      res.status(HTTP_OK).json(article);
-      return;
-    } else if (req.method === "GET" && urlEnds.includes("api/logs")) {
-      if (getConfigValue(ConfigKeys.PUBLIC_LOGS_ENABLED)) {
-        res.status(HTTP_OK).json({ logs: getLogs() });
-      } else {
-        res.status(HTTP_OK).json({});
-      }
-      return;
-    }
 
     if (req.url.includes("/api/config")) {
       handleConfig(req, res);
