@@ -1,4 +1,14 @@
-const { request, expect, faker, baseUsersUrl, baseArticlesUrl, baseCommentsUrl, sleepTime } = require("../config");
+const {
+  request,
+  expect,
+  faker,
+  baseUsersUrl,
+  baseArticlesUrl,
+  baseCommentsUrl,
+  sleepTime,
+  existingUserEmail,
+  existingUserPass,
+} = require("../config");
 const { sleep } = require("./helpers");
 
 const validExistingUser = {
@@ -26,6 +36,14 @@ const validExistingComment = {
   body: "I loved your insights on usability testing. It's crucial to ensure that the software meets the needs of the end users. Have you encountered any interesting user feedback during usability testing that led to significant improvements in the product?",
   date: "2021-11-30T14:44:22Z",
 };
+
+function generateValidUserLoginData() {
+  const testData = {
+    email: existingUserEmail,
+    password: existingUserPass,
+  };
+  return testData;
+}
 
 function generateValidUserData() {
   const testData = {
@@ -70,13 +88,9 @@ async function authUser() {
   const restoreResponse = await request.get("/api/restoreDB");
   expect(restoreResponse.status).to.equal(201);
 
-  const email = "Danial.Dicki@dicki.test";
-  const password = "test2";
+  const userData = generateValidUserLoginData();
   const userId = 2;
-  const response = await request.post("/api/login").send({
-    email,
-    password,
-  });
+  const response = await request.post("/api/login").send(userData);
   expect(response.status).to.equal(200);
 
   const token = response.body.access_token;
@@ -178,4 +192,5 @@ module.exports = {
   validExistingUser,
   validExistingComment,
   validExistingArticle,
+  generateValidUserLoginData,
 };

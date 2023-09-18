@@ -79,8 +79,8 @@
               }
             }
           },
-          "422": {
-            "description": "Invalid data supplied",
+          "401": {
+            "description": "Unauthorized",
             "content": {}
           }
         }

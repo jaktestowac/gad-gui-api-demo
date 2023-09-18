@@ -10,8 +10,13 @@ const baseHangmanUrl = "/api/hangman";
 const baseQuizUrl = "/api/quiz";
 const baseStatsUrl = "/api/stats";
 const baseCommentsUrl = "/api/comments";
+const baseLoginUrl = "/api/login";
+
+const existingUserEmail = "Danial.Dicki@dicki.test";
+const existingUserPass = "test2";
 
 const sleepTime = 50; // in ms
+const logLevel = 2;
 
 module.exports = {
   expect,
@@ -25,4 +30,8 @@ module.exports = {
   baseStatsUrl,
   baseCommentsUrl,
   sleepTime,
+  baseLoginUrl,
+  existingUserPass,
+  existingUserEmail,
+  logLevel,
 };

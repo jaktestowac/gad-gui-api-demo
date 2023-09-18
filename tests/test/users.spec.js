@@ -48,7 +48,7 @@ describe("Endpoint /users", async () => {
       expect(response.status).to.equal(404);
     });
 
-    describe("POST /users", () => {
+    describe("POST /users (register)", () => {
       it("empty payload", () => {
         return request.post(baseUrl).send({}).expect(422);
       });
@@ -78,10 +78,33 @@ describe("Endpoint /users", async () => {
         // Assert:
         expect(responseAgain.status).to.equal(201);
       });
+
       it("invalid email", async () => {
         // Arrange:
         const testUserData = generateValidUserData();
         testUserData.email = "abcd";
+
+        // Act:
+        const response = await request.post(baseUrl).send(testUserData);
+
+        // Assert:
+        expect(response.status).to.equal(422);
+      });
+
+      it("empty data", async () => {
+        // Arrange:
+        const testUserData = {};
+
+        // Act:
+        const response = await request.post(baseUrl).send(testUserData);
+
+        // Assert:
+        expect(response.status).to.equal(422);
+      });
+
+      it("invalid data", async () => {
+        // Arrange:
+        const testUserData = "12bs";
 
         // Act:
         const response = await request.post(baseUrl).send(testUserData);

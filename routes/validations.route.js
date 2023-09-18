@@ -8,19 +8,13 @@ const {
   getRandomInt,
   sleep,
 } = require("../helpers/helpers");
-const { logDebug, logError, logTrace, getLogs } = require("../helpers/logger-api");
+const { logDebug, logError, logTrace } = require("../helpers/logger-api");
 const { getConfigValue } = require("../config/config-manager");
 const { ConfigKeys } = require("../config/enums");
 
 const { validateEmail, verifyAccessToken } = require("../helpers/validation.helpers");
-const { articlesDb, fullDb, randomDbEntry } = require("../helpers/db.helpers");
 const { searchForUserWithToken } = require("../helpers/db-operation.helpers");
-const {
-  HTTP_UNAUTHORIZED,
-  HTTP_INTERNAL_SERVER_ERROR,
-  HTTP_OK,
-  HTTP_BAD_REQUEST,
-} = require("../helpers/response.helpers");
+const { HTTP_UNAUTHORIZED, HTTP_INTERNAL_SERVER_ERROR, HTTP_BAD_REQUEST } = require("../helpers/response.helpers");
 const { handleHangman } = require("../endpoints/hangman-endpoint.helpers");
 const { handleQuiz } = require("../endpoints/quiz-endpoint.helpers");
 const { handleConfig } = require("../endpoints/config-endpoint.helpers");
@@ -66,7 +60,6 @@ const validations = (req, res, next) => {
         error,
       });
     }
-
 
     if (req.url.includes("/api/config")) {
       handleConfig(req, res);

@@ -1,5 +1,5 @@
 const { serverApp } = require("../../server");
-const { request, expect } = require("../config");
+const { request, expect, logLevel } = require("../config");
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -15,7 +15,7 @@ async function setupEnv() {
 
   // Lower log level to WARNING:
   const requestBody = {
-    currentLogLevel: 2,
+    currentLogLevel: logLevel,
   };
   const response = await request.post("/api/config").send(requestBody);
   expect(response.status).to.equal(200);
