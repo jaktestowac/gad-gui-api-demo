@@ -28,7 +28,11 @@ const articlesUpload = (req, res, next) => {
 
       form.on("progress", function (bytesReceived, bytesExpected) {
         const uploadSizeLimitBytes = getConfigValue(ConfigKeys.UPLOAD_SIZE_LIMIT_BYTES);
-        logDebug("formidable data received:", { bytesReceived, bytesExpected, uploadSizeLimitBytes });
+        logDebug("[articles/upload]: progress: formidable data received:", {
+          bytesReceived,
+          bytesExpected,
+          uploadSizeLimitBytes,
+        });
         if (bytesReceived > uploadSizeLimitBytes) {
           throw new Error(`File too big. Actual: ${bytesExpected} bytes, Max: ${uploadSizeLimitBytes} bytes`);
         }
@@ -45,7 +49,7 @@ const articlesUpload = (req, res, next) => {
         const fileName = `uploaded.json`;
         const newFullFilePath = path.join(uploadDir, fileName);
 
-        logDebug("Renaming files:", { file, from: file.filepath, to: newFullFilePath });
+        logDebug("[articles/upload]: Renaming files:", { file, from: file.filepath, to: newFullFilePath });
         try {
           fs.renameSync(file.filepath, newFullFilePath);
           const fileDataRaw = fs.readFileSync(newFullFilePath, "utf8");
@@ -65,14 +69,16 @@ const articlesUpload = (req, res, next) => {
             return;
           }
           req.method = "POST";
-          req.url = req.url.replace(`/api/articles/upload`, "/api/articles");
+          req.url = req.url.replace("/upload", "");
           req.body = fileData;
-          logTrace("[articles/upload] POST:", { userId, body: req.body });
-
-          if (res.headersSent !== true) {
-            next();
-          }
-          return;
+          logTrace("[articles/upload]: Finalization: POST:", {
+            userId,
+            body: req.body,
+            headersSent: res.headersSent,
+            url: req.url,
+            method: req.method,
+          });
+          next();
         } catch (error) {
           logError("[articles/upload] Error:", error);
           res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("There was an error during file creation"));
@@ -80,15 +86,21 @@ const articlesUpload = (req, res, next) => {
         }
       });
     }
-    if (res.headersSent !== true) {
-      next();
-    }
   } catch (error) {
     logError("Fatal error. Please contact administrator.", {
       error,
       stack: error.stack,
     });
   }
+  // if (res.headersSent !== true) {
+  //   logTrace("[articles/upload] next() with:", {
+  //     statusCode: res.statusCode,
+  //     headersSent: res.headersSent,
+  //     url: req.url,
+  //     method: req.method,
+  //   });
+  //   next();
+  // }
 };
 
 exports.articlesUpload = articlesUpload;

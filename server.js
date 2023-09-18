@@ -379,6 +379,12 @@ router.render = function (req, res) {
     }
     res.jsonp(usersMapped);
   } else {
+    logTrace("router.render:", {
+      statusCode: res.statusCode,
+      headersSent: res.headersSent,
+      url: req.url,
+      method: req.method,
+    });
     res.jsonp(res.locals.data);
   }
 };
