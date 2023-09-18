@@ -53,58 +53,6 @@ const clearDbRoutes = (req, res, next) => {
 server.use(middlewares);
 server.use(jsonServer.bodyParser);
 
-// // Register New User
-// server.post("/api/register", (req, res) => {
-//   logDebug("register endpoint called; request body:");
-//   const { email, password } = req.body;
-
-//   if (!validateEmail(email)) {
-//     const status = HTTP_UNPROCESSABLE_ENTITY;
-//     const message = "Invalid email";
-//     res.status(status).json({ status, message });
-//     return;
-//   }
-
-//   if (isAuthenticated({ email, password }) === true) {
-//     const status = HTTP_UNAUTHORIZED;
-//     const message = "Email and Password already exist";
-//     res.status(status).json({ status, message });
-//     return;
-//   }
-
-//   fs.readFile(authUserDb, (err, data) => {
-//     if (err) {
-//       const status = HTTP_UNAUTHORIZED;
-//       const message = err;
-//       res.status(status).json({ status, message });
-//       return;
-//     }
-
-//     // Get current users data
-//     var data = JSON.parse(data.toString());
-
-//     // Get the id of last user
-//     var last_item_id = data.users[data.users.length - 1].id;
-
-//     //Add new user
-//     data.users.push({ id: last_item_id + 1, email: email, password: password }); //add some data
-//     var writeData = fs.writeFile(authUserDb, JSON.stringify(data), (err, result) => {
-//       // WRITE
-//       if (err) {
-//         const status = HTTP_UNAUTHORIZED;
-//         const message = err;
-//         res.status(status).json({ status, message });
-//         return;
-//       }
-//     });
-//   });
-
-//   // Create token for new user
-//   const access_token = createToken({ email, password });
-//   logDebug("Access Token:", email, password, access_token);
-//   res.status(HTTP_OK).json({ access_token });
-// });
-
 // Login to one of the users from ./users.json
 server.post("/api/login", (req, res) => {
   const { email, password, keepSignIn } = req.body;
@@ -253,27 +201,6 @@ server.get("/logout", (req, res) => {
   logDebug("logout");
   return res.redirect("/login");
 });
-
-// // server.use(/^(?!\/auth).*$/, (req, res, next) => {
-// server.use(/(\/api\/[^vlr]).*$/, (req, res, next) => {
-//   let access_token = req.headers.authorization;
-
-//   if (req.method !== "GET") {
-//     try {
-//       let verifyTokenResult;
-//       access_token = access_token.split(" ")[1];
-//       verifyTokenResult = verifyToken(access_token);
-//       if (verifyTokenResult instanceof Error) {
-//         res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse(`Access token not provided: ${verifyTokenResult?.name}`));
-//         return;
-//       }
-//     } catch (err) {
-//       res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Error access token is revoked"));
-//       return;
-//     }
-//   }
-//   next();
-// });
 
 server.use(clearDbRoutes);
 server.use(customRoutes);
