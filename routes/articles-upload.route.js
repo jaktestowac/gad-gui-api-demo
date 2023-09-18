@@ -2,7 +2,7 @@ const formidable = require("formidable");
 const { getConfigValue } = require("../config/config-manager");
 const { ConfigKeys } = require("../config/enums");
 const { logDebug, logError, logTrace } = require("../helpers/logger-api");
-const { formatErrorResponse } = require("../helpers/helpers");
+const { formatErrorResponse, pad } = require("../helpers/helpers");
 const { HTTP_INTERNAL_SERVER_ERROR } = require("../helpers/response.helpers");
 const {
   are_all_fields_valid,
@@ -55,6 +55,13 @@ const articlesUpload = (req, res, next) => {
           const fileDataRaw = fs.readFileSync(newFullFilePath, "utf8");
           const fileData = JSON.parse(fileDataRaw);
           fileData["user_id"] = userId;
+
+          const today = new Date();
+          const date = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}T${pad(
+            today.getHours()
+          )}:${pad(today.getMinutes())}:${pad(today.getSeconds())}Z`;
+          fileData["date"] = date;
+
           const isValid = are_all_fields_valid(fileData, all_fields_article, mandatory_non_empty_fields_article);
           if (!isValid.status) {
             logError("[articles/upload] Error after validation:", { error: isValid.error });

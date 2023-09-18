@@ -274,4 +274,5 @@ module.exports = {
   parsePublishStats,
   getIdFromUrl,
   shuffleArray,
+  pad,
 };
