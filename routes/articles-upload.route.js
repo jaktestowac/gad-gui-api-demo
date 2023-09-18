@@ -3,11 +3,7 @@ const { getConfigValue } = require("../config/config-manager");
 const { ConfigKeys } = require("../config/enums");
 const { logDebug, logError, logTrace } = require("../helpers/logger-api");
 const { formatErrorResponse } = require("../helpers/helpers");
-const {
-  HTTP_BAD_REQUEST,
-  HTTP_INTERNAL_SERVER_ERROR,
-  HTTP_UNPROCESSABLE_ENTITY,
-} = require("../helpers/response.helpers");
+const { HTTP_INTERNAL_SERVER_ERROR } = require("../helpers/response.helpers");
 const {
   are_all_fields_valid,
   mandatory_non_empty_fields_article,
@@ -18,6 +14,7 @@ const path = require("path");
 
 const articlesUpload = (req, res, next) => {
   try {
+    // TODO: rework:
     if (req.method === "POST" && req.url.endsWith("/api/articles/upload")) {
       const form = new formidable.IncomingForm();
       form.multiples = true;
@@ -38,8 +35,11 @@ const articlesUpload = (req, res, next) => {
         }
       });
       form.parse(req, async (err, fields, files) => {
+        req.on("end", () => {
+          logDebug("🟥 UPLOAD");
+        });
         if (err) {
-          res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(`There was an error parsing the file: ${err.message}`));
+          logError("[articles/upload] There was an error parsing the file:", { error: err.message });
           return;
         }
 
@@ -58,29 +58,8 @@ const articlesUpload = (req, res, next) => {
           const isValid = are_all_fields_valid(fileData, all_fields_article, mandatory_non_empty_fields_article);
           if (!isValid.status) {
             logError("[articles/upload] Error after validation:", { error: isValid.error });
-            res
-              .status(HTTP_UNPROCESSABLE_ENTITY)
-              .send(
-                formatErrorResponse(
-                  `One of field is invalid (empty, invalid or too long) or there are some additional fields: ${isValid.error}`,
-                  all_fields_article
-                )
-              );
             return;
           }
-
-          // TODO: rework:
-          // req.method = "POST";
-          // req.url = req.url.replace("/upload", "");
-          // req.body = fileData;
-          // logTrace("[articles/upload]: Finalization: POST:", {
-          //   userId,
-          //   body: req.body,
-          //   headersSent: res.headersSent,
-          //   url: req.url,
-          //   method: req.method,
-          // });
-          // next();
         } catch (error) {
           logError("[articles/upload] Error:", error);
           res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("There was an error during file creation"));
