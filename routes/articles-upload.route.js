@@ -68,17 +68,19 @@ const articlesUpload = (req, res, next) => {
               );
             return;
           }
-          req.method = "POST";
-          req.url = req.url.replace("/upload", "");
-          req.body = fileData;
-          logTrace("[articles/upload]: Finalization: POST:", {
-            userId,
-            body: req.body,
-            headersSent: res.headersSent,
-            url: req.url,
-            method: req.method,
-          });
-          next();
+
+          // TODO: rework:
+          // req.method = "POST";
+          // req.url = req.url.replace("/upload", "");
+          // req.body = fileData;
+          // logTrace("[articles/upload]: Finalization: POST:", {
+          //   userId,
+          //   body: req.body,
+          //   headersSent: res.headersSent,
+          //   url: req.url,
+          //   method: req.method,
+          // });
+          // next();
         } catch (error) {
           logError("[articles/upload] Error:", error);
           res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("There was an error during file creation"));
@@ -92,15 +94,9 @@ const articlesUpload = (req, res, next) => {
       stack: error.stack,
     });
   }
-  // if (res.headersSent !== true) {
-  //   logTrace("[articles/upload] next() with:", {
-  //     statusCode: res.statusCode,
-  //     headersSent: res.headersSent,
-  //     url: req.url,
-  //     method: req.method,
-  //   });
-  //   next();
-  // }
+  if (res.headersSent !== true) {
+    next();
+  }
 };
 
 exports.articlesUpload = articlesUpload;
