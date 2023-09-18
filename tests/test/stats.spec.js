@@ -1,6 +1,6 @@
-const { expect, request, baseStatsUrl } = require("./config");
-const { authUser } = require("./helpers/data.helpers");
-const { gracefulQuit, setupEnv } = require("./helpers/helpers");
+const { expect, request, baseStatsUrl } = require("../config");
+const { authUser } = require("../helpers/data.helpers");
+const { gracefulQuit, setupEnv } = require("../helpers/helpers");
 
 describe("Endpoint /stats", () => {
   const baseUrl = baseStatsUrl;

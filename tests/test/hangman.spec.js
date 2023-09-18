@@ -1,9 +1,9 @@
-const { expect, request, baseHangmanUrl } = require("./config");
-const { authUser } = require("./helpers/data.helpers");
-const { gracefulQuit, setupEnv } = require("./helpers/helpers");
+const { expect, request, baseHangmanUrl } = require("../config");
+const { authUser } = require("../helpers/data.helpers");
+const { gracefulQuit, setupEnv } = require("../helpers/helpers");
 
 describe("Endpoint /hangman", () => {
-  const baseUrl = baseHangmanUrl
+  const baseUrl = baseHangmanUrl;
 
   before(async () => {
     await setupEnv();

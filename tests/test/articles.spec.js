@@ -1,11 +1,11 @@
-const { request, expect, baseArticlesUrl, faker } = require("./config.js");
+const { baseArticlesUrl, request, faker, expect } = require("../config.js");
 const {
   authUser,
   generateValidArticleData,
   validExistingArticle,
   prepareUniqueArticle,
-} = require("./helpers/data.helpers.js");
-const { setupEnv, gracefulQuit } = require("./helpers/helpers.js");
+} = require("../helpers/data.helpers.js");
+const { setupEnv, gracefulQuit } = require("../helpers/helpers.js");
 
 describe("Endpoint /articles", () => {
   const baseUrl = baseArticlesUrl;

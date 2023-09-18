@@ -1,11 +1,11 @@
-const { gracefulQuit, setupEnv } = require("./helpers/helpers.js");
-const { baseUsersUrl, request, expect, faker } = require("./config.js");
+const { gracefulQuit, setupEnv } = require("../helpers/helpers.js");
+const { baseUsersUrl, request, expect, faker } = require("../config.js");
 const {
   prepareUniqueLoggedUser,
   authUser,
   validExistingUser,
   generateValidUserData,
-} = require("./helpers/data.helpers.js");
+} = require("../helpers/data.helpers.js");
 
 describe("Endpoint /users", async () => {
   const baseUrl = baseUsersUrl;

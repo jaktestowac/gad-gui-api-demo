@@ -1,12 +1,12 @@
-const { request, expect, baseCommentsUrl, faker } = require("./config.js");
+const { request, expect, baseCommentsUrl, faker } = require("../config.js");
 const {
   authUser,
   validExistingComment,
   prepareUniqueComment,
   generateValidCommentData,
   prepareUniqueArticle,
-} = require("./helpers/data.helpers.js");
-const { gracefulQuit, setupEnv } = require("./helpers/helpers.js");
+} = require("../helpers/data.helpers.js");
+const { gracefulQuit, setupEnv } = require("../helpers/helpers.js");
 
 describe("Endpoint /comments", () => {
   const baseUrl = baseCommentsUrl;

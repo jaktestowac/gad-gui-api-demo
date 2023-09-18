@@ -1,4 +1,4 @@
-const { serverApp } = require("../../server.js");
+const { serverApp } = require("../server.js");
 const request = require("supertest")(serverApp);
 let expect = require("chai").expect;
 const { faker } = require("@faker-js/faker");
@@ -11,7 +11,7 @@ const baseQuizUrl = "/api/quiz";
 const baseStatsUrl = "/api/stats";
 const baseCommentsUrl = "/api/comments";
 
-const sleepTime = 200; // in ms
+const sleepTime = 50; // in ms
 
 module.exports = {
   expect,

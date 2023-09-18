@@ -1,5 +1,5 @@
-const { expect, request, baseApiUrl } = require("./config");
-const { gracefulQuit, setupEnv } = require("./helpers/helpers");
+const { expect, request, baseApiUrl } = require("../config");
+const { gracefulQuit, setupEnv } = require("../helpers/helpers");
 
 describe("Endpoint /other", () => {
   const baseUrl = baseApiUrl;

@@ -1,4 +1,4 @@
-const { serverApp } = require("../../../server");
+const { serverApp } = require("../../server");
 const { request, expect } = require("../config");
 
 function sleep(ms) {

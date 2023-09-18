@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
-const { request, expect } = require("./test/config");
+
+const { request, expect } = require("./config");
 
 exports.mochaHooks = {
   async afterAll() {
