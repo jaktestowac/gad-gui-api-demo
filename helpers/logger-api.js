@@ -1,7 +1,8 @@
-const { getConfigValue } = require("../config/configSingleton");
+/* eslint-disable no-console */
+const { getConfigValue } = require("../config/config-manager");
 const { ConfigKeys, LogLevels } = require("../config/enums");
 const { getCurrentDateTime } = require("./datetime.helpers");
-const { LimitedList } = require("./limitedList");
+const { LimitedList } = require("./limited-list");
 
 const logList = new LimitedList(100);
 

@@ -10,12 +10,6 @@ async function issueGetRequest() {
   google.charts.setOnLoadCallback(displayData);
 }
 
-const getRandomInt = (min, max) => {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
-};
-
 const displayData = () => {
   const articlesDataForChart = results[0]["articlesDataForChart"];
   const commentsDataForChart = results[0]["commentsDataForChart"];

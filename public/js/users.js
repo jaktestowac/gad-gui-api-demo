@@ -2,13 +2,6 @@ const endpoint = "../../api/users";
 const pictureListEndpoint = "../../api/images/user";
 let picList = [];
 
-const fetchData = {
-  headers: {
-    "Content-Type": "application/json",
-  },
-  credentials: "include",
-};
-
 const issueGetRequest = () => {
   // get data from the server:
   fetch(endpoint, { headers: formatHeaders() })
@@ -17,48 +10,46 @@ const issueGetRequest = () => {
     .then(attachEventHandlers);
 };
 
-const issuePutRequest = (id, data, responseHandler) => {
-  // update data on the server:
-  const url = endpoint + "/" + id;
-  console.log("PUT request:", url, data);
-  fetch(url, {
-    method: "put",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      Authorization: getBearerToken(),
-    },
-    body: JSON.stringify(data),
-  })
-    .then((response) => {
-      showResponseOnUpdate(response);
-      return response.json();
-    })
-    .then(responseHandler);
-};
-const issuePatchRequest = (id, data, responseHandler) => {
-  // update data on the server:
-  const url = endpoint + "/" + id;
-  console.log("PATCH request:", url, data);
-  fetch(url, {
-    method: "PATCH",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      Authorization: getBearerToken(),
-    },
-    body: JSON.stringify(data),
-  })
-    .then((response) => {
-      showResponseOnUpdate(response);
-      return response.json();
-    })
-    .then(responseHandler);
-};
+// const issuePutRequest = (id, data, responseHandler) => {
+//   // update data on the server:
+//   const url = endpoint + "/" + id;
+//   fetch(url, {
+//     method: "put",
+//     headers: {
+//       Accept: "application/json",
+//       "Content-Type": "application/json",
+//       Authorization: getBearerToken(),
+//     },
+//     body: JSON.stringify(data),
+//   })
+//     .then((response) => {
+//       showResponseOnUpdate(response);
+//       return response.json();
+//     })
+//     .then(responseHandler);
+// };
+// const issuePatchRequest = (id, data, responseHandler) => {
+//   // update data on the server:
+//   const url = endpoint + "/" + id;
+//   fetch(url, {
+//     method: "PATCH",
+//     headers: {
+//       Accept: "application/json",
+//       "Content-Type": "application/json",
+//       Authorization: getBearerToken(),
+//     },
+//     body: JSON.stringify(data),
+//   })
+//     .then((response) => {
+//       showResponseOnUpdate(response);
+//       return response.json();
+//     })
+//     .then(responseHandler);
+// };
+
 const issueDeleteRequest = (id, responseHandler) => {
   // delete data on the server:
   const url = endpoint + "/" + id;
-  console.log("DELETE request:", url);
   fetch(url, { method: "delete", headers: formatHeaders() })
     .then((response) => {
       showResponseOnDelete(response);
@@ -69,7 +60,6 @@ const issueDeleteRequest = (id, responseHandler) => {
 
 const issuePostRequest = (data, responseHandler) => {
   // create data on the server:
-  console.log("POST request:", endpoint, data);
   fetch(endpoint, {
     method: "post",
     headers: {
@@ -93,13 +83,13 @@ const showResponseOnDelete = (response) => {
   }
 };
 
-const showResponseOnUpdate = (response) => {
-  if (response.status === 200) {
-    showMessage("User was updated", false);
-  } else {
-    showMessage("User was not updated", true);
-  }
-};
+// const showResponseOnUpdate = (response) => {
+//   if (response.status === 200) {
+//     showMessage("User was updated", false);
+//   } else {
+//     showMessage("User was not updated", true);
+//   }
+// };
 
 const showResponse = (response) => {
   if (response.status === 201) {
@@ -122,44 +112,44 @@ const showMessage = (message, isError = false) => {
   alertElement = newMessageElement;
 };
 
-const handleUpdate = (ev) => {
-  const id = ev.target.getAttribute("data-id");
-  const container = ev.target.parentElement.parentElement;
-  const data = {
-    firstname: container.querySelector("#firstname").value,
-    lastname: container.querySelector("#lastname").value,
-    email: container.querySelector("#email").value,
-    avatar: container.querySelector("#avatar").value,
-  };
-  const callback = (item) => {
-    if (item["error"] === undefined) {
-      container.innerHTML = getItemHTML(item);
-    }
-    attachEventHandlers();
-  };
-  issuePutRequest(id, data, callback);
-};
+// const handleUpdate = (ev) => {
+//   const id = ev.target.getAttribute("data-id");
+//   const container = ev.target.parentElement.parentElement;
+//   const data = {
+//     firstname: container.querySelector("#firstname").value,
+//     lastname: container.querySelector("#lastname").value,
+//     email: container.querySelector("#email").value,
+//     avatar: container.querySelector("#avatar").value,
+//   };
+//   const callback = (item) => {
+//     if (item["error"] === undefined) {
+//       container.innerHTML = getItemHTML(item);
+//     }
+//     attachEventHandlers();
+//   };
+//   issuePutRequest(id, data, callback);
+// };
 
-const handlePartialUpdate = (ev) => {
-  const id = ev.target.getAttribute("data-id");
-  const container = ev.target.parentElement.parentElement;
-  const data = {
-    email: container.querySelector("#email").value,
-  };
-  const callback = (item) => {
-    if (item["error"] === undefined) {
-      container.innerHTML = getItemHTML(item);
-    }
-    attachEventHandlers();
-  };
-  issuePatchRequest(id, data, callback);
-};
+// const handlePartialUpdate = (ev) => {
+//   const id = ev.target.getAttribute("data-id");
+//   const container = ev.target.parentElement.parentElement;
+//   const data = {
+//     email: container.querySelector("#email").value,
+//   };
+//   const callback = (item) => {
+//     if (item["error"] === undefined) {
+//       container.innerHTML = getItemHTML(item);
+//     }
+//     attachEventHandlers();
+//   };
+//   issuePatchRequest(id, data, callback);
+// };
 
 const handleCreate = () => {
   const container = document.querySelector(".add-new-panel");
   let birthdate = container.querySelector(".datepicker").value;
   birthdate = `${new Date(birthdate).toISOString()}`.split(".")[0] + "Z";
-  data = {
+  let data = {
     firstname: container.querySelector(".firstname").value,
     lastname: container.querySelector(".lastname").value,
     email: container.querySelector(".email").value,
@@ -188,7 +178,7 @@ const attachEventHandlers = (id = "") => {
   //   container.querySelector(".lastname").value = "";
   //   container.querySelector(".email").value = "";
   //   let index = 0;
-  //   for (element of picList) {
+  //   for (let element of picList) {
   //     var opt = document.createElement("option");
   //     opt.value = element;
   //     opt.innerHTML = element; // whatever property it has
@@ -210,13 +200,13 @@ const attachEventHandlers = (id = "") => {
     // document.querySelector(".update.save").onclick = handleCreate;
     return;
   }
-  for (elem of document.querySelectorAll(".delete")) {
+  for (let elem of document.querySelectorAll(".delete")) {
     elem.onclick = handleDelete;
   }
-  for (elem of document.querySelectorAll(".edit")) {
+  for (let elem of document.querySelectorAll(".edit")) {
     elem.onclick = showEditForm;
   }
-  for (elem of document.querySelectorAll(".emailEdit")) {
+  for (let elem of document.querySelectorAll(".emailEdit")) {
     elem.onclick = showEmailEditForm;
   }
 
@@ -227,26 +217,22 @@ const attachEventHandlers = (id = "") => {
 };
 
 const attachFormEventHandlers = (item, container) => {
-  if (true) {
-    return;
-  }
-  container.querySelector(".update").onclick = handleUpdate;
-  // container.querySelector('.partialUpdate').onclick = handlePartialUpdate;
-  container.querySelector(".cancel").onclick = () => {
-    container.innerHTML = getItemHTML(item);
-    attachEventHandlers();
-  };
+  // TODO: add auth validation
+  // container.querySelector(".update").onclick = handleUpdate;
+  // // container.querySelector('.partialUpdate').onclick = handlePartialUpdate;
+  // container.querySelector(".cancel").onclick = () => {
+  //   container.innerHTML = getItemHTML(item);
+  //   attachEventHandlers();
+  // };
 };
 
 const attachEmailFormEventHandlers = (item, container) => {
-  if (true) {
-    return;
-  }
-  container.querySelector(".partialUpdate").onclick = handlePartialUpdate;
-  container.querySelector(".cancel").onclick = () => {
-    container.innerHTML = getItemHTML(item);
-    attachEventHandlers();
-  };
+  // TODO: add auth validation
+  // container.querySelector(".partialUpdate").onclick = handlePartialUpdate;
+  // container.querySelector(".cancel").onclick = () => {
+  //   container.innerHTML = getItemHTML(item);
+  //   attachEventHandlers();
+  // };
 };
 
 const showEditForm = (ev) => {
@@ -274,9 +260,6 @@ const showEmailEditForm = (ev) => {
   return false;
 };
 
-{
-  /* <input type="text" id="email" value="${item.email}"><br> */
-}
 const displayForm = (item, container) => {
   container.innerHTML = `
         <div style="margin-top:7px;">
@@ -335,17 +318,16 @@ const getItemHTML = (item) => {
 };
 
 const displayItem = (item, container) => {
-  itemHTML = getItemHTML(item);
+  let itemHTML = getItemHTML(item);
   container.innerHTML += `
         <div class="card-wrapper">${itemHTML}</div>
     `;
 };
 
 const displayData = (data) => {
-  console.log(data);
   const container = document.querySelector("#container");
   container.innerHTML = "";
-  for (item of data) {
+  for (let item of data) {
     displayItem(item, container);
   }
   if (data.length === 0) {

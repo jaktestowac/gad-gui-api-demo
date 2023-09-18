@@ -1,0 +1,60 @@
+{
+    "root": false,
+    "env": {
+        "browser": true,
+        "es2021": true,
+        "node": true,
+        "mocha": true
+    },
+    "extends": "eslint:recommended",
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "plugins": ["eslint-plugin-html", "html"],
+    "rules": {
+        "no-console": "warn",
+        "no-unused-vars": "warn"
+    },
+    "globals": {
+        "window": "readonly",
+        "document": "readonly",
+        "google": "readonly",
+        "location": "readonly",
+        "$": "readonly",
+        "XLSX": "readonly",
+        "menuButtonDisable": "readonly",
+        "getParams": "readonly",
+        "generatePDF": "readonly",
+        "download": "readonly",
+        "formatHeaders": "readonly",
+        "getId": "readonly",
+        "isAuthorized": "readonly",
+        "jsonToCSV": "readonly",
+        "getBearerToken": "readonly",
+        "appendMenu": "readonly",
+        "getCookieId": "readonly",
+        "html2pdf": "readonly",
+        "downloadXlsx": "readonly",
+        "octaValidate": "readonly",
+        "userAdditionalMenu": "readonly",
+        "articlesAdditionalMenu": "readonly",
+        "articleAdditionalMenu": "readonly",
+        "articleAdditionalMenuOnPage": "readonly",
+        "appendElementOnTop": "readonly",
+        "injectLink": "readonly",
+        "getCookieEmail": "readonly",
+        "additionalData": "readonly",
+        "changeMinValue": "readonly",
+        "generateChartPDF": "readonly",
+        "checkAnswer": "readonly",
+        "startQuiz": "readonly",
+        "changeItemsPerPage": "readonly",
+        "describe": "readonly",
+        "test": "readonly",
+        "afterAll": "readonly",
+        "beforeEach": "readonly",
+        "beforeAll": "readonly",
+        "expect": "readonly"
+    }
+}

@@ -23,7 +23,6 @@
     "errorhandler": "^1.2.0",
     "express": "^4.16.2",
     "express-urlrewrite": "^1.2.0",
-    "faker": "^4.1.0",
     "formidable": "^3.5.0",
     "helmet": "^6.0.0",
     "jsonwebtoken": "^9.0.0",
@@ -40,5 +39,9 @@
   },
   "engines": {
     "node": ">=16.x"
+  },
+  "devDependencies": {
+    "eslint": "^8.48.0",
+    "eslint-plugin-html": "^7.1.0"
   }
 }

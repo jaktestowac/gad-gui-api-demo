@@ -1,8 +1,8 @@
 const seedrandom = require("seedrandom");
-const { logDebug } = require("./loggerApi");
+const { logDebug } = require("./logger-api");
 const pluginStatuses = ["on", "off", "obsolete"];
-const { getConfigValue } = require("../config/configSingleton");
-const { ConfigKeys } = require("../config/enums");
+const { getConfigValue, isBugDisabled } = require("../config/config-manager");
+const { ConfigKeys, BugConfigKeys } = require("../config/enums");
 const { formatYmd } = require("./datetime.helpers");
 
 function formatErrorResponse(message, details = undefined, id = undefined) {
@@ -116,18 +116,22 @@ function parseUserStats(dbDataJson, dataType) {
     articlesDataForChart.push([userIdToName[user_id], articlesPerUser[user_id]]);
   }
 
-  // TODO:INVOKE_BUG: comment this if to break stats charts when there are no data
-  if (articlesData.length === 0) {
-    articlesDataForChart = [];
+  if (isBugDisabled(BugConfigKeys.BUG_CHARTS_001)) {
+    // if there are no articlesData stats - prepare empty array
+    if (articlesData.length === 0) {
+      articlesDataForChart = [];
+    }
   }
 
   for (const user_id in commentsPerUser) {
     commentsDataForChart.push([userIdToName[user_id], commentsPerUser[user_id]]);
   }
 
-  // TODO:INVOKE_BUG: comment this if to break stats charts when there are no data
-  if (commentsData.length === 0) {
-    commentsDataForChart = [];
+  if (isBugDisabled(BugConfigKeys.BUG_CHARTS_002)) {
+    // if there are no commentsData stats - prepare empty array
+    if (commentsData.length === 0) {
+      commentsDataForChart = [];
+    }
   }
 
   if (dataType.includes("table")) {
@@ -224,7 +228,10 @@ function parsePublishStats(dbDataJson, type = "comments") {
     if (!(yearMonth in monthly)) {
       monthly[yearMonth] = 0;
     }
-    monthly[yearMonth]++;
+
+    if (isBugDisabled(BugConfigKeys.BUG_CHARTS_003)) {
+      monthly[yearMonth]++;
+    }
 
     const yearMonthDay = `${year}-${pad(month)}-${pad(day)}`;
     if (!(yearMonthDay in daily)) {
@@ -267,4 +274,5 @@ module.exports = {
   parsePublishStats,
   getIdFromUrl,
   shuffleArray,
+  pad,
 };

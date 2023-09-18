@@ -8,7 +8,6 @@ const questionsAndAnswers = {
   "performance tests": ["Measuring system response time", "Assessing system speed"],
   "integration tests": ["Ensuring multiple components work together"],
   "acceptance tests": ["Validating if the software meets requirements"],
-  "security tests": ["Identifying vulnerabilities in the system"],
   "regression tests": ["Verifying that recent changes didn't break existing functionality"],
   "load tests": ["Testing system performance under heavy workloads"],
   "usability tests": ["Evaluating user-friendliness and user experience"],
@@ -101,7 +100,7 @@ checkButton.addEventListener("click", () => {
     const answers = category.querySelectorAll(".test-answer");
     const correctAnswers = questionsAndAnswers[categoryText];
 
-    const answerTexts = Array.from(answers).map((x) => x.innerText);
+    // const answerTexts = Array.from(answers).map((x) => x.innerText);
 
     answers.forEach((answer) => {
       const answerText = answer.innerText;

@@ -1,7 +1,9 @@
-const { logDebug, logTrace } = require("./loggerApi");
-const { countAvailableQuestions, getOnlyQuestions, checkAnswer } = require("./quiz.helpers");
-const { HTTP_NOT_FOUND, HTTP_OK } = require("./response.helpers");
-const { verifyAccessToken } = require("./validation.helpers");
+const { isBugDisabled } = require("../config/config-manager");
+const { BugConfigKeys } = require("../config/enums");
+const { logDebug, logTrace } = require("../helpers/logger-api");
+const { countAvailableQuestions, getOnlyQuestions, checkAnswer } = require("../helpers/quiz.helpers");
+const { HTTP_NOT_FOUND, HTTP_OK } = require("../helpers/response.helpers");
+const { verifyAccessToken } = require("../helpers/validation.helpers");
 
 const quizHighScores = {};
 const quizTempScores = {};
@@ -31,10 +33,27 @@ function handleQuiz(req, res) {
       quizHighScores[email] = quizTempScores[email];
     }
 
-    quizTempScores[email] = 0;
+    if (isBugDisabled(BugConfigKeys.BUG_QUIZ_002)) {
+      // clear quizTempScores before quiz:
+      quizTempScores[email] = 0;
+    }
     logDebug("handleQuiz:Quiz stopped - final:", { email, quizHighScores });
     res.status(HTTP_OK).json({ highScore: quizHighScores[email] });
+
+    // TODO: v2:
+    // logDebug("handleQuiz:Quiz stopped:", { email, quizTempScores });
+    // const quizHighScore = saveGameHighScores("quiz", email, quizTempScores[email]);
+
+    // if (isBugDisabled(BugConfigKeys.BUG_QUIZ_002)) {
+    //   // clear quizTempScores before quiz:
+    //   quizTempScores[email] = 0;
+    // }
+
+    // logDebug("handleQuiz:Quiz stopped - final:", { email, quizHighScore });
+    // res.status(HTTP_OK).json({ highScore: quizHighScore });
   } else if (req.method === "GET" && req.url.endsWith("/api/quiz/highscores")) {
+    // TODO: v2:
+    // const quizHighScores = getQuizHighScoresDb();
     logDebug("handleQuiz:Quiz highScores:", { quizHighScores });
     res.status(HTTP_OK).json({ highScore: quizHighScores });
   } else if (req.method === "POST" && req.url.endsWith("/api/quiz/questions/check")) {
@@ -51,7 +70,12 @@ function handleQuiz(req, res) {
     if (quizTempScores[verifyTokenResult?.email] === undefined) {
       quizTempScores[verifyTokenResult?.email] = 0;
     }
-    quizTempScores[verifyTokenResult?.email] += isCorrect ? 1 : 0;
+
+    if (isBugDisabled(BugConfigKeys.BUG_QUIZ_001)) {
+      // add points for correct answer
+      quizTempScores[verifyTokenResult?.email] += isCorrect ? 1 : 0;
+    }
+
     if (isCorrect) {
       logTrace("handleQuiz:Quiz: user scores:", {
         email: verifyTokenResult?.email,

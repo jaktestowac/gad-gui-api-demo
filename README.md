@@ -22,7 +22,7 @@ Features of **🦎 GAD**:
 - Simple **DataBase** (json) with REST API endpoints to clear/restore all data
 - **Authentication** and **Authorization**
 - **User** <-> resources logic (calculations, statistics)
-- Diffrerent **data prezentation** (charts, tables etc.)
+- Different **data presentation** (charts, tables etc.)
 - **Challenging elements for test automation** (iframes, file uploads, drag&drop, logic on front-end and back-end etc.)
 - Admins "backoffice" with additional tools and functionalities
 
@@ -66,14 +66,14 @@ To see website:
 ## Deploy to **Render**
 
 - Create free account on: https://dashboard.render.com/register
-- After successfull registration hit the button:
+- After successful registration hit the button:
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/jaktestowac/gad-gui-api-demo)
 
 - name your app
-- hit `Applay`
+- hit `Apply`
 - wait a while and click link to project `GUI API Demo`
-- click link to open app (under porject name and repository)
+- click link to open app (under project name and repository)
 - enjoy 750 free hours of service per month
 
 ## Deploy using Docker image
@@ -83,7 +83,7 @@ This method can be used:
 - locally
 - in CI/CD services (GitHub Actions, GitLab CI etc.)
 
-### Prerequisits:
+### Prerequisites:
 
 On local environment:
 

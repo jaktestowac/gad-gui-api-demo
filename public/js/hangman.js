@@ -11,7 +11,7 @@ let wrongAttempts = 0;
 
 async function selectWord() {
   const questionsUrl = hangmanEndpoint;
-  selectedWordData = await Promise.all(
+  let selectedWordData = await Promise.all(
     [questionsUrl].map((url) =>
       fetch(url, { headers: formatHeaders() }).then((r) => {
         return r.json().then((json) => {

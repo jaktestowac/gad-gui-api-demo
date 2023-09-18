@@ -2,13 +2,6 @@ const usersEndpoint = "../../api/users";
 let alertElement = document.querySelector(".alert");
 let usersData;
 
-const fetchData = {
-  headers: {
-    "Content-Type": "application/json",
-  },
-  credentials: "include",
-};
-
 async function issueGetRequest(user_id) {
   const userUrl = `${usersEndpoint}/${user_id}`;
   usersData = await Promise.all([userUrl].map((url) => fetch(url, { headers: formatHeaders() }).then((r) => r.json())));
@@ -41,14 +34,6 @@ const showResponseOnUpdate = (response) => {
   }
 };
 
-const showResponse = (response) => {
-  if (response.status === 201) {
-    showMessage("User was created", false);
-  } else {
-    showMessage("User was not created", true);
-  }
-};
-
 const showMessage = (message, isError = false) => {
   alertElement.innerHTML = message;
   alertElement.classList.remove("alert-error", "alert-success");
@@ -65,7 +50,6 @@ const showMessage = (message, isError = false) => {
 const issuePutRequest = (id, data, responseHandler) => {
   // update data on the server:
   const url = usersEndpoint + "/" + id;
-  console.log("PUT request:", url, data);
   fetch(url, {
     method: "put",
     headers: {
@@ -85,7 +69,6 @@ const issuePutRequest = (id, data, responseHandler) => {
 const issuePatchRequest = (id, data, responseHandler) => {
   // update data on the server:
   const url = usersEndpoint + "/" + id;
-  console.log("PATCH request:", url, data);
   fetch(url, {
     method: "PATCH",
     headers: {
@@ -105,13 +88,11 @@ const issuePatchRequest = (id, data, responseHandler) => {
 const issueDeleteRequest = (id, responseHandler) => {
   // delete data on the server:
   const url = usersEndpoint + "/" + id;
-  console.log("DELETE request:", url);
   fetch(url, { method: "delete", headers: formatHeaders() }).then(responseHandler);
 };
 
 const issuePostRequest = (data, responseHandler) => {
   // create data on the server:
-  console.log("POST request:", usersEndpoint, data);
   fetch(usersEndpoint, {
     method: "post",
     headers: {
@@ -167,7 +148,7 @@ const handlePartialUpdate = (ev) => {
 
 const handleCreate = () => {
   const container = document.querySelector(".add-new-panel");
-  data = {
+  let data = {
     firstname: container.querySelector(".firstname").value,
     lastname: container.querySelector(".lastname").value,
     email: container.querySelector(".email").value,
@@ -197,31 +178,31 @@ const actionAfterDelete = () => {
 const attachEventHandlers = (id = "") => {
   if (!isAuthorized(id)) {
     // TODO: remove icons and methods if user is not logged
-    for (elem of document.querySelectorAll(".editName")) {
+    for (let elem of document.querySelectorAll(".editName")) {
       elem.disabled = true;
       elem.style.visibility = "hidden";
     }
-    for (elem of document.querySelectorAll(".delete")) {
+    for (let elem of document.querySelectorAll(".delete")) {
       elem.disabled = true;
       elem.style.visibility = "hidden";
     }
-    for (elem of document.querySelectorAll(".edit")) {
+    for (let elem of document.querySelectorAll(".edit")) {
       elem.disabled = true;
       elem.style.visibility = "hidden";
     }
-    for (elem of document.querySelectorAll(".emailEdit")) {
+    for (let elem of document.querySelectorAll(".emailEdit")) {
       elem.disabled = true;
       elem.style.visibility = "hidden";
     }
     return;
   }
-  for (elem of document.querySelectorAll(".delete")) {
+  for (let elem of document.querySelectorAll(".delete")) {
     elem.onclick = handleDelete;
   }
-  for (elem of document.querySelectorAll(".edit")) {
+  for (let elem of document.querySelectorAll(".edit")) {
     elem.onclick = showEditForm;
   }
-  for (elem of document.querySelectorAll(".emailEdit")) {
+  for (let elem of document.querySelectorAll(".emailEdit")) {
     elem.onclick = showEmailEditForm;
   }
   //    document.querySelector('#add-new').onclick = () => {
@@ -231,7 +212,6 @@ const attachEventHandlers = (id = "") => {
   //        container.classList.add('active');
   //    };
   document.querySelector(".close").onclick = () => {
-    console.log(1213);
     document.querySelector(".add-new-panel").classList.remove("active");
     removeConfirmExitPage();
   };
@@ -409,7 +389,7 @@ const getItemHTML = (item) => {
 };
 
 const displayItem = (item, container) => {
-  itemHTML = getItemHTML(item);
+  let itemHTML = getItemHTML(item);
   container.innerHTML += `
         <div class="card-wrapper">${itemHTML}</div>
     `;

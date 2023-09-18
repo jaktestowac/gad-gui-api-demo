@@ -1,0 +1,32 @@
+{
+  "name": "rest-api-demo-v2-tests",
+  "version": "2.0.0",
+  "description": "Tests for GAD",
+  "main": "server.js",
+  "scripts": {
+    "test-jest": "cross-env NODE_ENV=test PORT=3002 jest --testTimeout=10000 --detectOpenHandles",
+    "test": "cross-env NODE_ENV=test PORT=3002 mocha --require hooks.js"
+  },
+  "author": "jaktestowac.pl",
+  "license": "ISC",
+  "engines": {
+    "node": ">=16.x"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^8.0.2",
+    "chai": "^4.3.8",
+    "cross-env": "^7.0.3",
+    "mocha": "^10.2.0",
+    "supertest": "^6.3.3"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ],
+    "verbose": true,
+    "setupFilesAfterEnv": [
+      "jest-expect-message"
+    ]
+  }
+}

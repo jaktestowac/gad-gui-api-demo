@@ -1,0 +1,9 @@
+{
+  "games": [
+    {
+      "id": 1,
+      "name": "Quiz"
+    }
+  ],
+  "scores": {}
+}

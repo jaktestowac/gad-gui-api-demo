@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
-const { logDebug, logError } = require("./loggerApi");
+const { logDebug, logError } = require("./logger-api");
 const { userDb } = require("./db.helpers");
-const { getConfigValue } = require("../config/configSingleton");
+const { getConfigValue } = require("../config/config-manager");
 const { ConfigKeys } = require("../config/enums");
 
 // Create a token from a payload

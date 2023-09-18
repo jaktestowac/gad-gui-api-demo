@@ -1,4 +1,5 @@
-const faker = require("faker");
+/* eslint-disable no-console */
+const { faker } = require("@faker-js/faker");
 const db = require("../db-base.json");
 const fs = require("fs");
 const path = require("path");

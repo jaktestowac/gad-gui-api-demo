@@ -1,10 +1,10 @@
-const fs = require("fs");
 const { shuffleArray } = require("./helpers");
-const { getConfigValue } = require("../config/configSingleton");
+const { getConfigValue } = require("../config/config-manager");
 const { ConfigKeys } = require("../config/enums");
+const { hangmanDb } = require("./db.helpers");
 
 function getWords() {
-  let words = JSON.parse(fs.readFileSync(getConfigValue(ConfigKeys.HANGMAN_DATA_PATH), "UTF-8"));
+  let words = hangmanDb(getConfigValue(ConfigKeys.HANGMAN_DATA_PATH));
   words = words.map((word) => word.toLowerCase());
   let shuffledWords = shuffleArray(words);
   return shuffledWords;

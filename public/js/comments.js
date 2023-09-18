@@ -101,8 +101,14 @@ async function processCommentsData(userComments) {
   }
 
   for (let j = 0; j < userComments.length; j++) {
-    userComments[j].user_name = tempUserData[userComments[j].user_id.toString()];
-    userComments[j].article = tempArticleData[userComments[j].article_id.toString()];
+    const user_id = userComments[j].user_id;
+    const article_id = userComments[j].article_id;
+    if (user_id) {
+      userComments[j].user_name = tempUserData[user_id.toString()];
+    } else {
+      userComments[j].user_name = "[Unknown]";
+    }
+    userComments[j].article = tempArticleData[article_id.toString()];
   }
 }
 
@@ -131,7 +137,7 @@ const getCommentHTML = (comment) => {
   }-title" id="gotoArticle${comment.article?.id}">${comment.article?.title?.substring(0, 50)} (...)</a></span><br>
         <label>user:</label><span><a href="user.html?id=${comment.user_id}" data-testid="comment${
     comment.id
-  }-user" data-testid="article-${item.id}-title" id="gotoUser${comment.user_id}-${comment.id}">${
+  }-user" data-testid="article-${comment.id}-title" id="gotoUser${comment.user_id}-${comment.id}">${
     comment.user_name
   }</a></span><br>
         <label>date:</label><span data-testid="comment${comment.id}-date">${comment.date
@@ -149,7 +155,7 @@ const sleep = (time) => new Promise((res) => setTimeout(res, time));
 async function displayCommentsData(data, delay = 0) {
   const container = document.querySelector("#container");
   container.innerHTML = "";
-  for (item of data) {
+  for (let item of data) {
     displayItem(item, container);
 
     // delay displaying next element:
@@ -166,7 +172,7 @@ async function displayCommentsData(data, delay = 0) {
 
 const displayItem = (item, container) => {
   if (item !== undefined && item.article !== undefined) {
-    itemHTML = getCommentHTML(item);
+    let itemHTML = getCommentHTML(item);
     container.innerHTML += `
             <div class="card-wrapper card-comment">${itemHTML}</div>
         `;

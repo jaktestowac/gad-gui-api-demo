@@ -472,3 +472,33 @@ td:first-child {
   border-color: #bcbcbc !important;
   border: none !important;
 }
+
+s
+
+.container-mobile {
+  font-size: 12px;
+  align-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+@media (max-width: 550px) {
+  .container-mobile {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .button-mobile {
+    margin-bottom: 0px !important; 
+  }
+
+  .search {
+    width: 100px;
+  }
+
+  .mobile-search-container {
+    margin: 0px !important;
+  }
+}

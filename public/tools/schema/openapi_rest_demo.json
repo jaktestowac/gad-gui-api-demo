@@ -79,8 +79,8 @@
               }
             }
           },
-          "422": {
-            "description": "Invalid data supplied",
+          "401": {
+            "description": "Unauthorized",
             "content": {}
           }
         }
@@ -2057,7 +2057,10 @@
             "type": "string"
           },
           "selectedAnswers": {
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
