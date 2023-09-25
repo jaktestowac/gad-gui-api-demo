@@ -1,12 +1,14 @@
-const { isBugDisabled } = require("../config/config-manager");
+const { isBugDisabled, isBugEnabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
 const { logDebug, logTrace } = require("../helpers/logger-api");
 const { countAvailableQuestions, getOnlyQuestions, checkAnswer } = require("../helpers/quiz.helpers");
-const { HTTP_NOT_FOUND, HTTP_OK } = require("../helpers/response.helpers");
+const { HTTP_NOT_FOUND, HTTP_OK, HTTP_CONFLICT } = require("../helpers/response.helpers");
 const { verifyAccessToken } = require("../helpers/validation.helpers");
 
 const quizHighScores = {};
 const quizTempScores = {};
+
+const questionsPerQuiz = 10;
 
 function handleQuiz(req, res) {
   if (req.method === "GET" && req.url.endsWith("/api/quiz/questions/count")) {
@@ -15,12 +17,14 @@ function handleQuiz(req, res) {
     const verifyTokenResult = verifyAccessToken(req, res, "quiz", req.url);
     if (!verifyTokenResult) return;
 
-    res.status(HTTP_OK).json(getOnlyQuestions(10));
+    const questions = getOnlyQuestions(questionsPerQuiz);
+
+    res.status(HTTP_OK).json(questions);
   } else if (req.method === "GET" && req.url.endsWith("/api/quiz/start")) {
     const verifyTokenResult = verifyAccessToken(req, res, "quiz", req.url);
     if (!verifyTokenResult) return;
 
-    quizTempScores[verifyTokenResult?.email] = 0;
+    quizTempScores[verifyTokenResult?.email] = { ok: 0, nok: 0 };
     logDebug("handleQuiz:Quiz started:", { email: verifyTokenResult?.email, quizTempScores });
     res.status(HTTP_OK).json({});
   } else if (req.method === "GET" && req.url.endsWith("/api/quiz/stop")) {
@@ -29,13 +33,13 @@ function handleQuiz(req, res) {
 
     const email = verifyTokenResult?.email;
     logDebug("handleQuiz:Quiz stopped:", { email, quizTempScores, quizHighScores });
-    if (quizHighScores[email] === undefined || quizTempScores[email] >= quizHighScores[email]) {
-      quizHighScores[email] = quizTempScores[email];
+    if (quizHighScores[email] === undefined || quizTempScores[email]["ok"] >= quizHighScores[email]) {
+      quizHighScores[email] = quizTempScores[email]["ok"];
     }
 
     if (isBugDisabled(BugConfigKeys.BUG_QUIZ_002)) {
       // clear quizTempScores before quiz:
-      quizTempScores[email] = 0;
+      quizTempScores[email] = { ok: 0, nok: 0 };
     }
     logDebug("handleQuiz:Quiz stopped - final:", { email, quizHighScores });
     res.status(HTTP_OK).json({ highScore: quizHighScores[email] });
@@ -60,29 +64,46 @@ function handleQuiz(req, res) {
     const verifyTokenResult = verifyAccessToken(req, res, "quiz", req.url);
     if (!verifyTokenResult) return;
 
-    const questionText = req.body["questionText"];
-    const selectedAnswers = req.body["selectedAnswers"];
+    // check if user exceed number of questions - this may happen during multiple sessions:
+    let isConflict =
+      quizTempScores[verifyTokenResult?.email]["ok"] + quizTempScores[verifyTokenResult?.email]["nok"] >=
+      questionsPerQuiz;
 
-    const isCorrect = checkAnswer(selectedAnswers, questionText);
-    logTrace("handleQuiz:Quiz checkAnswer:", { questionText, selectedAnswers });
-
-    // TODO:INVOKE_BUG: score is saved per email. If You start 2x quiz on one user - You can get more points.
-    if (quizTempScores[verifyTokenResult?.email] === undefined) {
-      quizTempScores[verifyTokenResult?.email] = 0;
+    if (isBugEnabled(BugConfigKeys.BUG_QUIZ_004)) {
+      isConflict = false;
     }
 
-    if (isBugDisabled(BugConfigKeys.BUG_QUIZ_001)) {
-      // add points for correct answer
-      quizTempScores[verifyTokenResult?.email] += isCorrect ? 1 : 0;
-    }
+    if (isConflict) {
+      res.status(HTTP_CONFLICT).json({
+        isCorrect: false,
+        score: quizTempScores[verifyTokenResult?.email]["ok"],
+        message: "Conflict in Quiz responses",
+      });
+    } else {
+      const questionText = req.body["questionText"];
+      const selectedAnswers = req.body["selectedAnswers"];
 
-    if (isCorrect) {
+      const isCorrect = checkAnswer(selectedAnswers, questionText);
+      logTrace("handleQuiz:Quiz checkAnswer:", { questionText, selectedAnswers });
+
+      // TODO:INVOKE_BUG: score is saved per email. If You start 2x quiz on one user - You can get more points.
+      if (quizTempScores[verifyTokenResult?.email] === undefined) {
+        quizTempScores[verifyTokenResult?.email] = { ok: 0, nok: 0 };
+      }
+
+      if (isBugDisabled(BugConfigKeys.BUG_QUIZ_001)) {
+        // add points for correct answer
+        quizTempScores[verifyTokenResult?.email]["ok"] += isCorrect ? 1 : 0;
+        quizTempScores[verifyTokenResult?.email]["nok"] += isCorrect ? 0 : 1;
+      }
+
       logTrace("handleQuiz:Quiz: user scores:", {
         email: verifyTokenResult?.email,
         score: quizTempScores[verifyTokenResult?.email],
       });
+
+      res.status(HTTP_OK).json({ isCorrect, score: quizTempScores[verifyTokenResult?.email]["ok"] });
     }
-    res.status(HTTP_OK).json({ isCorrect, score: quizTempScores[verifyTokenResult?.email] });
   } else {
     res.status(HTTP_NOT_FOUND).json({});
   }

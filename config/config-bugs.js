@@ -12,6 +12,7 @@ const bugConfig = {
   bug_quiz_001: false,
   bug_quiz_002: false,
   bug_quiz_003: false,
+  bug_quiz_004: false,
 };
 
 module.exports = {

@@ -54,6 +54,7 @@ const BugConfigKeys = {
   BUG_QUIZ_001: "bug_quiz_001",
   BUG_QUIZ_002: "bug_quiz_002",
   BUG_QUIZ_003: "bug_quiz_003",
+  BUG_QUIZ_004: "bug_quiz_004",
 };
 
 module.exports = {

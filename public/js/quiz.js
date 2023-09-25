@@ -110,6 +110,10 @@ async function checkAnswer() {
       Authorization: getBearerToken(),
     },
   }).then((response) => {
+    if (response.status !== 200) {
+      // TODO:
+    }
+
     response.json().then((json) => {
       // Old logic with score on UI:
       // const isCorrect = json["isCorrect"] ?? false;
