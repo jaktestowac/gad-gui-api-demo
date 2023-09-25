@@ -24,7 +24,8 @@ function handleArticles(req, res, isAdmin) {
     const verifyTokenResult = verifyAccessToken(req, res, "articles", req.url);
     const foundUser = searchForUserWithToken(req.headers["userid"], verifyTokenResult);
 
-    if (foundUser === undefined) {
+    logTrace("handleArticles:", { method: req.method, urlEnds, foundUser });
+    if (foundUser === undefined || verifyTokenResult === undefined) {
       res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
       return;
     }

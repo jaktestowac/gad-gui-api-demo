@@ -21,6 +21,7 @@ const { handleConfig } = require("../endpoints/config-endpoint.helpers");
 const { handleUsers } = require("../endpoints/users-endpoint.helpers");
 const { handleArticles } = require("../endpoints/articles-endpoint.helpers");
 const { handleComments } = require("../endpoints/comments-endpoint.helpers");
+const { handleLikes } = require("../endpoints/likes-endpoint.helpers");
 
 const validations = (req, res, next) => {
   let isAdmin = false;
@@ -54,6 +55,11 @@ const validations = (req, res, next) => {
       ) {
         isAdmin = true;
         logDebug("validations: isAdmin:", isAdmin);
+      }
+
+      if (verifyTokenResult === undefined) {
+        res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
+        return;
       }
     } catch (error) {
       logError("Error: check if admin:", {
@@ -117,6 +123,10 @@ const validations = (req, res, next) => {
 
     if (req.url.includes("/api/comments")) {
       handleComments(req, res, isAdmin);
+    }
+
+    if (req.url.includes("/api/likes")) {
+      handleLikes(req, res, isAdmin);
     }
 
     logTrace("Returning:", { statusCode: res.statusCode, headersSent: res.headersSent, urlEnds, method: req.method });

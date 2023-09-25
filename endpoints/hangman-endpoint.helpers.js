@@ -1,6 +1,6 @@
 const { checkLetter, getRandomWord } = require("../helpers/hangman.helpers");
 const { logTrace, logDebug } = require("../helpers/logger-api");
-const { HTTP_NOT_FOUND, HTTP_OK } = require("../helpers/response.helpers");
+const { HTTP_NOT_FOUND, HTTP_OK} = require("../helpers/response.helpers");
 const { verifyAccessToken } = require("../helpers/validation.helpers");
 
 const hangmanHighScores = {};

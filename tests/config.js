@@ -11,6 +11,7 @@ const baseQuizUrl = "/api/quiz";
 const baseStatsUrl = "/api/stats";
 const baseCommentsUrl = "/api/comments";
 const baseLoginUrl = "/api/login";
+const baseLikesUrl = "/api/likes";
 
 const existingUserEmail = "Danial.Dicki@dicki.test";
 const existingUserPass = "test2";
@@ -25,6 +26,7 @@ module.exports = {
   baseApiUrl,
   baseArticlesUrl,
   baseUsersUrl,
+  baseLikesUrl,
   baseHangmanUrl,
   baseQuizUrl,
   baseStatsUrl,

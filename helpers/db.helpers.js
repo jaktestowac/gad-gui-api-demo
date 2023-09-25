@@ -13,18 +13,19 @@ function fullDb() {
 }
 
 function userDb() {
-  const db = JSON.parse(fs.readFileSync(getDbPath(getConfigValue(ConfigKeys.AUTH_USER_DB)), "UTF-8"));
-  return db["users"];
+  return fullDb()["users"];
 }
 
 function articlesDb() {
-  const db = JSON.parse(fs.readFileSync(getDbPath(getConfigValue(ConfigKeys.AUTH_USER_DB)), "UTF-8"));
-  return db["articles"];
+  return fullDb()["articles"];
 }
 
 function commentsDb() {
-  const db = JSON.parse(fs.readFileSync(getDbPath(getConfigValue(ConfigKeys.AUTH_USER_DB)), "UTF-8"));
-  return db["comments"];
+  return fullDb()["comments"];
+}
+
+function likesDb() {
+  return fullDb()["likes"];
 }
 
 function quizQuestionsDb() {
@@ -56,6 +57,7 @@ module.exports = {
   userDb,
   articlesDb,
   commentsDb,
+  likesDb,
   quizQuestionsDb,
   hangmanDb,
   fullDb,
