@@ -128,7 +128,7 @@ function handleArticles(req, res, isAdmin) {
 
     if (foundArticle === undefined) {
       req.method = "POST";
-      req.url = req.url.replace(`/${articleId}`, "");
+      req.url = "/api/articles";
       req.body.id = undefined;
       logTrace("handleArticles:PUT -> POST:", {
         method: req.method,

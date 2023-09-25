@@ -250,7 +250,7 @@ describe("Endpoint /users", async () => {
       testUserData.id = userId;
     });
 
-    it("PUT /users", async () => {
+    it("PUT /users - create user", async () => {
       // Act:
       const response = await request.put(baseUrl).set(headers).send(testUserData);
 
@@ -282,6 +282,7 @@ describe("Endpoint /users", async () => {
         expect(response.status).to.equal(422);
       });
     });
+
     it("PUT /users/:id - update different user", async () => {
       // Act:
       const response = await request.put(`${baseUrl}/1`).set(headers).send(testUserData);

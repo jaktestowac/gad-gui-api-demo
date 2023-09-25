@@ -103,8 +103,7 @@ describe("Endpoint /articles", () => {
         testArticleData.user_id = userId;
       });
 
-      // TODO: investigate and fix server behaviour
-      it.skip("PUT /articles - create article", async () => {
+      it("PUT /articles - create article", async () => {
         // Act:
         const response = await request.put(baseUrl).set(headers).send(testArticleData);
 
@@ -427,7 +426,7 @@ describe("Endpoint /articles", () => {
         });
       });
 
-      it.skip("POST /articles/upload", async () => {
+      it("POST /articles/upload", async () => {
         // TODO: prepare proper data
 
         // Arrange:

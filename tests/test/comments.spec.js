@@ -105,8 +105,7 @@ describe("Endpoint /comments", () => {
       testCommentData.user_id = userId;
     });
 
-    // TODO: investigate and fix server behaviour
-    it.skip("PUT /comments", async () => {
+    it("PUT /comments", async () => {
       // Act:
       const response = await request.put(baseUrl).set(headers).send(testCommentData);
 

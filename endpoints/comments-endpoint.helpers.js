@@ -38,12 +38,17 @@ function handleComments(req, res, isAdmin) {
 
     if (req.method === "PUT" && foundComment === undefined) {
       req.method = "POST";
-      req.url = req.url.replace(`/${commentId}`, "");
+      req.url = "/api/comments";
       if (parseInt(commentId).toString() === commentId) {
         commentId = parseInt(commentId);
       }
       req.body.id = commentId;
-      logTrace("handleComments:PUT:", { method: req.method, commentId, urlEnds });
+      logTrace("handleComments:PUT -> POST:", {
+        method: req.method,
+        commentId,
+        url: req.url,
+        body: req.body,
+      });
     }
   }
 
