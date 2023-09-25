@@ -104,7 +104,7 @@ describe("Endpoint /articles", () => {
       });
 
       // TODO: investigate and fix server behaviour
-      it.skip("PUT /articles", async () => {
+      it.skip("PUT /articles - create article", async () => {
         // Act:
         const response = await request.put(baseUrl).set(headers).send(testArticleData);
 
@@ -142,6 +142,23 @@ describe("Endpoint /articles", () => {
           expect(response.status).to.equal(422);
         });
       });
+
+      it(`PUT /articles - empty all fields`, async () => {
+        // Arrange:
+        const testData = generateValidArticleData();
+        testData.user_id = userId;
+        testData.body = "";
+        testData.image = "";
+        testData.title = "";
+        testData.date = "";
+
+        // Act:
+        const response = await request.put(baseUrl).set(headers).send(testData);
+
+        // Assert:
+        expect(response.status).to.equal(422);
+      });
+
       it("PATCH /articles/:id - full update", async () => {
         // Act:
         const response = await request.patch(`${baseUrl}/${articleId}`).set(headers).send(testArticleData);
@@ -338,6 +355,53 @@ describe("Endpoint /articles", () => {
           testData.user_id = userId;
 
           testData[field] = undefined;
+
+          // Act:
+          const response = await request.post(baseUrl).set(headers).send(testData);
+
+          // Assert:
+          expect(response.status).to.equal(422);
+        });
+      });
+
+      it(`POST /articles - empty all data fields`, async () => {
+        // Arrange:
+        const testData = generateValidArticleData();
+        testData.user_id = userId;
+        testData.body = "";
+        testData.image = "";
+        testData.title = "";
+        testData.date = "";
+
+        // Act:
+        const response = await request.post(baseUrl).set(headers).send(testData);
+
+        // Assert:
+        expect(response.status).to.equal(422);
+      });
+
+      it(`POST /articles - empty all fields`, async () => {
+        // Arrange:
+        const testData = generateValidArticleData();
+        testData.user_id = "";
+        testData.body = "";
+        testData.image = "";
+        testData.title = "";
+        testData.date = "";
+
+        // Act:
+        const response = await request.post(baseUrl).set(headers).send(testData);
+
+        // Assert:
+        expect(response.status).to.equal(401);
+      });
+      ["title", "body", "date"].forEach((field) => {
+        it(`POST /articles - empty mandatory field - ${field}`, async () => {
+          // Arrange:
+          const testData = generateValidArticleData();
+          testData.user_id = userId;
+
+          testData[field] = "";
 
           // Act:
           const response = await request.post(baseUrl).set(headers).send(testData);
