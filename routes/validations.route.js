@@ -90,7 +90,10 @@ const validations = (req, res, next) => {
       logTrace("Validators: Check user auth", { url: urlEnds });
       let userId = getIdFromUrl(urlEnds);
       const verifyTokenResult = verifyAccessToken(req, res, "users", req.url);
-      if (!verifyTokenResult) return;
+      if (verifyTokenResult === undefined) {
+        res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
+        return;
+      }
 
       const foundUser = searchForUserWithToken(userId, verifyTokenResult);
 
@@ -105,12 +108,18 @@ const validations = (req, res, next) => {
       (req.method !== "GET" && req.method !== "HEAD" && urlEnds?.includes("/api/articles") && !isAdmin)
     ) {
       const verifyTokenResult = verifyAccessToken(req, res, "articles", req.url);
-      if (!verifyTokenResult) return;
+      if (verifyTokenResult === undefined) {
+        res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
+        return;
+      }
     }
 
     if (req.method !== "GET" && req.method !== "HEAD" && urlEnds.includes("/api/comments") && !isAdmin) {
       const verifyTokenResult = verifyAccessToken(req, res, "comments", req.url);
-      if (!verifyTokenResult) return;
+      if (verifyTokenResult === undefined) {
+        res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
+        return;
+      }
     }
 
     if (req.url.includes("/api/users")) {

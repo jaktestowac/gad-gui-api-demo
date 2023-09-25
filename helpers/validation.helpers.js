@@ -114,7 +114,6 @@ const verifyAccessToken = (req, res, endpoint = "endpoint", url = "") => {
   // when checking admin we do not send response
   if (endpoint !== "isAdmin" && verifyTokenResult instanceof Error) {
     logTrace(`[${endpoint}] verifyAccessToken:`, { endpoint, verifyTokenResult });
-    res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
     return undefined;
   }
 

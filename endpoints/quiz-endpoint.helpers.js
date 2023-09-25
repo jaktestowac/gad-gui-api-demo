@@ -1,8 +1,9 @@
 const { isBugDisabled, isBugEnabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
+const { formatErrorResponse } = require("../helpers/helpers");
 const { logDebug, logTrace } = require("../helpers/logger-api");
 const { countAvailableQuestions, getOnlyQuestions, checkAnswer } = require("../helpers/quiz.helpers");
-const { HTTP_NOT_FOUND, HTTP_OK, HTTP_CONFLICT } = require("../helpers/response.helpers");
+const { HTTP_NOT_FOUND, HTTP_OK, HTTP_CONFLICT, HTTP_UNAUTHORIZED } = require("../helpers/response.helpers");
 const { verifyAccessToken } = require("../helpers/validation.helpers");
 
 const quizHighScores = {};
@@ -15,21 +16,30 @@ function handleQuiz(req, res) {
     res.status(HTTP_OK).json({ count: countAvailableQuestions() });
   } else if (req.method === "GET" && req.url.endsWith("/api/quiz/questions")) {
     const verifyTokenResult = verifyAccessToken(req, res, "quiz", req.url);
-    if (!verifyTokenResult) return;
+    if (verifyTokenResult === undefined) {
+      res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
+      return;
+    }
 
     const questions = getOnlyQuestions(questionsPerQuiz);
 
     res.status(HTTP_OK).json(questions);
   } else if (req.method === "GET" && req.url.endsWith("/api/quiz/start")) {
     const verifyTokenResult = verifyAccessToken(req, res, "quiz", req.url);
-    if (!verifyTokenResult) return;
+    if (verifyTokenResult === undefined) {
+      res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
+      return;
+    }
 
     quizTempScores[verifyTokenResult?.email] = { ok: 0, nok: 0 };
     logDebug("handleQuiz:Quiz started:", { email: verifyTokenResult?.email, quizTempScores });
     res.status(HTTP_OK).json({});
   } else if (req.method === "GET" && req.url.endsWith("/api/quiz/stop")) {
     const verifyTokenResult = verifyAccessToken(req, res, "quiz", req.url);
-    if (!verifyTokenResult) return;
+    if (verifyTokenResult === undefined) {
+      res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
+      return;
+    }
 
     const email = verifyTokenResult?.email;
     logDebug("handleQuiz:Quiz stopped:", { email, quizTempScores, quizHighScores });
@@ -62,7 +72,10 @@ function handleQuiz(req, res) {
     res.status(HTTP_OK).json({ highScore: quizHighScores });
   } else if (req.method === "POST" && req.url.endsWith("/api/quiz/questions/check")) {
     const verifyTokenResult = verifyAccessToken(req, res, "quiz", req.url);
-    if (!verifyTokenResult) return;
+    if (verifyTokenResult === undefined) {
+      res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
+      return;
+    }
 
     // check if user exceed number of questions - this may happen during multiple sessions:
     let isConflict =

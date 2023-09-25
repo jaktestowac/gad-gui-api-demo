@@ -28,11 +28,11 @@ const {
 function handleLikes(req, res, isAdmin) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
 
-  if (req.method !== "GET" && urlEnds?.includes("/api/likes") && !isAdmin) {
+  if (req.method !== "GET" && req.method !== "HEAD" && urlEnds?.includes("/api/likes") && !isAdmin) {
     const verifyTokenResult = verifyAccessToken(req, res, "likes", req.url);
     const foundUser = searchForUserWithToken(req.headers["userid"], verifyTokenResult);
 
-    if (foundUser === undefined || verifyTokenResult === false) {
+    if (foundUser === undefined || verifyTokenResult === undefined) {
       res.status(HTTP_UNAUTHORIZED).json(formatInvalidTokenErrorResponse());
       return;
     }
