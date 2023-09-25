@@ -23,8 +23,8 @@ Features of **🦎 GAD**:
 - **Authentication** and **Authorization**
 - **User** <-> resources logic (calculations, statistics)
 - Different **data presentation** (charts, tables etc.)
-- **Challenging elements for test automation** (iframes, file uploads, drag&drop, logic on front-end and back-end etc.)
-- Admins "backoffice" with additional tools and functionalities
+- **Challenging elements for test automation** (iframes, file uploads, drag&drop, logic on front-end and back-end, games etc.)
+- **Admins "backoffice"** with additional tools and functionalities
 
 # Deployment
 
