@@ -256,6 +256,22 @@ function shuffleArray(array) {
   return shuffledArray;
 }
 
+function getTodayDate() {
+  const today = new Date();
+  const date = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}T${pad(
+    today.getHours()
+  )}:${pad(today.getMinutes())}:${pad(today.getSeconds())}Z`;
+  return date;
+}
+
+function getTodayDateForFileName() {
+  const today = new Date();
+  const date = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}T${pad(
+    today.getHours()
+  )}-${pad(today.getMinutes())}-${pad(today.getSeconds())}Z`;
+  return date;
+}
+
 module.exports = {
   getRandomIntBasedOnDay,
   getRandomIdBasedOnDay,
@@ -275,4 +291,6 @@ module.exports = {
   getIdFromUrl,
   shuffleArray,
   pad,
+  getTodayDate,
+  getTodayDateForFileName,
 };
