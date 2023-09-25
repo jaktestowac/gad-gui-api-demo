@@ -18,6 +18,7 @@ const existingUserPass = "test2";
 
 const sleepTime = 50; // in ms
 const logLevel = 2;
+const clearDbAfter = true;
 
 module.exports = {
   expect,
@@ -36,4 +37,5 @@ module.exports = {
   existingUserPass,
   existingUserEmail,
   logLevel,
+  clearDbAfter,
 };
