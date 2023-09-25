@@ -55,8 +55,10 @@ function countLikesForArticle(articleId) {
 function checkIfAlreadyLiked(articleId, commentId, userId) {
   const foundLikes = likesDb().find((like) => {
     return (
-      (like["article_id"]?.toString() === articleId?.toString() || (like["article_id"] && articleId === undefined)) &&
-      (like["comment_id"]?.toString() === commentId?.toString() || (like["comment_id"] && commentId === undefined)) &&
+      ((like["article_id"]?.toString() === articleId?.toString() && articleId !== undefined) ||
+        (like["article_id"] === undefined && articleId === undefined)) &&
+      ((like["comment_id"]?.toString() === commentId?.toString() && commentId !== undefined) ||
+        (like["comment_id"] === undefined && commentId === undefined)) &&
       like["user_id"]?.toString() === userId?.toString()
     );
   });

@@ -279,7 +279,7 @@ describe("Endpoint /users", async () => {
         const response = await request.put(`${baseUrl}/${userId}`).set(headers).send(testUserData);
 
         // Assert:
-        expect(response.status).to.equal(422);
+        expect(response.status, `${JSON.stringify(response.body)} - ${testUserData}`).to.equal(422);
       });
     });
 

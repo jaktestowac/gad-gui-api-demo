@@ -1,9 +1,7 @@
 const { getConfigValue, isBugEnabled } = require("../config/config-manager");
 const { ConfigKeys, BugConfigKeys } = require("../config/enums");
-const { formatErrorResponse } = require("./helpers");
 const { verifyToken, getJwtExpiryDate } = require("./jwtauth");
 const { logDebug, logError, logTrace, logWarn } = require("./logger-api");
-const { HTTP_UNAUTHORIZED } = require("./response.helpers");
 
 const mandatory_non_empty_fields_user = ["firstname", "lastname", "email", "avatar"];
 const all_fields_user = ["id", "firstname", "lastname", "email", "avatar", "password", "birthdate"];
@@ -17,11 +15,15 @@ const mandatory_non_empty_fields_plugin = ["name", "status", "version"];
 
 function is_likes_data_valid(body) {
   if (body["comment_id"] !== undefined && body["article_id"] !== undefined) {
-    logDebug(`Field validation: only one field can be non empty - comment_id or article_id`);
+    logDebug(`Field validation: only one field can be non empty - comment_id or article_id`, { body });
     return false;
   }
   if (body["comment_id"] === undefined && body["article_id"] === undefined) {
-    logDebug(`Field validation: at least one field must be not empty - comment_id or article_id`);
+    logDebug(`Field validation: at least one field must be not empty - comment_id or article_id`, { body });
+    return false;
+  }
+  if (body["user_id"] === undefined) {
+    logDebug(`Field validation: user_id is empty`);
     return false;
   }
   return true;

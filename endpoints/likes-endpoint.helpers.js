@@ -5,11 +5,7 @@ const {
   countLikesForComment,
   checkIfAlreadyLiked,
 } = require("../helpers/db-operation.helpers");
-const {
-  formatInvalidTokenErrorResponse,
-  formatMissingFieldErrorResponse,
-  formatOnlyOneFieldPossibleErrorResponse,
-} = require("../helpers/helpers");
+const { formatInvalidTokenErrorResponse, formatOnlyOneFieldPossibleErrorResponse } = require("../helpers/helpers");
 const { logTrace } = require("../helpers/logger-api");
 const {
   HTTP_UNAUTHORIZED,
@@ -18,12 +14,7 @@ const {
   HTTP_NOT_FOUND,
   HTTP_OK,
 } = require("../helpers/response.helpers");
-const {
-  verifyAccessToken,
-  are_mandatory_fields_present,
-  mandatory_non_empty_fields_likes,
-  is_likes_data_valid,
-} = require("../helpers/validation.helpers");
+const { verifyAccessToken, is_likes_data_valid } = require("../helpers/validation.helpers");
 
 function handleLikes(req, res, isAdmin) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
@@ -40,11 +31,7 @@ function handleLikes(req, res, isAdmin) {
 
   // user clicked like button:
   if (req.method === "POST" && urlEnds.endsWith("/api/likes")) {
-    if (!are_mandatory_fields_present(req.body, mandatory_non_empty_fields_likes)) {
-      res.status(HTTP_UNPROCESSABLE_ENTITY).json(formatMissingFieldErrorResponse(mandatory_non_empty_fields_likes));
-      return;
-    }
-    if (is_likes_data_valid(req.body)) {
+    if (!is_likes_data_valid(req.body)) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).json(formatOnlyOneFieldPossibleErrorResponse(["comment_id", "article_id"]));
       return;
     }
@@ -52,7 +39,7 @@ function handleLikes(req, res, isAdmin) {
     const user_id = req.headers["userid"];
     const article_id = req.body["article_id"];
     const comment_id = req.body["comment_id"];
-
+    
     const alreadyLiked = checkIfAlreadyLiked(article_id, comment_id, user_id);
     logTrace("handleLikes: alreadyLiked?", { alreadyLiked, user_id, body: req.body });
 
@@ -83,7 +70,7 @@ function handleLikes(req, res, isAdmin) {
     return;
   }
 
-  if (req.method === "GET" && urlEnds.includes("/api/likes/comments/")) {
+  if (req.method === "GET" && urlEnds.includes("/api/likes/comment/")) {
     const commentId = urlEnds.split("/").slice(-1)[0];
     if (commentId === undefined) {
       res.status(HTTP_NOT_FOUND).json({});
@@ -92,22 +79,37 @@ function handleLikes(req, res, isAdmin) {
 
     const likes = countLikesForComment(commentId);
     logTrace("handleLikes: likes for comment", { commentId, likes });
-    res.status(HTTP_OK).json({ likes });
+    res.status(HTTP_OK).send({ likes });
     return;
   }
 
   if (req.method === "PUT" && urlEnds.includes("/api/likes")) {
-    res.status(HTTP_METHOD_NOT_ALLOWED).json({});
+    res.status(HTTP_METHOD_NOT_ALLOWED).send({});
     return;
   }
 
   if (req.method === "PATCH" && urlEnds.includes("/api/likes")) {
-    res.status(HTTP_METHOD_NOT_ALLOWED).json({});
+    res.status(HTTP_METHOD_NOT_ALLOWED).send({});
+    return;
+  }
+
+  if (req.method === "DELETE" && urlEnds.includes("/api/likes")) {
+    res.status(HTTP_METHOD_NOT_ALLOWED).send({});
     return;
   }
 
   if (req.method === "GET" && urlEnds.endsWith("/api/likes")) {
-    res.status(HTTP_METHOD_NOT_ALLOWED).json({});
+    res.status(HTTP_METHOD_NOT_ALLOWED).send({});
+    return;
+  }
+
+  if (
+    req.method === "GET" &&
+    urlEnds.includes("/api/likes/") &&
+    !urlEnds.includes("/api/likes/comment/") &&
+    !urlEnds.includes("/api/likes/article/")
+  ) {
+    res.status(HTTP_METHOD_NOT_ALLOWED).send({});
     return;
   }
 
