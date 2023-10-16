@@ -356,8 +356,8 @@
             "description": "Article deleted",
             "content": {}
           },
-          "404": {
-            "description": "Article not found",
+          "401": {
+            "description": "Unauthorized",
             "content": {}
           }
         }
