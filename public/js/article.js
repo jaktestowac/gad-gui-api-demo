@@ -17,31 +17,48 @@ async function issueGetRandomRequest() {
 }
 
 async function issueGetRequest(article_id) {
-  const articlesUrl = `${articlesEndpoint}/${article_id}`;
-  const articlesData = await Promise.all(
-    [articlesUrl].map((url) => fetch(url, { headers: formatHeaders() }).then((r) => r.json()))
-  );
+  // issueGetRequestArticles(article_id).then((x) => {
+  //   issueGetRequestComments(article_id);
+  // });
 
-  const commentsUrl = `${commentsEndpoint}?article_id=${article_id}`;
-  const comments = await Promise.all(
-    [commentsUrl].map((url) => fetch(url, { headers: formatHeaders() }).then((r) => r.json()))
-  );
-  articleData = articlesData[0];
-  articleDataForExport = JSON.parse(JSON.stringify(articlesData));
-  const userComments = comments[0];
+  issueGetRequestArticles(article_id).catch((error) => {
+    console.log(error);
+    displayArticlesData(undefined, "Error loading comments. Please contact administrator");
+  });
+
+  issueGetRequestComments(article_id).catch((error) => {
+    console.log(error);
+    displayCommentsData(undefined, "Error loading comments. Please contact administrator");
+  });
+}
+
+async function issueGetRequestArticles(article_id) {
+  // get article
+  const articlesUrl = `${articlesEndpoint}/${article_id}`;
+  let articleData = await fetch(articlesUrl, { headers: formatHeaders() }).then((r) => r.json());
+
+  articleDataForExport = JSON.parse(JSON.stringify(articleData));
   articleUserId = articleData.user_id;
 
-  articleData.comments = userComments;
-  // sort comments by date:
-  articleData.comments.sort((a, b) => a.date < b.date);
   article_id = articleData.id;
-  const commentsWithUsers = await Promise.all([addUserNameToComments(articleData.comments)]);
-  articleData.comments = commentsWithUsers[0];
   articleData = await Promise.all([addUserNameToArticle(articleData)]);
   const wasDisplayed = displayArticlesData(articleData[0]);
   if (wasDisplayed) {
     attachEventHandlers(articleUserId);
   }
+
+  return wasDisplayed;
+}
+
+async function issueGetRequestComments(article_id) {
+  // get comments
+  const commentsUrl = `${commentsEndpoint}?article_id=${article_id}`;
+  const userComments = await fetch(commentsUrl, { headers: formatHeaders() }).then((r) => r.json());
+  // sort comments by date:
+  userComments.sort((a, b) => a.date < b.date);
+  const commentsWithUsers = await addUserNameToComments(userComments);
+
+  displayCommentsData(commentsWithUsers);
 }
 
 async function addUserNameToComments(comments) {
@@ -160,11 +177,12 @@ function generatePDF() {
   html2pdf().set(opt).from(element).save();
 }
 
-const getCommentsHTML = (comments) => {
+const getCommentsHTML = (comments, error) => {
   let htmlData = "";
-  if (comments.length == 0) {
+  let errorMsg = error ?? "No Comments";
+  if (comments === undefined || comments?.length == 0) {
     htmlData = `<div class="comment-container">
-        <span>No Comments</span><br>
+        <span>${errorMsg}</span><br>
     </div>`;
   } else {
     for (let item of comments) {
@@ -191,29 +209,33 @@ const getCommentHTML = (comments) => {
     </div>`;
 };
 
-const displayArticlesData = (data) => {
+const displayArticlesData = (data, error) => {
   const container = document.querySelector("#container");
   container.innerHTML = "";
-
+  const errorMsg = error ?? "Invalid article ID or article does not exist";
   if (data === undefined || data.id === undefined) {
-    container.innerHTML =
-      '<div align="center"><h1 style="text-align: center;" data-testid="no-results">No data</h1><div data-testid="no-results-details">Invalid article ID or article does not exist</div></div>';
+    container.innerHTML = `<div align="center"><h1 style="text-align: center;" data-testid="no-results">No data</h1><div data-testid="no-results-details">${errorMsg}</div></div>`;
     const containerComments = document.querySelector("#containerComments");
     containerComments.innerHTML = "";
     return false;
   }
 
   displayItem(data, container);
-  const containerComments = document.querySelector("#containerComments");
-  containerComments.innerHTML = "";
-  displayComments(data, containerComments);
   return true;
 };
 
-const displayComments = (item, container) => {
-  let itemHTML = getCommentsHTML(item.comments);
+const displayCommentsData = (comments, error) => {
+  const containerComments = document.querySelector("#containerComments");
+  containerComments.innerHTML = "";
+  displayComments(comments, containerComments, error);
+  return true;
+};
+
+const displayComments = (comments, container, error) => {
+  let itemHTML = getCommentsHTML(comments, error);
   container.innerHTML += `<div align="center" ><div class="card-wrapper-wide" align="left">${itemHTML}</div></div><br>`;
 };
+
 const displayItem = (item, container) => {
   let itemHTML = getItemHTML(item);
   container.innerHTML += `<div align="center" ><div class="card-wrapper-wide" align="left">${itemHTML}</div></div>`;
