@@ -15,11 +15,18 @@ const fetchData = {
   credentials: "include",
 };
 
-async function issueGetRequest(limit = 6, page = 1, searchPhrase = undefined, onlyDisplay = false) {
+async function issueGetRequest(
+  limit = 6,
+  page = 1,
+  searchPhrase = undefined,
+  onlyDisplay = false,
+  sortingType = "date",
+  sortingOrder = "desc"
+) {
   // get data from the server:
 
   if (!onlyDisplay) {
-    let articlesEndpointPaged = `${articlesEndpoint}?_limit=${limit}&_page=${page}&_sort=date&_order=desc`;
+    let articlesEndpointPaged = `${articlesEndpoint}?_limit=${limit}&_page=${page}&_sort=${sortingType}&_order=${sortingOrder}`;
 
     if (search_user_id !== undefined) {
       articlesEndpointPaged += `&user_id=${search_user_id}`;
@@ -83,12 +90,12 @@ async function issueGetRequest(limit = 6, page = 1, searchPhrase = undefined, on
         articlesData[i].user_name = "Unknown user";
       }
     }
-    // sort articles by date:
-    articlesData.sort(function (a, b) {
-      let dateA = new Date(a.date),
-        dateB = new Date(b.date);
-      return dateB - dateA;
-    });
+    // // sort articles by date:
+    // articlesData.sort(function (a, b) {
+    //   let dateA = new Date(a.date),
+    //     dateB = new Date(b.date);
+    //   return dateB - dateA;
+    // });
   }
   displayPostsData(articlesData);
   attachEventHandlers(getId());
@@ -315,12 +322,17 @@ async function getPictureList() {
 
 let current_page = 1;
 let records_per_page = 6;
+let sortingType = "date";
+let sortingOrder = "desc";
 
 let search_user_id = getParams()["user_id"];
 
 getPictureList();
 updatePerPage();
-issueGetRequest(records_per_page, current_page, searchPhrase).then(() => changePage(current_page, true));
+updateSorting();
+issueGetRequest(records_per_page, current_page, searchPhrase, undefined, sortingType, sortingOrder).then(() =>
+  changePage(current_page, true)
+);
 
 // pagination:
 
@@ -388,7 +400,7 @@ function changePage(page, onlyDisplay = false) {
     btnNext.disabled = false;
     btnNext.style.color = "#0275d8";
   }
-  issueGetRequest(records_per_page, page, searchPhrase, onlyDisplay);
+  issueGetRequest(records_per_page, page, searchPhrase, onlyDisplay, sortingType, sortingOrder);
 }
 
 function numPages() {
@@ -399,5 +411,19 @@ menuButtonDisable("btnArticles");
 function seachByText() {
   let searchInput = document.getElementById("search-input");
   searchPhrase = searchInput.value;
-  issueGetRequest(records_per_page, current_page, searchPhrase).then(() => changePage(current_page, true));
+  issueGetRequest(records_per_page, current_page, searchPhrase, undefined, sortingType, sortingOrder).then(() =>
+    changePage(current_page, true)
+  );
+}
+
+// sorting:
+function updateSorting() {
+  let options = document.getElementById("sorting");
+  sortingType = options.value.split(" ")[0];
+  sortingOrder = options.value.split(" ")[1];
+}
+
+function changeSorting() {
+  updateSorting();
+  changeItemsPerPage();
 }
