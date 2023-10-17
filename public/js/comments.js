@@ -24,11 +24,19 @@ const fetchData = {
   credentials: "include",
 };
 
-async function issueGetRequest(limit = 6, page = 1, searchPhrase = undefined, onlyDisplay = false, displayDelay = 0) {
+async function issueGetRequest(
+  limit = 6,
+  page = 1,
+  searchPhrase = undefined,
+  onlyDisplay = false,
+  displayDelay = 0,
+  sortingType = "date",
+  sortingOrder = "desc"
+) {
   displayLoading();
   // get data from the server:
   if (!onlyDisplay) {
-    let commentsEndpointPaged = `${commentsEndpoint}?_limit=${limit}&_page=${page}&_sort=date&_order=desc`;
+    let commentsEndpointPaged = `${commentsEndpoint}?_limit=${limit}&_page=${page}&_sort=${sortingType}&_order=${sortingOrder}`;
 
     if (searchPhrase !== undefined && searchPhrase.length > 0) {
       commentsEndpointPaged += `&q=${searchPhrase}`;
@@ -47,11 +55,11 @@ async function issueGetRequest(limit = 6, page = 1, searchPhrase = undefined, on
 
     await processCommentsData(userComments);
   }
-  userComments.sort(function (a, b) {
-    let dateA = new Date(a.date),
-      dateB = new Date(b.date);
-    return dateB - dateA;
-  });
+  // userComments.sort(function (a, b) {
+  //   let dateA = new Date(a.date),
+  //     dateB = new Date(b.date);
+  //   return dateB - dateA;
+  // });
   allComments = userComments;
   hideLoading();
   await displayCommentsData(userComments, displayDelay);
@@ -239,7 +247,7 @@ function changePage(page, onlyDisplay = false) {
     btnNext.disabled = false;
     btnNext.style.color = "#0275d8";
   }
-  issueGetRequest(records_per_page, page, searchPhrase, onlyDisplay);
+  issueGetRequest(records_per_page, page, searchPhrase, onlyDisplay, displayDelay, sortingType, sortingOrder);
 }
 
 function numPages() {
@@ -248,12 +256,15 @@ function numPages() {
 
 let current_page = 1;
 let records_per_page = 12;
+let sortingType = "date";
+let sortingOrder = "desc";
 
 // TODO:INVOKE_BUG: stability issue - change this to slowly display new comments // issue on front-end
 const displayDelay = 0; // [ms]
 
 updatePerPage();
-issueGetRequest(records_per_page, current_page, searchPhrase, false, displayDelay).then(() =>
+updateSorting();
+issueGetRequest(records_per_page, current_page, searchPhrase, false, displayDelay, sortingType, sortingOrder).then(() =>
   changePage(current_page, true)
 );
 menuButtonDisable("btnComments");
@@ -261,5 +272,25 @@ menuButtonDisable("btnComments");
 function seachByText() {
   let searchInput = document.getElementById("search-input");
   searchPhrase = searchInput.value;
-  issueGetRequest(records_per_page, current_page, searchPhrase).then(() => changePage(current_page, true));
+  issueGetRequest(
+    records_per_page,
+    current_page,
+    searchPhrase,
+    undefined,
+    displayDelay,
+    sortingType,
+    sortingOrder
+  ).then(() => changePage(current_page, true));
+}
+
+// sorting:
+function updateSorting() {
+  let options = document.getElementById("sorting");
+  sortingType = options.value.split(" ")[0];
+  sortingOrder = options.value.split(" ")[1];
+}
+
+function changeSorting() {
+  updateSorting();
+  changeItemsPerPage();
 }
