@@ -710,7 +710,13 @@
       "body": "This article is a treasure trove of knowledge. ",
       "date": "2017-01-21T00:33:46Z"
     },
-    { "id": 23, "article_id": 5, "user_id": 4, "body": "Quo tempora possimus.", "date": "2017-06-02T23:43:15Z" },
+    {
+      "id": 23,
+      "article_id": 5,
+      "user_id": 4,
+      "body": "Quo tempora possimus.",
+      "date": "2017-06-02T23:43:15Z"
+    },
     {
       "id": 24,
       "article_id": 23,
@@ -718,7 +724,13 @@
       "body": "lol",
       "date": "2020-01-27T10:26:42Z"
     },
-    { "id": 25, "article_id": 2, "user_id": 4, "body": "Maiores libero qui facilis.", "date": "2020-12-31T12:22:29Z" },
+    {
+      "id": 25,
+      "article_id": 2,
+      "user_id": 4,
+      "body": "Maiores libero qui facilis.",
+      "date": "2020-12-31T12:22:29Z"
+    },
     {
       "id": 26,
       "article_id": 5,
@@ -733,7 +745,13 @@
       "body": "The way you explained complex concepts in a clear and concise manner is commendable. I learned so much!",
       "date": "2022-02-11T16:29:18Z"
     },
-    { "id": 28, "article_id": 24, "user_id": 1, "body": "Quae unde voluptas eveniet.", "date": "2022-01-25T12:34:20Z" },
+    {
+      "id": 28,
+      "article_id": 24,
+      "user_id": 1,
+      "body": "Quae unde voluptas eveniet.",
+      "date": "2022-01-25T12:34:20Z"
+    },
     {
       "id": 29,
       "article_id": 11,
@@ -769,7 +787,13 @@
       "body": "Your words served as a gentle reminder to be more mindful and compassionate. Thank you!",
       "date": "2021-09-25T05:53:57Z"
     },
-    { "id": 34, "article_id": 16, "user_id": 6, "body": "Ut qui fuga iusto veniam.", "date": "2017-05-16T21:32:21Z" },
+    {
+      "id": 34,
+      "article_id": 16,
+      "user_id": 6,
+      "body": "Ut qui fuga iusto veniam.",
+      "date": "2017-05-16T21:32:21Z"
+    },
     {
       "id": 35,
       "article_id": 39,
@@ -861,7 +885,13 @@
       "body": "Thank you for sharing your wisdom!",
       "date": "2022-05-29T07:14:40Z"
     },
-    { "id": 48, "article_id": 2, "user_id": 3, "body": "A ratione labore laborum.", "date": "2014-11-28T18:57:40Z" },
+    {
+      "id": 48,
+      "article_id": 2,
+      "user_id": 3,
+      "body": "A ratione labore laborum.",
+      "date": "2014-11-28T18:57:40Z"
+    },
     {
       "id": 49,
       "article_id": 39,
@@ -911,8 +941,20 @@
       "body": "Looking for help for becoming QA!",
       "date": "2021-12-27T16:11:05Z"
     },
-    { "id": 56, "article_id": 32, "user_id": 2, "body": "Accusamus quos quia iure.", "date": "2019-03-05T10:37:20Z" },
-    { "id": 57, "article_id": 19, "user_id": 5, "body": "Quo illum magnam vero.", "date": "2015-06-07T23:09:21Z" },
+    {
+      "id": 56,
+      "article_id": 32,
+      "user_id": 2,
+      "body": "Accusamus quos quia iure.",
+      "date": "2019-03-05T10:37:20Z"
+    },
+    {
+      "id": 57,
+      "article_id": 19,
+      "user_id": 5,
+      "body": "Quo illum magnam vero.",
+      "date": "2015-06-07T23:09:21Z"
+    },
     {
       "id": 58,
       "article_id": 41,
@@ -969,7 +1011,13 @@
       "body": "This made my day.",
       "date": "2014-11-15T19:57:02Z"
     },
-    { "id": 66, "article_id": 21, "user_id": 4, "body": "Expedita quia praesentium.", "date": "2014-10-18T21:32:29Z" },
+    {
+      "id": 66,
+      "article_id": 21,
+      "user_id": 4,
+      "body": "Expedita quia praesentium.",
+      "date": "2014-10-18T21:32:29Z"
+    },
     {
       "id": 67,
       "article_id": 11,
@@ -1082,7 +1130,13 @@
       "body": "This article is a true treasure trove of knowledge. The depth of information you've provided is astounding. I appreciate how you've gone beyond the basics and explored the nuances of the subject matter. Your writing style is engaging, and your explanations are crystal clear. ",
       "date": "2017-08-29T05:46:01Z"
     },
-    { "id": 83, "article_id": 15, "user_id": 2, "body": "Rem ut ut ut cupiditate.", "date": "2016-09-10T18:42:12Z" },
+    {
+      "id": 83,
+      "article_id": 15,
+      "user_id": 2,
+      "body": "Rem ut ut ut cupiditate.",
+      "date": "2016-09-10T18:42:12Z"
+    },
     {
       "id": 84,
       "article_id": 47,
@@ -1138,6 +1192,902 @@
       "user_id": 6,
       "body": "This is a very relevant article. Testing is a key skill for any developer and it should be part of their mindset and culture.",
       "date": "2022-12-28T12:22:50Z"
+    },
+    {
+      "id": 92,
+      "article_id": 45,
+      "user_id": 3,
+      "body": "Testing is crucial in software development. It ensures the quality and reliability of the software.",
+      "date": "2015-08-20T15:10:32Z"
+    },
+    {
+      "id": 93,
+      "article_id": 12,
+      "user_id": 9,
+      "body": "I completely agree. Testing should be an integral part of the development process.",
+      "date": "2013-06-17T09:45:18Z"
+    },
+    {
+      "id": 94,
+      "article_id": 32,
+      "user_id": 2,
+      "body": "Testing helps identify and fix issues early, saving time and resources.",
+      "date": "2014-12-02T14:30:55Z"
+    },
+    {
+      "id": 95,
+      "article_id": 18,
+      "user_id": 7,
+      "body": "Testing is not just a phase, it's a mindset. It leads to better software quality.",
+      "date": "2019-03-11T11:20:40Z"
+    },
+    {
+      "id": 96,
+      "article_id": 51,
+      "user_id": 4,
+      "body": "I believe every developer should be passionate about testing. It's the foundation of great software.",
+      "date": "2016-07-05T16:55:22Z"
+    },
+    {
+      "id": 97,
+      "article_id": 23,
+      "user_id": 6,
+      "body": "Testing is a continuous journey towards excellence in software development.",
+      "date": "2017-09-28T10:40:15Z"
+    },
+    {
+      "id": 98,
+      "article_id": 9,
+      "user_id": 5,
+      "body": "Testing isn't just about finding bugs; it's about building confidence in your code.",
+      "date": "2018-04-14T08:15:30Z"
+    },
+    {
+      "id": 99,
+      "article_id": 28,
+      "user_id": 8,
+      "body": "Testing is like a safety net for your software. Don't skip it!",
+      "date": "2012-11-03T17:25:42Z"
+    },
+    {
+      "id": 100,
+      "article_id": 6,
+      "user_id": 1,
+      "body": "Testing is an art. It's about ensuring the masterpiece called software functions flawlessly.",
+      "date": "2020-10-09T13:05:58Z"
+    },
+    {
+      "id": 101,
+      "article_id": 42,
+      "user_id": 10,
+      "body": "Testing is not a one-time effort; it's a continuous process of refinement and improvement.",
+      "date": "2011-07-19T18:50:05Z"
+    },
+    {
+      "id": 102,
+      "article_id": 18,
+      "user_id": 7,
+      "body": "This article is a great resource for understanding the importance of testing in software development.",
+      "date": "2013-04-12T14:35:20Z"
+    },
+    {
+      "id": 103,
+      "article_id": 8,
+      "user_id": 2,
+      "body": "Testing is the backbone of reliable software. This article explains it perfectly.",
+      "date": "2014-09-30T11:10:42Z"
+    },
+    {
+      "id": 104,
+      "article_id": 36,
+      "user_id": 9,
+      "body": "I've always believed that testing is an art. This article reinforces that belief.",
+      "date": "2017-06-25T08:45:15Z"
+    },
+    {
+      "id": 105,
+      "article_id": 53,
+      "user_id": 3,
+      "body": "Testing is the compass that guides us through the software development journey. Great read!",
+      "date": "2015-10-05T16:20:28Z"
+    },
+    {
+      "id": 106,
+      "article_id": 28,
+      "user_id": 6,
+      "body": "This article reminds us that testing isn't just a task; it's a mindset and a culture.",
+      "date": "2018-03-07T10:55:37Z"
+    },
+    {
+      "id": 107,
+      "article_id": 12,
+      "user_id": 4,
+      "body": "Testing is like a journey through the unknown. This article is a great guide.",
+      "date": "2012-08-14T09:30:50Z"
+    },
+    {
+      "id": 108,
+      "article_id": 46,
+      "user_id": 8,
+      "body": "I couldn't agree more with the article's emphasis on testing as a quality assurance tool.",
+      "date": "2016-11-20T13:15:03Z"
+    },
+    {
+      "id": 109,
+      "article_id": 5,
+      "user_id": 10,
+      "body": "Testing is a never-ending process. This article explains why it's worth the effort.",
+      "date": "2019-04-18T12:40:22Z"
+    },
+    {
+      "id": 110,
+      "article_id": 24,
+      "user_id": 1,
+      "body": "This article showcases the pivotal role that testing plays in software development.",
+      "date": "2014-01-08T15:50:35Z"
+    },
+    {
+      "id": 111,
+      "article_id": 3,
+      "user_id": 5,
+      "body": "Testing is the foundation of software quality, and this article reinforces that notion.",
+      "date": "2020-07-02T08:25:47Z"
+    },
+    {
+      "id": 112,
+      "article_id": 28,
+      "user_id": 3,
+      "body": "Testing is the cornerstone of software quality. This article explains why it's so critical.",
+      "date": "2015-02-18T14:45:10Z"
+    },
+    {
+      "id": 113,
+      "article_id": 6,
+      "user_id": 9,
+      "body": "I found this article to be a great resource for understanding the art of software testing.",
+      "date": "2017-10-29T10:20:32Z"
+    },
+    {
+      "id": 114,
+      "article_id": 15,
+      "user_id": 5,
+      "body": "Testing isn't just about finding bugs; it's about building confidence in software. This article nails it.",
+      "date": "2014-04-23T09:15:15Z"
+    },
+    {
+      "id": 115,
+      "article_id": 42,
+      "user_id": 8,
+      "body": "I agree with the article's perspective on testing. It's an ongoing journey towards excellence.",
+      "date": "2019-08-07T17:05:28Z"
+    },
+    {
+      "id": 116,
+      "article_id": 17,
+      "user_id": 2,
+      "body": "Testing is not just a task; it's a culture. This article captures that essence perfectly.",
+      "date": "2016-06-11T15:40:37Z"
+    },
+    {
+      "id": 117,
+      "article_id": 31,
+      "user_id": 6,
+      "body": "This article emphasizes the significance of testing in building reliable software.",
+      "date": "2013-11-09T11:30:50Z"
+    },
+    {
+      "id": 118,
+      "article_id": 19,
+      "user_id": 4,
+      "body": "Testing is the bridge between code and quality. This article is a great read for developers.",
+      "date": "2018-03-15T08:55:03Z"
+    },
+    {
+      "id": 119,
+      "article_id": 8,
+      "user_id": 10,
+      "body": "I've always believed that testing is an art. This article reinforces that belief.",
+      "date": "2012-09-12T09:10:22Z"
+    },
+    {
+      "id": 120,
+      "article_id": 55,
+      "user_id": 7,
+      "body": "This article perfectly explains why testing is the compass in the world of software development.",
+      "date": "2020-12-18T07:20:35Z"
+    },
+    {
+      "id": 121,
+      "article_id": 14,
+      "user_id": 1,
+      "body": "Testing is like a journey through the unknown. This article is a great guide.",
+      "date": "2014-06-04T14:15:47Z"
+    },
+    {
+      "id": 122,
+      "article_id": 7,
+      "user_id": 3,
+      "body": "Testing is the foundation of software quality, and this article reinforces that notion.",
+      "date": "2017-05-21T17:25:10Z"
+    },
+    {
+      "id": 123,
+      "article_id": 35,
+      "user_id": 9,
+      "body": "I couldn't agree more with the article's emphasis on testing as a quality assurance tool.",
+      "date": "2015-12-09T13:30:22Z"
+    },
+    {
+      "id": 124,
+      "article_id": 22,
+      "user_id": 2,
+      "body": "This article showcases the pivotal role that testing plays in software development.",
+      "date": "2018-09-28T12:05:40Z"
+    },
+    {
+      "id": 125,
+      "article_id": 54,
+      "user_id": 8,
+      "body": "I believe every developer should be passionate about testing. It's the foundation of great software.",
+      "date": "2013-02-03T15:50:15Z"
+    },
+    {
+      "id": 126,
+      "article_id": 45,
+      "user_id": 4,
+      "body": "Testing is a continuous journey towards excellence in software development.",
+      "date": "2016-07-08T18:22:28Z"
+    },
+    {
+      "id": 127,
+      "article_id": 10,
+      "user_id": 7,
+      "body": "Testing is the safety net for software. Don't skip it! This article explains why.",
+      "date": "2019-04-14T14:40:32Z"
+    },
+    {
+      "id": 128,
+      "article_id": 51,
+      "user_id": 5,
+      "body": "Testing isn't just a phase; it's a mindset. This article highlights its significance.",
+      "date": "2011-08-25T11:20:37Z"
+    },
+    {
+      "id": 129,
+      "article_id": 23,
+      "user_id": 10,
+      "body": "Testing is like planting seeds for a bountiful software harvest. This article is a must-read.",
+      "date": "2014-10-01T09:55:50Z"
+    },
+    {
+      "id": 130,
+      "article_id": 33,
+      "user_id": 6,
+      "body": "Testing ensures the reliability of software. This article provides valuable insights.",
+      "date": "2017-03-17T08:10:03Z"
+    },
+    {
+      "id": 131,
+      "article_id": 19,
+      "user_id": 4,
+      "body": "Effective testing and test automation are essential for ensuring software quality. This article provides valuable insights.",
+      "date": "2015-08-12T14:35:20Z"
+    },
+    {
+      "id": 132,
+      "article_id": 8,
+      "user_id": 7,
+      "body": "Test automation empowers teams to achieve faster and more reliable software delivery. This article is a valuable resource.",
+      "date": "2018-03-29T10:20:32Z"
+    },
+    {
+      "id": 133,
+      "article_id": 44,
+      "user_id": 1,
+      "body": "Quality assurance plays a pivotal role in the software development process. This article emphasizes its significance.",
+      "date": "2016-05-23T09:15:15Z"
+    },
+    {
+      "id": 134,
+      "article_id": 12,
+      "user_id": 5,
+      "body": "Testing is not just a task; it's a culture of quality. This article is a testament to that philosophy.",
+      "date": "2012-11-05T17:05:28Z"
+    },
+    {
+      "id": 135,
+      "article_id": 53,
+      "user_id": 8,
+      "body": "Quality assurance is the guardian of software reliability. This article explores its vital role.",
+      "date": "2017-10-02T15:40:37Z"
+    },
+    {
+      "id": 136,
+      "article_id": 26,
+      "user_id": 9,
+      "body": "Effective test automation ensures the rapid and consistent delivery of high-quality software. This article is a must-read.",
+      "date": "2014-08-29T11:30:50Z"
+    },
+    {
+      "id": 137,
+      "article_id": 37,
+      "user_id": 3,
+      "body": "Test automation is a powerful tool for achieving software excellence. This article highlights its potential.",
+      "date": "2019-02-15T08:55:03Z"
+    },
+    {
+      "id": 138,
+      "article_id": 15,
+      "user_id": 6,
+      "body": "Quality assurance ensures that software meets the highest standards. This article is a guide to achieving those standards.",
+      "date": "2013-07-22T09:10:22Z"
+    },
+    {
+      "id": 139,
+      "article_id": 31,
+      "user_id": 10,
+      "body": "Test automation is the key to streamlining the software testing process. This article delves into its benefits.",
+      "date": "2016-12-18T07:20:35Z"
+    },
+    {
+      "id": 140,
+      "article_id": 7,
+      "user_id": 2,
+      "body": "Effective testing is the foundation of software quality. This article is a blueprint for achieving that quality.",
+      "date": "2015-01-04T14:15:47Z"
+    },
+    {
+      "id": 141,
+      "article_id": 40,
+      "user_id": 4,
+      "body": "Quality assurance is the gatekeeper of software excellence. This article opens the gates to that understanding.",
+      "date": "2018-06-21T17:25:10Z"
+    },
+    {
+      "id": 142,
+      "article_id": 23,
+      "user_id": 7,
+      "body": "Testing, test automation, and quality assurance are the cornerstones of software reliability. This article explores their roles.",
+      "date": "2011-09-12T15:50:15Z"
+    },
+    {
+      "id": 143,
+      "article_id": 48,
+      "user_id": 9,
+      "body": "This article dives into the world of testing and quality assurance, emphasizing their critical roles in software development.",
+      "date": "2017-06-02T08:10:03Z"
+    },
+    {
+      "id": 144,
+      "article_id": 20,
+      "user_id": 5,
+      "body": "Test automation streamlines the testing process, and this article provides insights into its benefits.",
+      "date": "2014-02-19T11:10:22Z"
+    },
+    {
+      "id": 145,
+      "article_id": 5,
+      "user_id": 3,
+      "body": "Effective testing and quality assurance ensure software meets the highest standards of excellence. This article is a guide to that journey.",
+      "date": "2019-10-11T10:55:28Z"
+    },
+    {
+      "id": 146,
+      "article_id": 16,
+      "user_id": 6,
+      "body": "Software testing, test automation, and quality assurance are the pillars of software reliability. This article delves into their significance.",
+      "date": "2012-05-07T13:30:50Z"
+    },
+    {
+      "id": 147,
+      "article_id": 41,
+      "user_id": 1,
+      "body": "This article sparks a conversation about the roles of testing, test automation, and quality assurance in software development.",
+      "date": "2015-09-15T16:05:03Z"
+    },
+    {
+      "id": 148,
+      "article_id": 13,
+      "user_id": 8,
+      "body": "Testing, test automation, and quality assurance lead to victory in the world of software. This article is a gold mine of knowledge.",
+      "date": "2018-04-27T09:50:22Z"
+    },
+    {
+      "id": 149,
+      "article_id": 33,
+      "user_id": 10,
+      "body": "Test automation is the rocket that launches software into the stratosphere of quality. This article is your launchpad.",
+      "date": "2013-12-02T15:15:50Z"
+    },
+    {
+      "id": 150,
+      "article_id": 25,
+      "user_id": 2,
+      "body": "Effective testing is the searchlight in the darkness of uncertainty. This article is a beacon of knowledge.",
+      "date": "2016-07-30T14:20:37Z"
+    },
+    {
+      "id": 151,
+      "article_id": 19,
+      "user_id": 4,
+      "body": "🧪 Effective testing and test automation are vital for ensuring software quality. Quality assurance is the backbone of reliability.",
+      "date": "2015-08-12T14:35:20Z"
+    },
+    {
+      "id": 152,
+      "article_id": 8,
+      "user_id": 7,
+      "body": "Test automation streamlines the testing process, leading to faster and more reliable software delivery. Quality assurance ensures top-notch quality.",
+      "date": "2018-03-29T10:20:32Z"
+    },
+    {
+      "id": 153,
+      "article_id": 44,
+      "user_id": 1,
+      "body": "Robust quality assurance practices are essential for building trustworthy software. Test automation accelerates the process.",
+      "date": "2016-05-23T09:15:15Z"
+    },
+    {
+      "id": 154,
+      "article_id": 12,
+      "user_id": 5,
+      "body": "Software testing is not just a task; it's a culture of excellence. Test automation is the future of efficiency.",
+      "date": "2012-11-05T17:05:28Z"
+    },
+    {
+      "id": 155,
+      "article_id": 53,
+      "user_id": 8,
+      "body": "🚀 Quality assurance is the guardian of software reliability. Effective testing and test automation are the pillars of success.",
+      "date": "2017-10-02T15:40:37Z"
+    },
+    {
+      "id": 156,
+      "article_id": 26,
+      "user_id": 9,
+      "body": "Effective test automation empowers teams to deliver high-quality software consistently. Quality assurance is the compass for reliability.",
+      "date": "2014-08-29T11:30:50Z"
+    },
+    {
+      "id": 157,
+      "article_id": 37,
+      "user_id": 3,
+      "body": "Test automation simplifies testing processes and enhances software quality. Quality assurance sets the bar high.",
+      "date": "2019-02-15T08:55:03Z"
+    },
+    {
+      "id": 158,
+      "article_id": 15,
+      "user_id": 6,
+      "body": "Robust quality assurance practices ensure software meets the highest standards. Test automation is the accelerator for efficiency.",
+      "date": "2013-07-22T09:10:22Z"
+    },
+    {
+      "id": 159,
+      "article_id": 31,
+      "user_id": 10,
+      "body": "Test automation is the key to rapid and reliable software testing. Quality assurance is the gatekeeper of excellence.",
+      "date": "2016-12-18T07:20:35Z"
+    },
+    {
+      "id": 160,
+      "article_id": 7,
+      "user_id": 2,
+      "body": "Effective testing is the foundation of software quality. Quality assurance ensures software reaches its peak.",
+      "date": "2015-01-04T14:15:47Z"
+    },
+    {
+      "id": 161,
+      "article_id": 40,
+      "user_id": 4,
+      "body": "Quality assurance is the guardian of software excellence. Test automation is the key to unlocking its potential.",
+      "date": "2018-06-21T17:25:10Z"
+    },
+    {
+      "id": 162,
+      "article_id": 23,
+      "user_id": 7,
+      "body": "Testing, test automation, and quality assurance are the cornerstones of software reliability. This article dives deep into their roles.",
+      "date": "2011-09-12T15:50:15Z"
+    },
+    {
+      "id": 163,
+      "article_id": 48,
+      "user_id": 9,
+      "body": "This article provides a comprehensive view of the world of testing, test automation, and quality assurance, underlining their indispensable roles in software development.",
+      "date": "2017-06-02T08:10:03Z"
+    },
+    {
+      "id": 164,
+      "article_id": 20,
+      "user_id": 5,
+      "body": "Test automation simplifies testing processes, making them efficient and effective. Quality assurance is the gatekeeper of excellence.",
+      "date": "2014-02-19T11:10:22Z"
+    },
+    {
+      "id": 165,
+      "article_id": 5,
+      "user_id": 3,
+      "body": "Effective testing and quality assurance ensure software meets the highest standards of excellence. This article is your guide to that journey.",
+      "date": "2019-10-11T10:55:28Z"
+    },
+    {
+      "id": 166,
+      "article_id": 16,
+      "user_id": 6,
+      "body": "Software testing, test automation, and quality assurance are the pillars of software reliability. This article is a testament to their importance.",
+      "date": "2012-05-07T13:30:50Z"
+    },
+    {
+      "id": 167,
+      "article_id": 41,
+      "user_id": 1,
+      "body": "This article sparks a conversation about the roles of testing, test automation, and quality assurance in software development.",
+      "date": "2015-09-15T16:05:03Z"
+    },
+    {
+      "id": 168,
+      "article_id": 13,
+      "user_id": 8,
+      "body": "Testing, test automation, and quality assurance lead to victory in the world of software. This article is a gold mine of knowledge.",
+      "date": "2018-04-27T09:50:22Z"
+    },
+    {
+      "id": 169,
+      "article_id": 33,
+      "user_id": 10,
+      "body": "Test automation is the rocket that launches software into the stratosphere of quality. This article is your launchpad.",
+      "date": "2013-12-02T15:15:50Z"
+    },
+    {
+      "id": 170,
+      "article_id": 25,
+      "user_id": 2,
+      "body": "Effective testing is the searchlight in the darkness of uncertainty. This article is a beacon of knowledge.",
+      "date": "2016-07-30T14:20:37Z"
+    },
+    {
+      "id": 171,
+      "article_id": 19,
+      "user_id": 4,
+      "body": "🧪 Effective testing and test automation are vital for ensuring software quality. Quality assurance is the backbone of reliability.",
+      "date": "2010-08-12T14:35:20Z"
+    },
+    {
+      "id": 172,
+      "article_id": 8,
+      "user_id": 7,
+      "body": "Test automation streamlines the testing process, leading to faster and more reliable software delivery. Quality assurance ensures top-notch quality.",
+      "date": "2011-03-29T10:20:32Z"
+    },
+    {
+      "id": 173,
+      "article_id": 44,
+      "user_id": 1,
+      "body": "Robust quality assurance practices are essential for building trustworthy software. Test automation accelerates the process.",
+      "date": "2012-05-23T09:15:15Z"
+    },
+    {
+      "id": 174,
+      "article_id": 12,
+      "user_id": 5,
+      "body": "Software testing is not just a task; it's a culture of excellence. Test automation is the future of efficiency.",
+      "date": "2011-11-05T17:05:28Z"
+    },
+    {
+      "id": 175,
+      "article_id": 53,
+      "user_id": 8,
+      "body": "🚀 Quality assurance is the guardian of software reliability. Effective testing and test automation are the pillars of success.",
+      "date": "2010-10-02T15:40:37Z"
+    },
+    {
+      "id": 176,
+      "article_id": 26,
+      "user_id": 9,
+      "body": "Effective test automation empowers teams to deliver high-quality software consistently. Quality assurance is the compass for reliability.",
+      "date": "2012-08-29T11:30:50Z"
+    },
+    {
+      "id": 177,
+      "article_id": 37,
+      "user_id": 3,
+      "body": "Test automation simplifies testing processes and enhances software quality. Quality assurance sets the bar high.",
+      "date": "2011-02-15T08:55:03Z"
+    },
+    {
+      "id": 178,
+      "article_id": 15,
+      "user_id": 6,
+      "body": "Robust quality assurance practices ensure software meets the highest standards. Test automation is the accelerator for efficiency.",
+      "date": "2010-07-22T09:10:22Z"
+    },
+    {
+      "id": 179,
+      "article_id": 31,
+      "user_id": 10,
+      "body": "Test automation is the key to rapid and reliable software testing. Quality assurance is the gatekeeper of excellence.",
+      "date": "2012-12-18T07:20:35Z"
+    },
+    {
+      "id": 180,
+      "article_id": 7,
+      "user_id": 2,
+      "body": "Effective testing is the foundation of software quality. Quality assurance ensures software reaches its peak.",
+      "date": "2011-01-04T14:15:47Z"
+    },
+    {
+      "id": 181,
+      "article_id": 40,
+      "user_id": 4,
+      "body": "Quality assurance is the guardian of software excellence. Test automation is the key to unlocking its potential.",
+      "date": "2010-06-21T17:25:10Z"
+    },
+    {
+      "id": 182,
+      "article_id": 23,
+      "user_id": 7,
+      "body": "Testing, test automation, and quality assurance are the cornerstones of software reliability. This article dives deep into their roles.",
+      "date": "2011-09-12T15:50:15Z"
+    },
+    {
+      "id": 183,
+      "article_id": 48,
+      "user_id": 9,
+      "body": "This article provides a comprehensive view of the world of testing, test automation, and quality assurance, underlining their indispensable roles in software development.",
+      "date": "2012-06-02T08:10:03Z"
+    },
+    {
+      "id": 184,
+      "article_id": 20,
+      "user_id": 5,
+      "body": "Test automation simplifies testing processes, making them efficient and effective. Quality assurance is the gatekeeper of excellence.",
+      "date": "2010-02-19T11:10:22Z"
+    },
+    {
+      "id": 185,
+      "article_id": 5,
+      "user_id": 3,
+      "body": "Effective testing and quality assurance ensure software meets the highest standards of excellence. This article is your guide to that journey.",
+      "date": "2011-10-11T10:55:28Z"
+    },
+    {
+      "id": 186,
+      "article_id": 16,
+      "user_id": 6,
+      "body": "Software testing, test automation, and quality assurance are the pillars of software reliability. This article is a testament to their importance.",
+      "date": "2012-05-07T13:30:50Z"
+    },
+    {
+      "id": 187,
+      "article_id": 41,
+      "user_id": 1,
+      "body": "This article sparks a conversation about the roles of testing, test automation, and quality assurance in software development.",
+      "date": "2010-09-15T16:05:03Z"
+    },
+    {
+      "id": 188,
+      "article_id": 13,
+      "user_id": 8,
+      "body": "Testing, test automation, and quality assurance lead to victory in the world of software. This article is a gold mine of knowledge.",
+      "date": "2012-04-27T09:50:22Z"
+    },
+    {
+      "id": 189,
+      "article_id": 33,
+      "user_id": 10,
+      "body": "Test automation is the rocket that launches software into the stratosphere of quality. This article is your launchpad.",
+      "date": "2011-12-02T15:15:50Z"
+    },
+    {
+      "id": 190,
+      "article_id": 25,
+      "user_id": 2,
+      "body": "Effective testing is the searchlight in the darkness of uncertainty. This article is a beacon of knowledge.",
+      "date": "2012-07-30T14:20:37Z"
+    },
+    {
+      "id": 191,
+      "article_id": 19,
+      "user_id": 4,
+      "body": "Testing is like peeling an onion. You keep uncovering new layers of potential issues, but it's all worth it for a reliable product. 🧅",
+      "date": "2010-08-12T14:35:20Z"
+    },
+    {
+      "id": 192,
+      "article_id": 8,
+      "user_id": 2,
+      "body": "When it comes to software quality, test automation is the orchestra conductor. Every piece falls into place to create a harmonious product. 🎶",
+      "date": "2011-03-29T10:20:32Z"
+    },
+    {
+      "id": 193,
+      "article_id": 44,
+      "user_id": 5,
+      "body": "Quality assurance is the Sherlock Holmes of software. It uncovers the mysteries hidden within the code. 🔍",
+      "date": "2012-05-23T09:15:15Z"
+    },
+    {
+      "id": 194,
+      "article_id": 12,
+      "user_id": 1,
+      "body": "Testing is the journey to discover the unknowns, and test automation is your trusty compass leading the way. 🗺️",
+      "date": "2011-11-05T17:05:28Z"
+    },
+    {
+      "id": 195,
+      "article_id": 53,
+      "user_id": 3,
+      "body": "Quality assurance is the guardian angel of software. It watches over every line of code to ensure it's free from flaws. 👼",
+      "date": "2010-10-02T15:40:37Z"
+    },
+    {
+      "id": 196,
+      "article_id": 26,
+      "user_id": 4,
+      "body": "Effective test automation is like having a tireless team of testers working around the clock, ensuring software quality day and night. 🌞🌛",
+      "date": "2012-08-29T11:30:50Z"
+    },
+    {
+      "id": 197,
+      "article_id": 37,
+      "user_id": 2,
+      "body": "Test automation is the conductor's baton, orchestrating a symphony of test cases to ensure the software plays beautifully. 🎵",
+      "date": "2011-02-15T08:55:03Z"
+    },
+    {
+      "id": 198,
+      "article_id": 15,
+      "user_id": 5,
+      "body": "Quality assurance is like the vigilant lighthouse, guiding the software safely through the rocky shores of defects. 🚢",
+      "date": "2010-07-22T09:10:22Z"
+    },
+    {
+      "id": 199,
+      "article_id": 31,
+      "user_id": 1,
+      "body": "Testing is the treasure hunt, and test automation is the map leading you to the goldmine of bug-free software. 🏴‍☠️",
+      "date": "2012-12-18T07:20:35Z"
+    },
+    {
+      "id": 200,
+      "article_id": 7,
+      "user_id": 3,
+      "body": "Testing is the sculptor, chiseling away imperfections to reveal the masterpiece underneath. 🎨",
+      "date": "2011-01-04T14:15:47Z"
+    },
+    {
+      "id": 201,
+      "article_id": 40,
+      "user_id": 4,
+      "body": "Quality assurance is the safety net, ensuring that no trapeze artist (software feature) falls during the performance. 🎪",
+      "date": "2010-06-21T17:25:10Z"
+    },
+    {
+      "id": 202,
+      "article_id": 23,
+      "user_id": 2,
+      "body": "Testing is the detective story, and test automation is your magnifying glass, helping you uncover even the tiniest clues. 🔍🔦",
+      "date": "2011-09-12T15:50:15Z"
+    },
+    {
+      "id": 203,
+      "article_id": 48,
+      "user_id": 5,
+      "body": "Software quality is the masterpiece, and testing, test automation, and quality assurance are the artists who craft it. 🎨🖌️",
+      "date": "2012-06-02T08:10:03Z"
+    },
+    {
+      "id": 204,
+      "article_id": 20,
+      "user_id": 1,
+      "body": "Test automation is like the magician's wand, making testing challenges disappear into thin air. 🪄✨",
+      "date": "2010-02-19T11:10:22Z"
+    },
+    {
+      "id": 205,
+      "article_id": 5,
+      "user_id": 3,
+      "body": "Effective testing and quality assurance are the superheroes who protect the software world from villains like bugs and glitches. 🦸‍♂️🦸‍♀️",
+      "date": "2011-10-11T10:55:28Z"
+    },
+    {
+      "id": 206,
+      "article_id": 16,
+      "user_id": 2,
+      "body": "Software testing, test automation, and quality assurance are like the three musketeers, defending software's honor with their trusty swords. ⚔️",
+      "date": "2012-05-07T13:30:50Z"
+    },
+    {
+      "id": 207,
+      "article_id": 41,
+      "user_id": 4,
+      "body": "Testing, test automation, and quality assurance are the architects of software excellence, building a sturdy foundation. 🏗️",
+      "date": "2010-09-15T16:05:03Z"
+    },
+    {
+      "id": 208,
+      "article_id": 13,
+      "user_id": 1,
+      "body": "Testing, test automation, and quality assurance are the dream team, turning software dreams into reality. 💭✨",
+      "date": "2012-04-27T09:50:22Z"
+    },
+    {
+      "id": 209,
+      "article_id": 33,
+      "user_id": 5,
+      "body": "Test automation is the jet engine propelling software into the skies of quality, with a sonic boom of excellence. 🛫💥",
+      "date": "2011-12-02T15:15:50Z"
+    },
+    {
+      "id": 210,
+      "article_id": 47,
+      "user_id": 4,
+      "body": "I wholeheartedly agree that testing is an art. It's about attention to detail and creating a masterpiece of bug-free software. 🖌️🧡",
+      "date": "2009-08-12T14:35:20Z"
+    },
+    {
+      "id": 211,
+      "article_id": 51,
+      "user_id": 2,
+      "body": "I couldn't agree more about test automation being a magician's wand. It magically streamlines our testing process and brings efficiency to the forefront. 🪄✨",
+      "date": "2010-03-29T10:20:32Z"
+    },
+    {
+      "id": 212,
+      "article_id": 48,
+      "user_id": 5,
+      "body": "I have a different view on quality assurance. It's not just about user satisfaction; it's about building trust in the software we create. 🤝🔍",
+      "date": "2011-05-23T09:15:15Z"
+    },
+    {
+      "id": 213,
+      "article_id": 55,
+      "user_id": 1,
+      "body": "Testing is indeed a journey of discovery, but it's not always a happy ending. Sometimes, it's about finding and fixing flaws that lurk in the code. 🗺️💔",
+      "date": "2012-01-05T17:05:28Z"
+    },
+    {
+      "id": 214,
+      "article_id": 45,
+      "user_id": 3,
+      "body": "I'm with you on quality assurance being the software architect. It ensures our software stands tall, but we must also acknowledge the testers who build its strength. 🏗️👷",
+      "date": "2009-10-02T15:40:37Z"
+    },
+    {
+      "id": 215,
+      "article_id": 56,
+      "user_id": 4,
+      "body": "Agreed, test automation is like a trusted partner. It tirelessly supports us in achieving software quality, and that's something to cherish. 🙌🤖",
+      "date": "2010-08-29T11:30:50Z"
+    },
+    {
+      "id": 216,
+      "article_id": 54,
+      "user_id": 2,
+      "body": "I see quality assurance as the custodian of the user experience, ensuring each interaction with software is seamless. It's the ultimate goal. 🛡️🌟",
+      "date": "2011-02-15T08:55:03Z"
+    },
+    {
+      "id": 217,
+      "article_id": 46,
+      "user_id": 5,
+      "body": "I agree that testing is a journey, and it's not always sunshine and rainbows. But each challenge we face makes us better testers. 🌦️💪",
+      "date": "2009-11-15T09:30:15Z"
+    },
+    {
+      "id": 218,
+      "article_id": 57,
+      "user_id": 1,
+      "body": "I couldn't agree more about the magic of test automation. It turns complex tasks into simple ones and leaves us in awe of its capabilities. 🪄👏",
+      "date": "2010-06-22T15:45:22Z"
+    },
+    {
+      "id": 219,
+      "article_id": 49,
+      "user_id": 3,
+      "body": "Quality assurance ensures software reliability, and that's the foundation of trust. It's the bedrock on which we build excellence. 🏰🤩",
+      "date": "2011-12-12T12:25:30Z"
     }
   ],
   "likes": [
