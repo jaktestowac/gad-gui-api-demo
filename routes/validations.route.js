@@ -1,16 +1,13 @@
 const {
   formatErrorResponse,
-  parseUserStats,
-  parseArticleStats,
-  parsePublishStats,
   getIdFromUrl,
   formatInvalidTokenErrorResponse,
   getRandomInt,
   sleep,
 } = require("../helpers/helpers");
 const { logDebug, logError, logTrace } = require("../helpers/logger-api");
-const { getConfigValue } = require("../config/config-manager");
-const { ConfigKeys } = require("../config/enums");
+const { getConfigValue, isBugEnabled } = require("../config/config-manager");
+const { ConfigKeys, BugConfigKeys } = require("../config/enums");
 
 const { validateEmail, verifyAccessToken } = require("../helpers/validation.helpers");
 const { searchForUserWithToken } = require("../helpers/db-operation.helpers");
@@ -65,6 +62,16 @@ const validations = (req, res, next) => {
       logError("Error: check if admin:", {
         error,
       });
+    }
+
+    if (isBugEnabled(BugConfigKeys.BUG_SORTING_001)) {
+      req.query._limit = 11;
+    }
+    if (isBugEnabled(BugConfigKeys.BUG_SORTING_002)) {
+      req.query._sort = "";
+    }
+    if (isBugEnabled(BugConfigKeys.BUG_SORTING_003)) {
+      req.query._order = "";
     }
 
     if (req.url.includes("/api/config")) {
