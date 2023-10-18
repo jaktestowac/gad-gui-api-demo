@@ -316,6 +316,8 @@ function getBearerToken() {
       token = cookie.split("=")[1];
     }
   }
+
+  if (token === undefined) return token;
   return `Bearer ${token}`;
 }
 
