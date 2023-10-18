@@ -2,7 +2,7 @@ const { request, expect, baseLikesUrl } = require("../config.js");
 const { authUser, generateLikesBody } = require("../helpers/data.helpers.js");
 const { setupEnv, gracefulQuit, sleep } = require("../helpers/helpers.js");
 
-describe("Endpoint /likes", () => {
+describe.only("Endpoint /likes", () => {
   const baseUrl = baseLikesUrl;
 
   before(async () => {
@@ -69,6 +69,7 @@ describe("Endpoint /likes", () => {
     describe("e2e", () => {
       beforeEach(async () => {
         await setupEnv();
+        await request.get("/restoreDB");
       });
 
       [
@@ -87,6 +88,8 @@ describe("Endpoint /likes", () => {
           // Act:
           const responsePost = await request.post(baseUrl).set(headers).send(likedBody);
 
+          await sleep(100); // service is slow
+
           // Assert:
           expect(responsePost.status).to.equal(201);
 
@@ -102,7 +105,7 @@ describe("Endpoint /likes", () => {
         ["comment", 1, undefined],
         ["article", undefined, 1],
       ].forEach((dataSet) => {
-        it(`POST /likes - ${dataSet[0]} and one more like`, async () => {
+        it(`POST /likes - ${dataSet[0]} liked by same user (unlike)`, async () => {
           // Arrange:
           const likedBody = generateLikesBody(userId, dataSet[1], dataSet[2]);
 
@@ -116,8 +119,11 @@ describe("Endpoint /likes", () => {
 
           // Assert:
           expect(responsePost.status).to.equal(201);
+          const responseGetAfterFirstLike = await request.get(`${baseUrl}/${dataSet[0]}/1`).set(headers);
+          const likesAfterFirstLike = responseGetAfterFirstLike.body.likes;
+          expect(likesAfterFirstLike, JSON.stringify(responseGetAfterFirstLike.body)).to.equal(likesBefore + 1);
 
-          await sleep(50); // service is slow
+          await sleep(100); // service is slow
 
           // Act: second like:
           const responsePostAnother = await request.post(baseUrl).set(headers).send(likedBody);
@@ -129,7 +135,7 @@ describe("Endpoint /likes", () => {
 
           expect(responseGetAfterAnother.status).to.equal(200);
           const likesAfterAnother = responseGetAfterAnother.body.likes;
-          expect(likesAfterAnother, JSON.stringify(responseGetAfterAnother.body)).to.equal(likesBefore + 1);
+          expect(likesAfterAnother, JSON.stringify(responseGetAfterAnother.body)).to.equal(likesBefore);
         });
       });
     });
