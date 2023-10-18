@@ -37,7 +37,7 @@ function handleLikes(req, res, isAdmin) {
       return;
     }
 
-    const user_id = req.headers["userid"];
+    const user_id = req.body["user_id"];
     const article_id = req.body["article_id"];
     const comment_id = req.body["comment_id"];
 
