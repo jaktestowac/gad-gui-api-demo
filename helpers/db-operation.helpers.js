@@ -52,7 +52,7 @@ function countLikesForArticle(articleId) {
   return foundLikes.length;
 }
 
-function checkIfAlreadyLiked(articleId, commentId, userId) {
+function findAllLikes(articleId, commentId, userId) {
   const foundLikes = likesDb().find((like) => {
     return (
       ((like["article_id"]?.toString() === articleId?.toString() && articleId !== undefined) ||
@@ -62,6 +62,11 @@ function checkIfAlreadyLiked(articleId, commentId, userId) {
       like["user_id"]?.toString() === userId?.toString()
     );
   });
+  return foundLikes;
+}
+
+function checkIfAlreadyLiked(articleId, commentId, userId) {
+  const foundLikes = findAllLikes(articleId, commentId, userId);
   return foundLikes !== undefined;
 }
 
@@ -125,4 +130,5 @@ module.exports = {
   countLikesForArticle,
   countLikesForComment,
   checkIfAlreadyLiked,
+  findAllLikes,
 };

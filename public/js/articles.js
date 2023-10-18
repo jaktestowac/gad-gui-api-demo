@@ -55,20 +55,30 @@ async function likeArticle(articleId) {
       userid: getId(),
     },
     body: JSON.stringify(data),
-  }).then((body) => {
-    issueGetLikes(articleId).then((likesNumber) => {
-      const element = document.querySelector(`#likes-container-${articleId}`);
-      element.innerHTML = formatLike(true, likesNumber, articleId);
+  })
+    .then((r) => r.json())
+    .then((body) => {
+      issueGetLikes(articleId).then((likes) => {
+        const element = document.querySelector(`#likes-container-${articleId}`);
+        element.innerHTML = formatLike(body.id !== undefined, likes, articleId);
+      });
     });
-  });
 }
 
 function formatLike(alreadyLiked, likesNumber, articleId) {
   let out = "";
   if (alreadyLiked) {
-    out = `<div style="display: flex;justify-self: end"><div id="likes-button"  style="cursor: pointer;">💗</div> <div id="likes-count" >${likesNumber}</div></div>`;
+    if (getBearerToken() === undefined) {
+      out = `<div style="display: flex;justify-self: end"><div id="likes-button" >💗</div> <div id="likes-count" >${likesNumber}</div></div>`;
+    } else {
+      out = `<div style="display: flex;justify-self: end"><div id="likes-button" onclick="likeArticle(${articleId})" style="cursor: pointer;" >💗</div> <div id="likes-count" >${likesNumber}</div></div>`;
+    }
   } else {
-    out = `<div style="display: flex;justify-self: end"><div id="likes-button" onclick="likeArticle(${articleId})" style="cursor: pointer;">🤍</div> <div id="likes-count" >${likesNumber}</div></div>`;
+    if (getBearerToken() === undefined) {
+      out = `<div style="display: flex;justify-self: end"><div id="likes-button" >🤍</div> <div id="likes-count" >${likesNumber}</div></div>`;
+    } else {
+      out = `<div style="display: flex;justify-self: end"><div id="likes-button" onclick="likeArticle(${articleId})" style="cursor: pointer;">🤍</div> <div id="likes-count" >${likesNumber}</div></div>`;
+    }
   }
   return out;
 }

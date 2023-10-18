@@ -4,6 +4,7 @@ const {
   countLikesForArticle,
   countLikesForComment,
   checkIfAlreadyLiked,
+  findAllLikes,
 } = require("../helpers/db-operation.helpers");
 const { formatInvalidTokenErrorResponse, formatOnlyOneFieldPossibleErrorResponse } = require("../helpers/helpers");
 const { logTrace } = require("../helpers/logger-api");
@@ -40,12 +41,17 @@ function handleLikes(req, res, isAdmin) {
     const article_id = req.body["article_id"];
     const comment_id = req.body["comment_id"];
 
-    const alreadyLiked = checkIfAlreadyLiked(article_id, comment_id, user_id);
-    logTrace("handleLikes: alreadyLiked?", { alreadyLiked, user_id, body: req.body });
+    const allLikes = findAllLikes(article_id, comment_id, user_id);
+    logTrace("handleLikes: alreadyLiked?", { allLikes, user_id, body: req.body });
 
-    if (alreadyLiked === true) {
-      // TODO: unlike
-      res.status(HTTP_OK).json({});
+    if (allLikes !== undefined) {
+      req.method = "DELETE";
+      req.url = `/api/likes/${allLikes.id}`;
+      logTrace("handleLikes: unlike - POST -> DELETE:", {
+        method: req.method,
+        url: req.url,
+        body: req.body,
+      });
       return;
     } else {
       req.body["user_id"] = user_id;
@@ -53,7 +59,6 @@ function handleLikes(req, res, isAdmin) {
 
       logTrace("handleLikes: New like for:", { body: req.body });
     }
-
     return;
   }
 
