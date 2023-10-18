@@ -2,7 +2,7 @@ const { request, expect, baseLikesUrl } = require("../config.js");
 const { authUser, generateLikesBody } = require("../helpers/data.helpers.js");
 const { setupEnv, gracefulQuit, sleep } = require("../helpers/helpers.js");
 
-describe.only("Endpoint /likes", () => {
+describe("Endpoint /likes", () => {
   const baseUrl = baseLikesUrl;
 
   before(async () => {
