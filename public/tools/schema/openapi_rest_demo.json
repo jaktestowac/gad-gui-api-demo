@@ -813,7 +813,7 @@
             "content": {}
           },
           "422": {
-            "description": "Invalid comment supplied",
+            "description": "Invalid data supplied",
             "content": {}
           }
         }
