@@ -2,6 +2,9 @@ const articlesEndpoint = "../../api/articles";
 const usersEndpoint = "../../api/users";
 const commentsEndpoint = "../../api/comments";
 const randomArticleEndpoint = "../../api/random/article";
+const articleLikesEndpoint = "../../api/likes/article";
+const myLikesEndpoint = "../../api/likes/article/mylikes";
+const likesEndpoint = "../../api/likes";
 let user_name = "Unknown";
 let article_id = undefined;
 let articleData;
@@ -16,12 +19,58 @@ async function issueGetRandomRequest() {
   return articleData;
 }
 
+async function issueGetMyLikesForArticle(articleId) {
+  const likesData = await fetch(`${myLikesEndpoint}?ids=${articleId}`, {
+    headers: { ...formatHeaders(), userid: getId() },
+  }).then((r) => r.json());
+  return likesData.likes;
+}
+
+async function issueGetLikes(article_id) {
+  const likesData = await fetch(`${articleLikesEndpoint}/${article_id}`, { headers: formatHeaders() }).then((r) =>
+    r.json()
+  );
+  return likesData.likes;
+}
+
+async function likeArticle(articleId) {
+  const data = {
+    article_id: articleId,
+    user_id: getId(),
+  };
+  fetch(likesEndpoint, {
+    method: "post",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+      userid: getId(),
+    },
+    body: JSON.stringify(data),
+  }).then((body) => {
+    issueGetLikes(articleId).then((likes) => {
+      const element = document.querySelector(`#likes-container`);
+      element.innerHTML = formatLike(true, likes, articleId);
+    });
+  });
+}
+
+function formatLike(alreadyLiked, likesNumber, articleId) {
+  let out = "";
+  if (alreadyLiked) {
+    out = `<div style="display: flex;justify-self: end"><div id="likes-button"  style="cursor: pointer;">💗</div> <div id="likes-count" >${likesNumber}</div></div>`;
+  } else {
+    out = `<div style="display: flex;justify-self: end"><div id="likes-button" onclick="likeArticle(${articleId})" style="cursor: pointer;">🤍</div> <div id="likes-count" >${likesNumber}</div></div>`;
+  }
+  return out;
+}
+
 async function issueGetRequest(article_id) {
   // issueGetRequestArticles(article_id).then((x) => {
   //   issueGetRequestComments(article_id);
   // });
 
-  issueGetRequestArticles(article_id).catch((error) => {
+  let wasDisplayed = issueGetRequestArticles(article_id).catch((error) => {
     console.log(error);
     displayArticlesData(undefined, "Error loading comments. Please contact administrator");
   });
@@ -30,6 +79,8 @@ async function issueGetRequest(article_id) {
     console.log(error);
     displayCommentsData(undefined, "Error loading comments. Please contact administrator");
   });
+
+  return wasDisplayed;
 }
 
 async function issueGetRequestArticles(article_id) {
@@ -158,6 +209,7 @@ const getItemHTML = (item) => {
 
         <button onclick="generatePDF()" id="btnDownloadPdf" class="button-primary" data-testid="download-pdf">PDF</button></div>
         <label></label><span data-testid="article-body">${body}</span><br>
+        <div id="likes-container" style="visibility: visible;display: grid;"></div>
     </div>`;
 };
 //        <hr><br>
@@ -656,7 +708,14 @@ if (`${is_random}` === "1" || `${is_random}`.toLowerCase() === "true" || `${arti
     });
   });
 } else if (article_id !== undefined) {
-  issueGetRequest(article_id);
+  issueGetRequest(article_id).then((wasDisplayed) => {
+    issueGetLikes(article_id).then((likes) => {
+      issueGetMyLikesForArticle(article_id).then((myLikes) => {
+        const container = document.querySelector("#likes-container");
+        container.innerHTML = formatLike(myLikes[article_id], likes, article_id);
+      });
+    });
+  });
 } else {
   const container = document.querySelector("#container");
   container.innerHTML =

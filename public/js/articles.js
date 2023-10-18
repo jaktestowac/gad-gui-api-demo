@@ -1,5 +1,8 @@
 const articlesEndpoint = "../../api/articles";
 const usersEndpoint = "../../api/users";
+const articleLikesEndpoint = "../../api/likes/article";
+const likesEndpoint = "../../api/likes";
+const myLikesEndpoint = "../../api/likes/article/mylikes";
 const pictureListEndpoint = "../../api/images/posts";
 let picList = [];
 let users = [];
@@ -14,6 +17,61 @@ const fetchData = {
   },
   credentials: "include",
 };
+
+async function issueGetMyLikesForArticles(articleIds) {
+  const formattedIds = articleIds.join(",");
+  const likesData = await fetch(`${myLikesEndpoint}?ids=${formattedIds}`, {
+    headers: { ...formatHeaders(), userid: getId() },
+  }).then((r) => r.json());
+  return likesData.likes;
+}
+
+async function issueGetLikesForArticles(articleIds) {
+  const formattedIds = articleIds.join(",");
+  const likesData = await fetch(`${articleLikesEndpoint}?ids=${formattedIds}`, { headers: formatHeaders() }).then((r) =>
+    r.json()
+  );
+  return likesData.likes;
+}
+
+async function issueGetLikes(article_id) {
+  const likesData = await fetch(`${articleLikesEndpoint}/${article_id}`, { headers: formatHeaders() }).then((r) =>
+    r.json()
+  );
+  return likesData.likes;
+}
+
+async function likeArticle(articleId) {
+  const data = {
+    article_id: articleId,
+    user_id: getId(),
+  };
+  fetch(likesEndpoint, {
+    method: "post",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+      userid: getId(),
+    },
+    body: JSON.stringify(data),
+  }).then((body) => {
+    issueGetLikes(articleId).then((likesNumber) => {
+      const element = document.querySelector(`#likes-container-${articleId}`);
+      element.innerHTML = formatLike(true, likesNumber, articleId);
+    });
+  });
+}
+
+function formatLike(alreadyLiked, likesNumber, articleId) {
+  let out = "";
+  if (alreadyLiked) {
+    out = `<div style="display: flex;justify-self: end"><div id="likes-button"  style="cursor: pointer;">💗</div> <div id="likes-count" >${likesNumber}</div></div>`;
+  } else {
+    out = `<div style="display: flex;justify-self: end"><div id="likes-button" onclick="likeArticle(${articleId})" style="cursor: pointer;">🤍</div> <div id="likes-count" >${likesNumber}</div></div>`;
+  }
+  return out;
+}
 
 async function issueGetRequest(
   limit = 6,
@@ -115,6 +173,8 @@ async function issueGetRequest(
       document.title = `🦎 GAD | Articles by ${foundUser.firstname} ${foundUser.lastname}`;
     }
   }
+
+  return true;
 }
 
 const attachEventHandlers = (user_id) => {
@@ -281,7 +341,14 @@ const getItemHTML = (item) => {
     .replace("T", " ")
     .replace("Z", "")}</span><br>
         <label></label><span data-testid="article-${item.id}-body">${item.body?.substring(0, 200)} (...)</span><br>
-        <span><a href="article.html?id=${item.id}" id="seeArticle${item.id}">See More...</a></span><br>
+        <div style="display: flex; justify-content: space-between;">
+        <span style="display: flex; justify-content: flex-start;">
+            <a href="article.html?id=${item.id}" id="seeArticle${item.id}">See More...</a>
+        </span>
+        <div class="likes-container" id="likes-container-${item.id}" style="visibility: visible;"></div>
+    </div>
+    
+    
     </div>`;
 };
 
@@ -330,9 +397,29 @@ let search_user_id = getParams()["user_id"];
 getPictureList();
 updatePerPage();
 updateSorting();
-issueGetRequest(records_per_page, current_page, searchPhrase, undefined, sortingType, sortingOrder).then(() =>
-  changePage(current_page, true)
-);
+issueGetRequest(records_per_page, current_page, searchPhrase, undefined, sortingType, sortingOrder).then(() => {
+  changePage(current_page, true);
+  updateLikeElements();
+});
+
+async function updateLikeElements() {
+  const elements = document.querySelectorAll(".likes-container");
+  const ids = [];
+  elements.forEach((element) => {
+    ids.push(element.id.split("-").slice(-1)[0]);
+  });
+  issueGetLikesForArticles(ids).then((likes) => {
+    issueGetMyLikesForArticles(ids).then((myLikes) => {
+      elements.forEach((element) => {
+        const id = element.id.split("-").slice(-1)[0];
+        const likesNumber = likes[id];
+        const alreadyLiked = myLikes[id];
+
+        element.innerHTML = formatLike(alreadyLiked, likesNumber, id);
+      });
+    });
+  });
+}
 
 // pagination:
 
@@ -400,7 +487,9 @@ function changePage(page, onlyDisplay = false) {
     btnNext.disabled = false;
     btnNext.style.color = "#0275d8";
   }
-  issueGetRequest(records_per_page, page, searchPhrase, onlyDisplay, sortingType, sortingOrder);
+  issueGetRequest(records_per_page, page, searchPhrase, onlyDisplay, sortingType, sortingOrder).then(() => {
+    updateLikeElements();
+  });
 }
 
 function numPages() {
@@ -411,9 +500,10 @@ menuButtonDisable("btnArticles");
 function seachByText() {
   let searchInput = document.getElementById("search-input");
   searchPhrase = searchInput.value;
-  issueGetRequest(records_per_page, current_page, searchPhrase, undefined, sortingType, sortingOrder).then(() =>
-    changePage(current_page, true)
-  );
+  issueGetRequest(records_per_page, current_page, searchPhrase, undefined, sortingType, sortingOrder).then(() => {
+    changePage(current_page, true);
+    updateLikeElements();
+  });
 }
 
 // sorting:

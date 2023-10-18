@@ -39,7 +39,7 @@ function handleLikes(req, res, isAdmin) {
     const user_id = req.headers["userid"];
     const article_id = req.body["article_id"];
     const comment_id = req.body["comment_id"];
-    
+
     const alreadyLiked = checkIfAlreadyLiked(article_id, comment_id, user_id);
     logTrace("handleLikes: alreadyLiked?", { alreadyLiked, user_id, body: req.body });
 
@@ -57,6 +57,27 @@ function handleLikes(req, res, isAdmin) {
     return;
   }
 
+  if (req.method === "GET" && urlEnds.includes("/api/likes/article/mylikes")) {
+    const articleIdsRaw = urlEnds.split("?ids=").slice(-1)[0];
+    const user_id = req.headers["userid"];
+    if (articleIdsRaw === undefined) {
+      res.status(HTTP_NOT_FOUND).json({});
+      return;
+    }
+
+    const articleIds = articleIdsRaw.split(",");
+
+    const likes = {};
+    for (let index = 0; index < articleIds.length; index++) {
+      const articleId = articleIds[index];
+      const alreadyLiked = checkIfAlreadyLiked(articleId, undefined, user_id);
+      likes[articleId] = alreadyLiked;
+    }
+    logTrace("handleLikes: mylikes articles", { articleIds, user_id, likes });
+    res.status(HTTP_OK).json({ likes });
+    return;
+  }
+
   if (req.method === "GET" && urlEnds.includes("/api/likes/article/")) {
     const articleId = urlEnds.split("/").slice(-1)[0];
     if (articleId === undefined) {
@@ -66,6 +87,26 @@ function handleLikes(req, res, isAdmin) {
 
     const likes = countLikesForArticle(articleId);
     logTrace("handleLikes: likes for article", { articleId, likes });
+    res.status(HTTP_OK).json({ likes });
+    return;
+  }
+
+  if (req.method === "GET" && urlEnds.includes("/api/likes/article?ids=")) {
+    const articleIdsRaw = urlEnds.split("?ids=").slice(-1)[0];
+    if (articleIdsRaw === undefined) {
+      res.status(HTTP_NOT_FOUND).json({});
+      return;
+    }
+
+    const articleIds = articleIdsRaw.split(",");
+
+    const likes = {};
+    for (let index = 0; index < articleIds.length; index++) {
+      const articleId = articleIds[index];
+      const likesForArticle = countLikesForArticle(articleId);
+      logTrace("handleLikes: likes for article", { articleId, likesForArticle });
+      likes[articleId] = likesForArticle;
+    }
     res.status(HTTP_OK).json({ likes });
     return;
   }
