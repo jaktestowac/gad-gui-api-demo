@@ -2,9 +2,49 @@ const articlesLikesEndpoint = "../../api/likes/top/articles";
 const articleLikesEndpoint = "../../api/likes/article";
 const articlesEndpoint = "../../api/articles";
 const likesEndpoint = "../../api/likes";
+const usersEndpoint = "../../api/users";
 const myLikesEndpoint = "../../api/likes/article/mylikes";
 
 const intervalValue = 60000;
+
+async function getUsers(articlesData) {
+  const userIds = [];
+  for (let i = 0; i < articlesData.length; i++) {
+    if (articlesData[i].user_id !== undefined && !userIds.includes(articlesData[i].user_id)) {
+      userIds.push(articlesData[i].user_id);
+    }
+  }
+  userIds.push(getId());
+  const queryId = `${userIds.join("&id=")}`;
+  const userUrlQuery = `${usersEndpoint}?id=${queryId}`;
+
+  const users = await fetch(userUrlQuery, { headers: formatHeaders() }).then((r) => r.json());
+
+  for (let i = 0; i < articlesData.length; i++) {
+    for (let j = 0; j < users.length; j++) {
+      if (users[j].id?.toString() === articlesData[i].user_id?.toString()) {
+        articlesData[i].user_name = `${users[j].firstname}`;
+        if (getId()) articlesData[i].user_name += ` ${users[j].lastname}`;
+        articlesData[i].user_id = users[j].id;
+        break;
+      }
+    }
+    if (articlesData[i].user_name === undefined) {
+      for (let j = 0; j < users.length; j++) {
+        if (users[j].id?.toString() === articlesData[i].user_id?.toString()) {
+          articlesData[i].user_name = `${users[j].firstname} ${users[j].lastname}`;
+          articlesData[i].user_id = users[j].id;
+          break;
+        }
+      }
+    }
+    if (articlesData[i].user_name === undefined) {
+      articlesData[i].user_name = "Unknown user";
+    }
+  }
+
+  return articlesData;
+}
 
 async function getArticles(articleIds) {
   // get article
@@ -148,14 +188,17 @@ async function makeRequest() {
           const bIndex = articleIds.indexOf(b.id.toString());
           return bIndex - aIndex;
         });
+
         issueGetMyLikesForArticles(articleIds).then((myLikes) => {
-          displayPostsData(articles);
-          for (let item of articles) {
-            const articleId = item.id;
-            const element = document.querySelector(`#likes-container-${articleId}`);
-            const likeCount = likesData[articleId];
-            element.innerHTML = formatLike(myLikes[articleId], likeCount, articleId);
-          }
+          getUsers(sortedObjectList).then((articles) => {
+            displayPostsData(articles);
+            for (let item of articles) {
+              const articleId = item.id;
+              const element = document.querySelector(`#likes-container-${articleId}`);
+              const likeCount = likesData[articleId];
+              element.innerHTML = formatLike(myLikes[articleId], likeCount, articleId);
+            }
+          });
         });
       });
     })
