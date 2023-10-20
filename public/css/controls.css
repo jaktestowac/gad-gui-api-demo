@@ -383,6 +383,7 @@ td:first-child {
 
 .navigation-bar {
   width: 670px;
+  z-index: 1;
 }
 
 .container-space {
