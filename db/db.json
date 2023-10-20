@@ -2104,6 +2104,42 @@
       "comment_id": null,
       "article_id": 1,
       "date": "2023-09-25T11:00:00Z"
+    },
+    {
+      "article_id": 1,
+      "user_id": "1",
+      "date": "2023-10-20T15:43:18Z",
+      "id": 3
+    },
+    {
+      "article_id": 56,
+      "user_id": "1",
+      "date": "2023-10-20T15:44:21Z",
+      "id": 4
+    },
+    {
+      "article_id": 57,
+      "user_id": "1",
+      "date": "2023-10-20T15:46:30Z",
+      "id": 5
+    },
+    {
+      "article_id": 45,
+      "user_id": "1",
+      "date": "2023-10-20T15:47:46Z",
+      "id": 6
+    },
+    {
+      "article_id": 45,
+      "user_id": "2",
+      "date": "2023-10-20T15:47:46Z",
+      "id": 7
+    },
+    {
+      "article_id": 45,
+      "user_id": "3",
+      "date": "2023-10-20T15:47:46Z",
+      "id": 8
     }
   ]
 }

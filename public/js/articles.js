@@ -19,16 +19,16 @@ const fetchData = {
 };
 
 async function issueGetMyLikesForArticles(articleIds) {
-  const formattedIds = articleIds.join(",");
-  const likesData = await fetch(`${myLikesEndpoint}?ids=${formattedIds}`, {
+  const formattedIds = articleIds.join("&id=");
+  const likesData = await fetch(`${myLikesEndpoint}?id=${formattedIds}`, {
     headers: { ...formatHeaders(), userid: getId() },
   }).then((r) => r.json());
   return likesData.likes;
 }
 
 async function issueGetLikesForArticles(articleIds) {
-  const formattedIds = articleIds.join(",");
-  const likesData = await fetch(`${articleLikesEndpoint}?ids=${formattedIds}`, { headers: formatHeaders() }).then((r) =>
+  const formattedIds = articleIds.join("&id=");
+  const likesData = await fetch(`${articleLikesEndpoint}?id=${formattedIds}`, { headers: formatHeaders() }).then((r) =>
     r.json()
   );
   return likesData.likes;
@@ -409,7 +409,6 @@ updatePerPage();
 updateSorting();
 issueGetRequest(records_per_page, current_page, searchPhrase, undefined, sortingType, sortingOrder).then(() => {
   changePage(current_page, true);
-  updateLikeElements();
 });
 
 async function updateLikeElements() {
@@ -512,7 +511,6 @@ function seachByText() {
   searchPhrase = searchInput.value;
   issueGetRequest(records_per_page, current_page, searchPhrase, undefined, sortingType, sortingOrder).then(() => {
     changePage(current_page, true);
-    updateLikeElements();
   });
 }
 

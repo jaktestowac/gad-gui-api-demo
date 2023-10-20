@@ -20,7 +20,7 @@ async function issueGetRandomRequest() {
 }
 
 async function issueGetMyLikesForArticle(articleId) {
-  const likesData = await fetch(`${myLikesEndpoint}?ids=${articleId}`, {
+  const likesData = await fetch(`${myLikesEndpoint}?id=${articleId}`, {
     headers: { ...formatHeaders(), userid: getId() },
   }).then((r) => r.json());
   return likesData.likes;

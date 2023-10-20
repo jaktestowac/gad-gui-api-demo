@@ -36,6 +36,13 @@ function searchForArticle(articleId) {
   return foundArticle;
 }
 
+function searchForArticles(articleIds) {
+  const articleIdsStr = articleIds.filter((id) => id.toString());
+
+  const foundArticles = articlesDb().filter((article) => articleIdsStr.includes(article["id"]?.toString()));
+  return foundArticles;
+}
+
 function searchForComment(commentId) {
   const foundComment = commentsDb().find((comment) => {
     if (comment["id"]?.toString() === commentId?.toString()) {
@@ -43,6 +50,29 @@ function searchForComment(commentId) {
     }
   });
   return foundComment;
+}
+
+function countLikesForAllArticles() {
+  const foundLikes = {};
+  likesDb().filter((like) => {
+    const id = like["article_id"]?.toString();
+    if (id !== undefined) {
+      if (foundLikes[id] === undefined) {
+        foundLikes[id] = 0;
+      }
+      foundLikes[id] += 1;
+    }
+  });
+  return foundLikes;
+}
+
+function searchForLike(likeId) {
+  const foundLike = commentsDb().find((like) => {
+    if (like["id"]?.toString() === likeId?.toString()) {
+      return like;
+    }
+  });
+  return foundLike;
 }
 
 function countLikesForArticle(articleId) {
@@ -123,6 +153,7 @@ module.exports = {
   searchForUserWithEmail,
   searchForUser,
   searchForArticle,
+  searchForArticles,
   searchForComment,
   getGameIdByName,
   getGameHighScoresByGameName,
@@ -131,4 +162,6 @@ module.exports = {
   countLikesForComment,
   checkIfAlreadyLiked,
   findAllLikes,
+  countLikesForAllArticles,
+  searchForLike,
 };

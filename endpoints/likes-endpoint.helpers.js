@@ -5,8 +5,14 @@ const {
   countLikesForComment,
   checkIfAlreadyLiked,
   findAllLikes,
+  countLikesForAllArticles,
+  searchForLike,
 } = require("../helpers/db-operation.helpers");
-const { formatInvalidTokenErrorResponse, formatOnlyOneFieldPossibleErrorResponse } = require("../helpers/helpers");
+const {
+  formatInvalidTokenErrorResponse,
+  formatOnlyOneFieldPossibleErrorResponse,
+  findMaxValues,
+} = require("../helpers/helpers");
 const { logTrace } = require("../helpers/logger-api");
 const {
   HTTP_UNAUTHORIZED,
@@ -44,15 +50,16 @@ function handleLikes(req, res, isAdmin) {
     const allLikes = findAllLikes(article_id, comment_id, user_id);
     logTrace("handleLikes: alreadyLiked?", { allLikes, user_id, body: req.body });
 
+    // already liked -> dislike
     if (allLikes !== undefined) {
       req.method = "DELETE";
       req.url = `/api/likes/${allLikes.id}`;
-      logTrace("handleLikes: unlike - POST -> DELETE:", {
+
+      logTrace("handleLikes: dislike - POST -> DELETE:", {
         method: req.method,
         url: req.url,
         body: req.body,
       });
-      return;
     } else {
       req.body["user_id"] = user_id;
       req.body["date"] = getCurrentDateTimeISO();
@@ -62,15 +69,36 @@ function handleLikes(req, res, isAdmin) {
     return;
   }
 
+  // TODO: untested:
+  if (req.method === "DELETE" && urlEnds.includes("/api/likes/")) {
+    const likeId = urlEnds.split("/").slice(-1)[0];
+    const like = searchForLike(likeId);
+
+    logTrace("handleLikes: DELETE:", { likeId: like });
+    if (like === undefined) {
+      res.status(HTTP_NOT_FOUND).json({});
+      return;
+    }
+
+    const verifyTokenResult = verifyAccessToken(req, res, "likes", req.url);
+    const foundUser = searchForUserWithToken(like.user_id, verifyTokenResult);
+
+    logTrace("handleLikes: DELETE: foundUser:", { foundUser });
+    if (foundUser === undefined || verifyTokenResult === undefined) {
+      res.status(HTTP_UNAUTHORIZED).json(formatInvalidTokenErrorResponse());
+      return;
+    }
+  }
+
   if (req.method === "GET" && urlEnds.includes("/api/likes/article/mylikes")) {
-    const articleIdsRaw = urlEnds.split("?ids=").slice(-1)[0];
+    const articleIdsRaw = urlEnds.split("?id=").slice(-1)[0];
     const user_id = req.headers["userid"];
     if (articleIdsRaw === undefined) {
       res.status(HTTP_NOT_FOUND).json({});
       return;
     }
 
-    const articleIds = articleIdsRaw.split(",");
+    const articleIds = articleIdsRaw.split("&id=");
 
     const likes = {};
     for (let index = 0; index < articleIds.length; index++) {
@@ -96,14 +124,29 @@ function handleLikes(req, res, isAdmin) {
     return;
   }
 
-  if (req.method === "GET" && urlEnds.includes("/api/likes/article?ids=")) {
-    const articleIdsRaw = urlEnds.split("?ids=").slice(-1)[0];
+  if (req.method === "GET" && urlEnds.includes("/api/likes/top/articles")) {
+    const likes = countLikesForAllArticles();
+    const maxValues = findMaxValues(likes, 10);
+    logTrace("handleLikes: top 10 liked articles", { maxValues });
+    res.status(HTTP_OK).json({ likes: maxValues });
+    return;
+  }
+
+  if (req.method === "GET" && urlEnds.includes("/api/likes/articles")) {
+    const likes = countLikesForAllArticles();
+    logTrace("handleLikes: likes for all articles", { likes });
+    res.status(HTTP_OK).json({ likes });
+    return;
+  }
+
+  if (req.method === "GET" && urlEnds.includes("/api/likes/article?id=")) {
+    const articleIdsRaw = urlEnds.split("?id=").slice(-1)[0];
     if (articleIdsRaw === undefined) {
       res.status(HTTP_NOT_FOUND).json({});
       return;
     }
 
-    const articleIds = articleIdsRaw.split(",");
+    const articleIds = articleIdsRaw.split("&id=");
 
     const likes = {};
     for (let index = 0; index < articleIds.length; index++) {

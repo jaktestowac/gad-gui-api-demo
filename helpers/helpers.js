@@ -276,6 +276,21 @@ function getTodayDateForFileName() {
   return date;
 }
 
+function findMaxValues(obj, count) {
+  const values = Object.values(obj);
+  const sortedValues = values.sort((a, b) => b - a);
+  const maxValues = sortedValues.slice(0, count);
+
+  const maxObjects = {};
+  for (const key in obj) {
+    if (maxValues.includes(obj[key])) {
+      maxObjects[key] = obj[key];
+    }
+  }
+
+  return maxObjects;
+}
+
 module.exports = {
   getRandomIntBasedOnDay,
   getRandomIdBasedOnDay,
@@ -298,4 +313,5 @@ module.exports = {
   pad,
   getTodayDate,
   getTodayDateForFileName,
+  findMaxValues,
 };
