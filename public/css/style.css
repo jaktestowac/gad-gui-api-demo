@@ -480,3 +480,28 @@ input[type="submit"]:hover {
   margin-top: 10px;
   cursor: pointer;
 }
+
+/* Styling for the popup */
+.popup {
+  display: none;
+  position: absolute;
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 10px;
+  z-index: 1;
+  width: 140px;
+  top: 20px;
+  left: 50%; 
+  transform: translate(-50%, 0%);
+  text-align: center;
+}
+
+/* Style for the element that triggers the popup */
+.hover-element {
+  position: relative;
+}
+
+/* Show the popup when hovering over the element */
+.hover-element:hover .popup {
+  display: block;
+}

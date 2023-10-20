@@ -160,24 +160,6 @@ async function likeArticle(articleId) {
     });
 }
 
-function formatLike(alreadyLiked, likesNumber, articleId) {
-  let out = "";
-  if (alreadyLiked) {
-    if (getBearerToken() === undefined) {
-      out = `<div style="display: flex;justify-self: end"><div id="likes-button" >💗</div> <div id="likes-count" >${likesNumber}</div></div>`;
-    } else {
-      out = `<div style="display: flex;justify-self: end"><div id="likes-button" onclick="likeArticle(${articleId})" style="cursor: pointer;" >💗</div> <div id="likes-count" >${likesNumber}</div></div>`;
-    }
-  } else {
-    if (getBearerToken() === undefined) {
-      out = `<div style="display: flex;justify-self: end"><div id="likes-button" >🤍</div> <div id="likes-count" >${likesNumber}</div></div>`;
-    } else {
-      out = `<div style="display: flex;justify-self: end"><div id="likes-button" onclick="likeArticle(${articleId})" style="cursor: pointer;">🤍</div> <div id="likes-count" >${likesNumber}</div></div>`;
-    }
-  }
-  return out;
-}
-
 async function makeRequest() {
   getTopArticles()
     .then((likesData) => {

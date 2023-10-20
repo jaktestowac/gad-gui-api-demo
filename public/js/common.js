@@ -333,3 +333,22 @@ function formatHeaders() {
 }
 
 addMainMenuAndFooter();
+
+const likeMessage = "Please log in to like this content!";
+function formatLike(alreadyLiked, likesNumber, articleId) {
+  let out = "";
+  if (alreadyLiked) {
+    if (getBearerToken() === undefined) {
+      out = `<div class="hover-element" style="display: grid;justify-self: end"><div style="display: flex;justify-self: end"><div id="likes-button" >💗</div> <div id="likes-count" >${likesNumber}</div></div><div class="popup">${likeMessage}</div></div>`;
+    } else {
+      out = `<div style="display: flex;justify-self: end"><div id="likes-button" onclick="likeArticle(${articleId})" style="cursor: pointer;" >💗</div> <div id="likes-count" >${likesNumber}</div></div>`;
+    }
+  } else {
+    if (getBearerToken() === undefined) {
+      out = `<div class="hover-element" style="display: grid;justify-self: end"><div style="display: flex;justify-self: end"><div id="likes-button" >🤍</div> <div id="likes-count" >${likesNumber}</div></div><div class="popup">${likeMessage}</div></div>`;
+    } else {
+      out = `<div style="display: flex;justify-self: end"><div id="likes-button" onclick="likeArticle(${articleId})" style="cursor: pointer;">🤍</div> <div id="likes-count" >${likesNumber}</div></div>`;
+    }
+  }
+  return out;
+}
