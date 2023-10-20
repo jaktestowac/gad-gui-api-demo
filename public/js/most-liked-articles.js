@@ -4,6 +4,8 @@ const articlesEndpoint = "../../api/articles";
 const likesEndpoint = "../../api/likes";
 const myLikesEndpoint = "../../api/likes/article/mylikes";
 
+const intervalValue = 60000;
+
 async function getArticles(articleIds) {
   // get article
   const articlesUrl = `${articlesEndpoint}?id=${articleIds.join("&id=")}`;
@@ -162,6 +164,6 @@ async function makeRequest() {
     });
 }
 
-setInterval(makeRequest, 5000);
+setInterval(makeRequest, intervalValue);
 
 makeRequest();
