@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-const { config } = require("./config-general");
+const { config, configToModify } = require("./config-general");
 const { bugConfig } = require("./config-bugs");
 const { ConfigKeys, BugConfigKeys } = require("./enums");
 
@@ -8,13 +8,16 @@ const ConfigManager = (function () {
 
   function createInstance() {
     const configCopy = { ...config };
+    const configToModifyCopy = { ...configToModify };
     const bugConfigCopy = { ...bugConfig };
 
     function getConfigValue(key) {
-      if (configCopy[key] === undefined) {
-        console.log(`> Config: Warning! Value of "${key}" is "${configCopy[key]}"`);
+      const tmpConfig = { ...configToModifyCopy, ...configCopy };
+
+      if (tmpConfig[key] === undefined) {
+        console.log(`> Config: Warning! Value of "${key}" is "${tmpConfig[key]}"`);
       }
-      return configCopy[key];
+      return tmpConfig[key];
     }
 
     function getBugConfigValue(key) {
@@ -25,8 +28,8 @@ const ConfigManager = (function () {
     }
 
     function setConfigValue(key, value) {
-      configCopy[key] = value;
-      return configCopy[key];
+      configToModifyCopy[key] = value;
+      return configToModifyCopy[key];
     }
 
     function setBugConfigValue(key, value) {
@@ -36,6 +39,7 @@ const ConfigManager = (function () {
 
     function resetConfig() {
       reset(configCopy, config);
+      reset(configToModifyCopy, configToModify);
       reset(bugConfigCopy, bugConfig);
     }
 
@@ -49,7 +53,8 @@ const ConfigManager = (function () {
     }
 
     function fullSelfCheck() {
-      selfCheck(ConfigKeys, configCopy, "Config");
+      const tmpConfig = { ...configToModifyCopy, ...configCopy };
+      selfCheck(ConfigKeys, tmpConfig, "Config");
       selfCheck(BugConfigKeys, bugConfigCopy, "BugConfig");
     }
 
@@ -81,7 +86,7 @@ const ConfigManager = (function () {
     }
 
     return {
-      configCopy,
+      configToModifyCopy,
       bugConfigCopy,
       getConfigValue,
       setConfigValue,

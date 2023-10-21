@@ -1,6 +1,6 @@
 const { LogLevels } = require("./enums");
 
-const config = {
+const configToModify = {
   adminUserEmail: "admin",
   adminUserPass: "admin",
   superAdminUserEmail: "super",
@@ -26,16 +26,6 @@ const config = {
   superAdminTokenExpiresIn: `60m`, // 1 hour
   keepSignInTokenExpiresIn: `7200m`, // 5 * 24 * 60m // 5 days
 
-  authUserDb: "./db/db.json",
-  dbPath: "./db/db.json",
-  dbRestorePath: "./db/db-base.json",
-  dbEmptyRestorePath: "./db/db-empty.json",
-  quizQuestionsPath: "./db/quiz-questions.json",
-  quizDbPath: "./db/games-db.json",
-  hangmanDataPath: "./db/hangman-words.json",
-  defaultPort: 3000,
-  dateRegexp: /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/, // e.g. 2016-01-19T15:21:32Z
-  emailRegexp: /^\S+@\S+\.\S+$/,
   uploadSizeLimitBytes: 1000,
   currentLogLevel: LogLevels.DEBUG,
   publicLogsEnabled: false,
@@ -46,6 +36,20 @@ const config = {
   numberOfTopLikedArticles: 10,
 };
 
+const config = {
+  authUserDb: "./db/db.json",
+  dbPath: "./db/db.json",
+  dbRestorePath: "./db/db-base.json",
+  dbEmptyRestorePath: "./db/db-empty.json",
+  quizQuestionsPath: "./db/quiz-questions.json",
+  quizDbPath: "./db/games-db.json",
+  hangmanDataPath: "./db/hangman-words.json",
+  defaultPort: 3000,
+  dateRegexp: /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/, // e.g. 2016-01-19T15:21:32Z
+  emailRegexp: /^\S+@\S+\.\S+$/,
+};
+
 module.exports = {
+  configToModify,
   config,
 };
