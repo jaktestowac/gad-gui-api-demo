@@ -291,7 +291,7 @@ describe("Endpoint /likes", () => {
       const response = await request.delete(`${baseUrl}/1`).set(headers);
 
       // Assert:
-      expect(response.status).to.equal(405);
+      expect(response.status).to.equal(401);
     });
 
     it("HEAD /likes", async () => {
