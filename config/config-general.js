@@ -42,6 +42,8 @@ const config = {
   sleepTimePerOneGetComment: 30,
   sleepTimePerOneGetCommentMin: 25,
   sleepTimePerOneGetCommentMax: 50,
+
+  numberOfTopLikedArticles: 10,
 };
 
 module.exports = {

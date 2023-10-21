@@ -1,3 +1,5 @@
+const { isBugEnabled, getConfigValue } = require("../config/config-manager");
+const { BugConfigKeys, ConfigKeys } = require("../config/enums");
 const { getCurrentDateTimeISO } = require("../helpers/datetime.helpers");
 const {
   searchForUserWithToken,
@@ -12,6 +14,7 @@ const {
   formatInvalidTokenErrorResponse,
   formatOnlyOneFieldPossibleErrorResponse,
   findMaxValues,
+  getRandomInt,
 } = require("../helpers/helpers");
 const { logTrace } = require("../helpers/logger-api");
 const {
@@ -47,8 +50,12 @@ function handleLikes(req, res, isAdmin) {
     const article_id = req.body["article_id"];
     const comment_id = req.body["comment_id"];
 
-    const allLikes = findAllLikes(article_id, comment_id, user_id);
+    let allLikes = findAllLikes(article_id, comment_id, user_id);
     logTrace("handleLikes: alreadyLiked?", { allLikes, user_id, body: req.body });
+
+    if (isBugEnabled(BugConfigKeys.BUG_LIKES_001)) {
+      allLikes = undefined;
+    }
 
     // already liked -> dislike
     if (allLikes !== undefined) {
@@ -61,6 +68,7 @@ function handleLikes(req, res, isAdmin) {
         body: req.body,
       });
     } else {
+      // if not - like the resource
       req.body["user_id"] = user_id;
       req.body["date"] = getCurrentDateTimeISO();
 
@@ -126,7 +134,14 @@ function handleLikes(req, res, isAdmin) {
 
   if (req.method === "GET" && urlEnds.includes("/api/likes/top/articles")) {
     const likes = countLikesForAllArticles();
-    const maxValues = findMaxValues(likes, 10);
+
+    let numberOfTopLikedArticles = getConfigValue(ConfigKeys.NUMBER_OF_TOP_LIKED_ARTICLES);
+
+    if (isBugEnabled(BugConfigKeys.BUG_LIKES_002)) {
+      numberOfTopLikedArticles = getRandomInt(numberOfTopLikedArticles - 2, numberOfTopLikedArticles + 2);
+    }
+
+    const maxValues = findMaxValues(likes, numberOfTopLikedArticles);
     logTrace("handleLikes: top 10 liked articles", { maxValues });
     res.status(HTTP_OK).json({ likes: maxValues });
     return;

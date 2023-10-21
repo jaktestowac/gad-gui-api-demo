@@ -16,6 +16,8 @@ const bugConfig = {
   bug_sorting_001: false,
   bug_sorting_002: false,
   bug_sorting_003: false,
+  bug_likes_001: false,
+  bug_likes_002: false,
 };
 
 module.exports = {
