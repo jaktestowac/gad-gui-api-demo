@@ -139,12 +139,12 @@ const articlesAdditionalMenu = `
 `;
 
 const articleAdditionalMenu = `
-<button id="add-new" class="button-primary" disabled>Add Comment</button>
+<button id="add-new-comment" class="button-primary" disabled>Add Comment</button>
 `;
 
 const articleAdditionalMenuOnPage = `
 <div align="center">
-  <button id="add-new-comment" class="button-primary" disabled>Add Comment</button>
+  <button id="add-new" class="button-primary" disabled>Add Comment</button>
 </div>
 `;
 

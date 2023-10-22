@@ -479,20 +479,24 @@ const actionAfterDelete = () => {
 };
 
 const addCommentArticleButton = () => {
-  document.querySelector("#add-new").onclick = () => {
-    window.scrollTo(0, 0);
-    const container = document.querySelector(".add-new-panel");
-    container.querySelector(".body").value = "";
-    container.querySelector("#body").value = "";
-    container.classList.add("active");
-  };
-  document.querySelector("#add-new-comment").onclick = () => {
-    window.scrollTo(0, 0);
-    const container = document.querySelector(".add-new-panel");
-    container.querySelector(".body").value = "";
-    container.querySelector("#body").value = "";
-    container.classList.add("active");
-  };
+  if (document.querySelector("#add-new")) {
+    document.querySelector("#add-new").onclick = () => {
+      window.scrollTo(0, 0);
+      const container = document.querySelector(".add-new-panel");
+      container.querySelector(".body").value = "";
+      container.querySelector("#body").value = "";
+      container.classList.add("active");
+    };
+  }
+  if (document.querySelector("#add-new-comment")) {
+    document.querySelector("#add-new-comment").onclick = () => {
+      window.scrollTo(0, 0);
+      const container = document.querySelector(".add-new-panel");
+      container.querySelector(".body").value = "";
+      container.querySelector("#body").value = "";
+      container.classList.add("active");
+    };
+  }
   document.querySelector(".close").onclick = () => {
     document.querySelector(".add-new-panel").classList.remove("active");
   };
@@ -513,8 +517,12 @@ const attachEventHandlers = (id = "") => {
       appendElementOnTop(articleAdditionalMenuOnPage, "containerComments");
     }
 
-    document.querySelector("#add-new").disabled = false;
-    document.querySelector("#add-new-comment").disabled = false;
+    if (document.querySelector("#add-new")) {
+      document.querySelector("#add-new").disabled = false;
+    }
+    if (document.querySelector("#add-new-comment")) {
+      document.querySelector("#add-new-comment").disabled = false;
+    }
   }
   if (!isAuthorized(id)) {
     // TODO: remove icons and methods if user is not logged
