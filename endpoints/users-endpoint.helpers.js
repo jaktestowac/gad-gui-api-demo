@@ -21,6 +21,7 @@ const {
 function handleUsers(req, res) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
 
+  // register user:
   if (req.method === "POST" && urlEnds.includes("/api/users")) {
     logDebug("Register User: attempt:", { urlEnds, email: req.body["email"] });
     // validate mandatory fields:
@@ -42,7 +43,9 @@ function handleUsers(req, res) {
       return;
     }
 
-    if (userDb().includes(req.body["email"])) {
+    const emails = userDb().map((user) => user?.email);
+    const foundUser = emails.filter((email) => email === req.body["email"]);
+    if (foundUser.length !== 0) {
       res.status(HTTP_CONFLICT).send(formatErrorResponse("Email not unique"));
       return;
     }

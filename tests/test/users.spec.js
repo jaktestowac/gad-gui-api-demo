@@ -76,7 +76,7 @@ describe("Endpoint /users", async () => {
         const responseAgain = await request.post(baseUrl).send(testUserData);
 
         // Assert:
-        expect(responseAgain.status).to.equal(201);
+        expect(responseAgain.status).to.equal(409);
       });
 
       it("invalid email", async () => {

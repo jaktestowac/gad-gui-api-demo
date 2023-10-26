@@ -14,7 +14,7 @@ const { userDb, getDbPath } = require("./helpers/db.helpers");
 const server = jsonServer.create();
 const router = jsonServer.router(getDbPath(getConfigValue(ConfigKeys.DB_PATH)));
 
-const { formatErrorResponse, isAnyAdminUser, isSuperAdminUser } = require("./helpers/helpers");
+const { formatErrorResponse, isAnyAdminUser, isSuperAdminUser, sleep } = require("./helpers/helpers");
 const { logDebug, logError, logTrace } = require("./helpers/logger-api");
 const { HTTP_INTERNAL_SERVER_ERROR, HTTP_CREATED, HTTP_OK, HTTP_UNAUTHORIZED } = require("./helpers/response.helpers");
 const { articlesUpload } = require("./routes/articles-upload.route");
@@ -237,6 +237,11 @@ router.render = function (req, res) {
       usersMapped.password = "****";
     }
     res.jsonp(usersMapped);
+  } else if (req.method === "POST" && req.url.includes("users")) {
+    // add little wait  so that user is created in DB
+    sleep(100).then((x) => {
+      res.jsonp(res.locals.data);
+    });
   } else {
     logTrace("router.render:", {
       statusCode: res.statusCode,
