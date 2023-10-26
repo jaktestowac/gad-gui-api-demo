@@ -52,6 +52,7 @@ const BugConfigKeys = {
   BUG_VALIDATION_003: "bug_validation_003",
   BUG_VALIDATION_004: "bug_validation_004",
   BUG_VALIDATION_005: "bug_validation_005",
+  BUG_VALIDATION_006: "bug_validation_006",
   BUG_QUIZ_001: "bug_quiz_001",
   BUG_QUIZ_002: "bug_quiz_002",
   BUG_QUIZ_003: "bug_quiz_003",

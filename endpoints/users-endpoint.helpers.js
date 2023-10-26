@@ -1,4 +1,4 @@
-const { isBugDisabled } = require("../config/config-manager");
+const { isBugDisabled, isBugEnabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
 const { searchForUser } = require("../helpers/db-operation.helpers");
 const { userDb } = require("../helpers/db.helpers");
@@ -44,7 +44,12 @@ function handleUsers(req, res) {
     }
 
     const emails = userDb().map((user) => user?.email);
-    const foundUser = emails.filter((email) => email === req.body["email"]);
+    let foundUser = emails.filter((email) => email === req.body["email"]);
+
+    if (isBugEnabled(BugConfigKeys.BUG_LIKES_006)) {
+      foundUser = [];
+    }
+
     if (foundUser.length !== 0) {
       res.status(HTTP_CONFLICT).send(formatErrorResponse("Email not unique"));
       return;
