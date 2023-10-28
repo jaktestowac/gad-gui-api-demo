@@ -1,5 +1,11 @@
 ### Config - get all
-GET http://localhost:3000/api/config
+GET http://localhost:3000/api/config/all
+
+### Config - get all bugs
+GET http://localhost:3000/api/config/bugs
+
+### Config - get all features
+GET http://localhost:3000/api/config/features
 
 ### Config Reset
 GET http://localhost:3000/api/config/reset
@@ -22,6 +28,22 @@ content-type: application/json
 {
     "bug_charts_001": true,
     "bug_charts_002": true
+}
+
+### Config - change features
+POST http://localhost:3000/api/config/features
+content-type: application/json
+ 
+{
+    "feature_likes": true
+}
+
+### Config - check feature
+POST http://localhost:3000/api/config/checkfeatures
+content-type: application/json
+ 
+{
+    "feature": "feature_likes"
 }
 
 ### Config - change log level

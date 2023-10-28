@@ -64,8 +64,13 @@ const BugConfigKeys = {
   BUG_LIKES_002: "bug_likes_002",
 };
 
+const FeatureFlagConfigKeys = {
+  FEATURE_LIKES: "feature_likes",
+};
+
 module.exports = {
   LogLevels,
   ConfigKeys,
   BugConfigKeys,
+  FeatureFlagConfigKeys,
 };

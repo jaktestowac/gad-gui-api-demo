@@ -5,22 +5,47 @@ const {
   configInstance,
   getBugConfigValue,
   setBugConfigValue,
+  getFeatureFlagConfigValue,
+  setFeatureFlagConfigValue,
 } = require("../config/config-manager");
 const { logDebug } = require("../helpers/logger-api");
 const { HTTP_OK, HTTP_UNPROCESSABLE_ENTITY } = require("../helpers/response.helpers");
 
 function handleConfig(req, res) {
   if (req.url.includes("api/config/bugs")) {
-    handleGenericConfig(req, res, "api/config/bugs", getBugConfigValue, setBugConfigValue);
-  } else if (req.url.includes("api/config")) {
-    handleGenericConfig(req, res, "api/config", getConfigValue, setConfigValue);
+    handleGenericConfig(
+      req,
+      res,
+      "api/config/bugs",
+      getBugConfigValue,
+      setBugConfigValue,
+      configInstance.bugConfigCopy
+    );
+  } else if (req.url.includes("api/config/features")) {
+    handleGenericConfig(
+      req,
+      res,
+      "api/config/features",
+      getFeatureFlagConfigValue,
+      setFeatureFlagConfigValue,
+      configInstance.featureFlagConfigCopy
+    );
+  } else if (req.url.includes("api/config/all")) {
+    handleGenericConfig(req, res, "api/config/all", getConfigValue, setConfigValue, configInstance);
+  } else if (req.method === "GET" && req.url.includes("api/config/reset")) {
+    resetConfig();
+    res.status(HTTP_OK).json({});
+  } else if (req.method === "POST" && req.url.includes("api/config/checkfeature")) {
+    const featureName = req.body.name;
+    const featureEnabled = getFeatureFlagConfigValue(featureName) ?? false;
+    res.status(HTTP_OK).json({ name: featureName, enabled: featureEnabled });
   }
   return;
 }
 
-function handleGenericConfig(req, res, endpoint, getConfigValue, setConfigValue) {
+function handleGenericConfig(req, res, endpoint, getConfigValue, setConfigValue, config) {
   if (req.method === "GET" && req.url.endsWith(endpoint)) {
-    res.status(HTTP_OK).json(configInstance);
+    res.status(HTTP_OK).json({ config: config });
   } else if (req.method === "POST" && req.url.endsWith(endpoint)) {
     const invalidKeys = [];
 
@@ -43,9 +68,6 @@ function handleGenericConfig(req, res, endpoint, getConfigValue, setConfigValue)
       }
       res.status(HTTP_OK).json({});
     }
-  } else if (req.method === "GET" && req.url.includes(`${endpoint}/reset`)) {
-    resetConfig();
-    res.status(HTTP_OK).json({});
   }
   return;
 }

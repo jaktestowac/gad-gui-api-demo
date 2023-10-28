@@ -65,7 +65,6 @@ async function likeArticle(articleId) {
     });
 }
 
-
 async function issueGetRequest(
   limit = 6,
   page = 1,
