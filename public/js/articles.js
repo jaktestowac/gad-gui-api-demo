@@ -394,6 +394,9 @@ issueGetRequest(records_per_page, current_page, searchPhrase, undefined, sorting
 });
 
 async function updateLikeElements() {
+  const isEnabled = await checkIfFeatureEnabled("feature_likes");
+  if (!isEnabled) return;
+
   const elements = document.querySelectorAll(".likes-container");
   const ids = [];
   elements.forEach((element) => {

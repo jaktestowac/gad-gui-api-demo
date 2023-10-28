@@ -709,10 +709,13 @@ if (`${is_random}` === "1" || `${is_random}`.toLowerCase() === "true" || `${arti
   });
 } else if (article_id !== undefined) {
   issueGetRequest(article_id).then((wasDisplayed) => {
-    issueGetLikes(article_id).then((likes) => {
-      issueGetMyLikesForArticle(article_id).then((myLikes) => {
-        const container = document.querySelector("#likes-container");
-        container.innerHTML = formatLike(myLikes[article_id], likes, article_id);
+    checkIfFeatureEnabled("feature_likes").then((isEnabled) => {
+      if (!isEnabled) return;
+      issueGetLikes(article_id).then((likes) => {
+        issueGetMyLikesForArticle(article_id).then((myLikes) => {
+          const container = document.querySelector("#likes-container");
+          container.innerHTML = formatLike(myLikes[article_id], likes, article_id);
+        });
       });
     });
   });

@@ -124,9 +124,13 @@ const injectLink = (link, id) => {
 const menuButtonDisable = (id) => {
   if (id) {
     const menuItem = document.querySelector(`#${id}`);
-    menuItem.classList = ["button-disabled"];
-    menuItem.disabled = true;
-    menuItem.readOnly = true;
+    if (menuItem !== undefined && menuItem !== null) {
+      menuItem.classList = ["button-disabled"];
+      menuItem.disabled = true;
+      menuItem.readOnly = true;
+    } else {
+      console.log(`WARNING! Button ${id} was not found!`);
+    }
   }
 };
 
@@ -351,4 +355,22 @@ function formatLike(alreadyLiked, likesNumber, articleId) {
     }
   }
   return out;
+}
+
+async function checkIfFeatureEnabled(featureName) {
+  const body = { name: featureName };
+  const url = "/api/config/checkfeature";
+
+  return fetch(url, {
+    method: "post",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  })
+    .then((r) => r.json())
+    .then((jsonBody) => {
+      return jsonBody.enabled;
+    });
 }
