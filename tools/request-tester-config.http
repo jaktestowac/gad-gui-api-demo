@@ -12,7 +12,7 @@ GET http://localhost:3000/api/config/reset
 
 
 ### Config - change token and cookies
-POST http://localhost:3000/api/config
+POST http://localhost:3000/api/config/all
 content-type: application/json
  
 {
@@ -64,3 +64,6 @@ content-type: application/json
 
 ### Get logs
 GET http://localhost:3000/api/logs
+
+### Get Uploaded file list
+GET http://localhost:3000/api/uploads
