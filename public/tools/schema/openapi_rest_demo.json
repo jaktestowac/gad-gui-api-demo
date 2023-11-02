@@ -2187,7 +2187,7 @@
       },
       "Like": {
         "type": "object",
-        "required": ["date"],
+        "required": ["date", "user_id"],
         "properties": {
           "id": {
             "oneOf": [
