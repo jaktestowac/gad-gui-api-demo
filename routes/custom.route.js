@@ -1,4 +1,13 @@
-const { fullDb, articlesDb, commentsDb, userDb, randomDbEntry } = require("../helpers/db.helpers");
+const {
+  fullDb,
+  articlesDb,
+  commentsDb,
+  userDb,
+  randomDbEntry,
+  getUserAvatars,
+  getImagesForArticles,
+  getUploadsList,
+} = require("../helpers/db.helpers");
 const {
   formatErrorResponse,
   getIdFromUrl,
@@ -9,8 +18,6 @@ const {
 } = require("../helpers/helpers");
 const { logError, logDebug, getLogs } = require("../helpers/logger-api");
 const { HTTP_INTERNAL_SERVER_ERROR, HTTP_OK } = require("../helpers/response.helpers");
-const fs = require("fs");
-const path = require("path");
 const { getRandomVisitsForEntities } = require("../helpers/random-data.generator");
 const { getConfigValue } = require("../config/config-manager");
 const { ConfigKeys } = require("../config/enums");
@@ -58,12 +65,15 @@ const customRoutes = (req, res, next) => {
       res.json(dbData);
       req.body = dbData;
     } else if (req.method === "GET" && req.url.endsWith("/images/user")) {
-      let files = fs.readdirSync(path.join(__dirname, "../public/data/users"));
-      files = files.filter((file) => !file.startsWith("face_"));
+      const files = getUserAvatars();
       res.json(files);
       req.body = files;
     } else if (req.method === "GET" && req.url.endsWith("/images/posts")) {
-      const files = fs.readdirSync(path.join(__dirname, "../public/data/images/256"));
+      const files = getImagesForArticles();
+      res.json(files);
+      req.body = files;
+    } else if (req.method === "GET" && req.url.endsWith("/api/uploads")) {
+      const files = getUploadsList();
       res.json(files);
       req.body = files;
     } else if (req.method === "GET" && req.url.endsWith("/pluginstatuses")) {

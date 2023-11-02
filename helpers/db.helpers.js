@@ -53,6 +53,23 @@ function randomDbEntry(db) {
   return db[Math.floor(Math.random() * db.length)];
 }
 
+function getUserAvatars() {
+  let files = fs.readdirSync(path.join(__dirname, getConfigValue(ConfigKeys.USER_AVATAR_PATH)));
+  files = files.filter((file) => !file.startsWith("face_"));
+  return files;
+}
+
+function getImagesForArticles() {
+  let files = fs.readdirSync(path.join(__dirname, getConfigValue(ConfigKeys.ARTICLE_IMAGE_PATH)));
+  return files;
+}
+
+function getUploadsList() {
+  let files = fs.readdirSync(path.join(__dirname, getConfigValue(ConfigKeys.UPLOADS_PATH)));
+  files = files.filter((file) => file.endsWith(".json"));
+  return files;
+}
+
 module.exports = {
   userDb,
   articlesDb,
@@ -65,4 +82,7 @@ module.exports = {
   getDbPath,
   getQuizHighScoresDb,
   saveQuizHighScoresDb,
+  getUserAvatars,
+  getImagesForArticles,
+  getUploadsList,
 };

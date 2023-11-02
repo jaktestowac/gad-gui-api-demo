@@ -48,7 +48,7 @@ const articlesUpload = (req, res, next) => {
 
         // TODO:INVOKE_BUG: same file name might cause file overwrite in parallel scenarios
         // const fileName = `uploaded-${getTodayDateForFileName()}.json`;
-        const fileName = `uploaded.json`;
+        const fileName = `uploaded-article.json`;
         const newFullFilePath = path.join(uploadDir, fileName);
 
         logDebug("[articles/upload]: Renaming files:", { file, from: file.filepath, to: newFullFilePath });

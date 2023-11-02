@@ -41,6 +41,9 @@ const ConfigKeys = {
   SLEEP_TIME_PER_ONE_GET_COMMENT_MAX: "sleepTimePerOneGetCommentMax",
   PUBLIC_LOGS_ENABLED: "publicLogsEnabled",
   NUMBER_OF_TOP_LIKED_ARTICLES: "numberOfTopLikedArticles",
+  USER_AVATAR_PATH: "userAvatarPath",
+  ARTICLE_IMAGE_PATH: "articleImagePath",
+  UPLOADS_PATH: "uploadsPath",
 };
 
 const BugConfigKeys = {

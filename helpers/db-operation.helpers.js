@@ -148,6 +148,7 @@ function saveGameHighScores(gameName, userEmail, score) {
   return quizHighScores[userId];
 }
 
+
 module.exports = {
   searchForUserWithToken,
   searchForUserWithEmail,
