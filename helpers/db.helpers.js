@@ -67,7 +67,18 @@ function getImagesForArticles() {
 function getUploadsList() {
   let files = fs.readdirSync(path.join(__dirname, getConfigValue(ConfigKeys.UPLOADS_PATH)));
   files = files.filter((file) => file.endsWith(".json"));
-  return files;
+
+  const foundFiles = [];
+
+  files.forEach((fileName) => {
+    const filePath = path.join(__dirname, getConfigValue(ConfigKeys.UPLOADS_PATH), fileName);
+    const fileStats = fs.statSync(filePath);
+    const fileSize = fileStats.size; // Size in bytes
+    const fileModificationDate = fileStats.mtime; // Last modification date
+    foundFiles.push({ name: fileName, size: fileSize, lastModified: fileModificationDate });
+  });
+
+  return foundFiles;
 }
 
 module.exports = {
