@@ -14,6 +14,9 @@ const path = require("path");
 
 const uploadDir = path.join(__dirname, "..", "uploads");
 
+const maxFiles = 10;
+let currentFile = 0;
+
 const articlesUpload = (req, res, next) => {
   try {
     // TODO: rework:
@@ -48,7 +51,11 @@ const articlesUpload = (req, res, next) => {
 
         // TODO:INVOKE_BUG: same file name might cause file overwrite in parallel scenarios
         // const fileName = `uploaded-${getTodayDateForFileName()}.json`;
-        const fileName = `uploaded-article.json`;
+
+        const fileName = `uploaded-article-${currentFile}.json`;
+
+        currentFile = (currentFile + 1) % maxFiles;
+
         const newFullFilePath = path.join(uploadDir, fileName);
 
         logDebug("[articles/upload]: Renaming files:", { file, from: file.filepath, to: newFullFilePath });
@@ -66,6 +73,7 @@ const articlesUpload = (req, res, next) => {
             logError("[articles/upload] Error after validation:", { error: isValid.error });
             return;
           }
+          res.status(HTTP_OK).send({});
         } catch (error) {
           logError("[articles/upload] Error:", error);
           res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("There was an error during file creation"));
