@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="css/controls.css" />
     <link rel="stylesheet" href="css/style.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- https://sheetjs.com/ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   </head>
   <body>
     <div class="container" align="center">
@@ -60,6 +62,9 @@
               <button onclick="generatePDF()" id="btnDownloadPdf" class="button-primary" data-testid="download-pdf">
                 PDF
               </button>
+              <a id="downloadDataXlsx"
+                ><button disabled id="btnDownloadDataXlsx" class="button-primary">Xlsx</button></a
+              >
             </div>
           </td>
         </tr>
