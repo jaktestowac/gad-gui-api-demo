@@ -35,7 +35,8 @@ POST http://localhost:3000/api/config/features
 content-type: application/json
  
 {
-    "feature_likes": true
+    "feature_likes": true,
+    "feature_files": true
 }
 
 ### Config - check feature

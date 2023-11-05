@@ -188,15 +188,27 @@ const mainGUIMenuHTML = (path = ".") => {
 };
 
 const mainGUIMenuHTMLLogged = (path = ".") => {
-  return `
+  const mainGuiMenu = `
   <a href="${path}/users.html" class="menu-link">
     <button id="btnUsers" data-testid="open-users" class="button-primary">Users</button>
   </a>
   <a href="${path}/stats.html" class="menu-link">
     <button id="btnStats" data-testid="open-stats" class="button-primary">Statistics</button>
   </a>
+  <span id="additionalMenu"></span>
   <span hidden id="menu-more">|| </span>
   `;
+
+  // checkIfFeatureEnabled("feature_files").then((isEnabled) => {
+  //   if (isEnabled) {
+  //     const container = document.querySelector("#additionalMenu");
+  //     container.innerHTML += `<a href="${path}/files.html" class="menu-link">
+  //           <button id="btnFiles" data-testid="open-files" class="button-primary" >📁</button>
+  //        </a>`;
+  //   }
+  // });
+
+  return mainGuiMenu;
 };
 
 const mainAPIMenuHTML = `

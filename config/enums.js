@@ -69,6 +69,7 @@ const BugConfigKeys = {
 
 const FeatureFlagConfigKeys = {
   FEATURE_LIKES: "feature_likes",
+  FEATURE_FILES: "feature_files",
 };
 
 module.exports = {
