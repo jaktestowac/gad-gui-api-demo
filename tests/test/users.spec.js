@@ -323,6 +323,20 @@ describe("Endpoint /users", async () => {
       expect(response.body).to.deep.equal(baseUserData);
     });
 
+    it("PATCH /users/:id - update partial", async () => {
+      // Arrange:
+      const testPartialUserData = { password: "1234" };
+
+      // Act:
+      const response = await request.patch(`${baseUrl}/${userId}`).set(headers).send(testPartialUserData);
+
+      // Assert:
+      expect(response.status).to.equal(200);
+      baseUserData.password = testPartialUserData.password;
+      baseUserData.id = response.body.id;
+      expect(response.body).to.deep.equal(baseUserData);
+    });
+
     it("PATCH /users/:id - update partial with invalid data", async () => {
       // Arrange:
       const testPartialUserData = { firstname: faker.string.alphanumeric(10001) };

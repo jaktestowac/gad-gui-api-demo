@@ -56,7 +56,8 @@ server.use(jsonServer.bodyParser);
 // Login to one of the users from ./users.json
 server.post("/api/login", (req, res) => {
   const { email, password, keepSignIn } = req.body;
-  logDebug("login: endpoint called:", { email, password, keepSignIn });
+  logTrace("login: endpoint called:", { email });
+  logTrace("login: endpoint called:", { email, password, keepSignIn });
 
   let isAdmin = isAnyAdminUser(email, password);
   let isSuperAdmin = isSuperAdminUser(email, password);
