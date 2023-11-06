@@ -199,15 +199,6 @@ const mainGUIMenuHTMLLogged = (path = ".") => {
   <span hidden id="menu-more">|| </span>
   `;
 
-  // checkIfFeatureEnabled("feature_files").then((isEnabled) => {
-  //   if (isEnabled) {
-  //     const container = document.querySelector("#additionalMenu");
-  //     container.innerHTML += `<a href="${path}/files.html" class="menu-link">
-  //           <button id="btnFiles" data-testid="open-files" class="button-primary" >📁</button>
-  //        </a>`;
-  //   }
-  // });
-
   return mainGuiMenu;
 };
 

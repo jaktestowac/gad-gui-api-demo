@@ -10,6 +10,15 @@ function getId() {
   return id;
 }
 
+checkIfFeatureEnabled("feature_files").then((isEnabled) => {
+  if (isEnabled) {
+    const container = document.querySelector("#additionalBtns");
+    container.innerHTML += `<a href="./files.html" class="menu-link">
+            <button id="btnFiles" data-testid="open-files" class="button-primary" >📁</button>
+         </a>`;
+  }
+});
+
 const editAccountButton = document.querySelector("#btnEditLink");
 editAccountButton.setAttribute("href", `/user.html?id=${getId()}`);
 

@@ -81,6 +81,22 @@ function getUploadsList() {
   return foundFiles;
 }
 
+function getUploadedFilePath(fileName) {
+  let files = fs.readdirSync(path.join(__dirname, getConfigValue(ConfigKeys.UPLOADS_PATH)));
+  const foundFile = files.find((file) => file === fileName);
+
+  if (foundFile === undefined) return foundFile;
+
+  return path.join(__dirname, getConfigValue(ConfigKeys.UPLOADS_PATH), foundFile);
+}
+
+function getUploadedFile(fileName) {
+  const foundFile = getUploadedFilePath(fileName);
+  if (foundFile === undefined) return foundFile;
+  const fileContent = JSON.parse(fs.readFileSync(foundFile, "UTF-8"));
+  return fileContent;
+}
+
 module.exports = {
   userDb,
   articlesDb,
@@ -96,4 +112,6 @@ module.exports = {
   getUserAvatars,
   getImagesForArticles,
   getUploadsList,
+  getUploadedFile,
+  getUploadedFilePath,
 };

@@ -17,8 +17,8 @@ const router = jsonServer.router(getDbPath(getConfigValue(ConfigKeys.DB_PATH)));
 const { formatErrorResponse, isAnyAdminUser, isSuperAdminUser, sleep } = require("./helpers/helpers");
 const { logDebug, logError, logTrace } = require("./helpers/logger-api");
 const { HTTP_INTERNAL_SERVER_ERROR, HTTP_CREATED, HTTP_OK, HTTP_UNAUTHORIZED } = require("./helpers/response.helpers");
-const { articlesUpload } = require("./routes/articles-upload.route");
 const { customRoutes } = require("./routes/custom.route");
+const { fileUpload } = require("./routes/file-upload.route");
 const middlewares = jsonServer.defaults();
 
 const port = process.env.PORT || getConfigValue(ConfigKeys.DEFAULT_PORT);
@@ -205,7 +205,7 @@ server.get("/logout", (req, res) => {
 server.use(clearDbRoutes);
 server.use(customRoutes);
 server.use(validations);
-server.use(articlesUpload);
+server.use(fileUpload);
 server.use("/api", router);
 
 router.render = function (req, res) {

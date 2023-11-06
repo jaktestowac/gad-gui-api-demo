@@ -40,3 +40,10 @@ content-type: application/json
 
 ### Get random article
 GET http://localhost:3000/api/random/article
+
+
+### Download article
+GET http://localhost:3000/api/articles/download/uploaded.json
+
+### Download article (404)
+GET http://localhost:3000/api/articles/download/xyz

@@ -2,8 +2,8 @@ const formidable = require("formidable");
 const { getConfigValue } = require("../config/config-manager");
 const { ConfigKeys } = require("../config/enums");
 const { logDebug, logError, logTrace } = require("../helpers/logger-api");
-const { formatErrorResponse, pad, getTodayDate, getTodayDateForFileName } = require("../helpers/helpers");
-const { HTTP_INTERNAL_SERVER_ERROR, HTTP_OK } = require("../helpers/response.helpers");
+const { formatErrorResponse, getTodayDate, getIdFromUrl } = require("../helpers/helpers");
+const { HTTP_INTERNAL_SERVER_ERROR, HTTP_OK, HTTP_NOT_FOUND } = require("../helpers/response.helpers");
 const {
   are_all_fields_valid,
   mandatory_non_empty_fields_article,
@@ -11,13 +11,14 @@ const {
 } = require("../helpers/validation.helpers");
 const fs = require("fs");
 const path = require("path");
+const { getUploadedFilePath } = require("../helpers/db.helpers");
 
 const uploadDir = path.join(__dirname, "..", "uploads");
 
 const maxFiles = 10;
 let currentFile = 0;
 
-const articlesUpload = (req, res, next) => {
+const fileUpload = (req, res, next) => {
   try {
     // TODO: rework:
     if (req.method === "POST" && req.url.endsWith("/api/articles/upload")) {
@@ -82,16 +83,22 @@ const articlesUpload = (req, res, next) => {
       });
       res.status(HTTP_OK);
       return;
-    } else if (req.method === "GET" && req.url.endsWith("/api/articles/upload")) {
-      const foundFiles = [];
-      fs.readdirSync(uploadDir).forEach((file) => {
-        if (file.endsWith(".json")) {
-          foundFiles.push(file);
-        }
-      });
-      logDebug("Found files:", { uploadDir, foundFiles });
-      res.status(HTTP_OK).json(foundFiles);
-      return;
+    } else if (req.method === "GET" && req.url.includes("/api/articles/download/")) {
+      const urlEnds = req.url.replace(/\/\/+/g, "/");
+
+      const fileName = getIdFromUrl(urlEnds);
+
+      logDebug("[articles/download] Searching for file:", { fileName });
+      const foundFile = getUploadedFilePath(fileName);
+      logDebug("[articles/download] Found file:", { fileName, found: foundFile !== undefined });
+
+      if (foundFile === undefined) {
+        res.status(HTTP_NOT_FOUND).json({ fileName, found: foundFile !== undefined });
+        return;
+      } else {
+        res.status(HTTP_OK).download(foundFile);
+        return;
+      }
     }
   } catch (error) {
     logError("Fatal error. Please contact administrator.", {
@@ -104,4 +111,4 @@ const articlesUpload = (req, res, next) => {
   }
 };
 
-exports.articlesUpload = articlesUpload;
+exports.fileUpload = fileUpload;
