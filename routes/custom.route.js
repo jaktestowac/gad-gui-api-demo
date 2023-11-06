@@ -19,8 +19,8 @@ const {
 const { logError, logDebug, getLogs } = require("../helpers/logger-api");
 const { HTTP_INTERNAL_SERVER_ERROR, HTTP_OK } = require("../helpers/response.helpers");
 const { getRandomVisitsForEntities } = require("../helpers/random-data.generator");
-const { getConfigValue } = require("../config/config-manager");
-const { ConfigKeys } = require("../config/enums");
+const { getConfigValue, getFeatureFlagConfigValue } = require("../config/config-manager");
+const { ConfigKeys, FeatureFlagConfigKeys } = require("../config/enums");
 
 const visitsPerArticle = getRandomVisitsForEntities(articlesDb());
 const visitsPerComment = getRandomVisitsForEntities(commentsDb());
@@ -72,7 +72,11 @@ const customRoutes = (req, res, next) => {
       const files = getImagesForArticles();
       res.json(files);
       req.body = files;
-    } else if (req.method === "GET" && req.url.endsWith("/api/uploads")) {
+    } else if (
+      req.method === "GET" &&
+      req.url.endsWith("/api/uploads") &&
+      getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_FILES)
+    ) {
       const files = getUploadsList();
       res.json(files);
       req.body = files;

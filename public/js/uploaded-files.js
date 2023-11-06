@@ -39,6 +39,9 @@ async function makeRequest() {
   getUploadedFiles()
     .then((filesData) => {
       console.log("Obtained:", filesData.length);
+      if (filesData.length === undefined) {
+        filesData = [];
+      }
       filesData.sort((a, b) => new Date(b.lastModified) - new Date(a.lastModified));
       populateTable(filesData);
     })

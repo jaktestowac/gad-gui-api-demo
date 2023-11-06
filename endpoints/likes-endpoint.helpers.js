@@ -1,5 +1,5 @@
-const { isBugEnabled, getConfigValue } = require("../config/config-manager");
-const { BugConfigKeys, ConfigKeys } = require("../config/enums");
+const { isBugEnabled, getConfigValue, getFeatureFlagConfigValue } = require("../config/config-manager");
+const { BugConfigKeys, ConfigKeys, FeatureFlagConfigKeys } = require("../config/enums");
 const { getCurrentDateTimeISO } = require("../helpers/datetime.helpers");
 const {
   searchForUserWithToken,
@@ -27,6 +27,11 @@ const {
 const { verifyAccessToken, is_likes_data_valid } = require("../helpers/validation.helpers");
 
 function handleLikes(req, res, isAdmin) {
+  const isFeatureEnabled = getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_LIKES);
+  if (!isFeatureEnabled) {
+    return;
+  }
+
   const urlEnds = req.url.replace(/\/\/+/g, "/");
 
   if (req.method !== "GET" && req.method !== "HEAD" && urlEnds?.includes("/api/likes") && !isAdmin) {

@@ -37,7 +37,7 @@
     },
     {
       "name": "likes",
-      "description": "Likes"
+      "description": "Likes (⚠️ needs proper feature flag enabled)"
     },
     {
       "name": "search",
