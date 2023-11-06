@@ -4,7 +4,7 @@ const { ConfigKeys, LogLevels } = require("../config/enums");
 const { getCurrentDateTime } = require("./datetime.helpers");
 const { LimitedList } = require("./limited-list");
 
-const logList = new LimitedList(100);
+const logList = new LimitedList(getConfigValue(ConfigKeys.LOGS_LIMIT));
 
 function getLogs() {
   return logList;

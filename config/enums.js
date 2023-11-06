@@ -44,6 +44,7 @@ const ConfigKeys = {
   USER_AVATAR_PATH: "userAvatarPath",
   ARTICLE_IMAGE_PATH: "articleImagePath",
   UPLOADS_PATH: "uploadsPath",
+  LOGS_LIMIT: "logsLimit"
 };
 
 const BugConfigKeys = {
