@@ -1,8 +1,7 @@
-<!DOCTYPE html>
 <html>
   <head>
-    <title>🦎 GAD | Welcome</title>
-    <link rel="icon" href="./favicon.png" />
+    <title>🦎 GAD | Files</title>
+    <link rel="icon" href="./data/icons/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
       rel="stylesheet"
@@ -11,8 +10,8 @@
       crossorigin="anonymous"
     />
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
-    <link rel="stylesheet" href="./css/controls.css" />
-    <link rel="stylesheet" href="./css/style.css" />
+    <link rel="stylesheet" href="css/controls.css" />
+    <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
     <header>
@@ -20,38 +19,40 @@
         <h1 id="menu-main-gui" class="nav-menu"></h1>
       </div>
     </header>
-    <div id="container"></div>
-    <div id="containerComments"></div>
+
     <br />
     <br />
     <br />
+    <br />
+    <br />
+
     <div
       class="container"
       id="pageHeader"
       style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center"
     >
-      <div class="welcome">
-        <h2 data-testid="hello">Hi <%=username%>!</h2>
-        <h2 id="countDown" data-testid="countDown"></h2>
-        <a href="/logout">
-          <button id="btnLogoutWelcome" data-testid="logoutButton" class="button-primary">Logout</button>
-        </a>
-        <a href="/users.html" id="btnEditLink">
-          <button class="button-primary">My profile</button>
-        </a>
-        <a href="/users.html" id="btnArticlesLink">
-          <button class="button-primary">My articles</button>
-        </a>
-        <span id="additionalBtns"></span>
-      </div>
+      <h1>Actions:</h1>
+    </div>
+    <div
+      class="container container-mobile"
+      style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center"
+    >
+      <a href="./fileupload.html">
+        <button class="button-primary button-mobile" id="btnFileUpload" style="margin: 10; font-size: 22px">
+          File upload
+        </button>
+      </a>
+      <a href="./fileupload.html?filelist=true">
+        <button class="button-primary button-mobile" id="btnUploadedFiles" style="margin: 10; font-size: 22px">
+          File upload with file list
+        </button>
+      </a>
     </div>
   </body>
-  <br />
-  <br />
-  <br />
   <script type="text/javascript" src="js/common.js"></script>
-  <script type="text/javascript" src="js/welcome.js"></script>
   <script type="text/javascript" src="version.js"></script>
   <script type="text/javascript" src="username.js"></script>
-  <script type="text/javascript" src="cookieExpiration.js"></script>
+  <script>
+    menuButtonDisable("btnFiles");
+  </script>
 </html>

@@ -55,6 +55,8 @@
         "afterAll": "readonly",
         "beforeEach": "readonly",
         "beforeAll": "readonly",
-        "expect": "readonly"
+        "expect": "readonly",
+        "formatLike": "readonly", 
+        "checkIfFeatureEnabled": "readonly"
     }
 }

@@ -1,20 +1,25 @@
 /* eslint-disable no-console */
-const { config } = require("./config-general");
+const { config, configToModify } = require("./config-general");
 const { bugConfig } = require("./config-bugs");
-const { ConfigKeys, BugConfigKeys } = require("./enums");
+const { featureFlagConfig } = require("./config-features");
+const { ConfigKeys, BugConfigKeys, FeatureFlagConfigKeys } = require("./enums");
 
 const ConfigManager = (function () {
   let instance;
 
   function createInstance() {
     const configCopy = { ...config };
+    const configToModifyCopy = { ...configToModify };
     const bugConfigCopy = { ...bugConfig };
+    const featureFlagConfigCopy = { ...featureFlagConfig };
 
     function getConfigValue(key) {
-      if (configCopy[key] === undefined) {
-        console.log(`> Config: Warning! Value of "${key}" is "${configCopy[key]}"`);
+      const tmpConfig = { ...configToModifyCopy, ...configCopy };
+
+      if (tmpConfig[key] === undefined) {
+        console.log(`> Config: Warning! Value of "${key}" is "${tmpConfig[key]}"`);
       }
-      return configCopy[key];
+      return tmpConfig[key];
     }
 
     function getBugConfigValue(key) {
@@ -24,9 +29,16 @@ const ConfigManager = (function () {
       return bugConfigCopy[key];
     }
 
+    function getFeatureFlagConfigValue(key) {
+      if (featureFlagConfigCopy[key] === undefined) {
+        console.log(`> FeatureFlagConfig: Warning! Value of "${key}" is "${featureFlagConfigCopy[key]}"`);
+      }
+      return featureFlagConfigCopy[key];
+    }
+
     function setConfigValue(key, value) {
-      configCopy[key] = value;
-      return configCopy[key];
+      configToModifyCopy[key] = value;
+      return configToModifyCopy[key];
     }
 
     function setBugConfigValue(key, value) {
@@ -34,9 +46,16 @@ const ConfigManager = (function () {
       return bugConfigCopy[key];
     }
 
+    function setFeatureFlagConfigValue(key, value) {
+      featureFlagConfigCopy[key] = value;
+      return featureFlagConfigCopy[key];
+    }
+
     function resetConfig() {
       reset(configCopy, config);
+      reset(configToModifyCopy, configToModify);
       reset(bugConfigCopy, bugConfig);
+      reset(featureFlagConfigCopy, featureFlagConfig);
     }
 
     function reset(configCopy, config) {
@@ -49,8 +68,10 @@ const ConfigManager = (function () {
     }
 
     function fullSelfCheck() {
-      selfCheck(ConfigKeys, configCopy, "Config");
+      const tmpConfig = { ...configToModifyCopy, ...configCopy };
+      selfCheck(ConfigKeys, tmpConfig, "Config");
       selfCheck(BugConfigKeys, bugConfigCopy, "BugConfig");
+      selfCheck(FeatureFlagConfigKeys, featureFlagConfigCopy, "FeatureFlagConfig");
     }
 
     function selfCheck(configKeys, configCopy, msg) {
@@ -81,13 +102,16 @@ const ConfigManager = (function () {
     }
 
     return {
-      configCopy,
+      configToModifyCopy,
       bugConfigCopy,
+      featureFlagConfigCopy,
       getConfigValue,
       setConfigValue,
       resetConfig,
       getBugConfigValue,
       setBugConfigValue,
+      getFeatureFlagConfigValue,
+      setFeatureFlagConfigValue,
       fullSelfCheck,
     };
   }
@@ -120,6 +144,8 @@ module.exports = {
   resetConfig: configInstance.resetConfig,
   getBugConfigValue: configInstance.getBugConfigValue,
   setBugConfigValue: configInstance.setBugConfigValue,
+  getFeatureFlagConfigValue: configInstance.getFeatureFlagConfigValue,
+  setFeatureFlagConfigValue: configInstance.setFeatureFlagConfigValue,
   isBugDisabled,
   isBugEnabled,
 };

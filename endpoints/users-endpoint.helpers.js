@@ -1,4 +1,4 @@
-const { isBugDisabled } = require("../config/config-manager");
+const { isBugDisabled, isBugEnabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
 const { searchForUser } = require("../helpers/db-operation.helpers");
 const { userDb } = require("../helpers/db.helpers");
@@ -21,6 +21,7 @@ const {
 function handleUsers(req, res) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
 
+  // register user:
   if (req.method === "POST" && urlEnds.includes("/api/users")) {
     logDebug("Register User: attempt:", { urlEnds, email: req.body["email"] });
     // validate mandatory fields:
@@ -42,7 +43,14 @@ function handleUsers(req, res) {
       return;
     }
 
-    if (userDb().includes(req.body["email"])) {
+    const emails = userDb().map((user) => user?.email);
+    let foundUser = emails.filter((email) => email === req.body["email"]);
+
+    if (isBugEnabled(BugConfigKeys.BUG_LIKES_006)) {
+      foundUser = [];
+    }
+
+    if (foundUser.length !== 0) {
       res.status(HTTP_CONFLICT).send(formatErrorResponse("Email not unique"));
       return;
     }

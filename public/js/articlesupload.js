@@ -8,6 +8,7 @@ const sampleArticleJson = {
   date: "2022-05-20T05:38:12Z",
   image: ".\\data\\images\\256\\chuttersnap-9cCeS9Sg6nU-unsplash.jpg",
 };
+const infoContainer = document.querySelector("#infoContainer");
 
 const handleCreate = () => {
   const today = new Date();
@@ -138,47 +139,3 @@ const attachEventHandlers = (user_id) => {
 
 attachEventHandlers(getId());
 
-function uploadFile() {
-  const fileInput = document.getElementById("jsonFile");
-  const file = fileInput.files[0];
-  if (file && file.type === "application/json") {
-    const formData = new FormData();
-    formData.append("jsonFile", file);
-
-    fetch(articlesUploadEndpoint, {
-      method: "POST",
-      body: formData,
-      headers: {
-        Authorization: getBearerToken(),
-        userid: getId(),
-      },
-    })
-      .then((response) => {
-        if (response.ok) {
-          const container = document.querySelector("#infoContainer");
-          container.innerHTML = "JSON file uploaded successfully!";
-          response.json().then((json) => {
-            const container = document.querySelector("#infoContainer");
-            container.innerHTML = `JSON file uploaded successfully!. <br/><a href="/article.html?id=${json?.id}" >
-            <button id="btnArticle" data-testid="article" class="button-primary" style="margin:2px;">Visit uploaded article</button>
-          </a>`;
-          });
-        } else {
-          const container = document.querySelector("#infoContainer");
-          container.innerHTML = "JSON file upload failed.";
-          response.json().then((json) => {
-            const container = document.querySelector("#infoContainer");
-            container.innerHTML = `JSON file upload failed. <br/>${json?.error?.message}`;
-          });
-        }
-      })
-      .catch((error) => {
-        console.error("Error uploading JSON file:", error);
-        const container = document.querySelector("#infoContainer");
-        container.innerHTML = "JSON file upload failed.";
-      });
-  } else {
-    const container = document.querySelector("#infoContainer");
-    container.innerHTML = "Please select a valid JSON file.";
-  }
-}

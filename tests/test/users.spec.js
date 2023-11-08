@@ -76,7 +76,7 @@ describe("Endpoint /users", async () => {
         const responseAgain = await request.post(baseUrl).send(testUserData);
 
         // Assert:
-        expect(responseAgain.status).to.equal(201);
+        expect(responseAgain.status).to.equal(409);
       });
 
       it("invalid email", async () => {
@@ -250,7 +250,7 @@ describe("Endpoint /users", async () => {
       testUserData.id = userId;
     });
 
-    it("PUT /users", async () => {
+    it("PUT /users - create user", async () => {
       // Act:
       const response = await request.put(baseUrl).set(headers).send(testUserData);
 
@@ -279,9 +279,10 @@ describe("Endpoint /users", async () => {
         const response = await request.put(`${baseUrl}/${userId}`).set(headers).send(testUserData);
 
         // Assert:
-        expect(response.status).to.equal(422);
+        expect(response.status, `${JSON.stringify(response.body)} - ${testUserData}`).to.equal(422);
       });
     });
+
     it("PUT /users/:id - update different user", async () => {
       // Act:
       const response = await request.put(`${baseUrl}/1`).set(headers).send(testUserData);
@@ -318,6 +319,20 @@ describe("Endpoint /users", async () => {
       // Assert:
       expect(response.status).to.equal(200);
       baseUserData.firstname = testPartialUserData.firstname;
+      baseUserData.id = response.body.id;
+      expect(response.body).to.deep.equal(baseUserData);
+    });
+
+    it("PATCH /users/:id - update partial", async () => {
+      // Arrange:
+      const testPartialUserData = { password: "1234" };
+
+      // Act:
+      const response = await request.patch(`${baseUrl}/${userId}`).set(headers).send(testPartialUserData);
+
+      // Assert:
+      expect(response.status).to.equal(200);
+      baseUserData.password = testPartialUserData.password;
       baseUserData.id = response.body.id;
       expect(response.body).to.deep.equal(baseUserData);
     });

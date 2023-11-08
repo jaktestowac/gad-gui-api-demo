@@ -35,10 +35,9 @@
           ></strong
         >
         <div style="margin: 5px 15px 5px 15px">
-          Page: <span id="page" data-testid="current-page"></span> /
-          <span id="pagesTotal" data-testid="total-pages"></span>
+          Page: <span id="page" data-testid="current-page"></span>/<span id="pagesTotal" data-testid="total-pages"></span>
         </div>
-        <label style="margin: 5px 5px 5px 5px">Items per page:</label>
+        <label style="margin: 5px 5px 5px 5px">Items/Page:</label>
         <select
           id="perPage"
           data-testid="per-page-select"
@@ -49,9 +48,24 @@
           <option id="opt2" selected value="6">6</option>
           <option id="opt3" value="9">9</option>
           <option id="opt4" value="12">12</option>
+          <option id="opt5" value="24">24</option>
+        </select>
+        <label style="margin: 5px 5px 5px 5px">Sort:</label>
+        <select
+          id="sorting"
+          data-testid="sorting-select"
+          onchange="changeSorting()"
+          style="display: inline-block; width: 75px; margin: 5px 5px 5px 5px"
+        >
+          <option id="sorting-opt2" selected value="date DESC">date ⬇️</option>
+          <option id="sorting-opt1" value="date ASC">date ⬆️</option>
+          <option id="sorting-opt4" value="title DESC">title ⬇️</option>
+          <option id="sorting-opt3" value="title ASC">title ⬆️</option>
+          <option id="sorting-opt4" value="body DESC">body ⬇️</option>
+          <option id="sorting-opt3" value="body ASC">body ⬆️</option>
         </select>
         <div class="mobile-search-container" style="margin: 5px 15px 5px 15px">
-          <input class="search" value="" placeholder="Search..." id="search-input" data-testid="search-input" style="vertical-align: middle"></input>
+          <input class="search" value="" placeholder="Search..." id="search-input" data-testid="search-input" style="vertical-align: middle;width: 100px;"></input>
           <strong>
           <a data-testid="search-button" style="vertical-align: middle; margin: 5px 5px 5px 5px" href="javascript:seachByText()"
             >GO</a

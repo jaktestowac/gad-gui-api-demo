@@ -1,6 +1,6 @@
 const { isBugDisabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
-const { searchForUserWithToken, searchForArticle } = require("../helpers/db-operation.helpers");
+const { searchForUserWithToken, searchForArticle, searchForArticles } = require("../helpers/db-operation.helpers");
 const {
   formatInvalidTokenErrorResponse,
   getIdFromUrl,
@@ -8,7 +8,12 @@ const {
   formatInvalidFieldErrorResponse,
 } = require("../helpers/helpers");
 const { logTrace, logWarn } = require("../helpers/logger-api");
-const { HTTP_UNAUTHORIZED, HTTP_UNPROCESSABLE_ENTITY } = require("../helpers/response.helpers");
+const {
+  HTTP_UNAUTHORIZED,
+  HTTP_UNPROCESSABLE_ENTITY,
+  HTTP_NOT_FOUND,
+  HTTP_OK,
+} = require("../helpers/response.helpers");
 const {
   verifyAccessToken,
   are_mandatory_fields_present,
@@ -24,7 +29,8 @@ function handleArticles(req, res, isAdmin) {
     const verifyTokenResult = verifyAccessToken(req, res, "articles", req.url);
     const foundUser = searchForUserWithToken(req.headers["userid"], verifyTokenResult);
 
-    if (foundUser === undefined) {
+    logTrace("handleArticles:", { method: req.method, urlEnds, foundUser });
+    if (foundUser === undefined || verifyTokenResult === undefined) {
       res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
       return;
     }
@@ -74,6 +80,19 @@ function handleArticles(req, res, isAdmin) {
       }
     }
   }
+
+  // if (req.method === "GET" && urlEnds.includes("/api/articles?ids=")) {
+  //   const articleIdsRaw = urlEnds.split("?ids=").slice(-1)[0];
+  //   if (articleIdsRaw === undefined) {
+  //     res.status(HTTP_NOT_FOUND).json({});
+  //     return;
+  //   }
+
+  //   const articleIds = articleIdsRaw.split(",");
+  //   const foundArticles = searchForArticles(articleIds);
+  //   res.status(HTTP_OK).json(foundArticles);
+  //   return;
+  // }
 
   if (req.method === "POST" && urlEnds.includes("/api/articles") && !urlEnds.includes("/upload") && !isAdmin) {
     // validate mandatory fields:
@@ -128,7 +147,7 @@ function handleArticles(req, res, isAdmin) {
 
     if (foundArticle === undefined) {
       req.method = "POST";
-      req.url = req.url.replace(`/${articleId}`, "");
+      req.url = "/api/articles";
       req.body.id = undefined;
       logTrace("handleArticles:PUT -> POST:", {
         method: req.method,

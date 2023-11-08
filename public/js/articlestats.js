@@ -85,8 +85,12 @@ const displayData = () => {
     document.querySelector("#btnDownloadTableDataJson").onclick = () => {
       download("articles_table_data.json", tableDataForCsv);
     };
+    document.querySelector("#btnDownloadTableDataXlsx").onclick = () => {
+      downloadXlsx("articles_table_data.xlsx", tableDataForCsv);
+    };
     document.querySelector("#btnDownloadTableDataCsv").disabled = false;
     document.querySelector("#btnDownloadTableDataJson").disabled = false;
+    document.querySelector("#btnDownloadTableDataXlsx").disabled = false;
   }
 };
 

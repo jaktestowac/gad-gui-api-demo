@@ -36,6 +36,10 @@
       "description": "Comments"
     },
     {
+      "name": "likes",
+      "description": "Likes (⚠️ needs proper feature flag enabled)"
+    },
+    {
       "name": "search",
       "description": "Search, filter, pagination for given objects"
     },
@@ -356,8 +360,8 @@
             "description": "Article deleted",
             "content": {}
           },
-          "404": {
-            "description": "Article not found",
+          "401": {
+            "description": "Unauthorized",
             "content": {}
           }
         }
@@ -773,6 +777,162 @@
         }
       }
     },
+    "/likes": {
+      "post": {
+        "tags": ["likes"],
+        "summary": "Like or dislike element on page",
+        "operationId": "createLike",
+        "requestBody": {
+          "description": "Created Like object",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Like"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Like deleted",
+            "content": {}
+          },
+          "201": {
+            "description": "Like created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Like"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - malformed JSON",
+            "content": {}
+          },
+          "422": {
+            "description": "Invalid data supplied",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/likes/article/{id}": {
+      "get": {
+        "tags": ["likes"],
+        "summary": "Get likes for article",
+        "operationId": "getLikesForArticle",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of article to return its likes",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Likes"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/likes/article": {
+      "get": {
+        "tags": ["likes"],
+        "summary": "Get likes for article",
+        "operationId": "getLikesForArticle",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Likes"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/likes/comment/{id}": {
+      "get": {
+        "tags": ["likes"],
+        "summary": "Get likes for comment",
+        "operationId": "getLikesForComment",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of comment to return its likes",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Likes"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/likes/article/mylikes": {
+      "get": {
+        "tags": ["likes"],
+        "summary": "Get myLikes",
+        "operationId": "getMyLikes",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MyLikes"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
     "/comments/{id}": {
       "get": {
         "tags": ["comments"],
@@ -2014,6 +2174,69 @@
         },
         "xml": {
           "name": "UserLoginToken"
+        }
+      },
+      "Likes": {
+        "type": "object",
+        "required": ["likes"],
+        "properties": {
+          "likes": {
+            "type": "number"
+          }
+        }
+      },
+      "Like": {
+        "type": "object",
+        "required": ["date", "user_id"],
+        "properties": {
+          "id": {
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "user_id": {
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "comment_id": {
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "article_id": {
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "example": "2024-06-30T15:44:31Z"
+          }
+        },
+        "xml": {
+          "name": "Like"
         }
       },
       "UserLoginData": {

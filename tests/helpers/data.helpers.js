@@ -56,6 +56,16 @@ function generateValidUserData() {
   return testData;
 }
 
+function generateLikesBody(user_id, comment_id, article_id) {
+  const like = {
+    user_id: user_id,
+    comment_id: comment_id,
+    article_id: article_id,
+    date: "2023-09-25T10:00:00Z",
+  };
+  return like;
+}
+
 function generateValidCommentData() {
   const testData = {
     article_id: 1,
@@ -193,4 +203,5 @@ module.exports = {
   validExistingComment,
   validExistingArticle,
   generateValidUserLoginData,
+  generateLikesBody,
 };

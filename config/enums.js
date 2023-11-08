@@ -40,6 +40,11 @@ const ConfigKeys = {
   SLEEP_TIME_PER_ONE_GET_COMMENT_MIN: "sleepTimePerOneGetCommentMin",
   SLEEP_TIME_PER_ONE_GET_COMMENT_MAX: "sleepTimePerOneGetCommentMax",
   PUBLIC_LOGS_ENABLED: "publicLogsEnabled",
+  NUMBER_OF_TOP_LIKED_ARTICLES: "numberOfTopLikedArticles",
+  USER_AVATAR_PATH: "userAvatarPath",
+  ARTICLE_IMAGE_PATH: "articleImagePath",
+  UPLOADS_PATH: "uploadsPath",
+  LOGS_LIMIT: "logsLimit"
 };
 
 const BugConfigKeys = {
@@ -51,13 +56,26 @@ const BugConfigKeys = {
   BUG_VALIDATION_003: "bug_validation_003",
   BUG_VALIDATION_004: "bug_validation_004",
   BUG_VALIDATION_005: "bug_validation_005",
+  BUG_VALIDATION_006: "bug_validation_006",
   BUG_QUIZ_001: "bug_quiz_001",
   BUG_QUIZ_002: "bug_quiz_002",
   BUG_QUIZ_003: "bug_quiz_003",
+  BUG_QUIZ_004: "bug_quiz_004",
+  BUG_SORTING_001: "bug_sorting_001",
+  BUG_SORTING_002: "bug_sorting_002",
+  BUG_SORTING_003: "bug_sorting_003",
+  BUG_LIKES_001: "bug_likes_001",
+  BUG_LIKES_002: "bug_likes_002",
+};
+
+const FeatureFlagConfigKeys = {
+  FEATURE_LIKES: "feature_likes",
+  FEATURE_FILES: "feature_files",
 };
 
 module.exports = {
   LogLevels,
   ConfigKeys,
   BugConfigKeys,
+  FeatureFlagConfigKeys,
 };

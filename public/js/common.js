@@ -124,9 +124,13 @@ const injectLink = (link, id) => {
 const menuButtonDisable = (id) => {
   if (id) {
     const menuItem = document.querySelector(`#${id}`);
-    menuItem.classList = ["button-disabled"];
-    menuItem.disabled = true;
-    menuItem.readOnly = true;
+    if (menuItem !== undefined && menuItem !== null) {
+      menuItem.classList = ["button-disabled"];
+      menuItem.disabled = true;
+      menuItem.readOnly = true;
+    } else {
+      console.log(`WARNING! Button ${id} was not found!`);
+    }
   }
 };
 
@@ -139,12 +143,12 @@ const articlesAdditionalMenu = `
 `;
 
 const articleAdditionalMenu = `
-<button id="add-new" class="button-primary" disabled>Add Comment</button>
+<button id="add-new-comment" class="button-primary" disabled>Add Comment</button>
 `;
 
 const articleAdditionalMenuOnPage = `
 <div align="center">
-  <button id="add-new-comment" class="button-primary" disabled>Add Comment</button>
+  <button id="add-new" class="button-primary" disabled>Add Comment</button>
 </div>
 `;
 
@@ -184,15 +188,18 @@ const mainGUIMenuHTML = (path = ".") => {
 };
 
 const mainGUIMenuHTMLLogged = (path = ".") => {
-  return `
+  const mainGuiMenu = `
   <a href="${path}/users.html" class="menu-link">
     <button id="btnUsers" data-testid="open-users" class="button-primary">Users</button>
   </a>
   <a href="${path}/stats.html" class="menu-link">
     <button id="btnStats" data-testid="open-stats" class="button-primary">Statistics</button>
   </a>
+  <span id="additionalMenu"></span>
   <span hidden id="menu-more">|| </span>
   `;
+
+  return mainGuiMenu;
 };
 
 const mainAPIMenuHTML = `
@@ -316,6 +323,8 @@ function getBearerToken() {
       token = cookie.split("=")[1];
     }
   }
+
+  if (token === undefined) return token;
   return `Bearer ${token}`;
 }
 
@@ -331,3 +340,40 @@ function formatHeaders() {
 }
 
 addMainMenuAndFooter();
+
+const likeMessage = "Please log in to like this content!";
+function formatLike(alreadyLiked, likesNumber, articleId) {
+  let out = "";
+  if (alreadyLiked) {
+    if (getBearerToken() === undefined) {
+      out = `<div class="hover-element" style="display: grid;justify-self: end"><div style="display: flex;justify-self: end"><div id="likes-button" >💗</div> <div id="likes-count" >${likesNumber}</div></div><div class="popup">${likeMessage}</div></div>`;
+    } else {
+      out = `<div style="display: flex;justify-self: end"><div id="likes-button" onclick="likeArticle(${articleId})" style="cursor: pointer;" >💗</div> <div id="likes-count" >${likesNumber}</div></div>`;
+    }
+  } else {
+    if (getBearerToken() === undefined) {
+      out = `<div class="hover-element" style="display: grid;justify-self: end"><div style="display: flex;justify-self: end"><div id="likes-button" >🤍</div> <div id="likes-count" >${likesNumber}</div></div><div class="popup">${likeMessage}</div></div>`;
+    } else {
+      out = `<div style="display: flex;justify-self: end"><div id="likes-button" onclick="likeArticle(${articleId})" style="cursor: pointer;">🤍</div> <div id="likes-count" >${likesNumber}</div></div>`;
+    }
+  }
+  return out;
+}
+
+async function checkIfFeatureEnabled(featureName) {
+  const body = { name: featureName };
+  const url = "/api/config/checkfeature";
+
+  return fetch(url, {
+    method: "post",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  })
+    .then((r) => r.json())
+    .then((jsonBody) => {
+      return jsonBody.enabled;
+    });
+}

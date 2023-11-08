@@ -50,11 +50,15 @@ const displayData = () => {
   document.querySelector("#btnDownloadVisitsDataCsv").onclick = () => {
     download("publications.csv", dataForChart);
   };
+  document.querySelector("#btnDownloadDataXlsx").onclick = () => {
+    downloadXlsx("publications.xlsx", dataForChart);
+  };
   document.querySelector("#btnDownloadVisitsDataJson").onclick = () => {
     download("publications.json", publicationData);
   };
   document.querySelector("#btnDownloadVisitsDataCsv").disabled = false;
   document.querySelector("#btnDownloadVisitsDataJson").disabled = false;
+  document.querySelector("#btnDownloadDataXlsx").disabled = false;
   document.querySelector("#tableChart").style.visibility = "visible";
 };
 

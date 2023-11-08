@@ -1,6 +1,7 @@
 const { checkLetter, getRandomWord } = require("../helpers/hangman.helpers");
+const { formatErrorResponse } = require("../helpers/helpers");
 const { logTrace, logDebug } = require("../helpers/logger-api");
-const { HTTP_NOT_FOUND, HTTP_OK } = require("../helpers/response.helpers");
+const { HTTP_NOT_FOUND, HTTP_OK, HTTP_UNAUTHORIZED } = require("../helpers/response.helpers");
 const { verifyAccessToken } = require("../helpers/validation.helpers");
 
 const hangmanHighScores = {};
@@ -23,7 +24,10 @@ function handleHangman(req, res) {
     res.status(HTTP_OK).json({ indices });
   } else if (req.method === "POST" && req.url.endsWith("/api/v2/hangman/check")) {
     const verifyTokenResult = verifyAccessToken(req, res, "hangman", req.url);
-    if (!verifyTokenResult) return;
+    if (verifyTokenResult === undefined) {
+      res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
+      return;
+    }
 
     const letter = req.body["letter"];
     const word = hangmanTempScores[verifyTokenResult?.email].selectedWord;
@@ -34,7 +38,10 @@ function handleHangman(req, res) {
     res.status(HTTP_OK).json({ indices });
   } else if (req.method === "GET" && req.url.endsWith("/api/v2/hangman/start")) {
     const verifyTokenResult = verifyAccessToken(req, res, "hangman", req.url);
-    if (!verifyTokenResult) return;
+    if (verifyTokenResult === undefined) {
+      res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
+      return;
+    }
 
     const randomWord = getRandomWord();
     hangmanTempScores[verifyTokenResult?.email] = { selectedWord: randomWord, wrongAttempts: 0 };
@@ -43,7 +50,10 @@ function handleHangman(req, res) {
     res.status(HTTP_OK).json({ selectedWordLength: randomWord.length });
   } else if (req.method === "GET" && req.url.endsWith("/api/v2/hangman/stop")) {
     const verifyTokenResult = verifyAccessToken(req, res, "hangman", req.url);
-    if (!verifyTokenResult) return;
+    if (verifyTokenResult === undefined) {
+      res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
+      return;
+    }
 
     const email = verifyTokenResult?.email;
     logDebug("handleHangman:Hangman stopped:", { email, hangmanTempScores, hangmanHighScores });

@@ -11,12 +11,14 @@ const baseQuizUrl = "/api/quiz";
 const baseStatsUrl = "/api/stats";
 const baseCommentsUrl = "/api/comments";
 const baseLoginUrl = "/api/login";
+const baseLikesUrl = "/api/likes";
 
 const existingUserEmail = "Danial.Dicki@dicki.test";
 const existingUserPass = "test2";
 
 const sleepTime = 50; // in ms
 const logLevel = 2;
+const clearDbAfter = true;
 
 module.exports = {
   expect,
@@ -25,6 +27,7 @@ module.exports = {
   baseApiUrl,
   baseArticlesUrl,
   baseUsersUrl,
+  baseLikesUrl,
   baseHangmanUrl,
   baseQuizUrl,
   baseStatsUrl,
@@ -34,4 +37,5 @@ module.exports = {
   existingUserPass,
   existingUserEmail,
   logLevel,
+  clearDbAfter,
 };

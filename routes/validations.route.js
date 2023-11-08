@@ -1,16 +1,13 @@
 const {
   formatErrorResponse,
-  parseUserStats,
-  parseArticleStats,
-  parsePublishStats,
   getIdFromUrl,
   formatInvalidTokenErrorResponse,
   getRandomInt,
   sleep,
 } = require("../helpers/helpers");
 const { logDebug, logError, logTrace } = require("../helpers/logger-api");
-const { getConfigValue } = require("../config/config-manager");
-const { ConfigKeys } = require("../config/enums");
+const { getConfigValue, isBugEnabled } = require("../config/config-manager");
+const { ConfigKeys, BugConfigKeys } = require("../config/enums");
 
 const { validateEmail, verifyAccessToken } = require("../helpers/validation.helpers");
 const { searchForUserWithToken } = require("../helpers/db-operation.helpers");
@@ -21,6 +18,7 @@ const { handleConfig } = require("../endpoints/config-endpoint.helpers");
 const { handleUsers } = require("../endpoints/users-endpoint.helpers");
 const { handleArticles } = require("../endpoints/articles-endpoint.helpers");
 const { handleComments } = require("../endpoints/comments-endpoint.helpers");
+const { handleLikes } = require("../endpoints/likes-endpoint.helpers");
 
 const validations = (req, res, next) => {
   let isAdmin = false;
@@ -55,10 +53,25 @@ const validations = (req, res, next) => {
         isAdmin = true;
         logDebug("validations: isAdmin:", isAdmin);
       }
+
+      if (verifyTokenResult === undefined) {
+        res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
+        return;
+      }
     } catch (error) {
       logError("Error: check if admin:", {
         error,
       });
+    }
+
+    if (isBugEnabled(BugConfigKeys.BUG_SORTING_001)) {
+      req.query._limit = 11;
+    }
+    if (isBugEnabled(BugConfigKeys.BUG_SORTING_002)) {
+      req.query._sort = "";
+    }
+    if (isBugEnabled(BugConfigKeys.BUG_SORTING_003)) {
+      req.query._order = "";
     }
 
     if (req.url.includes("/api/config")) {
@@ -84,7 +97,10 @@ const validations = (req, res, next) => {
       logTrace("Validators: Check user auth", { url: urlEnds });
       let userId = getIdFromUrl(urlEnds);
       const verifyTokenResult = verifyAccessToken(req, res, "users", req.url);
-      if (!verifyTokenResult) return;
+      if (verifyTokenResult === undefined) {
+        res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
+        return;
+      }
 
       const foundUser = searchForUserWithToken(userId, verifyTokenResult);
 
@@ -99,12 +115,18 @@ const validations = (req, res, next) => {
       (req.method !== "GET" && req.method !== "HEAD" && urlEnds?.includes("/api/articles") && !isAdmin)
     ) {
       const verifyTokenResult = verifyAccessToken(req, res, "articles", req.url);
-      if (!verifyTokenResult) return;
+      if (verifyTokenResult === undefined) {
+        res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
+        return;
+      }
     }
 
     if (req.method !== "GET" && req.method !== "HEAD" && urlEnds.includes("/api/comments") && !isAdmin) {
       const verifyTokenResult = verifyAccessToken(req, res, "comments", req.url);
-      if (!verifyTokenResult) return;
+      if (verifyTokenResult === undefined) {
+        res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
+        return;
+      }
     }
 
     if (req.url.includes("/api/users")) {
@@ -117,6 +139,10 @@ const validations = (req, res, next) => {
 
     if (req.url.includes("/api/comments")) {
       handleComments(req, res, isAdmin);
+    }
+
+    if (req.url.includes("/api/likes")) {
+      handleLikes(req, res, isAdmin);
     }
 
     logTrace("Returning:", { statusCode: res.statusCode, headersSent: res.headersSent, urlEnds, method: req.method });

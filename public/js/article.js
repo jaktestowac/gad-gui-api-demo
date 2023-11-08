@@ -2,6 +2,9 @@ const articlesEndpoint = "../../api/articles";
 const usersEndpoint = "../../api/users";
 const commentsEndpoint = "../../api/comments";
 const randomArticleEndpoint = "../../api/random/article";
+const articleLikesEndpoint = "../../api/likes/article";
+const myLikesEndpoint = "../../api/likes/article/mylikes";
+const likesEndpoint = "../../api/likes";
 let user_name = "Unknown";
 let article_id = undefined;
 let articleData;
@@ -16,32 +19,89 @@ async function issueGetRandomRequest() {
   return articleData;
 }
 
-async function issueGetRequest(article_id) {
-  const articlesUrl = `${articlesEndpoint}/${article_id}`;
-  const articlesData = await Promise.all(
-    [articlesUrl].map((url) => fetch(url, { headers: formatHeaders() }).then((r) => r.json()))
-  );
+async function issueGetMyLikesForArticle(articleId) {
+  const likesData = await fetch(`${myLikesEndpoint}?id=${articleId}`, {
+    headers: { ...formatHeaders(), userid: getId() },
+  }).then((r) => r.json());
+  return likesData.likes;
+}
 
-  const commentsUrl = `${commentsEndpoint}?article_id=${article_id}`;
-  const comments = await Promise.all(
-    [commentsUrl].map((url) => fetch(url, { headers: formatHeaders() }).then((r) => r.json()))
+async function issueGetLikes(article_id) {
+  const likesData = await fetch(`${articleLikesEndpoint}/${article_id}`, { headers: formatHeaders() }).then((r) =>
+    r.json()
   );
-  articleData = articlesData[0];
-  articleDataForExport = JSON.parse(JSON.stringify(articlesData));
-  const userComments = comments[0];
+  return likesData.likes;
+}
+
+async function likeArticle(articleId) {
+  const data = {
+    article_id: articleId,
+    user_id: getId(),
+  };
+  fetch(likesEndpoint, {
+    method: "post",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+      userid: getId(),
+    },
+    body: JSON.stringify(data),
+  })
+    .then((r) => r.json())
+    .then((body) => {
+      issueGetLikes(articleId).then((likes) => {
+        const element = document.querySelector(`#likes-container`);
+        element.innerHTML = formatLike(body.id !== undefined, likes, articleId);
+      });
+    });
+}
+
+async function issueGetRequest(article_id) {
+  // issueGetRequestArticles(article_id).then((x) => {
+  //   issueGetRequestComments(article_id);
+  // });
+
+  let wasDisplayed = issueGetRequestArticles(article_id).catch((error) => {
+    console.log(error);
+    displayArticlesData(undefined, "Error loading comments. Please contact administrator");
+  });
+
+  issueGetRequestComments(article_id).catch((error) => {
+    console.log(error);
+    displayCommentsData(undefined, "Error loading comments. Please contact administrator");
+  });
+
+  return wasDisplayed;
+}
+
+async function issueGetRequestArticles(article_id) {
+  // get article
+  const articlesUrl = `${articlesEndpoint}/${article_id}`;
+  let articleData = await fetch(articlesUrl, { headers: formatHeaders() }).then((r) => r.json());
+
+  articleDataForExport = JSON.parse(JSON.stringify(articleData));
   articleUserId = articleData.user_id;
 
-  articleData.comments = userComments;
-  // sort comments by date:
-  articleData.comments.sort((a, b) => a.date < b.date);
   article_id = articleData.id;
-  const commentsWithUsers = await Promise.all([addUserNameToComments(articleData.comments)]);
-  articleData.comments = commentsWithUsers[0];
   articleData = await Promise.all([addUserNameToArticle(articleData)]);
   const wasDisplayed = displayArticlesData(articleData[0]);
   if (wasDisplayed) {
     attachEventHandlers(articleUserId);
   }
+
+  return wasDisplayed;
+}
+
+async function issueGetRequestComments(article_id) {
+  // get comments
+  const commentsUrl = `${commentsEndpoint}?article_id=${article_id}`;
+  const userComments = await fetch(commentsUrl, { headers: formatHeaders() }).then((r) => r.json());
+  // sort comments by date:
+  userComments.sort((a, b) => a.date < b.date);
+  const commentsWithUsers = await addUserNameToComments(userComments);
+
+  displayCommentsData(commentsWithUsers);
 }
 
 async function addUserNameToComments(comments) {
@@ -141,6 +201,7 @@ const getItemHTML = (item) => {
 
         <button onclick="generatePDF()" id="btnDownloadPdf" class="button-primary" data-testid="download-pdf">PDF</button></div>
         <label></label><span data-testid="article-body">${body}</span><br>
+        <div id="likes-container" style="visibility: visible;display: grid;"></div>
     </div>`;
 };
 //        <hr><br>
@@ -160,11 +221,12 @@ function generatePDF() {
   html2pdf().set(opt).from(element).save();
 }
 
-const getCommentsHTML = (comments) => {
+const getCommentsHTML = (comments, error) => {
   let htmlData = "";
-  if (comments.length == 0) {
+  let errorMsg = error ?? "No Comments";
+  if (comments === undefined || comments?.length == 0) {
     htmlData = `<div class="comment-container">
-        <span>No Comments</span><br>
+        <span>${errorMsg}</span><br>
     </div>`;
   } else {
     for (let item of comments) {
@@ -191,29 +253,33 @@ const getCommentHTML = (comments) => {
     </div>`;
 };
 
-const displayArticlesData = (data) => {
+const displayArticlesData = (data, error) => {
   const container = document.querySelector("#container");
   container.innerHTML = "";
-
+  const errorMsg = error ?? "Invalid article ID or article does not exist";
   if (data === undefined || data.id === undefined) {
-    container.innerHTML =
-      '<div align="center"><h1 style="text-align: center;" data-testid="no-results">No data</h1><div data-testid="no-results-details">Invalid article ID or article does not exist</div></div>';
+    container.innerHTML = `<div align="center"><h1 style="text-align: center;" data-testid="no-results">No data</h1><div data-testid="no-results-details">${errorMsg}</div></div>`;
     const containerComments = document.querySelector("#containerComments");
     containerComments.innerHTML = "";
     return false;
   }
 
   displayItem(data, container);
-  const containerComments = document.querySelector("#containerComments");
-  containerComments.innerHTML = "";
-  displayComments(data, containerComments);
   return true;
 };
 
-const displayComments = (item, container) => {
-  let itemHTML = getCommentsHTML(item.comments);
+const displayCommentsData = (comments, error) => {
+  const containerComments = document.querySelector("#containerComments");
+  containerComments.innerHTML = "";
+  displayComments(comments, containerComments, error);
+  return true;
+};
+
+const displayComments = (comments, container, error) => {
+  let itemHTML = getCommentsHTML(comments, error);
   container.innerHTML += `<div align="center" ><div class="card-wrapper-wide" align="left">${itemHTML}</div></div><br>`;
 };
+
 const displayItem = (item, container) => {
   let itemHTML = getItemHTML(item);
   container.innerHTML += `<div align="center" ><div class="card-wrapper-wide" align="left">${itemHTML}</div></div>`;
@@ -413,20 +479,24 @@ const actionAfterDelete = () => {
 };
 
 const addCommentArticleButton = () => {
-  document.querySelector("#add-new").onclick = () => {
-    window.scrollTo(0, 0);
-    const container = document.querySelector(".add-new-panel");
-    container.querySelector(".body").value = "";
-    container.querySelector("#body").value = "";
-    container.classList.add("active");
-  };
-  document.querySelector("#add-new-comment").onclick = () => {
-    window.scrollTo(0, 0);
-    const container = document.querySelector(".add-new-panel");
-    container.querySelector(".body").value = "";
-    container.querySelector("#body").value = "";
-    container.classList.add("active");
-  };
+  if (document.querySelector("#add-new")) {
+    document.querySelector("#add-new").onclick = () => {
+      window.scrollTo(0, 0);
+      const container = document.querySelector(".add-new-panel");
+      container.querySelector(".body").value = "";
+      container.querySelector("#body").value = "";
+      container.classList.add("active");
+    };
+  }
+  if (document.querySelector("#add-new-comment")) {
+    document.querySelector("#add-new-comment").onclick = () => {
+      window.scrollTo(0, 0);
+      const container = document.querySelector(".add-new-panel");
+      container.querySelector(".body").value = "";
+      container.querySelector("#body").value = "";
+      container.classList.add("active");
+    };
+  }
   document.querySelector(".close").onclick = () => {
     document.querySelector(".add-new-panel").classList.remove("active");
   };
@@ -447,8 +517,12 @@ const attachEventHandlers = (id = "") => {
       appendElementOnTop(articleAdditionalMenuOnPage, "containerComments");
     }
 
-    document.querySelector("#add-new").disabled = false;
-    document.querySelector("#add-new-comment").disabled = false;
+    if (document.querySelector("#add-new")) {
+      document.querySelector("#add-new").disabled = false;
+    }
+    if (document.querySelector("#add-new-comment")) {
+      document.querySelector("#add-new-comment").disabled = false;
+    }
   }
   if (!isAuthorized(id)) {
     // TODO: remove icons and methods if user is not logged
@@ -634,7 +708,17 @@ if (`${is_random}` === "1" || `${is_random}`.toLowerCase() === "true" || `${arti
     });
   });
 } else if (article_id !== undefined) {
-  issueGetRequest(article_id);
+  issueGetRequest(article_id).then((wasDisplayed) => {
+    checkIfFeatureEnabled("feature_likes").then((isEnabled) => {
+      if (!isEnabled) return;
+      issueGetLikes(article_id).then((likes) => {
+        issueGetMyLikesForArticle(article_id).then((myLikes) => {
+          const container = document.querySelector("#likes-container");
+          container.innerHTML = formatLike(myLikes[article_id], likes, article_id);
+        });
+      });
+    });
+  });
 } else {
   const container = document.querySelector("#container");
   container.innerHTML =

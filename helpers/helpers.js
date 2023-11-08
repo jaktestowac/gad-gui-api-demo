@@ -26,6 +26,10 @@ function formatMissingFieldErrorResponse(all_fields) {
   return formatErrorResponse("One of mandatory field is missing", all_fields);
 }
 
+function formatOnlyOneFieldPossibleErrorResponse(all_fields) {
+  return formatErrorResponse("Only one field must not be empty!", all_fields);
+}
+
 function getIdFromUrl(urlEnds) {
   const urlParts = urlEnds.split("/");
   let id = urlParts[urlParts.length - 1];
@@ -256,6 +260,37 @@ function shuffleArray(array) {
   return shuffledArray;
 }
 
+function getTodayDate() {
+  const today = new Date();
+  const date = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}T${pad(
+    today.getHours()
+  )}:${pad(today.getMinutes())}:${pad(today.getSeconds())}Z`;
+  return date;
+}
+
+function getTodayDateForFileName() {
+  const today = new Date();
+  const date = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}T${pad(
+    today.getHours()
+  )}-${pad(today.getMinutes())}-${pad(today.getSeconds())}Z`;
+  return date;
+}
+
+function findMaxValues(obj, count) {
+  const values = Object.values(obj);
+  const sortedValues = values.sort((a, b) => b - a);
+  const maxValues = sortedValues.slice(0, count);
+
+  const maxObjects = {};
+  for (const key in obj) {
+    if (maxValues.includes(obj[key])) {
+      maxObjects[key] = obj[key];
+    }
+  }
+
+  return maxObjects;
+}
+
 module.exports = {
   getRandomIntBasedOnDay,
   getRandomIdBasedOnDay,
@@ -264,6 +299,7 @@ module.exports = {
   formatInvalidFieldErrorResponse,
   formatMissingFieldErrorResponse,
   formatInvalidTokenErrorResponse,
+  formatOnlyOneFieldPossibleErrorResponse,
   getRandomInt,
   sleep,
   isAdminUser,
@@ -275,4 +311,7 @@ module.exports = {
   getIdFromUrl,
   shuffleArray,
   pad,
+  getTodayDate,
+  getTodayDateForFileName,
+  findMaxValues,
 };

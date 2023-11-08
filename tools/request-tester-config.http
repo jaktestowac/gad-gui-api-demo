@@ -1,12 +1,18 @@
 ### Config - get all
-GET http://localhost:3000/api/config
+GET http://localhost:3000/api/config/all
+
+### Config - get all bugs
+GET http://localhost:3000/api/config/bugs
+
+### Config - get all features
+GET http://localhost:3000/api/config/features
 
 ### Config Reset
 GET http://localhost:3000/api/config/reset
 
 
 ### Config - change token and cookies
-POST http://localhost:3000/api/config
+POST http://localhost:3000/api/config/all
 content-type: application/json
  
 {
@@ -24,8 +30,25 @@ content-type: application/json
     "bug_charts_002": true
 }
 
+### Config - change features
+POST http://localhost:3000/api/config/features
+content-type: application/json
+ 
+{
+    "feature_likes": true,
+    "feature_files": true
+}
+
+### Config - check feature
+POST http://localhost:3000/api/config/checkfeatures
+content-type: application/json
+ 
+{
+    "feature": "feature_likes"
+}
+
 ### Config - change log level
-POST http://localhost:3000/api/config
+POST http://localhost:3000/api/config/all
 content-type: application/json
  
 {
@@ -33,7 +56,7 @@ content-type: application/json
 }
 
 ### Config - change publicLogsEnabled
-POST http://localhost:3000/api/config
+POST http://localhost:3000/api/config/all
 content-type: application/json
  
 {
@@ -42,3 +65,6 @@ content-type: application/json
 
 ### Get logs
 GET http://localhost:3000/api/logs
+
+### Get Uploaded file list
+GET http://localhost:3000/api/uploads

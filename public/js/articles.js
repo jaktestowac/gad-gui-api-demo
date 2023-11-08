@@ -1,5 +1,8 @@
 const articlesEndpoint = "../../api/articles";
 const usersEndpoint = "../../api/users";
+const articleLikesEndpoint = "../../api/likes/article";
+const likesEndpoint = "../../api/likes";
+const myLikesEndpoint = "../../api/likes/article/mylikes";
 const pictureListEndpoint = "../../api/images/posts";
 let picList = [];
 let users = [];
@@ -15,11 +18,65 @@ const fetchData = {
   credentials: "include",
 };
 
-async function issueGetRequest(limit = 6, page = 1, searchPhrase = undefined, onlyDisplay = false) {
+async function issueGetMyLikesForArticles(articleIds) {
+  const formattedIds = articleIds.join("&id=");
+  const likesData = await fetch(`${myLikesEndpoint}?id=${formattedIds}`, {
+    headers: { ...formatHeaders(), userid: getId() },
+  }).then((r) => r.json());
+  return likesData.likes;
+}
+
+async function issueGetLikesForArticles(articleIds) {
+  const formattedIds = articleIds.join("&id=");
+  const likesData = await fetch(`${articleLikesEndpoint}?id=${formattedIds}`, { headers: formatHeaders() }).then((r) =>
+    r.json()
+  );
+  return likesData.likes;
+}
+
+async function issueGetLikes(article_id) {
+  const likesData = await fetch(`${articleLikesEndpoint}/${article_id}`, { headers: formatHeaders() }).then((r) =>
+    r.json()
+  );
+  return likesData.likes;
+}
+
+async function likeArticle(articleId) {
+  const data = {
+    article_id: articleId,
+    user_id: getId(),
+  };
+  fetch(likesEndpoint, {
+    method: "post",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+      userid: getId(),
+    },
+    body: JSON.stringify(data),
+  })
+    .then((r) => r.json())
+    .then((body) => {
+      issueGetLikes(articleId).then((likes) => {
+        const element = document.querySelector(`#likes-container-${articleId}`);
+        element.innerHTML = formatLike(body.id !== undefined, likes, articleId);
+      });
+    });
+}
+
+async function issueGetRequest(
+  limit = 6,
+  page = 1,
+  searchPhrase = undefined,
+  onlyDisplay = false,
+  sortingType = "date",
+  sortingOrder = "desc"
+) {
   // get data from the server:
 
   if (!onlyDisplay) {
-    let articlesEndpointPaged = `${articlesEndpoint}?_limit=${limit}&_page=${page}&_sort=date&_order=desc`;
+    let articlesEndpointPaged = `${articlesEndpoint}?_limit=${limit}&_page=${page}&_sort=${sortingType}&_order=${sortingOrder}`;
 
     if (search_user_id !== undefined) {
       articlesEndpointPaged += `&user_id=${search_user_id}`;
@@ -83,12 +140,12 @@ async function issueGetRequest(limit = 6, page = 1, searchPhrase = undefined, on
         articlesData[i].user_name = "Unknown user";
       }
     }
-    // sort articles by date:
-    articlesData.sort(function (a, b) {
-      let dateA = new Date(a.date),
-        dateB = new Date(b.date);
-      return dateB - dateA;
-    });
+    // // sort articles by date:
+    // articlesData.sort(function (a, b) {
+    //   let dateA = new Date(a.date),
+    //     dateB = new Date(b.date);
+    //   return dateB - dateA;
+    // });
   }
   displayPostsData(articlesData);
   attachEventHandlers(getId());
@@ -108,6 +165,8 @@ async function issueGetRequest(limit = 6, page = 1, searchPhrase = undefined, on
       document.title = `🦎 GAD | Articles by ${foundUser.firstname} ${foundUser.lastname}`;
     }
   }
+
+  return true;
 }
 
 const attachEventHandlers = (user_id) => {
@@ -274,7 +333,14 @@ const getItemHTML = (item) => {
     .replace("T", " ")
     .replace("Z", "")}</span><br>
         <label></label><span data-testid="article-${item.id}-body">${item.body?.substring(0, 200)} (...)</span><br>
-        <span><a href="article.html?id=${item.id}" id="seeArticle${item.id}">See More...</a></span><br>
+        <div style="display: flex; justify-content: space-between;">
+        <span style="display: flex; justify-content: flex-start;">
+            <a href="article.html?id=${item.id}" id="seeArticle${item.id}">See More...</a>
+        </span>
+        <div class="likes-container" id="likes-container-${item.id}" style="visibility: visible;"></div>
+    </div>
+    
+    
     </div>`;
 };
 
@@ -315,12 +381,39 @@ async function getPictureList() {
 
 let current_page = 1;
 let records_per_page = 6;
+let sortingType = "date";
+let sortingOrder = "desc";
 
 let search_user_id = getParams()["user_id"];
 
 getPictureList();
 updatePerPage();
-issueGetRequest(records_per_page, current_page, searchPhrase).then(() => changePage(current_page, true));
+updateSorting();
+issueGetRequest(records_per_page, current_page, searchPhrase, undefined, sortingType, sortingOrder).then(() => {
+  changePage(current_page, true);
+});
+
+async function updateLikeElements() {
+  const isEnabled = await checkIfFeatureEnabled("feature_likes");
+  if (!isEnabled) return;
+
+  const elements = document.querySelectorAll(".likes-container");
+  const ids = [];
+  elements.forEach((element) => {
+    ids.push(element.id.split("-").slice(-1)[0]);
+  });
+  issueGetLikesForArticles(ids).then((likes) => {
+    issueGetMyLikesForArticles(ids).then((myLikes) => {
+      elements.forEach((element) => {
+        const id = element.id.split("-").slice(-1)[0];
+        const likesNumber = likes[id];
+        const alreadyLiked = myLikes[id];
+
+        element.innerHTML = formatLike(alreadyLiked, likesNumber, id);
+      });
+    });
+  });
+}
 
 // pagination:
 
@@ -388,7 +481,9 @@ function changePage(page, onlyDisplay = false) {
     btnNext.disabled = false;
     btnNext.style.color = "#0275d8";
   }
-  issueGetRequest(records_per_page, page, searchPhrase, onlyDisplay);
+  issueGetRequest(records_per_page, page, searchPhrase, onlyDisplay, sortingType, sortingOrder).then(() => {
+    updateLikeElements();
+  });
 }
 
 function numPages() {
@@ -399,5 +494,19 @@ menuButtonDisable("btnArticles");
 function seachByText() {
   let searchInput = document.getElementById("search-input");
   searchPhrase = searchInput.value;
-  issueGetRequest(records_per_page, current_page, searchPhrase).then(() => changePage(current_page, true));
+  issueGetRequest(records_per_page, current_page, searchPhrase, undefined, sortingType, sortingOrder).then(() => {
+    changePage(current_page, true);
+  });
+}
+
+// sorting:
+function updateSorting() {
+  let options = document.getElementById("sorting");
+  sortingType = options.value.split(" ")[0];
+  sortingOrder = options.value.split(" ")[1];
+}
+
+function changeSorting() {
+  updateSorting();
+  changeItemsPerPage();
 }
