@@ -6,6 +6,7 @@ const sampleArticleJson = {
   image: ".\\data\\images\\256\\chuttersnap-9cCeS9Sg6nU-unsplash.jpg",
 };
 const infoContainer = document.querySelector("#infoContainer");
+const publicCheckbox = document.querySelector(".public-checkbox");
 
 function uploadFile() {
   const fileInput = document.getElementById("jsonFile");
@@ -22,7 +23,7 @@ function uploadFile() {
       headers: {
         Authorization: getBearerToken(),
         userid: getId(),
-        isPublic: false,
+        isPublic: publicCheckbox.checked,
       },
     })
       .then((response) => {

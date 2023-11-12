@@ -1,5 +1,3 @@
-const { logTrace } = require("./logger-api");
-
 function formatFileName(userId, currentFilePerUser, isPublic) {
   let fileType = isPublic ? "P" : "R";
 

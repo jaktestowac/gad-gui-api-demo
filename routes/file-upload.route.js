@@ -36,7 +36,7 @@ const fileUpload = (req, res, next) => {
         form.multiples = true;
         form.uploadDir = uploadDir;
         let userId = req.headers["userid"];
-        let isPublic = req.headers["isPublic"] ?? false;
+        let isPublic = req.headers["ispublic"] === "true";
         logTrace("[articles/upload]:", { method: req.method, url: req.url, userId });
 
         form.on("progress", function (bytesReceived, bytesExpected) {
@@ -68,7 +68,7 @@ const fileUpload = (req, res, next) => {
           }
 
           const fileName = formatFileName(userId, currentFilePerUser[userId], isPublic);
-
+          logTrace("[articles/upload] Saving:", { fileName, userId, isPublic });
           currentFilePerUser[userId] = (currentFilePerUser[userId] + 1) % maxFiles;
 
           const newFullFilePath = path.join(uploadDir, fileName);
