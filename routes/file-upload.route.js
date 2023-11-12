@@ -3,16 +3,23 @@ const { getConfigValue, getFeatureFlagConfigValue } = require("../config/config-
 const { ConfigKeys, FeatureFlagConfigKeys } = require("../config/enums");
 const { logDebug, logError, logTrace } = require("../helpers/logger-api");
 const { formatErrorResponse, getTodayDate, getIdFromUrl } = require("../helpers/helpers");
-const { HTTP_INTERNAL_SERVER_ERROR, HTTP_OK, HTTP_NOT_FOUND } = require("../helpers/response.helpers");
+const {
+  HTTP_INTERNAL_SERVER_ERROR,
+  HTTP_OK,
+  HTTP_NOT_FOUND,
+  HTTP_UNAUTHORIZED,
+} = require("../helpers/response.helpers");
 const {
   are_all_fields_valid,
   mandatory_non_empty_fields_article,
   all_fields_article,
+  verifyAccessToken,
 } = require("../helpers/validation.helpers");
 const fs = require("fs");
 const path = require("path");
-const { getUploadedFilePath, getUploadedFileList } = require("../helpers/db.helpers");
+const { getUploadedFilePath, getUploadedFileList, getAndFilterUploadedFileList } = require("../helpers/db.helpers");
 const { formatFileName } = require("../helpers/file-upload.helper");
+const { searchForUserWithEmail } = require("../helpers/db-operation.helpers");
 
 const uploadDir = path.join(__dirname, "..", "uploads");
 
@@ -60,7 +67,7 @@ const fileUpload = (req, res, next) => {
             currentFilePerUser[userId] = 0;
           }
 
-          const fileName = formatFileName(userId, isPublic);
+          const fileName = formatFileName(userId, currentFilePerUser[userId], isPublic);
 
           currentFilePerUser[userId] = (currentFilePerUser[userId] + 1) % maxFiles;
 
@@ -112,7 +119,56 @@ const fileUpload = (req, res, next) => {
         req.url.endsWith("/api/files/uploaded") &&
         getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_FILES)
       ) {
-        const files = getUploadedFileList();
+        const verifyTokenResult = verifyAccessToken(req, res, "users", req.url);
+        if (verifyTokenResult === undefined) {
+          res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
+          return;
+        }
+
+        const foundUser = searchForUserWithEmail(verifyTokenResult?.email);
+
+        const files = getAndFilterUploadedFileList([foundUser.id], false);
+        res.json(files);
+        req.body = files;
+      } else if (
+        req.method === "GET" &&
+        req.url.endsWith("/api/files/uploaded/public") &&
+        getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_FILES)
+      ) {
+        const files = getAndFilterUploadedFileList(undefined, true);
+        res.json(files);
+        req.body = files;
+      } else if (
+        req.method === "GET" &&
+        req.url.includes("/api/files/uploaded/public?userIds=") &&
+        getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_FILES)
+      ) {
+        const ids = req.url.split("userIds=").slice(-1)[0];
+        const userIds = ids.split(",");
+
+        const files = getAndFilterUploadedFileList(userIds, true);
+        res.json(files);
+        req.body = files;
+      } else if (
+        req.method === "GET" &&
+        req.url.includes("/api/files/uploaded?userId=") &&
+        getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_FILES)
+      ) {
+        const userId = req.url.split("userId=").slice(-1)[0];
+
+        const verifyTokenResult = verifyAccessToken(req, res, "users", req.url);
+        if (verifyTokenResult === undefined) {
+          res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
+          return;
+        }
+
+        const foundUser = searchForUserWithEmail(verifyTokenResult?.email);
+        if (`${foundUser?.id}` !== `${userId}`) {
+          res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!!"));
+          return;
+        }
+
+        const files = getAndFilterUploadedFileList([userId], false);
         res.json(files);
         req.body = files;
       }

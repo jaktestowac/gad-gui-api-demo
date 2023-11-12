@@ -68,3 +68,14 @@ GET http://localhost:3000/api/logs
 
 ### Get Uploaded file list
 GET http://localhost:3000/api/files/uploaded
+
+### Get Uploaded file list - private per user
+GET http://localhost:3000/api/files/uploaded?userId=1
+content-type: application/json
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Ik1vc2VzLkFybXN0cm9uZ0BGZWVzdC5jYSIsImRhdGEiOiJUQkQiLCJpYXQiOjE2OTk0Njk5MjMsImV4cCI6MTY5OTkwMTkyM30.JSXrSU2XJhhbyBZICNqlqsu-H0z7ao2nWonGMmlRf5A
+
+### Get Uploaded file list - all public
+GET http://localhost:3000/api/files/uploaded/public
+
+### Get Uploaded file list - public per user
+GET http://localhost:3000/api/files/uploaded/public?userIds=1,2

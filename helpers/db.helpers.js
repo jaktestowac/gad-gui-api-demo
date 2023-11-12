@@ -3,6 +3,7 @@ const { getConfigValue } = require("../config/config-manager");
 const { ConfigKeys } = require("../config/enums");
 const path = require("path");
 const { checkFileName } = require("./file-upload.helper");
+const { logTrace } = require("./logger-api");
 
 function getDbPath(dbPath) {
   return path.resolve(__dirname, "..", dbPath);
@@ -82,14 +83,22 @@ function getUploadedFileList() {
   return foundFiles;
 }
 
-function getAndFilterUploadedFileList(userId, isPublic = true) {
+function getAndFilterUploadedFileList(userIds, isPublic = true) {
   let files = getUploadedFileList();
 
+  logTrace("getAndFilterUploadedFileList:", { userIds, isPublic });
   const foundFiles = [];
-
   files.forEach((file) => {
-    if (checkFileName(file.name, userId, isPublic)) {
-      foundFiles.push(file);
+    if (userIds === undefined || userIds.length === 0) {
+      if (checkFileName(file.name, undefined, isPublic, true)) {
+        foundFiles.push(file);
+      }
+    } else {
+      userIds.forEach((userId) => {
+        if (checkFileName(file.name, userId, isPublic)) {
+          foundFiles.push(file);
+        }
+      });
     }
   });
 

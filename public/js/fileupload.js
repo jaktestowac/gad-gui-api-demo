@@ -22,6 +22,7 @@ function uploadFile() {
       headers: {
         Authorization: getBearerToken(),
         userid: getId(),
+        isPublic: false,
       },
     })
       .then((response) => {
