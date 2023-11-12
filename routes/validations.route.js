@@ -111,7 +111,7 @@ const validations = (req, res, next) => {
     }
 
     if (
-      (urlEnds?.includes("/api/articles/upload") && !isAdmin) ||
+      (urlEnds?.includes("/api/files/articles/upload") && !isAdmin) ||
       (req.method !== "GET" && req.method !== "HEAD" && urlEnds?.includes("/api/articles") && !isAdmin)
     ) {
       const verifyTokenResult = verifyAccessToken(req, res, "articles", req.url);

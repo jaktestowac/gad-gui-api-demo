@@ -1,4 +1,4 @@
-const uploadedFilesEndpoint = "../../api/uploads";
+const uploadedFilesEndpoint = "../../api/files/uploaded";
 
 const intervalValue = 20000;
 const table = document.getElementById("fileTable");

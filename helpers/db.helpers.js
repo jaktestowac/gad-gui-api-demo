@@ -2,6 +2,7 @@ const fs = require("fs");
 const { getConfigValue } = require("../config/config-manager");
 const { ConfigKeys } = require("../config/enums");
 const path = require("path");
+const { checkFileName } = require("./file-upload.helper");
 
 function getDbPath(dbPath) {
   return path.resolve(__dirname, "..", dbPath);
@@ -64,7 +65,7 @@ function getImagesForArticles() {
   return files;
 }
 
-function getUploadsList() {
+function getUploadedFileList() {
   let files = fs.readdirSync(path.join(__dirname, getConfigValue(ConfigKeys.UPLOADS_PATH)));
   files = files.filter((file) => file.endsWith(".json"));
 
@@ -76,6 +77,20 @@ function getUploadsList() {
     const fileSize = fileStats.size; // Size in bytes
     const fileModificationDate = fileStats.mtime; // Last modification date
     foundFiles.push({ name: fileName, size: fileSize, lastModified: fileModificationDate });
+  });
+
+  return foundFiles;
+}
+
+function getAndFilterUploadedFileList(userId, isPublic = true) {
+  let files = getUploadedFileList();
+
+  const foundFiles = [];
+
+  files.forEach((file) => {
+    if (checkFileName(file.name, userId, isPublic)) {
+      foundFiles.push(file);
+    }
   });
 
   return foundFiles;
@@ -111,7 +126,8 @@ module.exports = {
   saveQuizHighScoresDb,
   getUserAvatars,
   getImagesForArticles,
-  getUploadsList,
+  getUploadedFileList,
   getUploadedFile,
   getUploadedFilePath,
+  getAndFilterUploadedFileList,
 };

@@ -1,4 +1,4 @@
-const articlesUploadEndpoint = "../../api/articles/upload";
+const articlesUploadEndpoint = "../../api/files/articles/upload";
 const sampleArticleJson = {
   title: "MY_TITLE",
   body: "MY_BODY",

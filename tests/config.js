@@ -5,6 +5,7 @@ const { faker } = require("@faker-js/faker");
 
 const baseApiUrl = "/api";
 const baseArticlesUrl = "/api/articles";
+const baseFilesArticlesUrl = "/api/files/articles";
 const baseUsersUrl = "/api/users";
 const baseHangmanUrl = "/api/hangman";
 const baseQuizUrl = "/api/quiz";
@@ -38,4 +39,5 @@ module.exports = {
   existingUserEmail,
   logLevel,
   clearDbAfter,
+  baseFilesArticlesUrl,
 };

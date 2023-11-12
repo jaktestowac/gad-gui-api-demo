@@ -67,4 +67,4 @@ content-type: application/json
 GET http://localhost:3000/api/logs
 
 ### Get Uploaded file list
-GET http://localhost:3000/api/uploads
+GET http://localhost:3000/api/files/uploaded

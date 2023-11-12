@@ -1,4 +1,4 @@
-const { baseArticlesUrl, request, faker, expect } = require("../config.js");
+const { baseArticlesUrl, request, faker, expect, baseFilesArticlesUrl } = require("../config.js");
 const {
   authUser,
   generateValidArticleData,
@@ -53,8 +53,8 @@ describe("Endpoint /articles", () => {
         return request.post(baseUrl).send({}).expect(401);
       });
 
-      it("POST /articles/upload", () => {
-        return request.post(`${baseUrl}/upload`).send({}).expect(401);
+      it("POST /files/articles/upload", () => {
+        return request.post(`${baseFilesArticlesUrl}/upload`).send({}).expect(401);
       });
 
       it("PUT /articles", () => {
@@ -427,7 +427,7 @@ describe("Endpoint /articles", () => {
       });
     });
 
-    it.skip("POST /articles/upload", async () => {
+    it.skip("POST /files/articles/upload", async () => {
       // TODO: prepare proper data
 
       // Arrange:

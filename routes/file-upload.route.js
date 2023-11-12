@@ -11,23 +11,25 @@ const {
 } = require("../helpers/validation.helpers");
 const fs = require("fs");
 const path = require("path");
-const { getUploadedFilePath } = require("../helpers/db.helpers");
+const { getUploadedFilePath, getUploadedFileList } = require("../helpers/db.helpers");
+const { formatFileName } = require("../helpers/file-upload.helper");
 
 const uploadDir = path.join(__dirname, "..", "uploads");
 
-const maxFiles = 10;
-let currentFile = 0;
+const maxFiles = 5;
+let currentFilePerUser = {};
 
 const fileUpload = (req, res, next) => {
   const isFeatureEnabled = getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_FILES);
   if (isFeatureEnabled) {
     try {
       // TODO: rework:
-      if (req.method === "POST" && req.url.endsWith("/api/articles/upload")) {
+      if (req.method === "POST" && req.url.endsWith("/api/files/articles/upload")) {
         const form = new formidable.IncomingForm();
         form.multiples = true;
         form.uploadDir = uploadDir;
         let userId = req.headers["userid"];
+        let isPublic = req.headers["isPublic"] ?? false;
         logTrace("[articles/upload]:", { method: req.method, url: req.url, userId });
 
         form.on("progress", function (bytesReceived, bytesExpected) {
@@ -54,13 +56,17 @@ const fileUpload = (req, res, next) => {
 
           // TODO:INVOKE_BUG: same file name might cause file overwrite in parallel scenarios
           // const fileName = `uploaded-${getTodayDateForFileName()}.json`;
+          if (currentFilePerUser[userId] === undefined) {
+            currentFilePerUser[userId] = 0;
+          }
 
-          const fileName = `uploaded-article-${currentFile}.json`;
+          const fileName = formatFileName(userId, isPublic);
 
-          currentFile = (currentFile + 1) % maxFiles;
+          currentFilePerUser[userId] = (currentFilePerUser[userId] + 1) % maxFiles;
 
           const newFullFilePath = path.join(uploadDir, fileName);
 
+          logTrace("[articles/upload]: Stats:", { currentFilePerUser });
           logDebug("[articles/upload]: Renaming files:", { file, from: file.filepath, to: newFullFilePath });
           try {
             fs.renameSync(file.filepath, newFullFilePath);
@@ -101,6 +107,14 @@ const fileUpload = (req, res, next) => {
           res.status(HTTP_OK).download(foundFile);
           return;
         }
+      } else if (
+        req.method === "GET" &&
+        req.url.endsWith("/api/files/uploaded") &&
+        getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_FILES)
+      ) {
+        const files = getUploadedFileList();
+        res.json(files);
+        req.body = files;
       }
     } catch (error) {
       logError("Fatal error. Please contact administrator.", {
