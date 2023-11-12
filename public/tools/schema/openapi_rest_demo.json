@@ -40,6 +40,10 @@
       "description": "Likes (⚠️ needs proper feature flag enabled)"
     },
     {
+      "name": "files",
+      "description": "Files (⚠️ needs proper feature flag enabled)"
+    },
+    {
       "name": "search",
       "description": "Search, filter, pagination for given objects"
     },
@@ -912,7 +916,6 @@
         }
       }
     },
-
     "/likes/article/mylikes": {
       "get": {
         "tags": ["likes"],
@@ -925,6 +928,142 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/MyLikes"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/files/uploaded": {
+      "get": {
+        "tags": ["files"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get files",
+        "operationId": "getFiles",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadedFiles"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/files/uploaded?userId={id}": {
+      "get": {
+        "tags": ["files"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get user files",
+        "operationId": "getUserFiles",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of user",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadedFiles"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/files/uploaded/public": {
+      "get": {
+        "tags": ["files"],
+        "summary": "Get files",
+        "operationId": "getPublicFiles",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadedFiles"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/files/uploaded/public?userIds={id}": {
+      "get": {
+        "tags": ["files"],
+        "summary": "Get files",
+        "operationId": "getFiles",
+        "get": {
+          "tags": ["files"],
+          "summary": "Get users public files",
+          "operationId": "getUsersPublicFiles",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "ID of user or multiple IDs of users separated by comma",
+              "required": true,
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "successful operation",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/UploadedFiles"
+                  }
                 }
               }
             }
@@ -2174,6 +2313,27 @@
         },
         "xml": {
           "name": "UserLoginToken"
+        }
+      },
+      "UploadedFiles": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/UploadedFile"
+        }
+      },
+      "UploadedFile": {
+        "type": "object",
+        "required": ["name", "size", "lastModified"],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "size": {
+            "type": "number"
+          },
+          "lastModified": {
+            "type": "string"
+          }
         }
       },
       "Likes": {
