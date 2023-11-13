@@ -71,6 +71,7 @@ const BugConfigKeys = {
 const FeatureFlagConfigKeys = {
   FEATURE_LIKES: "feature_likes",
   FEATURE_FILES: "feature_files",
+  FEATURE_ONLY_BACKEND: "feature_only_backend",
 };
 
 module.exports = {
