@@ -37,7 +37,7 @@ content-type: application/json
 {
     "feature_likes": true,
     "feature_files": true,
-    "feature_only_backend": true
+    "feature_only_backend": false
 }
 
 ### Config - check feature

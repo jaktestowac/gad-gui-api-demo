@@ -76,3 +76,12 @@ const attachEventHandlers = (user_id) => {
 attachEventHandlers(getId());
 const filelist = getParams()["filelist"];
 loadIframe(filelist);
+
+checkIfFeatureEnabled("feature_files").then((isEnabled) => {
+  if (!isEnabled) {
+    const container = document.querySelector("#warning");
+    container.innerHTML = "<b>⚠️ This feature is not enabled ⚠️</b><br/><br/>";
+    const uploadBtn = document.querySelector("#uploadBtn2");
+    uploadBtn.disabled = true;
+  }
+});

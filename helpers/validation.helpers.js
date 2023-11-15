@@ -103,7 +103,12 @@ const validateEmail = (email) => {
 };
 
 const validateDate = (date) => {
-  return date.match(getConfigValue(ConfigKeys.DATE_REGEXP));
+  try {
+    return date.match(getConfigValue(ConfigKeys.DATE_REGEXP));
+  } catch (error) {
+    logDebug("Invalid date:", date);
+    return false;
+  }
 };
 
 const verifyAccessToken = (req, res, endpoint = "endpoint", url = "") => {
