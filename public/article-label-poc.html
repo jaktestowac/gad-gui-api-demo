@@ -1,0 +1,238 @@
+<html>
+  <head>
+    <title>🦎 GAD | Article</title>
+    <link rel="icon" href="./data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+      integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay"
+      crossorigin="anonymous"
+    />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+    <link rel="stylesheet" href="css/controls.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  </head>
+  <body>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+  
+      #labelContainer {
+        display: flex;
+        flex-wrap: wrap;
+      }
+  
+      .label {
+        background-color: #3498db;
+        color: #fff;
+        padding: 5px 10px;
+        margin: 5px;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+      }
+  
+      .label span {
+        margin-left: 5px;
+        cursor: pointer;
+      }
+  
+      .label:hover span {
+        text-decoration: underline;
+      }
+  
+      #labelInput {
+        margin-bottom: 10px;
+      }
+  
+      #matchingLabelsDropdown {
+        display: none;
+        position: absolute;
+        background-color: #fff;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        z-index: 1;
+      }
+  
+      #matchingLabelsDropdown a {
+        padding: 12px;
+        display: block;
+        text-decoration: none;
+        color: #000;
+      }
+  
+      #matchingLabelsDropdown a:hover {
+        background-color: #afc59a;
+      }
+
+      .selected {
+      background-color: #afc59a;
+    }
+    </style>
+    <script>
+      function updateMatchingLabels() {
+        const input = document.getElementById('labelInput');
+        const inputValue = input.value.trim().toLowerCase();
+        const matchingLabelsDropdown = document.getElementById('matchingLabelsDropdown');
+        matchingLabelsDropdown.innerHTML = '';
+  
+        const matchedLabels = labelOptions.filter(label => label.toLowerCase().includes(inputValue));
+  
+        if (matchedLabels.length > 0) {
+          matchingLabelsDropdown.style.display = 'block';
+  
+          matchedLabels.forEach(matchedLabel => {
+            const labelLink = document.createElement('a');
+            labelLink.textContent = matchedLabel;
+            labelLink.addEventListener('click', () => selectMatchingLabel(matchedLabel));
+            matchingLabelsDropdown.appendChild(labelLink);
+          });
+        } else {
+          matchingLabelsDropdown.style.display = 'none';
+        }
+      }
+  
+      function handleKeyPress(event) {
+        const matchingLabelsDropdown = document.getElementById('matchingLabelsDropdown');
+        const selectedLabel = matchingLabelsDropdown.querySelector('.selected');
+  
+        if (event.key === 'Enter') {
+          if (selectedLabel) {
+            addLabel(selectedLabel.textContent);
+          } else {
+            const input = document.getElementById('labelInput');
+            const customLabel = input.value.trim();
+            if (customLabel) {
+              addLabel(customLabel);
+            }
+          }
+        }
+  
+        if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+          event.preventDefault();
+          handleArrowKeyPress(event.key);
+        }
+      }
+  
+      function handleArrowKeyPress(key) {
+        const matchingLabelsDropdown = document.getElementById('matchingLabelsDropdown');
+        const selectedLabel = matchingLabelsDropdown.querySelector('.selected');
+  
+        const labelLinks = matchingLabelsDropdown.querySelectorAll('a');
+        const currentIndex = selectedLabel ? Array.from(labelLinks).indexOf(selectedLabel) : -1;
+        let nextIndex;
+  
+        if (key === 'ArrowDown') {
+          nextIndex = currentIndex < labelLinks.length - 1 ? currentIndex + 1 : 0;
+        } else if (key === 'ArrowUp') {
+          nextIndex = currentIndex > 0 ? currentIndex - 1 : labelLinks.length - 1;
+        }
+  
+        labelLinks.forEach((labelLink, index) => {
+          labelLink.classList.remove('selected');
+          if (index === nextIndex) {
+            labelLink.classList.add('selected');
+          }
+        });
+      }
+  
+      function selectMatchingLabel(label) {
+        const input = document.getElementById('labelInput');
+        input.value = label;
+        updateMatchingLabels();
+      }
+  
+      const labelOptions = ['Label 1', 'Label 2', 'Label 3'];
+  
+      function addLabel(selectedLabel) {
+        const labelContainer = document.getElementById('labelContainer');
+  
+        const isLabelAlreadyAdded = [...labelContainer.children].some(label => label.children[0].id === selectedLabel);
+
+        const labelExists = labelOptions.some(label => label === selectedLabel);
+        if (!isLabelAlreadyAdded) {
+          labelOptions.push(selectedLabel)
+        }
+  
+        if (!isLabelAlreadyAdded) {
+          const label = document.createElement('div');
+          label.className = 'label';
+  
+          const labelText = document.createElement('span');
+          labelText.textContent = selectedLabel;
+          labelText.id = selectedLabel;
+  
+          const removeButton = document.createElement('span');
+          removeButton.textContent = 'x';
+          removeButton.addEventListener('click', () => removeLabel(label));
+  
+          label.appendChild(labelText);
+          label.appendChild(removeButton);
+  
+          labelContainer.appendChild(label);
+        }
+  
+        document.getElementById('labelInput').value = '';
+        document.getElementById('matchingLabelsDropdown').innerHTML = '';
+      }
+  
+      function removeLabel(label) {
+        const labelContainer = document.getElementById('labelContainer');
+        labelContainer.removeChild(label);
+      }
+  
+      window.addEventListener('click', function(event) {
+        const matchingLabelsDropdown = document.getElementById('matchingLabelsDropdown');
+        if (!event.target.matches('#labelInput') && !event.target.matches('a')) {
+          matchingLabelsDropdown.style.display = 'none';
+        }
+      });
+    </script>
+    <header>
+      <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+        <h1 id="menu-main-gui" class="nav-menu"></h1>
+      </div>
+    </header>
+    <div align="center" style="justify-content: center !important; display: flex; align-items: center">
+      <div
+        class="alert"
+        role="alert"
+        data-testid="alert-popup"
+        id="alertPopup"
+        style="position: unset !important; margin: 60px 0px 0px 0px"
+      ></div>
+    </div>
+    
+    <div style="position: relative;">
+      <label for="labelInput">Enter a label:</label>
+      <input type="text" id="labelInput" oninput="updateMatchingLabels()" onkeydown="handleKeyPress(event)">
+      <div id="matchingLabelsDropdown"></div>
+    </div>
+    <div id="labelContainer"></div>
+
+    <div id="container">
+    </div>
+    <br />
+    <div id="containerComments"></div>
+    <section class="add-new-panel">
+      <div>
+        <h2>Add New Comment</h2>
+
+        <label>Comment:</label><br />
+        <textarea rows="4" class="body" id="body" style="width: 350px"></textarea><br />
+        <label></label>
+        <div style="padding-top: 10px; text-align: center">
+          <button type="button" class="update save button-primary">Save</button>
+          <button type="button" class="cancel">Cancel</button>
+        </div>
+        <button class="close" id="close">&times;</button>
+      </div>
+    </section>
+  </body>
+  <script type="text/javascript" src="js/common.js"></script>
+  <script type="text/javascript" src="./js/article.js"></script>
+  <script type="text/javascript" src="version.js"></script>
+  <script type="text/javascript" src="username.js"></script>
+</html>
