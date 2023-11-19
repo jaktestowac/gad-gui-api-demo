@@ -1,5 +1,5 @@
-const { gracefulQuit, setupEnv } = require("../helpers/helpers.js");
-const { baseUsersUrl, request, expect, faker } = require("../config.js");
+const { gracefulQuit, setupEnv, sleep } = require("../helpers/helpers.js");
+const { baseUsersUrl, request, expect, faker, sleepTime } = require("../config.js");
 const {
   prepareUniqueLoggedUser,
   authUser,
@@ -71,6 +71,8 @@ describe("Endpoint /users", async () => {
         const testUserData = generateValidUserData();
         const response = await request.post(baseUrl).send(testUserData);
         expect(response.status).to.equal(201);
+
+        await sleep(sleepTime)
 
         // Act:
         const responseAgain = await request.post(baseUrl).send(testUserData);

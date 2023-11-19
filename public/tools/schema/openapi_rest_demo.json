@@ -44,6 +44,10 @@
       "description": "Files (⚠️ needs proper feature flag enabled)"
     },
     {
+      "name": "labels",
+      "description": "Labels (⚠️ needs proper feature flag enabled)"
+    },
+    {
       "name": "search",
       "description": "Search, filter, pagination for given objects"
     },
@@ -777,6 +781,25 @@
           "422": {
             "description": "Invalid comment supplied",
             "content": {}
+          }
+        }
+      }
+    },
+    "/labels": {
+      "get": {
+        "tags": ["labels"],
+        "summary": "Get labels",
+        "operationId": "getLabels",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Labels"
+                }
+              }
+            }
           }
         }
       }
@@ -2333,6 +2356,27 @@
           },
           "lastModified": {
             "type": "string"
+          }
+        }
+      },
+      "Labels": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Label"
+        }
+      },
+      "Label": {
+        "type": "object",
+        "required": ["name", "id", "user_id"],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "id": {
+            "type": "number"
+          },
+          "user_id": {
+            "type": "number"
           }
         }
       },

@@ -36,6 +36,15 @@ function searchForArticle(articleId) {
   return foundArticle;
 }
 
+function searchForArticleWithUserId(articleId, userId) {
+  const foundArticle = articlesDb().find((article) => {
+    if (article["id"]?.toString() === articleId?.toString() && article["user_id"]?.toString() === userId?.toString()) {
+      return article;
+    }
+  });
+  return foundArticle;
+}
+
 function searchForArticles(articleIds) {
   const articleIdsStr = articleIds.filter((id) => id.toString());
 
@@ -154,6 +163,7 @@ module.exports = {
   searchForUserWithEmail,
   searchForUser,
   searchForArticle,
+  searchForArticleWithUserId,
   searchForArticles,
   searchForComment,
   getGameIdByName,

@@ -30,6 +30,14 @@ function likesDb() {
   return fullDb()["likes"];
 }
 
+function labelsDb() {
+  return fullDb()["labels"];
+}
+
+function articleLabelsDb() {
+  return fullDb()["article-labels"];
+}
+
 function quizQuestionsDb() {
   const db = JSON.parse(fs.readFileSync(getDbPath(getConfigValue(ConfigKeys.QUIZ_QUESTIONS_PATH), "UTF-8")));
   return db;
@@ -139,4 +147,6 @@ module.exports = {
   getUploadedFile,
   getUploadedFilePath,
   getAndFilterUploadedFileList,
+  articleLabelsDb,
+  labelsDb,
 };

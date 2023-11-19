@@ -17,7 +17,7 @@ const baseLikesUrl = "/api/likes";
 const existingUserEmail = "Danial.Dicki@dicki.test";
 const existingUserPass = "test2";
 
-const sleepTime = 50; // in ms
+const sleepTime = 200; // in ms
 const logLevel = 2;
 const clearDbAfter = true;
 

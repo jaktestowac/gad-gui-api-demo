@@ -29,6 +29,7 @@ const { verifyAccessToken, is_likes_data_valid } = require("../helpers/validatio
 function handleLikes(req, res, isAdmin) {
   const isFeatureEnabled = getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_LIKES);
   if (!isFeatureEnabled) {
+    res.status(HTTP_NOT_FOUND).json({});
     return;
   }
 
