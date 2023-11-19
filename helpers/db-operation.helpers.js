@@ -1,4 +1,4 @@
-const { userDb, articlesDb, commentsDb, getQuizHighScoresDb, saveQuizHighScoresDb, likesDb } = require("./db.helpers");
+const { userDb, articlesDb, commentsDb, getQuizHighScoresDb, saveQuizHighScoresDb, likesDb, labelsDb, articleLabelsDb } = require("./db.helpers");
 
 function searchForUserWithToken(userId, verifyTokenResult) {
   const foundUser = userDb().find((user) => {
@@ -59,6 +59,15 @@ function searchForComment(commentId) {
     }
   });
   return foundComment;
+}
+
+function searchForArticleLabels(articleId) {
+  const foundLabels = articleLabelsDb().find((label) => {
+    if (label["article_id"]?.toString() === articleId?.toString()) {
+      return label;
+    }
+  });
+  return foundLabels;
 }
 
 function countLikesForAllArticles() {
@@ -175,4 +184,5 @@ module.exports = {
   findAllLikes,
   countLikesForAllArticles,
   searchForLike,
+  searchForArticleLabels
 };

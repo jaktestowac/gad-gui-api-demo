@@ -48,6 +48,10 @@
       "description": "Labels (⚠️ needs proper feature flag enabled)"
     },
     {
+      "name": "article-labels",
+      "description": "Article Labels (⚠️ needs proper feature flag enabled)"
+    },
+    {
       "name": "search",
       "description": "Search, filter, pagination for given objects"
     },
@@ -781,6 +785,43 @@
           "422": {
             "description": "Invalid comment supplied",
             "content": {}
+          }
+        }
+      }
+    },
+    "/article-labels/articles/{id}": {
+      "get": {
+        "tags": ["article-labels"],
+        "summary": "Get labels for article",
+        "operationId": "getArticleLabels",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of article to return its labels",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticleLabels"
+                }
+              }
+            }
           }
         }
       }
@@ -2376,6 +2417,24 @@
             "type": "number"
           },
           "user_id": {
+            "type": "number"
+          }
+        }
+      },
+      "ArticleLabels": {
+        "type": "object",
+        "required": ["label_ids", "id", "article_id"],
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "label_ids": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "article_id": {
             "type": "number"
           }
         }

@@ -1,9 +1,9 @@
 const { getFeatureFlagConfigValue } = require("../config/config-manager");
 const { FeatureFlagConfigKeys } = require("../config/enums");
-const { searchForUserWithToken, searchForArticleWithUserId } = require("../helpers/db-operation.helpers");
+const { searchForUserWithToken, searchForArticleWithUserId, searchForArticleLabels } = require("../helpers/db-operation.helpers");
 const { formatMissingFieldErrorResponse, formatInvalidTokenErrorResponse, formatInvalidFieldErrorResponse } = require("../helpers/helpers");
-const { logTrace } = require("../helpers/logger-api");
-const { HTTP_NOT_FOUND, HTTP_UNPROCESSABLE_ENTITY, HTTP_UNAUTHORIZED, HTTP_METHOD_NOT_ALLOWED } = require("../helpers/response.helpers");
+const { logTrace, logDebug } = require("../helpers/logger-api");
+const { HTTP_NOT_FOUND, HTTP_UNPROCESSABLE_ENTITY, HTTP_UNAUTHORIZED, HTTP_METHOD_NOT_ALLOWED, HTTP_OK } = require("../helpers/response.helpers");
 const { are_mandatory_fields_present, mandatory_non_empty_fields_labels, mandatory_non_empty_fields_article_labels, are_all_fields_present } = require("../helpers/validation.helpers");
 
 function handleLabels(req, res, isAdmin) {
@@ -21,6 +21,19 @@ function handleLabels(req, res, isAdmin) {
   }
 
   if (req.method === "GET" && urlEnds.endsWith("/api/labels")) {
+    return true;
+  }
+
+  
+  if (req.method === "GET" && urlEnds.includes("/api/article-labels/articles/")) {
+    const articleId = urlEnds.split("/").slice(-1)[0];
+    const foundArticle = searchForArticleLabels(articleId)
+    logDebug('article-labels/articles:', articleId, foundArticle)
+    if (foundArticle === undefined) {
+        res.status(HTTP_NOT_FOUND).send({});
+        return false;
+    }
+    res.status(HTTP_OK).send(foundArticle);
     return true;
   }
 
