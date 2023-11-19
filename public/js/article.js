@@ -194,7 +194,8 @@ const getItemHTML = (item) => {
         <label>user:</label><span><a href="user.html?id=${item.user_id}" data-testid="user-name">${
     item.user_name
   }</a></span><br>
-        <label>date:</label><span>${item?.date?.replace("T", " ").replace("Z", "")}</span><br>
+        <label>date:</label><span>${item?.date?.replace("T", " ").replace("Z", "")}</span>
+        <div class="labels-container" id="labels-container-${item.id}" ></div>
         <div align="center" >Download article as:<br>
         <a id="download" ><button id="btnDownloadCsv" class="button-primary" data-testid="download-scv">CSV</button></a>
         <a id="download" ><button id="btnDownloadJson" class="button-primary" data-testid="download-json">JSON</button></a>

@@ -377,3 +377,23 @@ async function checkIfFeatureEnabled(featureName) {
       return jsonBody.enabled;
     });
 }
+
+function formatLabelElement(labelText, showRemoveButton) {
+  const label = document.createElement('div');
+  label.className = 'label';
+
+  const labelTextElement = document.createElement('span');
+  labelTextElement.textContent = labelText;
+  labelTextElement.id = labelText;
+
+  label.appendChild(labelTextElement);
+
+  if (showRemoveButton === true) {
+    const removeButton = document.createElement('span');
+    removeButton.textContent = 'x';
+    removeButton.addEventListener('click', () => removeLabel(label));
+
+    label.appendChild(removeButton);
+  }
+  return label.outerHTML;
+}
