@@ -514,14 +514,15 @@ s .container-mobile {
 .label {
   background-color: #3498db;
   color: #fff;
-  margin: 5px;
+  margin: 3px;
   border-radius: 5px;
   display: flex;
   align-items: center;
+  font-size: 10px;
 }
 
 .label span {
-  margin-left: 5px;
+  margin-left: 2px;
   cursor: pointer;
 }
 

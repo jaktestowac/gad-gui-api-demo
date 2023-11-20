@@ -1,7 +1,9 @@
 const articlesEndpoint = "../../api/articles";
 const usersEndpoint = "../../api/users";
 const articleLikesEndpoint = "../../api/likes/article";
+const articleLabelsEndpoint = "../../api/article-labels/articles";
 const likesEndpoint = "../../api/likes";
+const labelsEndpoint = "../../api/labels";
 const myLikesEndpoint = "../../api/likes/article/mylikes";
 const pictureListEndpoint = "../../api/images/posts";
 let picList = [];
@@ -32,6 +34,22 @@ async function issueGetLikesForArticles(articleIds) {
     r.json()
   );
   return likesData.likes;
+}
+
+async function issueGetLabelsForArticles(articleIds) {
+  const formattedIds = articleIds.join("&id=");
+  const labelsData = await fetch(`${articleLabelsEndpoint}?id=${formattedIds}`, { headers: formatHeaders() }).then(
+    (r) => r.json()
+  );
+  return labelsData.labels;
+}
+
+async function issueGetLabels(labelIds) {
+  const formattedIds = labelIds.join("&id=");
+  const labelsData = await fetch(`${labelsEndpoint}?id=${formattedIds}`, { headers: formatHeaders() }).then((r) =>
+    r.json()
+  );
+  return labelsData;
 }
 
 async function issueGetLikes(article_id) {
@@ -344,7 +362,6 @@ const getItemHTML = (item) => {
     </div>`;
 };
 
-
 function presentPicture() {
   const userPicture = document.querySelector(".userPicture");
   userPicture.src = `.\\data\\images\\256\\${document.querySelector(".image").value}`;
@@ -393,6 +410,34 @@ updateSorting();
 issueGetRequest(records_per_page, current_page, searchPhrase, undefined, sortingType, sortingOrder).then(() => {
   changePage(current_page, true);
 });
+
+async function updateLabelElements() {
+  const isEnabled = await checkIfFeatureEnabled("feature_labels");
+  if (!isEnabled) return;
+
+  const elements = document.querySelectorAll(".labels-container");
+  const ids = [];
+  elements.forEach((element) => {
+    ids.push(element.id.split("-").slice(-1)[0]);
+  });
+
+  issueGetLabelsForArticles(ids).then((labels) => {
+    const labelIds = [...new Set(Object.values(labels).flatMap((item) => item.label_ids || []))];
+    issueGetLabels(labelIds).then((labelData) => {
+      elements.forEach((element) => {
+        element.innerHTML = "";
+        const id = element.id.split("-").slice(-1)[0];
+        const labelIds = labels[id]?.label_ids;
+        if (labelIds !== undefined) {
+          labelIds.forEach((labelId) => {
+            const label = labelData.find((lbl) => lbl.id === labelId);
+            element.innerHTML += formatLabelElement(label.name);
+          });
+        }
+      });
+    });
+  });
+}
 
 async function updateLikeElements() {
   const isEnabled = await checkIfFeatureEnabled("feature_likes");
@@ -484,6 +529,7 @@ function changePage(page, onlyDisplay = false) {
   }
   issueGetRequest(records_per_page, page, searchPhrase, onlyDisplay, sortingType, sortingOrder).then(() => {
     updateLikeElements();
+    updateLabelElements();
   });
 }
 

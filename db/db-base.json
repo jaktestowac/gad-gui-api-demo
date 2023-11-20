@@ -2146,17 +2146,17 @@
     {
       "id": 1,
       "label_ids": [1, 2],
-      "article_id": 1
+      "article_id": 56
     },
     {
       "id": 2,
-      "label_ids": [2],
-      "article_id": 2
+      "label_ids": [1, 2],
+      "article_id": 57
     },
     {
       "id": 3,
       "label_ids": [1],
-      "article_id": 3
+      "article_id": 59
     }
   ],
   "labels": [

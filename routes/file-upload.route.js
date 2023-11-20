@@ -17,7 +17,7 @@ const {
 } = require("../helpers/validation.helpers");
 const fs = require("fs");
 const path = require("path");
-const { getUploadedFilePath, getUploadedFileList, getAndFilterUploadedFileList } = require("../helpers/db.helpers");
+const { getUploadedFilePath, getAndFilterUploadedFileList } = require("../helpers/db.helpers");
 const { formatFileName } = require("../helpers/file-upload.helper");
 const { searchForUserWithEmail } = require("../helpers/db-operation.helpers");
 
