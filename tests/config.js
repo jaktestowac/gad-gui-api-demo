@@ -13,6 +13,8 @@ const baseStatsUrl = "/api/stats";
 const baseCommentsUrl = "/api/comments";
 const baseLoginUrl = "/api/login";
 const baseLikesUrl = "/api/likes";
+const baseLabelsUrl = "/api/labels";
+const baseArticleLabelsUrl = "/api/article-labels";
 
 const existingUserEmail = "Danial.Dicki@dicki.test";
 const existingUserPass = "test2";
@@ -40,4 +42,6 @@ module.exports = {
   logLevel,
   clearDbAfter,
   baseFilesArticlesUrl,
+  baseLabelsUrl,
+  baseArticleLabelsUrl,
 };

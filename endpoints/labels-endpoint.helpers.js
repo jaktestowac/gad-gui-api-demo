@@ -9,6 +9,8 @@ const {
   formatMissingFieldErrorResponse,
   formatInvalidTokenErrorResponse,
   formatInvalidFieldErrorResponse,
+  getUniqueValues,
+  formatTooManyValuesErrorResponse,
 } = require("../helpers/helpers");
 const { logTrace, logDebug } = require("../helpers/logger-api");
 const {
@@ -39,7 +41,7 @@ function handleLabels(req, res, isAdmin) {
 
   if (req.method === "DELETE" && urlEnds.endsWith("/api/labels")) {
     res.status(HTTP_METHOD_NOT_ALLOWED).send({});
-    return true;
+    return false;
   }
 
   if (req.method === "GET" && urlEnds.endsWith("/api/labels")) {
@@ -81,20 +83,15 @@ function handleLabels(req, res, isAdmin) {
     return true;
   }
 
-  if ((req.method === "POST" || req.method === "DELETE") && urlEnds.includes("/api/article-labels")) {
-    if (!are_mandatory_fields_present(req.body, mandatory_non_empty_fields_article_labels)) {
-      res
-        .status(HTTP_UNPROCESSABLE_ENTITY)
-        .send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_article_labels));
-      return false;
-    }
-    if (!are_all_fields_present(req.body, mandatory_non_empty_fields_article_labels)) {
-      res
-        .status(HTTP_UNPROCESSABLE_ENTITY)
-        .send(formatInvalidFieldErrorResponse(mandatory_non_empty_fields_article_labels));
-      return false;
-    }
+  if (
+    (req.method === "PATCH" || req.method === "DELETE" || req.method === "POST") &&
+    urlEnds.endsWith("/api/article-labels")
+  ) {
+    res.status(HTTP_METHOD_NOT_ALLOWED).send({});
+    return false;
+  }
 
+  if (req.method === "PUT" && urlEnds.includes("/api/article-labels")) {
     let userId = req.body["user_id"];
     let articleId = req.body["article_id"];
     const foundUser = searchForUserWithToken(userId, verifyTokenResult);
@@ -110,6 +107,32 @@ function handleLabels(req, res, isAdmin) {
 
     if (foundArticle === undefined) {
       res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+      return false;
+    }
+
+    if (!are_mandatory_fields_present(req.body, mandatory_non_empty_fields_article_labels)) {
+      res
+        .status(HTTP_UNPROCESSABLE_ENTITY)
+        .send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_article_labels));
+      return false;
+    }
+    if (!are_all_fields_present(req.body, mandatory_non_empty_fields_article_labels)) {
+      res
+        .status(HTTP_UNPROCESSABLE_ENTITY)
+        .send(formatInvalidFieldErrorResponse(mandatory_non_empty_fields_article_labels));
+      return false;
+    }
+
+    const foundLabels = searchForArticleLabels(articleId);
+
+    if (foundLabels !== undefined) {
+      const labelIds = req.body.label_ids ?? [];
+
+      req.body.label_ids = getUniqueValues(foundLabels.label_ids.concat(labelIds));
+    }
+
+    if (req.body.label_ids.length > 3) {
+      res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatTooManyValuesErrorResponse("labels"));
       return false;
     }
 

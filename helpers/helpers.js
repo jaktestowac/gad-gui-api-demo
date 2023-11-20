@@ -15,6 +15,10 @@ function formatInvalidTokenErrorResponse() {
   return formatErrorResponse("Access token for given user is invalid!");
 }
 
+function formatTooManyValuesErrorResponse(valueType) {
+  return formatErrorResponse(`Too many values of type: ${valueType}!`);
+}
+
 function formatInvalidFieldErrorResponse(isValid, all_fields) {
   return formatErrorResponse(
     `One of field is invalid (empty, invalid or too long) or there are some additional fields: ${isValid.error}`,
@@ -291,6 +295,8 @@ function findMaxValues(obj, count) {
   return maxObjects;
 }
 
+const getUniqueValues = (inputList) => [...new Set(inputList.map(Number))];
+
 module.exports = {
   getRandomIntBasedOnDay,
   getRandomIdBasedOnDay,
@@ -299,6 +305,7 @@ module.exports = {
   formatInvalidFieldErrorResponse,
   formatMissingFieldErrorResponse,
   formatInvalidTokenErrorResponse,
+  formatTooManyValuesErrorResponse,
   formatOnlyOneFieldPossibleErrorResponse,
   getRandomInt,
   sleep,
@@ -314,4 +321,5 @@ module.exports = {
   getTodayDate,
   getTodayDateForFileName,
   findMaxValues,
+  getUniqueValues,
 };

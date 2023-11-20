@@ -23,6 +23,7 @@ async function setupEnv() {
   const requestFeatureBody = {
     feature_likes: true,
     feature_files: true,
+    feature_labels: true,
   };
   const responseFeature = await request.post("/api/config/features").send(requestFeatureBody);
 
