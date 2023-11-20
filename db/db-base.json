@@ -2145,7 +2145,7 @@
   "article-labels": [
     {
       "id": 1,
-      "label_ids": [1, 2],
+      "label_ids": [3, 2],
       "article_id": 56
     },
     {
@@ -2157,6 +2157,71 @@
       "id": 3,
       "label_ids": [1],
       "article_id": 59
+    },
+    {
+      "id": 4,
+      "label_ids": [4, 5],
+      "article_id": 45
+    },
+    {
+      "id": 5,
+      "label_ids": [1, 2, 6],
+      "article_id": 37
+    },
+    {
+      "id": 6,
+      "label_ids": [1],
+      "article_id": 58
+    },
+    {
+      "id": 7,
+      "label_ids": [7],
+      "article_id": 48
+    },
+    {
+      "id": 8,
+      "label_ids": [8, 2],
+      "article_id": 4
+    },
+    {
+      "id": 9,
+      "label_ids": [9],
+      "article_id": 39
+    },
+    {
+      "id": 10,
+      "label_ids": [1],
+      "article_id": 1
+    },
+    {
+      "id": 11,
+      "label_ids": [1, 2, 11],
+      "article_id": 2
+    },
+    {
+      "id": 12,
+      "label_ids": [1, 9],
+      "article_id": 3
+    },
+    {
+      "id": 13,
+      "label_ids": [9],
+      "article_id": 51
+    },
+    {
+      "id": 14,
+      "label_ids": [9],
+      "article_id": 47
+    },
+    {
+      "id": 15,
+      "label_ids": [9],
+      "article_id": 41
+    },
+    {
+      "id": 16,
+      "label_ids": [1, 2],
+      "article_id": 40
     }
   ],
   "labels": [
@@ -2169,6 +2234,91 @@
       "id": 2,
       "name": "Automation",
       "user_id": 2
+    },
+    {
+      "id": 3,
+      "name": "TDD",
+      "user_id": 2
+    },
+    {
+      "id": 4,
+      "name": "Postman",
+      "user_id": 2
+    },
+    {
+      "id": 5,
+      "name": "REST API",
+      "user_id": 2
+    },
+    {
+      "id": 6,
+      "name": "Playwright",
+      "user_id": 1
+    },
+    {
+      "id": 7,
+      "name": "BDD",
+      "user_id": 2
+    },
+    {
+      "id": 8,
+      "name": "Selenium",
+      "user_id": 2
+    },
+    {
+      "id": 9,
+      "name": "Agile",
+      "user_id": 1
+    },
+    {
+      "id": 10,
+      "name": "QA Basics",
+      "user_id": 1
+    },
+    {
+      "id": 11,
+      "name": "Design Patterns",
+      "user_id": 3
+    },
+    {
+      "id": 12,
+      "name": "CI/CD",
+      "user_id": 3
+    },
+    {
+      "id": 13,
+      "name": "Security",
+      "user_id": 1
+    },
+    {
+      "id": 14,
+      "name": "DevOps",
+      "user_id": 2
+    },
+    {
+      "id": 15,
+      "name": "Agile",
+      "user_id": 1
+    },
+    {
+      "id": 16,
+      "name": "Front-end",
+      "user_id": 4
+    },
+    {
+      "id": 17,
+      "name": "Back-end",
+      "user_id": 4
+    },
+    {
+      "id": 18,
+      "name": "UX Design",
+      "user_id": 5
+    },
+    {
+      "id": 19,
+      "name": "Cybersec",
+      "user_id": 5
     }
   ]
 }

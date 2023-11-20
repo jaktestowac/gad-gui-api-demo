@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "rnd": "node ./tools/generateData.js",
-    "pretty": "npx prettier --write ."
+    "pretty": "npx prettier --write .",
+    "eslint": "npx eslint"
   },
   "keywords": [
     "json-server, node, REST API"

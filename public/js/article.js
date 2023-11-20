@@ -195,7 +195,8 @@ const getItemHTML = (item) => {
     item.user_name
   }</a></span><br>
         <label>date:</label><span>${item?.date?.replace("T", " ").replace("Z", "")}</span>
-        <div class="labels-container" id="labels-container-${item.id}" ></div>
+        <div class="labels-container" id="labels-container" ></div>
+        
         <div align="center" >Download article as:<br>
         <a id="download" ><button id="btnDownloadCsv" class="button-primary" data-testid="download-scv">CSV</button></a>
         <a id="download" ><button id="btnDownloadJson" class="button-primary" data-testid="download-json">JSON</button></a>
@@ -716,6 +717,19 @@ if (`${is_random}` === "1" || `${is_random}`.toLowerCase() === "true" || `${arti
         issueGetMyLikesForArticle(article_id).then((myLikes) => {
           const container = document.querySelector("#likes-container");
           container.innerHTML = formatLike(myLikes[article_id], likes, article_id);
+        });
+      });
+    });
+    checkIfFeatureEnabled("feature_labels").then((isEnabled) => {
+      issueGetLabelsForArticles([article_id]).then((labels) => {
+        const labelIds = [...new Set(Object.values(labels).flatMap((item) => item.label_ids || []))];
+        issueGetLabels(labelIds).then((labelData) => {
+          const container = document.querySelector("#labels-container");
+          console.log(labelData);
+          labelIds.forEach((labelId) => {
+            const label = labelData.find((lbl) => lbl.id === labelId);
+            container.innerHTML += formatLabelElement(label.name);
+          });
         });
       });
     });

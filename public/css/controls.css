@@ -501,14 +501,16 @@ s .container-mobile {
 }
 
 #labels-container {
-  display: flex;
+  display: flex  !important;
   flex-wrap: wrap;
   align-items: center !important;
+  justify-content: center;
 }
 .labels-container {
-  display: flex;
+  display: flex  !important;
   flex-wrap: wrap;
   align-items: center !important;
+  justify-content: center;
 }
 
 .label {

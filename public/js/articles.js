@@ -1,9 +1,7 @@
 const articlesEndpoint = "../../api/articles";
 const usersEndpoint = "../../api/users";
 const articleLikesEndpoint = "../../api/likes/article";
-const articleLabelsEndpoint = "../../api/article-labels/articles";
 const likesEndpoint = "../../api/likes";
-const labelsEndpoint = "../../api/labels";
 const myLikesEndpoint = "../../api/likes/article/mylikes";
 const pictureListEndpoint = "../../api/images/posts";
 let picList = [];
@@ -36,21 +34,6 @@ async function issueGetLikesForArticles(articleIds) {
   return likesData.likes;
 }
 
-async function issueGetLabelsForArticles(articleIds) {
-  const formattedIds = articleIds.join("&id=");
-  const labelsData = await fetch(`${articleLabelsEndpoint}?id=${formattedIds}`, { headers: formatHeaders() }).then(
-    (r) => r.json()
-  );
-  return labelsData.labels;
-}
-
-async function issueGetLabels(labelIds) {
-  const formattedIds = labelIds.join("&id=");
-  const labelsData = await fetch(`${labelsEndpoint}?id=${formattedIds}`, { headers: formatHeaders() }).then((r) =>
-    r.json()
-  );
-  return labelsData;
-}
 
 async function issueGetLikes(article_id) {
   const likesData = await fetch(`${articleLikesEndpoint}/${article_id}`, { headers: formatHeaders() }).then((r) =>
