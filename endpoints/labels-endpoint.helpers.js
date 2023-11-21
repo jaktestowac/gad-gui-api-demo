@@ -26,7 +26,6 @@ const {
   mandatory_non_empty_fields_article_labels,
   are_all_fields_present,
   verifyAccessToken,
-  are_all_fields_valid,
 } = require("../helpers/validation.helpers");
 
 function handleLabels(req, res, isAdmin) {
@@ -39,15 +38,17 @@ function handleLabels(req, res, isAdmin) {
 
   const urlEnds = req.url.replace(/\/\/+/g, "/");
 
-  if (req.method === "DELETE" && urlEnds.endsWith("/api/labels")) {
+  if (req.method === "DELETE" && urlEnds.endsWith("/api/labels") && !isAdmin) {
     res.status(HTTP_METHOD_NOT_ALLOWED).send({});
     return false;
   }
 
+  // get labels
   if (req.method === "GET" && urlEnds.endsWith("/api/labels")) {
     return true;
   }
 
+  // get article labels
   if (req.method === "GET" && urlEnds.includes("/api/article-labels/articles/")) {
     const articleId = urlEnds.split("/").slice(-1)[0];
     const foundArticle = searchForArticleLabels(articleId);
@@ -60,6 +61,7 @@ function handleLabels(req, res, isAdmin) {
     return true;
   }
 
+  // get article labels via query
   if (req.method === "GET" && urlEnds.includes("/api/article-labels/articles?id=")) {
     const articleIdsRaw = urlEnds.split("?id=").slice(-1)[0];
     const user_id = req.headers["userid"];
@@ -91,6 +93,7 @@ function handleLabels(req, res, isAdmin) {
     return false;
   }
 
+  // create or remove labels for articles
   if (req.method === "PUT" && urlEnds.includes("/api/article-labels")) {
     let userId = req.body["user_id"];
     let articleId = req.body["article_id"];

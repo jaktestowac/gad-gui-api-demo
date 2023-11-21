@@ -24,7 +24,7 @@ describe("Endpoint /article-labels", () => {
       headers["userid"] = userId;
     });
 
-    it("PUT /article-labels", async () => {
+    it("PUT /article-labels - missing labels", async () => {
       // Act:
       const response = await request.put(baseUrl).send({ user_id: userId, article_id: 2 }).set(headers);
 
@@ -32,7 +32,7 @@ describe("Endpoint /article-labels", () => {
       expect(response.status).to.equal(422);
     });
 
-    it("PUT /article-labels/:id", async () => {
+    it("PUT /article-labels/:id - missing labels", async () => {
       // Act:
       const response = await request.put(`${baseUrl}/11`).set(headers).send({ user_id: userId, article_id: 2 });
 
