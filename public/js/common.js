@@ -378,15 +378,16 @@ async function checkIfFeatureEnabled(featureName) {
     });
 }
 
-function formatLabelElement(labelText, showRemoveButton) {
-  const label = document.createElement("div");
-  label.className = "label";
+function formatLabelElement(labelObject, showRemoveButton) {
+  const labelElement = document.createElement("div");
+  labelElement.className = "label";
 
   const labelTextElement = document.createElement("span");
-  labelTextElement.textContent = labelText;
-  labelTextElement.id = labelText;
+  labelTextElement.textContent = labelObject.name;
+  labelTextElement.id = labelObject.name;
+  labelTextElement.setAttribute("label-id", labelObject.id);
 
-  label.appendChild(labelTextElement);
+  labelElement.appendChild(labelTextElement);
 
   const removeButton = document.createElement("span");
   if (showRemoveButton === true) {
@@ -394,8 +395,8 @@ function formatLabelElement(labelText, showRemoveButton) {
   } else {
     removeButton.textContent = " ";
   }
-  removeButton.addEventListener("click", () => removeLabel(label));
+  removeButton.addEventListener("click", () => removeLabel(labelElement));
 
-  label.appendChild(removeButton);
-  return label.outerHTML;
+  labelElement.appendChild(removeButton);
+  return labelElement.outerHTML;
 }

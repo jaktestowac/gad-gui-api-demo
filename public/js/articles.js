@@ -414,7 +414,7 @@ async function updateLabelElements() {
         if (labelIds !== undefined) {
           labelIds.forEach((labelId) => {
             const label = labelData.find((lbl) => lbl.id === labelId);
-            element.innerHTML += formatLabelElement(label.name);
+            element.innerHTML += formatLabelElement(label);
           });
         }
       });

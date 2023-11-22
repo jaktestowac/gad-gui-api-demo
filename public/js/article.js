@@ -285,6 +285,12 @@ const displayComments = (comments, container, error) => {
 const displayItem = (item, container) => {
   let itemHTML = getItemHTML(item);
   container.innerHTML += `<div align="center" ><div class="card-wrapper-wide" align="left">${itemHTML}</div></div>`;
+
+  if (labelsEnabled === true) {
+    for (let index = 0; index < assignedLabels.length; index++) {
+      addLabel(assignedLabels[index].name);
+    }
+  }
 };
 
 let alertElement = document.querySelector(".alert");
@@ -421,6 +427,12 @@ const handleUpdate = (ev) => {
     if (item["error"] === undefined) {
       item.user_name = user_name;
       container.innerHTML = getItemHTML(item);
+
+      if (labelsEnabled === true) {
+        for (let index = 0; index < assignedLabels.length; index++) {
+          addLabel(assignedLabels[index].name);
+        }
+      }
     }
     attachEventHandlers(data.user_id);
   };
@@ -437,6 +449,12 @@ const handleUpdateName = (ev) => {
     if (item["error"] === undefined) {
       item.user_name = user_name;
       container.innerHTML = getItemHTML(item);
+
+      if (labelsEnabled === true) {
+        for (let index = 0; index < assignedLabels.length; index++) {
+          addLabel(assignedLabels[index].name);
+        }
+      }
     }
     attachEventHandlers(articleUserId);
   };
@@ -659,12 +677,29 @@ const displayForm = (item, container) => {
     item.body = "[No body]";
   }
 
+  let labelsElement = "";
+  if (labelsEnabled === true) {
+    labelsElement = `
+      <div style="position: relative;">
+        <label for="labelInput">enter a label:</label>
+        <span>
+          <input type="text" id="labelInput" oninput="updateMatchingLabels()" onkeydown="handleKeyPress(event)">
+          <div id="matchingLabelsDropdown"></div>
+        </span>
+      </div>
+      <div style="position: relative;">
+        <label for="labels-container">labels:</label>
+        <div class="labels-container" id="labels-container" ></div>
+      </div>`;
+  }
+
   container.innerHTML = `
         <div style="margin-top:7px; width:500px;">
             <label>id:</label><span>${item.id}</span><br>
             <label>title:</label>
             <input type="text" id="title" data-testid="title-input" value="${item.title}"><br>
             </br>
+            ${labelsElement}
             <label>body:</label><br>
             <textarea rows="4" type="text" id="body" data-testid="body-input" style="width:350px;" value="${item.body}">${item.body}</textarea><br>
             <input style="visibility:hidden;" type="text" id="user_id" value="${item.user_id}"><br>
@@ -678,6 +713,12 @@ const displayForm = (item, container) => {
             <button type="button" class="cancel">Cancel</button>
         </div>
     `;
+
+  if (labelsEnabled === true) {
+    for (let index = 0; index < assignedLabels.length; index++) {
+      addLabel(assignedLabels[index].name);
+    }
+  }
 };
 
 const displayNameForm = (item, container) => {
@@ -703,6 +744,8 @@ article_id = getParams()["id"];
 const is_random = getParams()["random"];
 const msg = getParams()["msg"];
 
+let labelsEnabled = false;
+
 if (`${is_random}` === "1" || `${is_random}`.toLowerCase() === "true" || `${article_id}`.toLowerCase() === "random") {
   issueGetRandomRequest().then((article) => {
     issueGetRequest(article.id).then(() => {
@@ -721,15 +764,21 @@ if (`${is_random}` === "1" || `${is_random}`.toLowerCase() === "true" || `${arti
       });
     });
     checkIfFeatureEnabled("feature_labels").then((isEnabled) => {
+      if (!isEnabled) return;
+      labelsEnabled = isEnabled;
       issueGetLabelsForArticles([article_id]).then((labels) => {
         const labelIds = [...new Set(Object.values(labels).flatMap((item) => item.label_ids || []))];
         issueGetLabels(labelIds).then((labelData) => {
           const container = document.querySelector("#labels-container");
-          console.log(labelData);
+          assignedLabels = labelData;
           labelIds.forEach((labelId) => {
             const label = labelData.find((lbl) => lbl.id === labelId);
-            container.innerHTML += formatLabelElement(label.name);
+            container.innerHTML += formatLabelElement(label);
           });
+        });
+        issueGetAllLabels().then((labels) => {
+          allLabels = labels;
+          labelOptions = labels.map((label) => label.name);
         });
       });
     });
@@ -743,3 +792,130 @@ if (`${is_random}` === "1" || `${is_random}`.toLowerCase() === "true" || `${arti
 if (msg !== undefined) {
   showMessage(decodeURIComponent(msg), false);
 }
+
+let labelOptions = [];
+let allLabels = [];
+let assignedLabels = [];
+
+function updateMatchingLabels() {
+  const input = document.getElementById("labelInput");
+  const inputValue = input.value.trim().toLowerCase();
+  const matchingLabelsDropdown = document.getElementById("matchingLabelsDropdown");
+  matchingLabelsDropdown.innerHTML = "";
+
+  const matchedLabels = labelOptions.filter((label) => label.toLowerCase().includes(inputValue));
+
+  if (matchedLabels.length > 0) {
+    matchingLabelsDropdown.style.display = "block";
+
+    matchedLabels.forEach((matchedLabel) => {
+      const labelLink = document.createElement("a");
+      labelLink.textContent = matchedLabel;
+      labelLink.addEventListener("click", () => selectMatchingLabel(matchedLabel));
+      matchingLabelsDropdown.appendChild(labelLink);
+    });
+  } else {
+    matchingLabelsDropdown.style.display = "none";
+  }
+}
+
+function handleKeyPress(event) {
+  const matchingLabelsDropdown = document.getElementById("matchingLabelsDropdown");
+  const selectedLabel = matchingLabelsDropdown.querySelector(".selected");
+
+  if (event.key === "Enter") {
+    if (selectedLabel) {
+      addLabel(selectedLabel.textContent);
+    } else {
+      const input = document.getElementById("labelInput");
+      const customLabel = input.value.trim();
+      if (customLabel) {
+        addLabel(customLabel);
+      }
+    }
+  }
+
+  if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+    event.preventDefault();
+    handleArrowKeyPress(event.key);
+  }
+}
+
+function handleArrowKeyPress(key) {
+  const matchingLabelsDropdown = document.getElementById("matchingLabelsDropdown");
+  const selectedLabel = matchingLabelsDropdown.querySelector(".selected");
+
+  const labelLinks = matchingLabelsDropdown.querySelectorAll("a");
+  const currentIndex = selectedLabel ? Array.from(labelLinks).indexOf(selectedLabel) : -1;
+  let nextIndex;
+
+  if (key === "ArrowDown") {
+    nextIndex = currentIndex < labelLinks.length - 1 ? currentIndex + 1 : 0;
+  } else if (key === "ArrowUp") {
+    nextIndex = currentIndex > 0 ? currentIndex - 1 : labelLinks.length - 1;
+  }
+
+  labelLinks.forEach((labelLink, index) => {
+    labelLink.classList.remove("selected");
+    if (index === nextIndex) {
+      labelLink.classList.add("selected");
+    }
+  });
+}
+
+function selectMatchingLabel(label) {
+  const input = document.getElementById("labelInput");
+  input.value = label;
+  updateMatchingLabels();
+}
+
+function addLabel(selectedLabel) {
+  const labelContainer = document.getElementById("labels-container");
+
+  const isLabelAlreadyAdded = [...labelContainer.children].some((label) => label.children[0].id === selectedLabel);
+
+  const labelExists = labelOptions.some((label) => label === selectedLabel);
+  if (!isLabelAlreadyAdded) {
+    labelOptions.push(selectedLabel);
+  }
+
+  if (!isLabelAlreadyAdded) {
+    const label = document.createElement("div");
+    label.className = "label";
+
+    const labelText = document.createElement("span");
+    labelText.textContent = selectedLabel;
+    labelText.id = selectedLabel;
+
+    const removeButton = document.createElement("span");
+    removeButton.textContent = "x";
+    removeButton.addEventListener("click", () => removeLabel(label));
+
+    label.appendChild(labelText);
+    label.appendChild(removeButton);
+
+    labelContainer.appendChild(label);
+  }
+
+  const labelInput = document.getElementById("labelInput");
+  if (labelInput) {
+    labelInput.value = "";
+  }
+
+  const matchingLabelsDropdown = document.getElementById("matchingLabelsDropdown");
+  if (matchingLabelsDropdown) {
+    matchingLabelsDropdown.innerHTML = "";
+  }
+}
+
+function removeLabel(label) {
+  const labelContainer = document.getElementById("labels-container");
+  labelContainer.removeChild(label);
+}
+
+window.addEventListener("click", function (event) {
+  const matchingLabelsDropdown = document.getElementById("matchingLabelsDropdown");
+  if (!event.target.matches("#labelInput") && !event.target.matches("a") && matchingLabelsDropdown !== null) {
+    matchingLabelsDropdown.style.display = "none";
+  }
+});

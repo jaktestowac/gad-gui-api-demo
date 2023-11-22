@@ -16,3 +16,8 @@ async function issueGetLabels(labelIds) {
   );
   return labelsData;
 }
+
+async function issueGetAllLabels() {
+  const labelsData = await fetch(`${labelsEndpoint}`, { headers: formatHeaders() }).then((r) => r.json());
+  return labelsData;
+}
