@@ -1,8 +1,26 @@
-const { userDb, articlesDb, commentsDb, getQuizHighScoresDb, saveQuizHighScoresDb, likesDb, labelsDb, articleLabelsDb } = require("./db.helpers");
+const {
+  userDb,
+  articlesDb,
+  commentsDb,
+  getQuizHighScoresDb,
+  saveQuizHighScoresDb,
+  likesDb,
+  labelsDb,
+  articleLabelsDb,
+} = require("./db.helpers");
 
 function searchForUserWithToken(userId, verifyTokenResult) {
   const foundUser = userDb().find((user) => {
     if (user["id"]?.toString() === userId?.toString() && user["email"] === verifyTokenResult.email) {
+      return user;
+    }
+  });
+  return foundUser;
+}
+
+function searchForUserWithOnlyToken(verifyTokenResult) {
+  const foundUser = userDb().find((user) => {
+    if (user["email"] === verifyTokenResult.email) {
       return user;
     }
   });
@@ -166,7 +184,6 @@ function saveGameHighScores(gameName, userEmail, score) {
   return quizHighScores[userId];
 }
 
-
 module.exports = {
   searchForUserWithToken,
   searchForUserWithEmail,
@@ -184,5 +201,6 @@ module.exports = {
   findAllLikes,
   countLikesForAllArticles,
   searchForLike,
-  searchForArticleLabels
+  searchForArticleLabels,
+  searchForUserWithOnlyToken,
 };

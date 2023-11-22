@@ -378,7 +378,7 @@ async function checkIfFeatureEnabled(featureName) {
     });
 }
 
-function formatLabelElement(labelObject, showRemoveButton) {
+function formatLabelElement(labelObject, showRemoveButton, callback) {
   const labelElement = document.createElement("div");
   labelElement.className = "label";
 
@@ -395,8 +395,18 @@ function formatLabelElement(labelObject, showRemoveButton) {
   } else {
     removeButton.textContent = " ";
   }
-  removeButton.addEventListener("click", () => removeLabel(labelElement));
+  removeButton.addEventListener("click", () => {
+    removeLabel(labelElement);
+    if (callback) {
+      callback(labelObject.id);
+    }
+  });
 
   labelElement.appendChild(removeButton);
-  return labelElement.outerHTML;
+  return labelElement;
+}
+
+function removeLabel(label) {
+  const labelContainer = document.getElementById("labels-container");
+  labelContainer.removeChild(label);
 }

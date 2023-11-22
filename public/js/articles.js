@@ -34,7 +34,6 @@ async function issueGetLikesForArticles(articleIds) {
   return likesData.likes;
 }
 
-
 async function issueGetLikes(article_id) {
   const likesData = await fetch(`${articleLikesEndpoint}/${article_id}`, { headers: formatHeaders() }).then((r) =>
     r.json()
@@ -404,17 +403,17 @@ async function updateLabelElements() {
     ids.push(element.id.split("-").slice(-1)[0]);
   });
 
-  issueGetLabelsForArticles(ids).then((labels) => {
-    const labelIds = [...new Set(Object.values(labels).flatMap((item) => item.label_ids || []))];
+  issueGetLabelsForArticles(ids).then((labelsData) => {
+    const labelIds = [...new Set(Object.values(labelsData.labels).flatMap((item) => item.label_ids || []))];
     issueGetLabels(labelIds).then((labelData) => {
       elements.forEach((element) => {
         element.innerHTML = "";
         const id = element.id.split("-").slice(-1)[0];
-        const labelIds = labels[id]?.label_ids;
+        const labelIds = labelsData.labels[id]?.label_ids;
         if (labelIds !== undefined) {
           labelIds.forEach((labelId) => {
             const label = labelData.find((lbl) => lbl.id === labelId);
-            element.innerHTML += formatLabelElement(label);
+            element.innerHTML += formatLabelElement(label).outerHTML;
           });
         }
       });

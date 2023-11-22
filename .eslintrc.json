@@ -57,6 +57,10 @@
         "beforeAll": "readonly",
         "expect": "readonly",
         "formatLike": "readonly", 
-        "checkIfFeatureEnabled": "readonly"
+        "checkIfFeatureEnabled": "readonly",
+        "issueUpdateLabels": "readonly",
+        "issueGetLabelsForArticles": "readonly",
+        "issueGetLabels": "readonly",
+        "formatLabelElement": "readonly"
     }
 }

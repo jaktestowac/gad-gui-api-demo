@@ -4,6 +4,8 @@ const {
   searchForUserWithToken,
   searchForArticleWithUserId,
   searchForArticleLabels,
+  searchForUserWithOnlyToken,
+  searchForArticle,
 } = require("../helpers/db-operation.helpers");
 const {
   formatMissingFieldErrorResponse,
@@ -95,30 +97,23 @@ function handleLabels(req, res, isAdmin) {
 
   // create or remove labels for articles
   if (req.method === "PUT" && urlEnds.includes("/api/article-labels")) {
-    let userId = req.body["user_id"];
     let articleId = req.body["article_id"];
-    const foundUser = searchForUserWithToken(userId, verifyTokenResult);
-    logTrace("handleArticleLabels: foundUser:", { method: req.method, urlEnds, foundUser, userId });
+    const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
+    logTrace("handleArticleLabels: foundUser:", { method: req.method, urlEnds, foundUser });
 
     if (foundUser === undefined) {
       res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
       return false;
     }
 
-    const foundArticle = searchForArticleWithUserId(articleId, userId);
-    logTrace("handleArticleLabels: foundArticle:", { articleId, userId, foundArticle });
+    const foundArticle = searchForArticle(articleId);
+    logTrace("handleArticleLabels: foundArticle:", { articleId, foundArticle });
 
-    if (foundArticle === undefined) {
+    if (`${foundArticle.user_id}` !== `${foundUser.id}`) {
       res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
       return false;
     }
 
-    if (!are_mandatory_fields_present(req.body, mandatory_non_empty_fields_article_labels)) {
-      res
-        .status(HTTP_UNPROCESSABLE_ENTITY)
-        .send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_article_labels));
-      return false;
-    }
     if (!are_all_fields_present(req.body, mandatory_non_empty_fields_article_labels)) {
       res
         .status(HTTP_UNPROCESSABLE_ENTITY)
@@ -126,19 +121,20 @@ function handleLabels(req, res, isAdmin) {
       return false;
     }
 
-    const foundLabels = searchForArticleLabels(articleId);
+    // const foundLabels = searchForArticleLabels(articleId);
 
-    if (foundLabels !== undefined) {
-      const labelIds = req.body.label_ids ?? [];
+    // if (foundLabels !== undefined) {
+    //   const labelIds = req.body.label_ids ?? [];
 
-      req.body.label_ids = getUniqueValues(foundLabels.label_ids.concat(labelIds));
-    }
+    //   if (labelIds.length > 0) {
+    //     req.body.label_ids = getUniqueValues(foundLabels.label_ids.concat(labelIds));
+    //   }
+    // }
 
     if (req.body.label_ids.length > 3) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatTooManyValuesErrorResponse("labels"));
       return false;
     }
-
     return true;
   }
 

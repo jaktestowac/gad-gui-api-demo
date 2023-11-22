@@ -10,6 +10,10 @@ let article_id = undefined;
 let articleData;
 let articleDataForExport;
 let articleUserId;
+let articleLabelId = undefined;
+let selectedLabels = [];
+let labelsEnabled = false;
+let labelsEditEnabled = false;
 
 async function issueGetRandomRequest() {
   const articlesData = await Promise.all(
@@ -128,6 +132,7 @@ async function addUserNameToComments(comments) {
     // TODO:INVOKE_BUG: remove toString() to get Unknown User in some cases #BUG004
     const userData = usersData.find((x) => x.id?.toString() === comment.user_id?.toString());
 
+    let user_name;
     if (userData === undefined || userData.firstname === undefined) {
       user_name = "Unknown user";
     } else {
@@ -428,6 +433,11 @@ const handleUpdate = (ev) => {
       item.user_name = user_name;
       container.innerHTML = getItemHTML(item);
 
+      if (labelsEditEnabled === true) {
+        issueUpdateLabels(articleLabelId, article_id, selectedLabels).then((response) => {
+          showResponseOnUpdate(response, "Article labels");
+        });
+      }
       if (labelsEnabled === true) {
         for (let index = 0; index < assignedLabels.length; index++) {
           addLabel(assignedLabels[index].name);
@@ -678,7 +688,7 @@ const displayForm = (item, container) => {
   }
 
   let labelsElement = "";
-  if (labelsEnabled === true) {
+  if (labelsEditEnabled === true) {
     labelsElement = `
       <div style="position: relative;">
         <label for="labelInput">enter a label:</label>
@@ -714,9 +724,9 @@ const displayForm = (item, container) => {
         </div>
     `;
 
-  if (labelsEnabled === true) {
+  if (labelsEditEnabled === true) {
     for (let index = 0; index < assignedLabels.length; index++) {
-      addLabel(assignedLabels[index].name);
+      addLabel(assignedLabels[index].name, true);
     }
   }
 };
@@ -744,8 +754,6 @@ article_id = getParams()["id"];
 const is_random = getParams()["random"];
 const msg = getParams()["msg"];
 
-let labelsEnabled = false;
-
 if (`${is_random}` === "1" || `${is_random}`.toLowerCase() === "true" || `${article_id}`.toLowerCase() === "random") {
   issueGetRandomRequest().then((article) => {
     issueGetRequest(article.id).then(() => {
@@ -766,14 +774,15 @@ if (`${is_random}` === "1" || `${is_random}`.toLowerCase() === "true" || `${arti
     checkIfFeatureEnabled("feature_labels").then((isEnabled) => {
       if (!isEnabled) return;
       labelsEnabled = isEnabled;
-      issueGetLabelsForArticles([article_id]).then((labels) => {
-        const labelIds = [...new Set(Object.values(labels).flatMap((item) => item.label_ids || []))];
+      issueGetLabelsForArticles([article_id]).then((labelsData) => {
+        articleLabelId = labelsData.labels[article_id].id;
+        const labelIds = [...new Set(Object.values(labelsData.labels).flatMap((item) => item.label_ids || []))];
         issueGetLabels(labelIds).then((labelData) => {
           const container = document.querySelector("#labels-container");
           assignedLabels = labelData;
           labelIds.forEach((labelId) => {
             const label = labelData.find((lbl) => lbl.id === labelId);
-            container.innerHTML += formatLabelElement(label);
+            container.innerHTML += formatLabelElement(label).outerHTML;
           });
         });
         issueGetAllLabels().then((labels) => {
@@ -825,12 +834,12 @@ function handleKeyPress(event) {
 
   if (event.key === "Enter") {
     if (selectedLabel) {
-      addLabel(selectedLabel.textContent);
+      addLabel(selectedLabel.textContent, true);
     } else {
       const input = document.getElementById("labelInput");
       const customLabel = input.value.trim();
       if (customLabel) {
-        addLabel(customLabel);
+        addLabel(customLabel, true);
       }
     }
   }
@@ -869,32 +878,33 @@ function selectMatchingLabel(label) {
   updateMatchingLabels();
 }
 
-function addLabel(selectedLabel) {
+function addLabel(selectedLabel, showRemoveButton) {
   const labelContainer = document.getElementById("labels-container");
 
   const isLabelAlreadyAdded = [...labelContainer.children].some((label) => label.children[0].id === selectedLabel);
 
   const labelExists = labelOptions.some((label) => label === selectedLabel);
+
+  if (!labelExists) {
+    return;
+  }
+
   if (!isLabelAlreadyAdded) {
     labelOptions.push(selectedLabel);
   }
 
   if (!isLabelAlreadyAdded) {
-    const label = document.createElement("div");
-    label.className = "label";
-
-    const labelText = document.createElement("span");
-    labelText.textContent = selectedLabel;
-    labelText.id = selectedLabel;
-
-    const removeButton = document.createElement("span");
-    removeButton.textContent = "x";
-    removeButton.addEventListener("click", () => removeLabel(label));
-
-    label.appendChild(labelText);
-    label.appendChild(removeButton);
-
+    let selectedLabelObject = allLabels.find((label) => label.name === selectedLabel);
+    if (selectedLabelObject === undefined) {
+      selectedLabelObject = {
+        name: selectedLabel,
+      };
+    }
+    let label = formatLabelElement(selectedLabelObject, showRemoveButton, (id) => {
+      selectedLabels = selectedLabels.filter((element) => element !== id);
+    });
     labelContainer.appendChild(label);
+    selectedLabels.push(selectedLabelObject.id);
   }
 
   const labelInput = document.getElementById("labelInput");
@@ -906,11 +916,6 @@ function addLabel(selectedLabel) {
   if (matchingLabelsDropdown) {
     matchingLabelsDropdown.innerHTML = "";
   }
-}
-
-function removeLabel(label) {
-  const labelContainer = document.getElementById("labels-container");
-  labelContainer.removeChild(label);
 }
 
 window.addEventListener("click", function (event) {

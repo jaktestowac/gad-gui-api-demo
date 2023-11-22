@@ -1,4 +1,5 @@
 const articleLabelsEndpoint = "../../api/article-labels/articles";
+const articleLabelsUpdateEndpoint = "../../api/article-labels";
 const labelsEndpoint = "../../api/labels";
 
 async function issueGetLabelsForArticles(articleIds) {
@@ -6,7 +7,7 @@ async function issueGetLabelsForArticles(articleIds) {
   const labelsData = await fetch(`${articleLabelsEndpoint}?id=${formattedIds}`, { headers: formatHeaders() }).then(
     (r) => r.json()
   );
-  return labelsData.labels;
+  return labelsData;
 }
 
 async function issueGetLabels(labelIds) {
@@ -20,4 +21,22 @@ async function issueGetLabels(labelIds) {
 async function issueGetAllLabels() {
   const labelsData = await fetch(`${labelsEndpoint}`, { headers: formatHeaders() }).then((r) => r.json());
   return labelsData;
+}
+
+async function issueUpdateLabels(articleLabelId, articleId, labelIds) {
+  let data = {
+    id: articleLabelId,
+    label_ids: labelIds,
+    article_id: articleId,
+  };
+  const url = `${articleLabelsUpdateEndpoint}/${articleLabelId}`;
+  return fetch(url, {
+    method: "put",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+    body: JSON.stringify(data),
+  });
 }
