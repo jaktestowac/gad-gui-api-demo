@@ -29,7 +29,8 @@ async function issueUpdateLabels(articleLabelId, articleId, labelIds) {
     label_ids: labelIds,
     article_id: articleId,
   };
-  const url = `${articleLabelsUpdateEndpoint}/${articleLabelId}`;
+  let url = `${articleLabelsUpdateEndpoint}`;
+  if (articleLabelId !== undefined) url = `${articleLabelsUpdateEndpoint}/${articleLabelId}`;
   return fetch(url, {
     method: "put",
     headers: {

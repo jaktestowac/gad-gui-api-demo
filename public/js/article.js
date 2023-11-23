@@ -12,8 +12,11 @@ let articleDataForExport;
 let articleUserId;
 let articleLabelId = undefined;
 let selectedLabels = [];
-let labelsEnabled = false;
-let labelsEditEnabled = false;
+let labelsEnabled = true;
+let labelsEditEnabled = true;
+let labelOptions = [];
+let allLabels = [];
+let assignedLabels = [];
 
 async function issueGetRandomRequest() {
   const articlesData = await Promise.all(
@@ -368,7 +371,7 @@ const showResponseOnDelete = (response, item) => {
 };
 
 const showResponseOnUpdate = (response, item) => {
-  if (response.status === 200) {
+  if (response.status === 200 || response.status === 201) {
     showMessage(`${item} was updated`, false);
   } else {
     showMessage(`${item} was not updated`, true);
@@ -436,13 +439,23 @@ const handleUpdate = (ev) => {
       if (labelsEditEnabled === true) {
         issueUpdateLabels(articleLabelId, article_id, selectedLabels).then((response) => {
           showResponseOnUpdate(response, "Article labels");
+          handleLabelsRefresh().then((x) => {
+            if (labelsEnabled === true) {
+              for (let index = 0; index < assignedLabels.length; index++) {
+                addLabel(assignedLabels[index].name);
+              }
+            }
+          });
         });
       }
-      if (labelsEnabled === true) {
-        for (let index = 0; index < assignedLabels.length; index++) {
-          addLabel(assignedLabels[index].name);
+
+      handleLabelsRefresh().then((x) => {
+        if (labelsEnabled === true) {
+          for (let index = 0; index < assignedLabels.length; index++) {
+            addLabel(assignedLabels[index].name);
+          }
         }
-      }
+      });
     }
     attachEventHandlers(data.user_id);
   };
@@ -771,26 +784,7 @@ if (`${is_random}` === "1" || `${is_random}`.toLowerCase() === "true" || `${arti
         });
       });
     });
-    checkIfFeatureEnabled("feature_labels").then((isEnabled) => {
-      if (!isEnabled) return;
-      labelsEnabled = isEnabled;
-      issueGetLabelsForArticles([article_id]).then((labelsData) => {
-        articleLabelId = labelsData.labels[article_id].id;
-        const labelIds = [...new Set(Object.values(labelsData.labels).flatMap((item) => item.label_ids || []))];
-        issueGetLabels(labelIds).then((labelData) => {
-          const container = document.querySelector("#labels-container");
-          assignedLabels = labelData;
-          labelIds.forEach((labelId) => {
-            const label = labelData.find((lbl) => lbl.id === labelId);
-            container.innerHTML += formatLabelElement(label).outerHTML;
-          });
-        });
-        issueGetAllLabels().then((labels) => {
-          allLabels = labels;
-          labelOptions = labels.map((label) => label.name);
-        });
-      });
-    });
+    handleLabelsRefresh();
   });
 } else {
   const container = document.querySelector("#container");
@@ -798,13 +792,38 @@ if (`${is_random}` === "1" || `${is_random}`.toLowerCase() === "true" || `${arti
     '<div align="center"><h1 style="text-align: center;" data-testid="no-results">No data</h1><div data-testid="no-results-details">Invalid article ID or article does not exist</div></div>';
 }
 
+async function handleLabelsRefresh() {
+  checkIfFeatureEnabled("feature_labels").then((isEnabled) => {
+    if (!isEnabled) return;
+
+    console.log("handleLabelsRefresh");
+    labelsEnabled = isEnabled;
+    issueGetLabelsForArticles([article_id]).then((labelsData) => {
+      issueGetAllLabels().then((labels) => {
+        allLabels = labels;
+        labelOptions = labels.map((label) => label.name);
+      });
+      if (labelsData.labels === undefined || labelsData.labels[article_id] === undefined) {
+        return;
+      }
+      articleLabelId = labelsData.labels[article_id].id;
+      const labelIds = [...new Set(Object.values(labelsData.labels).flatMap((item) => item.label_ids || []))];
+      issueGetLabels(labelIds).then((labelData) => {
+        const container = document.querySelector("#labels-container");
+        container.innerHTML = "";
+        assignedLabels = labelData;
+        labelIds.forEach((labelId) => {
+          const label = labelData.find((lbl) => lbl.id === labelId);
+          container.innerHTML += formatLabelElement(label).outerHTML;
+        });
+      });
+    });
+  });
+}
+
 if (msg !== undefined) {
   showMessage(decodeURIComponent(msg), false);
 }
-
-let labelOptions = [];
-let allLabels = [];
-let assignedLabels = [];
 
 function updateMatchingLabels() {
   const input = document.getElementById("labelInput");
@@ -881,12 +900,16 @@ function selectMatchingLabel(label) {
 function addLabel(selectedLabel, showRemoveButton) {
   const labelContainer = document.getElementById("labels-container");
 
+  if ([...labelContainer.children].length >= 3) {
+    return false;
+  }
+
   const isLabelAlreadyAdded = [...labelContainer.children].some((label) => label.children[0].id === selectedLabel);
 
   const labelExists = labelOptions.some((label) => label === selectedLabel);
 
   if (!labelExists) {
-    return;
+    return false;
   }
 
   if (!isLabelAlreadyAdded) {
@@ -916,11 +939,24 @@ function addLabel(selectedLabel, showRemoveButton) {
   if (matchingLabelsDropdown) {
     matchingLabelsDropdown.innerHTML = "";
   }
+
+  return true;
 }
 
 window.addEventListener("click", function (event) {
   const matchingLabelsDropdown = document.getElementById("matchingLabelsDropdown");
-  if (!event.target.matches("#labelInput") && !event.target.matches("a") && matchingLabelsDropdown !== null) {
+  if (!event.target.matches("#labelInput") && event.target.matches("a") && matchingLabelsDropdown !== null) {
+    const wasAdded = addLabel(matchingLabelsDropdown.textContent.trim(), true);
     matchingLabelsDropdown.style.display = "none";
+    const labelInput = document.getElementById("labelInput");
+    if (labelInput) {
+      labelInput.value = "";
+    }
+    if (!wasAdded) {
+      const labelContainer = document.getElementById("labels-container");
+      if ([...labelContainer.children].length >= 3) {
+        showMessage(`Only 3 labels can be added`, true);
+      }
+    }
   }
 });

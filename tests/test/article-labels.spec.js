@@ -13,7 +13,7 @@ describe("Endpoint /article-labels", () => {
     gracefulQuit();
   });
 
-  describe.only("With auth", () => {
+  describe("With auth", () => {
     let headers;
     let userId;
 
@@ -45,7 +45,7 @@ describe("Endpoint /article-labels", () => {
       const response = await request
         .put(`${baseUrl}/11`)
         .set(headers)
-        .send({ user_id: userId, article_id: 2, label_ids: [1, 2, 3] });
+        .send({ user_id: userId, article_id: 2, label_ids: [1, 2, 3, 4] });
 
       // Assert:
       expect(response.status).to.equal(422);

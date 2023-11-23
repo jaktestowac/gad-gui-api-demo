@@ -13,6 +13,7 @@ const {
   formatInvalidFieldErrorResponse,
   getUniqueValues,
   formatTooManyValuesErrorResponse,
+  getIdFromUrl,
 } = require("../helpers/helpers");
 const { logTrace, logDebug } = require("../helpers/logger-api");
 const {
@@ -131,10 +132,30 @@ function handleLabels(req, res, isAdmin) {
     //   }
     // }
 
-    if (req.body.label_ids.length > 3) {
+    if (req.body.label_ids === undefined || req.body.label_ids?.length > 3) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatTooManyValuesErrorResponse("labels"));
       return false;
     }
+
+    const foundArticleLabels = searchForArticleLabels(articleId);
+
+    if (articleId === "articles") {
+      articleId = "";
+    }
+
+    logTrace("handleArticleLabels:PUT:", { method: req.method, articleId });
+
+    if (foundArticleLabels === undefined) {
+      req.method = "POST";
+      req.url = "/api/article-labels";
+      req.body.id = undefined;
+      logTrace("handleArticleLabels:PUT -> POST:", {
+        method: req.method,
+        url: req.url,
+        body: req.body,
+      });
+    }
+
     return true;
   }
 

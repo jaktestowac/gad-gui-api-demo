@@ -2222,6 +2222,11 @@
       "id": 16,
       "label_ids": [1, 2],
       "article_id": 40
+    },
+    {
+      "id": 17,
+      "label_ids": [1],
+      "article_id": 35
     }
   ],
   "labels": [
