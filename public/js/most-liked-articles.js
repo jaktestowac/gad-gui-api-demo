@@ -124,6 +124,7 @@ const formatArticleHtml = (item) => {
       <label>date:</label><span data-testid="article-${item.id}-date">${item.date
     .replace("T", " ")
     .replace("Z", "")}</span><br>
+    <div class="labels-container" id="labels-container-${item.id}" ></div>
       <label></label><span data-testid="article-${item.id}-body">${item.body?.substring(0, 200)} (...)</span><br>
       <div style="display: flex; justify-content: space-between;">
           <span style="display: flex; justify-content: flex-start;">
@@ -180,6 +181,7 @@ async function makeRequest() {
               const likeCount = likesData[articleId];
               element.innerHTML = formatLike(myLikes[articleId], likeCount, articleId);
             }
+            updateLabelElements();
           });
         });
       });
