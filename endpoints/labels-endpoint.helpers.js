@@ -131,6 +131,9 @@ function handleLabels(req, res, isAdmin) {
     //     req.body.label_ids = getUniqueValues(foundLabels.label_ids.concat(labelIds));
     //   }
     // }
+    if (req.body.label_ids !== undefined) {
+      req.body.label_ids = getUniqueValues(req.body.label_ids);
+    }
 
     if (req.body.label_ids === undefined || req.body.label_ids?.length > 3) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatTooManyValuesErrorResponse("labels"));

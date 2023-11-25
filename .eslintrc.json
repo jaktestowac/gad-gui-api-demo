@@ -61,6 +61,8 @@
         "issueUpdateLabels": "readonly",
         "issueGetLabelsForArticles": "readonly",
         "issueGetLabels": "readonly",
-        "formatLabelElement": "readonly"
+        "formatLabelElement": "readonly",
+        "updateLabelElements": "readonly",
+        "issueGetAllLabels": "readonly"
     }
 }

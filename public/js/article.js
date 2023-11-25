@@ -378,6 +378,14 @@ const showResponseOnUpdate = (response, item) => {
   }
 };
 
+const showResponseOnlyOnFailure = (response, item) => {
+  if (response.status === 200 || response.status === 201) {
+    // showMessage(`${item} was updated`, false);
+  } else {
+    showMessage(`${item} was not updated`, true);
+  }
+};
+
 // TODO:INVOKE_BUG: current article is deleted, but not the comments.
 // If You add new article with this ID - it will have comments from deleted article
 const issueDeleteRequest = (id, responseHandler) => {
@@ -438,7 +446,7 @@ const handleUpdate = (ev) => {
 
       if (labelsEditEnabled === true) {
         issueUpdateLabels(articleLabelId, article_id, selectedLabels).then((response) => {
-          showResponseOnUpdate(response, "Article labels");
+          showResponseOnlyOnFailure(response, "Article labels");
           handleLabelsRefresh().then((x) => {
             if (labelsEnabled === true) {
               for (let index = 0; index < assignedLabels.length; index++) {
@@ -796,7 +804,6 @@ async function handleLabelsRefresh() {
   checkIfFeatureEnabled("feature_labels").then((isEnabled) => {
     if (!isEnabled) return;
 
-    console.log("handleLabelsRefresh");
     labelsEnabled = isEnabled;
     issueGetLabelsForArticles([article_id]).then((labelsData) => {
       issueGetAllLabels().then((labels) => {
@@ -831,14 +838,15 @@ function updateMatchingLabels() {
   const matchingLabelsDropdown = document.getElementById("matchingLabelsDropdown");
   matchingLabelsDropdown.innerHTML = "";
 
-  const matchedLabels = labelOptions.filter((label) => label.toLowerCase().includes(inputValue));
+  let matchedLabels = labelOptions.filter((label) => label.toLowerCase().includes(inputValue));
 
   if (matchedLabels.length > 0) {
     matchingLabelsDropdown.style.display = "block";
-
+    matchedLabels = [...new Set(matchedLabels)];
     matchedLabels.forEach((matchedLabel) => {
       const labelLink = document.createElement("a");
       labelLink.textContent = matchedLabel;
+      labelLink.setAttribute("name", matchedLabel);
       labelLink.addEventListener("click", () => selectMatchingLabel(matchedLabel));
       matchingLabelsDropdown.appendChild(labelLink);
     });
@@ -958,5 +966,7 @@ window.addEventListener("click", function (event) {
         showMessage(`Only 3 labels can be added`, true);
       }
     }
+  } else if (matchingLabelsDropdown !== null) {
+    matchingLabelsDropdown.style.display = "none";
   }
 });
