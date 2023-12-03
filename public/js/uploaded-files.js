@@ -19,6 +19,10 @@ async function getPublicUploadedFiles() {
   return filesData;
 }
 
+async function downloadFile(fileName) {
+  console.log(fileName);
+}
+
 function populateTable(table, data) {
   while (table.rows.length > 1) {
     table.deleteRow(1);
@@ -28,6 +32,8 @@ function populateTable(table, data) {
 
     const nameCell = row.insertCell(0);
     nameCell.textContent = item.name;
+    var link = `<div onclick="downloadFile('${item.name}')" >${item.name}</div>`;
+    nameCell.innerHTML = link;
     nameCell.style.textAlign = "center";
     nameCell.style.fontSize = "14px";
 

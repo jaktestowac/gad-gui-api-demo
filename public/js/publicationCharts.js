@@ -82,16 +82,3 @@ if (dataType === undefined || dataType === "undefined" || dataType.length === 0)
 
 let chartType = getParams()["type"];
 invokeChart(chartType);
-
-function generatePDF() {
-  const element = document.getElementById("tableChart");
-  var opt = {
-    margin: 1,
-    filename: "visit_stats.pdf",
-    image: { type: "jpeg", quality: 0.98 },
-    html2canvas: { scale: 1 },
-    jsPDF: { unit: "mm", format: "a3", orientation: "portrait" },
-  };
-  // Docs: https://github.com/eKoopmans/html2pdf.js
-  html2pdf().set(opt).from(element).save();
-}
