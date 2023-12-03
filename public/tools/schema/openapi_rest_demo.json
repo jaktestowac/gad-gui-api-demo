@@ -824,6 +824,80 @@
             }
           }
         }
+      },
+      "put": {
+        "tags": ["article-labels"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Creates, updates or deletes labels for article",
+        "description": "Creates, updates or deletes labels for article.",
+        "operationId": "putArticleLabels",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id of article-labels entity that need to be updated",
+            "required": false,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Updated ArticleLabel object",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ArticleLabelsUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "ArticleLabel updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticleLabels"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "ArticleLabel created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticleLabels"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - malformed JSON",
+            "content": {}
+          },
+          "404": {
+            "description": "User not found",
+            "content": {}
+          },
+          "422": {
+            "description": "Invalid user supplied",
+            "content": {}
+          }
+        }
       }
     },
     "/labels": {
@@ -2424,6 +2498,24 @@
       "ArticleLabels": {
         "type": "object",
         "required": ["label_ids", "id", "article_id"],
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "label_ids": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "article_id": {
+            "type": "number"
+          }
+        }
+      },
+      "ArticleLabelsUpdate": {
+        "type": "object",
+        "required": ["label_ids", "article_id"],
         "properties": {
           "id": {
             "type": "number"
