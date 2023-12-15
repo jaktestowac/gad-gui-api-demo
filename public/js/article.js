@@ -562,8 +562,12 @@ const attachEventHandlers = (id = "") => {
   if (getId()) {
     appendMenu(articleAdditionalMenu);
     const btn = document.querySelector("#add-new-comment");
+    const btn2 = document.querySelector("#add-new");
 
-    appendElementOnTop(articleAdditionalMenuOnPage, "containerCommentsQuickMenu");
+    // TODO:INVOKE_BUG: remove if to have a Bug - button Add Comment is duplicated
+    if (btn2 === undefined || btn2 === null) {
+      appendElementOnTop(articleAdditionalMenuOnPage, "containerCommentsQuickMenu");
+    }
 
     // TODO:INVOKE_BUG: remove if to have a Bug - button Add Comment is duplicated
     if (btn === undefined || btn === null) {
