@@ -2324,6 +2324,96 @@
       "id": 19,
       "name": "Cybersec",
       "user_id": 5
+    },
+    {
+      "id": 20,
+      "name": "JavaScript",
+      "user_id": 5
+    },
+    {
+      "id": 21,
+      "name": "TypeScript",
+      "user_id": 5
+    },
+    {
+      "id": 22,
+      "name": "Quality",
+      "user_id": 5
+    },
+    {
+      "id": 23,
+      "name": "Quality Assurance",
+      "user_id": 5
+    },
+    {
+      "id": 24,
+      "name": "TDD",
+      "user_id": 5
+    },
+    {
+      "id": 25,
+      "name": "GitHub Actions",
+      "user_id": 3
+    },
+    {
+      "id": 26,
+      "name": "Jenkins",
+      "user_id": 2
+    },
+    {
+      "id": 27,
+      "name": "Performance",
+      "user_id": 1
+    },
+    {
+      "id": 28,
+      "name": "Python",
+      "user_id": 1
+    },
+    {
+      "id": 29,
+      "name": "Test Strategy",
+      "user_id": 1
+    },
+    {
+      "id": 30,
+      "name": "Risk",
+      "user_id": 1
+    },
+    {
+      "id": 31,
+      "name": "Metrics",
+      "user_id": 1
+    },
+    {
+      "id": 32,
+      "name": "Good Practice",
+      "user_id": 4
+    },
+    {
+      "id": 33,
+      "name": "Documentation",
+      "user_id": 4
+    },
+    {
+      "id": 34,
+      "name": "Recruitment",
+      "user_id": 4
+    },
+    {
+      "id": 35,
+      "name": "HR",
+      "user_id": 4
+    },
+    {
+      "id": 36,
+      "name": "Training",
+      "user_id": 4
+    },
+    {
+      "id": 37,
+      "name": "Interview",
+      "user_id": 4
     }
   ]
 }
