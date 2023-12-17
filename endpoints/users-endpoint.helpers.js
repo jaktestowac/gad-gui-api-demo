@@ -46,7 +46,7 @@ function handleUsers(req, res) {
     const emails = userDb().map((user) => user?.email);
     let foundUser = emails.filter((email) => email === req.body["email"]);
 
-    if (isBugEnabled(BugConfigKeys.BUG_LIKES_006)) {
+    if (isBugEnabled(BugConfigKeys.BUG_LIKES_003)) {
       foundUser = [];
     }
 

@@ -44,7 +44,7 @@ const ConfigKeys = {
   USER_AVATAR_PATH: "userAvatarPath",
   ARTICLE_IMAGE_PATH: "articleImagePath",
   UPLOADS_PATH: "uploadsPath",
-  LOGS_LIMIT: "logsLimit"
+  LOGS_LIMIT: "logsLimit",
 };
 
 const BugConfigKeys = {
@@ -66,13 +66,14 @@ const BugConfigKeys = {
   BUG_SORTING_003: "bug_sorting_003",
   BUG_LIKES_001: "bug_likes_001",
   BUG_LIKES_002: "bug_likes_002",
+  BUG_LIKES_003: "bug_likes_003",
 };
 
 const FeatureFlagConfigKeys = {
   FEATURE_LIKES: "feature_likes",
   FEATURE_FILES: "feature_files",
   FEATURE_ONLY_BACKEND: "feature_only_backend",
-  FEATURE_LABELS: "feature_labels"
+  FEATURE_LABELS: "feature_labels",
 };
 
 module.exports = {

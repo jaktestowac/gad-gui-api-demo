@@ -72,7 +72,7 @@ describe("Endpoint /users", async () => {
         const response = await request.post(baseUrl).send(testUserData);
         expect(response.status).to.equal(201);
 
-        await sleep(sleepTime)
+        await sleep(sleepTime);
 
         // Act:
         const responseAgain = await request.post(baseUrl).send(testUserData);
