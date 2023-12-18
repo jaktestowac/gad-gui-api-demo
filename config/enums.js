@@ -74,6 +74,7 @@ const FeatureFlagConfigKeys = {
   FEATURE_FILES: "feature_files",
   FEATURE_ONLY_BACKEND: "feature_only_backend",
   FEATURE_LABELS: "feature_labels",
+  FEATURE_CACHE_CONTROL_NO_STORE: "feature_cache_control_no_store",
 };
 
 module.exports = {

@@ -60,6 +60,13 @@ server.get(/.*/, (req, res, next) => {
   }
 });
 
+server.use((req, res, next) => {
+  if (getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_CACHE_CONTROL_NO_STORE)) {
+    res.header("Cache-Control", "no-store");
+  }
+  next();
+});
+
 server.use(middlewares);
 server.use(jsonServer.bodyParser);
 
