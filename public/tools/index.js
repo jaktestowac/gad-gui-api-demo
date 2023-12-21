@@ -43,6 +43,7 @@ fetch("/api/config/features")
       const checkbox = document.createElement("input");
       checkbox.type = "checkbox";
       checkbox.checked = data.config[feature];
+      checkbox.id = `checkbox-${feature}`;
       checkbox.addEventListener("change", function () {
         handleCheckboxChange(feature, checkbox.checked);
       });
