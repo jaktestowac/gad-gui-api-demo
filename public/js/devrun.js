@@ -8,28 +8,30 @@ const finalScoreContainer = document.getElementById("final-score-container");
 let isJumping = false;
 let isGameOver = false;
 let score = 0;
-let positionY = 0;
+let playerPositionY = 0;
+let playerFixedPositionXMin = 50;
+let playerFixedPositionXMax = 100;
 
 function jump() {
   if (!isJumping) {
     isJumping = true;
     const jumpInterval = setInterval(() => {
-      if (positionY >= 100) {
+      if (playerPositionY >= 100) {
         clearInterval(jumpInterval);
         const fallInterval = setInterval(() => {
-          if (positionY <= 0) {
+          if (playerPositionY <= 0) {
             clearInterval(fallInterval);
             isJumping = false;
-            positionY = 0;
+            playerPositionY = 0;
             devHero.style.bottom = "0px";
           } else {
-            positionY -= 5;
-            devHero.style.bottom = positionY + "px";
+            playerPositionY -= 5;
+            devHero.style.bottom = playerPositionY + "px";
           }
         }, 20);
       }
-      positionY += 5;
-      devHero.style.bottom = positionY + "px";
+      playerPositionY += 5;
+      devHero.style.bottom = playerPositionY + "px";
     }, 20);
   }
 }
@@ -60,7 +62,12 @@ function createBug() {
       gameContainer.removeChild(bug);
       score += 10;
       scoreDisplay.textContent = "Score: " + score;
-    } else if (bugPosition > 50 && bugPosition < 100 && positionY > -100 && positionY < 50) {
+    } else if (
+      bugPosition > playerFixedPositionXMin &&
+      bugPosition < playerFixedPositionXMax &&
+      playerPositionY > -100 &&
+      playerPositionY < 50
+    ) {
       clearInterval(moveBugInterval);
       isGameOver = true;
       finalScoreContainer.innerHTML = `<strong>Game Over! Your Score: ${score}</strong><br>`;
