@@ -50,6 +50,11 @@ const clearDbRoutes = (req, res, next) => {
   }
 };
 
+server.use((req, res, next) => {
+  res.header("Cache-Control", "no-store");
+  next();
+});
+
 server.use(middlewares);
 server.use(jsonServer.bodyParser);
 
