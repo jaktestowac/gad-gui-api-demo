@@ -6,6 +6,8 @@ const { logDebug, logError, logTrace, logWarn } = require("./logger-api");
 const mandatory_non_empty_fields_user = ["firstname", "lastname", "email", "avatar"];
 const all_fields_user = ["id", "firstname", "lastname", "email", "avatar", "password", "birthdate"];
 const mandatory_non_empty_fields_article = ["user_id", "title", "body", "date"];
+const mandatory_non_empty_fields_labels = ["user_id", "name"];
+const mandatory_non_empty_fields_article_labels = ["article_id", "label_ids"];
 const mandatory_non_empty_fields_likes = ["user_id", "comment_id", "article_id"];
 const all_fields_article = ["id", "user_id", "title", "body", "date", "image"];
 const mandatory_non_empty_fields_comment = ["user_id", "article_id", "body", "date"];
@@ -42,6 +44,20 @@ function are_mandatory_fields_present(body, mandatory_non_empty_fields) {
     }
   }
   return true;
+}
+
+function are_all_fields_present(body, all_possible_fields) {
+  let error = "";
+  const keys = Object.keys(body);
+  for (let index = 0; index < keys.length; index++) {
+    const key = keys[index];
+    if (!all_possible_fields.includes(key)) {
+      error = `Field validation: "${key}" not in [${all_possible_fields}]`;
+      logError("are_all_fields_valid:", error);
+      return { status: false, error };
+    }
+  }
+  return { status: true, error };
 }
 
 function are_all_fields_valid(
@@ -103,7 +119,12 @@ const validateEmail = (email) => {
 };
 
 const validateDate = (date) => {
-  return date.match(getConfigValue(ConfigKeys.DATE_REGEXP));
+  try {
+    return date.match(getConfigValue(ConfigKeys.DATE_REGEXP));
+  } catch (error) {
+    logDebug("Invalid date:", date);
+    return false;
+  }
 };
 
 const verifyAccessToken = (req, res, endpoint = "endpoint", url = "") => {
@@ -140,6 +161,7 @@ module.exports = {
   validateDate,
   validateEmail,
   are_all_fields_valid,
+  are_all_fields_present,
   are_mandatory_fields_present,
   mandatory_non_empty_fields_user,
   all_fields_user,
@@ -152,4 +174,6 @@ module.exports = {
   verifyAccessToken,
   mandatory_non_empty_fields_likes,
   is_likes_data_valid,
+  mandatory_non_empty_fields_labels,
+  mandatory_non_empty_fields_article_labels,
 };

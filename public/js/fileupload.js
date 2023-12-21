@@ -1,4 +1,4 @@
-const articlesUploadEndpoint = "../../api/articles/upload";
+const articlesUploadEndpoint = "../../api/files/articles/upload";
 const sampleArticleJson = {
   title: "MY_TITLE",
   body: "MY_BODY",
@@ -6,6 +6,7 @@ const sampleArticleJson = {
   image: ".\\data\\images\\256\\chuttersnap-9cCeS9Sg6nU-unsplash.jpg",
 };
 const infoContainer = document.querySelector("#infoContainer");
+const publicCheckbox = document.querySelector(".public-checkbox");
 
 function uploadFile() {
   const fileInput = document.getElementById("jsonFile");
@@ -22,6 +23,7 @@ function uploadFile() {
       headers: {
         Authorization: getBearerToken(),
         userid: getId(),
+        isPublic: publicCheckbox.checked,
       },
     })
       .then((response) => {
@@ -74,3 +76,12 @@ const attachEventHandlers = (user_id) => {
 attachEventHandlers(getId());
 const filelist = getParams()["filelist"];
 loadIframe(filelist);
+
+checkIfFeatureEnabled("feature_files").then((isEnabled) => {
+  if (!isEnabled) {
+    const container = document.querySelector("#warning");
+    container.innerHTML = "<b>⚠️ This feature is not enabled ⚠️</b><br/><br/>";
+    const uploadBtn = document.querySelector("#uploadBtn2");
+    uploadBtn.disabled = true;
+  }
+});

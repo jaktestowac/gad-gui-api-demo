@@ -332,14 +332,14 @@ const getItemHTML = (item) => {
         <label>date:</label><span data-testid="article-${item.id}-date">${item.date
     .replace("T", " ")
     .replace("Z", "")}</span><br>
+    <div class="labels-container" id="labels-container-${item.id}" ></div>
         <label></label><span data-testid="article-${item.id}-body">${item.body?.substring(0, 200)} (...)</span><br>
         <div style="display: flex; justify-content: space-between;">
-        <span style="display: flex; justify-content: flex-start;">
-            <a href="article.html?id=${item.id}" id="seeArticle${item.id}">See More...</a>
-        </span>
-        <div class="likes-container" id="likes-container-${item.id}" style="visibility: visible;"></div>
-    </div>
-    
+            <span style="display: flex; justify-content: flex-start;">
+                <a href="article.html?id=${item.id}" id="seeArticle${item.id}">See More...</a>
+            </span>
+            <div class="likes-container" id="likes-container-${item.id}" style="visibility: visible;"></div>
+        </div>
     
     </div>`;
 };
@@ -483,6 +483,7 @@ function changePage(page, onlyDisplay = false) {
   }
   issueGetRequest(records_per_page, page, searchPhrase, onlyDisplay, sortingType, sortingOrder).then(() => {
     updateLikeElements();
+    updateLabelElements();
   });
 }
 

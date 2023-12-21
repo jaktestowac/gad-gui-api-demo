@@ -28,11 +28,10 @@
         style="position: unset !important; margin: 60px 0px 0px 0px"
       ></div>
     </div>
-    <div id="container"></div>
     <div align="center">
       <h2>Upload New File</h2>
       <div id="uploads"></div>
-
+      <div id="warning"></div>
       <a id="downloadSampleJson"
         ><button id="btnDownloadSampleJson" class="button-primary" data-testid="downloadBtn">
           Download Sample JSON
@@ -43,7 +42,10 @@
       <form id="uploadForm" enctype="multipart/form-data">
         <input type="file" class="button-secondary" name="jsonFile" id="jsonFile" />
         <br />
-        <br /><input
+        <br /><label
+          ><input type="checkbox" class="public-checkbox" id="publicFile" />
+          <span class="option-text">Public file</span></label
+        >&nbsp;&nbsp;&nbsp;<input
           type="button"
           value="Upload"
           class="button-primary"
@@ -52,7 +54,6 @@
           onclick="uploadFile()"
         />
       </form>
-      <br />
       <div id="infoContainer">&nbsp;</div>
       <br />
       <div id="uploadedFiles">
@@ -71,4 +72,5 @@
   <script type="text/javascript" src="js/fileupload.js"></script>
   <script type="text/javascript" src="version.js"></script>
   <script type="text/javascript" src="username.js"></script>
+  <script type="text/javascript" src="js/pdf-handler.js"></script>
 </html>

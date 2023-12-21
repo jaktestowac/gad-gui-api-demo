@@ -1,4 +1,4 @@
-const { request, expect, baseLikesUrl } = require("../config.js");
+const { request, expect, baseLikesUrl, sleepTime } = require("../config.js");
 const { authUser, generateLikesBody } = require("../helpers/data.helpers.js");
 const { setupEnv, gracefulQuit, sleep } = require("../helpers/helpers.js");
 
@@ -105,7 +105,7 @@ describe("Endpoint /likes", () => {
         ["comment", 1, undefined],
         ["article", undefined, 1],
       ].forEach((dataSet) => {
-        it(`POST /likes - ${dataSet[0]} liked by same user (unlike)`, async () => {
+        it(`POST /likes - ${dataSet[0]} liked by same user (unlike) - ${dataSet}`, async () => {
           // Arrange:
           const likedBody = generateLikesBody(userId, dataSet[1], dataSet[2]);
 
@@ -123,7 +123,7 @@ describe("Endpoint /likes", () => {
           const likesAfterFirstLike = responseGetAfterFirstLike.body.likes;
           expect(likesAfterFirstLike, JSON.stringify(responseGetAfterFirstLike.body)).to.equal(likesBefore + 1);
 
-          await sleep(100); // service is slow
+          await sleep(sleepTime); // service is slow
 
           // Act: second like:
           const responsePostAnother = await request.post(baseUrl).set(headers).send(likedBody);

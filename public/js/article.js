@@ -10,6 +10,13 @@ let article_id = undefined;
 let articleData;
 let articleDataForExport;
 let articleUserId;
+let articleLabelId = undefined;
+let selectedLabels = [];
+let labelsEnabled = true;
+let labelsEditEnabled = true;
+let labelOptions = [];
+let allLabels = [];
+let assignedLabels = [];
 
 async function issueGetRandomRequest() {
   const articlesData = await Promise.all(
@@ -128,6 +135,7 @@ async function addUserNameToComments(comments) {
     // TODO:INVOKE_BUG: remove toString() to get Unknown User in some cases #BUG004
     const userData = usersData.find((x) => x.id?.toString() === comment.user_id?.toString());
 
+    let user_name;
     if (userData === undefined || userData.firstname === undefined) {
       user_name = "Unknown user";
     } else {
@@ -194,7 +202,9 @@ const getItemHTML = (item) => {
         <label>user:</label><span><a href="user.html?id=${item.user_id}" data-testid="user-name">${
     item.user_name
   }</a></span><br>
-        <label>date:</label><span>${item?.date?.replace("T", " ").replace("Z", "")}</span><br>
+        <label>date:</label><span>${item?.date?.replace("T", " ").replace("Z", "")}</span>
+        <div class="labels-container" id="labels-container" ></div>
+        
         <div align="center" >Download article as:<br>
         <a id="download" ><button id="btnDownloadCsv" class="button-primary" data-testid="download-scv">CSV</button></a>
         <a id="download" ><button id="btnDownloadJson" class="button-primary" data-testid="download-json">JSON</button></a>
@@ -283,6 +293,12 @@ const displayComments = (comments, container, error) => {
 const displayItem = (item, container) => {
   let itemHTML = getItemHTML(item);
   container.innerHTML += `<div align="center" ><div class="card-wrapper-wide" align="left">${itemHTML}</div></div>`;
+
+  if (labelsEnabled === true) {
+    for (let index = 0; index < assignedLabels.length; index++) {
+      addLabel(assignedLabels[index].name);
+    }
+  }
 };
 
 let alertElement = document.querySelector(".alert");
@@ -355,8 +371,16 @@ const showResponseOnDelete = (response, item) => {
 };
 
 const showResponseOnUpdate = (response, item) => {
-  if (response.status === 200) {
+  if (response.status === 200 || response.status === 201) {
     showMessage(`${item} was updated`, false);
+  } else {
+    showMessage(`${item} was not updated`, true);
+  }
+};
+
+const showResponseOnlyOnFailure = (response, item) => {
+  if (response.status === 200 || response.status === 201) {
+    // showMessage(`${item} was updated`, false);
   } else {
     showMessage(`${item} was not updated`, true);
   }
@@ -419,6 +443,27 @@ const handleUpdate = (ev) => {
     if (item["error"] === undefined) {
       item.user_name = user_name;
       container.innerHTML = getItemHTML(item);
+
+      if (labelsEditEnabled === true) {
+        issueUpdateLabels(articleLabelId, article_id, selectedLabels).then((response) => {
+          showResponseOnlyOnFailure(response, "Article labels");
+          handleLabelsRefresh().then((x) => {
+            if (labelsEnabled === true) {
+              for (let index = 0; index < assignedLabels.length; index++) {
+                addLabel(assignedLabels[index].name);
+              }
+            }
+          });
+        });
+      }
+
+      handleLabelsRefresh().then((x) => {
+        if (labelsEnabled === true) {
+          for (let index = 0; index < assignedLabels.length; index++) {
+            addLabel(assignedLabels[index].name);
+          }
+        }
+      });
     }
     attachEventHandlers(data.user_id);
   };
@@ -435,6 +480,12 @@ const handleUpdateName = (ev) => {
     if (item["error"] === undefined) {
       item.user_name = user_name;
       container.innerHTML = getItemHTML(item);
+
+      if (labelsEnabled === true) {
+        for (let index = 0; index < assignedLabels.length; index++) {
+          addLabel(assignedLabels[index].name);
+        }
+      }
     }
     attachEventHandlers(articleUserId);
   };
@@ -511,6 +562,12 @@ const attachEventHandlers = (id = "") => {
   if (getId()) {
     appendMenu(articleAdditionalMenu);
     const btn = document.querySelector("#add-new-comment");
+    const btn2 = document.querySelector("#add-new");
+
+    // TODO:INVOKE_BUG: remove if to have a Bug - button Add Comment is duplicated
+    if (btn2 === undefined || btn2 === null) {
+      appendElementOnTop(articleAdditionalMenuOnPage, "containerCommentsQuickMenu");
+    }
 
     // TODO:INVOKE_BUG: remove if to have a Bug - button Add Comment is duplicated
     if (btn === undefined || btn === null) {
@@ -657,12 +714,29 @@ const displayForm = (item, container) => {
     item.body = "[No body]";
   }
 
+  let labelsElement = "";
+  if (labelsEditEnabled === true) {
+    labelsElement = `
+      <div style="position: relative;">
+        <label for="labelInput">enter a label:</label>
+        <span>
+          <input type="text" id="labelInput" oninput="updateMatchingLabels()" onkeydown="handleKeyPress(event)">
+          <div id="matchingLabelsDropdown"></div>
+        </span>
+      </div>
+      <div style="position: relative;">
+        <label for="labels-container">labels:</label>
+        <div class="labels-container" id="labels-container" ></div>
+      </div>`;
+  }
+
   container.innerHTML = `
         <div style="margin-top:7px; width:500px;">
             <label>id:</label><span>${item.id}</span><br>
             <label>title:</label>
             <input type="text" id="title" data-testid="title-input" value="${item.title}"><br>
             </br>
+            ${labelsElement}
             <label>body:</label><br>
             <textarea rows="4" type="text" id="body" data-testid="body-input" style="width:350px;" value="${item.body}">${item.body}</textarea><br>
             <input style="visibility:hidden;" type="text" id="user_id" value="${item.user_id}"><br>
@@ -676,6 +750,12 @@ const displayForm = (item, container) => {
             <button type="button" class="cancel">Cancel</button>
         </div>
     `;
+
+  if (labelsEditEnabled === true) {
+    for (let index = 0; index < assignedLabels.length; index++) {
+      addLabel(assignedLabels[index].name, true);
+    }
+  }
 };
 
 const displayNameForm = (item, container) => {
@@ -718,6 +798,7 @@ if (`${is_random}` === "1" || `${is_random}`.toLowerCase() === "true" || `${arti
         });
       });
     });
+    handleLabelsRefresh();
   });
 } else {
   const container = document.querySelector("#container");
@@ -725,6 +806,173 @@ if (`${is_random}` === "1" || `${is_random}`.toLowerCase() === "true" || `${arti
     '<div align="center"><h1 style="text-align: center;" data-testid="no-results">No data</h1><div data-testid="no-results-details">Invalid article ID or article does not exist</div></div>';
 }
 
+async function handleLabelsRefresh() {
+  checkIfFeatureEnabled("feature_labels").then((isEnabled) => {
+    if (!isEnabled) return;
+
+    labelsEnabled = isEnabled;
+    issueGetLabelsForArticles([article_id]).then((labelsData) => {
+      issueGetAllLabels().then((labels) => {
+        allLabels = labels;
+        labelOptions = labels.map((label) => label.name);
+      });
+      if (labelsData.labels === undefined || labelsData.labels[article_id] === undefined) {
+        return;
+      }
+      articleLabelId = labelsData.labels[article_id].id;
+      const labelIds = [...new Set(Object.values(labelsData.labels).flatMap((item) => item.label_ids || []))];
+      issueGetLabels(labelIds).then((labelData) => {
+        const container = document.querySelector("#labels-container");
+        container.innerHTML = "";
+        assignedLabels = labelData;
+        labelIds.forEach((labelId) => {
+          const label = labelData.find((lbl) => lbl.id === labelId);
+          container.innerHTML += formatLabelElement(label).outerHTML;
+        });
+      });
+    });
+  });
+}
+
 if (msg !== undefined) {
   showMessage(decodeURIComponent(msg), false);
 }
+
+function updateMatchingLabels() {
+  const input = document.getElementById("labelInput");
+  const inputValue = input.value.trim().toLowerCase();
+  const matchingLabelsDropdown = document.getElementById("matchingLabelsDropdown");
+  matchingLabelsDropdown.innerHTML = "";
+
+  let matchedLabels = labelOptions.filter((label) => label.toLowerCase().includes(inputValue));
+
+  if (matchedLabels.length > 0) {
+    matchingLabelsDropdown.style.display = "block";
+    matchedLabels = [...new Set(matchedLabels)];
+    matchedLabels.forEach((matchedLabel) => {
+      const labelLink = document.createElement("a");
+      labelLink.textContent = matchedLabel;
+      labelLink.setAttribute("name", matchedLabel);
+      labelLink.addEventListener("click", () => selectMatchingLabel(matchedLabel));
+      matchingLabelsDropdown.appendChild(labelLink);
+    });
+  } else {
+    matchingLabelsDropdown.style.display = "none";
+  }
+}
+
+function handleKeyPress(event) {
+  const matchingLabelsDropdown = document.getElementById("matchingLabelsDropdown");
+  const selectedLabel = matchingLabelsDropdown.querySelector(".selected");
+
+  if (event.key === "Enter") {
+    if (selectedLabel) {
+      addLabel(selectedLabel.textContent, true);
+    } else {
+      const input = document.getElementById("labelInput");
+      const customLabel = input.value.trim();
+      if (customLabel) {
+        addLabel(customLabel, true);
+      }
+    }
+  }
+
+  if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+    event.preventDefault();
+    handleArrowKeyPress(event.key);
+  }
+}
+
+function handleArrowKeyPress(key) {
+  const matchingLabelsDropdown = document.getElementById("matchingLabelsDropdown");
+  const selectedLabel = matchingLabelsDropdown.querySelector(".selected");
+
+  const labelLinks = matchingLabelsDropdown.querySelectorAll("a");
+  const currentIndex = selectedLabel ? Array.from(labelLinks).indexOf(selectedLabel) : -1;
+  let nextIndex;
+
+  if (key === "ArrowDown") {
+    nextIndex = currentIndex < labelLinks.length - 1 ? currentIndex + 1 : 0;
+  } else if (key === "ArrowUp") {
+    nextIndex = currentIndex > 0 ? currentIndex - 1 : labelLinks.length - 1;
+  }
+
+  labelLinks.forEach((labelLink, index) => {
+    labelLink.classList.remove("selected");
+    if (index === nextIndex) {
+      labelLink.classList.add("selected");
+    }
+  });
+}
+
+function selectMatchingLabel(label) {
+  const input = document.getElementById("labelInput");
+  input.value = label;
+  updateMatchingLabels();
+}
+
+function addLabel(selectedLabel, showRemoveButton) {
+  const labelContainer = document.getElementById("labels-container");
+
+  if ([...labelContainer.children].length >= 3) {
+    return false;
+  }
+
+  const isLabelAlreadyAdded = [...labelContainer.children].some((label) => label.children[0].id === selectedLabel);
+
+  const labelExists = labelOptions.some((label) => label === selectedLabel);
+
+  if (!labelExists) {
+    return false;
+  }
+
+  if (!isLabelAlreadyAdded) {
+    labelOptions.push(selectedLabel);
+  }
+
+  if (!isLabelAlreadyAdded) {
+    let selectedLabelObject = allLabels.find((label) => label.name === selectedLabel);
+    if (selectedLabelObject === undefined) {
+      selectedLabelObject = {
+        name: selectedLabel,
+      };
+    }
+    let label = formatLabelElement(selectedLabelObject, showRemoveButton, (id) => {
+      selectedLabels = selectedLabels.filter((element) => element !== id);
+    });
+    labelContainer.appendChild(label);
+    selectedLabels.push(selectedLabelObject.id);
+  }
+
+  const labelInput = document.getElementById("labelInput");
+  if (labelInput) {
+    labelInput.value = "";
+  }
+
+  const matchingLabelsDropdown = document.getElementById("matchingLabelsDropdown");
+  if (matchingLabelsDropdown) {
+    matchingLabelsDropdown.innerHTML = "";
+  }
+
+  return true;
+}
+
+window.addEventListener("click", function (event) {
+  const matchingLabelsDropdown = document.getElementById("matchingLabelsDropdown");
+  if (!event.target.matches("#labelInput") && event.target.matches("a") && matchingLabelsDropdown !== null) {
+    const wasAdded = addLabel(matchingLabelsDropdown.textContent.trim(), true);
+    matchingLabelsDropdown.style.display = "none";
+    const labelInput = document.getElementById("labelInput");
+    if (labelInput) {
+      labelInput.value = "";
+    }
+    if (!wasAdded) {
+      const labelContainer = document.getElementById("labels-container");
+      if ([...labelContainer.children].length >= 3) {
+        showMessage(`Only 3 labels can be added`, true);
+      }
+    }
+  } else if (matchingLabelsDropdown !== null) {
+    matchingLabelsDropdown.style.display = "none";
+  }
+});

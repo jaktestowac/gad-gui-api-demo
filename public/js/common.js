@@ -377,3 +377,36 @@ async function checkIfFeatureEnabled(featureName) {
       return jsonBody.enabled;
     });
 }
+
+function formatLabelElement(labelObject, showRemoveButton, callback) {
+  const labelElement = document.createElement("div");
+  labelElement.className = "label";
+
+  const labelTextElement = document.createElement("span");
+  labelTextElement.textContent = labelObject.name;
+  labelTextElement.id = labelObject.name;
+  labelTextElement.setAttribute("label-id", labelObject.id);
+
+  labelElement.appendChild(labelTextElement);
+
+  const removeButton = document.createElement("span");
+  if (showRemoveButton === true) {
+    removeButton.textContent = "x";
+  } else {
+    removeButton.textContent = " ";
+  }
+  removeButton.addEventListener("click", () => {
+    removeLabel(labelElement);
+    if (callback) {
+      callback(labelObject.id);
+    }
+  });
+
+  labelElement.appendChild(removeButton);
+  return labelElement;
+}
+
+function removeLabel(label) {
+  const labelContainer = document.getElementById("labels-container");
+  labelContainer.removeChild(label);
+}

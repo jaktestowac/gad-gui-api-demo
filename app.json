@@ -1,6 +1,6 @@
 {
   "name": "GAD",
-  "version": "v2.3.0",
+  "version": "v2.4.0",
   "description": "Simple application prepared and developed only for testing purposes",
   "repository": "https://github.com/jaktestowac/gad-gui-api-demo",
   "keywords": ["json-server, node, REST API"],

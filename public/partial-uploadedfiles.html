@@ -15,8 +15,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   </head>
   <body>
-    <div align="center">
-      <table id="fileTable" style="visibility: visible">
+    <div align="center" id="tableChart">
+      <div align="center">My private files:</div>
+      <table id="userFileTable" style="visibility: visible">
+        <tr>
+          <th style="width: 30%">Name</th>
+          <th style="width: 30%">Size</th>
+          <th style="width: 40%">Last modification date</th>
+        </tr>
+      </table>
+      <br />
+      <div align="center">Public files:</div>
+      <table id="publicFileTable" style="visibility: visible">
         <tr>
           <th style="width: 30%">Name</th>
           <th style="width: 30%">Size</th>
@@ -40,4 +50,5 @@
   </body>
   <script type="text/javascript" src="js/common.js"></script>
   <script type="text/javascript" src="js/uploaded-files.js"></script>
+  <script type="text/javascript" src="js/pdf-handler.js"></script>
 </html>

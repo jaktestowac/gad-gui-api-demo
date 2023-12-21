@@ -1,7 +1,6 @@
 const FILE_TYPE = "application/json";
 let fileContent = "";
 const articlesEndpoint = "../../api/articles";
-const articlesUploadEndpoint = "../../api/articles/upload";
 const sampleArticleJson = {
   title: "MY_TITLE",
   body: "MY_BODY",
@@ -138,4 +137,3 @@ const attachEventHandlers = (user_id) => {
 };
 
 attachEventHandlers(getId());
-

@@ -40,6 +40,18 @@
       "description": "Likes (⚠️ needs proper feature flag enabled)"
     },
     {
+      "name": "files",
+      "description": "Files (⚠️ needs proper feature flag enabled)"
+    },
+    {
+      "name": "labels",
+      "description": "Labels (⚠️ needs proper feature flag enabled)"
+    },
+    {
+      "name": "article-labels",
+      "description": "Article Labels (⚠️ needs proper feature flag enabled)"
+    },
+    {
       "name": "search",
       "description": "Search, filter, pagination for given objects"
     },
@@ -777,6 +789,136 @@
         }
       }
     },
+    "/article-labels/articles/{id}": {
+      "get": {
+        "tags": ["article-labels"],
+        "summary": "Get labels for article",
+        "operationId": "getArticleLabels",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of article to return its labels",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticleLabels"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["article-labels"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Creates, updates or deletes labels for article",
+        "description": "Creates, updates or deletes labels for article.",
+        "operationId": "putArticleLabels",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id of article-labels entity that need to be updated",
+            "required": false,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Updated ArticleLabel object",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ArticleLabelsUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "ArticleLabel updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticleLabels"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "ArticleLabel created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticleLabels"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - malformed JSON",
+            "content": {}
+          },
+          "404": {
+            "description": "User not found",
+            "content": {}
+          },
+          "422": {
+            "description": "Invalid user supplied",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/labels": {
+      "get": {
+        "tags": ["labels"],
+        "summary": "Get labels",
+        "operationId": "getLabels",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Labels"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/likes": {
       "post": {
         "tags": ["likes"],
@@ -912,7 +1054,6 @@
         }
       }
     },
-
     "/likes/article/mylikes": {
       "get": {
         "tags": ["likes"],
@@ -925,6 +1066,142 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/MyLikes"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/files/uploaded": {
+      "get": {
+        "tags": ["files"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get files",
+        "operationId": "getFiles",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadedFiles"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/files/uploaded?userId={id}": {
+      "get": {
+        "tags": ["files"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get user files",
+        "operationId": "getUserFiles",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of user",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadedFiles"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/files/uploaded/public": {
+      "get": {
+        "tags": ["files"],
+        "summary": "Get files",
+        "operationId": "getPublicFiles",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadedFiles"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/files/uploaded/public?userIds={id}": {
+      "get": {
+        "tags": ["files"],
+        "summary": "Get files",
+        "operationId": "getFiles",
+        "get": {
+          "tags": ["files"],
+          "summary": "Get users public files",
+          "operationId": "getUsersPublicFiles",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "ID of user or multiple IDs of users separated by comma",
+              "required": true,
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "successful operation",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/UploadedFiles"
+                  }
                 }
               }
             }
@@ -2174,6 +2451,84 @@
         },
         "xml": {
           "name": "UserLoginToken"
+        }
+      },
+      "UploadedFiles": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/UploadedFile"
+        }
+      },
+      "UploadedFile": {
+        "type": "object",
+        "required": ["name", "size", "lastModified"],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "size": {
+            "type": "number"
+          },
+          "lastModified": {
+            "type": "string"
+          }
+        }
+      },
+      "Labels": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Label"
+        }
+      },
+      "Label": {
+        "type": "object",
+        "required": ["name", "id", "user_id"],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "id": {
+            "type": "number"
+          },
+          "user_id": {
+            "type": "number"
+          }
+        }
+      },
+      "ArticleLabels": {
+        "type": "object",
+        "required": ["label_ids", "id", "article_id"],
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "label_ids": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "article_id": {
+            "type": "number"
+          }
+        }
+      },
+      "ArticleLabelsUpdate": {
+        "type": "object",
+        "required": ["label_ids", "article_id"],
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "label_ids": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "article_id": {
+            "type": "number"
+          }
         }
       },
       "Likes": {

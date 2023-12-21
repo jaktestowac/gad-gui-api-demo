@@ -19,6 +19,7 @@ const { handleUsers } = require("../endpoints/users-endpoint.helpers");
 const { handleArticles } = require("../endpoints/articles-endpoint.helpers");
 const { handleComments } = require("../endpoints/comments-endpoint.helpers");
 const { handleLikes } = require("../endpoints/likes-endpoint.helpers");
+const { handleLabels } = require("../endpoints/labels-endpoint.helpers");
 
 const validations = (req, res, next) => {
   let isAdmin = false;
@@ -111,7 +112,7 @@ const validations = (req, res, next) => {
     }
 
     if (
-      (urlEnds?.includes("/api/articles/upload") && !isAdmin) ||
+      (urlEnds?.includes("/api/files/articles/upload") && !isAdmin) ||
       (req.method !== "GET" && req.method !== "HEAD" && urlEnds?.includes("/api/articles") && !isAdmin)
     ) {
       const verifyTokenResult = verifyAccessToken(req, res, "articles", req.url);
@@ -143,6 +144,10 @@ const validations = (req, res, next) => {
 
     if (req.url.includes("/api/likes")) {
       handleLikes(req, res, isAdmin);
+    }
+    
+    if (req.url.includes("/api/labels") || req.url.includes("/api/article-labels")) {
+      handleLabels(req, res);
     }
 
     logTrace("Returning:", { statusCode: res.statusCode, headersSent: res.headersSent, urlEnds, method: req.method });

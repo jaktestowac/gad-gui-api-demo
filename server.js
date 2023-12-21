@@ -1,8 +1,8 @@
 const jsonServer = require("./json-server");
 const { validations } = require("./routes/validations.route");
 const { createToken, isAuthenticated, prepareCookieMaxAge } = require("./helpers/jwtauth");
-const { getConfigValue } = require("./config/config-manager");
-const { ConfigKeys } = require("./config/enums");
+const { getConfigValue, getFeatureFlagConfigValue } = require("./config/config-manager");
+const { ConfigKeys, FeatureFlagConfigKeys } = require("./config/enums");
 const fs = require("fs");
 const path = require("path");
 
@@ -50,8 +50,20 @@ const clearDbRoutes = (req, res, next) => {
   }
 };
 
+server.get(/.*/, (req, res, next) => {
+  if (!getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_ONLY_BACKEND)) {
+    next();
+  } else if (!req.url.includes("swagger") && !req.url.includes("/tools/") && !req.url.includes("/api/")) {
+    return res.redirect("/tools/swagger.html");
+  } else {
+    next();
+  }
+});
+
 server.use((req, res, next) => {
-  res.header("Cache-Control", "no-store");
+  if (getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_CACHE_CONTROL_NO_STORE)) {
+    res.header("Cache-Control", "no-store");
+  }
   next();
 });
 

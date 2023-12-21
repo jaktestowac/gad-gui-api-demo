@@ -1,8 +1,26 @@
-const { userDb, articlesDb, commentsDb, getQuizHighScoresDb, saveQuizHighScoresDb, likesDb } = require("./db.helpers");
+const {
+  userDb,
+  articlesDb,
+  commentsDb,
+  getQuizHighScoresDb,
+  saveQuizHighScoresDb,
+  likesDb,
+  labelsDb,
+  articleLabelsDb,
+} = require("./db.helpers");
 
 function searchForUserWithToken(userId, verifyTokenResult) {
   const foundUser = userDb().find((user) => {
-    if (user["id"]?.toString() === userId?.toString() && user["email"] === verifyTokenResult.email) {
+    if (user["id"]?.toString() === userId?.toString() && user["email"] === verifyTokenResult?.email) {
+      return user;
+    }
+  });
+  return foundUser;
+}
+
+function searchForUserWithOnlyToken(verifyTokenResult) {
+  const foundUser = userDb().find((user) => {
+    if (user["email"] === verifyTokenResult?.email) {
       return user;
     }
   });
@@ -36,6 +54,15 @@ function searchForArticle(articleId) {
   return foundArticle;
 }
 
+function searchForArticleWithUserId(articleId, userId) {
+  const foundArticle = articlesDb().find((article) => {
+    if (article["id"]?.toString() === articleId?.toString() && article["user_id"]?.toString() === userId?.toString()) {
+      return article;
+    }
+  });
+  return foundArticle;
+}
+
 function searchForArticles(articleIds) {
   const articleIdsStr = articleIds.filter((id) => id.toString());
 
@@ -50,6 +77,15 @@ function searchForComment(commentId) {
     }
   });
   return foundComment;
+}
+
+function searchForArticleLabels(articleId) {
+  const foundLabels = articleLabelsDb().find((label) => {
+    if (label["article_id"]?.toString() === articleId?.toString()) {
+      return label;
+    }
+  });
+  return foundLabels;
 }
 
 function countLikesForAllArticles() {
@@ -148,12 +184,12 @@ function saveGameHighScores(gameName, userEmail, score) {
   return quizHighScores[userId];
 }
 
-
 module.exports = {
   searchForUserWithToken,
   searchForUserWithEmail,
   searchForUser,
   searchForArticle,
+  searchForArticleWithUserId,
   searchForArticles,
   searchForComment,
   getGameIdByName,
@@ -165,4 +201,6 @@ module.exports = {
   findAllLikes,
   countLikesForAllArticles,
   searchForLike,
+  searchForArticleLabels,
+  searchForUserWithOnlyToken,
 };
