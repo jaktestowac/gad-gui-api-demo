@@ -5,6 +5,7 @@ const randomArticleEndpoint = "../../api/random/article";
 const articleLikesEndpoint = "../../api/likes/article";
 const myLikesEndpoint = "../../api/likes/article/mylikes";
 const likesEndpoint = "../../api/likes";
+const visitsEndpoint = "../../api/visits/articles";
 let user_name = "Unknown";
 let article_id = undefined;
 let articleData;
@@ -17,6 +18,13 @@ let labelsEditEnabled = true;
 let labelOptions = [];
 let allLabels = [];
 let assignedLabels = [];
+
+async function issueGetVisitsForArticle(articleId) {
+  const visitsData = await fetch(`${visitsEndpoint}/${articleId}`, {
+    headers: { ...formatHeaders(), userid: getId() },
+  }).then((r) => r.json());
+  return visitsData;
+}
 
 async function issueGetRandomRequest() {
   const articlesData = await Promise.all(
@@ -203,6 +211,9 @@ const getItemHTML = (item) => {
     item.user_name
   }</a></span><br>
         <label>date:</label><span>${item?.date?.replace("T", " ").replace("Z", "")}</span>
+        <div align="center" style="" class="visits-container" id="visits-container-${
+          item.id
+        }" style="visibility: visible;"></div>
         <div class="labels-container" id="labels-container" ></div>
         
         <div align="center" >Download article as:<br>
@@ -796,6 +807,13 @@ if (`${is_random}` === "1" || `${is_random}`.toLowerCase() === "true" || `${arti
           const container = document.querySelector("#likes-container");
           container.innerHTML = formatLike(myLikes[article_id], likes, article_id);
         });
+      });
+    });
+    checkIfFeatureEnabled("feature_visits").then((isEnabled) => {
+      if (!isEnabled) return;
+      issueGetVisitsForArticle(article_id).then((visits) => {
+        const container = document.querySelector(".visits-container");
+        container.innerHTML = formatVisits(visits[article_id], article_id);
       });
     });
     handleLabelsRefresh();
