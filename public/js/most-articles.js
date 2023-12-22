@@ -64,6 +64,9 @@ async function getArticles(articleIds) {
 }
 
 async function issueGetMyLikesForArticles(articleIds) {
+  const isEnabled = await checkIfFeatureEnabled("feature_likes");
+  if (!isEnabled) return;
+
   const formattedIds = articleIds.join("&id=");
   const likesData = await fetch(`${myLikesEndpoint}?id=${formattedIds}`, {
     headers: { ...formatHeaders(), userid: getId() },
@@ -72,6 +75,9 @@ async function issueGetMyLikesForArticles(articleIds) {
 }
 
 async function issueGetLikes(article_id) {
+  const isEnabled = await checkIfFeatureEnabled("feature_likes");
+  if (!isEnabled) return;
+
   const likesData = await fetch(`${articleLikesEndpoint}/${article_id}`, { headers: formatHeaders() }).then((r) =>
     r.json()
   );
@@ -79,6 +85,9 @@ async function issueGetLikes(article_id) {
 }
 
 async function getTopVisitedArticles() {
+  const isEnabled = await checkIfFeatureEnabled("feature_visits");
+  if (!isEnabled) return;
+
   const visitsData = await fetch(topArticleVisitsEndpoint, {
     headers: { ...formatHeaders(), userid: getId() },
   }).then((r) => r.json());
@@ -86,6 +95,9 @@ async function getTopVisitedArticles() {
 }
 
 async function getTopLikedArticles() {
+  const isEnabled = await checkIfFeatureEnabled("feature_likes");
+  if (!isEnabled) return;
+
   const likesData = await fetch(articlesLikesEndpoint, {
     headers: { ...formatHeaders(), userid: getId() },
   }).then((r) => r.json());
@@ -200,43 +212,60 @@ async function likeArticle(articleId) {
     });
 }
 
-async function makeRequest() {
-  // getTopVisitedArticles().then((visitsData) => {
-  //   const articleIds = Object.keys(visitsData).sort((a, b) => visitsData[b] - visitsData[a]);
-  //   console.log(visitsData);
-  //   console.log(articleIds);
-  // });
+async function displayArticles(articleIds, likesData, myLikes) {
+  getArticles(articleIds).then((articles) => {
+    const sortedObjectList = articles.sort((a, b) => {
+      const aIndex = articleIds.indexOf(a.id.toString());
+      const bIndex = articleIds.indexOf(b.id.toString());
+      return bIndex - aIndex;
+    });
 
-  getTopLikedArticles()
-    .then((likesData) => {
-      const articleIds = Object.keys(likesData).sort((a, b) => likesData[a] - likesData[b]);
-      getArticles(articleIds).then((articles) => {
-        const sortedObjectList = articles.sort((a, b) => {
-          const aIndex = articleIds.indexOf(a.id.toString());
-          const bIndex = articleIds.indexOf(b.id.toString());
-          return bIndex - aIndex;
-        });
+    getUsers(sortedObjectList).then((articles) => {
+      displayPostsData(articles);
+      if (likesData !== undefined) {
+        for (let item of articles) {
+          const articleId = item.id;
+          const element = document.querySelector(`#likes-container-${articleId}`);
+          const likeCount = likesData[articleId] ?? 0;
+          element.innerHTML = formatLike(myLikes[articleId], likeCount, articleId);
+        }
+      }
+      updateLabelElements();
+      updateVisitsElements();
+    });
+  });
+}
 
+async function makeRequest(type) {
+  const element = document.querySelector(`#title`);
+
+  if (type === "visited") {
+    element.innerHTML = `10 Most visited articles`;
+    getTopVisitedArticles().then((visitsData) => {
+      const articleIds = Object.keys(visitsData).sort((a, b) => visitsData[a] - visitsData[b]);
+      getTopLikedArticles().then((likesData) => {
         issueGetMyLikesForArticles(articleIds).then((myLikes) => {
-          getUsers(sortedObjectList).then((articles) => {
-            displayPostsData(articles);
-            for (let item of articles) {
-              const articleId = item.id;
-              const element = document.querySelector(`#likes-container-${articleId}`);
-              const likeCount = likesData[articleId];
-              element.innerHTML = formatLike(myLikes[articleId], likeCount, articleId);
-            }
-            updateLabelElements();
-            updateVisitsElements();
-          });
+          displayArticles(articleIds, likesData, myLikes);
         });
       });
-    })
-    .catch((err) => {
-      console.log("Error", err);
     });
+  } else {
+    element.innerHTML = `10 Most liked articles`;
+    getTopLikedArticles()
+      .then((likesData) => {
+        const articleIds = Object.keys(likesData).sort((a, b) => likesData[a] - likesData[b]);
+        issueGetMyLikesForArticles(articleIds).then((myLikes) => {
+          displayArticles(articleIds, likesData, myLikes);
+        });
+      })
+      .catch((err) => {
+        console.log("Error", err);
+      });
+  }
 }
+
+const type = getParams()["type"] ?? "liked";
 
 setInterval(makeRequest, intervalValue);
 
-makeRequest();
+makeRequest(type);
