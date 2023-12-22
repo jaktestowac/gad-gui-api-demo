@@ -63,6 +63,19 @@ const getRandomInt = (min, max) => {
   return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
 };
 
+const getGaussianRandomInt = (min, max) => {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(getGaussianRandom(1) * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
+};
+
+function getGaussianRandom(mean = 0, stdev = 1) {
+  const u = 1 - Math.random(); // Converting [0,1) to (0,1]
+  const v = Math.random();
+  const z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+  return z * stdev + mean;
+}
+
 function sleep(ms) {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
@@ -322,4 +335,6 @@ module.exports = {
   getTodayDateForFileName,
   findMaxValues,
   getUniqueValues,
+  getGaussianRandom,
+  getGaussianRandomInt,
 };
