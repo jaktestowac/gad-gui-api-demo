@@ -558,3 +558,8 @@ s .container-mobile {
 .selected {
   background-color: #afc59a;
 }
+
+.visits-container {
+  font-size: 12px;
+  color: gray;
+}

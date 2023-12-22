@@ -341,6 +341,15 @@ function formatHeaders() {
 
 addMainMenuAndFooter();
 
+function formatVisits(viewsNumber, articleId) {
+  let out = "";
+
+  // TODO: articleId is not used
+  out = `<div id="views-number">Views: ${viewsNumber}</div>`;
+
+  return out;
+}
+
 const likeMessage = "Please log in to like this content!";
 function formatLike(alreadyLiked, likesNumber, articleId) {
   let out = "";

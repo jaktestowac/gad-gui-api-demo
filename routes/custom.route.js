@@ -14,8 +14,9 @@ const {
   parsePublishStats,
   parseArticleStats,
   parseUserStats,
+  findMaxValues,
 } = require("../helpers/helpers");
-const { logError, logDebug, getLogs } = require("../helpers/logger-api");
+const { logError, logDebug, getLogs, logTrace } = require("../helpers/logger-api");
 const { HTTP_INTERNAL_SERVER_ERROR, HTTP_OK, HTTP_NOT_FOUND } = require("../helpers/response.helpers");
 const { getRandomVisitsForEntities } = require("../helpers/random-data.generator");
 const { getConfigValue } = require("../config/config-manager");
@@ -101,7 +102,7 @@ const customRoutes = (req, res, next) => {
         ids = idsRaw.split(",");
       }
 
-      logDebug("GET /api/visits/:", { id, ids });
+      logDebug("handleVisits: GET /api/visits/:", { id, ids });
       if (id !== undefined) {
         visits[id] = data[id];
       } else if (ids !== undefined) {
@@ -112,8 +113,15 @@ const customRoutes = (req, res, next) => {
         visits = data;
       }
 
-      res.json(visits);
-      req.body = visits;
+      if (req.url.includes("/top/")) {
+        let numberOfTopVisitedArticles = getConfigValue(ConfigKeys.NUMBER_OF_TOP_VISITED_ARTICLES);
+
+        const maxValues = findMaxValues(visits, numberOfTopVisitedArticles);
+        logDebug("handleVisits: top 10 visited articles", { maxValues });
+        visits = maxValues;
+      }
+
+      res.status(HTTP_OK).json(visits);
     } else if (req.url.includes("/api/articles") && req.method === "GET") {
       let articleId = getIdFromUrl(urlEnds);
 

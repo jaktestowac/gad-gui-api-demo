@@ -45,6 +45,7 @@ const ConfigKeys = {
   ARTICLE_IMAGE_PATH: "articleImagePath",
   UPLOADS_PATH: "uploadsPath",
   LOGS_LIMIT: "logsLimit",
+  NUMBER_OF_TOP_VISITED_ARTICLES: "numberOfTopVisitedArticles"
 };
 
 const BugConfigKeys = {
@@ -75,6 +76,7 @@ const FeatureFlagConfigKeys = {
   FEATURE_ONLY_BACKEND: "feature_only_backend",
   FEATURE_LABELS: "feature_labels",
   FEATURE_CACHE_CONTROL_NO_STORE: "feature_cache_control_no_store",
+  FEATURE_VISITS: "feature_visits",
 };
 
 module.exports = {

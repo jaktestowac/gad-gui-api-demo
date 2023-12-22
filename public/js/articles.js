@@ -4,6 +4,7 @@ const articleLikesEndpoint = "../../api/likes/article";
 const likesEndpoint = "../../api/likes";
 const myLikesEndpoint = "../../api/likes/article/mylikes";
 const pictureListEndpoint = "../../api/images/posts";
+const visitsEndpoint = "../../api/visits/articles";
 let picList = [];
 let users = [];
 let articlesData = [];
@@ -17,6 +18,14 @@ const fetchData = {
   },
   credentials: "include",
 };
+
+async function issueGetVisitsForArticles(articleIds) {
+  const formattedIds = articleIds.join(",");
+  const visitsData = await fetch(`${visitsEndpoint}?ids=${formattedIds}`, {
+    headers: { ...formatHeaders(), userid: getId() },
+  }).then((r) => r.json());
+  return visitsData;
+}
 
 async function issueGetMyLikesForArticles(articleIds) {
   const formattedIds = articleIds.join("&id=");
@@ -324,7 +333,11 @@ const getItemHTML = (item) => {
   }-link">${getImagesHTML(item.image)}</a><br>
         <div align="center" data-testid="article-${item.id}-title"><strong><a href="article.html?id=${item.id}">${
     item.title
-  }</a></strong></div><br>
+  }</a></strong></div>
+  <div align="center" style="" class="visits-container" id="visits-container-${
+    item.id
+  }" style="visibility: visible;"></div>
+  <br>
         <label>user:</label><span><a href="user.html?id=${item.user_id}" id="gotoUser${item.user_id}-${
     item.id
   }" data-testid="article-${item.id}-user">${item.user_name}</a></span>
@@ -392,6 +405,25 @@ updateSorting();
 issueGetRequest(records_per_page, current_page, searchPhrase, undefined, sortingType, sortingOrder).then(() => {
   changePage(current_page, true);
 });
+
+async function updateVisitsElements() {
+  const isEnabled = await checkIfFeatureEnabled("feature_visits");
+  if (!isEnabled) return;
+
+  const elements = document.querySelectorAll(".visits-container");
+  const ids = [];
+  elements.forEach((element) => {
+    ids.push(element.id.split("-").slice(-1)[0]);
+  });
+  issueGetVisitsForArticles(ids).then((visits) => {
+    elements.forEach((element) => {
+      const id = element.id.split("-").slice(-1)[0];
+      const visitsNumber = visits[id];
+
+      element.innerHTML = formatVisits(visitsNumber, id);
+    });
+  });
+}
 
 async function updateLikeElements() {
   const isEnabled = await checkIfFeatureEnabled("feature_likes");
@@ -484,6 +516,7 @@ function changePage(page, onlyDisplay = false) {
   issueGetRequest(records_per_page, page, searchPhrase, onlyDisplay, sortingType, sortingOrder).then(() => {
     updateLikeElements();
     updateLabelElements();
+    updateVisitsElements();
   });
 }
 

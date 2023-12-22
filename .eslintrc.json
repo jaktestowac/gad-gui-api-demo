@@ -57,6 +57,7 @@
         "beforeAll": "readonly",
         "expect": "readonly",
         "formatLike": "readonly", 
+        "formatVisits": "readonly", 
         "checkIfFeatureEnabled": "readonly",
         "issueUpdateLabels": "readonly",
         "issueGetLabelsForArticles": "readonly",

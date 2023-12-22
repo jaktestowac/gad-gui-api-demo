@@ -34,6 +34,7 @@ const configToModify = {
   sleepTimePerOneGetCommentMax: 50,
 
   numberOfTopLikedArticles: 10,
+  numberOfTopVisitedArticles: 10,
   logsLimit: 500,
 };
 
