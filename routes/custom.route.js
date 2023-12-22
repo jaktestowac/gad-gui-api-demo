@@ -16,14 +16,14 @@ const {
   parseUserStats,
 } = require("../helpers/helpers");
 const { logError, logDebug, getLogs } = require("../helpers/logger-api");
-const { HTTP_INTERNAL_SERVER_ERROR, HTTP_OK } = require("../helpers/response.helpers");
+const { HTTP_INTERNAL_SERVER_ERROR, HTTP_OK, HTTP_NOT_FOUND } = require("../helpers/response.helpers");
 const { getRandomVisitsForEntities } = require("../helpers/random-data.generator");
 const { getConfigValue } = require("../config/config-manager");
 const { ConfigKeys } = require("../config/enums");
 
-const visitsPerArticle = getRandomVisitsForEntities(articlesDb());
-const visitsPerComment = getRandomVisitsForEntities(commentsDb());
-const visitsPerUsers = getRandomVisitsForEntities(userDb());
+const visitsPerArticle = getRandomVisitsForEntities(articlesDb(), 50, 500);
+const visitsPerComment = getRandomVisitsForEntities(commentsDb(), 10, 50);
+const visitsPerUsers = getRandomVisitsForEntities(userDb(), 10, 250);
 
 const customRoutes = (req, res, next) => {
   try {
@@ -74,15 +74,46 @@ const customRoutes = (req, res, next) => {
     } else if (req.method === "GET" && req.url.endsWith("/pluginstatuses")) {
       res.json(pluginStatuses);
       req.body = pluginStatuses;
-    } else if (req.method === "GET" && req.url.endsWith("/api/visits/articles")) {
-      res.json(visitsPerArticle);
-      req.body = visitsPerArticle;
-    } else if (req.method === "GET" && req.url.endsWith("/api/visits/comments")) {
-      res.json(visitsPerComment);
-      req.body = visitsPerComment;
-    } else if (req.method === "GET" && req.url.endsWith("/api/visits/users")) {
-      res.json(visitsPerUsers);
-      req.body = visitsPerUsers;
+    } else if (req.method === "GET" && req.url.includes("/api/visits/")) {
+      let data = {};
+      let id = undefined;
+      let ids = undefined;
+      let visits = {};
+
+      if (req.url.includes("/articles")) {
+        data = visitsPerArticle;
+      } else if (req.url.includes("/comments")) {
+        data = visitsPerComment;
+      } else if (req.url.includes("/users")) {
+        data = visitsPerUsers;
+      }
+
+      if (req.url.includes("/articles/") || req.url.includes("/comments/") || req.url.includes("/users/")) {
+        id = getIdFromUrl(urlEnds);
+      }
+
+      if (req.url.includes("?ids=")) {
+        const idsRaw = urlEnds.split("?ids=").slice(-1)[0];
+        if (idsRaw === undefined) {
+          res.status(HTTP_NOT_FOUND).json({});
+          return;
+        }
+        ids = idsRaw.split(",");
+      }
+
+      logDebug("GET /api/visits/:", { id, ids });
+      if (id !== undefined) {
+        visits[id] = data[id];
+      } else if (ids !== undefined) {
+        ids.forEach((id) => {
+          visits[id] = visitsPerArticle[id];
+        });
+      } else {
+        visits = data;
+      }
+
+      res.json(visits);
+      req.body = visits;
     } else if (req.url.includes("/api/articles") && req.method === "GET") {
       let articleId = getIdFromUrl(urlEnds);
 
