@@ -4,8 +4,18 @@ const articlesEndpoint = "../../api/articles";
 const likesEndpoint = "../../api/likes";
 const usersEndpoint = "../../api/users";
 const myLikesEndpoint = "../../api/likes/article/mylikes";
+const articleVisitsEndpoint = "../../api/visits/articles";
+const topArticleVisitsEndpoint = "../../api/visits/top/articles";
 
 const intervalValue = 60000;
+
+async function issueGetVisitsForArticles(articleIds) {
+  const formattedIds = articleIds.join(",");
+  const visitsData = await fetch(`${articleVisitsEndpoint}?ids=${formattedIds}`, {
+    headers: { ...formatHeaders(), userid: getId() },
+  }).then((r) => r.json());
+  return visitsData;
+}
 
 async function getUsers(articlesData) {
   const userIds = [];
@@ -68,7 +78,14 @@ async function issueGetLikes(article_id) {
   return likesData.likes;
 }
 
-async function getTopArticles() {
+async function getTopVisitedArticles() {
+  const visitsData = await fetch(topArticleVisitsEndpoint, {
+    headers: { ...formatHeaders(), userid: getId() },
+  }).then((r) => r.json());
+  return visitsData;
+}
+
+async function getTopLikedArticles() {
   const likesData = await fetch(articlesLikesEndpoint, {
     headers: { ...formatHeaders(), userid: getId() },
   }).then((r) => r.json());
@@ -118,6 +135,9 @@ const formatArticleHtml = (item) => {
       <div align="center" data-testid="article-${item.id}-title"><strong><a href="article.html?id=${item.id}">${
     item.title
   }</a></strong></div>
+  <div align="center" style="" class="visits-container" id="visits-container-${
+    item.id
+  }" style="visibility: visible;"></div>
       <label>user:</label><span><a href="user.html?id=${item.user_id}" id="gotoUser${item.user_id}-${
     item.id
   }" data-testid="article-${item.id}-user">${item.user_name}</a></span><br>
@@ -136,6 +156,25 @@ const formatArticleHtml = (item) => {
 </div>
 `;
 };
+
+async function updateVisitsElements() {
+  const isEnabled = await checkIfFeatureEnabled("feature_visits");
+  if (!isEnabled) return;
+
+  const elements = document.querySelectorAll(".visits-container");
+  const ids = [];
+  elements.forEach((element) => {
+    ids.push(element.id.split("-").slice(-1)[0]);
+  });
+  issueGetVisitsForArticles(ids).then((visits) => {
+    elements.forEach((element) => {
+      const id = element.id.split("-").slice(-1)[0];
+      const visitsNumber = visits[id];
+
+      element.innerHTML = formatVisits(visitsNumber, id);
+    });
+  });
+}
 
 async function likeArticle(articleId) {
   const data = {
@@ -162,7 +201,13 @@ async function likeArticle(articleId) {
 }
 
 async function makeRequest() {
-  getTopArticles()
+  // getTopVisitedArticles().then((visitsData) => {
+  //   const articleIds = Object.keys(visitsData).sort((a, b) => visitsData[b] - visitsData[a]);
+  //   console.log(visitsData);
+  //   console.log(articleIds);
+  // });
+
+  getTopLikedArticles()
     .then((likesData) => {
       const articleIds = Object.keys(likesData).sort((a, b) => likesData[a] - likesData[b]);
       getArticles(articleIds).then((articles) => {
@@ -182,6 +227,7 @@ async function makeRequest() {
               element.innerHTML = formatLike(myLikes[articleId], likeCount, articleId);
             }
             updateLabelElements();
+            updateVisitsElements();
           });
         });
       });
