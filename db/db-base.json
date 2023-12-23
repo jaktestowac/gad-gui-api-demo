@@ -79,6 +79,46 @@
       "lastname": "Okuplok",
       "password": "1234",
       "avatar": ".\\data\\users\\face_1591137202.609116_1.jpg"
+    },
+    {
+      "id": 11,
+      "email": "Henry.Spencer@test.test",
+      "firstname": "Henry",
+      "lastname": "Spencer",
+      "password": "1234",
+      "avatar": ".\\data\\users\\face_1591137468.2648418_1.jpg"
+    },
+    {
+      "id": 12,
+      "email": "m.altman@test.test",
+      "firstname": "Michael",
+      "lastname": "Altman",
+      "password": "1234",
+      "avatar": ".\\data\\users\\face_1591137649.060836_1.jpg"
+    },
+    {
+      "id": 13,
+      "email": "Abraham.Neumann@test.test",
+      "firstname": "Abraham",
+      "lastname": "Neumann",
+      "password": "1234",
+      "avatar": ".\\data\\users\\face_1591134508.3222337_1.jpg"
+    },
+    {
+      "id": 14,
+      "email": "v.cortez@test.test",
+      "firstname": "Vera",
+      "lastname": "Cortez",
+      "password": "1234",
+      "avatar": ".\\data\\users\\face_1591138035.9912412_1.jpg"
+    },
+    {
+      "id": 15,
+      "email": "j.sumderland@test.test",
+      "firstname": "James",
+      "lastname": "Sumderland",
+      "password": "12345",
+      "avatar": ".\\data\\users\\face_1591136402.493333_1.jpg"
     }
   ],
   "articles": [
@@ -2140,6 +2180,144 @@
       "user_id": "3",
       "date": "2023-10-20T15:47:46Z",
       "id": 8
+    },
+    {
+      "article_id": 18,
+      "user_id": "8",
+      "date": "2023-10-15T08:12:30Z",
+      "id": 9
+    },
+    {
+      "article_id": 3,
+      "user_id": "2",
+      "date": "2023-10-16T14:25:50Z",
+      "id": 10
+    },
+    {
+      "article_id": 51,
+      "user_id": "7",
+      "date": "2023-10-17T10:03:20Z",
+      "id": 11
+    },
+    {
+      "article_id": 12,
+      "user_id": "4",
+      "date": "2023-10-18T12:48:15Z",
+      "id": 12
+    },
+    {
+      "article_id": 35,
+      "user_id": "9",
+      "date": "2023-10-19T16:30:40Z",
+      "id": 13
+    },
+    {
+      "article_id": 22,
+      "user_id": "6",
+      "date": "2023-10-20T09:55:25Z",
+      "id": 14
+    },
+    {
+      "article_id": 48,
+      "user_id": "3",
+      "date": "2023-10-21T11:20:35Z",
+      "id": 15
+    },
+    {
+      "article_id": 9,
+      "user_id": "5",
+      "date": "2023-10-22T13:15:10Z",
+      "id": 16
+    },
+    {
+      "article_id": 27,
+      "user_id": "10",
+      "date": "2023-10-23T14:50:05Z",
+      "id": 17
+    },
+    {
+      "article_id": 57,
+      "user_id": "1",
+      "date": "2023-10-24T15:35:55Z",
+      "id": 18
+    },
+    {
+      "article_id": 7,
+      "user_id": "5",
+      "date": "2023-10-25T08:12:30Z",
+      "id": 18
+    },
+    {
+      "article_id": 34,
+      "user_id": "9",
+      "date": "2023-10-26T14:25:50Z",
+      "id": 19
+    },
+    {
+      "article_id": 15,
+      "user_id": "2",
+      "date": "2023-10-27T10:03:20Z",
+      "id": 20
+    },
+    {
+      "article_id": 53,
+      "user_id": "7",
+      "date": "2023-10-28T12:48:15Z",
+      "id": 21
+    },
+    {
+      "article_id": 24,
+      "user_id": "1",
+      "date": "2023-10-29T16:30:40Z",
+      "id": 22
+    },
+    {
+      "article_id": 42,
+      "user_id": "6",
+      "date": "2023-10-30T09:55:25Z",
+      "id": 23
+    },
+    {
+      "article_id": 8,
+      "user_id": "3",
+      "date": "2023-10-31T11:20:35Z",
+      "id": 24
+    },
+    {
+      "article_id": 49,
+      "user_id": "10",
+      "date": "2023-11-01T13:15:10Z",
+      "id": 25
+    },
+    {
+      "article_id": 12,
+      "user_id": "11",
+      "date": "2023-11-02T14:50:05Z",
+      "id": 26
+    },
+    {
+      "article_id": 12,
+      "user_id": "12",
+      "date": "2023-11-03T15:35:55Z",
+      "id": 27
+    },
+    {
+      "article_id": 12,
+      "user_id": "2",
+      "date": "2023-11-04T09:25:20Z",
+      "id": 28
+    },
+    {
+      "article_id": 12,
+      "user_id": "5",
+      "date": "2023-11-05T11:45:15Z",
+      "id": 29
+    },
+    {
+      "article_id": 22,
+      "user_id": "8",
+      "date": "2023-11-05T11:45:15Z",
+      "id": 30
     }
   ],
   "article-labels": [
