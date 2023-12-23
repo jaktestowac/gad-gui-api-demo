@@ -266,6 +266,6 @@ async function makeRequest(type) {
 
 const type = getParams()["type"] ?? "liked";
 
-setInterval(makeRequest, intervalValue);
+setInterval(() => makeRequest(type), intervalValue);
 
 makeRequest(type);
