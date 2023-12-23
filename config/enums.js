@@ -45,7 +45,13 @@ const ConfigKeys = {
   ARTICLE_IMAGE_PATH: "articleImagePath",
   UPLOADS_PATH: "uploadsPath",
   LOGS_LIMIT: "logsLimit",
-  NUMBER_OF_TOP_VISITED_ARTICLES: "numberOfTopVisitedArticles"
+  NUMBER_OF_TOP_VISITED_ARTICLES: "numberOfTopVisitedArticles",
+  MAX_RANDOM_VISITS_FOR_ARTICLES: "maxRandomVisitsForArticles",
+  MIN_RANDOM_VISITS_FOR_ARTICLES: "minRandomVisitsForArticles",
+  MAX_RANDOM_VISITS_FOR_COMMENTS: "maxRandomVisitsForComments",
+  MIN_RANDOM_VISITS_FOR_COMMENTS: "minRandomVisitsForComments",
+  MAX_RANDOM_VISITS_FOR_USERS: "maxRandomVisitsForUsers",
+  MIN_RANDOM_VISITS_FOR_USERS: "minRandomVisitsForUsers",
 };
 
 const BugConfigKeys = {

@@ -1,12 +1,4 @@
-const {
-  fullDb,
-  articlesDb,
-  commentsDb,
-  userDb,
-  randomDbEntry,
-  getUserAvatars,
-  getImagesForArticles,
-} = require("../helpers/db.helpers");
+const { fullDb, articlesDb, randomDbEntry, getUserAvatars, getImagesForArticles, visitsPerArticle, visitsPerComment, visitsPerUsers } = require("../helpers/db.helpers");
 const {
   formatErrorResponse,
   getIdFromUrl,
@@ -18,13 +10,8 @@ const {
 } = require("../helpers/helpers");
 const { logError, logDebug, getLogs } = require("../helpers/logger-api");
 const { HTTP_INTERNAL_SERVER_ERROR, HTTP_OK, HTTP_NOT_FOUND } = require("../helpers/response.helpers");
-const { getRandomVisitsForEntities } = require("../helpers/random-data.generator");
 const { getConfigValue } = require("../config/config-manager");
 const { ConfigKeys } = require("../config/enums");
-
-const visitsPerArticle = getRandomVisitsForEntities(articlesDb(), 50, 15000);
-const visitsPerComment = getRandomVisitsForEntities(commentsDb(), 10, 50);
-const visitsPerUsers = getRandomVisitsForEntities(userDb(), 10, 250);
 
 const customRoutes = (req, res, next) => {
   try {

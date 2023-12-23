@@ -36,6 +36,13 @@ const configToModify = {
   numberOfTopLikedArticles: 10,
   numberOfTopVisitedArticles: 10,
   logsLimit: 500,
+
+  maxRandomVisitsForArticles: 1100,
+  minRandomVisitsForArticles: 50,
+  maxRandomVisitsForComments: 50,
+  minRandomVisitsForComments: 10,
+  maxRandomVisitsForUsers: 250,
+  minRandomVisitsForUsers: 10,
 };
 
 const config = {

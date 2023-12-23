@@ -4,6 +4,23 @@ const { ConfigKeys } = require("../config/enums");
 const path = require("path");
 const { checkFileName } = require("./file-upload.helper");
 const { logTrace } = require("./logger-api");
+const { getRandomVisitsForEntities } = require("./random-data.generator");
+
+const visitsPerArticle = getRandomVisitsForEntities(
+  articlesDb(),
+  getConfigValue(ConfigKeys.MIN_RANDOM_VISITS_FOR_ARTICLES),
+  getConfigValue(ConfigKeys.MAX_RANDOM_VISITS_FOR_ARTICLES)
+);
+const visitsPerComment = getRandomVisitsForEntities(
+  commentsDb(),
+  getConfigValue(ConfigKeys.MIN_RANDOM_VISITS_FOR_COMMENTS),
+  getConfigValue(ConfigKeys.MAX_RANDOM_VISITS_FOR_COMMENTS)
+);
+const visitsPerUsers = getRandomVisitsForEntities(
+  userDb(),
+  getConfigValue(ConfigKeys.MIN_RANDOM_VISITS_FOR_USERS),
+  getConfigValue(ConfigKeys.MAX_RANDOM_VISITS_FOR_USERS)
+);
 
 function getDbPath(dbPath) {
   return path.resolve(__dirname, "..", dbPath);
@@ -149,4 +166,7 @@ module.exports = {
   getAndFilterUploadedFileList,
   articleLabelsDb,
   labelsDb,
+  visitsPerArticle,
+  visitsPerComment,
+  visitsPerUsers,
 };
