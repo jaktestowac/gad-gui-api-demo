@@ -1,4 +1,13 @@
-const { fullDb, articlesDb, randomDbEntry, getUserAvatars, getImagesForArticles, visitsPerArticle, visitsPerComment, visitsPerUsers } = require("../helpers/db.helpers");
+const {
+  fullDb,
+  articlesDb,
+  randomDbEntry,
+  getUserAvatars,
+  getImagesForArticles,
+  getVisitsPerArticle,
+  getVisitsPerComment,
+  getVisitsPerUsers,
+} = require("../helpers/db.helpers");
 const {
   formatErrorResponse,
   getIdFromUrl,
@@ -69,11 +78,11 @@ const customRoutes = (req, res, next) => {
       let visits = {};
 
       if (req.url.includes("/articles")) {
-        data = visitsPerArticle;
+        data = getVisitsPerArticle();
       } else if (req.url.includes("/comments")) {
-        data = visitsPerComment;
+        data = getVisitsPerComment();
       } else if (req.url.includes("/users")) {
-        data = visitsPerUsers;
+        data = getVisitsPerUsers();
       }
 
       if (req.url.includes("/articles/") || req.url.includes("/comments/") || req.url.includes("/users/")) {
@@ -94,7 +103,7 @@ const customRoutes = (req, res, next) => {
         visits[id] = data[id];
       } else if (ids !== undefined) {
         ids.forEach((id) => {
-          visits[id] = visitsPerArticle[id];
+          visits[id] = getVisitsPerArticle()[id];
         });
       } else {
         visits = data;
@@ -113,34 +122,34 @@ const customRoutes = (req, res, next) => {
       let articleId = getIdFromUrl(urlEnds);
 
       if (!articleId?.includes("&_") && !articleId?.includes("?") && articleId !== undefined && articleId.length > 0) {
-        if (visitsPerArticle[articleId] === undefined) {
-          visitsPerArticle[articleId] = 0;
+        if (getVisitsPerArticle()[articleId] === undefined) {
+          getVisitsPerArticle()[articleId] = 0;
         }
 
-        visitsPerArticle[articleId]++;
-        logDebug(`[visits] articleId: "${articleId}" with visits:${visitsPerArticle[articleId]}`);
+        getVisitsPerArticle()[articleId]++;
+        logDebug(`[visits] articleId: "${articleId}" with visits:${getVisitsPerArticle()[articleId]}`);
       }
     } else if (req.url.includes("/api/comments") && req.method === "GET") {
       let commentId = getIdFromUrl(urlEnds);
 
       if (!commentId?.includes("&_") && !commentId?.includes("?") && commentId !== undefined && commentId.length > 0) {
-        if (visitsPerComment[commentId] === undefined) {
-          visitsPerComment[commentId] = 0;
+        if (getVisitsPerComment()[commentId] === undefined) {
+          getVisitsPerComment()[commentId] = 0;
         }
 
-        visitsPerComment[commentId]++;
-        logDebug(`[visits] commentId: "${commentId}" with visits:${visitsPerComment[commentId]}`);
+        getVisitsPerComment()[commentId]++;
+        logDebug(`[visits] commentId: "${commentId}" with visits:${getVisitsPerComment()[commentId]}`);
       }
     } else if (req.url.includes("/api/users") && req.method === "GET") {
       let userId = getIdFromUrl(urlEnds);
 
       if (!userId?.includes("&_") && !userId?.includes("?") && userId !== undefined && userId.length > 0) {
-        if (visitsPerUsers[userId] === undefined) {
-          visitsPerUsers[userId] = 0;
+        if (getVisitsPerUsers()[userId] === undefined) {
+          getVisitsPerUsers()[userId] = 0;
         }
 
-        visitsPerUsers[userId]++;
-        logDebug(`[visits] userId: "${userId}" with visits:${visitsPerUsers[userId]}`);
+        getVisitsPerUsers()[userId]++;
+        logDebug(`[visits] userId: "${userId}" with visits:${getVisitsPerUsers()[userId]}`);
       }
     }
     if (res.headersSent !== true) {
