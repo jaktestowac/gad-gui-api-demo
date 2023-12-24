@@ -2237,7 +2237,7 @@
     },
     {
       "article_id": 57,
-      "user_id": "1",
+      "user_id": "7",
       "date": "2023-10-24T15:35:55Z",
       "id": 18
     },
@@ -2318,6 +2318,186 @@
       "user_id": "8",
       "date": "2023-11-05T11:45:15Z",
       "id": 30
+    },
+    {
+      "user_id": 13,
+      "article_id": 7,
+      "date": "2021-07-08T09:39:27Z",
+      "id": 31
+    },
+    {
+      "user_id": 9,
+      "article_id": 51,
+      "date": "2020-03-28T22:20:02Z",
+      "id": 32
+    },
+    {
+      "user_id": 9,
+      "article_id": 33,
+      "date": "2015-07-24T09:03:50Z",
+      "id": 33
+    },
+    {
+      "user_id": 8,
+      "article_id": 58,
+      "date": "2017-08-23T00:49:52Z",
+      "id": 34
+    },
+    {
+      "user_id": 14,
+      "article_id": 29,
+      "date": "2012-01-20T12:00:49Z",
+      "id": 35
+    },
+    {
+      "user_id": 12,
+      "article_id": 35,
+      "date": "2022-06-03T22:18:50Z",
+      "id": 36
+    },
+    {
+      "user_id": 2,
+      "article_id": 8,
+      "date": "2013-10-13T08:22:27Z",
+      "id": 37
+    },
+    {
+      "user_id": 3,
+      "article_id": 12,
+      "date": "2020-08-01T06:58:51Z",
+      "id": 38
+    },
+    {
+      "user_id": 8,
+      "article_id": 50,
+      "date": "2016-02-17T23:10:38Z",
+      "id": 39
+    },
+    {
+      "user_id": 11,
+      "article_id": 51,
+      "date": "2017-08-02T01:54:20Z",
+      "id": 40
+    },
+    {
+      "user_id": 5,
+      "article_id": 23,
+      "date": "2017-01-13T08:16:35Z",
+      "id": 41
+    },
+    {
+      "user_id": 2,
+      "article_id": 55,
+      "date": "2020-03-07T18:52:14Z",
+      "id": 42
+    },
+    {
+      "user_id": 1,
+      "article_id": 5,
+      "date": "2017-10-27T12:51:28Z",
+      "id": 43
+    },
+    {
+      "user_id": 1,
+      "article_id": 10,
+      "date": "2021-09-02T04:09:33Z",
+      "id": 44
+    },
+    {
+      "user_id": 8,
+      "article_id": 8,
+      "date": "2019-05-25T21:35:57Z",
+      "id": 45
+    },
+    {
+      "user_id": 12,
+      "article_id": 34,
+      "date": "2014-10-01T07:12:45Z",
+      "id": 46
+    },
+    {
+      "user_id": 3,
+      "article_id": 21,
+      "date": "2013-02-16T09:33:59Z",
+      "id": 47
+    },
+    {
+      "user_id": 10,
+      "article_id": 40,
+      "date": "2016-03-04T18:50:35Z",
+      "id": 48
+    },
+    {
+      "user_id": 8,
+      "article_id": 52,
+      "date": "2016-02-08T12:33:57Z",
+      "id": 49
+    },
+    {
+      "user_id": 10,
+      "article_id": 4,
+      "date": "2012-01-23T04:57:15Z",
+      "id": 50
+    },
+    {
+      "user_id": 12,
+      "article_id": 2,
+      "date": "2022-03-24T11:38:36Z",
+      "id": 51
+    },
+    {
+      "user_id": 2,
+      "article_id": 56,
+      "date": "2012-09-25T16:46:05Z",
+      "id": 52
+    },
+    {
+      "user_id": 8,
+      "article_id": 11,
+      "date": "2018-04-11T07:41:50Z",
+      "id": 53
+    },
+    {
+      "user_id": 11,
+      "article_id": 43,
+      "date": "2015-04-27T16:30:36Z",
+      "id": 54
+    },
+    {
+      "user_id": 11,
+      "article_id": 14,
+      "date": "2017-03-14T12:07:09Z",
+      "id": 55
+    },
+    {
+      "user_id": 2,
+      "article_id": 2,
+      "date": "2011-02-20T11:12:25Z",
+      "id": 56
+    },
+    {
+      "user_id": 4,
+      "article_id": 27,
+      "date": "2014-10-03T17:32:14Z",
+      "id": 57
+    },
+    {
+      "user_id": 9,
+      "article_id": 15,
+      "date": "2014-04-16T10:30:36Z",
+      "id": 58
+    },
+    {
+      "user_id": 8,
+      "article_id": 24,
+      "date": "2011-01-10T07:47:13Z",
+      "id": 59
+    },
+    {
+      "user_id": 11,
+      "article_id": 39,
+      "date": "2018-06-23T15:27:17Z",
+      "id": 60
     }
   ],
   "article-labels": [
