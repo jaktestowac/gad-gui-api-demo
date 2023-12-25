@@ -8,6 +8,11 @@ const sampleArticleJson = {
   image: ".\\data\\images\\256\\chuttersnap-9cCeS9Sg6nU-unsplash.jpg",
 };
 const infoContainer = document.querySelector("#infoContainer");
+let browsebutton = document.getElementById("browsebutton");
+let input = document.getElementById("dragdropfile");
+const dropArea = document.getElementById("dropzone");
+const dragText = document.getElementById("dragdropheader");
+let file;
 
 const handleCreate = () => {
   const today = new Date();
@@ -86,6 +91,10 @@ function pad(num, size = 2) {
   return num;
 }
 
+function refreshDragAndDrop() {
+  dragText.innerHTML = "Drag & Drop";
+}
+
 const attachEventHandlers = (user_id) => {
   document.querySelector("#btnDownloadSampleJson").onclick = () => {
     download("sample_article.json", sampleArticleJson);
@@ -94,46 +103,59 @@ const attachEventHandlers = (user_id) => {
   if (user_id === undefined) {
     return;
   }
-  var dropzone = document.getElementById("dropzone");
 
-  if (dropzone) {
-    dropzone.ondrop = function (e) {
-      e.preventDefault();
-      this.className = "dropzone";
-    };
+  browsebutton.onclick = () => {
+    input.click();
+  };
 
-    dropzone.ondragover = function () {
-      this.className = "dropzone dragover";
-      return false;
-    };
-
-    dropzone.ondragleave = function () {
-      this.className = "dropzone";
-    };
-
-    dropzone.ondrop = function (event) {
-      const [item] = event.dataTransfer.items;
-      const itemData = item.getAsFile();
-      itemData.text().then((data) => {
-        if (itemData.type === FILE_TYPE) {
-          const container = document.querySelector("#infoContainer");
-          container.innerHTML = `File "${itemData.name}" ready`;
-          fileContent = data;
-          document.querySelector("#uploadBtn").disabled = false;
-        } else {
-          const container = document.querySelector("#infoContainer");
-          container.innerHTML = `Invalid file type! Must be ${FILE_TYPE}`;
-          document.querySelector("#uploadBtn").disabled = true;
-        }
-      });
-    };
-
-    document.querySelector("#uploadBtn").onclick = () => {
-      handleCreate();
-    };
+  input.addEventListener("change", function () {
+    refreshDragAndDrop();
+    file = this.files[0];
+    dropArea.classList.add("active");
+    handleFile(file);
+  });
+  dropArea.addEventListener("dragover", (event) => {
+    refreshDragAndDrop();
     event.preventDefault();
-    this.className = "dropzone";
+    dropArea.classList.add("active");
+    dragText.innerHTML = "Release to Upload";
+  });
+  dropArea.addEventListener("dragleave", () => {
+    dropArea.classList.remove("active");
+    refreshDragAndDrop();
+  });
+  dropArea.addEventListener("drop", (event) => {
+    refreshDragAndDrop();
+    event.preventDefault();
+    file = event.dataTransfer.files[0];
+    handleFile(file);
+  });
+
+  function handleFile(file) {
+    let fileType = file.type;
+    let validExtensions = ["application/json"];
+    if (validExtensions.includes(fileType)) {
+      dragText.innerHTML = "File ready";
+      let fileReader = new FileReader();
+
+      fileReader.readAsDataURL(file);
+      const container = document.querySelector("#infoContainer");
+      container.innerHTML = `File "${file.name}" ready`;
+      file.text().then((data) => {
+        fileContent = data;
+      });
+      document.querySelector("#uploadBtn").disabled = false;
+    } else {
+      const container = document.querySelector("#infoContainer");
+      container.innerHTML = `<div class="warning-msg">⚠️ Invalid file type! Must be ${FILE_TYPE}</div>`;
+      document.querySelector("#uploadBtn").disabled = true;
+      dropArea.classList.remove("active");
+    }
   }
+
+  document.querySelector("#uploadBtn").onclick = () => {
+    handleCreate();
+  };
 };
 
 attachEventHandlers(getId());

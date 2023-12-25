@@ -35,7 +35,15 @@
 
       <br /><br />
       <div id="uploads"></div>
-      <div class="dropzone" id="dropzone">Drop Here</div>
+      <div class="drag-area" id="dropzone">
+        <div class="icon">
+          <i class="fas fa-images"></i>
+        </div>
+        <span class="header" id="dragdropheader">Drag & Drop</span>
+        <span class="header">or <span class="button" id="browsebutton">browse</span></span>
+        <input type="file" id="dragdropfile" hidden />
+        <span class="support">Supports: JSON</span>
+      </div>
       <br />
       <a id="downloadSampleJson"
         ><button id="btnDownloadSampleJson" class="button-primary" data-testid="downloadBtn">
