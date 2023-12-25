@@ -45,7 +45,7 @@ const visits = (function () {
         getConfigValue(ConfigKeys.MAX_RANDOM_VISITS_FOR_USERS)
       );
 
-      logDebug('visits: generateVisits() invoked')
+      logDebug("visits: generateVisits() invoked");
     }
     return {
       visitsPerArticle,
@@ -136,6 +136,7 @@ function getUserAvatars() {
 
 function getImagesForArticles() {
   let files = fs.readdirSync(path.join(__dirname, getConfigValue(ConfigKeys.ARTICLE_IMAGE_PATH)));
+  files = files.filter((file) => file.toLowerCase().endsWith(".jpg") || file.toLowerCase().endsWith(".jpeg"));
   return files;
 }
 
