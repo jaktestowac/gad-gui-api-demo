@@ -38,6 +38,5 @@ articles.forEach((article) => {
   articleLabelsAll.push(articleLabels);
 });
 
-console.log(JSON.stringify(articleLabelsAll));
 db["article-labels"] = articleLabelsAll;
 fs.writeFileSync(dbPath, JSON.stringify(db));

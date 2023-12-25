@@ -1,8 +1,11 @@
 /* eslint-disable no-console */
-const db = require("../../db/db-base-big.json");
+const dbPath = `./db/db-base-big.json`;
+
+const fs = require("fs");
 const { faker } = require("@faker-js/faker");
 const { getGaussianRandomInt, getRandomInt } = require("../../helpers/helpers");
 
+const db = JSON.parse(fs.readFileSync(dbPath));
 const numberOfLikesToGenerate = 250;
 
 function createLike(user_id, article_id, date, id) {
@@ -63,4 +66,5 @@ for (let index = 0; index < numberOfLikesToGenerate; index++) {
   } while (!wasAdded && attempt < attemptsMax);
 }
 
-console.log(JSON.stringify(generatedLikes));
+db["likes"] = likes;
+fs.writeFileSync(dbPath, JSON.stringify(db));
