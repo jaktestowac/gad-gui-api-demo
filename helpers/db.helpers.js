@@ -195,6 +195,16 @@ function getUploadedFile(fileName) {
   return fileContent;
 }
 
+function countEntities(db) {
+  const entities = {};
+
+  Object.keys(db).forEach((key) => {
+    entities[key] = db[key].length;
+  });
+
+  return entities;
+}
+
 module.exports = {
   userDb,
   articlesDb,
@@ -215,6 +225,7 @@ module.exports = {
   getAndFilterUploadedFileList,
   articleLabelsDb,
   labelsDb,
+  countEntities,
   getVisitsPerArticle: visitsData.getVisitsPerArticle,
   getVisitsPerComment: visitsData.getVisitsPerComment,
   getVisitsPerUsers: visitsData.getVisitsPerUsers,

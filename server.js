@@ -9,7 +9,7 @@ const path = require("path");
 const cookieparser = require("cookie-parser");
 const helmet = require("helmet");
 const express = require("express");
-const { userDb, getDbPath } = require("./helpers/db.helpers");
+const { userDb, getDbPath, countEntities } = require("./helpers/db.helpers");
 
 const server = jsonServer.create();
 const router = jsonServer.router(getDbPath(getConfigValue(ConfigKeys.DB_PATH)));
@@ -28,22 +28,25 @@ const clearDbRoutes = (req, res, next) => {
     if (req.method === "GET" && req.url.endsWith("/restoreDB")) {
       const db = JSON.parse(fs.readFileSync(path.join(__dirname, getConfigValue(ConfigKeys.DB_RESTORE_PATH)), "utf8"));
       router.db.setState(db);
-      logDebug("Restore DB was successful");
-      res.status(HTTP_CREATED).send({ message: "Database successfully restored" });
+      const entities = countEntities(db)
+      logDebug("Restore DB was successful", entities);
+      res.status(HTTP_CREATED).send({ message: "Database successfully restored", entities });
     } else if (req.method === "GET" && req.url.endsWith("/restoreBigDB")) {
       const db = JSON.parse(
         fs.readFileSync(path.join(__dirname, getConfigValue(ConfigKeys.DB_BIG_RESTORE_PATH)), "utf8")
       );
       router.db.setState(db);
-      logDebug("Restore DB was successful");
-      res.status(HTTP_CREATED).send({ message: "Big Database successfully restored" });
+      const entities = countEntities(db)
+      logDebug("Restore DB was successful", entities);
+      res.status(HTTP_CREATED).send({ message: "Big Database successfully restored", entities });
     } else if (req.method === "GET" && req.url.endsWith("/restoreEmptyDB")) {
       const db = JSON.parse(
         fs.readFileSync(path.join(__dirname, getConfigValue(ConfigKeys.DB_EMPTY_RESTORE_PATH)), "utf8")
       );
       router.db.setState(db);
-      logDebug("Restore empty DB was successful");
-      res.status(HTTP_CREATED).send({ message: "Empty Database successfully restored" });
+      const entities = countEntities(db)
+      logDebug("Restore empty DB was successful", entities);
+      res.status(HTTP_CREATED).send({ message: "Empty Database successfully restored", entities });
     }
     if (res.headersSent !== true) {
       next();
