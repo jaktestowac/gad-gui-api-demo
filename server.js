@@ -30,6 +30,13 @@ const clearDbRoutes = (req, res, next) => {
       router.db.setState(db);
       logDebug("Restore DB was successful");
       res.status(HTTP_CREATED).send({ message: "Database successfully restored" });
+    } else if (req.method === "GET" && req.url.endsWith("/restoreBigDB")) {
+      const db = JSON.parse(
+        fs.readFileSync(path.join(__dirname, getConfigValue(ConfigKeys.DB_BIG_RESTORE_PATH)), "utf8")
+      );
+      router.db.setState(db);
+      logDebug("Restore DB was successful");
+      res.status(HTTP_CREATED).send({ message: "Big Database successfully restored" });
     } else if (req.method === "GET" && req.url.endsWith("/restoreEmptyDB")) {
       const db = JSON.parse(
         fs.readFileSync(path.join(__dirname, getConfigValue(ConfigKeys.DB_EMPTY_RESTORE_PATH)), "utf8")

@@ -25,6 +25,7 @@ const ConfigKeys = {
   AUTH_USER_DB: "authUserDb",
   DB_PATH: "dbPath",
   DB_RESTORE_PATH: "dbRestorePath",
+  DB_BIG_RESTORE_PATH: "dbBigRestorePath",
   DB_EMPTY_RESTORE_PATH: "dbEmptyRestorePath",
   QUIZ_QUESTIONS_PATH: "quizQuestionsPath",
   QUIZ_DB_PATH: "quizDbPath",

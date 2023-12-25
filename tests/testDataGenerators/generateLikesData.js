@@ -1,11 +1,21 @@
 /* eslint-disable no-console */
-const db = require("../db/db-base.json");
+const db = require("../../db/db-base-big.json");
 const { faker } = require("@faker-js/faker");
-const { getGaussianRandomInt, getRandomInt } = require("../helpers/helpers");
+const { getGaussianRandomInt, getRandomInt } = require("../../helpers/helpers");
+
+const numberOfLikesToGenerate = 250;
+
+function createLike(user_id, article_id, date, id) {
+  return {
+    user_id,
+    article_id,
+    date,
+    id,
+  };
+}
 
 const articles = db.articles;
 const users = db.users;
-const comments = db.comments;
 const likes = db.likes;
 
 // check likes:
@@ -27,7 +37,6 @@ if (duplicatedLikes.length > 0) {
 
 const baseLength = likes.length;
 console.log("-----------------------------------------------------------");
-const numberOfLikesToGenerate = 50;
 const generatedLikes = [];
 for (let index = 0; index < numberOfLikesToGenerate; index++) {
   let attempt = 0;
@@ -43,12 +52,8 @@ for (let index = 0; index < numberOfLikesToGenerate; index++) {
     );
 
     if (foundLikes.length === 0) {
-      const newLike = {
-        user_id,
-        article_id,
-        date,
-        id: baseLength + index,
-      };
+      const newLike = createLike(user_id, article_id, date, baseLength + index);
+
       generatedLikes.push(newLike);
       likes.push(newLike);
       wasAdded = true;
@@ -58,4 +63,4 @@ for (let index = 0; index < numberOfLikesToGenerate; index++) {
   } while (!wasAdded && attempt < attemptsMax);
 }
 
-console.log(generatedLikes);
+console.log(JSON.stringify(generatedLikes));

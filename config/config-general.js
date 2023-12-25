@@ -49,6 +49,7 @@ const config = {
   authUserDb: "./db/db.json",
   dbPath: "./db/db.json",
   dbRestorePath: "./db/db-base.json",
+  dbBigRestorePath: "./db/db-base-big.json",
   dbEmptyRestorePath: "./db/db-empty.json",
   quizQuestionsPath: "./db/quiz-questions.json",
   quizDbPath: "./db/games-db.json",
