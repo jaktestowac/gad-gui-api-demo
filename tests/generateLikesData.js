@@ -1,17 +1,12 @@
 /* eslint-disable no-console */
 const db = require("../db/db-base.json");
 const { faker } = require("@faker-js/faker");
+const { getGaussianRandomInt, getRandomInt } = require("../helpers/helpers");
 
 const articles = db.articles;
 const users = db.users;
 const comments = db.comments;
 const likes = db.likes;
-
-const getRandomInt = (min, max) => {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
-};
 
 // check likes:
 const duplicatedLikes = [];
@@ -22,6 +17,7 @@ likes.forEach((like) => {
   );
   if (foundLikes.length > 0) {
     duplicatedLikes.push(foundLikes);
+    duplicatedLikes.push(like);
   }
 });
 
@@ -29,7 +25,9 @@ if (duplicatedLikes.length > 0) {
   console.log("duplicatedLikes:", duplicatedLikes);
 }
 
-const numberOfLikesToGenerate = 30;
+const baseLength = likes.length;
+console.log("-----------------------------------------------------------");
+const numberOfLikesToGenerate = 50;
 const generatedLikes = [];
 for (let index = 0; index < numberOfLikesToGenerate; index++) {
   let attempt = 0;
@@ -37,7 +35,7 @@ for (let index = 0; index < numberOfLikesToGenerate; index++) {
   let wasAdded = false;
   do {
     const user_id = getRandomInt(1, users.length);
-    const article_id = getRandomInt(1, articles.length);
+    const article_id = getGaussianRandomInt(1, articles.length, 2);
     const date = `${faker.date.between({ from: "2011-01-01", to: "2022-10-05" }).toISOString()}`.split(".")[0] + "Z";
 
     const foundLikes = likes.filter(
@@ -49,9 +47,10 @@ for (let index = 0; index < numberOfLikesToGenerate; index++) {
         user_id,
         article_id,
         date,
-        id: likes.length + index,
+        id: baseLength + index,
       };
       generatedLikes.push(newLike);
+      likes.push(newLike);
       wasAdded = true;
     } else {
       attempt++;
