@@ -6,7 +6,7 @@ const { faker } = require("@faker-js/faker");
 const { getGaussianRandomInt, getRandomInt } = require("../../helpers/helpers");
 
 const db = JSON.parse(fs.readFileSync(dbPath));
-const numberOfLikesToGenerate = 250;
+const numberOfLikesToGenerate = 50;
 
 function createLike(user_id, article_id, date, id) {
   return {

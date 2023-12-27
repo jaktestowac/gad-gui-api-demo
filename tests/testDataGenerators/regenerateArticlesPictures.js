@@ -6,7 +6,8 @@ const images = fs.readdirSync(path.join(__dirname, "../../public/data/images/256
 const dbPath = `./db/db-base-big.json`;
 
 const db = JSON.parse(fs.readFileSync(dbPath));
-const articles = db.articles;
+const articles = db.articles
+images.filter((img) => img.toLowerCase().includes(".jpg"));
 
 articles.forEach((articles) => {
   if (articles.image === undefined) {

@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-const db = require("../../db/db-base.json");
+const db = require("../../db/db-base-big.json");
 const { faker } = require("@faker-js/faker");
 const fs = require("fs");
 const path = require("path");
@@ -31,7 +31,7 @@ const generatedUsers = [];
 for (let index = 0; index < numberOfUsersToGenerate; index++) {
   const firstname = faker.person.firstName();
   const lastname = faker.person.lastName();
-  const email = faker.internet.email({ firstname, lastname, provider: "test.test.dev" });
+  const email = faker.internet.email({ firstName: firstname, lastName: lastname, provider: "test.test.dev" });
   const pass = faker.internet.password({ length: 5 });
 
   const maxAttempts = 10;
