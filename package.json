@@ -1,11 +1,10 @@
 {
-  "name": "rest-api-demo-v2",
-  "version": "2.0.0",
+  "name": "gad-gui-api-demo-v2",
+  "version": "2.4.0",
   "description": "Simple application with GUI and API to deploy to Heroku, Glitch, Railway, Vercel etc.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "rnd": "node ./tools/generateData.js",
     "pretty": "npx prettier --write .",
     "eslint": "npx eslint"
   },

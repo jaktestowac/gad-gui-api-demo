@@ -1,7 +1,5 @@
 const {
   fullDb,
-  articlesDb,
-  randomDbEntry,
   getUserAvatars,
   getImagesForArticles,
   getVisitsPerArticle,
@@ -19,10 +17,10 @@ const {
 } = require("../helpers/helpers");
 const { logError, logDebug, getLogs } = require("../helpers/logger-api");
 const { HTTP_INTERNAL_SERVER_ERROR, HTTP_OK, HTTP_NOT_FOUND } = require("../helpers/response.helpers");
-const { getConfigValue } = require("../config/config-manager");
-const { ConfigKeys } = require("../config/enums");
+const { getConfigValue, getFeatureFlagConfigValue } = require("../config/config-manager");
+const { ConfigKeys, FeatureFlagConfigKeys } = require("../config/enums");
 
-const customRoutes = (req, res, next) => {
+const statsRoutes = (req, res, next) => {
   try {
     const urlEnds = req.url.replace(/\/\/+/g, "/");
     if (req.method === "GET" && urlEnds.includes("api/stats/users")) {
@@ -43,35 +41,24 @@ const customRoutes = (req, res, next) => {
       const stats = parsePublishStats(fullDb(), "comments");
       res.status(HTTP_OK).json(stats);
       return;
-    } else if (req.method === "GET" && urlEnds.includes("api/random/article")) {
-      const article = randomDbEntry(articlesDb());
-      logDebug("Random article:", article);
-      res.status(HTTP_OK).json(article);
-      return;
-    } else if (req.method === "GET" && urlEnds.includes("api/logs")) {
-      if (getConfigValue(ConfigKeys.PUBLIC_LOGS_ENABLED)) {
-        res.status(HTTP_OK).json({ logs: getLogs() });
-      } else {
-        res.status(HTTP_OK).json({});
-      }
-      return;
     }
-    if (req.method === "GET" && req.url.endsWith("/db")) {
-      const dbData = fullDb();
-      res.json(dbData);
-      req.body = dbData;
-    } else if (req.method === "GET" && req.url.endsWith("/images/user")) {
-      const files = getUserAvatars();
-      res.json(files);
-      req.body = files;
-    } else if (req.method === "GET" && req.url.endsWith("/images/posts")) {
-      const files = getImagesForArticles();
-      res.json(files);
-      req.body = files;
-    } else if (req.method === "GET" && req.url.endsWith("/pluginstatuses")) {
-      res.json(pluginStatuses);
-      req.body = pluginStatuses;
-    } else if (req.method === "GET" && req.url.includes("/api/visits/")) {
+
+    if (res.headersSent !== true) {
+      next();
+    }
+  } catch (error) {
+    logError("Fatal error. Please contact administrator.", {
+      error,
+      stack: error.stack,
+    });
+    res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Fatal error. Please contact administrator."));
+  }
+};
+
+const visitsRoutes = (req, res, next) => {
+  try {
+    const urlEnds = req.url.replace(/\/\/+/g, "/");
+    if (req.method === "GET" && req.url.includes("/api/visits/")) {
       let data = {};
       let id = undefined;
       let ids = undefined;
@@ -118,7 +105,24 @@ const customRoutes = (req, res, next) => {
       }
 
       res.status(HTTP_OK).json(visits);
-    } else if (req.url.includes("/api/articles") && req.method === "GET") {
+    }
+
+    if (res.headersSent !== true) {
+      next();
+    }
+  } catch (error) {
+    logError("Fatal error. Please contact administrator.", {
+      error,
+      stack: error.stack,
+    });
+    res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Fatal error. Please contact administrator."));
+  }
+};
+
+const queryRoutes = (req, res, next) => {
+  try {
+    const urlEnds = req.url.replace(/\/\/+/g, "/");
+    if (req.url.includes("/api/articles") && req.method === "GET") {
       let articleId = getIdFromUrl(urlEnds);
 
       if (!articleId?.includes("&_") && !articleId?.includes("?") && articleId !== undefined && articleId.length > 0) {
@@ -164,4 +168,68 @@ const customRoutes = (req, res, next) => {
   }
 };
 
+const customRoutes = (req, res, next) => {
+  try {
+    const urlEnds = req.url.replace(/\/\/+/g, "/");
+    if (req.method === "GET" && urlEnds.includes("api/logs")) {
+      if (getConfigValue(ConfigKeys.PUBLIC_LOGS_ENABLED)) {
+        res.status(HTTP_OK).json({ logs: getLogs() });
+      } else {
+        res.status(HTTP_OK).json({});
+      }
+      return;
+    }
+    if (req.method === "GET" && req.url.endsWith("/db")) {
+      const dbData = fullDb();
+      res.json(dbData);
+      req.body = dbData;
+    } else if (req.method === "GET" && req.url.endsWith("/images/user")) {
+      const files = getUserAvatars();
+      res.json(files);
+      req.body = files;
+    } else if (req.method === "GET" && req.url.endsWith("/images/posts")) {
+      const files = getImagesForArticles();
+      res.json(files);
+      req.body = files;
+    } else if (req.method === "GET" && req.url.endsWith("/pluginstatuses")) {
+      res.json(pluginStatuses);
+      req.body = pluginStatuses;
+    }
+    if (res.headersSent !== true) {
+      next();
+    }
+  } catch (error) {
+    logError("Fatal error. Please contact administrator.", {
+      error,
+      stack: error.stack,
+    });
+    res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Fatal error. Please contact administrator."));
+  }
+};
+
+const onlyBackendRoute = (req, res, next) => {
+  if (!getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_ONLY_BACKEND)) {
+    next();
+  } else if (!req.url.includes("swagger") && !req.url.includes("/tools/") && !req.url.includes("/api/")) {
+    return res.redirect("/tools/swagger.html");
+  } else {
+    next();
+  }
+};
+
+const homeRoute = (req, res) => {
+  // check if user is logged in, by checking cookie
+  let username = req.cookies.username;
+
+  // render the home page
+  return res.render("welcome", {
+    username,
+  });
+};
+
 exports.customRoutes = customRoutes;
+exports.statsRoutes = statsRoutes;
+exports.visitsRoutes = visitsRoutes;
+exports.queryRoutes = queryRoutes;
+exports.onlyBackendRoute = onlyBackendRoute;
+exports.homeRoute = homeRoute;
