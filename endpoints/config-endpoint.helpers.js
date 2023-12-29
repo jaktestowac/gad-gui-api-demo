@@ -8,7 +8,8 @@ const {
   getFeatureFlagConfigValue,
   setFeatureFlagConfigValue,
 } = require("../config/config-manager");
-const { logDebug } = require("../helpers/logger-api");
+const { visitsData } = require("../helpers/db.helpers");
+const { logDebug, logTrace } = require("../helpers/logger-api");
 const { HTTP_OK, HTTP_UNPROCESSABLE_ENTITY } = require("../helpers/response.helpers");
 
 function handleConfig(req, res) {
@@ -65,6 +66,11 @@ function handleGenericConfig(req, res, endpoint, getConfigValue, setConfigValue,
         const currentValue = getConfigValue(key);
         logDebug(`Setting "${key}": from "${currentValue}" to "${req.body[key]}"`);
         setConfigValue(key, req.body[key]);
+
+        if (key.toLowerCase().includes("randomvisitsfor")) {
+          visitsData.generateVisits();
+          logTrace("handleGenericConfig: regenerated random visits");
+        }
       }
       res.status(HTTP_OK).json({});
     }

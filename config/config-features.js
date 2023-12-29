@@ -5,7 +5,8 @@ const featureFlagConfig = {
   feature_files: false,
   feature_only_backend: false,
   feature_labels: false,
-  feature_cache_control_no_store: true,
+  feature_cache_control_no_store: false,
+  feature_visits: false,
 };
 
 module.exports = {

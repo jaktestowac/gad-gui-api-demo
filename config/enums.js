@@ -25,6 +25,7 @@ const ConfigKeys = {
   AUTH_USER_DB: "authUserDb",
   DB_PATH: "dbPath",
   DB_RESTORE_PATH: "dbRestorePath",
+  DB_BIG_RESTORE_PATH: "dbBigRestorePath",
   DB_EMPTY_RESTORE_PATH: "dbEmptyRestorePath",
   QUIZ_QUESTIONS_PATH: "quizQuestionsPath",
   QUIZ_DB_PATH: "quizDbPath",
@@ -45,6 +46,13 @@ const ConfigKeys = {
   ARTICLE_IMAGE_PATH: "articleImagePath",
   UPLOADS_PATH: "uploadsPath",
   LOGS_LIMIT: "logsLimit",
+  NUMBER_OF_TOP_VISITED_ARTICLES: "numberOfTopVisitedArticles",
+  MAX_RANDOM_VISITS_FOR_ARTICLES: "maxRandomVisitsForArticles",
+  MIN_RANDOM_VISITS_FOR_ARTICLES: "minRandomVisitsForArticles",
+  MAX_RANDOM_VISITS_FOR_COMMENTS: "maxRandomVisitsForComments",
+  MIN_RANDOM_VISITS_FOR_COMMENTS: "minRandomVisitsForComments",
+  MAX_RANDOM_VISITS_FOR_USERS: "maxRandomVisitsForUsers",
+  MIN_RANDOM_VISITS_FOR_USERS: "minRandomVisitsForUsers",
 };
 
 const BugConfigKeys = {
@@ -75,6 +83,7 @@ const FeatureFlagConfigKeys = {
   FEATURE_ONLY_BACKEND: "feature_only_backend",
   FEATURE_LABELS: "feature_labels",
   FEATURE_CACHE_CONTROL_NO_STORE: "feature_cache_control_no_store",
+  FEATURE_VISITS: "feature_visits",
 };
 
 module.exports = {

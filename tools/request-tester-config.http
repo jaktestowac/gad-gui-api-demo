@@ -66,6 +66,14 @@ content-type: application/json
     "publicLogsEnabled": true
 }
 
+### Config - change maxRandomVisitsForArticles
+POST http://localhost:3000/api/config/all
+content-type: application/json
+ 
+{
+    "maxRandomVisitsForArticles": 150000
+}
+
 ### Get logs
 GET http://localhost:3000/api/logs
 
@@ -82,3 +90,4 @@ GET http://localhost:3000/api/files/uploaded/public
 
 ### Get Uploaded file list - public per user
 GET http://localhost:3000/api/files/uploaded/public?userIds=1,2
+

@@ -341,6 +341,24 @@ function formatHeaders() {
 
 addMainMenuAndFooter();
 
+function numberToWords(num) {
+  const units = ["", "K", "M", "B", "T"];
+  const unit = Math.floor((num.toString().length - 1) / 3) * 3;
+  const suffix = units[unit / 3];
+  const roundedNum = Math.round((num / Math.pow(10, unit)) * 10) / 10;
+  return roundedNum + suffix;
+}
+
+function formatVisits(viewsNumber, articleId) {
+  let out = "";
+  const formattedNumber = viewsNumber.toLocaleString("en-US", { style: "decimal" });
+  const writtenNumber = numberToWords(viewsNumber);
+  // TODO: articleId is not used... for now
+  out = `<div class="hover-element" id="views-number">Views: ${writtenNumber}<div class="popup">Views: ${formattedNumber}</div></div>`;
+
+  return out;
+}
+
 const likeMessage = "Please log in to like this content!";
 function formatLike(alreadyLiked, likesNumber, articleId) {
   let out = "";

@@ -1,11 +1,10 @@
 const {
   fullDb,
-  articlesDb,
-  commentsDb,
-  userDb,
-  randomDbEntry,
   getUserAvatars,
   getImagesForArticles,
+  getVisitsPerArticle,
+  getVisitsPerComment,
+  getVisitsPerUsers,
 } = require("../helpers/db.helpers");
 const {
   formatErrorResponse,
@@ -14,18 +13,14 @@ const {
   parsePublishStats,
   parseArticleStats,
   parseUserStats,
+  findMaxValues,
 } = require("../helpers/helpers");
 const { logError, logDebug, getLogs } = require("../helpers/logger-api");
-const { HTTP_INTERNAL_SERVER_ERROR, HTTP_OK } = require("../helpers/response.helpers");
-const { getRandomVisitsForEntities } = require("../helpers/random-data.generator");
-const { getConfigValue } = require("../config/config-manager");
-const { ConfigKeys } = require("../config/enums");
+const { HTTP_INTERNAL_SERVER_ERROR, HTTP_OK, HTTP_NOT_FOUND } = require("../helpers/response.helpers");
+const { getConfigValue, getFeatureFlagConfigValue } = require("../config/config-manager");
+const { ConfigKeys, FeatureFlagConfigKeys } = require("../config/enums");
 
-const visitsPerArticle = getRandomVisitsForEntities(articlesDb());
-const visitsPerComment = getRandomVisitsForEntities(commentsDb());
-const visitsPerUsers = getRandomVisitsForEntities(userDb());
-
-const customRoutes = (req, res, next) => {
+const statsRoutes = (req, res, next) => {
   try {
     const urlEnds = req.url.replace(/\/\/+/g, "/");
     if (req.method === "GET" && urlEnds.includes("api/stats/users")) {
@@ -46,12 +41,137 @@ const customRoutes = (req, res, next) => {
       const stats = parsePublishStats(fullDb(), "comments");
       res.status(HTTP_OK).json(stats);
       return;
-    } else if (req.method === "GET" && urlEnds.includes("api/random/article")) {
-      const article = randomDbEntry(articlesDb());
-      logDebug("Random article:", article);
-      res.status(HTTP_OK).json(article);
-      return;
-    } else if (req.method === "GET" && urlEnds.includes("api/logs")) {
+    }
+
+    if (res.headersSent !== true) {
+      next();
+    }
+  } catch (error) {
+    logError("Fatal error. Please contact administrator.", {
+      error,
+      stack: error.stack,
+    });
+    res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Fatal error. Please contact administrator."));
+  }
+};
+
+const visitsRoutes = (req, res, next) => {
+  try {
+    const urlEnds = req.url.replace(/\/\/+/g, "/");
+    if (req.method === "GET" && req.url.includes("/api/visits/")) {
+      let data = {};
+      let id = undefined;
+      let ids = undefined;
+      let visits = {};
+
+      if (req.url.includes("/articles")) {
+        data = getVisitsPerArticle();
+      } else if (req.url.includes("/comments")) {
+        data = getVisitsPerComment();
+      } else if (req.url.includes("/users")) {
+        data = getVisitsPerUsers();
+      }
+
+      if (req.url.includes("/articles/") || req.url.includes("/comments/") || req.url.includes("/users/")) {
+        id = getIdFromUrl(urlEnds);
+      }
+
+      if (req.url.includes("?ids=")) {
+        const idsRaw = urlEnds.split("?ids=").slice(-1)[0];
+        if (idsRaw === undefined) {
+          res.status(HTTP_NOT_FOUND).json({});
+          return;
+        }
+        ids = idsRaw.split(",");
+      }
+
+      logDebug("handleVisits: GET /api/visits/:", { id, ids });
+      if (id !== undefined) {
+        visits[id] = data[id];
+      } else if (ids !== undefined) {
+        ids.forEach((id) => {
+          visits[id] = getVisitsPerArticle()[id];
+        });
+      } else {
+        visits = data;
+      }
+
+      if (req.url.includes("/top/")) {
+        let numberOfTopVisitedArticles = getConfigValue(ConfigKeys.NUMBER_OF_TOP_VISITED_ARTICLES);
+
+        const maxValues = findMaxValues(visits, numberOfTopVisitedArticles);
+        logDebug("handleVisits: top 10 visited articles", { maxValues });
+        visits = maxValues;
+      }
+
+      res.status(HTTP_OK).json(visits);
+    }
+
+    if (res.headersSent !== true) {
+      next();
+    }
+  } catch (error) {
+    logError("Fatal error. Please contact administrator.", {
+      error,
+      stack: error.stack,
+    });
+    res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Fatal error. Please contact administrator."));
+  }
+};
+
+const queryRoutes = (req, res, next) => {
+  try {
+    const urlEnds = req.url.replace(/\/\/+/g, "/");
+    if (req.url.includes("/api/articles") && req.method === "GET") {
+      let articleId = getIdFromUrl(urlEnds);
+
+      if (!articleId?.includes("&_") && !articleId?.includes("?") && articleId !== undefined && articleId.length > 0) {
+        if (getVisitsPerArticle()[articleId] === undefined) {
+          getVisitsPerArticle()[articleId] = 0;
+        }
+
+        getVisitsPerArticle()[articleId]++;
+        logDebug(`[visits] articleId: "${articleId}" with visits:${getVisitsPerArticle()[articleId]}`);
+      }
+    } else if (req.url.includes("/api/comments") && req.method === "GET") {
+      let commentId = getIdFromUrl(urlEnds);
+
+      if (!commentId?.includes("&_") && !commentId?.includes("?") && commentId !== undefined && commentId.length > 0) {
+        if (getVisitsPerComment()[commentId] === undefined) {
+          getVisitsPerComment()[commentId] = 0;
+        }
+
+        getVisitsPerComment()[commentId]++;
+        logDebug(`[visits] commentId: "${commentId}" with visits:${getVisitsPerComment()[commentId]}`);
+      }
+    } else if (req.url.includes("/api/users") && req.method === "GET") {
+      let userId = getIdFromUrl(urlEnds);
+
+      if (!userId?.includes("&_") && !userId?.includes("?") && userId !== undefined && userId.length > 0) {
+        if (getVisitsPerUsers()[userId] === undefined) {
+          getVisitsPerUsers()[userId] = 0;
+        }
+
+        getVisitsPerUsers()[userId]++;
+        logDebug(`[visits] userId: "${userId}" with visits:${getVisitsPerUsers()[userId]}`);
+      }
+    }
+    if (res.headersSent !== true) {
+      next();
+    }
+  } catch (error) {
+    logError("Fatal error. Please contact administrator.", {
+      error,
+      stack: error.stack,
+    });
+    res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Fatal error. Please contact administrator."));
+  }
+};
+
+const customRoutes = (req, res, next) => {
+  try {
+    const urlEnds = req.url.replace(/\/\/+/g, "/");
+    if (req.method === "GET" && urlEnds.includes("api/logs")) {
       if (getConfigValue(ConfigKeys.PUBLIC_LOGS_ENABLED)) {
         res.status(HTTP_OK).json({ logs: getLogs() });
       } else {
@@ -74,48 +194,6 @@ const customRoutes = (req, res, next) => {
     } else if (req.method === "GET" && req.url.endsWith("/pluginstatuses")) {
       res.json(pluginStatuses);
       req.body = pluginStatuses;
-    } else if (req.method === "GET" && req.url.endsWith("/api/visits/articles")) {
-      res.json(visitsPerArticle);
-      req.body = visitsPerArticle;
-    } else if (req.method === "GET" && req.url.endsWith("/api/visits/comments")) {
-      res.json(visitsPerComment);
-      req.body = visitsPerComment;
-    } else if (req.method === "GET" && req.url.endsWith("/api/visits/users")) {
-      res.json(visitsPerUsers);
-      req.body = visitsPerUsers;
-    } else if (req.url.includes("/api/articles") && req.method === "GET") {
-      let articleId = getIdFromUrl(urlEnds);
-
-      if (!articleId?.includes("&_") && !articleId?.includes("?") && articleId !== undefined && articleId.length > 0) {
-        if (visitsPerArticle[articleId] === undefined) {
-          visitsPerArticle[articleId] = 0;
-        }
-
-        visitsPerArticle[articleId]++;
-        logDebug(`[visits] articleId: "${articleId}" with visits:${visitsPerArticle[articleId]}`);
-      }
-    } else if (req.url.includes("/api/comments") && req.method === "GET") {
-      let commentId = getIdFromUrl(urlEnds);
-
-      if (!commentId?.includes("&_") && !commentId?.includes("?") && commentId !== undefined && commentId.length > 0) {
-        if (visitsPerComment[commentId] === undefined) {
-          visitsPerComment[commentId] = 0;
-        }
-
-        visitsPerComment[commentId]++;
-        logDebug(`[visits] commentId: "${commentId}" with visits:${visitsPerComment[commentId]}`);
-      }
-    } else if (req.url.includes("/api/users") && req.method === "GET") {
-      let userId = getIdFromUrl(urlEnds);
-
-      if (!userId?.includes("&_") && !userId?.includes("?") && userId !== undefined && userId.length > 0) {
-        if (visitsPerUsers[userId] === undefined) {
-          visitsPerUsers[userId] = 0;
-        }
-
-        visitsPerUsers[userId]++;
-        logDebug(`[visits] userId: "${userId}" with visits:${visitsPerUsers[userId]}`);
-      }
     }
     if (res.headersSent !== true) {
       next();
@@ -129,4 +207,29 @@ const customRoutes = (req, res, next) => {
   }
 };
 
+const onlyBackendRoute = (req, res, next) => {
+  if (!getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_ONLY_BACKEND)) {
+    next();
+  } else if (!req.url.includes("swagger") && !req.url.includes("/tools/") && !req.url.includes("/api/")) {
+    return res.redirect("/tools/swagger.html");
+  } else {
+    next();
+  }
+};
+
+const homeRoute = (req, res) => {
+  // check if user is logged in, by checking cookie
+  let username = req.cookies.username;
+
+  // render the home page
+  return res.render("welcome", {
+    username,
+  });
+};
+
 exports.customRoutes = customRoutes;
+exports.statsRoutes = statsRoutes;
+exports.visitsRoutes = visitsRoutes;
+exports.queryRoutes = queryRoutes;
+exports.onlyBackendRoute = onlyBackendRoute;
+exports.homeRoute = homeRoute;

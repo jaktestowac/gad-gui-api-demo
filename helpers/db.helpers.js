@@ -3,7 +3,72 @@ const { getConfigValue } = require("../config/config-manager");
 const { ConfigKeys } = require("../config/enums");
 const path = require("path");
 const { checkFileName } = require("./file-upload.helper");
-const { logTrace } = require("./logger-api");
+const { logTrace, logDebug } = require("./logger-api");
+const { getRandomVisitsForEntities } = require("./random-data.generator");
+
+const visits = (function () {
+  let instance;
+
+  function createInstance() {
+    let visitsPerArticle = {};
+    let visitsPerComment = {};
+    let visitsPerUsers = {};
+
+    function getVisitsPerArticle() {
+      return visitsPerArticle;
+    }
+
+    function getVisitsPerComment() {
+      return visitsPerComment;
+    }
+
+    function getVisitsPerUsers() {
+      return visitsPerUsers;
+    }
+
+    function generateVisits() {
+      visitsPerArticle = getRandomVisitsForEntities(
+        articlesDb(),
+        getConfigValue(ConfigKeys.MIN_RANDOM_VISITS_FOR_ARTICLES),
+        getConfigValue(ConfigKeys.MAX_RANDOM_VISITS_FOR_ARTICLES)
+      );
+
+      visitsPerComment = getRandomVisitsForEntities(
+        commentsDb(),
+        getConfigValue(ConfigKeys.MIN_RANDOM_VISITS_FOR_COMMENTS),
+        getConfigValue(ConfigKeys.MAX_RANDOM_VISITS_FOR_COMMENTS)
+      );
+
+      visitsPerUsers = getRandomVisitsForEntities(
+        userDb(),
+        getConfigValue(ConfigKeys.MIN_RANDOM_VISITS_FOR_USERS),
+        getConfigValue(ConfigKeys.MAX_RANDOM_VISITS_FOR_USERS)
+      );
+
+      logDebug("visits: generateVisits() invoked");
+    }
+    return {
+      visitsPerArticle,
+      visitsPerComment,
+      visitsPerUsers,
+      generateVisits,
+      getVisitsPerArticle,
+      getVisitsPerComment,
+      getVisitsPerUsers,
+    };
+  }
+  return {
+    getInstance: function () {
+      if (!instance) {
+        instance = createInstance();
+      }
+      return instance;
+    },
+  };
+})();
+
+const visitsData = visits.getInstance();
+visitsData.generateVisits();
 
 function getDbPath(dbPath) {
   return path.resolve(__dirname, "..", dbPath);
@@ -71,6 +136,7 @@ function getUserAvatars() {
 
 function getImagesForArticles() {
   let files = fs.readdirSync(path.join(__dirname, getConfigValue(ConfigKeys.ARTICLE_IMAGE_PATH)));
+  files = files.filter((file) => file.toLowerCase().endsWith(".jpg") || file.toLowerCase().endsWith(".jpeg"));
   return files;
 }
 
@@ -129,6 +195,16 @@ function getUploadedFile(fileName) {
   return fileContent;
 }
 
+function countEntities(db) {
+  const entities = {};
+
+  Object.keys(db).forEach((key) => {
+    entities[key] = db[key].length;
+  });
+
+  return entities;
+}
+
 module.exports = {
   userDb,
   articlesDb,
@@ -149,4 +225,9 @@ module.exports = {
   getAndFilterUploadedFileList,
   articleLabelsDb,
   labelsDb,
+  countEntities,
+  getVisitsPerArticle: visitsData.getVisitsPerArticle,
+  getVisitsPerComment: visitsData.getVisitsPerComment,
+  getVisitsPerUsers: visitsData.getVisitsPerUsers,
+  visitsData,
 };

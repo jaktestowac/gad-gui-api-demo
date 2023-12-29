@@ -34,13 +34,22 @@ const configToModify = {
   sleepTimePerOneGetCommentMax: 50,
 
   numberOfTopLikedArticles: 10,
+  numberOfTopVisitedArticles: 10,
   logsLimit: 500,
+
+  maxRandomVisitsForArticles: 1100,
+  minRandomVisitsForArticles: 50,
+  maxRandomVisitsForComments: 50,
+  minRandomVisitsForComments: 10,
+  maxRandomVisitsForUsers: 250,
+  minRandomVisitsForUsers: 10,
 };
 
 const config = {
   authUserDb: "./db/db.json",
   dbPath: "./db/db.json",
   dbRestorePath: "./db/db-base.json",
+  dbBigRestorePath: "./db/db-base-big.json",
   dbEmptyRestorePath: "./db/db-empty.json",
   quizQuestionsPath: "./db/quiz-questions.json",
   quizDbPath: "./db/games-db.json",

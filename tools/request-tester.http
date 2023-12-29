@@ -47,3 +47,13 @@ GET http://localhost:3000/api/articles/download/uploaded.json
 
 ### Download article (404)
 GET http://localhost:3000/api/articles/download/xyz
+
+
+### All articles visits
+GET http://localhost:3000/api/visits/articles
+
+### One article visits
+GET http://localhost:3000/api/visits/articles/1
+
+### One article visits
+GET http://localhost:3000/api/visits/articles?ids=1,2,3

@@ -40,23 +40,23 @@ function uploadFile() {
           });
         } else {
           const container = document.querySelector("#infoContainer");
-          container.innerHTML = "JSON file upload failed.";
+          container.innerHTML = "<div class='error-msg'>JSON file upload failed.</div>";
           response.json().then((json) => {
             const container = document.querySelector("#infoContainer");
-            container.innerHTML = `JSON file upload failed. <br/>${json?.error?.message}`;
+            container.innerHTML = `<div class="error-msg">JSON file upload failed. <br/>${json?.error?.message}</div>`;
           });
         }
       })
       .catch((error) => {
         console.error("Error uploading JSON file:", error);
         const container = document.querySelector("#infoContainer");
-        container.innerHTML = "JSON file upload failed.";
+        container.innerHTML = '<div class="error-msg">JSON file upload failed.</div>';
       });
 
     fileInput.value = "";
   } else {
     const container = document.querySelector("#infoContainer");
-    container.innerHTML = "Please select a valid JSON file.";
+    container.innerHTML = '<div class="warning-msg">⚠️ Please select a valid JSON file.</div>';
   }
 }
 
@@ -80,7 +80,7 @@ loadIframe(filelist);
 checkIfFeatureEnabled("feature_files").then((isEnabled) => {
   if (!isEnabled) {
     const container = document.querySelector("#warning");
-    container.innerHTML = "<b>⚠️ This feature is not enabled ⚠️</b><br/><br/>";
+    container.innerHTML = "<div class='warning-msg'><b>⚠️ This feature is not enabled ⚠️</b><br/><br/></div>";
     const uploadBtn = document.querySelector("#uploadBtn2");
     uploadBtn.disabled = true;
   }
