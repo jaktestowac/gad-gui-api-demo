@@ -8,7 +8,7 @@ const path = require("path");
 const cookieparser = require("cookie-parser");
 const helmet = require("helmet");
 const express = require("express");
-const { getDbPath, countEntities } = require("./helpers/db.helpers");
+const { getDbPath, countEntities, visitsData } = require("./helpers/db.helpers");
 
 const server = jsonServer.create();
 const router = jsonServer.router(getDbPath(getConfigValue(ConfigKeys.DB_PATH)));
@@ -38,6 +38,7 @@ const clearDbRoutes = (req, res, next) => {
       router.db.setState(db);
       const entities = countEntities(db);
       logDebug("Restore DB was successful", entities);
+      visitsData.generateVisits();
       res.status(HTTP_CREATED).send({ message: "Database successfully restored", entities });
     } else if (req.method === "GET" && req.url.endsWith("/restoreBigDB")) {
       const db = JSON.parse(
@@ -46,6 +47,7 @@ const clearDbRoutes = (req, res, next) => {
       router.db.setState(db);
       const entities = countEntities(db);
       logDebug("Restore DB was successful", entities);
+      visitsData.generateVisits();
       res.status(HTTP_CREATED).send({ message: "Big Database successfully restored", entities });
     } else if (req.method === "GET" && req.url.endsWith("/restoreEmptyDB")) {
       const db = JSON.parse(
@@ -54,6 +56,7 @@ const clearDbRoutes = (req, res, next) => {
       router.db.setState(db);
       const entities = countEntities(db);
       logDebug("Restore empty DB was successful", entities);
+      visitsData.generateVisits();
       res.status(HTTP_CREATED).send({ message: "Empty Database successfully restored", entities });
     }
     if (res.headersSent !== true) {
