@@ -66,6 +66,10 @@
     {
       "name": "quiz",
       "description": "Sample Quiz"
+    },
+    {
+      "name": "healthcheck",
+      "description": "Healthcheck"
     }
   ],
   "paths": {
@@ -2201,6 +2205,42 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/about": {
+      "get": {
+        "tags": ["healthcheck"],
+        "summary": "Get information about application",
+        "responses": {
+          "200": {
+            "description": "Information about application received",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/ping": {
+      "get": {
+        "tags": ["healthcheck"],
+        "summary": "Get ping",
+        "responses": {
+          "200": {
+            "description": "Ping received",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/healthcheck": {
+      "get": {
+        "tags": ["healthcheck"],
+        "summary": "Get healthcheck",
+        "responses": {
+          "200": {
+            "description": "Healthcheck received",
+            "content": {}
           }
         }
       }

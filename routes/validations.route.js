@@ -9,7 +9,7 @@ const { logDebug, logError, logTrace } = require("../helpers/logger-api");
 const { getConfigValue, isBugEnabled } = require("../config/config-manager");
 const { ConfigKeys, BugConfigKeys } = require("../config/enums");
 
-const { validateEmail, verifyAccessToken } = require("../helpers/validation.helpers");
+const { verifyAccessToken } = require("../helpers/validation.helpers");
 const { searchForUserWithToken } = require("../helpers/db-operation.helpers");
 const { HTTP_UNAUTHORIZED, HTTP_INTERNAL_SERVER_ERROR, HTTP_BAD_REQUEST } = require("../helpers/response.helpers");
 const { handleHangman } = require("../endpoints/hangman-endpoint.helpers");
@@ -145,7 +145,7 @@ const validationsRoutes = (req, res, next) => {
     if (req.url.includes("/api/likes")) {
       handleLikes(req, res, isAdmin);
     }
-    
+
     if (req.url.includes("/api/labels") || req.url.includes("/api/article-labels")) {
       handleLabels(req, res);
     }
@@ -185,4 +185,3 @@ const validationsRoutes = (req, res, next) => {
 };
 
 exports.validationsRoutes = validationsRoutes;
-exports.validateEmail = validateEmail;
