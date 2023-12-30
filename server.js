@@ -1,5 +1,5 @@
 const jsonServer = require("./json-server");
-const { validations } = require("./routes/validations.route");
+const { validationsRoutes } = require("./routes/validations.route");
 const { getConfigValue, getFeatureFlagConfigValue } = require("./config/config-manager");
 const { ConfigKeys, FeatureFlagConfigKeys } = require("./config/enums");
 const fs = require("fs");
@@ -21,13 +21,19 @@ const {
   statsRoutes,
   visitsRoutes,
   queryRoutes,
-  onlyBackendRoute,
-  homeRoute,
+  onlyBackendRoutes,
+  homeRoutes,
 } = require("./routes/custom.route");
 const { fileUploadRoutes } = require("./routes/file-upload.route");
-const { loginRoutes, loginRoutesApi, processLoginRoute, welcomeRoute, logoutRoute } = require("./routes/login.route");
 const { renderResponse } = require("./renders/custom.render");
 const { healthCheckRoutes } = require("./routes/healthcheck.route");
+const {
+  loginApiRoutes,
+  processLoginRoutes,
+  loginRoutes,
+  welcomeRoutes,
+  logoutRoutes,
+} = require("./routes/login.route");
 const middlewares = jsonServer.defaults();
 
 const port = process.env.PORT || getConfigValue(ConfigKeys.DEFAULT_PORT);
@@ -72,7 +78,7 @@ const clearDbRoutes = (req, res, next) => {
   }
 };
 
-server.get(/.*/, onlyBackendRoute);
+server.get(/.*/, onlyBackendRoutes);
 
 server.use((req, res, next) => {
   if (getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_CACHE_CONTROL_NO_STORE)) {
@@ -94,26 +100,46 @@ server.set("view engine", "ejs");
 // render the ejs views
 server.set("views", path.join(__dirname, "public", "login"));
 
-server.get("/home", homeRoute);
+server.get("/home", homeRoutes);
 
 // Login to one of the users from ./users.json
-server.post("/api/login", loginRoutesApi);
-server.post("/process_login", processLoginRoute);
+server.post("/api/login", loginApiRoutes);
+server.post("/process_login", processLoginRoutes);
 server.get("/login", loginRoutes);
-server.get("/welcome", welcomeRoute);
-server.get("/logout", logoutRoute);
+server.get("/welcome", welcomeRoutes);
+server.get("/logout", logoutRoutes);
 
 server.use(clearDbRoutes);
 server.use(statsRoutes);
 server.use(visitsRoutes);
 server.use(queryRoutes);
 server.use(customRoutes);
-server.use(validations);
+server.use(validationsRoutes);
 server.use(fileUploadRoutes);
 server.use(healthCheckRoutes);
 server.use("/api", router);
 
 router.render = renderResponse;
+
+// render the ejs views
+server.use(function(req, res, next) {
+  res.status(404);
+
+  // respond with html page
+  if (req.accepts('html')) {
+    res.render('404', { url: req.url });
+    return;
+  }
+
+  // respond with json
+  if (req.accepts('json')) {
+    res.json({ error: 'Not found' });
+    return;
+  }
+
+  // default to plain-text. send()
+  res.type('txt').send('Not found');
+});
 
 var serverApp = server.listen(port, () => {
   logDebug(`Test Custom Data API listening on ${port}!`);

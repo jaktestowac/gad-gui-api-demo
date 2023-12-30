@@ -12,7 +12,6 @@ const healthCheckRoutes = (req, res, next) => {
       return;
     }
     if (req.method === "GET" && urlEnds.includes("api/ping")) {
-      configInstance.fullSelfCheck();
       res.status(HTTP_OK).json({ status: "pong" });
       return;
     }

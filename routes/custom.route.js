@@ -207,7 +207,7 @@ const customRoutes = (req, res, next) => {
   }
 };
 
-const onlyBackendRoute = (req, res, next) => {
+const onlyBackendRoutes = (req, res, next) => {
   if (!getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_ONLY_BACKEND)) {
     next();
   } else if (!req.url.includes("swagger") && !req.url.includes("/tools/") && !req.url.includes("/api/")) {
@@ -217,7 +217,7 @@ const onlyBackendRoute = (req, res, next) => {
   }
 };
 
-const homeRoute = (req, res) => {
+const homeRoutes = (req, res) => {
   // check if user is logged in, by checking cookie
   let username = req.cookies.username;
 
@@ -231,5 +231,5 @@ exports.customRoutes = customRoutes;
 exports.statsRoutes = statsRoutes;
 exports.visitsRoutes = visitsRoutes;
 exports.queryRoutes = queryRoutes;
-exports.onlyBackendRoute = onlyBackendRoute;
-exports.homeRoute = homeRoute;
+exports.onlyBackendRoutes = onlyBackendRoutes;
+exports.homeRoutes = homeRoutes;

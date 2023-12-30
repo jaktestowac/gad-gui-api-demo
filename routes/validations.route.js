@@ -21,7 +21,7 @@ const { handleComments } = require("../endpoints/comments-endpoint.helpers");
 const { handleLikes } = require("../endpoints/likes-endpoint.helpers");
 const { handleLabels } = require("../endpoints/labels-endpoint.helpers");
 
-const validations = (req, res, next) => {
+const validationsRoutes = (req, res, next) => {
   let isAdmin = false;
 
   try {
@@ -184,5 +184,5 @@ const validations = (req, res, next) => {
   }
 };
 
-exports.validations = validations;
+exports.validationsRoutes = validationsRoutes;
 exports.validateEmail = validateEmail;
