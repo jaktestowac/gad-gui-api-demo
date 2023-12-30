@@ -3,6 +3,6 @@
   "version": "v2.4.1",
   "description": "Simple application prepared and developed only for testing purposes",
   "repository": "https://github.com/jaktestowac/gad-gui-api-demo",
-  "keywords": ["json-server, node, REST API"],
+  "keywords": ["json-server", "node", "REST API", "UI", "JavaScript", "testing"],
   "author": "jaktestowac.pl"
 }
