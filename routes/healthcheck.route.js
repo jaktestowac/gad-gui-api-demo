@@ -17,7 +17,23 @@ const healthCheckRoutes = (req, res, next) => {
     }
     if (req.method === "GET" && urlEnds.includes("api/healthcheck")) {
       configInstance.fullSelfCheck();
-      res.status(HTTP_OK).json({ status: "ok" });
+
+      const memoryUsageMB = {};
+
+      // https://nodejs.org/api/process.html#process_process_memoryusage
+      const memoryUsageRaw = process.memoryUsage();
+      for (const [key, value] of Object.entries(memoryUsageRaw)) {
+        memoryUsageMB[key] = value / 1000000;
+      }
+
+      const healthcheck = {
+        uptime: process.uptime(),
+        processtime: process.hrtime(),
+        timestamp: Date.now(),
+        date: new Date(),
+        memoryUsageMB,
+      };
+      res.status(HTTP_OK).json({ status: "ok", healthcheck });
       return;
     }
 
