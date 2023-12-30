@@ -24,9 +24,10 @@ const {
   onlyBackendRoute,
   homeRoute,
 } = require("./routes/custom.route");
-const { fileUpload } = require("./routes/file-upload.route");
+const { fileUploadRoutes } = require("./routes/file-upload.route");
 const { loginRoutes, loginRoutesApi, processLoginRoute, welcomeRoute, logoutRoute } = require("./routes/login.route");
 const { renderResponse } = require("./renders/custom.render");
+const { healthCheckRoutes } = require("./routes/healthcheck.route");
 const middlewares = jsonServer.defaults();
 
 const port = process.env.PORT || getConfigValue(ConfigKeys.DEFAULT_PORT);
@@ -108,7 +109,8 @@ server.use(visitsRoutes);
 server.use(queryRoutes);
 server.use(customRoutes);
 server.use(validations);
-server.use(fileUpload);
+server.use(fileUploadRoutes);
+server.use(healthCheckRoutes);
 server.use("/api", router);
 
 router.render = renderResponse;
