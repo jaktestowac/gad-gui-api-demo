@@ -153,7 +153,7 @@ const validationsRoutes = (req, res, next) => {
     logTrace("Returning:", { statusCode: res.statusCode, headersSent: res.headersSent, urlEnds, method: req.method });
 
     if (res.headersSent !== true) {
-      logTrace("Processing with next()...");
+      logTrace("validationsRoutes:processing with next()...");
 
       if (req.method === "GET" && urlEnds.includes("api/comments")) {
         let limit = urlEnds.split("_limit=")[1];
@@ -177,6 +177,7 @@ const validationsRoutes = (req, res, next) => {
     }
   } catch (error) {
     logError("Fatal error. Please contact administrator.", {
+      route: "validationsRoutes",
       error,
       stack: error.stack,
     });

@@ -2233,13 +2233,37 @@
         }
       }
     },
-    "/healthcheck": {
+    "/health": {
       "get": {
         "tags": ["healthcheck"],
         "summary": "Get healthcheck",
         "responses": {
           "200": {
             "description": "Healthcheck received",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/health/memory": {
+      "get": {
+        "tags": ["healthcheck"],
+        "summary": "Get memory usage",
+        "responses": {
+          "200": {
+            "description": "Memory usage received",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/health/uptime": {
+      "get": {
+        "tags": ["healthcheck"],
+        "summary": "Get uptime",
+        "responses": {
+          "200": {
+            "description": "Uptime received",
             "content": {}
           }
         }

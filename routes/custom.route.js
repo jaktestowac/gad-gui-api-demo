@@ -48,6 +48,7 @@ const statsRoutes = (req, res, next) => {
     }
   } catch (error) {
     logError("Fatal error. Please contact administrator.", {
+      route: "statsRoutes",
       error,
       stack: error.stack,
     });
@@ -112,6 +113,7 @@ const visitsRoutes = (req, res, next) => {
     }
   } catch (error) {
     logError("Fatal error. Please contact administrator.", {
+      route: "visitsRoutes",
       error,
       stack: error.stack,
     });
@@ -161,6 +163,7 @@ const queryRoutes = (req, res, next) => {
     }
   } catch (error) {
     logError("Fatal error. Please contact administrator.", {
+      route: "queryRoutes",
       error,
       stack: error.stack,
     });
@@ -200,6 +203,7 @@ const customRoutes = (req, res, next) => {
     }
   } catch (error) {
     logError("Fatal error. Please contact administrator.", {
+      route: "customRoutes",
       error,
       stack: error.stack,
     });
