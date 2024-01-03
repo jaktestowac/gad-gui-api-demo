@@ -2268,6 +2268,18 @@
           }
         }
       }
+    },
+    "/health/db": {
+      "get": {
+        "tags": ["healthcheck"],
+        "summary": "Get db status",
+        "responses": {
+          "200": {
+            "description": "db status received",
+            "content": {}
+          }
+        }
+      }
     }
   },
   "components": {

@@ -88,6 +88,7 @@ server.use((req, res, next) => {
   next();
 });
 
+server.use(healthCheckRoutes);
 server.use(middlewares);
 server.use(jsonServer.bodyParser);
 
@@ -117,7 +118,6 @@ server.use(queryRoutes);
 server.use(customRoutes);
 server.use(validationsRoutes);
 server.use(fileUploadRoutes);
-server.use(healthCheckRoutes);
 server.use("/api", router);
 
 router.render = renderResponse;

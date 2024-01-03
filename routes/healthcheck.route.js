@@ -3,6 +3,7 @@ const { formatErrorResponse } = require("../helpers/helpers");
 const { logError, logTrace } = require("../helpers/logger-api");
 const { HTTP_OK, HTTP_INTERNAL_SERVER_ERROR } = require("../helpers/response.helpers");
 const app = require("../app.json");
+const { fullDb, countEntities } = require("../helpers/db.helpers");
 
 function getMemoryUsage() {
   const memoryUsageMB = {};
@@ -21,7 +22,7 @@ const healthCheckRoutes = (req, res, next) => {
     const urlEnds = req.url.replace(/\/\/+/g, "/");
     if (req.method === "GET" && urlEnds.endsWith("api/about")) {
       logTrace("healthCheck:api/about response:", app);
-      res.status(HTTP_OK).json({ app });
+      res.status(HTTP_OK).json({ ...app });
       return;
     }
     if (req.method === "GET" && urlEnds.endsWith("api/ping")) {
@@ -61,6 +62,14 @@ const healthCheckRoutes = (req, res, next) => {
 
       const response = { status: "ok", ...health };
       logTrace("healthCheck:api/health/uptime response:", response);
+      res.status(HTTP_OK).json(response);
+      return;
+    }
+    if (req.method === "GET" && urlEnds.endsWith("api/health/db")) {
+      const db = fullDb();
+
+      const response = { status: "ok", entities: countEntities(db) };
+      logTrace("healthCheck:api/health/db response:", response);
       res.status(HTTP_OK).json(response);
       return;
     }
