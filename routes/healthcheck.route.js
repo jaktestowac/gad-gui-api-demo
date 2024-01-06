@@ -17,6 +17,31 @@ function getMemoryUsage() {
   return memoryUsageMB;
 }
 
+function convertUptime(uptimeInSeconds) {
+  let totalMinutes = uptimeInSeconds / 60;
+  let totalHours = totalMinutes / 60;
+  let totalDays = totalHours / 24;
+
+  return {
+    days: totalDays,
+    hours: totalHours,
+    minutes: totalMinutes,
+    seconds: uptimeInSeconds,
+  };
+}
+
+function getUptime() {
+  const uptime = process.uptime();
+  const uptimeTotal = convertUptime(uptime);
+  const data = {
+    uptime,
+    uptimeTotal,
+    processtime: process.hrtime(),
+  };
+
+  return data;
+}
+
 const healthCheckRoutes = (req, res, next) => {
   try {
     const urlEnds = req.url.replace(/\/\/+/g, "/");
@@ -31,18 +56,22 @@ const healthCheckRoutes = (req, res, next) => {
       res.status(HTTP_OK).json(response);
       return;
     }
-    if (req.method === "GET" && urlEnds.endsWith("api/health")) {
+    if (req.method === "GET" && urlEnds.endsWith("api/health/check")) {
       configInstance.fullSelfCheck();
 
+      const response = { status: "ok" };
+      logTrace("healthCheck:api/health response:", response);
+      res.status(HTTP_OK).json(response);
+      return;
+    }
+    if (req.method === "GET" && urlEnds.endsWith("api/health")) {
       const memoryUsageMB = getMemoryUsage();
       const health = {
-        uptime: process.uptime(),
-        processtime: process.hrtime(),
         timestamp: Date.now(),
         date: new Date(),
         memoryUsageMB,
       };
-      const response = { status: "ok", health };
+      const response = { status: "ok", health: { ...getUptime(), ...health } };
       logTrace("healthCheck:api/health response:", response);
       res.status(HTTP_OK).json(response);
       return;
@@ -55,12 +84,9 @@ const healthCheckRoutes = (req, res, next) => {
       return;
     }
     if (req.method === "GET" && urlEnds.endsWith("api/health/uptime")) {
-      const health = {
-        uptime: process.uptime(),
-        processtime: process.hrtime(),
-      };
+      const uptime = getUptime();
 
-      const response = { status: "ok", ...health };
+      const response = { status: "ok", ...uptime };
       logTrace("healthCheck:api/health/uptime response:", response);
       res.status(HTTP_OK).json(response);
       return;
