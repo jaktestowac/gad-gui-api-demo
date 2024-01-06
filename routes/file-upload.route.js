@@ -26,7 +26,7 @@ const uploadDir = path.join(__dirname, "..", "uploads");
 const maxFiles = 5;
 let currentFilePerUser = {};
 
-const fileUpload = (req, res, next) => {
+const fileUploadRoutes = (req, res, next) => {
   const isFeatureEnabled = getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_FILES);
   if (isFeatureEnabled) {
     try {
@@ -184,4 +184,4 @@ const fileUpload = (req, res, next) => {
   }
 };
 
-exports.fileUpload = fileUpload;
+exports.fileUploadRoutes = fileUploadRoutes;

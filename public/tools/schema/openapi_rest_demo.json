@@ -66,6 +66,10 @@
     {
       "name": "quiz",
       "description": "Sample Quiz"
+    },
+    {
+      "name": "healthcheck",
+      "description": "Healthcheck"
     }
   ],
   "paths": {
@@ -2201,6 +2205,78 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/about": {
+      "get": {
+        "tags": ["healthcheck"],
+        "summary": "Get information about application",
+        "responses": {
+          "200": {
+            "description": "Information about application received",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/ping": {
+      "get": {
+        "tags": ["healthcheck"],
+        "summary": "Get ping",
+        "responses": {
+          "200": {
+            "description": "Ping received",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": ["healthcheck"],
+        "summary": "Get healthcheck",
+        "responses": {
+          "200": {
+            "description": "Healthcheck received",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/health/memory": {
+      "get": {
+        "tags": ["healthcheck"],
+        "summary": "Get memory usage",
+        "responses": {
+          "200": {
+            "description": "Memory usage received",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/health/uptime": {
+      "get": {
+        "tags": ["healthcheck"],
+        "summary": "Get uptime",
+        "responses": {
+          "200": {
+            "description": "Uptime received",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/health/db": {
+      "get": {
+        "tags": ["healthcheck"],
+        "summary": "Get db status",
+        "responses": {
+          "200": {
+            "description": "db status received",
+            "content": {}
           }
         }
       }

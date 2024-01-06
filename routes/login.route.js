@@ -6,7 +6,7 @@ const { isAuthenticated, createToken, prepareCookieMaxAge } = require("../helper
 const { logTrace, logDebug } = require("../helpers/logger-api");
 const { HTTP_UNAUTHORIZED, HTTP_OK } = require("../helpers/response.helpers");
 
-const loginRoutesApi = (req, res) => {
+const loginApiRoutes = (req, res) => {
   const { email, password, keepSignIn } = req.body;
   logTrace("login: endpoint called:", { email });
   logTrace("login: endpoint called:", { email, password, keepSignIn });
@@ -49,7 +49,7 @@ const loginRoutes = (req, res) => {
   }
 };
 
-const processLoginRoute = (req, res) => {
+const processLoginRoutes = (req, res) => {
   let { username, password, keepSignIn } = req.body;
   logDebug("process_login: { email, password, keepSignIn }:", { username, password, keepSignIn });
   let isAdmin = isAnyAdminUser(username, password);
@@ -108,7 +108,7 @@ const processLoginRoute = (req, res) => {
   return res.redirect("/welcome");
 };
 
-const welcomeRoute = (req, res) => {
+const welcomeRoutes = (req, res) => {
   // get the username
   let username = req.cookies.username;
   if (username === undefined) {
@@ -122,7 +122,7 @@ const welcomeRoute = (req, res) => {
   });
 };
 
-const logoutRoute = (req, res) => {
+const logoutRoutes = (req, res) => {
   // clear the cookie
   res.clearCookie("firstname");
   res.clearCookie("username");
@@ -135,8 +135,8 @@ const logoutRoute = (req, res) => {
   return res.redirect("/login");
 };
 
-exports.loginRoutesApi = loginRoutesApi;
+exports.processLoginRoutes = processLoginRoutes;
+exports.welcomeRoutes = welcomeRoutes;
+exports.loginApiRoutes = loginApiRoutes;
 exports.loginRoutes = loginRoutes;
-exports.logoutRoute = logoutRoute;
-exports.processLoginRoute = processLoginRoute;
-exports.welcomeRoute = welcomeRoute;
+exports.logoutRoutes = logoutRoutes;

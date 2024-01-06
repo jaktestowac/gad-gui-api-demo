@@ -9,7 +9,7 @@ const { logDebug, logError, logTrace } = require("../helpers/logger-api");
 const { getConfigValue, isBugEnabled } = require("../config/config-manager");
 const { ConfigKeys, BugConfigKeys } = require("../config/enums");
 
-const { validateEmail, verifyAccessToken } = require("../helpers/validation.helpers");
+const { verifyAccessToken } = require("../helpers/validation.helpers");
 const { searchForUserWithToken } = require("../helpers/db-operation.helpers");
 const { HTTP_UNAUTHORIZED, HTTP_INTERNAL_SERVER_ERROR, HTTP_BAD_REQUEST } = require("../helpers/response.helpers");
 const { handleHangman } = require("../endpoints/hangman-endpoint.helpers");
@@ -21,7 +21,7 @@ const { handleComments } = require("../endpoints/comments-endpoint.helpers");
 const { handleLikes } = require("../endpoints/likes-endpoint.helpers");
 const { handleLabels } = require("../endpoints/labels-endpoint.helpers");
 
-const validations = (req, res, next) => {
+const validationsRoutes = (req, res, next) => {
   let isAdmin = false;
 
   try {
@@ -145,7 +145,7 @@ const validations = (req, res, next) => {
     if (req.url.includes("/api/likes")) {
       handleLikes(req, res, isAdmin);
     }
-    
+
     if (req.url.includes("/api/labels") || req.url.includes("/api/article-labels")) {
       handleLabels(req, res);
     }
@@ -153,7 +153,7 @@ const validations = (req, res, next) => {
     logTrace("Returning:", { statusCode: res.statusCode, headersSent: res.headersSent, urlEnds, method: req.method });
 
     if (res.headersSent !== true) {
-      logTrace("Processing with next()...");
+      logTrace("validationsRoutes:processing with next()...");
 
       if (req.method === "GET" && urlEnds.includes("api/comments")) {
         let limit = urlEnds.split("_limit=")[1];
@@ -177,6 +177,7 @@ const validations = (req, res, next) => {
     }
   } catch (error) {
     logError("Fatal error. Please contact administrator.", {
+      route: "validationsRoutes",
       error,
       stack: error.stack,
     });
@@ -184,5 +185,4 @@ const validations = (req, res, next) => {
   }
 };
 
-exports.validations = validations;
-exports.validateEmail = validateEmail;
+exports.validationsRoutes = validationsRoutes;
