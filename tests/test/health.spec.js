@@ -33,6 +33,14 @@ describe("Endpoints /health, /about and /ping", async () => {
     expect(response.status).to.equal(200);
   });
 
+  it("GET /health/run", async () => {
+    // Act:
+    const response = await request.get(baseUrl + "/health/check");
+
+    // Assert:
+    expect(response.status).to.equal(200);
+  });
+
   it("GET /health", async () => {
     // Act:
     const response = await request.get(baseUrl + "/health");
