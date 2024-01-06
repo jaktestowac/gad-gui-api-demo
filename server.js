@@ -14,7 +14,7 @@ const server = jsonServer.create();
 const router = jsonServer.router(getDbPath(getConfigValue(ConfigKeys.DB_PATH)));
 
 const { formatErrorResponse } = require("./helpers/helpers");
-const { logDebug, logError } = require("./helpers/logger-api");
+const { logDebug, logError, logTrace } = require("./helpers/logger-api");
 const { HTTP_INTERNAL_SERVER_ERROR, HTTP_CREATED } = require("./helpers/response.helpers");
 const {
   customRoutes,
@@ -124,6 +124,8 @@ router.render = renderResponse;
 
 // render the ejs views
 server.use(function (req, res, next) {
+  logTrace("Hit 404:", { url: req.url });
+
   res.status(404);
 
   // respond with html page
