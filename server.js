@@ -122,7 +122,6 @@ server.use("/api", router);
 
 router.render = renderResponse;
 
-// render the ejs views
 server.use(function (req, res, next) {
   logTrace("Hit 404:", { url: req.url });
 

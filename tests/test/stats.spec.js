@@ -121,6 +121,13 @@ describe("Endpoint /stats", () => {
         expect(response.body.daily).to.not.be.undefined;
       });
     });
+    it("GET /api calls", async () => {
+      // Act:
+      const response = await request.get(`${baseUrl}/api`);
+
+      // Assert:
+      expect(response.status).to.equal(200);
+    });
   });
 
   describe("With auth", () => {
@@ -237,6 +244,13 @@ describe("Endpoint /stats", () => {
         expect(response.body.monthly).to.not.be.undefined;
         expect(response.body.daily).to.not.be.undefined;
       });
+    });
+    it("GET /api calls", async () => {
+      // Act:
+      const response = await request.get(`${baseUrl}/api`).set(headers);
+
+      // Assert:
+      expect(response.status).to.equal(200);
     });
   });
 });

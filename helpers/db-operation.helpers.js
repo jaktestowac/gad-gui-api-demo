@@ -88,6 +88,18 @@ function searchForArticleLabels(articleId) {
   return foundLabels;
 }
 
+function filterArticlesByLabel(articleIds, labelId) {
+  const foundArticlesIds = articleIds.find((articleId) => {
+    const foundLabels = articleLabelsDb().find((label) => {
+      const ids = label["label_ids"].map((id) => id.toString());
+
+      return label["article_id"]?.toString() === articleId?.toString() && ids.includes(labelId.toString());
+    });
+    return foundLabels.length > 0;
+  });
+  return foundArticlesIds;
+}
+
 function countLikesForAllArticles() {
   const foundLikes = {};
   likesDb().filter((like) => {
@@ -203,4 +215,5 @@ module.exports = {
   searchForLike,
   searchForArticleLabels,
   searchForUserWithOnlyToken,
+  filterArticlesByLabel,
 };
