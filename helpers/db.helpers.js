@@ -13,6 +13,7 @@ const visits = (function () {
     let visitsPerArticle = {};
     let visitsPerComment = {};
     let visitsPerUsers = {};
+    let apiCalls = {};
 
     function getVisitsPerArticle() {
       return visitsPerArticle;
@@ -24,6 +25,10 @@ const visits = (function () {
 
     function getVisitsPerUsers() {
       return visitsPerUsers;
+    }
+
+    function getApiCalls() {
+      return apiCalls;
     }
 
     function generateVisits() {
@@ -55,6 +60,7 @@ const visits = (function () {
       getVisitsPerArticle,
       getVisitsPerComment,
       getVisitsPerUsers,
+      getApiCalls,
     };
   }
   return {
@@ -229,5 +235,6 @@ module.exports = {
   getVisitsPerArticle: visitsData.getVisitsPerArticle,
   getVisitsPerComment: visitsData.getVisitsPerComment,
   getVisitsPerUsers: visitsData.getVisitsPerUsers,
+  getApiCalls: visitsData.getApiCalls,
   visitsData,
 };

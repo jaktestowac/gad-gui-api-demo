@@ -2040,6 +2040,19 @@
         }
       }
     },
+    "/stats/api": {
+      "get": {
+        "tags": ["stats"],
+        "summary": "Get api calls",
+        "operationId": "getApiCalls",
+        "responses": {
+          "200": {
+            "description": "Api Calls received",
+            "content": {}
+          }
+        }
+      }
+    },
     "/random/article": {
       "get": {
         "tags": ["random"],
