@@ -561,7 +561,7 @@ h3 {
 .whacker-container {
   display: flex;
   flex-wrap: wrap;
-  margin: 50px auto;
+  margin: 20px auto;
 }
 .whacker-hole {
   width: 90px;
