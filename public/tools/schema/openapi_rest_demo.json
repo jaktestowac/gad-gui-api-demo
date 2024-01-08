@@ -158,6 +158,10 @@
             "description": "Bad request - malformed JSON",
             "content": {}
           },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
           "422": {
             "description": "Invalid article supplied",
             "content": {}
@@ -270,6 +274,10 @@
             "description": "Bad request - malformed JSON",
             "content": {}
           },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
           "404": {
             "description": "Article not found",
             "content": {}
@@ -334,6 +342,10 @@
             "description": "Bad request - malformed JSON",
             "content": {}
           },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
           "404": {
             "description": "Article not found",
             "content": {}
@@ -374,6 +386,10 @@
         "responses": {
           "200": {
             "description": "Article deleted",
+            "content": {}
+          },
+          "400": {
+            "description": "Bad Request",
             "content": {}
           },
           "401": {
@@ -588,6 +604,10 @@
             "description": "Bad request - malformed JSON",
             "content": {}
           },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
           "404": {
             "description": "User not found",
             "content": {}
@@ -652,6 +672,10 @@
             "description": "Bad request - malformed JSON",
             "content": {}
           },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
           "404": {
             "description": "User not found",
             "content": {}
@@ -692,6 +716,10 @@
         "responses": {
           "200": {
             "description": "User deleted",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
             "content": {}
           },
           "404": {
@@ -786,6 +814,10 @@
             "description": "Bad request - malformed JSON",
             "content": {}
           },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
           "422": {
             "description": "Invalid comment supplied",
             "content": {}
@@ -826,6 +858,10 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
           }
         }
       },
@@ -919,6 +955,10 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
           }
         }
       }
@@ -956,6 +996,10 @@
           },
           "400": {
             "description": "Bad request - malformed JSON",
+            "content": {}
+          },
+          "404": {
+            "description": "Not found",
             "content": {}
           },
           "422": {
@@ -998,6 +1042,10 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
           }
         }
       }
@@ -1017,6 +1065,10 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
           }
         }
       }
@@ -1054,6 +1106,10 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
           }
         }
       }
@@ -1063,6 +1119,40 @@
         "tags": ["likes"],
         "summary": "Get myLikes",
         "operationId": "getMyLikes",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "ID of article",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          {
+            "name": "userid",
+            "in": "header",
+            "description": "ID of user",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "successful operation",
@@ -1073,6 +1163,10 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
           }
         }
       }
@@ -1101,6 +1195,10 @@
           },
           "401": {
             "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "Not found",
             "content": {}
           }
         }
@@ -1148,6 +1246,10 @@
           "401": {
             "description": "Unauthorized",
             "content": {}
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
           }
         }
       }
@@ -1167,6 +1269,10 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
           }
         }
       }
@@ -1323,6 +1429,10 @@
             "description": "Bad request - malformed JSON",
             "content": {}
           },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
           "404": {
             "description": "Comment not found",
             "content": {}
@@ -1387,6 +1497,10 @@
             "description": "Bad request - malformed JSON",
             "content": {}
           },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
           "404": {
             "description": "Comment not found",
             "content": {}
@@ -1427,6 +1541,10 @@
         "responses": {
           "200": {
             "description": "Comment deleted",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
             "content": {}
           },
           "404": {
@@ -2062,6 +2180,10 @@
           "200": {
             "description": "Article received",
             "content": {}
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
           }
         }
       }
@@ -2199,6 +2321,10 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
           }
         }
       }
@@ -2396,7 +2522,14 @@
         "required": ["user_id", "article_id", "body", "date"],
         "properties": {
           "id": {
-            "type": "string"
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ]
           },
           "article_id": {
             "oneOf": [
@@ -2763,6 +2896,15 @@
             "type": "object",
             "additionalProperties": {},
             "example": { "email@test.test": 1 }
+          }
+        }
+      },
+      "MyLikes": {
+        "type": "object",
+        "properties": {
+          "likes": {
+            "type": "object",
+            "example": { "1": true }
           }
         }
       },
