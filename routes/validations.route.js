@@ -134,7 +134,7 @@ const validationsRoutes = (req, res, next) => {
       handleUsers(req, res);
     }
 
-    if (req.url.includes("/api/articles")) {
+    if (req.url.includes("/api/articles") || req.url.includes("/api/random/article")) {
       handleArticles(req, res, isAdmin);
     }
 

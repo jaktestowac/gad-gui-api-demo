@@ -1,4 +1,11 @@
-const { baseArticlesUrl, request, faker, expect, baseFilesArticlesUrl } = require("../config.js");
+const {
+  baseArticlesUrl,
+  request,
+  faker,
+  expect,
+  baseFilesArticlesUrl,
+  baseRandomArticlesUrl,
+} = require("../config.js");
 const {
   authUser,
   generateValidArticleData,
@@ -83,6 +90,10 @@ describe("Endpoint /articles", () => {
 
       it("HEAD /articles", () => {
         return request.head(`${baseUrl}/1`).expect(200);
+      });
+
+      it("GET random/articles", () => {
+        return request.get(baseRandomArticlesUrl).expect(200);
       });
     });
   });

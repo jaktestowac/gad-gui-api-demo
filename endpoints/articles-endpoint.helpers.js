@@ -1,19 +1,15 @@
 const { isBugDisabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
 const { searchForUserWithToken, searchForArticle, searchForArticles } = require("../helpers/db-operation.helpers");
+const { randomDbEntry, articlesDb } = require("../helpers/db.helpers");
 const {
   formatInvalidTokenErrorResponse,
   getIdFromUrl,
   formatMissingFieldErrorResponse,
   formatInvalidFieldErrorResponse,
 } = require("../helpers/helpers");
-const { logTrace, logWarn } = require("../helpers/logger-api");
-const {
-  HTTP_UNAUTHORIZED,
-  HTTP_UNPROCESSABLE_ENTITY,
-  HTTP_NOT_FOUND,
-  HTTP_OK,
-} = require("../helpers/response.helpers");
+const { logTrace, logWarn, logDebug } = require("../helpers/logger-api");
+const { HTTP_UNAUTHORIZED, HTTP_UNPROCESSABLE_ENTITY } = require("../helpers/response.helpers");
 const {
   verifyAccessToken,
   are_mandatory_fields_present,
@@ -34,6 +30,20 @@ function handleArticles(req, res, isAdmin) {
       res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
       return;
     }
+
+    return;
+  }
+
+  if (req.method === "GET" && urlEnds?.includes("/api/random/article")) {
+    const randomArticle = randomDbEntry(articlesDb());
+
+    req.method = "GET";
+    req.url = `/api/articles/${randomArticle.id}`;
+    logTrace("handleArticles:GET -> GET:", {
+      method: req.method,
+      url: req.url,
+      body: req.body,
+    });
 
     return;
   }

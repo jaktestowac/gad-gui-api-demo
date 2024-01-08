@@ -5,6 +5,7 @@ const { faker } = require("@faker-js/faker");
 
 const baseApiUrl = "/api";
 const baseArticlesUrl = "/api/articles";
+const baseRandomArticlesUrl = "/api/random/articles";
 const baseFilesArticlesUrl = "/api/files/articles";
 const baseUsersUrl = "/api/users";
 const baseHangmanUrl = "/api/hangman";
@@ -44,4 +45,5 @@ module.exports = {
   baseFilesArticlesUrl,
   baseLabelsUrl,
   baseArticleLabelsUrl,
+  baseRandomArticlesUrl,
 };
