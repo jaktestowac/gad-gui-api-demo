@@ -1,9 +1,11 @@
 let score = 0;
 let timer;
+let countDownTimer;
 let gameDuration = 30; // in seconds
 let timeLeft = 0; // in seconds
 const bugSymbol = "🐛";
-const numHoles = 9;
+let numHoles = 9;
+let speed = 1000;
 
 function createHoles() {
   const container = document.getElementById("holeContainer");
@@ -14,13 +16,24 @@ function createHoles() {
     hole.className = "whacker-hole";
     container.appendChild(hole);
   }
+  const holes = document.querySelectorAll(".whacker-hole");
+  holes.forEach((hole) => hole.addEventListener("click", whackBug));
 }
 
 function startGame() {
   document.getElementById("startBtn").disabled = true;
+  document.getElementById("panel").disabled = true;
+  numHoles = document.getElementById("numHoles").value;
+  speed = document.getElementById("speed").value;
   resetGame();
-  timer = setInterval(popUpBug, 1000);
+  timer = setInterval(popUpBug, speed);
+  countDownTimer = setInterval(countDown, 1000);
   setTimeout(endGame, gameDuration * 1000);
+}
+
+function countDown() {
+  timeLeft--;
+  document.getElementById("time-left").textContent = timeLeft;
 }
 
 function popUpBug() {
@@ -34,10 +47,8 @@ function popUpBug() {
       if (hole.textContent === bugSymbol) {
         hole.textContent = "";
       }
-    }, 800);
+    }, speed * 0.75);
   }
-  timeLeft--;
-  document.getElementById("time-left").textContent = timeLeft;
 }
 
 function whackBug(event) {
@@ -54,13 +65,16 @@ function endGame() {
   timeLeft = 0;
   document.getElementById("time-left").textContent = timeLeft;
   clearInterval(timer);
+  clearInterval(countDownTimer);
   document.getElementById("final-score").textContent = `Game over! Your score is ${score}.`;
   document.getElementById("startBtn").disabled = false;
+  document.getElementById("panel").disabled = false;
 }
 
 function resetGame() {
   timeLeft = gameDuration;
   score = 0;
+  createHoles();
   document.getElementById("score").textContent = score;
   document.getElementById("final-score").textContent = "";
   document.getElementById("time-left").textContent = timeLeft;
@@ -70,9 +84,6 @@ function resetGame() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const holes = document.querySelectorAll(".whacker-hole");
-  holes.forEach((hole) => hole.addEventListener("click", whackBug));
-
   document.getElementById("startBtn").addEventListener("click", startGame);
 });
 

@@ -563,6 +563,7 @@ h3 {
   flex-wrap: wrap;
   margin: 20px auto;
 }
+
 .whacker-hole {
   width: 90px;
   height: 90px;
@@ -570,6 +571,6 @@ h3 {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 24px;
+  font-size: 64px;
   cursor: pointer;
 }

@@ -38,6 +38,23 @@
     </div>
     <div align="center">
       <div>
+        <div align="center" id="panel" style="display: flex; align-items: center; justify-content: center">
+          <label for="numHoles" style="margin: 5px 5px 5px 5px">Grid:</label>
+          <select id="numHoles" style="display: inline-block; width: 50px; margin: 5px 5px 5px 5px">
+            <option id="opt1" selected="" value="4">2x2</option>
+            <option id="opt2" selected="" value="9">3x3</option>
+            <option id="opt3" value="16">4x4</option>
+            <option id="opt4" value="25">5x5</option>
+          </select>
+          <label for="speed">Speed:</label>
+          <select id="speed" style="display: inline-block; width: 75px; margin: 5px 5px 5px 5px">
+            <option selected="" value="1250">Slow</option>
+            <option selected="" value="1000">Medium</option>
+            <option value="750">Fast</option>
+            <option value="500">Very Fast</option>
+            <option value="300">Insane!</option>
+          </select>
+        </div>
         <button id="startBtn" class="button-primary">Start Game</button>
         <p>Time left: <span id="time-left">0</span></p>
         <p>Score: <span id="score">0</span></p>
