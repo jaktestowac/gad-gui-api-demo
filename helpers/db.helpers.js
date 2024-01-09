@@ -85,6 +85,11 @@ function fullDb() {
   return db;
 }
 
+function gamesDb() {
+  const db = JSON.parse(fs.readFileSync(getDbPath(getConfigValue(ConfigKeys.GAMES_DB)), "UTF-8"));
+  return db["games"];
+}
+
 function userDb() {
   return fullDb()["users"];
 }
@@ -105,6 +110,10 @@ function labelsDb() {
   return fullDb()["labels"];
 }
 
+function scoresDb() {
+  return fullDb()["scores"];
+}
+
 function articleLabelsDb() {
   return fullDb()["article-labels"];
 }
@@ -112,17 +121,6 @@ function articleLabelsDb() {
 function quizQuestionsDb() {
   const db = JSON.parse(fs.readFileSync(getDbPath(getConfigValue(ConfigKeys.QUIZ_QUESTIONS_PATH), "UTF-8")));
   return db;
-}
-
-function getQuizHighScoresDb() {
-  const db = JSON.parse(fs.readFileSync(getDbPath(getConfigValue(ConfigKeys.QUIZ_DB_PATH), "UTF-8")));
-  return db;
-}
-
-function saveQuizHighScoresDb(data, gameId) {
-  const db = getQuizHighScoresDb();
-  db["scores"][gameId] = data;
-  fs.writeFileSync(getDbPath(getConfigValue(ConfigKeys.QUIZ_DB_PATH)), JSON.stringify(db, null, 4));
 }
 
 function hangmanDb() {
@@ -221,8 +219,8 @@ module.exports = {
   fullDb,
   randomDbEntry,
   getDbPath,
-  getQuizHighScoresDb,
-  saveQuizHighScoresDb,
+  gamesDb,
+  scoresDb,
   getUserAvatars,
   getImagesForArticles,
   getUploadedFileList,

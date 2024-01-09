@@ -7761,5 +7761,6 @@
     { "id": 67, "name": "Cybersecurity", "user_id": 2 },
     { "id": 68, "name": "AI", "user_id": 2 },
     { "id": 69, "name": "End-to-end", "user_id": 11 }
-  ]
+  ],
+  "scores": []
 }

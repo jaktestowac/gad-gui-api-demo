@@ -1,13 +1,4 @@
-const {
-  userDb,
-  articlesDb,
-  commentsDb,
-  getQuizHighScoresDb,
-  saveQuizHighScoresDb,
-  likesDb,
-  labelsDb,
-  articleLabelsDb,
-} = require("./db.helpers");
+const { userDb, articlesDb, commentsDb, likesDb, articleLabelsDb, gamesDb, scoresDb } = require("./db.helpers");
 
 function searchForUserWithToken(userId, verifyTokenResult) {
   const foundUser = userDb().find((user) => {
@@ -156,7 +147,7 @@ function countLikesForComment(commentId) {
 }
 
 function getGameByName(name) {
-  const foundGame = getQuizHighScoresDb()["games"].find((game) => {
+  const foundGame = gamesDb().find((game) => {
     if (game["name"]?.toString().toLowerCase() === name.toLowerCase()) {
       return game;
     }
@@ -169,32 +160,26 @@ function getGameIdByName(name) {
   return foundGame["id"];
 }
 
-function getGameHighScoresByGameName(name) {
-  const quizHighScores = getQuizHighScoresDb();
-  const gameId = getGameIdByName(name);
-
-  let scores = quizHighScores["scores"][gameId];
-
-  if (scores == undefined) {
-    scores = {};
-  }
-
-  return scores;
+function getUserScore(userId, gameId) {
+  const foundScore = scoresDb().find(
+    (score) => score.game_id.toString() === gameId.toString() && score.user_id.toString() === userId.toString()
+  );
+  return foundScore;
 }
 
-function saveGameHighScores(gameName, userEmail, score) {
-  const quizHighScores = getGameHighScoresByGameName(gameName);
-  const gameId = getGameIdByName(gameName);
-  const foundUser = searchForUserWithEmail(userEmail);
-  const userId = foundUser.id;
+// function saveGameHighScores(gameName, userEmail, score) {
+//   const quizHighScores = getGameHighScoresByGameName(gameName);
+//   const gameId = getGameIdByName(gameName);
+//   const foundUser = searchForUserWithEmail(userEmail);
+//   const userId = foundUser.id;
 
-  if (quizHighScores[userId] === undefined || score >= quizHighScores[userId]) {
-    quizHighScores[userId] = score;
-  }
+//   if (quizHighScores[userId] === undefined || score >= quizHighScores[userId]) {
+//     quizHighScores[userId] = score;
+//   }
 
-  saveQuizHighScoresDb(quizHighScores, gameId);
-  return quizHighScores[userId];
-}
+//   saveQuizHighScoresDb(quizHighScores, gameId);
+//   return quizHighScores[userId];
+// }
 
 module.exports = {
   searchForUserWithToken,
@@ -205,8 +190,7 @@ module.exports = {
   searchForArticles,
   searchForComment,
   getGameIdByName,
-  getGameHighScoresByGameName,
-  saveGameHighScores,
+  getUserScore,
   countLikesForArticle,
   countLikesForComment,
   checkIfAlreadyLiked,

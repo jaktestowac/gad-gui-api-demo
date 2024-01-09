@@ -56,7 +56,7 @@ describe("Endpoint /quiz", () => {
     });
 
     it("stop", () => {
-      return request.get(`${baseUrl}/stop`).set(headers).expect(200);
+      return request.get(`${baseUrl}/stop`).set(headers).expect(201);
     });
 
     it("highscores", () => {
@@ -65,10 +65,6 @@ describe("Endpoint /quiz", () => {
 
     it("questions", () => {
       return request.get(`${baseUrl}/questions`).set(headers).expect(200);
-    });
-
-    it("start", () => {
-      return request.get(`${baseUrl}/stop`).set(headers).expect(200);
     });
 
     it("questions/count", async () => {

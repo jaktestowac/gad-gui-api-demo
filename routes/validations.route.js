@@ -20,6 +20,8 @@ const { handleArticles } = require("../endpoints/articles-endpoint.helpers");
 const { handleComments } = require("../endpoints/comments-endpoint.helpers");
 const { handleLikes } = require("../endpoints/likes-endpoint.helpers");
 const { handleLabels } = require("../endpoints/labels-endpoint.helpers");
+const { handleGames } = require("../endpoints/games-endpoint.helpers");
+const { handleScores } = require("../endpoints/scores-endpoint.helpers");
 
 const validationsRoutes = (req, res, next) => {
   let isAdmin = false;
@@ -83,9 +85,16 @@ const validationsRoutes = (req, res, next) => {
       handleHangman(req, res);
       return;
     }
+    if (req.url.includes("/api/games")) {
+      handleGames(req, res);
+      return;
+    }
+    if (req.url.includes("/api/scores")) {
+      handleScores(req, res);
+      return;
+    }
     if (req.url.includes("/api/quiz")) {
       handleQuiz(req, res);
-      return;
     }
 
     if (

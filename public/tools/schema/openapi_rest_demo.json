@@ -2202,6 +2202,10 @@
           "200": {
             "description": "Quiz started"
           }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "content": {}
         }
       }
     },
@@ -2225,6 +2229,20 @@
                 }
               }
             }
+          },
+          "201": {
+            "description": "Quiz stopped with new high score",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuizHighScore"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
           }
         }
       }
@@ -2268,6 +2286,10 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
           }
         }
       }
@@ -2287,6 +2309,10 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
           }
         }
       }

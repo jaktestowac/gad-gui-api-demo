@@ -1,3 +1,4 @@
+const { getGameIdByName, getUserScore, searchForUserWithEmail } = require("../helpers/db-operation.helpers");
 const { formatErrorResponse } = require("../helpers/helpers");
 const { logDebug, logTrace } = require("../helpers/logger-api");
 const { countAvailableQuestions, getOnlyQuestions, checkAnswer } = require("../helpers/quiz.helpers");
@@ -9,6 +10,7 @@ const quizHighScores = {};
 const quizTempScores = {};
 
 const questionsPerQuiz = 10;
+const gameName = "quiz";
 
 function handleQuiz(req, res) {
   if (req.method === "GET" && req.url.endsWith("/api/quiz/questions/count")) {
@@ -44,7 +46,26 @@ function handleQuiz(req, res) {
 
     stopQuiz(quizTempScores, quizHighScores, email);
 
-    res.status(HTTP_OK).json({ highScore: quizHighScores[email] });
+    const gameId = getGameIdByName(gameName);
+    const user = searchForUserWithEmail(email);
+    const previousUserScore = getUserScore(user.id, gameId);
+
+    logDebug("handleQuiz:Quiz highScores:", { previousUserScore, currentScore: quizTempScores[email] });
+    if (previousUserScore !== undefined && previousUserScore.score > quizTempScores[email]["ok"]) {
+      res.status(HTTP_OK).json({ game_id: gameId, user_id: user.id, score: quizTempScores[email]["ok"] });
+    } else {
+      req.method = "POST";
+      req.url = "/api/scores";
+      req.body = { game_id: gameId, user_id: user.id, score: quizHighScores[email] };
+      logTrace("handleQuiz:stop -> POST scores:", {
+        method: req.method,
+        url: req.url,
+        body: req.body,
+      });
+    }
+
+    // res.status(HTTP_OK).json({ highScore: quizHighScores[email] });
+    return;
   } else if (req.method === "GET" && req.url.endsWith("/api/quiz/highscores")) {
     logDebug("handleQuiz:Quiz highScores:", { quizHighScores });
     res.status(HTTP_OK).json({ highScore: quizHighScores });
