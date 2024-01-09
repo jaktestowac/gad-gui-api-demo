@@ -160,26 +160,21 @@ function getGameIdByName(name) {
   return foundGame["id"];
 }
 
+function getGameNameById(id) {
+  const foundGame = gamesDb().find((game) => {
+    if (game["id"]?.toString() === id.toString()) {
+      return game;
+    }
+  });
+  return foundGame["name"];
+}
+
 function getUserScore(userId, gameId) {
   const foundScore = scoresDb().find(
     (score) => score.game_id.toString() === gameId.toString() && score.user_id.toString() === userId.toString()
   );
   return foundScore;
 }
-
-// function saveGameHighScores(gameName, userEmail, score) {
-//   const quizHighScores = getGameHighScoresByGameName(gameName);
-//   const gameId = getGameIdByName(gameName);
-//   const foundUser = searchForUserWithEmail(userEmail);
-//   const userId = foundUser.id;
-
-//   if (quizHighScores[userId] === undefined || score >= quizHighScores[userId]) {
-//     quizHighScores[userId] = score;
-//   }
-
-//   saveQuizHighScoresDb(quizHighScores, gameId);
-//   return quizHighScores[userId];
-// }
 
 module.exports = {
   searchForUserWithToken,
@@ -200,4 +195,5 @@ module.exports = {
   searchForArticleLabels,
   searchForUserWithOnlyToken,
   filterArticlesByLabel,
+  getGameNameById,
 };

@@ -1,4 +1,11 @@
-const { getGameIdByName, getUserScore, searchForUserWithEmail } = require("../helpers/db-operation.helpers");
+const {
+  getGameIdByName,
+  getUserScore,
+  searchForUserWithEmail,
+  getGameNameById,
+  searchForUser,
+} = require("../helpers/db-operation.helpers");
+const { scoresDb } = require("../helpers/db.helpers");
 const { formatErrorResponse } = require("../helpers/helpers");
 const { logDebug, logTrace } = require("../helpers/logger-api");
 const { countAvailableQuestions, getOnlyQuestions, checkAnswer } = require("../helpers/quiz.helpers");
@@ -50,25 +57,40 @@ function handleQuiz(req, res) {
     const user = searchForUserWithEmail(email);
     const previousUserScore = getUserScore(user.id, gameId);
 
-    logDebug("handleQuiz:Quiz highScores:", { previousUserScore, currentScore: quizTempScores[email] });
-    if (previousUserScore !== undefined && previousUserScore.score > quizTempScores[email]["ok"]) {
-      res.status(HTTP_OK).json({ game_id: gameId, user_id: user.id, score: quizTempScores[email]["ok"] });
+    logDebug("handleQuiz:Quiz highScores:", { previousUserScore, currentScore: quizHighScores[email] });
+    if (previousUserScore !== undefined && previousUserScore.score >= quizHighScores[email]) {
+      res.status(HTTP_OK).json({ game_id: gameId, user_id: user.id, score: quizHighScores[email] });
     } else {
-      req.method = "POST";
-      req.url = "/api/scores";
+      if (previousUserScore?.id !== undefined) {
+        req.method = "PUT";
+        req.url = `/api/scores/${previousUserScore.id}`;
+      } else {
+        req.method = "POST";
+        req.url = `/api/scores`;
+      }
       req.body = { game_id: gameId, user_id: user.id, score: quizHighScores[email] };
-      logTrace("handleQuiz:stop -> POST scores:", {
+      logDebug("handleQuiz:stop -> PUT scores:", {
         method: req.method,
         url: req.url,
         body: req.body,
       });
     }
 
-    // res.status(HTTP_OK).json({ highScore: quizHighScores[email] });
     return;
   } else if (req.method === "GET" && req.url.endsWith("/api/quiz/highscores")) {
     logDebug("handleQuiz:Quiz highScores:", { quizHighScores });
-    res.status(HTTP_OK).json({ highScore: quizHighScores });
+
+    const scores = scoresDb();
+    const parsedScores = scores.map((score) => {
+      const user = searchForUser(score.user_id);
+      return {
+        user: `${user.firstname} ${user.lastname}`,
+        game: getGameNameById(score.game_id),
+        score: score.score,
+      };
+    });
+
+    res.status(HTTP_OK).json({ highScore: parsedScores });
   } else if (req.method === "POST" && req.url.endsWith("/api/quiz/questions/check")) {
     const verifyTokenResult = verifyAccessToken(req, res, "quiz", req.url);
     if (verifyTokenResult === undefined) {
