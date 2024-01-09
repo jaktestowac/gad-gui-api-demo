@@ -2916,12 +2916,19 @@
         }
       },
       "QuizHighScore": {
-        "type": "object",
-        "properties": {
-          "highScores": {
-            "type": "object",
-            "additionalProperties": {},
-            "example": { "email@test.test": 1 }
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "user": {
+              "type": "string"
+            },
+            "game": {
+              "type": "string"
+            },
+            "score": {
+              "type": "number"
+            }
           }
         }
       },
