@@ -132,14 +132,6 @@ const fileUploadRoutes = (req, res, next) => {
         req.body = files;
       } else if (
         req.method === "GET" &&
-        req.url.endsWith("/api/files/uploaded/public") &&
-        getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_FILES)
-      ) {
-        const files = getAndFilterUploadedFileList(undefined, true);
-        res.json(files);
-        req.body = files;
-      } else if (
-        req.method === "GET" &&
         req.url.includes("/api/files/uploaded/public?userIds=") &&
         getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_FILES)
       ) {
@@ -147,6 +139,14 @@ const fileUploadRoutes = (req, res, next) => {
         const userIds = ids.split(",");
 
         const files = getAndFilterUploadedFileList(userIds, true);
+        res.json(files);
+        req.body = files;
+      } else if (
+        req.method === "GET" &&
+        req.url.endsWith("/api/files/uploaded/public") &&
+        getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_FILES)
+      ) {
+        const files = getAndFilterUploadedFileList(undefined, true);
         res.json(files);
         req.body = files;
       } else if (
