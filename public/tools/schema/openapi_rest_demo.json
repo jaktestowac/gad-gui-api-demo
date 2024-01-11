@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "🦎 GAD ",
-    "description": "This is a sample REST server form jaktestowac.pl team.",
+    "description": "This is a sample REST server form jaktestowac.pl team.</br></br>Return to <a target='_blank' href='../tools/index.html' rel='noopener noreferrer' class='link'><strong>TOOLS🔨</strong></a>",
     "termsOfService": "http://jaktestowac.pl/",
     "version": "1.3.3"
   },
