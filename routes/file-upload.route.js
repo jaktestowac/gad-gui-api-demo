@@ -18,7 +18,7 @@ const {
 const fs = require("fs");
 const path = require("path");
 const { getUploadedFilePath, getAndFilterUploadedFileList } = require("../helpers/db.helpers");
-const { formatFileName } = require("../helpers/file-upload.helper");
+const { formatFileName, checkFileName } = require("../helpers/file-upload.helper");
 const { searchForUserWithEmail } = require("../helpers/db-operation.helpers");
 
 const uploadDir = path.join(__dirname, "..", "uploads");
@@ -102,6 +102,13 @@ const fileUploadRoutes = (req, res, next) => {
         const urlEnds = req.url.replace(/\/\/+/g, "/");
 
         const fileName = getIdFromUrl(urlEnds);
+        const canFileBeDownloaded = checkFileName(fileName, undefined, true, true);
+
+        if (!canFileBeDownloaded) {
+          logDebug("[articles/download] CanFileBeDownloaded:", { canFileBeDownloaded });
+          res.status(HTTP_NOT_FOUND).json({ fileName, found: false });
+          return;
+        }
 
         logDebug("[articles/download] Searching for file:", { fileName });
         const foundFile = getUploadedFilePath(fileName);
@@ -114,11 +121,7 @@ const fileUploadRoutes = (req, res, next) => {
           res.status(HTTP_OK).download(foundFile);
           return;
         }
-      } else if (
-        req.method === "GET" &&
-        req.url.endsWith("/api/files/uploaded") &&
-        getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_FILES)
-      ) {
+      } else if (req.method === "GET" && req.url.endsWith("/api/files/uploaded") && isFeatureEnabled) {
         const verifyTokenResult = verifyAccessToken(req, res, "users", req.url);
         if (verifyTokenResult === undefined) {
           res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
@@ -130,30 +133,30 @@ const fileUploadRoutes = (req, res, next) => {
         const files = getAndFilterUploadedFileList([foundUser.id], false);
         res.json(files);
         req.body = files;
-      } else if (
-        req.method === "GET" &&
-        req.url.includes("/api/files/uploaded/public?userIds=") &&
-        getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_FILES)
-      ) {
+      } else if (req.method === "GET" && req.url.includes("/api/files/uploaded/public?userIds=") && isFeatureEnabled) {
         const ids = req.url.split("userIds=").slice(-1)[0];
         const userIds = ids.split(",");
 
         const files = getAndFilterUploadedFileList(userIds, true);
         res.json(files);
         req.body = files;
-      } else if (
-        req.method === "GET" &&
-        req.url.endsWith("/api/files/uploaded/public") &&
-        getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_FILES)
-      ) {
-        const files = getAndFilterUploadedFileList(undefined, true);
-        res.json(files);
-        req.body = files;
-      } else if (
-        req.method === "GET" &&
-        req.url.includes("/api/files/uploaded?userId=") &&
-        getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_FILES)
-      ) {
+      } else if (req.method === "GET" && req.url.endsWith("/api/files/uploaded/public") && isFeatureEnabled) {
+        const file = getAndFilterUploadedFileList(undefined, true);
+
+        res.json(file);
+        req.body = file;
+        // } else if (req.method === "POST" && req.url.endsWith("/api/files/uploaded/download")) {
+        //   const fileName = req.body.fileName;
+
+        //   const fileExists = fs.existsSync(path.join(uploadDir, fileName));
+        //   if (fileExists) {
+        //     res.sendFile(fileName, { root: "./uploads" });
+        //   } else {
+        //     res.status(HTTP_NOT_FOUND);
+        //     return;
+        //   }
+        //   return;
+      } else if (req.method === "GET" && req.url.includes("/api/files/uploaded?userId=") && isFeatureEnabled) {
         const userId = req.url.split("userId=").slice(-1)[0];
 
         const verifyTokenResult = verifyAccessToken(req, res, "users", req.url);

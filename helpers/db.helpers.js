@@ -184,8 +184,12 @@ function getAndFilterUploadedFileList(userIds, isPublic = true) {
 }
 
 function getUploadedFilePath(fileName) {
-  let files = fs.readdirSync(path.join(__dirname, getConfigValue(ConfigKeys.UPLOADS_PATH)));
+  const filesPath = path.join(__dirname, getConfigValue(ConfigKeys.UPLOADS_PATH));
+  logTrace("getUploadedFilePath:", { filesPath });
+
+  let files = fs.readdirSync(filesPath);
   const foundFile = files.find((file) => file === fileName);
+  logTrace("getUploadedFilePath:", { fileName, files, foundFile });
 
   if (foundFile === undefined) return foundFile;
 

@@ -11,7 +11,11 @@ function checkFileName(fileName, userId, isPublic, allUsers = false) {
   const parts = fileName.split("_");
   const actualUserID = parts[1];
   const actualFileType = parts[3];
-  return (`${actualUserID}` === `${userId}` || allUsers === true) && actualFileType === fileType;
+
+  const isUserCorrect = `${actualUserID}` === `${userId}`;
+  const isFileTypeCorrect = actualFileType === fileType;
+
+  return (isUserCorrect || allUsers === true) && isFileTypeCorrect;
 }
 
 module.exports = { formatFileName, checkFileName };
