@@ -28,6 +28,10 @@ fetch("/api/config/features")
   })
   .then((data) => {
     const tableDiv = document.getElementById("featureTable");
+    if (!tableDiv) {
+      return;
+    }
+
     tableDiv.innerHTML = "";
     const table = document.createElement("table");
 
@@ -78,6 +82,9 @@ fetch("/api/config/bugs")
   })
   .then((data) => {
     const tableDiv = document.getElementById("bugsTable");
+    if (!tableDiv) {
+      return;
+    }
     tableDiv.innerHTML = "";
     const table = document.createElement("table");
 
