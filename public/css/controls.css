@@ -590,3 +590,7 @@ s .container-mobile {
 #toggleCheckbox:checked ~ #hiddenContentSection {
   display: block;
 }
+
+.fileDownloadLink:hover {
+  cursor: pointer;
+}
