@@ -98,14 +98,14 @@ const fileUploadRoutes = (req, res, next) => {
         });
         res.status(HTTP_OK);
         return;
-      } else if (req.method === "GET" && req.url.includes("/api/articles/download/")) {
+      } else if (req.method === "GET" && req.url.includes("/api/files/articles/download/")) {
         const urlEnds = req.url.replace(/\/\/+/g, "/");
 
         const fileName = getIdFromUrl(urlEnds);
         const canFileBeDownloaded = checkFileName(fileName, undefined, true, true);
 
         if (!canFileBeDownloaded) {
-          logDebug("[articles/download] CanFileBeDownloaded:", { canFileBeDownloaded });
+          logDebug("[files/articles/download] CanFileBeDownloaded:", { canFileBeDownloaded });
           res.status(HTTP_NOT_FOUND).json({ fileName, found: false });
           return;
         }

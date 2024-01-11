@@ -67,14 +67,14 @@ GET http://localhost:3000/api/files/uploaded/public?userIds=1,2
 
 
 ### Download article
-GET http://localhost:3000/api/articles/download/uploaded.json
+GET http://localhost:3000/api/files/articles/download/uploaded.json
 
 ### Download article (404)
-GET http://localhost:3000/api/articles/download/uploaded-article_1_0_P1_.json
+GET http://localhost:3000/api/files/articles/download/uploaded-article_1_0_P1_.json
 
 ### Download article (200)
-GET http://localhost:3000/api/articles/download/uploaded-article_1_0_P_.json
+GET http://localhost:3000/api/files/articles/download/uploaded-article_1_0_P_.json
 
-### Download article (200)
-GET http://localhost:3000/api/articles/download/uploaded-article_1_0_R_.json
+### Download article (404 because R - restricted)
+GET http://localhost:3000/api/files/articles/download/uploaded-article_1_0_R_.json
 
