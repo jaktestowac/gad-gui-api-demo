@@ -148,7 +148,7 @@ var serverApp = server.listen(port, () => {
   var address = serverApp.address().address;
   address = address == "::" ? "localhost" : "localhost";
   logDebug(`Visit it on -> http://${address}:${port}`);
-  logDebug(`🎉 Your custom REST API service is up and running!!!`);
+  logDebug(`🎉 Your custom GUI and REST API service is up and running!!!`);
 });
 
 module.exports = {
