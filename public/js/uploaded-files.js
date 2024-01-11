@@ -1,5 +1,5 @@
-const uploadedFilesEndpoint = "../../api/files/uploaded";
-const uploadedPublicFilesEndpoint = "../../api/files/uploaded/public";
+const uploadedFilesEndpoint = "../../api/files/articles/uploaded";
+const uploadedPublicFilesEndpoint = "../../api/files/articles/uploaded/public";
 const downloadPublicFilesEndpoint = "../../api/files/articles/download/";
 
 const intervalValue = 20000;

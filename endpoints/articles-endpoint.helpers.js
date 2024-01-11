@@ -22,7 +22,7 @@ function handleArticles(req, res, isAdmin) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
 
   if (urlEnds?.includes("/api/files/articles/upload") && !isAdmin) {
-    const verifyTokenResult = verifyAccessToken(req, res, "articles", req.url);
+    const verifyTokenResult = verifyAccessToken(req, res, "files/articles/upload", req.url);
     const foundUser = searchForUserWithToken(req.headers["userid"], verifyTokenResult);
 
     logTrace("handleArticles:", { method: req.method, urlEnds, foundUser });

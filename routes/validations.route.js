@@ -120,10 +120,7 @@ const validationsRoutes = (req, res, next) => {
       }
     }
 
-    if (
-      (urlEnds?.includes("/api/files/articles/upload") && !isAdmin) ||
-      (req.method !== "GET" && req.method !== "HEAD" && urlEnds?.includes("/api/articles") && !isAdmin)
-    ) {
+    if (req.method !== "GET" && req.method !== "HEAD" && urlEnds?.includes("/api/articles") && !isAdmin) {
       const verifyTokenResult = verifyAccessToken(req, res, "articles", req.url);
       if (verifyTokenResult === undefined) {
         res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));

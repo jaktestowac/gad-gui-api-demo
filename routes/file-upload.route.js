@@ -32,6 +32,12 @@ const fileUploadRoutes = (req, res, next) => {
     try {
       // TODO: rework:
       if (req.method === "POST" && req.url.endsWith("/api/files/articles/upload")) {
+        const verifyTokenResult = verifyAccessToken(req, res, "files/articles/upload", req.url);
+        if (verifyTokenResult === undefined) {
+          res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
+          return;
+        }
+
         const form = new formidable.IncomingForm();
         form.multiples = true;
         form.uploadDir = uploadDir;
@@ -121,8 +127,8 @@ const fileUploadRoutes = (req, res, next) => {
           res.status(HTTP_OK).download(foundFile);
           return;
         }
-      } else if (req.method === "GET" && req.url.endsWith("/api/files/uploaded") && isFeatureEnabled) {
-        const verifyTokenResult = verifyAccessToken(req, res, "users", req.url);
+      } else if (req.method === "GET" && req.url.endsWith("/api/files/articles/uploaded") && isFeatureEnabled) {
+        const verifyTokenResult = verifyAccessToken(req, res, "files/articles/uploaded", req.url);
         if (verifyTokenResult === undefined) {
           res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
           return;
@@ -133,19 +139,24 @@ const fileUploadRoutes = (req, res, next) => {
         const files = getAndFilterUploadedFileList([foundUser.id], false);
         res.json(files);
         req.body = files;
-      } else if (req.method === "GET" && req.url.includes("/api/files/uploaded/public?userIds=") && isFeatureEnabled) {
+      } else if (
+        req.method === "GET" &&
+        req.url.includes("/api/files/articles/uploaded/public?userIds=") &&
+        isFeatureEnabled
+      ) {
         const ids = req.url.split("userIds=").slice(-1)[0];
         const userIds = ids.split(",");
 
         const files = getAndFilterUploadedFileList(userIds, true);
         res.json(files);
         req.body = files;
-      } else if (req.method === "GET" && req.url.endsWith("/api/files/uploaded/public") && isFeatureEnabled) {
+      } else if (req.method === "GET" && req.url.endsWith("/api/files/articles/uploaded/public") && isFeatureEnabled) {
         const file = getAndFilterUploadedFileList(undefined, true);
 
         res.json(file);
         req.body = file;
-        // } else if (req.method === "POST" && req.url.endsWith("/api/files/uploaded/download")) {
+        return;
+        // } else if (req.method === "POST" && req.url.endsWith("/api/files/articles/uploaded/download")) {
         //   const fileName = req.body.fileName;
 
         //   const fileExists = fs.existsSync(path.join(uploadDir, fileName));
@@ -156,10 +167,10 @@ const fileUploadRoutes = (req, res, next) => {
         //     return;
         //   }
         //   return;
-      } else if (req.method === "GET" && req.url.includes("/api/files/uploaded?userId=") && isFeatureEnabled) {
+      } else if (req.method === "GET" && req.url.includes("/api/files/articles/uploaded?userId=") && isFeatureEnabled) {
         const userId = req.url.split("userId=").slice(-1)[0];
 
-        const verifyTokenResult = verifyAccessToken(req, res, "users", req.url);
+        const verifyTokenResult = verifyAccessToken(req, res, "files/articles/uploaded", req.url);
         if (verifyTokenResult === undefined) {
           res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
           return;
