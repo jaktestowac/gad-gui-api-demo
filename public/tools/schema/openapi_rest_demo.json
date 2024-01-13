@@ -786,6 +786,11 @@
       },
       "post": {
         "tags": ["comments"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "summary": "Create comment",
         "operationId": "createComment",
         "requestBody": {
@@ -967,6 +972,11 @@
       "post": {
         "tags": ["likes"],
         "summary": "Like or dislike element on page",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "operationId": "createLike",
         "requestBody": {
           "description": "Created Like object",
