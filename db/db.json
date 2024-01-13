@@ -2797,131 +2797,87 @@
   "article-labels": [
     {
       "id": 1,
-      "label_ids": [
-        3,
-        2
-      ],
+      "label_ids": [3, 2],
       "article_id": 56
     },
     {
       "id": 2,
-      "label_ids": [
-        1,
-        2
-      ],
+      "label_ids": [1, 2],
       "article_id": 57
     },
     {
       "id": 3,
-      "label_ids": [
-        1
-      ],
+      "label_ids": [1],
       "article_id": 59
     },
     {
       "id": 4,
-      "label_ids": [
-        4,
-        5
-      ],
+      "label_ids": [4, 5],
       "article_id": 45
     },
     {
       "id": 5,
-      "label_ids": [
-        1,
-        2,
-        6
-      ],
+      "label_ids": [1, 2, 6],
       "article_id": 37
     },
     {
       "id": 6,
-      "label_ids": [
-        1
-      ],
+      "label_ids": [1],
       "article_id": 58
     },
     {
       "id": 7,
-      "label_ids": [
-        7
-      ],
+      "label_ids": [7],
       "article_id": 48
     },
     {
       "id": 8,
-      "label_ids": [
-        8,
-        2
-      ],
+      "label_ids": [8, 2],
       "article_id": 4
     },
     {
       "id": 9,
-      "label_ids": [
-        9
-      ],
+      "label_ids": [9],
       "article_id": 39
     },
     {
       "id": 10,
-      "label_ids": [
-        1
-      ],
+      "label_ids": [1],
       "article_id": 1
     },
     {
       "id": 11,
-      "label_ids": [
-        1,
-        2,
-        11
-      ],
+      "label_ids": [1, 2, 11],
       "article_id": 2
     },
     {
       "id": 12,
-      "label_ids": [
-        1,
-        9
-      ],
+      "label_ids": [1, 9],
       "article_id": 3
     },
     {
       "id": 13,
-      "label_ids": [
-        9
-      ],
+      "label_ids": [9],
       "article_id": 51
     },
     {
       "id": 14,
-      "label_ids": [
-        9
-      ],
+      "label_ids": [9],
       "article_id": 47
     },
     {
       "id": 15,
-      "label_ids": [
-        9
-      ],
+      "label_ids": [9],
       "article_id": 41
     },
     {
       "id": 16,
-      "label_ids": [
-        1,
-        2
-      ],
+      "label_ids": [1, 2],
       "article_id": 40
     },
     {
       "id": 17,
-      "label_ids": [
-        1
-      ],
+      "label_ids": [1],
       "article_id": 35
     }
   ],
@@ -3111,5 +3067,6 @@
       "name": "Interview",
       "user_id": 4
     }
-  ]
+  ],
+  "scores": []
 }

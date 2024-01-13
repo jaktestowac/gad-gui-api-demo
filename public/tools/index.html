@@ -67,13 +67,29 @@
                       <li><a href="../hangman.html">Hangman</a></li>
                       <li><a href="../matcher.html">Matcher</a></li>
                       <li><a href="../devrun.html">DevRun</a></li>
+                      <li><a href="../whacker.html">Whack-a-Bug</a></li>
                     </ul>
                   </li>
                 </ul>
               </div>
+
+              <div class="containerTools">
+                <h2>API: Bugs enabled / disabled</h2>
+                Easily enable and disable different <strong>🦎GAD Bugs</strong> (no restart required): <br />
+                (❗ After 🦎GAD restart default values are restored!) <br />
+                <br />
+                <input type="checkbox" id="toggleCheckbox" />
+                <label for="toggleCheckbox">Bug Toggles</label>
+
+                <section id="hiddenContentSection">
+                  <p>Enable or disable bugs:</p>
+                  <div id="bugsTable"></div>
+                </section>
+              </div>
+
               <div class="containerTools">
                 <h2>API: Feature Flags</h2>
-                Easily enable and disable different 🦎GAD Features (no restart required): <br />
+                Easily enable and disable different <strong>🦎GAD Features</strong> (no restart required): <br />
                 (❗ After 🦎GAD restart default values are restored!) <br />
                 <br />
                 <div id="featureTable"></div>
@@ -85,7 +101,8 @@
                 <h3>Additional endpoints</h3>
                 <a href="/api/images/user">Images for user avatar</a><br />
                 <a href="/api/images/posts">Images for article image</a><br />
-                <a href="/api/logs">Logs</a><br />
+                <a href="/api/logs">Logs (⚠️ needs proper config flag enabled)</a><br />
+                <a href="/api/stats/api">Api Calls stats</a><br />
                 <a href="/api/health">Health Check</a><br />
                 <p>❗❗ Using/clicking endpoint below restores database. All changes will be lost! ❗❗</p>
                 <a href="/api/restoreDB" target="_blank" rel="noopener">💣 Restore Database with sample data</a

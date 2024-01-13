@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "🦎 GAD ",
-    "description": "This is a sample REST server form jaktestowac.pl team.",
+    "description": "This is a sample REST server form jaktestowac.pl team.</br></br>Return to <a target='_blank' href='../tools/index.html' rel='noopener noreferrer' class='link'><strong>TOOLS🔨</strong></a>",
     "termsOfService": "http://jaktestowac.pl/",
     "version": "1.3.3"
   },
@@ -158,6 +158,10 @@
             "description": "Bad request - malformed JSON",
             "content": {}
           },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
           "422": {
             "description": "Invalid article supplied",
             "content": {}
@@ -270,6 +274,10 @@
             "description": "Bad request - malformed JSON",
             "content": {}
           },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
           "404": {
             "description": "Article not found",
             "content": {}
@@ -334,6 +342,10 @@
             "description": "Bad request - malformed JSON",
             "content": {}
           },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
           "404": {
             "description": "Article not found",
             "content": {}
@@ -374,6 +386,10 @@
         "responses": {
           "200": {
             "description": "Article deleted",
+            "content": {}
+          },
+          "400": {
+            "description": "Bad Request",
             "content": {}
           },
           "401": {
@@ -588,6 +604,10 @@
             "description": "Bad request - malformed JSON",
             "content": {}
           },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
           "404": {
             "description": "User not found",
             "content": {}
@@ -652,6 +672,10 @@
             "description": "Bad request - malformed JSON",
             "content": {}
           },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
           "404": {
             "description": "User not found",
             "content": {}
@@ -692,6 +716,10 @@
         "responses": {
           "200": {
             "description": "User deleted",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
             "content": {}
           },
           "404": {
@@ -758,6 +786,11 @@
       },
       "post": {
         "tags": ["comments"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "summary": "Create comment",
         "operationId": "createComment",
         "requestBody": {
@@ -784,6 +817,10 @@
           },
           "400": {
             "description": "Bad request - malformed JSON",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
             "content": {}
           },
           "422": {
@@ -826,6 +863,10 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
           }
         }
       },
@@ -919,6 +960,10 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
           }
         }
       }
@@ -927,6 +972,11 @@
       "post": {
         "tags": ["likes"],
         "summary": "Like or dislike element on page",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "operationId": "createLike",
         "requestBody": {
           "description": "Created Like object",
@@ -956,6 +1006,10 @@
           },
           "400": {
             "description": "Bad request - malformed JSON",
+            "content": {}
+          },
+          "404": {
+            "description": "Not found",
             "content": {}
           },
           "422": {
@@ -998,6 +1052,10 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
           }
         }
       }
@@ -1017,6 +1075,10 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
           }
         }
       }
@@ -1054,6 +1116,10 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
           }
         }
       }
@@ -1063,6 +1129,40 @@
         "tags": ["likes"],
         "summary": "Get myLikes",
         "operationId": "getMyLikes",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "ID of article",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          {
+            "name": "userid",
+            "in": "header",
+            "description": "ID of user",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "successful operation",
@@ -1073,6 +1173,14 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {}
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
           }
         }
       }
@@ -1101,6 +1209,10 @@
           },
           "401": {
             "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "Not found",
             "content": {}
           }
         }
@@ -1148,6 +1260,10 @@
           "401": {
             "description": "Unauthorized",
             "content": {}
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
           }
         }
       }
@@ -1167,6 +1283,10 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
           }
         }
       }
@@ -1174,41 +1294,40 @@
     "/files/uploaded/public?userIds={id}": {
       "get": {
         "tags": ["files"],
-        "summary": "Get files",
-        "operationId": "getFiles",
-        "get": {
-          "tags": ["files"],
-          "summary": "Get users public files",
-          "operationId": "getUsersPublicFiles",
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "description": "ID of user or multiple IDs of users separated by comma",
-              "required": true,
-              "schema": {
-                "oneOf": [
-                  {
-                    "type": "integer"
-                  },
-                  {
-                    "type": "string"
-                  }
-                ]
-              }
+        "summary": "Get users public files",
+        "operationId": "getUsersPublicFiles",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of user or multiple IDs of users separated by comma",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
             }
-          ],
-          "responses": {
-            "200": {
-              "description": "successful operation",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/UploadedFiles"
-                  }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadedFiles"
                 }
               }
             }
+          },
+          "404": {
+            "description": "Comment not found",
+            "content": {}
           }
         }
       }
@@ -1323,6 +1442,10 @@
             "description": "Bad request - malformed JSON",
             "content": {}
           },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
           "404": {
             "description": "Comment not found",
             "content": {}
@@ -1387,6 +1510,10 @@
             "description": "Bad request - malformed JSON",
             "content": {}
           },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
           "404": {
             "description": "Comment not found",
             "content": {}
@@ -1427,6 +1554,10 @@
         "responses": {
           "200": {
             "description": "Comment deleted",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
             "content": {}
           },
           "404": {
@@ -2040,6 +2171,19 @@
         }
       }
     },
+    "/stats/api": {
+      "get": {
+        "tags": ["stats"],
+        "summary": "Get api calls",
+        "operationId": "getApiCalls",
+        "responses": {
+          "200": {
+            "description": "Api Calls received",
+            "content": {}
+          }
+        }
+      }
+    },
     "/random/article": {
       "get": {
         "tags": ["random"],
@@ -2048,6 +2192,10 @@
         "responses": {
           "200": {
             "description": "Article received",
+            "content": {}
+          },
+          "404": {
+            "description": "Not found",
             "content": {}
           }
         }
@@ -2067,6 +2215,10 @@
           "200": {
             "description": "Quiz started"
           }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "content": {}
         }
       }
     },
@@ -2090,6 +2242,20 @@
                 }
               }
             }
+          },
+          "201": {
+            "description": "Quiz stopped with new high score",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuizHighScore"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
           }
         }
       }
@@ -2133,6 +2299,10 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
           }
         }
       }
@@ -2152,6 +2322,10 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
           }
         }
       }
@@ -2186,6 +2360,10 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
           }
         }
       }
@@ -2383,7 +2561,14 @@
         "required": ["user_id", "article_id", "body", "date"],
         "properties": {
           "id": {
-            "type": "string"
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ]
           },
           "article_id": {
             "oneOf": [
@@ -2745,11 +2930,30 @@
       },
       "QuizHighScore": {
         "type": "object",
-        "properties": {
-          "highScores": {
+        "items": {
+          "type": "array",
+          "items": {
             "type": "object",
-            "additionalProperties": {},
-            "example": { "email@test.test": 1 }
+            "properties": {
+              "user": {
+                "type": "string"
+              },
+              "game": {
+                "type": "string"
+              },
+              "score": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      },
+      "MyLikes": {
+        "type": "object",
+        "properties": {
+          "likes": {
+            "type": "object",
+            "example": { "1": true }
           }
         }
       },

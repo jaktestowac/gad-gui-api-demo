@@ -558,3 +558,19 @@ h3 {
   font-weight: bold;
   color: red;
 }
+.whacker-container {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 20px auto;
+}
+
+.whacker-hole {
+  width: 90px;
+  height: 90px;
+  border: 2px solid #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 64px;
+  cursor: pointer;
+}

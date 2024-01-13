@@ -1,5 +1,6 @@
-const uploadedFilesEndpoint = "../../api/files/uploaded";
-const uploadedPublicFilesEndpoint = "../../api/files/uploaded/public";
+const uploadedFilesEndpoint = "../../api/files/articles/uploaded";
+const uploadedPublicFilesEndpoint = "../../api/files/articles/uploaded/public";
+const downloadPublicFilesEndpoint = "../../api/files/articles/download/";
 
 const intervalValue = 20000;
 const userTable = document.getElementById("userFileTable");
@@ -20,10 +21,23 @@ async function getPublicUploadedFiles() {
 }
 
 async function downloadFile(fileName) {
-  console.log(fileName);
+  const url = `${downloadPublicFilesEndpoint}${fileName}`;
+  const fileRawData = await fetch(url, { headers: formatHeaders() }).then((r) => r.json());
+  const filesData = JSON.stringify(fileRawData, null, 2);
+  download(fileName, filesData);
 }
 
-function populateTable(table, data) {
+const download = (filename, data) => {
+  var element = document.createElement("a");
+  element.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(data));
+  element.setAttribute("download", filename);
+  element.style.display = "none";
+  document.body.appendChild(element);
+  element.click();
+  document.body.removeChild(element);
+};
+
+function populateTable(table, data, addDownloadLink) {
   while (table.rows.length > 1) {
     table.deleteRow(1);
   }
@@ -32,8 +46,14 @@ function populateTable(table, data) {
 
     const nameCell = row.insertCell(0);
     nameCell.textContent = item.name;
-    var link = `<div onclick="downloadFile('${item.name}')" >${item.name}</div>`;
-    nameCell.innerHTML = link;
+
+    if (addDownloadLink) {
+      // var link = `<div class="fileDownloadLink" onclick="downloadFile('${item.name}')" >${item.name}</div>`;
+      // nameCell.innerHTML = link;
+      nameCell.innerHTML = item.name;
+    } else {
+      nameCell.innerHTML = item.name;
+    }
     nameCell.style.textAlign = "center";
     nameCell.style.fontSize = "14px";
 
@@ -47,6 +67,13 @@ function populateTable(table, data) {
     dateCell.textContent = lastModified.toISOString();
     dateCell.style.textAlign = "center";
     dateCell.style.fontSize = "14px";
+    if (addDownloadLink) {
+      const downloadCell = row.insertCell(3);
+      downloadCell.textContent = item.size;
+      downloadCell.style.textAlign = "center";
+      downloadCell.style.fontSize = "14px";
+      downloadCell.innerHTML = `<div class="fileDownloadLink" onclick="downloadFile('${item.name}')" >📥</div>`;
+    }
   });
 }
 
@@ -70,7 +97,7 @@ async function makeRequest() {
         filesData = [];
       }
       filesData.sort((a, b) => new Date(b.lastModified) - new Date(a.lastModified));
-      populateTable(publicTable, filesData);
+      populateTable(publicTable, filesData, true);
     })
     .catch((err) => {
       console.log("Error", err);

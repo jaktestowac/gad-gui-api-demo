@@ -13,6 +13,7 @@ const visits = (function () {
     let visitsPerArticle = {};
     let visitsPerComment = {};
     let visitsPerUsers = {};
+    let apiCalls = {};
 
     function getVisitsPerArticle() {
       return visitsPerArticle;
@@ -24,6 +25,10 @@ const visits = (function () {
 
     function getVisitsPerUsers() {
       return visitsPerUsers;
+    }
+
+    function getApiCalls() {
+      return apiCalls;
     }
 
     function generateVisits() {
@@ -55,6 +60,7 @@ const visits = (function () {
       getVisitsPerArticle,
       getVisitsPerComment,
       getVisitsPerUsers,
+      getApiCalls,
     };
   }
   return {
@@ -79,6 +85,11 @@ function fullDb() {
   return db;
 }
 
+function gamesDb() {
+  const db = JSON.parse(fs.readFileSync(getDbPath(getConfigValue(ConfigKeys.GAMES_DB)), "UTF-8"));
+  return db["games"];
+}
+
 function userDb() {
   return fullDb()["users"];
 }
@@ -99,6 +110,10 @@ function labelsDb() {
   return fullDb()["labels"];
 }
 
+function scoresDb() {
+  return fullDb()["scores"];
+}
+
 function articleLabelsDb() {
   return fullDb()["article-labels"];
 }
@@ -106,17 +121,6 @@ function articleLabelsDb() {
 function quizQuestionsDb() {
   const db = JSON.parse(fs.readFileSync(getDbPath(getConfigValue(ConfigKeys.QUIZ_QUESTIONS_PATH), "UTF-8")));
   return db;
-}
-
-function getQuizHighScoresDb() {
-  const db = JSON.parse(fs.readFileSync(getDbPath(getConfigValue(ConfigKeys.QUIZ_DB_PATH), "UTF-8")));
-  return db;
-}
-
-function saveQuizHighScoresDb(data, gameId) {
-  const db = getQuizHighScoresDb();
-  db["scores"][gameId] = data;
-  fs.writeFileSync(getDbPath(getConfigValue(ConfigKeys.QUIZ_DB_PATH)), JSON.stringify(db, null, 4));
 }
 
 function hangmanDb() {
@@ -180,8 +184,12 @@ function getAndFilterUploadedFileList(userIds, isPublic = true) {
 }
 
 function getUploadedFilePath(fileName) {
-  let files = fs.readdirSync(path.join(__dirname, getConfigValue(ConfigKeys.UPLOADS_PATH)));
+  const filesPath = path.join(__dirname, getConfigValue(ConfigKeys.UPLOADS_PATH));
+  logTrace("getUploadedFilePath:", { filesPath });
+
+  let files = fs.readdirSync(filesPath);
   const foundFile = files.find((file) => file === fileName);
+  logTrace("getUploadedFilePath:", { fileName, files, foundFile });
 
   if (foundFile === undefined) return foundFile;
 
@@ -215,8 +223,8 @@ module.exports = {
   fullDb,
   randomDbEntry,
   getDbPath,
-  getQuizHighScoresDb,
-  saveQuizHighScoresDb,
+  gamesDb,
+  scoresDb,
   getUserAvatars,
   getImagesForArticles,
   getUploadedFileList,
@@ -229,5 +237,6 @@ module.exports = {
   getVisitsPerArticle: visitsData.getVisitsPerArticle,
   getVisitsPerComment: visitsData.getVisitsPerComment,
   getVisitsPerUsers: visitsData.getVisitsPerUsers,
+  getApiCalls: visitsData.getApiCalls,
   visitsData,
 };

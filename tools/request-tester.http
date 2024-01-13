@@ -41,14 +41,6 @@ content-type: application/json
 ### Get random article
 GET http://localhost:3000/api/random/article
 
-
-### Download article
-GET http://localhost:3000/api/articles/download/uploaded.json
-
-### Download article (404)
-GET http://localhost:3000/api/articles/download/xyz
-
-
 ### All articles visits
 GET http://localhost:3000/api/visits/articles
 
@@ -57,3 +49,32 @@ GET http://localhost:3000/api/visits/articles/1
 
 ### One article visits
 GET http://localhost:3000/api/visits/articles?ids=1,2,3
+
+### Get Uploaded file list
+GET http://localhost:3000/api/files/articles/uploaded
+
+### Get Uploaded file list - private per user
+GET http://localhost:3000/api/files/articles/uploaded?userId=1
+content-type: application/json
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Ik1vc2VzLkFybXN0cm9uZ0BGZWVzdC5jYSIsImRhdGEiOiJUQkQiLCJpYXQiOjE2OTk0Njk5MjMsImV4cCI6MTY5OTkwMTkyM30.JSXrSU2XJhhbyBZICNqlqsu-H0z7ao2nWonGMmlRf5A
+
+### Get Uploaded file list - all public
+GET http://localhost:3000/api/files/articles/uploaded/public
+
+### Get Uploaded file list - public per user
+GET http://localhost:3000/api/files/articles/uploaded/public?userIds=1,2
+
+
+
+### Download article
+GET http://localhost:3000/api/files/articles/download/uploaded.json
+
+### Download article (404)
+GET http://localhost:3000/api/files/articles/download/uploaded-article_1_0_P1_.json
+
+### Download article (200)
+GET http://localhost:3000/api/files/articles/download/uploaded-article_1_0_P_.json
+
+### Download article (404 because R - restricted)
+GET http://localhost:3000/api/files/articles/download/uploaded-article_1_0_R_.json
+

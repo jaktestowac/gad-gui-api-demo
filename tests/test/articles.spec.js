@@ -1,4 +1,4 @@
-const { baseArticlesUrl, request, faker, expect, baseFilesArticlesUrl } = require("../config.js");
+const { baseArticlesUrl, request, faker, expect, baseRandomArticlesUrl } = require("../config.js");
 const {
   authUser,
   generateValidArticleData,
@@ -53,10 +53,6 @@ describe("Endpoint /articles", () => {
         return request.post(baseUrl).send({}).expect(401);
       });
 
-      it("POST /files/articles/upload", () => {
-        return request.post(`${baseFilesArticlesUrl}/upload`).send({}).expect(401);
-      });
-
       it("PUT /articles", () => {
         return request.put(baseUrl).send({}).expect(401);
       });
@@ -83,6 +79,10 @@ describe("Endpoint /articles", () => {
 
       it("HEAD /articles", () => {
         return request.head(`${baseUrl}/1`).expect(200);
+      });
+
+      it("GET random/articles", () => {
+        return request.get(baseRandomArticlesUrl).expect(200);
       });
     });
   });
@@ -425,21 +425,6 @@ describe("Endpoint /articles", () => {
         // Assert:
         expect(response.status).to.equal(401);
       });
-    });
-
-    it.skip("POST /files/articles/upload", async () => {
-      // TODO: prepare proper data
-
-      // Arrange:
-      const testData = generateValidArticleData();
-      const newHeaders = { ...headers };
-      newHeaders["userid"] = userId;
-
-      // Act:
-      const response = await request.post(`${baseUrl}/upload`).set(newHeaders).send(testData);
-
-      // Assert:
-      expect(response.status).to.equal(201);
     });
 
     it("HEAD /articles", () => {

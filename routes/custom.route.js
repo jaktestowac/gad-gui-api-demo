@@ -5,6 +5,7 @@ const {
   getVisitsPerArticle,
   getVisitsPerComment,
   getVisitsPerUsers,
+  getApiCalls,
 } = require("../helpers/db.helpers");
 const {
   formatErrorResponse,
@@ -39,6 +40,10 @@ const statsRoutes = (req, res, next) => {
       return;
     } else if (req.method === "GET" && urlEnds.includes("api/stats/publish/comments")) {
       const stats = parsePublishStats(fullDb(), "comments");
+      res.status(HTTP_OK).json(stats);
+      return;
+    } else if (req.method === "GET" && urlEnds.includes("api/stats/api")) {
+      const stats = getApiCalls();
       res.status(HTTP_OK).json(stats);
       return;
     }
@@ -124,6 +129,20 @@ const visitsRoutes = (req, res, next) => {
 const queryRoutes = (req, res, next) => {
   try {
     const urlEnds = req.url.replace(/\/\/+/g, "/");
+
+    if (req.url.includes("/api/")) {
+      if (getApiCalls()["/api/"] === undefined) {
+        getApiCalls()["/api/"] = 0;
+      }
+      getApiCalls()["/api/"]++;
+
+      const apiEndpoint = urlEnds.split("?")[0];
+      if (getApiCalls()[apiEndpoint] === undefined) {
+        getApiCalls()[apiEndpoint] = 0;
+      }
+      getApiCalls()[apiEndpoint]++;
+    }
+
     if (req.url.includes("/api/articles") && req.method === "GET") {
       let articleId = getIdFromUrl(urlEnds);
 

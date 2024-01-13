@@ -20,6 +20,8 @@ const { handleArticles } = require("../endpoints/articles-endpoint.helpers");
 const { handleComments } = require("../endpoints/comments-endpoint.helpers");
 const { handleLikes } = require("../endpoints/likes-endpoint.helpers");
 const { handleLabels } = require("../endpoints/labels-endpoint.helpers");
+const { handleGames } = require("../endpoints/games-endpoint.helpers");
+const { handleScores } = require("../endpoints/scores-endpoint.helpers");
 
 const validationsRoutes = (req, res, next) => {
   let isAdmin = false;
@@ -83,9 +85,16 @@ const validationsRoutes = (req, res, next) => {
       handleHangman(req, res);
       return;
     }
+    if (req.url.includes("/api/games")) {
+      handleGames(req, res);
+      return;
+    }
+    if (req.url.includes("/api/scores")) {
+      handleScores(req, res);
+      return;
+    }
     if (req.url.includes("/api/quiz")) {
       handleQuiz(req, res);
-      return;
     }
 
     if (
@@ -111,10 +120,7 @@ const validationsRoutes = (req, res, next) => {
       }
     }
 
-    if (
-      (urlEnds?.includes("/api/files/articles/upload") && !isAdmin) ||
-      (req.method !== "GET" && req.method !== "HEAD" && urlEnds?.includes("/api/articles") && !isAdmin)
-    ) {
+    if (req.method !== "GET" && req.method !== "HEAD" && urlEnds?.includes("/api/articles") && !isAdmin) {
       const verifyTokenResult = verifyAccessToken(req, res, "articles", req.url);
       if (verifyTokenResult === undefined) {
         res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
@@ -134,7 +140,7 @@ const validationsRoutes = (req, res, next) => {
       handleUsers(req, res);
     }
 
-    if (req.url.includes("/api/articles")) {
+    if (req.url.includes("/api/articles") || req.url.includes("/api/random/article")) {
       handleArticles(req, res, isAdmin);
     }
 
