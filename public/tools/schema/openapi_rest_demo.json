@@ -36,6 +36,10 @@
       "description": "Comments"
     },
     {
+      "name": "random",
+      "description": "Random data"
+    },
+    {
       "name": "likes",
       "description": "Likes (⚠️ needs proper feature flag enabled)"
     },
@@ -60,12 +64,24 @@
       "description": "Other operations"
     },
     {
-      "name": "stats",
-      "description": "Statistics"
+      "name": "quiz",
+      "description": "Quiz game about testing"
     },
     {
-      "name": "quiz",
-      "description": "Sample Quiz"
+      "name": "hangman",
+      "description": "Hangman game"
+    },
+    {
+      "name": "games",
+      "description": "Games"
+    },
+    {
+      "name": "scores",
+      "description": "Game scores"
+    },
+    {
+      "name": "stats",
+      "description": "Statistics"
     },
     {
       "name": "healthcheck",
@@ -2387,6 +2403,85 @@
         }
       }
     },
+    "/games": {
+      "get": {
+        "tags": ["games"],
+        "summary": "Get games",
+        "operationId": "getGames",
+        "responses": {
+          "200": {
+            "description": "Get games",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Games"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/scores": {
+      "get": {
+        "tags": ["scores"],
+        "summary": "Get scores",
+        "operationId": "getScores",
+        "responses": {
+          "200": {
+            "description": "Get scores",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Scores"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/scores/{id}": {
+      "get": {
+        "tags": ["scores"],
+        "summary": "Get game scores",
+        "operationId": "getGameScores",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of game",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get game scores",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Scores"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
+          }
+        }
+      }
+    },
     "/about": {
       "get": {
         "tags": ["healthcheck"],
@@ -2972,6 +3067,75 @@
         "properties": {
           "count": {
             "word": "string"
+          }
+        }
+      },
+      "Scores": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "game_id": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "user_id": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "score": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "id": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "Games": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "id": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
           }
         }
       }
