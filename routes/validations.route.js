@@ -81,10 +81,6 @@ const validationsRoutes = (req, res, next) => {
       handleConfig(req, res);
       return;
     }
-    if (req.url.includes("/api/hangman")) {
-      handleHangman(req, res);
-      return;
-    }
     if (req.url.includes("/api/games")) {
       handleGames(req, res);
       return;
@@ -95,6 +91,9 @@ const validationsRoutes = (req, res, next) => {
     }
     if (req.url.includes("/api/quiz")) {
       handleQuiz(req, res);
+    }
+    if (req.url.includes("/api/hangman")) {
+      handleHangman(req, res);
     }
 
     if (

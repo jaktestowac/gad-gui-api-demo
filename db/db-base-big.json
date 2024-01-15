@@ -7762,5 +7762,36 @@
     { "id": 68, "name": "AI", "user_id": 2 },
     { "id": 69, "name": "End-to-end", "user_id": 11 }
   ],
-  "scores": []
+  "scores": [
+    {
+      "game_id": 1,
+      "user_id": 4,
+      "score": 5,
+      "id": 1
+    },
+    {
+      "game_id": 2,
+      "user_id": 4,
+      "score": 4,
+      "id": 2
+    },
+    {
+      "game_id": 1,
+      "user_id": 7,
+      "score": 6,
+      "id": 3
+    },
+    {
+      "game_id": 1,
+      "user_id": 9,
+      "score": 3,
+      "id": 4
+    },
+    {
+      "game_id": 2,
+      "user_id": 9,
+      "score": 11,
+      "id": 5
+    }
+  ]
 }

@@ -40,7 +40,7 @@ const configToModify = {
   maxRandomVisitsForArticles: 1100,
   minRandomVisitsForArticles: 50,
   maxRandomVisitsForComments: 50,
-  minRandomVisitsForComments: 10,
+  minRandomVisitsForComments: 0,
   maxRandomVisitsForUsers: 250,
   minRandomVisitsForUsers: 10,
 };

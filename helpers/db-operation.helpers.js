@@ -170,10 +170,15 @@ function getGameNameById(id) {
 }
 
 function getUserScore(userId, gameId) {
-  const foundScore = scoresDb().find(
+  const foundScore = scoresDb().filter(
     (score) => score.game_id.toString() === gameId.toString() && score.user_id.toString() === userId.toString()
   );
   return foundScore;
+}
+
+function getGameScores(gameId) {
+  const foundScores = scoresDb().filter((score) => score.game_id.toString() === gameId.toString()) || [];
+  return foundScores;
 }
 
 module.exports = {
@@ -196,4 +201,5 @@ module.exports = {
   searchForUserWithOnlyToken,
   filterArticlesByLabel,
   getGameNameById,
+  getGameScores,
 };

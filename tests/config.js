@@ -15,6 +15,7 @@ const baseCommentsUrl = "/api/comments";
 const baseLoginUrl = "/api/login";
 const baseLikesUrl = "/api/likes";
 const baseLabelsUrl = "/api/labels";
+const aboutUrl = "/api/about";
 const baseArticleLabelsUrl = "/api/article-labels";
 
 const existingUserEmail = "Danial.Dicki@dicki.test";
@@ -46,4 +47,5 @@ module.exports = {
   baseLabelsUrl,
   baseArticleLabelsUrl,
   baseRandomArticlesUrl,
+  aboutUrl,
 };

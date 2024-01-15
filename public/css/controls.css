@@ -594,3 +594,13 @@ s .container-mobile {
 .fileDownloadLink:hover {
   cursor: pointer;
 }
+
+.table-bor {
+  border-collapse: collapse;
+}
+
+.table-bor th,
+.table-bor td {
+  border: 1px solid black;
+  padding: 4px;
+}

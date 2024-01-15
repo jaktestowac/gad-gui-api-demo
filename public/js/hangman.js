@@ -4,6 +4,7 @@ const lettersContainer = document.getElementById("letters");
 const infoContainer = document.getElementById("info-container");
 const startButton = document.getElementById("start-button");
 const hangmanEndpoint = "../../api/hangman/random";
+const hangmanScoreEndpoint = "../../api/hangman/score";
 
 let selectedWord = "";
 let hiddenWord = [];
@@ -103,13 +104,27 @@ function updateLetterButtons() {
   gameContainer.style.height = "visible";
 }
 
-function displayFinalScore(success, attempts, selectedWord) {
+async function issuePostScoreRequest(score) {
+  fetch(hangmanScoreEndpoint, {
+    method: "POST",
+    body: JSON.stringify({ score }),
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+  });
+}
+
+async function displayFinalScore(success, attempts, selectedWord) {
   infoContainer.style.visibility = "visible";
   if (success) {
     let score = (maxAttempts - attempts) * 5 + selectedWord.length * 3;
     infoContainer.innerHTML = `<strong>Congratulations! Only ${attempts} attempts! Score: ${score}</strong>`;
+    issuePostScoreRequest(score);
   } else {
     infoContainer.innerHTML = `<strong>You failed! Selected word was: ${selectedWord}</strong>`;
+    issuePostScoreRequest(0);
   }
   startButton.style.visibility = "visible";
   lettersContainer.style.visibility = "collapse";
