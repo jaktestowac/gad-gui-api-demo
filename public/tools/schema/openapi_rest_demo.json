@@ -80,12 +80,16 @@
       "description": "Game scores"
     },
     {
+      "name": "visits",
+      "description": "Visits of different entities"
+    },
+    {
       "name": "stats",
       "description": "Statistics"
     },
     {
       "name": "healthcheck",
-      "description": "Healthcheck"
+      "description": "Healthcheck - check status and health of 🦎GAD"
     }
   ],
   "paths": {
@@ -2194,7 +2198,46 @@
         "operationId": "getApiCalls",
         "responses": {
           "200": {
-            "description": "Api Calls received",
+            "description": "Calls received",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/stats/api/details": {
+      "get": {
+        "tags": ["stats"],
+        "summary": "Get api detailed calls",
+        "operationId": "getApiDetailedCalls",
+        "responses": {
+          "200": {
+            "description": "Calls received",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/stats/nonapi": {
+      "get": {
+        "tags": ["stats"],
+        "summary": "Get non api calls",
+        "operationId": "getNonApiCalls",
+        "responses": {
+          "200": {
+            "description": "Calls received",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/stats/nonapi/details": {
+      "get": {
+        "tags": ["stats"],
+        "summary": "Get non api detailed calls",
+        "operationId": "getNonApiDetailedCalls",
+        "responses": {
+          "200": {
+            "description": "Calls received",
             "content": {}
           }
         }
@@ -2550,6 +2593,231 @@
           "200": {
             "description": "db status received",
             "content": {}
+          }
+        }
+      }
+    },
+    "/visits/articles": {
+      "get": {
+        "tags": ["visits"],
+        "summary": "Get articles visits stats",
+        "operationId": "getArticlesVisitsStats",
+        "responses": {
+          "200": {
+            "description": "Visits received",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Visits"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/visits/top/articles": {
+      "get": {
+        "tags": ["visits"],
+        "summary": "Get top articles visits stats",
+        "operationId": "getTopArticlesVisitsStats",
+        "responses": {
+          "200": {
+            "description": "Visits received",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Visits"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/visits/articles?ids={id}": {
+      "get": {
+        "tags": ["visits"],
+        "summary": "Get articles visits stats",
+        "operationId": "getSelectedArticlesVisitsStats",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of user or multiple IDs of articles separated by comma",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Visits"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/visits/users": {
+      "get": {
+        "tags": ["visits"],
+        "summary": "Get users visits stats",
+        "operationId": "getUsersVisitsStats",
+        "responses": {
+          "200": {
+            "description": "Visits received",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Visits"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/visits/top/users": {
+      "get": {
+        "tags": ["visits"],
+        "summary": "Get top users visits stats",
+        "operationId": "getTopUsersVisitsStats",
+        "responses": {
+          "200": {
+            "description": "Visits received",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Visits"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/visits/users?ids={id}": {
+      "get": {
+        "tags": ["visits"],
+        "summary": "Get users visits stats",
+        "operationId": "getSelectedUsersVisitsStats",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of user or multiple IDs of users separated by comma",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Visits"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/visits/comments": {
+      "get": {
+        "tags": ["visits"],
+        "summary": "Get comments visits stats",
+        "operationId": "getCommentsVisitsStats",
+        "responses": {
+          "200": {
+            "description": "Visits received",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Visits"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/visits/top/comments": {
+      "get": {
+        "tags": ["visits"],
+        "summary": "Get top comments visits stats",
+        "operationId": "getTopCommentsVisitsStats",
+        "responses": {
+          "200": {
+            "description": "Visits received",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Visits"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/visits/comments?ids={id}": {
+      "get": {
+        "tags": ["visits"],
+        "summary": "Get comments visits stats",
+        "operationId": "getSelectedCommentsVisitsStats",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of user or multiple IDs of comments separated by comma",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Visits"
+                }
+              }
+            }
           }
         }
       }
@@ -3138,6 +3406,10 @@
             }
           }
         }
+      },
+      "Visits": {
+        "type": "object",
+        "example": { "1": 2 }
       }
     }
   }

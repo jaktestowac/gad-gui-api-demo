@@ -6,6 +6,9 @@ const {
   getVisitsPerComment,
   getVisitsPerUsers,
   getApiCalls,
+  getApiRequestsDetails,
+  getNonApiCalls,
+  getNonApiRequestsDetails,
 } = require("../helpers/db.helpers");
 const {
   formatErrorResponse,
@@ -42,8 +45,20 @@ const statsRoutes = (req, res, next) => {
       const stats = parsePublishStats(fullDb(), "comments");
       res.status(HTTP_OK).json(stats);
       return;
-    } else if (req.method === "GET" && urlEnds.includes("api/stats/api")) {
+    } else if (req.method === "GET" && urlEnds.endsWith("api/stats/api")) {
       const stats = getApiCalls();
+      res.status(HTTP_OK).json(stats);
+      return;
+    } else if (req.method === "GET" && urlEnds.endsWith("api/stats/nonapi")) {
+      const stats = getNonApiCalls();
+      res.status(HTTP_OK).json(stats);
+      return;
+    } else if (req.method === "GET" && urlEnds.endsWith("api/stats/api/details")) {
+      const stats = getApiRequestsDetails();
+      res.status(HTTP_OK).json(stats);
+      return;
+    } else if (req.method === "GET" && urlEnds.endsWith("api/stats/nonapi/details")) {
+      const stats = getNonApiRequestsDetails();
       res.status(HTTP_OK).json(stats);
       return;
     }
@@ -83,11 +98,12 @@ const visitsRoutes = (req, res, next) => {
       }
 
       if (req.url.includes("?ids=")) {
-        const idsRaw = urlEnds.split("?ids=").slice(-1)[0];
+        let idsRaw = urlEnds.split("?ids=").slice(-1)[0];
         if (idsRaw === undefined) {
           res.status(HTTP_NOT_FOUND).json({});
           return;
         }
+        idsRaw = idsRaw.replaceAll("%2C", ",");
         ids = idsRaw.split(",");
       }
 
@@ -141,6 +157,29 @@ const queryRoutes = (req, res, next) => {
         getApiCalls()[apiEndpoint] = 0;
       }
       getApiCalls()[apiEndpoint]++;
+
+      const call = `${req.method} ${apiEndpoint} -> ${res.statusCode}`;
+      if (getApiRequestsDetails()[call] === undefined) {
+        getApiRequestsDetails()[call] = 0;
+      }
+      getApiRequestsDetails()[call]++;
+    } else {
+      if (getNonApiCalls()["$non-api-call"] === undefined) {
+        getNonApiCalls()["$non-api-call"] = 0;
+      }
+      getNonApiCalls()["$non-api-call"]++;
+
+      const endpointUrl = req.url;
+      if (getNonApiCalls()[endpointUrl] === undefined) {
+        getNonApiCalls()[endpointUrl] = 0;
+      }
+      getNonApiCalls()[endpointUrl]++;
+
+      const call = `${req.method} ${endpointUrl} -> ${res.statusCode}`;
+      if (getNonApiRequestsDetails()[call] === undefined) {
+        getNonApiRequestsDetails()[call] = 0;
+      }
+      getNonApiRequestsDetails()[call]++;
     }
 
     if (req.url.includes("/api/articles") && req.method === "GET") {
