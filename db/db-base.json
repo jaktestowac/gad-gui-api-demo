@@ -2602,5 +2602,6 @@
       "score": 6,
       "id": 3
     }
-  ]
+  ],
+  "bookmarks": [{ "id": 1, "user_id": 1, "article_ids": [1] }]
 }

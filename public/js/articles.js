@@ -5,6 +5,7 @@ const likesEndpoint = "../../api/likes";
 const myLikesEndpoint = "../../api/likes/article/mylikes";
 const pictureListEndpoint = "../../api/images/posts";
 const visitsEndpoint = "../../api/visits/articles";
+const articleBookmarkEndpoint = "../../api/bookmarks";
 let picList = [];
 let users = [];
 let articlesData = [];
@@ -41,6 +42,27 @@ async function issueGetLikesForArticles(articleIds) {
     r.json()
   );
   return likesData.likes;
+}
+
+async function bookmarkArticle(articleId) {
+  const data = {
+    article_id: articleId,
+    user_id: getId(),
+  };
+  fetch(articleBookmarkEndpoint, {
+    method: "post",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+      userid: getId(),
+    },
+    body: JSON.stringify(data),
+  })
+    .then((r) => r.json())
+    .then((body) => {
+      // TODO: display bookmark on UI
+    });
 }
 
 async function issueGetLikes(article_id) {
@@ -328,33 +350,47 @@ const getImagesHTML = (image) => {
 //        <label>id:</label><span>${item.id}</span><br>
 const getItemHTML = (item) => {
   return `<div id="article${item.id}" data-testid="article-${item.id}">
-        <a href="article.html?id=${item.id}" id="gotoArticle${item.id}" data-testid="article-${
-    item.id
-  }-link">${getImagesHTML(item.image)}</a><br>
-        <div align="center" data-testid="article-${item.id}-title"><strong><a href="article.html?id=${item.id}">${
-    item.title
-  }</a></strong></div>
+  <a href="article.html?id=${item.id}" id="gotoArticle${item.id}" data-testid="article-${item.id}-link">${getImagesHTML(
+    item.image
+  )}</a><br>
+  
+  <div align="center" data-testid="article-${item.id}-title">
+    <strong><a href="article.html?id=${item.id}">${item.title}</a></strong>
+  </div>
+  
   <div align="center" style="" class="visits-container" id="visits-container-${
     item.id
   }" style="visibility: visible;"></div>
   <br>
-        <label>user:</label><span><a href="user.html?id=${item.user_id}" id="gotoUser${item.user_id}-${
+  
+  <table>
+    <tr>
+      <td ><label style="width:10px !important">user:</label>&nbsp&nbsp</td>
+      <td><span><a href="user.html?id=${item.user_id}" id="gotoUser${item.user_id}-${item.id}" data-testid="article-${
     item.id
-  }" data-testid="article-${item.id}-user">${item.user_name}</a></span>
-  <br>
-        <label>date:</label><span data-testid="article-${item.id}-date">${item.date
-    .replace("T", " ")
-    .replace("Z", "")}</span><br>
-    <div class="labels-container" id="labels-container-${item.id}" ></div>
-        <label></label><span data-testid="article-${item.id}-body">${item.body?.substring(0, 200)} (...)</span><br>
-        <div style="display: flex; justify-content: space-between;">
-            <span style="display: flex; justify-content: flex-start;">
-                <a href="article.html?id=${item.id}" id="seeArticle${item.id}">See More...</a>
-            </span>
-            <div class="likes-container" id="likes-container-${item.id}" style="visibility: visible;"></div>
-        </div>
+  }-user">${item.user_name}</a></span></td>
+      <td rowspan="2" style="padding:0px !important" class="bookmark-container" id="bookmark-container-${item.id}"></td>
+    </tr>
     
-    </div>`;
+    <tr>
+      <td ><label style="width:10px !important">date:</label>&nbsp&nbsp</td>
+      <td ><span data-testid="article-${item.id}-date">${item.date.replace("T", " ").replace("Z", "")}</span></td>
+    </tr>
+  </table>
+  
+  <div class="labels-container" id="labels-container-${item.id}"></div>
+  
+  <label></label><span data-testid="article-${item.id}-body">${item.body?.substring(0, 200)} (...)</span><br>
+  
+  <div style="display: flex; justify-content: space-between;">
+    <span style="display: flex; justify-content: flex-start;">
+      <a href="article.html?id=${item.id}" id="seeArticle${item.id}">See More...</a>
+    </span>
+    
+    <div class="likes-container" id="likes-container-${item.id}" style="visibility: visible;"></div>
+  </div>
+</div>
+`;
 };
 
 function presentPicture() {
@@ -405,6 +441,24 @@ updateSorting();
 issueGetRequest(records_per_page, current_page, searchPhrase, undefined, sortingType, sortingOrder).then(() => {
   changePage(current_page, true);
 });
+
+async function updateBookmarkElements() {
+  const isEnabled = await checkIfFeatureEnabled("feature_user_bookmark_articles");
+  if (!isEnabled) return;
+
+  const elements = document.querySelectorAll(".bookmark-container");
+  const ids = [];
+  elements.forEach((element) => {
+    ids.push(element.id.split("-").slice(-1)[0]);
+  });
+
+  console.log(ids);
+  // TODO: get all bookmarks for current user
+  elements.forEach((element) => {
+    const id = element.id.split("-").slice(-1)[0];
+    element.innerHTML = formatBookmarkArticle(false, id);
+  });
+}
 
 async function updateVisitsElements() {
   const isEnabled = await checkIfFeatureEnabled("feature_visits");
@@ -517,6 +571,7 @@ function changePage(page, onlyDisplay = false) {
     updateLikeElements();
     updateLabelElements();
     updateVisitsElements();
+    updateBookmarkElements();
   });
 }
 

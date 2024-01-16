@@ -604,3 +604,12 @@ s .container-mobile {
   border: 1px solid black;
   padding: 4px;
 }
+
+.bookmark-icon {
+  font-size: 24px;
+}
+
+.bookmark-icon-disabled {
+  font-size: 24px;
+  opacity: 50%;
+}

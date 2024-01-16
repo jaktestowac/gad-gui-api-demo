@@ -136,6 +136,10 @@ function articleLabelsDb() {
   return fullDb()["article-labels"];
 }
 
+function bookmarksDb() {
+  return fullDb()["bookmarks"];
+}
+
 function quizQuestionsDb() {
   const db = JSON.parse(fs.readFileSync(getDbPath(getConfigValue(ConfigKeys.QUIZ_QUESTIONS_PATH), "UTF-8")));
   return db;
@@ -243,6 +247,7 @@ module.exports = {
   getDbPath,
   gamesDb,
   scoresDb,
+  bookmarksDb,
   getUserAvatars,
   getImagesForArticles,
   getUploadedFileList,
