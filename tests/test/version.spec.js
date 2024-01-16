@@ -3,7 +3,7 @@ const { aboutUrl, request, expect } = require("../config.js");
 const fs = require("fs");
 const path = require("path");
 
-describe.only("Version check", async () => {
+describe("Version check", async () => {
   const baseUrl = aboutUrl;
 
   before(async () => {
@@ -31,7 +31,7 @@ describe.only("Version check", async () => {
 
     // Assert:
     expect(response.status).to.equal(200);
-    expect(response.body.version).to.be.equal(packageData.version);
+    expect(response.body.version).to.be.equal("v" + packageData.version);
   });
 
   it("app version", async () => {

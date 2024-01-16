@@ -191,20 +191,20 @@ function getGameScores(gameId) {
 }
 
 function checkIfArticlesAlreadyInBookmarks(articleId, userId) {
-  const foundFavs = findAllBookmarkedArticles(userId);
-  if (foundFavs.length === 0) {
+  const foundBookmarks = findUserBookmarks(userId);
+  if (foundBookmarks.length === 0) {
     return false;
   }
-
-  const ids = foundFavs["article_ids"].map((id) => id.toString());
+  const foundBookmark = foundBookmarks[0];
+  const ids = foundBookmark["article_ids"].map((id) => id.toString());
   return ids.includes(articleId?.toString());
 }
 
-function findAllBookmarkedArticles(userId) {
-  const foundFavs = bookmarksDb().filter((fav) => {
-    return fav["user_id"]?.toString() === userId?.toString();
+function findUserBookmarks(userId) {
+  const foundBookmark = bookmarksDb().filter((bookmark) => {
+    return bookmark["user_id"]?.toString() === userId?.toString();
   });
-  return foundFavs;
+  return foundBookmark;
 }
 
 module.exports = {
@@ -229,4 +229,5 @@ module.exports = {
   getGameNameById,
   getGameScores,
   checkIfArticlesAlreadyInBookmarks,
+  findUserBookmarks,
 };
