@@ -5,7 +5,7 @@ const likesEndpoint = "../../api/likes";
 const myLikesEndpoint = "../../api/likes/article/mylikes";
 const pictureListEndpoint = "../../api/images/posts";
 const visitsEndpoint = "../../api/visits/articles";
-const articleBookmarkEndpoint = "../../api/bookmarks";
+const articleBookmarkEndpoint = "../../api/bookmarks/articles";
 let picList = [];
 let users = [];
 let articlesData = [];
@@ -44,6 +44,11 @@ async function issueGetLikesForArticles(articleIds) {
   return likesData.likes;
 }
 
+async function issueGetBookmarkedArticles() {
+  const bookmarksData = await fetch(articleBookmarkEndpoint, { headers: formatHeaders() }).then((r) => r.json());
+  return bookmarksData.article_ids;
+}
+
 async function bookmarkArticle(articleId) {
   const data = {
     article_id: articleId,
@@ -61,7 +66,10 @@ async function bookmarkArticle(articleId) {
   })
     .then((r) => r.json())
     .then((body) => {
-      // TODO: display bookmark on UI
+      issueGetBookmarkedArticles().then((article_ids) => {
+        const element = document.querySelector(`#bookmark-container-${articleId}`);
+        element.innerHTML = formatBookmarkArticle(article_ids.includes(articleId), articleId);
+      });
     });
 }
 
@@ -451,12 +459,12 @@ async function updateBookmarkElements() {
   elements.forEach((element) => {
     ids.push(element.id.split("-").slice(-1)[0]);
   });
-
-  console.log(ids);
-  // TODO: get all bookmarks for current user
-  elements.forEach((element) => {
-    const id = element.id.split("-").slice(-1)[0];
-    element.innerHTML = formatBookmarkArticle(false, id);
+  issueGetBookmarkedArticles().then((aricleIds) => {
+    const stringArticleIds = aricleIds.map(String);
+    elements.forEach((element) => {
+      const id = element.id.split("-").slice(-1)[0];
+      element.innerHTML = formatBookmarkArticle(stringArticleIds.includes(id.toString()), id);
+    });
   });
 }
 

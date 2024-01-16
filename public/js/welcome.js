@@ -19,6 +19,15 @@ checkIfFeatureEnabled("feature_files").then((isEnabled) => {
   }
 });
 
+checkIfFeatureEnabled("feature_user_bookmark_articles").then((isEnabled) => {
+  if (isEnabled) {
+    const container = document.querySelector("#additionalBtns");
+    container.innerHTML += `<a href="./bookmarked.html?type=bookmarked" class="menu-link">
+            <button id="btnBookmarks" data-testid="open-bookmarked" class="button-primary" >🏷️ articles</button>
+         </a>`;
+  }
+});
+
 const editAccountButton = document.querySelector("#btnEditLink");
 editAccountButton.setAttribute("href", `/user.html?id=${getId()}`);
 
