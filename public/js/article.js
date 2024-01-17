@@ -887,7 +887,6 @@ if (msg !== undefined) {
 async function bookmarkArticle(articleId) {
   const data = {
     article_id: articleId,
-    user_id: getId(),
   };
   fetch(articleBookmarkEndpoint, {
     method: "post",

@@ -51,8 +51,7 @@ async function issueGetBookmarkedArticles() {
 
 async function bookmarkArticle(articleId) {
   const data = {
-    article_id: articleId,
-    user_id: getId(),
+    article_id: articleId
   };
   fetch(articleBookmarkEndpoint, {
     method: "post",

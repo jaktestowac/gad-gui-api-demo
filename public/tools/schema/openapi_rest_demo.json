@@ -56,6 +56,10 @@
       "description": "Article Labels (⚠️ needs proper feature flag enabled)"
     },
     {
+      "name": "bookmarks",
+      "description": "Bookmarks (⚠️ needs proper feature flag enabled)"
+    },
+    {
       "name": "search",
       "description": "Search, filter, pagination for given objects"
     },
@@ -2821,6 +2825,81 @@
           }
         }
       }
+    },
+    "/bookmarks/articles": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": ["bookmarks"],
+        "summary": "Get user articles bookmarks",
+        "operationId": "getUserArticlesBookmarks",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticlesBookmarked"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": ["bookmarks"],
+        "requestBody": {
+          "description": "Created bookmarks object",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBookmark"
+              }
+            }
+          },
+          "required": true
+        },
+        "summary": "Add user articles bookmarks",
+        "operationId": "addUserArticlesBookmarks",
+        "responses": {
+          "200": {
+            "description": "Bookmark added or removed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Bookmarks"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "First bookmark created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Bookmarks"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          }
+        }
+      }
     }
   },
   "components": {
@@ -3346,7 +3425,7 @@
             "game_id": {
               "oneOf": [
                 {
-                  "type": "integer"
+                  "type": "number"
                 },
                 {
                   "type": "string"
@@ -3356,7 +3435,7 @@
             "user_id": {
               "oneOf": [
                 {
-                  "type": "integer"
+                  "type": "number"
                 },
                 {
                   "type": "string"
@@ -3366,7 +3445,7 @@
             "score": {
               "oneOf": [
                 {
-                  "type": "integer"
+                  "type": "number"
                 },
                 {
                   "type": "string"
@@ -3376,7 +3455,7 @@
             "id": {
               "oneOf": [
                 {
-                  "type": "integer"
+                  "type": "number"
                 },
                 {
                   "type": "string"
@@ -3397,7 +3476,7 @@
             "id": {
               "oneOf": [
                 {
-                  "type": "integer"
+                  "type": "number"
                 },
                 {
                   "type": "string"
@@ -3410,6 +3489,70 @@
       "Visits": {
         "type": "object",
         "example": { "1": 2 }
+      },
+      "CreateBookmark": {
+        "type": "object",
+        "properties": {
+          "article_id": {
+            "type": "string"
+          }
+        }
+      },
+      "ArticlesBookmarked": {
+        "type": "object",
+        "properties": {
+          "article_ids": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "Bookmarks": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "user_id": {
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "article_ids": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
       }
     }
   }

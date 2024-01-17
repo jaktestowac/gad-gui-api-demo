@@ -47,7 +47,7 @@ function handleBookmarks(req, res, isAdmin) {
       logTrace("handleBookmark: create a bookmark via POST:", {
         method: req.method,
         url: req.url,
-        body: bookmarks,
+        body: bookmark,
       });
       return;
     }
