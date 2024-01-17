@@ -6,6 +6,7 @@ const articleLikesEndpoint = "../../api/likes/article";
 const myLikesEndpoint = "../../api/likes/article/mylikes";
 const likesEndpoint = "../../api/likes";
 const visitsEndpoint = "../../api/visits/articles";
+const articleBookmarkEndpoint = "../../api/bookmarks/articles";
 let user_name = "Unknown";
 let article_id = undefined;
 let articleData;
@@ -24,6 +25,11 @@ async function issueGetVisitsForArticle(articleId) {
     headers: { ...formatHeaders(), userid: getId() },
   }).then((r) => r.json());
   return visitsData;
+}
+
+async function issueGetBookmarkedArticles() {
+  const bookmarksData = await fetch(articleBookmarkEndpoint, { headers: formatHeaders() }).then((r) => r.json());
+  return bookmarksData.article_ids;
 }
 
 async function issueGetRandomRequest() {
@@ -204,13 +210,28 @@ const getItemHTML = (item) => {
   return `<div>
         ${controls}<br>
         ${getImagesHTML(item.image)}<br>
-        <label>title:</label><span id="title" data-testid="article-title">${
-          item.title
-        }</span><i class="fas fa-edit editName" disabled data-testid="article-title-edit" id="${item.id}"></i><br>
-        <label>user:</label><span><a href="user.html?id=${item.user_id}" data-testid="user-name">${
+
+        <table>
+        <tr>
+          <td style="padding: 0px;"><label style="width:50px !important">title:</label>&nbsp&nbsp</td>
+          <td style="padding: 0px;"><span id="title" data-testid="article-title">${
+            item.title
+          }</span><i class="fas fa-edit editName" disabled data-testid="article-title-edit" id="${item.id}"></i></td>
+          <td rowspan="3" style="padding:0px !important" class="bookmark-container" id="bookmark-container"></td>
+        </tr>
+        
+        <tr>
+          <td style="padding: 0px;"><label style="width:50px !important">user:</label>&nbsp&nbsp</td>
+          <td style="padding: 0px;"><span><a href="user.html?id=${item.user_id}" data-testid="user-name">${
     item.user_name
-  }</a></span><br>
-        <label>date:</label><span>${item?.date?.replace("T", " ").replace("Z", "")}</span>
+  }</a></span></td>
+        </tr>
+        
+        <tr>
+          <td style="padding: 0px ;"><label style="width:10px !important">date:</label>&nbsp&nbsp</td>
+          <td style="padding: 0px ;"><span>${item?.date?.replace("T", " ").replace("Z", "")}</span></td>
+        </tr>
+      </table>
         <div align="center" style="" class="visits-container" id="visits-container-${
           item.id
         }" style="visibility: visible;"></div>
@@ -817,6 +838,13 @@ if (`${is_random}` === "1" || `${is_random}`.toLowerCase() === "true" || `${arti
       });
     });
     handleLabelsRefresh();
+    checkIfFeatureEnabled("feature_user_bookmark_articles").then((isEnabled) => {
+      if (!isEnabled) return;
+      issueGetBookmarkedArticles(article_id).then((article_ids) => {
+        const element = document.querySelector(`#bookmark-container`);
+        element.innerHTML = formatBookmarkArticle(article_ids.includes(article_id), article_id);
+      });
+    });
   });
 } else {
   const container = document.querySelector("#container");
@@ -854,6 +882,46 @@ async function handleLabelsRefresh() {
 
 if (msg !== undefined) {
   showMessage(decodeURIComponent(msg), false);
+}
+
+async function bookmarkArticle(articleId) {
+  const data = {
+    article_id: articleId,
+    user_id: getId(),
+  };
+  fetch(articleBookmarkEndpoint, {
+    method: "post",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+      userid: getId(),
+    },
+    body: JSON.stringify(data),
+  })
+    .then((r) => r.json())
+    .then((body) => {
+      const element = document.querySelector(`#bookmark-container`);
+      element.innerHTML = formatBookmarkArticle(body.article_ids.includes(articleId), articleId);
+    });
+}
+
+async function updateBookmarkElements() {
+  const isEnabled = await checkIfFeatureEnabled("feature_user_bookmark_articles");
+  if (!isEnabled) return;
+
+  const elements = document.querySelectorAll(".bookmark-container");
+  const ids = [];
+  elements.forEach((element) => {
+    ids.push(element.id.split("-").slice(-1)[0]);
+  });
+  issueGetBookmarkedArticles().then((aricleIds) => {
+    const stringArticleIds = aricleIds.map(String);
+    elements.forEach((element) => {
+      const id = element.id.split("-").slice(-1)[0];
+      element.innerHTML = formatBookmarkArticle(stringArticleIds.includes(id.toString()), id);
+    });
+  });
 }
 
 function updateMatchingLabels() {

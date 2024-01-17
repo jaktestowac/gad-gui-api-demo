@@ -223,10 +223,8 @@ async function bookmarkArticle(articleId) {
   })
     .then((r) => r.json())
     .then((body) => {
-      issueGetBookmarkedArticles().then((article_ids) => {
-        const element = document.querySelector(`#bookmark-container-${articleId}`);
-        element.innerHTML = formatBookmarkArticle(article_ids.includes(articleId), articleId);
-      });
+      const element = document.querySelector(`#bookmark-container-${articleId}`);
+      element.innerHTML = formatBookmarkArticle(body.article_ids.includes(articleId), articleId);
     });
 }
 

@@ -66,10 +66,8 @@ async function bookmarkArticle(articleId) {
   })
     .then((r) => r.json())
     .then((body) => {
-      issueGetBookmarkedArticles().then((article_ids) => {
-        const element = document.querySelector(`#bookmark-container-${articleId}`);
-        element.innerHTML = formatBookmarkArticle(article_ids.includes(articleId), articleId);
-      });
+      const element = document.querySelector(`#bookmark-container-${articleId}`);
+      element.innerHTML = formatBookmarkArticle(body.article_ids.includes(articleId), articleId);
     });
 }
 
@@ -373,16 +371,18 @@ const getItemHTML = (item) => {
   
   <table>
     <tr>
-      <td ><label style="width:10px !important">user:</label>&nbsp&nbsp</td>
-      <td><span><a href="user.html?id=${item.user_id}" id="gotoUser${item.user_id}-${item.id}" data-testid="article-${
+      <td style="padding: 0px;" ><label style="width:25px !important">user:</label>&nbsp&nbsp</td>
+      <td style="padding: 0px;"><span><a href="user.html?id=${item.user_id}" id="gotoUser${item.user_id}-${
     item.id
-  }-user">${item.user_name}</a></span></td>
+  }" data-testid="article-${item.id}-user">${item.user_name}</a></span></td>
       <td rowspan="2" style="padding:0px !important" class="bookmark-container" id="bookmark-container-${item.id}"></td>
     </tr>
     
     <tr>
-      <td ><label style="width:10px !important">date:</label>&nbsp&nbsp</td>
-      <td ><span data-testid="article-${item.id}-date">${item.date.replace("T", " ").replace("Z", "")}</span></td>
+      <td style="padding: 0px;"><label style="width:25px !important">date:</label>&nbsp&nbsp</td>
+      <td style="padding: 0px;"><span data-testid="article-${item.id}-date">${item.date
+    .replace("T", " ")
+    .replace("Z", "")}</span></td>
     </tr>
   </table>
   
