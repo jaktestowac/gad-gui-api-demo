@@ -19,6 +19,10 @@ function formatTooManyValuesErrorResponse(valueType) {
   return formatErrorResponse(`Too many values of type: ${valueType}!`);
 }
 
+function formatInvalidEntityErrorResponse(valueType) {
+  return formatErrorResponse(`Invalid entity - invalid ID or entity does not exist: ${valueType}!`);
+}
+
 function formatInvalidFieldErrorResponse(isValid, all_fields) {
   return formatErrorResponse(
     `One of field is invalid (empty, invalid or too long) or there are some additional fields: ${isValid.error}`,
@@ -329,6 +333,7 @@ module.exports = {
   formatInvalidTokenErrorResponse,
   formatTooManyValuesErrorResponse,
   formatOnlyOneFieldPossibleErrorResponse,
+  formatInvalidEntityErrorResponse,
   getRandomInt,
   sleep,
   isAdminUser,

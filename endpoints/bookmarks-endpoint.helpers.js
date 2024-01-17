@@ -4,10 +4,16 @@ const {
   searchForUserWithOnlyToken,
   checkIfArticlesAlreadyInBookmarks,
   findUserBookmarks,
+  searchForArticle,
 } = require("../helpers/db-operation.helpers");
-const { formatInvalidTokenErrorResponse } = require("../helpers/helpers");
+const { formatInvalidTokenErrorResponse, formatInvalidEntityErrorResponse } = require("../helpers/helpers");
 const { logTrace } = require("../helpers/logger-api");
-const { HTTP_NOT_FOUND, HTTP_UNAUTHORIZED, HTTP_OK } = require("../helpers/response.helpers");
+const {
+  HTTP_NOT_FOUND,
+  HTTP_UNAUTHORIZED,
+  HTTP_OK,
+  HTTP_UNPROCESSABLE_ENTITY,
+} = require("../helpers/response.helpers");
 const { verifyAccessToken } = require("../helpers/validation.helpers");
 
 function handleBookmarks(req, res, isAdmin) {
@@ -31,11 +37,18 @@ function handleBookmarks(req, res, isAdmin) {
     }
 
     const articleId = req.body["article_id"];
+
+    const foundArticle = searchForArticle(articleId);
+
+    if (foundArticle === undefined) {
+      res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidEntityErrorResponse("article_id"));
+      return false;
+    }
+
     const bookmarked = checkIfArticlesAlreadyInBookmarks(articleId, foundUser.id);
     const bookmarks = findUserBookmarks(foundUser.id);
 
     let bookmark = bookmarks[0];
-
     if (bookmark === undefined && bookmarked === false) {
       req.url = `/api/bookmarks`;
       req.method = "POST";
@@ -80,6 +93,7 @@ function handleBookmarks(req, res, isAdmin) {
       res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
       return false;
     }
+
     const bookmarks = findUserBookmarks(foundUser.id);
     const bookmark = bookmarks[0];
     res.status(HTTP_OK).json({ article_ids: bookmark?.article_ids });

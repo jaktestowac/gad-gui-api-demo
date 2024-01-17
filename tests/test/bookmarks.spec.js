@@ -1,8 +1,8 @@
-const { request, expect, baseBookmarksUrl, sleepTime } = require("../config.js");
-const { authUser, generateLikesBody } = require("../helpers/data.helpers.js");
+const { request, expect, baseBookmarksUrl } = require("../config.js");
+const { authUser } = require("../helpers/data.helpers.js");
 const { setupEnv, gracefulQuit, sleep } = require("../helpers/helpers.js");
 
-describe.only("Endpoint /bookmarks", async () => {
+describe("Endpoint /bookmarks", async () => {
   const baseUrl = baseBookmarksUrl;
 
   before(async () => {
@@ -66,10 +66,29 @@ describe.only("Endpoint /bookmarks", async () => {
       headers["userid"] = userId;
     });
 
+    it(`POST /bookmarks - invalid article_id`, async () => {
+      // Arrange:
+      const bookmarksBody = {
+        article_id: "abc",
+      };
+      const expectedBookmarkedArticles = undefined;
+
+      // Act:
+      const responsePost = await request.post(`${baseUrl}/articles`).set(headers).send(bookmarksBody);
+
+      // Assert:
+      expect(responsePost.status).to.equal(422);
+      const responseGetAfter = await request.get(`${baseUrl}/articles`).set(headers);
+
+      expect(responseGetAfter.status).to.equal(200);
+      const articleIdsAfter = responseGetAfter.body.article_ids;
+      expect(articleIdsAfter, JSON.stringify(responseGetAfter.body)).to.eql(expectedBookmarkedArticles);
+    });
+
     describe("e2e", async () => {
       beforeEach(async () => {
         await setupEnv();
-        await request.get("/restoreDB");
+        await request.get("/api/restoreDB");
       });
 
       it(`POST /bookmarks - add a brand new bookmark`, async () => {
@@ -113,8 +132,12 @@ describe.only("Endpoint /bookmarks", async () => {
         const responsePost1 = await request.post(`${baseUrl}/articles`).set(headers).send(bookmarksBody1);
         expect(responsePost1.status, JSON.stringify(responsePost1.body)).to.equal(201);
 
+        await sleep(200);
+
         const responsePost2 = await request.post(`${baseUrl}/articles`).set(headers).send(bookmarksBody2);
         expect(responsePost2.status, JSON.stringify(responsePost2.body)).to.equal(200);
+
+        await sleep(200);
 
         // Assert:
         const responseGetAfter = await request.get(`${baseUrl}/articles`).set(headers);
