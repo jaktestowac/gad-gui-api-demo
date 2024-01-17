@@ -51,7 +51,7 @@ async function issueGetBookmarkedArticles() {
 
 async function bookmarkArticle(articleId) {
   const data = {
-    article_id: articleId
+    article_id: articleId,
   };
   fetch(articleBookmarkEndpoint, {
     method: "post",
@@ -459,7 +459,7 @@ async function updateBookmarkElements() {
     ids.push(element.id.split("-").slice(-1)[0]);
   });
   issueGetBookmarkedArticles().then((aricleIds) => {
-    const stringArticleIds = aricleIds.map(String);
+    const stringArticleIds = (aricleIds ?? []).map(String);
     elements.forEach((element) => {
       const id = element.id.split("-").slice(-1)[0];
       element.innerHTML = formatBookmarkArticle(stringArticleIds.includes(id.toString()), id);

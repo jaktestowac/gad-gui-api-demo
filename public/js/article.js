@@ -29,7 +29,7 @@ async function issueGetVisitsForArticle(articleId) {
 
 async function issueGetBookmarkedArticles() {
   const bookmarksData = await fetch(articleBookmarkEndpoint, { headers: formatHeaders() }).then((r) => r.json());
-  return bookmarksData.article_ids;
+  return bookmarksData.article_ids ?? [];
 }
 
 async function issueGetRandomRequest() {
@@ -209,8 +209,10 @@ const getItemHTML = (item) => {
   const body = item.body?.replaceAll("\n", "<br/><br/>");
   return `<div>
         ${controls}<br>
-        ${getImagesHTML(item.image)}<br>
-
+        ${getImagesHTML(item.image)}
+        <div align="center" style="" class="visits-container" id="visits-container-${
+          item.id
+        }" style="visibility: visible;"></div>
         <table>
         <tr>
           <td style="padding: 0px;"><label style="width:50px !important">title:</label>&nbsp&nbsp</td>
@@ -232,9 +234,6 @@ const getItemHTML = (item) => {
           <td style="padding: 0px ;"><span>${item?.date?.replace("T", " ").replace("Z", "")}</span></td>
         </tr>
       </table>
-        <div align="center" style="" class="visits-container" id="visits-container-${
-          item.id
-        }" style="visibility: visible;"></div>
         <div class="labels-container" id="labels-container" ></div>
         
         <div align="center" >Download article as:<br>
