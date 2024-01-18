@@ -20,6 +20,9 @@ const bugConfig = {
   bug_likes_001: false,
   bug_likes_002: false,
   bug_likes_003: false,
+  bug_bookmarks_001: false,
+  bug_bookmarks_002: false,
+  bug_bookmarks_003: false,
 };
 
 module.exports = {

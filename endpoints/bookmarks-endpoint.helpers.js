@@ -1,5 +1,5 @@
-const { getFeatureFlagConfigValue } = require("../config/config-manager");
-const { FeatureFlagConfigKeys } = require("../config/enums");
+const { getFeatureFlagConfigValue, isBugDisabled, isBugEnabled } = require("../config/config-manager");
+const { FeatureFlagConfigKeys, BugConfigKeys } = require("../config/enums");
 const {
   searchForUserWithOnlyToken,
   checkIfArticlesAlreadyInBookmarks,
@@ -38,17 +38,36 @@ function handleBookmarks(req, res, isAdmin) {
 
     const articleId = req.body["article_id"];
 
-    const foundArticle = searchForArticle(articleId);
+    let foundArticle = searchForArticle(articleId);
+
+    const bug001Enabled = isBugEnabled(BugConfigKeys.BUG_BOOKMARKS_001);
+
+    if (bug001Enabled === true) {
+      // if bug enabled - then article check is disabled - article always exists:
+      foundArticle = 1;
+    }
 
     if (foundArticle === undefined) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidEntityErrorResponse("article_id"));
       return false;
     }
 
-    const bookmarked = checkIfArticlesAlreadyInBookmarks(articleId, foundUser.id);
-    const bookmarks = findUserBookmarks(foundUser.id);
-
+    let bookmarked = checkIfArticlesAlreadyInBookmarks(articleId, foundUser.id);
+    let bookmarks = findUserBookmarks(foundUser.id);
     let bookmark = bookmarks[0];
+
+    const bug002Enabled = isBugEnabled(BugConfigKeys.BUG_BOOKMARKS_002);
+    if (bug002Enabled === true) {
+      // if bug enabled - then article is never found as bookmarked:
+      bookmarked = false;
+    }
+
+    const bug003Enabled = isBugEnabled(BugConfigKeys.BUG_BOOKMARKS_003);
+    if (bug003Enabled === true) {
+      // if bug enabled - then article bookmark is never found:
+      bookmark = undefined;
+    }
+
     if (bookmark === undefined && bookmarked === false) {
       req.url = `/api/bookmarks`;
       req.method = "POST";
