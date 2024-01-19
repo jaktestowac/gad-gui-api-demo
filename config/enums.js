@@ -88,6 +88,7 @@ const FeatureFlagConfigKeys = {
   FEATURE_CACHE_CONTROL_NO_STORE: "feature_cache_control_no_store",
   FEATURE_VISITS: "feature_visits",
   FEATURE_USER_BOOKMARK_ARTICLES: "feature_user_bookmark_articles",
+  FEATURE_INFINITE_SCROLL_ARTICLES: "feature_infinite_scroll_articles",
 };
 
 module.exports = {

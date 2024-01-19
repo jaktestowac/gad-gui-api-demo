@@ -613,3 +613,14 @@ s .container-mobile {
   font-size: 24px;
   opacity: 50%;
 }
+
+#scroll-content {
+  padding: 20px;
+  border-bottom: 1px solid #ccc;
+}
+
+#scroll-loading {
+  text-align: center;
+  padding: 10px;
+  font-style: italic;
+}

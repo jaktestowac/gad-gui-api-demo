@@ -157,13 +157,6 @@ async function issueGetRequest(
         }
       }
       if (articlesData[i].user_name === undefined) {
-        //        const userUrl = `${usersEndpoint}/${articlesData[i].user_id}`;
-        //        const userResults = await Promise.all(
-        //          [userUrl].map((url) => fetch(url, { headers: formatHeaders() }, fetchData).then((r) => r.json()))
-        //        );
-        //
-        //        users = userResults[0];
-
         for (let j = 0; j < users.length; j++) {
           if (users[j].id?.toString() === articlesData[i].user_id?.toString()) {
             articlesData[i].user_name = `${users[j].firstname} ${users[j].lastname}`;
@@ -176,15 +169,12 @@ async function issueGetRequest(
         articlesData[i].user_name = "Unknown user";
       }
     }
-    // // sort articles by date:
-    // articlesData.sort(function (a, b) {
-    //   let dateA = new Date(a.date),
-    //     dateB = new Date(b.date);
-    //   return dateB - dateA;
-    // });
   }
+  return articlesData;
+}
+
+async function displayArticlesData(articlesData) {
   displayPostsData(articlesData);
-  attachEventHandlers(getId());
 
   if (search_user_id !== undefined) {
     const foundUser = users.find((user) => `${user.id}` === search_user_id);
@@ -202,6 +192,7 @@ async function issueGetRequest(
     }
   }
 
+  attachEventHandlers(getId());
   return true;
 }
 
@@ -247,30 +238,6 @@ const attachEventHandlers = (user_id) => {
 };
 
 let alertElement = document.querySelector(".alert");
-
-// const showResponseOnDelete = (response) => {
-//   if (response.status === 200) {
-//     showMessage("Article was deleted", false);
-//   } else {
-//     showMessage("Article was not deleted", true);
-//   }
-// };
-
-// const showResponseOnUpdate = (response) => {
-//   if (response.status === 200) {
-//     showMessage("Article was updated", false);
-//   } else {
-//     showMessage("Article was not updated", true);
-//   }
-// };
-
-// const showResponse = (response) => {
-//   if (response.status === 201) {
-//     showMessage("Article was created", false);
-//   } else {
-//     showMessage("Article was not created", true);
-//   }
-// };
 
 const showResponseAndRedirect = (response) => {
   if (response.status === 201) {
@@ -323,7 +290,6 @@ const handleCreate = () => {
     image: `.\\data\\images\\256\\${container.querySelector(".image").value}`,
   };
   issueArticleRequest(data, issueGetRequest, searchPhrase);
-  // document.querySelector(".add-new-panel").classList.remove("active");
 };
 
 const issueArticleRequest = (data, responseHandler) => {
@@ -344,15 +310,10 @@ const getImagesHTML = (image) => {
   let htmlData = "";
   if (image !== undefined) {
     htmlData += `<div align="center" ><img src="${image}" /></div>`;
-    //        for (image of images) {
-    //            htmlData += `<img src="${image}" />`;
-    //            htmlData += `<br>`
-    //        }
   }
   return htmlData;
 };
 
-//        <label>id:</label><span>${item.id}</span><br>
 const getItemHTML = (item) => {
   return `<div id="article${item.id}" data-testid="article-${item.id}">
   <a href="article.html?id=${item.id}" id="gotoArticle${item.id}" data-testid="article-${item.id}-link">${getImagesHTML(
@@ -407,22 +368,21 @@ function presentPicture() {
 
 const displayPostsData = (data) => {
   const container = document.querySelector("#container");
-  container.innerHTML = "";
+  container.innerHTML = formatPostsData(data);
+};
+
+const formatPostsData = (data, suppressNoDataMsg = false) => {
+  let innerHTML = "";
   for (let item of data) {
-    displayItem(item, container);
+    innerHTML += `<div class="card-wrapper" >${getItemHTML(item)}</div>`;
   }
-  if (data.length === 0) {
-    container.innerHTML += `
+  if (data.length === 0 && suppressNoDataMsg === false) {
+    innerHTML += `
         <div align="center"><h1 style="text-align: center;"data-testid="no-results">No data</h1></div>
     `;
   }
-};
 
-const displayItem = (item, container) => {
-  let itemHTML = getItemHTML(item);
-  container.innerHTML += `
-        <div class="card-wrapper" >${itemHTML}</div>
-    `;
+  return innerHTML;
 };
 
 async function getPictureList() {
@@ -445,8 +405,20 @@ let search_user_id = getParams()["user_id"];
 getPictureList();
 updatePerPage();
 updateSorting();
-issueGetRequest(records_per_page, current_page, searchPhrase, undefined, sortingType, sortingOrder).then(() => {
-  changePage(current_page, true);
+
+checkIfFeatureEnabled("feature_infinite_scroll_articles").then((isEnabled) => {
+  if (isEnabled === true) {
+    document.addEventListener("scroll", checkScroll);
+
+    // Initial check when the page loads
+    checkScroll();
+  } else {
+    issueGetRequest(records_per_page, current_page, searchPhrase, undefined, sortingType, sortingOrder).then((data) => {
+      displayArticlesData(data).then(() => {
+        changePage(current_page, true);
+      });
+    });
+  }
 });
 
 async function updateBookmarkElements() {
@@ -574,11 +546,13 @@ function changePage(page, onlyDisplay = false) {
     btnNext.disabled = false;
     btnNext.style.color = "#0275d8";
   }
-  issueGetRequest(records_per_page, page, searchPhrase, onlyDisplay, sortingType, sortingOrder).then(() => {
-    updateLikeElements();
-    updateLabelElements();
-    updateVisitsElements();
-    updateBookmarkElements();
+  issueGetRequest(records_per_page, page, searchPhrase, onlyDisplay, sortingType, sortingOrder).then((data) => {
+    displayArticlesData(data).then(() => {
+      updateLikeElements();
+      updateLabelElements();
+      updateVisitsElements();
+      updateBookmarkElements();
+    });
   });
 }
 
@@ -590,8 +564,10 @@ menuButtonDisable("btnArticles");
 function seachByText() {
   let searchInput = document.getElementById("search-input");
   searchPhrase = searchInput.value;
-  issueGetRequest(records_per_page, current_page, searchPhrase, undefined, sortingType, sortingOrder).then(() => {
-    changePage(current_page, true);
+  issueGetRequest(records_per_page, current_page, searchPhrase, undefined, sortingType, sortingOrder).then((data) => {
+    displayArticlesData(data).then(() => {
+      changePage(current_page, true);
+    });
   });
 }
 
@@ -605,4 +581,39 @@ function updateSorting() {
 function changeSorting() {
   updateSorting();
   changeItemsPerPage();
+}
+
+/// infinite scroll:
+
+let scrollLoading = false;
+let scrollPage = 1; // Initial page
+
+function appendContent(newContent) {
+  const contentElement = document.querySelector("#container");
+  contentElement.innerHTML += formatPostsData(newContent, true);
+  scrollLoading = false;
+}
+
+function checkScroll() {
+  const navigationBar = document.querySelector(".navigation-bar");
+  navigationBar.style.display = "none";
+  const loadingElement = document.getElementById("scroll-loading");
+  loadingElement.innerHTML = "Loading...";
+
+  if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 5) {
+    scrollLoading = true;
+    loadingElement.style.display = "block";
+
+    // Fetch new content and append it to the page
+
+    issueGetRequest(records_per_page, scrollPage, searchPhrase, false, sortingType, sortingOrder).then((data) => {
+      loadingElement.style.display = "none";
+      appendContent(data);
+      updateLikeElements();
+      updateLabelElements();
+      updateVisitsElements();
+      updateBookmarkElements();
+      scrollPage++;
+    });
+  }
 }
