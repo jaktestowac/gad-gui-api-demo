@@ -617,6 +617,7 @@ function checkScroll() {
         updateVisitsElements();
         updateBookmarkElements();
         current_page++;
+        checkScroll();
       }
     });
   }
