@@ -410,6 +410,8 @@ checkIfFeatureEnabled("feature_infinite_scroll_articles").then((isEnabled) => {
   if (isEnabled === true) {
     document.addEventListener("scroll", checkScroll);
 
+    // const containerSpace = document.querySelector(".container-space");
+    // containerSpace.style.marginTop = "0px";
     // Initial check when the page loads
     checkScroll();
   } else {
@@ -586,7 +588,6 @@ function changeSorting() {
 /// infinite scroll:
 
 let scrollLoading = false;
-let scrollPage = 1; // Initial page
 
 function appendContent(newContent) {
   const contentElement = document.querySelector("#container");
@@ -596,7 +597,7 @@ function appendContent(newContent) {
 }
 
 function checkScroll() {
-  const navigationBar = document.querySelector(".navigation-bar");
+  const navigationBar = document.querySelector("#paginationController");
   navigationBar.style.display = "none";
   const loadingElement = document.getElementById("scroll-loading");
   loadingElement.innerHTML = "Loading...";
@@ -607,7 +608,7 @@ function checkScroll() {
 
     // Fetch new content and append it to the page
 
-    issueGetRequest(records_per_page, scrollPage, searchPhrase, false, sortingType, sortingOrder).then((data) => {
+    issueGetRequest(records_per_page, current_page, searchPhrase, false, sortingType, sortingOrder).then((data) => {
       loadingElement.style.display = "none";
       if (data.length > 0) {
         appendContent(data);
@@ -615,7 +616,7 @@ function checkScroll() {
         updateLabelElements();
         updateVisitsElements();
         updateBookmarkElements();
-        scrollPage++;
+        current_page++;
       }
     });
   }
