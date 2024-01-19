@@ -590,6 +590,7 @@ let scrollPage = 1; // Initial page
 
 function appendContent(newContent) {
   const contentElement = document.querySelector("#container");
+
   contentElement.innerHTML += formatPostsData(newContent, true);
   scrollLoading = false;
 }
@@ -608,12 +609,14 @@ function checkScroll() {
 
     issueGetRequest(records_per_page, scrollPage, searchPhrase, false, sortingType, sortingOrder).then((data) => {
       loadingElement.style.display = "none";
-      appendContent(data);
-      updateLikeElements();
-      updateLabelElements();
-      updateVisitsElements();
-      updateBookmarkElements();
-      scrollPage++;
+      if (data.length > 0) {
+        appendContent(data);
+        updateLikeElements();
+        updateLabelElements();
+        updateVisitsElements();
+        updateBookmarkElements();
+        scrollPage++;
+      }
     });
   }
 }
