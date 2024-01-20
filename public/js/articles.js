@@ -596,29 +596,33 @@ function appendContent(newContent) {
   scrollLoading = false;
 }
 
-function checkScroll() {
+async function checkScroll() {
   const navigationBar = document.querySelector("#paginationController");
   navigationBar.style.display = "none";
   const loadingElement = document.getElementById("scroll-loading");
   loadingElement.innerHTML = "Loading...";
 
-  if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 5) {
+  if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 5 && scrollLoading === false) {
     scrollLoading = true;
     loadingElement.style.display = "block";
 
     // Fetch new content and append it to the page
-
-    issueGetRequest(records_per_page, current_page, searchPhrase, false, sortingType, sortingOrder).then((data) => {
-      loadingElement.style.display = "none";
-      if (data.length > 0) {
-        appendContent(data);
-        updateLikeElements();
-        updateLabelElements();
-        updateVisitsElements();
-        updateBookmarkElements();
-        current_page++;
-        checkScroll();
-      }
+    // delay displaying next element:
+    await sleep(300).then((msg) => {
+      issueGetRequest(records_per_page, current_page, searchPhrase, false, sortingType, sortingOrder).then((data) => {
+        loadingElement.style.display = "none";
+        if (data.length > 0) {
+          appendContent(data);
+          updateLikeElements();
+          updateLabelElements();
+          updateVisitsElements();
+          updateBookmarkElements();
+          current_page++;
+          checkScroll();
+        }
+      });
     });
   }
 }
+
+const sleep = (time) => new Promise((res) => setTimeout(res, time));
