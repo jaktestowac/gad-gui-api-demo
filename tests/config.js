@@ -21,6 +21,11 @@ const baseArticleLabelsUrl = "/api/article-labels";
 
 const existingUserEmail = "Danial.Dicki@dicki.test";
 const existingUserPass = "test2";
+const existingUserId = 2;
+
+const existingUserEmail2 = "Henry.Spencer@test.test";
+const existingUserPass2 = "1234";
+const existingUserId2 = 11;
 
 const sleepTime = 200; // in ms
 const logLevel = 2;
@@ -43,6 +48,7 @@ module.exports = {
   baseLoginUrl,
   existingUserPass,
   existingUserEmail,
+  existingUserId,
   logLevel,
   clearDbAfter,
   clearDbBefore,
@@ -52,4 +58,7 @@ module.exports = {
   baseRandomArticlesUrl,
   aboutUrl,
   baseBookmarksUrl,
+  existingUserEmail2,
+  existingUserPass2,
+  existingUserId2,
 };

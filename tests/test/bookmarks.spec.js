@@ -1,5 +1,5 @@
 const { request, expect, baseBookmarksUrl } = require("../config.js");
-const { authUser } = require("../helpers/data.helpers.js");
+const { authUser, authUser2 } = require("../helpers/data.helpers.js");
 const { setupEnv, gracefulQuit, sleep } = require("../helpers/helpers.js");
 
 describe("Endpoint /bookmarks", async () => {
@@ -60,7 +60,7 @@ describe("Endpoint /bookmarks", async () => {
     let userId;
 
     beforeEach(async () => {
-      const data = await authUser();
+      const data = await authUser2();
       headers = data.headers;
       userId = data.userId;
       headers["userid"] = userId;
@@ -100,7 +100,7 @@ describe("Endpoint /bookmarks", async () => {
 
         const response = await request.get(`${baseUrl}/articles`).set(headers);
 
-        expect(response.status).to.equal(200);
+        expect(response.status, `GET /articles: ${JSON.stringify(response.body)}`).to.equal(200);
 
         // Act:
         const responsePost = await request.post(`${baseUrl}/articles`).set(headers).send(bookmarksBody);
@@ -109,7 +109,10 @@ describe("Endpoint /bookmarks", async () => {
         expect(responsePost.status).to.equal(201);
         const responseGetAfter = await request.get(`${baseUrl}/articles`).set(headers);
 
-        expect(responseGetAfter.status).to.equal(200);
+        expect(
+          responseGetAfter.status,
+          `GET /articles after creation: ${JSON.stringify(responseGetAfter.body)}`
+        ).to.equal(200);
         const articleIdsAfter = responseGetAfter.body.article_ids;
         expect(articleIdsAfter, JSON.stringify(responseGetAfter.body)).to.eql(expectedBookmarkedArticles);
       });

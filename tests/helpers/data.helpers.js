@@ -8,6 +8,10 @@ const {
   sleepTime,
   existingUserEmail,
   existingUserPass,
+  existingUserId,
+  existingUserEmail2,
+  existingUserPass2,
+  existingUserId2,
 } = require("../config");
 const { sleep } = require("./helpers");
 
@@ -41,6 +45,14 @@ function generateValidUserLoginData() {
   const testData = {
     email: existingUserEmail,
     password: existingUserPass,
+  };
+  return testData;
+}
+
+function generateValidUserLoginData2() {
+  const testData = {
+    email: existingUserEmail2,
+    password: existingUserPass2,
   };
   return testData;
 }
@@ -99,7 +111,29 @@ async function authUser() {
   expect(restoreResponse.status).to.equal(201);
 
   const userData = generateValidUserLoginData();
-  const userId = 2;
+  const userId = existingUserId;
+  const response = await request.post("/api/login").send(userData);
+  expect(response.status).to.equal(200);
+
+  const token = response.body.access_token;
+  const headers = {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
+
+  return {
+    headers,
+    userId,
+  };
+}
+
+async function authUser2() {
+  const restoreResponse = await request.get("/api/restoreDB");
+  expect(restoreResponse.status).to.equal(201);
+
+  const userData = generateValidUserLoginData2();
+  const userId = existingUserId2;
   const response = await request.post("/api/login").send(userData);
   expect(response.status).to.equal(200);
 
@@ -196,6 +230,7 @@ module.exports = {
   prepareUniqueArticle,
   prepareUniqueComment,
   authUser,
+  authUser2,
   generateValidUserData,
   generateValidArticleData,
   generateValidCommentData,

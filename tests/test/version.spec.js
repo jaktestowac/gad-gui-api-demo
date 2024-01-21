@@ -17,6 +17,15 @@ describe("Version check", async () => {
   it("GET /about version", async () => {
     // Act:
     const response = await request.get(baseUrl);
+
+    // Assert:
+    expect(response.status).to.equal(200);
+    expect(response.body.version).to.contain("v");
+  });
+
+  it("GET /about version and pageFooter", async () => {
+    // Act:
+    const response = await request.get(baseUrl);
     const pageFooter = fs.readFileSync(path.join(__dirname, "..", "..", "public", "version.js"), "utf8");
 
     // Assert:
