@@ -469,7 +469,8 @@ async function getNewerVersion() {
       })
         .then((r) => r.json())
         .then((gadStatus) => {
-          const currentVersion = gadStatus.version;
+          // const currentVersion = gadStatus.version;
+          const currentVersion = "v2";
           gadReleases.sort((a, b) => b.name.localeCompare(a.name));
 
           const filteredVersions = gadReleases.filter((release) => {
@@ -483,7 +484,7 @@ async function getNewerVersion() {
 
           filteredVersions.sort((a, b) => b.name.localeCompare(a.name));
           const latestVersion = filteredVersions[0];
-          latestVersion.gad_msg = `<div  class="versionInfoBox"><strong>Newer GAD version is available!</strong> Latest: <strong>${latestVersion.name}</strong> and You have: <strong>${currentVersion}</strong><br/>Download it from <strong><a href="https://github.com/jaktestowac/gad-gui-api-demo" >official jaktestowac.pl repository</a></strong> or <strong><a href="${latestVersion.html_url}" >release page!</a></strong></div>`;
+          latestVersion.gad_msg = `<div  class="versionInfoBox"><strong>Newer GAD version is available!</strong> Latest: <strong>${latestVersion.name}</strong> and You have: <strong>${currentVersion}</strong><br/>You can download it from <strong><a href="https://github.com/jaktestowac/gad-gui-api-demo" >official jaktestowac.pl repository</a></strong> or <strong><a href="${latestVersion.html_url}" >release page!</a></strong></div>`;
           latestVersion.gad_msg_simple = `Newer GAD version is available! Latest: ${latestVersion.name} and You have: ${currentVersion}`;
           return latestVersion;
         });

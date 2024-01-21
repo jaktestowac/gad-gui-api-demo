@@ -627,9 +627,9 @@ s .container-mobile {
 
 .versionInfoBox {
   border-radius: 10px;
-  border: 2px solid #fada5e;
-  background-color: #fada5e33;
+  border: 2px solid #ffe3747c;
+  background-color: #fadb5e1f;
   padding: 10px;
   display: inline-block;
-  font-size: 14px;
+  font-size: 12px;
 }
