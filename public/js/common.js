@@ -474,12 +474,14 @@ function checkRelease() {
         .then((r) => r.json())
         .then((gadStatus) => {
           const currentVersion = gadStatus.version;
-          const filteredVersions = gadReleases.filter((obj) => {
-            return obj.name > currentVersion;
+          gadReleases.sort((a, b) => b.name.localeCompare(a.name));
+
+          const filteredVersions = gadReleases.filter((release) => {
+            return release.name > currentVersion;
           });
 
           if (filteredVersions.length === 0) {
-            console.log(`GAD version (${currentVersion}) is up to date!`);
+            console.log(`GAD (${currentVersion}) is up to date! Latest available version: ${gadReleases[0]?.name}`);
             return;
           }
 
