@@ -225,6 +225,7 @@ const logoGAD = (path = ".") => {
 const rightMenu = (path = ".") => {
   return `
   <span style="display: flex; align-items: center; justify-self: end; padding-right: 20px">
+
   <div class="dropdown" data-testid="user-dropdown">
     <button id="dropbtn" data-testid="btn-dropdown" class="dropbtn">
       <img id="avatar"
@@ -448,16 +449,11 @@ function removeLabel(label) {
   labelContainer.removeChild(label);
 }
 
-function checkRelease() {
-  const versionInfoContainer = document.getElementById("versionInfoBox");
-  if (versionInfoContainer === undefined || versionInfoContainer === null) {
-    return;
-  }
-
+async function getNewerVersion() {
   const gadReleasesUrl = "https://api.github.com/repos/jaktestowac/gad-gui-api-demo/releases";
   const gadStatusUrl = "/api/about";
 
-  fetch(gadReleasesUrl, {
+  return fetch(gadReleasesUrl, {
     method: "get",
     headers: {
       Accept: "application/vnd.github+json",
@@ -465,7 +461,7 @@ function checkRelease() {
   })
     .then((r) => r.json())
     .then((gadReleases) => {
-      fetch(gadStatusUrl, {
+      return fetch(gadStatusUrl, {
         method: "get",
         headers: {
           Accept: "application/json",
@@ -473,8 +469,7 @@ function checkRelease() {
       })
         .then((r) => r.json())
         .then((gadStatus) => {
-          // const currentVersion = gadStatus.version;
-          const currentVersion = "v2.2.2";
+          const currentVersion = gadStatus.version;
           gadReleases.sort((a, b) => b.name.localeCompare(a.name));
 
           const filteredVersions = gadReleases.filter((release) => {
@@ -487,13 +482,38 @@ function checkRelease() {
           }
 
           filteredVersions.sort((a, b) => b.name.localeCompare(a.name));
-          const versionInfoContainer = document.getElementById("versionInfoBox");
-          if (versionInfoContainer === undefined || versionInfoContainer === null) {
-            return;
-          }
           const latestVersion = filteredVersions[0];
-          versionInfoContainer.innerHTML = `<div  class="versionInfoBox"><strong>Newer GAD version is available!</strong> Latest: <strong>${latestVersion.name}</strong> and You have: <strong>${currentVersion}</strong><br/>Download it from <strong><a href="https://github.com/jaktestowac/gad-gui-api-demo" >official jaktestowac.pl repository</a></strong> or <strong><a href="${latestVersion.html_url}" >release page!</a></strong></div>`;
+          latestVersion.gad_msg = `<div  class="versionInfoBox"><strong>Newer GAD version is available!</strong> Latest: <strong>${latestVersion.name}</strong> and You have: <strong>${currentVersion}</strong><br/>Download it from <strong><a href="https://github.com/jaktestowac/gad-gui-api-demo" >official jaktestowac.pl repository</a></strong> or <strong><a href="${latestVersion.html_url}" >release page!</a></strong></div>`;
+          latestVersion.gad_msg_simple = `Newer GAD version is available! Latest: ${latestVersion.name} and You have: ${currentVersion}`;
+          return latestVersion;
         });
     });
+}
+
+async function checkNewerVersion() {
+  const versionInfoContainer = document.getElementById("versionInfoBox");
+  const rightMenuAlerts = document.getElementById("rightMenuAlerts");
+  if (versionInfoContainer === null && rightMenuAlerts === null) {
+    return;
+  }
+
+  getNewerVersion().then((latestVersion) => {
+    if (latestVersion === undefined) {
+      return;
+    }
+    const versionInfoContainer = document.getElementById("versionInfoBox");
+    const rightMenuAlerts = document.getElementById("rightMenuAlerts");
+    if (versionInfoContainer !== null) {
+      versionInfoContainer.innerHTML = latestVersion.gad_msg;
+    }
+    if (rightMenuAlerts !== null) {
+      rightMenuAlerts.outerHTML = `<a id="rightMenuAlerts" href="https://github.com/jaktestowac/gad-gui-api-demo" style="text-decoration: none; color: white;" >
+      <div class="hovertext" data-hover="${latestVersion.gad_msg_simple}" ><div style="font-size: 32px">🔄</div></div></a>`;
+    }
+  });
+}
+
+function checkRelease() {
+  checkNewerVersion();
 }
 checkRelease();
