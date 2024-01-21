@@ -449,9 +449,23 @@ function removeLabel(label) {
   labelContainer.removeChild(label);
 }
 
-async function getNewerVersion() {
-  const gadReleasesUrl = "https://api.github.com/repos/jaktestowac/gad-gui-api-demo/releases";
+async function getGadVersion() {
   const gadStatusUrl = "/api/about";
+
+  return fetch(gadStatusUrl, {
+    method: "get",
+    headers: {
+      Accept: "application/json",
+    },
+  })
+    .then((r) => r.json())
+    .then((gadStatus) => {
+      return gadStatus;
+    });
+}
+
+async function getGadReleases() {
+  const gadReleasesUrl = "https://api.github.com/repos/jaktestowac/gad-gui-api-demo/releases";
 
   return fetch(gadReleasesUrl, {
     method: "get",
@@ -461,34 +475,41 @@ async function getNewerVersion() {
   })
     .then((r) => r.json())
     .then((gadReleases) => {
-      return fetch(gadStatusUrl, {
-        method: "get",
-        headers: {
-          Accept: "application/json",
-        },
-      })
-        .then((r) => r.json())
-        .then((gadStatus) => {
-          // const currentVersion = gadStatus.version;
-          const currentVersion = "v2";
-          gadReleases.sort((a, b) => b.name.localeCompare(a.name));
-
-          const filteredVersions = gadReleases.filter((release) => {
-            return release.name > currentVersion;
-          });
-
-          if (filteredVersions.length === 0) {
-            console.log(`GAD (${currentVersion}) is up to date! Latest available version: ${gadReleases[0]?.name}`);
-            return;
-          }
-
-          filteredVersions.sort((a, b) => b.name.localeCompare(a.name));
-          const latestVersion = filteredVersions[0];
-          latestVersion.gad_msg = `<div  class="versionInfoBox"><strong>Newer GAD version is available!</strong> Latest: <strong>${latestVersion.name}</strong> and You have: <strong>${currentVersion}</strong><br/>You can download it from <strong><a href="https://github.com/jaktestowac/gad-gui-api-demo" >official jaktestowac.pl repository</a></strong> or <strong><a href="${latestVersion.html_url}" >release page!</a></strong></div>`;
-          latestVersion.gad_msg_simple = `Newer GAD version is available! Latest: ${latestVersion.name} and You have: ${currentVersion}`;
-          return latestVersion;
-        });
+      return gadReleases;
     });
+}
+
+function getNewestVersion(gadReleases, currentVersion) {
+  gadReleases.sort((a, b) => b.name.localeCompare(a.name));
+
+  const filteredVersions = gadReleases.filter((release) => {
+    return release.name > currentVersion;
+  });
+
+  if (filteredVersions.length === 0) {
+    console.log(`GAD (${currentVersion}) is up to date! Latest available version: ${gadReleases[0]?.name}`);
+    return;
+  }
+  filteredVersions.sort((a, b) => b.name.localeCompare(a.name));
+  const latestVersion = filteredVersions[0];
+  latestVersion.gad_msg = `<strong>Newer GAD version is available!</strong> Latest: <strong>${latestVersion.name}</strong> and You have: <strong>${currentVersion}</strong><br/>You can download it from <strong><a href="https://github.com/jaktestowac/gad-gui-api-demo" >official jaktestowac.pl repository</a></strong> or <strong><a href="${latestVersion.html_url}" >release page!</a></strong>`;
+  latestVersion.gad_msg_simple = `Newer GAD version is available! Latest: ${latestVersion.name} and You have: ${currentVersion}`;
+  return latestVersion;
+}
+
+function getNewerVersions(gadReleases, currentVersion) {
+  gadReleases.sort((a, b) => b.name.localeCompare(a.name));
+
+  const filteredVersions = gadReleases.filter((release) => {
+    return release.name > currentVersion;
+  });
+
+  if (filteredVersions.length === 0) {
+    console.log(`GAD (${currentVersion}) is up to date! Latest available version: ${gadReleases[0]?.name}`);
+    return [];
+  }
+  filteredVersions.sort((a, b) => b.name.localeCompare(a.name));
+  return filteredVersions;
 }
 
 async function checkNewerVersion() {
@@ -498,19 +519,37 @@ async function checkNewerVersion() {
     return;
   }
 
-  getNewerVersion().then((latestVersion) => {
-    if (latestVersion === undefined) {
-      return;
-    }
-    const versionInfoContainer = document.getElementById("versionInfoBox");
-    const rightMenuAlerts = document.getElementById("rightMenuAlerts");
-    if (versionInfoContainer !== null) {
-      versionInfoContainer.innerHTML = latestVersion.gad_msg;
-    }
-    if (rightMenuAlerts !== null) {
-      rightMenuAlerts.outerHTML = `<a id="rightMenuAlerts" href="https://github.com/jaktestowac/gad-gui-api-demo" style="text-decoration: none; color: white;" >
-      <div class="hovertext" data-hover="${latestVersion.gad_msg_simple}" ><div style="font-size: 32px">🔄</div></div></a>`;
-    }
+  getGadVersion().then((gadStatus) => {
+    const currentVersion = gadStatus.version;
+    getGadReleases().then((gadReleases) => {
+      const latestVersion = getNewestVersion(gadReleases, currentVersion);
+      if (latestVersion !== undefined) {
+        const versionInfoContainer = document.getElementById("versionInfoBox");
+        if (versionInfoContainer !== null) {
+          versionInfoContainer.innerHTML = `<div class="versionInfoBox">${latestVersion.gad_msg}</div>`;
+        }
+      }
+
+      const versionDetailsElement = document.getElementById("versionDetails");
+      if (versionDetailsElement === null) {
+        return;
+      }
+      const versions = getNewerVersions(gadReleases, currentVersion);
+      if (versions.length === 0) {
+        versionDetailsElement.innerHTML = `<h3>GAD (${currentVersion}) is up to date! Latest available version: ${gadReleases[0]?.name}</h3>`;
+        return;
+      }
+
+      let markdownInput = "";
+      versions.forEach((version) => {
+        let tmp = version.body.replace("# ", "## ");
+        tmp = tmp.replace("![obraz]", "\n![obraz]");
+        markdownInput += `\n\n# ${version.name}\n\n`;
+        markdownInput += tmp;
+      });
+      const htmlOutput = marked(markdownInput);
+      versionDetailsElement.innerHTML = htmlOutput;
+    });
   });
 }
 
