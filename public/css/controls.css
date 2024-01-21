@@ -624,3 +624,12 @@ s .container-mobile {
   padding: 10px;
   font-style: italic;
 }
+
+.versionInfoBox {
+  border-radius: 10px;
+  border: 2px solid #fada5e;
+  background-color: #fada5e33;
+  padding: 10px;
+  display: inline-block;
+  font-size: 14px;
+}

@@ -447,3 +447,50 @@ function removeLabel(label) {
   const labelContainer = document.getElementById("labels-container");
   labelContainer.removeChild(label);
 }
+
+function checkRelease() {
+  const versionInfoContainer = document.getElementById("versionInfoBox");
+  if (versionInfoContainer === undefined || versionInfoContainer === null) {
+    return;
+  }
+
+  const gadReleasesUrl = "https://api.github.com/repos/jaktestowac/gad-gui-api-demo/releases";
+  const gadStatusUrl = "/api/about";
+
+  fetch(gadReleasesUrl, {
+    method: "get",
+    headers: {
+      Accept: "application/vnd.github+json",
+    },
+  })
+    .then((r) => r.json())
+    .then((gadReleases) => {
+      fetch(gadStatusUrl, {
+        method: "get",
+        headers: {
+          Accept: "application/json",
+        },
+      })
+        .then((r) => r.json())
+        .then((gadStatus) => {
+          const currentVersion = gadStatus.version;
+          const filteredVersions = gadReleases.filter((obj) => {
+            return obj.name > currentVersion;
+          });
+
+          if (filteredVersions.length === 0) {
+            console.log(`GAD version (${currentVersion}) is up to date!`);
+            return;
+          }
+
+          filteredVersions.sort((a, b) => b.name.localeCompare(a.name));
+          const versionInfoContainer = document.getElementById("versionInfoBox");
+          if (versionInfoContainer === undefined || versionInfoContainer === null) {
+            return;
+          }
+          const latestVersion = filteredVersions[0];
+          versionInfoContainer.innerHTML = `<div  class="versionInfoBox"><strong>Newer GAD version is available!</strong> Latest is <strong>${latestVersion.name}</strong> and You have <strong>${currentVersion}</strong><br/>Download it from <strong><a href="https://github.com/jaktestowac/gad-gui-api-demo" >official jaktestowac.pl repository</a></strong> or <strong><a href="${latestVersion.html_url}" >release page!</a></strong></div>`;
+        });
+    });
+}
+checkRelease();
