@@ -209,6 +209,9 @@ const mainAPIMenuHTML = `
 <a href="./swagger.html">
   <button id="btnSwagger" data-testid="btn-swagger" class="button-primary">Swagger</button>
 </a>
+<a href="./version.html">
+  <button id="btnVersion" data-testid="btn-version" class="button-primary">Version</button>
+</a>
 
 `;
 
@@ -492,7 +495,8 @@ function getNewestVersion(gadReleases, currentVersion) {
   }
   filteredVersions.sort((a, b) => b.name.localeCompare(a.name));
   const latestVersion = filteredVersions[0];
-  latestVersion.gad_msg = `<strong>Newer GAD version is available!</strong> Latest: <strong>${latestVersion.name}</strong> and You have: <strong>${currentVersion}</strong><br/>You can download it from <strong><a href="https://github.com/jaktestowac/gad-gui-api-demo" >official jaktestowac.pl repository</a></strong> or <strong><a href="${latestVersion.html_url}" >release page!</a></strong>`;
+  latestVersion.gad_msg = `<strong>Newer GAD version is available!</strong> Latest: <strong>${latestVersion.name}</strong> and You have: <strong>${currentVersion}</strong><br/>
+    You can download it from <strong><a href="https://github.com/jaktestowac/gad-gui-api-demo" >official jaktestowac.pl repository</a></strong> or <strong><a href="${latestVersion.html_url}" >release page!</a></strong><br/>`;
   latestVersion.gad_msg_simple = `Newer GAD version is available! Latest: ${latestVersion.name} and You have: ${currentVersion}`;
   return latestVersion;
 }
@@ -535,8 +539,9 @@ async function checkNewerVersion() {
         return;
       }
       const versions = getNewerVersions(gadReleases, currentVersion);
+
       if (versions.length === 0) {
-        versionDetailsElement.innerHTML = `<h3>GAD (${currentVersion}) is up to date! Latest available version: ${gadReleases[0]?.name}</h3>`;
+        versionDetailsElement.innerHTML = `<h3><strong>GAD (${currentVersion}) is up to date!</strong>🥳 Latest available version: ${gadReleases[0]?.name}</h3>`;
         return;
       }
 

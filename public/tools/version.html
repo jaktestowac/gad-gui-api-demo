@@ -10,14 +10,14 @@
       crossorigin="anonymous"
     />
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
-    <link rel="stylesheet" href="css/controls.css" />
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="../css/controls.css" />
+    <link rel="stylesheet" href="../css/style.css" />
     <script src="https://cdn.jsdelivr.net/npm/marked@3.0.2/marked.min.js"></script>
   </head>
   <body>
     <header>
       <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
-        <h1 id="menu-main-gui" class="nav-menu"></h1>
+        <h1 id="menu-main-api" class="nav-menu"></h1>
       </div>
     </header>
 
@@ -37,10 +37,13 @@
       <div id="versionInfoBox"></div>
     </div>
     <div id="container" class="container-space">
-      <div id="versionDetails"></div>
+      <div id="versionDetails">Checking version...</div>
     </div>
   </body>
-  <script type="text/javascript" src="js/common.js"></script>
-  <script type="text/javascript" src="version.js"></script>
-  <script type="text/javascript" src="username.js"></script>
+  <script type="text/javascript" src="../js/common.js"></script>
+  <script type="text/javascript" src="../version.js"></script>
+  <script type="text/javascript" src="../username.js"></script>
+  <script>
+    menuButtonDisable("btnVersion");
+  </script>
 </html>
