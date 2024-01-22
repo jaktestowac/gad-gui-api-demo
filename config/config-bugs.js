@@ -1,6 +1,8 @@
 // Config to turn on and off different bugs
 
 const bugConfig = {
+  bug_articles_001: false,
+  bug_articles_002: false,
   bug_charts_001: false,
   bug_charts_002: false,
   bug_charts_003: false,

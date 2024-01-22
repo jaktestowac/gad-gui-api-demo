@@ -78,6 +78,8 @@ const BugConfigKeys = {
   BUG_BOOKMARKS_001: "bug_bookmarks_001",
   BUG_BOOKMARKS_002: "bug_bookmarks_002",
   BUG_BOOKMARKS_003: "bug_bookmarks_003",
+  BUG_ARTICLES_001: "bug_articles_001",
+  BUG_ARTICLES_002: "bug_articles_002",
 };
 
 const FeatureFlagConfigKeys = {

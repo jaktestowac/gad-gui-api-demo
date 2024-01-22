@@ -1,4 +1,4 @@
-const { isBugDisabled } = require("../config/config-manager");
+const { isBugDisabled, isBugEnabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
 const { searchForUserWithToken, searchForArticle, searchForArticles } = require("../helpers/db-operation.helpers");
 const { randomDbEntry, articlesDb } = require("../helpers/db.helpers");
@@ -9,7 +9,7 @@ const {
   formatInvalidFieldErrorResponse,
 } = require("../helpers/helpers");
 const { logTrace, logWarn, logDebug } = require("../helpers/logger-api");
-const { HTTP_UNAUTHORIZED, HTTP_UNPROCESSABLE_ENTITY } = require("../helpers/response.helpers");
+const { HTTP_UNAUTHORIZED, HTTP_UNPROCESSABLE_ENTITY, HTTP_NOT_FOUND } = require("../helpers/response.helpers");
 const {
   verifyAccessToken,
   are_mandatory_fields_present,
@@ -125,15 +125,40 @@ function handleArticles(req, res, isAdmin) {
   }
 
   if (req.method === "PATCH" && urlEnds.includes("/api/articles") && !isAdmin) {
+    const verifyTokenResult = verifyAccessToken(req, res, "PATCH articles", req.url);
+    let articleId = getIdFromUrl(urlEnds);
+
     // validate all fields:
     const isValid = are_all_fields_valid(req.body, all_fields_article, mandatory_non_empty_fields_article);
     if (!isValid.status) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidFieldErrorResponse(isValid, all_fields_article));
       return;
     }
+
+    const foundArticle = searchForArticle(articleId);
+    const foundUser = searchForUserWithToken(foundArticle?.user_id, verifyTokenResult);
+
+    logDebug("handleArticles: foundUser and user_id:", { foundUser, user_id: foundArticle?.user_id });
+
+    const bug001Enabled = isBugEnabled(BugConfigKeys.BUG_ARTICLES_001);
+    if (bug001Enabled === true) {
+      return;
+    }
+
+    if (foundArticle === undefined) {
+      res.status(HTTP_NOT_FOUND).send({});
+      return;
+    }
+
+    if (foundUser === undefined || foundUser?.id !== req.body?.user_id) {
+      res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+      return;
+    }
   }
 
   if (req.method === "PUT" && urlEnds.includes("/api/articles") && !isAdmin) {
+    const verifyTokenResult = verifyAccessToken(req, res, "PUT articles", req.url);
+
     // validate mandatory fields:
     if (!are_mandatory_fields_present(req.body, mandatory_non_empty_fields_article)) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_article));
@@ -148,6 +173,20 @@ function handleArticles(req, res, isAdmin) {
 
     let articleId = getIdFromUrl(urlEnds);
     const foundArticle = searchForArticle(articleId);
+
+    const foundUser = searchForUserWithToken(foundArticle?.user_id, verifyTokenResult);
+
+    logDebug("handleArticles: foundUser and user_id:", { foundUser, user_id: foundArticle?.user_id });
+
+    const bug002Enabled = isBugEnabled(BugConfigKeys.BUG_ARTICLES_002);
+    if (bug002Enabled && foundUser !== undefined) {
+      foundUser.id = req.body?.user_id;
+    }
+
+    if (foundArticle?.user_id !== undefined && foundUser !== undefined && foundUser?.id !== req.body?.user_id) {
+      res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+      return;
+    }
 
     if (articleId === "articles") {
       articleId = "";

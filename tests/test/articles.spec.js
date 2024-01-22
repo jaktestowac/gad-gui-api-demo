@@ -104,7 +104,7 @@ describe("Endpoint /articles", () => {
       testArticleData.user_id = userId;
     });
 
-    it("PUT /articles - create article", async () => {
+    it("PUT /articles - should create valid article", async () => {
       // Act:
       const response = await request.put(baseUrl).set(headers).send(testArticleData);
 
@@ -112,7 +112,7 @@ describe("Endpoint /articles", () => {
       expect(response.status).to.equal(201);
     });
 
-    it("PUT /articles/:id - update", async () => {
+    it("PUT /articles/:id - should update valid article", async () => {
       // Act:
       const response = await request.put(`${baseUrl}/${articleId}`).set(headers).send(testArticleData);
 
@@ -122,7 +122,17 @@ describe("Endpoint /articles", () => {
       expect(response.body).to.deep.equal(testArticleData);
     });
 
-    it("PUT /articles/:id - update different article", async () => {
+    it("PUT /articles/:id - should not update article with different user ID", async () => {
+      // Act:
+      const newArticleData = testArticleData;
+      newArticleData.user_id = newArticleData.user_id + 1;
+      const response = await request.put(`${baseUrl}/${articleId}`).set(headers).send(newArticleData);
+
+      // Assert:
+      expect(response.status).to.equal(401);
+    });
+
+    it("PUT /articles/:id - should not update different article", async () => {
       // Act:
       const response = await request.put(`${baseUrl}/1`).set(headers).send(testArticleData);
 
@@ -130,7 +140,7 @@ describe("Endpoint /articles", () => {
       expect(response.status).to.equal(401);
     });
 
-    ["title", "body", "date"].forEach((field) => {
+    ["title", "body", "date", "user_id"].forEach((field) => {
       it(`PUT /articles/:id - missing mandatory field - ${field}`, async () => {
         // Arrange:
         testArticleData[field] = undefined;
@@ -159,7 +169,7 @@ describe("Endpoint /articles", () => {
       expect(response.status).to.equal(422);
     });
 
-    it("PATCH /articles/:id - full update", async () => {
+    it("PATCH /articles/:id - should do full update", async () => {
       // Act:
       const response = await request.patch(`${baseUrl}/${articleId}`).set(headers).send(testArticleData);
 
@@ -169,8 +179,18 @@ describe("Endpoint /articles", () => {
       expect(response.body).to.deep.equal(testArticleData);
     });
 
+    it("PATCH /articles/:id - should not update but with different user ID", async () => {
+      // Act:
+      const newArticleData = testArticleData;
+      newArticleData.user_id = newArticleData.user_id + 1;
+      const response = await request.patch(`${baseUrl}/${articleId}`).set(headers).send(newArticleData);
+
+      // Assert:
+      expect(response.status).to.equal(401);
+    });
+
     ["title", "body", "date"].forEach((field) => {
-      it(`PATCH /articles/:id - full update with invalid data - ${field}`, async () => {
+      it(`PATCH /articles/:id - should not full update with invalid data - ${field}`, async () => {
         const testData = { ...testArticleData };
         testData[field] = faker.string.alphanumeric(10001);
 
@@ -182,7 +202,7 @@ describe("Endpoint /articles", () => {
       });
     });
 
-    it("PATCH /articles - full update not existing", async () => {
+    it("PATCH /articles - should not do full update not existing", async () => {
       // Act:
       const response = await request.patch(baseUrl).set(headers).send(testArticleData);
 
@@ -190,7 +210,7 @@ describe("Endpoint /articles", () => {
       expect(response.status).to.equal(404);
     });
 
-    it("PATCH /articles/:id - full update different article", async () => {
+    it("PATCH /articles/:id - should not full update different article", async () => {
       // Act:
       const response = await request.patch(`${baseUrl}/1`).set(headers).send(testArticleData);
 
@@ -275,7 +295,7 @@ describe("Endpoint /articles", () => {
       expect(response.body).to.deep.equal(expectedData);
     });
 
-    it("POST /articles - create valid article", async () => {
+    it("POST /articles - should create valid article", async () => {
       // Arrange:
       const testData = generateValidArticleData();
       testData.user_id = userId;
@@ -289,7 +309,7 @@ describe("Endpoint /articles", () => {
       expect(response.body).to.deep.equal(testData);
     });
 
-    it("POST /articles - create valid article (with id in body)", async () => {
+    it("POST /articles - should create valid article (with id in body)", async () => {
       // Arrange:
       const testData = generateValidArticleData();
       testData.user_id = userId;
@@ -304,7 +324,7 @@ describe("Endpoint /articles", () => {
       expect(response.body).to.deep.equal(testData);
     });
 
-    it("POST /articles - create valid article - max title length", async () => {
+    it("POST /articles - should create valid article - max title length", async () => {
       // Arrange:
       const testData = generateValidArticleData(128);
       testData.user_id = userId;
@@ -318,7 +338,7 @@ describe("Endpoint /articles", () => {
       expect(response.body).to.deep.equal(testData);
     });
 
-    it("POST /articles - create valid article - max body length", async () => {
+    it("POST /articles - should create valid article - max body length", async () => {
       // Arrange:
       const testData = generateValidArticleData(128, 10000);
       testData.user_id = userId;
