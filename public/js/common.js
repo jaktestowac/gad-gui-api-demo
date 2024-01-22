@@ -491,13 +491,10 @@ function getNewestVersion(gadReleases, currentVersion) {
 
   if (filteredVersions.length === 0) {
     console.log(`GAD (${currentVersion}) is up to date! Latest available version: ${gadReleases[0]?.name}`);
-    return;
+    return undefined;
   }
   filteredVersions.sort((a, b) => b.name.localeCompare(a.name));
   const latestVersion = filteredVersions[0];
-  latestVersion.gad_msg = `<strong>Newer GAD version is available!</strong> Latest: <strong>${latestVersion.name}</strong> and You have: <strong>${currentVersion}</strong><br/>
-    You can download it from <strong><a href="https://github.com/jaktestowac/gad-gui-api-demo" >official jaktestowac.pl repository</a></strong> or <strong><a href="${latestVersion.html_url}" >release page!</a></strong><br/>`;
-  latestVersion.gad_msg_simple = `Newer GAD version is available! Latest: ${latestVersion.name} and You have: ${currentVersion}`;
   return latestVersion;
 }
 
@@ -525,12 +522,15 @@ async function checkNewerVersion() {
 
   getGadVersion().then((gadStatus) => {
     const currentVersion = gadStatus.version;
+    console.log(`GAD current version is: ${currentVersion}`);
     getGadReleases().then((gadReleases) => {
       const latestVersion = getNewestVersion(gadReleases, currentVersion);
       if (latestVersion !== undefined) {
         const versionInfoContainer = document.getElementById("versionInfoBox");
         if (versionInfoContainer !== null) {
-          versionInfoContainer.innerHTML = `<div class="versionInfoBox">${latestVersion.gad_msg}</div>`;
+          const gad_msg = `<strong>Newer GAD version is available!</strong> Latest: <strong>${latestVersion.name}</strong> and You have: <strong>${currentVersion}</strong><br/>
+            You can download it from <strong><a href="https://github.com/jaktestowac/gad-gui-api-demo" >official jaktestowac.pl repository</a></strong> or <strong><a href="${latestVersion.html_url}" >release page!</a></strong><br/>`;
+          versionInfoContainer.innerHTML = `<div class="versionInfoBox">${gad_msg}</div>`;
         }
       }
 
@@ -541,15 +541,15 @@ async function checkNewerVersion() {
       const versions = getNewerVersions(gadReleases, currentVersion);
 
       if (versions.length === 0) {
-        versionDetailsElement.innerHTML = `<h3><strong>GAD (${currentVersion}) is up to date!</strong>🥳 Latest available version: ${gadReleases[0]?.name}</h3>`;
+        versionDetailsElement.innerHTML = `<div align="center"><h3><strong>🦎 GAD (${currentVersion}) is up to date!</strong>🥳<br/>Latest available version: ${gadReleases[0]?.name}</h3></div>`;
         return;
       }
 
-      let markdownInput = "";
+      let markdownInput = "# Release Notes\n\n";
       versions.forEach((version) => {
-        let tmp = version.body.replace("# ", "## ");
+        let tmp = version.body.replace("# ", "### ");
         tmp = tmp.replace("![obraz]", "\n![obraz]");
-        markdownInput += `\n\n# ${version.name}\n\n`;
+        markdownInput += `\n\n## ${version.name}\n\n`;
         markdownInput += tmp;
       });
       const htmlOutput = marked(markdownInput);
