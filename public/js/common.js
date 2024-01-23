@@ -476,7 +476,14 @@ async function getGadReleases() {
       Accept: "application/vnd.github+json",
     },
   })
+    .catch((e) => {
+      console.log("Error:", e?.message);
+      return [];
+    })
     .then((r) => r.json())
+    .catch((e) => {
+      return [];
+    })
     .then((gadReleases) => {
       return gadReleases;
     });
@@ -524,6 +531,16 @@ async function checkNewerVersion() {
     const currentVersion = gadStatus.version;
     console.log(`GAD current version is: ${currentVersion}`);
     getGadReleases().then((gadReleases) => {
+      if (gadReleases.length === 0) {
+        const versionDetailsElement = document.getElementById("versionDetails");
+        if (versionDetailsElement !== null) {
+          const gad_msg = `<div align="center"><h3>There was a problem with checking version😕<br/>
+            You can check it manually on <strong><a href="https://github.com/jaktestowac/gad-gui-api-demo" >official jaktestowac.pl repository</a></strong> or <strong><a href="https://github.com/jaktestowac/gad-gui-api-demo/releases" >release page</a></strong><br/></h3></div>`;
+          versionDetailsElement.innerHTML = gad_msg;
+        }
+        return;
+      }
+
       const latestVersion = getNewestVersion(gadReleases, currentVersion);
       if (latestVersion !== undefined) {
         const versionInfoContainer = document.getElementById("versionInfoBox");
