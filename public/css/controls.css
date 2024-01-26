@@ -642,3 +642,66 @@ s .container-mobile {
   display: inline-block;
   font-size: 16px;
 }
+
+.board-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+  margin: 0;
+}
+
+#board {
+  display: grid;
+  grid-template-columns: repeat(10, 30px);
+  gap: 1px;
+}
+
+.cell {
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  line-height: 30px;
+  cursor: pointer;
+  font-size: 14px;
+  background-color: #ddd;
+  position: relative;
+}
+
+.cell-hidden {
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  line-height: 30px;
+  cursor: pointer;
+  font-size: 14px;
+  background-color: #adadad;
+  position: relative;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.cell:active {
+  box-shadow: none;
+}
+
+.cell-open {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #ccc;
+  text-align: center;
+  line-height: 30px;
+  cursor: pointer;
+  font-size: 14px;
+  background-color: #ddd;
+  box-shadow: none;
+}
+
+.mine-visible {
+  background-color: #f00;
+  color: #fff;
+}
+
+.flag {
+  font-size: 20px;
+  color: #00f;
+}

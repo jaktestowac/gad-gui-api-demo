@@ -157,6 +157,10 @@ const verifyAccessToken = (req, res, endpoint = "endpoint", url = "") => {
   return verifyTokenResult;
 };
 
+function isNumber(value) {
+  return typeof value === "number";
+}
+
 module.exports = {
   validateDate,
   validateEmail,
@@ -176,4 +180,5 @@ module.exports = {
   is_likes_data_valid,
   mandatory_non_empty_fields_labels,
   mandatory_non_empty_fields_article_labels,
+  isNumber,
 };

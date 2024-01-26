@@ -9,6 +9,7 @@ const baseRandomArticlesUrl = "/api/random/articles";
 const baseFilesArticlesUrl = "/api/files/articles";
 const baseUsersUrl = "/api/users";
 const baseHangmanUrl = "/api/hangman";
+const baseMinesweeperUrl = "/api/minesweeper";
 const baseQuizUrl = "/api/quiz";
 const baseStatsUrl = "/api/stats";
 const baseCommentsUrl = "/api/comments";
@@ -41,6 +42,7 @@ module.exports = {
   baseUsersUrl,
   baseLikesUrl,
   baseHangmanUrl,
+  baseMinesweeperUrl,
   baseQuizUrl,
   baseStatsUrl,
   baseCommentsUrl,

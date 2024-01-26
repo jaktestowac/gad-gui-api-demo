@@ -76,6 +76,10 @@
       "description": "Hangman game"
     },
     {
+      "name": "minesweeper",
+      "description": "Minesweeper game"
+    },
+    {
       "name": "games",
       "description": "Games"
     },
@@ -2450,6 +2454,108 @@
         }
       }
     },
+    "/hangman/highscores": {
+      "get": {
+        "tags": ["hangman"],
+        "summary": "Get hangman highscores",
+        "operationId": "getHangmanHighscores",
+        "responses": {
+          "200": {
+            "description": "hangman highscores",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Scores"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/hangman/score": {
+      "post": {
+        "tags": ["hangman"],
+        "summary": "Set Hangman Score",
+        "operationId": "setHangmanScore",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Score recorded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScoreRecord"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "422": {
+            "description": "Invalid score data",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/minesweeper/highscores": {
+      "get": {
+        "tags": ["minesweeper"],
+        "summary": "Get minesweeper highscores",
+        "operationId": "getMinesweeperHighscores",
+        "responses": {
+          "200": {
+            "description": "minesweeper highscores",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Scores"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/minesweeper/score": {
+      "post": {
+        "tags": ["minesweeper"],
+        "summary": "Set minesweeper Score",
+        "operationId": "setMinesweeperScore",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Score recorded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScoreRecord"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "422": {
+            "description": "Invalid score data",
+            "content": {}
+          }
+        }
+      }
+    },
     "/games": {
       "get": {
         "tags": ["games"],
@@ -3414,6 +3520,15 @@
         "properties": {
           "count": {
             "word": "string"
+          }
+        }
+      },
+      "ScoreRecord": {
+        "type": "object",
+        "required": ["score"],
+        "properties": {
+          "score": {
+            "type": "string"
           }
         }
       },

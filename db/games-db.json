@@ -7,6 +7,10 @@
     {
       "id": 2,
       "name": "Hangman"
+    },
+    {
+      "id": 3,
+      "name": "Minesweeper"
     }
   ]
 }

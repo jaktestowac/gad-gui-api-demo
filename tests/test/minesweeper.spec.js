@@ -1,9 +1,9 @@
-const { expect, request, baseHangmanUrl } = require("../config");
+const { expect, request, baseMinesweeperUrl } = require("../config");
 const { authUser } = require("../helpers/data.helpers");
 const { gracefulQuit, setupEnv } = require("../helpers/helpers");
 
-describe("Endpoint /hangman", () => {
-  const baseUrl = baseHangmanUrl;
+describe("Endpoint /minesweeper", () => {
+  const baseUrl = baseMinesweeperUrl;
 
   before(async () => {
     await setupEnv();
@@ -14,14 +14,6 @@ describe("Endpoint /hangman", () => {
   });
 
   describe("Without auth", () => {
-    it("GET /random", async () => {
-      // Act:
-      const response = await request.get(`${baseUrl}/random`);
-
-      // Assert:
-      expect(response.status).to.equal(200);
-      expect(response.body.word.length, `Response was: ${JSON.stringify(response.body)}`).to.be.greaterThan(1);
-    });
     it("GET /highscores", async () => {
       // Act:
       const response = await request.get(`${baseUrl}/highscores`);
@@ -89,14 +81,6 @@ describe("Endpoint /hangman", () => {
       headers = data.headers;
     });
 
-    it("GET /random", async () => {
-      // Act:
-      const response = await request.get(`${baseUrl}/random`).set(headers);
-
-      // Assert:
-      expect(response.status).to.equal(200);
-      expect(response.body.word.length).to.be.greaterThan(1);
-    });
     it("GET /highscores", async () => {
       // Act:
       const response = await request.get(`${baseUrl}/highscores`).set(headers);

@@ -4,13 +4,18 @@ const {
   getUserScore,
   searchForUser,
   getGameNameById,
+  getGameScores,
 } = require("../helpers/db-operation.helpers");
-const { scoresDb } = require("../helpers/db.helpers");
 const { checkLetter, getRandomWord } = require("../helpers/hangman.helpers");
 const { formatErrorResponse } = require("../helpers/helpers");
 const { logTrace, logDebug } = require("../helpers/logger-api");
-const { HTTP_NOT_FOUND, HTTP_OK, HTTP_UNAUTHORIZED } = require("../helpers/response.helpers");
-const { verifyAccessToken } = require("../helpers/validation.helpers");
+const {
+  HTTP_NOT_FOUND,
+  HTTP_OK,
+  HTTP_UNAUTHORIZED,
+  HTTP_UNPROCESSABLE_ENTITY,
+} = require("../helpers/response.helpers");
+const { verifyAccessToken, isNumber } = require("../helpers/validation.helpers");
 
 const hangmanHighScores = {};
 const hangmanTempScores = {};
@@ -79,7 +84,7 @@ function handleHangman(req, res) {
     const user = searchForUserWithEmail(email);
     const previousUserScore = getUserScore(user.id, gameId);
 
-    logDebug("handleQuiz:Quiz highScores:", {
+    logDebug("handleHangman:Quiz highScores:", {
       previousUserScore,
       hangmanHighScores: hangmanHighScores[email],
     });
@@ -95,7 +100,7 @@ function handleHangman(req, res) {
         req.url = `/api/scores`;
       }
       req.body = { game_id: gameId, user_id: user.id, score: hangmanHighScores[email] };
-      logDebug("handleQuiz:stop -> PUT scores:", {
+      logDebug("handleHangman:stop -> PUT scores:", {
         method: req.method,
         url: req.url,
         body: req.body,
@@ -105,8 +110,8 @@ function handleHangman(req, res) {
     return;
   } else if (req.method === "GET" && req.url.endsWith("/api/hangman/highscores")) {
     logDebug("handleHangman:Hangman highScores:", { hangmanHighScores });
-
-    const scores = scoresDb();
+    const gameId = getGameIdByName(gameName);
+    const scores = getGameScores(gameId);
     const parsedScores = scores.map((score) => {
       const user = searchForUser(score.user_id);
       return {
@@ -125,12 +130,14 @@ function handleHangman(req, res) {
     }
     const score = req.body;
     const email = verifyTokenResult?.email;
-
+    if (score === undefined || score.score === undefined || !isNumber(score.score)) {
+      res.status(HTTP_UNPROCESSABLE_ENTITY).json(formatErrorResponse("Score was not provided"));
+    }
     const gameId = getGameIdByName(gameName);
     const user = searchForUserWithEmail(email);
     const previousUserScore = getUserScore(user.id, gameId);
 
-    logDebug("handleQuiz:hangman highScores:", { previousUserScore, currentScore: score });
+    logDebug("handleHangman:hangman highScores:", { previousUserScore, currentScore: score });
     if (previousUserScore !== undefined && previousUserScore.score >= score.score) {
       res.status(HTTP_OK).json({ game_id: gameId, user_id: user.id, score: score.score });
     } else {
@@ -142,7 +149,7 @@ function handleHangman(req, res) {
         req.url = `/api/scores`;
       }
       req.body = { game_id: gameId, user_id: user.id, score: score.score };
-      logDebug("handleQuiz:stop -> PUT/POST scores:", {
+      logDebug("handleHangman:stop -> PUT/POST scores:", {
         method: req.method,
         url: req.url,
         body: req.body,
