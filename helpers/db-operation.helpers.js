@@ -179,7 +179,7 @@ function getGameNameById(id) {
 }
 
 function getUserScore(userId, gameId) {
-  const foundScore = scoresDb().filter(
+  const foundScore = scoresDb().find(
     (score) => score.game_id.toString() === gameId.toString() && score.user_id.toString() === userId.toString()
   );
   return foundScore;

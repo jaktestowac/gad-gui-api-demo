@@ -5,6 +5,7 @@ let revealedCells = 0;
 let blockBoard = false;
 const minesweeperScoreEndpoint = "../../api/minesweeper/score";
 let finalScore = 0;
+const winningBonus = 10;
 
 async function issuePostScoreRequest(score) {
   fetch(minesweeperScoreEndpoint, {
@@ -28,13 +29,13 @@ function calculateScore() {
       }
     }
   }
-  score = flaggedMines;
+  score = flaggedMines + winningBonus;
   return score;
 }
 
 function updateScore(score) {
   const scoreElement = document.getElementById("score");
-  scoreElement.textContent = `Score: ${score}`;
+  scoreElement.textContent = score;
 }
 
 function initializeBoard() {
@@ -159,11 +160,14 @@ function handleRightClick(row, col, event) {
 
 function endGame(isWinner) {
   finalScore = calculateScore();
-  updateScore(finalScore);
   const msg = isWinner
     ? `Congratulations! You win with a score of ${finalScore}!`
-    : "Game over! You clicked on a mine.";
+    : `Game over! You clicked on a mine. Score: ${finalScore}!`;
+  updateScore(msg);
 
+  if (isWinner === true) {
+    issuePostScoreRequest(finalScore);
+  }
   revealAllMines();
   blockBoard = true;
 }
@@ -185,4 +189,14 @@ function resetGame() {
   initializeBoard();
 }
 
-initializeBoard();
+function startGame() {
+  const token = getBearerToken();
+  if (token === undefined) {
+    const scoreElement = document.getElementById("score");
+    scoreElement.innerHTML = "<strong>⛔ Please log in and return to this page ⛔</strong>";
+  } else {
+    initializeBoard();
+  }
+}
+
+startGame();
