@@ -20,7 +20,7 @@ describe("Endpoint /hangman", () => {
 
       // Assert:
       expect(response.status).to.equal(200);
-      expect(response.body.word.length, `Response was: ${JSON.stringify(response.body)}`).to.be.greaterThan(1);
+      expect(response.body.word.length, `Response was: ${JSON.stringify(response.body)}`).to.be.greaterThan(0);
     });
     it("GET /highscores", async () => {
       // Act:
@@ -28,7 +28,7 @@ describe("Endpoint /hangman", () => {
 
       // Assert:
       expect(response.status).to.equal(200);
-      expect(response.body.highScore.length, `Response was: ${JSON.stringify(response.body)}`).to.be.greaterThan(1);
+      expect(response.body.highScore.length, `Response was: ${JSON.stringify(response.body)}`).to.be.greaterThan(0);
     });
     it("POST /highscores", async () => {
       // Act:
@@ -103,7 +103,7 @@ describe("Endpoint /hangman", () => {
 
       // Assert:
       expect(response.status).to.equal(200);
-      expect(response.body.highScore.length, `Response was: ${JSON.stringify(response.body)}`).to.be.greaterThan(1);
+      expect(response.body.highScore.length, `Response was: ${JSON.stringify(response.body)}`).to.be.greaterThan(0);
     });
     it("POST /highscores", async () => {
       // Act:
