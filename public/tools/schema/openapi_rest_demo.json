@@ -36,6 +36,10 @@
       "description": "Comments"
     },
     {
+      "name": "random",
+      "description": "Random data"
+    },
+    {
       "name": "likes",
       "description": "Likes (⚠️ needs proper feature flag enabled)"
     },
@@ -52,6 +56,10 @@
       "description": "Article Labels (⚠️ needs proper feature flag enabled)"
     },
     {
+      "name": "bookmarks",
+      "description": "Bookmarks (⚠️ needs proper feature flag enabled)"
+    },
+    {
       "name": "search",
       "description": "Search, filter, pagination for given objects"
     },
@@ -60,16 +68,36 @@
       "description": "Other operations"
     },
     {
+      "name": "quiz",
+      "description": "Quiz game about testing"
+    },
+    {
+      "name": "hangman",
+      "description": "Hangman game"
+    },
+    {
+      "name": "minesweeper",
+      "description": "Minesweeper game"
+    },
+    {
+      "name": "games",
+      "description": "Games"
+    },
+    {
+      "name": "scores",
+      "description": "Game scores"
+    },
+    {
+      "name": "visits",
+      "description": "Visits of different entities"
+    },
+    {
       "name": "stats",
       "description": "Statistics"
     },
     {
-      "name": "quiz",
-      "description": "Sample Quiz"
-    },
-    {
       "name": "healthcheck",
-      "description": "Healthcheck"
+      "description": "Healthcheck - check status and health of 🦎GAD"
     }
   ],
   "paths": {
@@ -2178,7 +2206,46 @@
         "operationId": "getApiCalls",
         "responses": {
           "200": {
-            "description": "Api Calls received",
+            "description": "Calls received",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/stats/api/details": {
+      "get": {
+        "tags": ["stats"],
+        "summary": "Get api detailed calls",
+        "operationId": "getApiDetailedCalls",
+        "responses": {
+          "200": {
+            "description": "Calls received",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/stats/nonapi": {
+      "get": {
+        "tags": ["stats"],
+        "summary": "Get non api calls",
+        "operationId": "getNonApiCalls",
+        "responses": {
+          "200": {
+            "description": "Calls received",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/stats/nonapi/details": {
+      "get": {
+        "tags": ["stats"],
+        "summary": "Get non api detailed calls",
+        "operationId": "getNonApiDetailedCalls",
+        "responses": {
+          "200": {
+            "description": "Calls received",
             "content": {}
           }
         }
@@ -2387,6 +2454,187 @@
         }
       }
     },
+    "/hangman/highscores": {
+      "get": {
+        "tags": ["hangman"],
+        "summary": "Get hangman highscores",
+        "operationId": "getHangmanHighscores",
+        "responses": {
+          "200": {
+            "description": "hangman highscores",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Scores"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/hangman/score": {
+      "post": {
+        "tags": ["hangman"],
+        "summary": "Set Hangman Score",
+        "operationId": "setHangmanScore",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Score recorded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScoreRecord"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "422": {
+            "description": "Invalid score data",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/minesweeper/highscores": {
+      "get": {
+        "tags": ["minesweeper"],
+        "summary": "Get minesweeper highscores",
+        "operationId": "getMinesweeperHighscores",
+        "responses": {
+          "200": {
+            "description": "minesweeper highscores",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Scores"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/minesweeper/score": {
+      "post": {
+        "tags": ["minesweeper"],
+        "summary": "Set minesweeper Score",
+        "operationId": "setMinesweeperScore",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Score recorded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScoreRecord"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "422": {
+            "description": "Invalid score data",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/games": {
+      "get": {
+        "tags": ["games"],
+        "summary": "Get games",
+        "operationId": "getGames",
+        "responses": {
+          "200": {
+            "description": "Get games",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Games"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/scores": {
+      "get": {
+        "tags": ["scores"],
+        "summary": "Get scores",
+        "operationId": "getScores",
+        "responses": {
+          "200": {
+            "description": "Get scores",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Scores"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/scores/{id}": {
+      "get": {
+        "tags": ["scores"],
+        "summary": "Get game scores",
+        "operationId": "getGameScores",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of game",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get game scores",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Scores"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
+          }
+        }
+      }
+    },
     "/about": {
       "get": {
         "tags": ["healthcheck"],
@@ -2454,6 +2702,306 @@
         "responses": {
           "200": {
             "description": "db status received",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/visits/articles": {
+      "get": {
+        "tags": ["visits"],
+        "summary": "Get articles visits stats",
+        "operationId": "getArticlesVisitsStats",
+        "responses": {
+          "200": {
+            "description": "Visits received",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Visits"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/visits/top/articles": {
+      "get": {
+        "tags": ["visits"],
+        "summary": "Get top articles visits stats",
+        "operationId": "getTopArticlesVisitsStats",
+        "responses": {
+          "200": {
+            "description": "Visits received",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Visits"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/visits/articles?ids={id}": {
+      "get": {
+        "tags": ["visits"],
+        "summary": "Get articles visits stats",
+        "operationId": "getSelectedArticlesVisitsStats",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of user or multiple IDs of articles separated by comma",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Visits"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/visits/users": {
+      "get": {
+        "tags": ["visits"],
+        "summary": "Get users visits stats",
+        "operationId": "getUsersVisitsStats",
+        "responses": {
+          "200": {
+            "description": "Visits received",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Visits"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/visits/top/users": {
+      "get": {
+        "tags": ["visits"],
+        "summary": "Get top users visits stats",
+        "operationId": "getTopUsersVisitsStats",
+        "responses": {
+          "200": {
+            "description": "Visits received",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Visits"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/visits/users?ids={id}": {
+      "get": {
+        "tags": ["visits"],
+        "summary": "Get users visits stats",
+        "operationId": "getSelectedUsersVisitsStats",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of user or multiple IDs of users separated by comma",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Visits"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/visits/comments": {
+      "get": {
+        "tags": ["visits"],
+        "summary": "Get comments visits stats",
+        "operationId": "getCommentsVisitsStats",
+        "responses": {
+          "200": {
+            "description": "Visits received",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Visits"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/visits/top/comments": {
+      "get": {
+        "tags": ["visits"],
+        "summary": "Get top comments visits stats",
+        "operationId": "getTopCommentsVisitsStats",
+        "responses": {
+          "200": {
+            "description": "Visits received",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Visits"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/visits/comments?ids={id}": {
+      "get": {
+        "tags": ["visits"],
+        "summary": "Get comments visits stats",
+        "operationId": "getSelectedCommentsVisitsStats",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of user or multiple IDs of comments separated by comma",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Visits"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bookmarks/articles": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": ["bookmarks"],
+        "summary": "Get user articles bookmarks",
+        "operationId": "getUserArticlesBookmarks",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticlesBookmarked"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": ["bookmarks"],
+        "requestBody": {
+          "description": "Created bookmarks object",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBookmark"
+              }
+            }
+          },
+          "required": true
+        },
+        "summary": "Add user articles bookmarks",
+        "operationId": "addUserArticlesBookmarks",
+        "responses": {
+          "200": {
+            "description": "Bookmark added or removed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Bookmarks"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "First bookmark created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Bookmarks"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
             "content": {}
           }
         }
@@ -2972,6 +3520,152 @@
         "properties": {
           "count": {
             "word": "string"
+          }
+        }
+      },
+      "ScoreRecord": {
+        "type": "object",
+        "required": ["score"],
+        "properties": {
+          "score": {
+            "type": "string"
+          }
+        }
+      },
+      "Scores": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "game_id": {
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "user_id": {
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "score": {
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "id": {
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "Games": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "id": {
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "Visits": {
+        "type": "object",
+        "example": { "1": 2 }
+      },
+      "CreateBookmark": {
+        "type": "object",
+        "properties": {
+          "article_id": {
+            "type": "string"
+          }
+        }
+      },
+      "ArticlesBookmarked": {
+        "type": "object",
+        "properties": {
+          "article_ids": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "Bookmarks": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "user_id": {
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "article_ids": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
           }
         }
       }

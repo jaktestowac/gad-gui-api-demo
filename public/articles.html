@@ -25,31 +25,32 @@
     <div align="center" class="floating navigation-bar" >
       <div id="postsByUserName"></div>
       <div align="center" style="display: flex; align-items: center; justify-content: center">
-        
-        <strong
-          ><a href="javascript:prevPage()" id="btnPrev" data-testid="prev-button" style="margin: 5px 5px 5px 5px"
-            >Prev</a
+        <span style="display: flex; align-items: center; justify-content: center" id="paginationController">
+          <strong
+            ><a href="javascript:prevPage()" id="btnPrev" data-testid="prev-button" style="margin: 5px 5px 5px 5px"
+              >Prev</a
+            >
+            <a href="javascript:nextPage()" id="btnNext" data-testid="next-button" style="margin: 5px 5px 5px 5px"
+              >Next</a
+            ></strong
           >
-          <a href="javascript:nextPage()" id="btnNext" data-testid="next-button" style="margin: 5px 5px 5px 5px"
-            >Next</a
-          ></strong
-        >
-        <div style="margin: 5px 15px 5px 15px">
-          Page: <span id="page" data-testid="current-page"></span>/<span id="pagesTotal" data-testid="total-pages"></span>
-        </div>
-        <label style="margin: 5px 5px 5px 5px">Items/Page:</label>
-        <select
-          id="perPage"
-          data-testid="per-page-select"
-          onchange="changeItemsPerPage()"
-          style="display: inline-block; width: 50px; margin: 5px 5px 5px 5px"
-        >
-          <option id="opt1" value="3">3</option>
-          <option id="opt2" selected value="6">6</option>
-          <option id="opt3" value="9">9</option>
-          <option id="opt4" value="12">12</option>
-          <option id="opt5" value="24">24</option>
-        </select>
+          <div style="margin: 5px 15px 5px 15px">
+            Page: <span id="page" data-testid="current-page"></span>/<span id="pagesTotal" data-testid="total-pages"></span>
+          </div>
+          <label style="margin: 5px 5px 5px 5px">Items/Page:</label>
+          <select
+            id="perPage"
+            data-testid="per-page-select"
+            onchange="changeItemsPerPage()"
+            style="display: inline-block; width: 50px; margin: 5px 5px 5px 5px"
+          >
+            <option id="opt1" value="3">3</option>
+            <option id="opt2" selected value="6">6</option>
+            <option id="opt3" value="9">9</option>
+            <option id="opt4" value="12">12</option>
+            <option id="opt5" value="24">24</option>
+          </select>
+        </span>
         <label style="margin: 5px 5px 5px 5px">Sort:</label>
         <select
           id="sorting"
@@ -75,6 +76,7 @@
       </div>
     </div>
     <div id="container" class="container-space"></div>
+    <div id="scroll-loading"></div>
 
     <div align="center">
       <section class="add-new-panel">

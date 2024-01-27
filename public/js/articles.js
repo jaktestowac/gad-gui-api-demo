@@ -5,6 +5,7 @@ const likesEndpoint = "../../api/likes";
 const myLikesEndpoint = "../../api/likes/article/mylikes";
 const pictureListEndpoint = "../../api/images/posts";
 const visitsEndpoint = "../../api/visits/articles";
+const articleBookmarkEndpoint = "../../api/bookmarks/articles";
 let picList = [];
 let users = [];
 let articlesData = [];
@@ -41,6 +42,32 @@ async function issueGetLikesForArticles(articleIds) {
     r.json()
   );
   return likesData.likes;
+}
+
+async function issueGetBookmarkedArticles() {
+  const bookmarksData = await fetch(articleBookmarkEndpoint, { headers: formatHeaders() }).then((r) => r.json());
+  return bookmarksData.article_ids;
+}
+
+async function bookmarkArticle(articleId) {
+  const data = {
+    article_id: articleId,
+  };
+  fetch(articleBookmarkEndpoint, {
+    method: "post",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+      userid: getId(),
+    },
+    body: JSON.stringify(data),
+  })
+    .then((r) => r.json())
+    .then((body) => {
+      const element = document.querySelector(`#bookmark-container-${articleId}`);
+      element.innerHTML = formatBookmarkArticle(body.article_ids.includes(articleId), articleId);
+    });
 }
 
 async function issueGetLikes(article_id) {
@@ -130,13 +157,6 @@ async function issueGetRequest(
         }
       }
       if (articlesData[i].user_name === undefined) {
-        //        const userUrl = `${usersEndpoint}/${articlesData[i].user_id}`;
-        //        const userResults = await Promise.all(
-        //          [userUrl].map((url) => fetch(url, { headers: formatHeaders() }, fetchData).then((r) => r.json()))
-        //        );
-        //
-        //        users = userResults[0];
-
         for (let j = 0; j < users.length; j++) {
           if (users[j].id?.toString() === articlesData[i].user_id?.toString()) {
             articlesData[i].user_name = `${users[j].firstname} ${users[j].lastname}`;
@@ -149,15 +169,12 @@ async function issueGetRequest(
         articlesData[i].user_name = "Unknown user";
       }
     }
-    // // sort articles by date:
-    // articlesData.sort(function (a, b) {
-    //   let dateA = new Date(a.date),
-    //     dateB = new Date(b.date);
-    //   return dateB - dateA;
-    // });
   }
+  return articlesData;
+}
+
+async function displayArticlesData(articlesData) {
   displayPostsData(articlesData);
-  attachEventHandlers(getId());
 
   if (search_user_id !== undefined) {
     const foundUser = users.find((user) => `${user.id}` === search_user_id);
@@ -175,6 +192,7 @@ async function issueGetRequest(
     }
   }
 
+  attachEventHandlers(getId());
   return true;
 }
 
@@ -220,30 +238,6 @@ const attachEventHandlers = (user_id) => {
 };
 
 let alertElement = document.querySelector(".alert");
-
-// const showResponseOnDelete = (response) => {
-//   if (response.status === 200) {
-//     showMessage("Article was deleted", false);
-//   } else {
-//     showMessage("Article was not deleted", true);
-//   }
-// };
-
-// const showResponseOnUpdate = (response) => {
-//   if (response.status === 200) {
-//     showMessage("Article was updated", false);
-//   } else {
-//     showMessage("Article was not updated", true);
-//   }
-// };
-
-// const showResponse = (response) => {
-//   if (response.status === 201) {
-//     showMessage("Article was created", false);
-//   } else {
-//     showMessage("Article was not created", true);
-//   }
-// };
 
 const showResponseAndRedirect = (response) => {
   if (response.status === 201) {
@@ -296,7 +290,6 @@ const handleCreate = () => {
     image: `.\\data\\images\\256\\${container.querySelector(".image").value}`,
   };
   issueArticleRequest(data, issueGetRequest, searchPhrase);
-  // document.querySelector(".add-new-panel").classList.remove("active");
 };
 
 const issueArticleRequest = (data, responseHandler) => {
@@ -317,44 +310,55 @@ const getImagesHTML = (image) => {
   let htmlData = "";
   if (image !== undefined) {
     htmlData += `<div align="center" ><img src="${image}" /></div>`;
-    //        for (image of images) {
-    //            htmlData += `<img src="${image}" />`;
-    //            htmlData += `<br>`
-    //        }
   }
   return htmlData;
 };
 
-//        <label>id:</label><span>${item.id}</span><br>
 const getItemHTML = (item) => {
   return `<div id="article${item.id}" data-testid="article-${item.id}">
-        <a href="article.html?id=${item.id}" id="gotoArticle${item.id}" data-testid="article-${
-    item.id
-  }-link">${getImagesHTML(item.image)}</a><br>
-        <div align="center" data-testid="article-${item.id}-title"><strong><a href="article.html?id=${item.id}">${
-    item.title
-  }</a></strong></div>
+  <a href="article.html?id=${item.id}" id="gotoArticle${item.id}" data-testid="article-${item.id}-link">${getImagesHTML(
+    item.image
+  )}</a><br>
+  
+  <div align="center" data-testid="article-${item.id}-title">
+    <strong><a href="article.html?id=${item.id}">${item.title}</a></strong>
+  </div>
+  
   <div align="center" style="" class="visits-container" id="visits-container-${
     item.id
   }" style="visibility: visible;"></div>
   <br>
-        <label>user:</label><span><a href="user.html?id=${item.user_id}" id="gotoUser${item.user_id}-${
+  
+  <table>
+    <tr>
+      <td style="padding: 0px;" ><label style="width:25px !important">user:</label>&nbsp&nbsp</td>
+      <td style="padding: 0px;"><span><a href="user.html?id=${item.user_id}" id="gotoUser${item.user_id}-${
     item.id
-  }" data-testid="article-${item.id}-user">${item.user_name}</a></span>
-  <br>
-        <label>date:</label><span data-testid="article-${item.id}-date">${item.date
-    .replace("T", " ")
-    .replace("Z", "")}</span><br>
-    <div class="labels-container" id="labels-container-${item.id}" ></div>
-        <label></label><span data-testid="article-${item.id}-body">${item.body?.substring(0, 200)} (...)</span><br>
-        <div style="display: flex; justify-content: space-between;">
-            <span style="display: flex; justify-content: flex-start;">
-                <a href="article.html?id=${item.id}" id="seeArticle${item.id}">See More...</a>
-            </span>
-            <div class="likes-container" id="likes-container-${item.id}" style="visibility: visible;"></div>
-        </div>
+  }" data-testid="article-${item.id}-user">${item.user_name}</a></span></td>
+      <td rowspan="2" style="padding:0px !important" class="bookmark-container" id="bookmark-container-${item.id}"></td>
+    </tr>
     
-    </div>`;
+    <tr>
+      <td style="padding: 0px;"><label style="width:25px !important">date:</label>&nbsp&nbsp</td>
+      <td style="padding: 0px;"><span data-testid="article-${item.id}-date">${item.date
+    .replace("T", " ")
+    .replace("Z", "")}</span></td>
+    </tr>
+  </table>
+  
+  <div class="labels-container" id="labels-container-${item.id}"></div>
+  
+  <label></label><span data-testid="article-${item.id}-body">${item.body?.substring(0, 200)} (...)</span><br>
+  
+  <div style="display: flex; justify-content: space-between;">
+    <span style="display: flex; justify-content: flex-start;">
+      <a href="article.html?id=${item.id}" id="seeArticle${item.id}">See More...</a>
+    </span>
+    
+    <div class="likes-container" id="likes-container-${item.id}" style="visibility: visible;"></div>
+  </div>
+</div>
+`;
 };
 
 function presentPicture() {
@@ -364,22 +368,21 @@ function presentPicture() {
 
 const displayPostsData = (data) => {
   const container = document.querySelector("#container");
-  container.innerHTML = "";
+  container.innerHTML = formatPostsData(data);
+};
+
+const formatPostsData = (data, suppressNoDataMsg = false) => {
+  let innerHTML = "";
   for (let item of data) {
-    displayItem(item, container);
+    innerHTML += `<div class="card-wrapper" >${getItemHTML(item)}</div>`;
   }
-  if (data.length === 0) {
-    container.innerHTML += `
+  if (data.length === 0 && suppressNoDataMsg === false) {
+    innerHTML += `
         <div align="center"><h1 style="text-align: center;"data-testid="no-results">No data</h1></div>
     `;
   }
-};
 
-const displayItem = (item, container) => {
-  let itemHTML = getItemHTML(item);
-  container.innerHTML += `
-        <div class="card-wrapper" >${itemHTML}</div>
-    `;
+  return innerHTML;
 };
 
 async function getPictureList() {
@@ -402,9 +405,41 @@ let search_user_id = getParams()["user_id"];
 getPictureList();
 updatePerPage();
 updateSorting();
-issueGetRequest(records_per_page, current_page, searchPhrase, undefined, sortingType, sortingOrder).then(() => {
-  changePage(current_page, true);
+
+checkIfFeatureEnabled("feature_infinite_scroll_articles").then((isEnabled) => {
+  if (isEnabled === true) {
+    document.addEventListener("scroll", checkScroll);
+
+    // const containerSpace = document.querySelector(".container-space");
+    // containerSpace.style.marginTop = "0px";
+    // Initial check when the page loads
+    checkScroll();
+  } else {
+    issueGetRequest(records_per_page, current_page, searchPhrase, undefined, sortingType, sortingOrder).then((data) => {
+      displayArticlesData(data).then(() => {
+        changePage(current_page, true);
+      });
+    });
+  }
 });
+
+async function updateBookmarkElements() {
+  const isEnabled = await checkIfFeatureEnabled("feature_user_bookmark_articles");
+  if (!isEnabled) return;
+
+  const elements = document.querySelectorAll(".bookmark-container");
+  const ids = [];
+  elements.forEach((element) => {
+    ids.push(element.id.split("-").slice(-1)[0]);
+  });
+  issueGetBookmarkedArticles().then((aricleIds) => {
+    const stringArticleIds = (aricleIds ?? []).map(String);
+    elements.forEach((element) => {
+      const id = element.id.split("-").slice(-1)[0];
+      element.innerHTML = formatBookmarkArticle(stringArticleIds.includes(id.toString()), id);
+    });
+  });
+}
 
 async function updateVisitsElements() {
   const isEnabled = await checkIfFeatureEnabled("feature_visits");
@@ -513,10 +548,13 @@ function changePage(page, onlyDisplay = false) {
     btnNext.disabled = false;
     btnNext.style.color = "#0275d8";
   }
-  issueGetRequest(records_per_page, page, searchPhrase, onlyDisplay, sortingType, sortingOrder).then(() => {
-    updateLikeElements();
-    updateLabelElements();
-    updateVisitsElements();
+  issueGetRequest(records_per_page, page, searchPhrase, onlyDisplay, sortingType, sortingOrder).then((data) => {
+    displayArticlesData(data).then(() => {
+      updateLikeElements();
+      updateLabelElements();
+      updateVisitsElements();
+      updateBookmarkElements();
+    });
   });
 }
 
@@ -528,8 +566,10 @@ menuButtonDisable("btnArticles");
 function seachByText() {
   let searchInput = document.getElementById("search-input");
   searchPhrase = searchInput.value;
-  issueGetRequest(records_per_page, current_page, searchPhrase, undefined, sortingType, sortingOrder).then(() => {
-    changePage(current_page, true);
+  issueGetRequest(records_per_page, current_page, searchPhrase, undefined, sortingType, sortingOrder).then((data) => {
+    displayArticlesData(data).then(() => {
+      changePage(current_page, true);
+    });
   });
 }
 
@@ -544,3 +584,51 @@ function changeSorting() {
   updateSorting();
   changeItemsPerPage();
 }
+
+/// infinite scroll:
+
+let scrollLoading = false;
+
+function appendContent(newContent) {
+  const contentElement = document.querySelector("#container");
+
+  contentElement.innerHTML += formatPostsData(newContent, true);
+  scrollLoading = false;
+}
+
+function getRandomValue(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+async function checkScroll() {
+  const navigationBar = document.querySelector("#paginationController");
+  navigationBar.style.display = "none";
+  const loadingElement = document.getElementById("scroll-loading");
+  loadingElement.innerHTML = "Loading...";
+
+  if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 5 && scrollLoading === false) {
+    scrollLoading = true;
+    loadingElement.style.display = "block";
+
+    // Fetch new content and append it to the page
+    // delay displaying next element:
+    const randomTime = getRandomValue(200, 1000);
+
+    await sleep(randomTime).then((msg) => {
+      issueGetRequest(records_per_page, current_page, searchPhrase, false, sortingType, sortingOrder).then((data) => {
+        loadingElement.style.display = "none";
+        if (data.length > 0) {
+          appendContent(data);
+          updateLikeElements();
+          updateLabelElements();
+          updateVisitsElements();
+          updateBookmarkElements();
+          current_page++;
+          checkScroll();
+        }
+      });
+    });
+  }
+}
+
+const sleep = (time) => new Promise((res) => setTimeout(res, time));

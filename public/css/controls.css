@@ -594,3 +594,114 @@ s .container-mobile {
 .fileDownloadLink:hover {
   cursor: pointer;
 }
+
+.table-bor {
+  border-collapse: collapse;
+}
+
+.table-bor th,
+.table-bor td {
+  border: 1px solid black;
+  padding: 4px;
+}
+
+.bookmark-icon {
+  font-size: 24px;
+}
+
+.bookmark-icon-disabled {
+  font-size: 24px;
+  opacity: 50%;
+}
+
+#scroll-content {
+  padding: 20px;
+  border-bottom: 1px solid #ccc;
+}
+
+#scroll-loading {
+  text-align: center;
+  padding: 10px;
+  font-style: italic;
+}
+
+.versionInfoBox {
+  border-radius: 10px;
+  border: 2px solid #ffd9428f;
+  background-color: #fadb5e44;
+  padding: 10px;
+  display: inline-block;
+  font-size: 12px;
+}
+
+.versionInfoBoxBig {
+  border-radius: 10px;
+  border: 2px solid #ffe3747c;
+  background-color: #fadb5e1f;
+  padding: 10px;
+  display: inline-block;
+  font-size: 16px;
+}
+
+.board-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+  margin: 0;
+}
+
+#board {
+  display: grid;
+  grid-template-columns: repeat(10, 30px);
+  gap: 1px;
+}
+
+.cell {
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  line-height: 30px;
+  cursor: pointer;
+  font-size: 14px;
+  background-color: #ddd;
+  position: relative;
+}
+
+.cell-hidden {
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  line-height: 30px;
+  cursor: pointer;
+  font-size: 14px;
+  background-color: #adadad;
+  position: relative;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.cell:active {
+  box-shadow: none;
+}
+
+.cell-open {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #ccc;
+  text-align: center;
+  line-height: 30px;
+  cursor: pointer;
+  font-size: 14px;
+  background-color: #ddd;
+  box-shadow: none;
+}
+
+.mine-visible {
+  background-color: #f00;
+  color: #fff;
+}
+
+.flag {
+  font-size: 20px;
+  color: #00f;
+}

@@ -1,7 +1,7 @@
 const { serverApp } = require("../../server");
 const { request, expect, logLevel } = require("../config");
 
-function sleep(ms) {
+async function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
@@ -24,6 +24,7 @@ async function setupEnv() {
     feature_likes: true,
     feature_files: true,
     feature_labels: true,
+    feature_user_bookmark_articles: true,
   };
   const responseFeature = await request.post("/api/config/features").send(requestFeatureBody);
 

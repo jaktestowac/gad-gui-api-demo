@@ -22,6 +22,8 @@ const { handleLikes } = require("../endpoints/likes-endpoint.helpers");
 const { handleLabels } = require("../endpoints/labels-endpoint.helpers");
 const { handleGames } = require("../endpoints/games-endpoint.helpers");
 const { handleScores } = require("../endpoints/scores-endpoint.helpers");
+const { handleBookmarks } = require("../endpoints/bookmarks-endpoint.helpers");
+const { handleMinesweeper } = require("../endpoints/minesweeper-endpoint.helpers");
 
 const validationsRoutes = (req, res, next) => {
   let isAdmin = false;
@@ -81,10 +83,6 @@ const validationsRoutes = (req, res, next) => {
       handleConfig(req, res);
       return;
     }
-    if (req.url.includes("/api/hangman")) {
-      handleHangman(req, res);
-      return;
-    }
     if (req.url.includes("/api/games")) {
       handleGames(req, res);
       return;
@@ -95,6 +93,15 @@ const validationsRoutes = (req, res, next) => {
     }
     if (req.url.includes("/api/quiz")) {
       handleQuiz(req, res);
+    }
+    if (req.url.includes("/api/hangman")) {
+      handleHangman(req, res);
+    }
+    if (req.url.includes("/api/minesweeper")) {
+      handleMinesweeper(req, res);
+    }
+    if (req.url.includes("/api/bookmarks")) {
+      handleBookmarks(req, res);
     }
 
     if (

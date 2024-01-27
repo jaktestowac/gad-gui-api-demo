@@ -1,4 +1,13 @@
-const { userDb, articlesDb, commentsDb, likesDb, articleLabelsDb, gamesDb, scoresDb } = require("./db.helpers");
+const {
+  userDb,
+  articlesDb,
+  commentsDb,
+  likesDb,
+  articleLabelsDb,
+  gamesDb,
+  scoresDb,
+  bookmarksDb,
+} = require("./db.helpers");
 
 function searchForUserWithToken(userId, verifyTokenResult) {
   const foundUser = userDb().find((user) => {
@@ -176,6 +185,28 @@ function getUserScore(userId, gameId) {
   return foundScore;
 }
 
+function getGameScores(gameId) {
+  const foundScores = scoresDb().filter((score) => score.game_id.toString() === gameId.toString()) || [];
+  return foundScores;
+}
+
+function checkIfArticlesAlreadyInBookmarks(articleId, userId) {
+  const foundBookmarks = findUserBookmarks(userId);
+  if (foundBookmarks.length === 0) {
+    return false;
+  }
+  const foundBookmark = foundBookmarks[0];
+  const ids = foundBookmark["article_ids"].map((id) => id.toString());
+  return ids.includes(articleId?.toString());
+}
+
+function findUserBookmarks(userId) {
+  const foundBookmark = bookmarksDb().filter((bookmark) => {
+    return bookmark["user_id"]?.toString() === userId?.toString();
+  });
+  return foundBookmark;
+}
+
 module.exports = {
   searchForUserWithToken,
   searchForUserWithEmail,
@@ -196,4 +227,7 @@ module.exports = {
   searchForUserWithOnlyToken,
   filterArticlesByLabel,
   getGameNameById,
+  getGameScores,
+  checkIfArticlesAlreadyInBookmarks,
+  findUserBookmarks,
 };

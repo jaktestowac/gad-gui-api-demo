@@ -14,6 +14,9 @@ const visits = (function () {
     let visitsPerComment = {};
     let visitsPerUsers = {};
     let apiCalls = {};
+    let nonApiCalls = {};
+    let apiRequestsDetails = {};
+    let nonApiRequestsDetails = {};
 
     function getVisitsPerArticle() {
       return visitsPerArticle;
@@ -29,6 +32,18 @@ const visits = (function () {
 
     function getApiCalls() {
       return apiCalls;
+    }
+
+    function getNonApiCalls() {
+      return nonApiCalls;
+    }
+
+    function getApiRequestsDetails() {
+      return apiRequestsDetails;
+    }
+
+    function getNonApiRequestsDetails() {
+      return nonApiRequestsDetails;
     }
 
     function generateVisits() {
@@ -61,6 +76,9 @@ const visits = (function () {
       getVisitsPerComment,
       getVisitsPerUsers,
       getApiCalls,
+      getNonApiCalls,
+      getApiRequestsDetails,
+      getNonApiRequestsDetails,
     };
   }
   return {
@@ -116,6 +134,10 @@ function scoresDb() {
 
 function articleLabelsDb() {
   return fullDb()["article-labels"];
+}
+
+function bookmarksDb() {
+  return fullDb()["bookmarks"];
 }
 
 function quizQuestionsDb() {
@@ -225,6 +247,7 @@ module.exports = {
   getDbPath,
   gamesDb,
   scoresDb,
+  bookmarksDb,
   getUserAvatars,
   getImagesForArticles,
   getUploadedFileList,
@@ -238,5 +261,8 @@ module.exports = {
   getVisitsPerComment: visitsData.getVisitsPerComment,
   getVisitsPerUsers: visitsData.getVisitsPerUsers,
   getApiCalls: visitsData.getApiCalls,
+  getNonApiCalls: visitsData.getNonApiCalls,
+  getApiRequestsDetails: visitsData.getApiRequestsDetails,
+  getNonApiRequestsDetails: visitsData.getNonApiRequestsDetails,
   visitsData,
 };

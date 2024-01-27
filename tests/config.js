@@ -9,20 +9,29 @@ const baseRandomArticlesUrl = "/api/random/articles";
 const baseFilesArticlesUrl = "/api/files/articles";
 const baseUsersUrl = "/api/users";
 const baseHangmanUrl = "/api/hangman";
+const baseMinesweeperUrl = "/api/minesweeper";
 const baseQuizUrl = "/api/quiz";
 const baseStatsUrl = "/api/stats";
 const baseCommentsUrl = "/api/comments";
 const baseLoginUrl = "/api/login";
 const baseLikesUrl = "/api/likes";
 const baseLabelsUrl = "/api/labels";
+const aboutUrl = "/api/about";
+const baseBookmarksUrl = "/api/bookmarks";
 const baseArticleLabelsUrl = "/api/article-labels";
 
 const existingUserEmail = "Danial.Dicki@dicki.test";
 const existingUserPass = "test2";
+const existingUserId = 2;
+
+const existingUserEmail2 = "Henry.Spencer@test.test";
+const existingUserPass2 = "1234";
+const existingUserId2 = 11;
 
 const sleepTime = 200; // in ms
 const logLevel = 2;
-const clearDbAfter = true;
+const clearDbAfter = false;
+const clearDbBefore = true;
 
 module.exports = {
   expect,
@@ -33,6 +42,7 @@ module.exports = {
   baseUsersUrl,
   baseLikesUrl,
   baseHangmanUrl,
+  baseMinesweeperUrl,
   baseQuizUrl,
   baseStatsUrl,
   baseCommentsUrl,
@@ -40,10 +50,17 @@ module.exports = {
   baseLoginUrl,
   existingUserPass,
   existingUserEmail,
+  existingUserId,
   logLevel,
   clearDbAfter,
+  clearDbBefore,
   baseFilesArticlesUrl,
   baseLabelsUrl,
   baseArticleLabelsUrl,
   baseRandomArticlesUrl,
+  aboutUrl,
+  baseBookmarksUrl,
+  existingUserEmail2,
+  existingUserPass2,
+  existingUserId2,
 };

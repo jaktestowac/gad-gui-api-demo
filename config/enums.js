@@ -75,6 +75,11 @@ const BugConfigKeys = {
   BUG_LIKES_001: "bug_likes_001",
   BUG_LIKES_002: "bug_likes_002",
   BUG_LIKES_003: "bug_likes_003",
+  BUG_BOOKMARKS_001: "bug_bookmarks_001",
+  BUG_BOOKMARKS_002: "bug_bookmarks_002",
+  BUG_BOOKMARKS_003: "bug_bookmarks_003",
+  BUG_ARTICLES_001: "bug_articles_001",
+  BUG_ARTICLES_002: "bug_articles_002",
 };
 
 const FeatureFlagConfigKeys = {
@@ -84,6 +89,8 @@ const FeatureFlagConfigKeys = {
   FEATURE_LABELS: "feature_labels",
   FEATURE_CACHE_CONTROL_NO_STORE: "feature_cache_control_no_store",
   FEATURE_VISITS: "feature_visits",
+  FEATURE_USER_BOOKMARK_ARTICLES: "feature_user_bookmark_articles",
+  FEATURE_INFINITE_SCROLL_ARTICLES: "feature_infinite_scroll_articles",
 };
 
 module.exports = {

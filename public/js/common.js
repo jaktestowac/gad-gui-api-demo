@@ -209,6 +209,9 @@ const mainAPIMenuHTML = `
 <a href="./swagger.html">
   <button id="btnSwagger" data-testid="btn-swagger" class="button-primary">Swagger</button>
 </a>
+<a href="./version.html">
+  <button id="btnVersion" data-testid="btn-version" class="button-primary">Version</button>
+</a>
 
 `;
 
@@ -225,6 +228,7 @@ const logoGAD = (path = ".") => {
 const rightMenu = (path = ".") => {
   return `
   <span style="display: flex; align-items: center; justify-self: end; padding-right: 20px">
+
   <div class="dropdown" data-testid="user-dropdown">
     <button id="dropbtn" data-testid="btn-dropdown" class="dropbtn">
       <img id="avatar"
@@ -378,6 +382,25 @@ function formatLike(alreadyLiked, likesNumber, articleId) {
   return out;
 }
 
+const bookmarkMessage = "Please log in to add this content to Bookmarks!";
+function formatBookmarkArticle(alreadyBookmark, articleId) {
+  let out = "";
+  if (alreadyBookmark) {
+    if (getBearerToken() === undefined) {
+      out = `<div class="hover-element" style="display: grid;justify-self: end"><div style="display: flex;justify-self: end"><div id="bookmark-button" class="bookmark-icon">🏷️</div><div class="popup">${bookmarkMessage}</div></div>`;
+    } else {
+      out = `<div id="bookmark-button" onclick="bookmarkArticle(${articleId})" style="cursor: pointer;" class="bookmark-icon">🏷️</div>`;
+    }
+  } else {
+    if (getBearerToken() === undefined) {
+      out = `<div class="hover-element" style="display: grid;justify-self: end"><div style="display: flex;justify-self: end"><div id="bookmark-button" class="bookmark-icon-disabled">🔖</div><div class="popup">${bookmarkMessage}</div></div>`;
+    } else {
+      out = `<div id="bookmark-button" onclick="bookmarkArticle(${articleId})" style="cursor: pointer;" class="bookmark-icon-disabled">🔖</div>`;
+    }
+  }
+  return out;
+}
+
 async function checkIfFeatureEnabled(featureName) {
   const body = { name: featureName };
   const url = "/api/config/checkfeature";
@@ -428,3 +451,131 @@ function removeLabel(label) {
   const labelContainer = document.getElementById("labels-container");
   labelContainer.removeChild(label);
 }
+
+async function getGadVersion() {
+  const gadStatusUrl = "/api/about";
+
+  return fetch(gadStatusUrl, {
+    method: "get",
+    headers: {
+      Accept: "application/json",
+    },
+  })
+    .then((r) => r.json())
+    .then((gadStatus) => {
+      return gadStatus;
+    });
+}
+
+async function getGadReleases() {
+  const gadReleasesUrl = "https://api.github.com/repos/jaktestowac/gad-gui-api-demo/releases";
+
+  return fetch(gadReleasesUrl, {
+    method: "get",
+    headers: {
+      Accept: "application/vnd.github+json",
+    },
+  })
+    .catch((e) => {
+      console.log("Error:", e?.message);
+      return [];
+    })
+    .then((r) => r.json())
+    .catch((e) => {
+      return [];
+    })
+    .then((gadReleases) => {
+      return gadReleases;
+    });
+}
+
+function getNewestVersion(gadReleases, currentVersion) {
+  gadReleases.sort((a, b) => b.name.localeCompare(a.name));
+
+  const filteredVersions = gadReleases.filter((release) => {
+    return release.name > currentVersion;
+  });
+
+  if (filteredVersions.length === 0) {
+    console.log(`GAD (${currentVersion}) is up to date! Latest available version: ${gadReleases[0]?.name}`);
+    return undefined;
+  }
+  filteredVersions.sort((a, b) => b.name.localeCompare(a.name));
+  const latestVersion = filteredVersions[0];
+  return latestVersion;
+}
+
+function getNewerVersions(gadReleases, currentVersion) {
+  gadReleases.sort((a, b) => b.name.localeCompare(a.name));
+
+  const filteredVersions = gadReleases.filter((release) => {
+    return release.name > currentVersion;
+  });
+
+  if (filteredVersions.length === 0) {
+    console.log(`GAD (${currentVersion}) is up to date! Latest available version: ${gadReleases[0]?.name}`);
+    return [];
+  }
+  filteredVersions.sort((a, b) => b.name.localeCompare(a.name));
+  return filteredVersions;
+}
+
+async function checkNewerVersion() {
+  const versionInfoContainer = document.getElementById("versionInfoBox");
+  const rightMenuAlerts = document.getElementById("rightMenuAlerts");
+  if (versionInfoContainer === null && rightMenuAlerts === null) {
+    return;
+  }
+
+  getGadVersion().then((gadStatus) => {
+    const currentVersion = gadStatus.version;
+    console.log(`GAD current version is: ${currentVersion}`);
+    getGadReleases().then((gadReleases) => {
+      if (gadReleases.length === 0) {
+        const versionDetailsElement = document.getElementById("versionDetails");
+        if (versionDetailsElement !== null) {
+          const gad_msg = `<div align="center"><h3>There was a problem with checking version😕<br/>
+            You can check it manually on <strong><a href="https://github.com/jaktestowac/gad-gui-api-demo" >official jaktestowac.pl repository</a></strong> or <strong><a href="https://github.com/jaktestowac/gad-gui-api-demo/releases" >release page</a></strong><br/></h3></div>`;
+          versionDetailsElement.innerHTML = gad_msg;
+        }
+        return;
+      }
+
+      const latestVersion = getNewestVersion(gadReleases, currentVersion);
+      if (latestVersion !== undefined) {
+        const versionInfoContainer = document.getElementById("versionInfoBox");
+        if (versionInfoContainer !== null) {
+          const gad_msg = `<strong>Newer GAD version is available!</strong> Latest: <strong>${latestVersion.name}</strong> and You have: <strong>${currentVersion}</strong><br/>
+            You can download it from <strong><a href="https://github.com/jaktestowac/gad-gui-api-demo" >official jaktestowac.pl repository</a></strong> or <strong><a href="${latestVersion.html_url}" >release page!</a></strong><br/>`;
+          versionInfoContainer.innerHTML = `<div class="versionInfoBox">${gad_msg}</div>`;
+        }
+      }
+
+      const versionDetailsElement = document.getElementById("versionDetails");
+      if (versionDetailsElement === null) {
+        return;
+      }
+      const versions = getNewerVersions(gadReleases, currentVersion);
+
+      if (versions.length === 0) {
+        versionDetailsElement.innerHTML = `<div align="center"><h3><strong>🦎 GAD (${currentVersion}) is up to date!</strong>🥳<br/>Latest available version: ${gadReleases[0]?.name}</h3></div>`;
+        return;
+      }
+
+      let markdownInput = "# Release Notes\n\n";
+      versions.forEach((version) => {
+        let tmp = version.body.replace("# ", "### ");
+        tmp = tmp.replace("![obraz]", "\n![obraz]");
+        markdownInput += `\n\n## ${version.name}\n\n`;
+        markdownInput += tmp;
+      });
+      const htmlOutput = marked(markdownInput);
+      versionDetailsElement.innerHTML = htmlOutput;
+    });
+  });
+}
+
+function checkRelease() {
+  checkNewerVersion();
+}
+checkRelease();
