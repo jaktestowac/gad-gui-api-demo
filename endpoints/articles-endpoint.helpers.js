@@ -151,7 +151,7 @@ function handleArticles(req, res, isAdmin) {
       return;
     }
 
-    if (foundUser === undefined && !areIdsEqual(foundUser?.id, req.body?.user_id, "handleArticles:PATCH")) {
+    if (foundUser === undefined && !areIdsEqual(foundUser?.id, foundArticle?.user_id, "handleArticles:PATCH")) {
       res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
       return;
     }

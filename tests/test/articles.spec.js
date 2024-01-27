@@ -179,11 +179,12 @@ describe("Endpoint /articles", () => {
       expect(response.body).to.deep.equal(testArticleData);
     });
 
-    it("PATCH /articles/:id - should not update but with different user ID", async () => {
+    it("PATCH /articles/:id - should not update with different user ID", async () => {
       // Act:
       const newArticleData = testArticleData;
-      newArticleData.user_id = newArticleData.user_id + 1;
-      const response = await request.patch(`${baseUrl}/${articleId}`).set(headers).send(newArticleData);
+      newArticleData.user_id = undefined;
+      const newArticleId = articleId - 1;
+      const response = await request.patch(`${baseUrl}/${newArticleId}`).set(headers).send(newArticleData);
 
       // Assert:
       expect(response.status).to.equal(401);
