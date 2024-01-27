@@ -19,7 +19,7 @@ async function issuePostScoreRequest(score) {
   });
 }
 
-function calculateScore() {
+function calculateScore(isWinner) {
   let score = 0;
   let flaggedMines = 0;
   for (let i = 0; i < boardSize; i++) {
@@ -29,7 +29,10 @@ function calculateScore() {
       }
     }
   }
-  score = flaggedMines + winningBonus;
+  score = flaggedMines;
+  if (isWinner === true) {
+    score += winningBonus;
+  }
   return score;
 }
 
@@ -159,7 +162,7 @@ function handleRightClick(row, col, event) {
 }
 
 function endGame(isWinner) {
-  finalScore = calculateScore();
+  finalScore = calculateScore(isWinner);
   const msg = isWinner
     ? `Congratulations! You win with a score of ${finalScore}!`
     : `Game over! You clicked on a mine. Score: ${finalScore}!`;
