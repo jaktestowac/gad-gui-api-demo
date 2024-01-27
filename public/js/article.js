@@ -726,7 +726,7 @@ const showEditForm = (ev) => {
 const showEditNameForm = (ev) => {
   const id = ev.target.id;
   const url = articlesEndpoint + "/" + id;
-  const cardElement = ev.target.parentElement.parentElement;
+  const cardElement = document.querySelector(".card-wrapper-wide");
   fetch(url, { headers: formatHeaders() })
     .then((response) => response.json())
     .then((item) => {
