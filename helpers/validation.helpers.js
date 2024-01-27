@@ -161,6 +161,11 @@ function isNumber(value) {
   return typeof value === "number";
 }
 
+function areIdsEqual(id1, id2, msg) {
+  logTrace("areIdsEqual", { id1, id2, msg });
+  return id1?.toString() === id2?.toString();
+}
+
 module.exports = {
   validateDate,
   validateEmail,
@@ -181,4 +186,5 @@ module.exports = {
   mandatory_non_empty_fields_labels,
   mandatory_non_empty_fields_article_labels,
   isNumber,
+  areIdsEqual,
 };

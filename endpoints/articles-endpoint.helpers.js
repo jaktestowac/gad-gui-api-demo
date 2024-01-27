@@ -16,6 +16,7 @@ const {
   mandatory_non_empty_fields_article,
   all_fields_article,
   are_all_fields_valid,
+  areIdsEqual,
 } = require("../helpers/validation.helpers");
 
 function handleArticles(req, res, isAdmin) {
@@ -186,7 +187,7 @@ function handleArticles(req, res, isAdmin) {
     if (
       foundArticle?.user_id !== undefined &&
       foundUser !== undefined &&
-      foundUser?.id?.toString() !== req.body?.user_id?.toString()
+      !areIdsEqual(foundUser?.id, req.body?.user_id, "handleArticles:PUT")
     ) {
       res.status(HTTP_UNAUTHORIZED).send("You can not edit articles if You are not an owner");
       return;
