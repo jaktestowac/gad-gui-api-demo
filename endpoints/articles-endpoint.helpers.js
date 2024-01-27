@@ -183,8 +183,12 @@ function handleArticles(req, res, isAdmin) {
       foundUser.id = req.body?.user_id;
     }
 
-    if (foundArticle?.user_id !== undefined && foundUser !== undefined && foundUser?.id !== req.body?.user_id) {
-      res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+    if (
+      foundArticle?.user_id !== undefined &&
+      foundUser !== undefined &&
+      foundUser?.id?.toString() !== req.body?.user_id?.toString()
+    ) {
+      res.status(HTTP_UNAUTHORIZED).send("You can not edit articles if You are not an owner");
       return;
     }
 
