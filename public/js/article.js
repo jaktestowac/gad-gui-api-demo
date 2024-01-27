@@ -14,8 +14,8 @@ let articleDataForExport;
 let articleUserId;
 let articleLabelId = undefined;
 let selectedLabels = [];
-let labelsEnabled = true;
-let labelsEditEnabled = true;
+let labelsEnabled = false;
+let labelsEditEnabled = false;
 let labelOptions = [];
 let allLabels = [];
 let assignedLabels = [];
@@ -856,6 +856,7 @@ async function handleLabelsRefresh() {
     if (!isEnabled) return;
 
     labelsEnabled = isEnabled;
+    labelsEditEnabled = isEnabled;
     issueGetLabelsForArticles([article_id]).then((labelsData) => {
       issueGetAllLabels().then((labels) => {
         allLabels = labels;

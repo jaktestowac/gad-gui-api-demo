@@ -596,6 +596,10 @@ function appendContent(newContent) {
   scrollLoading = false;
 }
 
+function getRandomValue(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 async function checkScroll() {
   const navigationBar = document.querySelector("#paginationController");
   navigationBar.style.display = "none";
@@ -608,7 +612,9 @@ async function checkScroll() {
 
     // Fetch new content and append it to the page
     // delay displaying next element:
-    await sleep(300).then((msg) => {
+    const randomTime = getRandomValue(200, 1000);
+
+    await sleep(randomTime).then((msg) => {
       issueGetRequest(records_per_page, current_page, searchPhrase, false, sortingType, sortingOrder).then((data) => {
         loadingElement.style.display = "none";
         if (data.length > 0) {
