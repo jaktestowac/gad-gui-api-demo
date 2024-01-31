@@ -1,6 +1,6 @@
 const { isBugDisabled, isBugEnabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
-const { searchForUserWithToken, searchForArticle, searchForArticles } = require("../helpers/db-operation.helpers");
+const { searchForUserWithToken, searchForArticle, searchForUserWithEmail } = require("../helpers/db-operation.helpers");
 const { randomDbEntry, articlesDb } = require("../helpers/db.helpers");
 const {
   formatInvalidTokenErrorResponse,
@@ -74,21 +74,24 @@ function handleArticles(req, res, isAdmin) {
         return;
       }
     } else {
-      let userId = req.body["user_id"];
+      // method POST:
+      // let userId = req.body["user_id"];
 
-      if (userId === undefined) {
-        logWarn("User ID is not defined", { method: req.method, url: req.url, userIdInHeader: req.headers["userid"] });
-        userId = req.headers["userid"];
-      }
+      // if (userId === undefined) {
+      //   logWarn("User ID is not defined", { method: req.method, url: req.url, userIdInHeader: req.headers["userid"] });
+      //   userId = req.headers["userid"];
+      // }
 
-      const foundUser = searchForUserWithToken(userId, verifyTokenResult);
+      // const foundUser = searchForUserWithToken(userId, verifyTokenResult);
+      const foundUser = searchForUserWithEmail(verifyTokenResult?.email);
 
-      logTrace("handleArticles:", { method: req.method, urlEnds, foundUser, userId });
+      logTrace("handleArticles:", { method: req.method, urlEnds, foundUser });
 
       if (foundUser === undefined) {
         res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
         return;
       }
+      req.body["user_id"] = foundUser.id;
     }
   }
 

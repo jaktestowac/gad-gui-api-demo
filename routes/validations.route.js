@@ -52,8 +52,8 @@ const validationsRoutes = (req, res, next) => {
     try {
       let verifyTokenResult = verifyAccessToken(req, res, "isAdmin", req.url);
       if (
-        verifyTokenResult?.email === getConfigValue(ConfigKeys.ADMIN_USER_EMAIL) ||
-        verifyTokenResult?.email === getConfigValue(ConfigKeys.SUPER_ADMIN_USER_EMAIL)
+        verifyTokenResult?.email?.toLowerCase() === getConfigValue(ConfigKeys.ADMIN_USER_EMAIL)?.toLowerCase() ||
+        verifyTokenResult?.email?.toLowerCase() === getConfigValue(ConfigKeys.SUPER_ADMIN_USER_EMAIL)?.toLowerCase()
       ) {
         isAdmin = true;
         logDebug("validations: isAdmin:", isAdmin);

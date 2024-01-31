@@ -96,12 +96,15 @@ function sleep(ms) {
 }
 
 function isAdminUser(email, pass) {
-  return email === getConfigValue(ConfigKeys.ADMIN_USER_EMAIL) && pass === getConfigValue(ConfigKeys.ADMIN_USER_PASS);
+  return (
+    email?.toLowerCase() === getConfigValue(ConfigKeys.ADMIN_USER_EMAIL)?.toLowerCase() &&
+    pass === getConfigValue(ConfigKeys.ADMIN_USER_PASS)
+  );
 }
 
 function isSuperAdminUser(email, pass) {
   return (
-    email === getConfigValue(ConfigKeys.SUPER_ADMIN_USER_EMAIL) &&
+    email?.toLowerCase() === getConfigValue(ConfigKeys.SUPER_ADMIN_USER_EMAIL)?.toLowerCase() &&
     pass === getConfigValue(ConfigKeys.SUPER_ADMIN_USER_PASS)
   );
 }

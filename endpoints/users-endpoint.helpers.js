@@ -44,7 +44,7 @@ function handleUsers(req, res) {
     }
 
     const emails = userDb().map((user) => user?.email);
-    let foundUser = emails.filter((email) => email === req.body["email"]);
+    let foundUser = emails.filter((email) => email?.toLowerCase() === req.body["email"]?.toLowerCase());
 
     if (isBugEnabled(BugConfigKeys.BUG_LIKES_003)) {
       foundUser = [];
@@ -79,7 +79,10 @@ function handleUsers(req, res) {
     }
 
     const foundMail = userDb().find((user) => {
-      if (user["id"]?.toString() !== userId?.toString() && user["email"] === req.body["email"]) {
+      if (
+        user["id"]?.toString() !== userId?.toString() &&
+        user["email"]?.toLowerCase() === req.body["email"]?.toLowerCase()
+      ) {
         return user;
       }
     });

@@ -11,7 +11,9 @@ const mandatory_non_empty_fields_article_labels = ["article_id", "label_ids"];
 const mandatory_non_empty_fields_likes = ["user_id", "comment_id", "article_id"];
 const all_fields_article = ["id", "user_id", "title", "body", "date", "image"];
 const mandatory_non_empty_fields_comment = ["user_id", "article_id", "body", "date"];
+const mandatory_non_empty_fields_comment_create = ["article_id", "body", "date"];
 const all_fields_comment = ["id", "user_id", "article_id", "body", "date"];
+const all_fields_comment_create = ["id", "article_id", "body", "date"];
 const all_fields_plugin = ["id", "name", "status", "version"];
 const mandatory_non_empty_fields_plugin = ["name", "status", "version"];
 
@@ -187,4 +189,6 @@ module.exports = {
   mandatory_non_empty_fields_article_labels,
   isNumber,
   areIdsEqual,
+  mandatory_non_empty_fields_comment_create,
+  all_fields_comment_create,
 };
