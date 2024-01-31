@@ -285,7 +285,6 @@ const handleCreate = () => {
   let data = {
     title: container.querySelector(".title").value,
     body: container.querySelector(".body").value,
-    user_id: container.querySelector(".user").value,
     date: date,
     image: `.\\data\\images\\256\\${container.querySelector(".image").value}`,
   };

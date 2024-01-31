@@ -3018,18 +3018,8 @@
     "schemas": {
       "ArticleCreate": {
         "type": "object",
-        "required": ["user_id", "title", "body", "date"],
+        "required": ["title", "body", "date"],
         "properties": {
-          "user_id": {
-            "oneOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "string"
-              }
-            ]
-          },
           "title": {
             "type": "string",
             "description": "Title"
@@ -3193,16 +3183,6 @@
         "required": ["article_id", "body", "date"],
         "properties": {
           "article_id": {
-            "oneOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "string"
-              }
-            ]
-          },
-          "user_id": {
             "oneOf": [
               {
                 "type": "integer"
