@@ -1,6 +1,6 @@
 const { isBugDisabled, isBugEnabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
-const { areIdsEqual } = require("../helpers/compare.helpers");
+const { areIdsEqual, isUndefined } = require("../helpers/compare.helpers");
 const { searchForUserWithToken, searchForArticle, searchForUserWithEmail } = require("../helpers/db-operation.helpers");
 const { randomDbEntry, articlesDb } = require("../helpers/db.helpers");
 const {
@@ -27,7 +27,7 @@ function handleArticles(req, res, isAdmin) {
     const foundUser = searchForUserWithToken(req.headers["userid"], verifyTokenResult);
 
     logTrace("handleArticles:", { method: req.method, urlEnds, foundUser });
-    if (foundUser === undefined || verifyTokenResult === undefined) {
+    if (isUndefined(foundUser) || isUndefined(verifyTokenResult)) {
       res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
       return;
     }
@@ -54,7 +54,7 @@ function handleArticles(req, res, isAdmin) {
 
     if (req.method !== "POST") {
       let articleId = req.body["id"];
-      if (articleId === undefined) {
+      if (isUndefined(articleId)) {
         articleId = getIdFromUrl(urlEnds);
       }
 
@@ -65,11 +65,11 @@ function handleArticles(req, res, isAdmin) {
 
       logTrace("handleArticles: foundUser and user_id:", { foundUser, user_id: foundArticle?.user_id });
 
-      if (foundUser === undefined && foundArticle !== undefined) {
+      if (isUndefined(foundUser) && !isUndefined(foundArticle)) {
         res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
         return;
       }
-      if (foundUser === undefined && foundArticle === undefined && req.method === "DELETE") {
+      if (isUndefined(foundUser) && isUndefined(foundArticle) && req.method === "DELETE") {
         res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
         return;
       }
@@ -79,7 +79,7 @@ function handleArticles(req, res, isAdmin) {
 
       logTrace("handleArticles:", { method: req.method, urlEnds, foundUser });
 
-      if (foundUser === undefined) {
+      if (isUndefined(foundUser)) {
         res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
         return;
       }
@@ -89,7 +89,7 @@ function handleArticles(req, res, isAdmin) {
 
   // if (req.method === "GET" && urlEnds.includes("/api/articles?ids=")) {
   //   const articleIdsRaw = urlEnds.split("?ids=").slice(-1)[0];
-  //   if (articleIdsRaw === undefined) {
+  //   if (articleIdsRaw)) {
   //     res.status(HTTP_NOT_FOUND).json({});
   //     return;
   //   }
@@ -141,12 +141,12 @@ function handleArticles(req, res, isAdmin) {
       return;
     }
 
-    if (foundArticle === undefined) {
+    if (isUndefined(foundArticle)) {
       res.status(HTTP_NOT_FOUND).send({});
       return;
     }
 
-    if (foundUser === undefined && !areIdsEqual(foundUser?.id, foundArticle?.user_id, "handleArticles:PATCH")) {
+    if (isUndefined(foundUser) && !areIdsEqual(foundUser?.id, foundArticle?.user_id, "handleArticles:PATCH")) {
       res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
       return;
     }
@@ -175,13 +175,13 @@ function handleArticles(req, res, isAdmin) {
     logDebug("handleArticles: foundUser and user_id:", { foundUser, user_id: foundArticle?.user_id });
 
     const bug002Enabled = isBugEnabled(BugConfigKeys.BUG_ARTICLES_002);
-    if (bug002Enabled && foundUser !== undefined) {
+    if (bug002Enabled && !isUndefined(foundUser)) {
       foundUser.id = req.body?.user_id;
     }
 
     if (
-      foundArticle?.user_id !== undefined &&
-      foundUser !== undefined &&
+      !isUndefined(foundArticle?.user_id) &&
+      !isUndefined(foundUser) &&
       !areIdsEqual(foundUser?.id, req.body?.user_id, "handleArticles:PUT")
     ) {
       res.status(HTTP_UNAUTHORIZED).send("You can not edit articles if You are not an owner");
@@ -194,7 +194,7 @@ function handleArticles(req, res, isAdmin) {
 
     logTrace("handleArticles:PUT:", { method: req.method, articleId });
 
-    if (foundArticle === undefined) {
+    if (isUndefined(foundArticle)) {
       req.method = "POST";
       req.url = "/api/articles";
       req.body.id = undefined;

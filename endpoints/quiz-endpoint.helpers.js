@@ -1,3 +1,4 @@
+const { isUndefined } = require("../helpers/compare.helpers");
 const {
   getGameIdByName,
   getUserScore,
@@ -24,7 +25,7 @@ function handleQuiz(req, res) {
     res.status(HTTP_OK).json({ count: countAvailableQuestions() });
   } else if (req.method === "GET" && req.url.endsWith("/api/quiz/questions")) {
     const verifyTokenResult = verifyAccessToken(req, res, "quiz", req.url);
-    if (verifyTokenResult === undefined) {
+    if (isUndefined(verifyTokenResult)) {
       res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
       return;
     }
@@ -34,7 +35,7 @@ function handleQuiz(req, res) {
     res.status(HTTP_OK).json(questions);
   } else if (req.method === "GET" && req.url.endsWith("/api/quiz/start")) {
     const verifyTokenResult = verifyAccessToken(req, res, "quiz", req.url);
-    if (verifyTokenResult === undefined) {
+    if (isUndefined(verifyTokenResult)) {
       res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
       return;
     }
@@ -44,7 +45,7 @@ function handleQuiz(req, res) {
     res.status(HTTP_OK).json({});
   } else if (req.method === "GET" && req.url.endsWith("/api/quiz/stop")) {
     const verifyTokenResult = verifyAccessToken(req, res, "quiz", req.url);
-    if (verifyTokenResult === undefined) {
+    if (isUndefined(verifyTokenResult)) {
       res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
       return;
     }
@@ -58,10 +59,10 @@ function handleQuiz(req, res) {
     const previousUserScore = getUserScore(user.id, gameId);
 
     logDebug("handleQuiz:Quiz highScores:", { previousUserScore, currentScore: quizHighScores[email] });
-    if (previousUserScore !== undefined && previousUserScore.score >= quizHighScores[email]) {
+    if (!isUndefined(previousUserScore) && previousUserScore.score >= quizHighScores[email]) {
       res.status(HTTP_OK).json({ game_id: gameId, user_id: user.id, score: quizHighScores[email] });
     } else {
-      if (previousUserScore?.id !== undefined) {
+      if (!isUndefined(previousUserScore?.id)) {
         req.method = "PUT";
         req.url = `/api/scores/${previousUserScore.id}`;
       } else {
@@ -93,7 +94,7 @@ function handleQuiz(req, res) {
     res.status(HTTP_OK).json({ highScore: parsedScores });
   } else if (req.method === "POST" && req.url.endsWith("/api/quiz/questions/check")) {
     const verifyTokenResult = verifyAccessToken(req, res, "quiz", req.url);
-    if (verifyTokenResult === undefined) {
+    if (isUndefined(verifyTokenResult)) {
       res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
       return;
     }

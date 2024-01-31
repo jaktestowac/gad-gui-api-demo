@@ -8,6 +8,7 @@ const {
   getFeatureFlagConfigValue,
   setFeatureFlagConfigValue,
 } = require("../config/config-manager");
+const { isUndefined } = require("../helpers/compare.helpers");
 const { visitsData } = require("../helpers/db.helpers");
 const { logDebug, logTrace } = require("../helpers/logger-api");
 const { HTTP_OK, HTTP_UNPROCESSABLE_ENTITY } = require("../helpers/response.helpers");
@@ -53,7 +54,7 @@ function handleGenericConfig(req, res, endpoint, getConfigValue, setConfigValue,
     // check if key is correct:
     for (const key in req.body) {
       const currentValue = getConfigValue(key);
-      if (currentValue === undefined) {
+      if (isUndefined(currentValue)) {
         invalidKeys.push(key);
       }
     }

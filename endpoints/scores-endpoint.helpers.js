@@ -1,3 +1,4 @@
+const { isUndefined } = require("../helpers/compare.helpers");
 const { getGameScores } = require("../helpers/db-operation.helpers");
 const { scoresDb } = require("../helpers/db.helpers");
 const { HTTP_NOT_FOUND, HTTP_OK } = require("../helpers/response.helpers");
@@ -10,7 +11,7 @@ function handleScores(req, res) {
     const urlEnds = req.url.replace(/\/\/+/g, "/");
     const gameId = urlEnds.split("/").slice(-1)[0];
 
-    if (gameId === undefined) {
+    if (isUndefined(gameId)) {
       res.status(HTTP_NOT_FOUND).json({});
       return;
     }

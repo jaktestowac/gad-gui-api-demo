@@ -10,7 +10,17 @@ function areIdsEqual(id1, id2, msg) {
   return id1?.toString() === id2?.toString();
 }
 
+function isNumber(value) {
+  return typeof value === "number";
+}
+
+function isUndefined(value) {
+  return value === undefined;
+}
+
 module.exports = {
   areStringsEqualIgnoringCase,
   areIdsEqual,
+  isNumber,
+  isUndefined,
 };

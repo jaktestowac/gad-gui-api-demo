@@ -1,5 +1,6 @@
 const { getConfigValue, isBugEnabled } = require("../config/config-manager");
 const { ConfigKeys, BugConfigKeys } = require("../config/enums");
+const { isUndefined } = require("./compare.helpers");
 const { verifyToken, getJwtExpiryDate } = require("./jwtauth");
 const { logDebug, logError, logTrace, logWarn } = require("./logger-api");
 
@@ -18,15 +19,15 @@ const all_fields_plugin = ["id", "name", "status", "version"];
 const mandatory_non_empty_fields_plugin = ["name", "status", "version"];
 
 function isLikesDataValid(body) {
-  if (body["comment_id"] !== undefined && body["article_id"] !== undefined) {
+  if (!isUndefined(body["comment_id"]) && !isUndefined(body["article_id"])) {
     logDebug(`Field validation: only one field can be non empty - comment_id or article_id`, { body });
     return false;
   }
-  if (body["comment_id"] === undefined && body["article_id"] === undefined) {
+  if (isUndefined(body["comment_id"]) && isUndefined(body["article_id"])) {
     logDebug(`Field validation: at least one field must be not empty - comment_id or article_id`, { body });
     return false;
   }
-  if (body["user_id"] === undefined) {
+  if (isUndefined(body["user_id"])) {
     logDebug(`Field validation: user_id is empty`);
     return false;
   }
@@ -40,7 +41,7 @@ function areMandatoryFieldsPresent(body, mandatory_non_empty_fields) {
 
   for (let index = 0; index < mandatory_non_empty_fields.length; index++) {
     const element = mandatory_non_empty_fields[index];
-    if (body[element] === undefined || body[element] === "" || body[element]?.length === 0) {
+    if (isUndefined(body[element]) || body[element] === "" || body[element]?.length === 0) {
       logDebug(`Field validation: field ${element} not valid ${body[element]}`);
       return false;
     }
@@ -72,7 +73,7 @@ function areAllFieldsValid(
   if (isBugEnabled(BugConfigKeys.BUG_VALIDATION_002)) {
     max_title_length = 0;
   }
-  if (body?.length !== undefined && body?.length > 0) {
+  if (!isUndefined(body?.length) && body?.length > 0) {
     return { status: false, error: "Wrong JSON structure" };
   }
   const keys = Object.keys(body);
@@ -97,7 +98,7 @@ function areAllFieldsValid(
       return { status: false, error };
     }
     if (mandatory_non_empty_fields.includes(key)) {
-      if (element === undefined || element?.toString().length === 0) {
+      if (isUndefined(element) || element?.toString().length === 0) {
         logDebug("areAllFieldsValid: Body:", body);
         error = `Field validation: "${key}" is empty! Mandatory fields: [${mandatory_non_empty_fields}]`;
         logError(error);
@@ -142,7 +143,7 @@ const verifyAccessToken = (req, res, endpoint = "endpoint", url = "") => {
     return undefined;
   }
 
-  if (verifyTokenResult?.exp !== undefined) {
+  if (!isUndefined(verifyTokenResult?.exp)) {
     const current_time = Date.now() / 1000;
     const diff = Math.round(verifyTokenResult.exp - current_time);
     logTrace(`[${endpoint}] getJwtExpiryDate:`, {
@@ -158,10 +159,6 @@ const verifyAccessToken = (req, res, endpoint = "endpoint", url = "") => {
 
   return verifyTokenResult;
 };
-
-function isNumber(value) {
-  return typeof value === "number";
-}
 
 module.exports = {
   isDateValid,
@@ -182,7 +179,6 @@ module.exports = {
   isLikesDataValid,
   mandatory_non_empty_fields_labels,
   mandatory_non_empty_fields_article_labels,
-  isNumber,
   mandatory_non_empty_fields_comment_create,
   all_fields_comment_create,
 };

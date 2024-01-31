@@ -1,4 +1,4 @@
-const { areStringsEqualIgnoringCase, areIdsEqual } = require("./compare.helpers");
+const { areStringsEqualIgnoringCase, areIdsEqual, isUndefined } = require("./compare.helpers");
 const {
   userDb,
   articlesDb,
@@ -105,8 +105,8 @@ function countLikesForAllArticles() {
   const foundLikes = {};
   likesDb().filter((like) => {
     const id = like["article_id"]?.toString();
-    if (id !== undefined) {
-      if (foundLikes[id] === undefined) {
+    if (!isUndefined(id)) {
+      if (isUndefined(foundLikes[id])) {
         foundLikes[id] = 0;
       }
       foundLikes[id] += 1;
@@ -134,10 +134,10 @@ function countLikesForArticle(articleId) {
 function findAllLikes(articleId, commentId, userId) {
   const foundLikes = likesDb().find((like) => {
     return (
-      ((areIdsEqual(like["article_id"], articleId) && articleId !== undefined) ||
-        (like["article_id"] === undefined && articleId === undefined)) &&
-      ((areIdsEqual(like["comment_id"], commentId) && commentId !== undefined) ||
-        (like["comment_id"] === undefined && commentId === undefined)) &&
+      ((areIdsEqual(like["article_id"], articleId) && !isUndefined(articleId)) ||
+        (isUndefined(like["article_id"]) && isUndefined(articleId))) &&
+      ((areIdsEqual(like["comment_id"], commentId) && !isUndefined(commentId)) ||
+        (isUndefined(like["comment_id"]) && isUndefined(commentId))) &&
       areIdsEqual(like["user_id"], userId)
     );
   });
@@ -146,7 +146,7 @@ function findAllLikes(articleId, commentId, userId) {
 
 function checkIfAlreadyLiked(articleId, commentId, userId) {
   const foundLikes = findAllLikes(articleId, commentId, userId);
-  return foundLikes !== undefined;
+  return !isUndefined(foundLikes);
 }
 
 function countLikesForComment(commentId) {

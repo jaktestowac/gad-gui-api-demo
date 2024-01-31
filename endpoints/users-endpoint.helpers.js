@@ -1,6 +1,6 @@
 const { isBugDisabled, isBugEnabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
-const { areStringsEqualIgnoringCase, areIdsEqual } = require("../helpers/compare.helpers");
+const { areStringsEqualIgnoringCase, areIdsEqual, isUndefined } = require("../helpers/compare.helpers");
 const { searchForUser } = require("../helpers/db-operation.helpers");
 const { userDb } = require("../helpers/db.helpers");
 const {
@@ -85,13 +85,13 @@ function handleUsers(req, res) {
       }
     });
 
-    if (foundMail !== undefined) {
+    if (!isUndefined(foundMail)) {
       res.status(HTTP_CONFLICT).send(formatErrorResponse("Email not unique"));
       return;
     }
     const foundUser = searchForUser(userId);
 
-    if (foundUser === undefined) {
+    if (isUndefined(foundUser)) {
       req.method = "POST";
       req.url = req.url.replace(`/${userId}`, "");
       if (parseInt(userId).toString() === userId) {
@@ -99,7 +99,7 @@ function handleUsers(req, res) {
       }
       req.body.id = userId;
     }
-    if (foundUser !== undefined) {
+    if (!isUndefined(foundUser)) {
       if (!req.body.password || req.body.password == "") {
         req.body.password = foundUser["password"];
       }

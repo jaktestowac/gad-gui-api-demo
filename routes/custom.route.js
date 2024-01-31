@@ -23,6 +23,7 @@ const { logError, logDebug, getLogs } = require("../helpers/logger-api");
 const { HTTP_INTERNAL_SERVER_ERROR, HTTP_OK, HTTP_NOT_FOUND } = require("../helpers/response.helpers");
 const { getConfigValue, getFeatureFlagConfigValue } = require("../config/config-manager");
 const { ConfigKeys, FeatureFlagConfigKeys } = require("../config/enums");
+const { isUndefined } = require("../helpers/compare.helpers");
 
 const statsRoutes = (req, res, next) => {
   try {
@@ -99,7 +100,7 @@ const visitsRoutes = (req, res, next) => {
 
       if (req.url.includes("?ids=")) {
         let idsRaw = urlEnds.split("?ids=").slice(-1)[0];
-        if (idsRaw === undefined) {
+        if (isUndefined(idsRaw)) {
           res.status(HTTP_NOT_FOUND).json({});
           return;
         }
@@ -108,9 +109,9 @@ const visitsRoutes = (req, res, next) => {
       }
 
       logDebug("handleVisits: GET /api/visits/:", { id, ids });
-      if (id !== undefined) {
+      if (!isUndefined(id)) {
         visits[id] = data[id];
-      } else if (ids !== undefined) {
+      } else if (!isUndefined(ids)) {
         ids.forEach((id) => {
           visits[id] = getVisitsPerArticle()[id];
         });
@@ -185,7 +186,7 @@ const queryRoutes = (req, res, next) => {
     if (req.url.includes("/api/articles") && req.method === "GET") {
       let articleId = getIdFromUrl(urlEnds);
 
-      if (!articleId?.includes("&_") && !articleId?.includes("?") && articleId !== undefined && articleId.length > 0) {
+      if (!articleId?.includes("&_") && !articleId?.includes("?") && !isUndefined(articleId) && articleId.length > 0) {
         if (getVisitsPerArticle()[articleId] === undefined) {
           getVisitsPerArticle()[articleId] = 0;
         }
@@ -196,7 +197,7 @@ const queryRoutes = (req, res, next) => {
     } else if (req.url.includes("/api/comments") && req.method === "GET") {
       let commentId = getIdFromUrl(urlEnds);
 
-      if (!commentId?.includes("&_") && !commentId?.includes("?") && commentId !== undefined && commentId.length > 0) {
+      if (!commentId?.includes("&_") && !commentId?.includes("?") && !isUndefined(commentId) && commentId.length > 0) {
         if (getVisitsPerComment()[commentId] === undefined) {
           getVisitsPerComment()[commentId] = 0;
         }
@@ -207,7 +208,7 @@ const queryRoutes = (req, res, next) => {
     } else if (req.url.includes("/api/users") && req.method === "GET") {
       let userId = getIdFromUrl(urlEnds);
 
-      if (!userId?.includes("&_") && !userId?.includes("?") && userId !== undefined && userId.length > 0) {
+      if (!userId?.includes("&_") && !userId?.includes("?") && !isUndefined(userId) && userId.length > 0) {
         if (getVisitsPerUsers()[userId] === undefined) {
           getVisitsPerUsers()[userId] = 0;
         }

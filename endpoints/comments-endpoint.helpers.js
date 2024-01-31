@@ -1,5 +1,6 @@
 const { isBugDisabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
+const { isUndefined } = require("../helpers/compare.helpers");
 const { searchForComment, searchForUserWithToken, searchForUserWithEmail } = require("../helpers/db-operation.helpers");
 const {
   formatInvalidFieldErrorResponse,
@@ -16,7 +17,6 @@ const {
   verifyAccessToken,
   areMandatoryFieldsPresent,
   mandatory_non_empty_fields_comment_create,
-  all_fields_comment_create,
 } = require("../helpers/validation.helpers");
 
 function handleComments(req, res, isAdmin) {
@@ -38,7 +38,7 @@ function handleComments(req, res, isAdmin) {
     const foundComment = searchForComment(commentId);
     logTrace("handleComments:", { method: req.method, commentId, urlEnds });
 
-    if (req.method === "PUT" && foundComment === undefined) {
+    if (req.method === "PUT" && isUndefined(foundComment)) {
       req.method = "POST";
       req.url = "/api/comments";
       if (parseInt(commentId).toString() === commentId) {
@@ -69,11 +69,11 @@ function handleComments(req, res, isAdmin) {
 
       logTrace("handleComments:", { method: req.method, commentId, urlEnds });
 
-      if (foundUser === undefined && foundComment !== undefined) {
+      if (isUndefined(foundUser) && !isUndefined(foundComment)) {
         res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
         return;
       }
-      if (foundUser === undefined && foundComment === undefined && req.method === "DELETE") {
+      if (isUndefined(foundUser) && isUndefined(foundComment) && req.method === "DELETE") {
         res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
         return;
       }
@@ -105,7 +105,7 @@ function handleComments(req, res, isAdmin) {
 
     logTrace("handleComments:", { method: req.method, urlEnds, foundUser });
 
-    if (foundUser === undefined) {
+    if (isUndefined(foundUser)) {
       res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
       return;
     }
