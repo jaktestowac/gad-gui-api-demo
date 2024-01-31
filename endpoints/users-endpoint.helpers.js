@@ -1,5 +1,6 @@
 const { isBugDisabled, isBugEnabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
+const { areStringsEqualIgnoringCase, areIdsEqual } = require("../helpers/compare.helpers");
 const { searchForUser } = require("../helpers/db-operation.helpers");
 const { userDb } = require("../helpers/db.helpers");
 const {
@@ -11,10 +12,10 @@ const {
 const { logDebug } = require("../helpers/logger-api");
 const { HTTP_UNPROCESSABLE_ENTITY, HTTP_CONFLICT } = require("../helpers/response.helpers");
 const {
-  are_mandatory_fields_present,
+  areMandatoryFieldsPresent,
   mandatory_non_empty_fields_user,
-  validateEmail,
-  are_all_fields_valid,
+  isEmailValid,
+  areAllFieldsValid,
   all_fields_user,
 } = require("../helpers/validation.helpers");
 
@@ -25,26 +26,26 @@ function handleUsers(req, res) {
   if (req.method === "POST" && urlEnds.includes("/api/users")) {
     logDebug("Register User: attempt:", { urlEnds, email: req.body["email"] });
     // validate mandatory fields:
-    if (!are_mandatory_fields_present(req.body, mandatory_non_empty_fields_user)) {
+    if (!areMandatoryFieldsPresent(req.body, mandatory_non_empty_fields_user)) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_user));
       return;
     }
 
     // validate email:
-    if (!validateEmail(req.body["email"])) {
+    if (!isEmailValid(req.body["email"])) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatErrorResponse("Invalid email"));
       return;
     }
 
     // validate all fields:
-    const isValid = are_all_fields_valid(req.body, all_fields_user, mandatory_non_empty_fields_user);
+    const isValid = areAllFieldsValid(req.body, all_fields_user, mandatory_non_empty_fields_user);
     if (!isValid.status) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send();
       return;
     }
 
     const emails = userDb().map((user) => user?.email);
-    let foundUser = emails.filter((email) => email?.toLowerCase() === req.body["email"]?.toLowerCase());
+    let foundUser = emails.filter((email) => areStringsEqualIgnoringCase(email, req.body["email"]));
 
     if (isBugEnabled(BugConfigKeys.BUG_LIKES_003)) {
       foundUser = [];
@@ -66,23 +67,20 @@ function handleUsers(req, res) {
   if (req.method === "PUT" && urlEnds.includes("/api/users/")) {
     let userId = getIdFromUrl(urlEnds);
     // validate mandatory fields:
-    if (!are_mandatory_fields_present(req.body, mandatory_non_empty_fields_user)) {
+    if (!areMandatoryFieldsPresent(req.body, mandatory_non_empty_fields_user)) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_user));
       return;
     }
 
     // validate all fields:
-    const isValid = are_all_fields_valid(req.body, all_fields_user, mandatory_non_empty_fields_user);
+    const isValid = areAllFieldsValid(req.body, all_fields_user, mandatory_non_empty_fields_user);
     if (!isValid.status) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidFieldErrorResponse(isValid, all_fields_user));
       return;
     }
 
     const foundMail = userDb().find((user) => {
-      if (
-        user["id"]?.toString() !== userId?.toString() &&
-        user["email"]?.toLowerCase() === req.body["email"]?.toLowerCase()
-      ) {
+      if (areIdsEqual(user["id"], userId) && areStringsEqualIgnoringCase(user["email"], req.body["email"])) {
         return user;
       }
     });
@@ -110,7 +108,7 @@ function handleUsers(req, res) {
 
   if (req.method === "PATCH" && urlEnds.includes("/api/users")) {
     // validate all fields:
-    const isValid = are_all_fields_valid(req.body, all_fields_user, mandatory_non_empty_fields_user);
+    const isValid = areAllFieldsValid(req.body, all_fields_user, mandatory_non_empty_fields_user);
     if (!isValid.status) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidFieldErrorResponse(isValid, all_fields_user));
       return;

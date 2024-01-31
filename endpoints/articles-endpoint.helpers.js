@@ -1,5 +1,6 @@
 const { isBugDisabled, isBugEnabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
+const { areIdsEqual } = require("../helpers/compare.helpers");
 const { searchForUserWithToken, searchForArticle, searchForUserWithEmail } = require("../helpers/db-operation.helpers");
 const { randomDbEntry, articlesDb } = require("../helpers/db.helpers");
 const {
@@ -8,15 +9,14 @@ const {
   formatMissingFieldErrorResponse,
   formatInvalidFieldErrorResponse,
 } = require("../helpers/helpers");
-const { logTrace, logWarn, logDebug } = require("../helpers/logger-api");
+const { logTrace, logDebug } = require("../helpers/logger-api");
 const { HTTP_UNAUTHORIZED, HTTP_UNPROCESSABLE_ENTITY, HTTP_NOT_FOUND } = require("../helpers/response.helpers");
 const {
   verifyAccessToken,
-  are_mandatory_fields_present,
+  areMandatoryFieldsPresent,
   mandatory_non_empty_fields_article,
   all_fields_article,
-  are_all_fields_valid,
-  areIdsEqual,
+  areAllFieldsValid,
 } = require("../helpers/validation.helpers");
 
 function handleArticles(req, res, isAdmin) {
@@ -102,12 +102,12 @@ function handleArticles(req, res, isAdmin) {
 
   if (req.method === "POST" && urlEnds.includes("/api/articles") && !urlEnds.includes("/upload") && !isAdmin) {
     // validate mandatory fields:
-    if (!are_mandatory_fields_present(req.body, mandatory_non_empty_fields_article)) {
+    if (!areMandatoryFieldsPresent(req.body, mandatory_non_empty_fields_article)) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_article));
       return;
     }
     // validate all fields:
-    const isValid = are_all_fields_valid(req.body, all_fields_article, mandatory_non_empty_fields_article);
+    const isValid = areAllFieldsValid(req.body, all_fields_article, mandatory_non_empty_fields_article);
     if (!isValid.status) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidFieldErrorResponse(isValid, all_fields_article));
       return;
@@ -125,7 +125,7 @@ function handleArticles(req, res, isAdmin) {
     let articleId = getIdFromUrl(urlEnds);
 
     // validate all fields:
-    const isValid = are_all_fields_valid(req.body, all_fields_article, mandatory_non_empty_fields_article);
+    const isValid = areAllFieldsValid(req.body, all_fields_article, mandatory_non_empty_fields_article);
     if (!isValid.status) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidFieldErrorResponse(isValid, all_fields_article));
       return;
@@ -156,12 +156,12 @@ function handleArticles(req, res, isAdmin) {
     const verifyTokenResult = verifyAccessToken(req, res, "PUT articles", req.url);
 
     // validate mandatory fields:
-    if (!are_mandatory_fields_present(req.body, mandatory_non_empty_fields_article)) {
+    if (!areMandatoryFieldsPresent(req.body, mandatory_non_empty_fields_article)) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_article));
       return;
     }
     // validate all fields:
-    const isValid = are_all_fields_valid(req.body, all_fields_article, mandatory_non_empty_fields_article);
+    const isValid = areAllFieldsValid(req.body, all_fields_article, mandatory_non_empty_fields_article);
     if (!isValid.status) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidFieldErrorResponse(isValid, all_fields_article));
       return;

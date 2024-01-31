@@ -24,7 +24,7 @@ const {
   HTTP_NOT_FOUND,
   HTTP_OK,
 } = require("../helpers/response.helpers");
-const { verifyAccessToken, is_likes_data_valid } = require("../helpers/validation.helpers");
+const { verifyAccessToken, isLikesDataValid } = require("../helpers/validation.helpers");
 
 function handleLikes(req, res, isAdmin) {
   const isFeatureEnabled = getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_LIKES);
@@ -47,7 +47,7 @@ function handleLikes(req, res, isAdmin) {
 
   // user clicked like button:
   if (req.method === "POST" && urlEnds.endsWith("/api/likes")) {
-    if (!is_likes_data_valid(req.body)) {
+    if (!isLikesDataValid(req.body)) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).json(formatOnlyOneFieldPossibleErrorResponse(["comment_id", "article_id"]));
       return;
     }

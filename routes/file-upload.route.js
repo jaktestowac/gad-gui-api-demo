@@ -10,7 +10,7 @@ const {
   HTTP_UNAUTHORIZED,
 } = require("../helpers/response.helpers");
 const {
-  are_all_fields_valid,
+  areAllFieldsValid,
   mandatory_non_empty_fields_article,
   all_fields_article,
   verifyAccessToken,
@@ -90,7 +90,7 @@ const fileUploadRoutes = (req, res, next) => {
 
             fs.writeFileSync(newFullFilePath, JSON.stringify(fileData, null, 4));
 
-            const isValid = are_all_fields_valid(fileData, all_fields_article, mandatory_non_empty_fields_article);
+            const isValid = areAllFieldsValid(fileData, all_fields_article, mandatory_non_empty_fields_article);
             if (!isValid.status) {
               logError("[articles/upload] Error after validation:", { error: isValid.error });
               return;

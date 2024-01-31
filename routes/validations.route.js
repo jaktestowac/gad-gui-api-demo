@@ -24,6 +24,7 @@ const { handleGames } = require("../endpoints/games-endpoint.helpers");
 const { handleScores } = require("../endpoints/scores-endpoint.helpers");
 const { handleBookmarks } = require("../endpoints/bookmarks-endpoint.helpers");
 const { handleMinesweeper } = require("../endpoints/minesweeper-endpoint.helpers");
+const { areStringsEqualIgnoringCase } = require("../helpers/compare.helpers");
 
 const validationsRoutes = (req, res, next) => {
   let isAdmin = false;
@@ -52,8 +53,8 @@ const validationsRoutes = (req, res, next) => {
     try {
       let verifyTokenResult = verifyAccessToken(req, res, "isAdmin", req.url);
       if (
-        verifyTokenResult?.email?.toLowerCase() === getConfigValue(ConfigKeys.ADMIN_USER_EMAIL)?.toLowerCase() ||
-        verifyTokenResult?.email?.toLowerCase() === getConfigValue(ConfigKeys.SUPER_ADMIN_USER_EMAIL)?.toLowerCase()
+        areStringsEqualIgnoringCase(verifyTokenResult?.email, getConfigValue(ConfigKeys.ADMIN_USER_EMAIL)) ||
+        areStringsEqualIgnoringCase(verifyTokenResult?.email, getConfigValue(ConfigKeys.SUPER_ADMIN_USER_EMAIL))
       ) {
         isAdmin = true;
         logDebug("validations: isAdmin:", isAdmin);

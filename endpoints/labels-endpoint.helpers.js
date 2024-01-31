@@ -24,10 +24,10 @@ const {
   HTTP_OK,
 } = require("../helpers/response.helpers");
 const {
-  are_mandatory_fields_present,
+  areMandatoryFieldsPresent,
   mandatory_non_empty_fields_labels,
   mandatory_non_empty_fields_article_labels,
-  are_all_fields_present,
+  areAllFieldsPresent,
   verifyAccessToken,
 } = require("../helpers/validation.helpers");
 
@@ -115,7 +115,7 @@ function handleLabels(req, res, isAdmin) {
       return false;
     }
 
-    if (!are_all_fields_present(req.body, mandatory_non_empty_fields_article_labels)) {
+    if (!areAllFieldsPresent(req.body, mandatory_non_empty_fields_article_labels)) {
       res
         .status(HTTP_UNPROCESSABLE_ENTITY)
         .send(formatInvalidFieldErrorResponse(mandatory_non_empty_fields_article_labels));
@@ -163,7 +163,7 @@ function handleLabels(req, res, isAdmin) {
   }
 
   if (req.method === "POST" && urlEnds.endsWith("/api/labels")) {
-    if (!are_mandatory_fields_present(req.body, mandatory_non_empty_fields_labels)) {
+    if (!areMandatoryFieldsPresent(req.body, mandatory_non_empty_fields_labels)) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_labels));
       return false;
     }

@@ -10,11 +10,11 @@ const {
 const { logTrace } = require("../helpers/logger-api");
 const { HTTP_UNPROCESSABLE_ENTITY, HTTP_UNAUTHORIZED } = require("../helpers/response.helpers");
 const {
-  are_all_fields_valid,
+  areAllFieldsValid,
   all_fields_comment,
   mandatory_non_empty_fields_comment,
   verifyAccessToken,
-  are_mandatory_fields_present,
+  areMandatoryFieldsPresent,
   mandatory_non_empty_fields_comment_create,
   all_fields_comment_create,
 } = require("../helpers/validation.helpers");
@@ -24,7 +24,7 @@ function handleComments(req, res, isAdmin) {
 
   if (req.method !== "GET" && req.method !== "HEAD" && urlEnds.includes("/api/comments")) {
     // validate all fields:
-    const isValid = are_all_fields_valid(req.body, all_fields_comment, mandatory_non_empty_fields_comment_create);
+    const isValid = areAllFieldsValid(req.body, all_fields_comment, mandatory_non_empty_fields_comment_create);
     if (!isValid.status) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidFieldErrorResponse(isValid, all_fields_comment));
       return;
@@ -57,7 +57,7 @@ function handleComments(req, res, isAdmin) {
   if (req.method !== "GET" && req.method !== "HEAD" && urlEnds.includes("/api/comments") && !isAdmin) {
     const verifyTokenResult = verifyAccessToken(req, res, "comments", req.url);
     // validate all fields:
-    const isValid = are_all_fields_valid(req.body, all_fields_comment, mandatory_non_empty_fields_comment);
+    const isValid = areAllFieldsValid(req.body, all_fields_comment, mandatory_non_empty_fields_comment);
     if (!isValid.status) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidFieldErrorResponse(isValid, all_fields_comment));
       return;
@@ -82,14 +82,14 @@ function handleComments(req, res, isAdmin) {
 
   if (req.method === "POST" && urlEnds.includes("/api/comments")) {
     // validate mandatory fields:
-    if (!are_mandatory_fields_present(req.body, mandatory_non_empty_fields_comment_create)) {
+    if (!areMandatoryFieldsPresent(req.body, mandatory_non_empty_fields_comment_create)) {
       res
         .status(HTTP_UNPROCESSABLE_ENTITY)
         .send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_comment_create));
       return;
     }
     // validate all fields:
-    const isValid = are_all_fields_valid(req.body, all_fields_comment, mandatory_non_empty_fields_comment_create);
+    const isValid = areAllFieldsValid(req.body, all_fields_comment, mandatory_non_empty_fields_comment_create);
     if (!isValid.status) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidFieldErrorResponse(isValid, all_fields_comment));
       return;
