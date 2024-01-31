@@ -414,7 +414,7 @@ describe("Endpoint /articles", () => {
       const response = await request.post(baseUrl).set(headers).send(testData);
 
       // Assert:
-      expect(response.status).to.equal(401);
+      expect(response.status, JSON.stringify(response.body)).to.equal(422);
     });
     ["title", "body", "date"].forEach((field) => {
       it(`POST /articles - empty mandatory field - ${field}`, async () => {
@@ -429,22 +429,6 @@ describe("Endpoint /articles", () => {
 
         // Assert:
         expect(response.status).to.equal(422);
-      });
-    });
-
-    ["user_id"].forEach((field) => {
-      it(`POST /articles - missing mandatory field - ${field}`, async () => {
-        // Arrange:
-        const testData = generateValidArticleData();
-        testData.user_id = userId;
-
-        testData[field] = undefined;
-
-        // Act:
-        const response = await request.post(baseUrl).set(headers).send(testData);
-
-        // Assert:
-        expect(response.status).to.equal(401);
       });
     });
 

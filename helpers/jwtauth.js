@@ -41,7 +41,10 @@ function verifyToken(token) {
 
 // Check if the user exists in database
 function isAuthenticated({ email, password }) {
-  return userDb().findIndex((user) => user.email === email && user.password === password) !== -1;
+  return (
+    userDb().findIndex((user) => user.email?.toLowerCase() === email?.toLowerCase() && user.password === password) !==
+    -1
+  );
 }
 
 function getJwtExpiryDate(seconds) {

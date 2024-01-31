@@ -234,7 +234,7 @@ describe("Endpoint /comments", () => {
       const response = await request.post(baseCommentsUrl).set(headers).send(testData);
 
       // Assert:
-      expect(response.status).to.equal(201);
+      expect(response.status, JSON.stringify(response.body)).to.equal(201);
       testData.id = response.body.id;
       expect(response.body).to.deep.equal(testData);
     });
@@ -249,12 +249,12 @@ describe("Endpoint /comments", () => {
       const response = await request.post(baseCommentsUrl).set(headers).send(testData);
 
       // Assert:
-      expect(response.status).to.equal(201);
+      expect(response.status, JSON.stringify(response.body)).to.equal(201);
       testData.id = response.body.id;
       expect(response.body).to.deep.equal(testData);
     });
 
-    ["user_id", "article_id", "body", "date"].forEach((field) => {
+    ["article_id", "body", "date"].forEach((field) => {
       it(`POST /comments - missing mandatory field - ${field}`, async () => {
         // Arrange:
         const testData = generateValidCommentData();
@@ -266,7 +266,7 @@ describe("Endpoint /comments", () => {
         const response = await request.post(baseUrl).set(headers).send(testData);
 
         // Assert:
-        expect(response.status).to.equal(422);
+        expect(response.status, JSON.stringify(response.body)).to.equal(422);
       });
     });
 

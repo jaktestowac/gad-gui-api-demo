@@ -11,7 +11,10 @@ const {
 
 function searchForUserWithToken(userId, verifyTokenResult) {
   const foundUser = userDb().find((user) => {
-    if (user["id"]?.toString() === userId?.toString() && user["email"] === verifyTokenResult?.email) {
+    if (
+      user["id"]?.toString() === userId?.toString() &&
+      user["email"]?.toLowerCase() === verifyTokenResult?.email?.toLowerCase()
+    ) {
       return user;
     }
   });
@@ -20,7 +23,7 @@ function searchForUserWithToken(userId, verifyTokenResult) {
 
 function searchForUserWithOnlyToken(verifyTokenResult) {
   const foundUser = userDb().find((user) => {
-    if (user["email"] === verifyTokenResult?.email) {
+    if (user["email"]?.toLowerCase() === verifyTokenResult?.email?.toLowerCase()) {
       return user;
     }
   });
@@ -38,7 +41,7 @@ function searchForUser(userId) {
 
 function searchForUserWithEmail(email) {
   const foundUser = userDb().find((user) => {
-    if (user["email"]?.toString() === email?.toString()) {
+    if (user["email"]?.toLowerCase() === email?.toLowerCase()) {
       return user;
     }
   });

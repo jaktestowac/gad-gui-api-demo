@@ -165,7 +165,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ArticleUpdate"
+                "$ref": "#/components/schemas/ArticleCreate"
               }
             }
           },
@@ -826,7 +826,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CommentUpdate"
+                "$ref": "#/components/schemas/CommentCreate"
               }
             }
           },
@@ -3016,6 +3016,42 @@
       }
     },
     "schemas": {
+      "ArticleCreate": {
+        "type": "object",
+        "required": ["user_id", "title", "body", "date"],
+        "properties": {
+          "user_id": {
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "title": {
+            "type": "string",
+            "description": "Title"
+          },
+          "body": {
+            "type": "string",
+            "description": "Article body"
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "example": "2024-06-30T15:44:31Z"
+          },
+          "image": {
+            "type": "string",
+            "description": "Image path"
+          }
+        },
+        "xml": {
+          "name": "Article"
+        }
+      },
       "Article": {
         "type": "object",
         "required": ["user_id", "title", "body", "date"],
@@ -3118,6 +3154,44 @@
               }
             ]
           },
+          "article_id": {
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "user_id": {
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "body": {
+            "type": "string",
+            "description": "Comment body"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-06-30T15:44:31Z"
+          }
+        },
+        "xml": {
+          "name": "Comment"
+        }
+      },
+      "CommentCreate": {
+        "type": "object",
+        "required": ["article_id", "body", "date"],
+        "properties": {
           "article_id": {
             "oneOf": [
               {

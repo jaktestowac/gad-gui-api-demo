@@ -213,7 +213,7 @@ async function prepareUniqueComment(headers, userId, articleId) {
 
   const response = await request.post(baseCommentsUrl).set(headers).send(testData);
 
-  expect(response.status).to.equal(201);
+  expect(response.status, JSON.stringify(response.body)).to.equal(201);
   const commentId = response.body.id;
   testData.id = commentId;
 
