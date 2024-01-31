@@ -75,14 +75,6 @@ function handleArticles(req, res, isAdmin) {
       }
     } else {
       // method POST:
-      // let userId = req.body["user_id"];
-
-      // if (userId === undefined) {
-      //   logWarn("User ID is not defined", { method: req.method, url: req.url, userIdInHeader: req.headers["userid"] });
-      //   userId = req.headers["userid"];
-      // }
-
-      // const foundUser = searchForUserWithToken(userId, verifyTokenResult);
       const foundUser = searchForUserWithEmail(verifyTokenResult?.email);
 
       logTrace("handleArticles:", { method: req.method, urlEnds, foundUser });
