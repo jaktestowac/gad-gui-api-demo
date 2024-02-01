@@ -90,7 +90,6 @@ server.use((req, res, next) => {
 
 server.use(healthCheckRoutes);
 server.use(middlewares);
-// server.use(jsonServer.bodyParser);
 
 const bodyParser = require("body-parser");
 
@@ -106,6 +105,7 @@ server.use((req, res, next) => {
     next();
   });
 });
+server.use(jsonServer.bodyParser);
 
 server.use(helmet());
 server.use(cookieparser());
