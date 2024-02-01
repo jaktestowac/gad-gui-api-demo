@@ -1,5 +1,6 @@
 const { isBugEnabled, getConfigValue, getFeatureFlagConfigValue } = require("../config/config-manager");
 const { BugConfigKeys, ConfigKeys, FeatureFlagConfigKeys } = require("../config/enums");
+const { isUndefined } = require("../helpers/compare.helpers");
 const { getCurrentDateTimeISO } = require("../helpers/datetime.helpers");
 const {
   searchForUserWithToken,
@@ -24,7 +25,7 @@ const {
   HTTP_NOT_FOUND,
   HTTP_OK,
 } = require("../helpers/response.helpers");
-const { verifyAccessToken, is_likes_data_valid } = require("../helpers/validation.helpers");
+const { verifyAccessToken, isLikesDataValid } = require("../helpers/validation.helpers");
 
 function handleLikes(req, res, isAdmin) {
   const isFeatureEnabled = getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_LIKES);
@@ -39,7 +40,7 @@ function handleLikes(req, res, isAdmin) {
     const verifyTokenResult = verifyAccessToken(req, res, "likes", req.url);
     const foundUser = searchForUserWithToken(req.headers["userid"], verifyTokenResult);
 
-    if (foundUser === undefined || verifyTokenResult === undefined) {
+    if (isUndefined(foundUser) || isUndefined(verifyTokenResult)) {
       res.status(HTTP_UNAUTHORIZED).json(formatInvalidTokenErrorResponse());
       return;
     }
@@ -47,7 +48,7 @@ function handleLikes(req, res, isAdmin) {
 
   // user clicked like button:
   if (req.method === "POST" && urlEnds.endsWith("/api/likes")) {
-    if (!is_likes_data_valid(req.body)) {
+    if (!isLikesDataValid(req.body)) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).json(formatOnlyOneFieldPossibleErrorResponse(["comment_id", "article_id"]));
       return;
     }
@@ -64,7 +65,7 @@ function handleLikes(req, res, isAdmin) {
     }
 
     // already liked -> dislike
-    if (allLikes !== undefined) {
+    if (!isUndefined(allLikes)) {
       req.method = "DELETE";
       req.url = `/api/likes/${allLikes.id}`;
 
@@ -89,7 +90,7 @@ function handleLikes(req, res, isAdmin) {
     const like = searchForLike(likeId);
 
     logTrace("handleLikes: DELETE:", { likeId: like });
-    if (like === undefined) {
+    if (isUndefined(like)) {
       res.status(HTTP_NOT_FOUND).json({});
       return;
     }
@@ -98,7 +99,7 @@ function handleLikes(req, res, isAdmin) {
     const foundUser = searchForUserWithToken(like.user_id, verifyTokenResult);
 
     logTrace("handleLikes: DELETE: foundUser:", { foundUser });
-    if (foundUser === undefined || verifyTokenResult === undefined) {
+    if (isUndefined(foundUser) || isUndefined(verifyTokenResult)) {
       res.status(HTTP_UNAUTHORIZED).json(formatInvalidTokenErrorResponse());
       return;
     }
@@ -107,7 +108,7 @@ function handleLikes(req, res, isAdmin) {
   if (req.method === "GET" && urlEnds.includes("/api/likes/article/mylikes")) {
     const articleIdsRaw = urlEnds.split("?id=").slice(-1)[0];
     const user_id = req.headers["userid"];
-    if (articleIdsRaw === undefined) {
+    if (isUndefined(articleIdsRaw)) {
       res.status(HTTP_NOT_FOUND).json({});
       return;
     }
@@ -127,7 +128,7 @@ function handleLikes(req, res, isAdmin) {
 
   if (req.method === "GET" && urlEnds.includes("/api/likes/article/")) {
     const articleId = urlEnds.split("/").slice(-1)[0];
-    if (articleId === undefined) {
+    if (isUndefined(articleId)) {
       res.status(HTTP_NOT_FOUND).json({});
       return;
     }
@@ -162,7 +163,7 @@ function handleLikes(req, res, isAdmin) {
 
   if (req.method === "GET" && urlEnds.includes("/api/likes/article?id=")) {
     const articleIdsRaw = urlEnds.split("?id=").slice(-1)[0];
-    if (articleIdsRaw === undefined) {
+    if (isUndefined(articleIdsRaw)) {
       res.status(HTTP_NOT_FOUND).json({});
       return;
     }
@@ -182,7 +183,7 @@ function handleLikes(req, res, isAdmin) {
 
   if (req.method === "GET" && urlEnds.includes("/api/likes/comment/")) {
     const commentId = urlEnds.split("/").slice(-1)[0];
-    if (commentId === undefined) {
+    if (isUndefined(commentId)) {
       res.status(HTTP_NOT_FOUND).json({});
       return;
     }

@@ -1,5 +1,6 @@
-const { getFeatureFlagConfigValue, isBugDisabled, isBugEnabled } = require("../config/config-manager");
+const { getFeatureFlagConfigValue, isBugEnabled } = require("../config/config-manager");
 const { FeatureFlagConfigKeys, BugConfigKeys } = require("../config/enums");
+const { isUndefined } = require("../helpers/compare.helpers");
 const {
   searchForUserWithOnlyToken,
   checkIfArticlesAlreadyInBookmarks,
@@ -31,7 +32,7 @@ function handleBookmarks(req, res, isAdmin) {
     const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
     logTrace("handleArticleLabels: foundUser:", { method: req.method, urlEnds, foundUser });
 
-    if (foundUser === undefined) {
+    if (isUndefined(foundUser)) {
       res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
       return false;
     }
@@ -47,7 +48,7 @@ function handleBookmarks(req, res, isAdmin) {
       foundArticle = 1;
     }
 
-    if (foundArticle === undefined) {
+    if (isUndefined(foundArticle)) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidEntityErrorResponse("article_id"));
       return false;
     }
@@ -68,7 +69,7 @@ function handleBookmarks(req, res, isAdmin) {
       bookmark = undefined;
     }
 
-    if (bookmark === undefined && bookmarked === false) {
+    if (isUndefined(bookmark) && bookmarked === false) {
       req.url = `/api/bookmarks`;
       req.method = "POST";
       bookmark = {
@@ -108,7 +109,7 @@ function handleBookmarks(req, res, isAdmin) {
     const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
     logTrace("handleArticleLabels: foundUser:", { method: req.method, urlEnds, foundUser });
 
-    if (foundUser === undefined) {
+    if (isUndefined(foundUser)) {
       res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
       return false;
     }

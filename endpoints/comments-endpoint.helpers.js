@@ -1,5 +1,6 @@
 const { isBugDisabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
+const { isUndefined } = require("../helpers/compare.helpers");
 const { searchForComment, searchForUserWithToken, searchForUserWithEmail } = require("../helpers/db-operation.helpers");
 const {
   formatInvalidFieldErrorResponse,
@@ -10,13 +11,12 @@ const {
 const { logTrace } = require("../helpers/logger-api");
 const { HTTP_UNPROCESSABLE_ENTITY, HTTP_UNAUTHORIZED } = require("../helpers/response.helpers");
 const {
-  are_all_fields_valid,
+  areAllFieldsValid,
   all_fields_comment,
   mandatory_non_empty_fields_comment,
   verifyAccessToken,
-  are_mandatory_fields_present,
+  areMandatoryFieldsPresent,
   mandatory_non_empty_fields_comment_create,
-  all_fields_comment_create,
 } = require("../helpers/validation.helpers");
 
 function handleComments(req, res, isAdmin) {
@@ -24,7 +24,7 @@ function handleComments(req, res, isAdmin) {
 
   if (req.method !== "GET" && req.method !== "HEAD" && urlEnds.includes("/api/comments")) {
     // validate all fields:
-    const isValid = are_all_fields_valid(req.body, all_fields_comment, mandatory_non_empty_fields_comment_create);
+    const isValid = areAllFieldsValid(req.body, all_fields_comment, mandatory_non_empty_fields_comment_create);
     if (!isValid.status) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidFieldErrorResponse(isValid, all_fields_comment));
       return;
@@ -38,7 +38,7 @@ function handleComments(req, res, isAdmin) {
     const foundComment = searchForComment(commentId);
     logTrace("handleComments:", { method: req.method, commentId, urlEnds });
 
-    if (req.method === "PUT" && foundComment === undefined) {
+    if (req.method === "PUT" && isUndefined(foundComment)) {
       req.method = "POST";
       req.url = "/api/comments";
       if (parseInt(commentId).toString() === commentId) {
@@ -57,7 +57,7 @@ function handleComments(req, res, isAdmin) {
   if (req.method !== "GET" && req.method !== "HEAD" && urlEnds.includes("/api/comments") && !isAdmin) {
     const verifyTokenResult = verifyAccessToken(req, res, "comments", req.url);
     // validate all fields:
-    const isValid = are_all_fields_valid(req.body, all_fields_comment, mandatory_non_empty_fields_comment);
+    const isValid = areAllFieldsValid(req.body, all_fields_comment, mandatory_non_empty_fields_comment);
     if (!isValid.status) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidFieldErrorResponse(isValid, all_fields_comment));
       return;
@@ -69,11 +69,11 @@ function handleComments(req, res, isAdmin) {
 
       logTrace("handleComments:", { method: req.method, commentId, urlEnds });
 
-      if (foundUser === undefined && foundComment !== undefined) {
+      if (isUndefined(foundUser) && !isUndefined(foundComment)) {
         res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
         return;
       }
-      if (foundUser === undefined && foundComment === undefined && req.method === "DELETE") {
+      if (isUndefined(foundUser) && isUndefined(foundComment) && req.method === "DELETE") {
         res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
         return;
       }
@@ -82,14 +82,14 @@ function handleComments(req, res, isAdmin) {
 
   if (req.method === "POST" && urlEnds.includes("/api/comments")) {
     // validate mandatory fields:
-    if (!are_mandatory_fields_present(req.body, mandatory_non_empty_fields_comment_create)) {
+    if (!areMandatoryFieldsPresent(req.body, mandatory_non_empty_fields_comment_create)) {
       res
         .status(HTTP_UNPROCESSABLE_ENTITY)
         .send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_comment_create));
       return;
     }
     // validate all fields:
-    const isValid = are_all_fields_valid(req.body, all_fields_comment, mandatory_non_empty_fields_comment_create);
+    const isValid = areAllFieldsValid(req.body, all_fields_comment, mandatory_non_empty_fields_comment_create);
     if (!isValid.status) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidFieldErrorResponse(isValid, all_fields_comment));
       return;
@@ -105,7 +105,7 @@ function handleComments(req, res, isAdmin) {
 
     logTrace("handleComments:", { method: req.method, urlEnds, foundUser });
 
-    if (foundUser === undefined) {
+    if (isUndefined(foundUser)) {
       res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
       return;
     }

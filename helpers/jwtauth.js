@@ -3,6 +3,7 @@ const { logDebug, logError } = require("./logger-api");
 const { userDb } = require("./db.helpers");
 const { getConfigValue } = require("../config/config-manager");
 const { ConfigKeys } = require("../config/enums");
+const { areStringsEqualIgnoringCase } = require("./compare.helpers");
 
 // Create a token from a payload
 function createToken(payload, isSuperAdmin = false, keepSignIn = false) {
@@ -42,8 +43,7 @@ function verifyToken(token) {
 // Check if the user exists in database
 function isAuthenticated({ email, password }) {
   return (
-    userDb().findIndex((user) => user.email?.toLowerCase() === email?.toLowerCase() && user.password === password) !==
-    -1
+    userDb().findIndex((user) => areStringsEqualIgnoringCase(user.email, email) && user.password === password) !== -1
   );
 }
 

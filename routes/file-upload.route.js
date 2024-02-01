@@ -10,7 +10,7 @@ const {
   HTTP_UNAUTHORIZED,
 } = require("../helpers/response.helpers");
 const {
-  are_all_fields_valid,
+  areAllFieldsValid,
   mandatory_non_empty_fields_article,
   all_fields_article,
   verifyAccessToken,
@@ -20,6 +20,7 @@ const path = require("path");
 const { getUploadedFilePath, getAndFilterUploadedFileList } = require("../helpers/db.helpers");
 const { formatFileName, checkFileName } = require("../helpers/file-upload.helper");
 const { searchForUserWithEmail } = require("../helpers/db-operation.helpers");
+const { isUndefined } = require("../helpers/compare.helpers");
 
 const uploadDir = path.join(__dirname, "..", "uploads");
 
@@ -33,7 +34,7 @@ const fileUploadRoutes = (req, res, next) => {
       // TODO: rework:
       if (req.method === "POST" && req.url.endsWith("/api/files/articles/upload")) {
         const verifyTokenResult = verifyAccessToken(req, res, "files/articles/upload", req.url);
-        if (verifyTokenResult === undefined) {
+        if (isUndefined(verifyTokenResult)) {
           res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
           return;
         }
@@ -69,7 +70,7 @@ const fileUploadRoutes = (req, res, next) => {
 
           // TODO:INVOKE_BUG: same file name might cause file overwrite in parallel scenarios
           // const fileName = `uploaded-${getTodayDateForFileName()}.json`;
-          if (currentFilePerUser[userId] === undefined) {
+          if (isUndefined(currentFilePerUser[userId])) {
             currentFilePerUser[userId] = 0;
           }
 
@@ -90,7 +91,7 @@ const fileUploadRoutes = (req, res, next) => {
 
             fs.writeFileSync(newFullFilePath, JSON.stringify(fileData, null, 4));
 
-            const isValid = are_all_fields_valid(fileData, all_fields_article, mandatory_non_empty_fields_article);
+            const isValid = areAllFieldsValid(fileData, all_fields_article, mandatory_non_empty_fields_article);
             if (!isValid.status) {
               logError("[articles/upload] Error after validation:", { error: isValid.error });
               return;
@@ -118,10 +119,10 @@ const fileUploadRoutes = (req, res, next) => {
 
         logDebug("[articles/download] Searching for file:", { fileName });
         const foundFile = getUploadedFilePath(fileName);
-        logDebug("[articles/download] Found file:", { fileName, found: foundFile !== undefined });
+        logDebug("[articles/download] Found file:", { fileName, found: !isUndefined(foundFile) });
 
-        if (foundFile === undefined) {
-          res.status(HTTP_NOT_FOUND).json({ fileName, found: foundFile !== undefined });
+        if (isUndefined(foundFile)) {
+          res.status(HTTP_NOT_FOUND).json({ fileName, found: !isUndefined(foundFile) });
           return;
         } else {
           res.status(HTTP_OK).download(foundFile);
@@ -129,7 +130,7 @@ const fileUploadRoutes = (req, res, next) => {
         }
       } else if (req.method === "GET" && req.url.endsWith("/api/files/articles/uploaded") && isFeatureEnabled) {
         const verifyTokenResult = verifyAccessToken(req, res, "files/articles/uploaded", req.url);
-        if (verifyTokenResult === undefined) {
+        if (isUndefined(verifyTokenResult)) {
           res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
           return;
         }
@@ -171,7 +172,7 @@ const fileUploadRoutes = (req, res, next) => {
         const userId = req.url.split("userId=").slice(-1)[0];
 
         const verifyTokenResult = verifyAccessToken(req, res, "files/articles/uploaded", req.url);
-        if (verifyTokenResult === undefined) {
+        if (isUndefined(verifyTokenResult)) {
           res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
           return;
         }

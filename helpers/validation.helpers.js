@@ -1,5 +1,6 @@
 const { getConfigValue, isBugEnabled } = require("../config/config-manager");
 const { ConfigKeys, BugConfigKeys } = require("../config/enums");
+const { isUndefined } = require("./compare.helpers");
 const { verifyToken, getJwtExpiryDate } = require("./jwtauth");
 const { logDebug, logError, logTrace, logWarn } = require("./logger-api");
 
@@ -17,30 +18,30 @@ const all_fields_comment_create = ["id", "article_id", "body", "date"];
 const all_fields_plugin = ["id", "name", "status", "version"];
 const mandatory_non_empty_fields_plugin = ["name", "status", "version"];
 
-function is_likes_data_valid(body) {
-  if (body["comment_id"] !== undefined && body["article_id"] !== undefined) {
+function isLikesDataValid(body) {
+  if (!isUndefined(body["comment_id"]) && !isUndefined(body["article_id"])) {
     logDebug(`Field validation: only one field can be non empty - comment_id or article_id`, { body });
     return false;
   }
-  if (body["comment_id"] === undefined && body["article_id"] === undefined) {
+  if (isUndefined(body["comment_id"]) && isUndefined(body["article_id"])) {
     logDebug(`Field validation: at least one field must be not empty - comment_id or article_id`, { body });
     return false;
   }
-  if (body["user_id"] === undefined) {
+  if (isUndefined(body["user_id"])) {
     logDebug(`Field validation: user_id is empty`);
     return false;
   }
   return true;
 }
 
-function are_mandatory_fields_present(body, mandatory_non_empty_fields) {
+function areMandatoryFieldsPresent(body, mandatory_non_empty_fields) {
   if (isBugEnabled(BugConfigKeys.BUG_VALIDATION_001)) {
     return true;
   }
 
   for (let index = 0; index < mandatory_non_empty_fields.length; index++) {
     const element = mandatory_non_empty_fields[index];
-    if (body[element] === undefined || body[element] === "" || body[element]?.length === 0) {
+    if (isUndefined(body[element]) || body[element] === "" || body[element]?.length === 0) {
       logDebug(`Field validation: field ${element} not valid ${body[element]}`);
       return false;
     }
@@ -48,21 +49,21 @@ function are_mandatory_fields_present(body, mandatory_non_empty_fields) {
   return true;
 }
 
-function are_all_fields_present(body, all_possible_fields) {
+function areAllFieldsPresent(body, all_possible_fields) {
   let error = "";
   const keys = Object.keys(body);
   for (let index = 0; index < keys.length; index++) {
     const key = keys[index];
     if (!all_possible_fields.includes(key)) {
       error = `Field validation: "${key}" not in [${all_possible_fields}]`;
-      logError("are_all_fields_valid:", error);
+      logError("areAllFieldsValid:", error);
       return { status: false, error };
     }
   }
   return { status: true, error };
 }
 
-function are_all_fields_valid(
+function areAllFieldsValid(
   body,
   all_possible_fields,
   mandatory_non_empty_fields,
@@ -72,7 +73,7 @@ function are_all_fields_valid(
   if (isBugEnabled(BugConfigKeys.BUG_VALIDATION_002)) {
     max_title_length = 0;
   }
-  if (body?.length !== undefined && body?.length > 0) {
+  if (!isUndefined(body?.length) && body?.length > 0) {
     return { status: false, error: "Wrong JSON structure" };
   }
   const keys = Object.keys(body);
@@ -82,31 +83,31 @@ function are_all_fields_valid(
     const key = keys[index];
     if (!all_possible_fields.includes(key)) {
       error = `Field validation: "${key}" not in [${all_possible_fields}]`;
-      logError("are_all_fields_valid:", error);
+      logError("areAllFieldsValid:", error);
       return { status: false, error };
     }
     const element = body[key];
     if (element?.toString().length > max_field_length) {
       error = `Field validation: "${key}" longer than "${max_field_length}"`;
-      logError("are_all_fields_valid:", error);
+      logError("areAllFieldsValid:", error);
       return { status: false, error };
     }
     if (key.toLowerCase() === "title" && element?.toString().length > max_title_length) {
       error = `Field validation: "${key}" longer than "${max_title_length}"`;
-      logError("are_all_fields_valid:", error);
+      logError("areAllFieldsValid:", error);
       return { status: false, error };
     }
     if (mandatory_non_empty_fields.includes(key)) {
-      if (element === undefined || element?.toString().length === 0) {
-        logDebug("are_all_fields_valid: Body:", body);
+      if (isUndefined(element) || element?.toString().length === 0) {
+        logDebug("areAllFieldsValid: Body:", body);
         error = `Field validation: "${key}" is empty! Mandatory fields: [${mandatory_non_empty_fields}]`;
         logError(error);
         return { status: false, error };
       }
     }
     if (key === "date") {
-      if (!validateDate(element)) {
-        logDebug("are_all_fields_valid: Body:", body);
+      if (!isDateValid(element)) {
+        logDebug("areAllFieldsValid: Body:", body);
         error = `Field validation: "${key}" has invalid format!`;
         logError(error);
         return { status: false, error };
@@ -116,11 +117,11 @@ function are_all_fields_valid(
   return { status: true, error };
 }
 
-const validateEmail = (email) => {
+const isEmailValid = (email) => {
   return email.match(getConfigValue(ConfigKeys.EMAIL_REGEXP));
 };
 
-const validateDate = (date) => {
+const isDateValid = (date) => {
   try {
     return date.match(getConfigValue(ConfigKeys.DATE_REGEXP));
   } catch (error) {
@@ -142,7 +143,7 @@ const verifyAccessToken = (req, res, endpoint = "endpoint", url = "") => {
     return undefined;
   }
 
-  if (verifyTokenResult?.exp !== undefined) {
+  if (!isUndefined(verifyTokenResult?.exp)) {
     const current_time = Date.now() / 1000;
     const diff = Math.round(verifyTokenResult.exp - current_time);
     logTrace(`[${endpoint}] getJwtExpiryDate:`, {
@@ -159,21 +160,12 @@ const verifyAccessToken = (req, res, endpoint = "endpoint", url = "") => {
   return verifyTokenResult;
 };
 
-function isNumber(value) {
-  return typeof value === "number";
-}
-
-function areIdsEqual(id1, id2, msg) {
-  logTrace("areIdsEqual", { id1, id2, msg });
-  return id1?.toString() === id2?.toString();
-}
-
 module.exports = {
-  validateDate,
-  validateEmail,
-  are_all_fields_valid,
-  are_all_fields_present,
-  are_mandatory_fields_present,
+  isDateValid,
+  isEmailValid,
+  areAllFieldsValid,
+  areAllFieldsPresent,
+  areMandatoryFieldsPresent,
   mandatory_non_empty_fields_user,
   all_fields_user,
   all_fields_article,
@@ -184,11 +176,9 @@ module.exports = {
   all_fields_plugin,
   verifyAccessToken,
   mandatory_non_empty_fields_likes,
-  is_likes_data_valid,
+  isLikesDataValid,
   mandatory_non_empty_fields_labels,
   mandatory_non_empty_fields_article_labels,
-  isNumber,
-  areIdsEqual,
   mandatory_non_empty_fields_comment_create,
   all_fields_comment_create,
 };

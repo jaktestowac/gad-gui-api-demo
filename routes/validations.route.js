@@ -24,6 +24,7 @@ const { handleGames } = require("../endpoints/games-endpoint.helpers");
 const { handleScores } = require("../endpoints/scores-endpoint.helpers");
 const { handleBookmarks } = require("../endpoints/bookmarks-endpoint.helpers");
 const { handleMinesweeper } = require("../endpoints/minesweeper-endpoint.helpers");
+const { areStringsEqualIgnoringCase, isUndefined } = require("../helpers/compare.helpers");
 
 const validationsRoutes = (req, res, next) => {
   let isAdmin = false;
@@ -52,14 +53,14 @@ const validationsRoutes = (req, res, next) => {
     try {
       let verifyTokenResult = verifyAccessToken(req, res, "isAdmin", req.url);
       if (
-        verifyTokenResult?.email?.toLowerCase() === getConfigValue(ConfigKeys.ADMIN_USER_EMAIL)?.toLowerCase() ||
-        verifyTokenResult?.email?.toLowerCase() === getConfigValue(ConfigKeys.SUPER_ADMIN_USER_EMAIL)?.toLowerCase()
+        areStringsEqualIgnoringCase(verifyTokenResult?.email, getConfigValue(ConfigKeys.ADMIN_USER_EMAIL)) ||
+        areStringsEqualIgnoringCase(verifyTokenResult?.email, getConfigValue(ConfigKeys.SUPER_ADMIN_USER_EMAIL))
       ) {
         isAdmin = true;
         logDebug("validations: isAdmin:", isAdmin);
       }
 
-      if (verifyTokenResult === undefined) {
+      if (isUndefined(verifyTokenResult)) {
         res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
         return;
       }
@@ -114,14 +115,14 @@ const validationsRoutes = (req, res, next) => {
       logTrace("Validators: Check user auth", { url: urlEnds });
       let userId = getIdFromUrl(urlEnds);
       const verifyTokenResult = verifyAccessToken(req, res, "users", req.url);
-      if (verifyTokenResult === undefined) {
+      if (isUndefined(verifyTokenResult)) {
         res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
         return;
       }
 
       const foundUser = searchForUserWithToken(userId, verifyTokenResult);
 
-      if (foundUser === undefined) {
+      if (isUndefined(foundUser)) {
         res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
         return;
       }
@@ -129,7 +130,7 @@ const validationsRoutes = (req, res, next) => {
 
     if (req.method !== "GET" && req.method !== "HEAD" && urlEnds?.includes("/api/articles") && !isAdmin) {
       const verifyTokenResult = verifyAccessToken(req, res, "articles", req.url);
-      if (verifyTokenResult === undefined) {
+      if (isUndefined(verifyTokenResult)) {
         res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
         return;
       }
@@ -137,7 +138,7 @@ const validationsRoutes = (req, res, next) => {
 
     if (req.method !== "GET" && req.method !== "HEAD" && urlEnds.includes("/api/comments") && !isAdmin) {
       const verifyTokenResult = verifyAccessToken(req, res, "comments", req.url);
-      if (verifyTokenResult === undefined) {
+      if (isUndefined(verifyTokenResult)) {
         res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
         return;
       }
@@ -173,7 +174,7 @@ const validationsRoutes = (req, res, next) => {
         limit = limit?.split("&")[0];
         let timeout = getConfigValue(ConfigKeys.SLEEP_TIME_PER_ONE_GET_COMMENT);
         logTrace(`[DELAY] Getting sleep time:`, { limit, timeout });
-        if (limit !== undefined) {
+        if (!isUndefined(limit)) {
           timeout =
             limit *
             getRandomInt(

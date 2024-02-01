@@ -4,6 +4,7 @@ const pluginStatuses = ["on", "off", "obsolete"];
 const { getConfigValue, isBugDisabled } = require("../config/config-manager");
 const { ConfigKeys, BugConfigKeys } = require("../config/enums");
 const { formatYmd } = require("./datetime.helpers");
+const { areStringsEqualIgnoringCase, isUndefined } = require("./compare.helpers");
 
 function formatErrorResponse(message, details = undefined, id = undefined) {
   const body = { error: { message: message, details: details }, id };
@@ -70,7 +71,7 @@ const getRandomInt = (min, max) => {
 function getGaussianRandom(min, max, sigma) {
   const mean = (max + min) / 2;
 
-  if (sigma === undefined) {
+  if (isUndefined(sigma)) {
     sigma = (max - min) / 6;
   }
 
@@ -97,14 +98,14 @@ function sleep(ms) {
 
 function isAdminUser(email, pass) {
   return (
-    email?.toLowerCase() === getConfigValue(ConfigKeys.ADMIN_USER_EMAIL)?.toLowerCase() &&
+    areStringsEqualIgnoringCase(email, getConfigValue(ConfigKeys.ADMIN_USER_EMAIL)) &&
     pass === getConfigValue(ConfigKeys.ADMIN_USER_PASS)
   );
 }
 
 function isSuperAdminUser(email, pass) {
   return (
-    email?.toLowerCase() === getConfigValue(ConfigKeys.SUPER_ADMIN_USER_EMAIL)?.toLowerCase() &&
+    areStringsEqualIgnoringCase(email, getConfigValue(ConfigKeys.SUPER_ADMIN_USER_EMAIL)) &&
     pass === getConfigValue(ConfigKeys.SUPER_ADMIN_USER_PASS)
   );
 }
@@ -242,7 +243,7 @@ function parsePublishStats(dbDataJson, type = "comments") {
     entriesData = dbDataJson["comments"];
   }
 
-  if (entriesData === undefined) {
+  if (isUndefined(entriesData)) {
     return {
       yearly,
       monthly,

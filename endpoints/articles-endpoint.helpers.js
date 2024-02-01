@@ -1,5 +1,6 @@
 const { isBugDisabled, isBugEnabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
+const { areIdsEqual, isUndefined } = require("../helpers/compare.helpers");
 const { searchForUserWithToken, searchForArticle, searchForUserWithEmail } = require("../helpers/db-operation.helpers");
 const { randomDbEntry, articlesDb } = require("../helpers/db.helpers");
 const {
@@ -8,15 +9,14 @@ const {
   formatMissingFieldErrorResponse,
   formatInvalidFieldErrorResponse,
 } = require("../helpers/helpers");
-const { logTrace, logWarn, logDebug } = require("../helpers/logger-api");
+const { logTrace, logDebug } = require("../helpers/logger-api");
 const { HTTP_UNAUTHORIZED, HTTP_UNPROCESSABLE_ENTITY, HTTP_NOT_FOUND } = require("../helpers/response.helpers");
 const {
   verifyAccessToken,
-  are_mandatory_fields_present,
+  areMandatoryFieldsPresent,
   mandatory_non_empty_fields_article,
   all_fields_article,
-  are_all_fields_valid,
-  areIdsEqual,
+  areAllFieldsValid,
 } = require("../helpers/validation.helpers");
 
 function handleArticles(req, res, isAdmin) {
@@ -27,7 +27,7 @@ function handleArticles(req, res, isAdmin) {
     const foundUser = searchForUserWithToken(req.headers["userid"], verifyTokenResult);
 
     logTrace("handleArticles:", { method: req.method, urlEnds, foundUser });
-    if (foundUser === undefined || verifyTokenResult === undefined) {
+    if (isUndefined(foundUser) || isUndefined(verifyTokenResult)) {
       res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
       return;
     }
@@ -54,7 +54,7 @@ function handleArticles(req, res, isAdmin) {
 
     if (req.method !== "POST") {
       let articleId = req.body["id"];
-      if (articleId === undefined) {
+      if (isUndefined(articleId)) {
         articleId = getIdFromUrl(urlEnds);
       }
 
@@ -65,11 +65,11 @@ function handleArticles(req, res, isAdmin) {
 
       logTrace("handleArticles: foundUser and user_id:", { foundUser, user_id: foundArticle?.user_id });
 
-      if (foundUser === undefined && foundArticle !== undefined) {
+      if (isUndefined(foundUser) && !isUndefined(foundArticle)) {
         res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
         return;
       }
-      if (foundUser === undefined && foundArticle === undefined && req.method === "DELETE") {
+      if (isUndefined(foundUser) && isUndefined(foundArticle) && req.method === "DELETE") {
         res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
         return;
       }
@@ -79,7 +79,7 @@ function handleArticles(req, res, isAdmin) {
 
       logTrace("handleArticles:", { method: req.method, urlEnds, foundUser });
 
-      if (foundUser === undefined) {
+      if (isUndefined(foundUser)) {
         res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
         return;
       }
@@ -89,7 +89,7 @@ function handleArticles(req, res, isAdmin) {
 
   // if (req.method === "GET" && urlEnds.includes("/api/articles?ids=")) {
   //   const articleIdsRaw = urlEnds.split("?ids=").slice(-1)[0];
-  //   if (articleIdsRaw === undefined) {
+  //   if (articleIdsRaw)) {
   //     res.status(HTTP_NOT_FOUND).json({});
   //     return;
   //   }
@@ -102,12 +102,12 @@ function handleArticles(req, res, isAdmin) {
 
   if (req.method === "POST" && urlEnds.includes("/api/articles") && !urlEnds.includes("/upload") && !isAdmin) {
     // validate mandatory fields:
-    if (!are_mandatory_fields_present(req.body, mandatory_non_empty_fields_article)) {
+    if (!areMandatoryFieldsPresent(req.body, mandatory_non_empty_fields_article)) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_article));
       return;
     }
     // validate all fields:
-    const isValid = are_all_fields_valid(req.body, all_fields_article, mandatory_non_empty_fields_article);
+    const isValid = areAllFieldsValid(req.body, all_fields_article, mandatory_non_empty_fields_article);
     if (!isValid.status) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidFieldErrorResponse(isValid, all_fields_article));
       return;
@@ -125,7 +125,7 @@ function handleArticles(req, res, isAdmin) {
     let articleId = getIdFromUrl(urlEnds);
 
     // validate all fields:
-    const isValid = are_all_fields_valid(req.body, all_fields_article, mandatory_non_empty_fields_article);
+    const isValid = areAllFieldsValid(req.body, all_fields_article, mandatory_non_empty_fields_article);
     if (!isValid.status) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidFieldErrorResponse(isValid, all_fields_article));
       return;
@@ -141,12 +141,12 @@ function handleArticles(req, res, isAdmin) {
       return;
     }
 
-    if (foundArticle === undefined) {
+    if (isUndefined(foundArticle)) {
       res.status(HTTP_NOT_FOUND).send({});
       return;
     }
 
-    if (foundUser === undefined && !areIdsEqual(foundUser?.id, foundArticle?.user_id, "handleArticles:PATCH")) {
+    if (isUndefined(foundUser) && !areIdsEqual(foundUser?.id, foundArticle?.user_id, "handleArticles:PATCH")) {
       res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
       return;
     }
@@ -156,12 +156,12 @@ function handleArticles(req, res, isAdmin) {
     const verifyTokenResult = verifyAccessToken(req, res, "PUT articles", req.url);
 
     // validate mandatory fields:
-    if (!are_mandatory_fields_present(req.body, mandatory_non_empty_fields_article)) {
+    if (!areMandatoryFieldsPresent(req.body, mandatory_non_empty_fields_article)) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_article));
       return;
     }
     // validate all fields:
-    const isValid = are_all_fields_valid(req.body, all_fields_article, mandatory_non_empty_fields_article);
+    const isValid = areAllFieldsValid(req.body, all_fields_article, mandatory_non_empty_fields_article);
     if (!isValid.status) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidFieldErrorResponse(isValid, all_fields_article));
       return;
@@ -175,13 +175,13 @@ function handleArticles(req, res, isAdmin) {
     logDebug("handleArticles: foundUser and user_id:", { foundUser, user_id: foundArticle?.user_id });
 
     const bug002Enabled = isBugEnabled(BugConfigKeys.BUG_ARTICLES_002);
-    if (bug002Enabled && foundUser !== undefined) {
+    if (bug002Enabled && !isUndefined(foundUser)) {
       foundUser.id = req.body?.user_id;
     }
 
     if (
-      foundArticle?.user_id !== undefined &&
-      foundUser !== undefined &&
+      !isUndefined(foundArticle?.user_id) &&
+      !isUndefined(foundUser) &&
       !areIdsEqual(foundUser?.id, req.body?.user_id, "handleArticles:PUT")
     ) {
       res.status(HTTP_UNAUTHORIZED).send("You can not edit articles if You are not an owner");
@@ -194,7 +194,7 @@ function handleArticles(req, res, isAdmin) {
 
     logTrace("handleArticles:PUT:", { method: req.method, articleId });
 
-    if (foundArticle === undefined) {
+    if (isUndefined(foundArticle)) {
       req.method = "POST";
       req.url = "/api/articles";
       req.body.id = undefined;

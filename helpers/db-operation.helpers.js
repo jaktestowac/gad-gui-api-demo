@@ -1,3 +1,4 @@
+const { areStringsEqualIgnoringCase, areIdsEqual, isUndefined } = require("./compare.helpers");
 const {
   userDb,
   articlesDb,
@@ -11,10 +12,7 @@ const {
 
 function searchForUserWithToken(userId, verifyTokenResult) {
   const foundUser = userDb().find((user) => {
-    if (
-      user["id"]?.toString() === userId?.toString() &&
-      user["email"]?.toLowerCase() === verifyTokenResult?.email?.toLowerCase()
-    ) {
+    if (areIdsEqual(user["id"], userId) && areStringsEqualIgnoringCase(user["email"], verifyTokenResult?.email)) {
       return user;
     }
   });
@@ -23,7 +21,7 @@ function searchForUserWithToken(userId, verifyTokenResult) {
 
 function searchForUserWithOnlyToken(verifyTokenResult) {
   const foundUser = userDb().find((user) => {
-    if (user["email"]?.toLowerCase() === verifyTokenResult?.email?.toLowerCase()) {
+    if (areStringsEqualIgnoringCase(user["email"], verifyTokenResult?.email)) {
       return user;
     }
   });
@@ -32,7 +30,7 @@ function searchForUserWithOnlyToken(verifyTokenResult) {
 
 function searchForUser(userId) {
   const foundUser = userDb().find((user) => {
-    if (user["id"]?.toString() === userId?.toString()) {
+    if (areIdsEqual(user["id"], userId)) {
       return user;
     }
   });
@@ -41,7 +39,7 @@ function searchForUser(userId) {
 
 function searchForUserWithEmail(email) {
   const foundUser = userDb().find((user) => {
-    if (user["email"]?.toLowerCase() === email?.toLowerCase()) {
+    if (areStringsEqualIgnoringCase(user["email"], email)) {
       return user;
     }
   });
@@ -50,7 +48,7 @@ function searchForUserWithEmail(email) {
 
 function searchForArticle(articleId) {
   const foundArticle = articlesDb().find((article) => {
-    if (article["id"]?.toString() === articleId?.toString()) {
+    if (areIdsEqual(article["id"], articleId)) {
       return article;
     }
   });
@@ -59,7 +57,7 @@ function searchForArticle(articleId) {
 
 function searchForArticleWithUserId(articleId, userId) {
   const foundArticle = articlesDb().find((article) => {
-    if (article["id"]?.toString() === articleId?.toString() && article["user_id"]?.toString() === userId?.toString()) {
+    if (areIdsEqual(article["id"], articleId) && areIdsEqual(article["user_id"], userId)) {
       return article;
     }
   });
@@ -75,7 +73,7 @@ function searchForArticles(articleIds) {
 
 function searchForComment(commentId) {
   const foundComment = commentsDb().find((comment) => {
-    if (comment["id"]?.toString() === commentId?.toString()) {
+    if (areIdsEqual(comment["id"], commentId)) {
       return comment;
     }
   });
@@ -84,7 +82,7 @@ function searchForComment(commentId) {
 
 function searchForArticleLabels(articleId) {
   const foundLabels = articleLabelsDb().find((label) => {
-    if (label["article_id"]?.toString() === articleId?.toString()) {
+    if (areIdsEqual(label["article_id"], articleId)) {
       return label;
     }
   });
@@ -96,7 +94,7 @@ function filterArticlesByLabel(articleIds, labelId) {
     const foundLabels = articleLabelsDb().find((label) => {
       const ids = label["label_ids"].map((id) => id.toString());
 
-      return label["article_id"]?.toString() === articleId?.toString() && ids.includes(labelId.toString());
+      return areIdsEqual(label["article_id"], articleId) && ids.includes(labelId.toString());
     });
     return foundLabels.length > 0;
   });
@@ -107,8 +105,8 @@ function countLikesForAllArticles() {
   const foundLikes = {};
   likesDb().filter((like) => {
     const id = like["article_id"]?.toString();
-    if (id !== undefined) {
-      if (foundLikes[id] === undefined) {
+    if (!isUndefined(id)) {
+      if (isUndefined(foundLikes[id])) {
         foundLikes[id] = 0;
       }
       foundLikes[id] += 1;
@@ -119,7 +117,7 @@ function countLikesForAllArticles() {
 
 function searchForLike(likeId) {
   const foundLike = commentsDb().find((like) => {
-    if (like["id"]?.toString() === likeId?.toString()) {
+    if (areIdsEqual(like["id"], likeId)) {
       return like;
     }
   });
@@ -128,7 +126,7 @@ function searchForLike(likeId) {
 
 function countLikesForArticle(articleId) {
   const foundLikes = likesDb().filter((like) => {
-    return like["article_id"]?.toString() === articleId?.toString();
+    return areIdsEqual(like["article_id"], articleId);
   });
   return foundLikes.length;
 }
@@ -136,11 +134,11 @@ function countLikesForArticle(articleId) {
 function findAllLikes(articleId, commentId, userId) {
   const foundLikes = likesDb().find((like) => {
     return (
-      ((like["article_id"]?.toString() === articleId?.toString() && articleId !== undefined) ||
-        (like["article_id"] === undefined && articleId === undefined)) &&
-      ((like["comment_id"]?.toString() === commentId?.toString() && commentId !== undefined) ||
-        (like["comment_id"] === undefined && commentId === undefined)) &&
-      like["user_id"]?.toString() === userId?.toString()
+      ((areIdsEqual(like["article_id"], articleId) && !isUndefined(articleId)) ||
+        (isUndefined(like["article_id"]) && isUndefined(articleId))) &&
+      ((areIdsEqual(like["comment_id"], commentId) && !isUndefined(commentId)) ||
+        (isUndefined(like["comment_id"]) && isUndefined(commentId))) &&
+      areIdsEqual(like["user_id"], userId)
     );
   });
   return foundLikes;
@@ -148,19 +146,19 @@ function findAllLikes(articleId, commentId, userId) {
 
 function checkIfAlreadyLiked(articleId, commentId, userId) {
   const foundLikes = findAllLikes(articleId, commentId, userId);
-  return foundLikes !== undefined;
+  return !isUndefined(foundLikes);
 }
 
 function countLikesForComment(commentId) {
   const foundLikes = likesDb().filter((like) => {
-    return like["comment_id"]?.toString() === commentId?.toString();
+    return areIdsEqual(like["comment_id"], commentId);
   });
   return foundLikes.length;
 }
 
 function getGameByName(name) {
   const foundGame = gamesDb().find((game) => {
-    if (game["name"]?.toString().toLowerCase() === name.toLowerCase()) {
+    if (areStringsEqualIgnoringCase(game["name"], name)) {
       return game;
     }
   });
@@ -174,7 +172,7 @@ function getGameIdByName(name) {
 
 function getGameNameById(id) {
   const foundGame = gamesDb().find((game) => {
-    if (game["id"]?.toString() === id.toString()) {
+    if (areIdsEqual(game["id"], id)) {
       return game;
     }
   });
@@ -183,13 +181,13 @@ function getGameNameById(id) {
 
 function getUserScore(userId, gameId) {
   const foundScore = scoresDb().find(
-    (score) => score.game_id.toString() === gameId.toString() && score.user_id.toString() === userId.toString()
+    (score) => areIdsEqual(score.game_id, gameId) && areIdsEqual(score.user_id, userId)
   );
   return foundScore;
 }
 
 function getGameScores(gameId) {
-  const foundScores = scoresDb().filter((score) => score.game_id.toString() === gameId.toString()) || [];
+  const foundScores = scoresDb().filter((score) => areIdsEqual(score.game_id, gameId)) || [];
   return foundScores;
 }
 
@@ -205,7 +203,7 @@ function checkIfArticlesAlreadyInBookmarks(articleId, userId) {
 
 function findUserBookmarks(userId) {
   const foundBookmark = bookmarksDb().filter((bookmark) => {
-    return bookmark["user_id"]?.toString() === userId?.toString();
+    return areIdsEqual(bookmark["user_id"], userId);
   });
   return foundBookmark;
 }

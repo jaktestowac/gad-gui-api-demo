@@ -1,5 +1,6 @@
 const { getConfigValue } = require("../config/config-manager");
 const { ConfigKeys } = require("../config/enums");
+const { isUndefined, areStringsEqualIgnoringCase } = require("../helpers/compare.helpers");
 const { userDb } = require("../helpers/db.helpers");
 const { isAnyAdminUser, isSuperAdminUser } = require("../helpers/helpers");
 const { isAuthenticated, createToken, prepareCookieMaxAge } = require("../helpers/jwtauth");
@@ -68,7 +69,7 @@ const processLoginRoutes = (req, res) => {
   let foundUser = undefined;
   if (!isAdmin) {
     foundUser = userDb().find((user) => {
-      if (user["email"]?.toString() === username) {
+      if (areStringsEqualIgnoringCase(user["email"], username)) {
         return user;
       }
     });
@@ -111,7 +112,7 @@ const processLoginRoutes = (req, res) => {
 const welcomeRoutes = (req, res) => {
   // get the username
   let username = req.cookies.username;
-  if (username === undefined) {
+  if (isUndefined(username)) {
     // redirect with a fail msg
     return res.redirect("/login");
   }

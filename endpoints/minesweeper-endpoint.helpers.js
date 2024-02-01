@@ -1,3 +1,4 @@
+const { isNumber, isUndefined } = require("../helpers/compare.helpers");
 const {
   searchForUser,
   getGameNameById,
@@ -14,7 +15,7 @@ const {
   HTTP_UNAUTHORIZED,
   HTTP_UNPROCESSABLE_ENTITY,
 } = require("../helpers/response.helpers");
-const { verifyAccessToken, isNumber } = require("../helpers/validation.helpers");
+const { verifyAccessToken } = require("../helpers/validation.helpers");
 
 const gameName = "minesweeper";
 
@@ -35,13 +36,13 @@ function handleMinesweeper(req, res) {
     res.status(HTTP_OK).json({ highScore: parsedScores });
   } else if (req.method === "POST" && req.url.endsWith("/api/minesweeper/score")) {
     const verifyTokenResult = verifyAccessToken(req, res, "hangman", req.url);
-    if (verifyTokenResult === undefined) {
+    if (isUndefined(verifyTokenResult)) {
       res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
       return;
     }
     const score = req.body;
     const email = verifyTokenResult?.email;
-    if (score === undefined || score.score === undefined || !isNumber(score.score)) {
+    if (isUndefined(score) || isUndefined(score.score) || !isNumber(score.score)) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).json(formatErrorResponse("Score was not provided"));
     }
     const gameId = getGameIdByName(gameName);
@@ -49,10 +50,10 @@ function handleMinesweeper(req, res) {
     const previousUserScore = getUserScore(user.id, gameId);
 
     logDebug("handleMinesweeper:minesweeper highScores:", { previousUserScore, currentScore: score });
-    if (previousUserScore !== undefined && previousUserScore.score >= score.score) {
+    if (!isUndefined(previousUserScore) && previousUserScore.score >= score.score) {
       res.status(HTTP_OK).json({ game_id: gameId, user_id: user.id, score: score.score });
     } else {
-      if (previousUserScore?.id !== undefined) {
+      if (!isUndefined(previousUserScore?.id)) {
         req.method = "PUT";
         req.url = `/api/scores/${previousUserScore.id}`;
       } else {

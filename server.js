@@ -15,7 +15,7 @@ const router = jsonServer.router(getDbPath(getConfigValue(ConfigKeys.DB_PATH)));
 
 const { formatErrorResponse } = require("./helpers/helpers");
 const { logDebug, logError, logTrace } = require("./helpers/logger-api");
-const { HTTP_INTERNAL_SERVER_ERROR, HTTP_CREATED } = require("./helpers/response.helpers");
+const { HTTP_INTERNAL_SERVER_ERROR, HTTP_CREATED, HTTP_BAD_REQUEST } = require("./helpers/response.helpers");
 const {
   customRoutes,
   statsRoutes,
@@ -90,6 +90,21 @@ server.use((req, res, next) => {
 
 server.use(healthCheckRoutes);
 server.use(middlewares);
+
+const bodyParser = require("body-parser");
+
+server.use((req, res, next) => {
+  bodyParser.json()(req, res, (err) => {
+    if (err) {
+      logError("SyntaxError: Unexpected data in JSON - Please check Your JSON.", { err: JSON.stringify(err) });
+      return res
+        .status(HTTP_BAD_REQUEST)
+        .json({ error: "SyntaxError: Unexpected data in JSON. Please check Your JSON.", details: err?.body });
+    }
+
+    next();
+  });
+});
 server.use(jsonServer.bodyParser);
 
 server.use(helmet());

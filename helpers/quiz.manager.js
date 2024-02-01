@@ -1,5 +1,6 @@
 const { isBugDisabled, isBugEnabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
+const { isUndefined } = require("./compare.helpers");
 const { logDebug, logTrace } = require("./logger-api");
 
 function startQuiz(quizScores, email) {
@@ -10,7 +11,7 @@ function startQuiz(quizScores, email) {
 
 function stopQuiz(quizScores, quizHighScores, email) {
   logDebug("handleQuiz:Quiz stopped:", { email, quizScores, quizHighScores });
-  if (quizHighScores[email] === undefined || quizScores[email]["ok"] >= quizHighScores[email]) {
+  if (isUndefined(quizHighScores[email]) || quizScores[email]["ok"] >= quizHighScores[email]) {
     quizHighScores[email] = quizScores[email]["ok"];
   }
 
@@ -34,7 +35,7 @@ function quizQuestionsCheckConflict(quizScores, email, questionsPerQuiz) {
 
 function quizAddScore(isCorrect, quizScores, email) {
   // TODO:INVOKE_BUG: score is saved per email. If You start 2x quiz on one user - You can get more points.
-  if (quizScores[email] === undefined) {
+  if (isUndefined(quizScores[email])) {
     quizScores[email] = { ok: 0, nok: 0 };
   }
 
