@@ -3030,8 +3030,7 @@
           },
           "date": {
             "type": "string",
-            "format": "date",
-            "example": "2024-06-30T15:44:31Z"
+            "format": "date-time"
           },
           "image": {
             "type": "string",
@@ -3076,8 +3075,7 @@
           },
           "date": {
             "type": "string",
-            "format": "date",
-            "example": "2024-06-30T15:44:31Z"
+            "format": "date-time"
           },
           "image": {
             "type": "string",
@@ -3118,8 +3116,7 @@
           },
           "date": {
             "type": "string",
-            "format": "date",
-            "example": "2024-06-30T15:44:31Z"
+            "format": "date-time"
           },
           "image": {
             "type": "string",
@@ -3170,8 +3167,7 @@
           },
           "date": {
             "type": "string",
-            "format": "date-time",
-            "example": "2024-06-30T15:44:31Z"
+            "format": "date-time"
           }
         },
         "xml": {
@@ -3241,8 +3237,7 @@
           },
           "date": {
             "type": "string",
-            "format": "date-time",
-            "example": "2024-06-30T15:44:31Z"
+            "format": "date-time"
           }
         },
         "xml": {
@@ -3462,8 +3457,7 @@
           },
           "date": {
             "type": "string",
-            "format": "date",
-            "example": "2024-06-30T15:44:31Z"
+            "format": "date-time"
           }
         },
         "xml": {

@@ -31,6 +31,10 @@ function formatInvalidFieldErrorResponse(isValid, all_fields) {
   );
 }
 
+function formatInvalidDateFieldErrorResponse(isValid, fields = ["date"]) {
+  return formatErrorResponse(`Date field is invalid: ${isValid.error}`, fields);
+}
+
 function formatMissingFieldErrorResponse(all_fields) {
   return formatErrorResponse("One of mandatory field is missing", all_fields);
 }
@@ -338,6 +342,7 @@ module.exports = {
   formatTooManyValuesErrorResponse,
   formatOnlyOneFieldPossibleErrorResponse,
   formatInvalidEntityErrorResponse,
+  formatInvalidDateFieldErrorResponse,
   getRandomInt,
   sleep,
   isAdminUser,

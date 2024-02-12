@@ -8,6 +8,7 @@ const {
   getIdFromUrl,
   formatMissingFieldErrorResponse,
   formatInvalidFieldErrorResponse,
+  formatInvalidDateFieldErrorResponse,
 } = require("../helpers/helpers");
 const { logTrace, logDebug } = require("../helpers/logger-api");
 const { HTTP_UNAUTHORIZED, HTTP_UNPROCESSABLE_ENTITY, HTTP_NOT_FOUND } = require("../helpers/response.helpers");
@@ -17,6 +18,7 @@ const {
   mandatory_non_empty_fields_article,
   all_fields_article,
   areAllFieldsValid,
+  validateDateFields,
 } = require("../helpers/validation.helpers");
 
 function handleArticles(req, res, isAdmin) {
@@ -113,6 +115,13 @@ function handleArticles(req, res, isAdmin) {
       return;
     }
 
+    // validate date field:
+    const isDateValid = validateDateFields(req.body);
+    if (!isDateValid.status) {
+      res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidDateFieldErrorResponse(isDateValid));
+      return;
+    }
+
     if (isBugDisabled(BugConfigKeys.BUG_VALIDATION_003)) {
       // remove id - otherwise - 500: Error: Insert failed, duplicate id
       req.body.id = undefined;
@@ -131,6 +140,13 @@ function handleArticles(req, res, isAdmin) {
       return;
     }
 
+    // validate date field:
+    const isDateValid = validateDateFields(req.body);
+    if (!isDateValid.status) {
+      res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidDateFieldErrorResponse(isDateValid));
+      return;
+    }
+
     const foundArticle = searchForArticle(articleId);
     const foundUser = searchForUserWithToken(foundArticle?.user_id, verifyTokenResult);
 
@@ -146,7 +162,7 @@ function handleArticles(req, res, isAdmin) {
       return;
     }
 
-    if (isUndefined(foundUser) && !areIdsEqual(foundUser?.id, foundArticle?.user_id, "handleArticles:PATCH")) {
+    if (isUndefined(foundUser) && !areIdsEqual(foundUser?.id, foundArticle?.user_id)) {
       res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
       return;
     }
@@ -167,6 +183,13 @@ function handleArticles(req, res, isAdmin) {
       return;
     }
 
+    // validate date field:
+    const isDateValid = validateDateFields(req.body);
+    if (!isDateValid.status) {
+      res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidDateFieldErrorResponse(isDateValid));
+      return;
+    }
+
     let articleId = getIdFromUrl(urlEnds);
     const foundArticle = searchForArticle(articleId);
 
@@ -182,7 +205,7 @@ function handleArticles(req, res, isAdmin) {
     if (
       !isUndefined(foundArticle?.user_id) &&
       !isUndefined(foundUser) &&
-      !areIdsEqual(foundUser?.id, req.body?.user_id, "handleArticles:PUT")
+      !areIdsEqual(foundUser?.id, req.body?.user_id)
     ) {
       res.status(HTTP_UNAUTHORIZED).send("You can not edit articles if You are not an owner");
       return;
