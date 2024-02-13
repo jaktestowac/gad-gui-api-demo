@@ -1,5 +1,8 @@
 # Introduction
-![obraz](https://github.com/jaktestowac/gad-gui-api-demo/assets/72373858/eadec2e8-229c-414f-81da-9ec4601b0972)
+
+<p align="center">
+  <img src="https://github.com/jaktestowac/gad-gui-api-demo/assets/72373858/eadec2e8-229c-414f-81da-9ec4601b0972" alt="GAD" width="300" height="300">
+</p>
 
 This application (called **🦎 GAD**) was prepared and developed **only for testing purposes**. It provides:
 
