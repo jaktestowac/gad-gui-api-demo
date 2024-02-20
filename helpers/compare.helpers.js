@@ -1,12 +1,8 @@
-const { logTrace } = require("./logger-api");
-
-function areStringsEqualIgnoringCase(str1, str2, msg) {
-  logTrace("areStringsEqualIgnoringCase", { str1, str2, msg });
+function areStringsEqualIgnoringCase(str1, str2) {
   return str1?.toLowerCase() === str2?.toLowerCase();
 }
 
-function areIdsEqual(id1, id2, msg) {
-  logTrace("areIdsEqual", { id1, id2, msg });
+function areIdsEqual(id1, id2) {
   return id1?.toString() === id2?.toString();
 }
 

@@ -63,6 +63,31 @@ function areAllFieldsPresent(body, all_possible_fields) {
   return { status: true, error };
 }
 
+function validateDateFields(body, fields = ["date"]) {
+  let error = "";
+  const keys = Object.keys(body);
+  for (let index = 0; index < keys.length; index++) {
+    const key = keys[index];
+    const element = body[key];
+    if (fields.includes(key)) {
+      const isValid = isDateValid(element);
+      if (isValid === false) {
+        logDebug("validateDateFields: Body:", body);
+        error = `Field validation: "${key}" has invalid date format!`;
+        return { status: false, error };
+      }
+
+      const isInFuture = isDateInFuture(element);
+      if (isInFuture === true) {
+        logDebug("validateDateFields: Body:", body);
+        error = `Field validation: "${key}" has date in future!`;
+        return { status: false, error };
+      }
+    }
+  }
+  return { status: true, error };
+}
+
 function areAllFieldsValid(
   body,
   all_possible_fields,
@@ -130,6 +155,23 @@ const isDateValid = (date) => {
   }
 };
 
+function isDateInFuture(dateString) {
+  const inputDate = new Date(dateString);
+  const currentDate = new Date();
+  currentDate.setHours(currentDate.getHours() + 1); // UTC+1
+  currentDate.setSeconds(currentDate.getSeconds() + 10); // add possibility of offset
+  logTrace("isDateInFuture:", { inputDate, currentDate });
+
+  if (isBugEnabled(BugConfigKeys.BUG_VALIDATION_007)) {
+    return true;
+  }
+  if (isBugEnabled(BugConfigKeys.BUG_VALIDATION_008)) {
+    return false;
+  }
+
+  return inputDate > currentDate;
+}
+
 const verifyAccessToken = (req, res, endpoint = "endpoint", url = "") => {
   const authorization = req.headers["authorization"];
   let access_token = authorization?.split(" ")[1];
@@ -181,4 +223,5 @@ module.exports = {
   mandatory_non_empty_fields_article_labels,
   mandatory_non_empty_fields_comment_create,
   all_fields_comment_create,
+  validateDateFields,
 };

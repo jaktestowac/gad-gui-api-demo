@@ -9,6 +9,21 @@ function gracefulQuit() {
   serverApp.close();
 }
 
+function pad(num, size = 2) {
+  num = num.toString();
+  while (num.length < size) num = "0" + num;
+  return num;
+}
+
+function getCurrentDate(hours = 0, minutes = 0, seconds = 0) {
+  const today = new Date();
+  const date = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}T${pad(
+    today.getHours() + hours
+  )}:${pad(today.getMinutes() + minutes)}:${pad(today.getSeconds() + seconds)}Z`;
+
+  return date;
+}
+
 async function setupEnv() {
   const restoreResponse = await request.get("/api/restoreDB");
   expect(restoreResponse.status).to.equal(201);
@@ -35,4 +50,5 @@ module.exports = {
   sleep,
   gracefulQuit,
   setupEnv,
+  getCurrentDate,
 };

@@ -12,6 +12,8 @@ const bugConfig = {
   bug_validation_004: false,
   bug_validation_005: false,
   bug_validation_006: false,
+  bug_validation_007: false,
+  bug_validation_008: false,
   bug_quiz_001: false,
   bug_quiz_002: false,
   bug_quiz_003: false,
