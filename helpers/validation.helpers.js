@@ -161,6 +161,14 @@ function isDateInFuture(dateString) {
   currentDate.setHours(currentDate.getHours() + 1); // UTC+1
   currentDate.setSeconds(currentDate.getSeconds() + 10); // add possibility of offset
   logTrace("isDateInFuture:", { inputDate, currentDate });
+
+  if (isBugEnabled(BugConfigKeys.BUG_VALIDATION_007)) {
+    return true;
+  }
+  if (isBugEnabled(BugConfigKeys.BUG_VALIDATION_008)) {
+    return false;
+  }
+
   return inputDate > currentDate;
 }
 
