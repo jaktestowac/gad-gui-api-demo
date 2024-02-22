@@ -1,5 +1,5 @@
 function areStringsEqualIgnoringCase(str1, str2) {
-  return str1?.toLowerCase() === str2?.toLowerCase();
+  return `${str1}`.toLowerCase() === `${str2}`.toLowerCase();
 }
 
 function areIdsEqual(id1, id2) {
