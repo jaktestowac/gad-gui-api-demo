@@ -35,28 +35,32 @@ describe("Endpoint /login", () => {
     expect(response.status).to.equal(401);
   });
 
-  it("POST /login - invalid pass", async () => {
-    // Arrange:
-    const userData = generateValidUserLoginData();
-    userData.password = "";
+  ["", 0, true, undefined].forEach((testValue) => {
+    it(`POST /login - invalid pass - "${testValue}"`, async () => {
+      // Arrange:
+      const userData = generateValidUserLoginData();
+      userData.password = testValue;
 
-    // Act:
-    const response = await request.post(baseUrl).send(userData);
+      // Act:
+      const response = await request.post(baseUrl).send(userData);
 
-    // Assert:
-    expect(response.status).to.equal(401);
+      // Assert:
+      expect(response.status).to.equal(401);
+    });
   });
 
-  it("POST /login - invalid email", async () => {
-    // Arrange:
-    const userData = generateValidUserLoginData();
-    userData.email = "";
+  ["", 0, true, undefined].forEach((testValue) => {
+    it(`POST /login - invalid email - "${testValue}"`, async () => {
+      // Arrange:
+      const userData = generateValidUserLoginData();
+      userData.email = testValue;
 
-    // Act:
-    const response = await request.post(baseUrl).send(userData);
+      // Act:
+      const response = await request.post(baseUrl).send(userData);
 
-    // Assert:
-    expect(response.status).to.equal(401);
+      // Assert:
+      expect(response.status).to.equal(401);
+    });
   });
 
   it("POST /login - invalid data", async () => {
