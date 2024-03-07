@@ -55,6 +55,24 @@ Steps:
 
 Application will be available at `http://localhost:3000`
 
+### Read Only mode
+
+This mode disables all POST, PUT and PATCH methods, besides login.
+
+To run GAD in **Read Only mode** use:
+
+PowerShell:
+
+```PowerShell
+$env:READ_ONLY=1; npm run start
+```
+
+Bash:
+
+```Bash
+READ_ONLY=1 npm run start
+```
+
 ## Deploy to **Glitch**
 
 No account needed - but your project will be deleted in 5 days.

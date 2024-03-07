@@ -53,6 +53,7 @@ const ConfigKeys = {
   MIN_RANDOM_VISITS_FOR_COMMENTS: "minRandomVisitsForComments",
   MAX_RANDOM_VISITS_FOR_USERS: "maxRandomVisitsForUsers",
   MIN_RANDOM_VISITS_FOR_USERS: "minRandomVisitsForUsers",
+  READ_ONLY: "readOnly",
 };
 
 const BugConfigKeys = {

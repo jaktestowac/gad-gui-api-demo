@@ -60,6 +60,7 @@ const config = {
   userAvatarPath: "../public/data/users",
   articleImagePath: "../public/data/images/256",
   uploadsPath: "../uploads",
+  readOnly: process.env.READ_ONLY === 1 || process.env.READ_ONLY === "1" ? true : false,
 };
 
 module.exports = {

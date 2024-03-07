@@ -11,7 +11,12 @@ const { ConfigKeys, BugConfigKeys } = require("../config/enums");
 
 const { verifyAccessToken } = require("../helpers/validation.helpers");
 const { searchForUserWithToken } = require("../helpers/db-operation.helpers");
-const { HTTP_UNAUTHORIZED, HTTP_INTERNAL_SERVER_ERROR, HTTP_BAD_REQUEST } = require("../helpers/response.helpers");
+const {
+  HTTP_UNAUTHORIZED,
+  HTTP_INTERNAL_SERVER_ERROR,
+  HTTP_BAD_REQUEST,
+  HTTP_METHOD_NOT_ALLOWED,
+} = require("../helpers/response.helpers");
 const { handleHangman } = require("../endpoints/hangman-endpoint.helpers");
 const { handleQuiz } = require("../endpoints/quiz-endpoint.helpers");
 const { handleConfig } = require("../endpoints/config-endpoint.helpers");
@@ -78,6 +83,13 @@ const validationsRoutes = (req, res, next) => {
     }
     if (isBugEnabled(BugConfigKeys.BUG_SORTING_003)) {
       req.query._order = "";
+    }
+
+    const readOnlyMode = getConfigValue(ConfigKeys.READ_ONLY);
+
+    if (readOnlyMode !== false && req.method !== "GET") {
+      res.status(HTTP_METHOD_NOT_ALLOWED).send(formatErrorResponse("Method not allowed in READ ONLY MODE"));
+      return;
     }
 
     if (req.url.includes("/api/config")) {
