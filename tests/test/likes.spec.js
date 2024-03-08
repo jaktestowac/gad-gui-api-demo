@@ -50,7 +50,7 @@ describe("Endpoint /likes", () => {
       return request.delete(`${baseUrl}/1`).expect(401);
     });
 
-    it("HEAD /likes", () => {
+    it("HEAD /likes/:id", () => {
       return request.head(`${baseUrl}/1`).expect(200);
     });
   });

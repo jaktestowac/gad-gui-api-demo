@@ -8,6 +8,7 @@ const {
   gamesDb,
   scoresDb,
   bookmarksDb,
+  surveyResponsesDb,
 } = require("./db.helpers");
 
 function searchForUserWithToken(userId, verifyTokenResult) {
@@ -208,6 +209,12 @@ function findUserBookmarks(userId) {
   return foundBookmark;
 }
 
+function findUserSurveyResponses(userId) {
+  const foundSurveyResponses = surveyResponsesDb().filter((surveyResponse) => {
+    return areIdsEqual(surveyResponse["user_id"], userId);
+  });
+  return foundSurveyResponses;
+}
 module.exports = {
   searchForUserWithToken,
   searchForUserWithEmail,
@@ -231,4 +238,5 @@ module.exports = {
   getGameScores,
   checkIfArticlesAlreadyInBookmarks,
   findUserBookmarks,
+  findUserSurveyResponses,
 };

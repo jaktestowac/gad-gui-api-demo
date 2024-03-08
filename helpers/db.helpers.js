@@ -137,6 +137,10 @@ function articleLabelsDb() {
   return fullDb()["article-labels"];
 }
 
+function surveyResponsesDb() {
+  return fullDb()["survey-responses"];
+}
+
 function bookmarksDb() {
   return fullDb()["bookmarks"];
 }
@@ -249,6 +253,7 @@ module.exports = {
   gamesDb,
   scoresDb,
   bookmarksDb,
+  surveyResponsesDb,
   getUserAvatars,
   getImagesForArticles,
   getUploadedFileList,

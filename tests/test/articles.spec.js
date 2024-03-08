@@ -408,13 +408,13 @@ describe("Endpoint /articles", () => {
       const testData = generateValidArticleData();
       testData.user_id = userId;
 
-      testData.date = getCurrentDate(0, 0, 11);
+      testData.date = getCurrentDate(0, 0, 20);
 
       // Act:
       const response = await request.post(baseUrl).set(headers).send(testData);
 
       // Assert:
-      expect(response.status).to.equal(422);
+      expect(response.status, JSON.stringify(response.body)).to.equal(422);
     });
 
     ["title", "body", "date"].forEach((field) => {

@@ -19,6 +19,7 @@ const baseLabelsUrl = "/api/labels";
 const aboutUrl = "/api/about";
 const baseBookmarksUrl = "/api/bookmarks";
 const baseArticleLabelsUrl = "/api/article-labels";
+const baseSurveysManualApiUrl = "/api/surveys/manualapi";
 
 const existingUserEmail = "Danial.Dicki@dicki.test";
 const existingUserPass = "test2";
@@ -63,4 +64,5 @@ module.exports = {
   existingUserEmail2,
   existingUserPass2,
   existingUserId2,
+  baseSurveysManualApiUrl,
 };

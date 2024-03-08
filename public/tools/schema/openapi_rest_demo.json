@@ -88,6 +88,10 @@
       "description": "Game scores"
     },
     {
+      "name": "surveys",
+      "description": "Surveys"
+    },
+    {
       "name": "visits",
       "description": "Visits of different entities"
     },
@@ -2932,6 +2936,70 @@
         }
       }
     },
+
+    "/surveys/manualapi/questions": {
+      "get": {
+        "tags": ["surveys"],
+        "summary": "Get surveys questions",
+        "operationId": "getSurveysManualApiQuestions",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Surveys"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/surveys/manualapi/responses": {
+      "post": {
+        "tags": ["surveys"],
+        "summary": "Create a new survey response",
+        "operationId": "createSurvey",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewSurvey"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Survey created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Survey"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "422": {
+            "description": "Invalid score data",
+            "content": {}
+          }
+        }
+      }
+    },
     "/bookmarks/articles": {
       "get": {
         "security": [
@@ -3675,6 +3743,44 @@
                   "type": "string"
                 }
               ]
+            }
+          }
+        }
+      },
+      "Survey": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "user_id": {
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "type": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "answers": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
             }
           }
         }

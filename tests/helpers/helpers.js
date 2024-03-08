@@ -17,9 +17,18 @@ function pad(num, size = 2) {
 
 function getCurrentDate(hours = 0, minutes = 0, seconds = 0) {
   const today = new Date();
-  const date = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}T${pad(
-    today.getHours() + hours
-  )}:${pad(today.getMinutes() + minutes)}:${pad(today.getSeconds() + seconds)}Z`;
+  today.setHours(today.getHours() + hours);
+  today.setMinutes(today.getMinutes() + minutes);
+  today.setSeconds(today.getSeconds() + seconds);
+
+  const year = today.getFullYear();
+  const month = pad(today.getMonth() + 1);
+  const day = pad(today.getDate());
+  const hour = pad(today.getHours());
+  const minute = pad(today.getMinutes());
+  const second = pad(today.getSeconds());
+
+  const date = `${year}-${month}-${day}T${hour}:${minute}:${second}Z`;
 
   return date;
 }
