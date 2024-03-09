@@ -124,6 +124,29 @@ describe(`Endpoint ${baseSurveysManualApiUrl}`, () => {
       headers2["userid"] = userId2;
     });
 
+    describe("GET", () => {
+      it(`GET ${baseUrl} - should return existing question`, async () => {
+        // Act:
+        const response = await request.get(baseUrl + "/questions/1").set(headers1);
+
+        // Assert:
+        expect(response.status).to.equal(200);
+      });
+      it(`GET ${baseUrl} - should not return not existing question`, async () => {
+        // Act:
+        const response = await request.get(baseUrl + "/questions/0000").set(headers1);
+
+        // Assert:
+        expect(response.status).to.equal(404);
+      });
+      it(`GET ${baseUrl} - should not return anything`, async () => {
+        // Act:
+        const response = await request.get(baseUrl + "/questions/").set(headers1);
+
+        // Assert:
+        expect(response.status).to.equal(404);
+      });
+    });
     describe("POST", () => {
       it(`POST ${baseUrl} - should not create a survey with empty body`, async () => {
         // Act:

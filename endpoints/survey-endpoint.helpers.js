@@ -1,3 +1,4 @@
+const { questions } = require("../data/surveys/maunal-api.survey");
 const { isUndefined, isStringOnTheList } = require("../helpers/compare.helpers");
 const { searchForUserWithOnlyToken, findUserSurveyTypeResponses } = require("../helpers/db-operation.helpers");
 const {
@@ -37,10 +38,21 @@ function handleSurvey(req, res, isAdmin) {
     }
   }
 
-  if (req.method === "GET" && req.url.endsWith("/api/surveys/manualapi/questions")) {
-    // TODO: Add the logic to get the survey questions
+  if (req.method === "GET" && req.url.includes("/api/surveys/manualapi/questions/")) {
+    const questionId = urlEnds.split("/").slice(-1)[0];
+    if (isUndefined(questionId)) {
+      res.status(HTTP_NOT_FOUND).json({});
+      return;
+    }
 
-    res.status(HTTP_OK).json({});
+    const question = questions[questionId];
+
+    if (isUndefined(question)) {
+      res.status(HTTP_NOT_FOUND).json({});
+      return;
+    }
+
+    res.status(HTTP_OK).json({ question: question });
   } else if (req.method === "POST" && req.url.endsWith("/api/surveys/manualapi/responses")) {
     const mandatoryFieldValid = areAllFieldsPresent(req.body, mandatory_non_empty_fields_survey);
     if (!mandatoryFieldValid.status) {
