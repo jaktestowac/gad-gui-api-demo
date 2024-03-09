@@ -14,9 +14,18 @@ function isUndefined(value) {
   return value === undefined;
 }
 
+function isStringOnTheList(value, list, caseSensitive = false) {
+  if (caseSensitive === true) {
+    return list.includes(value);
+  } else {
+    return list.some((item) => item.toLowerCase() === value.toLowerCase());
+  }
+}
+
 module.exports = {
   areStringsEqualIgnoringCase,
   areIdsEqual,
   isNumber,
   isUndefined,
+  isStringOnTheList,
 };

@@ -215,6 +215,14 @@ function findUserSurveyResponses(userId) {
   });
   return foundSurveyResponses;
 }
+
+function findUserSurveyTypeResponses(userId, type) {
+  const foundSurveyResponses = surveyResponsesDb().filter((surveyResponse) => {
+    return areIdsEqual(surveyResponse["user_id"], userId) && areIdsEqual(surveyResponse["type"], type);
+  });
+  return foundSurveyResponses;
+}
+
 module.exports = {
   searchForUserWithToken,
   searchForUserWithEmail,
@@ -239,4 +247,5 @@ module.exports = {
   checkIfArticlesAlreadyInBookmarks,
   findUserBookmarks,
   findUserSurveyResponses,
+  findUserSurveyTypeResponses,
 };

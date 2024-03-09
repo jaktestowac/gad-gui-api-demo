@@ -1,14 +1,42 @@
-const { formatInvalidFieldErrorResponse, formatInvalidDateFieldErrorResponse } = require("../helpers/helpers");
-const { HTTP_NOT_FOUND, HTTP_OK, HTTP_UNPROCESSABLE_ENTITY } = require("../helpers/response.helpers");
+const { isUndefined, isStringOnTheList } = require("../helpers/compare.helpers");
+const { searchForUserWithOnlyToken, findUserSurveyTypeResponses } = require("../helpers/db-operation.helpers");
+const {
+  formatInvalidFieldErrorResponse,
+  formatInvalidDateFieldErrorResponse,
+  formatInvalidTokenErrorResponse,
+  formatInvalidFieldValueErrorResponse,
+} = require("../helpers/helpers");
+const { logTrace } = require("../helpers/logger-api");
+const {
+  HTTP_NOT_FOUND,
+  HTTP_OK,
+  HTTP_UNPROCESSABLE_ENTITY,
+  HTTP_UNAUTHORIZED,
+} = require("../helpers/response.helpers");
 const {
   areAllFieldsPresent,
   mandatory_non_empty_fields_survey,
   isFieldsLengthValid,
   isObjectLengthValid,
   validateDateFields,
+  verifyAccessToken,
 } = require("../helpers/validation.helpers");
 
-function handleSurvey(req, res) {
+function handleSurvey(req, res, isAdmin) {
+  const urlEnds = req.url.replace(/\/\/+/g, "/");
+
+  let foundUser = undefined;
+  if (isStringOnTheList(req.method, ["GET", "POST"]) && urlEnds?.includes("/api/surveys/manualapi/") && !isAdmin) {
+    const verifyTokenResult = verifyAccessToken(req, res, "surveys/manualapi", req.url);
+    foundUser = searchForUserWithOnlyToken(verifyTokenResult);
+    logTrace("handleSurvey: foundUser:", { method: req.method, urlEnds, foundUser });
+
+    if (isUndefined(foundUser) || isUndefined(verifyTokenResult)) {
+      res.status(HTTP_UNAUTHORIZED).json(formatInvalidTokenErrorResponse());
+      return;
+    }
+  }
+
   if (req.method === "GET" && req.url.endsWith("/api/surveys/manualapi/questions")) {
     // TODO: Add the logic to get the survey questions
 
@@ -21,6 +49,7 @@ function handleSurvey(req, res) {
         .send(formatInvalidFieldErrorResponse(mandatoryFieldValid, mandatory_non_empty_fields_survey));
       return;
     }
+
     const objectLengthValid = isObjectLengthValid(req.body);
     if (!objectLengthValid.status) {
       res
@@ -28,6 +57,7 @@ function handleSurvey(req, res) {
         .send(formatInvalidFieldErrorResponse(objectLengthValid, mandatory_non_empty_fields_survey));
       return;
     }
+
     const fieldsLengthValid = isFieldsLengthValid(req.body);
     if (!fieldsLengthValid.status) {
       res
@@ -42,10 +72,41 @@ function handleSurvey(req, res) {
       return;
     }
 
-    // TODO: Save the survey data
+    // TODO: refactor into function
+    const surveyType = 1;
+    const typeValid = req.body?.type == surveyType;
+    if (!typeValid) {
+      res
+        .status(HTTP_UNPROCESSABLE_ENTITY)
+        .send(formatInvalidFieldValueErrorResponse({ status: false, error: "Invalid Type" }, "type"));
+      return;
+    }
 
-    res.status(HTTP_OK).json({});
-  } else if (req.url.endsWith("/api/survey")) {
+    let foundSurveys = findUserSurveyTypeResponses(foundUser.id, surveyType);
+    let foundSurvey = foundSurveys[0];
+
+    if (isUndefined(foundSurvey)) {
+      req.url = `/api/survey-responses`;
+      req.method = "POST";
+      const survey = req.body;
+      logTrace("handleSurvey: create a survey via POST:", {
+        method: req.method,
+        url: req.url,
+        body: survey,
+      });
+      return;
+    } else {
+      req.method = "PUT";
+      req.url = `/api/survey-responses/${foundSurvey.id}`;
+      const survey = req.body;
+      logTrace("handleSurvey: overwrite survey via POST -> PUT::", {
+        method: req.method,
+        url: req.url,
+        body: survey,
+      });
+      return;
+    }
+  } else if (req.url.includes("/api/survey") || req.url.includes("/api/survey-responses")) {
     res.status(HTTP_NOT_FOUND).json({});
   }
   return;

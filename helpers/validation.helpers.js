@@ -69,9 +69,9 @@ function isObjectLengthValid(obj, maxLength = 20000) {
 function areAllFieldsPresent(body, all_possible_fields) {
   let error = "";
   const keys = Object.keys(body);
-  for (let index = 0; index < keys.length; index++) {
-    const key = keys[index];
-    if (!all_possible_fields.includes(key)) {
+  for (let index = 0; index < all_possible_fields.length; index++) {
+    const key = all_possible_fields[index];
+    if (!keys.includes(key)) {
       error = `Field validation: "${key}" not in [${all_possible_fields}]`;
       logError("areAllFieldsPresent:", error);
       return { status: false, error };

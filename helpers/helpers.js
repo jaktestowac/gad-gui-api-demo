@@ -31,6 +31,10 @@ function formatInvalidFieldErrorResponse(isValid, all_fields) {
   );
 }
 
+function formatInvalidFieldValueErrorResponse(isValid, field) {
+  return formatErrorResponse(`Field value is invalid: ${isValid?.error}`, field);
+}
+
 function formatInvalidDateFieldErrorResponse(isValid, fields = ["date"]) {
   return formatErrorResponse(`Date field is invalid: ${isValid.error}`, fields);
 }
@@ -360,4 +364,5 @@ module.exports = {
   getUniqueValues,
   getGaussianRandom,
   getGaussianRandomInt,
+  formatInvalidFieldValueErrorResponse,
 };
