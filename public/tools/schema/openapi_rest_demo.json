@@ -2937,18 +2937,36 @@
       }
     },
 
-    "/surveys/manualapi/questions": {
+    "/surveys/manualapi/questions/{id}": {
       "get": {
         "tags": ["surveys"],
         "summary": "Get surveys questions",
         "operationId": "getSurveysManualApiQuestions",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of question to return its likes",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful operation",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Surveys"
+                  "$ref": "#/components/schemas/SurveyQuestion"
                 }
               }
             }
@@ -2970,7 +2988,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewSurvey"
+                "$ref": "#/components/schemas/SurveyResponse"
               }
             }
           }
@@ -2981,7 +2999,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Survey"
+                  "$ref": "#/components/schemas/SurveyResponse"
                 }
               }
             }
@@ -2995,6 +3013,29 @@
           },
           "422": {
             "description": "Invalid score data",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/surveys/manualapi/statistics": {
+      "get": {
+        "tags": ["surveys"],
+        "summary": "Get surveys statistics",
+        "operationId": "getSurveysManualApiStatistics",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SurveyQuestion"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
             "content": {}
           }
         }
@@ -3747,7 +3788,8 @@
           }
         }
       },
-      "Survey": {
+      "SurveyQuestion": {},
+      "SurveyResponse": {
         "type": "object",
         "properties": {
           "id": {
@@ -3778,9 +3820,12 @@
             "format": "date-time"
           },
           "answers": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
             }
           }
         }

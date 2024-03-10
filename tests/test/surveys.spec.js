@@ -148,7 +148,7 @@ describe(`Endpoint ${baseSurveysManualApiUrl}`, () => {
       });
     });
     describe("POST", () => {
-      it(`POST ${baseUrl} - should not create a survey with empty body`, async () => {
+      it(`POST ${baseUrl} - should not create a survey response with empty body`, async () => {
         // Act:
         const response = await request
           .post(baseUrl + "/responses")
@@ -158,7 +158,7 @@ describe(`Endpoint ${baseSurveysManualApiUrl}`, () => {
         // Assert:
         expect(response.status).to.equal(422);
       });
-      it(`POST ${baseUrl} - should create a survey`, async () => {
+      it(`POST ${baseUrl} - should create a survey response`, async () => {
         // Arrange:
         const survey = generateSurveyBody(userId1, 1, [{ test: 0 }]);
 
@@ -171,7 +171,7 @@ describe(`Endpoint ${baseSurveysManualApiUrl}`, () => {
         // Assert:
         expect(response.status).to.equal(201);
       });
-      it(`POST ${baseUrl} - should overwrite a survey`, async () => {
+      it(`POST ${baseUrl} - should overwrite a survey response`, async () => {
         // Arrange:
         const survey1 = generateSurveyBody(userId2, 1, [{ test: 1 }]);
         const survey2 = generateSurveyBody(userId2, 1, [{ test: 2 }]);

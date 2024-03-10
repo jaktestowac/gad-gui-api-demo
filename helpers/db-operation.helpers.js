@@ -223,6 +223,38 @@ function findUserSurveyTypeResponses(userId, type) {
   return foundSurveyResponses;
 }
 
+function aggregateSurveyAnswers(keysToSkip = ["Open-Ended Questions"]) {
+  const aggregated = {};
+
+  surveyResponsesDb().forEach((response) => {
+    const answers = response.answers;
+
+    Object.keys(answers).forEach((response) => {
+      const responseValues = answers[response];
+
+      if (!keysToSkip.includes(response)) {
+        responseValues.forEach((value) => {
+          const responseKey = response.toLowerCase();
+
+          if (!aggregated[responseKey]) {
+            aggregated[responseKey] = {};
+          }
+
+          const valueKey = value.toLowerCase();
+
+          if (!aggregated[responseKey][valueKey]) {
+            aggregated[responseKey][valueKey] = 0;
+          }
+
+          aggregated[responseKey][valueKey]++;
+        });
+      }
+    });
+  });
+
+  return aggregated;
+}
+
 module.exports = {
   searchForUserWithToken,
   searchForUserWithEmail,
@@ -248,4 +280,5 @@ module.exports = {
   findUserBookmarks,
   findUserSurveyResponses,
   findUserSurveyTypeResponses,
+  aggregateSurveyAnswers,
 };
