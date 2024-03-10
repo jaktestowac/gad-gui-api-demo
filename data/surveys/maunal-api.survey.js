@@ -3,7 +3,7 @@ const questions = {
         <div id="question-1" class="question" value="REST API testing">
             <h3>Question: Do you have experience in manual REST API testing?</h3>
             <input type="radio" name="rest api testing" value="yes" next="2" /><span>Yes</span>
-            <input type="radio" name="rest api testing" value="no" next="998" /><span>No</span>
+            <input type="radio" name="rest api testing" value="no" next="100" /><span>No</span>
             <br><br id="toRemove">
             <button id="buttonNext" onclick="parseQuestion(1)">Next</button>
         </div>`,
@@ -51,6 +51,7 @@ const questions = {
             <input type="radio" name="testing frequency" value="daily" next="100"> <span>Daily</span>
             <input type="radio" name="testing frequency" value="weekly" next="100"> <span>Weekly</span>
             <input type="radio" name="testing frequency" value="monthly" next="100"> <span>Monthly</span>
+            <input type="radio" name="testing frequency" value="never" next="100"> <span>Never</span>
             <br><br id="toRemove">
             <button id="buttonNext" onclick="parseQuestion(99)">Next</button>
         </div>`,
@@ -61,17 +62,28 @@ const questions = {
             <input type="checkbox" name="test types" value="Module tests" next="998"> <span>Module tests</span>
             <input type="checkbox" name="test types" value="Contract tests" next="998"> <span>Contract tests</span>
             <input type="checkbox" name="test types" value="Integration tests" next="998"> <span>Integration tests</span>
-            <input type="checkbox" name="test types" value="E2e tests" next="998"> <span>E2e tests</span>
+            <input type="checkbox" name="test types" value="E2e tests" next="998"> <span>E2e tests</span><br>
             <input type="checkbox" name="test types" value="UAT tests" next="998"> <span>UAT tests</span>
             <input type="checkbox" name="test types" value="Performance tests" next="998"> <span>Performance tests</span>
             <input type="checkbox" name="test types" value="Security tests" next="998"> <span>Security tests</span>
             <input type="checkbox" name="test types" value="Visual tests" next="998"> <span>Visual tests</span>
+            <input type="checkbox" name="test types" value="Accessibility tests" next="998"> <span>Accessibility tests</span><br>
+            <input type="checkbox" name="test types" value="Usability tests" next="998"> <span>Usability tests</span>
+            <input type="checkbox" name="test types" value="Smoke tests" next="998"> <span>Smoke tests</span>
+            <input type="checkbox" name="test types" value="Sanity tests" next="998"> <span>Sanity tests</span>
+            <input type="checkbox" name="test types" value="Regression tests" next="998"> <span>Regression tests</span>
+            <input type="checkbox" name="test types" value="Ad-hoc tests" next="998"> <span>Ad-hoc tests</span><br>
+            <input type="checkbox" name="test types" value="Exploratory tests" next="998"> <span>Exploratory tests</span>
+            <input type="checkbox" name="test types" value="Mutation tests" next="998"> <span>Mutation tests</span>
+            <input type="checkbox" name="test types" value="Fuzz tests" next="998"> <span>Fuzz tests</span>
+            <input type="checkbox" name="test types" value="Chaos tests" next="998"> <span>Chaos tests</span>
+            <input type="checkbox" name="test types" value="other" next="998"> <span>other</span>
             <br><br id="toRemove">
             <button id="buttonNext" onclick="parseQuestion(100)">Next</button>
         </div>`,
   998: `
-        <div id="question-998" class="question" value="Plans to start API testing">
-            <h3>Question: What are You plans to start testing API?</h3>
+        <div id="question-998" class="question" value="Plans to improve testing">
+            <h3>Question: What are You plans to improve testing?</h3>
             <textarea rows="4" class="body" style="width: 350px" next="999"></textarea>
             <br><br id="toRemove">
             <button id="buttonNext" onclick="parseQuestion(998)">Next</button>
