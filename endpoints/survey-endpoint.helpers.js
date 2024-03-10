@@ -1,14 +1,16 @@
-const { questions } = require("../data/surveys/maunal-api.survey");
+const { questions, extractValueFromQuestions } = require("../data/surveys/maunal-api.survey");
 const { isUndefined, isStringOnTheList } = require("../helpers/compare.helpers");
 const {
   searchForUserWithOnlyToken,
   findUserSurveyTypeResponses,
   aggregateSurveyAnswers,
 } = require("../helpers/db-operation.helpers");
+const { surveyResponsesDb } = require("../helpers/db.helpers");
 const {
   formatInvalidFieldErrorResponse,
   formatInvalidDateFieldErrorResponse,
   formatInvalidFieldValueErrorResponse,
+  filterSelectedKeys,
 } = require("../helpers/helpers");
 const { logTrace } = require("../helpers/logger-api");
 const {
@@ -32,9 +34,13 @@ function handleSurvey(req, res, isAdmin) {
   let foundUser = undefined;
 
   if (req.method === "GET" && req.url.endsWith("/api/surveys/manualapi/statistics")) {
-    const aggregatedSurveyAnswers = aggregateSurveyAnswers();
+    const data = surveyResponsesDb();
+    const topics = extractValueFromQuestions(questions);
+    const aggregatedSurveyAnswers = aggregateSurveyAnswers(data);
 
-    res.status(HTTP_OK).json(aggregatedSurveyAnswers);
+    const filtered = filterSelectedKeys(aggregatedSurveyAnswers, topics);
+
+    res.status(HTTP_OK).json(filtered);
     return;
   }
 
@@ -44,7 +50,6 @@ function handleSurvey(req, res, isAdmin) {
     logTrace("handleSurvey: foundUser:", { method: req.method, urlEnds, foundUser });
 
     if (isUndefined(foundUser) || isUndefined(verifyTokenResult)) {
-      console.log("HTTP_UNAUTHORIZED", HTTP_UNAUTHORIZED);
       // TODO: fix this
       // res.status(HTTP_UNAUTHORIZED).json(formatInvalidTokenErrorResponse());
       // return;

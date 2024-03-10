@@ -89,12 +89,24 @@ const questions = {
             <button id="buttonNext" onclick="parseQuestion(998)">Next</button>
         </div>`,
   999: `
-        <div id="question-999" class="question" value="999">
+        <div id="question-999" class="question">
             <h3>Thank You for Your time!</h3>
             <button id="buttonFinish" onclick="finish()">Send Your Answers</button>
         </div>`,
 };
 
-module.exports = {
-  questions,
-};
+function extractValueFromQuestions(questions) {
+  const values = [];
+  Object.keys(questions).forEach((key) => {
+    const regex = /value="([^"]+)"/;
+    const match = questions[key].match(regex);
+    const value = match ? match[1] : undefined;
+
+    if (value !== undefined) {
+      values.push(value);
+    }
+  });
+  return values;
+}
+
+module.exports = { extractValueFromQuestions, questions };

@@ -335,6 +335,17 @@ function findMaxValues(obj, count) {
 
 const getUniqueValues = (inputList) => [...new Set(inputList.map(Number))];
 
+function filterSelectedKeys(obj, selectedKeys) {
+  const newObj = {};
+  for (const key in obj) {
+    const lowercaseKey = key.toLowerCase();
+    if (selectedKeys.map((k) => k.toLowerCase()).includes(lowercaseKey)) {
+      newObj[key] = obj[key];
+    }
+  }
+  return newObj;
+}
+
 module.exports = {
   getRandomIntBasedOnDay,
   getRandomIdBasedOnDay,
@@ -365,4 +376,5 @@ module.exports = {
   getGaussianRandom,
   getGaussianRandomInt,
   formatInvalidFieldValueErrorResponse,
+  filterSelectedKeys,
 };

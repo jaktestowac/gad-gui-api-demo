@@ -223,10 +223,10 @@ function findUserSurveyTypeResponses(userId, type) {
   return foundSurveyResponses;
 }
 
-function aggregateSurveyAnswers(keysToSkip = ["Open-Ended Questions"]) {
+function aggregateSurveyAnswers(responses, keysToSkip = ["Open-Ended Questions"]) {
   const aggregated = {};
 
-  surveyResponsesDb().forEach((response) => {
+  responses.forEach((response) => {
     const answers = response.answers;
 
     Object.keys(answers).forEach((response) => {
