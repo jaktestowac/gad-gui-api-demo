@@ -1,0 +1,18 @@
+{
+  "en": {
+    "surveyStatsTitle": "Survey Stats",
+    "languageLabel": "Language:",
+    "englishOption": "🇬🇧 English",
+    "polishOption": "🇵🇱 Polish",
+    "categoryHeader": "Category",
+    "countHeader": "Count"
+  },
+  "pl": {
+    "surveyStatsTitle": "Statystyki Ankiet",
+    "languageLabel": "Język:",
+    "englishOption": "🇬🇧 Angielski",
+    "polishOption": "🇵🇱 Polski",
+    "categoryHeader": "Kategoria",
+    "countHeader": "Liczba"
+  }
+}
