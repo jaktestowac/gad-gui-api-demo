@@ -109,6 +109,11 @@ function gamesDb() {
   return db["games"];
 }
 
+function translationsDb() {
+  const db = JSON.parse(fs.readFileSync(getDbPath(getConfigValue(ConfigKeys.TRANSLATIONS_DB)), "UTF-8"));
+  return db;
+}
+
 function userDb() {
   return fullDb()["users"];
 }
@@ -271,4 +276,5 @@ module.exports = {
   getApiRequestsDetails: visitsData.getApiRequestsDetails,
   getNonApiRequestsDetails: visitsData.getNonApiRequestsDetails,
   visitsData,
+  translationsDb,
 };

@@ -5,7 +5,18 @@
     "englishOption": "🇬🇧 English",
     "polishOption": "🇵🇱 Polish",
     "categoryHeader": "Category",
-    "countHeader": "Count"
+    "countHeader": "Count",
+    "btnArticles": "Articles",
+    "btnComments": "Comments",
+    "btnUsers": "Users",
+    "btnStats": "Stats",
+    "logoutBtn": "Logout",
+    "surveysHeader": "Surveys",
+    "btnSurveyStatistics": "Statistics",
+    "surveyStatisticsHeader": "Survey Statistics",
+    "btnTakeSurvey": "Take Survey",
+    "testingApiLabel": "Testing REST API",
+    "noDataHeader": "No data available"
   },
   "pl": {
     "surveyStatsTitle": "Statystyki Ankiet",
@@ -13,6 +24,17 @@
     "englishOption": "🇬🇧 Angielski",
     "polishOption": "🇵🇱 Polski",
     "categoryHeader": "Kategoria",
-    "countHeader": "Liczba"
+    "countHeader": "Liczba",
+    "btnArticles": "Artykuły",
+    "btnComments": "Komentarze",
+    "btnUsers": "Użytkownicy",
+    "btnStats": "Statystyki",
+    "logoutBtn": "Wyloguj",
+    "surveysHeader": "Ankiety",
+    "btnSurveyStatistics": "Statystyki",
+    "surveyStatisticsHeader": "Statystyki Ankiet",
+    "btnTakeSurvey": "Wypełnij",
+    "testingApiLabel": "Testowanie REST API",
+    "noDataHeader": "Brak danych"
   }
 }

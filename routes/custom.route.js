@@ -9,6 +9,7 @@ const {
   getApiRequestsDetails,
   getNonApiCalls,
   getNonApiRequestsDetails,
+  translationsDb,
 } = require("../helpers/db.helpers");
 const {
   formatErrorResponse,
@@ -256,6 +257,16 @@ const customRoutes = (req, res, next) => {
     } else if (req.method === "GET" && req.url.endsWith("/pluginstatuses")) {
       res.json(pluginStatuses);
       req.body = pluginStatuses;
+    } else if (req.method === "GET" && req.url.endsWith("/translations")) {
+      const dbData = translationsDb();
+      res.json(dbData);
+      req.body = dbData;
+    } else if (req.method === "GET" && req.url.includes("/translations/")) {
+      let language = getIdFromUrl(urlEnds);
+      const dbData = translationsDb();
+      const translations = dbData[language] ?? {};
+      res.json(translations);
+      req.body = translations;
     }
     if (res.headersSent !== true) {
       next();

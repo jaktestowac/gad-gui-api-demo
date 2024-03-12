@@ -1,4 +1,4 @@
-const { questions, extractValueFromQuestions } = require("../data/surveys/maunal-api.survey");
+const { extractValueFromQuestions, getSurveyQuestions } = require("../data/surveys/survey.helper");
 const { isUndefined, isStringOnTheList } = require("../helpers/compare.helpers");
 const {
   searchForUserWithOnlyToken,
@@ -33,10 +33,16 @@ function handleSurvey(req, res, isAdmin) {
 
   let foundUser = undefined;
 
-  if (req.method === "GET" && req.url.endsWith("/api/surveys/manualapi/statistics")) {
+  if (req.method === "GET" && req.url.includes("/api/surveys/statistics/")) {
+    const surveyType = urlEnds.split("/").slice(-1)[0];
     const data = surveyResponsesDb();
-    const topics = extractValueFromQuestions(questions);
-    const aggregatedSurveyAnswers = aggregateSurveyAnswers(data);
+    const topics = extractValueFromQuestions(getSurveyQuestions(surveyType));
+    const aggregatedSurveyAnswers = aggregateSurveyAnswers(data, surveyType);
+
+    if (Object.keys(aggregatedSurveyAnswers).length === 0) {
+      res.status(HTTP_NOT_FOUND).json({});
+      return;
+    }
 
     const filtered = filterSelectedKeys(aggregatedSurveyAnswers, topics);
 
@@ -44,7 +50,7 @@ function handleSurvey(req, res, isAdmin) {
     return;
   }
 
-  if (isStringOnTheList(req.method, ["GET", "POST"]) && urlEnds?.includes("/api/surveys/manualapi/") && !isAdmin) {
+  if (isStringOnTheList(req.method, ["GET", "POST"]) && urlEnds?.includes("/api/surveys/") && !isAdmin) {
     const verifyTokenResult = verifyAccessToken(req, res, "surveys/manualapi", req.url);
     foundUser = searchForUserWithOnlyToken(verifyTokenResult);
     logTrace("handleSurvey: foundUser:", { method: req.method, urlEnds, foundUser });
@@ -56,14 +62,17 @@ function handleSurvey(req, res, isAdmin) {
     }
   }
 
-  if (req.method === "GET" && req.url.includes("/api/surveys/manualapi/questions/")) {
+  if (req.method === "GET" && /\/api\/surveys\/[0-9]{1,}\/questions\//.test(req.url)) {
+    // URL is valid
+    const surveyType = req.url.match(/\/api\/surveys\/([0-9]{1,})\/questions\//)[1];
+
     const questionId = urlEnds.split("/").slice(-1)[0];
     if (isUndefined(questionId)) {
       res.status(HTTP_NOT_FOUND).json({});
       return;
     }
 
-    const question = questions[questionId];
+    const question = getSurveyQuestions(surveyType)[questionId];
 
     if (isUndefined(question)) {
       res.status(HTTP_NOT_FOUND).json({});
@@ -71,7 +80,7 @@ function handleSurvey(req, res, isAdmin) {
     }
 
     res.status(HTTP_OK).json({ question: question });
-  } else if (req.method === "POST" && req.url.endsWith("/api/surveys/manualapi/responses")) {
+  } else if (req.method === "POST" && req.url.endsWith("/api/surveys/responses")) {
     const mandatoryFieldValid = areAllFieldsPresent(req.body, mandatory_non_empty_fields_survey);
     if (!mandatoryFieldValid.status) {
       res
@@ -102,9 +111,10 @@ function handleSurvey(req, res, isAdmin) {
       return;
     }
 
-    // TODO: refactor into function
-    const surveyType = 1;
-    const typeValid = req.body?.type == surveyType;
+    const surveyType = req.body?.type;
+    // TODO: refactor this
+    const typeValid = isStringOnTheList(surveyType, ["1", "2"]);
+
     if (!typeValid) {
       res
         .status(HTTP_UNPROCESSABLE_ENTITY)

@@ -1,3 +1,13 @@
+const translationsEndpoint = "../../api/translations";
+let translationsStored = {};
+
+async function issueGetTranslations() {
+  const translations = await fetch(translationsEndpoint, {
+    headers: { ...formatHeaders(), userid: getId() },
+  }).then((r) => r.json());
+  return translations;
+}
+
 function getLanguage() {
   let lang = undefined;
   const cookies = document.cookie.split(";");
@@ -14,48 +24,9 @@ function addLanguageCookie(value) {
   document.cookie = `lang=${value?.toLowerCase()}; path=/`;
 }
 
-const translations = {
-  en: {
-    surveyStatsTitle: "Survey Stats",
-    languageLabel: "Language:",
-    englishOption: "🇬🇧 English",
-    polishOption: "🇵🇱 Polish",
-    categoryHeader: "Category",
-    countHeader: "Count",
-    btnArticles: "Articles",
-    btnComments: "Comments",
-    btnUsers: "Users",
-    btnStats: "Stats",
-    logoutBtn: "Logout",
-    surveysHeader: "Surveys",
-    btnSurveyStatistics: "Statistics",
-    surveyStatisticsHeader: "Survey Statistics",
-    btnTakeSurvey: "Take Survey",
-    testingApiLabel: "Testing REST API",
-  },
-  pl: {
-    surveyStatsTitle: "Statystyki Ankiet",
-    languageLabel: "Język:",
-    englishOption: "🇬🇧 Angielski",
-    polishOption: "🇵🇱 Polski",
-    categoryHeader: "Kategoria",
-    countHeader: "Liczba",
-    btnArticles: "Artykuły",
-    btnComments: "Komentarze",
-    btnUsers: "Użytkownicy",
-    btnStats: "Statystyki",
-    logoutBtn: "Wyloguj",
-    surveysHeader: "Ankiety",
-    btnSurveyStatistics: "Statystyki",
-    surveyStatisticsHeader: "Statystyki Ankiet",
-    btnTakeSurvey: "Wypełnij",
-    testingApiLabel: "Testowanie REST API",
-  },
-};
-
 function changeLanguage(language) {
   addLanguageCookie(language);
-  const translation = translations[language];
+  const translation = translationsStored[language];
   if (translation) {
     Object.keys(translation).forEach((translationKey) => {
       const elements = getElementsById(translationKey);
@@ -72,5 +43,13 @@ function getElementsById(id) {
   return Array.from(document.querySelectorAll(`[id="${id}"]`));
 }
 
-addLanguageSelect(getLanguage());
-changeLanguage(getLanguage());
+function detectDomChange(callback) {
+  const observer = new MutationObserver(callback);
+  observer.observe(document, { childList: true, subtree: true });
+}
+
+issueGetTranslations().then((translations) => {
+  translationsStored = translations;
+  addLanguageSelect(getLanguage());
+  changeLanguage(getLanguage());
+});

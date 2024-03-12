@@ -24,6 +24,7 @@ const ConfigKeys = {
   KEEP_SIGNIN_TOKEN_EXPIRES_IN: "keepSignInTokenExpiresIn",
   AUTH_USER_DB: "authUserDb",
   GAMES_DB: "gamesDbPath",
+  TRANSLATIONS_DB: "translationsDbPath",
   DB_PATH: "dbPath",
   DB_RESTORE_PATH: "dbRestorePath",
   DB_BIG_RESTORE_PATH: "dbBigRestorePath",

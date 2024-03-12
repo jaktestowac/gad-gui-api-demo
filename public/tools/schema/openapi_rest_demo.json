@@ -2088,6 +2088,43 @@
         }
       }
     },
+    "/translations": {
+      "get": {
+        "tags": ["other"],
+        "summary": "Get translations",
+        "operationId": "getTranslations",
+        "responses": {
+          "200": {
+            "description": "Translations received",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/translations/{lang}": {
+      "get": {
+        "tags": ["other"],
+        "summary": "Get translations",
+        "operationId": "getTranslations",
+        "parameters": [
+          {
+            "name": "lang",
+            "in": "path",
+            "description": "Language",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Translations received",
+            "content": {}
+          }
+        }
+      }
+    },
     "/restoreDB": {
       "get": {
         "tags": ["other"],
@@ -2937,12 +2974,62 @@
       }
     },
 
-    "/surveys/manualapi/questions/{id}": {
+    "/surveys/statistics/{type}": {
+      "get": {
+        "tags": ["surveys"],
+        "summary": "Get surveys statistics",
+        "operationId": "getSurveysStatistics",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "path",
+            "description": "type of surveys",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SurveyStatistics"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/surveys/{surveyType}/questions/{id}": {
       "get": {
         "tags": ["surveys"],
         "summary": "Get surveys questions",
         "operationId": "getSurveysManualApiQuestions",
         "parameters": [
+          {
+            "name": "surveyType",
+            "in": "path",
+            "description": "Type of survey",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "name": "id",
             "in": "path",
@@ -2978,7 +3065,7 @@
         }
       }
     },
-    "/surveys/manualapi/responses": {
+    "/surveys/responses": {
       "post": {
         "tags": ["surveys"],
         "summary": "Create a new survey response",
@@ -3013,29 +3100,6 @@
           },
           "422": {
             "description": "Invalid score data",
-            "content": {}
-          }
-        }
-      }
-    },
-    "/surveys/manualapi/statistics": {
-      "get": {
-        "tags": ["surveys"],
-        "summary": "Get surveys statistics",
-        "operationId": "getSurveysManualApiStatistics",
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SurveyQuestion"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not found",
             "content": {}
           }
         }

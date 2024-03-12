@@ -1,7 +1,7 @@
-const surveyStatisticsEndpoint = "../../api/surveys/manualapi/statistics";
+const surveyStatisticsEndpoint = "../../api/surveys/statistics";
 
 async function issueGetSurveyStatistics() {
-  const surveyStatisticsData = await fetch(surveyStatisticsEndpoint, {
+  const surveyStatisticsData = await fetch(`${surveyStatisticsEndpoint}/${statsType}`, {
     headers: { ...formatHeaders(), userid: getId() },
   }).then((r) => r.json());
   return surveyStatisticsData;
@@ -34,6 +34,15 @@ function drawChart(title, data) {
 
 function getAndDrawCharts() {
   issueGetSurveyStatistics().then((surveyStatisticsData) => {
+    if (Object.keys(surveyStatisticsData).length === 0) {
+      const containerDiv = document.getElementById("noDataHeader");
+      containerDiv.style.visibility = "visible";
+      return;
+    } else {
+      const containerDiv = document.getElementById("noDataHeader");
+      containerDiv.style.visibility = "hidden";
+    }
+
     Object.keys(surveyStatisticsData).forEach((key) => {
       const data = [];
       Object.keys(surveyStatisticsData[key]).forEach((answer) => {
@@ -44,6 +53,8 @@ function getAndDrawCharts() {
     });
   });
 }
+
+let statsType = getParams()["type"];
 
 // Load google charts
 google.charts.load("current", { packages: ["corechart"] });

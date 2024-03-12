@@ -223,33 +223,36 @@ function findUserSurveyTypeResponses(userId, type) {
   return foundSurveyResponses;
 }
 
-function aggregateSurveyAnswers(responses, keysToSkip = ["Open-Ended Questions"]) {
+function aggregateSurveyAnswers(responses, surveyType, keysToSkip = ["Open-Ended Questions"]) {
   const aggregated = {};
 
   responses.forEach((response) => {
     const answers = response.answers;
+    const type = response.type;
 
-    Object.keys(answers).forEach((response) => {
-      const responseValues = answers[response];
+    if (areIdsEqual(type, surveyType)) {
+      Object.keys(answers).forEach((response) => {
+        const responseValues = answers[response];
 
-      if (!keysToSkip.includes(response)) {
-        responseValues.forEach((value) => {
-          const responseKey = response.toLowerCase();
+        if (!keysToSkip.includes(response)) {
+          responseValues.forEach((value) => {
+            const responseKey = response.toLowerCase();
 
-          if (!aggregated[responseKey]) {
-            aggregated[responseKey] = {};
-          }
+            if (!aggregated[responseKey]) {
+              aggregated[responseKey] = {};
+            }
 
-          const valueKey = value.toLowerCase();
+            const valueKey = value.toLowerCase();
 
-          if (!aggregated[responseKey][valueKey]) {
-            aggregated[responseKey][valueKey] = 0;
-          }
+            if (!aggregated[responseKey][valueKey]) {
+              aggregated[responseKey][valueKey] = 0;
+            }
 
-          aggregated[responseKey][valueKey]++;
-        });
-      }
-    });
+            aggregated[responseKey][valueKey]++;
+          });
+        }
+      });
+    }
   });
 
   return aggregated;
