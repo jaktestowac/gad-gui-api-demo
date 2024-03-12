@@ -35,6 +35,12 @@ function changeLanguage(language) {
           element.textContent = translation[translationKey];
         });
       }
+      const elementsByTranslateId = getElementsByTranslateId(translationKey);
+      if (elementsByTranslateId) {
+        elementsByTranslateId.forEach((element) => {
+          element.textContent = translation[translationKey];
+        });
+      }
     });
   }
 }
@@ -43,9 +49,13 @@ function getElementsById(id) {
   return Array.from(document.querySelectorAll(`[id="${id}"]`));
 }
 
+function getElementsByTranslateId(id) {
+  return Array.from(document.querySelectorAll(`[translateId="${id}"]`));
+}
+
 function detectDomChange(callback) {
   const observer = new MutationObserver(callback);
-  observer.observe(document, { childList: true, subtree: true });
+  observer.observe(document, { characterData: true, attributes: true, childList: false, subtree: true });
 }
 
 issueGetTranslations().then((translations) => {

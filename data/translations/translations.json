@@ -16,7 +16,10 @@
     "surveyStatisticsHeader": "Survey Statistics",
     "btnTakeSurvey": "Take Survey",
     "testingApiLabel": "Testing REST API",
-    "noDataHeader": "No data available"
+    "noDataHeader": "No data available",
+    "btnReturnToSurveys": "Return to Surveys",
+    "testAutomationLabel": "Test Automation",
+    "buttonStartSurvey": "Start Survey"
   },
   "pl": {
     "surveyStatsTitle": "Statystyki Ankiet",
@@ -35,6 +38,9 @@
     "surveyStatisticsHeader": "Statystyki Ankiet",
     "btnTakeSurvey": "Wypełnij",
     "testingApiLabel": "Testowanie REST API",
-    "noDataHeader": "Brak danych"
+    "noDataHeader": "Brak danych",
+    "btnReturnToSurveys": "Powrót do Ankiet",
+    "testAutomationLabel": "Automatyzacja Testów",
+    "buttonStartSurvey": "Rozpocznij Ankietę"
   }
 }

@@ -1,10 +1,10 @@
-const surveyQuestionsEndpoint = "../../api/surveys/manualapi/questions";
-const surveyResponsesEndpoint = "../../api/surveys/manualapi/responses";
+const surveyQuestionsEndpoint = "../../api/surveys";
+const surveyResponsesEndpoint = "../../api/surveys/responses";
 
 const responses = {};
 
-async function issueGetSurveyQuestions(id) {
-  const surveyQuestionsData = await fetch(`${surveyQuestionsEndpoint}/${id}`, {
+async function issueGetSurveyQuestions(type, id) {
+  const surveyQuestionsData = await fetch(`${surveyQuestionsEndpoint}/${type}/questions/${id}`, {
     headers: { ...formatHeaders(), userid: getId() },
   }).then((r) => r.json());
   return surveyQuestionsData;
@@ -117,7 +117,7 @@ function parseQuestion(currentId) {
   const uniqueNextQuestions = [...new Set(nextQuestions)];
   const lowestNextQuestions = Math.min(...uniqueNextQuestions);
 
-  getQuestion(lowestNextQuestions);
+  getQuestion(surveyType, lowestNextQuestions);
 }
 
 function finish() {
@@ -129,14 +129,15 @@ function finish() {
 function start() {
   const buttonStart = document.getElementById("buttonStart");
   buttonStart.style.display = "none";
-  getQuestion(1);
+  getQuestion(surveyType, 1);
 }
 
-async function getQuestion(id) {
-  issueGetSurveyQuestions(id).then((surveyQuestionsData) => {
+async function getQuestion(surveyType, id) {
+  issueGetSurveyQuestions(surveyType, id).then((surveyQuestionsData) => {
     const questionContainer = document.getElementById("questionContainer");
     questionContainer.innerHTML += surveyQuestionsData.question;
   });
 }
 
+let surveyType = getParams()["type"];
 showMessage("To start press <strong>Start Survey</strong>", false);

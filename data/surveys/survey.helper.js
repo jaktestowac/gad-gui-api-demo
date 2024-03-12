@@ -26,4 +26,15 @@ function getSurveyQuestions(surveyType) {
   }
 }
 
-module.exports = { extractValueFromQuestions, getSurveyQuestions };
+function getSurveyFullName(surveyType) {
+  switch (`${surveyType}`) {
+    case "1":
+      return manualApiSurvey.fullName;
+    case "2":
+      return automationSurvey.fullName;
+    default:
+      return {};
+  }
+}
+
+module.exports = { extractValueFromQuestions, getSurveyQuestions, getSurveyFullName };

@@ -1,3 +1,4 @@
+const fullName = "Experience in REST API Testing";
 const questions = {
   1: `
         <div id="question-1" class="question" value="REST API testing">
@@ -97,4 +98,4 @@ const questions = {
         </div>`,
 };
 
-module.exports = { questions };
+module.exports = { questions, fullName };

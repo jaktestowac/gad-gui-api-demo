@@ -236,10 +236,10 @@ function addLanguageSelect(selectedOption) {
           onchange="changeLanguage(this.value)"
           style="display: inline-block; width: 100px; height:30px; margin: 5px 5px 5px 5px; font-size:16px"
         >
-          <option value="en" id="englishOption" style="font-size:16px" ${
+          <option value="en" translateId="englishOption" style="font-size:16px" ${
             selectedLanguage === "en" ? "selected" : ""
           }>🇬🇧 English</option>
-          <option value="pl" id="polishOption" style="font-size:16px" ${
+          <option value="pl" translateId="polishOption" style="font-size:16px" ${
             selectedLanguage === "pl" ? "selected" : ""
           }>🇵🇱 Polish</option>
         </select>
