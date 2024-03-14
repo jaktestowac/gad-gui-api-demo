@@ -234,7 +234,7 @@ function aggregateSurveyAnswers(responses, surveyType, keysToSkip = ["Open-Ended
       Object.keys(answers).forEach((response) => {
         const responseValues = answers[response];
 
-        if (!keysToSkip.includes(response)) {
+        if (Array.isArray(responseValues) && !keysToSkip.includes(response)) {
           responseValues.forEach((value) => {
             const responseKey = response.toLowerCase();
 

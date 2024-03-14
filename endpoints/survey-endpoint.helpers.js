@@ -11,6 +11,7 @@ const {
   formatInvalidDateFieldErrorResponse,
   formatInvalidFieldValueErrorResponse,
   filterSelectedKeys,
+  formatInvalidTokenErrorResponse,
 } = require("../helpers/helpers");
 const { logTrace } = require("../helpers/logger-api");
 const {
@@ -51,14 +52,13 @@ function handleSurvey(req, res, isAdmin) {
   }
 
   if (isStringOnTheList(req.method, ["GET", "POST"]) && urlEnds?.includes("/api/surveys/") && !isAdmin) {
-    const verifyTokenResult = verifyAccessToken(req, res, "surveys/manualapi", req.url);
+    const verifyTokenResult = verifyAccessToken(req, res, "surveys", req.url);
     foundUser = searchForUserWithOnlyToken(verifyTokenResult);
     logTrace("handleSurvey: foundUser:", { method: req.method, urlEnds, foundUser });
 
     if (isUndefined(foundUser) || isUndefined(verifyTokenResult)) {
-      // TODO: fix this
-      // res.status(HTTP_UNAUTHORIZED).json(formatInvalidTokenErrorResponse());
-      // return;
+      res.status(HTTP_UNAUTHORIZED).json(formatInvalidTokenErrorResponse());
+      return;
     }
   }
 

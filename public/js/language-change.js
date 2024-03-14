@@ -58,6 +58,10 @@ function detectDomChange(callback) {
   observer.observe(document, { characterData: true, attributes: true, childList: false, subtree: true });
 }
 
+function getTranslatedText(elementId) {
+  return translationsStored[elementId];
+}
+
 issueGetTranslations().then((translations) => {
   translationsStored = translations;
   addLanguageSelect(getLanguage());

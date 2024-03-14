@@ -19,7 +19,11 @@
     "noDataHeader": "No data available",
     "btnReturnToSurveys": "Return to Surveys",
     "testAutomationLabel": "Test Automation",
-    "buttonStartSurvey": "Start Survey"
+    "buttonStartSurvey": "Start Survey",
+    "surveyHeader": "Testing Survey",
+    "toStartSurveyMessage": "To start press 'Start Survey'",
+    "thankYouMessage": "Thank you!",
+    "anErrorOccurredMessage": "An error occurred. Please try again later."
   },
   "pl": {
     "surveyStatsTitle": "Statystyki Ankiet",
@@ -41,6 +45,10 @@
     "noDataHeader": "Brak danych",
     "btnReturnToSurveys": "Powrót do Ankiet",
     "testAutomationLabel": "Automatyzacja Testów",
-    "buttonStartSurvey": "Rozpocznij Ankietę"
+    "buttonStartSurvey": "Rozpocznij Ankietę",
+    "surveyHeader": "Ankieta Testerska",
+    "toStartSurveyMessage": "Aby rozpocząć naciśnij 'Rozpocznij Ankietę'",
+    "thankYouMessage": "Dziękujemy!",
+    "anErrorOccurredMessage": "Wystąpił błąd. Proszę spróbować ponownie później."
   }
 }

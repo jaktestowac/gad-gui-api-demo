@@ -39,9 +39,9 @@ async function issuePostSurveyResponses(responses) {
     body: JSON.stringify(data),
   }).then((response) => {
     if (response.status === 201 || response.status === 200) {
-      showMessage("Thank You!", false);
+      showMessage(`<span translateId="thankYouMessage">Thank You!<span>`, false);
     } else {
-      showMessage("An error occurred!", true);
+      showMessage(`<span translateId="anErrorOccurredMessage">An error occurred!<span>`, true);
     }
   });
 }
@@ -139,5 +139,13 @@ async function getQuestion(surveyType, id) {
   });
 }
 
+async function getSurveyDetails(surveyType) {
+  issueGetSurveyQuestions(surveyType, 0).then((surveyQuestionsData) => {
+    const surveyDetails = document.getElementById("surveyDetails");
+    surveyDetails.innerHTML += surveyQuestionsData.question;
+  });
+}
+
 let surveyType = getParams()["type"];
-showMessage("To start press <strong>Start Survey</strong>", false);
+showMessage(`<span translateId="toStartSurveyMessage">To start press <strong>Start Survey</strong><span>`, false);
+getSurveyDetails(surveyType);

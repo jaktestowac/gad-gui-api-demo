@@ -1,9 +1,9 @@
-const { request, expect, baseSurveysManualApiUrl } = require("../config.js");
+const { request, expect, baseSurveysUrl } = require("../config.js");
 const { authUser, generateSurveyBody, authUser2 } = require("../helpers/data.helpers.js");
 const { setupEnv, gracefulQuit, sleep } = require("../helpers/helpers.js");
 
-describe(`Endpoint ${baseSurveysManualApiUrl}`, () => {
-  const baseUrl = baseSurveysManualApiUrl;
+describe.only(`Endpoint ${baseSurveysUrl}`, () => {
+  const baseUrl = baseSurveysUrl;
 
   before(async () => {
     await setupEnv();
@@ -105,8 +105,99 @@ describe(`Endpoint ${baseSurveysManualApiUrl}`, () => {
         });
       });
     });
+    ["/survey-responses"].forEach((endpoint) => {
+      let baseUrl = rootUrl + endpoint;
+
+      describe(`Without auth - ${baseUrl}`, () => {
+        it(`GET ${baseUrl}`, async () => {
+          // Act:
+          const response = await request.get(baseUrl);
+
+          // Assert:
+          expect(response.status).to.equal(401);
+        });
+
+        it(`POST ${baseUrl}`, () => {
+          return request.post(baseUrl).send({}).expect(401);
+        });
+
+        it(`PUT ${baseUrl}`, () => {
+          return request.put(baseUrl).send({}).expect(404);
+        });
+
+        it(`PUT ${baseUrl}/:id`, () => {
+          return request.put(`${baseUrl}/1`).send({}).expect(404);
+        });
+
+        it(`PATCH ${baseUrl}`, () => {
+          return request.patch(baseUrl).send({}).expect(404);
+        });
+
+        it(`PATCH ${baseUrl}/:id`, () => {
+          return request.patch(`${baseUrl}/1`).send({}).expect(404);
+        });
+
+        it(`DELETE ${baseUrl}`, () => {
+          return request.delete(baseUrl).expect(404);
+        });
+
+        it(`DELETE ${baseUrl}/:id`, () => {
+          return request.delete(`${baseUrl}/1`).expect(404);
+        });
+
+        it(`HEAD ${baseUrl}/:id`, () => {
+          return request.head(`${baseUrl}/1`).expect(404);
+        });
+      });
+    });
+    ["/statistics"].forEach((endpoint) => {
+      let baseUrl = rootUrl + endpoint;
+
+      describe(`Without auth - ${baseUrl}`, () => {
+        it(`GET ${baseUrl}`, async () => {
+          // Act:
+          const response = await request.get(baseUrl);
+
+          // Assert:
+          expect(response.status).to.equal(401);
+        });
+
+        it(`POST ${baseUrl}`, () => {
+          return request.post(baseUrl).send({}).expect(401);
+        });
+
+        it(`PUT ${baseUrl}`, () => {
+          return request.put(baseUrl).send({}).expect(404);
+        });
+
+        it(`PUT ${baseUrl}/:id`, () => {
+          return request.put(`${baseUrl}/1`).send({}).expect(404);
+        });
+
+        it(`PATCH ${baseUrl}`, () => {
+          return request.patch(baseUrl).send({}).expect(404);
+        });
+
+        it(`PATCH ${baseUrl}/:id`, () => {
+          return request.patch(`${baseUrl}/1`).send({}).expect(404);
+        });
+
+        it(`DELETE ${baseUrl}`, () => {
+          return request.delete(baseUrl).expect(404);
+        });
+
+        it(`DELETE ${baseUrl}/:id`, () => {
+          return request.delete(`${baseUrl}/1`).expect(404);
+        });
+
+        it(`HEAD ${baseUrl}/:id`, () => {
+          return request.head(`${baseUrl}/1`).expect(404);
+        });
+      });
+    });
   });
   describe(`With auth - ${baseUrl}`, () => {
+    const rootUrl = baseUrl;
     let headers1;
     let userId1;
     let headers2;
@@ -124,77 +215,173 @@ describe(`Endpoint ${baseSurveysManualApiUrl}`, () => {
       headers2["userid"] = userId2;
     });
 
-    describe("GET", () => {
-      it(`GET ${baseUrl} - should return existing question`, async () => {
-        // Act:
-        const response = await request.get(baseUrl + "/questions/1").set(headers1);
+    describe("/questions", () => {
+      describe("GET", () => {
+        it(`GET ${baseUrl}/1/questions/1 - should return existing question`, async () => {
+          // Act:
+          const response = await request.get(baseUrl + "/1/questions/1").set(headers1);
 
-        // Assert:
-        expect(response.status).to.equal(200);
-      });
-      it(`GET ${baseUrl} - should not return not existing question`, async () => {
-        // Act:
-        const response = await request.get(baseUrl + "/questions/0000").set(headers1);
+          // Assert:
+          expect(response.status).to.equal(200);
+        });
+        it(`GET ${baseUrl}/1/questions/0000 - should not return not existing question`, async () => {
+          // Act:
+          const response = await request.get(baseUrl + "/1/questions/0000").set(headers1);
 
-        // Assert:
-        expect(response.status).to.equal(404);
-      });
-      it(`GET ${baseUrl} - should not return anything`, async () => {
-        // Act:
-        const response = await request.get(baseUrl + "/questions/").set(headers1);
+          // Assert:
+          expect(response.status).to.equal(404);
+        });
+        it(`GET ${baseUrl}/1/questions/ - should not return anything`, async () => {
+          // Act:
+          const response = await request.get(baseUrl + "/1/questions/").set(headers1);
 
-        // Assert:
-        expect(response.status).to.equal(404);
+          // Assert:
+          expect(response.status).to.equal(404);
+        });
+        it(`GET ${baseUrl}/questions/1 - should not return not existing question`, async () => {
+          // Act:
+          const response = await request.get(baseUrl + "/questions/1").set(headers1);
+
+          // Assert:
+          expect(response.status).to.equal(404);
+        });
+        it(`GET ${baseUrl}/questions/0000 - should not return not existing question`, async () => {
+          // Act:
+          const response = await request.get(baseUrl + "/questions/0000").set(headers1);
+
+          // Assert:
+          expect(response.status).to.equal(404);
+        });
+        it(`GET ${baseUrl}/questions/ - should not return anything`, async () => {
+          // Act:
+          const response = await request.get(baseUrl + "/questions/").set(headers1);
+
+          // Assert:
+          expect(response.status).to.equal(404);
+        });
+        it(`GET ${baseUrl}/0000/questions/1 - should not return not existing question`, async () => {
+          // Act:
+          const response = await request.get(baseUrl + "/0000/questions/1").set(headers1);
+
+          // Assert:
+          expect(response.status).to.equal(404);
+        });
+        it(`GET ${baseUrl}/0000/questions/0000 - should not return not existing question`, async () => {
+          // Act:
+          const response = await request.get(baseUrl + "/0000/questions/0000").set(headers1);
+
+          // Assert:
+          expect(response.status).to.equal(404);
+        });
+        it(`GET ${baseUrl}/0000/questions/ - should not return anything`, async () => {
+          // Act:
+          const response = await request.get(baseUrl + "/0000/questions/").set(headers1);
+
+          // Assert:
+          expect(response.status).to.equal(404);
+        });
       });
     });
-    describe("POST", () => {
-      it(`POST ${baseUrl} - should not create a survey response with empty body`, async () => {
-        // Act:
-        const response = await request
-          .post(baseUrl + "/responses")
-          .set(headers1)
-          .send({});
+    describe("/responses", () => {
+      describe("POST", () => {
+        it(`POST ${baseUrl} - should not create a survey response with empty body`, async () => {
+          // Act:
+          const response = await request
+            .post(baseUrl + "/responses")
+            .set(headers1)
+            .send({});
 
-        // Assert:
-        expect(response.status).to.equal(422);
+          // Assert:
+          expect(response.status).to.equal(422);
+        });
+        it(`POST ${baseUrl} - should create a survey response`, async () => {
+          // Arrange:
+          const survey = generateSurveyBody(userId1, 1, [{ test: 0 }]);
+
+          // Act:
+          const response = await request
+            .post(baseUrl + "/responses")
+            .set(headers1)
+            .send(survey);
+
+          // Assert:
+          expect(response.status).to.equal(201);
+        });
+        it(`POST ${baseUrl} - should overwrite a survey response`, async () => {
+          // Arrange:
+          const survey1 = generateSurveyBody(userId2, 1, [{ test: 1 }]);
+          const survey2 = generateSurveyBody(userId2, 1, [{ test: 2 }]);
+
+          // Act:
+          const response1 = await request
+            .post(baseUrl + "/responses")
+            .set(headers2)
+            .send(survey1);
+
+          // Assert:
+          expect(response1.status).to.equal(201);
+
+          await sleep(200); // service is slow
+
+          // Act:
+          const response2 = await request
+            .post(baseUrl + "/responses")
+            .set(headers2)
+            .send(survey2);
+
+          // Assert:
+          expect(response2.status).to.equal(200);
+        });
       });
-      it(`POST ${baseUrl} - should create a survey response`, async () => {
-        // Arrange:
-        const survey = generateSurveyBody(userId1, 1, [{ test: 0 }]);
+    });
 
-        // Act:
-        const response = await request
-          .post(baseUrl + "/responses")
-          .set(headers1)
-          .send(survey);
+    ["/statistics"].forEach((endpoint) => {
+      describe(endpoint, () => {
+        let baseUrl = rootUrl + endpoint;
 
-        // Assert:
-        expect(response.status).to.equal(201);
-      });
-      it(`POST ${baseUrl} - should overwrite a survey response`, async () => {
-        // Arrange:
-        const survey1 = generateSurveyBody(userId2, 1, [{ test: 1 }]);
-        const survey2 = generateSurveyBody(userId2, 1, [{ test: 2 }]);
+        it(`GET ${baseUrl}`, async () => {
+          // Act:
+          const response = await request.get(baseUrl).set(headers1);
 
-        // Act:
-        const response1 = await request
-          .post(baseUrl + "/responses")
-          .set(headers2)
-          .send(survey1);
+          // Assert:
+          expect(response.status).to.equal(404);
+        });
 
-        // Assert:
-        expect(response1.status).to.equal(201);
+        it(`POST ${baseUrl}`, () => {
+          return request.post(baseUrl).set(headers1).send({}).expect(404);
+        });
 
-        await sleep(200); // service is slow
+        it(`POST ${baseUrl}/1`, () => {
+          return request.post(`${baseUrl}/1`).set(headers1).send({}).expect(404);
+        });
 
-        // Act:
-        const response2 = await request
-          .post(baseUrl + "/responses")
-          .set(headers2)
-          .send(survey2);
+        it(`PUT ${baseUrl}`, () => {
+          return request.put(baseUrl).set(headers1).send({}).expect(404);
+        });
 
-        // Assert:
-        expect(response2.status).to.equal(200);
+        it(`PUT ${baseUrl}/:id`, () => {
+          return request.put(`${baseUrl}/1`).set(headers1).send({}).expect(404);
+        });
+
+        it(`PATCH ${baseUrl}`, () => {
+          return request.patch(baseUrl).set(headers1).send({}).expect(404);
+        });
+
+        it(`PATCH ${baseUrl}/:id`, () => {
+          return request.patch(`${baseUrl}/1`).set(headers1).send({}).expect(404);
+        });
+
+        it(`DELETE ${baseUrl}`, () => {
+          return request.delete(baseUrl).set(headers1).expect(404);
+        });
+
+        it(`DELETE ${baseUrl}/:id`, () => {
+          return request.delete(`${baseUrl}/1`).set(headers1).expect(404);
+        });
+
+        it(`HEAD ${baseUrl}/:id`, () => {
+          return request.head(`${baseUrl}/1`).set(headers1).expect(404);
+        });
       });
     });
   });
