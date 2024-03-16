@@ -209,6 +209,13 @@ function findUserBookmarks(userId) {
   return foundBookmark;
 }
 
+function findUserSurveyResponse(userId, responseId) {
+  const foundSurveyResponses = surveyResponsesDb().filter((surveyResponse) => {
+    return areIdsEqual(surveyResponse["user_id"], userId) && areIdsEqual(surveyResponse["id"], responseId);
+  });
+  return foundSurveyResponses;
+}
+
 function findUserSurveyResponses(userId) {
   const foundSurveyResponses = surveyResponsesDb().filter((surveyResponse) => {
     return areIdsEqual(surveyResponse["user_id"], userId);
@@ -284,4 +291,5 @@ module.exports = {
   findUserSurveyResponses,
   findUserSurveyTypeResponses,
   aggregateSurveyAnswers,
+  findUserSurveyResponse,
 };

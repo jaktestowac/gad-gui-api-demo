@@ -4,6 +4,7 @@ const {
   searchForUserWithOnlyToken,
   findUserSurveyTypeResponses,
   aggregateSurveyAnswers,
+  findUserSurveyResponse,
 } = require("../helpers/db-operation.helpers");
 const { surveyResponsesDb } = require("../helpers/db.helpers");
 const {
@@ -146,6 +147,17 @@ function handleSurvey(req, res, isAdmin) {
       });
       return;
     }
+  } else if (req.method === "GET" && req.url.includes("/api/surveys/responses/")) {
+    const surveyResponseId = urlEnds.split("/").slice(-1)[0];
+
+    const surveyResponse = findUserSurveyResponse(foundUser.id, surveyResponseId);
+
+    if (isUndefined(surveyResponse) || surveyResponse.length === 0) {
+      res.status(HTTP_NOT_FOUND).json({});
+      return;
+    }
+
+    res.status(HTTP_OK).json(surveyResponse[0]);
   } else if (req.url.includes("/api/survey") || req.url.includes("/api/survey-responses")) {
     res.status(HTTP_NOT_FOUND).json({});
   }

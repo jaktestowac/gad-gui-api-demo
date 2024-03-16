@@ -7878,6 +7878,24 @@
       "date": "2024-03-10T19:27:13Z",
       "user_id": "4",
       "id": 4
+    },
+    {
+      "answers": {
+        "REST API testing": ["yes"],
+        "REST API tools": ["Postman", "Swagger"],
+        "Using newman": ["no"],
+        "Using CI/CD": ["yes"],
+        "CI/CD tools": ["GitHub Actions"],
+        "Testing frequency": ["daily"],
+        "Test types": ["Module tests", "Integration tests", "E2e tests", "UAT tests", "Performance tests"],
+        "Open-Ended Questions": {
+          "Plans to improve testing": [""]
+        }
+      },
+      "type": 1,
+      "date": "2024-03-11T19:27:13Z",
+      "user_id": "2",
+      "id": 5
     }
   ]
 }
