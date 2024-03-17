@@ -24,7 +24,7 @@ async function issuePostSurveyResponses(responses) {
 
   const data = {
     answers: responses,
-    type: 1,
+    type: surveyType,
     date: date,
     user_id: getId(),
   };

@@ -7896,6 +7896,23 @@
       "date": "2024-03-11T19:27:13Z",
       "user_id": "2",
       "id": 5
+    },
+    {
+      "answers": {
+        "experience in test automation": ["yes"],
+        "experience in test automation in years": ["2-3 years"],
+        "automation tools": ["Playwright", "Selenium"],
+        "languages for automation tools": ["JavaScript", "TypeScript", "Python"],
+        "Number of automated tests": ["50-100"],
+        "Automated test types": ["Integration tests", "E2e tests"],
+        "Open-Ended Questions": {
+          "Plans to improve skills": ["Learn more about Playwright"]
+        }
+      },
+      "type": 2,
+      "date": "2024-03-17T01:43:30Z",
+      "user_id": "2",
+      "id": 6
     }
   ]
 }

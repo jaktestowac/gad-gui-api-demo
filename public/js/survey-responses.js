@@ -55,14 +55,21 @@ function createTable(surveyResponsesData) {
   return table;
 }
 
-function displaySurveyResponses() {
+function displaySurveyResponses(surveyType) {
   issueGetSurveyResponses().then((surveyResponsesData) => {
     for (const data of surveyResponsesData) {
+      if (`${surveyType}` !== `${data.type}`) {
+        continue;
+      }
       const table = createTable(data.answers);
       const surveyResponsesContainer = document.getElementById("surveyResponsesContainer");
       surveyResponsesContainer.appendChild(table);
+
+      const hr = document.createElement("hr");
+      surveyResponsesContainer.appendChild(hr);
     }
   });
 }
 
-displaySurveyResponses();
+let surveyType = getParams()["type"];
+displaySurveyResponses(surveyType);
