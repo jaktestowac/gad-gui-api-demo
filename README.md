@@ -23,13 +23,14 @@ Features of **🦎 GAD**:
 - **GUI** (front-end)
 - **REST API** (back-end)
 - **Swagger** Doc
-- Simple **DataBase** (json) with REST API endpoints to clear/restore all data
+- Simple **DataBase** (JSON) with REST API endpoints to clear/restore all data
 - **Authentication** and **Authorization**
 - **User** <-> resources logic (calculations, statistics)
 - Different **data presentation** (charts, tables etc.)
 - **Feature flags** configurable from UI!
+- **Bug flags** to enable/disable different bugs - configurable from UI!
 - **Dynamic config**
-- **Challenging elements for test automation** (iframes, file uploads, drag&drop, likes, labels, logic on front-end and back-end, games etc.)
+- **Challenging elements for test automation** (iframes, file uploads, drag&drop, likes, labels, logic on front-end and back-end, dynamic elements, games etc.)
 - **Admins "backoffice"** with additional tools and functionalities
 
 # Deployment
@@ -124,10 +125,10 @@ docker run -p 3000:3000 -d jaktestowac/gad
 or specific version:
 
 ```
-docker run -p 3000:3000 -d jaktestowac/gad:2.1
+docker run -p 3000:3000 -d jaktestowac/gad:2.5.5
 ```
 
 Application should be running under http://localhost:3000/
 
-Image is available at:
-[hub.docker.com/repository/docker/jaktestowac](https://hub.docker.com/repository/docker/jaktestowac/gad/general)
+Images are available at:
+[🐋 hub.docker.com/repository/docker/jaktestowac](https://hub.docker.com/repository/docker/jaktestowac/gad/general)
