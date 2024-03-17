@@ -17,9 +17,9 @@ function extractValueFromQuestions(questions) {
 
 function getSurveyQuestions(surveyType) {
   switch (`${surveyType}`) {
-    case "1":
+    case `${manualApiSurvey.type}`:
       return manualApiSurvey.questions;
-    case "2":
+    case `${automationSurvey.type}`:
       return automationSurvey.questions;
     default:
       return {};
@@ -28,13 +28,17 @@ function getSurveyQuestions(surveyType) {
 
 function getSurveyFullName(surveyType) {
   switch (`${surveyType}`) {
-    case "1":
+    case `${manualApiSurvey.type}`:
       return manualApiSurvey.fullName;
-    case "2":
+    case `${automationSurvey.type}`:
       return automationSurvey.fullName;
     default:
       return {};
   }
 }
 
-module.exports = { extractValueFromQuestions, getSurveyQuestions, getSurveyFullName };
+function getSurveyTypes() {
+  return [manualApiSurvey.type, automationSurvey.type];
+}
+
+module.exports = { extractValueFromQuestions, getSurveyQuestions, getSurveyFullName, getSurveyTypes };

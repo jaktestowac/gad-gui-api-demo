@@ -1,4 +1,5 @@
 const fullName = "Experience in REST API Testing";
+const type = 1;
 const questions = {
   0: `
         <div >
@@ -102,4 +103,4 @@ const questions = {
         </div>`,
 };
 
-module.exports = { questions, fullName };
+module.exports = { questions, fullName, type };

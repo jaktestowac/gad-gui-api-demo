@@ -1,4 +1,6 @@
-const { extractValueFromQuestions, getSurveyQuestions } = require("../data/surveys/survey.helper");
+const { isBugEnabled } = require("../config/config-manager");
+const { BugConfigKeys } = require("../config/enums");
+const { extractValueFromQuestions, getSurveyQuestions, getSurveyTypes } = require("../data/surveys/survey.helper");
 const { isUndefined, isStringOnTheList } = require("../helpers/compare.helpers");
 const {
   searchForUserWithOnlyToken,
@@ -48,6 +50,11 @@ function handleSurvey(req, res, isAdmin) {
     }
 
     const filtered = filterSelectedKeys(aggregatedSurveyAnswers, topics);
+
+    if (isBugEnabled(BugConfigKeys.BUG_SURVEY_001)) {
+      res.status(HTTP_OK).json(filtered);
+      return;
+    }
 
     if (Object.keys(filtered).length === 0) {
       res.status(HTTP_NOT_FOUND).json({});
@@ -119,10 +126,13 @@ function handleSurvey(req, res, isAdmin) {
     }
 
     const surveyType = req.body?.type;
-    // TODO: refactor this
-    const typeValid = isStringOnTheList(surveyType, ["1", "2"]);
+    let typeValid = isStringOnTheList(surveyType, getSurveyTypes());
 
-    if (!typeValid) {
+    if (isBugEnabled(BugConfigKeys.BUG_SURVEY_002)) {
+      typeValid = true;
+    }
+
+    if (typeValid !== true) {
       res
         .status(HTTP_UNPROCESSABLE_ENTITY)
         .send(formatInvalidFieldValueErrorResponse({ status: false, error: "Invalid Type" }, "type"));
@@ -131,6 +141,10 @@ function handleSurvey(req, res, isAdmin) {
 
     let foundSurveys = findUserSurveyTypeResponses(foundUser.id, surveyType);
     let foundSurvey = foundSurveys[0];
+
+    if (isBugEnabled(BugConfigKeys.BUG_SURVEY_003)) {
+      foundSurvey = undefined;
+    }
 
     if (isUndefined(foundSurvey)) {
       req.url = `/api/survey-responses`;

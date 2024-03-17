@@ -1,4 +1,5 @@
 const fullName = "Experience in Test Automation";
+const type = 2;
 const questions = {
   0: `
           <div  >
@@ -102,4 +103,4 @@ const questions = {
         </div>`,
 };
 
-module.exports = { questions, fullName };
+module.exports = { questions, fullName, type };
