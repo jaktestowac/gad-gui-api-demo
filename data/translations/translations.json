@@ -23,7 +23,9 @@
     "surveyHeader": "Testing Survey",
     "toStartSurveyMessage": "To start press 'Start Survey'",
     "thankYouMessage": "Thank you!",
-    "anErrorOccurredMessage": "An error occurred. Please try again later."
+    "anErrorOccurredMessage": "An error occurred. Please try again later.",
+    "surveyResponsesHeader": "Survey Responses",
+    "btnSurveyResponses": "Responses"
   },
   "pl": {
     "surveyStatsTitle": "Statystyki Ankiet",
@@ -49,6 +51,8 @@
     "surveyHeader": "Ankieta Testerska",
     "toStartSurveyMessage": "Aby rozpocząć naciśnij 'Rozpocznij Ankietę'",
     "thankYouMessage": "Dziękujemy!",
-    "anErrorOccurredMessage": "Wystąpił błąd. Proszę spróbować ponownie później."
+    "anErrorOccurredMessage": "Wystąpił błąd. Proszę spróbować ponownie później.",
+    "surveyResponsesHeader": "Odpowiedzi na Ankietę",
+    "btnSurveyResponses": "Odpowiedzi"
   }
 }

@@ -2618,7 +2618,7 @@
         "testing frequency": ["weekly"],
         "Test types": ["Integration tests", "E2e tests"],
         "Open-Ended Questions": {
-          "Plans to improve testing": [""]
+          "Plans to improve testing": ["Learn more Playwright for API Testing"]
         }
       },
       "type": 1,
@@ -2680,7 +2680,7 @@
           "Visual tests"
         ],
         "Open-Ended Questions": {
-          "Plans to improve testing": [""]
+          "Plans to improve testing": ["Learn more REST API"]
         }
       },
       "type": 1,
@@ -2698,7 +2698,7 @@
         "Testing frequency": ["daily"],
         "Test types": ["Module tests", "Integration tests", "E2e tests", "UAT tests", "Performance tests"],
         "Open-Ended Questions": {
-          "Plans to improve testing": [""]
+          "Plans to improve testing": ["Learn more Playwright for API Testing"]
         }
       },
       "type": 1,
