@@ -83,6 +83,9 @@ function parseQuestion(currentId) {
     textResponse = true;
     inputValues = [textareaElement.value];
     nextQuestions.push(textareaElement.getAttribute("next"));
+
+    textareaElement.disabled = true;
+    textareaElement.innerHTML = textareaElement.value;
   }
 
   if (nextQuestions.length === 0 || inputValues.length === 0) {

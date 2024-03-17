@@ -15,11 +15,11 @@ const questions = {
   2: `
         <div id="question-2" class="question" value="REST API tools">
             <h3>Question: Which tools have you used for manual testing of REST API?</h3>
-            <input type="checkbox" value="Swagger" next="6"> <span>Swagger</span>
+            <input type="checkbox" value="Swagger" next="4"> <span>Swagger</span>
             <input type="checkbox" value="Postman" next="3"> <span>Postman</span>
-            <input type="checkbox" value="Bruno" next="6"> <span>Bruno</span>
-            <input type="checkbox" value="Dev Tools" next="6"> <span>Dev Tools</span>
-            <input type="checkbox" value="Other" next="6"> <span>Other</span>
+            <input type="checkbox" value="Bruno" next="4"> <span>Bruno</span>
+            <input type="checkbox" value="Dev Tools" next="4"> <span>Dev Tools</span>
+            <input type="checkbox" value="Other" next="4"> <span>Other</span>
             <br><br id="toRemove">
             <button id="buttonNext" onclick="parseQuestion(2)">Next</button>
         </div>`,
