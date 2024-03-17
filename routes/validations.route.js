@@ -31,6 +31,7 @@ const { handleBookmarks } = require("../endpoints/bookmarks-endpoint.helpers");
 const { handleMinesweeper } = require("../endpoints/minesweeper-endpoint.helpers");
 const { areStringsEqualIgnoringCase, isUndefined } = require("../helpers/compare.helpers");
 const { handleSurvey } = require("../endpoints/survey-endpoint.helpers");
+const { handleBugEater } = require("../endpoints/bug-eater-endpoint.helpers");
 
 const validationsRoutes = (req, res, next) => {
   let isAdmin = false;
@@ -113,6 +114,9 @@ const validationsRoutes = (req, res, next) => {
     }
     if (req.url.includes("/api/minesweeper")) {
       handleMinesweeper(req, res);
+    }
+    if (req.url.includes("/api/bug-eater")) {
+      handleBugEater(req, res);
     }
     if (req.url.includes("/api/bookmarks")) {
       handleBookmarks(req, res);

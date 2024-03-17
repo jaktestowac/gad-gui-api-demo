@@ -10,6 +10,20 @@ let gameInterval;
 const baseInterval = 200;
 const intervalStep = 10;
 
+const bugEaterScoreEndpoint = "../../api/bug-eater/score";
+
+async function issuePostScoreRequest(score) {
+  fetch(bugEaterScoreEndpoint, {
+    method: "POST",
+    body: JSON.stringify({ score }),
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+  });
+}
+
 function createCell(x, y, className) {
   const cell = document.createElement("div");
   cell.className = className;
@@ -65,8 +79,10 @@ function moveSnake() {
   }
   if (isGameOver()) {
     clearInterval(gameInterval);
-    alert(`Game Over! Your score is ${score}`);
-    resetGame();
+    issuePostScoreRequest(score).then(() => {
+      alert(`Game Over! Your score is ${score}`);
+      resetGame();
+    });
   }
   drawBoard();
 }
