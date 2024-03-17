@@ -73,7 +73,7 @@ function joinUser(sessions, userId, sessionCode) {
   if (isUndefined(existingSession.firstUserId)) {
     existingSession.firstUserId = userId;
   } else if (isUndefined(existingSession.secondUserId)) {
-    existingSession.firstUserId = userId;
+    existingSession.secondUserId = userId;
   } else {
     logTrace("joinUser: User cannot join the game", { existingSession, userId, sessionCode });
     return undefined;
@@ -154,6 +154,11 @@ function handleTicTacToe(req, res) {
     }
 
     const sessionCode = req.body.code;
+    if (isUndefined(sessionCode)) {
+      res.status(HTTP_UNPROCESSABLE_ENTITY).json(formatErrorResponse("Session code not provided"));
+      return;
+    }
+
     const canJoin = userCanJoin(sessions, foundUser.id, sessionCode);
     if (canJoin !== true) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).json(canJoin);
@@ -178,7 +183,13 @@ function handleTicTacToe(req, res) {
       res.status(HTTP_UNAUTHORIZED).json(formatInvalidTokenErrorResponse());
       return;
     }
-    const sessionCode = req.body.sessionCode;
+
+    const sessionCode = req.body.code;
+
+    if (isUndefined(sessionCode)) {
+      res.status(HTTP_UNPROCESSABLE_ENTITY).json(formatErrorResponse("Session code not provided"));
+      return;
+    }
 
     addScore(sessions, sessionCode, foundUser.id);
     const currentSession = stopSession(sessions, sessionCode);

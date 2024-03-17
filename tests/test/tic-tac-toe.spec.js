@@ -133,7 +133,7 @@ describe("Endpoint /tic-tac-toe", () => {
         // Assert:
         expect(response.status, JSON.stringify(response.body)).to.equal(201);
         const sessionCode = response.body.code;
-        expect(sessionCode.length, JSON.stringify(response.body)).toBeGreaterThan(0);
+        expect(sessionCode.length, JSON.stringify(response.body)).to.be.greaterThan(0);
       });
 
       it(`PUT ${rootUrl}`, () => {
@@ -180,7 +180,7 @@ describe("Endpoint /tic-tac-toe", () => {
         const response = await request.post(rootUrl).set(headers1).send({});
 
         // Assert:
-        expect(response.status).to.equal(200);
+        expect(response.status).to.equal(422);
       });
 
       it(`PUT ${rootUrl}`, () => {
@@ -227,7 +227,7 @@ describe("Endpoint /tic-tac-toe", () => {
         const response = await request.post(rootUrl).set(headers1);
 
         // Assert:
-        expect(response.status).to.equal(200);
+        expect(response.status).to.equal(422);
       });
 
       it(`POST ${rootUrl}/:id`, () => {
@@ -262,7 +262,7 @@ describe("Endpoint /tic-tac-toe", () => {
         return request.head(`${rootUrl}/1`).set(headers1).expect(404);
       });
     });
-    describe.only(`E2e`, () => {
+    describe(`E2e`, () => {
       it(`should start and join game`, async () => {
         // Act:
         const responseStart = await request.post(`${baseUrl}/start`).set(headers1).send({});
@@ -276,6 +276,32 @@ describe("Endpoint /tic-tac-toe", () => {
 
         // Assert:
         expect(responseJoin.status, JSON.stringify(responseJoin.body)).to.equal(200);
+      });
+      it(`should start, join and stop game`, async () => {
+        // Act:
+        const responseStart = await request.post(`${baseUrl}/start`).set(headers1).send({});
+
+        // Assert:
+        expect(responseStart.status, JSON.stringify(responseStart.body)).to.equal(201);
+        const sessionCode = responseStart.body.code;
+
+        // Act:
+        const responseJoin = await request.post(`${baseUrl}/join`).set(headers2).send({ code: sessionCode });
+
+        // Assert:
+        expect(responseJoin.status, JSON.stringify(responseJoin.body)).to.equal(200);
+        const joinedSession = responseJoin.body;
+        expect(joinedSession.firstUserId, JSON.stringify(joinedSession)).to.not.be.undefined;
+        expect(joinedSession.secondUserId, JSON.stringify(joinedSession)).to.not.be.undefined;
+
+        // Act:
+        const responseStop = await request.post(`${baseUrl}/stop`).set(headers2).send({ code: sessionCode });
+
+        // Assert:
+        expect(responseStop.status, JSON.stringify(responseStop.body)).to.equal(200);
+        const stoppedSession = responseStop.body;
+        expect(stoppedSession.firstUserId, JSON.stringify(stoppedSession)).to.not.be.undefined;
+        expect(stoppedSession.secondUserId, JSON.stringify(stoppedSession)).to.not.be.undefined;
       });
     });
   });
