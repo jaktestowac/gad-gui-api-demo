@@ -106,6 +106,19 @@ input.button-secondary {
   background-color: #007bff;
   border: none;
 }
+
+.button-primary-danger:hover {
+  color: #fff;
+  background-color: #8b2525;
+  border: none;
+}
+
+.button-primary-danger {
+  color: #fff;
+  background-color: #c53b3b;
+  border: none;
+}
+
 .button-secondary:hover {
   color: #fff;
   background-color: #3898ff;
@@ -704,4 +717,25 @@ s .container-mobile {
 .flag {
   font-size: 20px;
   color: #00f;
+}
+
+.separator {
+  display: flex;
+  align-items: center;
+  text-align: center;
+}
+
+.separator::before,
+.separator::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #000;
+}
+
+.separator:not(:empty)::before {
+  margin-right: 0.25em;
+}
+
+.separator:not(:empty)::after {
+  margin-left: 0.25em;
 }
