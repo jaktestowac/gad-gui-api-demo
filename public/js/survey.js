@@ -153,7 +153,7 @@ async function getSurveyDetails(surveyType) {
       return;
     }
 
-    if (surveyDetails === undefined || Object.keys(surveyDetails).length === 0) {
+    if (surveyQuestionsData === undefined || Object.keys(surveyQuestionsData).length === 0) {
       surveyDetails.innerHTML = "<h3>Survey does not exists or was not published yet.</h3>";
       const buttonStart = document.getElementById("buttonStart");
       buttonStart.style.display = "none";

@@ -63,10 +63,11 @@ function displaySurveyResponses(surveyType) {
 
     if (surveyResponsesData === undefined || Object.keys(surveyResponsesData).length === 0) {
       const surveyResponsesContainer = document.getElementById("surveyResponsesContainer");
-      surveyResponsesContainer.innerHTML = "<h3>No Data</h3>";
+      surveyResponsesContainer.innerHTML = "<h3>No Responses Yet</h3>";
       return;
     }
 
+    let surveyResponses = 0;
     for (const data of surveyResponsesData) {
       if (`${surveyType}` !== `${data.type}`) {
         continue;
@@ -77,6 +78,12 @@ function displaySurveyResponses(surveyType) {
 
       const hr = document.createElement("hr");
       surveyResponsesContainer.appendChild(hr);
+      surveyResponses++;
+    }
+
+    if (surveyResponses === 0) {
+      const surveyResponsesContainer = document.getElementById("surveyResponsesContainer");
+      surveyResponsesContainer.innerHTML = "<h3>No Responses Yet</h3>";
     }
   });
 }
