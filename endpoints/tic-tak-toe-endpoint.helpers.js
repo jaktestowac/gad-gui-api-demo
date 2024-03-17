@@ -48,27 +48,27 @@ function registerNewSession(sessions, session) {
 }
 
 function userCanJoin(sessions, userId, sessionCode) {
-  const existingSession = sessions.find((s) => areIdsEqual(s.sessionCode, sessionCode));
+  const existingSession = sessions.find((s) => areIdsEqual(s.code, sessionCode));
   if (existingSession === undefined) {
     logTrace("userCanJoin: Session not found", { userId, sessionCode });
-    return false;
+    return formatErrorResponse("Session not found");
   }
 
   if (!isUndefined(existingSession.firstUserId) && !isUndefined(existingSession.secondUserId)) {
     logTrace("userCanJoin: Session is full", { existingSession, userId, sessionCode });
-    return false;
+    return formatErrorResponse("Session is full");
   }
 
   if (areIdsEqual(existingSession.firstUserId, userId) || areIdsEqual(existingSession.secondUserId, userId)) {
     logTrace("userCanJoin: User is already in the game", { existingSession, userId, sessionCode });
-    return false;
+    return formatErrorResponse("User is already in the game");
   }
 
   return true;
 }
 
 function joinUser(sessions, userId, sessionCode) {
-  const existingSession = sessions.find((s) => areIdsEqual(s.sessionCode, sessionCode));
+  const existingSession = sessions.find((s) => areIdsEqual(s.code, sessionCode));
 
   if (isUndefined(existingSession.firstUserId)) {
     existingSession.firstUserId = userId;
@@ -76,14 +76,15 @@ function joinUser(sessions, userId, sessionCode) {
     existingSession.firstUserId = userId;
   } else {
     logTrace("joinUser: User cannot join the game", { existingSession, userId, sessionCode });
-    return false;
+    return undefined;
   }
 
   existingSession.hasStarted = true;
+  return existingSession;
 }
 
 function addScore(sessions, sessionCode, userId, score) {
-  const existingSession = sessions.find((s) => areIdsEqual(s.sessionCode, sessionCode));
+  const existingSession = sessions.find((s) => areIdsEqual(s.code, sessionCode));
   if (!existingSession) {
     logTrace("stopSession: Session not found", { sessions, sessionCode });
     return existingSession;
@@ -102,7 +103,7 @@ function addScore(sessions, sessionCode, userId, score) {
 }
 
 function stopSession(sessions, sessionCode) {
-  const existingSession = sessions.find((s) => areIdsEqual(s.sessionCode, sessionCode));
+  const existingSession = sessions.find((s) => areIdsEqual(s.code, sessionCode));
   if (!existingSession) {
     logTrace("stopSession: Session not found", { sessions, sessionCode });
     return existingSession;
@@ -136,7 +137,7 @@ function handleTicTacToe(req, res) {
       res.status(HTTP_UNAUTHORIZED).json(formatInvalidTokenErrorResponse());
       return;
     }
-    const newSession = createNewSession(req.body.user_id);
+    const newSession = createNewSession(foundUser.id);
     const currentSession = registerNewSession(sessions, newSession);
 
     logTrace("handleTicTacToe:tic-tac-toe start:", { method: req.method, currentSession });
@@ -152,14 +153,20 @@ function handleTicTacToe(req, res) {
       return;
     }
 
-    const sessionCode = req.body.sessionCode;
+    const sessionCode = req.body.code;
     const canJoin = userCanJoin(sessions, foundUser.id, sessionCode);
-    if (!canJoin) {
-      res.status(HTTP_UNPROCESSABLE_ENTITY).json(formatErrorResponse("User cannot join the game"));
+    if (canJoin !== true) {
+      res.status(HTTP_UNPROCESSABLE_ENTITY).json(canJoin);
       return;
     }
 
     const currentSession = joinUser(sessions, foundUser.id, sessionCode);
+
+    if (isUndefined(currentSession)) {
+      res.status(HTTP_UNPROCESSABLE_ENTITY).json(formatErrorResponse("User cannot join the game"));
+      return;
+    }
+
     res.status(HTTP_OK).json({ ...currentSession, id: undefined });
     return;
   } else if (req.method === "POST" && req.url.endsWith("/api/tic-tac-toe/stop")) {
@@ -175,7 +182,7 @@ function handleTicTacToe(req, res) {
 
     addScore(sessions, sessionCode, foundUser.id);
     const currentSession = stopSession(sessions, sessionCode);
-    
+
     res.status(HTTP_OK).json({ ...currentSession, id: undefined });
     return;
   } else if (req.method === "POST" && req.url.endsWith("/api/tic-tac-toe/score")) {
