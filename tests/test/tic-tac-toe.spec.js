@@ -2,7 +2,7 @@ const { expect, request, baseTicTacToeUrl } = require("../config");
 const { authUser, authUser2 } = require("../helpers/data.helpers");
 const { gracefulQuit, setupEnv } = require("../helpers/helpers");
 
-describe.only("Endpoint /tic-tac-toe", () => {
+describe("Endpoint /tic-tac-toe", () => {
   const baseUrl = baseTicTacToeUrl;
 
   before(async () => {
@@ -220,8 +220,12 @@ describe.only("Endpoint /tic-tac-toe", () => {
         expect(response.status).to.equal(404);
       });
 
-      it(`POST ${rootUrl}`, () => {
-        return request.post(rootUrl).set(headers1).send({}).expect(404);
+      it(`POST ${rootUrl}`, async () => {
+        // Act:
+        const response = await request.post(rootUrl).set(headers1);
+
+        // Assert:
+        expect(response.status).to.equal(200);
       });
 
       it(`POST ${rootUrl}/:id`, () => {

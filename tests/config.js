@@ -10,6 +10,7 @@ const baseFilesArticlesUrl = "/api/files/articles";
 const baseUsersUrl = "/api/users";
 const baseHangmanUrl = "/api/hangman";
 const baseMinesweeperUrl = "/api/minesweeper";
+const baseBugEaterUrl = "/api/bug-eater";
 const baseQuizUrl = "/api/quiz";
 const baseStatsUrl = "/api/stats";
 const baseCommentsUrl = "/api/comments";
@@ -67,4 +68,5 @@ module.exports = {
   existingUserId2,
   baseSurveysUrl,
   baseTicTacToeUrl,
+  baseBugEaterUrl,
 };
