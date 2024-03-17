@@ -2,7 +2,7 @@ const { request, expect, baseSurveysUrl } = require("../config.js");
 const { authUser, generateSurveyBody, authUser2 } = require("../helpers/data.helpers.js");
 const { setupEnv, gracefulQuit, sleep } = require("../helpers/helpers.js");
 
-describe.only(`Endpoint ${baseSurveysUrl}`, () => {
+describe(`Endpoint ${baseSurveysUrl}`, () => {
   const baseUrl = baseSurveysUrl;
 
   before(async () => {

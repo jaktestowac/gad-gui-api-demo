@@ -18,7 +18,7 @@ function isStringOnTheList(value, list, caseSensitive = false) {
   if (caseSensitive === true) {
     return list.includes(`${value}`);
   } else {
-    return list.some((item) => item.toLowerCase() === `${value}`.toLowerCase());
+    return list.some((item) => `${item}`.toLowerCase() === `${value}`.toLowerCase());
   }
 }
 
