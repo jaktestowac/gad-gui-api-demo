@@ -61,7 +61,7 @@ function handleBugEater(req, res) {
         req.url = `/api/scores`;
       }
       req.body = { game_id: gameId, user_id: user.id, score: score.score };
-      logDebug("handleMinesweeper:stop -> PUT/POST scores:", {
+      logDebug("handleBugEater:stop -> PUT/POST scores:", {
         method: req.method,
         url: req.url,
         body: req.body,

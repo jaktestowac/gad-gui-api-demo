@@ -20,6 +20,7 @@ const aboutUrl = "/api/about";
 const baseBookmarksUrl = "/api/bookmarks";
 const baseArticleLabelsUrl = "/api/article-labels";
 const baseSurveysUrl = "/api/surveys";
+const baseTicTacToeUrl = "/api/tic-tac-toe";
 
 const existingUserEmail = "Danial.Dicki@dicki.test";
 const existingUserPass = "test2";
@@ -65,4 +66,5 @@ module.exports = {
   existingUserPass2,
   existingUserId2,
   baseSurveysUrl,
+  baseTicTacToeUrl,
 };

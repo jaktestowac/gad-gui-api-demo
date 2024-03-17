@@ -15,6 +15,10 @@
     {
       "id": 4,
       "name": "Bug Eater"
+    },
+    {
+      "id": 5,
+      "name": "Tic Tac Toe"
     }
   ]
 }

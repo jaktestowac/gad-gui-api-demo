@@ -346,6 +346,16 @@ function filterSelectedKeys(obj, selectedKeys) {
   return newObj;
 }
 
+function generateRandomString(length) {
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let result = "";
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    result += characters.charAt(randomIndex);
+  }
+  return result;
+}
+
 module.exports = {
   getRandomIntBasedOnDay,
   getRandomIdBasedOnDay,
@@ -377,4 +387,5 @@ module.exports = {
   getGaussianRandomInt,
   formatInvalidFieldValueErrorResponse,
   filterSelectedKeys,
+  generateRandomString,
 };
