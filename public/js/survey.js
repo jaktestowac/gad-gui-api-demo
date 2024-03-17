@@ -145,6 +145,21 @@ async function getQuestion(surveyType, id) {
 async function getSurveyDetails(surveyType) {
   issueGetSurveyQuestions(surveyType, 0).then((surveyQuestionsData) => {
     const surveyDetails = document.getElementById("surveyDetails");
+
+    if (surveyQuestionsData.error?.message !== undefined) {
+      surveyDetails.innerHTML = surveyQuestionsData.error?.message;
+      const buttonStart = document.getElementById("buttonStart");
+      buttonStart.style.display = "none";
+      return;
+    }
+
+    if (surveyDetails === undefined || Object.keys(surveyDetails).length === 0) {
+      surveyDetails.innerHTML = "<h3>Survey does not exists or was not published yet.</h3>";
+      const buttonStart = document.getElementById("buttonStart");
+      buttonStart.style.display = "none";
+      return;
+    }
+
     surveyDetails.innerHTML += surveyQuestionsData.question;
   });
 }

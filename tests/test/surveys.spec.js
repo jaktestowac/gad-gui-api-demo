@@ -390,6 +390,21 @@ describe.only(`Endpoint ${baseSurveysUrl}`, () => {
       describe(endpoint, () => {
         let baseUrl = rootUrl + endpoint;
 
+        it(`GET ${baseUrl}/:id - should return valid stats`, async () => {
+          // Act:
+          const response = await request.get(`${baseUrl}/1`).set(headers1);
+
+          // Assert:
+          expect(response.status, JSON.stringify(response.body)).to.equal(200);
+          expect(Object.keys(response.body).length, JSON.stringify(response.body)).to.be.greaterThan(0);
+        });
+        it(`GET ${baseUrl}/:id - should not return stats for not existing survey`, async () => {
+          // Act:
+          const response = await request.get(`${baseUrl}/0011`).set(headers1);
+
+          // Assert:
+          expect(response.status).to.equal(404);
+        });
         it(`GET ${baseUrl}`, async () => {
           // Act:
           const response = await request.get(baseUrl).set(headers1);
@@ -397,12 +412,11 @@ describe.only(`Endpoint ${baseSurveysUrl}`, () => {
           // Assert:
           expect(response.status).to.equal(404);
         });
-
         it(`POST ${baseUrl}`, () => {
           return request.post(baseUrl).set(headers1).send({}).expect(404);
         });
 
-        it(`POST ${baseUrl}/1`, () => {
+        it(`POST ${baseUrl}/:id`, () => {
           return request.post(`${baseUrl}/1`).set(headers1).send({}).expect(404);
         });
 

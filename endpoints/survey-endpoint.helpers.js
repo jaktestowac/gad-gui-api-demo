@@ -49,6 +49,11 @@ function handleSurvey(req, res, isAdmin) {
 
     const filtered = filterSelectedKeys(aggregatedSurveyAnswers, topics);
 
+    if (Object.keys(filtered).length === 0) {
+      res.status(HTTP_NOT_FOUND).json({});
+      return;
+    }
+
     res.status(HTTP_OK).json(filtered);
     return;
   }

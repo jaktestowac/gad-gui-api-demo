@@ -37,8 +37,6 @@ function createTable(surveyResponsesData) {
     questionCell.textContent = question;
 
     if (!Array.isArray(answer)) {
-      console.log("Answer is an array", answer);
-
       let innerTable = createTable(answer);
       answerCell.innerHTML = innerTable.outerHTML;
     } else {
@@ -57,6 +55,18 @@ function createTable(surveyResponsesData) {
 
 function displaySurveyResponses(surveyType) {
   issueGetSurveyResponses().then((surveyResponsesData) => {
+    if (surveyResponsesData.error?.message !== undefined) {
+      const surveyResponsesContainer = document.getElementById("surveyResponsesContainer");
+      surveyResponsesContainer.innerHTML = surveyResponsesData.error?.message;
+      return;
+    }
+
+    if (surveyResponsesData === undefined || Object.keys(surveyResponsesData).length === 0) {
+      const surveyResponsesContainer = document.getElementById("surveyResponsesContainer");
+      surveyResponsesContainer.innerHTML = "<h3>No Data</h3>";
+      return;
+    }
+
     for (const data of surveyResponsesData) {
       if (`${surveyType}` !== `${data.type}`) {
         continue;
