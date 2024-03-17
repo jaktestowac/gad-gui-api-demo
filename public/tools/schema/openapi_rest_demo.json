@@ -3066,6 +3066,32 @@
       }
     },
     "/surveys/responses": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": ["surveys"],
+        "summary": "Get user survey responses",
+        "operationId": "getUserSurveyResponses",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SurveyResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          }
+        }
+      },
       "post": {
         "tags": ["surveys"],
         "summary": "Create a new survey response",
@@ -3100,6 +3126,52 @@
           },
           "422": {
             "description": "Invalid score data",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/surveys/responses/{id}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": ["surveys"],
+        "summary": "Get user survey response",
+        "operationId": "getUserSurveyResponse",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of response",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SurveyResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
             "content": {}
           }
         }

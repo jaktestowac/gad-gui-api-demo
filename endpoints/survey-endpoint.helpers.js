@@ -5,6 +5,7 @@ const {
   findUserSurveyTypeResponses,
   aggregateSurveyAnswers,
   findUserSurveyResponse,
+  findUserSurveyResponses,
 } = require("../helpers/db-operation.helpers");
 const { surveyResponsesDb } = require("../helpers/db.helpers");
 const {
@@ -147,6 +148,15 @@ function handleSurvey(req, res, isAdmin) {
       });
       return;
     }
+  } else if (req.method === "GET" && req.url.endsWith("/api/surveys/responses")) {
+    const surveyResponses = findUserSurveyResponses(foundUser.id);
+
+    if (isUndefined(surveyResponses) || surveyResponses.length === 0) {
+      res.status(HTTP_NOT_FOUND).json({});
+      return;
+    }
+
+    res.status(HTTP_OK).json(surveyResponses);
   } else if (req.method === "GET" && req.url.includes("/api/surveys/responses/")) {
     const surveyResponseId = urlEnds.split("/").slice(-1)[0];
 

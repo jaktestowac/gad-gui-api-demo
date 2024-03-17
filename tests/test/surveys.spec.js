@@ -316,7 +316,7 @@ describe.only(`Endpoint ${baseSurveysUrl}`, () => {
         });
         it(`POST ${baseUrl} - should create a survey response`, async () => {
           // Arrange:
-          const survey = generateSurveyBody(userId1, 1, [{ test: 0 }]);
+          const survey = generateSurveyBody(userId1, 2, [{ test: 0 }]);
 
           // Act:
           const response = await request
@@ -361,8 +361,6 @@ describe.only(`Endpoint ${baseSurveysUrl}`, () => {
           // Assert:
           expect(response.status, JSON.stringify(response.body)).to.equal(404);
         });
-      });
-      describe("GET", () => {
         it(`GET ${baseUrl} - should not get a survey response of another user`, async () => {
           // Act:
           const response = await request.get(baseUrl + "/responses/1").set(headers1);
@@ -370,14 +368,20 @@ describe.only(`Endpoint ${baseSurveysUrl}`, () => {
           // Assert:
           expect(response.status, JSON.stringify(response.body)).to.equal(404);
         });
-      });
-      describe("GET", () => {
         it(`GET ${baseUrl} - should get users survey response`, async () => {
           // Act:
           const response = await request.get(baseUrl + "/responses/5").set(headers1);
 
           // Assert:
           expect(response.status, JSON.stringify(response.body)).to.equal(200);
+        });
+        it(`GET ${baseUrl} - should get all users survey responses`, async () => {
+          // Act:
+          const response = await request.get(baseUrl + "/responses").set(headers1);
+
+          // Assert:
+          expect(response.status, JSON.stringify(response.body)).to.equal(200);
+          expect(response.body.length).to.be.greaterThan(0);
         });
       });
     });
