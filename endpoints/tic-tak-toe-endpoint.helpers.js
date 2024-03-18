@@ -1,4 +1,4 @@
-const { isNumber, isUndefined, areIdsEqual } = require("../helpers/compare.helpers");
+const { isNumber, isUndefined } = require("../helpers/compare.helpers");
 const {
   searchForUser,
   getGameNameById,
@@ -8,7 +8,7 @@ const {
   getGameScores,
   searchForUserWithOnlyToken,
 } = require("../helpers/db-operation.helpers");
-const { formatErrorResponse, generateRandomString, formatInvalidTokenErrorResponse } = require("../helpers/helpers");
+const { formatErrorResponse, formatInvalidTokenErrorResponse } = require("../helpers/helpers");
 const { logDebug, logTrace } = require("../helpers/logger-api");
 const {
   HTTP_NOT_FOUND,
@@ -17,101 +17,21 @@ const {
   HTTP_UNPROCESSABLE_ENTITY,
   HTTP_CREATED,
 } = require("../helpers/response.helpers");
+const {
+  addScore,
+  stopSession,
+  userCanJoin,
+  joinUser,
+  createNewSession,
+  registerNewSession,
+  canSwitchUserTurn,
+  switchUserTurn,
+} = require("../helpers/tic-tac-toe.helpers");
 const { verifyAccessToken } = require("../helpers/validation.helpers");
 
 const gameName = "Tic Tac Toe";
 
 const sessions = [];
-
-function createNewSession(userId) {
-  return {
-    firstUserId: userId,
-    secondUserId: undefined,
-    code: generateRandomString(4),
-    id: generateRandomString(20),
-    firstUserScore: 0,
-    secondUserScore: 0,
-    numberOfMatches: 0,
-    hasStarted: false,
-    hasEnded: false,
-  };
-}
-
-function registerNewSession(sessions, session) {
-  const existingSession = sessions.find((s) => areIdsEqual(s.id, session.id));
-  if (existingSession) {
-    logTrace("registerNewSession: Session already exists", { session });
-    return existingSession;
-  }
-  sessions.push(session);
-  return session;
-}
-
-function userCanJoin(sessions, userId, sessionCode) {
-  const existingSession = sessions.find((s) => areIdsEqual(s.code, sessionCode));
-  if (existingSession === undefined) {
-    logTrace("userCanJoin: Session not found", { userId, sessionCode });
-    return formatErrorResponse("Session not found");
-  }
-
-  if (!isUndefined(existingSession.firstUserId) && !isUndefined(existingSession.secondUserId)) {
-    logTrace("userCanJoin: Session is full", { existingSession, userId, sessionCode });
-    return formatErrorResponse("Session is full");
-  }
-
-  if (areIdsEqual(existingSession.firstUserId, userId) || areIdsEqual(existingSession.secondUserId, userId)) {
-    logTrace("userCanJoin: User is already in the game", { existingSession, userId, sessionCode });
-    return formatErrorResponse("User is already in the game");
-  }
-
-  return true;
-}
-
-function joinUser(sessions, userId, sessionCode) {
-  const existingSession = sessions.find((s) => areIdsEqual(s.code, sessionCode));
-
-  if (isUndefined(existingSession.firstUserId)) {
-    existingSession.firstUserId = userId;
-  } else if (isUndefined(existingSession.secondUserId)) {
-    existingSession.secondUserId = userId;
-  } else {
-    logTrace("joinUser: User cannot join the game", { existingSession, userId, sessionCode });
-    return undefined;
-  }
-
-  existingSession.hasStarted = true;
-  return existingSession;
-}
-
-function addScore(sessions, sessionCode, userId, score) {
-  const existingSession = sessions.find((s) => areIdsEqual(s.code, sessionCode));
-  if (!existingSession) {
-    logTrace("stopSession: Session not found", { sessions, sessionCode });
-    return existingSession;
-  }
-
-  if (areIdsEqual(existingSession.firstUserId, userId)) {
-    existingSession.firstUserScore += score;
-  } else if (areIdsEqual(existingSession.secondUserId, userId)) {
-    existingSession.secondUserScore += score;
-  } else {
-    logTrace("addScore: User not found in the session", { existingSession, userId, sessionCode });
-    return existingSession;
-  }
-
-  return existingSession;
-}
-
-function stopSession(sessions, sessionCode) {
-  const existingSession = sessions.find((s) => areIdsEqual(s.code, sessionCode));
-  if (!existingSession) {
-    logTrace("stopSession: Session not found", { sessions, sessionCode });
-    return existingSession;
-  }
-
-  existingSession.hasEnded = true;
-  return existingSession;
-}
 
 function handleTicTacToe(req, res) {
   if (req.method === "GET" && req.url.endsWith("/api/tic-tac-toe/highscores")) {
@@ -143,6 +63,32 @@ function handleTicTacToe(req, res) {
     logTrace("handleTicTacToe:tic-tac-toe start:", { method: req.method, currentSession });
     res.status(HTTP_CREATED).json({ ...currentSession, id: undefined });
     return;
+  } else if (req.method === "GET" && req.url.endsWith("/api/tic-tac-toe/status")) {
+    // TODO: Implement this
+  } else if (req.method === "POST" && req.url.endsWith("/api/tic-tac-toe/status")) {
+    const verifyTokenResult = verifyAccessToken(req, res, "tic-tac-toe/join", req.url);
+    const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
+    logTrace("handleSurvey: foundUser:", { method: req.method, foundUser });
+
+    if (isUndefined(foundUser) || isUndefined(verifyTokenResult)) {
+      res.status(HTTP_UNAUTHORIZED).json(formatInvalidTokenErrorResponse());
+      return;
+    }
+
+    const sessionCode = req.body.code;
+    const move = req.body.move;
+    const canSwitch = canSwitchUserTurn(sessions, sessionCode, move, foundUser.id);
+
+    if (canSwitch.error !== undefined) {
+      res.status(HTTP_UNPROCESSABLE_ENTITY).json(canSwitch);
+      return;
+    }
+
+    const currentSession = switchUserTurn(sessions, sessionCode, move);
+
+    // TODO: Implement this
+    res.status(HTTP_OK).json({ ...currentSession, id: undefined });
+    return;
   } else if (req.method === "POST" && req.url.endsWith("/api/tic-tac-toe/join")) {
     const verifyTokenResult = verifyAccessToken(req, res, "tic-tac-toe/join", req.url);
     const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
@@ -160,7 +106,7 @@ function handleTicTacToe(req, res) {
     }
 
     const canJoin = userCanJoin(sessions, foundUser.id, sessionCode);
-    if (canJoin !== true) {
+    if (canJoin.error !== undefined) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).json(canJoin);
       return;
     }
