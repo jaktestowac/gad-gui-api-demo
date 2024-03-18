@@ -91,6 +91,11 @@ function canUserMakeTurn(sessions, sessionCode, move, userId) {
     return formatErrorResponse("Session not found");
   }
 
+  if (isUndefined(move) || move.length !== 2) {
+    logWarnTrace("makeUserTurn: Move is invalid", { existingSession, move });
+    return formatErrorResponse("Move is invalid");
+  }
+
   const currentUser = existingSession.currentTurn % 2;
   if (!areIdsEqual(existingSession.users[currentUser], userId)) {
     logWarnTrace("makeUserTurn: It's not the user's turn", { existingSession, userId });
@@ -243,4 +248,6 @@ module.exports = {
   createNewSession,
   canUserMakeTurn,
   checkWin,
+  findSessionByCode,
+  findSessionById,
 };

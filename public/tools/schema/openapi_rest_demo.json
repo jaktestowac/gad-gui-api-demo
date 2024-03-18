@@ -80,6 +80,10 @@
       "description": "Minesweeper game"
     },
     {
+      "name": "tic-tac-toe",
+      "description": "Tic Tac Toe game"
+    },
+    {
       "name": "games",
       "description": "Games"
     },
@@ -2597,6 +2601,229 @@
         }
       }
     },
+    "/tic-tac-toe/highscores": {
+      "get": {
+        "tags": ["tic-tac-toe"],
+        "summary": "Get tic-tac-toe highscores",
+        "operationId": "getTicTacToeHighscores",
+        "responses": {
+          "200": {
+            "description": "TicTacToe highscores",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Scores"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tic-tac-toe/start": {
+      "post": {
+        "tags": ["tic-tac-toe"],
+        "summary": "start TicTacToe",
+        "operationId": "startTicTacToe",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Started",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScoreRecord"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/tic-tac-toe/join": {
+      "post": {
+        "tags": ["tic-tac-toe"],
+        "summary": "join TicTacToe session",
+        "operationId": "joinTicTacToeSession",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TicTacToeJoin"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Joined",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TicTacToeSession"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Session code not provided",
+            "content": {}
+          },
+          "409": {
+            "description": "Game already full",
+            "content": {}
+          },
+          "422": {
+            "description": "Invalid session code",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/tic-tac-toe/status/{code}": {
+      "get": {
+        "tags": ["tic-tac-toe"],
+        "summary": "Get tic-tac-toe status",
+        "operationId": "getTicTacToeStatus",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "description": "Session code",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "TicTacToe status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TicTacToeSession"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/tic-tac-toe/status": {
+      "post": {
+        "tags": ["tic-tac-toe"],
+        "summary": "make a move in TicTacToe",
+        "operationId": "moveTicTacToe",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MoveTicTacToe"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Stopped",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TicTacToeSession"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Session code not provided",
+            "content": {}
+          },
+          "422": {
+            "description": "User cannot make a move",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/tic-tac-toe/stop": {
+      "post": {
+        "tags": ["tic-tac-toe"],
+        "summary": "stop TicTacToe session",
+        "operationId": "stopTicTacToeSession",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TicTacToeStop"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Stopped",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TicTacToeSession"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Session code not provided",
+            "content": {}
+          }
+        }
+      }
+    },
     "/games": {
       "get": {
         "tags": ["games"],
@@ -4001,6 +4228,117 @@
                 }
               ]
             }
+          }
+        }
+      },
+      "TicTacToeJoin": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          }
+        }
+      },
+      "MoveTicTacToe": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "move": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "example": [0, 0]
+          }
+        }
+      },
+      "TicTacToeSession": {
+        "type": "object",
+        "properties": {
+          "users": {
+            "type": "object",
+            "properties": {
+              "0": {
+                "oneOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "1": {
+                "oneOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              }
+            }
+          },
+          "scores": {
+            "type": "object",
+            "properties": {
+              "0": {
+                "type": "number"
+              },
+              "1": {
+                "type": "number"
+              }
+            }
+          },
+          "code": {
+            "type": "string"
+          },
+          "numberOfMatches": {
+            "type": "number"
+          },
+          "hasStarted": {
+            "type": "boolean"
+          },
+          "hasEnded": {
+            "type": "boolean"
+          },
+          "currentTurn": {
+            "type": "number"
+          },
+          "roundTimeInSeconds": {
+            "type": "number"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "currentTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "board": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "TicTacToeStop": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
           }
         }
       }

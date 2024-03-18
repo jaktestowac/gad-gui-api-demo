@@ -1,10 +1,8 @@
-const { isNumber, isUndefined } = require("../helpers/compare.helpers");
+const { isUndefined, areIdsEqual } = require("../helpers/compare.helpers");
 const {
   searchForUser,
   getGameNameById,
   getGameIdByName,
-  searchForUserWithEmail,
-  getUserScore,
   getGameScores,
   searchForUserWithOnlyToken,
 } = require("../helpers/db-operation.helpers");
@@ -16,9 +14,10 @@ const {
   HTTP_UNAUTHORIZED,
   HTTP_UNPROCESSABLE_ENTITY,
   HTTP_CREATED,
+  HTTP_CONFLICT,
+  HTTP_FORBIDDEN,
 } = require("../helpers/response.helpers");
 const {
-  addScore,
   stopSession,
   userCanJoin,
   joinUser,
@@ -26,6 +25,7 @@ const {
   registerNewSession,
   canUserMakeTurn,
   makeUserTurn,
+  findSessionByCode,
 } = require("../helpers/tic-tac-toe.helpers");
 const { verifyAccessToken } = require("../helpers/validation.helpers");
 
@@ -34,6 +34,8 @@ const gameName = "Tic Tac Toe";
 const sessions = [];
 
 function handleTicTacToe(req, res) {
+  const urlEnds = req.url.replace(/\/\/+/g, "/");
+
   if (req.method === "GET" && req.url.endsWith("/api/tic-tac-toe/highscores")) {
     const gameId = getGameIdByName(gameName);
     const scores = getGameScores(gameId);
@@ -63,7 +65,7 @@ function handleTicTacToe(req, res) {
     logTrace("handleTicTacToe:tic-tac-toe start:", { method: req.method, currentSession });
     res.status(HTTP_CREATED).json({ ...currentSession, id: undefined });
     return;
-  } else if (req.method === "GET" && req.url.endsWith("/api/tic-tac-toe/status")) {
+  } else if (req.method === "GET" && req.url.includes("/api/tic-tac-toe/status/")) {
     const verifyTokenResult = verifyAccessToken(req, res, "tic-tac-toe/status", req.url);
     const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
     logTrace("handleTicTacToe: foundUser:", { method: req.method, foundUser });
@@ -73,8 +75,21 @@ function handleTicTacToe(req, res) {
       return;
     }
 
-    
-    // TODO: Implement this
+    const sessionCode = urlEnds.split("/").slice(-1)[0];
+    const currentSession = findSessionByCode(sessions, sessionCode);
+
+    if (isUndefined(currentSession)) {
+      res.status(HTTP_NOT_FOUND).json(formatErrorResponse("User cannot make a move"));
+      return;
+    }
+
+    if (!areIdsEqual(currentSession.users[0], foundUser.id) && !areIdsEqual(currentSession.users[1], foundUser.id)) {
+      res.status(HTTP_UNAUTHORIZED).json(formatInvalidTokenErrorResponse());
+      return;
+    }
+
+    res.status(HTTP_OK).json({ ...currentSession, id: undefined });
+    return;
   } else if (req.method === "POST" && req.url.endsWith("/api/tic-tac-toe/status")) {
     const verifyTokenResult = verifyAccessToken(req, res, "tic-tac-toe/status", req.url);
     const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
@@ -115,7 +130,7 @@ function handleTicTacToe(req, res) {
 
     const sessionCode = req.body.code;
     if (isUndefined(sessionCode)) {
-      res.status(HTTP_UNPROCESSABLE_ENTITY).json(formatErrorResponse("Session code not provided"));
+      res.status(HTTP_FORBIDDEN).json(formatErrorResponse("Session code not provided"));
       return;
     }
 
@@ -128,7 +143,7 @@ function handleTicTacToe(req, res) {
     const currentSession = joinUser(sessions, foundUser.id, sessionCode);
 
     if (isUndefined(currentSession)) {
-      res.status(HTTP_UNPROCESSABLE_ENTITY).json(formatErrorResponse("User cannot join the game"));
+      res.status(HTTP_CONFLICT).json(formatErrorResponse("User cannot join the game - game probably full."));
       return;
     }
 
@@ -147,49 +162,13 @@ function handleTicTacToe(req, res) {
     const sessionCode = req.body.code;
 
     if (isUndefined(sessionCode)) {
-      res.status(HTTP_UNPROCESSABLE_ENTITY).json(formatErrorResponse("Session code not provided"));
+      res.status(HTTP_FORBIDDEN).json(formatErrorResponse("Session code not provided"));
       return;
     }
 
     const currentSession = stopSession(sessions, sessionCode);
 
     res.status(HTTP_OK).json({ ...currentSession, id: undefined });
-    return;
-  } else if (req.method === "POST" && req.url.endsWith("/api/tic-tac-toe/score")) {
-    const verifyTokenResult = verifyAccessToken(req, res, "tic-tac-toe/score", req.url);
-    if (isUndefined(verifyTokenResult)) {
-      res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
-      return;
-    }
-
-    const score = req.body;
-    const email = verifyTokenResult?.email;
-    if (isUndefined(score) || isUndefined(score.score) || !isNumber(score.score)) {
-      res.status(HTTP_UNPROCESSABLE_ENTITY).json(formatErrorResponse("Score was not provided"));
-    }
-    const gameId = getGameIdByName(gameName);
-    const user = searchForUserWithEmail(email);
-    const previousUserScore = getUserScore(user.id, gameId);
-
-    logDebug("handleTicTacToe:tic-tac-toe highScores:", { previousUserScore, currentScore: score });
-    if (!isUndefined(previousUserScore) && previousUserScore.score >= score.score) {
-      res.status(HTTP_OK).json({ game_id: gameId, user_id: user.id, score: score.score });
-    } else {
-      if (!isUndefined(previousUserScore?.id)) {
-        req.method = "PUT";
-        req.url = `/api/scores/${previousUserScore.id}`;
-      } else {
-        req.method = "POST";
-        req.url = `/api/scores`;
-      }
-      req.body = { game_id: gameId, user_id: user.id, score: score.score };
-      logDebug("handleTicTacToe:stop -> PUT/POST scores:", {
-        method: req.method,
-        url: req.url,
-        body: req.body,
-      });
-    }
-
     return;
   } else {
     res.status(HTTP_NOT_FOUND).json({});
