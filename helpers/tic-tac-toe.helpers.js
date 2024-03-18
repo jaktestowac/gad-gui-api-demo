@@ -24,8 +24,20 @@ function createNewSession(userId) {
   };
 }
 
+function findSessionById(sessions, id) {
+  const existingSession = sessions.find((s) => areIdsEqual(s.id, id));
+
+  return existingSession;
+}
+
+function findSessionByCode(sessions, sessionCode) {
+  const existingSession = sessions.find((s) => areIdsEqual(s.code, sessionCode));
+
+  return existingSession;
+}
+
 function registerNewSession(sessions, session) {
-  const existingSession = sessions.find((s) => areIdsEqual(s.id, session.id));
+  const existingSession = findSessionById(sessions, session.id);
   if (existingSession) {
     logWarnTrace("registerNewSession: Session already exists", { session });
     return existingSession;
@@ -35,7 +47,7 @@ function registerNewSession(sessions, session) {
 }
 
 function userCanJoin(sessions, userId, sessionCode) {
-  const existingSession = sessions.find((s) => areIdsEqual(s.code, sessionCode));
+  const existingSession = findSessionByCode(sessions, sessionCode);
   if (existingSession === undefined) {
     logWarnTrace("userCanJoin: Session not found", { userId, sessionCode });
     return formatErrorResponse("Session not found");
@@ -55,7 +67,7 @@ function userCanJoin(sessions, userId, sessionCode) {
 }
 
 function joinUser(sessions, userId, sessionCode) {
-  const existingSession = sessions.find((s) => areIdsEqual(s.code, sessionCode));
+  const existingSession = findSessionByCode(sessions, sessionCode);
 
   if (isUndefined(existingSession.users[0])) {
     existingSession.users[0] = userId;
@@ -71,38 +83,43 @@ function joinUser(sessions, userId, sessionCode) {
   return existingSession;
 }
 
-function canSwitchUserTurn(sessions, sessionCode, move, userId) {
-  const existingSession = sessions.find((s) => areIdsEqual(s.code, sessionCode));
+function canUserMakeTurn(sessions, sessionCode, move, userId) {
+  const existingSession = findSessionByCode(sessions, sessionCode);
 
   if (!existingSession) {
-    logWarnTrace("switchUserTurn: Session not found", { sessions, sessionCode });
+    logWarnTrace("makeUserTurn: Session not found", { sessions, sessionCode });
     return formatErrorResponse("Session not found");
   }
 
   const currentUser = existingSession.currentTurn % 2;
   if (!areIdsEqual(existingSession.users[currentUser], userId)) {
-    logWarnTrace("switchUserTurn: It's not the user's turn", { existingSession, userId });
+    logWarnTrace("makeUserTurn: It's not the user's turn", { existingSession, userId });
     return formatErrorResponse("It's not the user's turn");
   }
 
   if (existingSession.board.length < move[1] || existingSession.board[0].length < move[0]) {
-    logWarnTrace("switchUserTurn: Move is out of bounds", { existingSession, move });
+    logWarnTrace("makeUserTurn: Move is out of bounds", { existingSession, move });
     return formatErrorResponse("Move is out of bounds");
   }
 
   if (`${existingSession.board[move[1]][move[0]]}`?.length > 0) {
-    logWarnTrace("switchUserTurn: Move is already taken", { existingSession, move });
+    logWarnTrace("makeUserTurn: Move is already taken", { existingSession, move });
     return formatErrorResponse("Move is already taken");
   }
 
   return { success: true };
 }
 
-function switchUserTurn(sessions, sessionCode, move) {
-  const existingSession = sessions.find((s) => areIdsEqual(s.code, sessionCode));
+function makeUserTurn(sessions, sessionCode, move) {
+  const existingSession = findSessionByCode(sessions, sessionCode);
   if (!existingSession) {
-    logWarnTrace("switchUserTurn: Session not found", { sessions, sessionCode });
+    logWarnTrace("makeUserTurn: Session not found", { sessions, sessionCode });
     return undefined;
+  }
+
+  if (existingSession.hasEnded === true) {
+    logWarnTrace("makeUserTurn: Session has already ended", { existingSession, sessionCode });
+    return existingSession;
   }
 
   const currentUser = existingSession.currentTurn % 2;
@@ -110,7 +127,43 @@ function switchUserTurn(sessions, sessionCode, move) {
 
   existingSession.board[move[1]][move[0]] = userId;
   existingSession.currentTurn++;
+
+  const result = checkWin(existingSession.board);
+
+  if (result !== undefined) {
+    existingSession.hasEnded = true;
+    existingSession.endTime = new Date();
+    existingSession.numberOfMatches += 1;
+    existingSession.scores[currentUser] += 1;
+  }
+
   return existingSession;
+}
+
+function checkWin(board) {
+  // Check rows
+  for (let i = 0; i < 3; i++) {
+    if (board[i][0] !== "" && board[i][0] === board[i][1] && board[i][1] === board[i][2]) {
+      return board[i][0];
+    }
+  }
+
+  // Check columns
+  for (let j = 0; j < 3; j++) {
+    if (board[0][j] !== "" && board[0][j] === board[1][j] && board[1][j] === board[2][j]) {
+      return board[0][j];
+    }
+  }
+
+  // Check diagonals
+  if (board[0][0] !== "" && board[0][0] === board[1][1] && board[1][1] === board[2][2]) {
+    return board[0][0];
+  }
+  if (board[0][2] !== "" && board[0][2] === board[1][1] && board[1][1] === board[2][0]) {
+    return board[0][2];
+  }
+  // No winner
+  return undefined;
 }
 
 function countDifferences(board1, board2) {
@@ -126,7 +179,7 @@ function countDifferences(board1, board2) {
 }
 
 function getCurrentUserTurn(sessions, sessionCode) {
-  const existingSession = sessions.find((s) => areIdsEqual(s.code, sessionCode));
+  const existingSession = findSessionByCode(sessions, sessionCode);
   if (!existingSession) {
     logWarnTrace("getCurrentUserTurn: Session not found", { sessions, sessionCode });
     return existingSession;
@@ -137,9 +190,14 @@ function getCurrentUserTurn(sessions, sessionCode) {
 }
 
 function addScore(sessions, sessionCode, userId, score) {
-  const existingSession = sessions.find((s) => areIdsEqual(s.code, sessionCode));
+  const existingSession = findSessionByCode(sessions, sessionCode);
   if (!existingSession) {
     logWarnTrace("addScore: Session not found", { sessions, sessionCode });
+    return existingSession;
+  }
+
+  if (existingSession.hasEnded === true) {
+    logWarnTrace("addScore: Session has already ended", { existingSession, userId, sessionCode });
     return existingSession;
   }
 
@@ -156,9 +214,14 @@ function addScore(sessions, sessionCode, userId, score) {
 }
 
 function stopSession(sessions, sessionCode) {
-  const existingSession = sessions.find((s) => areIdsEqual(s.code, sessionCode));
+  const existingSession = findSessionByCode(sessions, sessionCode);
   if (!existingSession) {
     logWarnTrace("stopSession: Session not found", { sessions, sessionCode });
+    return existingSession;
+  }
+
+  if (existingSession.hasEnded === true) {
+    logWarnTrace("addScore: Session has already ended", { existingSession, sessionCode });
     return existingSession;
   }
 
@@ -173,10 +236,11 @@ module.exports = {
   addScore,
   getCurrentUserTurn,
   countDifferences,
-  switchUserTurn,
+  makeUserTurn,
   joinUser,
   userCanJoin,
   registerNewSession,
   createNewSession,
-  canSwitchUserTurn,
+  canUserMakeTurn,
+  checkWin,
 };

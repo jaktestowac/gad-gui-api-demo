@@ -24,8 +24,8 @@ const {
   joinUser,
   createNewSession,
   registerNewSession,
-  canSwitchUserTurn,
-  switchUserTurn,
+  canUserMakeTurn,
+  makeUserTurn,
 } = require("../helpers/tic-tac-toe.helpers");
 const { verifyAccessToken } = require("../helpers/validation.helpers");
 
@@ -51,7 +51,7 @@ function handleTicTacToe(req, res) {
   } else if (req.method === "POST" && req.url.endsWith("/api/tic-tac-toe/start")) {
     const verifyTokenResult = verifyAccessToken(req, res, "tic-tac-toe/start", req.url);
     const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
-    logTrace("handleSurvey: foundUser:", { method: req.method, foundUser });
+    logTrace("handleTicTacToe: foundUser:", { method: req.method, foundUser });
 
     if (isUndefined(foundUser) || isUndefined(verifyTokenResult)) {
       res.status(HTTP_UNAUTHORIZED).json(formatInvalidTokenErrorResponse());
@@ -64,11 +64,21 @@ function handleTicTacToe(req, res) {
     res.status(HTTP_CREATED).json({ ...currentSession, id: undefined });
     return;
   } else if (req.method === "GET" && req.url.endsWith("/api/tic-tac-toe/status")) {
+    const verifyTokenResult = verifyAccessToken(req, res, "tic-tac-toe/status", req.url);
+    const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
+    logTrace("handleTicTacToe: foundUser:", { method: req.method, foundUser });
+
+    if (isUndefined(foundUser) || isUndefined(verifyTokenResult)) {
+      res.status(HTTP_UNAUTHORIZED).json(formatInvalidTokenErrorResponse());
+      return;
+    }
+
+    
     // TODO: Implement this
   } else if (req.method === "POST" && req.url.endsWith("/api/tic-tac-toe/status")) {
-    const verifyTokenResult = verifyAccessToken(req, res, "tic-tac-toe/join", req.url);
+    const verifyTokenResult = verifyAccessToken(req, res, "tic-tac-toe/status", req.url);
     const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
-    logTrace("handleSurvey: foundUser:", { method: req.method, foundUser });
+    logTrace("handleTicTacToe: foundUser:", { method: req.method, foundUser });
 
     if (isUndefined(foundUser) || isUndefined(verifyTokenResult)) {
       res.status(HTTP_UNAUTHORIZED).json(formatInvalidTokenErrorResponse());
@@ -77,22 +87,26 @@ function handleTicTacToe(req, res) {
 
     const sessionCode = req.body.code;
     const move = req.body.move;
-    const canSwitch = canSwitchUserTurn(sessions, sessionCode, move, foundUser.id);
+    const canMove = canUserMakeTurn(sessions, sessionCode, move, foundUser.id);
 
-    if (canSwitch.error !== undefined) {
-      res.status(HTTP_UNPROCESSABLE_ENTITY).json(canSwitch);
+    if (canMove.error !== undefined) {
+      res.status(HTTP_UNPROCESSABLE_ENTITY).json(canMove);
       return;
     }
 
-    const currentSession = switchUserTurn(sessions, sessionCode, move);
+    const currentSession = makeUserTurn(sessions, sessionCode, move);
 
-    // TODO: Implement this
+    if (isUndefined(currentSession)) {
+      res.status(HTTP_UNPROCESSABLE_ENTITY).json(formatErrorResponse("User cannot make a move"));
+      return;
+    }
+
     res.status(HTTP_OK).json({ ...currentSession, id: undefined });
     return;
   } else if (req.method === "POST" && req.url.endsWith("/api/tic-tac-toe/join")) {
     const verifyTokenResult = verifyAccessToken(req, res, "tic-tac-toe/join", req.url);
     const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
-    logTrace("handleSurvey: foundUser:", { method: req.method, foundUser });
+    logTrace("handleTicTacToe: foundUser:", { method: req.method, foundUser });
 
     if (isUndefined(foundUser) || isUndefined(verifyTokenResult)) {
       res.status(HTTP_UNAUTHORIZED).json(formatInvalidTokenErrorResponse());
@@ -123,7 +137,7 @@ function handleTicTacToe(req, res) {
   } else if (req.method === "POST" && req.url.endsWith("/api/tic-tac-toe/stop")) {
     const verifyTokenResult = verifyAccessToken(req, res, "tic-tac-toe/stop", req.url);
     const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
-    logTrace("handleSurvey: foundUser:", { method: req.method, foundUser });
+    logTrace("handleTicTacToe: foundUser:", { method: req.method, foundUser });
 
     if (isUndefined(foundUser) || isUndefined(verifyTokenResult)) {
       res.status(HTTP_UNAUTHORIZED).json(formatInvalidTokenErrorResponse());
@@ -137,13 +151,12 @@ function handleTicTacToe(req, res) {
       return;
     }
 
-    addScore(sessions, sessionCode, foundUser.id);
     const currentSession = stopSession(sessions, sessionCode);
 
     res.status(HTTP_OK).json({ ...currentSession, id: undefined });
     return;
   } else if (req.method === "POST" && req.url.endsWith("/api/tic-tac-toe/score")) {
-    const verifyTokenResult = verifyAccessToken(req, res, "tic-tac-toe", req.url);
+    const verifyTokenResult = verifyAccessToken(req, res, "tic-tac-toe/score", req.url);
     if (isUndefined(verifyTokenResult)) {
       res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
       return;

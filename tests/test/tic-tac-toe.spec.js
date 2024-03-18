@@ -457,10 +457,109 @@ describe.only("Endpoint /tic-tac-toe", () => {
         const stoppedSession = responseStop.body;
         expect(stoppedSession.users[0], JSON.stringify(stoppedSession)).to.not.be.undefined;
         expect(stoppedSession.users[1], JSON.stringify(stoppedSession)).to.not.be.undefined;
+        expect(stoppedSession.scores[0], JSON.stringify(stoppedSession)).to.be.equal(0);
+        expect(stoppedSession.scores[1], JSON.stringify(stoppedSession)).to.be.equal(0);
         expect(stoppedSession.hasStarted, JSON.stringify(stoppedSession)).to.be.true;
         expect(stoppedSession.hasEnded, JSON.stringify(stoppedSession)).to.be.true;
         expect(stoppedSession.numberOfMatches, JSON.stringify(stoppedSession)).to.be.equal(1);
         expect(stoppedSession.currentTurn, JSON.stringify(stoppedSession)).to.be.equal(3);
+
+        // Act: should not be able to play game after game has ended:
+        const responsePlayAFterStop = await request
+          .post(`${baseUrl}/status`)
+          .set(headers2)
+          .send({ code: sessionCode, move: [0, 0] });
+
+        // Assert:
+        expect(responsePlayAFterStop.status, JSON.stringify(responsePlayAFterStop.body)).to.equal(200);
+        const stoppedSession2 = responsePlayAFterStop.body;
+        expect(stoppedSession.scores[0], JSON.stringify(stoppedSession)).to.be.equal(0);
+        expect(stoppedSession.scores[1], JSON.stringify(stoppedSession)).to.be.equal(0);
+        expect(stoppedSession2.hasStarted, JSON.stringify(stoppedSession2)).to.be.true;
+        expect(stoppedSession2.hasEnded, JSON.stringify(stoppedSession2)).to.be.true;
+        expect(stoppedSession2.numberOfMatches, JSON.stringify(stoppedSession2)).to.be.equal(1);
+        expect(stoppedSession2.currentTurn, JSON.stringify(stoppedSession2)).to.be.equal(3);
+      });
+
+      it(`should play full game`, async () => {
+        // Act:
+        const responseStart = await request.post(`${baseUrl}/start`).set(headers1).send({});
+
+        // Assert:
+        expect(responseStart.status, JSON.stringify(responseStart.body)).to.equal(201);
+        const sessionCode = responseStart.body.code;
+
+        // Act:
+        const responseJoin = await request.post(`${baseUrl}/join`).set(headers2).send({ code: sessionCode });
+
+        // Assert:
+        expect(responseJoin.status, JSON.stringify(responseJoin.body)).to.equal(200);
+
+        // Act: 1 move:
+        const responseStatus1 = await request
+          .post(`${baseUrl}/status`)
+          .set(headers1)
+          .send({ code: sessionCode, move: [0, 0] });
+
+        // Assert:
+        expect(responseStatus1.status, JSON.stringify(responseStatus1.body)).to.equal(200);
+
+        // Act: 2 move:
+        const responseStatus2 = await request
+          .post(`${baseUrl}/status`)
+          .set(headers2)
+          .send({ code: sessionCode, move: [0, 1] });
+
+        // Assert:
+        expect(responseStatus2.status, JSON.stringify(responseStatus2.body)).to.equal(200);
+
+        // Act: 3 move - should pass:
+        const responseStatus3 = await request
+          .post(`${baseUrl}/status`)
+          .set(headers1)
+          .send({ code: sessionCode, move: [1, 0] });
+
+        // Assert:
+        expect(responseStatus3.status, JSON.stringify(responseStatus3.body)).to.equal(200);
+
+        // Act: 4 move - should pass:
+        const responseStatus4 = await request
+          .post(`${baseUrl}/status`)
+          .set(headers2)
+          .send({ code: sessionCode, move: [1, 1] });
+
+        // Assert:
+        expect(responseStatus4.status, JSON.stringify(responseStatus4.body)).to.equal(200);
+
+        // Act: 5 move - should pass:
+        const responseStatus5 = await request
+          .post(`${baseUrl}/status`)
+          .set(headers1)
+          .send({ code: sessionCode, move: [2, 0] });
+
+        // Assert:
+        expect(responseStatus5.status, JSON.stringify(responseStatus5.body)).to.equal(200);
+
+        // Assert:
+        expect(responseStatus5.status, JSON.stringify(responseStatus5.body)).to.equal(200);
+        const finishedSession = responseStatus5.body;
+        expect(finishedSession.scores[0], JSON.stringify(finishedSession)).to.be.equal(1);
+        expect(finishedSession.scores[1], JSON.stringify(finishedSession)).to.be.equal(0);
+        expect(finishedSession.hasEnded, JSON.stringify(finishedSession)).to.be.true;
+        expect(finishedSession.numberOfMatches, JSON.stringify(finishedSession)).to.be.equal(1);
+        expect(finishedSession.currentTurn, JSON.stringify(finishedSession)).to.be.equal(5);
+
+        // Act: should not be able to stop game after game has ended:
+        const responseStop = await request.post(`${baseUrl}/stop`).set(headers2).send({ code: sessionCode });
+
+        // Assert:
+        expect(responseStop.status, JSON.stringify(responseStop.body)).to.equal(200);
+        const stoppedSession = responseStop.body;
+        expect(stoppedSession.scores[0], JSON.stringify(stoppedSession)).to.be.equal(1);
+        expect(stoppedSession.scores[1], JSON.stringify(stoppedSession)).to.be.equal(0);
+        expect(stoppedSession.hasEnded, JSON.stringify(stoppedSession)).to.be.true;
+        expect(stoppedSession.numberOfMatches, JSON.stringify(stoppedSession)).to.be.equal(1);
+        expect(stoppedSession.currentTurn, JSON.stringify(stoppedSession)).to.be.equal(5);
       });
     });
   });
