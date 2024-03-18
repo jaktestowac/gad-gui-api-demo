@@ -180,7 +180,7 @@ describe.only("Endpoint /tic-tac-toe", () => {
         const response = await request.post(rootUrl).set(headers1).send({});
 
         // Assert:
-        expect(response.status).to.equal(422);
+        expect(response.status).to.equal(403);
       });
 
       it(`PUT ${rootUrl}`, () => {
@@ -227,7 +227,7 @@ describe.only("Endpoint /tic-tac-toe", () => {
         const response = await request.post(rootUrl).set(headers1);
 
         // Assert:
-        expect(response.status).to.equal(422);
+        expect(response.status).to.equal(403);
       });
 
       it(`POST ${rootUrl}/:id`, () => {
