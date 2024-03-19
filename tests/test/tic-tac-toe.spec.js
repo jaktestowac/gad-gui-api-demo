@@ -2,7 +2,7 @@ const { expect, request, baseTicTacToeUrl } = require("../config");
 const { authUser, authUser2 } = require("../helpers/data.helpers");
 const { gracefulQuit, setupEnv } = require("../helpers/helpers");
 
-describe.only("Endpoint /tic-tac-toe", () => {
+describe("Endpoint /tic-tac-toe", () => {
   const baseUrl = baseTicTacToeUrl;
 
   before(async () => {
@@ -308,7 +308,7 @@ describe.only("Endpoint /tic-tac-toe", () => {
         const responseJoin2 = await request.post(`${baseUrl}/join`).set(headers2).send({ code: sessionCode });
 
         // Assert:
-        expect(responseJoin2.status, JSON.stringify(responseJoin2.body)).to.equal(422);
+        expect(responseJoin2.status, JSON.stringify(responseJoin2.body)).to.equal(200);
       });
       it(`should start, join and stop game`, async () => {
         // Act:
@@ -465,16 +465,19 @@ describe.only("Endpoint /tic-tac-toe", () => {
         expect(stoppedSession.currentTurn, JSON.stringify(stoppedSession)).to.be.equal(3);
 
         // Act: should not be able to play game after game has ended:
-        const responsePlayAFterStop = await request
+        const responsePlayAfterStop = await request
           .post(`${baseUrl}/status`)
           .set(headers2)
           .send({ code: sessionCode, move: [0, 0] });
 
         // Assert:
-        expect(responsePlayAFterStop.status, JSON.stringify(responsePlayAFterStop.body)).to.equal(200);
-        const stoppedSession2 = responsePlayAFterStop.body;
-        expect(stoppedSession.scores[0], JSON.stringify(stoppedSession)).to.be.equal(0);
-        expect(stoppedSession.scores[1], JSON.stringify(stoppedSession)).to.be.equal(0);
+        expect(responsePlayAfterStop.status, JSON.stringify(responsePlayAfterStop.body)).to.equal(422);
+
+        const responsePlayAfterStop2 = await request.get(`${baseUrl}/status/${sessionCode}`).set(headers2);
+        expect(responsePlayAfterStop2.status, JSON.stringify(responsePlayAfterStop2.body)).to.equal(200);
+        const stoppedSession2 = responsePlayAfterStop2.body;
+        expect(stoppedSession2.scores[0], JSON.stringify(stoppedSession2)).to.be.equal(0);
+        expect(stoppedSession2.scores[1], JSON.stringify(stoppedSession2)).to.be.equal(0);
         expect(stoppedSession2.hasStarted, JSON.stringify(stoppedSession2)).to.be.true;
         expect(stoppedSession2.hasEnded, JSON.stringify(stoppedSession2)).to.be.true;
         expect(stoppedSession2.numberOfMatches, JSON.stringify(stoppedSession2)).to.be.equal(1);

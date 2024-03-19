@@ -46,6 +46,16 @@ function registerNewSession(sessions, session) {
   return session;
 }
 
+function isUserAlreadyInGame(sessions, userId, sessionCode) {
+  const existingSession = findSessionByCode(sessions, sessionCode);
+  if (existingSession === undefined) {
+    logWarnTrace("userCanJoin: Session not found", { userId, sessionCode });
+    return formatErrorResponse("Session not found");
+  }
+
+  return { success: areIdsEqual(existingSession.users[0], userId) || areIdsEqual(existingSession.users[1], userId) };
+}
+
 function userCanJoin(sessions, userId, sessionCode) {
   const existingSession = findSessionByCode(sessions, sessionCode);
   if (existingSession === undefined) {
@@ -53,7 +63,7 @@ function userCanJoin(sessions, userId, sessionCode) {
     return formatErrorResponse("Session not found");
   }
 
-  if (areIdsEqual(existingSession.users[0], userId) || areIdsEqual(existingSession.users[1], userId)) {
+  if (isUserAlreadyInGame(sessions, userId, sessionCode).success === true) {
     logWarnTrace("userCanJoin: User is already in the game", { existingSession, userId, sessionCode });
     return formatErrorResponse("User is already in the game");
   }
@@ -89,6 +99,11 @@ function canUserMakeTurn(sessions, sessionCode, move, userId) {
   if (!existingSession) {
     logWarnTrace("makeUserTurn: Session not found", { sessions, sessionCode });
     return formatErrorResponse("Session not found");
+  }
+
+  if (existingSession.hasEnded === true) {
+    logWarnTrace("makeUserTurn: Session has already ended", { existingSession, sessionCode });
+    return formatErrorResponse("Session has already ended");
   }
 
   if (isUndefined(move) || move.length !== 2) {
@@ -250,4 +265,5 @@ module.exports = {
   checkWin,
   findSessionByCode,
   findSessionById,
+  isUserAlreadyInGame,
 };

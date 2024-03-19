@@ -60,7 +60,8 @@
     </div>
     <div id="container"></div>
     <div align="center">
-      <button id="start-button" class="button-primary" onclick="startGame()">Start New Game</button> <br /><br />
+      <button id="start-button" class="button-primary" onclick="startGame()">Start New Game</button>
+      <button id="stop-button" class="button-primary" disabled onclick="stopGame()">Stop Game</button><br /><br />
       <div class="separator">Or join existing game:</div>
       <br />
       <div align="center" style="align-items: center; display: flex; justify-content: center; width: 500px">
@@ -75,21 +76,24 @@
         <button id="join-button" class="button-primary" style="width: 100px" onclick="joinGame()">Join Game</button>
       </div>
       <br />
+      <label id="messageLbl" style="width: 50px">...</label>
+      <br />
+      <br />
       <div class="board">
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
+        <div class="cell" coords="0,0"></div>
+        <div class="cell" coords="1,0"></div>
+        <div class="cell" coords="2,0"></div>
+        <div class="cell" coords="0,1"></div>
+        <div class="cell" coords="1,1"></div>
+        <div class="cell" coords="2,1"></div>
+        <div class="cell" coords="0,2"></div>
+        <div class="cell" coords="1,2"></div>
+        <div class="cell" coords="2,2"></div>
       </div>
-      <div class="score">
-        <span>Player X: <span id="player-x-score">0</span></span
+      <div style="display: none" class="score">
+        <span>Player You: <span id="player-x-score">...</span></span
         ><br />
-        <span>Player O: <span id="player-o-score">0</span></span>
+        <span>Player Opponent: <span id="player-o-score">...</span></span>
       </div>
     </div>
     <script type="text/javascript" src="js/common.js"></script>

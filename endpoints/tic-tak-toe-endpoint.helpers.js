@@ -26,6 +26,7 @@ const {
   canUserMakeTurn,
   makeUserTurn,
   findSessionByCode,
+  isUserAlreadyInGame,
 } = require("../helpers/tic-tac-toe.helpers");
 const { verifyAccessToken } = require("../helpers/validation.helpers");
 
@@ -131,6 +132,12 @@ function handleTicTacToe(req, res) {
     const sessionCode = req.body.code;
     if (isUndefined(sessionCode)) {
       res.status(HTTP_FORBIDDEN).json(formatErrorResponse("Session code not provided"));
+      return;
+    }
+
+    if (isUserAlreadyInGame(sessions, foundUser.id, sessionCode).success === true) {
+      const currentSession = findSessionByCode(sessions, sessionCode);
+      res.status(HTTP_OK).json({ ...currentSession, id: undefined });
       return;
     }
 

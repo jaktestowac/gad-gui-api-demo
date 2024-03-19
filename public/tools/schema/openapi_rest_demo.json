@@ -2636,7 +2636,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ScoreRecord"
+                  "$ref": "#/components/schemas/TicTacToeSession"
                 }
               }
             }
