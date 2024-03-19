@@ -1,8 +1,6 @@
 const startButton = document.getElementById("start-button");
 const stopButton = document.getElementById("stop-button");
 const cells = document.querySelectorAll(".cell");
-const playerXScore = document.getElementById("player-x-score");
-const playerOScore = document.getElementById("player-o-score");
 const joinButton = document.getElementById("join-button");
 const sessionCodeInput = document.getElementById("session-code");
 const messageLbl = document.getElementById("messageLbl");
@@ -15,7 +13,7 @@ const startEndpoint = "../../api/tic-tac-toe/start";
 const joinEndpoint = "../../api/tic-tac-toe/join";
 const statusEndpoint = "../../api/tic-tac-toe/status";
 const stopEndpoint = "../../api/tic-tac-toe/stop";
-const baseInterval = 1000;
+const baseInterval = 1500;
 let gameInterval;
 let myTurn = false;
 
