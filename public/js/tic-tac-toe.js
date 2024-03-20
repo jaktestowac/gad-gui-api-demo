@@ -98,6 +98,7 @@ function gameStatusListener() {
     if (session?.error !== undefined) {
       setMessage("Error: " + session.error.message, simpleErrorBox);
     }
+
     const listOfUsers =
       session !== undefined
         ? Object.values(session.users).map((userId) => {

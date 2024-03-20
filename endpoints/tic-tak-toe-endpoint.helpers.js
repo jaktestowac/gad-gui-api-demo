@@ -1,3 +1,5 @@
+const { isBugEnabled } = require("../config/config-manager");
+const { BugConfigKeys } = require("../config/enums");
 const { isUndefined, areIdsEqual } = require("../helpers/compare.helpers");
 const {
   searchForUser,
@@ -103,7 +105,11 @@ function handleTicTacToe(req, res) {
 
     const sessionCode = req.body.code;
     const move = req.body.move;
-    const canMove = canUserMakeTurn(sessions, sessionCode, move, foundUser.id);
+    let canMove = canUserMakeTurn(sessions, sessionCode, move, foundUser.id);
+
+    if (isBugEnabled(BugConfigKeys.BUG_GAME_TTT_001)) {
+      canMove = { success: true };
+    }
 
     if (canMove.error !== undefined) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).json(canMove);
@@ -135,13 +141,19 @@ function handleTicTacToe(req, res) {
       return;
     }
 
-    if (isUserAlreadyInGame(sessions, foundUser.id, sessionCode).success === true) {
+    let userAlreadyInGame = isUserAlreadyInGame(sessions, foundUser.id, sessionCode);
+    if (isBugEnabled(BugConfigKeys.BUG_GAME_TTT_002)) {
+      userAlreadyInGame = { success: false };
+    }
+
+    if (userAlreadyInGame.success === true) {
       const currentSession = findSessionByCode(sessions, sessionCode);
       res.status(HTTP_OK).json({ ...currentSession, id: undefined });
       return;
     }
 
     const canJoin = userCanJoin(sessions, foundUser.id, sessionCode);
+
     if (canJoin.error !== undefined) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).json(canJoin);
       return;

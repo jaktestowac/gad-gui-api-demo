@@ -88,6 +88,9 @@ const BugConfigKeys = {
   BUG_SURVEY_002: "bug_survey_002",
   BUG_SURVEY_003: "bug_survey_003",
   BUG_SURVEY_004: "bug_survey_004",
+  BUG_GAME_TTT_001: "bug_game_ttt_001",
+  BUG_GAME_TTT_002: "bug_game_ttt_002",
+  BUG_GAME_TTT_003: "bug_game_ttt_003",
 };
 
 const FeatureFlagConfigKeys = {
