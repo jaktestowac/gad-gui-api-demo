@@ -1,44 +1,7 @@
-// JSON data
-var jsonData = {
-  users: [
-    {
-      id: 1,
-      email: "Moses.Armstrong@Feest.ca",
-      firstname: "Moses",
-      lastname: "Armstrong",
-      password: "test1",
-      avatar: ".\\data\\users\\face_1591133479.7144732.jpg",
-    },
-    {
-      id: 2,
-      email: "Danial.Dicki@dicki.test",
-      firstname: "Danial",
-      lastname: "Dicki",
-      password: "test2",
-      avatar: ".\\data\\users\\face_1591133060.68834.jpg",
-    },
-  ],
-  articles: [
-    {
-      id: 1,
-      title: "How to write effective test cases",
-      body: "Test cases are the backbone of any testing process...",
-      user_id: 1,
-      date: "2021-07-13T16:35:00Z",
-      image: ".\\data\\images\\256\\presentation_b9889e1e-d60f-4230-b7d6-04981145c588.jpg",
-    },
-    {
-      id: 2,
-      title: "Benefits of continuous integration and delivery",
-      body: "Continuous integration (CI) and continuous delivery (CD)...",
-      user_id: 2,
-      date: "2020-06-15T11:12:00Z",
-      image: ".\\data\\images\\256\\tester-app_744f913b-f1de-4334-87e4-0b9e43171a10.jpg",
-    },
-  ],
-};
-
 const dbEndpoint = "./api/db";
+
+const refreshBtn = document.getElementById("refreshBtn");
+const statsLbl = document.getElementById("statsLbl");
 
 async function issueGetDb() {
   const dbAsJson = await fetch(dbEndpoint, {}).then((r) => r.json());
@@ -82,18 +45,18 @@ function generateTable(data, tableName) {
       } else {
         cellValue = "";
       }
-      if (key === "id") {
+      if (key === "id" && isNotNullNorUndefined(value)) {
         const singularTableName = tableName.slice(0, -1);
         row.setAttribute("id", `${singularTableName}_${value}`);
         td.textContent = cellValue;
-      } else if (key.includes("_ids")) {
+      } else if (key?.includes("_ids") && isNotNullNorUndefined(value)) {
         const foreignTable = key.split("_")[0];
 
         cellValue.split(",").forEach((id) => {
           const fullId = `${foreignTable}_${id}`;
           td.innerHTML += `<a href="#${fullId}" onclick="highlightRow('${fullId}')" >${id}</a> `;
         });
-      } else if (key.includes("_id")) {
+      } else if (key?.includes("_id") && isNotNullNorUndefined(value)) {
         const foreignTable = key.split("_")[0];
         const fullId = `${foreignTable}_${value}`;
         td.innerHTML = `<a href="#${fullId}" onclick="highlightRow('${fullId}')" >${value}</a>`;
@@ -115,6 +78,10 @@ function generateTable(data, tableName) {
   return table;
 }
 
+function isNotNullNorUndefined(value) {
+  return value !== null && value !== undefined && value !== "null" && value !== "undefined";
+}
+
 // Function to highlight destination row
 function highlightRow(rowId) {
   const row = document.getElementById(rowId);
@@ -126,11 +93,44 @@ function highlightRow(rowId) {
   }
 }
 
+// Normalize objects with null properties
+function normalizeObjects(data) {
+  const keys = data.reduce((allKeys, obj) => {
+    Object.keys(obj).forEach((key) => {
+      if (!allKeys.includes(key)) {
+        allKeys.push(key);
+      }
+    });
+    return allKeys;
+  }, []);
+
+  const normalizedData = data.map((obj) => {
+    const normalizedObj = {};
+    keys.forEach((key) => {
+      normalizedObj[key] = obj.hasOwnProperty(key) ? obj[key] : null;
+    });
+    return normalizedObj;
+  });
+
+  return normalizedData;
+}
+
 // Render JSON data as table
 const jsonTable = document.getElementById("jsonTable");
 
-issueGetDb().then((data) => {
-  Object.keys(data).forEach((tableName) => {
-    jsonTable.appendChild(generateTable(data[tableName], tableName));
+function refreshData() {
+  refreshBtn.disable = true;
+  jsonTable.innerHTML = "";
+  issueGetDb().then((data) => {
+    let status = "";
+    Object.keys(data).forEach((tableName) => {
+      const normalizedData = normalizeObjects(data[tableName]);
+      jsonTable.appendChild(generateTable(normalizedData, tableName));
+      status += `${tableName}: ${normalizedData.length} rows, `;
+    });
+    refreshBtn.disable = false;
+    statsLbl.innerHTML = `Last updated: ${new Date().toLocaleTimeString()}; <br/>Status:<br/>${status}`;
   });
-});
+}
+
+refreshData();
