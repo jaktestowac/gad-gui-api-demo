@@ -547,12 +547,12 @@
       "image": ".\\data\\images\\256\\team-work-it-project-_6cc0887c-bde2-4b46-a0b3-ec7ffd1fc293.jpg"
     },
     {
+      "id": 4,
       "title": "How to use Selenium for web automation",
       "body": "Selenium is a popular open-source tool for automating web browsers. Selenium can be used to perform various tasks on web applications, such as filling forms, clicking buttons, navigating pages, verifying content, etc. Selenium supports multiple languages, such as Java, Python, C#, Ruby, etc., and multiple browsers, such as Chrome, Firefox, Edge, etc. To use Selenium for web automation, you need to:\n- Install Selenium WebDriver and a browser driver\n- Write a script that interacts with web elements using locators\n- Run the script and verify the results",
       "user_id": "3",
       "date": "2021-10-16T17:59:00Z",
-      "image": ".\\data\\images\\256\\team-work-it-project-6.jpg",
-      "id": 4
+      "image": ".\\data\\images\\256\\team-work-it-project-6.jpg"
     },
     {
       "id": 5,

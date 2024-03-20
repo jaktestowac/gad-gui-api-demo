@@ -147,12 +147,12 @@
       "image": ".\\data\\images\\256\\jeremy-hynes-HxxNVun8HEc-unsplash.jpg"
     },
     {
+      "id": 4,
       "title": "How to use Selenium for web automation",
       "body": "Selenium is a popular open-source tool for automating web browsers. Selenium can be used to perform various tasks on web applications, such as filling forms, clicking buttons, navigating pages, verifying content, etc. Selenium supports multiple languages, such as Java, Python, C#, Ruby, etc., and multiple browsers, such as Chrome, Firefox, Edge, etc. To use Selenium for web automation, you need to:\n- Install Selenium WebDriver and a browser driver\n- Write a script that interacts with web elements using locators\n- Run the script and verify the results",
       "user_id": "3",
       "date": "2021-10-16T17:59:00Z",
-      "image": ".\\data\\images\\256\\joseph-chan-Es0eirjyQPQ-unsplash.jpg",
-      "id": 4
+      "image": ".\\data\\images\\256\\joseph-chan-Es0eirjyQPQ-unsplash.jpg"
     },
     {
       "id": 5,
@@ -2708,32 +2708,14 @@
     },
     {
       "answers": {
-        "experience in test automation": [
-          "yes"
-        ],
-        "experience in test automation in years": [
-          "2-3 years"
-        ],
-        "automation tools": [
-          "Playwright",
-          "Selenium"
-        ],
-        "languages for automation tools": [
-          "JavaScript",
-          "TypeScript",
-          "Python"
-        ],
-        "Number of automated tests": [
-          "50-100"
-        ],
-        "Automated test types": [
-          "Integration tests",
-          "E2e tests"
-        ],
+        "experience in test automation": ["yes"],
+        "experience in test automation in years": ["2-3 years"],
+        "automation tools": ["Playwright", "Selenium"],
+        "languages for automation tools": ["JavaScript", "TypeScript", "Python"],
+        "Number of automated tests": ["50-100"],
+        "Automated test types": ["Integration tests", "E2e tests"],
         "Open-Ended Questions": {
-          "Plans to improve skills": [
-            "Learn more about Playwright"
-          ]
+          "Plans to improve skills": ["Learn more about Playwright"]
         }
       },
       "type": 2,

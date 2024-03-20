@@ -147,12 +147,12 @@
       "image": ".\\data\\images\\256\\jeremy-hynes-HxxNVun8HEc-unsplash.jpg"
     },
     {
+      "id": 4,
       "title": "How to use Selenium for web automation",
       "body": "Selenium is a popular open-source tool for automating web browsers. Selenium can be used to perform various tasks on web applications, such as filling forms, clicking buttons, navigating pages, verifying content, etc. Selenium supports multiple languages, such as Java, Python, C#, Ruby, etc., and multiple browsers, such as Chrome, Firefox, Edge, etc. To use Selenium for web automation, you need to:\n- Install Selenium WebDriver and a browser driver\n- Write a script that interacts with web elements using locators\n- Run the script and verify the results",
       "user_id": "3",
       "date": "2021-10-16T17:59:00Z",
-      "image": ".\\data\\images\\256\\joseph-chan-Es0eirjyQPQ-unsplash.jpg",
-      "id": 4
+      "image": ".\\data\\images\\256\\joseph-chan-Es0eirjyQPQ-unsplash.jpg"
     },
     {
       "id": 5,
@@ -2797,131 +2797,87 @@
   "article-labels": [
     {
       "id": 1,
-      "label_ids": [
-        3,
-        2
-      ],
+      "label_ids": [3, 2],
       "article_id": 56
     },
     {
       "id": 2,
-      "label_ids": [
-        1,
-        2
-      ],
+      "label_ids": [1, 2],
       "article_id": 57
     },
     {
       "id": 3,
-      "label_ids": [
-        1
-      ],
+      "label_ids": [1],
       "article_id": 59
     },
     {
       "id": 4,
-      "label_ids": [
-        4,
-        5
-      ],
+      "label_ids": [4, 5],
       "article_id": 45
     },
     {
       "id": 5,
-      "label_ids": [
-        1,
-        2,
-        6
-      ],
+      "label_ids": [1, 2, 6],
       "article_id": 37
     },
     {
       "id": 6,
-      "label_ids": [
-        1
-      ],
+      "label_ids": [1],
       "article_id": 58
     },
     {
       "id": 7,
-      "label_ids": [
-        7
-      ],
+      "label_ids": [7],
       "article_id": 48
     },
     {
       "id": 8,
-      "label_ids": [
-        8,
-        2
-      ],
+      "label_ids": [8, 2],
       "article_id": 4
     },
     {
       "id": 9,
-      "label_ids": [
-        9
-      ],
+      "label_ids": [9],
       "article_id": 39
     },
     {
       "id": 10,
-      "label_ids": [
-        1
-      ],
+      "label_ids": [1],
       "article_id": 1
     },
     {
       "id": 11,
-      "label_ids": [
-        1,
-        2,
-        11
-      ],
+      "label_ids": [1, 2, 11],
       "article_id": 2
     },
     {
       "id": 12,
-      "label_ids": [
-        1,
-        9
-      ],
+      "label_ids": [1, 9],
       "article_id": 3
     },
     {
       "id": 13,
-      "label_ids": [
-        9
-      ],
+      "label_ids": [9],
       "article_id": 51
     },
     {
       "id": 14,
-      "label_ids": [
-        9
-      ],
+      "label_ids": [9],
       "article_id": 47
     },
     {
       "id": 15,
-      "label_ids": [
-        9
-      ],
+      "label_ids": [9],
       "article_id": 41
     },
     {
       "id": 16,
-      "label_ids": [
-        1,
-        2
-      ],
+      "label_ids": [1, 2],
       "article_id": 40
     },
     {
       "id": 17,
-      "label_ids": [
-        1
-      ],
+      "label_ids": [1],
       "article_id": 35
     }
   ],
@@ -3136,55 +3092,26 @@
     {
       "id": 1,
       "user_id": 1,
-      "article_ids": [
-        1,
-        3,
-        7
-      ]
+      "article_ids": [1, 3, 7]
     },
     {
       "id": 2,
       "user_id": 2,
-      "article_ids": [
-        5,
-        8,
-        10
-      ]
+      "article_ids": [5, 8, 10]
     }
   ],
   "survey-responses": [
     {
       "answers": {
-        "REST API testing": [
-          "yes"
-        ],
-        "REST API tools": [
-          "Swagger",
-          "Postman",
-          "Bruno"
-        ],
-        "Using newman": [
-          "yes"
-        ],
-        "Using CI/CD": [
-          "yes"
-        ],
-        "CI/CD tools": [
-          "GitHub Actions",
-          "Jenkins",
-          "Azure DevOps"
-        ],
-        "testing frequency": [
-          "weekly"
-        ],
-        "Test types": [
-          "Integration tests",
-          "E2e tests"
-        ],
+        "REST API testing": ["yes"],
+        "REST API tools": ["Swagger", "Postman", "Bruno"],
+        "Using newman": ["yes"],
+        "Using CI/CD": ["yes"],
+        "CI/CD tools": ["GitHub Actions", "Jenkins", "Azure DevOps"],
+        "testing frequency": ["weekly"],
+        "Test types": ["Integration tests", "E2e tests"],
         "Open-Ended Questions": {
-          "Plans to improve testing": [
-            "Learn more Playwright for API Testing"
-          ]
+          "Plans to improve testing": ["Learn more Playwright for API Testing"]
         }
       },
       "type": 1,
@@ -3194,36 +3121,15 @@
     },
     {
       "answers": {
-        "REST API testing": [
-          "yes"
-        ],
-        "REST API tools": [
-          "Swagger",
-          "Postman"
-        ],
-        "Using newman": [
-          "no"
-        ],
-        "Using CI/CD": [
-          "yes"
-        ],
-        "CI/CD tools": [
-          "GitHub Actions",
-          "Azure DevOps"
-        ],
-        "testing frequency": [
-          "weekly"
-        ],
-        "Test types": [
-          "Unit tests",
-          "Module tests",
-          "Integration tests",
-          "E2e tests"
-        ],
+        "REST API testing": ["yes"],
+        "REST API tools": ["Swagger", "Postman"],
+        "Using newman": ["no"],
+        "Using CI/CD": ["yes"],
+        "CI/CD tools": ["GitHub Actions", "Azure DevOps"],
+        "testing frequency": ["weekly"],
+        "Test types": ["Unit tests", "Module tests", "Integration tests", "E2e tests"],
         "Open-Ended Questions": {
-          "Plans to improve testing": [
-            ""
-          ]
+          "Plans to improve testing": [""]
         }
       },
       "type": 1,
@@ -3233,38 +3139,15 @@
     },
     {
       "answers": {
-        "REST API testing": [
-          "yes"
-        ],
-        "REST API tools": [
-          "Swagger",
-          "Postman",
-          "Bruno"
-        ],
-        "Using newman": [
-          "no"
-        ],
-        "Using CI/CD": [
-          "yes"
-        ],
-        "CI/CD tools": [
-          "GitHub Actions",
-          "Jenkins"
-        ],
-        "Testing frequency": [
-          "daily"
-        ],
-        "Test types": [
-          "Unit tests",
-          "Module tests",
-          "Contract tests",
-          "Integration tests",
-          "E2e tests"
-        ],
+        "REST API testing": ["yes"],
+        "REST API tools": ["Swagger", "Postman", "Bruno"],
+        "Using newman": ["no"],
+        "Using CI/CD": ["yes"],
+        "CI/CD tools": ["GitHub Actions", "Jenkins"],
+        "Testing frequency": ["daily"],
+        "Test types": ["Unit tests", "Module tests", "Contract tests", "Integration tests", "E2e tests"],
         "Open-Ended Questions": {
-          "Plans to improve testing": [
-            ""
-          ]
+          "Plans to improve testing": [""]
         }
       },
       "type": 1,
@@ -3274,24 +3157,12 @@
     },
     {
       "answers": {
-        "REST API testing": [
-          "yes"
-        ],
-        "REST API tools": [
-          "Postman"
-        ],
-        "Using newman": [
-          "yes"
-        ],
-        "Using CI/CD": [
-          "yes"
-        ],
-        "CI/CD tools": [
-          "GitHub Actions"
-        ],
-        "Testing frequency": [
-          "daily"
-        ],
+        "REST API testing": ["yes"],
+        "REST API tools": ["Postman"],
+        "Using newman": ["yes"],
+        "Using CI/CD": ["yes"],
+        "CI/CD tools": ["GitHub Actions"],
+        "Testing frequency": ["daily"],
         "Test types": [
           "Module tests",
           "Integration tests",
@@ -3302,9 +3173,7 @@
           "Visual tests"
         ],
         "Open-Ended Questions": {
-          "Plans to improve testing": [
-            ""
-          ]
+          "Plans to improve testing": [""]
         }
       },
       "type": 1,
@@ -3314,36 +3183,15 @@
     },
     {
       "answers": {
-        "REST API testing": [
-          "yes"
-        ],
-        "REST API tools": [
-          "Postman",
-          "Swagger"
-        ],
-        "Using newman": [
-          "no"
-        ],
-        "Using CI/CD": [
-          "yes"
-        ],
-        "CI/CD tools": [
-          "GitHub Actions"
-        ],
-        "Testing frequency": [
-          "daily"
-        ],
-        "Test types": [
-          "Module tests",
-          "Integration tests",
-          "E2e tests",
-          "UAT tests",
-          "Performance tests"
-        ],
+        "REST API testing": ["yes"],
+        "REST API tools": ["Postman", "Swagger"],
+        "Using newman": ["no"],
+        "Using CI/CD": ["yes"],
+        "CI/CD tools": ["GitHub Actions"],
+        "Testing frequency": ["daily"],
+        "Test types": ["Module tests", "Integration tests", "E2e tests", "UAT tests", "Performance tests"],
         "Open-Ended Questions": {
-          "Plans to improve testing": [
-            "Learn more Playwright for API Testing"
-          ]
+          "Plans to improve testing": ["Learn more Playwright for API Testing"]
         }
       },
       "type": 1,
@@ -3353,32 +3201,14 @@
     },
     {
       "answers": {
-        "experience in test automation": [
-          "yes"
-        ],
-        "experience in test automation in years": [
-          "2-3 years"
-        ],
-        "automation tools": [
-          "Playwright",
-          "Selenium"
-        ],
-        "languages for automation tools": [
-          "JavaScript",
-          "TypeScript",
-          "Python"
-        ],
-        "Number of automated tests": [
-          "50-100"
-        ],
-        "Automated test types": [
-          "Integration tests",
-          "E2e tests"
-        ],
+        "experience in test automation": ["yes"],
+        "experience in test automation in years": ["2-3 years"],
+        "automation tools": ["Playwright", "Selenium"],
+        "languages for automation tools": ["JavaScript", "TypeScript", "Python"],
+        "Number of automated tests": ["50-100"],
+        "Automated test types": ["Integration tests", "E2e tests"],
         "Open-Ended Questions": {
-          "Plans to improve skills": [
-            "Learn more about Playwright"
-          ]
+          "Plans to improve skills": ["Learn more about Playwright"]
         }
       },
       "type": 2,
