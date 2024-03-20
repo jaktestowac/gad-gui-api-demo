@@ -1,0 +1,26 @@
+.simpleInfoBox {
+  border-radius: 10px;
+  border: 2px solid #ffd9428f;
+  background-color: #fadb5e44;
+  padding: 5px;
+  display: inline-block;
+  font-size: 14px;
+}
+
+.simpleSuccessBox {
+  border-radius: 10px;
+  border: 2px solid #48ff428f;
+  background-color: #5efa7844;
+  padding: 5px;
+  display: inline-block;
+  font-size: 14px;
+}
+
+.simpleErrorBox {
+  border-radius: 10px;
+  border: 2px solid #ff42428f;
+  background-color: #fa5e5e44;
+  padding: 5px;
+  display: inline-block;
+  font-size: 14px;
+}

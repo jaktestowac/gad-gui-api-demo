@@ -2,10 +2,41 @@ const dbEndpoint = "./api/db";
 
 const refreshBtn = document.getElementById("refreshBtn");
 const statsLbl = document.getElementById("statsLbl");
+const queryInfoLbl = document.getElementById("queryInfo");
+
+const floatingBox = document.getElementById("floatingBox");
+const resizeBtn = document.getElementById("resizeBtn");
+const sqlQuery = document.getElementById("sqlQuery");
+let isExpanded = false;
+
+let simpleSuccessBox = "simpleSuccessBox";
+let simpleErrorBox = "simpleErrorBox";
+let simpleInfoBox = "simpleInfoBox";
+
+const sampleQueries = {
+  0: "Sample query...",
+  1: "SELECT * FROM users",
+  2: "SELECT * FROM users WHERE id = 1",
+  3: "SELECT * FROM users WHERE email LIKE '%@test.test'",
+  4: "SELECT email, firstname, lastname FROM users",
+};
+
+const sampleQuerySelect = document.getElementById("sampleQuerySelect");
+
+Object.keys(sampleQueries).forEach((key) => {
+  const option = document.createElement("option");
+  option.value = key;
+  option.text = sampleQueries[key];
+  sampleQuerySelect.appendChild(option);
+});
 
 async function issueGetDb() {
   const dbAsJson = await fetch(dbEndpoint, {}).then((r) => r.json());
   return dbAsJson;
+}
+
+function setMessage(msg, className) {
+  queryInfoLbl.innerHTML = `<div class="${className}">${msg}</div>`;
 }
 
 // Function to generate table from JSON data
@@ -117,20 +148,85 @@ function normalizeObjects(data) {
 
 // Render JSON data as table
 const jsonTable = document.getElementById("jsonTable");
+let databaseAsJson = {};
 
-function refreshData() {
+async function refreshData() {
   refreshBtn.disable = true;
   jsonTable.innerHTML = "";
-  issueGetDb().then((data) => {
-    let status = "";
-    Object.keys(data).forEach((tableName) => {
-      const normalizedData = normalizeObjects(data[tableName]);
-      jsonTable.appendChild(generateTable(normalizedData, tableName));
-      status += `${tableName}: ${normalizedData.length} rows, `;
-    });
-    refreshBtn.disable = false;
-    statsLbl.innerHTML = `Last updated: ${new Date().toLocaleTimeString()}; <br/>Status:<br/>${status}`;
+  return issueGetDb().then((data) => {
+    displayResults(data);
   });
 }
+
+function displayResults(data) {
+  databaseAsJson = data;
+  let status = "";
+  Object.keys(data).forEach((tableName) => {
+    const normalizedData = normalizeObjects(data[tableName]);
+    jsonTable.appendChild(generateTable(normalizedData, tableName));
+    status += `${tableName}: ${normalizedData.length} rows, `;
+  });
+  refreshBtn.disable = false;
+  statsLbl.innerHTML = `Last updated: ${new Date().toLocaleTimeString()}; <br/>Status:<br/>${status}`;
+}
+
+function executeSqlQuery(sqlQuery) {
+  try {
+    Object.keys(databaseAsJson).forEach((tableName) => {
+      alasql(`CREATE TABLE IF NOT EXISTS \`${tableName}\``);
+      alasql.tables[tableName].data = databaseAsJson[tableName];
+    });
+
+    var res = alasql(sqlQuery);
+    const normalizedData = normalizeObjects(res);
+    jsonTable.innerHTML = "";
+    jsonTable.appendChild(generateTable(normalizedData, "Results:"));
+    setMessage(`Found: ${res?.length} records`, simpleSuccessBox);
+  } catch (error) {
+    setMessage(error.message, simpleErrorBox);
+  }
+}
+
+function runQuery() {
+  // https://github.com/AlaSQL/alasql
+  const sqlQuery = document.getElementById("sqlQuery").value;
+  const checkbox = document.getElementById("refreshRequest");
+  const checkboxValue = checkbox.checked;
+
+  if (sqlQuery === "") {
+    setMessage("Invalid query", simpleInfoBox);
+    return;
+  }
+
+  if (checkboxValue === true) {
+    refreshData().then(() => {
+      executeSqlQuery(sqlQuery);
+    });
+  } else {
+    executeSqlQuery(sqlQuery);
+  }
+}
+
+function selectSampleQuery() {
+  const sqlQueryId = document.getElementById("sampleQuerySelect").value;
+  if (sqlQueryId === "0") {
+    document.getElementById("sqlQuery").value = "";
+    setMessage("", "");
+    return;
+  }
+  document.getElementById("sqlQuery").value = sampleQueries[sqlQueryId];
+}
+
+resizeBtn.addEventListener("click", function () {
+  if (isExpanded) {
+    floatingBox.style.width = "400px"; // Set the width back to the original size
+    isExpanded = false;
+    sqlQuery.rows = 1;
+  } else {
+    floatingBox.style.width = "600px"; // Update the width to 2x the original size
+    isExpanded = true;
+    sqlQuery.rows = 4;
+  }
+});
 
 refreshData();

@@ -2,7 +2,9 @@
 <html>
   <head>
     <title>DataBase Visualizer</title>
+    <link rel="stylesheet" href="./../css/infoBoxes.css" />
     <style>
+      /* Existing styles */
       table {
         border-collapse: collapse;
       }
@@ -40,13 +42,53 @@
           background-color: rgb(182, 255, 114);
         }
       }
+
+      /* New styles for floating box */
+      .floating-box {
+        position: fixed;
+        width: 400px;
+        top: 0%;
+        left: 100%;
+        transform: translate(-100%, 0%);
+        background-color: #c1e6ff;
+        padding: 10px;
+        border-color: black;
+        border-style: solid;
+        border-width: 1px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        z-index: 9999;
+      }
     </style>
   </head>
   <body>
+    <div class="floating-box" id="floatingBox">
+      <label>SQL Query</label> <button id="resizeBtn">📏</button> ||
+      <button id="resizeBtn" onclick="runQuery()">🔍</button> ||
+      <span style="max-width: 110px !important">
+        <select id="sampleQuerySelect" style="max-width: 110px !important" onchange="selectSampleQuery()"></select
+      ></span>
+      ||
+      <input type="checkbox" id="refreshRequest" name="refreshRequest" checked />
+      <label for="refreshRequest">Refresh</label>
+      <br />
+      <div align="center">
+        <textarea
+          id="sqlQuery"
+          type="text"
+          placeholder="SQL Query"
+          title="Type in a name"
+          style="width: 100%"
+          rows="1"
+        ></textarea>
+        <label id="queryInfo"></label>
+      </div>
+    </div>
     <h1>DataBase Visualizer</h1>
     <button id="refreshBtn" onclick="refreshData()">Refresh</button>
     <label id="statsLbl">...</label>
+
     <div id="jsonTable"></div>
+    <script src="../js/alasql.min.js"></script>
     <script type="text/javascript" src="../js/dbvisualizer.js"></script>
   </body>
 </html>
