@@ -19,6 +19,13 @@ const sampleQueries = {
   2: "SELECT * FROM users WHERE id = 1",
   3: "SELECT * FROM users WHERE email LIKE '%@test.test'",
   4: "SELECT email, firstname, lastname FROM users",
+  5: `SELECT articles.id, articles.title, users.email
+FROM articles
+JOIN users ON articles.user_id = users.id;`,
+  6: `SELECT articles.id, articles.title, users.email
+FROM articles
+JOIN users ON articles.user_id = users.id
+WHERE articles.title LIKE '%test%';`,
 };
 
 const sampleQuerySelect = document.getElementById("sampleQuerySelect");
@@ -120,7 +127,7 @@ function highlightRow(rowId) {
     row.classList.add("highlight");
     setTimeout(() => {
       row.classList.remove("highlight");
-    }, 4000);
+    }, 5000);
   }
 }
 
