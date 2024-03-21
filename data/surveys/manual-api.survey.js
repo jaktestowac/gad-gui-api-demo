@@ -1,5 +1,9 @@
 const fullName = "Experience in REST API Testing";
 const type = 1;
+const description = {
+  base: `This survey is about experience in REST API testing.`,
+};
+
 const questions = {
   0: `
         <div >
@@ -103,4 +107,4 @@ const questions = {
         </div>`,
 };
 
-module.exports = { questions, fullName, type };
+module.exports = { questions, fullName, type, description };

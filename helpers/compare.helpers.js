@@ -14,6 +14,17 @@ function isUndefined(value) {
   return value === undefined;
 }
 
+function isEmptyOrUndefined(value) {
+  return (
+    value === undefined ||
+    value === "" ||
+    value === null ||
+    value === 0 ||
+    value === false ||
+    Object.keys(value).length === 0
+  );
+}
+
 function isStringOnTheList(value, list, caseSensitive = false) {
   if (caseSensitive === true) {
     return list.includes(`${value}`);
@@ -28,4 +39,5 @@ module.exports = {
   isNumber,
   isUndefined,
   isStringOnTheList,
+  isEmptyOrUndefined,
 };

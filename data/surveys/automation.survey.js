@@ -1,5 +1,8 @@
 const fullName = "Experience in Test Automation";
 const type = 2;
+const description = {
+  base: `This survey is about experience in test automation.`,
+};
 const questions = {
   0: `
           <div  >
@@ -103,4 +106,4 @@ const questions = {
         </div>`,
 };
 
-module.exports = { questions, fullName, type };
+module.exports = { questions, fullName, type, description };

@@ -1,4 +1,12 @@
 const surveyStatisticsEndpoint = "../../api/surveys/statistics";
+const surveyQuestionsEndpoint = "../../api/surveys";
+
+async function issueGetSurveyDescription(type) {
+  const surveyDescriptionData = await fetch(`${surveyQuestionsEndpoint}/${type}/description`, {
+    headers: { ...formatHeaders(), userid: getId() },
+  }).then((r) => r.json());
+  return surveyDescriptionData;
+}
 
 async function issueGetSurveyStatistics() {
   const surveyStatisticsData = await fetch(`${surveyStatisticsEndpoint}/${statsType}`, {
@@ -58,6 +66,11 @@ let statsType = getParams()["type"];
 
 // Load google charts
 google.charts.load("current", { packages: ["corechart"] });
+
+issueGetSurveyDescription(statsType).then((surveyDescriptionData) => {
+  document.getElementById("surveyDetails").innerHTML = surveyDescriptionData.description.base;
+});
+
 issueGetSurveyStatistics();
 
 google.charts.setOnLoadCallback(getAndDrawCharts);

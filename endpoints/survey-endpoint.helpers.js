@@ -1,6 +1,11 @@
 const { isBugEnabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
-const { extractValueFromQuestions, getSurveyQuestions, getSurveyTypes } = require("../data/surveys/survey.helper");
+const {
+  extractValueFromQuestions,
+  getSurveyQuestions,
+  getSurveyTypes,
+  getSurveyDescription,
+} = require("../data/surveys/survey.helper");
 const { isUndefined, isStringOnTheList } = require("../helpers/compare.helpers");
 const {
   searchForUserWithOnlyToken,
@@ -94,6 +99,17 @@ function handleSurvey(req, res, isAdmin) {
     }
 
     res.status(HTTP_OK).json({ question: question });
+  } else if (req.method === "GET" && /\/api\/surveys\/[0-9]{1,}\/description/.test(req.url)) {
+    // URL is valid
+    const surveyType = req.url.match(/\/api\/surveys\/([0-9]{1,})\/description/)[1];
+    const description = getSurveyDescription(surveyType);
+
+    if (isUndefined(description)) {
+      res.status(HTTP_NOT_FOUND).json({});
+      return;
+    }
+
+    res.status(HTTP_OK).json({ description: description });
   } else if (req.method === "POST" && req.url.endsWith("/api/surveys/responses")) {
     const mandatoryFieldValid = areAllFieldsPresent(req.body, mandatory_non_empty_fields_survey);
     if (!mandatoryFieldValid.status) {

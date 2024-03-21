@@ -15,6 +15,17 @@ function extractValueFromQuestions(questions) {
   return values;
 }
 
+function getSurveyDescription(surveyType) {
+  switch (`${surveyType}`) {
+    case `${manualApiSurvey.type}`:
+      return manualApiSurvey.description;
+    case `${automationSurvey.type}`:
+      return automationSurvey.description;
+    default:
+      return {};
+  }
+}
+
 function getSurveyQuestions(surveyType) {
   switch (`${surveyType}`) {
     case `${manualApiSurvey.type}`:
@@ -41,4 +52,10 @@ function getSurveyTypes() {
   return [manualApiSurvey.type, automationSurvey.type];
 }
 
-module.exports = { extractValueFromQuestions, getSurveyQuestions, getSurveyFullName, getSurveyTypes };
+module.exports = {
+  extractValueFromQuestions,
+  getSurveyQuestions,
+  getSurveyFullName,
+  getSurveyTypes,
+  getSurveyDescription,
+};

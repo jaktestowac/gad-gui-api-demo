@@ -3242,11 +3242,45 @@
         }
       }
     },
+    "/surveys/{surveyType}/description": {
+      "get": {
+        "tags": ["surveys"],
+        "summary": "Get surveys description",
+        "operationId": "getSurveysDescription",
+        "parameters": [
+          {
+            "name": "surveyType",
+            "in": "path",
+            "description": "Type of survey",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SurveyDescription"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
+          }
+        }
+      }
+    },
     "/surveys/{surveyType}/questions/{id}": {
       "get": {
         "tags": ["surveys"],
         "summary": "Get surveys questions",
-        "operationId": "getSurveysManualApiQuestions",
+        "operationId": "getSurveysQuestions",
         "parameters": [
           {
             "name": "surveyType",
@@ -4151,7 +4185,27 @@
           }
         }
       },
-      "SurveyQuestion": {},
+      "SurveyDescription": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "object",
+            "properties": {
+              "base": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "SurveyQuestion": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "string"
+          }
+        }
+      },
       "SurveyResponse": {
         "type": "object",
         "properties": {
