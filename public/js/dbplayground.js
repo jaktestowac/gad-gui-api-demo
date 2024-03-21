@@ -13,6 +13,8 @@ let simpleSuccessBox = "simpleSuccessBox";
 let simpleErrorBox = "simpleErrorBox";
 let simpleInfoBox = "simpleInfoBox";
 
+const maxFieldLength = 70;
+
 const sampleQueries = {
   0: "Sample query...",
   1: "SELECT * FROM users",
@@ -25,21 +27,29 @@ WHERE email
 LIKE '%@test.test'`,
   4: `SELECT email, firstname, lastname
 FROM users`,
-  5: `SELECT a.id, a.title, a.date, u.firstname, u.lastname
+  5: `SELECT *
+FROM articles
+WHERE title
+LIKE '%test%'`,
+  6: `SELECT *
+FROM articles
+WHERE body
+LIKE '%playwright%'`,
+  10: `SELECT a.id, a.title, a.date, u.firstname, u.lastname
 FROM articles a
 INNER JOIN users u ON a.user_id = u.id;`,
-  10: `SELECT users.id, users.email, COUNT(articles.id) AS article_count
+  20: `SELECT users.id, users.email, COUNT(articles.id) AS article_count
 FROM users
 JOIN articles ON users.id = articles.user_id
 GROUP BY users.id, users.email;`,
-  11: `SELECT articles.id, articles.title, users.email
+  21: `SELECT articles.id, articles.title, users.email
 FROM articles
 JOIN users ON articles.user_id = users.id;`,
-  12: `SELECT articles.id, articles.title, users.email
+  22: `SELECT articles.id, articles.title, users.email
 FROM articles
 JOIN users ON articles.user_id = users.id
 WHERE articles.title LIKE '%test%';`,
-  20: `SELECT a.id AS article_id, a.title, COUNT(c.id) AS comment_count
+  30: `SELECT a.id AS article_id, a.title, COUNT(c.id) AS comment_count
 FROM articles a
 LEFT JOIN comments c ON a.id = c.article_id 
 GROUP BY a.id, a.title;`,
@@ -96,7 +106,7 @@ function generateTable(data, tableName) {
       let cellValue = value;
 
       if (cellValue !== null && cellValue !== undefined) {
-        cellValue = `${value}`.slice(0, 75) + (value.length > 75 ? "(...)" : "");
+        cellValue = `${value}`.slice(0, maxFieldLength) + (value.length > maxFieldLength ? "(...)" : "");
       } else {
         cellValue = "";
       }
@@ -188,10 +198,10 @@ function displayResults(data) {
   Object.keys(data).forEach((tableName) => {
     const normalizedData = normalizeObjects(data[tableName]);
     jsonTable.appendChild(generateTable(normalizedData, tableName));
-    status += `${tableName}: ${normalizedData.length} rows, `;
+    status += `${tableName} [${normalizedData.length}], `;
   });
   refreshBtn.disable = false;
-  statsLbl.innerHTML = `Last updated: ${new Date().toLocaleTimeString()}; <br/>Status:<br/>${status}`;
+  statsLbl.innerHTML = `Last updated: ${new Date().toLocaleTimeString()}; <br/>Rows: ${status}`;
 }
 
 function executeSqlQuery(sqlQuery) {
@@ -219,7 +229,7 @@ function runQuery() {
   const checkboxValue = checkbox.checked;
 
   if (sqlQuery === "") {
-    setMessage("Invalid query", simpleInfoBox);
+    setMessage("Please provide query", simpleInfoBox);
     return;
   }
 
@@ -248,12 +258,12 @@ resizeBtn.addEventListener("click", function () {
   if (isExpanded) {
     floatingBox.style.width = "400px";
     isExpanded = false;
-    sqlQuery.rows = 4;
+    sqlQuery.rows = 5;
     inputQueryArea.setSize("100%", 50);
   } else {
     floatingBox.style.width = "600px";
     isExpanded = true;
-    sqlQuery.rows = 7;
+    sqlQuery.rows = 8;
     inputQueryArea.setSize("100%", 210);
   }
 });
@@ -265,6 +275,8 @@ var inputQueryArea = CodeMirror.fromTextArea(document.getElementById("sqlQuery")
   lineNumbers: true,
   autofocus: true,
   styleActiveLine: true,
+  extraKeys: { "Ctrl-Space": "autocomplete" },
+  hint: CodeMirror.hint.sql,
 });
 
 refreshData();

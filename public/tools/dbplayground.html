@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>DataBase Visualizer</title>
+    <title>🦎 GAD | Database SQL Playground</title>
     <link rel="icon" href="./../data/icons/favicon.png" />
     <link rel="stylesheet" href="./../css/infoBoxes.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -15,16 +15,24 @@
     <script src="./../js/libs/codemirror.js"></script>
     <link rel="stylesheet" href="./../js/libs/codemirror.css" />
     <script src="./../js/libs/sql.js"></script>
+    <script src="./../js/libs/show-hint.js"></script>
+    <script src="./../js/libs/sql-hint.js"></script>
+    <link rel="stylesheet" href="./../js/libs/hints.css" />
     <style>
       /* Existing styles */
+
+      div {
+        font-family: "Roboto";
+      }
       table {
         border-collapse: collapse;
       }
       th,
       td {
         border: 1px solid black;
-        padding: 8px;
+        padding: 4px;
         text-align: left;
+        font-size: 14px;
       }
       th {
         background-color: #f2f2f2;
@@ -54,13 +62,11 @@
           background-color: rgb(182, 255, 114);
         }
       }
-
-      /* New styles for floating box */
       .floating-box {
         position: fixed;
         width: 400px;
-        top: 0%;
         left: 100%;
+        top: 0%;
         transform: translate(-100%, 0%);
         background-color: #c1e6ff;
         padding: 10px;
@@ -68,13 +74,57 @@
         border-style: solid;
         border-width: 1px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-        z-index: 9999;
+        z-index: 999;
+      }
+      .floating-menu {
+        position: fixed;
+        display: flex;
+        height: 20px;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: #cacaca;
+        padding: 10px;
+        z-index: 999;
+      }
+      .floating-menu ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+      }
+      .floating-menu li {
+        vertical-align: middle;
+        margin: 0 10px;
+      }
+      .floating-menu a {
+        text-decoration: none;
+        color: #333;
+      }
+      option {
+        background-color: #e0e0e0;
+        font-size: 12px;
       }
     </style>
   </head>
   <body>
+    <div class="floating-menu">
+      <a href="./index.html" style="text-decoration: none; color: white" target="_blank" rel="noopener">
+        <img
+          src="../data/icons/favicon.png"
+          style="width: 30px !important; height: 30px !important; padding: 0px !important; margin-top: -5px"
+          alt="" /></a
+      >&nbsp;&nbsp;&nbsp;
+      <strong style="font-size: 18px !important; padding: 0px; margin: -2px">🦎 GAD | Database SQL Playground</strong
+      >&nbsp;
+      <ul>
+        <li><button id="refreshBtn" onclick="refreshData()">Refresh / Clear Results</button></li>
+      </ul>
+    </div>
     <div class="floating-box" id="floatingBox">
       <label>SQL Query</label>
+
       <span style="max-width: 120px !important">
         <select id="sampleQuerySelect" style="max-width: 120px !important" onchange="selectSampleQuery()"></select
       ></span>
@@ -82,24 +132,26 @@
       <input type="checkbox" id="refreshRequest" name="refreshRequest" checked />
       <label for="refreshRequest">Refresh</label>
       <br />
-      <textarea
-        id="sqlQuery"
-        type="text"
-        placeholder="SQL Query"
-        title="Type in a name"
-        style="width: 100%"
-        rows="4"
-      ></textarea>
+
+      <span style="font-size: 12px">
+        <textarea
+          id="sqlQuery"
+          type="text"
+          placeholder="SQL Query"
+          title="Type in a name"
+          style="width: 100%"
+          rows="5"
+        ></textarea>
+      </span>
       <button onclick="runQuery()">Run 🏃‍♂️</button> || <button id="resizeBtn">👀</button> ||
       <label id="queryInfo"></label>
     </div>
-    <h2>DataBase Visualizer</h2>
-    Read-only SQL query tool for the 🦎GAD database.<br /><br />
-    <button id="refreshBtn" onclick="refreshData()">Refresh / Clear Results</button>
-    <label id="statsLbl">...</label>
 
+    Read-only SQL query tool for the 🦎GAD database. Return to
+    <br /><br />
+    <label id="statsLbl">...</label>
     <div id="jsonTable"></div>
     <script src="../js/alasql.min.js"></script>
-    <script type="text/javascript" src="../js/dbvisualizer.js"></script>
+    <script type="text/javascript" src="../js/dbplayground.js"></script>
   </body>
 </html>
