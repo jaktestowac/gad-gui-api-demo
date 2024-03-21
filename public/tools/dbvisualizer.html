@@ -2,7 +2,19 @@
 <html>
   <head>
     <title>DataBase Visualizer</title>
+    <link rel="icon" href="./../data/icons/favicon.png" />
     <link rel="stylesheet" href="./../css/infoBoxes.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+      integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay"
+      crossorigin="anonymous"
+    />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+    <script src="./../js/libs/codemirror.js"></script>
+    <link rel="stylesheet" href="./../js/libs/codemirror.css" />
+    <script src="./../js/libs/sql.js"></script>
     <style>
       /* Existing styles */
       table {
@@ -62,29 +74,28 @@
   </head>
   <body>
     <div class="floating-box" id="floatingBox">
-      <label>SQL Query</label> <button id="resizeBtn">👀</button> ||
-      <button id="resizeBtn" onclick="runQuery()">🔍</button> ||
-      <span style="max-width: 110px !important">
-        <select id="sampleQuerySelect" style="max-width: 110px !important" onchange="selectSampleQuery()"></select
+      <label>SQL Query</label>
+      <span style="max-width: 120px !important">
+        <select id="sampleQuerySelect" style="max-width: 120px !important" onchange="selectSampleQuery()"></select
       ></span>
       ||
       <input type="checkbox" id="refreshRequest" name="refreshRequest" checked />
       <label for="refreshRequest">Refresh</label>
       <br />
-      <div align="center">
-        <textarea
-          id="sqlQuery"
-          type="text"
-          placeholder="SQL Query"
-          title="Type in a name"
-          style="width: 100%"
-          rows="1"
-        ></textarea>
-        <label id="queryInfo"></label>
-      </div>
+      <textarea
+        id="sqlQuery"
+        type="text"
+        placeholder="SQL Query"
+        title="Type in a name"
+        style="width: 100%"
+        rows="4"
+      ></textarea>
+      <button onclick="runQuery()">Run 🏃‍♂️</button> || <button id="resizeBtn">👀</button> ||
+      <label id="queryInfo"></label>
     </div>
-    <h1>DataBase Visualizer</h1>
-    <button id="refreshBtn" onclick="refreshData()">Refresh</button>
+    <h2>DataBase Visualizer</h2>
+    Read-only SQL query tool for the 🦎GAD database.<br /><br />
+    <button id="refreshBtn" onclick="refreshData()">Refresh / Clear Results</button>
     <label id="statsLbl">...</label>
 
     <div id="jsonTable"></div>

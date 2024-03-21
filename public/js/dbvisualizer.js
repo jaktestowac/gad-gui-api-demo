@@ -16,16 +16,33 @@ let simpleInfoBox = "simpleInfoBox";
 const sampleQueries = {
   0: "Sample query...",
   1: "SELECT * FROM users",
-  2: "SELECT * FROM users WHERE id = 1",
-  3: "SELECT * FROM users WHERE email LIKE '%@test.test'",
-  4: "SELECT email, firstname, lastname FROM users",
-  5: `SELECT articles.id, articles.title, users.email
+  2: `SELECT *
+FROM users
+WHERE id = 1`,
+  3: `SELECT *
+FROM users
+WHERE email
+LIKE '%@test.test'`,
+  4: `SELECT email, firstname, lastname
+FROM users`,
+  5: `SELECT a.id, a.title, a.date, u.firstname, u.lastname
+FROM articles a
+INNER JOIN users u ON a.user_id = u.id;`,
+  10: `SELECT users.id, users.email, COUNT(articles.id) AS article_count
+FROM users
+JOIN articles ON users.id = articles.user_id
+GROUP BY users.id, users.email;`,
+  11: `SELECT articles.id, articles.title, users.email
 FROM articles
 JOIN users ON articles.user_id = users.id;`,
-  6: `SELECT articles.id, articles.title, users.email
+  12: `SELECT articles.id, articles.title, users.email
 FROM articles
 JOIN users ON articles.user_id = users.id
 WHERE articles.title LIKE '%test%';`,
+  20: `SELECT a.id AS article_id, a.title, COUNT(c.id) AS comment_count
+FROM articles a
+LEFT JOIN comments c ON a.id = c.article_id 
+GROUP BY a.id, a.title;`,
 };
 
 const sampleQuerySelect = document.getElementById("sampleQuerySelect");
@@ -217,23 +234,36 @@ function runQuery() {
 function selectSampleQuery() {
   const sqlQueryId = document.getElementById("sampleQuerySelect").value;
   if (sqlQueryId === "0") {
-    document.getElementById("sqlQuery").value = "";
+    // document.getElementById("sqlQuery").value = "";
+    inputQueryArea.setValue("");
     setMessage("", "");
     return;
   }
-  document.getElementById("sqlQuery").value = sampleQueries[sqlQueryId];
+  //   document.getElementById("sqlQuery").value = sampleQueries[sqlQueryId];
+  inputQueryArea.setValue(sampleQueries[sqlQueryId]);
 }
 
 resizeBtn.addEventListener("click", function () {
   if (isExpanded) {
     floatingBox.style.width = "400px"; // Set the width back to the original size
     isExpanded = false;
-    sqlQuery.rows = 1;
+    sqlQuery.rows = 4;
+    inputQueryArea.setSize("100%", 50);
   } else {
     floatingBox.style.width = "600px"; // Update the width to 2x the original size
     isExpanded = true;
-    sqlQuery.rows = 4;
+    sqlQuery.rows = 7;
+    inputQueryArea.setSize("100%", 210);
   }
+});
+
+var inputQueryArea = CodeMirror.fromTextArea(document.getElementById("sqlQuery"), {
+  mode: "sql",
+  indentWithTabs: true,
+  smartIndent: true,
+  lineNumbers: true,
+  autofocus: true,
+  styleActiveLine: true,
 });
 
 refreshData();
