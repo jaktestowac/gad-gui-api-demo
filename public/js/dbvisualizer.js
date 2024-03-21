@@ -213,7 +213,8 @@ function executeSqlQuery(sqlQuery) {
 
 function runQuery() {
   // https://github.com/AlaSQL/alasql
-  const sqlQuery = document.getElementById("sqlQuery").value;
+  //   const sqlQuery = document.getElementById("sqlQuery").value;
+  const sqlQuery = inputQueryArea.getValue();
   const checkbox = document.getElementById("refreshRequest");
   const checkboxValue = checkbox.checked;
 
@@ -239,18 +240,18 @@ function selectSampleQuery() {
     setMessage("", "");
     return;
   }
-  //   document.getElementById("sqlQuery").value = sampleQueries[sqlQueryId];
+  // document.getElementById("sqlQuery").value = sampleQueries[sqlQueryId];
   inputQueryArea.setValue(sampleQueries[sqlQueryId]);
 }
 
 resizeBtn.addEventListener("click", function () {
   if (isExpanded) {
-    floatingBox.style.width = "400px"; // Set the width back to the original size
+    floatingBox.style.width = "400px";
     isExpanded = false;
     sqlQuery.rows = 4;
     inputQueryArea.setSize("100%", 50);
   } else {
-    floatingBox.style.width = "600px"; // Update the width to 2x the original size
+    floatingBox.style.width = "600px";
     isExpanded = true;
     sqlQuery.rows = 7;
     inputQueryArea.setSize("100%", 210);
