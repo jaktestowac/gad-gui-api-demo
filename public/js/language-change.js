@@ -1,5 +1,6 @@
 const translationsEndpoint = "../../api/languages/translations";
 const languagesEndpoint = "../../api/languages";
+let previousLanguage = undefined;
 
 let translationsStored = {};
 let languagesStored = {};
@@ -38,7 +39,7 @@ function changeLanguage(language) {
   addLanguageCookie(language);
   const translation = translationsStored[language];
   if (translation) {
-    replaceLanguageText(translationsStored);
+    replaceLanguageText(translationsStored, previousLanguage, language);
     Object.keys(translation).forEach((translationKey) => {
       const elements = getElementsById(translationKey);
       if (elements) {
@@ -54,6 +55,7 @@ function changeLanguage(language) {
       }
     });
   }
+  previousLanguage = getLanguage();
 }
 
 function getElementsById(id) {
@@ -81,19 +83,22 @@ issueGetTranslations().then((translations) => {
     translationsStored = translations;
     addLanguageSelect(languagesStored, getLanguage());
     changeLanguage(getLanguage());
-    detectDomChange(() => replaceLanguageText(translationsStored));
+    detectDomChange(() => replaceLanguageText(translationsStored, previousLanguage, getLanguage()));
   });
 });
 
-function replaceLanguageText(languageData) {
-  if (getLanguage() === "en") {
+function replaceLanguageText(languageData, previousLanguage, language) {
+  if (previousLanguage === undefined) {
+    previousLanguage = "en";
+  }
+  if (language === "en" || previousLanguage === language) {
     return;
   }
   const elements = document.querySelectorAll("*");
 
   const mergedData = {};
-  for (const subKey in languageData["en"]) {
-    mergedData[languageData["en"][subKey]] = languageData[getLanguage()][subKey];
+  for (const subKey in languageData[previousLanguage]) {
+    mergedData[languageData[previousLanguage][subKey]] = languageData[language][subKey];
   }
 
   elements.forEach((element) => {
