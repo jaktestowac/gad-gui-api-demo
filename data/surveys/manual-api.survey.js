@@ -12,8 +12,8 @@ const questions = {
   1: `
         <div id="question-1" class="question" value="REST API testing">
             <h3>Question: Do you have experience in manual REST API testing?</h3>
-            <input type="radio" value="yes" next="2" /><span>Yes</span>
-            <input type="radio" value="no" next="100" /><span>No</span>
+            <input  name="experience" type="radio" value="yes" next="2" /><span>Yes</span>
+            <input  name="experience" type="radio" value="no" next="100" /><span>No</span>
             <br><br id="toRemove">
             <button id="buttonNext" onclick="parseQuestion(1)">Next</button>
         </div>`,
@@ -31,16 +31,16 @@ const questions = {
   3: `
         <div id="question-3" class="question" value="Using newman">
             <h3>Question: Have You used Newman?</h3>
-            <input type="radio" value="yes" next="4"> <span>Yes</span>
-            <input type="radio" value="no" next="4"> <span>No</span>
+            <input  name="newman" type="radio" value="yes" next="4"> <span>Yes</span>
+            <input  name="newman" type="radio" value="no" next="4"> <span>No</span>
             <br><br id="toRemove">
             <button id="buttonNext" onclick="parseQuestion(3)">Next</button>
         </div>`,
   4: `
         <div id="question-4" class="question" value="Using CI/CD">
             <h3>Question: Have You used CI/CD?</h3>
-            <input type="radio" value="yes" next="5"> <span>Yes</span>
-            <input type="radio" value="no" next="99"> <span>No</span>
+            <input  name="cicd"  type="radio" value="yes" next="5"> <span>Yes</span>
+            <input  name="cicd"  type="radio" value="no" next="99"> <span>No</span>
             <br><br id="toRemove">
             <button id="buttonNext" onclick="parseQuestion(4)">Next</button>
         </div>`,
@@ -60,10 +60,10 @@ const questions = {
   99: `
         <div id="question-99" class="question" value="Testing frequency">
             <h3>Question: How often do you perform manual testing?</h3>
-            <input type="radio" value="daily" next="100"> <span>Daily</span>
-            <input type="radio" value="weekly" next="100"> <span>Weekly</span>
-            <input type="radio" value="monthly" next="100"> <span>Monthly</span>
-            <input type="radio" value="never" next="100"> <span>Never</span>
+            <input  name="frequency" type="radio" value="daily" next="100"> <span>Daily</span>
+            <input  name="frequency" type="radio" value="weekly" next="100"> <span>Weekly</span>
+            <input  name="frequency" type="radio" value="monthly" next="100"> <span>Monthly</span>
+            <input  name="frequency" type="radio" value="never" next="100"> <span>Never</span>
             <br><br id="toRemove">
             <button id="buttonNext" onclick="parseQuestion(99)">Next</button>
         </div>`,

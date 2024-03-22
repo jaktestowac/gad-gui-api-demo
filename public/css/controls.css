@@ -352,6 +352,7 @@ td:first-child {
 .pagination a:hover:not(.active) {
   background-color: #ddd;
 }
+
 .hovertext {
   position: relative;
   border-bottom: 1px dotted black;
@@ -738,4 +739,42 @@ s .container-mobile {
 
 .separator:not(:empty)::after {
   margin-left: 0.25em;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.tooltip::after {
+  content: "?";
+  position: absolute;
+  top: -16px;
+  right: -30px;
+  width: 20px;
+  height: 20px;
+  background-color: #367cff;
+  color: #fff;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 20px;
+  font-weight: bold;
+}
+
+.tooltip:hover::before {
+  content: attr(text);
+  position: absolute;
+  top: -40px;
+  right: -100px;
+  padding: 5px;
+  background-color: #000;
+  color: #fff;
+  border-radius: 5px;
+  font-size: 12px;
+  opacity: 0.8;
+
+  text-align: center;
+  border-radius: 5px;
+  transition: opacity 0.3s ease-in-out;
 }

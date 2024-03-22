@@ -21,7 +21,7 @@ function getLanguage() {
 }
 
 function addLanguageCookie(value) {
-  document.cookie = `lang=${value?.toLowerCase()}; path=/`;
+  document.cookie = `lang=${value?.toLowerCase()}; SameSite=Lax; path=/`;
 }
 
 function changeLanguage(language) {
@@ -54,8 +54,10 @@ function getElementsByTranslateId(id) {
 }
 
 function detectDomChange(callback) {
+  var config = { attributes: false, childList: true, characterData: false, subtree: true };
+
   const observer = new MutationObserver(callback);
-  observer.observe(document, { characterData: true, attributes: true, childList: false, subtree: true });
+  observer.observe(document, config);
 }
 
 function getTranslatedText(elementId) {
@@ -66,4 +68,31 @@ issueGetTranslations().then((translations) => {
   translationsStored = translations;
   addLanguageSelect(getLanguage());
   changeLanguage(getLanguage());
+  detectDomChange(() => replaceLanguageText(translationsStored));
 });
+
+function replaceLanguageText(languageData) {
+  if (getLanguage() === "en") {
+    return;
+  }
+  const elements = document.querySelectorAll("*");
+
+  const mergedData = {};
+  for (const subKey in languageData["en"]) {
+    mergedData[languageData["en"][subKey]] = languageData[getLanguage()][subKey];
+  }
+
+  elements.forEach((element) => {
+    if (element.innerHTML === element.textContent) {
+      const text = element.textContent.trim();
+
+      if (text !== undefined && text !== "") {
+        const replacementText = mergedData[text];
+
+        if (replacementText !== undefined) {
+          element.textContent = replacementText;
+        }
+      }
+    }
+  });
+}

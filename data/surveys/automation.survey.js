@@ -11,8 +11,8 @@ const questions = {
   1: `
         <div id="question-1" class="question" value="experience in test automation">
             <h3>Question: Do you have experience in test automation?</h3>
-            <input type="radio" value="yes" next="2" /><span>Yes</span>
-            <input type="radio" value="no" next="100" /><span>No</span>
+            <input name="experience" type="radio" value="yes" next="2" /><span>Yes</span>
+            <input name="experience" type="radio" value="no" next="100" /><span>No</span>
             <br><br id="toRemove">
             <button id="buttonNext" onclick="parseQuestion(1)">Next</button>
         </div>`,
@@ -42,7 +42,7 @@ const questions = {
         </div>`,
   4: `
         <div id="question-4" class="question" value="languages for automation tools">
-            <h3>Question: Which tools have you used for test automation?</h3>
+            <h3>Question: Which language have you used for test automation?</h3>
             <input type="checkbox" value="JavaScript" next="5"> <span>JavaScript</span>
             <input type="checkbox" value="TypeScript" next="5"> <span>TypeScript</span>
             <input type="checkbox" value="Java" next="5"> <span>Java</span>
@@ -55,14 +55,14 @@ const questions = {
         </div>`,
   5: `
         <div id="question-5" class="question" value="Number of automated tests">
-            <h3>Question: How many automated tests You have in project??</h3>
-            <input type="radio" value="less than 10" next="100"> <span>less than 10</span>
-            <input type="radio" value="10-50" next="100"> <span>10-50</span>
-            <input type="radio" value="50-100" next="100"> <span>50-100</span>
-            <input type="radio" value="100-250" next="100"> <span>100-250</span>
-            <input type="radio" value="250-500" next="100"> <span>250-500</span>
-            <input type="radio" value="500-1000" next="100"> <span>500-1000</span>
-            <input type="radio" value="1000+" next="100"> <span>1000+</span>
+            <h3>Question: How many automated tests You have in project?</h3>
+            <input name="automatedTestsNumber" type="radio" value="less than 10" next="100"> <span>less than 10</span>
+            <input name="automatedTestsNumber" type="radio" value="10-50" next="100"> <span>10-50</span>
+            <input name="automatedTestsNumber" type="radio" value="50-100" next="100"> <span>50-100</span>
+            <input name="automatedTestsNumber" type="radio" value="100-250" next="100"> <span>100-250</span>
+            <input name="automatedTestsNumber" type="radio" value="250-500" next="100"> <span>250-500</span>
+            <input name="automatedTestsNumber" type="radio" value="500-1000" next="100"> <span>500-1000</span>
+            <input name="automatedTestsNumber" type="radio" value="1000+" next="100"> <span>1000+</span>
             <br><br id="toRemove">
             <button id="buttonNext" onclick="parseQuestion(5)">Next</button>
         </div>`,

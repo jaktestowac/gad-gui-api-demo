@@ -242,6 +242,9 @@ function addLanguageSelect(selectedOption) {
           <option value="pl" translateId="polishOption" style="font-size:16px" ${
             selectedLanguage === "pl" ? "selected" : ""
           }>🇵🇱 Polish</option>
+          <option value="jp" translateId="japaneseOption" style="font-size:16px" ${
+            selectedLanguage === "jp" ? "selected" : ""
+          }> 🇯🇵 Japanese</option>
         </select>
       </span>`;
   }

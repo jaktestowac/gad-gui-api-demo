@@ -16,7 +16,7 @@ let simpleInfoBox = "simpleInfoBox";
 const maxFieldLength = 70;
 
 const sampleQueries = {
-  0: "Sample query...",
+  0: "Pick a query...",
   1: "SELECT * FROM users",
   2: `SELECT *
 FROM users
@@ -32,6 +32,10 @@ FROM articles
 WHERE title
 LIKE '%test%'`,
   6: `SELECT *
+FROM articles
+WHERE body
+LIKE '%playwright%'`,
+  7: `SELECT title, body
 FROM articles
 WHERE body
 LIKE '%playwright%'`,
@@ -53,6 +57,7 @@ WHERE articles.title LIKE '%test%';`,
 FROM articles a
 LEFT JOIN comments c ON a.id = c.article_id 
 GROUP BY a.id, a.title;`,
+  90: `SHOW TABLES`,
 };
 
 const sampleQuerySelect = document.getElementById("sampleQuerySelect");
@@ -81,20 +86,23 @@ function generateTable(data, tableName) {
 
   // Create table header
   var headerRow = document.createElement("tr");
-  Object.keys(data[0]).forEach(function (key) {
-    var th = document.createElement("th");
-    th.textContent = key;
 
-    if (key === "id") {
-      th.classList.add("primary-key");
-      th.textContent = key + " (PK)";
-    }
-    if (key.includes("_id")) {
-      th.classList.add("foreign-key");
-      th.textContent = key + " (FK)";
-    }
-    headerRow.appendChild(th);
-  });
+  if (data.length > 0) {
+    Object.keys(data[0]).forEach(function (key) {
+      var th = document.createElement("th");
+      th.textContent = key;
+
+      if (key === "id") {
+        th.classList.add("primary-key");
+        th.textContent = key + " (PK)";
+      }
+      if (key.includes("_id")) {
+        th.classList.add("foreign-key");
+        th.textContent = key + " (FK)";
+      }
+      headerRow.appendChild(th);
+    });
+  }
   thead.appendChild(headerRow);
   table.appendChild(thead);
 
@@ -205,7 +213,16 @@ function displayResults(data) {
 }
 
 function executeSqlQuery(sqlQuery) {
+  const DB_NAME = "gaddb";
   try {
+    try {
+      alasql(`CREATE DATABASE IF NOT EXISTS ${DB_NAME};`);
+    } catch (error) {
+      if (!error.message.includes("already exists")) {
+        console.error(`${error.message} but proceeding...`);
+      }
+    }
+    alasql(`USE ${DB_NAME};`);
     Object.keys(databaseAsJson).forEach((tableName) => {
       alasql(`CREATE TABLE IF NOT EXISTS \`${tableName}\``);
       alasql.tables[tableName].data = databaseAsJson[tableName];
@@ -217,6 +234,7 @@ function executeSqlQuery(sqlQuery) {
     jsonTable.appendChild(generateTable(normalizedData, "Results:"));
     setMessage(`Found: ${res?.length} records`, simpleSuccessBox);
   } catch (error) {
+    console.error(error);
     setMessage(error.message, simpleErrorBox);
   }
 }
