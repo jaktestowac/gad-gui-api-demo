@@ -64,7 +64,9 @@
     "testingFrequencyLabel": "Testing Frequency",
     "dailyLabel": "Daily",
     "testTypesLabel": "Test Types",
-    "myAccount": "My account"
+    "myAccount": "My account",
+    "next": "Next",
+    "surveyNotExists": "Survey does not exists or was not published yet."
   },
   "pl": {
     "_name": "🇵🇱&nbsp;Polski",
@@ -131,7 +133,9 @@
     "testingFrequencyLabel": "Częstotliwość Testowania",
     "dailyLabel": "Codziennie",
     "testTypesLabel": "Rodzaje Testów",
-    "myAccount": "Moje konto"
+    "myAccount": "Moje konto",
+    "next": "Dalej",
+    "surveyNotExists": "Ankieta nie istnieje lub nie została jeszcze opublikowana."
   },
   "jp": {
     "_name": "🇯🇵&nbsp;日本語",
@@ -198,6 +202,8 @@
     "testingFrequencyLabel": "テスト頻度",
     "dailyLabel": "毎日",
     "testTypesLabel": "テストタイプ",
-    "myAccount": "マイアカウント"
+    "myAccount": "マイアカウント",
+    "next": "次へ",
+    "surveyNotExists": "アンケートが存在しないか、まだ公開されていません。"
   }
 }
