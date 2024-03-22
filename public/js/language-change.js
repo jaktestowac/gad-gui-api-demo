@@ -83,15 +83,16 @@ issueGetTranslations().then((translations) => {
     translationsStored = translations;
     addLanguageSelect(languagesStored, getLanguage());
     changeLanguage(getLanguage());
-    detectDomChange(() => replaceLanguageText(translationsStored, previousLanguage, getLanguage()));
+    detectDomChange(() => replaceLanguageText(translationsStored, "en", getLanguage()));
   });
 });
 
 function replaceLanguageText(languageData, previousLanguage, language) {
+  console.log("replacing language text", previousLanguage, language);
   if (previousLanguage === undefined) {
     previousLanguage = "en";
   }
-  if (language === "en" || previousLanguage === language) {
+  if (previousLanguage === language) {
     return;
   }
   const elements = document.querySelectorAll("*");
