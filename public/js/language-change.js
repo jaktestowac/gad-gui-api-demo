@@ -38,6 +38,7 @@ function changeLanguage(language) {
   addLanguageCookie(language);
   const translation = translationsStored[language];
   if (translation) {
+    replaceLanguageText(translationsStored);
     Object.keys(translation).forEach((translationKey) => {
       const elements = getElementsById(translationKey);
       if (elements) {
@@ -80,7 +81,6 @@ issueGetTranslations().then((translations) => {
     translationsStored = translations;
     addLanguageSelect(languagesStored, getLanguage());
     changeLanguage(getLanguage());
-    replaceLanguageText(translationsStored);
     detectDomChange(() => replaceLanguageText(translationsStored));
   });
 });
