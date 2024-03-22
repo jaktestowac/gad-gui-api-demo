@@ -225,10 +225,16 @@ const logoGAD = (path = ".") => {
  `;
 };
 
-function addLanguageSelect(selectedOption) {
+function addLanguageSelect(languages, selectedOption) {
   const languageSelectElement = document.getElementById("languageSelect");
   if (languageSelectElement !== undefined && languageSelectElement !== null) {
     const selectedLanguage = selectedOption?.toLowerCase();
+
+    let allLanguages = Object.keys(languages).map((lang) => {
+      return `<option value="${lang}" style="font-size:16px" ${selectedLanguage === lang ? "selected" : ""}>${
+        languages[lang]
+      }</option>`;
+    });
 
     languageSelectElement.innerHTML = `
     <span style="display: flex; align-items: center; justify-content: center" >
@@ -236,15 +242,7 @@ function addLanguageSelect(selectedOption) {
           onchange="changeLanguage(this.value)"
           style="display: inline-block; width: 100px; height:30px; margin: 5px 5px 5px 5px; font-size:16px"
         >
-          <option value="en" translateId="englishOption" style="font-size:16px" ${
-            selectedLanguage === "en" ? "selected" : ""
-          }>🇬🇧 English</option>
-          <option value="pl" translateId="polishOption" style="font-size:16px" ${
-            selectedLanguage === "pl" ? "selected" : ""
-          }>🇵🇱 Polish</option>
-          <option value="jp" translateId="japaneseOption" style="font-size:16px" ${
-            selectedLanguage === "jp" ? "selected" : ""
-          }> 🇯🇵 Japanese</option>
+          ${allLanguages.join("")}
         </select>
       </span>`;
   }

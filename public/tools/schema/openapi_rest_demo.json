@@ -2092,7 +2092,20 @@
         }
       }
     },
-    "/translations": {
+    "/languages": {
+      "get": {
+        "tags": ["other"],
+        "summary": "Get languages",
+        "operationId": "getLanguages",
+        "responses": {
+          "200": {
+            "description": "Languages received",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/languages/translations": {
       "get": {
         "tags": ["other"],
         "summary": "Get translations",
@@ -2105,7 +2118,7 @@
         }
       }
     },
-    "/translations/{lang}": {
+    "/languages/translations/{lang}": {
       "get": {
         "tags": ["other"],
         "summary": "Get translations",

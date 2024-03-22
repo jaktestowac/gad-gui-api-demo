@@ -10,6 +10,7 @@ const {
   getNonApiCalls,
   getNonApiRequestsDetails,
   translationsDb,
+  getLanguages,
 } = require("../helpers/db.helpers");
 const {
   formatErrorResponse,
@@ -257,16 +258,20 @@ const customRoutes = (req, res, next) => {
     } else if (req.method === "GET" && req.url.endsWith("/pluginstatuses")) {
       res.json(pluginStatuses);
       req.body = pluginStatuses;
-    } else if (req.method === "GET" && req.url.endsWith("/translations")) {
+    } else if (req.method === "GET" && req.url.endsWith("/languages/translations")) {
       const dbData = translationsDb();
       res.json(dbData);
       req.body = dbData;
-    } else if (req.method === "GET" && req.url.includes("/translations/")) {
+    } else if (req.method === "GET" && req.url.includes("/languages/translations/")) {
       let language = getIdFromUrl(urlEnds);
       const dbData = translationsDb();
       const translations = dbData[language] ?? {};
       res.json(translations);
       req.body = translations;
+    } else if (req.method === "GET" && req.url.includes("/languages")) {
+      const languages = getLanguages();
+      res.json(languages);
+      req.body = languages;
     }
     if (res.headersSent !== true) {
       next();

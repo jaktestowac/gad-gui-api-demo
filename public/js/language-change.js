@@ -1,11 +1,21 @@
-const translationsEndpoint = "../../api/translations";
+const translationsEndpoint = "../../api/languages/translations";
+const languagesEndpoint = "../../api/languages";
+
 let translationsStored = {};
+let languagesStored = {};
 
 async function issueGetTranslations() {
   const translations = await fetch(translationsEndpoint, {
     headers: { ...formatHeaders(), userid: getId() },
   }).then((r) => r.json());
   return translations;
+}
+
+async function issueGetLanguages() {
+  const languages = await fetch(languagesEndpoint, {
+    headers: { ...formatHeaders(), userid: getId() },
+  }).then((r) => r.json());
+  return languages;
 }
 
 function getLanguage() {
@@ -65,10 +75,14 @@ function getTranslatedText(elementId) {
 }
 
 issueGetTranslations().then((translations) => {
-  translationsStored = translations;
-  addLanguageSelect(getLanguage());
-  changeLanguage(getLanguage());
-  detectDomChange(() => replaceLanguageText(translationsStored));
+  issueGetLanguages().then((languages) => {
+    languagesStored = languages;
+    translationsStored = translations;
+    addLanguageSelect(languagesStored, getLanguage());
+    changeLanguage(getLanguage());
+    replaceLanguageText(translationsStored);
+    detectDomChange(() => replaceLanguageText(translationsStored));
+  });
 });
 
 function replaceLanguageText(languageData) {
@@ -91,6 +105,12 @@ function replaceLanguageText(languageData) {
 
         if (replacementText !== undefined) {
           element.textContent = replacementText;
+        } else {
+          Object.keys(mergedData).forEach((key) => {
+            if (text?.toLowerCase() === key?.toLowerCase()) {
+              element.textContent = mergedData[key];
+            }
+          });
         }
       }
     }

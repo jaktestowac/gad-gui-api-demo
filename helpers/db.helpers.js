@@ -114,6 +114,16 @@ function translationsDb() {
   return db;
 }
 
+function getLanguages() {
+  const translations = translationsDb();
+  const keys = Object.keys(translations);
+  const keyNamePair = keys.reduce((acc, key) => {
+    acc[key] = translations[key]["_name"];
+    return acc;
+  }, {});
+  return keyNamePair;
+}
+
 function userDb() {
   return fullDb()["users"];
 }
@@ -277,4 +287,5 @@ module.exports = {
   getNonApiRequestsDetails: visitsData.getNonApiRequestsDetails,
   visitsData,
   translationsDb,
+  getLanguages,
 };
