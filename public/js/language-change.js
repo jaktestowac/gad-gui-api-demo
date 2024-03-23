@@ -35,6 +35,14 @@ function addLanguageCookie(value) {
   document.cookie = `lang=${value?.toLowerCase()}; SameSite=Lax; path=/`;
 }
 
+function toggleDirAttribute(element, language) {
+  if (language === "fa") {
+    element.setAttribute("dir", "rtl");
+  } else {
+    element.removeAttribute("dir");
+  }
+}
+
 function changeLanguage(language) {
   addLanguageCookie(language);
   const translation = translationsStored[language];
@@ -45,18 +53,14 @@ function changeLanguage(language) {
       if (elements) {
         elements.forEach((element) => {
           element.textContent = translation[translationKey];
-          if (language === "fa") {
-            element.setAttribute("dir", "rtl");
-          }
+          toggleDirAttribute(element, language);
         });
       }
       const elementsByTranslateId = getElementsByTranslateId(translationKey);
       if (elementsByTranslateId) {
         elementsByTranslateId.forEach((element) => {
           element.textContent = translation[translationKey];
-          if (language === "fa") {
-            element.setAttribute("dir", "rtl");
-          }
+          toggleDirAttribute(element, language);
         });
       }
     });
@@ -106,17 +110,12 @@ function replaceLanguageText(languageData, previousLanguage, language) {
 
         if (replacementText !== undefined) {
           element.textContent = replacementText;
-          if (language === "fa") {
-            element.setAttribute("dir", "rtl");
-          }
+          toggleDirAttribute(element, language);
         } else {
           Object.keys(mergedData).forEach((key) => {
             if (text?.toLowerCase() === key?.toLowerCase()) {
               element.textContent = mergedData[key];
-
-              if (language === "fa") {
-                element.setAttribute("dir", "rtl");
-              }
+              toggleDirAttribute(element, language);
             }
           });
         }
