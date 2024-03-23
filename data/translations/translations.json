@@ -94,7 +94,12 @@
     "mutationTests": "Mutation tests",
     "fuzzTests": "Fuzz tests",
     "chaosTests": "Chaos tests",
-    "other": "Other"
+    "other": "Other",
+    "id": "id",
+    "firstname": "firstname",
+    "lastname": "lastname",
+    "email": "email",
+    "avatar": "avatar"
   },
   "pl": {
     "_name": "🇵🇱&nbsp;Polski",
@@ -191,7 +196,12 @@
     "chaosTests": "Testy chaosu",
     "other": "Inne",
     "surveyDescription300": "Ta ankieta dotyczy doświadczenia w testowaniu REST API.",
-    "surveyDescription400": "Ta ankieta dotyczy doświadczenia w automatyzacji testów."
+    "surveyDescription400": "Ta ankieta dotyczy doświadczenia w automatyzacji testów.",
+    "id": "id",
+    "firstname": "imię",
+    "lastname": "nazwisko",
+    "email": "email",
+    "avatar": "avatar"
   },
   "jp": {
     "_name": "🇯🇵&nbsp;日本語",
@@ -288,7 +298,12 @@
     "mutationTests": "ミューテーションテスト",
     "fuzzTests": "ファズテスト",
     "chaosTests": "カオステスト",
-    "other": "その他"
+    "other": "その他",
+    "firstname": "名",
+    "lastname": "姓",
+    "email": "メール",
+    "avatar": "アバター",
+    "id": "ID"
   },
   "de": {
     "_name": "🇩🇪&nbsp;Deutsch",
@@ -386,7 +401,12 @@
     "mutationTests": "Mutations-Tests",
     "fuzzTests": "Fuzz-Tests",
     "chaosTests": "Chaos-Tests",
-    "other": "Andere"
+    "other": "Andere",
+    "firstname": "Vorname",
+    "lastname": "Nachname",
+    "email": "E-Mail",
+    "avatar": "Avatar",
+    "id": "ID"
   },
   "fa": {
     "_name": "🇮🇷&nbsp;فارسی",
@@ -485,6 +505,11 @@
     "mutationTests": "تست‌های جهشی",
     "fuzzTests": "تست‌های Fuzz",
     "chaosTests": "تست‌های Chaos",
-    "other": "دیگر"
+    "other": "دیگر",
+    "firstname": "نام",
+    "lastname": "نام خانوادگی",
+    "email": "ایمیل",
+    "avatar": "آواتار",
+    "id": "شناسه"
   }
 }

@@ -297,4 +297,11 @@ var inputQueryArea = CodeMirror.fromTextArea(document.getElementById("sqlQuery")
   hint: CodeMirror.hint.sql,
 });
 
+const menu = document.querySelector(".floating-menu");
+
+document.addEventListener("scroll", () => {
+  if (document.documentElement.scrollTop > 120) menu.classList.add("transparent");
+  else menu.classList.remove("transparent");
+});
+
 refreshData();
