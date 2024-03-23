@@ -29,16 +29,19 @@ th {
 
 @keyframes pulse {
   0% {
-    background-color: rgb(182, 255, 114);
+    background-color: rgb(170, 255, 91);
   }
-  25% {
-    background-color: rgb(255, 114, 114);
+  20% {
+    background-color: rgb(255, 40, 40);
   }
-  75% {
-    background-color: rgb(140, 114, 255);
+  80% {
+    background-color: rgb(72, 203, 255);
+  }
+  80% {
+    background-color: rgb(255, 229, 114);
   }
   100% {
-    background-color: rgb(182, 255, 114);
+    background-color: rgb(170, 255, 91);
   }
 }
 .floating-box {
