@@ -45,12 +45,18 @@ function changeLanguage(language) {
       if (elements) {
         elements.forEach((element) => {
           element.textContent = translation[translationKey];
+          if (language === "fa") {
+            element.setAttribute("dir", "rtl");
+          }
         });
       }
       const elementsByTranslateId = getElementsByTranslateId(translationKey);
       if (elementsByTranslateId) {
         elementsByTranslateId.forEach((element) => {
           element.textContent = translation[translationKey];
+          if (language === "fa") {
+            element.setAttribute("dir", "rtl");
+          }
         });
       }
     });
@@ -77,18 +83,7 @@ function getTranslatedText(elementId) {
   return translationsStored[elementId];
 }
 
-issueGetTranslations().then((translations) => {
-  issueGetLanguages().then((languages) => {
-    languagesStored = languages;
-    translationsStored = translations;
-    addLanguageSelect(languagesStored, getLanguage());
-    changeLanguage(getLanguage());
-    detectDomChange(() => replaceLanguageText(translationsStored, "en", getLanguage()));
-  });
-});
-
 function replaceLanguageText(languageData, previousLanguage, language) {
-  console.log("replacing language text", previousLanguage, language);
   if (previousLanguage === undefined) {
     previousLanguage = "en";
   }
@@ -111,10 +106,17 @@ function replaceLanguageText(languageData, previousLanguage, language) {
 
         if (replacementText !== undefined) {
           element.textContent = replacementText;
+          if (language === "fa") {
+            element.setAttribute("dir", "rtl");
+          }
         } else {
           Object.keys(mergedData).forEach((key) => {
             if (text?.toLowerCase() === key?.toLowerCase()) {
               element.textContent = mergedData[key];
+
+              if (language === "fa") {
+                element.setAttribute("dir", "rtl");
+              }
             }
           });
         }
@@ -122,3 +124,13 @@ function replaceLanguageText(languageData, previousLanguage, language) {
     }
   });
 }
+
+issueGetTranslations().then((translations) => {
+  issueGetLanguages().then((languages) => {
+    languagesStored = languages;
+    translationsStored = translations;
+    addLanguageSelect(languagesStored, getLanguage());
+    changeLanguage(getLanguage());
+    detectDomChange(() => replaceLanguageText(translationsStored, "en", getLanguage()));
+  });
+});
