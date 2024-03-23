@@ -22,6 +22,7 @@ const baseBookmarksUrl = "/api/bookmarks";
 const baseArticleLabelsUrl = "/api/article-labels";
 const baseSurveysUrl = "/api/surveys";
 const baseTicTacToeUrl = "/api/tic-tac-toe";
+const languagesUrl = "/api/languages";
 
 const existingUserEmail = "Danial.Dicki@dicki.test";
 const existingUserPass = "test2";
@@ -69,4 +70,5 @@ module.exports = {
   baseSurveysUrl,
   baseTicTacToeUrl,
   baseBugEaterUrl,
+  languagesUrl,
 };

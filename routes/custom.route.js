@@ -268,10 +268,12 @@ const customRoutes = (req, res, next) => {
       const translations = dbData[language] ?? {};
       res.json(translations);
       req.body = translations;
-    } else if (req.method === "GET" && req.url.includes("/languages")) {
+    } else if (req.method === "GET" && req.url.endsWith("/languages")) {
       const languages = getLanguages();
       res.json(languages);
       req.body = languages;
+    } else if (req.method === "GET" && req.url.includes("/languages")) {
+      res.status(HTTP_NOT_FOUND).json({});
     }
     if (res.headersSent !== true) {
       next();
