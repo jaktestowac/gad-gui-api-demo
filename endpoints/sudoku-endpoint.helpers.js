@@ -17,10 +17,10 @@ const {
 } = require("../helpers/response.helpers");
 const { verifyAccessToken } = require("../helpers/validation.helpers");
 
-const gameName = "minesweeper";
+const gameName = "sudoku";
 
-function handleMinesweeper(req, res) {
-  if (req.method === "GET" && req.url.endsWith("/api/minesweeper/highscores")) {
+function handleSudoku(req, res) {
+  if (req.method === "GET" && req.url.endsWith("/api/sudoku/highscores")) {
     const gameId = getGameIdByName(gameName);
     const scores = getGameScores(gameId);
     const parsedScores = scores.map((score) => {
@@ -32,10 +32,10 @@ function handleMinesweeper(req, res) {
       };
     });
 
-    logDebug("handleMinesweeper:minesweeper highScores:", { parsedScores });
+    logDebug("handleSudoku:sudoku highScores:", { parsedScores });
     res.status(HTTP_OK).json({ highScore: parsedScores });
-  } else if (req.method === "POST" && req.url.endsWith("/api/minesweeper/score")) {
-    const verifyTokenResult = verifyAccessToken(req, res, "minesweeper/score", req.url);
+  } else if (req.method === "POST" && req.url.endsWith("/api/sudoku/score")) {
+    const verifyTokenResult = verifyAccessToken(req, res, "sudoku/score", req.url);
     if (isUndefined(verifyTokenResult)) {
       res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
       return;
@@ -49,7 +49,7 @@ function handleMinesweeper(req, res) {
     const user = searchForUserWithEmail(email);
     const previousUserScore = getUserScore(user.id, gameId);
 
-    logDebug("handleMinesweeper:minesweeper highScores:", { previousUserScore, currentScore: score });
+    logDebug("handleSudoku:sudoku highScores:", { previousUserScore, currentScore: score });
     if (!isUndefined(previousUserScore) && previousUserScore.score >= score.score) {
       res.status(HTTP_OK).json({ game_id: gameId, user_id: user.id, score: score.score });
     } else {
@@ -61,7 +61,7 @@ function handleMinesweeper(req, res) {
         req.url = `/api/scores`;
       }
       req.body = { game_id: gameId, user_id: user.id, score: score.score };
-      logDebug("handleMinesweeper:stop -> PUT/POST scores:", {
+      logDebug("handleSudoku:stop -> PUT/POST scores:", {
         method: req.method,
         url: req.url,
         body: req.body,
@@ -76,5 +76,5 @@ function handleMinesweeper(req, res) {
 }
 
 module.exports = {
-  handleMinesweeper,
+  handleSudoku,
 };

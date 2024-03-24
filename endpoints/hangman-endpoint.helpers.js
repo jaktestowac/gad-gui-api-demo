@@ -52,7 +52,7 @@ function handleHangman(req, res) {
 
     res.status(HTTP_OK).json({ indices });
   } else if (req.method === "GET" && req.url.endsWith("/api/v2/hangman/start")) {
-    const verifyTokenResult = verifyAccessToken(req, res, "hangman", req.url);
+    const verifyTokenResult = verifyAccessToken(req, res, "hangman/start", req.url);
     if (isUndefined(verifyTokenResult)) {
       res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
       return;
@@ -64,7 +64,7 @@ function handleHangman(req, res) {
     logDebug("handleHangman:Hangman started:", { email: verifyTokenResult?.email, hangmanTempScores });
     res.status(HTTP_OK).json({ selectedWordLength: randomWord.length });
   } else if (req.method === "GET" && req.url.endsWith("/api/v2/hangman/stop")) {
-    const verifyTokenResult = verifyAccessToken(req, res, "hangman", req.url);
+    const verifyTokenResult = verifyAccessToken(req, res, "hangman/stop", req.url);
     if (isUndefined(verifyTokenResult)) {
       res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
       return;
@@ -124,7 +124,7 @@ function handleHangman(req, res) {
 
     res.status(HTTP_OK).json({ highScore: parsedScores });
   } else if (req.method === "POST" && req.url.endsWith("/api/hangman/score")) {
-    const verifyTokenResult = verifyAccessToken(req, res, "hangman", req.url);
+    const verifyTokenResult = verifyAccessToken(req, res, "hangman/score", req.url);
     if (isUndefined(verifyTokenResult)) {
       res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
       return;

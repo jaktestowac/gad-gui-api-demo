@@ -33,6 +33,7 @@ const { areStringsEqualIgnoringCase, isUndefined } = require("../helpers/compare
 const { handleSurvey } = require("../endpoints/survey-endpoint.helpers");
 const { handleBugEater } = require("../endpoints/bug-eater-endpoint.helpers");
 const { handleTicTacToe } = require("../endpoints/tic-tak-toe-endpoint.helpers");
+const { handleSudoku } = require("../endpoints/sudoku-endpoint.helpers");
 
 const validationsRoutes = (req, res, next) => {
   let isAdmin = false;
@@ -115,6 +116,9 @@ const validationsRoutes = (req, res, next) => {
     }
     if (req.url.includes("/api/minesweeper")) {
       handleMinesweeper(req, res);
+    }
+    if (req.url.includes("/api/sudoku")) {
+      handleSudoku(req, res);
     }
     if (req.url.includes("/api/bug-eater")) {
       handleBugEater(req, res);
