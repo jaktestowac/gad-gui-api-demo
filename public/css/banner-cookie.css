@@ -1,0 +1,35 @@
+.cookies-infobar {
+  background: rgba(0, 0, 0, 0.9);
+  color: #fff;
+  position: fixed;
+  width: 100%;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 10px;
+  text-align: center;
+}
+
+.cookies-infobar.cookies-accepted {
+  display: none;
+}
+
+.cookies-infobar-wrapper {
+  margin: 10px;
+}
+
+.cookies-infobar a {
+  color: inherit;
+}
+
+.cookies-infobar-btn {
+  display: inline-block;
+  padding: 5px 10px;
+  background: #f00;
+  text-decoration: none;
+  border-radius: 3px;
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 1.2em;
+  cursor: pointer;
+}
