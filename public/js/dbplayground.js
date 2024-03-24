@@ -16,48 +16,57 @@ let simpleInfoBox = "simpleInfoBox";
 const maxFieldLength = 70;
 
 const sampleQueries = {
-  0: "Pick a query...",
-  1: "SELECT * FROM users",
-  2: `SELECT *
-FROM users
-WHERE id = 1`,
+  0: "> Pick a query...",
+  1: "-- Users:",
+  2: "SELECT * FROM users",
   3: `SELECT *
-FROM users
-WHERE email
-LIKE '%@test.test'`,
-  4: `SELECT email, firstname, lastname
-FROM users`,
-  5: `SELECT *
-FROM articles
-WHERE title
-LIKE '%test%'`,
-  6: `SELECT *
-FROM articles
-WHERE body
-LIKE '%playwright%'`,
-  7: `SELECT title, body
-FROM articles
-WHERE body
-LIKE '%playwright%'`,
-  10: `SELECT a.id, a.title, a.date, u.firstname, u.lastname
-FROM articles a
-INNER JOIN users u ON a.user_id = u.id;`,
-  20: `SELECT users.id, users.email, COUNT(articles.id) AS article_count
-FROM users
-JOIN articles ON users.id = articles.user_id
-GROUP BY users.id, users.email;`,
-  21: `SELECT articles.id, articles.title, users.email
-FROM articles
-JOIN users ON articles.user_id = users.id;`,
-  22: `SELECT articles.id, articles.title, users.email
-FROM articles
-JOIN users ON articles.user_id = users.id
-WHERE articles.title LIKE '%test%';`,
-  30: `SELECT a.id AS article_id, a.title, COUNT(c.id) AS comment_count
-FROM articles a
-LEFT JOIN comments c ON a.id = c.article_id 
-GROUP BY a.id, a.title;`,
-  90: `SHOW TABLES`,
+  FROM users
+  WHERE id = 1`,
+  4: `SELECT *
+  FROM users
+  WHERE email
+  LIKE '%@test.test'`,
+  5: `SELECT email, firstname, lastname
+  FROM users`,
+  10: "-- Articles:",
+  11: `SELECT *
+  FROM articles
+  WHERE title
+  LIKE '%test%'`,
+  12: `SELECT *
+  FROM articles
+  WHERE body
+  LIKE '%playwright%'`,
+  13: `SELECT title, body
+  FROM articles
+  WHERE body
+  LIKE '%playwright%'`,
+  20: "-- Comments:",
+  21: `SELECT *
+  FROM comments
+  WHERE body
+  LIKE '%automation%'`,
+  50: "-- Joins:",
+  51: `SELECT a.id, a.title, a.date, u.firstname, u.lastname
+  FROM articles a
+  INNER JOIN users u ON a.user_id = u.id;`,
+  52: `SELECT users.id, users.email, COUNT(articles.id) AS article_count
+  FROM users
+  JOIN articles ON users.id = articles.user_id
+  GROUP BY users.id, users.email;`,
+  53: `SELECT articles.id, articles.title, users.email
+  FROM articles
+  JOIN users ON articles.user_id = users.id;`,
+  54: `SELECT articles.id, articles.title, users.email
+  FROM articles
+  JOIN users ON articles.user_id = users.id
+  WHERE articles.title LIKE '%test%';`,
+  55: `SELECT a.id AS article_id, a.title, COUNT(c.id) AS comment_count
+  FROM articles a
+  LEFT JOIN comments c ON a.id = c.article_id 
+  GROUP BY a.id, a.title;`,
+  900: "-- Advanced:",
+  901: `SHOW TABLES`,
 };
 
 const sampleQuerySelect = document.getElementById("sampleQuerySelect");
@@ -262,7 +271,8 @@ function runQuery() {
 
 function selectSampleQuery() {
   const sqlQueryId = document.getElementById("sampleQuerySelect").value;
-  if (sqlQueryId === "0") {
+  const query = sampleQueries[sqlQueryId];
+  if (query === undefined || query.startsWith("> ") || query.startsWith("-- ")) {
     // document.getElementById("sqlQuery").value = "";
     inputQueryArea.setValue("");
     setMessage("", "");
