@@ -91,7 +91,7 @@ const validationsRoutes = (req, res, next) => {
 
     const readOnlyMode = getConfigValue(ConfigKeys.READ_ONLY);
 
-    if (readOnlyMode !== false && req.method !== "GET") {
+    if (readOnlyMode === true && req.method !== "GET") {
       res.status(HTTP_METHOD_NOT_ALLOWED).send(formatErrorResponse("Method not allowed in READ ONLY MODE"));
       return;
     }
