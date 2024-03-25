@@ -20,6 +20,27 @@ let remainingTime = 5;
 let allowedToSkip = false;
 let popupTimer;
 
+function wasAccepted() {
+  return checkCookie() === "1";
+}
+
+function checkCookie() {
+  var name = "advertCookie=";
+  var cookies = document.cookie.split(";");
+
+  for (var i = 0; i < cookies.length; i++) {
+    var cookie = cookies[i];
+    while (cookie.charAt(0) == " ") {
+      cookie = cookie.substring(1);
+    }
+
+    if (cookie.indexOf(name) === 0) {
+      return cookie.substring(name.length, cookie.length);
+    }
+  }
+  return "";
+}
+
 function saveAcceptInCookies(daysOfValidity) {
   var now = new Date();
   var time = now.getTime() + daysOfValidity * 24 * 60 * 60 * 1000;
@@ -48,15 +69,19 @@ const showAd = () => {
 const skipAd = () => {
   const popupOverlay = document.querySelector(".popup-overlay");
   popupOverlay.classList.remove("active");
-  saveAcceptInCookies(0.01);
+  popupOverlay.remove();
+  saveAcceptInCookies(0.005);
 };
 
 function displayAd() {
+  if (wasAccepted() === true) {
+    return;
+  }
   document.body.insertAdjacentHTML("beforeend", advertArticlesBanner);
   const skipButton = document.querySelector(".popup-container .skip-button");
   showAd();
   skipButton.addEventListener("click", () => {
-    if (allowedToSkip) {
+    if (allowedToSkip === true) {
       skipAd();
     }
   });
