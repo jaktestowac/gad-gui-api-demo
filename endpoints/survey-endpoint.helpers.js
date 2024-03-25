@@ -70,7 +70,12 @@ function handleSurvey(req, res, isAdmin) {
     return;
   }
 
-  if (isStringOnTheList(req.method, ["GET", "POST"]) && urlEnds?.includes("/api/surveys/") && !isAdmin) {
+  if (
+    isStringOnTheList(req.method, ["GET", "POST"]) &&
+    urlEnds?.includes("/api/surveys/") &&
+    !urlEnds?.includes("description") &&
+    !isAdmin
+  ) {
     const verifyTokenResult = verifyAccessToken(req, res, "surveys", req.url);
     foundUser = searchForUserWithOnlyToken(verifyTokenResult);
     logTrace("handleSurvey: foundUser:", { method: req.method, urlEnds, foundUser });
