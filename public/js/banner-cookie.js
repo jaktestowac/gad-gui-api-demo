@@ -65,6 +65,7 @@ function displayBanner() {
   btnReject.addEventListener("click", function (e) {
     e.preventDefault();
     hideInfobar();
+    saveAcceptInCookies(0.01);
   });
 }
 
