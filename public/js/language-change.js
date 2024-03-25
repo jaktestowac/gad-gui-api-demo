@@ -18,36 +18,36 @@ async function issueGetLanguages() {
   return languages;
 }
 
-function getPrevLanguage() {
+function getPrevLanguageCookie() {
+  return getCookie("langPrev=");
+}
+
+function getLanguageCookie() {
+  return getCookie("lang=");
+}
+
+function getCookie(cookieName) {
   let lang = undefined;
   const cookies = document.cookie.split(";");
   for (let cookie of cookies) {
     cookie = cookie.trim();
-    if (cookie.startsWith("langPrev=")) {
+    if (cookie.startsWith(cookieName)) {
       lang = cookie.split("=")[1];
     }
   }
   return lang;
+}
+
+function addCookie(cookieName, value) {
+  document.cookie = `${cookieName}=${value?.toLowerCase()}; SameSite=Lax; path=/`;
 }
 
 function addPrevLanguageCookie(value) {
-  document.cookie = `langPrev=${value?.toLowerCase()}; SameSite=Lax; path=/`;
-}
-
-function getLanguage() {
-  let lang = undefined;
-  const cookies = document.cookie.split(";");
-  for (let cookie of cookies) {
-    cookie = cookie.trim();
-    if (cookie.startsWith("lang=")) {
-      lang = cookie.split("=")[1];
-    }
-  }
-  return lang;
+  addCookie("langPrev", value);
 }
 
 function addLanguageCookie(value) {
-  document.cookie = `lang=${value?.toLowerCase()}; SameSite=Lax; path=/`;
+  addCookie("lang", value);
 }
 
 function toggleDirAttribute(element, language) {
@@ -62,7 +62,7 @@ function changeLanguage(language) {
   addLanguageCookie(language);
   const translation = translationsStored[language];
   if (translation) {
-    replaceLanguageText(translationsStored, getPrevLanguage(), language);
+    replaceLanguageText(translationsStored, getPrevLanguageCookie(), language);
     Object.keys(translation).forEach((translationKey) => {
       const elements = getElementsById(translationKey);
       if (elements) {
@@ -142,8 +142,8 @@ issueGetTranslations().then((translations) => {
   issueGetLanguages().then((languages) => {
     languagesStored = languages;
     translationsStored = translations;
-    addLanguageSelect(languagesStored, getLanguage());
-    changeLanguage(getLanguage());
-    detectDomChange(() => replaceLanguageText(translationsStored, getPrevLanguage(), getLanguage()));
+    addLanguageSelect(languagesStored, getLanguageCookie());
+    changeLanguage(getLanguageCookie());
+    detectDomChange(() => replaceLanguageText(translationsStored, getPrevLanguageCookie(), getLanguageCookie()));
   });
 });
