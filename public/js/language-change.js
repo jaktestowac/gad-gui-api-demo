@@ -1,6 +1,5 @@
 const translationsEndpoint = "../../api/languages/translations";
 const languagesEndpoint = "../../api/languages";
-let previousLanguage = undefined;
 
 let translationsStored = {};
 let languagesStored = {};
@@ -17,6 +16,22 @@ async function issueGetLanguages() {
     headers: { ...formatHeaders(), userid: getId() },
   }).then((r) => r.json());
   return languages;
+}
+
+function getPrevLanguage() {
+  let lang = undefined;
+  const cookies = document.cookie.split(";");
+  for (let cookie of cookies) {
+    cookie = cookie.trim();
+    if (cookie.startsWith("langPrev=")) {
+      lang = cookie.split("=")[1];
+    }
+  }
+  return lang;
+}
+
+function addPrevLanguageCookie(value) {
+  document.cookie = `langPrev=${value?.toLowerCase()}; SameSite=Lax; path=/`;
 }
 
 function getLanguage() {
@@ -47,7 +62,7 @@ function changeLanguage(language) {
   addLanguageCookie(language);
   const translation = translationsStored[language];
   if (translation) {
-    replaceLanguageText(translationsStored, previousLanguage, language);
+    replaceLanguageText(translationsStored, getPrevLanguage(), language);
     Object.keys(translation).forEach((translationKey) => {
       const elements = getElementsById(translationKey);
       if (elements) {
@@ -65,7 +80,7 @@ function changeLanguage(language) {
       }
     });
   }
-  previousLanguage = getLanguage();
+  addPrevLanguageCookie(language);
 }
 
 function getElementsById(id) {
@@ -95,7 +110,6 @@ function replaceLanguageText(languageData, previousLanguage, language) {
     return;
   }
   const elements = document.querySelectorAll("*");
-
   const mergedData = {};
   for (const subKey in languageData[previousLanguage]) {
     mergedData[languageData[previousLanguage][subKey]] = languageData[language][subKey];
@@ -130,6 +144,6 @@ issueGetTranslations().then((translations) => {
     translationsStored = translations;
     addLanguageSelect(languagesStored, getLanguage());
     changeLanguage(getLanguage());
-    detectDomChange(() => replaceLanguageText(translationsStored, "en", getLanguage()));
+    detectDomChange(() => replaceLanguageText(translationsStored, getPrevLanguage(), getLanguage()));
   });
 });
