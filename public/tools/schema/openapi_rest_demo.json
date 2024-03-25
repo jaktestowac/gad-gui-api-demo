@@ -80,12 +80,20 @@
       "description": "Minesweeper game"
     },
     {
+      "name": "tic-tac-toe",
+      "description": "Tic Tac Toe game"
+    },
+    {
       "name": "games",
       "description": "Games"
     },
     {
       "name": "scores",
       "description": "Game scores"
+    },
+    {
+      "name": "surveys",
+      "description": "Surveys"
     },
     {
       "name": "visits",
@@ -2084,6 +2092,56 @@
         }
       }
     },
+    "/languages": {
+      "get": {
+        "tags": ["other"],
+        "summary": "Get languages",
+        "operationId": "getLanguages",
+        "responses": {
+          "200": {
+            "description": "Languages received",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/languages/translations": {
+      "get": {
+        "tags": ["other"],
+        "summary": "Get translations",
+        "operationId": "getTranslations",
+        "responses": {
+          "200": {
+            "description": "Translations received",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/languages/translations/{lang}": {
+      "get": {
+        "tags": ["other"],
+        "summary": "Get translations",
+        "operationId": "getTranslations",
+        "parameters": [
+          {
+            "name": "lang",
+            "in": "path",
+            "description": "Language",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Translations received",
+            "content": {}
+          }
+        }
+      }
+    },
     "/restoreDB": {
       "get": {
         "tags": ["other"],
@@ -2556,6 +2614,229 @@
         }
       }
     },
+    "/tic-tac-toe/highscores": {
+      "get": {
+        "tags": ["tic-tac-toe"],
+        "summary": "Get tic-tac-toe highscores",
+        "operationId": "getTicTacToeHighscores",
+        "responses": {
+          "200": {
+            "description": "TicTacToe highscores",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Scores"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tic-tac-toe/start": {
+      "post": {
+        "tags": ["tic-tac-toe"],
+        "summary": "start TicTacToe",
+        "operationId": "startTicTacToe",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Started",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TicTacToeSession"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/tic-tac-toe/join": {
+      "post": {
+        "tags": ["tic-tac-toe"],
+        "summary": "join TicTacToe session",
+        "operationId": "joinTicTacToeSession",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TicTacToeJoin"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Joined",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TicTacToeSession"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Session code not provided",
+            "content": {}
+          },
+          "409": {
+            "description": "Game already full",
+            "content": {}
+          },
+          "422": {
+            "description": "Invalid session code",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/tic-tac-toe/status/{code}": {
+      "get": {
+        "tags": ["tic-tac-toe"],
+        "summary": "Get tic-tac-toe status",
+        "operationId": "getTicTacToeStatus",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "description": "Session code",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "TicTacToe status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TicTacToeSession"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/tic-tac-toe/status": {
+      "post": {
+        "tags": ["tic-tac-toe"],
+        "summary": "make a move in TicTacToe",
+        "operationId": "moveTicTacToe",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MoveTicTacToe"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Stopped",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TicTacToeSession"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Session code not provided",
+            "content": {}
+          },
+          "422": {
+            "description": "User cannot make a move",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/tic-tac-toe/stop": {
+      "post": {
+        "tags": ["tic-tac-toe"],
+        "summary": "stop TicTacToe session",
+        "operationId": "stopTicTacToeSession",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TicTacToeStop"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Stopped",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TicTacToeSession"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Session code not provided",
+            "content": {}
+          }
+        }
+      }
+    },
     "/games": {
       "get": {
         "tags": ["games"],
@@ -2928,6 +3209,244 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+
+    "/surveys/statistics/{type}": {
+      "get": {
+        "tags": ["surveys"],
+        "summary": "Get surveys statistics",
+        "operationId": "getSurveysStatistics",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "path",
+            "description": "type of surveys",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SurveyStatistics"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/surveys/{surveyType}/description": {
+      "get": {
+        "tags": ["surveys"],
+        "summary": "Get surveys description",
+        "operationId": "getSurveysDescription",
+        "parameters": [
+          {
+            "name": "surveyType",
+            "in": "path",
+            "description": "Type of survey",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SurveyDescription"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/surveys/{surveyType}/questions/{id}": {
+      "get": {
+        "tags": ["surveys"],
+        "summary": "Get surveys questions",
+        "operationId": "getSurveysQuestions",
+        "parameters": [
+          {
+            "name": "surveyType",
+            "in": "path",
+            "description": "Type of survey",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of question to return its likes",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SurveyQuestion"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/surveys/responses": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": ["surveys"],
+        "summary": "Get user survey responses",
+        "operationId": "getUserSurveyResponses",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SurveyResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          }
+        }
+      },
+      "post": {
+        "tags": ["surveys"],
+        "summary": "Create a new survey response",
+        "operationId": "createSurvey",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SurveyResponse"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Survey created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SurveyResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "422": {
+            "description": "Invalid score data",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/surveys/responses/{id}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": ["surveys"],
+        "summary": "Get user survey response",
+        "operationId": "getUserSurveyResponse",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of response",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SurveyResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
           }
         }
       }
@@ -3679,6 +4198,68 @@
           }
         }
       },
+      "SurveyDescription": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "object",
+            "properties": {
+              "base": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "SurveyQuestion": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "string"
+          }
+        }
+      },
+      "SurveyResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "user_id": {
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "type": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "answers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
       "Bookmarks": {
         "type": "object",
         "properties": {
@@ -3714,6 +4295,117 @@
                 }
               ]
             }
+          }
+        }
+      },
+      "TicTacToeJoin": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          }
+        }
+      },
+      "MoveTicTacToe": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "move": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "example": [0, 0]
+          }
+        }
+      },
+      "TicTacToeSession": {
+        "type": "object",
+        "properties": {
+          "users": {
+            "type": "object",
+            "properties": {
+              "0": {
+                "oneOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "1": {
+                "oneOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              }
+            }
+          },
+          "scores": {
+            "type": "object",
+            "properties": {
+              "0": {
+                "type": "number"
+              },
+              "1": {
+                "type": "number"
+              }
+            }
+          },
+          "code": {
+            "type": "string"
+          },
+          "numberOfMatches": {
+            "type": "number"
+          },
+          "hasStarted": {
+            "type": "boolean"
+          },
+          "hasEnded": {
+            "type": "boolean"
+          },
+          "currentTurn": {
+            "type": "number"
+          },
+          "roundTimeInSeconds": {
+            "type": "number"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "currentTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "board": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "TicTacToeStop": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
           }
         }
       }

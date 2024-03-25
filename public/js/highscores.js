@@ -40,7 +40,7 @@ async function displayGameScoreTable(game, scoreData, usersData) {
   outerDiv.appendChild(heading);
 
   const urlNode = document.createElement("a");
-  urlNode.href = `${game.toLowerCase()}.html`;
+  urlNode.href = `${game.toLowerCase().replaceAll(" ", "-")}.html`;
   const labelText = document.createTextNode("🎮 Play the game! 🎮");
   urlNode.appendChild(labelText);
   outerDiv.appendChild(urlNode);

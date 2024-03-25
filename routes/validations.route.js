@@ -11,7 +11,12 @@ const { ConfigKeys, BugConfigKeys } = require("../config/enums");
 
 const { verifyAccessToken } = require("../helpers/validation.helpers");
 const { searchForUserWithToken } = require("../helpers/db-operation.helpers");
-const { HTTP_UNAUTHORIZED, HTTP_INTERNAL_SERVER_ERROR, HTTP_BAD_REQUEST } = require("../helpers/response.helpers");
+const {
+  HTTP_UNAUTHORIZED,
+  HTTP_INTERNAL_SERVER_ERROR,
+  HTTP_BAD_REQUEST,
+  HTTP_METHOD_NOT_ALLOWED,
+} = require("../helpers/response.helpers");
 const { handleHangman } = require("../endpoints/hangman-endpoint.helpers");
 const { handleQuiz } = require("../endpoints/quiz-endpoint.helpers");
 const { handleConfig } = require("../endpoints/config-endpoint.helpers");
@@ -25,6 +30,10 @@ const { handleScores } = require("../endpoints/scores-endpoint.helpers");
 const { handleBookmarks } = require("../endpoints/bookmarks-endpoint.helpers");
 const { handleMinesweeper } = require("../endpoints/minesweeper-endpoint.helpers");
 const { areStringsEqualIgnoringCase, isUndefined } = require("../helpers/compare.helpers");
+const { handleSurvey } = require("../endpoints/survey-endpoint.helpers");
+const { handleBugEater } = require("../endpoints/bug-eater-endpoint.helpers");
+const { handleTicTacToe } = require("../endpoints/tic-tak-toe-endpoint.helpers");
+const { handleSudoku } = require("../endpoints/sudoku-endpoint.helpers");
 
 const validationsRoutes = (req, res, next) => {
   let isAdmin = false;
@@ -80,6 +89,13 @@ const validationsRoutes = (req, res, next) => {
       req.query._order = "";
     }
 
+    const readOnlyMode = getConfigValue(ConfigKeys.READ_ONLY);
+
+    if (readOnlyMode === true && req.method !== "GET") {
+      res.status(HTTP_METHOD_NOT_ALLOWED).send(formatErrorResponse("Method not allowed in READ ONLY MODE"));
+      return;
+    }
+
     if (req.url.includes("/api/config")) {
       handleConfig(req, res);
       return;
@@ -101,10 +117,21 @@ const validationsRoutes = (req, res, next) => {
     if (req.url.includes("/api/minesweeper")) {
       handleMinesweeper(req, res);
     }
+    if (req.url.includes("/api/sudoku")) {
+      handleSudoku(req, res);
+    }
+    if (req.url.includes("/api/bug-eater")) {
+      handleBugEater(req, res);
+    }
+    if (req.url.includes("/api/tic-tac-toe")) {
+      handleTicTacToe(req, res);
+    }
     if (req.url.includes("/api/bookmarks")) {
       handleBookmarks(req, res);
     }
-
+    if (req.url.includes("/api/survey")) {
+      handleSurvey(req, res);
+    }
     if (
       req.method !== "GET" &&
       req.method !== "POST" &&

@@ -225,10 +225,33 @@ const logoGAD = (path = ".") => {
  `;
 };
 
+function addLanguageSelect(languages, selectedOption) {
+  const languageSelectElement = document.getElementById("languageSelect");
+  if (languageSelectElement !== undefined && languageSelectElement !== null) {
+    const selectedLanguage = selectedOption?.toLowerCase();
+
+    let allLanguages = Object.keys(languages).map((lang) => {
+      return `<option value="${lang}" style="font-size:16px" ${selectedLanguage === lang ? "selected" : ""}>${
+        languages[lang]
+      }</option>`;
+    });
+
+    languageSelectElement.innerHTML = `
+    <span style="display: flex; align-items: center; justify-content: center" >
+        <select
+          onchange="changeLanguage(this.value)"
+          style="display: inline-block; width: 100px; height:30px; margin: 5px 5px 5px 5px; font-size:16px"
+        >
+          ${allLanguages.join("")}
+        </select>
+      </span>`;
+  }
+}
+
 const rightMenu = (path = ".") => {
   return `
   <span style="display: flex; align-items: center; justify-self: end; padding-right: 20px">
-
+  <span id="languageSelect"></span>
   <div class="dropdown" data-testid="user-dropdown">
     <button id="dropbtn" data-testid="btn-dropdown" class="dropbtn">
       <img id="avatar"

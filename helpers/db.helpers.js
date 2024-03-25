@@ -109,6 +109,21 @@ function gamesDb() {
   return db["games"];
 }
 
+function translationsDb() {
+  const db = JSON.parse(fs.readFileSync(getDbPath(getConfigValue(ConfigKeys.TRANSLATIONS_DB)), "UTF-8"));
+  return db;
+}
+
+function getLanguages() {
+  const translations = translationsDb();
+  const keys = Object.keys(translations);
+  const keyNamePair = keys.reduce((acc, key) => {
+    acc[key] = translations[key]["_name"];
+    return acc;
+  }, {});
+  return keyNamePair;
+}
+
 function userDb() {
   return fullDb()["users"];
 }
@@ -135,6 +150,10 @@ function scoresDb() {
 
 function articleLabelsDb() {
   return fullDb()["article-labels"];
+}
+
+function surveyResponsesDb() {
+  return fullDb()["survey-responses"];
 }
 
 function bookmarksDb() {
@@ -249,6 +268,7 @@ module.exports = {
   gamesDb,
   scoresDb,
   bookmarksDb,
+  surveyResponsesDb,
   getUserAvatars,
   getImagesForArticles,
   getUploadedFileList,
@@ -266,4 +286,6 @@ module.exports = {
   getApiRequestsDetails: visitsData.getApiRequestsDetails,
   getNonApiRequestsDetails: visitsData.getNonApiRequestsDetails,
   visitsData,
+  translationsDb,
+  getLanguages,
 };

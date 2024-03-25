@@ -78,6 +78,16 @@ function generateLikesBody(user_id, comment_id, article_id) {
   return like;
 }
 
+function generateSurveyBody(user_id, type, answers = []) {
+  const surveyBody = {
+    user_id: user_id,
+    type: type,
+    date: "2023-09-25T10:00:00Z",
+    answers: answers,
+  };
+  return surveyBody;
+}
+
 function generateValidCommentData() {
   const testData = {
     article_id: 1,
@@ -239,4 +249,5 @@ module.exports = {
   validExistingArticle,
   generateValidUserLoginData,
   generateLikesBody,
+  generateSurveyBody,
 };

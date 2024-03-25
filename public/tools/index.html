@@ -30,13 +30,13 @@
           <tr>
             <td>
               <div class="containerTools">
-                <h2>GUI: Pages</h2>
+                <h2>GUI: Pages <span class="tooltip" text="All pages available from UI"></span></h2>
                 <ul>
                   <li><a href="../users.html">Users</a></li>
                   <li><a href="../user.html?id=1">Single user</a></li>
                   <li><a href="../articles.html">Articles</a></li>
                   <li>
-                    Upload article:
+                    <strong>Upload article:</strong>
                     <ul>
                       <li><a href="../articlesupload.html">drag and drop</a></li>
                       <li><a href="../fileupload.html">file upload (⚠️ needs proper feature flag enabled)</a></li>
@@ -61,21 +61,38 @@
                     </ul>
                   </li>
                   <li>
-                    Games:
+                    <a href="../surveys.html">Surveys</a>
+                    <ul>
+                      <li><a href="../survey-stats.html?type=1">Survey Stats</a></li>
+                      <li><a href="../survey.html?type=1">Testing Survey</a></li>
+                    </ul>
+                  </li>
+                  <li>
+                    <strong>Games:</strong>
                     <ul>
                       <li><a href="../quiz.html">Quiz</a></li>
                       <li><a href="../hangman.html">Hangman</a></li>
                       <li><a href="../matcher.html">Matcher</a></li>
                       <li><a href="../devrun.html">DevRun</a></li>
                       <li><a href="../whacker.html">Whack-a-Bug</a></li>
+                      <li><a href="../bug-eater.html">Bug Eater</a></li>
+                      <li><a href="../tic-tac-toe-hot-seat.html">Tic Tac Toe (Hot Seat)</a></li>
+                      <li><a href="../tic-tac-toe.html">Tic Tac Toe (Multiplayer)</a></li>
                     </ul>
                   </li>
                   <li><a href="../tools/version.html">Version check</a></li>
+                  <li>
+                    <strong>Database helpers:</strong>
+                    <ul>
+                      <li><a href="../tools/dbplayground.html">Database SQL Playground</a></li>
+                    </ul>
+                  </li>
                 </ul>
               </div>
 
               <div class="containerTools">
                 <h2>API: Feature Flags</h2>
+
                 Easily enable and disable different <strong>🦎GAD Features</strong> (no restart required): <br />
                 (❗ After 🦎GAD restart default values are restored!) <br />
                 <br />

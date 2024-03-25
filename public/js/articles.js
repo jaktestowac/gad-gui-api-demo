@@ -409,6 +409,9 @@ checkIfFeatureEnabled("feature_infinite_scroll_articles").then((isEnabled) => {
   if (isEnabled === true) {
     document.addEventListener("scroll", checkScroll);
 
+    if (getId() !== undefined) {
+      appendMenu(articlesAdditionalMenu);
+    }
     // const containerSpace = document.querySelector(".container-space");
     // containerSpace.style.marginTop = "0px";
     // Initial check when the page loads
