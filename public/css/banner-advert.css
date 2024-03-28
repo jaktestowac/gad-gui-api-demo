@@ -23,7 +23,6 @@
   padding: 12px 0;
   box-shadow: 0 6px 55px -10px rgba(0, 0, 0, 0.7);
   background-size: cover;
-  background-image: url("../images/advert1-bg.jpg");
 
   opacity: 0;
   pointer-events: none;
@@ -47,6 +46,12 @@
   padding-left: 250px;
 }
 
+.popup-container .right2 {
+  width: 560px;
+  padding: 16px;
+  padding-left: 320px;
+}
+
 .popup-container .skip-button {
   position: absolute;
   top: 4px;
@@ -58,7 +63,7 @@
 }
 
 .popup-container h2.popup-heading {
-  font-size: 30px;
+  font-size: 24px;
   text-transform: uppercase;
   margin: 0;
 }
