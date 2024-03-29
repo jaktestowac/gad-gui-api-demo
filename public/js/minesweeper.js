@@ -6,6 +6,7 @@ let blockBoard = false;
 const minesweeperScoreEndpoint = "../../api/minesweeper/score";
 let finalScore = 0;
 const winningBonus = 10;
+const resetBtn = document.getElementById("resetBtn");
 
 async function issuePostScoreRequest(score) {
   fetch(minesweeperScoreEndpoint, {
@@ -53,6 +54,8 @@ function initializeBoard() {
   calculateNeighborCounts();
   renderBoard();
   blockBoard = false;
+  const scoreElement = document.getElementById("score");
+  scoreElement.textContent = "";
 }
 
 function placeMines() {
@@ -202,4 +205,5 @@ function startGame() {
   }
 }
 
+resetBtn.addEventListener("click", resetGame);
 startGame();

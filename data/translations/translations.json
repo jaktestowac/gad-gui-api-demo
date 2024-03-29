@@ -100,7 +100,10 @@
     "firstname": "firstname",
     "lastname": "lastname",
     "email": "email",
-    "avatar": "avatar"
+    "avatar": "avatar",
+    "cookieBanner1": "If you continue to use this site means you accept Terms and Conditions and Privacy Policy.",
+    "accept": "Accept",
+    "reject": "Reject"
   },
   "pl": {
     "_name": "🇵🇱&nbsp;Polski",
@@ -203,7 +206,10 @@
     "firstname": "imię",
     "lastname": "nazwisko",
     "email": "email",
-    "avatar": "avatar"
+    "avatar": "avatar",
+    "cookieBanner1": "Kontynuując korzystanie z tej strony, oznacza, że akceptujesz Regulamin i Politykę Prywatności.",
+    "accept": "Akceptuj",
+    "reject": "Odrzuć"
   },
   "jp": {
     "_name": "🇯🇵&nbsp;日本語",
@@ -306,7 +312,10 @@
     "lastname": "姓",
     "email": "メール",
     "avatar": "アバター",
-    "id": "ID"
+    "id": "ID",
+    "cookieBanner1": "このサイトを引き続き使用すると、利用規約とプライバシーポリシーに同意したことになります。",
+    "accept": "受け入れる",
+    "reject": "拒否する"
   },
   "de": {
     "_name": "🇩🇪&nbsp;Deutsch",
@@ -410,7 +419,10 @@
     "lastname": "Nachname",
     "email": "E-Mail",
     "avatar": "Avatar",
-    "id": "ID"
+    "id": "ID",
+    "cookieBanner1": "Wenn Sie diese Website weiterhin nutzen, bedeutet dies, dass Sie die Nutzungsbedingungen und die Datenschutzrichtlinie akzeptieren.",
+    "accept": "Akzeptieren",
+    "reject": "Ablehnen"
   },
   "fa": {
     "_name": "🇮🇷&nbsp;فارسی",
@@ -515,6 +527,9 @@
     "lastname": "نام خانوادگی",
     "email": "ایمیل",
     "avatar": "آواتار",
-    "id": "شناسه"
+    "id": "شناسه",
+    "cookieBanner1": "اگر ادامه استفاده از این سایت به معنای پذیرش شرایط و ضوابط و سیاست حفظ حریم خصوصی است.",
+    "accept": "پذیرش",
+    "reject": "رد"
   }
 }

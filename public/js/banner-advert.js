@@ -35,6 +35,24 @@ const advertSudokuBanner = `<div class="popup-overlay">
 </div>
 </div>`;
 
+const advertMinesweeperBanner = `<div class="popup-overlay">
+<div class="popup-container" style="background-image: url('../images/advert4-bg.jpg'); ">
+
+  <div class="right2">
+    <div class="skip-button">Skip in 5s</div>
+
+    <p class="logo">🦎GAD</p>
+    <h2 class="popup-heading">MINESWEEPER</h2>
+    <p class="description">
+      Challenge yourself!
+      <br>Uncover the mines without detonating them. Have fun🎉
+    </p>
+
+    <a href="./minesweeper.html" class="visit-button">Play Minesweeper</a>
+  </div>
+</div>
+</div>`;
+
 const advertCommentsBanner = `<div class="popup-overlay">
 <div class="popup-container" style="background-image: url('../images/advert3-bg.jpg'); ">
 
@@ -71,7 +89,13 @@ const advertStatisticsBanner = `<div class="popup-overlay">
 </div>
 </div>`;
 
-const listOfBanners = [advertArticlesBanner1, advertCommentsBanner, advertStatisticsBanner, advertSudokuBanner];
+const listOfBanners = [
+  advertArticlesBanner1,
+  advertCommentsBanner,
+  advertStatisticsBanner,
+  advertSudokuBanner,
+  advertMinesweeperBanner,
+];
 
 let remainingTime = 5;
 let allowedToSkip = false;
@@ -98,7 +122,7 @@ function checkCookie() {
   return "";
 }
 
-function saveAcceptInCookies(daysOfValidity) {
+function saveAdvertAcceptInCookies(daysOfValidity) {
   var now = new Date();
   var time = now.getTime() + daysOfValidity * 24 * 60 * 60 * 1000;
   var newTime = new Date(now.setTime(time));
@@ -127,7 +151,7 @@ const skipAd = () => {
   const popupOverlay = document.querySelector(".popup-overlay");
   popupOverlay.classList.remove("active");
   popupOverlay.remove();
-  saveAcceptInCookies(0.005);
+  saveAdvertAcceptInCookies(0.01);
 };
 
 function getRandomBanner() {
@@ -139,8 +163,8 @@ function displayAd() {
     return;
   }
   document.body.insertAdjacentHTML("beforeend", getRandomBanner());
-  const skipButton = document.querySelector(".popup-container .skip-button");
   showAd();
+  const skipButton = document.querySelector(".popup-container .skip-button");
   skipButton.addEventListener("click", () => {
     if (allowedToSkip === true) {
       skipAd();
