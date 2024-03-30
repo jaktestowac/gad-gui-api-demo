@@ -28,6 +28,7 @@ const sampleQueries = {
   LIKE '%@test.test'`,
   5: `SELECT email, firstname, lastname
   FROM users`,
+  6: `Insert into users (email, firstname, lastname) values ('xyz@test.test', 'John', 'Doe')`,
   10: "-- Articles:",
   11: `SELECT *
   FROM articles
@@ -177,6 +178,10 @@ function highlightRow(rowId) {
 
 // Normalize objects with null properties
 function normalizeObjects(data) {
+  if (data === undefined || Object.keys(data).length === 0) {
+    return [];
+  }
+
   const keys = data.reduce((allKeys, obj) => {
     Object.keys(obj).forEach((key) => {
       if (!allKeys.includes(key)) {
@@ -238,13 +243,20 @@ function executeSqlQuery(sqlQuery) {
     });
 
     var res = alasql(sqlQuery);
-    const normalizedData = normalizeObjects(res);
-    jsonTable.innerHTML = "";
-    jsonTable.appendChild(generateTable(normalizedData, "Results:"));
-    setMessage(`Found: ${res?.length} records`, simpleSuccessBox);
+
+    if (res.length >= 0) {
+      const normalizedData = normalizeObjects(res);
+      jsonTable.innerHTML = "";
+      jsonTable.appendChild(generateTable(normalizedData, "Results:"));
+      setMessage(`Found: ${normalizedData?.length} records`, simpleSuccessBox);
+    } else if (res === 1) {
+      setMessage("Query executed successfully (but READ-ONLY MODE!)", simpleInfoBox);
+    } else {
+      setMessage(res, simpleErrorBox);
+    }
   } catch (error) {
     console.error(error);
-    setMessage(error.message, simpleErrorBox);
+    setMessage(error, simpleErrorBox);
   }
 }
 

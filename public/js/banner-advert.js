@@ -1,8 +1,12 @@
+let remainingTime = 2;
+let allowedToSkip = false;
+let popupTimer;
+
 const advertArticlesBanner1 = `<div class="popup-overlay">
 <div class="popup-container" style="background-image: url('../images/advert1-bg.jpg'); ">
 
   <div class="right">
-    <div class="skip-button">Skip in 5s</div>
+    <div class="skip-button">Skip in ${remainingTime}s</div>
 
     <p class="logo">🦎GAD</p>
     <h2 class="popup-heading">Gain Knowledge</h2>
@@ -20,7 +24,7 @@ const advertSudokuBanner = `<div class="popup-overlay">
 <div class="popup-container" style="background-image: url('../images/advert2-bg.jpg'); ">
 
   <div class="right2">
-    <div class="skip-button">Skip in 5s</div>
+    <div class="skip-button">Skip in ${remainingTime}s</div>
 
     <p class="logo">🦎GAD</p>
     <h2 class="popup-heading">SUDOKU</h2>
@@ -39,7 +43,7 @@ const advertMinesweeperBanner = `<div class="popup-overlay">
 <div class="popup-container" style="background-image: url('../images/advert4-bg.jpg'); ">
 
   <div class="right2">
-    <div class="skip-button">Skip in 5s</div>
+    <div class="skip-button">Skip in ${remainingTime}s</div>
 
     <p class="logo">🦎GAD</p>
     <h2 class="popup-heading">MINESWEEPER</h2>
@@ -57,7 +61,7 @@ const advertCommentsBanner = `<div class="popup-overlay">
 <div class="popup-container" style="background-image: url('../images/advert3-bg.jpg'); ">
 
   <div class="right">
-    <div class="skip-button">Skip in 5s</div>
+    <div class="skip-button">Skip in ${remainingTime}s</div>
 
     <p class="logo">🦎GAD</p>
     <h2 class="popup-heading">Exchange Thoughts</h2>
@@ -75,7 +79,7 @@ const advertStatisticsBanner = `<div class="popup-overlay">
 <div class="popup-container" style="background-image: url('../images/advert5-bg.jpg'); ">
 
   <div class="right">
-    <div class="skip-button">Skip in 5s</div>
+    <div class="skip-button">Skip in ${remainingTime}s</div>
 
     <p class="logo">🦎GAD</p>
     <h2 class="popup-heading">World of Charts</h2>
@@ -96,10 +100,6 @@ const listOfBanners = [
   advertSudokuBanner,
   advertMinesweeperBanner,
 ];
-
-let remainingTime = 5;
-let allowedToSkip = false;
-let popupTimer;
 
 function wasAccepted() {
   return checkCookie() === "1";
