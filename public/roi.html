@@ -15,8 +15,7 @@
     <link rel="stylesheet" href="css/style.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-      // Function to calculate ROI
-      function calculateROI() {
+      function getValues() {
         const data = {};
 
         // Fetch inputs from form
@@ -42,21 +41,36 @@
 
         const hourlyCost = parseFloat(document.getElementById("hourlyCost").value);
 
+        data.numberOfEnvs = numberOfEnvs;
+        data.numberOfSprints = numberOfSprints;
         data.baseTestCases = baseTestCases;
-        let baseTestCasesLeft = baseTestCases - testsNotAutomated;
         data.newTestsPerRelease = newTestsPerRelease;
         data.modifiedTestsPerRelease = modifiedTestsPerRelease;
         data.removedTestsPerRelease = removedTestsPerRelease;
+        data.testsNotAutomated = testsNotAutomated;
+        data.averageEffortOnModificationOfManualTC = averageEffortOnModificationOfManualTC;
+        data.averageEffortOnModificationOfAutomatedTC = averageEffortOnModificationOfAutomatedTC;
+        data.numberOfAutomationOfBaseTestCases = numberOfAutomationOfBaseTestCases;
         data.manualCreationHours = manualCreationHours;
         data.manualExecutionHours = manualExecutionHours;
         data.automationCreationHours = automationCreationHours;
         data.automationExecutionHours = automationExecutionHours;
+        data.additionalMaintenanceHours = additionalMaintenanceHours;
         data.hourlyCost = hourlyCost;
 
+        return data;
+      }
+
+      // Function to calculate ROI
+      function calculateROI(data) {
         // Initialize variables for calculation
         let totalManualCost = 0;
         let totalAutomationCost = 0;
-        let totalTestCases = baseTestCases;
+        let totalCostsManual = 0;
+        let totalCostsAutomation = 0;
+        let totalAutomatedCases = 0;
+        let totalTestCases = data.baseTestCases;
+        let baseTestCasesLeft = data.baseTestCases - data.testsNotAutomated;
 
         data.sprints = [];
         data.newTests = [];
@@ -83,22 +97,27 @@
           effort: {
             creation: [],
             execution: [],
+            maintenance: [],
           },
           cost: {
             creation: [],
             execution: [],
+            maintenance: [],
             total: [],
           },
         };
 
-        let totalCostsManual = 0;
-        let totalCostsAutomation = 0;
-        let totalAutomatedCases = 0;
+        data.diff = {
+          automationAdditionalCosts: [],
+        };
+
         // Calculate cost for each sprint
-        for (let sprint = 0; sprint < numberOfSprints; sprint++) {
-          const newTests = Math.round(totalTestCases * newTestsPerRelease);
-          const modifiedTests = Math.round(totalTestCases * modifiedTestsPerRelease);
-          const removedTests = Math.round(totalTestCases * removedTestsPerRelease);
+        for (let sprint = 0; sprint < data.numberOfSprints; sprint++) {
+          let baseTestCases = totalTestCases;
+
+          const newTests = Math.round(baseTestCases * data.newTestsPerRelease);
+          const modifiedTests = Math.round(baseTestCases * data.modifiedTestsPerRelease);
+          const removedTests = Math.round(baseTestCases * data.removedTestsPerRelease);
 
           totalTestCases += newTests;
           totalTestCases -= removedTests;
@@ -111,17 +130,17 @@
 
           // manual:
           const manualCreationEffort =
-            newTests * manualCreationHours +
-            modifiedTests * averageEffortOnModificationOfManualTC * manualCreationHours;
-          const manualExecutionEffort = totalTestCases * manualExecutionHours * numberOfEnvs;
+            newTests * data.manualCreationHours +
+            modifiedTests * data.averageEffortOnModificationOfManualTC * data.manualCreationHours;
+          const manualExecutionEffort = totalTestCases * data.manualExecutionHours * data.numberOfEnvs;
 
           data.manual.effort.creation.push(manualCreationEffort);
           data.manual.effort.execution.push(manualExecutionEffort);
 
           const manualCreationCost =
-            newTests * manualCreationHours * hourlyCost +
-            modifiedTests * averageEffortOnModificationOfManualTC * manualCreationHours * hourlyCost;
-          const manualExecutionCost = totalTestCases * manualExecutionHours * hourlyCost * numberOfEnvs;
+            newTests * data.manualCreationHours * data.hourlyCost +
+            modifiedTests * data.averageEffortOnModificationOfManualTC * data.manualCreationHours * data.hourlyCost;
+          const manualExecutionCost = totalTestCases * data.manualExecutionHours * data.hourlyCost * data.numberOfEnvs;
 
           totalCostsManual += manualCreationCost + manualExecutionCost;
 
@@ -133,7 +152,7 @@
           let existingCasesToAutomate = 0;
 
           if (baseTestCasesLeft > 0) {
-            existingCasesToAutomate = Math.round(data.baseTestCases * numberOfAutomationOfBaseTestCases);
+            existingCasesToAutomate = Math.round(data.baseTestCases * data.numberOfAutomationOfBaseTestCases);
 
             if (existingCasesToAutomate > baseTestCasesLeft) {
               existingCasesToAutomate = baseTestCasesLeft;
@@ -142,42 +161,47 @@
           }
 
           const automationCreationEffort =
-            newTests * automationCreationHours +
-            existingCasesToAutomate * automationCreationHours +
-            modifiedTests * averageEffortOnModificationOfAutomatedTC * automationCreationHours;
+            newTests * data.automationCreationHours +
+            existingCasesToAutomate * data.automationCreationHours +
+            modifiedTests * data.averageEffortOnModificationOfAutomatedTC * data.automationCreationHours;
 
-          const automationExecutionEffort = totalTestCases * automationExecutionHours * numberOfEnvs;
+          const automationExecutionEffort = totalTestCases * data.automationExecutionHours * data.numberOfEnvs;
+
+          const automationMaintenanceEffort = (totalTestCases / 10) * data.additionalMaintenanceHours;
 
           data.automation.effort.creation.push(automationCreationEffort);
           data.automation.effort.execution.push(automationExecutionEffort);
+          data.automation.effort.maintenance.push(automationMaintenanceEffort);
+
+          const automationMaintenanceCosts = automationMaintenanceEffort * data.hourlyCost;
 
           const automationCreationCost =
-            newTests * automationCreationHours * hourlyCost +
-            existingCasesToAutomate * automationCreationHours * hourlyCost +
-            modifiedTests * averageEffortOnModificationOfAutomatedTC * automationCreationHours * hourlyCost +
-            additionalMaintenanceHours * automationCreationHours * hourlyCost;
-          const automationExecutionCost = totalTestCases * automationExecutionHours * hourlyCost * numberOfEnvs;
+            newTests * data.automationCreationHours * data.hourlyCost +
+            existingCasesToAutomate * data.automationCreationHours * data.hourlyCost +
+            modifiedTests *
+              data.averageEffortOnModificationOfAutomatedTC *
+              data.automationCreationHours *
+              data.hourlyCost +
+            automationMaintenanceCosts;
+
+          const automationExecutionCost =
+            totalTestCases * data.automationExecutionHours * data.hourlyCost * data.numberOfEnvs;
 
           totalCostsAutomation += automationCreationCost + automationExecutionCost;
           totalAutomatedCases += newTests - removedTests + existingCasesToAutomate;
+
           data.automation.total.push(totalAutomatedCases);
           data.automation.cost.creation.push(automationCreationCost);
           data.automation.cost.execution.push(automationExecutionCost);
+          data.automation.cost.maintenance.push(automationMaintenanceCosts);
           data.automation.cost.total.push(totalCostsAutomation);
+
+          data.diff.automationAdditionalCosts.push(Math.abs(totalCostsManual - totalCostsAutomation));
         }
 
         // Calculate ROI
         const roi = totalManualCost - totalAutomationCost;
         data.roi = roi;
-
-        console.log(data);
-
-        displayChart(data.sprints, [
-          { label: "Automation total costs", data: data.automation.cost.total, yAxisID: "A" },
-          { label: "Manual total costs", data: data.manual.cost.total, yAxisID: "A" },
-          { label: "No. of TC", data: data.totalTestCases, yAxisID: "B", type: "line" },
-          { label: "No. of automated TC", data: data.automation.total, yAxisID: "B", type: "line" },
-        ]);
 
         return data;
       }
@@ -209,9 +233,13 @@
         }
       }
 
-      function displayChart(x, y) {
-        if (window.roiChart != undefined && window.roiChart != null) {
-          window.roiChart.destroy();
+      function displayChart(x, y, chartId, yLabels = ["Cost (PLN)", ""]) {
+        if (window.myCharts === undefined) {
+          window.myCharts = {};
+        }
+
+        if (window.myCharts[chartId] != undefined) {
+          window.myCharts[chartId].destroy();
         }
 
         const datasets = [];
@@ -226,8 +254,8 @@
           });
         });
 
-        var ctx = document.getElementById("chart").getContext("2d");
-        window.roiChart = new Chart(ctx, {
+        var ctx = document.getElementById(chartId).getContext("2d");
+        window.myCharts[chartId] = new Chart(ctx, {
           type: "bar",
           data: {
             labels: x,
@@ -238,15 +266,63 @@
               A: {
                 beginAtZero: true,
                 position: "left",
-                title: { display: true, text: "Cost (PLN)" },
+                title: { display: true, text: yLabels[0] },
               },
               B: {
                 beginAtZero: true,
                 position: "right",
+                title: { display: true, text: yLabels[1] },
               },
             },
           },
         });
+      }
+
+      function presentROI() {
+        const data = getValues();
+        const dataCalc = calculateROI(data);
+        console.log(dataCalc);
+        displayChart(
+          dataCalc.sprints,
+          [
+            { label: "Manual TC creation effort", data: dataCalc.manual.effort.creation, yAxisID: "A" },
+            { label: "Automation of TC creation effort", data: dataCalc.automation.effort.creation, yAxisID: "A" },
+            { label: "Manual execution effort", data: dataCalc.manual.effort.execution, yAxisID: "A" },
+            { label: "Automation execution effort", data: dataCalc.automation.effort.execution, yAxisID: "A" },
+            { label: "Automation maintenance effort", data: dataCalc.automation.effort.maintenance, yAxisID: "A" },
+            { label: "Total no. of TC", data: dataCalc.totalTestCases, yAxisID: "B", type: "line" },
+            { label: "Total no. of automated TC", data: dataCalc.automation.total, yAxisID: "B", type: "line" },
+            { label: "No. of new TC", data: dataCalc.newTests, yAxisID: "B", type: "line" },
+          ],
+          "chartEffort",
+          ["Hours", ""]
+        );
+        displayChart(
+          dataCalc.sprints,
+          [
+            { label: "Manual TC creation costs", data: dataCalc.manual.cost.creation, yAxisID: "A" },
+            { label: "Automation of TC creation costs", data: dataCalc.automation.cost.creation, yAxisID: "A" },
+            { label: "Manual execution costs", data: dataCalc.manual.cost.execution, yAxisID: "A" },
+            { label: "Automation execution costs", data: dataCalc.automation.cost.execution, yAxisID: "A" },
+            { label: "Automation maintenance costs", data: dataCalc.automation.cost.maintenance, yAxisID: "A" },
+            { label: "Total no. of TC", data: dataCalc.totalTestCases, yAxisID: "B", type: "line" },
+            { label: "Total no. of automated TC", data: dataCalc.automation.total, yAxisID: "B", type: "line" },
+            { label: "No. of new TC", data: dataCalc.newTests, yAxisID: "B", type: "line" },
+          ],
+          "chartCosts"
+        );
+        displayChart(
+          dataCalc.sprints,
+          [
+            { label: "Automation total costs", data: dataCalc.automation.cost.total, yAxisID: "A" },
+            { label: "Manual total costs", data: dataCalc.manual.cost.total, yAxisID: "A" },
+            { label: "Automation additional costs", data: dataCalc.diff.automationAdditionalCosts, yAxisID: "A" },
+            { label: "Total no. of TC", data: dataCalc.totalTestCases, yAxisID: "B", type: "line" },
+            { label: "Total no. of automated TC", data: dataCalc.automation.total, yAxisID: "B", type: "line" },
+            { label: "No. of new TC", data: dataCalc.newTests, yAxisID: "B", type: "line" },
+          ],
+          "chartRoi"
+        );
       }
     </script>
     <style>
@@ -288,80 +364,82 @@
             </colgroup>
             <tr>
               <td>Number of Sprints:</td>
-              <td><input type="number" id="numberOfSprints" value="12" /></td>
+              <td><input type="number" id="numberOfSprints" min="0" max="999" value="12" /></td>
             </tr>
             <tr>
               <td>Base Number of Test Cases:</td>
-              <td><input type="number" id="baseTestCases" value="300" /></td>
+              <td><input type="number" id="baseTestCases" min="0" max="999" value="300" /></td>
             </tr>
             <tr>
               <td>Number of Test Environments (Browsers, Configurations, etc.):</td>
-              <td><input type="number" id="numberOfEnvs" value="1" /></td>
+              <td><input type="number" id="numberOfEnvs" min="0" max="999" value="1" /></td>
             </tr>
             <tr>
               <td>New Tests added per Release/Sprint (%):</td>
-              <td><input type="number" id="newTestsPerRelease" value="10" /></td>
+              <td><input type="number" id="newTestsPerRelease" min="0" max="100" value="10" /></td>
             </tr>
             <tr>
               <td>Tests modified per Release/Sprint (%):</td>
-              <td><input type="number" id="modifiedTestsPerRelease" value="10" /></td>
+              <td><input type="number" id="modifiedTestsPerRelease" min="0" max="100" value="10" /></td>
             </tr>
             <tr>
               <td>Tests removed per Release/Sprint (%):</td>
-              <td><input type="number" id="removedTestsPerRelease" value="5" /></td>
+              <td><input type="number" id="removedTestsPerRelease" min="0" max="100" value="5" /></td>
             </tr>
             <tr>
-              <td>% of Manual Tests that cannot be automated:</td>
-              <td><input type="number" id="testsNotAutomated" value="10" /></td>
+              <td>% of Manual Tests that cannot be Automated:</td>
+              <td><input type="number" id="testsNotAutomated" min="0" max="100" value="10" /></td>
             </tr>
             <tr>
-              <td>Average effort on Modification of manual test (% of effort for creating new manual test):</td>
-              <td><input type="number" id="averageEffortOnModificationOfManualTC" value="10" /></td>
+              <td>Average Effort on Modification of Manual Test (% of Effort for Creating new Manual Test):</td>
+              <td><input type="number" id="averageEffortOnModificationOfManualTC" min="0" max="100" value="10" /></td>
             </tr>
             <tr>
-              <td>Average effort on modification of automated tests (% of effort for creating new automation test):</td>
-              <td><input type="number" id="averageEffortOnModificationOfAutomatedTC" value="40" /></td>
+              <td>Average Effort on Modification of Automated tests (% of Effort for Creating new Automation Test):</td>
+              <td>
+                <input type="number" id="averageEffortOnModificationOfAutomatedTC" min="0" max="100" value="40" />
+              </td>
             </tr>
             <tr>
-              <td>Average number of base test cases automated each sprint in %:</td>
-              <td><input type="number" id="numberOfAutomationOfBaseTestCases" value="10" /></td>
+              <td>Average Number of Base Test Cases Automated each Sprint in %:</td>
+              <td><input type="number" id="numberOfAutomationOfBaseTestCases" min="0" max="100" value="10" /></td>
             </tr>
             <tr>
               <td>Manual Effort for Case Creation (hours):</td>
-              <td><input type="number" id="manualCreationHours" value="2.5" /></td>
+              <td><input type="number" id="manualCreationHours" min="0" max="999" value="2.5" /></td>
             </tr>
             <tr>
               <td>Manual Effort for Case Execution (hours):</td>
-              <td><input type="number" id="manualExecutionHours" value="2" /></td>
+              <td><input type="number" id="manualExecutionHours" min="0" max="999" value="2" /></td>
             </tr>
             <tr>
               <td>Effort of Creating Automated Tests (hours):</td>
-              <td><input type="number" id="automationCreationHours" value="12" /></td>
+              <td><input type="number" id="automationCreationHours" min="0" max="999" value="12" /></td>
             </tr>
             <tr>
               <td>Effort of Executing Automated Tests (hours):</td>
-              <td><input type="number" id="automationExecutionHours" value="0.1" /></td>
+              <td><input type="number" id="automationExecutionHours" min="0" max="999" value="0.25" /></td>
             </tr>
             <tr>
-              <td>
-                Additional Cost of Maintaining Existing Automated Tests (% of effort for creating new automation test):
-              </td>
-              <td><input type="number" id="additionalMaintenanceHours" value="2" /></td>
+              <td>Additional Cost of Maintaining Existing Automated Tests (hours per 10 new tests):</td>
+              <td><input type="number" id="additionalMaintenanceHours" min="0" max="100" value="0.25" /></td>
             </tr>
             <tr>
               <td>Hourly Cost (PLN):</td>
-              <td><input type="number" id="hourlyCost" value="50" /></td>
+              <td><input type="number" id="hourlyCost" min="0" max="999" value="50" /></td>
             </tr>
           </table>
         </div>
       </form>
 
       <br />
-      <button class="button-primary button-mobile" onclick="calculateROI()">Calculate ROI</button>
+      <button class="button-primary button-mobile" onclick="presentROI()">Calculate ROI</button>
     </div>
     <div id="roiTable"></div>
     <div id="roiResult"></div>
-    <canvas id="chart"></canvas>
+    <canvas id="chartEffort"></canvas>
+    <canvas id="chartCosts"></canvas>
+    <canvas id="chartRoi"></canvas>
   </body>
   <script type="text/javascript" src="js/common.js"></script>
   <script type="text/javascript" src="version.js"></script>
