@@ -25,7 +25,7 @@
         const newTestsPerRelease = parseFloat(document.getElementById("newTestsPerRelease").value) / 100;
         const modifiedTestsPerRelease = parseFloat(document.getElementById("modifiedTestsPerRelease").value) / 100;
         const removedTestsPerRelease = parseFloat(document.getElementById("removedTestsPerRelease").value) / 100;
-        const testsNotAutomated = parseFloat(document.getElementById("testsNotAutomated").value) / 100;
+        const automationNotApplicable = parseFloat(document.getElementById("automationNotApplicable").value) / 100;
         const averageEffortOnModificationOfManualTC =
           parseFloat(document.getElementById("averageEffortOnModificationOfManualTC").value) / 100;
         const averageEffortOnModificationOfAutomatedTC =
@@ -47,7 +47,7 @@
         data.newTestsPerRelease = newTestsPerRelease;
         data.modifiedTestsPerRelease = modifiedTestsPerRelease;
         data.removedTestsPerRelease = removedTestsPerRelease;
-        data.testsNotAutomated = testsNotAutomated;
+        data.automationNotApplicable = automationNotApplicable;
         data.averageEffortOnModificationOfManualTC = averageEffortOnModificationOfManualTC;
         data.averageEffortOnModificationOfAutomatedTC = averageEffortOnModificationOfAutomatedTC;
         data.numberOfAutomationOfBaseTestCases = numberOfAutomationOfBaseTestCases;
@@ -70,13 +70,14 @@
         let totalCostsAutomation = 0;
         let totalAutomatedCases = 0;
         let totalTestCases = data.baseTestCases;
-        let baseTestCasesLeft = data.baseTestCases - data.testsNotAutomated;
-
+        let baseTestCasesLeft = data.baseTestCases - data.baseTestCases * data.automationNotApplicable;
+        console.log(baseTestCasesLeft);
         data.sprints = [];
         data.newTests = [];
         data.totalTestCases = [];
         data.modifiedTests = [];
         data.removedTests = [];
+        data.automationNotApplicableTests = [];
         data.totalAutomationCost = [];
         data.manualCost = [];
         data.automationCost = [];
@@ -121,12 +122,14 @@
 
           totalTestCases += newTests;
           totalTestCases -= removedTests;
+          let automationNotApplicableTests = newTests * data.automationNotApplicable;
 
           data.newTests.push(newTests);
           data.totalTestCases.push(totalTestCases);
           data.modifiedTests.push(modifiedTests);
           data.removedTests.push(removedTests);
           data.sprints.push(`S${sprint}`);
+          data.automationNotApplicableTests.push(automationNotApplicableTests);
 
           // manual:
           const manualCreationEffort =
@@ -161,7 +164,7 @@
           }
 
           const automationCreationEffort =
-            newTests * data.automationCreationHours +
+            (newTests - automationNotApplicableTests) * data.automationCreationHours +
             existingCasesToAutomate * data.automationCreationHours +
             modifiedTests * data.averageEffortOnModificationOfAutomatedTC * data.automationCreationHours;
 
@@ -176,7 +179,7 @@
           const automationMaintenanceCosts = automationMaintenanceEffort * data.hourlyCost;
 
           const automationCreationCost =
-            newTests * data.automationCreationHours * data.hourlyCost +
+            (newTests - automationNotApplicableTests) * data.automationCreationHours * data.hourlyCost +
             existingCasesToAutomate * data.automationCreationHours * data.hourlyCost +
             modifiedTests *
               data.averageEffortOnModificationOfAutomatedTC *
@@ -188,7 +191,7 @@
             totalTestCases * data.automationExecutionHours * data.hourlyCost * data.numberOfEnvs;
 
           totalCostsAutomation += automationCreationCost + automationExecutionCost;
-          totalAutomatedCases += newTests - removedTests + existingCasesToAutomate;
+          totalAutomatedCases += newTests - automationNotApplicableTests - removedTests + existingCasesToAutomate;
 
           data.automation.total.push(totalAutomatedCases);
           data.automation.cost.creation.push(automationCreationCost);
@@ -388,7 +391,7 @@
             </tr>
             <tr>
               <td>% of Manual Tests that cannot be Automated:</td>
-              <td><input type="number" id="testsNotAutomated" min="0" max="100" value="10" /></td>
+              <td><input type="number" id="automationNotApplicable" min="0" max="100" value="10" /></td>
             </tr>
             <tr>
               <td>Average Effort on Modification of Manual Test (% of Effort for Creating new Manual Test):</td>
