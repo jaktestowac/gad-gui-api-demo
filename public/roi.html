@@ -22,6 +22,7 @@
         const numberOfEnvs = parseFloat(document.getElementById("numberOfEnvs").value);
         const numberOfSprints = parseFloat(document.getElementById("numberOfSprints").value);
         const baseTestCases = parseFloat(document.getElementById("baseTestCases").value);
+        const startingTestCases = parseFloat(document.getElementById("startingTestCases").value);
         const newTestsPerRelease = parseFloat(document.getElementById("newTestsPerRelease").value) / 100;
         const modifiedTestsPerRelease = parseFloat(document.getElementById("modifiedTestsPerRelease").value) / 100;
         const removedTestsPerRelease = parseFloat(document.getElementById("removedTestsPerRelease").value) / 100;
@@ -44,6 +45,7 @@
         data.numberOfEnvs = numberOfEnvs;
         data.numberOfSprints = numberOfSprints;
         data.baseTestCases = baseTestCases;
+        data.startingTestCases = startingTestCases;
         data.newTestsPerRelease = newTestsPerRelease;
         data.modifiedTestsPerRelease = modifiedTestsPerRelease;
         data.removedTestsPerRelease = removedTestsPerRelease;
@@ -71,7 +73,6 @@
         let totalAutomatedCases = 0;
         let totalTestCases = data.baseTestCases;
         let baseTestCasesLeft = data.baseTestCases - data.baseTestCases * data.automationNotApplicable;
-        console.log(baseTestCasesLeft);
         data.sprints = [];
         data.newTests = [];
         data.totalTestCases = [];
@@ -115,6 +116,10 @@
         // Calculate cost for each sprint
         for (let sprint = 0; sprint < data.numberOfSprints; sprint++) {
           let baseTestCases = totalTestCases;
+
+          if (baseTestCases === 0 || baseTestCases < data.startingTestCases) {
+            baseTestCases = data.startingTestCases;
+          }
 
           const newTests = Math.round(baseTestCases * data.newTestsPerRelease);
           const modifiedTests = Math.round(baseTestCases * data.modifiedTestsPerRelease);
@@ -203,7 +208,7 @@
         }
 
         // Calculate ROI
-        const roi = totalManualCost - totalAutomationCost;
+        const roi = totalCostsManual - totalCostsAutomation;
         data.roi = roi;
 
         return data;
@@ -236,7 +241,7 @@
         }
       }
 
-      function displayChart(x, y, chartId, yLabels = ["Cost (PLN)", ""]) {
+      function displayChart(x, y, chartId, title, yLabels = ["Cost (PLN)", ""]) {
         if (window.myCharts === undefined) {
           window.myCharts = {};
         }
@@ -265,6 +270,15 @@
             datasets: datasets,
           },
           options: {
+            plugins: {
+              title: {
+                display: true,
+                text: title,
+                font: {
+                  size: 24,
+                },
+              },
+            },
             scales: {
               A: {
                 beginAtZero: true,
@@ -298,6 +312,7 @@
             { label: "No. of new TC", data: dataCalc.newTests, yAxisID: "B", type: "line" },
           ],
           "chartEffort",
+          "Effort of Manual Tests and Automation (per Each Sprint)",
           ["Hours", ""]
         );
         displayChart(
@@ -312,7 +327,9 @@
             { label: "Total no. of automated TC", data: dataCalc.automation.total, yAxisID: "B", type: "line" },
             { label: "No. of new TC", data: dataCalc.newTests, yAxisID: "B", type: "line" },
           ],
-          "chartCosts"
+          "chartCosts",
+          "Costs of Manual and Automation (per Each Sprint)",
+          ["Cost (PLN)", ""]
         );
         displayChart(
           dataCalc.sprints,
@@ -324,8 +341,21 @@
             { label: "Total no. of automated TC", data: dataCalc.automation.total, yAxisID: "B", type: "line" },
             { label: "No. of new TC", data: dataCalc.newTests, yAxisID: "B", type: "line" },
           ],
-          "chartRoi"
+          "chartRoi",
+          "ROI - Manual Tests and Automation (Cumulative Costs)",
+          ["Cost (PLN)", ""]
         );
+      }
+
+      function change() {
+        var startingValue = document.getElementById("startingValue");
+        var baseTestCases = document.getElementById("baseTestCases").value;
+        console.log(baseTestCases);
+        if (baseTestCases == 0) {
+          startingValue.style.visibility = "visible";
+        } else {
+          startingValue.style.visibility = "collapse";
+        }
       }
     </script>
     <style>
@@ -367,11 +397,15 @@
             </colgroup>
             <tr>
               <td>Number of Sprints:</td>
-              <td><input type="number" id="numberOfSprints" min="0" max="999" value="12" /></td>
+              <td><input type="number" id="numberOfSprints" min="0" max="99999" value="12" /></td>
             </tr>
             <tr>
-              <td>Base Number of Test Cases:</td>
-              <td><input type="number" id="baseTestCases" min="0" max="999" value="300" /></td>
+              <td>Base Number of Test Cases (at the first sprint):</td>
+              <td><input type="number" id="baseTestCases" min="0" max="99999" value="300" onchange="change()" /></td>
+            </tr>
+            <tr id="startingValue" style="visibility: collapse">
+              <td><strong>Number of Test Cases (to calculate %):</strong></td>
+              <td><input type="number" id="startingTestCases" min="0" max="99999" value="200" /></td>
             </tr>
             <tr>
               <td>Number of Test Environments (Browsers, Configurations, etc.):</td>
@@ -425,7 +459,7 @@
             </tr>
             <tr>
               <td>Additional Cost of Maintaining Existing Automated Tests (hours per 10 new tests):</td>
-              <td><input type="number" id="additionalMaintenanceHours" min="0" max="100" value="0.25" /></td>
+              <td><input type="number" id="additionalMaintenanceHours" min="0" max="100" value="0.5" /></td>
             </tr>
             <tr>
               <td>Hourly Cost (PLN):</td>
