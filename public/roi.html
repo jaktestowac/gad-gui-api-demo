@@ -196,7 +196,7 @@
           data.automation.cost.maintenance.push(automationMaintenanceCosts);
           data.automation.cost.total.push(totalCostsAutomation);
 
-          data.diff.automationAdditionalCosts.push(Math.abs(totalCostsManual - totalCostsAutomation));
+          data.diff.automationAdditionalCosts.push(totalCostsAutomation - totalCostsManual);
         }
 
         // Calculate ROI
@@ -286,7 +286,7 @@
           dataCalc.sprints,
           [
             { label: "Manual TC creation effort", data: dataCalc.manual.effort.creation, yAxisID: "A" },
-            { label: "Automation of TC creation effort", data: dataCalc.automation.effort.creation, yAxisID: "A" },
+            { label: "Automation of TC effort", data: dataCalc.automation.effort.creation, yAxisID: "A" },
             { label: "Manual execution effort", data: dataCalc.manual.effort.execution, yAxisID: "A" },
             { label: "Automation execution effort", data: dataCalc.automation.effort.execution, yAxisID: "A" },
             { label: "Automation maintenance effort", data: dataCalc.automation.effort.maintenance, yAxisID: "A" },
@@ -301,7 +301,7 @@
           dataCalc.sprints,
           [
             { label: "Manual TC creation costs", data: dataCalc.manual.cost.creation, yAxisID: "A" },
-            { label: "Automation of TC creation costs", data: dataCalc.automation.cost.creation, yAxisID: "A" },
+            { label: "Automation of TC costs", data: dataCalc.automation.cost.creation, yAxisID: "A" },
             { label: "Manual execution costs", data: dataCalc.manual.cost.execution, yAxisID: "A" },
             { label: "Automation execution costs", data: dataCalc.automation.cost.execution, yAxisID: "A" },
             { label: "Automation maintenance costs", data: dataCalc.automation.cost.maintenance, yAxisID: "A" },
@@ -316,7 +316,7 @@
           [
             { label: "Automation total costs", data: dataCalc.automation.cost.total, yAxisID: "A" },
             { label: "Manual total costs", data: dataCalc.manual.cost.total, yAxisID: "A" },
-            { label: "Automation additional costs", data: dataCalc.diff.automationAdditionalCosts, yAxisID: "A" },
+            { label: "Automation costs over manual", data: dataCalc.diff.automationAdditionalCosts, yAxisID: "A" },
             { label: "Total no. of TC", data: dataCalc.totalTestCases, yAxisID: "B", type: "line" },
             { label: "Total no. of automated TC", data: dataCalc.automation.total, yAxisID: "B", type: "line" },
             { label: "No. of new TC", data: dataCalc.newTests, yAxisID: "B", type: "line" },
