@@ -12,15 +12,7 @@ function getCookieEmail() {
 }
 
 function getCookieId() {
-  let id = undefined;
-  const cookies = document.cookie.split(";");
-  for (let cookie of cookies) {
-    cookie = cookie.trim();
-    if (cookie.startsWith("id=")) {
-      id = cookie.split("=")[1];
-    }
-  }
-  return id;
+  return getCookie("id=");
 }
 
 function getCookieAvatar() {
@@ -34,6 +26,42 @@ function getCookieAvatar() {
     }
   }
   return avatar;
+}
+
+function getCookie(cookieName) {
+  let cookieValue = undefined;
+  const cookies = document.cookie.split(";");
+  for (let cookie of cookies) {
+    cookie = cookie.trim();
+    if (cookie.startsWith(cookieName)) {
+      cookieValue = cookie.split("=")[1];
+    }
+  }
+  return cookieValue;
+}
+
+function addCookie(cookieName, value, daysOfValidity) {
+  var now = new Date();
+  var time = now.getTime() + daysOfValidity * 24 * 60 * 60 * 1000;
+  var newTime = new Date(now.setTime(time));
+  newTime = newTime.toUTCString();
+  document.cookie = `${cookieName}=${value?.toLowerCase()}; expires=${newTime}; SameSite=Lax; path=/`;
+}
+
+function addVersionStatusCookie(status) {
+  addCookie("versionStatus", `${status}`, 0.005);
+}
+
+function addLatestVersionCookie(version) {
+  addCookie("versionLatest", version, 7);
+}
+
+function getVersionStatusCookie() {
+  return getCookie("versionStatus");
+}
+
+function getLatestVersionCookie() {
+  return getCookie("versionLatest");
 }
 
 const addMainMenuAndFooter = () => {
@@ -225,10 +253,33 @@ const logoGAD = (path = ".") => {
  `;
 };
 
+function addLanguageSelect(languages, selectedOption) {
+  const languageSelectElement = document.getElementById("languageSelect");
+  if (languageSelectElement !== undefined && languageSelectElement !== null) {
+    const selectedLanguage = selectedOption?.toLowerCase();
+
+    let allLanguages = Object.keys(languages).map((lang) => {
+      return `<option value="${lang}" style="font-size:16px" ${selectedLanguage === lang ? "selected" : ""}>${
+        languages[lang]
+      }</option>`;
+    });
+
+    languageSelectElement.innerHTML = `
+    <span style="display: flex; align-items: center; justify-content: center" >
+        <select
+          onchange="changeLanguage(this.value)"
+          style="display: inline-block; width: 100px; height:30px; margin: 5px 5px 5px 5px; font-size:16px"
+        >
+          ${allLanguages.join("")}
+        </select>
+      </span>`;
+  }
+}
+
 const rightMenu = (path = ".") => {
   return `
   <span style="display: flex; align-items: center; justify-self: end; padding-right: 20px">
-
+  <span id="languageSelect"></span>
   <div class="dropdown" data-testid="user-dropdown">
     <button id="dropbtn" data-testid="btn-dropdown" class="dropbtn">
       <img id="avatar"
@@ -497,7 +548,9 @@ function getNewestVersion(gadReleases, currentVersion) {
   });
 
   if (filteredVersions.length === 0) {
-    console.log(`GAD (${currentVersion}) is up to date! Latest available version: ${gadReleases[0]?.name}`);
+    console.log(
+      `[getNewestVersion] GAD (${currentVersion}) is up to date! Latest available version: ${gadReleases[0]?.name}`
+    );
     return undefined;
   }
   filteredVersions.sort((a, b) => b.name.localeCompare(a.name));
@@ -513,25 +566,53 @@ function getNewerVersions(gadReleases, currentVersion) {
   });
 
   if (filteredVersions.length === 0) {
-    console.log(`GAD (${currentVersion}) is up to date! Latest available version: ${gadReleases[0]?.name}`);
+    console.log(
+      `[getNewerVersions] GAD (${currentVersion}) is up to date! Latest available version: ${gadReleases[0]?.name}`
+    );
     return [];
   }
   filteredVersions.sort((a, b) => b.name.localeCompare(a.name));
   return filteredVersions;
 }
 
+function displayUpToDateMessage(currentVersion, latestVersion) {
+  const versionDetailsElement = document.getElementById("versionDetails");
+  if (versionDetailsElement !== null) {
+    versionDetailsElement.innerHTML = `<div align="center"><h3><strong>🦎 GAD (${currentVersion}) is up to date!</strong>🥳<br/>Latest available version: ${latestVersion}</h3></div>`;
+  }
+}
+
+function displayNewerVersionAvailableMessage(currentVersion, latestVersion) {
+  const versionInfoContainer = document.getElementById("versionInfoBox");
+  if (versionInfoContainer !== null) {
+    const gad_msg = `<strong>Newer GAD version is available!</strong> Latest: <strong>${latestVersion.name}</strong> and You have: <strong>${currentVersion}</strong><br/>
+      You can download it from <strong><a href="https://github.com/jaktestowac/gad-gui-api-demo" >official jaktestowac.pl repository</a></strong> or <strong><a href="${latestVersion.html_url}" >release page!</a></strong><br/>`;
+    versionInfoContainer.innerHTML = `<div class="versionInfoBox">${gad_msg}</div>`;
+  }
+}
+
 async function checkNewerVersion() {
   const versionInfoContainer = document.getElementById("versionInfoBox");
-  const rightMenuAlerts = document.getElementById("rightMenuAlerts");
-  if (versionInfoContainer === null && rightMenuAlerts === null) {
+  if (versionInfoContainer === null) {
     return;
   }
 
   getGadVersion().then((gadStatus) => {
     const currentVersion = gadStatus.version;
     console.log(`GAD current version is: ${currentVersion}`);
+
+    const versionUpToDate = getVersionStatusCookie();
+
+    if (versionUpToDate === "1") {
+      console.log("Using cached cookie data");
+      const latestVersionCookie = getLatestVersionCookie();
+      displayUpToDateMessage(currentVersion, latestVersionCookie);
+      return;
+    }
+
     getGadReleases().then((gadReleases) => {
       if (gadReleases.length === 0) {
+        addVersionStatusCookie(0);
         const versionDetailsElement = document.getElementById("versionDetails");
         if (versionDetailsElement !== null) {
           const gad_msg = `<div align="center"><h3>There was a problem with checking version😕<br/>
@@ -543,12 +624,8 @@ async function checkNewerVersion() {
 
       const latestVersion = getNewestVersion(gadReleases, currentVersion);
       if (latestVersion !== undefined) {
-        const versionInfoContainer = document.getElementById("versionInfoBox");
-        if (versionInfoContainer !== null) {
-          const gad_msg = `<strong>Newer GAD version is available!</strong> Latest: <strong>${latestVersion.name}</strong> and You have: <strong>${currentVersion}</strong><br/>
-            You can download it from <strong><a href="https://github.com/jaktestowac/gad-gui-api-demo" >official jaktestowac.pl repository</a></strong> or <strong><a href="${latestVersion.html_url}" >release page!</a></strong><br/>`;
-          versionInfoContainer.innerHTML = `<div class="versionInfoBox">${gad_msg}</div>`;
-        }
+        addVersionStatusCookie(2);
+        displayNewerVersionAvailableMessage(currentVersion, latestVersion);
       }
 
       const versionDetailsElement = document.getElementById("versionDetails");
@@ -558,7 +635,9 @@ async function checkNewerVersion() {
       const versions = getNewerVersions(gadReleases, currentVersion);
 
       if (versions.length === 0) {
-        versionDetailsElement.innerHTML = `<div align="center"><h3><strong>🦎 GAD (${currentVersion}) is up to date!</strong>🥳<br/>Latest available version: ${gadReleases[0]?.name}</h3></div>`;
+        addVersionStatusCookie(1);
+        addLatestVersionCookie(gadReleases[0]?.name);
+        displayUpToDateMessage(currentVersion, gadReleases[0]?.name);
         return;
       }
 

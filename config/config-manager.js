@@ -101,6 +101,13 @@ const ConfigManager = (function () {
       console.log(`> ${msg}: Self Check Done...`);
     }
 
+    function displayAdditionInfo() {
+      const readOnlyMode = getConfigValue(ConfigKeys.READ_ONLY);
+      if (readOnlyMode === true) {
+        console.log("--> Config: READ ONLY MODE is enabled");
+      }
+    }
+
     return {
       configToModifyCopy,
       bugConfigCopy,
@@ -113,6 +120,7 @@ const ConfigManager = (function () {
       getFeatureFlagConfigValue,
       setFeatureFlagConfigValue,
       fullSelfCheck,
+      displayAdditionInfo,
     };
   }
 
@@ -128,6 +136,7 @@ const ConfigManager = (function () {
 
 const configInstance = ConfigManager.getInstance();
 configInstance.fullSelfCheck();
+configInstance.displayAdditionInfo();
 
 function isBugDisabled(bugEnum) {
   return configInstance.getBugConfigValue(bugEnum) === false;

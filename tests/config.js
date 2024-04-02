@@ -10,6 +10,7 @@ const baseFilesArticlesUrl = "/api/files/articles";
 const baseUsersUrl = "/api/users";
 const baseHangmanUrl = "/api/hangman";
 const baseMinesweeperUrl = "/api/minesweeper";
+const baseBugEaterUrl = "/api/bug-eater";
 const baseQuizUrl = "/api/quiz";
 const baseStatsUrl = "/api/stats";
 const baseCommentsUrl = "/api/comments";
@@ -19,6 +20,9 @@ const baseLabelsUrl = "/api/labels";
 const aboutUrl = "/api/about";
 const baseBookmarksUrl = "/api/bookmarks";
 const baseArticleLabelsUrl = "/api/article-labels";
+const baseSurveysUrl = "/api/surveys";
+const baseTicTacToeUrl = "/api/tic-tac-toe";
+const languagesUrl = "/api/languages";
 
 const existingUserEmail = "Danial.Dicki@dicki.test";
 const existingUserPass = "test2";
@@ -63,4 +67,8 @@ module.exports = {
   existingUserEmail2,
   existingUserPass2,
   existingUserId2,
+  baseSurveysUrl,
+  baseTicTacToeUrl,
+  baseBugEaterUrl,
+  languagesUrl,
 };

@@ -92,6 +92,7 @@ server.use(healthCheckRoutes);
 server.use(middlewares);
 
 const bodyParser = require("body-parser");
+const { randomErrorsRoutes } = require("./routes/error.route");
 
 server.use((req, res, next) => {
   bodyParser.json()(req, res, (err) => {
@@ -131,6 +132,7 @@ server.use(statsRoutes);
 server.use(visitsRoutes);
 server.use(queryRoutes);
 server.use(customRoutes);
+server.use(randomErrorsRoutes)
 server.use(validationsRoutes);
 server.use(fileUploadRoutes);
 server.use("/api", router);

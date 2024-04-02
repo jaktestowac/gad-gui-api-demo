@@ -8,6 +8,7 @@ const {
   gamesDb,
   scoresDb,
   bookmarksDb,
+  surveyResponsesDb,
 } = require("./db.helpers");
 
 function searchForUserWithToken(userId, verifyTokenResult) {
@@ -208,6 +209,62 @@ function findUserBookmarks(userId) {
   return foundBookmark;
 }
 
+function findUserSurveyResponse(userId, responseId) {
+  const foundSurveyResponses = surveyResponsesDb().filter((surveyResponse) => {
+    return areIdsEqual(surveyResponse["user_id"], userId) && areIdsEqual(surveyResponse["id"], responseId);
+  });
+  return foundSurveyResponses;
+}
+
+function findUserSurveyResponses(userId) {
+  const foundSurveyResponses = surveyResponsesDb().filter((surveyResponse) => {
+    return areIdsEqual(surveyResponse["user_id"], userId);
+  });
+  return foundSurveyResponses;
+}
+
+function findUserSurveyTypeResponses(userId, type) {
+  const foundSurveyResponses = surveyResponsesDb().filter((surveyResponse) => {
+    return areIdsEqual(surveyResponse["user_id"], userId) && areIdsEqual(surveyResponse["type"], type);
+  });
+  return foundSurveyResponses;
+}
+
+function aggregateSurveyAnswers(responses, surveyType, keysToSkip = ["Open-Ended Questions"]) {
+  const aggregated = {};
+
+  responses.forEach((response) => {
+    const answers = response.answers;
+    const type = response.type;
+
+    if (areIdsEqual(type, surveyType)) {
+      Object.keys(answers).forEach((response) => {
+        const responseValues = answers[response];
+
+        if (Array.isArray(responseValues) && !keysToSkip.includes(response)) {
+          responseValues.forEach((value) => {
+            const responseKey = response.toLowerCase();
+
+            if (!aggregated[responseKey]) {
+              aggregated[responseKey] = {};
+            }
+
+            const valueKey = value.toLowerCase();
+
+            if (!aggregated[responseKey][valueKey]) {
+              aggregated[responseKey][valueKey] = 0;
+            }
+
+            aggregated[responseKey][valueKey]++;
+          });
+        }
+      });
+    }
+  });
+
+  return aggregated;
+}
+
 module.exports = {
   searchForUserWithToken,
   searchForUserWithEmail,
@@ -231,4 +288,8 @@ module.exports = {
   getGameScores,
   checkIfArticlesAlreadyInBookmarks,
   findUserBookmarks,
+  findUserSurveyResponses,
+  findUserSurveyTypeResponses,
+  aggregateSurveyAnswers,
+  findUserSurveyResponse,
 };

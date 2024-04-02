@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>🦎 GAD | Survey Statistics</title>
+    <link rel="icon" href="./data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+      integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay"
+      crossorigin="anonymous"
+    />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+    <link rel="stylesheet" href="css/controls.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/banner-cookie.css" />
+  </head>
+  <body>
+    <header>
+      <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+        <h1 id="menu-main-gui" class="nav-menu"></h1>
+      </div>
+    </header>
+    <div align="center" style="justify-content: center !important; display: flex; align-items: center">
+      <div
+        class="alert"
+        role="alert"
+        data-testid="alert-popup"
+        id="alertPopup"
+        style="position: unset !important; margin: 60px 0px 0px 0px"
+      ></div>
+    </div>
+    <div align="center">
+      <h1 translateId="surveyStatsTitle">Survey Stats</h1>
+
+      <div id="surveyDetails">No details available</div>
+      <div id="noDataHeader" translateId="noDataHeader">No data available</div>
+      <a href="./surveys.html">
+        <button
+          class="button-primary button-mobile"
+          translateId="btnReturnToSurveys"
+          style="margin: 10; font-size: 16px"
+        >
+          Return to Surveys
+        </button>
+      </a>
+      <br />
+      <br />
+      <div align="center" id="charts"></div>
+    </div>
+  </body>
+  <script></script>
+  <script src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript" src="js/common.js"></script>
+  <script type="text/javascript" src="version.js"></script>
+  <script type="text/javascript" src="username.js"></script>
+  <script type="text/javascript" src="js/survey-stats.js"></script>
+  <script type="text/javascript" src="js/language-change.js"></script>
+  <script type="text/javascript" src="js/banner-cookie.js"></script>
+</html>

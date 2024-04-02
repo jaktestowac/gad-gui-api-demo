@@ -31,23 +31,33 @@
       style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center"
     >
       <div class="welcome">
-        <h2 data-testid="hello">Hi <%=username%>!</h2>
-        <h2 id="countDown" data-testid="countDown"></h2>
-        <a href="/logout">
-          <button id="btnLogoutWelcome" data-testid="logoutButton" class="button-primary">Logout</button>
-        </a>
-        <a href="/users.html" id="btnEditLink">
-          <button class="button-primary">My profile</button>
-        </a>
-        <a href="/users.html" id="btnArticlesLink">
-          <button class="button-primary">My articles</button>
-        </a>
+        <div align="center">
+          <h2 data-testid="hello">Hi <%=username%>!</h2>
+          <h2 id="countDown" data-testid="countDown">Session will expire in: Counting time...</h2>
+        </div>
+        <br />
+        <div class="separator">Quick Navigation</div>
+        <div align="center">
+          <br />
+          <a href="/users.html" id="btnEditLink"> <button class="button-primary">My profile</button> </a><br /><br />
+          <a href="/users.html" id="btnArticlesLink"> <button class="button-primary">My articles</button> </a
+          ><br /><br />
+          <a href="../surveys.html" id="btnSurveysLink"> <button class="button-primary">Surveys</button> </a
+          ><br /><br />
+          <a href="../games.html" id="btnGamesLink"> <button class="button-primary">Games</button> </a><br /><br />
+          <span id="additionalBtns"></span>
+        </div>
+        <br />
+        <div class="separator">Danger Zone</div>
+        <br />
+        <div align="center">
+          <a href="/logout">
+            <button id="btnLogoutWelcome" data-testid="logoutButton" class="button-primary-danger">Logout</button>
+          </a>
+        </div>
       </div>
     </div>
     <br />
-    <div align="center">
-      <span id="additionalBtns"></span>
-    </div>
   </body>
   <br />
   <br />

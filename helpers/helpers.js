@@ -31,6 +31,10 @@ function formatInvalidFieldErrorResponse(isValid, all_fields) {
   );
 }
 
+function formatInvalidFieldValueErrorResponse(isValid, field) {
+  return formatErrorResponse(`Field value is invalid: ${isValid?.error}`, field);
+}
+
 function formatInvalidDateFieldErrorResponse(isValid, fields = ["date"]) {
   return formatErrorResponse(`Date field is invalid: ${isValid.error}`, fields);
 }
@@ -64,6 +68,10 @@ function getRandomIntBasedOnDay() {
   const randomValue = generator();
 
   return randomValue.toString().replace(".", "");
+}
+
+function isTrueWithProbability(probability) {
+  return Math.random() < probability;
 }
 
 const getRandomInt = (min, max) => {
@@ -331,6 +339,27 @@ function findMaxValues(obj, count) {
 
 const getUniqueValues = (inputList) => [...new Set(inputList.map(Number))];
 
+function filterSelectedKeys(obj, selectedKeys) {
+  const newObj = {};
+  for (const key in obj) {
+    const lowercaseKey = key.toLowerCase();
+    if (selectedKeys.map((k) => k.toLowerCase()).includes(lowercaseKey)) {
+      newObj[key] = obj[key];
+    }
+  }
+  return newObj;
+}
+
+function generateRandomString(length) {
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let result = "";
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    result += characters.charAt(randomIndex);
+  }
+  return result;
+}
+
 module.exports = {
   getRandomIntBasedOnDay,
   getRandomIdBasedOnDay,
@@ -360,4 +389,8 @@ module.exports = {
   getUniqueValues,
   getGaussianRandom,
   getGaussianRandomInt,
+  formatInvalidFieldValueErrorResponse,
+  filterSelectedKeys,
+  generateRandomString,
+  isTrueWithProbability,
 };

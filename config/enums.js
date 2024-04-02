@@ -24,6 +24,7 @@ const ConfigKeys = {
   KEEP_SIGNIN_TOKEN_EXPIRES_IN: "keepSignInTokenExpiresIn",
   AUTH_USER_DB: "authUserDb",
   GAMES_DB: "gamesDbPath",
+  TRANSLATIONS_DB: "translationsDbPath",
   DB_PATH: "dbPath",
   DB_RESTORE_PATH: "dbRestorePath",
   DB_BIG_RESTORE_PATH: "dbBigRestorePath",
@@ -53,6 +54,7 @@ const ConfigKeys = {
   MIN_RANDOM_VISITS_FOR_COMMENTS: "minRandomVisitsForComments",
   MAX_RANDOM_VISITS_FOR_USERS: "maxRandomVisitsForUsers",
   MIN_RANDOM_VISITS_FOR_USERS: "minRandomVisitsForUsers",
+  READ_ONLY: "readOnly",
 };
 
 const BugConfigKeys = {
@@ -82,6 +84,14 @@ const BugConfigKeys = {
   BUG_BOOKMARKS_003: "bug_bookmarks_003",
   BUG_ARTICLES_001: "bug_articles_001",
   BUG_ARTICLES_002: "bug_articles_002",
+  BUG_SURVEY_001: "bug_survey_001",
+  BUG_SURVEY_002: "bug_survey_002",
+  BUG_SURVEY_003: "bug_survey_003",
+  BUG_SURVEY_004: "bug_survey_004",
+  BUG_GAME_TTT_001: "bug_game_ttt_001",
+  BUG_GAME_TTT_002: "bug_game_ttt_002",
+  BUG_GAME_TTT_003: "bug_game_ttt_003",
+  BUG_RANDOM_503: "bug_random_503",
 };
 
 const FeatureFlagConfigKeys = {

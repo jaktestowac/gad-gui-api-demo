@@ -1,0 +1,96 @@
+/* Existing styles */
+
+div {
+  font-family: "Roboto";
+}
+table {
+  border-collapse: collapse;
+}
+th,
+td {
+  border: 1px solid black;
+  padding: 4px;
+  text-align: left;
+  font-size: 14px;
+}
+th {
+  background-color: #f2f2f2;
+}
+.primary-key {
+  background-color: yellow;
+}
+.foreign-key {
+  background-color: lightblue;
+}
+
+.highlight {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    background-color: rgb(170, 255, 91);
+  }
+  20% {
+    background-color: rgb(255, 40, 40);
+  }
+  80% {
+    background-color: rgb(72, 203, 255);
+  }
+  80% {
+    background-color: rgb(255, 229, 114);
+  }
+  100% {
+    background-color: rgb(170, 255, 91);
+  }
+}
+.floating-box {
+  position: fixed;
+  width: 400px;
+  left: 100%;
+  top: 0%;
+  transform: translate(-100%, 0%);
+  background-color: #c1e6ff;
+  padding: 10px;
+  border-color: black;
+  border-style: solid;
+  border-width: 1px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+}
+.floating-menu {
+  position: fixed;
+  display: flex;
+  height: 20px;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #cacaca;
+  padding: 10px;
+  z-index: 999;
+  opacity: 1;
+}
+
+.transparent {
+  opacity: 0.80;
+}
+
+.floating-menu ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+}
+.floating-menu li {
+  vertical-align: middle;
+  margin: 0 10px;
+}
+.floating-menu a {
+  text-decoration: none;
+  color: #333;
+}
+option {
+  background-color: #e0e0e0;
+  font-size: 12px;
+}

@@ -15,7 +15,7 @@ checkIfFeatureEnabled("feature_files").then((isEnabled) => {
     const container = document.querySelector("#additionalBtns");
     container.innerHTML += `<a href="./files.html" class="menu-link">
             <button id="btnFiles" data-testid="open-files" class="button-primary" >📁 My files</button>
-         </a>`;
+         </a><br /><br />`;
   }
 });
 
@@ -24,7 +24,7 @@ checkIfFeatureEnabled("feature_user_bookmark_articles").then((isEnabled) => {
     const container = document.querySelector("#additionalBtns");
     container.innerHTML += `<a href="./bookmarked.html?type=bookmarked" class="menu-link">
             <button id="btnBookmarks" data-testid="open-bookmarked" class="button-primary" >🏷️ Bookmarked articles</button>
-         </a>`;
+         </a><br /><br />`;
   }
 });
 

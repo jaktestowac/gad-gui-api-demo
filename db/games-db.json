@@ -11,6 +11,18 @@
     {
       "id": 3,
       "name": "Minesweeper"
+    },
+    {
+      "id": 4,
+      "name": "Bug Eater"
+    },
+    {
+      "id": 5,
+      "name": "Tic Tac Toe"
+    },
+    {
+      "id": 6,
+      "name": "Sudoku"
     }
   ]
 }

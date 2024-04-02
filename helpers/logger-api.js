@@ -62,10 +62,16 @@ function logWarn(msg, obj) {
   }
 }
 
+function logWarnTrace(msg, obj) {
+  logWarn(msg);
+  logTrace(msg, obj);
+}
+
 module.exports = {
   logDebug,
   logError,
   logWarn,
   logTrace,
   getLogs,
+  logWarnTrace,
 };

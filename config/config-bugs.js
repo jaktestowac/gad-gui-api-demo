@@ -27,6 +27,14 @@ const bugConfig = {
   bug_bookmarks_001: false,
   bug_bookmarks_002: false,
   bug_bookmarks_003: false,
+  bug_survey_001: false,
+  bug_survey_002: false,
+  bug_survey_003: false,
+  bug_survey_004: false,
+  bug_game_ttt_001: false,
+  bug_game_ttt_002: false,
+  bug_game_ttt_003: false,
+  bug_random_503: false,
 };
 
 module.exports = {

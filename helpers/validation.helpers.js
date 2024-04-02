@@ -17,6 +17,7 @@ const all_fields_comment = ["id", "user_id", "article_id", "body", "date"];
 const all_fields_comment_create = ["id", "article_id", "body", "date"];
 const all_fields_plugin = ["id", "name", "status", "version"];
 const mandatory_non_empty_fields_plugin = ["name", "status", "version"];
+const mandatory_non_empty_fields_survey = ["user_id", "date", "type", "answers"];
 
 function isLikesDataValid(body) {
   if (!isUndefined(body["comment_id"]) && !isUndefined(body["article_id"])) {
@@ -49,14 +50,45 @@ function areMandatoryFieldsPresent(body, mandatory_non_empty_fields) {
   return true;
 }
 
+function getTotalObjectLength(obj) {
+  const jsonString = JSON.stringify(obj);
+  return jsonString.length;
+}
+
+function isObjectLengthValid(obj, maxLength = 20000) {
+  let error = "";
+  const totalLength = getTotalObjectLength(obj);
+  if (totalLength > maxLength) {
+    error = `Field validation: object length: ${totalLength} longer than "${maxLength}"`;
+    logError("isObjectLengthValid:", error);
+    return { status: false, error };
+  }
+  return { status: true, error };
+}
+
 function areAllFieldsPresent(body, all_possible_fields) {
+  let error = "";
+  const keys = Object.keys(body);
+  for (let index = 0; index < all_possible_fields.length; index++) {
+    const key = all_possible_fields[index];
+    if (!keys.includes(key)) {
+      error = `Field validation: "${key}" not in [${all_possible_fields}]`;
+      logError("areAllFieldsPresent:", error);
+      return { status: false, error };
+    }
+  }
+  return { status: true, error };
+}
+
+function isFieldsLengthValid(body, max_field_length = 10000) {
   let error = "";
   const keys = Object.keys(body);
   for (let index = 0; index < keys.length; index++) {
     const key = keys[index];
-    if (!all_possible_fields.includes(key)) {
-      error = `Field validation: "${key}" not in [${all_possible_fields}]`;
-      logError("areAllFieldsValid:", error);
+    const element = body[key];
+    if (element?.toString().length > max_field_length) {
+      error = `Field validation: "${key}" longer than "${max_field_length}"`;
+      logError("isFieldsLengthValid:", error);
       return { status: false, error };
     }
   }
@@ -77,10 +109,10 @@ function validateDateFields(body, fields = ["date"]) {
         return { status: false, error };
       }
 
-      const isInFuture = isDateInFuture(element);
-      if (isInFuture === true) {
-        logDebug("validateDateFields: Body:", body);
-        error = `Field validation: "${key}" has date in future!`;
+      const result = isDateInFuture(element);
+      if (result.isDateInFuture === true) {
+        logError("validateDateFields: Body:", { body, result });
+        error = `Field validation: "${key}" has date in future! Application date: "${result.currentDate}" Input date: "${result.inputDate}"`;
         return { status: false, error };
       }
     }
@@ -157,10 +189,11 @@ const isDateValid = (date) => {
 
 function isDateInFuture(dateString) {
   const inputDate = new Date(dateString);
+  const timezoneOffset = inputDate.getTimezoneOffset();
   const currentDate = new Date();
-  currentDate.setHours(currentDate.getHours() + 1); // UTC+1
+  currentDate.setMinutes(currentDate.getMinutes() - timezoneOffset);
   currentDate.setSeconds(currentDate.getSeconds() + 10); // add possibility of offset
-  logTrace("isDateInFuture:", { inputDate, currentDate });
+  logTrace("isDateInFuture:", { dateString, inputDate, currentDate });
 
   if (isBugEnabled(BugConfigKeys.BUG_VALIDATION_007)) {
     return true;
@@ -169,7 +202,7 @@ function isDateInFuture(dateString) {
     return false;
   }
 
-  return inputDate > currentDate;
+  return { isDateInFuture: inputDate > currentDate, dateString, inputDate, currentDate };
 }
 
 const verifyAccessToken = (req, res, endpoint = "endpoint", url = "") => {
@@ -222,6 +255,9 @@ module.exports = {
   mandatory_non_empty_fields_labels,
   mandatory_non_empty_fields_article_labels,
   mandatory_non_empty_fields_comment_create,
+  mandatory_non_empty_fields_survey,
   all_fields_comment_create,
   validateDateFields,
+  isFieldsLengthValid,
+  isObjectLengthValid,
 };

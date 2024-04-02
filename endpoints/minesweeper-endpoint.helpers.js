@@ -35,7 +35,7 @@ function handleMinesweeper(req, res) {
     logDebug("handleMinesweeper:minesweeper highScores:", { parsedScores });
     res.status(HTTP_OK).json({ highScore: parsedScores });
   } else if (req.method === "POST" && req.url.endsWith("/api/minesweeper/score")) {
-    const verifyTokenResult = verifyAccessToken(req, res, "hangman", req.url);
+    const verifyTokenResult = verifyAccessToken(req, res, "minesweeper/score", req.url);
     if (isUndefined(verifyTokenResult)) {
       res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
       return;

@@ -52,6 +52,8 @@ function popUpBug() {
 }
 
 function whackBug(event) {
+  if (timeLeft === 0) return;
+
   if (event.target.textContent === bugSymbol) {
     event.target.textContent = "";
     score++;

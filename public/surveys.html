@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>🦎 GAD | Survey Statistics</title>
+    <link rel="icon" href="./data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+      integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay"
+      crossorigin="anonymous"
+    />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+    <link rel="stylesheet" href="css/controls.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/banner-cookie.css" />
+  </head>
+  <body>
+    <header>
+      <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+        <h1 id="menu-main-gui" class="nav-menu"></h1>
+      </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+
+    <div align="center" id="container">
+      <table class="table-bor" id="game-Quiz" style="width: 800px">
+        <tbody>
+          <tr>
+            <th style="text-align: center; width: 25%; border: none"></th>
+            <th style="text-align: center; width: 25%; border-color: lightgrey !important">
+              <h3 style="font-weight: bold" translateId="surveysHeader">Surveys</h3>
+            </th>
+            <th style="text-align: center; width: 25%; border-color: lightgrey !important">
+              <h3 style="font-weight: bold" translateId="surveyStatisticsHeader">Survey statistics</h3>
+            </th>
+            <th style="text-align: center; width: 25%; border-color: lightgrey !important">
+              <h3 style="font-weight: bold" translateId="surveyResponsesHeader">Your Survey responses</h3>
+            </th>
+          </tr>
+          <tr>
+            <td style="text-align: center; border-color: lightgrey !important">
+              <span translateId="testingApiLabel">Testing REST API</span>
+            </td>
+            <td style="text-align: center; border-color: lightgrey !important">
+              <a href="./survey.html?type=1">
+                <button
+                  class="button-primary button-mobile"
+                  translateId="btnTakeSurvey"
+                  style="margin: 10; font-size: 16px"
+                >
+                  Take Survey
+                </button>
+              </a>
+            </td>
+            <td style="text-align: center; border-color: lightgrey !important">
+              <a href="./survey-stats.html?type=1">
+                <button
+                  class="button-primary button-mobile"
+                  id="btnSurveyStatistics"
+                  style="margin: 10; font-size: 16px"
+                >
+                  Statistics
+                </button>
+              </a>
+            </td>
+            <td style="text-align: center; border-color: lightgrey !important">
+              <a href="./survey-responses.html?type=1">
+                <button
+                  class="button-primary button-mobile"
+                  id="btnSurveyResponses"
+                  style="margin: 10; font-size: 16px"
+                >
+                  Responses
+                </button>
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center; border-color: lightgrey !important">
+              <span translateId="testAutomationLabel">Test Automation</span>
+            </td>
+            <td style="text-align: center; border-color: lightgrey !important">
+              <a href="./survey.html?type=2">
+                <button
+                  class="button-primary button-mobile"
+                  translateId="btnTakeSurvey"
+                  style="margin: 10; font-size: 16px"
+                >
+                  Take Survey
+                </button>
+              </a>
+            </td>
+            <td style="text-align: center; border-color: lightgrey !important">
+              <a href="./survey-stats.html?type=2">
+                <button
+                  class="button-primary button-mobile"
+                  translateId="btnSurveyStatistics"
+                  style="margin: 10; font-size: 16px"
+                >
+                  Statistics
+                </button>
+              </a>
+            </td>
+            <td style="text-align: center; border-color: lightgrey !important">
+              <a href="./survey-responses.html?type=2">
+                <button
+                  class="button-primary button-mobile"
+                  id="btnSurveyResponses"
+                  style="margin: 10; font-size: 16px"
+                >
+                  Responses
+                </button>
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </body>
+  <script></script>
+  <script type="text/javascript" src="js/common.js"></script>
+  <script type="text/javascript" src="js/banner-cookie.js"></script>
+  <script type="text/javascript" src="version.js"></script>
+  <script type="text/javascript" src="username.js"></script>
+  <script type="text/javascript" src="js/language-change.js"></script>
+</html>
