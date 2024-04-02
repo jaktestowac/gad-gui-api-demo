@@ -100,7 +100,14 @@ function getDbPath(dbPath) {
 }
 
 function fullDb() {
-  const db = JSON.parse(fs.readFileSync(getDbPath(getConfigValue(ConfigKeys.AUTH_USER_DB)), "UTF-8"));
+  const db = JSON.parse(fs.readFileSync(path.join(__dirname, "..", getConfigValue(ConfigKeys.DB_PATH)), "utf8"));
+  return db;
+}
+
+function fullBaseDb() {
+  const db = JSON.parse(
+    fs.readFileSync(path.join(__dirname, "..", getConfigValue(ConfigKeys.DB_RESTORE_PATH)), "utf8")
+  );
   return db;
 }
 
@@ -263,6 +270,7 @@ module.exports = {
   quizQuestionsDb,
   hangmanDb,
   fullDb,
+  fullBaseDb,
   randomDbEntry,
   getDbPath,
   gamesDb,

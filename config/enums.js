@@ -28,6 +28,7 @@ const ConfigKeys = {
   DB_PATH: "dbPath",
   DB_RESTORE_PATH: "dbRestorePath",
   DB_BIG_RESTORE_PATH: "dbBigRestorePath",
+  DB_TINY_RESTORE_PATH: "dbTinyRestorePath",
   DB_EMPTY_RESTORE_PATH: "dbEmptyRestorePath",
   QUIZ_QUESTIONS_PATH: "quizQuestionsPath",
   HANGMAN_DATA_PATH: "hangmanDataPath",

@@ -56,6 +56,15 @@ const clearDbRoutes = (req, res, next) => {
       logDebug("Restore DB was successful", entities);
       visitsData.generateVisits();
       res.status(HTTP_CREATED).send({ message: "Big Database successfully restored", entities });
+    } else if (req.method === "GET" && req.url.endsWith("/restoreTinyDB")) {
+      const db = JSON.parse(
+        fs.readFileSync(path.join(__dirname, getConfigValue(ConfigKeys.DB_TINY_RESTORE_PATH)), "utf8")
+      );
+      router.db.setState(db);
+      const entities = countEntities(db);
+      logDebug("Restore DB was successful", entities);
+      visitsData.generateVisits();
+      res.status(HTTP_CREATED).send({ message: "Big Database successfully restored", entities });
     } else if (req.method === "GET" && req.url.endsWith("/restoreEmptyDB")) {
       const db = JSON.parse(
         fs.readFileSync(path.join(__dirname, getConfigValue(ConfigKeys.DB_EMPTY_RESTORE_PATH)), "utf8")
@@ -93,6 +102,7 @@ server.use(middlewares);
 
 const bodyParser = require("body-parser");
 const { randomErrorsRoutes } = require("./routes/error.route");
+const { checkDatabase } = require("./helpers/sanity.check");
 
 server.use((req, res, next) => {
   bodyParser.json()(req, res, (err) => {
@@ -132,7 +142,7 @@ server.use(statsRoutes);
 server.use(visitsRoutes);
 server.use(queryRoutes);
 server.use(customRoutes);
-server.use(randomErrorsRoutes)
+server.use(randomErrorsRoutes);
 server.use(validationsRoutes);
 server.use(fileUploadRoutes);
 server.use("/api", router);
@@ -159,6 +169,8 @@ server.use(function (req, res, next) {
   // default to plain-text. send()
   res.type("txt").send("Not found");
 });
+
+checkDatabase();
 
 var serverApp = server.listen(port, () => {
   logDebug(`Test Custom Data API listening on ${port}!`);

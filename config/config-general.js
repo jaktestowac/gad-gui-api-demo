@@ -50,6 +50,7 @@ const config = {
   dbPath: "./db/db.json",
   dbRestorePath: "./db/db-base.json",
   dbBigRestorePath: "./db/db-base-big.json",
+  dbTinyRestorePath: "./db/db-base-tiny.json",
   dbEmptyRestorePath: "./db/db-empty.json",
   quizQuestionsPath: "./db/quiz-questions.json",
   gamesDbPath: "./db/games-db.json",
