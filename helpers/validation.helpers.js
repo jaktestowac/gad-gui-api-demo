@@ -109,10 +109,10 @@ function validateDateFields(body, fields = ["date"]) {
         return { status: false, error };
       }
 
-      const isInFuture = isDateInFuture(element);
-      if (isInFuture === true) {
-        logDebug("validateDateFields: Body:", body);
-        error = `Field validation: "${key}" has date in future!`;
+      const result = isDateInFuture(element);
+      if (result.isDateInFuture === true) {
+        logError("validateDateFields: Body:", { body, result });
+        error = `Field validation: "${key}" has date in future! Application date: "${result.currentDate}" Input date: "${result.inputDate}"`;
         return { status: false, error };
       }
     }
@@ -189,8 +189,9 @@ const isDateValid = (date) => {
 
 function isDateInFuture(dateString) {
   const inputDate = new Date(dateString);
+  const timezoneOffset = inputDate.getTimezoneOffset();
   const currentDate = new Date();
-  currentDate.setHours(currentDate.getHours() + 1); // UTC+1
+  currentDate.setMinutes(currentDate.getMinutes() - timezoneOffset);
   currentDate.setSeconds(currentDate.getSeconds() + 10); // add possibility of offset
   logTrace("isDateInFuture:", { dateString, inputDate, currentDate });
 
@@ -201,7 +202,7 @@ function isDateInFuture(dateString) {
     return false;
   }
 
-  return inputDate > currentDate;
+  return { isDateInFuture: inputDate > currentDate, dateString, inputDate, currentDate };
 }
 
 const verifyAccessToken = (req, res, endpoint = "endpoint", url = "") => {
