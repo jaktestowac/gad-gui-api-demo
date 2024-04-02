@@ -34,6 +34,7 @@ const bugConfig = {
   bug_game_ttt_001: false,
   bug_game_ttt_002: false,
   bug_game_ttt_003: false,
+  bug_random_503: false,
 };
 
 module.exports = {

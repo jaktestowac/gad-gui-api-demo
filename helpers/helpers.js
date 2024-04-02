@@ -70,6 +70,10 @@ function getRandomIntBasedOnDay() {
   return randomValue.toString().replace(".", "");
 }
 
+function isTrueWithProbability(probability) {
+  return Math.random() < probability;
+}
+
 const getRandomInt = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -388,4 +392,5 @@ module.exports = {
   formatInvalidFieldValueErrorResponse,
   filterSelectedKeys,
   generateRandomString,
+  isTrueWithProbability,
 };

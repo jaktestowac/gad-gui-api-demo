@@ -382,7 +382,7 @@ describe("Endpoint /articles", () => {
       const response = await request.post(baseUrl).set(headers).send(testData);
 
       // Assert:
-      expect(response.status).to.equal(201);
+      expect(response.status, JSON.stringify(response.body)).to.equal(201);
       testData.id = response.body.id;
       expect(response.body).to.deep.equal(testData);
     });
@@ -398,7 +398,7 @@ describe("Endpoint /articles", () => {
       const response = await request.post(baseUrl).set(headers).send(testData);
 
       // Assert:
-      expect(response.status).to.equal(201);
+      expect(response.status, JSON.stringify(response.body)).to.equal(201);
       testData.id = response.body.id;
       expect(response.body).to.deep.equal(testData);
     });

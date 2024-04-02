@@ -91,6 +91,7 @@ const BugConfigKeys = {
   BUG_GAME_TTT_001: "bug_game_ttt_001",
   BUG_GAME_TTT_002: "bug_game_ttt_002",
   BUG_GAME_TTT_003: "bug_game_ttt_003",
+  BUG_RANDOM_503: "bug_random_503",
 };
 
 const FeatureFlagConfigKeys = {
