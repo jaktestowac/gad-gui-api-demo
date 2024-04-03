@@ -60,7 +60,7 @@ const healthCheckRoutes = (req, res, next) => {
     if (req.method === "GET" && urlEnds.endsWith("api/health/check")) {
       configInstance.fullSelfCheck();
 
-      const response = { status: "ok" };
+      const response = { status: true };
       logTrace("healthCheck:api/health response:", response);
       res.status(HTTP_OK).json(response);
       return;
@@ -80,14 +80,14 @@ const healthCheckRoutes = (req, res, next) => {
         date: new Date(),
         memoryUsageMB,
       };
-      const response = { status: "ok", health: { ...getUptime(), ...health } };
+      const response = { status: true, health: { ...getUptime(), ...health } };
       logTrace("healthCheck:api/health response:", response);
       res.status(HTTP_OK).json(response);
       return;
     }
     if (req.method === "GET" && urlEnds.endsWith("api/health/memory")) {
       const memoryUsageMB = getMemoryUsage();
-      const response = { status: "ok", ...memoryUsageMB };
+      const response = { status: true, ...memoryUsageMB };
       logTrace("healthCheck:api/health/memory response:", response);
       res.status(HTTP_OK).json(response);
       return;
@@ -95,7 +95,7 @@ const healthCheckRoutes = (req, res, next) => {
     if (req.method === "GET" && urlEnds.endsWith("api/health/uptime")) {
       const uptime = getUptime();
 
-      const response = { status: "ok", ...uptime };
+      const response = { status: true, ...uptime };
       logTrace("healthCheck:api/health/uptime response:", response);
       res.status(HTTP_OK).json(response);
       return;
@@ -103,7 +103,7 @@ const healthCheckRoutes = (req, res, next) => {
     if (req.method === "GET" && urlEnds.endsWith("api/health/db")) {
       const db = fullDb();
 
-      const response = { status: "ok", entities: countEntities(db) };
+      const response = { status: true, entities: countEntities(db) };
       logTrace("healthCheck:api/health/db response:", response);
       res.status(HTTP_OK).json(response);
       return;

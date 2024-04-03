@@ -12,6 +12,7 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
     <link rel="stylesheet" href="css/controls.css" />
     <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/infoBoxes.css" />
   </head>
   <body>
     <header>
@@ -40,9 +41,6 @@
     >
       <h2>Explore and create testing content!</h2>
     </div>
-    <!-- <div align="center" style="justify-content: center !important">
-      <div id="versionInfoBox"></div>
-    </div> -->
 
     <div align="center" style="justify-content: center !important">
       <img
@@ -50,6 +48,10 @@
         style="max-width: 300px !important; max-height: 300px !important; margin: 10px"
         alt=""
       />
+    </div>
+
+    <div align="center" style="justify-content: center !important">
+      <div id="dbStatusInfoBox" class="simpleInfoBox" style="display: none"></div>
     </div>
 
     <div
@@ -78,6 +80,7 @@
   </body>
 
   <script type="text/javascript" src="js/common.js"></script>
+  <script type="text/javascript" src="js/dbcheck.js"></script>
   <script type="text/javascript" src="version.js"></script>
   <script type="text/javascript" src="username.js"></script>
 </html>

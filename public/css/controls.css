@@ -778,3 +778,14 @@ s .container-mobile {
   border-radius: 5px;
   transition: opacity 0.3s ease-in-out;
 }
+
+.span-button {
+  display: inline-block;
+  padding: 0.2em 0.2em;
+  margin: 0.2em 0.2em;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  font-size: 12px;
+}

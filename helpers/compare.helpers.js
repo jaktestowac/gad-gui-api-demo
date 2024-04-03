@@ -40,7 +40,6 @@ function compareDbObjects(baseDb, currentDb) {
   const areTablesEqual = baseDbTables.length === currentDbTables.length;
 
   const missingTablesInCurrentDb = baseDbTables.filter((key) => !currentDbTables.includes(key));
-  const missingTablesInBaseDb = currentDbTables.filter((key) => !baseDbTables.includes(key));
 
   const entitiesCountInCurrentDb = getDbTableElementsCount(currentDb);
   const isCurrentDbEmpty = Object.values(entitiesCountInCurrentDb).every((count) => count === 0);
@@ -48,20 +47,19 @@ function compareDbObjects(baseDb, currentDb) {
   const keys1 = getAllDbKeys(baseDb);
   const keys2 = getAllDbKeys(currentDb);
 
+  const areAllKeysPresent = keys1.every((key) => keys2.includes(key));
+
   const missingKeysInCurrentDb = keys1.filter((key) => !keys2.includes(key));
-  const missingKeysInBaseDb = keys2.filter((key) => !keys1.includes(key));
-  const areEqual =
-    keys1.length === keys2.length && missingKeysInCurrentDb.length === 0 && missingKeysInBaseDb.length === 0;
+  const areEqual = areAllKeysPresent === true && missingKeysInCurrentDb.length === 0;
 
   return {
     areEqual,
     areTablesEqual,
     isCurrentDbEmpty,
+    areAllKeysPresent,
     entitiesCountInCurrentDb,
     missingTablesInCurrentDb,
-    missingTablesInBaseDb,
     missingKeysInCurrentDb,
-    missingKeysInBaseDb,
   };
 }
 
