@@ -1,5 +1,6 @@
 const { compareDbObjects } = require("./compare.helpers");
 const { fullDb, fullBaseDb } = require("./db.helpers");
+const { logDebug, logError } = require("./logger-api");
 
 function checkDatabase() {
   const dbData = fullDb();
@@ -8,9 +9,9 @@ function checkDatabase() {
   const result = compareDbObjects(dbBaseData, dbData);
 
   if (result.areEqual) {
-    console.log("> Database is correct");
+    logDebug("> Database is correct");
   } else {
-    console.log("> DATABASE IS INCORRECT!", result);
+    logError("> DATABASE IS INCORRECT!", result);
   }
 }
 
