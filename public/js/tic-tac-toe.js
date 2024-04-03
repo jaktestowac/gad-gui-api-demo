@@ -235,6 +235,4 @@ function resetGame() {
   sessionCodeInput.value = "";
 }
 
-startButton.addEventListener("click", startGame);
-
 sessionCodeInput.value = "";
