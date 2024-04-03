@@ -4,6 +4,7 @@ const { logError, logTrace } = require("../helpers/logger-api");
 const { HTTP_OK, HTTP_INTERNAL_SERVER_ERROR } = require("../helpers/response.helpers");
 const app = require("../app.json");
 const { fullDb, countEntities } = require("../helpers/db.helpers");
+const { checkDatabase } = require("../helpers/sanity.check");
 
 function getMemoryUsage() {
   const memoryUsageMB = {};
@@ -61,6 +62,14 @@ const healthCheckRoutes = (req, res, next) => {
 
       const response = { status: "ok" };
       logTrace("healthCheck:api/health response:", response);
+      res.status(HTTP_OK).json(response);
+      return;
+    }
+    if (req.method === "GET" && urlEnds.endsWith("api/health/dbcheck")) {
+      const result = checkDatabase();
+
+      const response = { status: result.isOk, result };
+      logTrace("healthCheck:api/health dbcheck response:", response);
       res.status(HTTP_OK).json(response);
       return;
     }

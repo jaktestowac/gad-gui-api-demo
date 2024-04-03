@@ -8,11 +8,15 @@ function checkDatabase() {
 
   const result = compareDbObjects(dbBaseData, dbData);
 
-  if (result.areEqual) {
+  result.isOk = result.areEqual === true || (result.areTablesEqual === true && result.isCurrentDbEmpty === true);
+
+  if (result.isOk === true) {
     logDebug("> Database is correct");
   } else {
     logError("> DATABASE IS INCORRECT!", result);
   }
+
+  return result;
 }
 
 module.exports = { checkDatabase };
