@@ -66,7 +66,7 @@ const visits = (function () {
         getConfigValue(ConfigKeys.MAX_RANDOM_VISITS_FOR_USERS)
       );
 
-      logDebug("visits: generateVisits() invoked");
+      logDebug("Visits: generated for articles, comments and users");
     }
     return {
       visitsPerArticle,
@@ -92,8 +92,10 @@ const visits = (function () {
   };
 })();
 
-const visitsData = visits.getInstance();
-visitsData.generateVisits();
+function initVisits() {
+  const visitsData = visits.getInstance();
+  visitsData.generateVisits();
+}
 
 function getDbPath(dbPath) {
   return path.resolve(__dirname, "..", dbPath);
@@ -286,14 +288,15 @@ module.exports = {
   articleLabelsDb,
   labelsDb,
   countEntities,
-  getVisitsPerArticle: visitsData.getVisitsPerArticle,
-  getVisitsPerComment: visitsData.getVisitsPerComment,
-  getVisitsPerUsers: visitsData.getVisitsPerUsers,
-  getApiCalls: visitsData.getApiCalls,
-  getNonApiCalls: visitsData.getNonApiCalls,
-  getApiRequestsDetails: visitsData.getApiRequestsDetails,
-  getNonApiRequestsDetails: visitsData.getNonApiRequestsDetails,
-  visitsData,
+  getVisitsPerArticle: visits.getInstance().getVisitsPerArticle,
+  getVisitsPerComment: visits.getInstance().getVisitsPerComment,
+  getVisitsPerUsers: visits.getInstance().getVisitsPerUsers,
+  getApiCalls: visits.getInstance().getApiCalls,
+  getNonApiCalls: visits.getInstance().getNonApiCalls,
+  getApiRequestsDetails: visits.getInstance().getApiRequestsDetails,
+  getNonApiRequestsDetails: visits.getInstance().getNonApiRequestsDetails,
+  visitsData: visits.getInstance(),
+  initVisits,
   translationsDb,
   getLanguages,
 };

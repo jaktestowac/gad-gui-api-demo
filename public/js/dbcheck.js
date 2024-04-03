@@ -29,6 +29,7 @@ issueGetDbCheckRequest().then((data) => {
                ", "
              )}</strong></br></span>`
           : [];
+
       const text = `Current database seems to be <strong>incorrect</strong> 🤕</br>
       ${missingTables}
       ${missingMandatoryColumns}
