@@ -29,10 +29,12 @@ issueGetDbCheckRequest().then((data) => {
                ", "
              )}</strong></br></span>`
           : [];
+      const error = data.result?.error !== undefined ? `<strong>${data.result?.error}</strong></br>` : "";
 
       const text = `Current database seems to be <strong>incorrect</strong> 🤕</br>
       ${missingTables}
       ${missingMandatoryColumns}
+      ${error}
       </br>If You progress with this state - GAD can return errors.
       </br>Go to <strong><a href='/tools/index.html#restore'>💣 DB Restore</a></strong> to fix it.`;
       dbStatusInfoContainer.innerHTML = text;
