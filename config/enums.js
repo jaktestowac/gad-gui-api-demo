@@ -5,6 +5,7 @@ const LogLevels = {
   WARNING: 2,
   DEBUG: 4,
   TRACE: 5,
+  INSANE: 10,
 };
 
 const ConfigKeys = {
@@ -56,6 +57,7 @@ const ConfigKeys = {
   MAX_RANDOM_VISITS_FOR_USERS: "maxRandomVisitsForUsers",
   MIN_RANDOM_VISITS_FOR_USERS: "minRandomVisitsForUsers",
   READ_ONLY: "readOnly",
+  RANDOM_ERROR_RESPONSE_PROBABILITY: "randomErrorResponseProbability",
 };
 
 const BugConfigKeys = {
@@ -93,6 +95,11 @@ const BugConfigKeys = {
   BUG_GAME_TTT_002: "bug_game_ttt_002",
   BUG_GAME_TTT_003: "bug_game_ttt_003",
   BUG_RANDOM_503: "bug_random_503",
+  BUG_RANDOM_404_GET: "bug_random_404_get",
+  BUG_SLOWER_RESPONSES_100: "bug_slower_responses_100ms",
+  BUG_SLOWER_RESPONSES_500: "bug_slower_responses_500ms",
+  BUG_SLOWER_RESPONSES_1000: "bug_slower_responses_1000ms",
+  BUG_SLOWER_RESPONSES_2500: "bug_slower_responses_2500ms",
 };
 
 const FeatureFlagConfigKeys = {

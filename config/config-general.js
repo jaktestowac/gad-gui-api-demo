@@ -29,6 +29,7 @@ const configToModify = {
   uploadSizeLimitBytes: 1000,
   currentLogLevel: LogLevels.DEBUG,
   publicLogsEnabled: false,
+
   sleepTimePerOneGetComment: 30,
   sleepTimePerOneGetCommentMin: 25,
   sleepTimePerOneGetCommentMax: 50,
@@ -43,6 +44,8 @@ const configToModify = {
   minRandomVisitsForComments: 0,
   maxRandomVisitsForUsers: 250,
   minRandomVisitsForUsers: 10,
+
+  randomErrorResponseProbability: 0.05,
 };
 
 const config = {

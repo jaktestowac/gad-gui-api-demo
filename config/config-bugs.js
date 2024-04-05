@@ -35,6 +35,11 @@ const bugConfig = {
   bug_game_ttt_002: false,
   bug_game_ttt_003: false,
   bug_random_503: false,
+  bug_random_404_get: false,
+  bug_slower_responses_100ms: false,
+  bug_slower_responses_500ms: false,
+  bug_slower_responses_1000ms: false,
+  bug_slower_responses_2500ms: false,
 };
 
 module.exports = {
