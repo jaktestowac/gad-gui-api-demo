@@ -33,3 +33,27 @@ editAccountButton.setAttribute("href", `/user.html?id=${getId()}`);
 
 const articlesLinkButton = document.querySelector("#btnArticlesLink");
 articlesLinkButton.setAttribute("href", `/articles.html?user_id=${getId()}`);
+
+function deleteAccount() {
+  const id = getId();
+
+  const confirmation = confirm("Are you sure you want to delete your account?");
+  if (confirmation === true) {
+    if (id !== undefined) {
+      const url = `./api/users/${id}`;
+      fetch(url, { headers: formatHeaders(), method: "DELETE" })
+        .then((response) => {
+          if (response.ok) {
+            window.location.href = "/logout";
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    }
+  } else {
+    console.log("Account deletion cancelled");
+  }
+}
+
+document.querySelector("#btnDeleteAccount").addEventListener("click", deleteAccount);

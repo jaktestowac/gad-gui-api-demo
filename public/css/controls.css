@@ -107,6 +107,18 @@ input.button-secondary {
   border: none;
 }
 
+.button-primary-warning:hover {
+  color: #fff;
+  background-color: #8b7025;
+  border: none;
+}
+
+.button-primary-warning {
+  color: #fff;
+  background-color: #c5a03b;
+  border: none;
+}
+
 .button-primary-danger:hover {
   color: #fff;
   background-color: #8b2525;
