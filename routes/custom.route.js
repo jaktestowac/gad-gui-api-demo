@@ -15,7 +15,6 @@ const {
 const {
   formatErrorResponse,
   getIdFromUrl,
-  pluginStatuses,
   parsePublishStats,
   parseArticleStats,
   parseUserStats,
@@ -255,9 +254,6 @@ const customRoutes = (req, res, next) => {
       const files = getImagesForArticles();
       res.json(files);
       req.body = files;
-    } else if (req.method === "GET" && req.url.endsWith("/pluginstatuses")) {
-      res.json(pluginStatuses);
-      req.body = pluginStatuses;
     } else if (req.method === "GET" && req.url.endsWith("/languages/translations")) {
       const dbData = translationsDb();
       res.json(dbData);

@@ -1,6 +1,5 @@
 const seedrandom = require("seedrandom");
 const { logDebug } = require("./logger-api");
-const pluginStatuses = ["on", "off", "obsolete"];
 const { getConfigValue, isBugDisabled } = require("../config/config-manager");
 const { ConfigKeys, BugConfigKeys } = require("../config/enums");
 const { formatYmd } = require("./datetime.helpers");
@@ -363,7 +362,6 @@ function generateRandomString(length) {
 module.exports = {
   getRandomIntBasedOnDay,
   getRandomIdBasedOnDay,
-  pluginStatuses,
   formatErrorResponse,
   formatInvalidFieldErrorResponse,
   formatMissingFieldErrorResponse,

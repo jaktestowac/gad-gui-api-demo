@@ -40,6 +40,10 @@ const bugConfig = {
   bug_slower_responses_500ms: false,
   bug_slower_responses_1000ms: false,
   bug_slower_responses_2500ms: false,
+  bug_disable_module_comments: false,
+  bug_disable_module_users: false,
+  bug_disable_module_articles: false,
+  bug_disable_module_auth: false,
 };
 
 module.exports = {

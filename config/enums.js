@@ -100,6 +100,10 @@ const BugConfigKeys = {
   BUG_SLOWER_RESPONSES_500: "bug_slower_responses_500ms",
   BUG_SLOWER_RESPONSES_1000: "bug_slower_responses_1000ms",
   BUG_SLOWER_RESPONSES_2500: "bug_slower_responses_2500ms",
+  BUG_DISABLE_MODULE_COMMENTS: "bug_disable_module_comments",
+  BUG_DISABLE_MODULE_ARTICLES: "bug_disable_module_articles",
+  BUG_DISABLE_MODULE_USERS: "bug_disable_module_users",
+  BUG_DISABLE_MODULE_AUTH: "bug_disable_module_auth",
 };
 
 const FeatureFlagConfigKeys = {

@@ -16,6 +16,7 @@ const {
   HTTP_INTERNAL_SERVER_ERROR,
   HTTP_BAD_REQUEST,
   HTTP_METHOD_NOT_ALLOWED,
+  HTTP_SERVICE_UNAVAILABLE,
 } = require("../helpers/response.helpers");
 const { handleHangman } = require("../endpoints/hangman-endpoint.helpers");
 const { handleQuiz } = require("../endpoints/quiz-endpoint.helpers");
@@ -37,6 +38,19 @@ const { handleSudoku } = require("../endpoints/sudoku-endpoint.helpers");
 
 const validationsRoutes = (req, res, next) => {
   let isAdmin = false;
+
+  if (req.url.includes("/api/users") && isBugEnabled(BugConfigKeys.BUG_DISABLE_MODULE_USERS)) {
+    res.status(HTTP_SERVICE_UNAVAILABLE).send({ message: "Module users is disabled" });
+    return;
+  }
+  if (req.url.includes("/api/articles") && isBugEnabled(BugConfigKeys.BUG_DISABLE_MODULE_ARTICLES)) {
+    res.status(HTTP_SERVICE_UNAVAILABLE).send({ message: "Module articles is disabled" });
+    return;
+  }
+  if (req.url.includes("/api/comments") && isBugEnabled(BugConfigKeys.BUG_DISABLE_MODULE_COMMENTS)) {
+    res.status(HTTP_SERVICE_UNAVAILABLE).send({ message: "Module comments is disabled" });
+    return;
+  }
 
   try {
     const urlEnds = req.url.replace(/\/\/+/g, "/");
@@ -132,6 +146,7 @@ const validationsRoutes = (req, res, next) => {
     if (req.url.includes("/api/survey")) {
       handleSurvey(req, res);
     }
+
     if (
       req.method !== "GET" &&
       req.method !== "POST" &&
