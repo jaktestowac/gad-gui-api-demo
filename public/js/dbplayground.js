@@ -132,17 +132,22 @@ function generateTable(data, tableName) {
         const singularTableName = tableName.slice(0, -1);
         row.setAttribute("id", `${singularTableName}_${value}`);
         td.textContent = cellValue;
+
+        var spanAnchor = document.createElement("span");
+        spanAnchor.setAttribute("id", `anchor_${singularTableName}_${value}`);
+        spanAnchor.classList.add("anchor");
+        td.appendChild(spanAnchor);
       } else if (key?.includes("_ids") && isNotNullNorUndefined(value)) {
         const foreignTable = key.split("_")[0];
 
         cellValue.split(",").forEach((id) => {
           const fullId = `${foreignTable}_${id}`;
-          td.innerHTML += `<a href="#${fullId}" onclick="highlightRow('${fullId}')" >${id}</a> `;
+          td.innerHTML += `<a href="#anchor_${fullId}" onclick="highlightRow('${fullId}')" >${id}</a> `;
         });
       } else if (key?.includes("_id") && isNotNullNorUndefined(value)) {
         const foreignTable = key.split("_")[0];
         const fullId = `${foreignTable}_${value}`;
-        td.innerHTML = `<a href="#${fullId}" onclick="highlightRow('${fullId}')" >${value}</a>`;
+        td.innerHTML = `<a href="#anchor_${fullId}" onclick="highlightRow('${fullId}')" >${value}</a>`;
       } else {
         td.textContent = cellValue;
       }
