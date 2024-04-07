@@ -1,7 +1,8 @@
 const { isBugEnabled, getConfigValue } = require("../config/config-manager");
 const { BugConfigKeys, ConfigKeys } = require("../config/enums");
-const { isTrueWithProbability, sleep, getRandomInt } = require("../helpers/helpers");
+const { isTrueWithProbability, sleep } = require("../helpers/helpers");
 const { logDebug } = require("../helpers/logger-api");
+const { getRandomInt } = require("../helpers/random-data.generator");
 
 const randomErrorsRoutes = (req, res, next) => {
   if (isBugEnabled(BugConfigKeys.BUG_RANDOM_503)) {

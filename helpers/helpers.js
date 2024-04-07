@@ -1,8 +1,6 @@
-const seedrandom = require("seedrandom");
 const { logDebug } = require("./logger-api");
 const { getConfigValue, isBugDisabled } = require("../config/config-manager");
 const { ConfigKeys, BugConfigKeys } = require("../config/enums");
-const { formatYmd } = require("./datetime.helpers");
 const { areStringsEqualIgnoringCase, isUndefined } = require("./compare.helpers");
 
 function formatErrorResponse(message, details = undefined, id = undefined) {
@@ -52,53 +50,8 @@ function getIdFromUrl(urlEnds) {
   return id;
 }
 
-function getRandomIdBasedOnDay(length = 32) {
-  var result = "";
-  var charactersLength = getConfigValue(ConfigKeys.CHARACTERS).length;
-  const generator = seedrandom(formatYmd(new Date()));
-  for (var i = 0; i < length; i++) {
-    result += getConfigValue(ConfigKeys.CHARACTERS).charAt(Math.floor(generator() * charactersLength));
-  }
-  return result;
-}
-
-function getRandomIntBasedOnDay() {
-  const generator = seedrandom(formatYmd(new Date()));
-  const randomValue = generator();
-
-  return randomValue.toString().replace(".", "");
-}
-
 function isTrueWithProbability(probability) {
   return Math.random() < probability;
-}
-
-const getRandomInt = (min, max) => {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
-};
-
-function getGaussianRandom(min, max, sigma) {
-  const mean = (max + min) / 2;
-
-  if (isUndefined(sigma)) {
-    sigma = (max - min) / 6;
-  }
-
-  let u = 0,
-    v = 0;
-  while (u === 0) u = Math.random(); // Converting [0,1) to (0,1)
-  while (v === 0) v = Math.random();
-
-  let z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
-  let randomValue = mean + z * sigma;
-
-  return Math.max(min, Math.min(max, randomValue));
-}
-
-function getGaussianRandomInt(min, max, sigma) {
-  return Math.round(getGaussianRandom(min, max, sigma));
 }
 
 function sleep(ms) {
@@ -360,8 +313,6 @@ function generateRandomString(length) {
 }
 
 module.exports = {
-  getRandomIntBasedOnDay,
-  getRandomIdBasedOnDay,
   formatErrorResponse,
   formatInvalidFieldErrorResponse,
   formatMissingFieldErrorResponse,
@@ -370,7 +321,6 @@ module.exports = {
   formatOnlyOneFieldPossibleErrorResponse,
   formatInvalidEntityErrorResponse,
   formatInvalidDateFieldErrorResponse,
-  getRandomInt,
   sleep,
   isAdminUser,
   isSuperAdminUser,
@@ -385,8 +335,6 @@ module.exports = {
   getTodayDateForFileName,
   findMaxValues,
   getUniqueValues,
-  getGaussianRandom,
-  getGaussianRandomInt,
   formatInvalidFieldValueErrorResponse,
   filterSelectedKeys,
   generateRandomString,

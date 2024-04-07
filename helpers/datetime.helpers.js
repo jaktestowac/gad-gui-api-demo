@@ -26,6 +26,20 @@ function getCurrentDateTimeISO() {
   return formattedDateTime;
 }
 
+function dateToDateStringISO(date) {
+  let dateToFormat = date;
+  if (dateToFormat === undefined) {
+    dateToFormat = new Date();
+  }
+
+  const year = dateToFormat.getFullYear();
+  const month = String(dateToFormat.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+  const day = String(dateToFormat.getDate()).padStart(2, "0");
+
+  const formattedDateTime = `${year}-${month}-${day}T`;
+  return formattedDateTime;
+}
+
 function tomorrow() {
   const today = new Date();
   const tomorrow = new Date(today);
@@ -46,4 +60,5 @@ module.exports = {
   tomorrow,
   formatYmd,
   addSecondsToDate,
+  dateToDateStringISO,
 };

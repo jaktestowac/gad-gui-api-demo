@@ -4,7 +4,7 @@ const { ConfigKeys } = require("../config/enums");
 const path = require("path");
 const { checkFileName } = require("./file-upload.helper");
 const { logTrace, logDebug } = require("./logger-api");
-const { getRandomVisitsForEntities } = require("./random-data.generator");
+const { getSeededRandomVisitsForEntities } = require("./random-data.generator");
 const { isUndefined } = require("./compare.helpers");
 
 const visits = (function () {
@@ -48,19 +48,19 @@ const visits = (function () {
     }
 
     function generateVisits() {
-      visitsPerArticle = getRandomVisitsForEntities(
+      visitsPerArticle = getSeededRandomVisitsForEntities(
         articlesDb(),
         getConfigValue(ConfigKeys.MIN_RANDOM_VISITS_FOR_ARTICLES),
         getConfigValue(ConfigKeys.MAX_RANDOM_VISITS_FOR_ARTICLES)
       );
 
-      visitsPerComment = getRandomVisitsForEntities(
+      visitsPerComment = getSeededRandomVisitsForEntities(
         commentsDb(),
         getConfigValue(ConfigKeys.MIN_RANDOM_VISITS_FOR_COMMENTS),
         getConfigValue(ConfigKeys.MAX_RANDOM_VISITS_FOR_COMMENTS)
       );
 
-      visitsPerUsers = getRandomVisitsForEntities(
+      visitsPerUsers = getSeededRandomVisitsForEntities(
         userDb(),
         getConfigValue(ConfigKeys.MIN_RANDOM_VISITS_FOR_USERS),
         getConfigValue(ConfigKeys.MAX_RANDOM_VISITS_FOR_USERS)

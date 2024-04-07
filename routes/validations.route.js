@@ -1,10 +1,4 @@
-const {
-  formatErrorResponse,
-  getIdFromUrl,
-  formatInvalidTokenErrorResponse,
-  getRandomInt,
-  sleep,
-} = require("../helpers/helpers");
+const { formatErrorResponse, getIdFromUrl, formatInvalidTokenErrorResponse, sleep } = require("../helpers/helpers");
 const { logDebug, logError, logTrace } = require("../helpers/logger-api");
 const { getConfigValue, isBugEnabled } = require("../config/config-manager");
 const { ConfigKeys, BugConfigKeys } = require("../config/enums");
@@ -35,6 +29,7 @@ const { handleSurvey } = require("../endpoints/survey-endpoint.helpers");
 const { handleBugEater } = require("../endpoints/bug-eater-endpoint.helpers");
 const { handleTicTacToe } = require("../endpoints/tic-tak-toe-endpoint.helpers");
 const { handleSudoku } = require("../endpoints/sudoku-endpoint.helpers");
+const { getRandomInt } = require("../helpers/random-data.generator");
 
 const validationsRoutes = (req, res, next) => {
   let isAdmin = false;

@@ -15,9 +15,9 @@ const {
   formatInvalidTokenErrorResponse,
   formatOnlyOneFieldPossibleErrorResponse,
   findMaxValues,
-  getRandomInt,
 } = require("../helpers/helpers");
 const { logTrace } = require("../helpers/logger-api");
+const { getRandomInt } = require("../helpers/random-data.generator");
 const {
   HTTP_UNAUTHORIZED,
   HTTP_UNPROCESSABLE_ENTITY,
