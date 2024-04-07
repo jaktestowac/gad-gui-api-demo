@@ -1,157 +1,85 @@
 <html>
-  <head>
-    <title>🦎 GAD | Register</title>
-    <link rel="icon" href="./data/icons/favicon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="stylesheet"
-      href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
-      integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay"
-      crossorigin="anonymous"
-    />
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
-    <link rel="stylesheet" href="css/controls.css" />
-    <link rel="stylesheet" href="css/style.css" />
-    <link rel="stylesheet" href="../js/jquery-ui.css" />
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
-    <script src="../js/jquery-3.6.0.js"></script>
-    <script src="../js/jquery-ui.js"></script>
-    <script>
-      $(function () {
-        // https://jqueryui.com/datepicker/
-        $("#datepicker").datepicker({
-          dateFormat: "yy-mm-dd",
-          defaultDate: "1995-10-10",
-          currentText: "Now",
-          showButtonPanel: true,
-          nextText: ">",
-          prevText: "<",
-          maxDate: "+0d",
-          showOptions: { direction: "up" },
-          constrainInput: true,
-          duration: "slow",
-        });
+
+<head>
+  <title>🦎 GAD | Register</title>
+  <link rel="icon" href="./data/icons/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+  <link rel="stylesheet" href="css/controls.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="../js/jquery-ui.css" />
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
+  <script src="../js/jquery-3.6.0.js"></script>
+  <script src="../js/jquery-ui.js"></script>
+  <script>
+    $(function () {
+      // https://jqueryui.com/datepicker/
+      $("#datepicker").datepicker({
+        dateFormat: "yy-mm-dd",
+        defaultDate: "1995-10-10",
+        currentText: "Now",
+        showButtonPanel: true,
+        nextText: ">",
+        prevText: "<",
+        maxDate: "+0d",
+        showOptions: { direction: "up" },
+        constrainInput: true,
+        duration: "slow",
       });
-    </script>
-  </head>
-  <body>
-    <header>
-      <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
-        <h1 id="menu-main-gui" class="nav-menu"></h1>
-      </div>
-    </header>
-    <div id="container"></div>
-    <div id="containerComments"></div>
-    <br />
-    <div align="center" style="justify-content: center !important; display: flex; align-items: center">
-      <div
-        class="alert"
-        role="alert"
-        data-testid="alert-popup"
-        id="alertPopup"
-        style="position: unset !important; margin: 60px 0px 0px 0px"
-        disabled
-      ></div>
+    });
+  </script>
+</head>
+
+<body>
+  <header>
+    <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+      <h1 id="menu-main-gui" class="nav-menu"></h1>
     </div>
-    <div
-      class="container"
-      id="pageHeader"
-      style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center"
-    >
-      <div class="form">
-        <form id="registerForm" style="width: 400px">
-          <div style="margin-top: 40px">
-            <h2>Register</h2>
-          </div>
-          <div id="infoContainer"></div>
-          <div class="input-field">
-            <input
-              type="text"
-              name="firstname"
-              class="firstname"
-              data-testid="firstname-input"
-              id="firstname"
-              style="padding: 10px 10px; margin: 8px 0"
-              placeholder="Enter User First Name"
-              octavalidate="R,ALPHA_ONLY"
-            />
-          </div>
-          <div class="input-field">
-            <input
-              type="text"
-              name="lastname"
-              class="lastname"
-              data-testid="lastname-input"
-              id="lastname"
-              style="padding: 10px 10px; margin: 8px 0"
-              placeholder="Enter User Last Name"
-              octavalidate="R,ALPHA_ONLY"
-            />
-          </div>
-          <div class="input-field">
-            <input
-              type="text"
-              name="email"
-              class="email"
-              data-testid="email-input"
-              id="email"
-              style="padding: 10px 10px; margin: 8px 0"
-              placeholder="Enter User Email"
-              octavalidate="R,EMAIL"
-            />
-          </div>
-          <div class="input-field">
-            <input
-              type="text"
-              class="datepicker"
-              class="birthdate"
-              data-testid="birthdate-input"
-              style="padding: 10px 10px; margin: 8px 0"
-              placeholder="Enter Birth Date"
-              id="datepicker"
-              placeholder="Enter Password"
-              octavalidate="DATE"
-            />
-          </div>
-          <div class="input-field">
-            <input
-              type="password"
-              name="password"
-              class="password"
-              data-testid="password-input"
-              id="password"
-              style="padding: 10px 10px; margin: 8px 0"
-              placeholder="Enter Password"
-              octavalidate="R,PASS"
-            />
-          </div>
-          <div align="center">
-            <img
-              src=""
-              id="userPicture"
-              class="userPicture"
-              style="width: 100px !important; height: 100px !important; margin: 10px"
-              alt=""
-            />
-          </div>
-          <div class="input-field">
-            <select name="avatar" class="avatar" id="avatar" onchange="presentPicture()"></select>
-          </div>
-          <input
-            type="submit"
-            class="button-primary"
-            style="background-color: #007bff"
-            data-testid="register-button"
-            id="registerButton"
-            value="Register"
-          />
-        </form>
-      </div>
+  </header>
+  <div id="container"></div>
+  <div id="containerComments"></div>
+  <br />
+  <div align="center" style="justify-content: center !important; display: flex; align-items: center">
+    <div class="alert" role="alert" data-testid="alert-popup" id="alertPopup" style="position: unset !important; margin: 60px 0px 0px 0px" disabled></div>
+  </div>
+  <div class="container" id="pageHeader" style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center">
+    <div class="form">
+      <form id="registerForm" style="width: 400px">
+        <div style="margin-top: 40px">
+          <h2>Register</h2>
+        </div>
+        <div id="infoContainer"></div>
+        <div class="input-field">
+          <input type="text" name="firstname" class="firstname" data-testid="firstname-input" id="firstname" style="padding: 10px 10px; margin: 8px 0" placeholder="Enter User First Name" octavalidate="R,ALPHA_ONLY" />
+        </div>
+        <div class="input-field">
+          <input type="text" name="lastname" class="lastname" data-testid="lastname-input" id="lastname" style="padding: 10px 10px; margin: 8px 0" placeholder="Enter User Last Name" octavalidate="R,ALPHA_ONLY" />
+        </div>
+        <div class="input-field">
+          <input type="text" name="email" class="email" data-testid="email-input" id="email" style="padding: 10px 10px; margin: 8px 0" placeholder="Enter User Email" octavalidate="R,EMAIL" />
+        </div>
+        <div class="input-field">
+          <input type="text" class="datepicker" class="birthdate" data-testid="birthdate-input" style="padding: 10px 10px; margin: 8px 0" placeholder="Enter Birth Date" id="datepicker" placeholder="Enter Password" octavalidate="DATE" />
+        </div>
+        <div class="input-field">
+          <input type="password" name="password" class="password" data-testid="password-input" id="password" style="padding: 10px 10px; margin: 8px 0" placeholder="Enter Password" octavalidate="R,PASS" />
+        </div>
+        <div align="center">
+          <img src="" id="userPicture" class="userPicture" style="width: 100px !important; height: 100px !important; margin: 10px" alt="" />
+        </div>
+        <div class="input-field">
+          <select name="avatar" class="avatar" id="avatar" onchange="presentPicture()"></select>
+        </div>
+        <input type="submit" class="button-primary" style="background-color: #007bff" data-testid="register-button" id="registerButton" value="Register" />
+      </form>
     </div>
-  </body>
-  <script type="text/javascript" src="js/common.js"></script>
-  <script type="text/javascript" src="version.js"></script>
-  <script type="text/javascript" src="username.js"></script>
-  <script type="text/javascript" src="../js/validate.js"></script>
-  <script type="text/javascript" src="js/register.js"></script>
+  </div>
+</body>
+<script type="text/javascript" src="js/common.js"></script>
+<script type="text/javascript" src="version.js"></script>
+<script type="text/javascript" src="username.js"></script>
+<script type="text/javascript" src="../js/validate.js"></script>
+<script type="text/javascript" src="js/register.js"></script>
+
 </html>

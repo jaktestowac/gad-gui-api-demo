@@ -1,56 +1,48 @@
 <html>
-  <head>
-    <title>🦎 GAD | Article</title>
-    <link rel="icon" href="./data/icons/favicon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="stylesheet"
-      href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
-      integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay"
-      crossorigin="anonymous"
-    />
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
-    <link rel="stylesheet" href="css/controls.css" />
-    <link rel="stylesheet" href="css/style.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  </head>
-  <body>
-    <header>
-      <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
-        <h1 id="menu-main-gui" class="nav-menu"></h1>
-      </div>
-    </header>
-    <div align="center" style="justify-content: center !important; display: flex; align-items: center">
-      <div
-        class="alert"
-        role="alert"
-        data-testid="alert-popup"
-        id="alertPopup"
-        style="position: unset !important; margin: 60px 0px 0px 0px"
-      ></div>
-    </div>
-    <div id="container"></div>
-    <br />
-    <div id="containerCommentsQuickMenu"></div>
-    <div id="containerComments"></div>
-    <section class="add-new-panel">
-      <div>
-        <h2>Add New Comment</h2>
 
-        <label>Comment:</label><br />
-        <textarea rows="4" class="body" id="body" style="width: 350px"></textarea><br />
-        <label></label>
-        <div style="padding-top: 10px; text-align: center">
-          <button type="button" class="update save button-primary">Save</button>
-          <button type="button" class="cancel">Cancel</button>
-        </div>
-        <button class="close" id="close">&times;</button>
+<head>
+  <title>🦎 GAD | Article</title>
+  <link rel="icon" href="./data/icons/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+  <link rel="stylesheet" href="css/controls.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+
+<body>
+  <header>
+    <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+      <h1 id="menu-main-gui" class="nav-menu"></h1>
+    </div>
+  </header>
+  <div align="center" style="justify-content: center !important; display: flex; align-items: center">
+    <div class="alert" role="alert" data-testid="alert-popup" id="alertPopup" style="position: unset !important; margin: 60px 0px 0px 0px"></div>
+  </div>
+  <div id="container"></div>
+  <br />
+  <div id="containerCommentsQuickMenu"></div>
+  <div id="containerComments"></div>
+  <section class="add-new-panel">
+    <div>
+      <h2>Add New Comment</h2>
+
+      <label>Comment:</label><br />
+      <textarea rows="4" class="body" id="body" style="width: 350px"></textarea><br />
+      <label></label>
+      <div style="padding-top: 10px; text-align: center">
+        <button type="button" class="update save button-primary">Save</button>
+        <button type="button" class="cancel">Cancel</button>
       </div>
-    </section>
-  </body>
-  <script type="text/javascript" src="js/common-articles.js"></script>
-  <script type="text/javascript" src="js/common.js"></script>
-  <script type="text/javascript" src="./js/article.js"></script>
-  <script type="text/javascript" src="version.js"></script>
-  <script type="text/javascript" src="username.js"></script>
+      <button class="close" id="close">&times;</button>
+    </div>
+  </section>
+</body>
+<script type="text/javascript" src="js/common-articles.js"></script>
+<script type="text/javascript" src="js/common.js"></script>
+<script type="text/javascript" src="./js/article.js"></script>
+<script type="text/javascript" src="version.js"></script>
+<script type="text/javascript" src="username.js"></script>
+
 </html>

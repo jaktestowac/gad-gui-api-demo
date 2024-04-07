@@ -1,95 +1,71 @@
 <html>
-  <head>
-    <title>🦎 GAD | Comments</title>
-    <link rel="icon" href="./data/icons/favicon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="stylesheet"
-      href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
-      integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay"
-      crossorigin="anonymous"
-    />
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
-    <link rel="stylesheet" href="css/controls.css" />
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
-  <body>
-    <header>
-      <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
-        <h1 id="menu-main-gui" class="nav-menu"></h1>
-      </div>
-    </header>
 
-    <div align="center" style="justify-content: center !important; display: flex; align-items: center">
-      <div
-        class="alert"
-        role="alert"
-        data-testid="alert-popup"
-        id="alertPopup"
-        style="position: unset !important; margin: 60px 0px 0px 0px"
-      ></div>
+<head>
+  <title>🦎 GAD | Comments</title>
+  <link rel="icon" href="./data/icons/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+  <link rel="stylesheet" href="css/controls.css" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <header>
+    <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+      <h1 id="menu-main-gui" class="nav-menu"></h1>
     </div>
-    <div align="center">
-      <div class="loader-container">
-        <div class="spinner"></div>
+  </header>
+
+  <div align="center" style="justify-content: center !important; display: flex; align-items: center">
+    <div class="alert" role="alert" data-testid="alert-popup" id="alertPopup" style="position: unset !important; margin: 60px 0px 0px 0px"></div>
+  </div>
+  <div align="center">
+    <div class="loader-container">
+      <div class="spinner"></div>
+    </div>
+  </div>
+  <div align="center" class="floating navigation-bar">
+    <div align="center" style="display: flex; align-items: center; justify-content: center">
+      <strong>
+        <a href="javascript:prevPage()" id="btnPrev" data-testid="prev-button" style="margin: 5px 5px 5px 5px">Prev</a>
+        <a href="javascript:nextPage()" id="btnNext" data-testid="next-button" style="margin: 5px 5px 5px 5px">Next</a>
+      </strong>
+      <div style="margin: 5px 10px 5px 15px">
+        Page: <span id="page" data-testid="current-page"></span>/<span id="pagesTotal" data-testid="total-pages"></span>
       </div>
-    </div>
-    <div align="center" class="floating navigation-bar">
-      <div align="center" style="display: flex; align-items: center; justify-content: center">
+      <label style="margin: 5px 5px 5px 5px">Items/Page:</label>
+      <select id="perPage" data-testid="per-page-select" onchange="changeItemsPerPage()" style="display: inline-block; width: 50px; margin: 5px 5px 5px 5px">
+        <option id="opt1" value="6">6</option>
+        <option id="opt2" selected value="12">12</option>
+        <option id="opt3" value="24">24</option>
+        <option id="opt4" value="48">48</option>
+        <option id="opt5" value="96">96</option>
+        <option id="opt6" value="192">192</option>
+        <option id="opt7" value="384">384</option>
+      </select>
+      <label style="margin: 5px 5px 5px 5px">Sort:</label>
+      <select id="sorting" data-testid="sorting-select" onchange="changeSorting()" style="display: inline-block; width: 75px; margin: 5px 5px 5px 5px">
+        <option id="sorting-opt2" selected value="date DESC">date ⬇️</option>
+        <option id="sorting-opt1" value="date ASC">date ⬆️</option>
+        <option id="sorting-opt4" value="body DESC">body ⬇️</option>
+        <option id="sorting-opt3" value="body ASC">body ⬆️</option>
+      </select>
+      <div style="margin: 5px 15px 5px 15px">
+        <input class="search" value="" placeholder="Search..." id="search-input" data-testid="search-input" style="vertical-align: middle;width: 100px;"></input>
         <strong>
-          <a href="javascript:prevPage()" id="btnPrev" data-testid="prev-button" style="margin: 5px 5px 5px 5px"
-            >Prev</a
-          >
-          <a href="javascript:nextPage()" id="btnNext" data-testid="next-button" style="margin: 5px 5px 5px 5px"
-            >Next</a
-          >
+          <a data-testid="search-button" style="vertical-align: middle; margin: 5px 5px 5px 5px" href="javascript:seachByText()">GO</a>
         </strong>
-        <div style="margin: 5px 10px 5px 15px">
-          Page: <span id="page" data-testid="current-page"></span>/<span id="pagesTotal" data-testid="total-pages"></span>
-        </div>
-        <label style="margin: 5px 5px 5px 5px">Items/Page:</label>
-        <select
-          id="perPage"
-          data-testid="per-page-select"
-          onchange="changeItemsPerPage()"
-          style="display: inline-block; width: 50px; margin: 5px 5px 5px 5px"
-        >
-          <option id="opt1" value="6">6</option>
-          <option id="opt2" selected value="12">12</option>
-          <option id="opt3" value="24">24</option>
-          <option id="opt4" value="48">48</option>
-          <option id="opt5" value="96">96</option>
-          <option id="opt6" value="192">192</option>
-          <option id="opt7" value="384">384</option>
-        </select>
-        <label style="margin: 5px 5px 5px 5px">Sort:</label>
-        <select
-          id="sorting"
-          data-testid="sorting-select"
-          onchange="changeSorting()"
-          style="display: inline-block; width: 75px; margin: 5px 5px 5px 5px"
-        >
-          <option id="sorting-opt2" selected value="date DESC">date ⬇️</option>
-          <option id="sorting-opt1" value="date ASC">date ⬆️</option>
-          <option id="sorting-opt4" value="body DESC">body ⬇️</option>
-          <option id="sorting-opt3" value="body ASC">body ⬆️</option>
-        </select>
-        <div style="margin: 5px 15px 5px 15px">
-          <input class="search" value="" placeholder="Search..." id="search-input" data-testid="search-input" style="vertical-align: middle;width: 100px;"></input>
-        <strong>
-          <a data-testid="search-button" style="vertical-align: middle; margin: 5px 5px 5px 5px" href="javascript:seachByText()"
-            >GO</a
-          >
-        </strong>
-        </div>
       </div>
     </div>
+  </div>
 
-    <div id="container" class="container-space"></div>
+  <div id="container" class="container-space"></div>
 
-    <script type="text/javascript" src="js/common.js"></script>
-    <script type="text/javascript" src="js/comments.js"></script>
-  </body>
-  <script type="text/javascript" src="version.js"></script>
-  <script type="text/javascript" src="username.js"></script>
+  <script type="text/javascript" src="js/common.js"></script>
+  <script type="text/javascript" src="js/comments.js"></script>
+</body>
+<script type="text/javascript" src="version.js"></script>
+<script type="text/javascript" src="username.js"></script>
+
 </html>

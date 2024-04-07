@@ -1,69 +1,53 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>🦎 GAD | Login</title>
-    <link rel="icon" href="./favicon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="stylesheet"
-      href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
-      integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay"
-      crossorigin="anonymous"
-    />
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
-    <link rel="stylesheet" href="../css/controls.css" />
-    <link rel="stylesheet" href="../css/style.css" />
-  </head>
-  <body>
-    <header>
-      <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
-        <h1 id="menu-main-gui-login" class="nav-menu"></h1>
-      </div>
-    </header>
-    <div id="container"></div>
-    <div id="containerComments"></div>
-    <br />
-    <br />
-    <br />
-    <div
-      class="container"
-      id="pageHeader"
-      style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center"
-    >
-      <div class="form">
-        <form action="/process_login" method="post" style="width: 400px">
-          <h2>Login</h2>
-          <% if(locals.error) {%>
-          <p class="text-danger" data-testid="login-error"><%=error%></p>
-          <%}%>
-          <div class="input-field">
-            <input
-              type="text"
-              name="username"
-              id="username"
-              style="padding: 10px 10px; margin: 8px 0"
-              placeholder="Enter User Email"
-            />
-          </div>
-          <div class="input-field">
-            <input
-              type="password"
-              name="password"
-              id="password"
-              style="padding: 10px 10px; margin: 8px 0"
-              placeholder="Enter Password"
-            />
-          </div>
-          <input type="checkbox" id="keepSignIn" name="keepSignIn" value="true" />
-          <label for="keepSignIn"> keep me sign in</label><br />
-          <input type="submit" class="button-primary" id="loginButton" value="LogIn" />
-        </form>
-      </div>
+
+<head>
+  <title>🦎 GAD | Login</title>
+  <link rel="icon" href="./favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/controls.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+
+<body>
+  <header>
+    <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+      <h1 id="menu-main-gui-login" class="nav-menu"></h1>
     </div>
-  </body>
+  </header>
+  <div id="container"></div>
+  <div id="containerComments"></div>
   <br />
-  <script type="text/javascript" src="../js/common.js"></script>
-  <script type="text/javascript" src="../version.js"></script>
-  <script type="text/javascript" src="../username.js"></script>
-  <script type="text/javascript" src="../blockback.js"></script>
+  <br />
+  <br />
+  <div class="container" id="pageHeader" style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center">
+    <div class="form">
+      <form action="/process_login" method="post" style="width: 400px">
+        <h2>Login</h2>
+        <% if(locals.error) {%>
+          <p class="text-danger" data-testid="login-error">
+            <%=error%>
+          </p>
+          <%}%>
+            <div class="input-field">
+              <input type="text" name="username" id="username" style="padding: 10px 10px; margin: 8px 0" placeholder="Enter User Email" />
+            </div>
+            <div class="input-field">
+              <input type="password" name="password" id="password" style="padding: 10px 10px; margin: 8px 0" placeholder="Enter Password" />
+            </div>
+            <input type="checkbox" id="keepSignIn" name="keepSignIn" value="true" />
+            <label for="keepSignIn"> keep me sign in</label><br />
+            <input type="submit" class="button-primary" id="loginButton" value="LogIn" />
+      </form>
+    </div>
+  </div>
+</body>
+<br />
+<script type="text/javascript" src="../js/common.js"></script>
+<script type="text/javascript" src="../version.js"></script>
+<script type="text/javascript" src="../username.js"></script>
+<script type="text/javascript" src="../blockback.js"></script>
+
 </html>
