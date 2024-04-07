@@ -89,7 +89,7 @@ function setMessage(msg, className) {
 }
 
 // Function to generate table from JSON data
-function generateTable(data, tableName) {
+function generateTable(data, tableName, addLinks = true) {
   var table = document.createElement("table");
   var thead = document.createElement("thead");
   var tbody = document.createElement("tbody");
@@ -142,12 +142,20 @@ function generateTable(data, tableName) {
 
         cellValue.split(",").forEach((id) => {
           const fullId = `${foreignTable}_${id}`;
-          td.innerHTML += `<a href="#anchor_${fullId}" onclick="highlightRow('${fullId}')" >${id}</a> `;
+          if (addLinks === true) {
+            td.innerHTML += `<a href="#anchor_${fullId}" onclick="highlightRow('${fullId}')" >${id}</a> `;
+          } else {
+            td.innerHTML += `${id} `;
+          }
         });
       } else if (key?.includes("_id") && isNotNullNorUndefined(value)) {
         const foreignTable = key.split("_")[0];
         const fullId = `${foreignTable}_${value}`;
-        td.innerHTML = `<a href="#anchor_${fullId}" onclick="highlightRow('${fullId}')" >${value}</a>`;
+        if (addLinks === true) {
+          td.innerHTML = `<a href="#anchor_${fullId}" onclick="highlightRow('${fullId}')" >${value}</a>`;
+        } else {
+          td.textContent = value;
+        }
       } else {
         td.textContent = cellValue;
       }
@@ -252,7 +260,7 @@ function executeSqlQuery(sqlQuery) {
     if (res.length >= 0) {
       const normalizedData = normalizeObjects(res);
       jsonTable.innerHTML = "";
-      jsonTable.appendChild(generateTable(normalizedData, "Results:"));
+      jsonTable.appendChild(generateTable(normalizedData, "Results:", false));
       setMessage(`Found: ${normalizedData?.length} records`, simpleSuccessBox);
     } else if (res === 1) {
       setMessage("Query executed successfully (but READ-ONLY MODE!)", simpleInfoBox);
