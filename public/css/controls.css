@@ -785,6 +785,8 @@ s .container-mobile {
   border-radius: 5px;
   font-size: 12px;
   opacity: 0.8;
+  font-family: "Roboto";
+  font-weight: normal;
 
   text-align: center;
   border-radius: 5px;
