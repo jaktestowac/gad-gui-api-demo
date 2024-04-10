@@ -267,7 +267,7 @@ function addLanguageSelect(languages, selectedOption) {
     languageSelectElement.innerHTML = `
     <span style="display: flex; align-items: center; justify-content: center" >
         <select
-          onchange="changeLanguage(this.value)"
+          onchange="changeLanguage(this.value)" onfocusout="changeLanguage(this.value)"
           style="display: inline-block; width: 100px; height:30px; margin: 5px 5px 5px 5px; font-size:16px"
         >
           ${allLanguages.join("")}

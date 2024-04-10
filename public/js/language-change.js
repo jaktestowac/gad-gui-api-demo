@@ -80,11 +80,10 @@ function getTranslatedText(elementId) {
 function changeLanguage(newLanguage) {
   addPrevLanguageCookie(getLanguageCookie());
   if (newLanguage === undefined || newLanguage === "" || newLanguage === null || newLanguage === "undefined") {
-    console.log(" -> ", newLanguage);
     newLanguage = "en";
   }
-
   addLanguageCookie(newLanguage);
+
   translateToLanguage(getPrevLanguageCookie(), getLanguageCookie());
 }
 
@@ -110,6 +109,7 @@ function translateToLanguage(oldLanguage, newLanguage) {
 
     const elements = document.querySelectorAll("*");
     changeElementText(elements, oldLanguage, newLanguage);
+    changeElementText(elements, "en", newLanguage);
   }
 }
 
@@ -145,10 +145,8 @@ issueGetTranslations().then((translations) => {
   issueGetLanguages().then((languages) => {
     languagesStored = languages;
     translationsStored = translations;
-    addLanguageCheckCookie("en");
     addPrevLanguageCookie("en");
     addLanguageSelect(languagesStored, getLanguageCookie());
-    addLanguageCheckCookie(getLanguageCookie());
     translateToLanguage(getPrevLanguageCookie(), getLanguageCookie());
     detectDomChange((mutationList) => {
       mutationList.forEach((mutation) => {
