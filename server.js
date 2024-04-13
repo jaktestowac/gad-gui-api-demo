@@ -68,6 +68,13 @@ const clearDbRoutes = (req, res, next) => {
       logDebug("Restore DB was successful", entities);
       visitsData.generateVisits();
       res.status(HTTP_CREATED).send({ message: "Big Database successfully restored", entities });
+    } else if (req.method === "GET" && req.url.endsWith("/restoreDB2")) {
+      const db = JSON.parse(fs.readFileSync(path.join(__dirname, getConfigValue(ConfigKeys.DB2_RESTORE_PATH)), "utf8"));
+      router.db.setState(db);
+      const entities = countEntities(db);
+      logDebug("Restore DB was successful", entities);
+      visitsData.generateVisits();
+      res.status(HTTP_CREATED).send({ message: "Database successfully restored", entities });
     } else if (req.method === "GET" && req.url.endsWith("/restoreTinyDB")) {
       const db = JSON.parse(
         fs.readFileSync(path.join(__dirname, getConfigValue(ConfigKeys.DB_TINY_RESTORE_PATH)), "utf8")

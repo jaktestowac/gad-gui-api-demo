@@ -4,8 +4,8 @@ const { ConfigKeys } = require("../config/enums");
 const path = require("path");
 const { checkFileName } = require("./file-upload.helper");
 const { logTrace, logDebug } = require("./logger-api");
-const { getSeededRandomVisitsForEntities } = require("./random-data.generator");
 const { isUndefined } = require("./compare.helpers");
+const { getSeededRandomVisitsForEntities } = require("./generators/random-data.generator");
 
 const visits = (function () {
   let instance;

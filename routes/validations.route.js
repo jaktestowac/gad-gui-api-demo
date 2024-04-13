@@ -29,7 +29,7 @@ const { handleSurvey } = require("../endpoints/survey-endpoint.helpers");
 const { handleBugEater } = require("../endpoints/bug-eater-endpoint.helpers");
 const { handleTicTacToe } = require("../endpoints/tic-tak-toe-endpoint.helpers");
 const { handleSudoku } = require("../endpoints/sudoku-endpoint.helpers");
-const { getRandomInt } = require("../helpers/random-data.generator");
+const { getRandomInt } = require("../helpers/generators/random-data.generator");
 
 const validationsRoutes = (req, res, next) => {
   let isAdmin = false;

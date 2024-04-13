@@ -11,13 +11,13 @@ const {
   countLikesForAllArticles,
   searchForLike,
 } = require("../helpers/db-operation.helpers");
+const { getRandomInt } = require("../helpers/generators/random-data.generator");
 const {
   formatInvalidTokenErrorResponse,
   formatOnlyOneFieldPossibleErrorResponse,
   findMaxValues,
 } = require("../helpers/helpers");
 const { logTrace } = require("../helpers/logger-api");
-const { getRandomInt } = require("../helpers/random-data.generator");
 const {
   HTTP_UNAUTHORIZED,
   HTTP_UNPROCESSABLE_ENTITY,

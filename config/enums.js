@@ -28,6 +28,7 @@ const ConfigKeys = {
   TRANSLATIONS_DB: "translationsDbPath",
   DB_PATH: "dbPath",
   DB_RESTORE_PATH: "dbRestorePath",
+  DB2_RESTORE_PATH: "db2RestorePath",
   DB_BIG_RESTORE_PATH: "dbBigRestorePath",
   DB_TINY_RESTORE_PATH: "dbTinyRestorePath",
   DB_EMPTY_RESTORE_PATH: "dbEmptyRestorePath",

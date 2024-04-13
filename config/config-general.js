@@ -52,6 +52,7 @@ const config = {
   authUserDb: "./db/db.json",
   dbPath: "./db/db.json",
   dbRestorePath: "./db/db-base.json",
+  db2RestorePath: "./db/db-base-v2.json",
   dbBigRestorePath: "./db/db-base-big.json",
   dbTinyRestorePath: "./db/db-base-tiny.json",
   dbEmptyRestorePath: "./db/db-empty.json",
