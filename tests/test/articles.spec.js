@@ -109,7 +109,7 @@ describe("Endpoint /articles", () => {
       const response = await request.put(baseUrl).set(headers).send(testArticleData);
 
       // Assert:
-      expect(response.status).to.equal(201);
+      expect(response.status, JSON.stringify(response)).to.equal(201);
     });
 
     it("PUT /articles/:id - should update valid article", async () => {
@@ -131,14 +131,14 @@ describe("Endpoint /articles", () => {
       expect(response.status).to.equal(422);
     });
 
-    it("PUT /articles/:id - should not update article with different user ID", async () => {
+    it("PUT /articles/:id - should update article with different user ID - id is overwritten on back-end", async () => {
       // Act:
       const newArticleData = testArticleData;
       newArticleData.user_id = newArticleData.user_id + 1;
       const response = await request.put(`${baseUrl}/${articleId}`).set(headers).send(newArticleData);
 
       // Assert:
-      expect(response.status).to.equal(401);
+      expect(response.status).to.equal(200);
     });
 
     it("PUT /articles/:id - should not update different article", async () => {
@@ -146,10 +146,10 @@ describe("Endpoint /articles", () => {
       const response = await request.put(`${baseUrl}/1`).set(headers).send(testArticleData);
 
       // Assert:
-      expect(response.status).to.equal(401);
+      expect(response.status, JSON.stringify(response)).to.equal(401);
     });
 
-    ["title", "body", "date", "user_id"].forEach((field) => {
+    ["title", "body", "date"].forEach((field) => {
       it(`PUT /articles/:id - missing mandatory field - ${field}`, async () => {
         // Arrange:
         testArticleData[field] = undefined;

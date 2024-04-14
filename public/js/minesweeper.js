@@ -198,9 +198,11 @@ function resetGame() {
 function startGame() {
   const token = getBearerToken();
   if (token === undefined) {
+    resetBtn.style.display = "none";
     const scoreElement = document.getElementById("score");
     scoreElement.innerHTML = "<strong>⛔ Please log in and return to this page ⛔</strong>";
   } else {
+    resetBtn.style.display = "block";
     initializeBoard();
   }
 }
