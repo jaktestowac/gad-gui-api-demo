@@ -135,10 +135,15 @@ describe("Endpoint /articles", () => {
       // Act:
       const newArticleData = testArticleData;
       newArticleData.user_id = newArticleData.user_id + 1;
+      expect(userId).to.not.eql(newArticleData.user_id);
+
       const response = await request.put(`${baseUrl}/${articleId}`).set(headers).send(newArticleData);
 
       // Assert:
       expect(response.status).to.equal(200);
+
+      const responseGet = await request.get(`${baseUrl}/${articleId}`).set(headers);
+      expect(userId).to.deep.equal(responseGet.body.user_id);
     });
 
     it("PUT /articles/:id - should not update different article", async () => {
