@@ -31,7 +31,7 @@ Features of **🦎 GAD**:
 - **Bug flags** to enable/disable different bugs - configurable from UI!
 - **Dynamic config**
 - **Challenging elements for test automation** (iframes, file uploads, drag&drop, likes, labels, surveys, banners, pop-ups, logic on front-end and back-end, dynamic elements, games etc.)
-- **Admins "backoffice"** with additional tools and functionalities (SQL Playground)
+- **Admins "backoffice"** with additional tools and functionalities (DB reset, SQL Playground)
 
 # Deployment
 

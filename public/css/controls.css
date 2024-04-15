@@ -803,3 +803,23 @@ s .container-mobile {
   cursor: pointer;
   font-size: 12px;
 }
+
+.marker {
+  position: relative;
+}
+
+.marker::before {
+  content: attr(value); /* Add the value attribute as content */
+  font-size: 12px;
+  font-weight: bold;
+  position: absolute;
+  transform: translateX(100%) translateY(100%);
+  width: 20px;
+  height: 20px;
+  background-color: red;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
