@@ -65,7 +65,7 @@ function compareDbObjects(baseDb, currentDb) {
 
     for (const obj of currentDb[parts[0]]) {
       if (obj[parts[1]] === undefined) {
-        invalidObjects.push({ table: parts[0], key: parts[1], id: obj.id });
+        invalidObjects.push({ table: parts[0], key: parts[1], "obj:id": obj.id });
       }
     }
   }
