@@ -57,8 +57,10 @@ const processLoginRoutes = (req, res) => {
   let isSuperAdmin = isSuperAdminUser(username, password);
 
   isAdmin = isAdmin || isSuperAdmin;
+  const authenticated = isAuthenticated({ email: username, password });
+  logDebug("process_login: { isAdmin, isSuperAdmin, authenticated }:", { isAdmin, isSuperAdmin, authenticated });
 
-  if (!isAdmin && isAuthenticated({ email: username, password }) === false) {
+  if ((!isAdmin && authenticated === false) || authenticated === undefined) {
     // redirect with a fail msg
     return res.redirect("/login?msg=Invalid username or password");
   }

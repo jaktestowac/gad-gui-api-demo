@@ -2976,6 +2976,30 @@
         }
       }
     },
+    "/health/check": {
+      "get": {
+        "tags": ["healthcheck"],
+        "summary": "Get config check result",
+        "responses": {
+          "200": {
+            "description": "config result received",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/health/dbcheck": {
+      "get": {
+        "tags": ["healthcheck"],
+        "summary": "Get dbcheck result",
+        "responses": {
+          "200": {
+            "description": "dbcheck result received",
+            "content": {}
+          }
+        }
+      }
+    },
     "/health/db": {
       "get": {
         "tags": ["healthcheck"],

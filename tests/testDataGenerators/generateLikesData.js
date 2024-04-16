@@ -3,7 +3,7 @@ const dbPath = `./db/db-base-big.json`;
 
 const fs = require("fs");
 const { faker } = require("@faker-js/faker");
-const { getGaussianRandomInt, getRandomInt } = require("../../helpers/helpers");
+const { getRandomInt, getGaussianRandomInt } = require("../../helpers/generators/random-data.generator");
 
 const db = JSON.parse(fs.readFileSync(dbPath));
 const numberOfLikesToGenerate = 50;

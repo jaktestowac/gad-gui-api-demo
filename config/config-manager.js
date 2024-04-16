@@ -98,7 +98,7 @@ const ConfigManager = (function () {
       if (emptyList.length > 0) {
         throw new Error(`INVALID KEYS - there are values in config but not in enums:\r\n${emptyList}\r\n`);
       }
-      console.log(`> ${msg}: Self Check Done...`);
+      console.log(`> ${msg}: Self Check Done`);
     }
 
     function displayAdditionInfo() {

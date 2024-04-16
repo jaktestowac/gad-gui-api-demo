@@ -1,14 +1,16 @@
 const { isBugDisabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
-const { isUndefined } = require("../helpers/compare.helpers");
+const { isUndefined, areIdsEqual } = require("../helpers/compare.helpers");
 const { searchForComment, searchForUserWithToken, searchForUserWithEmail } = require("../helpers/db-operation.helpers");
 const {
   formatInvalidFieldErrorResponse,
   getIdFromUrl,
   formatInvalidTokenErrorResponse,
   formatMissingFieldErrorResponse,
+  formatErrorResponse,
+  formatInvalidDateFieldErrorResponse,
 } = require("../helpers/helpers");
-const { logTrace } = require("../helpers/logger-api");
+const { logTrace, logDebug } = require("../helpers/logger-api");
 const { HTTP_UNPROCESSABLE_ENTITY, HTTP_UNAUTHORIZED } = require("../helpers/response.helpers");
 const {
   areAllFieldsValid,
@@ -17,6 +19,7 @@ const {
   verifyAccessToken,
   areMandatoryFieldsPresent,
   mandatory_non_empty_fields_comment_create,
+  validateDateFields,
 } = require("../helpers/validation.helpers");
 
 function handleComments(req, res, isAdmin) {
@@ -35,23 +38,7 @@ function handleComments(req, res, isAdmin) {
       commentId = getIdFromUrl(urlEnds);
     }
 
-    const foundComment = searchForComment(commentId);
     logTrace("handleComments:", { method: req.method, commentId, urlEnds });
-
-    if (req.method === "PUT" && isUndefined(foundComment)) {
-      req.method = "POST";
-      req.url = "/api/comments";
-      if (parseInt(commentId).toString() === commentId) {
-        commentId = parseInt(commentId);
-      }
-      req.body.id = commentId;
-      logTrace("handleComments:PUT -> POST:", {
-        method: req.method,
-        commentId,
-        url: req.url,
-        body: req.body,
-      });
-    }
   }
 
   if (req.method !== "GET" && req.method !== "HEAD" && urlEnds.includes("/api/comments") && !isAdmin) {
@@ -110,6 +97,63 @@ function handleComments(req, res, isAdmin) {
       return;
     }
     req.body["user_id"] = foundUser.id;
+  }
+
+  // update or create:
+  if (req.method === "PUT" && urlEnds.includes("/api/comments") && !isAdmin) {
+    const verifyTokenResult = verifyAccessToken(req, res, "PUT comments", req.url);
+
+    // validate mandatory fields:
+    if (!areMandatoryFieldsPresent(req.body, mandatory_non_empty_fields_comment)) {
+      res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_comment));
+      return;
+    }
+
+    // validate all fields:
+    const isValid = areAllFieldsValid(req.body, all_fields_comment, mandatory_non_empty_fields_comment);
+    if (!isValid.status) {
+      res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidFieldErrorResponse(isValid, all_fields_comment));
+      return;
+    }
+
+    // validate date field:
+    const isDateValid = validateDateFields(req.body);
+    if (!isDateValid.status) {
+      res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidDateFieldErrorResponse(isDateValid));
+      return;
+    }
+
+    let commentId = getIdFromUrl(urlEnds);
+    const foundComment = searchForComment(commentId);
+
+    const foundUser = searchForUserWithToken(foundComment?.user_id, verifyTokenResult);
+
+    logDebug("handleComments: foundUser and user_id:", { commentId, foundUser, user_id: foundComment?.user_id });
+
+    if (
+      (isUndefined(foundUser) && !isUndefined(foundComment)) ||
+      (!isUndefined(foundComment?.user_id) && !isUndefined(foundUser) && !areIdsEqual(foundUser?.id, req.body?.user_id))
+    ) {
+      res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("You can not edit comment if You are not an owner"));
+      return;
+    }
+
+    if (commentId === "comments") {
+      commentId = "";
+    }
+
+    logTrace("handleComments:PUT:", { method: req.method, commentId });
+
+    if (isUndefined(foundComment)) {
+      req.method = "POST";
+      req.url = "/api/comments";
+      req.body.id = undefined;
+      logTrace("handleComments:PUT -> POST:", {
+        method: req.method,
+        url: req.url,
+        body: req.body,
+      });
+    }
   }
 
   return;

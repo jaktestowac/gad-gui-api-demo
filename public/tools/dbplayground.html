@@ -1,68 +1,61 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>🦎 GAD | Database SQL Playground</title>
-    <link rel="icon" href="./../data/icons/favicon.png" />
-    <link rel="stylesheet" href="./../css/infoBoxes.css" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="stylesheet"
-      href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
-      integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay"
-      crossorigin="anonymous"
-    />
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
-    <script src="./../js/libs/codemirror.js"></script>
-    <link rel="stylesheet" href="./../js/libs/codemirror.css" />
-    <script src="./../js/libs/sql.js"></script>
-    <script src="./../js/libs/show-hint.js"></script>
-    <script src="./../js/libs/sql-hint.js"></script>
-    <link rel="stylesheet" href="./../js/libs/hints.css" />
-    <link rel="stylesheet" href="./../css/dbplayground.css" />
-  </head>
-  <body>
-    <div class="floating-menu">
-      <a href="./index.html" style="text-decoration: none; color: white" target="_blank" rel="noopener">
-        <img
-          src="../data/icons/favicon.png"
-          style="width: 30px !important; height: 30px !important; padding: 0px !important; margin-top: -5px"
-          alt="" /></a
-      >&nbsp;&nbsp;&nbsp;
-      <strong style="font-size: 18px !important; padding: 0px; margin: -2px">🦎 GAD | Database SQL Playground</strong
-      >&nbsp;
-      <ul>
-        <li><button id="refreshBtn" onclick="refreshData()">Refresh / Clear Results</button></li>
-      </ul>
-    </div>
-    <div class="floating-box" id="floatingBox">
-      <label>SQL Query:</label>
 
-      <span style="max-width: 120px !important">
-        <select id="sampleQuerySelect" style="max-width: 120px !important" onchange="selectSampleQuery()"></select
-      ></span>
-      ||
-      <input type="checkbox" id="refreshRequest" name="refreshRequest" checked />
-      <label for="refreshRequest">Refresh</label>
-      <br />
+<head>
+  <title>🦎 GAD | Database SQL Playground</title>
+  <link rel="icon" href="./../data/icons/favicon.png" />
+  <link rel="stylesheet" href="./../css/infoBoxes.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+  <script src="./../js/libs/codemirror.js"></script>
+  <link rel="stylesheet" href="./../js/libs/codemirror.css" />
+  <script src="./../js/libs/sql.js"></script>
+  <script src="./../js/libs/show-hint.js"></script>
+  <script src="./../js/libs/sql-hint.js"></script>
+  <link rel="stylesheet" href="./../js/libs/hints.css" />
+  <link rel="stylesheet" href="./../css/dbplayground.css" />
+  <style>
+    .anchor {
+      display: block;
+      position: relative;
+      top: -150px;
+      visibility: hidden;
+    }
+  </style>
+</head>
 
-      <span style="font-size: 12px">
-        <textarea
-          id="sqlQuery"
-          type="text"
-          placeholder="SQL Query"
-          title="Type in a name"
-          style="width: 100%"
-          rows="5"
-        ></textarea>
-      </span>
-      <button onclick="runQuery()">Run 🏃‍♂️</button> || <button id="resizeBtn">🔍</button> ||
-      <label id="queryInfo"></label>
-    </div>
-    <br /><br />
-    <strong>Read-only</strong> SQL query tool for the 🦎GAD database.<br />
-    <label id="statsLbl">...</label>
-    <div id="jsonTable"></div>
-    <script src="../js/alasql.min.js"></script>
-    <script type="text/javascript" src="../js/dbplayground.js"></script>
-  </body>
+<body>
+  <div class="floating-menu">
+    <a href="./index.html" style="text-decoration: none; color: white" target="_blank" rel="noopener">
+      <img src="../data/icons/favicon.png" style="width: 30px !important; height: 30px !important; padding: 0px !important; margin-top: -5px" alt="" /></a>&nbsp;&nbsp;&nbsp;
+    <strong style="font-size: 18px !important; padding: 0px; margin: -2px">🦎 GAD | Database SQL Playground</strong>&nbsp;
+    <ul>
+      <li><button id="refreshBtn" onclick="refreshData()">Refresh / Clear Results</button></li>
+    </ul>
+  </div>
+  <div class="floating-box" id="floatingBox">
+    <label>SQL Query:</label>
+
+    <span style="max-width: 120px !important">
+      <select id="sampleQuerySelect" style="max-width: 120px !important" onchange="selectSampleQuery()"></select></span>
+    ||
+    <input type="checkbox" id="refreshRequest" name="refreshRequest" checked />
+    <label for="refreshRequest">Refresh</label>
+    <br />
+
+    <span style="font-size: 12px">
+      <textarea id="sqlQuery" type="text" placeholder="SQL Query" title="Type in a name" style="width: 100%" rows="5"></textarea>
+    </span>
+    <button onclick="runQuery()">Run 🏃‍♂️</button> || <button id="resizeBtn">🔍</button> ||
+    <label id="queryInfo"></label>
+  </div>
+  <br /><br />
+  <strong>Read-only</strong> SQL query tool for the 🦎GAD database.<br />
+  <label id="statsLbl">...</label>
+  <div id="jsonTable"></div>
+  <script src="../js/alasql.min.js"></script>
+  <script type="text/javascript" src="../js/dbplayground.js"></script>
+</body>
+
 </html>

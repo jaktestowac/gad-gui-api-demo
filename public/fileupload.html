@@ -1,76 +1,51 @@
 <html>
-  <head>
-    <title>🦎 GAD | File Upload</title>
-    <link rel="icon" href="./data/icons/favicon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="stylesheet"
-      href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
-      integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay"
-      crossorigin="anonymous"
-    />
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
-    <link rel="stylesheet" href="css/controls.css" />
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
-  <body>
-    <header>
-      <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
-        <h1 id="menu-main-gui" class="nav-menu"></h1>
-      </div>
-    </header>
-    <div align="center" style="justify-content: center !important; display: flex; align-items: center">
-      <div
-        class="alert"
-        role="alert"
-        data-testid="alert-popup"
-        id="alertPopup"
-        style="position: unset !important; margin: 60px 0px 0px 0px"
-      ></div>
+
+<head>
+  <title>🦎 GAD | File Upload</title>
+  <link rel="icon" href="./data/icons/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+  <link rel="stylesheet" href="css/controls.css" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <header>
+    <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+      <h1 id="menu-main-gui" class="nav-menu"></h1>
     </div>
-    <div align="center">
-      <h2>Upload New File</h2>
-      <div id="uploads"></div>
-      <div id="warning"></div>
-      <a id="downloadSampleJson"
-        ><button id="btnDownloadSampleJson" class="button-primary" data-testid="downloadBtn">
-          Download Sample JSON
-        </button></a
-      >
+  </header>
+  <div align="center" style="justify-content: center !important; display: flex; align-items: center">
+    <div class="alert" role="alert" data-testid="alert-popup" id="alertPopup" style="position: unset !important; margin: 60px 0px 0px 0px"></div>
+  </div>
+  <div align="center">
+    <h2>Upload New File</h2>
+    <div id="uploads"></div>
+    <div id="warning"></div>
+    <a id="downloadSampleJson"><button id="btnDownloadSampleJson" class="button-primary" data-testid="downloadBtn">
+        Download Sample JSON
+      </button></a>
+    <br />
+    <br />
+    <form id="uploadForm" enctype="multipart/form-data">
+      <input type="file" class="button-secondary" name="jsonFile" id="jsonFile" />
       <br />
-      <br />
-      <form id="uploadForm" enctype="multipart/form-data">
-        <input type="file" class="button-secondary" name="jsonFile" id="jsonFile" />
-        <br />
-        <br /><label
-          ><input type="checkbox" class="public-checkbox" id="publicFile" />
-          <span class="option-text">Public file</span></label
-        >&nbsp;&nbsp;&nbsp;<input
-          type="button"
-          value="Upload"
-          class="button-primary"
-          id="uploadBtn2"
-          data-testid="uploadBtn"
-          onclick="uploadFile()"
-        />
-      </form>
-      <div id="infoContainer">&nbsp;</div>
-      <br />
-      <div id="uploadedFiles">
-        <iframe
-          id="uploadedFilesIframe"
-          title="uploaded files iframe"
-          width="100%"
-          height="80%"
-          style="border: none; max-height: 80%"
-        ></iframe>
-      </div>
+      <br /><label><input type="checkbox" class="public-checkbox" id="publicFile" />
+        <span class="option-text">Public file</span></label>&nbsp;&nbsp;&nbsp;<input type="button" value="Upload" class="button-primary" id="uploadBtn2" data-testid="uploadBtn" onclick="uploadFile()" />
+    </form>
+    <div id="infoContainer">&nbsp;</div>
+    <br />
+    <div id="uploadedFiles">
+      <iframe id="uploadedFilesIframe" title="uploaded files iframe" width="100%" height="80%" style="border: none; max-height: 80%"></iframe>
     </div>
-  </body>
-  <script type="text/javascript" src="js/common.js"></script>
-  <script type="text/javascript" src="js/helpers/reports.js"></script>
-  <script type="text/javascript" src="js/fileupload.js"></script>
-  <script type="text/javascript" src="version.js"></script>
-  <script type="text/javascript" src="username.js"></script>
-  <script type="text/javascript" src="js/pdf-handler.js"></script>
+  </div>
+</body>
+<script type="text/javascript" src="js/common.js"></script>
+<script type="text/javascript" src="js/helpers/reports.js"></script>
+<script type="text/javascript" src="js/fileupload.js"></script>
+<script type="text/javascript" src="version.js"></script>
+<script type="text/javascript" src="username.js"></script>
+<script type="text/javascript" src="js/pdf-handler.js"></script>
+
 </html>

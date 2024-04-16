@@ -8,10 +8,7 @@ const path = require("path");
 const cookieparser = require("cookie-parser");
 const helmet = require("helmet");
 const express = require("express");
-const { getDbPath, countEntities, visitsData } = require("./helpers/db.helpers");
-
-const server = jsonServer.create();
-const router = jsonServer.router(getDbPath(getConfigValue(ConfigKeys.DB_PATH)));
+const { getDbPath, countEntities, visitsData, initVisits } = require("./helpers/db.helpers");
 
 const { formatErrorResponse } = require("./helpers/helpers");
 const { logDebug, logError, logTrace } = require("./helpers/logger-api");
@@ -34,9 +31,24 @@ const {
   welcomeRoutes,
   logoutRoutes,
 } = require("./routes/login.route");
+
+const bodyParser = require("body-parser");
+const { randomErrorsRoutes } = require("./routes/error.route");
+const { checkDatabase } = require("./helpers/sanity.check");
+const { copyDefaultDbIfNotExists } = require("./helpers/setup");
+const { log } = require("console");
+
 const middlewares = jsonServer.defaults();
 
 const port = process.env.PORT || getConfigValue(ConfigKeys.DEFAULT_PORT);
+
+copyDefaultDbIfNotExists();
+checkDatabase();
+
+initVisits();
+
+const server = jsonServer.create();
+const router = jsonServer.router(getDbPath(getConfigValue(ConfigKeys.DB_PATH)));
 
 const clearDbRoutes = (req, res, next) => {
   try {
@@ -50,6 +62,22 @@ const clearDbRoutes = (req, res, next) => {
     } else if (req.method === "GET" && req.url.endsWith("/restoreBigDB")) {
       const db = JSON.parse(
         fs.readFileSync(path.join(__dirname, getConfigValue(ConfigKeys.DB_BIG_RESTORE_PATH)), "utf8")
+      );
+      router.db.setState(db);
+      const entities = countEntities(db);
+      logDebug("Restore DB was successful", entities);
+      visitsData.generateVisits();
+      res.status(HTTP_CREATED).send({ message: "Big Database successfully restored", entities });
+    } else if (req.method === "GET" && req.url.endsWith("/restoreDB2")) {
+      const db = JSON.parse(fs.readFileSync(path.join(__dirname, getConfigValue(ConfigKeys.DB2_RESTORE_PATH)), "utf8"));
+      router.db.setState(db);
+      const entities = countEntities(db);
+      logDebug("Restore DB was successful", entities);
+      visitsData.generateVisits();
+      res.status(HTTP_CREATED).send({ message: "Database successfully restored", entities });
+    } else if (req.method === "GET" && req.url.endsWith("/restoreTinyDB")) {
+      const db = JSON.parse(
+        fs.readFileSync(path.join(__dirname, getConfigValue(ConfigKeys.DB_TINY_RESTORE_PATH)), "utf8")
       );
       router.db.setState(db);
       const entities = countEntities(db);
@@ -91,9 +119,6 @@ server.use((req, res, next) => {
 server.use(healthCheckRoutes);
 server.use(middlewares);
 
-const bodyParser = require("body-parser");
-const { randomErrorsRoutes } = require("./routes/error.route");
-
 server.use((req, res, next) => {
   bodyParser.json()(req, res, (err) => {
     if (err) {
@@ -132,7 +157,7 @@ server.use(statsRoutes);
 server.use(visitsRoutes);
 server.use(queryRoutes);
 server.use(customRoutes);
-server.use(randomErrorsRoutes)
+server.use(randomErrorsRoutes);
 server.use(validationsRoutes);
 server.use(fileUploadRoutes);
 server.use("/api", router);
@@ -160,12 +185,16 @@ server.use(function (req, res, next) {
   res.type("txt").send("Not found");
 });
 
+logDebug(`Starting 🦎 GAD on port ${port}...`);
+logDebug(`--------------------------------`);
+const app = require("./app.json");
+
 var serverApp = server.listen(port, () => {
-  logDebug(`Test Custom Data API listening on ${port}!`);
+  logDebug(`🦎 GAD listening on ${port}!`);
   var address = serverApp.address().address;
   address = address == "::" ? "localhost" : "localhost";
   logDebug(`Visit it on -> http://${address}:${port}`);
-  logDebug(`🎉 Your custom GUI and REST API service is up and running!!!`);
+  logDebug(`🎉 Your custom 🦎 GAD (${app.version}) is up and running!!!`);
 });
 
 module.exports = {

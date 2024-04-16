@@ -1,0 +1,123 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "email": "Moses.Armstrong@Feest.ca",
+      "firstname": "Moses",
+      "lastname": "Armstrong",
+      "password": "test1",
+      "avatar": ".\\data\\users\\face_1591133479.7144732.jpg"
+    },
+    {
+      "id": 2,
+      "email": "Danial.Dicki@dicki.test",
+      "firstname": "Danial",
+      "lastname": "Dicki",
+      "password": "test2",
+      "avatar": ".\\data\\users\\face_1591133060.68834.jpg"
+    }
+  ],
+  "articles": [
+    {
+      "id": 1,
+      "title": "How to write effective test cases",
+      "body": "Test cases are the backbone of any testing process. They define what to test, how to test, and what to expect. Writing effective test cases can save time, effort, and resources. Here are some tips for writing effective test cases:\n- Use clear and concise language\n- Follow a consistent format and structure\n- Include preconditions, steps, expected results, and postconditions\n- Cover positive, negative, and boundary scenarios\n- Prioritize test cases based on risk and importance\n- Review and update test cases regularly",
+      "user_id": 1,
+      "date": "2021-07-13T16:35:00Z",
+      "image": ".\\data\\images\\256\\chuttersnap-9cCeS9Sg6nU-unsplash.jpg"
+    },
+    {
+      "id": 2,
+      "title": "Benefits of continuous integration and delivery",
+      "body": "Continuous integration (CI) and continuous delivery (CD) are practices that aim to improve the quality and speed of software development. CI involves building and testing code frequently and automatically. CD involves deploying code to production environments quickly and reliably. Some of the benefits of CI/CD are:\n- Faster feedback and bug detection\n- Reduced integration conflicts and errors\n- Higher code quality and security\n- Shorter release cycles and time to market\n- Increased customer satisfaction and trust",
+      "user_id": 2,
+      "date": "2020-06-15T11:12:00Z",
+      "image": ".\\data\\images\\256\\christian-cueni-Us3TUHxMl3U-unsplash.jpg"
+    }
+  ],
+  "comments": [
+    {
+      "id": 1,
+      "article_id": 1,
+      "user_id": 2,
+      "body": "I loved your insights on usability testing. It's crucial to ensure that the software meets the needs of the end users. Have you encountered any interesting user feedback during usability testing that led to significant improvements in the product?",
+      "date": "2021-11-30T14:44:22Z"
+    },
+    {
+      "id": 2,
+      "article_id": 1,
+      "user_id": 1,
+      "body": "Interesting!",
+      "date": "2021-11-20T03:53:00Z"
+    }
+  ],
+  "likes": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "comment_id": 1,
+      "article_id": null,
+      "date": "2023-09-25T10:00:00Z"
+    },
+    {
+      "id": 2,
+      "user_id": 2,
+      "comment_id": null,
+      "article_id": 1,
+      "date": "2023-09-25T11:00:00Z"
+    }
+  ],
+  "article-labels": [
+    {
+      "id": 1,
+      "label_ids": [1],
+      "article_id": 1
+    },
+    {
+      "id": 2,
+      "label_ids": [1, 2],
+      "article_id": 2
+    }
+  ],
+  "labels": [
+    {
+      "id": 1,
+      "name": "Testing",
+      "user_id": 1
+    },
+    {
+      "id": 2,
+      "name": "Automation",
+      "user_id": 2
+    }
+  ],
+  "scores": [
+    {
+      "game_id": 1,
+      "user_id": 1,
+      "score": 5,
+      "id": 1
+    }
+  ],
+  "bookmarks": [{ "id": 1, "user_id": 1, "article_ids": [1] }],
+  "survey-responses": [
+    {
+      "answers": {
+        "REST API testing": ["yes"],
+        "REST API tools": ["Swagger", "Postman", "Bruno"],
+        "Using newman": ["yes"],
+        "Using CI/CD": ["yes"],
+        "CI/CD tools": ["GitHub Actions", "Jenkins", "Azure DevOps"],
+        "testing frequency": ["weekly"],
+        "Test types": ["Integration tests", "E2e tests"],
+        "Open-Ended Questions": {
+          "Plans to improve testing": ["Learn more Playwright for API Testing"]
+        }
+      },
+      "type": 1,
+      "date": "2024-03-10T18:29:42Z",
+      "user_id": "1",
+      "id": 1
+    }
+  ]
+}

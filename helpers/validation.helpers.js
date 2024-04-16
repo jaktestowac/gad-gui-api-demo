@@ -2,7 +2,7 @@ const { getConfigValue, isBugEnabled } = require("../config/config-manager");
 const { ConfigKeys, BugConfigKeys } = require("../config/enums");
 const { isUndefined } = require("./compare.helpers");
 const { verifyToken, getJwtExpiryDate } = require("./jwtauth");
-const { logDebug, logError, logTrace, logWarn } = require("./logger-api");
+const { logDebug, logError, logTrace, logWarn, logInsane } = require("./logger-api");
 
 const mandatory_non_empty_fields_user = ["firstname", "lastname", "email", "avatar"];
 const all_fields_user = ["id", "firstname", "lastname", "email", "avatar", "password", "birthdate"];
@@ -209,19 +209,25 @@ const verifyAccessToken = (req, res, endpoint = "endpoint", url = "") => {
   const authorization = req.headers["authorization"];
   let access_token = authorization?.split(" ")[1];
 
+  let logFunction = logTrace;
+  if (endpoint === "isAdmin") {
+    logFunction = logInsane;
+  }
+
   let verifyTokenResult = verifyToken(access_token);
-  logTrace(`[${endpoint}] verifyAccessToken:`, { access_token, verifyTokenResult, authorization, url });
+  logFunction(`[${endpoint}] verifyAccessToken:`, { access_token, verifyTokenResult, authorization, url });
 
   // when checking admin we do not send response
   if (endpoint !== "isAdmin" && verifyTokenResult instanceof Error) {
-    logTrace(`[${endpoint}] verifyAccessToken soft Error:`, { endpoint, verifyTokenResult });
+    logInsane(`[${endpoint}] verifyAccessToken soft Error:`, { endpoint, verifyTokenResult });
     return undefined;
   }
 
   if (!isUndefined(verifyTokenResult?.exp)) {
     const current_time = Date.now() / 1000;
     const diff = Math.round(verifyTokenResult.exp - current_time);
-    logTrace(`[${endpoint}] getJwtExpiryDate:`, {
+
+    logFunction(`[${endpoint}] getJwtExpiryDate:`, {
       current_time: current_time,
       exp: verifyTokenResult.exp,
       diff,

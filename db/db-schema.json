@@ -1,0 +1,230 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "users": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": ["number", "string"]
+          },
+          "email": {
+            "type": "string"
+          },
+          "firstname": {
+            "type": "string"
+          },
+          "lastname": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "avatar": {
+            "type": "string"
+          }
+        },
+        "required": ["id", "email", "firstname", "lastname", "password", "avatar"]
+      }
+    },
+    "articles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": ["number", "string"]
+          },
+          "title": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": ["number", "string"]
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "image": {
+            "type": "string"
+          }
+        },
+        "required": ["id", "title", "body", "user_id", "date", "image"]
+      }
+    },
+    "comments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": ["number", "string"]
+          },
+          "article_id": {
+            "type": ["number", "string"]
+          },
+          "user_id": {
+            "type": ["number", "string"]
+          },
+          "body": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": ["id", "article_id", "user_id", "body", "date"]
+      }
+    },
+    "likes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": ["number", "string"]
+          },
+          "user_id": {
+            "type": ["number", "string"]
+          },
+          "comment_id": {
+            "type": ["number", "string"],
+            "nullable": true
+          },
+          "article_id": {
+            "type": ["number", "string"],
+            "nullable": true
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": ["id", "user_id", "date"]
+      }
+    },
+    "article-labels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": ["number", "string"]
+          },
+          "label_ids": {
+            "type": "array",
+            "items": {
+              "type": ["number", "string"]
+            }
+          },
+          "article_id": {
+            "type": ["number", "string"]
+          }
+        },
+        "required": ["id", "label_ids", "article_id"]
+      }
+    },
+    "labels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": ["number", "string"]
+          },
+          "name": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": ["number", "string"]
+          }
+        },
+        "required": ["id", "name", "user_id"]
+      }
+    },
+    "scores": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "game_id": {
+            "type": ["number", "string"]
+          },
+          "user_id": {
+            "type": ["number", "string"]
+          },
+          "score": {
+            "type": "number"
+          },
+          "id": {
+            "type": ["number", "string"]
+          }
+        },
+        "required": ["game_id", "user_id", "score", "id"]
+      }
+    },
+    "bookmarks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": ["number", "string"]
+          },
+          "user_id": {
+            "type": ["number", "string"]
+          },
+          "article_ids": {
+            "type": "array",
+            "items": {
+              "type": ["number", "string"]
+            }
+          }
+        },
+        "required": ["id", "user_id", "article_ids"]
+      }
+    },
+    "survey-responses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "answers": {
+            "type": "object"
+          },
+          "type": {
+            "type": "number"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "user_id": {
+            "type": ["number", "string"]
+          },
+          "id": {
+            "type": ["number", "string"]
+          }
+        },
+        "required": ["answers", "type", "date", "user_id", "id"]
+      }
+    }
+  },
+  "required": [
+    "users",
+    "articles",
+    "comments",
+    "likes",
+    "article-labels",
+    "labels",
+    "scores",
+    "bookmarks",
+    "survey-responses"
+  ]
+}

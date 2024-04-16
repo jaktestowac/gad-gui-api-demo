@@ -135,7 +135,7 @@ const issueDeleteRequest = (id, responseHandler) => {
   // delete data on the server:
   const url = commentsEndpoint + "/" + id;
   console.log("DELETE request:", url);
-  fetch(url, { method: "delete", headers: formatHeaders() }).then(responseHandler);
+  fetch(url, { method: "DELETE", headers: formatHeaders() }).then(responseHandler);
 };
 
 const issuePostRequest = (data, responseHandler) => {

@@ -5,6 +5,7 @@ const LogLevels = {
   WARNING: 2,
   DEBUG: 4,
   TRACE: 5,
+  INSANE: 10,
 };
 
 const ConfigKeys = {
@@ -27,7 +28,9 @@ const ConfigKeys = {
   TRANSLATIONS_DB: "translationsDbPath",
   DB_PATH: "dbPath",
   DB_RESTORE_PATH: "dbRestorePath",
+  DB2_RESTORE_PATH: "db2RestorePath",
   DB_BIG_RESTORE_PATH: "dbBigRestorePath",
+  DB_TINY_RESTORE_PATH: "dbTinyRestorePath",
   DB_EMPTY_RESTORE_PATH: "dbEmptyRestorePath",
   QUIZ_QUESTIONS_PATH: "quizQuestionsPath",
   HANGMAN_DATA_PATH: "hangmanDataPath",
@@ -55,6 +58,7 @@ const ConfigKeys = {
   MAX_RANDOM_VISITS_FOR_USERS: "maxRandomVisitsForUsers",
   MIN_RANDOM_VISITS_FOR_USERS: "minRandomVisitsForUsers",
   READ_ONLY: "readOnly",
+  RANDOM_ERROR_RESPONSE_PROBABILITY: "randomErrorResponseProbability",
 };
 
 const BugConfigKeys = {
@@ -92,6 +96,15 @@ const BugConfigKeys = {
   BUG_GAME_TTT_002: "bug_game_ttt_002",
   BUG_GAME_TTT_003: "bug_game_ttt_003",
   BUG_RANDOM_503: "bug_random_503",
+  BUG_RANDOM_404_GET: "bug_random_404_get",
+  BUG_SLOWER_RESPONSES_100: "bug_slower_responses_100ms",
+  BUG_SLOWER_RESPONSES_500: "bug_slower_responses_500ms",
+  BUG_SLOWER_RESPONSES_1000: "bug_slower_responses_1000ms",
+  BUG_SLOWER_RESPONSES_2500: "bug_slower_responses_2500ms",
+  BUG_DISABLE_MODULE_COMMENTS: "bug_disable_module_comments",
+  BUG_DISABLE_MODULE_ARTICLES: "bug_disable_module_articles",
+  BUG_DISABLE_MODULE_USERS: "bug_disable_module_users",
+  BUG_DISABLE_MODULE_AUTH: "bug_disable_module_auth",
 };
 
 const FeatureFlagConfigKeys = {

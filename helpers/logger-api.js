@@ -22,13 +22,13 @@ function logMsgAndData(level, message, obj) {
   logList.addItem(`[${getCurrentDateTime()}]${msg}`);
 }
 
-function logDebug(msg, obj) {
-  if (getConfigValue(ConfigKeys.CURRENT_LOG_LEVEL) < LogLevels.DEBUG) return;
+function logInsane(msg, obj) {
+  if (getConfigValue(ConfigKeys.CURRENT_LOG_LEVEL) < LogLevels.INSANE) return;
 
   if (obj === undefined) {
-    logMsg("[DEBUG]", msg);
+    logMsg("[INSANE]", msg);
   } else {
-    logMsgAndData("[DEBUG]", msg, obj);
+    logMsgAndData("[INSANE]", msg, obj);
   }
 }
 
@@ -39,6 +39,16 @@ function logTrace(msg, obj) {
     logMsg("[TRACE]", msg);
   } else {
     logMsgAndData("[TRACE]", msg, obj);
+  }
+}
+
+function logDebug(msg, obj) {
+  if (getConfigValue(ConfigKeys.CURRENT_LOG_LEVEL) < LogLevels.DEBUG) return;
+
+  if (obj === undefined) {
+    logMsg("[DEBUG]", msg);
+  } else {
+    logMsgAndData("[DEBUG]", msg, obj);
   }
 }
 
@@ -74,4 +84,5 @@ module.exports = {
   logTrace,
   getLogs,
   logWarnTrace,
+  logInsane,
 };

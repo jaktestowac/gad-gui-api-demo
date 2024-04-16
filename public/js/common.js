@@ -1,3 +1,5 @@
+const repository_url = "https://github.com/jaktestowac/gad-gui-api-demo";
+
 function getCookieEmail() {
   let email = undefined;
   const cookies = document.cookie.split(";");
@@ -267,7 +269,7 @@ function addLanguageSelect(languages, selectedOption) {
     languageSelectElement.innerHTML = `
     <span style="display: flex; align-items: center; justify-content: center" >
         <select
-          onchange="changeLanguage(this.value)"
+          onchange="changeLanguage(this.value)" onfocusout="changeLanguage(this.value)"
           style="display: inline-block; width: 100px; height:30px; margin: 5px 5px 5px 5px; font-size:16px"
         >
           ${allLanguages.join("")}
@@ -586,12 +588,12 @@ function displayNewerVersionAvailableMessage(currentVersion, latestVersion) {
   const versionInfoContainer = document.getElementById("versionInfoBox");
   if (versionInfoContainer !== null) {
     const gad_msg = `<strong>Newer GAD version is available!</strong> Latest: <strong>${latestVersion.name}</strong> and You have: <strong>${currentVersion}</strong><br/>
-      You can download it from <strong><a href="https://github.com/jaktestowac/gad-gui-api-demo" >official jaktestowac.pl repository</a></strong> or <strong><a href="${latestVersion.html_url}" >release page!</a></strong><br/>`;
+      You can download it from <strong><a href="${repository_url}" >official jaktestowac.pl repository</a></strong> or <strong><a href="${latestVersion.html_url}" >release page!</a></strong><br/>`;
     versionInfoContainer.innerHTML = `<div class="versionInfoBox">${gad_msg}</div>`;
   }
 }
 
-async function checkNewerVersion() {
+async function checkNewerVersion(force = false) {
   const versionInfoContainer = document.getElementById("versionInfoBox");
   if (versionInfoContainer === null) {
     return;
@@ -600,23 +602,34 @@ async function checkNewerVersion() {
   getGadVersion().then((gadStatus) => {
     const currentVersion = gadStatus.version;
     console.log(`GAD current version is: ${currentVersion}`);
-
     const versionUpToDate = getVersionStatusCookie();
+    const latestVersionCookie = getLatestVersionCookie();
 
     if (versionUpToDate === "1") {
-      console.log("Using cached cookie data");
       const latestVersionCookie = getLatestVersionCookie();
+      console.log("Using cached cookie data. Latest:", latestVersionCookie);
       displayUpToDateMessage(currentVersion, latestVersionCookie);
       return;
     }
 
+    if (versionUpToDate === "2" && currentVersion < latestVersionCookie && force === false) {
+      const latestVersionCookie = getLatestVersionCookie();
+      console.log("Using cached cookie data.. Latest:", latestVersionCookie);
+      displayNewerVersionAvailableMessage(currentVersion, {
+        name: latestVersionCookie,
+        html_url: `${repository_url}/releases/tag/${latestVersionCookie}`,
+      });
+      return;
+    }
+
+    console.log("Cache expired, checking releases...");
     getGadReleases().then((gadReleases) => {
       if (gadReleases.length === 0) {
         addVersionStatusCookie(0);
         const versionDetailsElement = document.getElementById("versionDetails");
         if (versionDetailsElement !== null) {
           const gad_msg = `<div align="center"><h3>There was a problem with checking version😕<br/>
-            You can check it manually on <strong><a href="https://github.com/jaktestowac/gad-gui-api-demo" >official jaktestowac.pl repository</a></strong> or <strong><a href="https://github.com/jaktestowac/gad-gui-api-demo/releases" >release page</a></strong><br/></h3></div>`;
+            You can check it manually on <strong><a href="${repository_url}" >official jaktestowac.pl repository</a></strong> or <strong><a href="${repository_url}/releases" >release page</a></strong><br/></h3></div>`;
           versionDetailsElement.innerHTML = gad_msg;
         }
         return;
@@ -624,8 +637,14 @@ async function checkNewerVersion() {
 
       const latestVersion = getNewestVersion(gadReleases, currentVersion);
       if (latestVersion !== undefined) {
-        addVersionStatusCookie(2);
         displayNewerVersionAvailableMessage(currentVersion, latestVersion);
+      }
+
+      if (latestVersion !== undefined) {
+        addVersionStatusCookie(2); // new version
+        addLatestVersionCookie(latestVersion.name);
+      } else {
+        addVersionStatusCookie(1); // version up to date
       }
 
       const versionDetailsElement = document.getElementById("versionDetails");
@@ -635,7 +654,7 @@ async function checkNewerVersion() {
       const versions = getNewerVersions(gadReleases, currentVersion);
 
       if (versions.length === 0) {
-        addVersionStatusCookie(1);
+        addVersionStatusCookie(1); // version up to date
         addLatestVersionCookie(gadReleases[0]?.name);
         displayUpToDateMessage(currentVersion, gadReleases[0]?.name);
         return;
@@ -654,7 +673,6 @@ async function checkNewerVersion() {
   });
 }
 
-function checkRelease() {
-  checkNewerVersion();
+function checkRelease(force = false) {
+  checkNewerVersion(force);
 }
-checkRelease();

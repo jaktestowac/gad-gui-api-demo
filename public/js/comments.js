@@ -111,7 +111,7 @@ async function processCommentsData(userComments) {
   for (let j = 0; j < userComments.length; j++) {
     const user_id = userComments[j].user_id;
     const article_id = userComments[j].article_id;
-    if (user_id) {
+    if (user_id !== undefined && tempUserData[user_id.toString()] !== undefined) {
       userComments[j].user_name = tempUserData[user_id.toString()];
     } else {
       userComments[j].user_name = "[Unknown]";

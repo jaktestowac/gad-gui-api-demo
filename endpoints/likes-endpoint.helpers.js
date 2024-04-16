@@ -11,11 +11,11 @@ const {
   countLikesForAllArticles,
   searchForLike,
 } = require("../helpers/db-operation.helpers");
+const { getRandomInt } = require("../helpers/generators/random-data.generator");
 const {
   formatInvalidTokenErrorResponse,
   formatOnlyOneFieldPossibleErrorResponse,
   findMaxValues,
-  getRandomInt,
 } = require("../helpers/helpers");
 const { logTrace } = require("../helpers/logger-api");
 const {

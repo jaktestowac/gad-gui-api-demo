@@ -1,151 +1,157 @@
 <html>
-  <head>
-    <title>🦎 GAD | Tools</title>
-    <link rel="icon" href="../data/icons/favicon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="stylesheet"
-      href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
-      integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay"
-      crossorigin="anonymous"
-    />
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
-    <link rel="stylesheet" href="../css/style.css" />
-    <link rel="stylesheet" href="../css/controls.css" />
-  </head>
 
-  <body>
-    <header>
-      <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
-        <h1 id="menu-main-api" class="nav-menu"></h1>
-      </div>
-    </header>
-    <main>
-      <br />
-      <br />
-      <br />
-      <br />
-      <div class="containerTools">
-        <table>
-          <tr>
-            <td>
-              <div class="containerTools">
-                <h2>GUI: Pages <span class="tooltip" text="All pages available from UI"></span></h2>
-                <ul>
-                  <li><a href="../users.html">Users</a></li>
-                  <li><a href="../user.html?id=1">Single user</a></li>
-                  <li><a href="../articles.html">Articles</a></li>
-                  <li>
-                    <strong>Upload article:</strong>
-                    <ul>
-                      <li><a href="../articlesupload.html">drag and drop</a></li>
-                      <li><a href="../fileupload.html">file upload (⚠️ needs proper feature flag enabled)</a></li>
-                      <li>
-                        <a href="../fileupload.html?filelist=true"
-                          >file upload with file list (⚠️ needs proper feature flag enabled)</a
-                        >
-                      </li>
-                    </ul>
-                  </li>
-                  <li><a href="../article.html?id=1">Single article</a></li>
-                  <li><a href="../articles.html?user_id=1">Articles per user</a></li>
-                  <li><a href="../comments.html">Comments</a></li>
-                  <li><a href="../comment.html?id=1">Single Comment</a></li>
-                  <li>
-                    <a href="../stats.html">Stats</a>
-                    <ul>
-                      <li><a href="../userstats.html">users</a></li>
-                      <li><a href="../articlestats.html">articles</a></li>
-                      <li><a href="../visitstats.html">visits</a></li>
-                      <li><a href="../publicationstats.html">publications</a></li>
-                    </ul>
-                  </li>
-                  <li>
-                    <a href="../surveys.html">Surveys</a>
-                    <ul>
-                      <li><a href="../survey-stats.html?type=1">Survey Stats</a></li>
-                      <li><a href="../survey.html?type=1">Testing Survey</a></li>
-                    </ul>
-                  </li>
-                  <li>
-                    <strong>Games:</strong>
-                    <ul>
-                      <li><a href="../quiz.html">Quiz</a></li>
-                      <li><a href="../hangman.html">Hangman</a></li>
-                      <li><a href="../matcher.html">Matcher</a></li>
-                      <li><a href="../devrun.html">DevRun</a></li>
-                      <li><a href="../whacker.html">Whack-a-Bug</a></li>
-                      <li><a href="../bug-eater.html">Bug Eater</a></li>
-                      <li><a href="../tic-tac-toe-hot-seat.html">Tic Tac Toe (Hot Seat)</a></li>
-                      <li><a href="../tic-tac-toe.html">Tic Tac Toe (Multiplayer)</a></li>
-                    </ul>
-                  </li>
-                  <li><a href="../tools/version.html">Version check</a></li>
-                  <li>
-                    <strong>Database helpers:</strong>
-                    <ul>
-                      <li><a href="../tools/dbplayground.html">Database SQL Playground</a></li>
-                    </ul>
-                  </li>
-                </ul>
-              </div>
+<head>
+  <title>🦎 GAD | Tools</title>
+  <link rel="icon" href="../data/icons/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/controls.css" />
+</head>
 
-              <div class="containerTools">
-                <h2>API: Feature Flags</h2>
+<body>
+  <header>
+    <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+      <h1 id="menu-main-api" class="nav-menu"></h1>
+    </div>
+  </header>
+  <main>
+    <br />
+    <br />
+    <br />
+    <br />
+    <div class="containerTools">
+      <table>
+        <tr>
+          <td>
+            <div class="containerTools">
+              <h2>GUI: Pages <span class="tooltip" text="All pages available from UI"></span></h2>
+              <ul>
+                <li><a href="../users.html">Users</a></li>
+                <li><a href="../user.html?id=1">Single user</a></li>
+                <li><a href="../articles.html">Articles</a></li>
+                <li>
+                  <strong>Upload article:</strong>
+                  <ul>
+                    <li><a href="../articlesupload.html">drag and drop</a></li>
+                    <li><a href="../fileupload.html">file upload (⚠️ needs proper feature flag enabled)</a></li>
+                    <li>
+                      <a href="../fileupload.html?filelist=true">file upload with file list (⚠️ needs proper feature flag enabled)</a>
+                    </li>
+                  </ul>
+                </li>
+                <li><a href="../article.html?id=1">Single article</a></li>
+                <li><a href="../articles.html?user_id=1">Articles per user</a></li>
+                <li><a href="../comments.html">Comments</a></li>
+                <li><a href="../comment.html?id=1">Single Comment</a></li>
+                <li>
+                  <a href="../stats.html">Stats</a>
+                  <ul>
+                    <li><a href="../userstats.html">users</a></li>
+                    <li><a href="../articlestats.html">articles</a></li>
+                    <li><a href="../visitstats.html">visits</a></li>
+                    <li><a href="../publicationstats.html">publications</a></li>
+                  </ul>
+                </li>
+                <li>
+                  <a href="../surveys.html">Surveys</a>
+                  <ul>
+                    <li><a href="../survey-stats.html?type=1">Survey Stats</a></li>
+                    <li><a href="../survey.html?type=1">Testing Survey</a></li>
+                  </ul>
+                </li>
+                <li>
+                  <a href="../games.html">Games:</a>
+                  <ul>
+                    <li><a href="../quiz.html">Quiz</a></li>
+                    <li><a href="../hangman.html">Hangman</a></li>
+                    <li><a href="../matcher.html">Matcher</a></li>
+                    <li><a href="../devrun.html">DevRun</a></li>
+                    <li><a href="../whacker.html">Whack-a-Bug</a></li>
+                    <li><a href="../bug-eater.html">Bug Eater</a></li>
+                    <li><a href="../tic-tac-toe-hot-seat.html">Tic Tac Toe (Hot Seat)</a></li>
+                    <li><a href="../tic-tac-toe.html">Tic Tac Toe (Multiplayer)</a></li>
+                    <li><a href="../minesweeper.html">Minesweeper</a></li>
+                    <li><a href="../sudoku.html">Sudoku</a></li>
+                  </ul>
+                </li>
+                <li><a href="../tools/version.html">Version check</a></li>
+                <li>
+                  <strong>Database helpers:</strong>
+                  <ul>
+                    <li><a href="../tools/dbplayground.html">Database SQL Playground</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+            <div id="restore" class="containerTools">
+              <h2>API: 💣 Restore DB</h2>
+              <p>❗❗ Using/clicking endpoint below restores database. All changes will be lost! ❗❗</p>
+              Default:<br />
+              <a href="/api/restoreDB" target="_blank" rel="noopener"><strong>💣 Restore Default Database</strong> with sample data</a><br /><br />
 
-                Easily enable and disable different <strong>🦎GAD Features</strong> (no restart required): <br />
-                (❗ After 🦎GAD restart default values are restored!) <br />
-                <br />
-                <div id="featureTable"></div>
-              </div>
-              <div class="containerTools">
-                <h2>API: Endpoints</h2>
+              Other:<br />
+              <a href="/api/restoreDB2" target="_blank" rel="noopener">💣 Restore Default v2 Database with sample data</a><br />
+              <a href="/api/restoreEmptyDB" target="_blank" rel="noopener">💣 Restore Empty Database</a><br />
+              <a href="/api/restoreTinyDB" target="_blank" rel="noopener">💣 Restore Tiny Database</a><br />
+              <a href="/api/restoreBigDB" target="_blank" rel="noopener">💣 Restore Big Database</a><br />
 
-                <div id="resources"></div>
-                <h3>Additional endpoints</h3>
-                <a href="/api/images/user">Images for user avatar</a><br />
-                <a href="/api/images/posts">Images for article image</a><br />
-                <a href="/api/logs">Logs (⚠️ needs proper config flag enabled)</a><br />
-                <a href="/api/stats/api">Api Calls stats</a><br />
-                <a href="/api/health">Health Check</a><br />
-                <p>❗❗ Using/clicking endpoint below restores database. All changes will be lost! ❗❗</p>
-                <a href="/api/restoreDB" target="_blank" rel="noopener">💣 Restore Database with sample data</a
-                ><br /><br />
-                <a href="/api/restoreEmptyDB" target="_blank" rel="noopener">💣 Restore Empty Database</a><br /><br />
-                <a href="/api/restoreBigDB" target="_blank" rel="noopener">💣 Restore Big Database</a><br /><br />
-              </div>
-              <div class="containerTools">
-                <h2>API: Documentation</h2>
-                <a href="./swagger.html" id="swagger" target="_blank" rel="noopener">Swagger UI</a><br />
-                <a href="schema/openapi_rest_demo.json" target="_blank" rel="noopener">Open API schema</a><br /><br />
-                External:<br /><br />
-                <a
-                  href="https://editor.swagger.io/#?url=schema/openapi_rest_demo.json"
-                  id="swaggerEditor"
-                  target="_blank"
-                  rel="noopener"
-                  >Swagger Editor (external)</a
-                ><br />
-              </div>
-              <div class="containerTools">
-                <h2>API: Bugs enabled / disabled</h2>
-                Easily enable and disable different <strong>🦎GAD Bugs</strong> (no restart required).<br />
-                This functionality gives You possibility to enable/disable mutations in code.<br />
-                It also gives possibility <strong>to test Your automated test framework</strong>: if it covers and
-                detects <strong>regression bugs</strong>.<br /><br />
-                <strong><a href="./bugs.html" id="bugs">Bugs configuration</a></strong>
-              </div>
-            </td>
-          </tr>
-        </table>
-      </div>
-    </main>
-    <script type="text/javascript" src="../js/common.js"></script>
-    <script type="text/javascript" src="index.js"></script>
-  </body>
-  <script type="text/javascript" src="../version.js"></script>
-  <script type="text/javascript" src="../username.js"></script>
-  <script>
-    menuButtonDisable("btnTools");
-  </script>
+              <h2>API: Endpoints</h2>
+
+              <div id="resources"></div>
+              <h3>API: Additional endpoints</h3>
+              <a href="/api/images/user">Images for user avatar</a><br />
+              <a href="/api/images/posts">Images for article image</a><br />
+              <a href="/api/logs">Logs (⚠️ needs proper config flag enabled)</a><br />
+              <a href="/api/stats/api">Api Calls stats</a><br />
+              <a href="/api/health">Health Check</a><br />
+            </div>
+
+            <div class="containerTools">
+              <h2>API: Feature Flags</h2>
+
+              Easily enable and disable different <strong>🦎GAD Features</strong> (no restart required): <br />
+              (❗ After 🦎GAD restart default values are restored!) <br />
+              <br />
+              <div id="featureTable"></div>
+            </div>
+
+            <div class="containerTools">
+              <h2>API: Documentation</h2>
+              <a href="./swagger.html" id="swagger" target="_blank" rel="noopener">Swagger UI</a><br />
+              <a href="schema/openapi_rest_demo.json" target="_blank" rel="noopener">Open API schema</a><br /><br />
+              External:<br /><br />
+              <a href="https://editor.swagger.io/#?url=schema/openapi_rest_demo.json" id="swaggerEditor" target="_blank" rel="noopener">Swagger Editor (external)</a><br />
+            </div>
+            <div class="containerTools">
+              <h2>API: Bugs enabled / disabled</h2>
+              Easily enable and disable different <strong>🦎GAD Bugs</strong> (no restart required).<br />
+              This functionality gives You possibility to enable/disable mutations in code.<br />
+              It also gives possibility <strong>to test Your automated test framework</strong>: if it covers and
+              detects <strong>regression bugs</strong>.<br /><br />
+              <strong><a href="./bugs.html" id="bugs">Bugs configuration</a></strong>
+            </div>
+
+
+            <div class="containerTools">
+              <h2>External links</h2>
+              <span>Visit 🦎GAD official&nbsp;&nbsp;<i class="fa-brands fa-github" style="font-size:24px"></i>&nbsp;<strong><a href="https://github.com/jaktestowac/gad-gui-api-demo" target="_blank" rel="noopener">GitHub Repository</a></strong>
+              </span>
+            </div>
+
+          </td>
+        </tr>
+      </table>
+    </div>
+  </main>
+  <script type="text/javascript" src="../js/common.js"></script>
+  <script type="text/javascript" src="index.js"></script>
+</body>
+<script type="text/javascript" src="../version.js"></script>
+<script type="text/javascript" src="../username.js"></script>
+<script>
+  menuButtonDisable("btnTools");
+</script>
+
 </html>

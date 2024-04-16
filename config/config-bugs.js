@@ -35,6 +35,15 @@ const bugConfig = {
   bug_game_ttt_002: false,
   bug_game_ttt_003: false,
   bug_random_503: false,
+  bug_random_404_get: false,
+  bug_slower_responses_100ms: false,
+  bug_slower_responses_500ms: false,
+  bug_slower_responses_1000ms: false,
+  bug_slower_responses_2500ms: false,
+  bug_disable_module_comments: false,
+  bug_disable_module_users: false,
+  bug_disable_module_articles: false,
+  bug_disable_module_auth: false,
 };
 
 module.exports = {

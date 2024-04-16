@@ -15,13 +15,12 @@ const {
 const {
   formatErrorResponse,
   getIdFromUrl,
-  pluginStatuses,
   parsePublishStats,
   parseArticleStats,
   parseUserStats,
   findMaxValues,
 } = require("../helpers/helpers");
-const { logError, logDebug, getLogs } = require("../helpers/logger-api");
+const { logError, logDebug, getLogs, logTrace } = require("../helpers/logger-api");
 const { HTTP_INTERNAL_SERVER_ERROR, HTTP_OK, HTTP_NOT_FOUND } = require("../helpers/response.helpers");
 const { getConfigValue, getFeatureFlagConfigValue } = require("../config/config-manager");
 const { ConfigKeys, FeatureFlagConfigKeys } = require("../config/enums");
@@ -194,7 +193,7 @@ const queryRoutes = (req, res, next) => {
         }
 
         getVisitsPerArticle()[articleId]++;
-        logDebug(`[visits] articleId: "${articleId}" with visits:${getVisitsPerArticle()[articleId]}`);
+        logTrace(`[visits] articleId: "${articleId}" with visits:${getVisitsPerArticle()[articleId]}`);
       }
     } else if (req.url.includes("/api/comments") && req.method === "GET") {
       let commentId = getIdFromUrl(urlEnds);
@@ -205,7 +204,7 @@ const queryRoutes = (req, res, next) => {
         }
 
         getVisitsPerComment()[commentId]++;
-        logDebug(`[visits] commentId: "${commentId}" with visits:${getVisitsPerComment()[commentId]}`);
+        logTrace(`[visits] commentId: "${commentId}" with visits:${getVisitsPerComment()[commentId]}`);
       }
     } else if (req.url.includes("/api/users") && req.method === "GET") {
       let userId = getIdFromUrl(urlEnds);
@@ -216,7 +215,7 @@ const queryRoutes = (req, res, next) => {
         }
 
         getVisitsPerUsers()[userId]++;
-        logDebug(`[visits] userId: "${userId}" with visits:${getVisitsPerUsers()[userId]}`);
+        logTrace(`[visits] userId: "${userId}" with visits:${getVisitsPerUsers()[userId]}`);
       }
     }
     if (res.headersSent !== true) {
@@ -255,9 +254,6 @@ const customRoutes = (req, res, next) => {
       const files = getImagesForArticles();
       res.json(files);
       req.body = files;
-    } else if (req.method === "GET" && req.url.endsWith("/pluginstatuses")) {
-      res.json(pluginStatuses);
-      req.body = pluginStatuses;
     } else if (req.method === "GET" && req.url.endsWith("/languages/translations")) {
       const dbData = translationsDb();
       res.json(dbData);

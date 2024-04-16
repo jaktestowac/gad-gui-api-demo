@@ -1,68 +1,59 @@
 <html>
-  <head>
-    <title>🦎 GAD | Users</title>
-    <link rel="icon" href="./data/icons/favicon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="stylesheet"
-      href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
-      integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay"
-      crossorigin="anonymous"
-    />
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
-    <link rel="stylesheet" href="css/controls.css" />
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
-  <body>
-    <header>
-      <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
-        <h1 id="menu-main-gui" class="nav-menu">
-          <!-- <a href="./register.html">
+
+<head>
+  <title>🦎 GAD | Users</title>
+  <link rel="icon" href="./data/icons/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+  <link rel="stylesheet" href="css/controls.css" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <header>
+    <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+      <h1 id="menu-main-gui" class="nav-menu">
+        <!-- <a href="./register.html">
             <button id="add-new" class="button-primary" disabled>Register</button>
           </a> -->
-        </h1>
-      </div>
-    </header>
-    <div align="center" style="justify-content: center !important; display: flex; align-items: center">
-      <div
-        class="alert"
-        role="alert"
-        data-testid="alert-popup"
-        id="alertPopup"
-        style="position: unset !important; margin: 60px 0px 0px 0px"
-      ></div>
+      </h1>
     </div>
+  </header>
+  <div align="center" style="justify-content: center !important; display: flex; align-items: center">
+    <div class="alert" role="alert" data-testid="alert-popup" id="alertPopup" style="position: unset !important; margin: 60px 0px 0px 0px"></div>
+  </div>
 
-    <div id="container"></div>
-    <section class="add-new-panel">
-      <div>
-        <h2>Add New User</h2>
-        <label>Firstname:</label>
-        <input type="text" class="firstname" id="firstname" value="" /><br />
+  <div id="container"></div>
+  <section class="add-new-panel">
+    <div>
+      <h2>Add New User</h2>
+      <label>Firstname:</label>
+      <input type="text" class="firstname" id="firstname" value="" /><br />
 
-        <label>Lastname:</label>
-        <input type="text" class="lastname" id="lastname" value="" /><br />
+      <label>Lastname:</label>
+      <input type="text" class="lastname" id="lastname" value="" /><br />
 
-        <label>Email:</label>
-        <input type="text" class="email" id="email" value="" /><br />
+      <label>Email:</label>
+      <input type="text" class="email" id="email" value="" /><br />
 
-        <label>Password:</label>
-        <input type="password" class="password" id="password" value="" /><br />
+      <label>Password:</label>
+      <input type="password" class="password" id="password" value="" /><br />
 
-        <label>Avatar:</label>
-        <select name="avatar" class="avatar" id="avatar"></select
-        ><br />
+      <label>Avatar:</label>
+      <select name="avatar" class="avatar" id="avatar"></select><br />
 
-        <label></label>
-        <button type="button" class="update save button-primary" id="save">Save</button>
-        <button type="button" class="cancel">Cancel</button>
+      <label></label>
+      <button type="button" class="update save button-primary" id="save">Save</button>
+      <button type="button" class="cancel">Cancel</button>
 
-        <button class="close" id="close">&times;</button>
-      </div>
-    </section>
-  </body>
-  <script type="text/javascript" src="js/common.js"></script>
-  <script type="text/javascript" src="js/users.js"></script>
-  <script type="text/javascript" src="version.js"></script>
-  <script type="text/javascript" src="username.js"></script>
+      <button class="close" id="close">&times;</button>
+    </div>
+  </section>
+</body>
+<script type="text/javascript" src="js/common.js"></script>
+<script type="text/javascript" src="js/users.js"></script>
+<script type="text/javascript" src="version.js"></script>
+<script type="text/javascript" src="username.js"></script>
+
 </html>

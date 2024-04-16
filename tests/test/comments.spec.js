@@ -227,7 +227,7 @@ describe("Endpoint /comments", () => {
 
     it("POST /comments - create valid comment", async () => {
       const testData = generateValidCommentData();
-      testData.user_id = userId;
+      testData.user_id = undefined;
       testData.article_id = 1;
 
       // Act:
@@ -236,7 +236,114 @@ describe("Endpoint /comments", () => {
       // Assert:
       expect(response.status, JSON.stringify(response.body)).to.equal(201);
       testData.id = response.body.id;
+      testData.user_id = userId;
       expect(response.body).to.deep.equal(testData);
+    });
+
+    describe("PUT", () => {
+      let commentId;
+      const articleId = 1;
+
+      beforeEach(async () => {
+        const testData = generateValidCommentData();
+        testData.user_id = userId;
+        testData.article_id = articleId;
+
+        // Act:
+        const response = await request.post(baseCommentsUrl).set(headers).send(testData);
+
+        // Assert:
+        expect(response.status, JSON.stringify(response.body)).to.equal(201);
+        testData.id = response.body.id;
+        expect(response.body).to.deep.equal(testData);
+        commentId = response.body.id;
+
+        // check if was created:
+        const responseGet = await request.get(`${baseCommentsUrl}/${commentId}`);
+        expect(responseGet.status, JSON.stringify(responseGet.body)).to.equal(200);
+      });
+
+      it("PUT /comments - should update valid comment", async () => {
+        // Arrange:
+        const testData = generateValidCommentData();
+        testData.user_id = userId;
+        testData.article_id = articleId;
+        testData.id = commentId;
+        // Act:
+        const response = await request.put(`${baseCommentsUrl}/${commentId}`).set(headers).send(testData);
+
+        // Assert:
+        expect(
+          response.status,
+          `updating commentId: ${commentId} -> received: ${JSON.stringify(response.body)}`
+        ).to.equal(200);
+        testData.id = response.body.id;
+        expect(response.body).to.deep.equal(testData);
+      });
+
+      it("PUT /comments - should not update comment without user_id", async () => {
+        // Arrange:
+        const testData = generateValidCommentData();
+        testData.user_id = undefined;
+        testData.article_id = articleId;
+        testData.id = commentId;
+        // Act:
+        const response = await request.put(`${baseCommentsUrl}/${commentId}`).set(headers).send(testData);
+
+        // Assert:
+        expect(
+          response.status,
+          `updating commentId: ${commentId} -> received: ${JSON.stringify(response.body)}`
+        ).to.equal(422);
+      });
+
+      it("PUT /comments - should not update not Your own comment", async () => {
+        // Arrange:
+        const testData = generateValidCommentData();
+        testData.user_id = userId;
+        testData.article_id = articleId;
+        testData.id = commentId;
+        // Act:
+        const response = await request.put(`${baseCommentsUrl}/5`).set(headers).send(testData);
+
+        // Assert:
+        expect(
+          response.status,
+          `updating commentId: ${commentId} -> received: ${JSON.stringify(response.body)}`
+        ).to.equal(401);
+      });
+
+      it("PUT /comments - should create comment if not exist", async () => {
+        // Arrange:
+        const testData = generateValidCommentData();
+        testData.user_id = userId;
+        testData.article_id = articleId;
+        testData.id = commentId;
+        // Act:
+        const response = await request.put(`${baseCommentsUrl}/12125`).set(headers).send(testData);
+
+        // Assert:
+        expect(
+          response.status,
+          `updating commentId: ${commentId} -> received: ${JSON.stringify(response.body)}`
+        ).to.equal(201);
+      });
+
+      it("PUT /comments - should create comment", async () => {
+        // Arrange:
+        const testData = generateValidCommentData();
+        testData.user_id = userId;
+        testData.article_id = articleId;
+        testData.id = commentId;
+        // Act:
+        const response = await request.put(`${baseCommentsUrl}`).set(headers).send(testData);
+
+        // Assert:
+        expect(
+          response.status,
+          `updating commentId: ${commentId} -> received: ${JSON.stringify(response.body)}`
+        ).to.equal(201);
+      });
     });
 
     it("POST /comments - create valid comment (with id in body)", async () => {

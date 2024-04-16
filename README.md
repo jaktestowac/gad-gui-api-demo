@@ -30,8 +30,8 @@ Features of **🦎 GAD**:
 - **Feature flags** configurable from UI!
 - **Bug flags** to enable/disable different bugs - configurable from UI!
 - **Dynamic config**
-- **Challenging elements for test automation** (iframes, file uploads, drag&drop, likes, labels, logic on front-end and back-end, dynamic elements, games etc.)
-- **Admins "backoffice"** with additional tools and functionalities
+- **Challenging elements for test automation** (iframes, file uploads, drag&drop, likes, labels, surveys, banners, pop-ups, logic on front-end and back-end, dynamic elements, games etc.)
+- **Admins "backoffice"** with additional tools and functionalities (DB reset, SQL Playground)
 
 # Deployment
 
@@ -46,21 +46,57 @@ Instructions how to deploy presented service to various free hosting sites.
 
 Requirements:
 
-- **node.js** installed in system
+- **node.js** installed in the system
+  - tested on node.js **v18** and **v20**
+- **git** installed in the system
+
+### First use
 
 Steps:
 
-1. Open project root directory in cmd/terminal
+1. Open the project root directory in cmd/terminal
+1. Clone the repository using `git clone ...`
+   - this is the **preferred way** to use this application
 1. Run `npm i`
+   - to install modules (don't use node.js global packages!)
 1. Run `npm run start`
+   - to start GAD
 
-Application will be available at `http://localhost:3000`
+The application will be available at `http://localhost:3000`
+
+### Update version
+
+Steps:
+
+1. Open the project root directory in cmd/terminal
+1. Pull latest changes using `git pull`
+1. Run `npm i`
+   - to install new modules
+1. Run `npm run start`
+   - to start GAD
+
+### Update version if You have any changes (e.g. in database)
+
+One possibility is to reset all Your local changes and pull new version.Using this method **You will lose all Your local changes and data**!
+
+Steps:
+
+1. Open the project root directory in cmd/terminal
+1. Reset local changes and pull latest changes using:
+   ```
+   git reset --hard HEAD
+   git pull
+   ```
+1. Run `npm i`
+   - to install new modules
+1. Run `npm run start`
+   - to start GAD
 
 ### Read Only mode
 
-This mode disables all POST, PUT and PATCH methods, besides login.
+This mode disables all POST, PUT, and PATCH methods, besides login.
 
-To run GAD in **Read Only mode** use:
+To run GAD in **Read Only mode**, use the following commands:
 
 PowerShell:
 

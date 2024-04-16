@@ -4,8 +4,8 @@ const { ConfigKeys } = require("../config/enums");
 const path = require("path");
 const { checkFileName } = require("./file-upload.helper");
 const { logTrace, logDebug } = require("./logger-api");
-const { getRandomVisitsForEntities } = require("./random-data.generator");
 const { isUndefined } = require("./compare.helpers");
+const { getSeededRandomVisitsForEntities } = require("./generators/random-data.generator");
 
 const visits = (function () {
   let instance;
@@ -48,25 +48,25 @@ const visits = (function () {
     }
 
     function generateVisits() {
-      visitsPerArticle = getRandomVisitsForEntities(
+      visitsPerArticle = getSeededRandomVisitsForEntities(
         articlesDb(),
         getConfigValue(ConfigKeys.MIN_RANDOM_VISITS_FOR_ARTICLES),
         getConfigValue(ConfigKeys.MAX_RANDOM_VISITS_FOR_ARTICLES)
       );
 
-      visitsPerComment = getRandomVisitsForEntities(
+      visitsPerComment = getSeededRandomVisitsForEntities(
         commentsDb(),
         getConfigValue(ConfigKeys.MIN_RANDOM_VISITS_FOR_COMMENTS),
         getConfigValue(ConfigKeys.MAX_RANDOM_VISITS_FOR_COMMENTS)
       );
 
-      visitsPerUsers = getRandomVisitsForEntities(
+      visitsPerUsers = getSeededRandomVisitsForEntities(
         userDb(),
         getConfigValue(ConfigKeys.MIN_RANDOM_VISITS_FOR_USERS),
         getConfigValue(ConfigKeys.MAX_RANDOM_VISITS_FOR_USERS)
       );
 
-      logDebug("visits: generateVisits() invoked");
+      logDebug("Visits: generated for articles, comments and users");
     }
     return {
       visitsPerArticle,
@@ -92,15 +92,24 @@ const visits = (function () {
   };
 })();
 
-const visitsData = visits.getInstance();
-visitsData.generateVisits();
+function initVisits() {
+  const visitsData = visits.getInstance();
+  visitsData.generateVisits();
+}
 
 function getDbPath(dbPath) {
   return path.resolve(__dirname, "..", dbPath);
 }
 
 function fullDb() {
-  const db = JSON.parse(fs.readFileSync(getDbPath(getConfigValue(ConfigKeys.AUTH_USER_DB)), "UTF-8"));
+  const db = JSON.parse(fs.readFileSync(path.join(__dirname, "..", getConfigValue(ConfigKeys.DB_PATH)), "utf8"));
+  return db;
+}
+
+function fullBaseDb() {
+  const db = JSON.parse(
+    fs.readFileSync(path.join(__dirname, "..", getConfigValue(ConfigKeys.DB_RESTORE_PATH)), "utf8")
+  );
   return db;
 }
 
@@ -263,6 +272,7 @@ module.exports = {
   quizQuestionsDb,
   hangmanDb,
   fullDb,
+  fullBaseDb,
   randomDbEntry,
   getDbPath,
   gamesDb,
@@ -278,14 +288,15 @@ module.exports = {
   articleLabelsDb,
   labelsDb,
   countEntities,
-  getVisitsPerArticle: visitsData.getVisitsPerArticle,
-  getVisitsPerComment: visitsData.getVisitsPerComment,
-  getVisitsPerUsers: visitsData.getVisitsPerUsers,
-  getApiCalls: visitsData.getApiCalls,
-  getNonApiCalls: visitsData.getNonApiCalls,
-  getApiRequestsDetails: visitsData.getApiRequestsDetails,
-  getNonApiRequestsDetails: visitsData.getNonApiRequestsDetails,
-  visitsData,
+  getVisitsPerArticle: visits.getInstance().getVisitsPerArticle,
+  getVisitsPerComment: visits.getInstance().getVisitsPerComment,
+  getVisitsPerUsers: visits.getInstance().getVisitsPerUsers,
+  getApiCalls: visits.getInstance().getApiCalls,
+  getNonApiCalls: visits.getInstance().getNonApiCalls,
+  getApiRequestsDetails: visits.getInstance().getApiRequestsDetails,
+  getNonApiRequestsDetails: visits.getInstance().getNonApiRequestsDetails,
+  visitsData: visits.getInstance(),
+  initVisits,
   translationsDb,
   getLanguages,
 };

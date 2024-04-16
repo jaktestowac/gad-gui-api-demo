@@ -1,123 +1,97 @@
 <html>
-  <head>
-    <title>🦎 GAD</title>
-    <link rel="icon" href="./../data/icons/favicon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="stylesheet"
-      href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
-      integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay"
-      crossorigin="anonymous"
-    />
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
-    <link rel="stylesheet" href="../css/controls.css" />
-    <link rel="stylesheet" href="../css/style.css" />
-  </head>
-  <body>
-    <header>
-      <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
-        <h1 id="menu-main-api" class="nav-menu"></h1>
-      </div>
-    </header>
 
+<head>
+  <title>🦎 GAD</title>
+  <link rel="icon" href="./../data/icons/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/controls.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/infoBoxes.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body>
+  <header>
+    <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+      <h1 id="menu-main-api" class="nav-menu"></h1>
+    </div>
+  </header>
+
+  <br />
+  <br />
+  <br />
+  <div align="center" style="margin: 15px">
+    <div class="container" id="pageHeader" style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center">
+      <h1 style="margin: 10px">
+        Welcome to the Backoffice for <span style="color: rgb(8, 195, 1)">G</span>UI
+        <span style="color: rgb(8, 195, 1)">A</span>PI <span style="color: rgb(8, 195, 1)">D</span>emo
+      </h1>
+    </div>
+    <div class="container" id="pageHeader" style="font-size: 14px; align-content: center; display: flex; align-items: center; justify-content: center">
+      <h2 style="margin: 10px">🦎 GAD is a convenient tool for experimenting with tests!</h2>
+    </div>
+    <div class="container" style="font-size: 14px; align-content: center; display: flex; align-items: center; justify-content: center">
+      Here you can practice GUI tests and API tests in a safe environment.
+    </div>
+    <div class="container" style="font-size: 14px; align-content: center; display: flex; align-items: center; justify-content: center">
+      The page has been prepared with the purpose of learning testing.<br />It contains simple logic, resources,
+      intentionally prepared errors, and various challenges.
+    </div>
+    <div class="container" style="font-size: 14px; align-content: center; display: flex; align-items: center; justify-content: center">
+      With this configuration, we are able to simulate more challenging project realities 😉
+    </div>
     <br />
+    <div class="container" style="font-size: 14px; align-content: center; display: flex; align-items: center; justify-content: center">
+      PS. Additionally, the application has several serious design flaws - curious if you will notice them? 😉
+    </div>
     <br />
+    <span style="font-size: 14px; align-content: center; display: flex; align-items: center; justify-content: center">Visit 🦎GAD official&nbsp;&nbsp;
+      <i class="fa-brands fa-github" style="font-size:24px"></i>&nbsp;<strong><a href="https://github.com/jaktestowac/gad-gui-api-demo" target="_blank" rel="noopener">GitHub Repository</a></strong>
+    </span>
+    <div align="center" style="justify-content: center !important">
+      <div align="center" id="versionInfoBox"></div>
+    </div>
     <br />
-    <div align="center" style="margin: 15px">
-      <div
-        class="container"
-        id="pageHeader"
-        style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center"
-      >
-        <h1>
-          Witaj na Backoffice do <span style="color: rgb(8, 195, 1)">G</span>UI
-          <span style="color: rgb(8, 195, 1)">A</span>PI <span style="color: rgb(8, 195, 1)">D</span>emo
-        </h1>
-      </div>
-      <div
-        class="container"
-        id="pageHeader"
-        style="font-size: 14px; align-content: center; display: flex; align-items: center; justify-content: center"
-      >
-        <h2>🦎 GAD to wygodne narzędzie do eksperymentów z testami!</h2>
-      </div>
-      <div align="center" style="justify-content: center !important"></div>
-      <br />
-      <div
-        class="container"
-        style="font-size: 14px; align-content: center; display: flex; align-items: center; justify-content: center"
-      >
-        Możesz tutaj poćwiczyć testy GUI oraz testy API w bezpiecznym środowisku.
-      </div>
-      <div
-        class="container"
-        style="font-size: 14px; align-content: center; display: flex; align-items: center; justify-content: center"
-      >
-        Strona została przygotowana z myślą o nauce testowania. Zawiera prostą logikę, zasoby oraz celowo przygotowane
-        błędy oraz różne wyzwania.
-      </div>
-      <div
-        class="container"
-        style="font-size: 14px; align-content: center; display: flex; align-items: center; justify-content: center"
-      >
-        Dzięki takiej konfiguracji, jesteśmy w stanie odrobinę oddać trudniejsze realia projektowe😉
-      </div>
-      <br />
-      <div
-        class="container"
-        style="font-size: 14px; align-content: center; display: flex; align-items: center; justify-content: center"
-      >
-        PS. Dodatkowo aplikacja ma kilka poważnych wad projektowych - ciekawe czy je dostrzeżesz?😉
-      </div>
-      <br />
-      <div
-        class="container"
-        style="font-size: 18px; align-content: center; display: flex; align-items: center; justify-content: center"
-      >
-        <strong>Daj nam znać co myślisz o 🦎 GAD!</strong>
-      </div>
-      <div
-        class="container"
-        style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 14px"
-      >
-        <span style="display: flex; align-items: center; justify-self: center">
-          <a href="https://forms.gle/d2Fq6EY9ZdL9mMQ28" target="_blank" rel="noopener">
-            <button class="button-primary" style="margin: 20; font-size: 18px">Wypełnij ankietę📝</button>
-          </a>
-        </span>
-      </div>
-      <br />
-      <div
-        class="container"
-        style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 24px"
-      >
-        <span style="display: flex; align-items: center; justify-self: center">
-          <img
-            src="../data/icons/favicon.png"
-            style="width: 50px !important; height: 50px !important; padding: 0; border: none"
-            alt=""
-          />&nbsp&nbspjaktestowac.pl
-        </span>
-      </div>
+    <div class="container" style="font-size: 18px; align-content: center; display: flex; align-items: center; justify-content: center">
+      <strong>Let us know what you think about 🦎 GAD!</strong>
+    </div>
+    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 14px">
+      <span style="display: flex; align-items: center; justify-self: center">
+        <a href="https://forms.gle/d2Fq6EY9ZdL9mMQ28" target="_blank" rel="noopener">
+          <button class="button-primary" style="margin: 10; font-size: 18px">Fill out the survey📝</button>
+        </a>
+      </span>
     </div>
 
-    <div
-      class="container"
-      style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center"
-    >
-      <a href="../" class="menu-link">
-        <button class="button-primary" id="btnGui" style="margin: 20; font-size: 28px">GUI</button>
-      </a>
-      <a href="./index.html">
-        <button class="button-primary" id="btnApiTools" style="margin: 20; font-size: 28px">Tools</button>
-      </a>
-      <a href="./swagger.html">
-        <button class="button-primary" id="btnApiTools" style="margin: 20; font-size: 28px">Swagger</button>
-      </a>
+    <div align="center" style="justify-content: center !important">
+      <div id="dbStatusInfoBox" class="simpleInfoBox" style="display: none"></div>
     </div>
-  </body>
+    <br />
+    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 24px">
+      <span style="display: flex; align-items: center; justify-self: center">
+        <img src="../data/icons/favicon.png" style="width: 50px !important; height: 50px !important; padding: 0; border: none" alt="" />&nbsp&nbspjaktestowac.pl
+      </span>
+    </div>
+  </div>
 
-  <script type="text/javascript" src="../js/common.js"></script>
-  <script type="text/javascript" src="../version.js"></script>
-  <script type="text/javascript" src="../username.js"></script>
+  <div class="container" style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center">
+    <a href="../" class="menu-link">
+      <button class="button-primary" id="btnGui" style="margin: 10; font-size: 28px">GUI</button>
+    </a>
+    <a href="./index.html">
+      <button class="button-primary" id="btnApiTools" style="margin: 10; font-size: 28px">Tools</button>
+    </a>
+    <a href="./swagger.html">
+      <button class="button-primary" id="btnApiTools" style="margin: 10; font-size: 28px">Swagger</button>
+    </a>
+  </div>
+</body>
+
+<script type="text/javascript" src="../js/common.js"></script>
+<script type="text/javascript" src="../js/dbcheck.js"></script>
+<script type="text/javascript" src="../version.js"></script>
+<script type="text/javascript" src="../username.js"></script>
+<script type="text/javascript" src="../js/version-check.js"></script>
+
 </html>

@@ -58,31 +58,6 @@ function toggleDirAttribute(element, language) {
   }
 }
 
-function changeLanguage(language) {
-  addLanguageCookie(language);
-  const translation = translationsStored[language];
-  if (translation) {
-    replaceLanguageText(translationsStored, getPrevLanguageCookie(), language);
-    Object.keys(translation).forEach((translationKey) => {
-      const elements = getElementsById(translationKey);
-      if (elements) {
-        elements.forEach((element) => {
-          element.textContent = translation[translationKey];
-          toggleDirAttribute(element, language);
-        });
-      }
-      const elementsByTranslateId = getElementsByTranslateId(translationKey);
-      if (elementsByTranslateId) {
-        elementsByTranslateId.forEach((element) => {
-          element.textContent = translation[translationKey];
-          toggleDirAttribute(element, language);
-        });
-      }
-    });
-  }
-  addPrevLanguageCookie(language);
-}
-
 function getElementsById(id) {
   return Array.from(document.querySelectorAll(`[id="${id}"]`));
 }
@@ -102,34 +77,62 @@ function getTranslatedText(elementId) {
   return translationsStored[elementId];
 }
 
-function replaceLanguageText(languageData, previousLanguage, language) {
-  if (previousLanguage === undefined) {
-    previousLanguage = "en";
+function changeLanguage(newLanguage) {
+  addPrevLanguageCookie(getLanguageCookie());
+  if (newLanguage === undefined || newLanguage === "" || newLanguage === null || newLanguage === "undefined") {
+    newLanguage = "en";
   }
-  if (previousLanguage === language) {
-    return;
+  addLanguageCookie(newLanguage);
+
+  translateToLanguage(getPrevLanguageCookie(), getLanguageCookie());
+}
+
+function translateToLanguage(oldLanguage, newLanguage) {
+  const newTranslation = translationsStored[newLanguage];
+  if (newTranslation) {
+    Object.keys(newTranslation).forEach((translationKey) => {
+      const elements = getElementsById(translationKey);
+      if (elements) {
+        elements.forEach((element) => {
+          element.textContent = newTranslation[translationKey];
+          toggleDirAttribute(element, newLanguage);
+        });
+      }
+      const elementsByTranslateId = getElementsByTranslateId(translationKey);
+      if (elementsByTranslateId) {
+        elementsByTranslateId.forEach((element) => {
+          element.textContent = newTranslation[translationKey];
+          toggleDirAttribute(element, newLanguage);
+        });
+      }
+    });
+
+    const elements = document.querySelectorAll("*");
+    changeElementText(elements, oldLanguage, newLanguage);
+    changeElementText(elements, "en", newLanguage);
   }
-  const elements = document.querySelectorAll("*");
+}
+
+function changeElementText(elements, oldLanguage, newLanguage) {
   const mergedData = {};
-  for (const subKey in languageData[previousLanguage]) {
-    mergedData[languageData[previousLanguage][subKey]] = languageData[language][subKey];
+  for (const subKey in translationsStored[oldLanguage]) {
+    mergedData[translationsStored[oldLanguage][subKey]] = translationsStored[newLanguage][subKey];
   }
 
   elements.forEach((element) => {
     if (element.innerHTML === element.textContent) {
       const text = element.textContent.trim();
-
       if (text !== undefined && text !== "") {
         const replacementText = mergedData[text];
 
         if (replacementText !== undefined) {
           element.textContent = replacementText;
-          toggleDirAttribute(element, language);
+          toggleDirAttribute(element, newLanguage);
         } else {
           Object.keys(mergedData).forEach((key) => {
             if (text?.toLowerCase() === key?.toLowerCase()) {
               element.textContent = mergedData[key];
-              toggleDirAttribute(element, language);
+              toggleDirAttribute(element, newLanguage);
             }
           });
         }
@@ -142,8 +145,13 @@ issueGetTranslations().then((translations) => {
   issueGetLanguages().then((languages) => {
     languagesStored = languages;
     translationsStored = translations;
+    addPrevLanguageCookie("en");
     addLanguageSelect(languagesStored, getLanguageCookie());
-    changeLanguage(getLanguageCookie());
-    detectDomChange(() => replaceLanguageText(translationsStored, getPrevLanguageCookie(), getLanguageCookie()));
+    translateToLanguage(getPrevLanguageCookie(), getLanguageCookie());
+    detectDomChange((mutationList) => {
+      mutationList.forEach((mutation) => {
+        // TODO:
+      });
+    });
   });
 });
