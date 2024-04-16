@@ -9,6 +9,7 @@ const {
   formatMissingFieldErrorResponse,
   formatInvalidFieldErrorResponse,
   formatInvalidDateFieldErrorResponse,
+  formatErrorResponse,
 } = require("../helpers/helpers");
 const { logTrace, logDebug } = require("../helpers/logger-api");
 const { HTTP_UNAUTHORIZED, HTTP_UNPROCESSABLE_ENTITY, HTTP_NOT_FOUND } = require("../helpers/response.helpers");
@@ -219,7 +220,7 @@ function handleArticles(req, res, isAdmin) {
       isUndefined(foundUser) && !isUndefined(foundArticle) ||
       (!isUndefined(foundArticle?.user_id) && !isUndefined(foundUser) && !areIdsEqual(foundUser?.id, req.body?.user_id))
     ) {
-      res.status(HTTP_UNAUTHORIZED).send("You can not edit articles if You are not an owner");
+      res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("You can not edit articles if You are not an owner"));
       return;
     }
 

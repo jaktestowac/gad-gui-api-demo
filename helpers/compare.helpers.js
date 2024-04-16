@@ -52,6 +52,24 @@ function compareDbObjects(baseDb, currentDb) {
   const missingKeysInCurrentDb = keys1.filter((key) => !keys2.includes(key));
   const areEqual = areAllKeysPresent === true && missingKeysInCurrentDb.length === 0;
 
+  const invalidObjects = [];
+  for (const key of missingKeysInCurrentDb) {
+    const parts = key.split(".");
+
+    if (currentDb[parts[0]] === undefined) {
+      break;
+    }
+    if (currentDb[parts[0]].length === undefined) {
+      break;
+    }
+
+    for (const obj of currentDb[parts[0]]) {
+      if (obj[parts[1]] === undefined) {
+        invalidObjects.push({ table: parts[0], key: parts[1], id: obj.id });
+      }
+    }
+  }
+
   return {
     areEqual,
     areTablesEqual,
@@ -60,6 +78,7 @@ function compareDbObjects(baseDb, currentDb) {
     entitiesCountInCurrentDb,
     missingTablesInCurrentDb,
     missingKeysInCurrentDb,
+    invalidObjects,
   };
 }
 
