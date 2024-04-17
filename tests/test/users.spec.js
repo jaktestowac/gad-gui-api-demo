@@ -291,6 +291,16 @@ describe("Endpoint /users", async () => {
       expect(response.status).to.equal(401);
     });
 
+    it("PUT /users - should not create user without providing user_id", async () => {
+      testUserData.id = undefined;
+
+      // Act:
+      const response = await request.put(baseUrl).set(headers).send(testUserData);
+
+      // Assert:
+      expect(response.status).to.equal(401);
+    });
+
     it("PUT /users/:id - should update user", async () => {
       // Act:
       const response = await request.put(`${baseUrl}/${userId}`).set(headers).send(testUserData);
@@ -298,6 +308,19 @@ describe("Endpoint /users", async () => {
       // Assert:
       expect(response.status).to.equal(200);
       testUserData.id = response.body.id;
+      expect(response.body).to.deep.equal(testUserData);
+    });
+
+    it("PUT /users/:id - should update user without providing user_id (user_id taken from token)", async () => {
+      testUserData.id = undefined;
+
+      // Act:
+      const response = await request.put(`${baseUrl}/${userId}`).set(headers).send(testUserData);
+
+      // Assert:
+      expect(response.status).to.equal(200);
+      testUserData.id = response.body.id;
+      testUserData.id = userId;
       expect(response.body).to.deep.equal(testUserData);
     });
 

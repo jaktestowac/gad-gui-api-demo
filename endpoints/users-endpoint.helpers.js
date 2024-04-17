@@ -1,7 +1,7 @@
 const { isBugDisabled, isBugEnabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
 const { areStringsEqualIgnoringCase, areIdsEqual, isUndefined } = require("../helpers/compare.helpers");
-const { searchForUser } = require("../helpers/db-operation.helpers");
+const { searchForUser, searchForUserWithToken } = require("../helpers/db-operation.helpers");
 const { userDb } = require("../helpers/db.helpers");
 const {
   formatMissingFieldErrorResponse,
@@ -10,13 +10,14 @@ const {
   formatInvalidFieldErrorResponse,
 } = require("../helpers/helpers");
 const { logDebug } = require("../helpers/logger-api");
-const { HTTP_UNPROCESSABLE_ENTITY, HTTP_CONFLICT } = require("../helpers/response.helpers");
+const { HTTP_UNPROCESSABLE_ENTITY, HTTP_CONFLICT, HTTP_UNAUTHORIZED } = require("../helpers/response.helpers");
 const {
   areMandatoryFieldsPresent,
   mandatory_non_empty_fields_user,
   isEmailValid,
   areAllFieldsValid,
   all_fields_user,
+  verifyAccessToken,
 } = require("../helpers/validation.helpers");
 
 function handleUsers(req, res) {
@@ -65,6 +66,8 @@ function handleUsers(req, res) {
   }
 
   if (req.method === "PUT" && urlEnds.includes("/api/users/")) {
+    const verifyTokenResult = verifyAccessToken(req, res, "PUT users", req.url);
+
     let userId = getIdFromUrl(urlEnds);
     // validate mandatory fields:
     if (!areMandatoryFieldsPresent(req.body, mandatory_non_empty_fields_user)) {
@@ -89,7 +92,18 @@ function handleUsers(req, res) {
       res.status(HTTP_CONFLICT).send(formatErrorResponse("Email not unique"));
       return;
     }
+
+    // TODO: test this
+    // if (userId === "users") {
+    //   userId = "";
+    // }
+
     const foundUser = searchForUser(userId);
+    // const foundUser2 = searchForUserWithToken(userId, verifyTokenResult);
+    // if (!areIdsEqual(foundUser?.id, foundUser2?.id)) {
+    //   res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("You can not edit user if You the user"));
+    //   return;
+    // }
 
     if (isUndefined(foundUser)) {
       req.method = "POST";
