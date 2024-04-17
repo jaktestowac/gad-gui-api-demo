@@ -104,13 +104,15 @@ function handleComments(req, res, isAdmin) {
     const verifyTokenResult = verifyAccessToken(req, res, "PUT comments", req.url);
 
     // validate mandatory fields:
-    if (!areMandatoryFieldsPresent(req.body, mandatory_non_empty_fields_comment)) {
-      res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_comment));
+    if (!areMandatoryFieldsPresent(req.body, mandatory_non_empty_fields_comment_create)) {
+      res
+        .status(HTTP_UNPROCESSABLE_ENTITY)
+        .send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_comment_create));
       return;
     }
 
     // validate all fields:
-    const isValid = areAllFieldsValid(req.body, all_fields_comment, mandatory_non_empty_fields_comment);
+    const isValid = areAllFieldsValid(req.body, all_fields_comment, mandatory_non_empty_fields_comment_create);
     if (!isValid.status) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidFieldErrorResponse(isValid, all_fields_comment));
       return;
@@ -129,6 +131,10 @@ function handleComments(req, res, isAdmin) {
     const foundUser = searchForUserWithToken(foundComment?.user_id, verifyTokenResult);
 
     logDebug("handleComments: foundUser and user_id:", { commentId, foundUser, user_id: foundComment?.user_id });
+
+    if (!isUndefined(foundUser)) {
+      req.body.user_id = foundUser.id;
+    }
 
     if (
       (isUndefined(foundUser) && !isUndefined(foundComment)) ||

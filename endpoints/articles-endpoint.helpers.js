@@ -216,8 +216,13 @@ function handleArticles(req, res, isAdmin) {
       foundUser.id = req.body?.user_id;
     }
 
+    if (!isUndefined(foundUser)) {
+      req.body.user_id = foundUser.id;
+    }
+
     if (
-      isUndefined(foundUser) && !isUndefined(foundArticle) ||
+      isUndefined(req.body.user_id) ||
+      (isUndefined(foundUser) && !isUndefined(foundArticle)) ||
       (!isUndefined(foundArticle?.user_id) && !isUndefined(foundUser) && !areIdsEqual(foundUser?.id, req.body?.user_id))
     ) {
       res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("You can not edit articles if You are not an owner"));

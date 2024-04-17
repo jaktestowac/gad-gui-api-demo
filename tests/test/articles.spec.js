@@ -122,6 +122,20 @@ describe("Endpoint /articles", () => {
       expect(response.body).to.deep.equal(testArticleData);
     });
 
+    it("PUT /articles/:id - should update valid article without providing user_id (user_id taken from token)", async () => {
+      // Arrange:
+      testArticleData.user_id = undefined;
+
+      // Act:
+      const response = await request.put(`${baseUrl}/${articleId}`).set(headers).send(testArticleData);
+
+      // Assert:
+      expect(response.status).to.equal(200);
+      testArticleData.id = response.body.id;
+      testArticleData.user_id = userId;
+      expect(response.body).to.deep.equal(testArticleData);
+    });
+
     it("PUT /articles/:id - should not update article with date in future", async () => {
       // Act:
       testArticleData.date = getCurrentDate(0, 0, 11);

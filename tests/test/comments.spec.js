@@ -281,7 +281,7 @@ describe("Endpoint /comments", () => {
         expect(response.body).to.deep.equal(testData);
       });
 
-      it("PUT /comments - should not update comment without user_id", async () => {
+      it("PUT /comments - should update comment without providing user_id (user_id taken from token)", async () => {
         // Arrange:
         const testData = generateValidCommentData();
         testData.user_id = undefined;
@@ -294,7 +294,10 @@ describe("Endpoint /comments", () => {
         expect(
           response.status,
           `updating commentId: ${commentId} -> received: ${JSON.stringify(response.body)}`
-        ).to.equal(422);
+        ).to.equal(200);
+        testData.id = response.body.id;
+        testData.user_id = userId;
+        expect(response.body).to.deep.equal(testData);
       });
 
       it("PUT /comments - should not update not Your own comment", async () => {
