@@ -31,12 +31,12 @@ const {
   welcomeRoutes,
   logoutRoutes,
 } = require("./routes/login.route");
+const { calcRoutes } = require("./routes/calc.route");
 
 const bodyParser = require("body-parser");
 const { randomErrorsRoutes } = require("./routes/error.route");
 const { checkDatabase } = require("./helpers/sanity.check");
 const { copyDefaultDbIfNotExists } = require("./helpers/setup");
-const { log } = require("console");
 
 const middlewares = jsonServer.defaults();
 
@@ -160,6 +160,7 @@ server.use(customRoutes);
 server.use(randomErrorsRoutes);
 server.use(validationsRoutes);
 server.use(fileUploadRoutes);
+server.use(calcRoutes);
 server.use("/api", router);
 
 router.render = renderResponse;
