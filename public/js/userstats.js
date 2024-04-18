@@ -7,7 +7,7 @@ async function issueGetRequest() {
     [userstatsEndpoint].map((url) => fetch(url + `?chartType=${chartType}`).then((r) => r.json()))
   );
 
-  google.charts.setOnLoadCallback(displayData);
+  return results;
 }
 
 const displayData = () => {
@@ -141,8 +141,60 @@ function generateChartPDF(filename) {
   generatePDF(filename, "tableChart");
 }
 
+function displayChart(chartId, xLabels, data) {
+  if (window.myCharts === undefined) {
+    window.myCharts = {};
+  }
+
+  if (window.myCharts[chartId] != undefined) {
+    window.myCharts[chartId].destroy();
+  }
+
+  const ctx = document.getElementById(chartId).getContext("2d");
+  window.myCharts[chartId] = new Chart(ctx, {
+    type: "polarArea",
+    data: {
+      labels: xLabels,
+      datasets: [{ data: data }],
+    },
+    options: {
+      plugins: {
+        title: {
+          display: true,
+          text: "Articles per User",
+          font: {
+            size: 24,
+          },
+        },
+      },
+    },
+  });
+}
+
+function displayCanvasChart(results) {
+  document.querySelector("#canvasPolarChartArticlesData").style.display = "inherit";
+
+  const xLabels = [];
+  const articlesData = [];
+  results.articlesDataForChart.forEach((element) => {
+    xLabels.push(element[0]);
+    articlesData.push(element[1]);
+  });
+
+  displayChart("canvasPolarChartArticlesData", xLabels, articlesData);
+}
+
 // Load google charts
 google.charts.load("current", { packages: ["corechart"] });
 
 const chartType = getParams()["type"];
-issueGetRequest();
+
+if (chartType === "polar") {
+  issueGetRequest().then((results) => {
+    displayCanvasChart(results[0]);
+  });
+} else {
+  issueGetRequest().then(() => {
+    google.charts.setOnLoadCallback(displayData);
+  });
+}

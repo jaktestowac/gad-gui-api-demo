@@ -11,6 +11,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <!-- https://sheetjs.com/ -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -28,7 +29,11 @@
     <a id="columnChart" href="./userstats.html"><button id="btnColumnChart" class="button-primary">Column Chart</button></a>
     <a id="pieChart" href="./userstats.html?type=pie"><button id="btnPieChart" class="button-primary">Pie Chart</button></a>
     <a id="table" href="./userstats.html?type=table"><button id="btnTableData" class="button-primary">Table</button></a>
+    <a id="polarChart" href="./userstats.html?type=polar"><button id="btnPolarChart" class="button-primary">Polar Chart (Articles per User)</button></a>
     <br /><br />
+    <div style="width: 500px;">
+      <canvas id="canvasPolarChartArticlesData" style="display: none;"></canvas>
+    </div>
     <table id="tableChart" style="visibility: hidden">
       <tr>
         <th style="width: 50%">Articles per User</th>
