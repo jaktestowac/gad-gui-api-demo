@@ -46,12 +46,100 @@ function displayData(data) {
   headerRow.insertCell(2).outerHTML = "<th>Total Benefit ($)</th>";
   headerRow.insertCell(3).outerHTML = "<th>ROI (%)</th>";
 
-  for (var i = 1; i <= data.numberOfSprints; i++) {
+  for (var i = 0; i <= data.numberOfSprints; i++) {
     // Insert row per sprint
     var row = resultTable.insertRow(-1);
-    row.insertCell(0).textContent = i; // Sprint number
-    row.insertCell(1).textContent = data.totalCostsPerSprint[i].toFixed(2);
-    row.insertCell(2).textContent = data.totalBenefitsPerSprint[i].toFixed(2);
+    row.insertCell(0).textContent = i + 1; // Sprint number
+    row.insertCell(1).textContent = data.totalCumulativeCostsPerSprint[i].toFixed(2);
+    row.insertCell(2).textContent = data.totalCumulativeBenefitsPerSprint[i].toFixed(2);
     row.insertCell(3).textContent = data.sprintROI[i].toFixed(2);
   }
+
+  displayChart(
+    data.sprints,
+    [
+      { label: "Total Cumulative Benefits Per Sprint", data: data.totalCumulativeBenefitsPerSprint, yAxisID: "A" },
+      { label: "Total Cumulative Costs Per Sprint", data: data.totalCumulativeCostsPerSprint, yAxisID: "A" },
+      { label: "Profit Per Sprint", data: data.profitPerSprint, yAxisID: "A" },
+      { label: "Total Cumulative Profit Per Sprint", data: data.totalCumulativeProfitPerSprint, yAxisID: "A" },
+    ],
+    "chartRoi",
+    "ROI - Manual Tests and Automation (Cumulative Costs)",
+    ["USD", ""]
+  );
+}
+
+function displayChart(x, y, chartId, title, yLabels = ["USD", ""]) {
+  if (window.myCharts === undefined) {
+    window.myCharts = {};
+  }
+
+  if (window.myCharts[chartId] != undefined) {
+    window.myCharts[chartId].destroy();
+  }
+
+  const datasets = [];
+
+  y.forEach((element) => {
+    datasets.push({
+      label: element.label,
+      data: element.data,
+      borderWidth: 1,
+      yAxisID: element.yAxisID,
+      type: element.type,
+    });
+  });
+
+  var ctx = document.getElementById(chartId).getContext("2d");
+  window.myCharts[chartId] = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: x,
+      datasets: datasets,
+    },
+    options: {
+      plugins: {
+        title: {
+          display: true,
+          text: title,
+          font: {
+            size: 24,
+          },
+        },
+        tooltip: {
+          callbacks: {
+            label: function (context) {
+              let label = context.dataset.label || "";
+              if (label) {
+                label += ": ";
+              }
+              if (context.parsed.y !== null) {
+                const lbl = context.dataset.label.toLowerCase();
+                if (lbl.includes("cost") || lbl.includes("benefit") || lbl.includes("profit")) {
+                  label += new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(
+                    context.parsed.y
+                  );
+                } else {
+                  label += Math.round(context.parsed.y);
+                }
+              }
+              return label;
+            },
+          },
+        },
+      },
+      scales: {
+        A: {
+          beginAtZero: true,
+          position: "left",
+          title: { display: true, text: yLabels[0] },
+        },
+        B: {
+          beginAtZero: true,
+          position: "right",
+          title: { display: true, text: yLabels[1] },
+        },
+      },
+    },
+  });
 }

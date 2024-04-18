@@ -150,16 +150,24 @@ function calculateROI(data) {
 function calculateSimpleROI(data) {
   data.totalCosts = 0;
   data.totalBenefits = 0;
-  data.totalCostsPerSprint = [];
-  data.totalBenefitsPerSprint = [];
+  data.totalProfit = 0;
+  data.totalCumulativeCostsPerSprint = [];
+  data.totalCumulativeBenefitsPerSprint = [];
+  data.profitPerSprint = [];
+  data.totalCumulativeProfitPerSprint = [];
   data.sprintROI = [];
+  data.sprints = [];
 
   // Calculate and display results per sprint
-  for (let i = 1; i <= data.numberOfSprints; i++) {
-    data.totalCosts += data.costPerSprint;
+  for (let i = 0; i <= data.numberOfSprints; i++) {
+    data.sprints.push(`S${i + 1}`);
+    data.totalCosts -= data.costPerSprint;
     data.totalBenefits += data.benefitPerSprint;
-    data.totalCostsPerSprint[i] = data.totalCosts;
-    data.totalBenefitsPerSprint[i] = data.totalBenefits;
+    data.totalProfit += data.benefitPerSprint - data.costPerSprint;
+    data.totalCumulativeCostsPerSprint[i] = data.totalCosts;
+    data.totalCumulativeBenefitsPerSprint[i] = data.totalBenefits;
+    data.profitPerSprint[i] = data.benefitPerSprint - data.costPerSprint;
+    data.totalCumulativeProfitPerSprint[i] = data.totalProfit;
     data.sprintROI[i] = ((data.totalBenefits - data.totalCosts) / data.totalCosts) * 100;
   }
 

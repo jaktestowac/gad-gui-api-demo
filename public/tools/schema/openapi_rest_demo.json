@@ -4544,7 +4544,7 @@
             "description": "The total benefits accumulated over all sprints.",
             "example": 10
           },
-          "totalCostsPerSprint": {
+          "totalCumulativeCostsPerSprint": {
             "type": "array",
             "description": "List of total costs accumulated by each sprint, where the first entry can be null to indicate no data.",
             "items": {
@@ -4552,9 +4552,25 @@
             },
             "example": [null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
           },
-          "totalBenefitsPerSprint": {
+          "totalCumulativeBenefitsPerSprint": {
             "type": "array",
             "description": "List of total benefits accumulated by each sprint, where the first entry can be null to indicate no data.",
+            "items": {
+              "type": ["integer", "null"]
+            },
+            "example": [null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+          },
+          "profitPerSprint": {
+            "type": "array",
+            "description": "List of profits per each sprint, where the first entry can be null to indicate no data.",
+            "items": {
+              "type": ["integer", "null"]
+            },
+            "example": [null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+          },
+          "totalCumulativeProfitPerSprint": {
+            "type": "array",
+            "description": "List of cumulative profit per each sprint, where the first entry can be null to indicate no data.",
             "items": {
               "type": ["integer", "null"]
             },
@@ -4567,6 +4583,13 @@
               "type": ["integer", "null"]
             },
             "example": [null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+          },
+          "sprints": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Labels of the sprints."
           }
         },
         "required": [
