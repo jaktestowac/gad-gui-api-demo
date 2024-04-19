@@ -141,7 +141,7 @@ function generateChartPDF(filename) {
   generatePDF(filename, "tableChart");
 }
 
-function displayChart(chartId, xLabels, data) {
+function displayChart(chartId, xLabels, data, title) {
   if (window.myCharts === undefined) {
     window.myCharts = {};
   }
@@ -161,7 +161,7 @@ function displayChart(chartId, xLabels, data) {
       plugins: {
         title: {
           display: true,
-          text: "Articles per User",
+          text: title,
           font: {
             size: 24,
           },
@@ -171,27 +171,36 @@ function displayChart(chartId, xLabels, data) {
   });
 }
 
-function displayCanvasChart(results) {
-  document.querySelector("#canvasPolarChartArticlesData").style.display = "inherit";
+function displayCanvasChart(results, title) {
+  document.querySelector("#canvasPolarChartData").style.display = "inherit";
 
   const xLabels = [];
   const articlesData = [];
-  results.articlesDataForChart.forEach((element) => {
-    xLabels.push(element[0]);
-    articlesData.push(element[1]);
+  results.forEach((element) => {
+    if (typeof element[1] === "number") {
+      xLabels.push(element[0]);
+      articlesData.push(element[1]);
+    }
   });
 
-  displayChart("canvasPolarChartArticlesData", xLabels, articlesData);
+  displayChart("canvasPolarChartData", xLabels, articlesData, title);
 }
 
 // Load google charts
 google.charts.load("current", { packages: ["corechart"] });
 
 const chartType = getParams()["type"];
+const entityType = getParams()["e"];
 
 if (chartType === "polar") {
   issueGetRequest().then((results) => {
-    displayCanvasChart(results[0]);
+    if (entityType === "articles") {
+      displayCanvasChart(results[0].articlesDataForChart, "Articles per User");
+    } else if (entityType === "comments") {
+      displayCanvasChart(results[0].commentsDataForChart, "Comments per User");
+    } else {
+      displayCanvasChart([], `No data for: ${entityType}`);
+    }
   });
 } else {
   issueGetRequest().then(() => {

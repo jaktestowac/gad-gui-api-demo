@@ -25,14 +25,21 @@
   </div>
   <div align="center">
     <div id="container"></div>
-    Data Type:
-    <a id="columnChart" href="./userstats.html"><button id="btnColumnChart" class="button-primary">Column Chart</button></a>
-    <a id="pieChart" href="./userstats.html?type=pie"><button id="btnPieChart" class="button-primary">Pie Chart</button></a>
-    <a id="table" href="./userstats.html?type=table"><button id="btnTableData" class="button-primary">Table</button></a>
-    <a id="polarChart" href="./userstats.html?type=polar"><button id="btnPolarChart" class="button-primary">Polar Chart (Articles per User)</button></a>
+
+    <fieldset style="width: 250px; border-radius: 10px; display: inline-block;">
+      <legend>Classic Charts:</legend>
+      <a id="columnChart" href="./userstats.html"><button id="btnColumnChart" class="button-primary-small">Column Chart</button></a>
+      <a id="pieChart" href="./userstats.html?type=pie"><button id="btnPieChart" class="button-primary-small">Pie Chart</button></a>
+      <a id="table" href="./userstats.html?type=table"><button id="btnTableData" class="button-primary-small">Table</button></a>
+    </fieldset>
+    <fieldset style="width: 250px; border-radius: 10px; display: inline-block;">
+      <legend>Polar Charts:</legend>
+      <a id="polarChart" href="./userstats.html?type=polar&e=articles"><button id="btnPolarChart" class="button-primary-small">Articles per User</button></a>
+      <a id="polarChart" href="./userstats.html?type=polar&e=comments"><button id="btnPolarChart" class="button-primary-small">Comments per User</button></a>
+    </fieldset>
     <br /><br />
     <div style="width: 500px;">
-      <canvas id="canvasPolarChartArticlesData" style="display: none;"></canvas>
+      <canvas id="canvasPolarChartData" style="display: none;"></canvas>
     </div>
     <table id="tableChart" style="visibility: hidden">
       <tr>

@@ -107,6 +107,20 @@ input.button-secondary {
   border: none;
 }
 
+.button-primary-small:hover {
+  color: #fff;
+  background-color: #0069d9;
+  border: none;
+}
+
+.button-primary-small {
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  padding: 5px;
+  font-size: 12px;
+}
+
 .button-primary-warning:hover {
   color: #fff;
   background-color: #8b7025;
