@@ -1,5 +1,33 @@
 const repository_url = "https://github.com/jaktestowac/gad-gui-api-demo";
 
+function saveSession(id, obj) {
+  sessionStorage.setItem(id, JSON.stringify(obj));
+  return true;
+}
+
+function getSession(id) {
+  const value = sessionStorage.getItem(id);
+  try {
+    return JSON.parse(value);
+  } catch (e) {
+    return value;
+  }
+}
+
+function saveLocalStorage(id, obj) {
+  localStorage.setItem(id, JSON.stringify(obj));
+  return true;
+}
+
+function getLocalStorage(id) {
+  const value = localStorage.getItem(id);
+  try {
+    return JSON.parse(value);
+  } catch (e) {
+    return value;
+  }
+}
+
 function getCookieEmail() {
   let email = undefined;
   const cookies = document.cookie.split(";");

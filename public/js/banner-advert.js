@@ -101,8 +101,11 @@ const listOfBanners = [
   advertMinesweeperBanner,
 ];
 
-function wasAccepted() {
-  return checkCookie() === "1";
+function wasSkipped() {
+  // cookie version:
+  // return checkCookie() === "1";
+
+  return checkIfAdvertSkipped();
 }
 
 function checkCookie() {
@@ -122,12 +125,24 @@ function checkCookie() {
   return "";
 }
 
-function saveAdvertAcceptInCookies(daysOfValidity) {
+function checkIfAdvertSkipped() {
+  const advert = getLocalStorage("advert");
+  if (advert && advert.skipped === "1" && new Date(advert.expires) > new Date()) {
+    return true;
+  }
+  return false;
+}
+
+function saveAdvertSkipped(daysOfValidity) {
   var now = new Date();
   var time = now.getTime() + daysOfValidity * 24 * 60 * 60 * 1000;
   var newTime = new Date(now.setTime(time));
   newTime = newTime.toUTCString();
-  document.cookie = "advertCookie=1; expires=" + newTime + "; SameSite=Lax; path=/";
+  // cookie version:
+  // document.cookie = "advertCookie=1; expires=" + newTime + "; SameSite=Lax; path=/";
+
+  const advertObj = { expires: newTime, skipped: "1" };
+  saveLocalStorage("advert", advertObj);
 }
 
 const showAd = () => {
@@ -151,7 +166,7 @@ const skipAd = () => {
   const popupOverlay = document.querySelector(".popup-overlay");
   popupOverlay.classList.remove("active");
   popupOverlay.remove();
-  saveAdvertAcceptInCookies(0.01);
+  saveAdvertSkipped(0.01);
 };
 
 function getRandomBanner() {
@@ -159,7 +174,7 @@ function getRandomBanner() {
 }
 
 function displayAd() {
-  if (wasAccepted() === true) {
+  if (wasSkipped() === true) {
     return;
   }
   document.body.insertAdjacentHTML("beforeend", getRandomBanner());
