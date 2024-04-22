@@ -3038,7 +3038,7 @@
         }
       }
     },
-    "/health/check": {
+    "/health/configcheck": {
       "get": {
         "tags": ["healthcheck"],
         "summary": "Get config check result",

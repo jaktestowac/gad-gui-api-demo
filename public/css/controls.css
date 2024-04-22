@@ -839,20 +839,22 @@ s .container-mobile {
   color: white;
 }
 
-* {
-  box-sizing: border-box;
-}
-
 body {
   font-family: sans-serif;
 }
 
-.grid {
-  max-width: 800px;
-  width: 800px;
+.grid-drag {
+  max-width: 600px;
+  width: 600px;
 }
 
-.grid:after {
+@media (max-width: 550px) {
+  .grid-drag {
+    margin-left: -100px;
+  }
+}
+
+.grid-drag:after {
   content: "";
   display: block;
   clear: both;
@@ -887,6 +889,10 @@ body {
 
 .grid-item--width4 {
   width: 400px;
+}
+
+.grid-item--height05 {
+  height: 50px;
 }
 
 .grid-item--height1 {

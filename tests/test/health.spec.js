@@ -35,7 +35,7 @@ describe("Endpoints /health, /about and /ping", async () => {
 
   it("GET /health/run", async () => {
     // Act:
-    const response = await request.get(baseUrl + "/health/check");
+    const response = await request.get(baseUrl + "/health/configcheck");
 
     // Assert:
     expect(response.status).to.equal(200);

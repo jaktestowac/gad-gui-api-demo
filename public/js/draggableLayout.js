@@ -41,25 +41,29 @@ Packery.prototype.initShiftLayout = function (positions, attr) {
 };
 
 $(".packery").packery();
-const $grid = $(".grid").packery({
+const $grid = $(".grid-drag").packery({
   itemSelector: ".grid-item",
   // columnWidth helps with drop positioning
-  columnWidth: 100,
+  columnWidth: 25,
   percentPosition: true,
   initLayout: false,
 });
 
+const basePosition = [
+  { attr: "1", x: 0.16666666666666666 },
+  { attr: "2", x: 0.16666666666666666 },
+  { attr: "5", x: 0.5 },
+  { attr: "3", x: 0.16666666666666666 },
+  { attr: "4", x: 0.5 },
+  { attr: "6", x: 0.16666666666666666 },
+];
+
 // get saved dragged positions
 let initPositions = localStorage.getItem("dragPositions");
-if (initPositions === null || !initPositions) {
-  const basePosition = [
-    { attr: "4", x: 0 },
-    { attr: "1", x: 0.25 },
-    { attr: "5", x: 0.75 },
-    { attr: "2", x: 0.375 },
-    { attr: "3", x: 0.375 },
-    { attr: "6", x: 0.375 },
-  ];
+
+const gridElements = document.querySelectorAll(".grid-item");
+
+if (initPositions === null || !initPositions || basePosition.length !== gridElements.length) {
   localStorage.setItem("dragPositions", JSON.stringify(basePosition));
   initPositions = basePosition;
 }
@@ -82,6 +86,8 @@ function hideDraggable() {
   gridElements.forEach((element) => {
     element.style.border = "none";
   });
+  const gridElement = document.querySelector(".grid-drag");
+  gridElement.style.border = "none";
 }
 
 function showDraggable() {
@@ -90,6 +96,8 @@ function showDraggable() {
   gridElements.forEach((element) => {
     element.style.border = "1px dashed grey";
   });
+  const gridElement = document.querySelector(".grid-drag");
+  gridElement.style.border = "1px dashed grey";
 }
 
 function toggleEditDashboard() {
