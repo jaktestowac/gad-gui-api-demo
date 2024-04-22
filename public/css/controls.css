@@ -44,6 +44,7 @@ pre {
   border: 1px solid #ced4da;
   border-radius: 0.25rem;
 }
+
 button {
   display: inline-block;
   font-weight: 400;
@@ -886,6 +887,10 @@ body {
 
 .grid-item--width4 {
   width: 400px;
+}
+
+.grid-item--height1 {
+  height: 100px;
 }
 
 .grid-item--height2 {
