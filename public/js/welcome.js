@@ -28,8 +28,12 @@ checkIfFeatureEnabled("feature_user_bookmark_articles").then((isEnabled) => {
   }
 });
 
-const editAccountButton = document.querySelector("#btnEditLink");
-editAccountButton.setAttribute("href", `/user.html?id=${getId()}`);
+const visitMyAccountButtons = document.querySelectorAll(".btnMyAccountLink");
+if (visitMyAccountButtons) {
+  for (let button of visitMyAccountButtons) {
+    button.setAttribute("href", `/user.html?id=${getId()}`);
+  }
+}
 
 const articlesLinkButton = document.querySelector("#btnArticlesLink");
 articlesLinkButton.setAttribute("href", `/articles.html?user_id=${getId()}`);
@@ -57,3 +61,10 @@ function deleteAccount() {
 }
 
 document.querySelector("#btnDeleteAccount").addEventListener("click", deleteAccount);
+
+let avatar = getCookieAvatar();
+const avatarElement = document.querySelector("#myAvatar");
+if (avatarElement) {
+  avatarElement.src = `./../${avatar}`;
+}
+

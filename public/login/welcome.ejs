@@ -9,6 +9,9 @@
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
   <link rel="stylesheet" href="./css/controls.css" />
   <link rel="stylesheet" href="./css/style.css" />
+  <script src="./js/libs/jquery/jquery.min.js"></script>
+  <script src="./js/libs/packery/packery.pkgd.min.js"></script>
+  <script src="./js/libs/packery/draggabilly.pkgd.min.js"></script>
 </head>
 
 <body>
@@ -22,38 +25,69 @@
   <br />
   <br />
   <br />
-  <div class="container" id="pageHeader" style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center">
-    <div class="welcome">
-      <div align="center">
-        <h2 data-testid="hello">Hi <%=username%>!</h2>
-        <h2 id="countDown" data-testid="countDown">Session will expire in: Counting time...</h2>
+  <div align="center">
+    <div class="grid">
+      <div class="grid-item grid-item--width4" data-item-id="1">
+        <div class="handle"></div>
+        <div style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center">
+          <div align="center">
+            <h2 data-testid="hello">Hi <%=username%>!</h2>
+            <h2 id="countDown" data-testid="countDown">Session will expire in: Counting time...</h2>
+          </div>
+        </div>
       </div>
-      <br />
-      <div class="separator">Quick Navigation</div>
-      <div align="center">
-        <br />
-        <a href="/users.html" id="btnEditLink"> <button class="button-primary">My profile</button> </a><br /><br />
-        <a href="/users.html" id="btnArticlesLink"> <button class="button-primary">My articles</button> </a><br /><br />
-        <a href="../surveys.html" id="btnSurveysLink"> <button class="button-primary">Surveys</button> </a><br /><br />
-        <a href="../games.html" id="btnGamesLink"> <button class="button-primary">Games</button> </a><br /><br />
-        <span id="additionalBtns"></span>
+      <div class="grid-item grid-item--width2" data-item-id="2">
+        <div class="handle"></div>
+        <div style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center">
+          <div style="width: 100%;">
+            <div class="separator">Quick Navigation</div>
+            <div align="center">
+              <br />
+              <a href="/users.html" id="btnMyAccountLink" class="btnMyAccountLink"> <button class="button-primary">My profile</button> </a><br /><br />
+              <a href="/users.html" id="btnArticlesLink"> <button class="button-primary">My articles</button> </a><br /><br />
+              <a href="../surveys.html" id="btnSurveysLink"> <button class="button-primary">Surveys</button> </a><br /><br />
+              <a href="../games.html" id="btnGamesLink"> <button class="button-primary">Games</button> </a><br /><br />
+              <span id="additionalBtns"></span>
+            </div>
+          </div>
+        </div>
       </div>
-      <br />
-
-      <div class="separator">Account Management</div>
-      <br />
-      <div align="center">
-        <a href="/logout">
-          <button id="btnLogout" data-testid="logoutButton" class="button-primary-warning">Logout</button>
-        </a>
+      <div class="grid-item grid-item--width2" data-item-id="3">
+        <div class="handle"></div>
+        <div style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center">
+          <div style="width: 100%;">
+            <div class="separator">Account Management</div>
+            <br />
+            <div align="center">
+              <a href="/logout">
+                <button id="btnLogout" data-testid="logoutButton" class="button-primary-warning">Logout</button>
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
-      <br />
-      <br />
-
-      <div class="separator">Danger Zone</div>
-      <br />
-      <div align="center">
-        <button id="btnDeleteAccount" data-testid="deleteButton" class="button-primary-danger">Delete Account</button>
+      <div class="grid-item grid-item--width2 grid-item--height2" data-item-id="4">
+        <div class="handle"></div>
+      </div>
+      <div class="grid-item grid-item--width2" data-item-id="5">
+        <div class="handle"></div>
+        <div>
+          <img class="myAvatar" id="myAvatar" width="150px"><br />
+          <a href="/users.html" id="btnMyAccountLink" class="btnMyAccountLink"> <button class="button-primary">My profile</button> </a><br /><br />
+          <button id="btnEditDashbaord" class="button-primary" >Edit Dashboard</button>
+        </div>
+      </div>
+      <div class="grid-item grid-item--width2" data-item-id="6">
+        <div class="handle"></div>
+        <div style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center">
+          <div style="width: 100%;">
+            <div class="separator">Danger Zone</div>
+            <br />
+            <div align="center">
+              <button id="btnDeleteAccount" data-testid="deleteButton" class="button-primary-danger">Delete Account</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -64,5 +98,6 @@
 <script type="text/javascript" src="version.js"></script>
 <script type="text/javascript" src="username.js"></script>
 <script type="text/javascript" src="cookieExpiration.js"></script>
+<script type="text/javascript" src="../js/draggableLayout.js"></script>
 
 </html>

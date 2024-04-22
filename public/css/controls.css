@@ -837,3 +837,65 @@ s .container-mobile {
   align-items: center;
   color: white;
 }
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: sans-serif;
+}
+
+.grid {
+  max-width: 800px;
+  width: 800px;
+}
+
+.grid:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+/* ---- .grid-item ---- */
+
+.grid-item {
+  float: left;
+  width: 100px;
+  min-height: 100px;
+  border: 1px dashed grey;
+}
+
+.handle {
+  height: 22px;
+  background: rgb(209, 209, 209);
+  position: relative;
+}
+
+.handle:before {
+  content: "⠿";
+  position: absolute;
+  left: 0;
+  right: 0;
+  color: gray;
+}
+
+.grid-item--width2 {
+  width: 200px;
+}
+
+.grid-item--width4 {
+  width: 400px;
+}
+
+.grid-item--height2 {
+  height: 200px;
+}
+
+.grid-item--height3 {
+  height: 300px;
+}
+
+.grid-item--height4 {
+  height: 400px;
+}
