@@ -105,14 +105,14 @@ function toggleEditDashboard() {
   if (handleElements[0].style.display === "none") {
     showDraggable();
     const button = document.querySelector("#btnEditDashbaord");
-    button.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Save Dashboard`;
+    button.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Save this Dashboard`;
   } else {
     // save drag positions
     const positions = $grid.packery("getShiftPositions", "data-item-id");
     localStorage.setItem("dragPositions", JSON.stringify(positions));
     hideDraggable();
     const button = document.querySelector("#btnEditDashbaord");
-    button.innerHTML = `<i class="fa-solid fa-pen-to-square"></i> Edit Dashboard`;
+    button.innerHTML = `<i class="fa-solid fa-pen-to-square"></i> Edit this Dashboard`;
   }
 }
 
