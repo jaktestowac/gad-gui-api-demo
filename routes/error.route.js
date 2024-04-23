@@ -31,7 +31,8 @@ const randomErrorsRoutes = (req, res, next) => {
     if (resourceCreatedRecently === true) {
       const elapsedSeconds = elapsedSecondsSinceCreation(`articles/${id}`);
       return res.status(404).send({
-        message: "404 error on first GET",
+        message: "404 error on too recent GET",
+        resource: req.url,
         details: `Resource created ${elapsedSeconds}[s] ago. Wait till: ${getConfigValue(
           ConfigKeys.MIN_SECONDS_FOR_RESOURCE_CREATED_RECENTLY_BUG
         )}[s]`,
@@ -51,7 +52,8 @@ const randomErrorsRoutes = (req, res, next) => {
     if (resourceCreatedRecently === true) {
       const elapsedSeconds = elapsedSecondsSinceCreation(`articles/${id}`);
       return res.status(404).send({
-        message: "404 error on first GET",
+        message: "404 error on too recent GET",
+        resource: req.url,
         details: `Resource created ${elapsedSeconds}[s] ago. Wait till: ${getConfigValue(
           ConfigKeys.MIN_SECONDS_FOR_RESOURCE_CREATED_RECENTLY_BUG
         )}[s]`,

@@ -1,3 +1,5 @@
+const { roundNumber } = require("./number.helper");
+
 function getCurrentDateTime() {
   const now = new Date();
 
@@ -55,7 +57,7 @@ function addSecondsToDate(date, seconds) {
 }
 
 function calculateTimeDifferenceInSeconds(date1, date2) {
-  const differenceInSeconds = Math.floor((date2 - date1) / 1000);
+  const differenceInSeconds = roundNumber((date2 - date1) / 1000);
   return differenceInSeconds;
 }
 
