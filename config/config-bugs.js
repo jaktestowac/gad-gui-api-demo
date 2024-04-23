@@ -36,6 +36,8 @@ const bugConfig = {
   bug_game_ttt_003: false,
   bug_random_503: false,
   bug_random_404_get: false,
+  bug_404_if_comment_created_recently: false,
+  bug_404_if_article_created_recently: false,
   bug_slower_responses_100ms: false,
   bug_slower_responses_500ms: false,
   bug_slower_responses_1000ms: false,

@@ -54,6 +54,11 @@ function addSecondsToDate(date, seconds) {
   return date;
 }
 
+function calculateTimeDifferenceInSeconds(date1, date2) {
+  const differenceInSeconds = Math.floor((date2 - date1) / 1000);
+  return differenceInSeconds;
+}
+
 module.exports = {
   getCurrentDateTime,
   getCurrentDateTimeISO,
@@ -61,4 +66,5 @@ module.exports = {
   formatYmd,
   addSecondsToDate,
   dateToDateStringISO,
+  calculateTimeDifferenceInSeconds,
 };
