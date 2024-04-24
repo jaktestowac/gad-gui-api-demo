@@ -114,16 +114,17 @@ function getCumulativeValuesByDayOfWeek(data) {
   return cumulativeData;
 }
 
-function displayData(dataType, dataResolution, labels, data) {
+function displayData(dataType, dataResolution, labels, data, animationDuration) {
   displayChart(
     labels,
     [{ label: dataType, data: data }],
     "chartPlaceholder",
-    `${dataType} Publication Trends by ${dataResolution}`
+    `${dataType} Publication Trends by ${dataResolution}`,
+    animationDuration
   );
 }
 
-function displayChart(x, y, chartId, title) {
+function displayChart(x, y, chartId, title, animationDuration = 400) {
   if (window.myCharts === undefined) {
     window.myCharts = {};
   }
@@ -150,6 +151,9 @@ function displayChart(x, y, chartId, title) {
       datasets: datasets,
     },
     options: {
+      animation: {
+        duration: animationDuration,
+      },
       scale: {
         min: 0,
       },
@@ -169,36 +173,39 @@ function displayChart(x, y, chartId, title) {
 function getAndDisplayData(dataType, dataResolution) {
   dataResolution = dataResolution ?? "month";
   dataType = dataType ?? "articles";
+  let dataSet = [];
+  let labels = MONTHS;
+  let animationDuration = 1000;
 
   if (dataType.toLowerCase() === "articles") {
     issueGetArticlesStatsRequest().then((data) => {
-      let dataSet = [];
-      let labels = MONTHS;
       if (dataResolution === "day") {
         dataSet = sortCumulativeData(parseDailyData(data.daily));
         labels = DAYS;
+        animationDuration = 2000;
       } else if (dataResolution === "day-of-week") {
         dataSet = sortCumulativeData(getCumulativeValuesByDayOfWeek(data.daily));
         labels = DAYS_OF_WEEK;
+        animationDuration = 3000;
       } else {
         dataSet = sortCumulativeData(parseMonthlyData(data.monthly));
       }
-      displayData("Articles", dataResolution, labels, dataSet);
+      displayData("Articles", dataResolution, labels, dataSet, animationDuration);
     });
   } else if (dataType.toLowerCase() === "comments") {
     issueGetCommentsStatsRequest().then((data) => {
-      let dataSet = [];
-      let labels = MONTHS;
       if (dataResolution === "day") {
         dataSet = sortCumulativeData(parseDailyData(data.daily));
         labels = DAYS;
+        animationDuration = 2000;
       } else if (dataResolution === "day-of-week") {
         dataSet = sortCumulativeData(getCumulativeValuesByDayOfWeek(data.daily));
         labels = DAYS_OF_WEEK;
+        animationDuration = 3000;
       } else {
         dataSet = sortCumulativeData(parseMonthlyData(data.monthly));
       }
-      displayData("Comments", dataResolution, labels, dataSet);
+      displayData("Comments", dataResolution, labels, dataSet, animationDuration);
     });
   } else {
     console.error("Invalid data type");
