@@ -633,20 +633,33 @@ async function checkNewerVersion(force = false) {
     const versionUpToDate = getVersionStatusCookie();
     const latestVersionCookie = getLatestVersionCookie();
 
-    if (versionUpToDate === "1") {
-      const latestVersionCookie = getLatestVersionCookie();
+    if (versionUpToDate === "1" && latestVersionCookie !== undefined) {
       console.log("Using cached cookie data. Latest:", latestVersionCookie);
       displayUpToDateMessage(currentVersion, latestVersionCookie);
+
+      const versionInfoContainer = document.getElementById("versionDetails");
+      if (versionInfoContainer !== null) {
+        versionInfoContainer.innerHTML += `<div align="center">(Using cached cookie data. Valid for 5 minutes)</div>`;
+      }
       return;
     }
 
-    if (versionUpToDate === "2" && currentVersion < latestVersionCookie && force === false) {
-      const latestVersionCookie = getLatestVersionCookie();
+    if (
+      versionUpToDate === "2" &&
+      currentVersion < latestVersionCookie &&
+      force === false &&
+      latestVersionCookie !== undefined
+    ) {
       console.log("Using cached cookie data.. Latest:", latestVersionCookie);
       displayNewerVersionAvailableMessage(currentVersion, {
         name: latestVersionCookie,
         html_url: `${repository_url}/releases/tag/${latestVersionCookie}`,
       });
+
+      const versionInfoContainer = document.getElementById("versionInfoBox");
+      if (versionInfoContainer !== null) {
+        versionInfoContainer.innerHTML += `<div align="center">(Using cached cookie data. Valid for 5 minutes)</div>`;
+      }
       return;
     }
 
