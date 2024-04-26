@@ -207,7 +207,7 @@ const getItemHTML = (item) => {
   }
 
   const body = item.body?.replaceAll("\n", "<br/><br/>");
-  return `<div>
+  return `<div class="item-card">
         ${controls}<br>
         ${getImagesHTML(item.image)}
         <div align="center" style="" class="visits-container" id="visits-container-${
@@ -266,7 +266,7 @@ const getCommentsHTML = (comments, error) => {
   let htmlData = "";
   let errorMsg = error ?? "No Comments";
   if (comments === undefined || comments?.length == 0) {
-    htmlData = `<div class="comment-container">
+    htmlData = `<div class="comment-container item-card">
         <span>${errorMsg}</span><br>
     </div>`;
   } else {
@@ -283,7 +283,7 @@ const getCommentHTML = (comments) => {
     comments.body = "<i>[Comment was removed]</i>";
   }
 
-  return `<div class="comment-container">
+  return `<div class="comment-container item-card">
         <label>id:</label><span class="super-style">${comments.id}</span><br>
         <label>author:</label><span><a href="user.html?id=${comments.user_id}" id="gotoUser${comments.id}-${
     comments.user_id
@@ -318,12 +318,12 @@ const displayCommentsData = (comments, error) => {
 
 const displayComments = (comments, container, error) => {
   let itemHTML = getCommentsHTML(comments, error);
-  container.innerHTML += `<div align="center" ><div class="card-wrapper-wide" align="left">${itemHTML}</div></div><br>`;
+  container.innerHTML += `<div align="center" ><div class="card-wrapper-wide item-card" align="left">${itemHTML}</div></div><br>`;
 };
 
 const displayItem = (item, container) => {
   let itemHTML = getItemHTML(item);
-  container.innerHTML += `<div align="center" ><div class="card-wrapper-wide" align="left">${itemHTML}</div></div>`;
+  container.innerHTML += `<div align="center" ><div class="card-wrapper-wide item-card" align="left">${itemHTML}</div></div>`;
 
   if (labelsEnabled === true) {
     for (let index = 0; index < assignedLabels.length; index++) {

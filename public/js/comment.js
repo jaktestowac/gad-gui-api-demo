@@ -44,7 +44,7 @@ const getItemHTML = (item) => {
   let controls = "";
 
   if (item.id !== undefined && item.id !== "undefined") {
-    controls = `<div class="controls" >
+    controls = `<div class="controls item-card">
             <i class="fas fa-edit edit" data-testid="edit" id="${item.id}"></i>
         </div>`;
     // <i class="fas fa-trash delete" id="${item.id}"></i>
@@ -52,7 +52,7 @@ const getItemHTML = (item) => {
   if (item.body === undefined || item.body.length === 0) {
     item.body = "<i>[Comment was removed]</i>";
   }
-  return `<div style="width:500px;">
+  return `<div style="width:500px;" class="item-card">
         <span><a href="article.html?id=${item.article_id}" id="gotoArticle${
     item.article_id
   }" data-testid="return">Return to Article...</a></span><br>
@@ -264,7 +264,7 @@ const showEditForm = (ev) => {
 
 const displayForm = (item, container) => {
   container.innerHTML = `
-        <div style="margin-top:7px; ">
+        <div style="margin-top:7px; " class="item-card">
             <label>comment id:</label><span>${item.id}</span><br>
             <input style="visibility:hidden;" type="text" id="id" data-testid="id-input" value="${item.id}"><br>
             <label>body:</label><br>

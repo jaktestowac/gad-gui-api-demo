@@ -910,3 +910,115 @@ body {
 .grid-item--height4 {
   height: 400px;
 }
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: sans-serif;
+  background-color: #fff;
+  color: #000;
+}
+
+body.darkmode {
+  background-color: #000;
+  color: #fff;
+}
+
+.darkmode .item-card {
+  background-color: #1f1f1f !important;
+  color: #9b9b9b !important;
+}
+
+.darkmode .navigation-bar {
+  background-color: #1f1f1f !important;
+  color: #9b9b9b !important;
+}
+
+.darkmode .add-new-panel .close {
+  color: rgb(163, 163, 163);
+  position: absolute;
+  font-size: 2.5em;
+  border-width: 0px;
+  padding-bottom: 5px;
+  background: none;
+  top: 0vh;
+  line-height: 1em;
+  right: 0vh;
+}
+.darkmode .add-new-panel .close:hover {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.darkmode textarea {
+  background-color: #b8b8b8;
+  color: #131313;
+}
+
+.darkmode input {
+  background-color: #b8b8b8;
+  color: #131313;
+}
+
+.darkmode .separator::before {
+  border-bottom: #b1b1b1 1px solid !important;
+}
+
+.darkmode .separator::after {
+  border-bottom: #b1b1b1 1px solid !important;
+}
+
+.darkmode #scores table {
+  border: #868686 1px solid !important;
+}
+
+.darkmode #scores table td {
+  border: #868686 1px solid !important;
+}
+
+.darkmode #scores table th {
+  border: #868686 1px solid !important;
+}
+
+.darkmode .dropdown-content {
+  background-color: #818181;
+  color: #131313;
+}
+
+.darkmode .cell {
+  background-color: #818181;
+  color: #131313;
+}
+
+.darkmode .whacker-hole {
+  background-color: #818181;
+  color: #131313;
+}
+
+.darkmode #game-container {
+  background-color: #818181;
+  color: #131313;
+}
+
+.darkmode .test-description {
+  background-color: #818181;
+  color: #131313;
+}
+
+.darkmode canvas {
+  background-color: #c4c4c4;
+  color: #131313;
+}
+
+.darkmode #tableChart {
+  border: #868686 1px solid !important;
+}
+
+.darkmode #tableChart td {
+  border: #868686 1px solid !important;
+}
+
+.darkmode #tableChart th {
+  border: #868686 1px solid !important;
+}

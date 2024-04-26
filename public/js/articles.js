@@ -314,7 +314,7 @@ const getImagesHTML = (image) => {
 };
 
 const getItemHTML = (item) => {
-  return `<div id="article${item.id}" data-testid="article-${item.id}">
+  return `<div id="article${item.id}" class="item-card" data-testid="article-${item.id}">
   <a href="article.html?id=${item.id}" id="gotoArticle${item.id}" data-testid="article-${item.id}-link">${getImagesHTML(
     item.image
   )}</a><br>

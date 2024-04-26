@@ -347,7 +347,7 @@ const displayForm = (item, container) => {
 const displayEmailForm = (item, container) => {
   const userEmail = getId() === "admin" ? item.email : getCookieEmail();
   container.innerHTML = `
-        <div style="margin-top:7px;">
+        <div style="margin-top:7px;" class="item-card">
             <label>id:</label><span>${item.id}</span><br>
             <label>firstname:</label>${item.firstname}<br>
             <label>lastname:</label>${item.lastname}<br>
@@ -372,7 +372,7 @@ const getItemHTML = (item) => {
         </div>`;
   }
 
-  return `<div>
+  return `<div class="item-card">
         ${controls}
         <label>id:</label><span data-testid="id">${item.id}</span><br>
         <label>firstname:</label><span  data-testid="firstname">${item.firstname}</span><br>
