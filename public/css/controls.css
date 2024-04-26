@@ -1012,15 +1012,15 @@ body.darkmode {
   color: #131313;
 }
 
-.darkmode #tableChart {
+.darkmode #tableData {
   border: #868686 1px solid !important;
 }
 
-.darkmode #tableChart td {
+.darkmode #tableData td {
   border: #868686 1px solid !important;
 }
 
-.darkmode #tableChart th {
+.darkmode #tableData th {
   border: #868686 1px solid !important;
 }
 
