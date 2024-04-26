@@ -1,15 +1,3 @@
-function getId() {
-  let id = undefined;
-  const cookies = document.cookie.split(";");
-  for (let cookie of cookies) {
-    cookie = cookie.trim();
-    if (cookie.startsWith("id=")) {
-      id = cookie.split("=")[1];
-    }
-  }
-  return id;
-}
-
 function removeNotAvailableLabel() {
   const container = document.querySelector("#notAvailableLbl");
   if (container) {

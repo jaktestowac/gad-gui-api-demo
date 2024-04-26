@@ -108,22 +108,22 @@ function wasSkipped() {
   return checkIfAdvertSkipped();
 }
 
-function checkCookie() {
-  var name = "advertCookie=";
-  var cookies = document.cookie.split(";");
+// function checkCookie() {
+//   var name = "advertCookie=";
+//   var cookies = document.cookie.split(";");
 
-  for (var i = 0; i < cookies.length; i++) {
-    var cookie = cookies[i];
-    while (cookie.charAt(0) == " ") {
-      cookie = cookie.substring(1);
-    }
+//   for (var i = 0; i < cookies.length; i++) {
+//     var cookie = cookies[i];
+//     while (cookie.charAt(0) == " ") {
+//       cookie = cookie.substring(1);
+//     }
 
-    if (cookie.indexOf(name) === 0) {
-      return cookie.substring(name.length, cookie.length);
-    }
-  }
-  return "";
-}
+//     if (cookie.indexOf(name) === 0) {
+//       return cookie.substring(name.length, cookie.length);
+//     }
+//   }
+//   return "";
+// }
 
 function checkIfAdvertSkipped() {
   const advert = getLocalStorage("advert");

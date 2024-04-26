@@ -1,31 +1,13 @@
 function darkmode_init() {
   let darkmodeSwitch = document.querySelector("#darkmode-switch");
 
-  let darkmodeCookie = {
-    set: function (key, value, time, path, secure = false) {
-      let expires = new Date();
-      expires.setTime(expires.getTime() + time);
-      const pathFinal = typeof path !== "undefined" ? (pathValue = "path=" + path + ";") : "";
-      const secureFinal = secure ? ";secure" : "";
-
-      document.cookie = key + "=" + value + ";" + pathFinal + "expires=" + expires.toUTCString() + secureFinal;
-    },
-    get: function () {
-      let keyValue = document.cookie.match("(^|;) ?darkmode=([^;]*)(;|$)");
-      return keyValue ? keyValue[2] : null;
-    },
-    remove: function () {
-      document.cookie = "darkmode=; Max-Age=0; path=/";
-    },
-  };
-
-  if (darkmodeCookie.get() == "true") {
+  if (getCookie("darkmode") === "1") {
     document.body.classList.add("darkmode");
   }
 
   if (darkmodeSwitch === null) return;
 
-  if (darkmodeCookie.get() == "true") {
+  if (getCookie("darkmode") === "1") {
     darkmodeSwitch.classList.add("active");
     darkmodeSwitch.innerHTML = '<i class="fas fa-sun"></i>';
   } else {
@@ -38,10 +20,10 @@ function darkmode_init() {
     document.body.classList.toggle("darkmode");
 
     if (document.body.classList.contains("darkmode")) {
-      darkmodeCookie.set("darkmode", "true", 2628000000, "/", false);
+      addCookie("darkmode", 1);
       darkmodeSwitch.innerHTML = '<i class="fas fa-sun"></i>';
     } else {
-      darkmodeCookie.remove();
+      addCookie("darkmode", 0);
       darkmodeSwitch.innerHTML = '<i class="fas fa-moon"></i>';
     }
   });

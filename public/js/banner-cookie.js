@@ -15,25 +15,7 @@ function hideInfobar() {
 }
 
 function wasAccepted() {
-  return checkCookie() === "1";
-}
-
-function checkCookie() {
-  let name = "bannerCookie=";
-  let cookies = document.cookie.split(";");
-  let found = "";
-
-  for (let i = 0; i < cookies.length; i++) {
-    let cookie = cookies[i];
-    while (cookie.charAt(0) == " ") {
-      cookie = cookie.substring(1);
-    }
-
-    if (cookie.indexOf(name) === 0) {
-      found = cookie.substring(name.length, cookie.length);
-    }
-  }
-  return found;
+  return checkIfCookieExists("bannerCookie=") === "1";
 }
 
 function saveCookieAcceptInCookies(daysOfValidity) {

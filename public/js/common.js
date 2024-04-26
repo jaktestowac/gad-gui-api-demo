@@ -28,6 +28,23 @@ function getLocalStorage(id) {
   }
 }
 
+function checkIfCookieExists(name) {
+  let cookies = document.cookie.split(";");
+  let found = "";
+
+  for (let i = 0; i < cookies.length; i++) {
+    let cookie = cookies[i];
+    while (cookie.charAt(0) == " ") {
+      cookie = cookie.substring(1);
+    }
+
+    if (cookie.indexOf(name) === 0) {
+      found = cookie.substring(name.length, cookie.length);
+    }
+  }
+  return found;
+}
+
 function getCookieEmail() {
   let email = undefined;
   const cookies = document.cookie.split(";");
@@ -39,6 +56,30 @@ function getCookieEmail() {
     }
   }
   return email;
+}
+
+function getCookieUserName() {
+  let firstname = undefined;
+  const cookies = document.cookie.split(";");
+  for (let cookie of cookies) {
+    cookie = cookie.trim();
+    if (cookie.startsWith("firstname=")) {
+      firstname = cookie.split("=")[1];
+    }
+  }
+  return firstname;
+}
+
+function getCookieExpired() {
+  let expires = undefined;
+  const cookies = document.cookie.split(";");
+  for (let cookie of cookies) {
+    cookie = cookie.trim();
+    if (cookie.startsWith("expires=")) {
+      expires = cookie.split("=")[1];
+    }
+  }
+  return parseInt(expires);
 }
 
 function getCookieId() {
@@ -70,12 +111,12 @@ function getCookie(cookieName) {
   return cookieValue;
 }
 
-function addCookie(cookieName, value, daysOfValidity) {
+function addCookie(cookieName, value, daysOfValidity = 9999) {
   var now = new Date();
   var time = now.getTime() + daysOfValidity * 24 * 60 * 60 * 1000;
   var newTime = new Date(now.setTime(time));
   newTime = newTime.toUTCString();
-  document.cookie = `${cookieName}=${value?.toLowerCase()}; expires=${newTime}; SameSite=Lax; path=/`;
+  document.cookie = `${cookieName}=${`${value}`?.toLowerCase()}; expires=${newTime}; SameSite=Lax; path=/`;
 }
 
 function addVersionStatusCookie(status) {
