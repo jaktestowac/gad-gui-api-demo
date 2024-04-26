@@ -41,7 +41,7 @@ function displayBanner() {
   btnAccept.addEventListener("click", function (e) {
     e.preventDefault();
     hideInfobar();
-    saveCookieAcceptInCookies(1);
+    saveCookieAcceptInCookies(0.1);
   });
 
   var btnReject = document.querySelector("#cookies-infobar-reject");

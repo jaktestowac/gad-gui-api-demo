@@ -947,6 +947,7 @@ body.darkmode {
   line-height: 1em;
   right: 0vh;
 }
+
 .darkmode .add-new-panel .close:hover {
   background: rgba(0, 0, 0, 0.4);
 }
@@ -982,7 +983,7 @@ body.darkmode {
 }
 
 .darkmode .dropdown-content {
-  background-color: #818181;
+  background-color: #cacaca;
   color: #131313;
 }
 
@@ -1021,4 +1022,21 @@ body.darkmode {
 
 .darkmode #tableChart th {
   border: #868686 1px solid !important;
+}
+
+.darkmode .table-bor {
+  border: #868686 1px solid !important;
+}
+
+.darkmode .table-bor td {
+  border: #868686 1px solid !important;
+  color: white !important;
+}
+
+.darkmode .table-bor th {
+  border: #868686 1px solid !important;
+}
+
+.darkmode svg > rect {
+  fill: #e9e9e9 !important;
 }

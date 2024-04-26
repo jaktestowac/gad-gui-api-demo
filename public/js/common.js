@@ -42,6 +42,7 @@ function checkIfCookieExists(name) {
       found = cookie.substring(name.length, cookie.length);
     }
   }
+  console.log("Cookie found:", found);
   return found;
 }
 
