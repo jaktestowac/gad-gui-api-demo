@@ -110,6 +110,24 @@ Bash:
 READ_ONLY=1 npm run start
 ```
 
+### Run on selected port
+
+GAD runs on default port `3000`.
+
+To run GAD on **selected port**, use the following commands:
+
+PowerShell:
+
+```PowerShell
+$env:PORT=3001; npm run start
+```
+
+Bash:
+
+```Bash
+PORT=3001 npm run start
+```
+
 ## Deploy to **Glitch**
 
 No account needed - but your project will be deleted in 5 days.

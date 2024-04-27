@@ -1,7 +1,7 @@
 const { isBugEnabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
 const { sleep } = require("../helpers/helpers");
-const { logTrace } = require("../helpers/logger-api");
+const { logTrace, logInsane } = require("../helpers/logger-api");
 const { addResourceCreationDate } = require("../helpers/temp-data-store");
 
 function renderResponse(req, res) {
@@ -9,7 +9,7 @@ function renderResponse(req, res) {
     const users = res.locals.data;
     let loggedUser = req.cookies.id;
     let usersMapped;
-    logTrace("User anonymization:", { length: users.length, loggedUser });
+    logTrace("RenderResponse: User anonymization:", { length: users.length, loggedUser });
     if (users?.length > 0) {
       usersMapped = users.map((user) => {
         if (!loggedUser) {
@@ -21,6 +21,8 @@ function renderResponse(req, res) {
         user.password = "****";
         return user;
       });
+      
+      usersMapped = usersMapped.filter((article) => article._inactive === undefined || article?._inactive === false);
     } else {
       // This is for single user
       usersMapped = users;
@@ -31,6 +33,11 @@ function renderResponse(req, res) {
         usersMapped.lastname = "****";
       }
       usersMapped.password = "****";
+
+      if (usersMapped?._inactive === true) {
+        usersMapped = {};
+        res.status(404);
+      }
     }
     res.jsonp(usersMapped);
   } else if (req.method === "POST" && req.url.includes("users")) {
@@ -40,6 +47,7 @@ function renderResponse(req, res) {
     });
   } else if (req.method === "GET" && req.url.includes("articles")) {
     const articles = res.locals.data;
+    logInsane("RenderResponse: returning articles:", { length: articles.length });
     if (articles?.length > 0) {
       let articlesMapped = articles.filter(
         (article) => article._inactive === undefined || article?._inactive === false
@@ -48,6 +56,7 @@ function renderResponse(req, res) {
         const { _inactive, ...rest } = article;
         return rest;
       });
+      logTrace("RenderResponse: Articles:", { withInactive: articles.length, withoutInactive: articlesMapped.length });
       res.jsonp(articlesMapped);
     } else {
       let articlesMapped = articles;
@@ -59,6 +68,7 @@ function renderResponse(req, res) {
     }
   } else if (req.method === "GET" && req.url.includes("comments")) {
     const comments = res.locals.data;
+    logInsane("RenderResponse: returning comments:", { length: comments.length });
 
     if (comments?.length > 0) {
       let commentsMapped = comments.filter(
@@ -68,6 +78,7 @@ function renderResponse(req, res) {
         const { _inactive, ...rest } = comment;
         return rest;
       });
+      logTrace("RenderResponse: Comments:", { withInactive: comments.length, withoutInactive: commentsMapped.length });
       res.jsonp(commentsMapped);
     } else {
       let commentsMapped = comments;

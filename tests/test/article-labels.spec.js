@@ -1,6 +1,6 @@
-const { request, expect, sleepTime, baseArticleLabelsUrl } = require("../config.js");
+const { request, expect, baseArticleLabelsUrl } = require("../config.js");
 const { authUser } = require("../helpers/data.helpers.js");
-const { setupEnv, gracefulQuit, sleep } = require("../helpers/helpers.js");
+const { setupEnv, gracefulQuit } = require("../helpers/helpers.js");
 
 describe("Endpoint /article-labels", () => {
   const baseUrl = baseArticleLabelsUrl;

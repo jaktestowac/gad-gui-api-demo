@@ -6,7 +6,7 @@ const {
   generateValidCommentData,
   prepareUniqueArticle,
 } = require("../helpers/data.helpers.js");
-const { gracefulQuit, setupEnv } = require("../helpers/helpers.js");
+const { gracefulQuit, setupEnv, sleep } = require("../helpers/helpers.js");
 
 describe("Endpoint /comments", () => {
   const baseUrl = baseCommentsUrl;
@@ -238,6 +238,39 @@ describe("Endpoint /comments", () => {
       testData.id = response.body.id;
       testData.user_id = userId;
       expect(response.body).to.deep.equal(testData);
+    });
+
+    it("POST /comments - should not reuse ID of deleted comments @e2e", async () => {
+      // Arrange:
+      const testData = generateValidCommentData();
+      testData.user_id = userId;
+
+      // Act:
+      const responsePost = await request.post(baseUrl).set(headers).send(testData);
+
+      // Assert:
+      expect(responsePost.status, JSON.stringify(responsePost.body)).to.equal(201);
+      const baseId = responsePost.body.id;
+
+      await sleep(100);
+
+      // Act:
+      const responseDelete = await request.delete(`${baseUrl}/${baseId}`).set(headers);
+
+      // Assert:
+      expect(responseDelete.status).to.equal(200);
+
+      // Create new article:
+      // Act:
+      const responsePost2 = await request.post(baseUrl).set(headers).send(testData);
+
+      await sleep(100);
+
+      // Assert:
+      expect(responsePost2.status, JSON.stringify(responsePost2.body)).to.equal(201);
+      const newBaseId = responsePost2.body.id;
+      expect(baseId).to.not.equal(newBaseId);
+      expect(baseId + 1).to.equal(newBaseId);
     });
 
     describe("PUT", () => {

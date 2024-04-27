@@ -26,7 +26,7 @@ describe("Endpoint /articles with slower GAD", async function () {
       userId = data.userId;
     });
 
-    it("POST /articles - should create article but GAD is slow and GET returns 404", async () => {
+    it("POST /articles - should create article but GAD is slow and GET returns 404 @e2e", async () => {
       // Arrange:
       const testData = generateValidArticleData();
       testData.user_id = userId;
