@@ -38,6 +38,45 @@ function renderResponse(req, res) {
     sleep(100).then((x) => {
       res.jsonp(res.locals.data);
     });
+  } else if (req.method === "GET" && req.url.includes("articles")) {
+    const articles = res.locals.data;
+    if (articles?.length > 0) {
+      let articlesMapped = articles.filter(
+        (article) => article._inactive === undefined || article?._inactive === false
+      );
+      articlesMapped = articlesMapped.map((article) => {
+        const { _inactive, ...rest } = article;
+        return rest;
+      });
+      res.jsonp(articlesMapped);
+    } else {
+      let articlesMapped = articles;
+      if (articlesMapped?._inactive === true) {
+        articlesMapped = {};
+        res.status(404);
+      }
+      res.jsonp(articlesMapped);
+    }
+  } else if (req.method === "GET" && req.url.includes("comments")) {
+    const comments = res.locals.data;
+
+    if (comments?.length > 0) {
+      let commentsMapped = comments.filter(
+        (comment) => comment._inactive === undefined || comment?._inactive === false
+      );
+      commentsMapped = commentsMapped.map((comment) => {
+        const { _inactive, ...rest } = comment;
+        return rest;
+      });
+      res.jsonp(commentsMapped);
+    } else {
+      let commentsMapped = comments;
+      if (commentsMapped?._inactive === true) {
+        commentsMapped = {};
+        res.status(404);
+      }
+      res.jsonp(commentsMapped);
+    }
   } else {
     if (
       req.method === "POST" &&

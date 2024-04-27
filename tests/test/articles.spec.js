@@ -157,7 +157,7 @@ describe("Endpoint /articles", () => {
       expect(response.status).to.equal(200);
 
       const responseGet = await request.get(`${baseUrl}/${articleId}`).set(headers);
-      expect(userId).to.equal(responseGet.body.user_id);
+      expect(userId, JSON.stringify(responseGet.body)).to.equal(responseGet.body.user_id);
     });
 
     it("PUT /articles/:id - should not update different article", async () => {

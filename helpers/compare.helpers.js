@@ -14,6 +14,10 @@ function isUndefined(value) {
   return value === undefined;
 }
 
+function isInactive(obj) {
+  return obj?._inactive === true;
+}
+
 function isEmptyOrUndefined(value) {
   return (
     value === undefined ||
@@ -140,4 +144,5 @@ module.exports = {
   isStringOnTheList,
   isEmptyOrUndefined,
   compareDbObjects,
+  isInactive,
 };

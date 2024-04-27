@@ -55,9 +55,9 @@ async function setupEnv() {
   expect(responseFeature.status).to.equal(200);
 }
 
-async function enable404Bug() {
+async function toggle404Bug(value) {
   const requestBody = {
-    bug_404_if_article_created_recently: true,
+    bug_404_if_article_created_recently: value,
   };
   const response = await request.post("/api/config/bugs").send(requestBody);
   expect(response.status).to.equal(200);
@@ -68,5 +68,5 @@ module.exports = {
   gracefulQuit,
   setupEnv,
   getCurrentDate,
-  enable404Bug,
+  toggle404Bug,
 };

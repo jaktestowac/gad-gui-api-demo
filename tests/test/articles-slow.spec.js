@@ -1,16 +1,17 @@
-const { baseArticlesUrl, request, faker, expect } = require("../config.js");
+const { baseArticlesUrl, request, expect } = require("../config.js");
 const { authUser, generateValidArticleData } = require("../helpers/data.helpers.js");
-const { setupEnv, gracefulQuit, enable404Bug, sleep } = require("../helpers/helpers.js");
+const { setupEnv, gracefulQuit, toggle404Bug, sleep } = require("../helpers/helpers.js");
 
 describe("Endpoint /articles with slower GAD", async function () {
   const baseUrl = baseArticlesUrl;
 
   before(async () => {
     await setupEnv();
-    await enable404Bug();
+    await toggle404Bug(true);
   });
 
-  after(() => {
+  after(async () => {
+    await toggle404Bug(false);
     gracefulQuit();
   });
 

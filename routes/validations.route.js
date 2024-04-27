@@ -4,13 +4,14 @@ const { getConfigValue, isBugEnabled } = require("../config/config-manager");
 const { ConfigKeys, BugConfigKeys } = require("../config/enums");
 
 const { verifyAccessToken } = require("../helpers/validation.helpers");
-const { searchForUserWithToken } = require("../helpers/db-operation.helpers");
+const { searchForUserWithToken, searchForUser } = require("../helpers/db-operation.helpers");
 const {
   HTTP_UNAUTHORIZED,
   HTTP_INTERNAL_SERVER_ERROR,
   HTTP_BAD_REQUEST,
   HTTP_METHOD_NOT_ALLOWED,
   HTTP_SERVICE_UNAVAILABLE,
+  HTTP_NOT_FOUND,
 } = require("../helpers/response.helpers");
 const { handleHangman } = require("../endpoints/hangman-endpoint.helpers");
 const { handleQuiz } = require("../endpoints/quiz-endpoint.helpers");
@@ -24,7 +25,7 @@ const { handleGames } = require("../endpoints/games-endpoint.helpers");
 const { handleScores } = require("../endpoints/scores-endpoint.helpers");
 const { handleBookmarks } = require("../endpoints/bookmarks-endpoint.helpers");
 const { handleMinesweeper } = require("../endpoints/minesweeper-endpoint.helpers");
-const { areStringsEqualIgnoringCase, isUndefined } = require("../helpers/compare.helpers");
+const { areStringsEqualIgnoringCase, isUndefined, isInactive } = require("../helpers/compare.helpers");
 const { handleSurvey } = require("../endpoints/survey-endpoint.helpers");
 const { handleBugEater } = require("../endpoints/bug-eater-endpoint.helpers");
 const { handleTicTacToe } = require("../endpoints/tic-tak-toe-endpoint.helpers");
@@ -142,6 +143,14 @@ const validationsRoutes = (req, res, next) => {
       handleSurvey(req, res);
     }
 
+    if (req.method === "DELETE" && urlEnds.includes("/api/users/")) {
+      let userId = getIdFromUrl(urlEnds);
+      const foundUser = searchForUser(userId);
+      if (isUndefined(foundUser) || isInactive(foundUser)) {
+        res.status(HTTP_NOT_FOUND).send({});
+        return;
+      }
+    }
     if (
       req.method !== "GET" &&
       req.method !== "POST" &&
@@ -201,7 +210,13 @@ const validationsRoutes = (req, res, next) => {
       handleLabels(req, res);
     }
 
-    logTrace("Returning:", { statusCode: res.statusCode, headersSent: res.headersSent, urlEnds, method: req.method });
+    logTrace("validationsRoutes: Returning:", {
+      statusCode: res.statusCode,
+      headersSent: res.headersSent,
+      urlEnds,
+      method: req.method,
+      body: req.body,
+    });
 
     if (res.headersSent !== true) {
       logTrace("validationsRoutes:processing with next()...");
