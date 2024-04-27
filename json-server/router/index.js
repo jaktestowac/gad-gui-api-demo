@@ -1,36 +1,32 @@
-"use strict";
+const express = require("express");
+const methodOverride = require("method-override");
+const _ = require("lodash");
+const lodashId = require("lodash-id");
+const low = require("lowdb");
+const Memory = require("lowdb/adapters/Memory");
+const FileSync = require("lowdb/adapters/FileSync");
+const bodyParser = require("../body-parser");
+const validateData = require("./validate-data");
+const plural = require("./plural");
+const nested = require("./nested");
+const singular = require("./singular");
+const mixins = require("../mixins");
 
-var express = require("express");
-var methodOverride = require("method-override");
-var _ = require("lodash");
-var lodashId = require("lodash-id");
-var low = require("lowdb");
-var fileAsync = require("lowdb/lib/storages/file-async");
-var bodyParser = require("../body-parser");
-var validateData = require("./validate-data");
-var plural = require("./plural");
-var nested = require("./nested");
-var singular = require("./singular");
-var mixins = require("../mixins");
+module.exports = (db, opts) => {
+  opts = Object.assign({ foreignKeySuffix: "Id", _isFake: false }, opts);
 
-module.exports = function (source) {
-  var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : { foreignKeySuffix: "Id" };
+  if (typeof db === "string") {
+    db = low(new FileSync(db));
+  } else if (!_.has(db, "__chain__") || !_.has(db, "__wrapped__")) {
+    db = low(new Memory()).setState(db);
+  }
 
   // Create router
-  var router = express.Router();
+  const router = express.Router();
 
   // Add middlewares
   router.use(methodOverride());
   router.use(bodyParser);
-
-  // Create database
-  var db = void 0;
-  if (_.isObject(source)) {
-    db = low();
-    db.setState(source);
-  } else {
-    db = low(source, { storage: fileAsync });
-  }
 
   validateData(db.getState());
 
@@ -44,12 +40,12 @@ module.exports = function (source) {
   router.db = db;
 
   // Expose render
-  router.render = function (req, res) {
+  router.render = (req, res) => {
     res.jsonp(res.locals.data);
   };
 
   // GET /db
-  router.get("/api/db", function (req, res) {
+  router.get("/db", (req, res) => {
     res.jsonp(db.getState());
   });
 
@@ -57,10 +53,14 @@ module.exports = function (source) {
   router.use(nested(opts));
 
   // Create routes
-  db.forEach(function (value, key) {
-    // console.log(key, value);
+  db.forEach((value, key) => {
+    if (key === "$schema") {
+      // ignore $schema
+      return;
+    }
+
     if (_.isPlainObject(value)) {
-      router.use(`/${key}`, singular(db, key));
+      router.use(`/${key}`, singular(db, key, opts));
       return;
     }
 
@@ -69,18 +69,18 @@ module.exports = function (source) {
       return;
     }
 
-    var sourceMessage = "";
-    if (!_.isObject(source)) {
-      sourceMessage = `in ${source}`;
-    }
+    const sourceMessage = "";
+    // if (!_.isObject(source)) {
+    //   sourceMessage = `in ${source}`
+    // }
 
-    var msg = `
-            Type of "${key}" (${typeof value}) ${sourceMessage} 
-            is not supported. Use objects or arrays of objects.`;
+    const msg =
+      `Type of "${key}" (${typeof value}) ${sourceMessage} is not supported. ` + `Use objects or arrays of objects.`;
+
     throw new Error(msg);
   }).value();
 
-  router.use(function (req, res) {
+  router.use((req, res) => {
     if (!res.locals.data) {
       res.status(404);
       res.locals.data = {};
@@ -89,7 +89,7 @@ module.exports = function (source) {
     router.render(req, res);
   });
 
-  router.use(function (err, req, res, next) {
+  router.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send(err.stack);
   });

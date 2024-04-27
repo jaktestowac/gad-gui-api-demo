@@ -32,6 +32,14 @@ const existingUserEmail2 = "Henry.Spencer@test.test";
 const existingUserPass2 = "1234";
 const existingUserId2 = 11;
 
+const existingUserEmail3 = "m.altman@test.test";
+const existingUserPass3 = "1234";
+const existingUserId3 = 12;
+
+const existingUserEmail4 = "v.cortez@test.test";
+const existingUserPass4 = "1234";
+const existingUserId4 = 13;
+
 const sleepTime = 200; // in ms
 const logLevel = 2;
 const clearDbAfter = false;
@@ -71,4 +79,10 @@ module.exports = {
   baseTicTacToeUrl,
   baseBugEaterUrl,
   languagesUrl,
+  existingUserEmail3,
+  existingUserPass3,
+  existingUserId3,
+  existingUserEmail4,
+  existingUserPass4,
+  existingUserId4,
 };

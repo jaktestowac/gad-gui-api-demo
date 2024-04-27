@@ -1,26 +1,24 @@
-"use strict";
+const express = require("express");
+const _ = require("lodash");
+const pluralize = require("pluralize");
+const write = require("./write");
+const getFullURL = require("./get-full-url");
+const utils = require("../utils");
+const delay = require("./delay");
 
-var express = require("express");
-var _ = require("lodash");
-var pluralize = require("pluralize");
-var write = require("./write");
-var getFullURL = require("./get-full-url");
-var utils = require("../utils");
-var delay = require("./delay");
-
-module.exports = function (db, name, opts) {
+module.exports = (db, name, opts) => {
   // Create router
-  var router = express.Router();
+  const router = express.Router();
   router.use(delay);
 
   // Embed function used in GET /name and GET /name/id
   function embed(resource, e) {
     e &&
-      [].concat(e).forEach(function (externalResource) {
+      [].concat(e).forEach((externalResource) => {
         if (db.get(externalResource).value) {
-          var query = {};
-          var singularResource = pluralize.singular(name);
-          query[`${singularResource}_${opts.foreignKeySuffix.toLowerCase()}`] = resource.id;
+          const query = {};
+          const singularResource = pluralize.singular(name);
+          query[`${singularResource}${opts.foreignKeySuffix}`] = resource.id;
           resource[externalResource] = db.get(externalResource).filter(query).value();
         }
       });
@@ -29,11 +27,10 @@ module.exports = function (db, name, opts) {
   // Expand function used in GET /name and GET /name/id
   function expand(resource, e) {
     e &&
-      [].concat(e).forEach(function (innerResource) {
-        var plural = pluralize(innerResource);
+      [].concat(e).forEach((innerResource) => {
+        const plural = pluralize(innerResource);
         if (db.get(plural).value()) {
-          var singularResource = pluralize.singular(innerResource);
-          var prop = `${singularResource}_${opts.foreignKeySuffix.toLowerCase()}`;
+          const prop = `${innerResource}${opts.foreignKeySuffix}`;
           resource[innerResource] = db.get(plural).getById(resource[prop]).value();
         }
       });
@@ -47,19 +44,19 @@ module.exports = function (db, name, opts) {
   // GET /name?_embed=&_expand=
   function list(req, res, next) {
     // Resource chain
-    var chain = db.get(name);
+    let chain = db.get(name);
 
     // Remove q, _start, _end, ... from req.query to avoid filtering using those
     // parameters
-    var q = req.query.q;
-    var _start = req.query._start;
-    var _end = req.query._end;
-    var _page = req.query._page;
-    var _sort = req.query._sort;
-    var _order = req.query._order;
-    var _limit = req.query._limit;
-    var _embed = req.query._embed;
-    var _expand = req.query._expand;
+    let q = req.query.q;
+    let _start = req.query._start;
+    let _end = req.query._end;
+    let _page = req.query._page;
+    const _sort = req.query._sort;
+    const _order = req.query._order;
+    let _limit = req.query._limit;
+    const _embed = req.query._embed;
+    const _expand = req.query._expand;
     delete req.query.q;
     delete req.query._start;
     delete req.query._end;
@@ -71,9 +68,9 @@ module.exports = function (db, name, opts) {
 
     // Automatically delete query parameters that can't be found
     // in the database
-    Object.keys(req.query).forEach(function (query) {
-      var arr = db.get(name).value();
-      for (var i in arr) {
+    Object.keys(req.query).forEach((query) => {
+      const arr = db.get(name).value();
+      for (const i in arr) {
         if (
           _.has(arr[i], query) ||
           query === "callback" ||
@@ -88,6 +85,11 @@ module.exports = function (db, name, opts) {
       delete req.query[query];
     });
 
+    // filter out inactive (soft deleted) objects
+    chain = chain.filter((obj) => {
+      return obj._inactive === undefined || obj._inactive === false;
+    });
+
     if (q) {
       // Full-text search
       if (Array.isArray(q)) {
@@ -96,41 +98,43 @@ module.exports = function (db, name, opts) {
 
       q = q.toLowerCase();
 
-      chain = chain.filter(function (obj) {
-        for (var key in obj) {
-          var value = obj[key];
+      chain = chain.filter((obj) => {
+        for (const key in obj) {
+          const value = obj[key];
           if (db._.deepQuery(value, q)) {
             return true;
           }
         }
+        return false;
       });
     }
 
-    Object.keys(req.query).forEach(function (key) {
+    Object.keys(req.query).forEach((key) => {
       // Don't take into account JSONP query parameters
       // jQuery adds a '_' query parameter too
       if (key !== "callback" && key !== "_") {
         // Always use an array, in case req.query is an array
-        var arr = [].concat(req.query[key]);
+        const arr = [].concat(req.query[key]);
 
-        chain = chain.filter(function (element) {
+        const isDifferent = /_ne$/.test(key);
+        const isRange = /_lte$/.test(key) || /_gte$/.test(key);
+        const isLike = /_like$/.test(key);
+        const path = key.replace(/(_lte|_gte|_ne|_like)$/, "");
+
+        chain = chain.filter((element) => {
           return arr
             .map(function (value) {
-              var isDifferent = /_ne$/.test(key);
-              var isRange = /_lte$/.test(key) || /_gte$/.test(key);
-              var isLike = /_like$/.test(key);
-              var path = key.replace(/(_lte|_gte|_ne|_like)$/, "");
               // get item value based on path
               // i.e post.title -> 'foo'
-              var elementValue = _.get(element, path);
+              const elementValue = _.get(element, path);
 
               // Prevent toString() failing on undefined or null values
               if (elementValue === undefined || elementValue === null) {
-                return;
+                return undefined;
               }
 
               if (isRange) {
-                var isLowerThan = /_gte$/.test(key);
+                const isLowerThan = /_gte$/.test(key);
 
                 return isLowerThan ? value <= elementValue : value >= elementValue;
               } else if (isDifferent) {
@@ -141,19 +145,15 @@ module.exports = function (db, name, opts) {
                 return value === elementValue.toString();
               }
             })
-            .reduce(function (a, b) {
-              return a || b;
-            });
+            .reduce((a, b) => (isDifferent ? a && b : a || b));
         });
       }
     });
 
     // Sort
     if (_sort) {
-      var _sortSet = _sort.split(",");
-      var _orderSet = (_order || "").split(",").map(function (s) {
-        return s.toLowerCase();
-      });
+      const _sortSet = _sort.split(",");
+      const _orderSet = (_order || "").split(",").map((s) => s.toLowerCase());
       chain = chain.orderBy(_sortSet, _orderSet);
     }
 
@@ -167,9 +167,9 @@ module.exports = function (db, name, opts) {
       _page = parseInt(_page, 10);
       _page = _page >= 1 ? _page : 1;
       _limit = parseInt(_limit, 10) || 10;
-      var page = utils.getPage(chain.value(), _page, _limit);
-      var links = {};
-      var fullURL = getFullURL(req);
+      const page = utils.getPage(chain.value(), _page, _limit);
+      const links = {};
+      const fullURL = getFullURL(req);
 
       if (page.first) {
         links.first = fullURL.replace(`page=${page.current}`, `page=${page.first}`);
@@ -212,14 +212,13 @@ module.exports = function (db, name, opts) {
   // GET /name/:id
   // GET /name/:id?_embed=&_expand
   function show(req, res, next) {
-    //console.log(req.params);
-    var _embed = req.query._embed;
-    var _expand = req.query._expand;
-    var resource = db.get(name).getById(req.params.id).value();
+    const _embed = req.query._embed;
+    const _expand = req.query._expand;
+    const resource = db.get(name).getById(req.params.id).value();
 
     if (resource) {
       // Clone resource to avoid making changes to the underlying object
-      var clone = _.cloneDeep(resource);
+      const clone = _.cloneDeep(resource);
 
       // Embed other resources based on resource id
       // /posts/1?_embed=comments
@@ -237,15 +236,16 @@ module.exports = function (db, name, opts) {
 
   // POST /name
   function create(req, res, next) {
-    var resource = db.get(name).insert(req.body).value();
+    let resource;
+    if (opts._isFake) {
+      const id = db.get(name).createId().value();
+      resource = { ...req.body, id };
+    } else {
+      resource = db.get(name).insert(req.body).value();
+    }
 
     res.setHeader("Access-Control-Expose-Headers", "Location");
-
-    if (getFullURL(req).endsWith(resource.id)) {
-      res.location(`${getFullURL(req)}`);
-    } else {
-      res.location(`${getFullURL(req)}/${resource.id}`);
-    }
+    res.location(`${getFullURL(req)}/${resource.id}`);
 
     res.status(201);
     res.locals.data = resource;
@@ -256,12 +256,24 @@ module.exports = function (db, name, opts) {
   // PUT /name/:id
   // PATCH /name/:id
   function update(req, res, next) {
-    var id = req.params.id;
-    var chain = db.get(name);
+    const id = req.params.id;
+    let resource;
 
-    chain = req.method === "PATCH" ? chain.updateById(id, req.body) : chain.replaceById(id, req.body);
+    if (opts._isFake) {
+      resource = db.get(name).getById(id).value();
 
-    var resource = chain.value();
+      if (req.method === "PATCH") {
+        resource = { ...resource, ...req.body };
+      } else {
+        resource = { ...req.body, id: resource.id };
+      }
+    } else {
+      let chain = db.get(name);
+
+      chain = req.method === "PATCH" ? chain.updateById(id, req.body) : chain.replaceById(id, req.body);
+
+      resource = chain.value();
+    }
 
     if (resource) {
       res.locals.data = resource;
@@ -272,13 +284,19 @@ module.exports = function (db, name, opts) {
 
   // DELETE /name/:id
   function destroy(req, res, next) {
-    var resource = db.get(name).removeById(req.params.id).value();
+    let resource;
 
-    // Remove dependents documents
-    var removable = db._.getRemovable(db.getState(), opts);
-    removable.forEach(function (item) {
-      db.get(item.name).removeById(item.id).value();
-    });
+    if (opts._isFake) {
+      resource = db.get(name).value();
+    } else {
+      resource = db.get(name).removeById(req.params.id).value();
+
+      // Remove dependents documents
+      const removable = db._.getRemovable(db.getState(), opts);
+      removable.forEach((item) => {
+        db.get(item.name).removeById(item.id).value();
+      });
+    }
 
     if (resource) {
       res.locals.data = {};
@@ -287,7 +305,7 @@ module.exports = function (db, name, opts) {
     next();
   }
 
-  var w = write(db);
+  const w = write(db);
 
   router.route("/").get(list).post(create, w);
 

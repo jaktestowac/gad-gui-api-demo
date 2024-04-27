@@ -1,5 +1,5 @@
 const { request, expect, baseBookmarksUrl } = require("../config.js");
-const { authUser, authUser2 } = require("../helpers/data.helpers.js");
+const { authUser, authUser2, authUser3, authUser4 } = require("../helpers/data.helpers.js");
 const { setupEnv, gracefulQuit, sleep } = require("../helpers/helpers.js");
 
 describe("Endpoint /bookmarks", async () => {
@@ -86,12 +86,17 @@ describe("Endpoint /bookmarks", async () => {
     });
 
     describe("e2e", async () => {
-      beforeEach(async () => {
+      before(async () => {
         await setupEnv();
-        await request.get("/api/restoreDB");
+        await sleep(200);
       });
 
       it(`POST /bookmarks - add a brand new bookmark`, async () => {
+        const data = await authUser3();
+        headers = data.headers;
+        userId = data.userId;
+        headers["userid"] = userId;
+
         // Arrange:
         const bookmarksBody = {
           article_id: 10,
@@ -101,12 +106,13 @@ describe("Endpoint /bookmarks", async () => {
         const response = await request.get(`${baseUrl}/articles`).set(headers);
 
         expect(response.status, `GET /articles: ${JSON.stringify(response.body)}`).to.equal(200);
+        await sleep(500);
 
         // Act:
         const responsePost = await request.post(`${baseUrl}/articles`).set(headers).send(bookmarksBody);
 
         // Assert:
-        expect(responsePost.status).to.equal(201);
+        expect(responsePost.status, JSON.stringify(responsePost.body)).to.equal(201);
         const responseGetAfter = await request.get(`${baseUrl}/articles`).set(headers);
 
         expect(
@@ -118,34 +124,40 @@ describe("Endpoint /bookmarks", async () => {
       });
 
       it(`POST /bookmarks - add article to bookmarks`, async () => {
+        const data = await authUser4();
+        headers = data.headers;
+        userId = data.userId;
+        headers["userid"] = userId;
+
         // Arrange:
         const bookmarksBody1 = {
-          article_id: 10,
-        };
-        const bookmarksBody2 = {
           article_id: 11,
         };
-        const expectedBookmarkedArticles = [10, 11];
+        const bookmarksBody2 = {
+          article_id: 12,
+        };
+        const expectedBookmarkedArticles = [11, 12];
 
         const response = await request.get(`${baseUrl}/articles`).set(headers);
 
-        expect(response.status).to.equal(200);
+        expect(response.status, JSON.stringify(response.body)).to.equal(200);
+        await sleep(500);
 
         // Act:
         const responsePost1 = await request.post(`${baseUrl}/articles`).set(headers).send(bookmarksBody1);
         expect(responsePost1.status, JSON.stringify(responsePost1.body)).to.equal(201);
 
-        await sleep(200);
+        await sleep(500);
 
         const responsePost2 = await request.post(`${baseUrl}/articles`).set(headers).send(bookmarksBody2);
         expect(responsePost2.status, JSON.stringify(responsePost2.body)).to.equal(200);
 
-        await sleep(200);
+        await sleep(500);
 
         // Assert:
         const responseGetAfter = await request.get(`${baseUrl}/articles`).set(headers);
 
-        expect(responseGetAfter.status).to.equal(200);
+        expect(responseGetAfter.status, JSON.stringify(responseGetAfter.body)).to.equal(200);
         const articleIdsAfter = responseGetAfter.body.article_ids;
         expect(articleIdsAfter, JSON.stringify(responseGetAfter.body)).to.eql(expectedBookmarkedArticles);
       });

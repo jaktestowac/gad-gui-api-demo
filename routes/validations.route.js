@@ -214,6 +214,7 @@ const validationsRoutes = (req, res, next) => {
       statusCode: res.statusCode,
       headersSent: res.headersSent,
       urlEnds,
+      url: req.url,
       method: req.method,
       body: req.body,
     });

@@ -1,16 +1,14 @@
-"use strict";
+const express = require("express");
+const pluralize = require("pluralize");
+const delay = require("./delay");
 
-var express = require("express");
-var pluralize = require("pluralize");
-var delay = require("./delay");
-
-module.exports = function (opts) {
-  var router = express.Router();
+module.exports = (opts) => {
+  const router = express.Router();
   router.use(delay);
 
   // Rewrite URL (/:resource/:id/:nested -> /:nested) and request query
   function get(req, res, next) {
-    var prop = pluralize.singular(req.params.resource);
+    const prop = pluralize.singular(req.params.resource);
     req.query[`${prop}${opts.foreignKeySuffix}`] = req.params.id;
     req.url = `/${req.params.nested}`;
     next();
@@ -18,7 +16,7 @@ module.exports = function (opts) {
 
   // Rewrite URL (/:resource/:id/:nested -> /:nested) and request body
   function post(req, res, next) {
-    var prop = pluralize.singular(req.params.resource);
+    const prop = pluralize.singular(req.params.resource);
     req.body[`${prop}${opts.foreignKeySuffix}`] = req.params.id;
     req.url = `/${req.params.nested}`;
     next();
