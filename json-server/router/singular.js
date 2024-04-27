@@ -1,24 +1,24 @@
-"use strict";
+const express = require("express");
+const write = require("./write");
+const getFullURL = require("./get-full-url");
+const delay = require("./delay");
 
-var express = require("express");
-var write = require("./write");
-var getFullURL = require("./get-full-url");
-var delay = require("./delay");
-
-module.exports = (db, name) => {
-  var router = express.Router();
+module.exports = (db, name, opts) => {
+  const router = express.Router();
   router.use(delay);
 
   function show(req, res, next) {
-    console.log(req.params);
     res.locals.data = db.get(name).value();
     next();
   }
 
   function create(req, res, next) {
-    console.log(req.params);
-    db.set(name, req.body).value();
-    res.locals.data = db.get(name).value();
+    if (opts._isFake) {
+      res.locals.data = req.body;
+    } else {
+      db.set(name, req.body).value();
+      res.locals.data = db.get(name).value();
+    }
 
     res.setHeader("Access-Control-Expose-Headers", "Location");
     res.location(`${getFullURL(req)}`);
@@ -28,17 +28,27 @@ module.exports = (db, name) => {
   }
 
   function update(req, res, next) {
-    if (req.method === "PUT") {
-      db.set(name, req.body).value();
+    if (opts._isFake) {
+      if (req.method === "PUT") {
+        res.locals.data = req.body;
+      } else {
+        const resource = db.get(name).value();
+        res.locals.data = { ...resource, ...req.body };
+      }
     } else {
-      db.get(name).assign(req.body).value();
+      if (req.method === "PUT") {
+        db.set(name, req.body).value();
+      } else {
+        db.get(name).assign(req.body).value();
+      }
+
+      res.locals.data = db.get(name).value();
     }
 
-    res.locals.data = db.get(name).value();
     next();
   }
 
-  var w = write(db);
+  const w = write(db);
 
   router.route("/").get(show).post(create, w).put(update, w).patch(update, w);
 

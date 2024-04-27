@@ -12,6 +12,12 @@ const {
   existingUserEmail2,
   existingUserPass2,
   existingUserId2,
+  existingUserId3,
+  existingUserEmail3,
+  existingUserPass3,
+  existingUserId4,
+  existingUserEmail4,
+  existingUserPass4,
 } = require("../config");
 const { sleep } = require("./helpers");
 
@@ -53,6 +59,22 @@ function generateValidUserLoginData2() {
   const testData = {
     email: existingUserEmail2,
     password: existingUserPass2,
+  };
+  return testData;
+}
+
+function generateValidUserLoginData3() {
+  const testData = {
+    email: existingUserEmail3,
+    password: existingUserPass3,
+  };
+  return testData;
+}
+
+function generateValidUserLoginData4() {
+  const testData = {
+    email: existingUserEmail4,
+    password: existingUserPass4,
   };
   return testData;
 }
@@ -160,6 +182,50 @@ async function authUser2() {
   };
 }
 
+async function authUser3() {
+  const restoreResponse = await request.get("/api/restoreDB");
+  expect(restoreResponse.status).to.equal(201);
+
+  const userData = generateValidUserLoginData3();
+  const userId = existingUserId3;
+  const response = await request.post("/api/login").send(userData);
+  expect(response.status).to.equal(200);
+
+  const token = response.body.access_token;
+  const headers = {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
+
+  return {
+    headers,
+    userId,
+  };
+}
+
+async function authUser4() {
+  const restoreResponse = await request.get("/api/restoreDB");
+  expect(restoreResponse.status).to.equal(201);
+
+  const userData = generateValidUserLoginData4();
+  const userId = existingUserId4;
+  const response = await request.post("/api/login").send(userData);
+  expect(response.status).to.equal(200);
+
+  const token = response.body.access_token;
+  const headers = {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
+
+  return {
+    headers,
+    userId,
+  };
+}
+
 async function prepareUniqueLoggedUser() {
   const restoreResponse = await request.get("/api/restoreDB");
   expect(restoreResponse.status).to.equal(201);
@@ -241,6 +307,8 @@ module.exports = {
   prepareUniqueComment,
   authUser,
   authUser2,
+  authUser3,
+  authUser4,
   generateValidUserData,
   generateValidArticleData,
   generateValidCommentData,

@@ -53,8 +53,9 @@ function handleBookmarks(req, res, isAdmin) {
       return false;
     }
 
-    let bookmarked = checkIfArticlesAlreadyInBookmarks(articleId, foundUser.id);
     let bookmarks = findUserBookmarks(foundUser.id);
+    let bookmarked = checkIfArticlesAlreadyInBookmarks(articleId, foundUser.id);
+    logTrace("handleBookmark: found bookmark:", { userId: foundUser.id, bookmarks, bookmarked });
     let bookmark = bookmarks[0];
 
     const bug002Enabled = isBugEnabled(BugConfigKeys.BUG_BOOKMARKS_002);
@@ -86,7 +87,12 @@ function handleBookmarks(req, res, isAdmin) {
     }
 
     req.method = "PUT";
-    req.url = `/api/bookmarks/${bookmark.id}`;
+    let bookmarkId = bookmark.id;
+    if (bookmarkId === "articles" || bookmarkId === "comments") {
+      bookmarkId = "";
+    }
+    req.url = `/api/bookmarks/${bookmarkId}`;
+
     if (bookmarked === true) {
       // already bookmarked -> remove bookmark
       let index = bookmark.article_ids.indexOf(articleId);
@@ -97,10 +103,10 @@ function handleBookmarks(req, res, isAdmin) {
       bookmark.article_ids.push(articleId);
       req.body = bookmark;
     }
-    logTrace("handleBookmark: add bookmark - POST -> PUT:", {
+    logTrace("handleBookmark: update bookmark - POST -> PUT:", {
       method: req.method,
       url: req.url,
-      body: bookmarks,
+      body: req.body,
     });
     return;
   }

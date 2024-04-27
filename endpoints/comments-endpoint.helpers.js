@@ -1,6 +1,6 @@
 const { isBugDisabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
-const { isUndefined, areIdsEqual } = require("../helpers/compare.helpers");
+const { isUndefined, areIdsEqual, isInactive } = require("../helpers/compare.helpers");
 const { searchForComment, searchForUserWithToken, searchForUserWithEmail } = require("../helpers/db-operation.helpers");
 const {
   formatInvalidFieldErrorResponse,
@@ -11,7 +11,7 @@ const {
   formatInvalidDateFieldErrorResponse,
 } = require("../helpers/helpers");
 const { logTrace, logDebug } = require("../helpers/logger-api");
-const { HTTP_UNPROCESSABLE_ENTITY, HTTP_UNAUTHORIZED } = require("../helpers/response.helpers");
+const { HTTP_UNPROCESSABLE_ENTITY, HTTP_UNAUTHORIZED, HTTP_NOT_FOUND } = require("../helpers/response.helpers");
 const {
   areAllFieldsValid,
   all_fields_comment,
@@ -61,7 +61,7 @@ function handleComments(req, res, isAdmin) {
         return;
       }
       if (isUndefined(foundUser) && isUndefined(foundComment) && req.method === "DELETE") {
-        res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+        res.status(HTTP_NOT_FOUND).send({});
         return;
       }
     }
@@ -160,6 +160,44 @@ function handleComments(req, res, isAdmin) {
         body: req.body,
       });
     }
+  }
+
+  // soft delete:
+  if (req.method === "DELETE" && urlEnds.includes("/api/comments") && !isAdmin) {
+    const verifyTokenResult = verifyAccessToken(req, res, "DELETE comments", req.url);
+    let commentId = getIdFromUrl(urlEnds);
+
+    const foundComment = searchForComment(commentId);
+    const foundUser = searchForUserWithToken(foundComment?.user_id, verifyTokenResult);
+
+    logDebug("handleComments: foundUser and user_id:", { foundUser, user_id: foundComment?.user_id });
+
+    if (isUndefined(foundComment) || isInactive(foundComment)) {
+      res.status(HTTP_NOT_FOUND).send({});
+      return;
+    }
+
+    if (isUndefined(foundUser) && !areIdsEqual(foundUser?.id, foundComment?.user_id)) {
+      res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+      return;
+    }
+
+    if (isUndefined(foundUser)) {
+      res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+      return;
+    }
+
+    req.method = "PUT";
+    req.url = `/api/comments/${commentId}`;
+    const newCommentBody = foundComment;
+    newCommentBody._inactive = true;
+    req.body = newCommentBody;
+    logTrace("handleComments: SOFT DELETE: overwrite DELETE -> PUT:", {
+      method: req.method,
+      url: req.url,
+      body: req.body,
+    });
+    return;
   }
 
   return;

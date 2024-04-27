@@ -214,13 +214,13 @@ describe("Endpoint /likes", () => {
 
       it("POST /likes - valid body for article", async () => {
         // Assert:
-        const likedBody = generateLikesBody(userId, 1, undefined);
+        const likedBody = generateLikesBody(userId, undefined, 1);
 
         // Act:
         const response = await request.post(baseUrl).set(headers).send(likedBody);
 
         // Assert:
-        expect(response.status).to.equal(201);
+        expect(response.status, JSON.stringify(response.body)).to.equal(201);
       });
 
       it("POST /likes - invalid body - article and comment", async () => {

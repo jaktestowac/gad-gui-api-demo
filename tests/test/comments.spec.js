@@ -195,7 +195,7 @@ describe("Endpoint /comments", () => {
       const responseGet = await request.get(`${baseUrl}/${commentId}`).set(headers);
 
       // Assert:
-      expect(responseGet.status).to.equal(404);
+      expect(responseGet.status, JSON.stringify(responseGet.body)).to.equal(404);
     });
 
     it("DELETE /comments/:id - non existing comment", async () => {
@@ -203,7 +203,7 @@ describe("Endpoint /comments", () => {
       const response = await request.delete(`${baseUrl}/1234213`).set(headers);
 
       // Assert:
-      expect(response.status).to.equal(401);
+      expect(response.status).to.equal(404);
     });
 
     it("DELETE /comments/:id - not my comment", async () => {

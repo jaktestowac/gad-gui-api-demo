@@ -1,6 +1,6 @@
 const { isBugDisabled, isBugEnabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
-const { areIdsEqual, isUndefined } = require("../helpers/compare.helpers");
+const { areIdsEqual, isUndefined, isInactive } = require("../helpers/compare.helpers");
 const { searchForUserWithToken, searchForArticle, searchForUserWithEmail } = require("../helpers/db-operation.helpers");
 const { randomDbEntry, articlesDb } = require("../helpers/db.helpers");
 const {
@@ -73,7 +73,7 @@ function handleArticles(req, res, isAdmin) {
         return;
       }
       if (isUndefined(foundUser) && isUndefined(foundArticle) && req.method === "DELETE") {
-        res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+        res.status(HTTP_NOT_FOUND).send({});
         return;
       }
     } else if (req.method === "POST") {
@@ -245,6 +245,44 @@ function handleArticles(req, res, isAdmin) {
         body: req.body,
       });
     }
+  }
+
+  // soft delete:
+  if (req.method === "DELETE" && urlEnds.includes("/api/articles") && !isAdmin) {
+    const verifyTokenResult = verifyAccessToken(req, res, "DELETE articles", req.url);
+    let articleId = getIdFromUrl(urlEnds);
+
+    const foundArticle = searchForArticle(articleId);
+    const foundUser = searchForUserWithToken(foundArticle?.user_id, verifyTokenResult);
+
+    logDebug("handleArticles: foundUser and user_id:", { foundUser, user_id: foundArticle?.user_id });
+
+    if (isUndefined(foundArticle) || isInactive(foundArticle)) {
+      res.status(HTTP_NOT_FOUND).send({});
+      return;
+    }
+
+    if (isUndefined(foundUser) && !areIdsEqual(foundUser?.id, foundArticle?.user_id)) {
+      res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+      return;
+    }
+
+    if (isUndefined(foundUser)) {
+      res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+      return;
+    }
+
+    req.method = "PUT";
+    req.url = `/api/articles/${articleId}`;
+    const newArticleBody = foundArticle;
+    newArticleBody._inactive = true;
+    req.body = newArticleBody;
+    logTrace("handleArticles: SOFT DELETE: overwrite DELETE -> PUT:", {
+      method: req.method,
+      url: req.url,
+      body: req.body,
+    });
+    return;
   }
 
   return;

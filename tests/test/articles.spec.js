@@ -29,6 +29,15 @@ describe("Endpoint /articles", () => {
         expect(response.body.length).to.be.greaterThan(1);
       });
 
+      it("GET /articles - use query", async () => {
+        // Act:
+        const response = await request.get(baseUrl + "?_limit=6&_page=1&_sort=date&_order=DESC");
+
+        // Assert:
+        expect(response.status).to.equal(200);
+        expect(response.body.length).to.equal(6);
+      });
+
       it("GET /articles/:id", async () => {
         // Arrange:
         const expectedData = validExistingArticle;
@@ -157,7 +166,7 @@ describe("Endpoint /articles", () => {
       expect(response.status).to.equal(200);
 
       const responseGet = await request.get(`${baseUrl}/${articleId}`).set(headers);
-      expect(userId).to.deep.equal(responseGet.body.user_id);
+      expect(userId, JSON.stringify(responseGet.body)).to.equal(responseGet.body.user_id);
     });
 
     it("PUT /articles/:id - should not update different article", async () => {
@@ -290,7 +299,7 @@ describe("Endpoint /articles", () => {
       const response = await request.delete(`${baseUrl}/1234213`).set(headers);
 
       // Assert:
-      expect(response.status).to.equal(401);
+      expect(response.status).to.equal(404);
     });
 
     it("DELETE /articles/:id - not my article", async () => {
@@ -310,6 +319,66 @@ describe("Endpoint /articles", () => {
       const data = await authUser();
       headers = data.headers;
       userId = data.userId;
+    });
+
+    it("GET /articles - use query", async () => {
+      // Act:
+      const response = await request.get(baseUrl + "?_limit=6&_page=1&_sort=date&_order=DESC");
+
+      // Assert:
+      expect(response.status).to.equal(200);
+      expect(response.body.length).to.equal(6);
+    });
+
+    it("GET /articles - use query 2", async () => {
+      // Act:
+      const response = await request.get(baseUrl + "?_limit=6&_page=1&_sort=date&_order=DESC&_inactive=true");
+
+      // Assert:
+      expect(response.status).to.equal(200);
+      expect(response.body.length).to.equal(6);
+    });
+
+    it("GET /articles - e2e - use query and delete one article", async () => {
+      // Arrange:
+      const testData = generateValidArticleData();
+      testData.user_id = userId;
+      testData.date = getCurrentDate(0, 0, 0);
+
+      // Act:
+      const responseCreate = await request.post(baseUrl).set(headers).send(testData);
+
+      // Assert:
+      expect(responseCreate.status, JSON.stringify(responseCreate.body)).to.equal(201);
+      testData.id = responseCreate.body.id;
+      const articleId = testData.id;
+      expect(responseCreate.body).to.deep.equal(testData);
+
+      // Act:
+      const responseGet1 = await request.get(baseUrl + "?_limit=6&_page=1&_sort=date&_order=DESC");
+
+      // Assert:
+      expect(responseGet1.status).to.equal(200);
+      expect(responseGet1.body.length).to.equal(6);
+
+      // Act:
+      const responseDel = await request.delete(`${baseUrl}/${articleId}`).set(headers);
+
+      // Assert:
+      expect(responseDel.status, JSON.stringify(responseDel.body)).to.equal(200);
+
+      // Act:
+      const responseGet = await request.get(`${baseUrl}/${articleId}`).set(headers);
+
+      // Assert:
+      expect(responseGet.status).to.equal(404);
+
+      // Act:
+      const responseGet2 = await request.get(baseUrl + "?_limit=6&_page=1&_sort=date&_order=DESC");
+
+      // Assert:
+      expect(responseGet2.status).to.equal(200);
+      expect(responseGet2.body.length).to.equal(6);
     });
 
     it("GET /articles", async () => {

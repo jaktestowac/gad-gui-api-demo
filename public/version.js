@@ -1,6 +1,6 @@
 const versionElement = document.querySelector("#version");
 
-const appVersion = "v2.6.2";
+const appVersion = "v2.6.3";
 
 if (versionElement) {
   versionElement.innerHTML = appVersion;
