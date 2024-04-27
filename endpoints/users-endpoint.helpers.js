@@ -1,7 +1,7 @@
 const { isBugDisabled, isBugEnabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
 const { areStringsEqualIgnoringCase, areIdsEqual, isUndefined } = require("../helpers/compare.helpers");
-const { searchForUser, searchForUserWithToken } = require("../helpers/db-operation.helpers");
+const { searchForUser } = require("../helpers/db-operation.helpers");
 const { userDb } = require("../helpers/db.helpers");
 const {
   formatMissingFieldErrorResponse,
@@ -10,7 +10,7 @@ const {
   formatInvalidFieldErrorResponse,
 } = require("../helpers/helpers");
 const { logDebug } = require("../helpers/logger-api");
-const { HTTP_UNPROCESSABLE_ENTITY, HTTP_CONFLICT, HTTP_UNAUTHORIZED } = require("../helpers/response.helpers");
+const { HTTP_UNPROCESSABLE_ENTITY, HTTP_CONFLICT, HTTP_NOT_FOUND } = require("../helpers/response.helpers");
 const {
   areMandatoryFieldsPresent,
   mandatory_non_empty_fields_user,
@@ -63,6 +63,16 @@ function handleUsers(req, res) {
     }
 
     logDebug("Register User: SUCCESS:", { urlEnds, email: req.body["email"] });
+  }
+
+  if (req.method === "DELETE" && urlEnds.includes("/api/users/")) {
+    let userId = getIdFromUrl(urlEnds);
+    const foundUser = searchForUser(userId);
+
+    if (isUndefined(foundUser)) {
+      res.status(HTTP_NOT_FOUND).send({});
+      return;
+    }
   }
 
   if (req.method === "PUT" && urlEnds.includes("/api/users/")) {

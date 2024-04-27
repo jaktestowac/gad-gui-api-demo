@@ -452,7 +452,7 @@ describe("Endpoint /users", async () => {
       const responseDel = await request.delete(`${baseUrl}/112323212`).set(headers);
 
       // Assert:
-      expect(responseDel.status).to.equal(401);
+      expect(responseDel.status).to.equal(404);
     });
   });
 });

@@ -11,7 +11,7 @@ const {
   formatInvalidDateFieldErrorResponse,
 } = require("../helpers/helpers");
 const { logTrace, logDebug } = require("../helpers/logger-api");
-const { HTTP_UNPROCESSABLE_ENTITY, HTTP_UNAUTHORIZED } = require("../helpers/response.helpers");
+const { HTTP_UNPROCESSABLE_ENTITY, HTTP_UNAUTHORIZED, HTTP_NOT_FOUND } = require("../helpers/response.helpers");
 const {
   areAllFieldsValid,
   all_fields_comment,
@@ -61,7 +61,7 @@ function handleComments(req, res, isAdmin) {
         return;
       }
       if (isUndefined(foundUser) && isUndefined(foundComment) && req.method === "DELETE") {
-        res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+        res.status(HTTP_NOT_FOUND).send({});
         return;
       }
     }

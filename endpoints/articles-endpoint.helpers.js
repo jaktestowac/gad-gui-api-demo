@@ -73,7 +73,7 @@ function handleArticles(req, res, isAdmin) {
         return;
       }
       if (isUndefined(foundUser) && isUndefined(foundArticle) && req.method === "DELETE") {
-        res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+        res.status(HTTP_NOT_FOUND).send({});
         return;
       }
     } else if (req.method === "POST") {

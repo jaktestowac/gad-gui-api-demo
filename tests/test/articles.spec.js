@@ -157,7 +157,7 @@ describe("Endpoint /articles", () => {
       expect(response.status).to.equal(200);
 
       const responseGet = await request.get(`${baseUrl}/${articleId}`).set(headers);
-      expect(userId).to.deep.equal(responseGet.body.user_id);
+      expect(userId).to.equal(responseGet.body.user_id);
     });
 
     it("PUT /articles/:id - should not update different article", async () => {
@@ -290,7 +290,7 @@ describe("Endpoint /articles", () => {
       const response = await request.delete(`${baseUrl}/1234213`).set(headers);
 
       // Assert:
-      expect(response.status).to.equal(401);
+      expect(response.status).to.equal(404);
     });
 
     it("DELETE /articles/:id - not my article", async () => {
