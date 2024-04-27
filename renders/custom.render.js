@@ -1,5 +1,8 @@
+const { isBugEnabled } = require("../config/config-manager");
+const { BugConfigKeys } = require("../config/enums");
 const { sleep } = require("../helpers/helpers");
 const { logTrace } = require("../helpers/logger-api");
+const { addResourceCreationDate } = require("../helpers/temp-data-store");
 
 function renderResponse(req, res) {
   if (req.method === "GET" && req.url.includes("users")) {
@@ -36,6 +39,23 @@ function renderResponse(req, res) {
       res.jsonp(res.locals.data);
     });
   } else {
+    if (
+      req.method === "POST" &&
+      req.url.includes("articles") &&
+      isBugEnabled(BugConfigKeys.BUG_404_IF_ARTICLE_CREATED_RECENTLY)
+    ) {
+      const article = res.locals.data;
+      addResourceCreationDate(`articles/${article.id}`);
+    }
+    if (
+      req.method === "POST" &&
+      req.url.includes("comments") &&
+      isBugEnabled(BugConfigKeys.BUG_404_IF_COMMENT_CREATED_RECENTLY)
+    ) {
+      const article = res.locals.data;
+      addResourceCreationDate(`comments/${article.id}`);
+    }
+
     logTrace("router.render:", {
       statusCode: res.statusCode,
       headersSent: res.headersSent,

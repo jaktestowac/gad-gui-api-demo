@@ -59,6 +59,7 @@ const ConfigKeys = {
   MIN_RANDOM_VISITS_FOR_USERS: "minRandomVisitsForUsers",
   READ_ONLY: "readOnly",
   RANDOM_ERROR_RESPONSE_PROBABILITY: "randomErrorResponseProbability",
+  MIN_SECONDS_FOR_RESOURCE_CREATED_RECENTLY_BUG: "minSecondsForResourceCreatedRecentlyBug",
 };
 
 const BugConfigKeys = {
@@ -97,6 +98,8 @@ const BugConfigKeys = {
   BUG_GAME_TTT_003: "bug_game_ttt_003",
   BUG_RANDOM_503: "bug_random_503",
   BUG_RANDOM_404_GET: "bug_random_404_get",
+  BUG_404_IF_ARTICLE_CREATED_RECENTLY: "bug_404_if_article_created_recently",
+  BUG_404_IF_COMMENT_CREATED_RECENTLY: "bug_404_if_comment_created_recently",
   BUG_SLOWER_RESPONSES_100: "bug_slower_responses_100ms",
   BUG_SLOWER_RESPONSES_500: "bug_slower_responses_500ms",
   BUG_SLOWER_RESPONSES_1000: "bug_slower_responses_1000ms",

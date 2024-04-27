@@ -6,7 +6,7 @@ async function issueGetRequest() {
   results = await Promise.all(
     [articleStatsEndpoint].map((url) => fetch(url + `?chartType=${chartType}`).then((r) => r.json()))
   );
-  google.charts.setOnLoadCallback(displayData);
+  return results;
 }
 
 const getRandomInt = (min, max) => {
@@ -98,9 +98,75 @@ function generateChartPDF(filename) {
   generatePDF(filename, "tableChart");
 }
 
+function displayChart(chartId, xLabels, data) {
+  if (window.myCharts === undefined) {
+    window.myCharts = {};
+  }
+
+  if (window.myCharts[chartId] != undefined) {
+    window.myCharts[chartId].destroy();
+  }
+
+  const ctx = document.getElementById(chartId).getContext("2d");
+  window.myCharts[chartId] = new Chart(ctx, {
+    type: "polarArea",
+    data: {
+      labels: xLabels,
+      datasets: [{ data: data }],
+    },
+    options: {
+      plugins: {
+        title: {
+          display: true,
+          text: "Articles per User",
+          font: {
+            size: 24,
+          },
+        },
+      },
+    },
+  });
+}
+
+function displayCanvasChart(results) {
+  document.querySelector("#canvasPolarChartArticlesData").style.display = "inherit";
+
+  const xLabels = [];
+  const articlesData = [];
+
+  results.articlesDataForChart.sort((a, b) => b[1] - a[1]); // Sort by numbers in descending order
+
+  const filteredResults = results.articlesDataForChart.slice(0, 15);
+  const skippedResults = results.articlesDataForChart.slice(15);
+  const sumOfSkippedValues = skippedResults.reduce((sum, element) => sum + element[1], 0);
+
+  filteredResults.forEach((element) => {
+    if (typeof element[1] === "number") {
+      xLabels.push(element[0]);
+      articlesData.push(element[1]);
+    }
+  });
+
+  if (sumOfSkippedValues > 0) {
+    xLabels.push("Others");
+    articlesData.push(sumOfSkippedValues);
+  }
+
+  displayChart("canvasPolarChartArticlesData", xLabels, articlesData);
+}
+
 // Load google charts
 google.charts.load("current", { packages: ["corechart"] });
 
 const chartType = getParams()["type"];
-issueGetRequest();
 menuButtonDisable();
+
+if (chartType === "polar") {
+  issueGetRequest().then(() => {
+    displayCanvasChart(results[0]);
+  });
+} else {
+  issueGetRequest().then(() => {
+    google.charts.setOnLoadCallback(displayData);
+  });
+}

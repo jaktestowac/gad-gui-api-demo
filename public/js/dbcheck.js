@@ -20,14 +20,14 @@ issueGetDbCheckRequest().then((data) => {
           ? `- <strong>tables</strong> are missing <span class="span-button" onclick="toggleMenu('missingTables')">Show more</span></br>
       <span id="missingTables" style="display:none;"><strong>${data.result?.missingTablesInCurrentDb.join(
         ", "
-      )}</strong></br></span>`
+      )}</strong></br></br>(check REST API response for more details about invalidObjects)</br></span>`
           : [];
       const missingMandatoryColumns =
         data.result?.missingKeysInCurrentDb?.length > 0
           ? `- <strong>mandatory columns</strong> are missing (in one or more entities) <span class="span-button" onclick="toggleMenu('missingColumns')">Show more</span></br>
              <span id="missingColumns" style="display:none;"><strong>${data.result?.missingKeysInCurrentDb.join(
                ", "
-             )}</strong></br></span>`
+             )}</strong></br></br>(check REST API response for more details about invalidObjects)</br></span>`
           : [];
       const error = data.result?.error !== undefined ? `<strong>${data.result?.error}</strong></br>` : "";
 

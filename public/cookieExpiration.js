@@ -1,15 +1,3 @@
-function getCookieExpired() {
-  let expires = undefined;
-  const cookies = document.cookie.split(";");
-  for (let cookie of cookies) {
-    cookie = cookie.trim();
-    if (cookie.startsWith("expires=")) {
-      expires = cookie.split("=")[1];
-    }
-  }
-  return parseInt(expires);
-}
-
 var countDownDate = new Date(getCookieExpired()).getTime();
 
 var x = setInterval(function () {

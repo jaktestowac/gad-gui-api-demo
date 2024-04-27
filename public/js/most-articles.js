@@ -141,12 +141,12 @@ const displayPostsData = (data) => {
 const displayItem = (item, container) => {
   let itemHTML = formatArticleHtml(item);
   container.innerHTML += `
-        <div class="card-wrapper" style="width: 800px; min-height:100px !important;";>${itemHTML}</div>
+        <div class="card-wrapper item-card" style="width: 800px; min-height:100px !important;";>${itemHTML}</div>
     `;
 };
 
 const formatArticleHtml = (item) => {
-  return `<div id="article${item.id}" data-testid="article-${
+  return `<div class="item-card" id="article${item.id}" data-testid="article-${
     item.id
   }" style="display: flex;min-height:100px !important;margin:0px 20px 20px 0px !important;">
   <div style="flex: 1; text-align: left;">

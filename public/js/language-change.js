@@ -18,36 +18,28 @@ async function issueGetLanguages() {
   return languages;
 }
 
-function getPrevLanguageCookie() {
-  return getCookie("langPrev=");
+function getPrevLanguage() {
+  // return getCookie("langPrev=");
+  const langData = getSession("languagePrevious");
+  return langData?.langPrevious;
 }
 
-function getLanguageCookie() {
-  return getCookie("lang=");
+function getLanguage() {
+  // return getCookie("lang=");
+  const langData = getSession("language");
+  return langData?.lang;
 }
 
-function getCookie(cookieName) {
-  let lang = undefined;
-  const cookies = document.cookie.split(";");
-  for (let cookie of cookies) {
-    cookie = cookie.trim();
-    if (cookie.startsWith(cookieName)) {
-      lang = cookie.split("=")[1];
-    }
-  }
-  return lang;
+function addPrevLanguage(value) {
+  // addCookie("langPrev", value);
+  const langData = { langPrevious: value };
+  saveSession("languagePrevious", langData);
 }
 
-function addCookie(cookieName, value) {
-  document.cookie = `${cookieName}=${value?.toLowerCase()}; SameSite=Lax; path=/`;
-}
-
-function addPrevLanguageCookie(value) {
-  addCookie("langPrev", value);
-}
-
-function addLanguageCookie(value) {
-  addCookie("lang", value);
+function addLanguage(value) {
+  // addCookie("lang", value);
+  const langData = { lang: value };
+  saveSession("language", langData);
 }
 
 function toggleDirAttribute(element, language) {
@@ -78,13 +70,13 @@ function getTranslatedText(elementId) {
 }
 
 function changeLanguage(newLanguage) {
-  addPrevLanguageCookie(getLanguageCookie());
+  addPrevLanguage(getLanguage());
   if (newLanguage === undefined || newLanguage === "" || newLanguage === null || newLanguage === "undefined") {
     newLanguage = "en";
   }
-  addLanguageCookie(newLanguage);
+  addLanguage(newLanguage);
 
-  translateToLanguage(getPrevLanguageCookie(), getLanguageCookie());
+  translateToLanguage(getPrevLanguage(), getLanguage());
 }
 
 function translateToLanguage(oldLanguage, newLanguage) {
@@ -145,9 +137,9 @@ issueGetTranslations().then((translations) => {
   issueGetLanguages().then((languages) => {
     languagesStored = languages;
     translationsStored = translations;
-    addPrevLanguageCookie("en");
-    addLanguageSelect(languagesStored, getLanguageCookie());
-    translateToLanguage(getPrevLanguageCookie(), getLanguageCookie());
+    addPrevLanguage("en");
+    addLanguageSelect(languagesStored, getLanguage());
+    translateToLanguage(getPrevLanguage(), getLanguage());
     detectDomChange((mutationList) => {
       mutationList.forEach((mutation) => {
         // TODO:

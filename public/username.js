@@ -1,14 +1,3 @@
-function getCookieUserName() {
-  let firstname = undefined;
-  const cookies = document.cookie.split(";");
-  for (let cookie of cookies) {
-    cookie = cookie.trim();
-    if (cookie.startsWith("firstname=")) {
-      firstname = cookie.split("=")[1];
-    }
-  }
-  return firstname;
-}
 
 let firstname = getCookieUserName();
 

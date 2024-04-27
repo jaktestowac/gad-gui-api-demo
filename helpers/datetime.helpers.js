@@ -1,3 +1,5 @@
+const { roundNumber } = require("./number.helper");
+
 function getCurrentDateTime() {
   const now = new Date();
 
@@ -54,6 +56,11 @@ function addSecondsToDate(date, seconds) {
   return date;
 }
 
+function calculateTimeDifferenceInSeconds(date1, date2) {
+  const differenceInSeconds = roundNumber((date2 - date1) / 1000);
+  return differenceInSeconds;
+}
+
 module.exports = {
   getCurrentDateTime,
   getCurrentDateTimeISO,
@@ -61,4 +68,5 @@ module.exports = {
   formatYmd,
   addSecondsToDate,
   dateToDateStringISO,
+  calculateTimeDifferenceInSeconds,
 };

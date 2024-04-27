@@ -57,7 +57,7 @@ const healthCheckRoutes = (req, res, next) => {
       res.status(HTTP_OK).json(response);
       return;
     }
-    if (req.method === "GET" && urlEnds.endsWith("api/health/check")) {
+    if (req.method === "GET" && urlEnds.endsWith("api/health/configcheck")) {
       configInstance.fullSelfCheck();
 
       const response = { status: true };

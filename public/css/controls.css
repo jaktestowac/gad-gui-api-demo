@@ -44,6 +44,7 @@ pre {
   border: 1px solid #ced4da;
   border-radius: 0.25rem;
 }
+
 button {
   display: inline-block;
   font-weight: 400;
@@ -105,6 +106,20 @@ input.button-secondary {
   color: #fff;
   background-color: #007bff;
   border: none;
+}
+
+.button-primary-small:hover {
+  color: #fff;
+  background-color: #0069d9;
+  border: none;
+}
+
+.button-primary-small {
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  padding: 5px;
+  font-size: 12px;
 }
 
 .button-primary-warning:hover {
@@ -822,4 +837,206 @@ s .container-mobile {
   justify-content: center;
   align-items: center;
   color: white;
+}
+
+body {
+  font-family: sans-serif;
+}
+
+.grid-drag {
+  max-width: 600px;
+  width: 600px;
+}
+
+@media (max-width: 550px) {
+  .grid-drag {
+    margin-left: -100px;
+  }
+}
+
+.grid-drag:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+/* ---- .grid-item ---- */
+
+.grid-item {
+  float: left;
+  width: 100px;
+  min-height: 100px;
+  border: 1px dashed grey;
+}
+
+.handle {
+  height: 22px;
+  background: rgb(209, 209, 209);
+  position: relative;
+}
+
+.handle:before {
+  content: "⠿";
+  position: absolute;
+  left: 0;
+  right: 0;
+  color: gray;
+}
+
+.grid-item--width2 {
+  width: 200px;
+}
+
+.grid-item--width4 {
+  width: 400px;
+}
+
+.grid-item--height05 {
+  height: 50px;
+}
+
+.grid-item--height1 {
+  height: 100px;
+}
+
+.grid-item--height2 {
+  height: 200px;
+}
+
+.grid-item--height3 {
+  height: 300px;
+}
+
+.grid-item--height4 {
+  height: 400px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: sans-serif;
+  background-color: #fff;
+  color: #000;
+}
+
+body.darkmode {
+  background-color: #000;
+  color: #fff;
+}
+
+.darkmode .item-card {
+  background-color: #1f1f1f !important;
+  color: #9b9b9b !important;
+}
+
+.darkmode .navigation-bar {
+  background-color: #1f1f1f !important;
+  color: #9b9b9b !important;
+}
+
+.darkmode .add-new-panel .close {
+  color: rgb(163, 163, 163);
+  position: absolute;
+  font-size: 2.5em;
+  border-width: 0px;
+  padding-bottom: 5px;
+  background: none;
+  top: 0vh;
+  line-height: 1em;
+  right: 0vh;
+}
+
+.darkmode .add-new-panel .close:hover {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.darkmode textarea {
+  background-color: #b8b8b8;
+  color: #131313;
+}
+
+.darkmode input {
+  background-color: #b8b8b8;
+  color: #131313;
+}
+
+.darkmode .separator::before {
+  border-bottom: #b1b1b1 1px solid !important;
+}
+
+.darkmode .separator::after {
+  border-bottom: #b1b1b1 1px solid !important;
+}
+
+.darkmode #scores table {
+  border: #868686 1px solid !important;
+}
+
+.darkmode #scores table td {
+  border: #868686 1px solid !important;
+}
+
+.darkmode #scores table th {
+  border: #868686 1px solid !important;
+}
+
+.darkmode .dropdown-content {
+  background-color: #cacaca;
+  color: #131313;
+}
+
+.darkmode .cell {
+  background-color: #818181;
+  color: #131313;
+}
+
+.darkmode .whacker-hole {
+  background-color: #818181;
+  color: #131313;
+}
+
+.darkmode #game-container {
+  background-color: #818181;
+  color: #131313;
+}
+
+.darkmode .test-description {
+  background-color: #818181;
+  color: #131313;
+}
+
+.darkmode canvas {
+  background-color: #c4c4c4;
+  color: #131313;
+}
+
+.darkmode #tableData {
+  border: #868686 1px solid !important;
+}
+
+.darkmode #tableData td {
+  border: #868686 1px solid !important;
+}
+
+.darkmode #tableData th {
+  border: #868686 1px solid !important;
+}
+
+.darkmode .table-bor {
+  border: #868686 1px solid !important;
+}
+
+.darkmode .table-bor td {
+  border: #868686 1px solid !important;
+  color: white !important;
+}
+
+.darkmode .table-bor th {
+  border: #868686 1px solid !important;
+}
+
+.darkmode svg > rect {
+  fill: #e9e9e9 !important;
 }

@@ -1,17 +1,13 @@
-function getId() {
-  let id = undefined;
-  const cookies = document.cookie.split(";");
-  for (let cookie of cookies) {
-    cookie = cookie.trim();
-    if (cookie.startsWith("id=")) {
-      id = cookie.split("=")[1];
-    }
+function removeNotAvailableLabel() {
+  const container = document.querySelector("#notAvailableLbl");
+  if (container) {
+    container.innerHTML = "";
   }
-  return id;
 }
 
 checkIfFeatureEnabled("feature_files").then((isEnabled) => {
   if (isEnabled) {
+    removeNotAvailableLabel();
     const container = document.querySelector("#additionalBtns");
     container.innerHTML += `<a href="./files.html" class="menu-link">
             <button id="btnFiles" data-testid="open-files" class="button-primary" >📁 My files</button>
@@ -21,6 +17,7 @@ checkIfFeatureEnabled("feature_files").then((isEnabled) => {
 
 checkIfFeatureEnabled("feature_user_bookmark_articles").then((isEnabled) => {
   if (isEnabled) {
+    removeNotAvailableLabel();
     const container = document.querySelector("#additionalBtns");
     container.innerHTML += `<a href="./bookmarked.html?type=bookmarked" class="menu-link">
             <button id="btnBookmarks" data-testid="open-bookmarked" class="button-primary" >🏷️ Bookmarked articles</button>
@@ -28,8 +25,12 @@ checkIfFeatureEnabled("feature_user_bookmark_articles").then((isEnabled) => {
   }
 });
 
-const editAccountButton = document.querySelector("#btnEditLink");
-editAccountButton.setAttribute("href", `/user.html?id=${getId()}`);
+const visitMyAccountButtons = document.querySelectorAll(".btnMyAccountLink");
+if (visitMyAccountButtons) {
+  for (let button of visitMyAccountButtons) {
+    button.setAttribute("href", `/user.html?id=${getId()}`);
+  }
+}
 
 const articlesLinkButton = document.querySelector("#btnArticlesLink");
 articlesLinkButton.setAttribute("href", `/articles.html?user_id=${getId()}`);
@@ -57,3 +58,9 @@ function deleteAccount() {
 }
 
 document.querySelector("#btnDeleteAccount").addEventListener("click", deleteAccount);
+
+let avatar = getCookieAvatar();
+const avatarElement = document.querySelector("#myAvatar");
+if (avatarElement) {
+  avatarElement.src = `./../${avatar}`;
+}

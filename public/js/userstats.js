@@ -7,7 +7,7 @@ async function issueGetRequest() {
     [userstatsEndpoint].map((url) => fetch(url + `?chartType=${chartType}`).then((r) => r.json()))
   );
 
-  google.charts.setOnLoadCallback(displayData);
+  return results;
 }
 
 const displayData = () => {
@@ -141,8 +141,69 @@ function generateChartPDF(filename) {
   generatePDF(filename, "tableChart");
 }
 
+function displayChart(chartId, xLabels, data, title) {
+  if (window.myCharts === undefined) {
+    window.myCharts = {};
+  }
+
+  if (window.myCharts[chartId] != undefined) {
+    window.myCharts[chartId].destroy();
+  }
+
+  const ctx = document.getElementById(chartId).getContext("2d");
+  window.myCharts[chartId] = new Chart(ctx, {
+    type: "polarArea",
+    data: {
+      labels: xLabels,
+      datasets: [{ data: data }],
+    },
+    options: {
+      plugins: {
+        title: {
+          display: true,
+          text: title,
+          font: {
+            size: 24,
+          },
+        },
+      },
+    },
+  });
+}
+
+function displayCanvasChart(results, title) {
+  document.querySelector("#canvasPolarChartData").style.display = "inherit";
+
+  const xLabels = [];
+  const articlesData = [];
+  results.forEach((element) => {
+    if (typeof element[1] === "number") {
+      xLabels.push(element[0]);
+      articlesData.push(element[1]);
+    }
+  });
+
+  displayChart("canvasPolarChartData", xLabels, articlesData, title);
+}
+
 // Load google charts
 google.charts.load("current", { packages: ["corechart"] });
 
 const chartType = getParams()["type"];
-issueGetRequest();
+const entityType = getParams()["e"];
+
+if (chartType === "polar") {
+  issueGetRequest().then((results) => {
+    if (entityType === "articles") {
+      displayCanvasChart(results[0].articlesDataForChart, "Articles per User");
+    } else if (entityType === "comments") {
+      displayCanvasChart(results[0].commentsDataForChart, "Comments per User");
+    } else {
+      displayCanvasChart([], `No data for: ${entityType}`);
+    }
+  });
+} else {
+  issueGetRequest().then(() => {
+    google.charts.setOnLoadCallback(displayData);
+  });
+}

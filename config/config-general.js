@@ -46,6 +46,7 @@ const configToModify = {
   minRandomVisitsForUsers: 10,
 
   randomErrorResponseProbability: 0.05,
+  minSecondsForResourceCreatedRecentlyBug: 3,
 };
 
 const config = {

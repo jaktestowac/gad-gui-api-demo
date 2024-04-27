@@ -1,5 +1,51 @@
 const repository_url = "https://github.com/jaktestowac/gad-gui-api-demo";
 
+function saveSession(id, obj) {
+  sessionStorage.setItem(id, JSON.stringify(obj));
+  return true;
+}
+
+function getSession(id) {
+  const value = sessionStorage.getItem(id);
+  try {
+    return JSON.parse(value);
+  } catch (e) {
+    return value;
+  }
+}
+
+function saveLocalStorage(id, obj) {
+  localStorage.setItem(id, JSON.stringify(obj));
+  return true;
+}
+
+function getLocalStorage(id) {
+  const value = localStorage.getItem(id);
+  try {
+    return JSON.parse(value);
+  } catch (e) {
+    return value;
+  }
+}
+
+function checkIfCookieExists(name) {
+  let cookies = document.cookie.split(";");
+  let found = "";
+
+  for (let i = 0; i < cookies.length; i++) {
+    let cookie = cookies[i];
+    while (cookie.charAt(0) == " ") {
+      cookie = cookie.substring(1);
+    }
+
+    if (cookie.indexOf(name) === 0) {
+      found = cookie.substring(name.length, cookie.length);
+    }
+  }
+  console.log("Cookie found:", found);
+  return found;
+}
+
 function getCookieEmail() {
   let email = undefined;
   const cookies = document.cookie.split(";");
@@ -11,6 +57,30 @@ function getCookieEmail() {
     }
   }
   return email;
+}
+
+function getCookieUserName() {
+  let firstname = undefined;
+  const cookies = document.cookie.split(";");
+  for (let cookie of cookies) {
+    cookie = cookie.trim();
+    if (cookie.startsWith("firstname=")) {
+      firstname = cookie.split("=")[1];
+    }
+  }
+  return firstname;
+}
+
+function getCookieExpired() {
+  let expires = undefined;
+  const cookies = document.cookie.split(";");
+  for (let cookie of cookies) {
+    cookie = cookie.trim();
+    if (cookie.startsWith("expires=")) {
+      expires = cookie.split("=")[1];
+    }
+  }
+  return parseInt(expires);
 }
 
 function getCookieId() {
@@ -42,12 +112,12 @@ function getCookie(cookieName) {
   return cookieValue;
 }
 
-function addCookie(cookieName, value, daysOfValidity) {
+function addCookie(cookieName, value, daysOfValidity = 9999) {
   var now = new Date();
   var time = now.getTime() + daysOfValidity * 24 * 60 * 60 * 1000;
   var newTime = new Date(now.setTime(time));
   newTime = newTime.toUTCString();
-  document.cookie = `${cookieName}=${value?.toLowerCase()}; expires=${newTime}; SameSite=Lax; path=/`;
+  document.cookie = `${cookieName}=${`${value}`?.toLowerCase()}; expires=${newTime}; SameSite=Lax; path=/`;
 }
 
 function addVersionStatusCookie(status) {
@@ -291,7 +361,7 @@ const rightMenu = (path = ".") => {
       />
     </button>
     <div class="dropdown-content" id="dropdown-content">
-      <div style="margin: 5px" id="username"></div>
+      <div align="center"><strong><div style="margin: 5px" id="username"></div></strong></div>
       <a href="/login" id="loginBtn">My Account</a>
       <a href="/logout" id="logoutBtn" hidden>Logout</a>
       <a href="/register.html" id="registerBtn">Register</a>
@@ -605,20 +675,33 @@ async function checkNewerVersion(force = false) {
     const versionUpToDate = getVersionStatusCookie();
     const latestVersionCookie = getLatestVersionCookie();
 
-    if (versionUpToDate === "1") {
-      const latestVersionCookie = getLatestVersionCookie();
+    if (versionUpToDate === "1" && latestVersionCookie !== undefined) {
       console.log("Using cached cookie data. Latest:", latestVersionCookie);
       displayUpToDateMessage(currentVersion, latestVersionCookie);
+
+      const versionInfoContainer = document.getElementById("versionDetails");
+      if (versionInfoContainer !== null) {
+        versionInfoContainer.innerHTML += `<div align="center">(Using cached cookie data. Valid for 5 minutes)</div>`;
+      }
       return;
     }
 
-    if (versionUpToDate === "2" && currentVersion < latestVersionCookie && force === false) {
-      const latestVersionCookie = getLatestVersionCookie();
+    if (
+      versionUpToDate === "2" &&
+      currentVersion < latestVersionCookie &&
+      force === false &&
+      latestVersionCookie !== undefined
+    ) {
       console.log("Using cached cookie data.. Latest:", latestVersionCookie);
       displayNewerVersionAvailableMessage(currentVersion, {
         name: latestVersionCookie,
         html_url: `${repository_url}/releases/tag/${latestVersionCookie}`,
       });
+
+      const versionInfoContainer = document.getElementById("versionInfoBox");
+      if (versionInfoContainer !== null) {
+        versionInfoContainer.innerHTML += `<div align="center">(Using cached cookie data. Valid for 5 minutes)</div>`;
+      }
       return;
     }
 

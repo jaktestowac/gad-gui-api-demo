@@ -11,6 +11,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <!-- https://sheetjs.com/ -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="./js/libs/charts/chart.js"></script>
 </head>
 
 <body>
@@ -24,11 +25,22 @@
   </div>
   <div align="center">
     <div id="container"></div>
-    Data Type:
-    <a id="columnChart" href="./userstats.html"><button id="btnColumnChart" class="button-primary">Column Chart</button></a>
-    <a id="pieChart" href="./userstats.html?type=pie"><button id="btnPieChart" class="button-primary">Pie Chart</button></a>
-    <a id="table" href="./userstats.html?type=table"><button id="btnTableData" class="button-primary">Table</button></a>
+
+    <fieldset style="width: 250px; border-radius: 10px; display: inline-block;">
+      <legend>Classic Charts:</legend>
+      <a id="columnChart" href="./userstats.html"><button id="btnColumnChart" class="button-primary-small">Column Chart</button></a>
+      <a id="pieChart" href="./userstats.html?type=pie"><button id="btnPieChart" class="button-primary-small">Pie Chart</button></a>
+      <a id="table" href="./userstats.html?type=table"><button id="btnTableData" class="button-primary-small">Table</button></a>
+    </fieldset>
+    <fieldset style="width: 250px; border-radius: 10px; display: inline-block;">
+      <legend>Polar Charts:</legend>
+      <a id="polarChart" href="./userstats.html?type=polar&e=articles"><button id="btnPolarChart" class="button-primary-small">Articles per User</button></a>
+      <a id="polarChart" href="./userstats.html?type=polar&e=comments"><button id="btnPolarChart" class="button-primary-small">Comments per User</button></a>
+    </fieldset>
     <br /><br />
+    <div style="width: 500px;">
+      <canvas id="canvasPolarChartData" style="display: none;"></canvas>
+    </div>
     <table id="tableChart" style="visibility: hidden">
       <tr>
         <th style="width: 50%">Articles per User</th>
@@ -93,5 +105,6 @@
 <script type="text/javascript" src="version.js"></script>
 <script type="text/javascript" src="username.js"></script>
 <script type="text/javascript" src="js/pdf-handler.js"></script>
+<script type="text/javascript" src="js/darkmode.js"></script>
 
 </html>

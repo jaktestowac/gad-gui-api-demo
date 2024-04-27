@@ -100,6 +100,10 @@
       "description": "Visits of different entities"
     },
     {
+      "name": "calculators",
+      "description": "Calculators"
+    },
+    {
       "name": "stats",
       "description": "Statistics"
     },
@@ -2092,6 +2096,64 @@
         }
       }
     },
+    "/calc/simpleroi": {
+      "post": {
+        "tags": ["calculators"],
+        "summary": "Calculate simple ROI",
+        "operationId": "calcSimpleRoi",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SimpleRoiParameters"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Calculated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimpleRoiCalculations"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/calc/roi": {
+      "post": {
+        "tags": ["calculators"],
+        "summary": "Calculate advanced ROI",
+        "operationId": "calcAdvRoi",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoiParameters"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Calculated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoiCalculations"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/languages": {
       "get": {
         "tags": ["other"],
@@ -2976,7 +3038,7 @@
         }
       }
     },
-    "/health/check": {
+    "/health/configcheck": {
       "get": {
         "tags": ["healthcheck"],
         "summary": "Get config check result",
@@ -4432,6 +4494,527 @@
             "type": "string"
           }
         }
+      },
+      "SimpleRoiParameters": {
+        "type": "object",
+        "properties": {
+          "costPerSprint": {
+            "type": "integer",
+            "description": "The cost associated with each sprint.",
+            "example": 1
+          },
+          "benefitPerSprint": {
+            "type": "integer",
+            "description": "The benefit derived from each sprint.",
+            "example": 1
+          },
+          "numberOfSprints": {
+            "type": "integer",
+            "description": "The total number of sprints planned for the project.",
+            "example": 10
+          }
+        },
+        "required": ["costPerSprint", "benefitPerSprint", "numberOfSprints"]
+      },
+      "SimpleRoiCalculations": {
+        "type": "object",
+        "properties": {
+          "costPerSprint": {
+            "type": "integer",
+            "description": "The cost associated with each sprint.",
+            "example": 1
+          },
+          "benefitPerSprint": {
+            "type": "integer",
+            "description": "The benefit derived from each sprint.",
+            "example": 1
+          },
+          "numberOfSprints": {
+            "type": "integer",
+            "description": "The total number of sprints planned for the project.",
+            "example": 10
+          },
+          "totalCosts": {
+            "type": "integer",
+            "description": "The total costs accumulated over all sprints.",
+            "example": 10
+          },
+          "totalBenefits": {
+            "type": "integer",
+            "description": "The total benefits accumulated over all sprints.",
+            "example": 10
+          },
+          "totalCumulativeCostsPerSprint": {
+            "type": "array",
+            "description": "List of total costs accumulated by each sprint, where the first entry can be null to indicate no data.",
+            "items": {
+              "type": ["integer", "null"]
+            },
+            "example": [null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+          },
+          "totalCumulativeBenefitsPerSprint": {
+            "type": "array",
+            "description": "List of total benefits accumulated by each sprint, where the first entry can be null to indicate no data.",
+            "items": {
+              "type": ["integer", "null"]
+            },
+            "example": [null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+          },
+          "profitPerSprint": {
+            "type": "array",
+            "description": "List of profits per each sprint, where the first entry can be null to indicate no data.",
+            "items": {
+              "type": ["integer", "null"]
+            },
+            "example": [null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+          },
+          "totalCumulativeProfitPerSprint": {
+            "type": "array",
+            "description": "List of cumulative profit per each sprint, where the first entry can be null to indicate no data.",
+            "items": {
+              "type": ["integer", "null"]
+            },
+            "example": [null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+          },
+          "sprintROI": {
+            "type": "array",
+            "description": "Return on investment for each sprint, where the first entry can be null to indicate no data and other entries are typically integers.",
+            "items": {
+              "type": ["integer", "null"]
+            },
+            "example": [null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+          },
+          "sprints": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Labels of the sprints."
+          }
+        },
+        "required": [
+          "costPerSprint",
+          "benefitPerSprint",
+          "numberOfSprints",
+          "totalCosts",
+          "totalBenefits",
+          "totalCostsPerSprint",
+          "totalBenefitsPerSprint",
+          "sprintROI"
+        ]
+      },
+      "RoiParameters": {
+        "type": "object",
+        "properties": {
+          "numberOfEnvs": {
+            "type": "integer",
+            "description": "The number of environments in which the test cases are executed.",
+            "example": 1
+          },
+          "numberOfSprints": {
+            "type": "integer",
+            "description": "The total number of sprints covered by the test cases.",
+            "example": 12
+          },
+          "baseTestCases": {
+            "type": "integer",
+            "description": "The initial number of test cases available before any modifications.",
+            "example": 300
+          },
+          "startingTestCases": {
+            "type": "integer",
+            "description": "The number of test cases at the start of testing.",
+            "example": 200
+          },
+          "newTestsPerRelease": {
+            "type": "number",
+            "description": "The proportion of new test cases added per release.",
+            "format": "float",
+            "example": 0.1
+          },
+          "modifiedTestsPerRelease": {
+            "type": "number",
+            "description": "The proportion of existing test cases modified per release.",
+            "format": "float",
+            "example": 0.1
+          },
+          "removedTestsPerRelease": {
+            "type": "number",
+            "description": "The proportion of test cases removed per release.",
+            "format": "float",
+            "example": 0.05
+          },
+          "automationNotApplicable": {
+            "type": "number",
+            "description": "The proportion of test cases where automation is not applicable.",
+            "format": "float",
+            "example": 0.1
+          },
+          "averageEffortOnModificationOfManualTC": {
+            "type": "number",
+            "description": "The average effort required to modify a manual test case, as a fraction of total effort.",
+            "format": "float",
+            "example": 0.1
+          },
+          "averageEffortOnModificationOfAutomatedTC": {
+            "type": "number",
+            "description": "The average effort required to modify an automated test case, as a fraction of total effort.",
+            "format": "float",
+            "example": 0.4
+          },
+          "numberOfAutomationOfBaseTestCases": {
+            "type": "number",
+            "description": "The proportion of base test cases that are automated.",
+            "format": "float",
+            "example": 0.1
+          },
+          "manualCreationHours": {
+            "type": "number",
+            "description": "The number of hours needed to create a manual test case.",
+            "format": "float",
+            "example": 1.5
+          },
+          "manualExecutionHours": {
+            "type": "number",
+            "description": "The number of hours needed to execute a manual test case.",
+            "format": "float",
+            "example": 2
+          },
+          "automationCreationHours": {
+            "type": "number",
+            "description": "The number of hours needed to create an automated test case.",
+            "format": "float",
+            "example": 8
+          },
+          "automationExecutionHours": {
+            "type": "number",
+            "description": "The number of hours needed to execute an automated test case.",
+            "format": "float",
+            "example": 0.05
+          },
+          "additionalMaintenanceHours": {
+            "type": "number",
+            "description": "The additional hours required for maintaining test cases per sprint.",
+            "format": "float",
+            "example": 0.5
+          },
+          "hourlyCost": {
+            "type": "number",
+            "description": "The cost per hour for conducting testing.",
+            "format": "float",
+            "example": 50
+          }
+        },
+        "required": [
+          "numberOfEnvs",
+          "numberOfSprints",
+          "baseTestCases",
+          "startingTestCases",
+          "newTestsPerRelease",
+          "modifiedTestsPerRelease",
+          "removedTestsPerRelease",
+          "automationNotApplicable",
+          "averageEffortOnModificationOfManualTC",
+          "averageEffortOnModificationOfAutomatedTC",
+          "numberOfAutomationOfBaseTestCases",
+          "manualCreationHours",
+          "manualExecutionHours",
+          "automationCreationHours",
+          "automationExecutionHours",
+          "additionalMaintenanceHours",
+          "hourlyCost"
+        ]
+      },
+      "RoiCalculations": {
+        "type": "object",
+        "properties": {
+          "numberOfEnvs": {
+            "type": "integer",
+            "description": "Number of testing environments."
+          },
+          "numberOfSprints": {
+            "type": "integer",
+            "description": "Number of sprints for the project."
+          },
+          "baseTestCases": {
+            "type": "integer",
+            "description": "Base number of test cases at the beginning of the project."
+          },
+          "startingTestCases": {
+            "type": "integer",
+            "description": "Number of test cases available at the start."
+          },
+          "newTestsPerRelease": {
+            "type": "number",
+            "format": "float",
+            "description": "Percentage of new tests added per release."
+          },
+          "modifiedTestsPerRelease": {
+            "type": "number",
+            "format": "float",
+            "description": "Percentage of tests modified per release."
+          },
+          "removedTestsPerRelease": {
+            "type": "number",
+            "format": "float",
+            "description": "Percentage of tests removed per release."
+          },
+          "automationNotApplicable": {
+            "type": "number",
+            "format": "float",
+            "description": "Percentage of tests not suitable for automation."
+          },
+          "averageEffortOnModificationOfManualTC": {
+            "type": "number",
+            "format": "float",
+            "description": "Average effort required to modify a manual test case."
+          },
+          "averageEffortOnModificationOfAutomatedTC": {
+            "type": "number",
+            "format": "float",
+            "description": "Average effort required to modify an automated test case."
+          },
+          "numberOfAutomationOfBaseTestCases": {
+            "type": "number",
+            "format": "float",
+            "description": "Percentage of base test cases that are automated."
+          },
+          "manualCreationHours": {
+            "type": "number",
+            "format": "float",
+            "description": "Hours required to create a manual test case."
+          },
+          "manualExecutionHours": {
+            "type": "number",
+            "format": "float",
+            "description": "Hours required to execute a manual test case."
+          },
+          "automationCreationHours": {
+            "type": "number",
+            "format": "float",
+            "description": "Hours required to create an automated test case."
+          },
+          "automationExecutionHours": {
+            "type": "number",
+            "format": "float",
+            "description": "Hours required to execute an automated test case."
+          },
+          "additionalMaintenanceHours": {
+            "type": "number",
+            "format": "float",
+            "description": "Additional hours per sprint for maintenance."
+          },
+          "hourlyCost": {
+            "type": "number",
+            "format": "float",
+            "description": "Cost per hour for testing."
+          },
+          "sprints": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Labels of the sprints."
+          },
+          "newTests": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Number of new tests introduced in each sprint."
+          },
+          "totalTestCases": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Total number of test cases after each sprint."
+          },
+          "modifiedTests": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Number of modified tests in each sprint."
+          },
+          "removedTests": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Number of removed tests in each sprint."
+          },
+          "automationNotApplicableTests": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Count of tests unsuitable for automation in each sprint."
+          },
+          "manual": {
+            "type": "object",
+            "properties": {
+              "effort": {
+                "type": "object",
+                "properties": {
+                  "creation": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "description": "Effort in hours for creating manual test cases per sprint."
+                  },
+                  "execution": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "description": "Effort in hours for executing manual test cases per sprint."
+                  }
+                }
+              },
+              "cost": {
+                "type": "object",
+                "properties": {
+                  "creation": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "description": "Cost of creating manual test cases per sprint."
+                  },
+                  "execution": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "description": "Cost of executing manual test cases per sprint."
+                  },
+                  "total": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "description": "Total manual testing cost per sprint."
+                  }
+                }
+              }
+            }
+          },
+          "automation": {
+            "type": "object",
+            "properties": {
+              "total": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "description": "Total number of automated tests per sprint."
+              },
+              "effort": {
+                "type": "object",
+                "properties": {
+                  "creation": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "description": "Effort in hours for creating automated test cases per sprint."
+                  },
+                  "execution": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "description": "Effort in hours for executing automated test cases per sprint."
+                  },
+                  "maintenance": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "description": "Maintenance hours for automated test cases per sprint."
+                  }
+                }
+              },
+              "cost": {
+                "type": "object",
+                "properties": {
+                  "creation": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "description": "Cost of creating automated test cases per sprint."
+                  },
+                  "execution": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "description": "Cost of executing automated test cases per sprint."
+                  },
+                  "maintenance": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "description": "Maintenance costs for automated test cases per sprint."
+                  },
+                  "total": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "description": "Total cost of automation per sprint."
+                  }
+                }
+              }
+            }
+          },
+          "diff": {
+            "type": "object",
+            "properties": {
+              "automationAdditionalCosts": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "description": "Additional costs incurred due to automation per sprint."
+              }
+            }
+          },
+          "roi": {
+            "type": "number",
+            "format": "float",
+            "description": "Return on investment from the project."
+          }
+        },
+        "required": [
+          "numberOfEnvs",
+          "numberOfSprints",
+          "baseTestCases",
+          "startingTestCases",
+          "newTestsPerRelease",
+          "modifiedTestsPerRelease",
+          "removedTestsPerRelease",
+          "automationNotApplicable",
+          "averageEffortOnModificationOfManualTC",
+          "averageEffortOnModificationOfAutomatedTC",
+          "numberOfAutomationOfBaseTestCases",
+          "manualCreationHours",
+          "manualExecutionHours",
+          "automationCreationHours",
+          "automationExecutionHours",
+          "additionalMaintenanceHours",
+          "hourlyCost",
+          "sprints",
+          "newTests",
+          "totalTestCases",
+          "modifiedTests",
+          "removedTests",
+          "automationNotApplicableTests"
+        ]
       }
     }
   }

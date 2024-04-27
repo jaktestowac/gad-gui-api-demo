@@ -262,7 +262,7 @@ const showEmailEditForm = (ev) => {
 
 const displayForm = (item, container) => {
   container.innerHTML = `
-        <div style="margin-top:7px;">
+        <div style="margin-top:7px;" class="item-card">
             <label>id:</label><span>${item.id}</span><br>
             <label>firstname:</label>
             <input type="text" id="firstname" value="${item.firstname}"><br>
@@ -284,7 +284,7 @@ const displayForm = (item, container) => {
 };
 const displayEmailForm = (item, container) => {
   container.innerHTML = `
-        <div style="margin-top:7px;">
+        <div style="margin-top:7px;" class="item-card">
             <label>id:</label><span>${item.id}</span><br>
             <label>firstname:</label>${item.firstname}<br>
             <label>lastname:</label>${item.lastname}<br>
@@ -308,7 +308,7 @@ const displayEmailForm = (item, container) => {
 }
 
 const getItemHTML = (item) => {
-  return `<div>
+  return `<div class="item-card">
         <label>id:</label><span>${item.id}</span><br>
         <label>firstname:</label><span>${item.firstname}</span><br>
         <label>lastname:</label><span>${item.lastname}</span><br>

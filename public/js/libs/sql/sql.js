@@ -4,10 +4,10 @@
 (function (mod) {
   if (typeof exports == "object" && typeof module == "object")
     // CommonJS
-    mod(require("./codemirror"));
+    mod(require("./../codemirror/codemirror"));
   else if (typeof define == "function" && define.amd)
     // AMD
-    define(["./codemirror"], mod);
+    define(["./../codemirror/codemirror"], mod);
   // Plain browser env
   else mod(CodeMirror);
 })(function (CodeMirror) {

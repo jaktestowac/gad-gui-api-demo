@@ -139,7 +139,7 @@ const getCommentHTML = (comment) => {
   if (comment.body === undefined || comment.body.length === 0) {
     comment.body = "<i>[Comment was removed]</i>";
   }
-  return `<div>
+  return `<div class="item-card">
         <label>article:</label></br><span><a href="article.html?id=${comment.article?.id}" data-testid="article-${
     comment.article?.id
   }-title" id="gotoArticle${comment.article?.id}">${comment.article?.title?.substring(0, 50)} (...)</a></span><br>
