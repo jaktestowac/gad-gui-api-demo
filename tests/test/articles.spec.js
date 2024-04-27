@@ -333,6 +333,14 @@ describe("Endpoint /articles", () => {
       expect(response.body).to.deep.equal(expectedData);
     });
 
+    it("GET /articles/:id - should return 404 when article does not exist", async () => {
+      // Act:
+      const response = await request.get(`${baseUrl}/10000000`).set(headers);
+
+      // Assert:
+      expect(response.status).to.equal(404);
+    });
+
     it("POST /articles - should create valid article", async () => {
       // Arrange:
       const testData = generateValidArticleData();

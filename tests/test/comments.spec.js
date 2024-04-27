@@ -417,6 +417,14 @@ describe("Endpoint /comments", () => {
       expect(response.body).to.deep.equal(expectedData);
     });
 
+    it("GET /comments/:id - should return 404 when comment does not exist", async () => {
+      // Act:
+      const response = await request.get(`${baseUrl}/100000`).set(headers);
+
+      // Assert:
+      expect(response.status).to.equal(404);
+    });
+
     it("HEAD /comments", () => {
       return request.head(`${baseUrl}/1`).set(headers).expect(200);
     });
