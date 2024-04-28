@@ -1,7 +1,13 @@
 const { isBugDisabled, isBugEnabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
 const { areIdsEqual, isUndefined, isInactive } = require("../helpers/compare.helpers");
-const { searchForUserWithToken, searchForArticle, searchForUserWithEmail } = require("../helpers/db-operation.helpers");
+const {
+  searchForUserWithToken,
+  searchForArticle,
+  searchForUserWithEmail,
+  searchForComment,
+  softDeleteCommentsByArticleId,
+} = require("../helpers/db-operation.helpers");
 const { randomDbEntry, articlesDb } = require("../helpers/db.helpers");
 const {
   formatInvalidTokenErrorResponse,
@@ -272,7 +278,11 @@ function handleArticles(req, res, isAdmin) {
       return;
     }
 
+    const softDeletedComments = softDeleteCommentsByArticleId(articleId);
+    logDebug("handleArticles: softDeletedComments:", { numberOfComments: softDeletedComments?.length });
+
     req.method = "PUT";
+    req._org_method = "DELETE";
     req.url = `/api/articles/${articleId}`;
     const newArticleBody = foundArticle;
     newArticleBody._inactive = true;

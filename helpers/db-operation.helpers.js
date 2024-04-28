@@ -81,6 +81,26 @@ function searchForComment(commentId) {
   return foundComment;
 }
 
+function searchForCommentsByArticleId(articleId) {
+  const foundComment = commentsDb().find((comment) => {
+    if (areIdsEqual(comment["article_id"], articleId)) {
+      return comment;
+    }
+  });
+  return foundComment;
+}
+
+function softDeleteCommentsByArticleId(articleId) {
+  let amount = 0;
+  const comments = commentsDb().map((comment) => {
+    if (areIdsEqual(comment["article_id"], articleId)) {
+      comment["_inactive"] = true;
+      amount++;
+    }
+  });
+  return amount;
+}
+
 function searchForArticleLabels(articleId) {
   const foundLabels = articleLabelsDb().find((label) => {
     if (areIdsEqual(label["article_id"], articleId)) {
@@ -292,4 +312,6 @@ module.exports = {
   findUserSurveyTypeResponses,
   aggregateSurveyAnswers,
   findUserSurveyResponse,
+  searchForCommentsByArticleId,
+  softDeleteCommentsByArticleId,
 };

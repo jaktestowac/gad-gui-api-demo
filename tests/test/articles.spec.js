@@ -286,6 +286,7 @@ describe("Endpoint /articles", () => {
 
       // Assert:
       expect(response.status, JSON.stringify(response.body)).to.equal(200);
+      expect(response.body, JSON.stringify(response.body)).to.deep.equal({});
 
       // Act:
       const responseGet = await request.get(`${baseUrl}/${articleId}`).set(headers);

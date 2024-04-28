@@ -67,6 +67,15 @@ function handleComments(req, res, isAdmin) {
     }
   }
 
+  if (req.method === "PATCH" && urlEnds.includes("/api/comments")) {
+    // validate date field:
+    const isDateValid = validateDateFields(req.body);
+    if (!isDateValid.status) {
+      res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidDateFieldErrorResponse(isDateValid));
+      return;
+    }
+  }
+
   if (req.method === "POST" && urlEnds.includes("/api/comments")) {
     // validate mandatory fields:
     if (!areMandatoryFieldsPresent(req.body, mandatory_non_empty_fields_comment_create)) {
@@ -75,10 +84,18 @@ function handleComments(req, res, isAdmin) {
         .send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_comment_create));
       return;
     }
+
     // validate all fields:
     const isValid = areAllFieldsValid(req.body, all_fields_comment, mandatory_non_empty_fields_comment_create);
     if (!isValid.status) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidFieldErrorResponse(isValid, all_fields_comment));
+      return;
+    }
+
+    // validate date field:
+    const isDateValid = validateDateFields(req.body);
+    if (!isDateValid.status) {
+      res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidDateFieldErrorResponse(isDateValid));
       return;
     }
 
@@ -188,6 +205,7 @@ function handleComments(req, res, isAdmin) {
     }
 
     req.method = "PUT";
+    req._org_method = "DELETE";
     req.url = `/api/comments/${commentId}`;
     const newCommentBody = foundComment;
     newCommentBody._inactive = true;
