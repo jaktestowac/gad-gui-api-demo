@@ -66,6 +66,19 @@ The application will be available at `http://localhost:3000`
 
 ### Update version
 
+#### If You are using zip package
+
+Steps:
+
+1. Download zipped repository
+1. Unzip and replace Your local instance of GAD
+1. Run `npm i` in root directory
+   - to install new modules
+1. Run `npm run start`
+   - to start GAD
+
+#### If You are using cloned repository
+
 Steps:
 
 1. Open the project root directory in cmd/terminal

@@ -1,7 +1,7 @@
 const jsonServer = require("./json-server");
 const { validationsRoutes } = require("./routes/validations.route");
-const { getConfigValue, getFeatureFlagConfigValue } = require("./config/config-manager");
-const { ConfigKeys, FeatureFlagConfigKeys } = require("./config/enums");
+const { getConfigValue, getFeatureFlagConfigValue, isBugEnabled } = require("./config/config-manager");
+const { ConfigKeys, FeatureFlagConfigKeys, BugConfigKeys } = require("./config/enums");
 const fs = require("fs");
 const path = require("path");
 
@@ -10,7 +10,7 @@ const helmet = require("helmet");
 const express = require("express");
 const { getDbPath, countEntities, visitsData, initVisits } = require("./helpers/db.helpers");
 
-const { formatErrorResponse } = require("./helpers/helpers");
+const { formatErrorResponse, sleep } = require("./helpers/helpers");
 const { logDebug, logError, logTrace } = require("./helpers/logger-api");
 const { HTTP_INTERNAL_SERVER_ERROR, HTTP_CREATED, HTTP_BAD_REQUEST } = require("./helpers/response.helpers");
 const {
@@ -168,17 +168,35 @@ server.use(calcRoutes);
 server.use(function (req, res, next) {
   if (getOriginMethod(req) === "DELETE" && req.url.includes("articles")) {
     const tracingInfo = getTracingInfo(req);
-    logTrace("Hit DELETE articles -> soft deleting comments", { url: req.url, tracingInfo });
-    router.db
-      .get("comments")
-      .filter({ article_id: parseInt(tracingInfo.resourceId) })
-      .each((item) => (item._inactive = true))
-      .write();
-    router.db
-      .get("comments")
-      .filter({ article_id: tracingInfo.resourceId })
-      .each((item) => (item._inactive = true))
-      .write();
+    logDebug("SOFT_DELETE: articles -> soft deleting comments", { url: req.url, tracingInfo });
+
+    const bugEnabled = isBugEnabled(BugConfigKeys.BUG_DELAY_SOFT_DELETE_COMMENTS);
+
+    let timeout = 0;
+    if (bugEnabled) {
+      timeout = getConfigValue(ConfigKeys.COMMENTS_SOFT_DELETE_DELAY_IN_SECONDS_BUG) * 1000;
+    }
+
+    sleep(timeout, bugEnabled ?? "Bug for SOFT_DELETE was enabled").then(() => {
+      setEntitiesInactive(router.db, "comments", { article_id: parseInt(tracingInfo.resourceId) });
+      setEntitiesInactive(router.db, "comments", { article_id: tracingInfo.resourceId });
+      // router.db
+      //   .get("comments")
+      //   .filter({ article_id: parseInt(tracingInfo.resourceId) })
+      //   .each((item) => (item._inactive = true))
+      //   .write()
+      //   .then((r) => {
+      //     logDebug("SOFT_DELETE: soft deleted:", { commentsCount: r.length, articleId: tracingInfo.resourceId });
+      //   });
+      // router.db
+      //   .get("comments")
+      //   .filter({ article_id: tracingInfo.resourceId })
+      //   .each((item) => (item._inactive = true))
+      //   .write()
+      //   .then((r) => {
+      //     logDebug("SOFT_DELETE: soft deleted:", { commentsCount: r.length, articleId: tracingInfo.resourceId });
+      //   });
+    });
   }
   next();
 });
@@ -211,6 +229,7 @@ server.use(function (req, res, next) {
 logDebug(`Starting 🦎 GAD on port ${port}...`);
 logDebug(`--------------------------------`);
 const app = require("./app.json");
+const { setEntitiesInactive } = require("./helpers/db-queries.helper");
 
 var serverApp = server.listen(port, () => {
   logDebug(`🦎 GAD listening on ${port}!`);

@@ -1,4 +1,4 @@
-const { logDebug } = require("./logger-api");
+const { logDebug, logTrace } = require("./logger-api");
 const { getConfigValue, isBugDisabled } = require("../config/config-manager");
 const { ConfigKeys, BugConfigKeys } = require("../config/enums");
 const { areStringsEqualIgnoringCase, isUndefined } = require("./compare.helpers");
@@ -54,7 +54,10 @@ function isTrueWithProbability(probability) {
   return Math.random() < probability;
 }
 
-function sleep(ms) {
+function sleep(ms, msg) {
+  if (ms > 0 || msg !== undefined) {
+    logTrace(`Sleeping for ${ms} ms...`, msg);
+  }
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
