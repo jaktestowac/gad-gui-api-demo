@@ -5,6 +5,7 @@ const { articlesDb } = require("../helpers/db.helpers");
 const { sleep } = require("../helpers/helpers");
 const { logTrace, logInsane } = require("../helpers/logger-api");
 const { addResourceCreationDate } = require("../helpers/temp-data-store");
+const { getOriginMethod } = require("../helpers/tracing-info.helper");
 
 function renderResponse(req, res) {
   if (req.method === "GET" && req.url.includes("users")) {
@@ -86,13 +87,17 @@ function renderResponse(req, res) {
       } else {
         const article = articlesDb().find((article) => areIdsEqual(article.id, resourcesMapped.article_id));
         if (article !== undefined && article._inactive === true) {
-          resourcesMapped = { ...resourcesMapped, body: "[Article for this comment was removed]", article_id: "[REMOVED]" };
+          resourcesMapped = {
+            ...resourcesMapped,
+            body: "[Article for this comment was removed]",
+            article_id: "[REMOVED]",
+          };
         }
       }
     }
 
     res.jsonp(resourcesMapped);
-  } else if (req._org_method === "DELETE" && (req.url.includes("articles") || req.url.includes("comments"))) {
+  } else if (getOriginMethod(req) === "DELETE" && (req.url.includes("articles") || req.url.includes("comments"))) {
     logInsane("RenderResponse: removing body:");
     res.jsonp({});
   } else {

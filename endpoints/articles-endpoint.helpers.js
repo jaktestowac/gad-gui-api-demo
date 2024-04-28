@@ -1,13 +1,7 @@
 const { isBugDisabled, isBugEnabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
 const { areIdsEqual, isUndefined, isInactive } = require("../helpers/compare.helpers");
-const {
-  searchForUserWithToken,
-  searchForArticle,
-  searchForUserWithEmail,
-  searchForComment,
-  softDeleteCommentsByArticleId,
-} = require("../helpers/db-operation.helpers");
+const { searchForUserWithToken, searchForArticle, searchForUserWithEmail } = require("../helpers/db-operation.helpers");
 const { randomDbEntry, articlesDb } = require("../helpers/db.helpers");
 const {
   formatInvalidTokenErrorResponse,
@@ -19,6 +13,7 @@ const {
 } = require("../helpers/helpers");
 const { logTrace, logDebug } = require("../helpers/logger-api");
 const { HTTP_UNAUTHORIZED, HTTP_UNPROCESSABLE_ENTITY, HTTP_NOT_FOUND } = require("../helpers/response.helpers");
+const { TrackingInfoBuilder } = require("../helpers/tracing-info.helper");
 const {
   verifyAccessToken,
   areMandatoryFieldsPresent,
@@ -278,11 +273,8 @@ function handleArticles(req, res, isAdmin) {
       return;
     }
 
-    const softDeletedComments = softDeleteCommentsByArticleId(articleId);
-    logDebug("handleArticles: softDeletedComments:", { numberOfComments: softDeletedComments?.length });
-
     req.method = "PUT";
-    req._org_method = "DELETE";
+    req = new TrackingInfoBuilder(req).setOriginMethod("DELETE").setResourceId(articleId).build();
     req.url = `/api/articles/${articleId}`;
     const newArticleBody = foundArticle;
     newArticleBody._inactive = true;

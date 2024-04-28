@@ -531,7 +531,7 @@ describe("Endpoint /comments", () => {
       commentId1 = commentData1.commentId;
     });
 
-    it("should return comment for soft deleted article", async () => {
+    it("should not return comment for soft deleted article", async () => {
       // Act:
       const responseDelete = await request.delete(`${baseArticlesUrl}/${articleId}`).set(headers);
 
@@ -547,9 +547,7 @@ describe("Endpoint /comments", () => {
 
       // Assert:
       expect(response.status, JSON.stringify(response.body)).to.equal(200);
-      expect(response.body.length).to.equal(1);
-      expect(response.body[0].article_id).to.equal("[REMOVED]");
-      expect(response.body[0].body).to.equal("[Article for this comment was removed]");
+      expect(response.body.length).to.equal(0);
     });
   });
 });
