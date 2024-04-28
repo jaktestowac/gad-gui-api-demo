@@ -73,29 +73,6 @@ function renderResponse(req, res) {
       }
     }
 
-    if (req.method === "GET" && req.url.includes("comments")) {
-      if (resourcesMapped?.length > 0) {
-        const articles = articlesDb();
-        resourcesMapped = resourcesMapped.map((resource) => {
-          const article = articles.find((article) => areIdsEqual(article.id, resource.article_id));
-          if (article !== undefined && article._inactive === true) {
-            return { ...resource, body: "[Article for this comment was removed]", article_id: "[REMOVED]" };
-          } else {
-            return resource;
-          }
-        });
-      } else {
-        const article = articlesDb().find((article) => areIdsEqual(article.id, resourcesMapped.article_id));
-        if (article !== undefined && article._inactive === true) {
-          resourcesMapped = {
-            ...resourcesMapped,
-            body: "[Article for this comment was removed]",
-            article_id: "[REMOVED]",
-          };
-        }
-      }
-    }
-
     res.jsonp(resourcesMapped);
   } else if (getOriginMethod(req) === "DELETE" && (req.url.includes("articles") || req.url.includes("comments"))) {
     logInsane("RenderResponse: removing body:");
