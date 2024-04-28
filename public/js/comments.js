@@ -38,6 +38,10 @@ async function issueGetRequest(
   if (!onlyDisplay) {
     let commentsEndpointPaged = `${commentsEndpoint}?_limit=${limit}&_page=${page}&_sort=${sortingType}&_order=${sortingOrder}`;
 
+    if (search_user_id !== undefined) {
+      commentsEndpointPaged += `&user_id=${search_user_id}`;
+    }
+
     if (searchPhrase !== undefined && searchPhrase.length > 0) {
       commentsEndpointPaged += `&q=${searchPhrase}`;
     }
@@ -175,6 +179,22 @@ const getCommentHTML = (comment) => {
 const sleep = (time) => new Promise((res) => setTimeout(res, time));
 
 async function displayCommentsData(data, delay = 0) {
+  if (search_user_id !== undefined) {
+    const foundUser = usersData.find((user) => `${user.id}` === search_user_id);
+
+    if (foundUser !== undefined) {
+      document.querySelector(
+        "#commentsByUserName"
+      ).innerHTML = `<b>Comments by ${foundUser.firstname} ${foundUser.lastname}</b>`;
+      const btnComments = document.querySelector("#btnComments");
+      btnComments.disabled = false;
+      btnComments.classList.remove("button-disabled");
+      btnComments.classList.add("button-primary");
+
+      document.title = `🦎 GAD | Comments by ${foundUser.firstname} ${foundUser.lastname}`;
+    }
+  }
+
   const container = document.querySelector("#container");
   container.innerHTML = "";
   for (let item of data) {
@@ -275,6 +295,8 @@ let sortingOrder = "desc";
 
 // TODO:INVOKE_BUG: stability issue - change this to slowly display new comments // issue on front-end
 const displayDelay = 0; // [ms]
+
+let search_user_id = getParams()["user_id"];
 
 updatePerPage();
 updateSorting();
