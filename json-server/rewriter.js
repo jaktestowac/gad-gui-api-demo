@@ -1,14 +1,16 @@
-const express = require("express");
-const rewrite = require("express-urlrewrite");
+"use strict";
 
-module.exports = (routes) => {
-  const router = express.Router();
+var express = require("express");
+var rewrite = require("express-urlrewrite");
 
-  router.get("/__rules", (req, res) => {
+module.exports = function (routes) {
+  var router = express.Router();
+
+  router.get("/__rules", function (req, res) {
     res.json(routes);
   });
 
-  Object.keys(routes).forEach((key) => {
+  Object.keys(routes).forEach(function (key) {
     router.use(rewrite(key, routes[key]));
   });
 

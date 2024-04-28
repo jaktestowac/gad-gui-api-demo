@@ -30,7 +30,7 @@
     "jsonwebtoken": "^9.0.0",
     "lodash": "^4.11.2",
     "lodash-id": "^0.14.0",
-    "lowdb": "^1.0.0",
+    "lowdb": "^0.15.0",
     "method-override": "^2.3.10",
     "morgan": "^1.9.0",
     "nanoid": "^1.0.1",
