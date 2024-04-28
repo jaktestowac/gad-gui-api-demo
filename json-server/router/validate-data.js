@@ -1,8 +1,10 @@
-const _ = require("lodash");
+"use strict";
+
+var _ = require("lodash");
 
 function validateKey(key) {
   if (key.indexOf("/") !== -1) {
-    const msg = [
+    var msg = [
       `Oops, found / character in database property '${key}'.`,
       "",
       "/ aren't supported, if you want to tweak default routes, see",
@@ -12,13 +14,12 @@ function validateKey(key) {
   }
 }
 
-module.exports = (obj) => {
+module.exports = function (obj) {
   if (_.isPlainObject(obj)) {
     Object.keys(obj).forEach(validateKey);
   } else {
     throw new Error(
-      `Data must be an object. Found ${Array.isArray(obj) ? "array" : typeof obj}.
-      'See https://github.com/typicode/json-server for example.`
+      `Data must be an object. Found ${typeof obj}.` + "See https://github.com/typicode/json-server for example."
     );
   }
 };

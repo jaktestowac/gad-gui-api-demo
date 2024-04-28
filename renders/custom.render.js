@@ -1,15 +1,18 @@
 const { isBugEnabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
+const { areIdsEqual } = require("../helpers/compare.helpers");
+const { articlesDb } = require("../helpers/db.helpers");
 const { sleep } = require("../helpers/helpers");
-const { logTrace } = require("../helpers/logger-api");
+const { logTrace, logInsane } = require("../helpers/logger-api");
 const { addResourceCreationDate } = require("../helpers/temp-data-store");
+const { getOriginMethod } = require("../helpers/tracing-info.helper");
 
 function renderResponse(req, res) {
   if (req.method === "GET" && req.url.includes("users")) {
     const users = res.locals.data;
     let loggedUser = req.cookies.id;
     let usersMapped;
-    logTrace("User anonymization:", { length: users.length, loggedUser });
+    logTrace("RenderResponse: User anonymization:", { length: users.length, loggedUser });
     if (users?.length > 0) {
       usersMapped = users.map((user) => {
         if (!loggedUser) {
@@ -21,6 +24,8 @@ function renderResponse(req, res) {
         user.password = "****";
         return user;
       });
+
+      usersMapped = usersMapped.filter((article) => article._inactive === undefined || article?._inactive === false);
     } else {
       // This is for single user
       usersMapped = users;
@@ -31,6 +36,11 @@ function renderResponse(req, res) {
         usersMapped.lastname = "****";
       }
       usersMapped.password = "****";
+
+      if (usersMapped?._inactive === true) {
+        usersMapped = {};
+        res.status(404);
+      }
     }
     res.jsonp(usersMapped);
   } else if (req.method === "POST" && req.url.includes("users")) {
@@ -38,63 +48,36 @@ function renderResponse(req, res) {
     sleep(100).then((x) => {
       res.jsonp(res.locals.data);
     });
-  } else if (req.method === "GET" && req.url.includes("articles")) {
-    const articles = res.locals.data;
-    if (articles?.length > 0) {
-      let articlesMapped = articles.filter(
-        (article) => article._inactive === undefined || article?._inactive === false
+  } else if (req.method === "GET" && (req.url.includes("articles") || req.url.includes("comments"))) {
+    const resources = res.locals.data;
+    let resourcesMapped = resources;
+    logInsane("RenderResponse: returning resources:", { length: resources.length });
+    if (resources?.length > 0) {
+      resourcesMapped = resources.filter(
+        (resource) => resource._inactive === undefined || resource?._inactive === false
       );
-      articlesMapped = articlesMapped.map((article) => {
-        const { _inactive, ...rest } = article;
+      resourcesMapped = resourcesMapped.map((resource) => {
+        const { _inactive, ...rest } = resource;
         return rest;
       });
-      res.jsonp(articlesMapped);
+      logTrace("RenderResponse: Articles:", {
+        withInactive: resources.length,
+        withoutInactive: resourcesMapped.length,
+      });
     } else {
-      let articlesMapped = articles;
-      if (articlesMapped?._inactive === true) {
-        articlesMapped = {};
+      if (resourcesMapped?._inactive === true) {
+        resourcesMapped = {};
         res.status(404);
+        res.jsonp(resourcesMapped);
+        return;
       }
-      res.jsonp(articlesMapped);
     }
-  } else if (req.method === "GET" && req.url.includes("comments")) {
-    const comments = res.locals.data;
 
-    if (comments?.length > 0) {
-      let commentsMapped = comments.filter(
-        (comment) => comment._inactive === undefined || comment?._inactive === false
-      );
-      commentsMapped = commentsMapped.map((comment) => {
-        const { _inactive, ...rest } = comment;
-        return rest;
-      });
-      res.jsonp(commentsMapped);
-    } else {
-      let commentsMapped = comments;
-      if (commentsMapped?._inactive === true) {
-        commentsMapped = {};
-        res.status(404);
-      }
-      res.jsonp(commentsMapped);
-    }
+    res.jsonp(resourcesMapped);
+  } else if (getOriginMethod(req) === "DELETE" && (req.url.includes("articles") || req.url.includes("comments"))) {
+    logInsane("RenderResponse: removing body:");
+    res.jsonp({});
   } else {
-    if (
-      req.method === "POST" &&
-      req.url.includes("articles") &&
-      isBugEnabled(BugConfigKeys.BUG_404_IF_ARTICLE_CREATED_RECENTLY)
-    ) {
-      const article = res.locals.data;
-      addResourceCreationDate(`articles/${article.id}`);
-    }
-    if (
-      req.method === "POST" &&
-      req.url.includes("comments") &&
-      isBugEnabled(BugConfigKeys.BUG_404_IF_COMMENT_CREATED_RECENTLY)
-    ) {
-      const article = res.locals.data;
-      addResourceCreationDate(`comments/${article.id}`);
-    }
-
     logTrace("router.render:", {
       statusCode: res.statusCode,
       headersSent: res.headersSent,
@@ -102,6 +85,23 @@ function renderResponse(req, res) {
       method: req.method,
     });
     res.jsonp(res.locals.data);
+  }
+
+  if (
+    req.method === "POST" &&
+    req.url.includes("articles") &&
+    isBugEnabled(BugConfigKeys.BUG_404_IF_ARTICLE_CREATED_RECENTLY)
+  ) {
+    const article = res.locals.data;
+    addResourceCreationDate(`articles/${article.id}`);
+  }
+  if (
+    req.method === "POST" &&
+    req.url.includes("comments") &&
+    isBugEnabled(BugConfigKeys.BUG_404_IF_COMMENT_CREATED_RECENTLY)
+  ) {
+    const article = res.locals.data;
+    addResourceCreationDate(`comments/${article.id}`);
   }
 }
 

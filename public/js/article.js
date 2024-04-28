@@ -83,15 +83,17 @@ async function issueGetRequest(article_id) {
   //   issueGetRequestComments(article_id);
   // });
 
-  let wasDisplayed = issueGetRequestArticles(article_id).catch((error) => {
+  let wasDisplayed = await issueGetRequestArticles(article_id).catch((error) => {
     console.log(error);
     displayArticlesData(undefined, "Error loading comments. Please contact administrator");
   });
 
-  issueGetRequestComments(article_id).catch((error) => {
-    console.log(error);
-    displayCommentsData(undefined, "Error loading comments. Please contact administrator");
-  });
+  if (wasDisplayed === true) {
+    issueGetRequestComments(article_id).catch((error) => {
+      console.log(error);
+      displayCommentsData(undefined, "Error loading comments. Please contact administrator");
+    });
+  }
 
   return wasDisplayed;
 }

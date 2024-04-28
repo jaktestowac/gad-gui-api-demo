@@ -38,6 +38,10 @@ async function issueGetRequest(
   if (!onlyDisplay) {
     let commentsEndpointPaged = `${commentsEndpoint}?_limit=${limit}&_page=${page}&_sort=${sortingType}&_order=${sortingOrder}`;
 
+    if (search_user_id !== undefined) {
+      commentsEndpointPaged += `&user_id=${search_user_id}`;
+    }
+
     if (searchPhrase !== undefined && searchPhrase.length > 0) {
       commentsEndpointPaged += `&q=${searchPhrase}`;
     }
@@ -117,6 +121,9 @@ async function processCommentsData(userComments) {
       userComments[j].user_name = "[Unknown]";
     }
     userComments[j].article = tempArticleData[article_id.toString()];
+    if (userComments[j].article === undefined) {
+      userComments[j].article = { title: "[Removed]", id: "" };
+    }
   }
 }
 
@@ -139,10 +146,23 @@ const getCommentHTML = (comment) => {
   if (comment.body === undefined || comment.body.length === 0) {
     comment.body = "<i>[Comment was removed]</i>";
   }
-  return `<div class="item-card">
-        <label>article:</label></br><span><a href="article.html?id=${comment.article?.id}" data-testid="article-${
+
+  let articleElement = `<span><a href="article.html?id=${comment.article?.id}" data-testid="article-${
     comment.article?.id
-  }-title" id="gotoArticle${comment.article?.id}">${comment.article?.title?.substring(0, 50)} (...)</a></span><br>
+  }-title" id="gotoArticle${comment.article?.id}">${comment.article?.title?.substring(0, 50)} (...)</a></span>`;
+
+  let seeMoreElement = `<span><strong><a href="comment.html?id=${comment.id}" id="gotoComment${comment.id}">See comment...</a></strong></span>`;
+
+  let commentBodyElement = `<span data-testid="comment${comment.id}-body">${comment.body}</span>`;
+
+  if (comment.article === undefined || comment.article.id === undefined || comment.article.id === "") {
+    articleElement = `<div align="center"><span>[Article was removed]</span></div>`;
+    seeMoreElement = "";
+    commentBodyElement = `<div align="center"><span>[Article for this comment was removed]</span></div>`;
+  }
+
+  return `<div class="item-card">
+        <label>article:</label></br>${articleElement}<br>
         <label>user:</label><span><a href="user.html?id=${comment.user_id}" data-testid="comment${
     comment.id
   }-user" data-testid="article-${comment.id}-title" id="gotoUser${comment.user_id}-${comment.id}">${
@@ -151,16 +171,30 @@ const getCommentHTML = (comment) => {
         <label>date:</label><span data-testid="comment${comment.id}-date">${comment.date
     .replace("T", " ")
     .replace("Z", "")}</span><br>
-        <label>comment:</label><span data-testid="comment${comment.id}-body">${comment.body}</span><br>
-        <span><strong><a href="comment.html?id=${comment.id}" id="gotoComment${
-    comment.id
-  }">See comment...</a></strong></span><br>
+        <label>comment:</label>${commentBodyElement}<br>
+        ${seeMoreElement}<br>
     </div>`;
 };
 
 const sleep = (time) => new Promise((res) => setTimeout(res, time));
 
 async function displayCommentsData(data, delay = 0) {
+  if (search_user_id !== undefined) {
+    const foundUser = usersData.find((user) => `${user.id}` === search_user_id);
+
+    if (foundUser !== undefined) {
+      document.querySelector(
+        "#commentsByUserName"
+      ).innerHTML = `<b>Comments by ${foundUser.firstname} ${foundUser.lastname}</b>`;
+      const btnComments = document.querySelector("#btnComments");
+      btnComments.disabled = false;
+      btnComments.classList.remove("button-disabled");
+      btnComments.classList.add("button-primary");
+
+      document.title = `🦎 GAD | Comments by ${foundUser.firstname} ${foundUser.lastname}`;
+    }
+  }
+
   const container = document.querySelector("#container");
   container.innerHTML = "";
   for (let item of data) {
@@ -179,7 +213,7 @@ async function displayCommentsData(data, delay = 0) {
 }
 
 const displayItem = (item, container) => {
-  if (item !== undefined && item.article !== undefined) {
+  if (item !== undefined) {
     let itemHTML = getCommentHTML(item);
     container.innerHTML += `
             <div class="card-wrapper card-comment">${itemHTML}</div>
@@ -261,6 +295,8 @@ let sortingOrder = "desc";
 
 // TODO:INVOKE_BUG: stability issue - change this to slowly display new comments // issue on front-end
 const displayDelay = 0; // [ms]
+
+let search_user_id = getParams()["user_id"];
 
 updatePerPage();
 updateSorting();

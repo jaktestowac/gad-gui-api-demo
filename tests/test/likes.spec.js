@@ -76,7 +76,7 @@ describe("Endpoint /likes", () => {
         ["comment", 1, undefined],
         ["article", undefined, 1],
       ].forEach((dataSet) => {
-        it(`POST /likes - ${dataSet[0]} and one more like`, async () => {
+        it(`POST /likes - ${dataSet[0]} and one more like @e2e`, async () => {
           // Arrange:
           const likedBody = generateLikesBody(userId, dataSet[1], dataSet[2]);
 
@@ -105,7 +105,7 @@ describe("Endpoint /likes", () => {
         ["comment", 1, undefined],
         ["article", undefined, 1],
       ].forEach((dataSet) => {
-        it(`POST /likes - ${dataSet[0]} liked by same user (unlike) - ${dataSet}`, async () => {
+        it(`POST /likes - ${dataSet[0]} liked by same user (unlike) - ${dataSet} @e2e`, async () => {
           // Arrange:
           const likedBody = generateLikesBody(userId, dataSet[1], dataSet[2]);
 

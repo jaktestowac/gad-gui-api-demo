@@ -1,5 +1,7 @@
+"use strict";
+
 module.exports = function write(db) {
-  return (req, res, next) => {
+  return function (req, res, next) {
     db.write();
     next();
   };

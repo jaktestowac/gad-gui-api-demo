@@ -5,7 +5,7 @@ const {
   validExistingArticle,
   prepareUniqueArticle,
 } = require("../helpers/data.helpers.js");
-const { setupEnv, gracefulQuit, getCurrentDate } = require("../helpers/helpers.js");
+const { setupEnv, gracefulQuit, getCurrentDate, sleep } = require("../helpers/helpers.js");
 
 describe("Endpoint /articles", () => {
   const baseUrl = baseArticlesUrl;
@@ -286,6 +286,7 @@ describe("Endpoint /articles", () => {
 
       // Assert:
       expect(response.status, JSON.stringify(response.body)).to.equal(200);
+      expect(response.body, JSON.stringify(response.body)).to.deep.equal({});
 
       // Act:
       const responseGet = await request.get(`${baseUrl}/${articleId}`).set(headers);
@@ -422,6 +423,39 @@ describe("Endpoint /articles", () => {
       expect(response.status).to.equal(201);
       testData.id = response.body.id;
       expect(response.body).to.deep.equal(testData);
+    });
+
+    it("POST /articles - should not reuse ID of deleted articles @e2e", async () => {
+      // Arrange:
+      const testData = generateValidArticleData();
+      testData.user_id = userId;
+
+      // Act:
+      const responsePost = await request.post(baseUrl).set(headers).send(testData);
+
+      // Assert:
+      expect(responsePost.status, JSON.stringify(responsePost.body)).to.equal(201);
+      const baseId = responsePost.body.id;
+
+      await sleep(100);
+
+      // Act:
+      const responseDelete = await request.delete(`${baseUrl}/${baseId}`).set(headers);
+
+      // Assert:
+      expect(responseDelete.status).to.equal(200);
+
+      // Create new article:
+      // Act:
+      const responsePost2 = await request.post(baseUrl).set(headers).send(testData);
+
+      await sleep(100);
+
+      // Assert:
+      expect(responsePost2.status, JSON.stringify(responsePost2.body)).to.equal(201);
+      const newBaseId = responsePost2.body.id;
+      expect(baseId).to.not.equal(newBaseId);
+      expect(baseId + 1).to.equal(newBaseId);
     });
 
     it("POST /articles - should create valid article (with id in body)", async () => {

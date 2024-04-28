@@ -35,6 +35,9 @@ if (visitMyAccountButtons) {
 const articlesLinkButton = document.querySelector("#btnArticlesLink");
 articlesLinkButton.setAttribute("href", `/articles.html?user_id=${getId()}`);
 
+const commentsLinkButton = document.querySelector("#btnCommentsLink");
+commentsLinkButton.setAttribute("href", `/comments.html?user_id=${getId()}`);
+
 function deleteAccount() {
   const id = getId();
 

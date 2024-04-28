@@ -1,5 +1,5 @@
 const { request, expect, baseBookmarksUrl } = require("../config.js");
-const { authUser, authUser2, authUser3, authUser4 } = require("../helpers/data.helpers.js");
+const { authUser2, authUser3, authUser4 } = require("../helpers/data.helpers.js");
 const { setupEnv, gracefulQuit, sleep } = require("../helpers/helpers.js");
 
 describe("Endpoint /bookmarks", async () => {
@@ -91,7 +91,7 @@ describe("Endpoint /bookmarks", async () => {
         await sleep(200);
       });
 
-      it(`POST /bookmarks - add a brand new bookmark`, async () => {
+      it(`POST /bookmarks - add a brand new bookmark @e2e`, async () => {
         const data = await authUser3();
         headers = data.headers;
         userId = data.userId;
@@ -123,7 +123,7 @@ describe("Endpoint /bookmarks", async () => {
         expect(articleIdsAfter, JSON.stringify(responseGetAfter.body)).to.eql(expectedBookmarkedArticles);
       });
 
-      it(`POST /bookmarks - add article to bookmarks`, async () => {
+      it(`POST /bookmarks - add article to bookmarks @e2e`, async () => {
         const data = await authUser4();
         headers = data.headers;
         userId = data.userId;

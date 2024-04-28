@@ -1,10 +1,11 @@
 {
   "name": "gad-gui-api-demo-v2",
-  "version": "2.6.3",
+  "version": "2.6.4",
   "description": "Simple application with GUI and API to deploy to Heroku, Glitch, Railway, Vercel etc.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
+    "start3001": "set PORT=3001 && node server.js",
     "pretty": "npx prettier --write .",
     "eslint": "npx eslint",
     "start:readonly": "set READ_ONLY=1 && node server.js"
@@ -29,7 +30,7 @@
     "jsonwebtoken": "^9.0.0",
     "lodash": "^4.11.2",
     "lodash-id": "^0.14.0",
-    "lowdb": "^1.0.0",
+    "lowdb": "^0.15.0",
     "method-override": "^2.3.10",
     "morgan": "^1.9.0",
     "nanoid": "^1.0.1",

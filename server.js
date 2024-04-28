@@ -37,6 +37,7 @@ const bodyParser = require("body-parser");
 const { randomErrorsRoutes } = require("./routes/error.route");
 const { checkDatabase } = require("./helpers/sanity.check");
 const { copyDefaultDbIfNotExists } = require("./helpers/setup");
+const { getOriginMethod, getTracingInfo } = require("./helpers/tracing-info.helper");
 
 const middlewares = jsonServer.defaults();
 
@@ -159,8 +160,29 @@ server.use(queryRoutes);
 server.use(customRoutes);
 server.use(randomErrorsRoutes);
 server.use(validationsRoutes);
+
 server.use(fileUploadRoutes);
 server.use(calcRoutes);
+
+// soft delete:
+server.use(function (req, res, next) {
+  if (getOriginMethod(req) === "DELETE" && req.url.includes("articles")) {
+    const tracingInfo = getTracingInfo(req);
+    logTrace("Hit DELETE articles -> soft deleting comments", { url: req.url, tracingInfo });
+    router.db
+      .get("comments")
+      .filter({ article_id: parseInt(tracingInfo.resourceId) })
+      .each((item) => (item._inactive = true))
+      .write();
+    router.db
+      .get("comments")
+      .filter({ article_id: tracingInfo.resourceId })
+      .each((item) => (item._inactive = true))
+      .write();
+  }
+  next();
+});
+
 server.use("/api", router);
 
 router.render = renderResponse;

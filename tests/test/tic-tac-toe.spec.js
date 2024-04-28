@@ -262,8 +262,8 @@ describe("Endpoint /tic-tac-toe", () => {
         return request.head(`${rootUrl}/1`).set(headers1).expect(404);
       });
     });
-    describe(`E2e`, () => {
-      it(`should start and join game`, async () => {
+    describe(`e2e`, () => {
+      it(`should start and join game @e2e`, async () => {
         // Act:
         const responseStart = await request.post(`${baseUrl}/start`).set(headers1).send({});
 
@@ -287,7 +287,7 @@ describe("Endpoint /tic-tac-toe", () => {
         expect(joinedSession.hasEnded, JSON.stringify(joinedSession)).to.be.false;
         expect(joinedSession.currentTurn, JSON.stringify(joinedSession)).to.be.equal(0);
       });
-      it(`should not join game - already joined`, async () => {
+      it(`should not join game - already joined @e2e`, async () => {
         // Act:
         const responseStart = await request.post(`${baseUrl}/start`).set(headers1).send({});
 
@@ -310,7 +310,7 @@ describe("Endpoint /tic-tac-toe", () => {
         // Assert:
         expect(responseJoin2.status, JSON.stringify(responseJoin2.body)).to.equal(200);
       });
-      it(`should start, join and stop game`, async () => {
+      it(`should start, join and stop game @e2e`, async () => {
         // Act:
         const responseStart = await request.post(`${baseUrl}/start`).set(headers1).send({});
 
@@ -339,7 +339,7 @@ describe("Endpoint /tic-tac-toe", () => {
         expect(stoppedSession.hasEnded, JSON.stringify(stoppedSession)).to.be.true;
         expect(stoppedSession.numberOfMatches, JSON.stringify(stoppedSession)).to.be.equal(1);
       });
-      it(`should start, join, switch and stop game`, async () => {
+      it(`should start, join, switch and stop game @e2e`, async () => {
         // Act:
         const responseStart = await request.post(`${baseUrl}/start`).set(headers1).send({});
 
@@ -378,7 +378,7 @@ describe("Endpoint /tic-tac-toe", () => {
         expect(stoppedSession.numberOfMatches, JSON.stringify(stoppedSession)).to.be.equal(1);
         expect(stoppedSession.currentTurn, JSON.stringify(stoppedSession)).to.be.equal(1);
       });
-      it(`should start, join, switch and stop game`, async () => {
+      it(`should start, join, switch and stop game @e2e`, async () => {
         // Act:
         const responseStart = await request.post(`${baseUrl}/start`).set(headers1).send({});
 
@@ -484,7 +484,7 @@ describe("Endpoint /tic-tac-toe", () => {
         expect(stoppedSession2.currentTurn, JSON.stringify(stoppedSession2)).to.be.equal(3);
       });
 
-      it(`should play full game`, async () => {
+      it(`should play full game @e2e`, async () => {
         // Act:
         const responseStart = await request.post(`${baseUrl}/start`).set(headers1).send({});
 
