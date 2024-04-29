@@ -38,6 +38,7 @@ const { randomErrorsRoutes } = require("./routes/error.route");
 const { checkDatabase } = require("./helpers/sanity.check");
 const { copyDefaultDbIfNotExists } = require("./helpers/setup");
 const { getOriginMethod, getTracingInfo } = require("./helpers/tracing-info.helper");
+const { setEntitiesInactive } = require("./helpers/db-queries.helper");
 
 const middlewares = jsonServer.defaults();
 
@@ -213,7 +214,6 @@ server.use(function (req, res, next) {
 logDebug(`Starting 🦎 GAD on port ${port}...`);
 logDebug(`--------------------------------`);
 const app = require("./app.json");
-const { setEntitiesInactive } = require("./helpers/db-queries.helper");
 
 var serverApp = server.listen(port, () => {
   logDebug(`🦎 GAD listening on ${port}!`);
