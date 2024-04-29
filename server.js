@@ -180,22 +180,6 @@ server.use(function (req, res, next) {
     sleep(timeout, bugEnabled ?? "Bug for SOFT_DELETE was enabled").then(() => {
       setEntitiesInactive(router.db, "comments", { article_id: parseInt(tracingInfo.resourceId) });
       setEntitiesInactive(router.db, "comments", { article_id: tracingInfo.resourceId });
-      // router.db
-      //   .get("comments")
-      //   .filter({ article_id: parseInt(tracingInfo.resourceId) })
-      //   .each((item) => (item._inactive = true))
-      //   .write()
-      //   .then((r) => {
-      //     logDebug("SOFT_DELETE: soft deleted:", { commentsCount: r.length, articleId: tracingInfo.resourceId });
-      //   });
-      // router.db
-      //   .get("comments")
-      //   .filter({ article_id: tracingInfo.resourceId })
-      //   .each((item) => (item._inactive = true))
-      //   .write()
-      //   .then((r) => {
-      //     logDebug("SOFT_DELETE: soft deleted:", { commentsCount: r.length, articleId: tracingInfo.resourceId });
-      //   });
     });
   }
   next();

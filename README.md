@@ -141,6 +141,11 @@ Bash:
 PORT=3001 npm run start
 ```
 
+Windows Cmd:
+``` 
+set PORT=3001 && npm run start
+```
+
 ## Deploy to **Glitch**
 
 No account needed - but your project will be deleted in 5 days.
