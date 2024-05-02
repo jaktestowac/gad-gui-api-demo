@@ -1,13 +1,14 @@
 const FILE_TYPE = "application/json";
 let fileContent = "";
 const articlesEndpoint = "../../api/articles";
+
 const sampleArticleJson = {
   title: "MY_TITLE",
-  body: "MY_BODY",
+  body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
   date: "2022-05-20T05:38:12Z",
   image: ".\\data\\images\\256\\chuttersnap-9cCeS9Sg6nU-unsplash.jpg",
 };
-const infoContainer = document.querySelector("#infoContainer");
+
 let browsebutton = document.getElementById("browsebutton");
 let input = document.getElementById("dragdropfile");
 const dropArea = document.getElementById("dropzone");

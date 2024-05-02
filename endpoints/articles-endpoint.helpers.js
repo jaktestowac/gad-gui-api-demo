@@ -100,6 +100,8 @@ function handleArticles(req, res, isAdmin) {
       }
       req.body["user_id"] = foundUser.id;
     }
+  } else if (req.method !== "GET" && req.method !== "HEAD" && urlEnds?.includes("/api/articles") && isAdmin) {
+    req.body["user_id"] = "admin";
   }
 
   // if (req.method === "GET" && urlEnds.includes("/api/articles?ids=")) {

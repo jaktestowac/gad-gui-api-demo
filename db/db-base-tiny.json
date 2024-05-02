@@ -2,19 +2,19 @@
   "users": [
     {
       "id": 1,
-      "email": "Moses.Armstrong@Feest.ca",
-      "firstname": "Moses",
-      "lastname": "Armstrong",
+      "email": "nancy_wyman66@test.test.dev",
+      "firstname": "Nancy",
+      "lastname": "Wyman",
       "password": "test1",
-      "avatar": ".\\data\\users\\face_1591133479.7144732.jpg"
+      "avatar": ".\\data\\users\\face_1713018024.9049351_f_1.jpg"
     },
     {
       "id": 2,
-      "email": "Danial.Dicki@dicki.test",
-      "firstname": "Danial",
-      "lastname": "Dicki",
+      "email": "leon.gerhold@test.test.dev",
+      "firstname": "Leon",
+      "lastname": "Gerhold",
       "password": "test2",
-      "avatar": ".\\data\\users\\face_1591133060.68834.jpg"
+      "avatar": ".\\data\\users\\face_1713017222.8101556_m_1.jpg"
     }
   ],
   "articles": [
