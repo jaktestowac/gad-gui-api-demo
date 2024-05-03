@@ -61,6 +61,7 @@ const ConfigKeys = {
   RANDOM_ERROR_RESPONSE_PROBABILITY: "randomErrorResponseProbability",
   MIN_SECONDS_FOR_RESOURCE_CREATED_RECENTLY_BUG: "minSecondsForResourceCreatedRecentlyBug",
   COMMENTS_SOFT_DELETE_DELAY_IN_SECONDS_BUG: "commentsSoftDeleteDelayInSecondsBug",
+  DIAGNOSTICS_ENABLED: "diagnosticsEnabled",
 };
 
 const BugConfigKeys = {

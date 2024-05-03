@@ -37,8 +37,9 @@ const bodyParser = require("body-parser");
 const { randomErrorsRoutes } = require("./routes/error.route");
 const { checkDatabase } = require("./helpers/sanity.check");
 const { copyDefaultDbIfNotExists } = require("./helpers/setup");
-const { getOriginMethod, getTracingInfo } = require("./helpers/tracing-info.helper");
+const { getOriginMethod, getTracingInfo, getWasAuthorized } = require("./helpers/tracing-info.helper");
 const { setEntitiesInactive } = require("./helpers/db-queries.helper");
+const { diagnosticRoutes } = require("./routes/diagnostic.route");
 
 const middlewares = jsonServer.defaults();
 
@@ -51,6 +52,8 @@ initVisits();
 
 const server = jsonServer.create();
 const router = jsonServer.router(getDbPath(getConfigValue(ConfigKeys.DB_PATH)));
+
+server.use(diagnosticRoutes);
 
 const clearDbRoutes = (req, res, next) => {
   try {
@@ -120,7 +123,6 @@ server.use((req, res, next) => {
 
 server.use(healthCheckRoutes);
 server.use(middlewares);
-
 server.use((req, res, next) => {
   bodyParser.json()(req, res, (err) => {
     if (err) {
@@ -167,7 +169,7 @@ server.use(calcRoutes);
 
 // soft delete:
 server.use(function (req, res, next) {
-  if (getOriginMethod(req) === "DELETE" && req.url.includes("articles")) {
+  if (getOriginMethod(req) === "DELETE" && getWasAuthorized(req) === true && req.url.includes("articles")) {
     const tracingInfo = getTracingInfo(req);
     logDebug("SOFT_DELETE: articles -> soft deleting comments", { url: req.url, tracingInfo });
 

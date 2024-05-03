@@ -133,8 +133,9 @@ const logoutRoutes = (req, res) => {
   res.clearCookie("token");
   res.clearCookie("id");
   res.clearCookie("avatar");
+  res.clearCookie("expires");
   // redirect to login
-  logDebug("logout");
+  logDebug("Logout");
   return res.redirect("/login");
 };
 

@@ -48,6 +48,7 @@ const configToModify = {
   randomErrorResponseProbability: 0.05,
   minSecondsForResourceCreatedRecentlyBug: 3,
   commentsSoftDeleteDelayInSecondsBug: 3,
+  diagnosticsEnabled: false,
 };
 
 const config = {

@@ -13,7 +13,7 @@ const {
 } = require("../helpers/helpers");
 const { logTrace, logDebug } = require("../helpers/logger-api");
 const { HTTP_UNAUTHORIZED, HTTP_UNPROCESSABLE_ENTITY, HTTP_NOT_FOUND } = require("../helpers/response.helpers");
-const { TrackingInfoBuilder } = require("../helpers/tracing-info.helper");
+const { TracingInfoBuilder } = require("../helpers/tracing-info.helper");
 const {
   verifyAccessToken,
   areMandatoryFieldsPresent,
@@ -276,7 +276,7 @@ function handleArticles(req, res, isAdmin) {
     }
 
     req.method = "PUT";
-    req = new TrackingInfoBuilder(req).setOriginMethod("DELETE").setResourceId(articleId).build();
+    req = new TracingInfoBuilder(req).setOriginMethod("DELETE").setWasAuthorized(true).setResourceId(articleId).build();
     req.url = `/api/articles/${articleId}`;
     const newArticleBody = foundArticle;
     newArticleBody._inactive = true;

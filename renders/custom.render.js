@@ -1,7 +1,5 @@
 const { isBugEnabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
-const { areIdsEqual } = require("../helpers/compare.helpers");
-const { articlesDb } = require("../helpers/db.helpers");
 const { sleep } = require("../helpers/helpers");
 const { logTrace, logInsane } = require("../helpers/logger-api");
 const { addResourceCreationDate } = require("../helpers/temp-data-store");
