@@ -2,14 +2,19 @@ const { createHistogram, performance, PerformanceObserver } = require("perf_hook
 const { saveJsonFile, saveFile, createDirectoryForFilePath } = require("../io.helpers");
 
 class TimeHistogramReporterHtml {
-  constructor(data) {
-    this.data = data;
+  constructor(timeHistogram) {
+    this.timeHistogram = timeHistogram;
     this.defaultPath = "reports/time-histogram-report.html";
+  }
+
+  getReport() {
+    const content = `${this.prepareHeader()}${this.prepareBody()}${this.prepareFooter()}`;
+    return content;
   }
 
   saveReport(path) {
     path = path || this.defaultPath;
-    const content = `${this.prepareHeader()}${this.prepareBody()}${this.prepareFooter()}`;
+    const content = this.getReport();
     createDirectoryForFilePath(path);
     saveFile(path, content);
   }
@@ -85,14 +90,18 @@ class TimeHistogramReporterHtml {
 }
 
 class TimeHistogramReporterJson {
-  constructor(data) {
-    this.data = data;
+  constructor(timeHistogram) {
+    this.timeHistogram = timeHistogram;
     this.defaultPath = "reports/time-histogram-report.json";
+  }
+
+  getReport() {
+    return this.timeHistogram.getReport();
   }
 
   saveReport(path) {
     path = path || this.defaultPath;
-    saveJsonFile(path, this.data.getReport());
+    saveJsonFile(path, this.getReport());
   }
 }
 
