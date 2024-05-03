@@ -52,7 +52,7 @@ class TimeHistogramReporterHtml {
   }
 
   prepareBody() {
-    return this.data
+    return this.timeHistogram
       .getReport()
       .items.map(
         (item) => `
@@ -134,8 +134,6 @@ class TimeHistogram {
   };
 
   getReport() {
-    this.performanceObserver.disconnect();
-
     const items = Array.from(this.histogramMap.entries()).map(([label, histogram]) => ({
       name: label,
       histogram,
@@ -147,7 +145,6 @@ class TimeHistogram {
           (item.entryType === "measure" && item.name === this.measureName) ||
           (item.entryType === "mark" && [this.startMarkName, this.stopMarkName].includes(item.name))
       );
-
     return {
       items,
       timeline,
