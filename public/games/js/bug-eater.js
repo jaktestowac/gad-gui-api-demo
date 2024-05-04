@@ -66,6 +66,18 @@ function moveSnake() {
     case "right":
       head.x++;
       break;
+    case "w":
+      head.y--;
+      break;
+    case "s":
+      head.y++;
+      break;
+    case "a":
+      head.x--;
+      break;
+    case "d":
+      head.x++;
+      break;
   }
   snake.unshift(head);
   if (head.x === bug.x && head.y === bug.y) {

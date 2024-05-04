@@ -276,7 +276,7 @@ const hamburgerMenu = () => {
   `;
 };
 
-const mainGUIMenuHTML = (path = ".") => {
+const mainGUIMenuHTML = (path = "") => {
   return `
   <a href="${path}/articles.html" class="menu-link">
     <button id="btnArticles" data-testid="open-articles" class="button-primary">Articles</button>
@@ -287,7 +287,7 @@ const mainGUIMenuHTML = (path = ".") => {
   `;
 };
 
-const mainGUIMenuHTMLLogged = (path = ".") => {
+const mainGUIMenuHTMLLogged = (path = "") => {
   const mainGuiMenu = `
   <a href="${path}/users.html" class="menu-link">
     <button id="btnUsers" data-testid="open-users" class="button-primary">Users</button>
@@ -319,7 +319,7 @@ const mainMenuHTML = `
 
 `;
 
-const logoGAD = (path = ".") => {
+const logoGAD = (path = "/") => {
   return `
  <a href="${path}" style="text-decoration: none; color: inherit; padding-right:5px;">🦎 GAD</a>
  `;
@@ -348,7 +348,7 @@ function addLanguageSelect(languages, selectedOption) {
   }
 }
 
-const rightMenu = (path = ".") => {
+const rightMenu = (path = "") => {
   return `
   <span style="display: flex; align-items: center; justify-self: end; padding-right: 20px">
   <span id="languageSelect"></span>
