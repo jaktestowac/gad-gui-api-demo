@@ -71,7 +71,7 @@ const displayData = () => {
     const tableElement = document.getElementById("tableDataBody");
     for (const article_id in articleIdToTitle) {
       let articleName = articleIdToTitle[article_id];
-      let articleLink = `<a href="article.html?id=${article_id}">${articleName}</a>`;
+      let articleLink = `<a href="/article.html?id=${article_id}">${articleName}</a>`;
       let commentsCount = commentsPerArticle[article_id] ?? 0;
       tableElement.innerHTML += `<tr><td style="text-align: center">${articleLink}</td>
                 <td style="text-align: center">${commentsCount}</td></tr>`;

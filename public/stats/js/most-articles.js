@@ -146,16 +146,18 @@ const displayItem = (item, container) => {
 };
 
 const formatArticleHtml = (item) => {
+  item.image = item.image.replace(".\\", "\\");
+
   return `<div class="item-card" id="article${item.id}" data-testid="article-${
     item.id
   }" style="display: flex;min-height:100px !important;margin:0px 20px 20px 0px !important;">
   <div style="flex: 1; text-align: left;">
-      <a href="article.html?id=${item.id}" id="gotoArticle${item.id}" data-testid="article-${
+      <a href="/article.html?id=${item.id}" id="gotoArticle${item.id}" data-testid="article-${
     item.id
   }-link">${getImagesHTML(item.image)}</a>
   </div>
   <div style="flex: 2; text-align: left;">
-      <div align="center" data-testid="article-${item.id}-title"><strong><a href="article.html?id=${item.id}">${
+      <div align="center" data-testid="article-${item.id}-title"><strong><a href="/article.html?id=${item.id}">${
     item.title
   }</a></strong></div>
   <div align="center" style="" class="visits-container" id="visits-container-${
@@ -164,7 +166,7 @@ const formatArticleHtml = (item) => {
   <table>
     <tr>
       <td ><label style="width:10px !important; font-size:14px">user:</label>&nbsp&nbsp</td>
-      <td><span><a href="user.html?id=${item.user_id}" id="gotoUser${item.user_id}-${item.id}" data-testid="article-${
+      <td><span><a href="/user.html?id=${item.user_id}" id="gotoUser${item.user_id}-${item.id}" data-testid="article-${
     item.id
   }-user">${item.user_name}</a></span></td>
       <td rowspan="2" style="padding:0px !important" class="bookmark-container" id="bookmark-container-${item.id}"></td>
@@ -179,7 +181,7 @@ const formatArticleHtml = (item) => {
       <label></label><span data-testid="article-${item.id}-body">${item.body?.substring(0, 200)} (...)</span><br>
       <div style="display: flex; justify-content: space-between;">
           <span style="display: flex; justify-content: flex-start;">
-              <a href="article.html?id=${item.id}" id="seeArticle${item.id}">See More...</a>
+              <a href="/article.html?id=${item.id}" id="seeArticle${item.id}">See More...</a>
           </span>
           <div class="likes-container" id="likes-container-${item.id}" style="visibility: visible;"></div>
       </div>

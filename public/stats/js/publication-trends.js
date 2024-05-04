@@ -212,6 +212,10 @@ function getAndDisplayData(dataType, dataResolution) {
   }
 }
 
+function generateChartPDF(filename) {
+  generatePDF(filename, "chartPlaceholder");
+}
+
 const dataType = getParams()["data"];
 const dataResolution = getParams()["resolution"];
 getAndDisplayData(dataType, dataResolution);

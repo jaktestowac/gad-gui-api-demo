@@ -292,7 +292,7 @@ const mainGUIMenuHTMLLogged = (path = "") => {
   <a href="${path}/users.html" class="menu-link">
     <button id="btnUsers" data-testid="open-users" class="button-primary">Users</button>
   </a>
-  <a href="${path}/stats.html" class="menu-link">
+  <a href="${path}/stats/stats.html" class="menu-link">
     <button id="btnStats" data-testid="open-stats" class="button-primary">Statistics</button>
   </a>
   <span id="additionalMenu"></span>

@@ -112,7 +112,7 @@ const displayData = () => {
     const tableElement = document.getElementById("tableDataBody");
     for (const user_id in userIdToName) {
       let userName = userIdToName[user_id];
-      let userLink = `<a href="user.html?id=${user_id}">${userName}</a>`;
+      let userLink = `<a href="/user.html?id=${user_id}">${userName}</a>`;
       let articlesCount = articlesPerUser[user_id] ?? 0;
       let commentsCount = commentsPerUser[user_id] ?? 0;
       tableElement.innerHTML += `<tr><td data-testid="user-${user_id}" style="text-align: center">${userLink}</td>

@@ -36,29 +36,35 @@ fetch("/api/config/features")
     const table = document.createElement("table");
 
     for (const feature of Object.keys(data.config)) {
-      const row = document.createElement("tr");
-
-      const labelCell = document.createElement("td");
-      const labelText = document.createTextNode(feature);
-      labelCell.appendChild(labelText);
-      row.appendChild(labelCell);
-
-      const checkboxCell = document.createElement("td");
-      const checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
-      checkbox.checked = data.config[feature];
-      checkbox.id = `checkbox-${feature}`;
-      checkbox.addEventListener("change", function () {
-        handleFeatureCheckboxChange(feature, checkbox.checked);
-      });
-
-      checkboxCell.appendChild(checkbox);
-      row.appendChild(checkboxCell);
-
-      table.appendChild(row);
+      const newRow = createFeatureRow(feature, data.config[feature]);
+      table.appendChild(newRow);
     }
+
     tableDiv.appendChild(table);
   });
+
+function createFeatureRow(feature, isChecked) {
+  const row = document.createElement("tr");
+
+  const labelCell = document.createElement("td");
+  const labelText = document.createTextNode(feature);
+  labelCell.appendChild(labelText);
+  row.appendChild(labelCell);
+
+  const checkboxCell = document.createElement("td");
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  checkbox.checked = isChecked;
+  checkbox.id = `checkbox-${feature}`;
+  checkbox.addEventListener("change", function () {
+    handleFeatureCheckboxChange(feature, checkbox.checked);
+  });
+
+  checkboxCell.appendChild(checkbox);
+  row.appendChild(checkboxCell);
+
+  return row;
+}
 
 function handleFeatureCheckboxChange(feature, isChecked) {
   console.log(`Feature ${feature} was ${isChecked ? "checked" : "unchecked"}`);
