@@ -55,7 +55,9 @@ function parseDataByMonths(jsonData, dataType = "articles") {
   return parsedData;
 }
 
-function composeChart(data) {
+function composeChart(data, yElementsCount) {
+  const dataLength = yElementsCount ?? data.length;
+
   const element = document.getElementById("chartPlaceholder");
   if (element) {
     element.innerHTML = "";
@@ -63,7 +65,7 @@ function composeChart(data) {
   // set the dimensions and margins of the graph
   const margin = { top: 10, right: 25, bottom: 30, left: 200 },
     width = 750 - margin.left - margin.right,
-    height = 550 - margin.top - margin.bottom;
+    height = dataLength * 20 - margin.top - margin.bottom;
 
   // append the svg object to the body of the page
   const svg = d3
@@ -100,7 +102,7 @@ function composeChart(data) {
     .remove();
 
   // Build Y scales and axis:
-  const y = d3.scaleBand().range([height, 0]).domain(myVars).padding(0.05);
+  const y = d3.scaleBand().range([0, height]).domain(myVars).padding(0.05);
   svg.append("g").style("font-size", 15).call(d3.axisLeft(y).tickSize(0)).select(".domain").remove();
 
   // Build color scale
@@ -127,7 +129,7 @@ function composeChart(data) {
     tooltip
       .html("Value: " + d.value)
       .style("left", event.x + 10 + "px")
-      .style("top", event.y + 10  + window.scrollY + "px");
+      .style("top", event.y + 10 + window.scrollY + "px");
   };
   const mouseleave = function (event, d) {
     tooltip.style("opacity", 0);
@@ -170,11 +172,15 @@ function presentData(type, period) {
     } else if (period.toLowerCase().includes("month")) {
       parsedData = parseDataByMonths(data, type);
     }
-    composeChart(parsedData);
+    composeChart(parsedData, Object.keys(data).length);
     document.getElementById(
       "details"
     ).innerHTML = `Number of <strong>${type}</strong> published by <strong>${period}</strong>`;
   });
+}
+
+function generateChartPDF(filename) {
+  generatePDF(filename, "chartPlaceholder");
 }
 
 presentData("articles", "Day of Week");
