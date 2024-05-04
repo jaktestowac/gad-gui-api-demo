@@ -185,9 +185,6 @@ function presentData(type, period) {
     document.getElementById(
       "details"
     ).innerHTML = `Number of <strong>${type}</strong> published by <strong>${period}</strong>`;
-
-    // Remove the loader element after chart is composed
-    element.removeChild(loader);
   });
 }
 
