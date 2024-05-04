@@ -398,6 +398,14 @@ input[type="submit"]:hover {
   z-index: 1;
 }
 
+.loader2-container {
+  width: 100%;
+  height: 200px;
+  /* position: fixed; */
+  background: url("/data/loading.gif") center no-repeat;
+  /* z-index: 1; */
+}
+
 .floating {
   position: fixed;
   max-width: 800px;

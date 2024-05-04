@@ -165,6 +165,15 @@ function composeChart(data, yElementsCount) {
 }
 
 function presentData(type, period) {
+  const element = document.getElementById("chartPlaceholder");
+  if (element) {
+    element.innerHTML = "";
+  }
+
+  const loader = document.createElement("div");
+  loader.classList.add("loader2-container");
+  element.appendChild(loader);
+
   issueGetStatsRequest().then((data) => {
     let parsedData = parseDataByDayOfWeek(data, type);
     if (period.toLowerCase().includes("day")) {
@@ -176,6 +185,9 @@ function presentData(type, period) {
     document.getElementById(
       "details"
     ).innerHTML = `Number of <strong>${type}</strong> published by <strong>${period}</strong>`;
+
+    // Remove the loader element after chart is composed
+    element.removeChild(loader);
   });
 }
 
