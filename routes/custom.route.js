@@ -19,6 +19,7 @@ const {
   parseArticleStats,
   parseUserStats,
   findMaxValues,
+  parseUserActivityStats,
 } = require("../helpers/helpers");
 const { logError, logDebug, getLogs, logTrace } = require("../helpers/logger-api");
 const { HTTP_INTERNAL_SERVER_ERROR, HTTP_OK, HTTP_NOT_FOUND } = require("../helpers/response.helpers");
@@ -46,6 +47,10 @@ const statsRoutes = (req, res, next) => {
     } else if (req.method === "GET" && urlEnds.includes("api/stats/publish/comments")) {
       const stats = parsePublishStats(fullDb(), "comments");
       res.status(HTTP_OK).json(stats);
+      return;
+    } else if (req.method === "GET" && urlEnds.includes("api/stats/activity/user")) {
+      const activity = parseUserActivityStats(fullDb());
+      res.status(HTTP_OK).json(activity);
       return;
     } else if (req.method === "GET" && urlEnds.endsWith("api/stats/api")) {
       const stats = getApiCalls();

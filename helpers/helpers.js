@@ -197,6 +197,85 @@ function parseArticleStats(dbDataJson, dataType) {
   }
 }
 
+function parseUserActivityStats(dbDataJson) {
+  const usersData = dbDataJson["users"];
+  const articlesData = dbDataJson["articles"];
+  const commentsData = dbDataJson["comments"];
+
+  const userActivity = {};
+
+  for (let i = 0; i < usersData.length; i++) {
+    const userId = usersData[i].id;
+    const userActivityByDay = {
+      Monday: { articles: 0, comments: 0 },
+      Tuesday: { articles: 0, comments: 0 },
+      Wednesday: { articles: 0, comments: 0 },
+      Thursday: { articles: 0, comments: 0 },
+      Friday: { articles: 0, comments: 0 },
+      Saturday: { articles: 0, comments: 0 },
+      Sunday: { articles: 0, comments: 0 },
+    };
+
+    const userActivityByMonth = {};
+
+    const months = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+
+    for (const month of months) {
+      userActivityByMonth[month] = { articles: 0, comments: 0 };
+    }
+
+    for (let j = 0; j < articlesData.length; j++) {
+      if (articlesData[j].user_id === userId) {
+        const articleDate = new Date(articlesData[j].date);
+        const month = articleDate.toLocaleDateString("en-US", { month: "long" });
+        const dayOfWeek = articleDate.toLocaleDateString("en-US", { weekday: "long" });
+        userActivityByDay[dayOfWeek].articles++;
+
+        if (!(month in userActivityByMonth)) {
+          userActivityByMonth[month] = { articles: 0, comments: 0 };
+        }
+        userActivityByMonth[month].articles++;
+      }
+    }
+
+    for (let j = 0; j < commentsData.length; j++) {
+      if (commentsData[j].user_id === userId) {
+        const commentDate = new Date(commentsData[j].date);
+        const month = commentDate.toLocaleDateString("en-US", { month: "long" });
+        const dayOfWeek = commentDate.toLocaleDateString("en-US", { weekday: "long" });
+        userActivityByDay[dayOfWeek].comments++;
+
+        if (!(month in userActivityByMonth)) {
+          userActivityByMonth[month] = { articles: 0, comments: 0 };
+        }
+        userActivityByMonth[month].comments++;
+      }
+    }
+
+    const userData = usersData.find((user) => user.id === userId);
+    userActivity[userId] = {
+      user: { name: `${userData.firstname} ${userData.lastname}`, id: userId },
+      userActivityByDay,
+      userActivityByMonth,
+    };
+  }
+
+  return userActivity;
+}
+
 function parsePublishStats(dbDataJson, type = "comments") {
   const yearly = {};
   const monthly = {};
@@ -342,4 +421,5 @@ module.exports = {
   filterSelectedKeys,
   generateRandomString,
   isTrueWithProbability,
+  parseUserActivityStats,
 };
