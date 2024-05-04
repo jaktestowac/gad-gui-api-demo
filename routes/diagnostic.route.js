@@ -10,19 +10,22 @@ const diagnosticRoutes = (req, res, next) => {
     timeHistogramManager.stopAction(`${req.method} ${req.url}`);
   }
 
-  const urlEnds = req.url.replace(/\/\/+/g, "/");
-  if (req.method === "GET" && urlEnds.includes("api/diagnostic/request/histogram")) {
-    const timeHistogramManager = TimeHistogramManager.getInstance();
-    const histogram = new TimeHistogramReporterJson(timeHistogramManager.getActionsTimeHistogram()).getReport();
-    res.status(HTTP_OK).json(histogram);
-    return;
-  } else if (req.method === "GET" && urlEnds.includes("diagnostic/request/histogram")) {
-    const timeHistogramManager = TimeHistogramManager.getInstance();
-    const histogram = new TimeHistogramReporterHtml(timeHistogramManager.getActionsTimeHistogram()).getReport();
-    res.send(histogram);
-    return;
-  }
   if (getConfigValue(ConfigKeys.DIAGNOSTICS_ENABLED) === true) {
+    const urlEnds = req.url.replace(/\/\/+/g, "/");
+
+    if (req.method === "GET" && urlEnds.includes("api/diagnostic/request/histogram")) {
+      const timeHistogramManager = TimeHistogramManager.getInstance();
+      const timeHistogram = timeHistogramManager.getActionsTimeHistogram();
+      const histogram = new TimeHistogramReporterJson(timeHistogram).getReport();
+      res.status(HTTP_OK).json(histogram);
+      return;
+    } else if (req.method === "GET" && urlEnds.includes("diagnostic/request/histogram")) {
+      const timeHistogramManager = TimeHistogramManager.getInstance();
+      const timeHistogram = timeHistogramManager.getActionsTimeHistogram();
+      const histogram = new TimeHistogramReporterHtml(timeHistogram).getReport();
+      res.send(histogram);
+      return;
+    }
     const timeHistogramManager = TimeHistogramManager.getInstance();
     timeHistogramManager.startAction(`${req.method} ${req.url}`);
 
