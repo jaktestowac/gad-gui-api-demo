@@ -1,6 +1,6 @@
 const { isBugDisabled, isBugEnabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
-const { areStringsEqualIgnoringCase, areIdsEqual, isUndefined, isInactive } = require("../helpers/compare.helpers");
+const { areStringsEqualIgnoringCase, areIdsEqual, isUndefined } = require("../helpers/compare.helpers");
 const { searchForUser } = require("../helpers/db-operation.helpers");
 const { userDb } = require("../helpers/db.helpers");
 const {
@@ -10,7 +10,7 @@ const {
   formatInvalidFieldErrorResponse,
 } = require("../helpers/helpers");
 const { logDebug } = require("../helpers/logger-api");
-const { HTTP_UNPROCESSABLE_ENTITY, HTTP_CONFLICT, HTTP_NOT_FOUND } = require("../helpers/response.helpers");
+const { HTTP_UNPROCESSABLE_ENTITY, HTTP_CONFLICT } = require("../helpers/response.helpers");
 const {
   areMandatoryFieldsPresent,
   mandatory_non_empty_fields_user,
@@ -61,7 +61,7 @@ function handleUsers(req, res) {
       // remove id - otherwise - 500: Error: Insert failed, duplicate id
       req.body.id = undefined;
     }
-
+    req.body.creationDate = new Date().toISOString();
     logDebug("Register User: SUCCESS:", { urlEnds, email: req.body["email"] });
   }
 
@@ -111,6 +111,7 @@ function handleUsers(req, res) {
       if (parseInt(userId).toString() === userId) {
         userId = parseInt(userId);
       }
+      req.body.creationDate = new Date().toISOString();
       req.body.id = userId;
     }
     if (!isUndefined(foundUser)) {

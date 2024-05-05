@@ -6,7 +6,9 @@
       "firstname": "Wilma",
       "lastname": "Langworth",
       "password": "4dzFC",
-      "avatar": ".\\data\\users\\face_1713017610.308172_f_1.jpg"
+      "avatar": ".\\data\\users\\face_1713017610.308172_f_1.jpg",
+      "creationDate": "2010-02-14T11:10:22.000Z",
+      "birthdate": "1981-03-03T00:42:20.142Z"
     },
     {
       "id": 2,
@@ -14,7 +16,9 @@
       "firstname": "Rosie",
       "lastname": "Runte",
       "password": "Fh1NH",
-      "avatar": ".\\data\\users\\face_1703528012.883891_1_f.jpg"
+      "avatar": ".\\data\\users\\face_1703528012.883891_1_f.jpg",
+      "creationDate": "2010-03-24T11:20:32.000Z",
+      "birthdate": "1965-02-10T09:34:28.944Z"
     },
     {
       "id": 3,
@@ -22,7 +26,9 @@
       "firstname": "Katherine",
       "lastname": "Gleichner",
       "password": "Rbc3s",
-      "avatar": ".\\data\\users\\face_1713018042.0075612_f_1.jpg"
+      "avatar": ".\\data\\users\\face_1713018042.0075612_f_1.jpg",
+      "creationDate": "2009-09-27T15:40:37.000Z",
+      "birthdate": "1962-05-18T01:44:16.071Z"
     },
     {
       "id": 4,
@@ -30,7 +36,9 @@
       "firstname": "Sidney",
       "lastname": "Kilback",
       "password": "c39k3",
-      "avatar": ".\\data\\users\\face_1703528033.3294685_1_m.jpg"
+      "avatar": ".\\data\\users\\face_1703528033.3294685_1_m.jpg",
+      "creationDate": "2009-08-07T14:35:20.000Z",
+      "birthdate": "1990-10-13T19:47:08.756Z"
     },
     {
       "id": 5,
@@ -38,7 +46,9 @@
       "firstname": "Camille",
       "lastname": "Howell",
       "password": "Jadr6",
-      "avatar": ".\\data\\users\\face_1703527706.7379515_f.jpg"
+      "avatar": ".\\data\\users\\face_1703527706.7379515_f.jpg",
+      "creationDate": "2009-11-10T09:30:15.000Z",
+      "birthdate": "1965-01-30T12:15:36.377Z"
     },
     {
       "id": 6,
@@ -46,7 +56,9 @@
       "firstname": "Myron",
       "lastname": "Reinger",
       "password": "PCKG6",
-      "avatar": ".\\data\\users\\face_1703527865.7502387_m.jpg"
+      "avatar": ".\\data\\users\\face_1703527865.7502387_m.jpg",
+      "creationDate": "2010-07-17T09:10:22.000Z",
+      "birthdate": "1951-12-21T02:24:44.154Z"
     },
     {
       "id": 7,
@@ -54,7 +66,9 @@
       "firstname": "Carlos",
       "lastname": "Kemmer",
       "password": "KiDfy",
-      "avatar": ".\\data\\users\\face_1703527946.2814512_1_m.jpg"
+      "avatar": ".\\data\\users\\face_1703527946.2814512_1_m.jpg",
+      "creationDate": "2011-03-24T11:20:32.000Z",
+      "birthdate": "1971-06-05T12:36:16.410Z"
     },
     {
       "id": 8,
@@ -62,7 +76,9 @@
       "firstname": "Chelsea",
       "lastname": "Reynolds",
       "password": "gXh47",
-      "avatar": ".\\data\\users\\face_1713017789.3176448_f_1.jpg"
+      "avatar": ".\\data\\users\\face_1713017789.3176448_f_1.jpg",
+      "creationDate": "2010-09-27T15:40:37.000Z",
+      "birthdate": "1964-03-26T21:43:25.632Z"
     },
     {
       "id": 9,
@@ -70,7 +86,9 @@
       "firstname": "Leroy",
       "lastname": "Berge",
       "password": "4DhiM",
-      "avatar": ".\\data\\users\\face_1703527969.3248012_1_m.jpg"
+      "avatar": ".\\data\\users\\face_1703527969.3248012_1_m.jpg",
+      "creationDate": "2012-05-28T08:10:03.000Z",
+      "birthdate": "1963-04-18T19:26:48.016Z"
     },
     {
       "id": 10,
@@ -78,7 +96,9 @@
       "firstname": "Joann",
       "lastname": "Dach",
       "password": "ImyuX",
-      "avatar": ".\\data\\users\\face_1713017796.407329_f_1.jpg"
+      "avatar": ".\\data\\users\\face_1713017796.407329_f_1.jpg",
+      "creationDate": "2011-07-14T18:50:05.000Z",
+      "birthdate": "1975-03-27T07:45:02.530Z"
     },
     {
       "id": 11,
@@ -86,7 +106,9 @@
       "firstname": "Jeremiah",
       "lastname": "Pfannerstill",
       "password": "BeXQx",
-      "avatar": ".\\data\\users\\face_1713017317.4920285_m_1.jpg"
+      "avatar": ".\\data\\users\\face_1713017317.4920285_m_1.jpg",
+      "creationDate": "2018-05-15T14:30:15.000Z",
+      "birthdate": "1951-03-23T23:29:24.329Z"
     },
     {
       "id": 12,
@@ -94,7 +116,9 @@
       "firstname": "Irvin",
       "lastname": "Hilpert",
       "password": "P4_ze",
-      "avatar": ".\\data\\users\\face_1713017346.0038195_m_1.jpg"
+      "avatar": ".\\data\\users\\face_1713017346.0038195_m_1.jpg",
+      "creationDate": "2018-02-28T16:25:37.909Z",
+      "birthdate": "1982-04-11T11:15:35.815Z"
     },
     {
       "id": 13,
@@ -102,7 +126,9 @@
       "firstname": "Jessica",
       "lastname": "Kuhic",
       "password": "2h4rx",
-      "avatar": ".\\data\\users\\face_1703527928.1388428_1_f.jpg"
+      "avatar": ".\\data\\users\\face_1703527928.1388428_1_f.jpg",
+      "creationDate": "2015-09-04T04:27:55.383Z",
+      "birthdate": "1959-02-12T01:30:57.699Z"
     },
     {
       "id": 14,
@@ -110,7 +136,9 @@
       "firstname": "Darin",
       "lastname": "Conroy",
       "password": "HU78w",
-      "avatar": ".\\data\\users\\face_1713017876.3369582_m_1.jpg"
+      "avatar": ".\\data\\users\\face_1713017876.3369582_m_1.jpg",
+      "creationDate": "2011-09-27T09:35:28.694Z",
+      "birthdate": "1958-03-15T04:18:37.106Z"
     },
     {
       "id": 15,
@@ -118,7 +146,9 @@
       "firstname": "Paula",
       "lastname": "Sporer",
       "password": "nY9HH",
-      "avatar": ".\\data\\users\\face_1713018024.9049351_f_1.jpg"
+      "avatar": ".\\data\\users\\face_1713018024.9049351_f_1.jpg",
+      "creationDate": "2018-02-01T18:03:58.930Z",
+      "birthdate": "1969-09-05T10:05:55.561Z"
     },
     {
       "id": 16,
@@ -126,7 +156,9 @@
       "firstname": "Kendra",
       "lastname": "Torp",
       "password": "EhwmP",
-      "avatar": ".\\data\\users\\face_1713017714.1419685_f_1.jpg"
+      "avatar": ".\\data\\users\\face_1713017714.1419685_f_1.jpg",
+      "creationDate": "2010-07-06T13:49:01.008Z",
+      "birthdate": "1988-02-15T16:04:56.940Z"
     },
     {
       "id": 17,
@@ -134,7 +166,9 @@
       "firstname": "Mack",
       "lastname": "Reichert",
       "password": "ySf7S",
-      "avatar": ".\\data\\users\\face_1713018008.9137316_m_1.jpg"
+      "avatar": ".\\data\\users\\face_1713018008.9137316_m_1.jpg",
+      "creationDate": "2019-03-18T08:08:46.791Z",
+      "birthdate": "1958-02-14T00:50:26.897Z"
     },
     {
       "id": 18,
@@ -142,7 +176,9 @@
       "firstname": "Kathy",
       "lastname": "Weimann",
       "password": "0JMnX",
-      "avatar": ".\\data\\users\\face_1703527942.0641403_1_f.jpg"
+      "avatar": ".\\data\\users\\face_1703527942.0641403_1_f.jpg",
+      "creationDate": "2010-07-07T22:44:25.342Z",
+      "birthdate": "1986-02-18T23:53:24.857Z"
     },
     {
       "id": 19,
@@ -150,7 +186,9 @@
       "firstname": "Eileen",
       "lastname": "Kassulke",
       "password": "hZ4ac",
-      "avatar": ".\\data\\users\\face_1713017912.4058664_f_1.jpg"
+      "avatar": ".\\data\\users\\face_1713017912.4058664_f_1.jpg",
+      "creationDate": "2010-07-08T14:13:39.406Z",
+      "birthdate": "1953-09-12T17:56:56.970Z"
     },
     {
       "id": 20,
@@ -158,7 +196,9 @@
       "firstname": "Billy",
       "lastname": "Gusikowski",
       "password": "86YEq",
-      "avatar": ".\\data\\users\\face_1713017734.8836098_m_1.jpg"
+      "avatar": ".\\data\\users\\face_1713017734.8836098_m_1.jpg",
+      "creationDate": "2011-11-15T14:55:09.563Z",
+      "birthdate": "1965-01-12T15:11:10.881Z"
     },
     {
       "id": 21,
@@ -166,7 +206,9 @@
       "firstname": "Martin",
       "lastname": "Dibbert",
       "password": "rPn6l",
-      "avatar": ".\\data\\users\\face_1703527734.2966335_m.jpg"
+      "avatar": ".\\data\\users\\face_1703527734.2966335_m.jpg",
+      "creationDate": "2019-10-05T02:45:51.623Z",
+      "birthdate": "1981-04-04T15:52:04.163Z"
     }
   ],
   "articles": [
@@ -651,13 +693,7 @@
       "body": "I loved your insights on usability testing. It's crucial to ensure that the software meets the needs of the end users. Have you encountered any interesting user feedback during usability testing that led to significant improvements in the product?",
       "date": "2021-11-30T14:44:22Z"
     },
-    {
-      "id": 2,
-      "article_id": 1,
-      "user_id": 1,
-      "body": "Interesting!",
-      "date": "2021-11-20T03:53:00Z"
-    },
+    { "id": 2, "article_id": 1, "user_id": 1, "body": "Interesting!", "date": "2021-11-20T03:53:00Z" },
     {
       "id": 3,
       "article_id": 2,
@@ -728,27 +764,9 @@
       "body": "Uncommonly surrounded considered for him are its. It we is read good soon. My to considered delightful invitation announcing of no decisively boisterous.",
       "date": "2021-12-11T18:42:41Z"
     },
-    {
-      "id": 13,
-      "article_id": 1,
-      "user_id": 3,
-      "body": "+1",
-      "date": "2022-01-11T14:24:32Z"
-    },
-    {
-      "id": 14,
-      "article_id": 1,
-      "user_id": 1,
-      "body": "So cool!",
-      "date": "2022-01-12T09:43:00Z"
-    },
-    {
-      "id": 15,
-      "article_id": 2,
-      "user_id": 1,
-      "body": "Thanks for sharing!",
-      "date": "2022-01-13T07:12:21Z"
-    },
+    { "id": 13, "article_id": 1, "user_id": 3, "body": "+1", "date": "2022-01-11T14:24:32Z" },
+    { "id": 14, "article_id": 1, "user_id": 1, "body": "So cool!", "date": "2022-01-12T09:43:00Z" },
+    { "id": 15, "article_id": 2, "user_id": 1, "body": "Thanks for sharing!", "date": "2022-01-13T07:12:21Z" },
     {
       "id": 16,
       "article_id": 2,
@@ -763,13 +781,7 @@
       "body": "It provided a fresh perspective on the topic and got me thinking. Looking forward to more from you!",
       "date": "2022-01-01T13:55:00Z"
     },
-    {
-      "id": 18,
-      "article_id": 3,
-      "user_id": 4,
-      "body": "Cool!",
-      "date": "2021-01-01T11:12:00Z"
-    },
+    { "id": 18, "article_id": 3, "user_id": 4, "body": "Cool!", "date": "2021-01-01T11:12:00Z" },
     {
       "id": 19,
       "article_id": 3,
@@ -798,34 +810,10 @@
       "body": "This article is a treasure trove of knowledge. ",
       "date": "2017-01-21T00:33:46Z"
     },
-    {
-      "id": 23,
-      "article_id": 5,
-      "user_id": 4,
-      "body": "Quo tempora possimus.",
-      "date": "2017-06-02T23:43:15Z"
-    },
-    {
-      "id": 24,
-      "article_id": 23,
-      "user_id": 4,
-      "body": "lol",
-      "date": "2020-01-27T10:26:42Z"
-    },
-    {
-      "id": 25,
-      "article_id": 2,
-      "user_id": 4,
-      "body": "Maiores libero qui facilis.",
-      "date": "2020-12-31T12:22:29Z"
-    },
-    {
-      "id": 26,
-      "article_id": 5,
-      "user_id": 1,
-      "body": "Can you post more?",
-      "date": "2017-10-16T08:44:15Z"
-    },
+    { "id": 23, "article_id": 5, "user_id": 4, "body": "Quo tempora possimus.", "date": "2017-06-02T23:43:15Z" },
+    { "id": 24, "article_id": 23, "user_id": 4, "body": "lol", "date": "2020-01-27T10:26:42Z" },
+    { "id": 25, "article_id": 2, "user_id": 4, "body": "Maiores libero qui facilis.", "date": "2020-12-31T12:22:29Z" },
+    { "id": 26, "article_id": 5, "user_id": 1, "body": "Can you post more?", "date": "2017-10-16T08:44:15Z" },
     {
       "id": 27,
       "article_id": 19,
@@ -833,27 +821,9 @@
       "body": "The way you explained complex concepts in a clear and concise manner is commendable. I learned so much!",
       "date": "2022-02-11T16:29:18Z"
     },
-    {
-      "id": 28,
-      "article_id": 24,
-      "user_id": 1,
-      "body": "Quae unde voluptas eveniet.",
-      "date": "2022-01-25T12:34:20Z"
-    },
-    {
-      "id": 29,
-      "article_id": 11,
-      "user_id": 2,
-      "body": "It is AI generated?",
-      "date": "2022-04-14T21:00:56Z"
-    },
-    {
-      "id": 30,
-      "article_id": 40,
-      "user_id": 4,
-      "body": "I learned so much!",
-      "date": "2018-03-19T00:34:56Z"
-    },
+    { "id": 28, "article_id": 24, "user_id": 1, "body": "Quae unde voluptas eveniet.", "date": "2022-01-25T12:34:20Z" },
+    { "id": 29, "article_id": 11, "user_id": 2, "body": "It is AI generated?", "date": "2022-04-14T21:00:56Z" },
+    { "id": 30, "article_id": 40, "user_id": 4, "body": "I learned so much!", "date": "2018-03-19T00:34:56Z" },
     {
       "id": 31,
       "article_id": 34,
@@ -875,13 +845,7 @@
       "body": "Your words served as a gentle reminder to be more mindful and compassionate. Thank you!",
       "date": "2021-09-25T05:53:57Z"
     },
-    {
-      "id": 34,
-      "article_id": 16,
-      "user_id": 6,
-      "body": "Ut qui fuga iusto veniam.",
-      "date": "2017-05-16T21:32:21Z"
-    },
+    { "id": 34, "article_id": 16, "user_id": 6, "body": "Ut qui fuga iusto veniam.", "date": "2017-05-16T21:32:21Z" },
     {
       "id": 35,
       "article_id": 39,
@@ -973,13 +937,7 @@
       "body": "Thank you for sharing your wisdom!",
       "date": "2022-05-29T07:14:40Z"
     },
-    {
-      "id": 48,
-      "article_id": 2,
-      "user_id": 3,
-      "body": "A ratione labore laborum.",
-      "date": "2014-11-28T18:57:40Z"
-    },
+    { "id": 48, "article_id": 2, "user_id": 3, "body": "A ratione labore laborum.", "date": "2014-11-28T18:57:40Z" },
     {
       "id": 49,
       "article_id": 39,
@@ -1008,20 +966,8 @@
       "body": "Thank you for sharing your story!",
       "date": "2016-02-09T00:09:38Z"
     },
-    {
-      "id": 53,
-      "article_id": 34,
-      "user_id": 7,
-      "body": "Like!",
-      "date": "2018-03-16T08:46:28Z"
-    },
-    {
-      "id": 54,
-      "article_id": 25,
-      "user_id": 1,
-      "body": "Nice staff",
-      "date": "2015-03-02T16:42:57Z"
-    },
+    { "id": 53, "article_id": 34, "user_id": 7, "body": "Like!", "date": "2018-03-16T08:46:28Z" },
+    { "id": 54, "article_id": 25, "user_id": 1, "body": "Nice staff", "date": "2015-03-02T16:42:57Z" },
     {
       "id": 55,
       "article_id": 8,
@@ -1029,27 +975,9 @@
       "body": "Looking for help for becoming QA!",
       "date": "2021-12-27T16:11:05Z"
     },
-    {
-      "id": 56,
-      "article_id": 32,
-      "user_id": 2,
-      "body": "Accusamus quos quia iure.",
-      "date": "2019-03-05T10:37:20Z"
-    },
-    {
-      "id": 57,
-      "article_id": 19,
-      "user_id": 5,
-      "body": "Quo illum magnam vero.",
-      "date": "2015-06-07T23:09:21Z"
-    },
-    {
-      "id": 58,
-      "article_id": 41,
-      "user_id": 6,
-      "body": "Is Playwright good tool?",
-      "date": "2014-12-23T22:34:25Z"
-    },
+    { "id": 56, "article_id": 32, "user_id": 2, "body": "Accusamus quos quia iure.", "date": "2019-03-05T10:37:20Z" },
+    { "id": 57, "article_id": 19, "user_id": 5, "body": "Quo illum magnam vero.", "date": "2015-06-07T23:09:21Z" },
+    { "id": 58, "article_id": 41, "user_id": 6, "body": "Is Playwright good tool?", "date": "2014-12-23T22:34:25Z" },
     {
       "id": 59,
       "article_id": 43,
@@ -1071,41 +999,11 @@
       "body": "I loved the comprehensive approach you took in addressing each aspect of the topic. Your attention to detail and thorough research made this article a reliable source of information.",
       "date": "2016-07-22T07:12:45Z"
     },
-    {
-      "id": 62,
-      "article_id": 11,
-      "user_id": 4,
-      "body": "I agree completely.",
-      "date": "2015-12-17T10:55:20Z"
-    },
-    {
-      "id": 63,
-      "article_id": 58,
-      "user_id": 6,
-      "body": "Short and sweet!",
-      "date": "2012-08-18T16:31:18Z"
-    },
-    {
-      "id": 64,
-      "article_id": 18,
-      "user_id": 8,
-      "body": "Well worth the read.",
-      "date": "2022-03-09T08:52:48Z"
-    },
-    {
-      "id": 65,
-      "article_id": 46,
-      "user_id": 8,
-      "body": "This made my day.",
-      "date": "2014-11-15T19:57:02Z"
-    },
-    {
-      "id": 66,
-      "article_id": 21,
-      "user_id": 4,
-      "body": "Expedita quia praesentium.",
-      "date": "2014-10-18T21:32:29Z"
-    },
+    { "id": 62, "article_id": 11, "user_id": 4, "body": "I agree completely.", "date": "2015-12-17T10:55:20Z" },
+    { "id": 63, "article_id": 58, "user_id": 6, "body": "Short and sweet!", "date": "2012-08-18T16:31:18Z" },
+    { "id": 64, "article_id": 18, "user_id": 8, "body": "Well worth the read.", "date": "2022-03-09T08:52:48Z" },
+    { "id": 65, "article_id": 46, "user_id": 8, "body": "This made my day.", "date": "2014-11-15T19:57:02Z" },
+    { "id": 66, "article_id": 21, "user_id": 4, "body": "Expedita quia praesentium.", "date": "2014-10-18T21:32:29Z" },
     {
       "id": 67,
       "article_id": 11,
@@ -1113,41 +1011,11 @@
       "body": "Aspernatur laborum sunt sit nisi non quas.",
       "date": "2020-09-14T03:59:21Z"
     },
-    {
-      "id": 68,
-      "article_id": 10,
-      "user_id": 4,
-      "body": "Keep up the good work!",
-      "date": "2020-10-27T23:04:08Z"
-    },
-    {
-      "id": 69,
-      "article_id": 19,
-      "user_id": 3,
-      "body": "Fantastic article!",
-      "date": "2012-10-23T00:40:58Z"
-    },
-    {
-      "id": 70,
-      "article_id": 49,
-      "user_id": 5,
-      "body": "Spot-on analysis.",
-      "date": "2020-09-26T22:05:33Z"
-    },
-    {
-      "id": 71,
-      "article_id": 52,
-      "user_id": 4,
-      "body": "So insightful!",
-      "date": "2021-03-01T12:18:33Z"
-    },
-    {
-      "id": 72,
-      "article_id": 23,
-      "user_id": 1,
-      "body": "This deserves attention.",
-      "date": "2021-03-18T05:41:30Z"
-    },
+    { "id": 68, "article_id": 10, "user_id": 4, "body": "Keep up the good work!", "date": "2020-10-27T23:04:08Z" },
+    { "id": 69, "article_id": 19, "user_id": 3, "body": "Fantastic article!", "date": "2012-10-23T00:40:58Z" },
+    { "id": 70, "article_id": 49, "user_id": 5, "body": "Spot-on analysis.", "date": "2020-09-26T22:05:33Z" },
+    { "id": 71, "article_id": 52, "user_id": 4, "body": "So insightful!", "date": "2021-03-01T12:18:33Z" },
+    { "id": 72, "article_id": 23, "user_id": 1, "body": "This deserves attention.", "date": "2021-03-18T05:41:30Z" },
     {
       "id": 73,
       "article_id": 15,
@@ -1218,13 +1086,7 @@
       "body": "This article is a true treasure trove of knowledge. The depth of information you've provided is astounding. I appreciate how you've gone beyond the basics and explored the nuances of the subject matter. Your writing style is engaging, and your explanations are crystal clear. ",
       "date": "2017-08-29T05:46:01Z"
     },
-    {
-      "id": 83,
-      "article_id": 15,
-      "user_id": 2,
-      "body": "Rem ut ut ut cupiditate.",
-      "date": "2016-09-10T18:42:12Z"
-    },
+    { "id": 83, "article_id": 15, "user_id": 2, "body": "Rem ut ut ut cupiditate.", "date": "2016-09-10T18:42:12Z" },
     {
       "id": 84,
       "article_id": 47,
@@ -2179,68 +2041,16 @@
     }
   ],
   "likes": [
-    {
-      "id": 1,
-      "user_id": 1,
-      "comment_id": 1,
-      "article_id": null,
-      "date": "2023-09-25T10:00:00Z"
-    },
-    {
-      "id": 2,
-      "user_id": 2,
-      "comment_id": null,
-      "article_id": 1,
-      "date": "2023-09-25T11:00:00Z"
-    },
-    {
-      "article_id": 1,
-      "user_id": "1",
-      "date": "2023-10-20T15:43:18Z",
-      "id": 3
-    },
-    {
-      "article_id": 56,
-      "user_id": "1",
-      "date": "2023-10-20T15:44:21Z",
-      "id": 4
-    },
-    {
-      "article_id": 57,
-      "user_id": "1",
-      "date": "2023-10-20T15:46:30Z",
-      "id": 5
-    },
-    {
-      "article_id": 45,
-      "user_id": "1",
-      "date": "2023-10-20T15:47:46Z",
-      "id": 6
-    },
-    {
-      "article_id": 45,
-      "user_id": "2",
-      "date": "2023-10-20T15:47:46Z",
-      "id": 7
-    },
-    {
-      "article_id": 45,
-      "user_id": "3",
-      "date": "2023-10-20T15:47:46Z",
-      "id": 8
-    },
-    {
-      "article_id": 18,
-      "user_id": "8",
-      "date": "2023-10-15T08:12:30Z",
-      "id": 9
-    },
-    {
-      "article_id": 3,
-      "user_id": "2",
-      "date": "2023-10-16T14:25:50Z",
-      "id": 10
-    },
+    { "id": 1, "user_id": 1, "comment_id": 1, "article_id": null, "date": "2023-09-25T10:00:00Z" },
+    { "id": 2, "user_id": 2, "comment_id": null, "article_id": 1, "date": "2023-09-25T11:00:00Z" },
+    { "article_id": 1, "user_id": "1", "date": "2023-10-20T15:43:18Z", "id": 3 },
+    { "article_id": 56, "user_id": "1", "date": "2023-10-20T15:44:21Z", "id": 4 },
+    { "article_id": 57, "user_id": "1", "date": "2023-10-20T15:46:30Z", "id": 5 },
+    { "article_id": 45, "user_id": "1", "date": "2023-10-20T15:47:46Z", "id": 6 },
+    { "article_id": 45, "user_id": "2", "date": "2023-10-20T15:47:46Z", "id": 7 },
+    { "article_id": 45, "user_id": "3", "date": "2023-10-20T15:47:46Z", "id": 8 },
+    { "article_id": 18, "user_id": "8", "date": "2023-10-15T08:12:30Z", "id": 9 },
+    { "article_id": 3, "user_id": "2", "date": "2023-10-16T14:25:50Z", "id": 10 },
     { "user_id": 7, "article_id": 31, "date": "2016-08-03T07:19:14Z", "id": 10 },
     { "user_id": 11, "article_id": 32, "date": "2016-06-07T02:12:34Z", "id": 11 },
     { "user_id": 8, "article_id": 33, "date": "2014-05-11T15:26:25Z", "id": 12 },
@@ -2331,12 +2141,7 @@
     { "user_id": 9, "article_id": 26, "date": "2016-12-21T07:31:02Z", "id": 97 },
     { "user_id": 14, "article_id": 58, "date": "2012-06-20T12:47:43Z", "id": 98 },
     { "user_id": 12, "article_id": 31, "date": "2017-12-06T02:33:55Z", "id": 99 },
-    {
-      "user_id": 11,
-      "article_id": 29,
-      "date": "2017-02-09T11:05:34Z",
-      "id": 100
-    },
+    { "user_id": 11, "article_id": 29, "date": "2017-02-09T11:05:34Z", "id": 100 },
     { "user_id": 6, "article_id": 34, "date": "2011-10-26T06:33:54Z", "id": 101 },
     { "user_id": 7, "article_id": 27, "date": "2020-09-22T09:52:29Z", "id": 102 },
     { "user_id": 9, "article_id": 27, "date": "2012-05-30T08:14:56Z", "id": 103 },
@@ -2344,312 +2149,71 @@
     { "user_id": 6, "article_id": 23, "date": "2017-01-12T11:48:48Z", "id": 105 },
     { "user_id": 8, "article_id": 30, "date": "2014-12-20T22:18:50Z", "id": 106 },
     { "user_id": 6, "article_id": 30, "date": "2015-09-17T11:40:20Z", "id": 107 },
-    {
-      "user_id": 10,
-      "article_id": 32,
-      "date": "2016-02-13T02:31:00Z",
-      "id": 108
-    },
-    {
-      "user_id": 11,
-      "article_id": 58,
-      "date": "2011-08-21T05:39:01Z",
-      "id": 110
-    }
+    { "user_id": 10, "article_id": 32, "date": "2016-02-13T02:31:00Z", "id": 108 },
+    { "user_id": 11, "article_id": 58, "date": "2011-08-21T05:39:01Z", "id": 110 }
   ],
   "article-labels": [
-    {
-      "id": 1,
-      "label_ids": [3, 2],
-      "article_id": 56
-    },
-    {
-      "id": 2,
-      "label_ids": [1, 2],
-      "article_id": 57
-    },
-    {
-      "id": 3,
-      "label_ids": [1],
-      "article_id": 59
-    },
-    {
-      "id": 4,
-      "label_ids": [4, 5],
-      "article_id": 45
-    },
-    {
-      "id": 5,
-      "label_ids": [1, 2, 6],
-      "article_id": 37
-    },
-    {
-      "id": 6,
-      "label_ids": [1],
-      "article_id": 58
-    },
-    {
-      "id": 7,
-      "label_ids": [7],
-      "article_id": 48
-    },
-    {
-      "id": 8,
-      "label_ids": [8, 2],
-      "article_id": 4
-    },
-    {
-      "id": 9,
-      "label_ids": [9],
-      "article_id": 39
-    },
-    {
-      "id": 10,
-      "label_ids": [1],
-      "article_id": 1
-    },
-    {
-      "id": 11,
-      "label_ids": [1, 2, 11],
-      "article_id": 2
-    },
-    {
-      "id": 12,
-      "label_ids": [1, 9],
-      "article_id": 3
-    },
-    {
-      "id": 13,
-      "label_ids": [9],
-      "article_id": 51
-    },
-    {
-      "id": 14,
-      "label_ids": [9],
-      "article_id": 47
-    },
-    {
-      "id": 15,
-      "label_ids": [9],
-      "article_id": 41
-    },
-    {
-      "id": 16,
-      "label_ids": [1, 2],
-      "article_id": 40
-    },
-    {
-      "id": 17,
-      "label_ids": [1],
-      "article_id": 35
-    }
+    { "id": 1, "label_ids": [3, 2], "article_id": 56 },
+    { "id": 2, "label_ids": [1, 2], "article_id": 57 },
+    { "id": 3, "label_ids": [1], "article_id": 59 },
+    { "id": 4, "label_ids": [4, 5], "article_id": 45 },
+    { "id": 5, "label_ids": [1, 2, 6], "article_id": 37 },
+    { "id": 6, "label_ids": [1], "article_id": 58 },
+    { "id": 7, "label_ids": [7], "article_id": 48 },
+    { "id": 8, "label_ids": [8, 2], "article_id": 4 },
+    { "id": 9, "label_ids": [9], "article_id": 39 },
+    { "id": 10, "label_ids": [1], "article_id": 1 },
+    { "id": 11, "label_ids": [1, 2, 11], "article_id": 2 },
+    { "id": 12, "label_ids": [1, 9], "article_id": 3 },
+    { "id": 13, "label_ids": [9], "article_id": 51 },
+    { "id": 14, "label_ids": [9], "article_id": 47 },
+    { "id": 15, "label_ids": [9], "article_id": 41 },
+    { "id": 16, "label_ids": [1, 2], "article_id": 40 },
+    { "id": 17, "label_ids": [1], "article_id": 35 }
   ],
   "labels": [
-    {
-      "id": 1,
-      "name": "Testing",
-      "user_id": 1
-    },
-    {
-      "id": 2,
-      "name": "Automation",
-      "user_id": 2
-    },
-    {
-      "id": 3,
-      "name": "TDD",
-      "user_id": 2
-    },
-    {
-      "id": 4,
-      "name": "Postman",
-      "user_id": 2
-    },
-    {
-      "id": 5,
-      "name": "REST API",
-      "user_id": 2
-    },
-    {
-      "id": 6,
-      "name": "Playwright",
-      "user_id": 1
-    },
-    {
-      "id": 7,
-      "name": "BDD",
-      "user_id": 2
-    },
-    {
-      "id": 8,
-      "name": "Selenium",
-      "user_id": 2
-    },
-    {
-      "id": 9,
-      "name": "Agile",
-      "user_id": 1
-    },
-    {
-      "id": 10,
-      "name": "QA Basics",
-      "user_id": 1
-    },
-    {
-      "id": 11,
-      "name": "Design Patterns",
-      "user_id": 3
-    },
-    {
-      "id": 12,
-      "name": "CI/CD",
-      "user_id": 3
-    },
-    {
-      "id": 13,
-      "name": "Security",
-      "user_id": 1
-    },
-    {
-      "id": 14,
-      "name": "DevOps",
-      "user_id": 2
-    },
-    {
-      "id": 15,
-      "name": "Agile",
-      "user_id": 1
-    },
-    {
-      "id": 16,
-      "name": "Front-end",
-      "user_id": 4
-    },
-    {
-      "id": 17,
-      "name": "Back-end",
-      "user_id": 4
-    },
-    {
-      "id": 18,
-      "name": "UX Design",
-      "user_id": 5
-    },
-    {
-      "id": 19,
-      "name": "Cybersec",
-      "user_id": 5
-    },
-    {
-      "id": 20,
-      "name": "JavaScript",
-      "user_id": 5
-    },
-    {
-      "id": 21,
-      "name": "TypeScript",
-      "user_id": 5
-    },
-    {
-      "id": 22,
-      "name": "Quality",
-      "user_id": 5
-    },
-    {
-      "id": 23,
-      "name": "Quality Assurance",
-      "user_id": 5
-    },
-    {
-      "id": 24,
-      "name": "TDD",
-      "user_id": 5
-    },
-    {
-      "id": 25,
-      "name": "GitHub Actions",
-      "user_id": 3
-    },
-    {
-      "id": 26,
-      "name": "Jenkins",
-      "user_id": 2
-    },
-    {
-      "id": 27,
-      "name": "Performance",
-      "user_id": 1
-    },
-    {
-      "id": 28,
-      "name": "Python",
-      "user_id": 1
-    },
-    {
-      "id": 29,
-      "name": "Test Strategy",
-      "user_id": 1
-    },
-    {
-      "id": 30,
-      "name": "Risk",
-      "user_id": 1
-    },
-    {
-      "id": 31,
-      "name": "Metrics",
-      "user_id": 1
-    },
-    {
-      "id": 32,
-      "name": "Good Practice",
-      "user_id": 4
-    },
-    {
-      "id": 33,
-      "name": "Documentation",
-      "user_id": 4
-    },
-    {
-      "id": 34,
-      "name": "Recruitment",
-      "user_id": 4
-    },
-    {
-      "id": 35,
-      "name": "HR",
-      "user_id": 4
-    },
-    {
-      "id": 36,
-      "name": "Training",
-      "user_id": 4
-    },
-    {
-      "id": 37,
-      "name": "Interview",
-      "user_id": 4
-    }
+    { "id": 1, "name": "Testing", "user_id": 1 },
+    { "id": 2, "name": "Automation", "user_id": 2 },
+    { "id": 3, "name": "TDD", "user_id": 2 },
+    { "id": 4, "name": "Postman", "user_id": 2 },
+    { "id": 5, "name": "REST API", "user_id": 2 },
+    { "id": 6, "name": "Playwright", "user_id": 1 },
+    { "id": 7, "name": "BDD", "user_id": 2 },
+    { "id": 8, "name": "Selenium", "user_id": 2 },
+    { "id": 9, "name": "Agile", "user_id": 1 },
+    { "id": 10, "name": "QA Basics", "user_id": 1 },
+    { "id": 11, "name": "Design Patterns", "user_id": 3 },
+    { "id": 12, "name": "CI/CD", "user_id": 3 },
+    { "id": 13, "name": "Security", "user_id": 1 },
+    { "id": 14, "name": "DevOps", "user_id": 2 },
+    { "id": 15, "name": "Agile", "user_id": 1 },
+    { "id": 16, "name": "Front-end", "user_id": 4 },
+    { "id": 17, "name": "Back-end", "user_id": 4 },
+    { "id": 18, "name": "UX Design", "user_id": 5 },
+    { "id": 19, "name": "Cybersec", "user_id": 5 },
+    { "id": 20, "name": "JavaScript", "user_id": 5 },
+    { "id": 21, "name": "TypeScript", "user_id": 5 },
+    { "id": 22, "name": "Quality", "user_id": 5 },
+    { "id": 23, "name": "Quality Assurance", "user_id": 5 },
+    { "id": 24, "name": "TDD", "user_id": 5 },
+    { "id": 25, "name": "GitHub Actions", "user_id": 3 },
+    { "id": 26, "name": "Jenkins", "user_id": 2 },
+    { "id": 27, "name": "Performance", "user_id": 1 },
+    { "id": 28, "name": "Python", "user_id": 1 },
+    { "id": 29, "name": "Test Strategy", "user_id": 1 },
+    { "id": 30, "name": "Risk", "user_id": 1 },
+    { "id": 31, "name": "Metrics", "user_id": 1 },
+    { "id": 32, "name": "Good Practice", "user_id": 4 },
+    { "id": 33, "name": "Documentation", "user_id": 4 },
+    { "id": 34, "name": "Recruitment", "user_id": 4 },
+    { "id": 35, "name": "HR", "user_id": 4 },
+    { "id": 36, "name": "Training", "user_id": 4 },
+    { "id": 37, "name": "Interview", "user_id": 4 }
   ],
   "scores": [
-    {
-      "game_id": 1,
-      "user_id": 4,
-      "score": 5,
-      "id": 1
-    },
-    {
-      "game_id": 2,
-      "user_id": 4,
-      "score": 4,
-      "id": 2
-    },
-    {
-      "game_id": 1,
-      "user_id": 7,
-      "score": 6,
-      "id": 3
-    }
+    { "game_id": 1, "user_id": 4, "score": 5, "id": 1 },
+    { "game_id": 2, "user_id": 4, "score": 4, "id": 2 },
+    { "game_id": 1, "user_id": 7, "score": 6, "id": 3 }
   ],
   "bookmarks": [
     { "id": 1, "user_id": 1, "article_ids": [1, 3, 7] },
@@ -2665,9 +2229,7 @@
         "CI/CD tools": ["GitHub Actions", "Jenkins", "Azure DevOps"],
         "testing frequency": ["weekly"],
         "Test types": ["Integration tests", "E2e tests"],
-        "Open-Ended Questions": {
-          "Plans to improve testing": ["Learn more Playwright for API Testing"]
-        }
+        "Open-Ended Questions": { "Plans to improve testing": ["Learn more Playwright for API Testing"] }
       },
       "type": 1,
       "date": "2024-03-10T18:29:42Z",
@@ -2683,9 +2245,7 @@
         "CI/CD tools": ["GitHub Actions", "Azure DevOps"],
         "testing frequency": ["weekly"],
         "Test types": ["Unit tests", "Module tests", "Integration tests", "E2e tests"],
-        "Open-Ended Questions": {
-          "Plans to improve testing": [""]
-        }
+        "Open-Ended Questions": { "Plans to improve testing": [""] }
       },
       "type": 1,
       "date": "2024-03-10T18:29:42Z",
@@ -2701,9 +2261,7 @@
         "CI/CD tools": ["GitHub Actions", "Jenkins"],
         "Testing frequency": ["daily"],
         "Test types": ["Unit tests", "Module tests", "Contract tests", "Integration tests", "E2e tests"],
-        "Open-Ended Questions": {
-          "Plans to improve testing": [""]
-        }
+        "Open-Ended Questions": { "Plans to improve testing": [""] }
       },
       "type": 1,
       "date": "2024-03-10T19:25:35Z",
@@ -2727,9 +2285,7 @@
           "Security tests",
           "Visual tests"
         ],
-        "Open-Ended Questions": {
-          "Plans to improve testing": [""]
-        }
+        "Open-Ended Questions": { "Plans to improve testing": [""] }
       },
       "type": 1,
       "date": "2024-03-10T19:27:13Z",
@@ -2745,9 +2301,7 @@
         "CI/CD tools": ["GitHub Actions"],
         "Testing frequency": ["daily"],
         "Test types": ["Module tests", "Integration tests", "E2e tests", "UAT tests", "Performance tests"],
-        "Open-Ended Questions": {
-          "Plans to improve testing": ["Learn more Playwright for API Testing"]
-        }
+        "Open-Ended Questions": { "Plans to improve testing": ["Learn more Playwright for API Testing"] }
       },
       "type": 1,
       "date": "2024-03-11T19:27:13Z",
@@ -2762,9 +2316,7 @@
         "languages for automation tools": ["JavaScript", "TypeScript", "Python"],
         "Number of automated tests": ["50-100"],
         "Automated test types": ["Integration tests", "E2e tests"],
-        "Open-Ended Questions": {
-          "Plans to improve skills": ["Learn more about Playwright"]
-        }
+        "Open-Ended Questions": { "Plans to improve skills": ["Learn more about Playwright"] }
       },
       "type": 2,
       "date": "2024-03-17T01:43:30Z",

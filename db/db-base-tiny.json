@@ -6,7 +6,9 @@
       "firstname": "Nancy",
       "lastname": "Wyman",
       "password": "test1",
-      "avatar": ".\\data\\users\\face_1713018024.9049351_f_1.jpg"
+      "avatar": ".\\data\\users\\face_1713018024.9049351_f_1.jpg",
+      "creationDate": "2010-02-03T07:45:00.547Z",
+      "birthdate": "1952-02-06T11:47:42.443Z"
     },
     {
       "id": 2,
@@ -14,7 +16,9 @@
       "firstname": "Leon",
       "lastname": "Gerhold",
       "password": "test2",
-      "avatar": ".\\data\\users\\face_1713017222.8101556_m_1.jpg"
+      "avatar": ".\\data\\users\\face_1713017222.8101556_m_1.jpg",
+      "creationDate": "2014-09-06T11:52:19.811Z",
+      "birthdate": "1985-04-03T21:39:38.920Z"
     }
   ],
   "articles": [
@@ -43,62 +47,21 @@
       "body": "I loved your insights on usability testing. It's crucial to ensure that the software meets the needs of the end users. Have you encountered any interesting user feedback during usability testing that led to significant improvements in the product?",
       "date": "2021-11-30T14:44:22Z"
     },
-    {
-      "id": 2,
-      "article_id": 1,
-      "user_id": 1,
-      "body": "Interesting!",
-      "date": "2021-11-20T03:53:00Z"
-    }
+    { "id": 2, "article_id": 1, "user_id": 1, "body": "Interesting!", "date": "2021-11-20T03:53:00Z" }
   ],
   "likes": [
-    {
-      "id": 1,
-      "user_id": 1,
-      "comment_id": 1,
-      "article_id": null,
-      "date": "2023-09-25T10:00:00Z"
-    },
-    {
-      "id": 2,
-      "user_id": 2,
-      "comment_id": null,
-      "article_id": 1,
-      "date": "2023-09-25T11:00:00Z"
-    }
+    { "id": 1, "user_id": 1, "comment_id": 1, "article_id": null, "date": "2023-09-25T10:00:00Z" },
+    { "id": 2, "user_id": 2, "comment_id": null, "article_id": 1, "date": "2023-09-25T11:00:00Z" }
   ],
   "article-labels": [
-    {
-      "id": 1,
-      "label_ids": [1],
-      "article_id": 1
-    },
-    {
-      "id": 2,
-      "label_ids": [1, 2],
-      "article_id": 2
-    }
+    { "id": 1, "label_ids": [1], "article_id": 1 },
+    { "id": 2, "label_ids": [1, 2], "article_id": 2 }
   ],
   "labels": [
-    {
-      "id": 1,
-      "name": "Testing",
-      "user_id": 1
-    },
-    {
-      "id": 2,
-      "name": "Automation",
-      "user_id": 2
-    }
+    { "id": 1, "name": "Testing", "user_id": 1 },
+    { "id": 2, "name": "Automation", "user_id": 2 }
   ],
-  "scores": [
-    {
-      "game_id": 1,
-      "user_id": 1,
-      "score": 5,
-      "id": 1
-    }
-  ],
+  "scores": [{ "game_id": 1, "user_id": 1, "score": 5, "id": 1 }],
   "bookmarks": [{ "id": 1, "user_id": 1, "article_ids": [1] }],
   "survey-responses": [
     {
@@ -110,9 +73,7 @@
         "CI/CD tools": ["GitHub Actions", "Jenkins", "Azure DevOps"],
         "testing frequency": ["weekly"],
         "Test types": ["Integration tests", "E2e tests"],
-        "Open-Ended Questions": {
-          "Plans to improve testing": ["Learn more Playwright for API Testing"]
-        }
+        "Open-Ended Questions": { "Plans to improve testing": ["Learn more Playwright for API Testing"] }
       },
       "type": 1,
       "date": "2024-03-10T18:29:42Z",
