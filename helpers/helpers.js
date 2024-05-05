@@ -217,6 +217,7 @@ function parseUserActivityStats(dbDataJson) {
     };
 
     const userActivityByMonth = {};
+    const userActivityByYear = {};
 
     const months = [
       "January",
@@ -242,12 +243,19 @@ function parseUserActivityStats(dbDataJson) {
         const articleDate = new Date(articlesData[j].date);
         const month = articleDate.toLocaleDateString("en-US", { month: "long" });
         const dayOfWeek = articleDate.toLocaleDateString("en-US", { weekday: "long" });
+        const year = articleDate.toLocaleDateString("en-US", { year: "numeric" });
         userActivityByDay[dayOfWeek].articles++;
 
         if (!(month in userActivityByMonth)) {
           userActivityByMonth[month] = { articles: 0, comments: 0 };
         }
         userActivityByMonth[month].articles++;
+
+        if (userActivityByYear[year] === undefined) {
+          userActivityByYear[year] = { articles: 0, comments: 0, total: 0 };
+        }
+        userActivityByYear[year].articles++;
+        userActivityByYear[year].total++;
       }
     }
 
@@ -256,12 +264,19 @@ function parseUserActivityStats(dbDataJson) {
         const commentDate = new Date(commentsData[j].date);
         const month = commentDate.toLocaleDateString("en-US", { month: "long" });
         const dayOfWeek = commentDate.toLocaleDateString("en-US", { weekday: "long" });
+        const year = commentDate.toLocaleDateString("en-US", { year: "numeric" });
         userActivityByDay[dayOfWeek].comments++;
 
         if (!(month in userActivityByMonth)) {
           userActivityByMonth[month] = { articles: 0, comments: 0 };
         }
         userActivityByMonth[month].comments++;
+        
+        if (userActivityByYear[year] === undefined) {
+          userActivityByYear[year] = { articles: 0, comments: 0, total: 0 };
+        }
+        userActivityByYear[year].comments++;
+        userActivityByYear[year].total++;
       }
     }
 
@@ -270,6 +285,7 @@ function parseUserActivityStats(dbDataJson) {
       user: { name: `${userData.firstname} ${userData.lastname}`, id: userId },
       userActivityByDay,
       userActivityByMonth,
+      userActivityByYear,
     };
   }
 

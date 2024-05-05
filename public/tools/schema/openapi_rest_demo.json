@@ -2338,6 +2338,36 @@
         }
       }
     },
+    "/stats/activity/user/{id}": {
+      "get": {
+        "tags": ["stats"],
+        "summary": "Get single user activity stats",
+        "operationId": "getSingleUserActivityStats",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "User ID",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Single user activity stats received",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserActivityStats"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/stats/api": {
       "get": {
         "tags": ["stats"],
@@ -4979,7 +5009,8 @@
                     }
                   }
                 }
-              }
+              },
+              "userActivityByYear": { "type": "object" }
             }
           }
         }

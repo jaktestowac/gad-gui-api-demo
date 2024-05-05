@@ -1,7 +1,9 @@
 const userActivityEndpoint = "../../api/stats/activity/user";
 
-async function issueGetStatsRequest() {
-  const data = fetch(userActivityEndpoint, {
+async function issueGetStatsRequest(userId) {
+  const url = userId !== undefined ? `${userActivityEndpoint}/${userId}` : userActivityEndpoint;
+
+  const data = fetch(url, {
     method: "GET",
     headers: {
       Accept: "application/json",
@@ -65,7 +67,7 @@ function composeChart(data, yElementsCount) {
   // set the dimensions and margins of the graph
   const margin = { top: 10, right: 25, bottom: 30, left: 200 },
     width = 750 - margin.left - margin.right,
-    height = dataLength * 20 - margin.top - margin.bottom;
+    height = 40 + dataLength * 20 - margin.top - margin.bottom;
 
   // append the svg object to the body of the page
   const svg = d3
@@ -95,7 +97,7 @@ function composeChart(data, yElementsCount) {
   const x = d3.scaleBand().range([0, width]).domain(myGroups).padding(0.05);
   svg
     .append("g")
-    .style("font-size", 15)
+    .style("font-size", 10)
     .attr("transform", `translate(0, ${height})`)
     .call(d3.axisBottom(x).tickSize(0))
     .select(".domain")
@@ -103,7 +105,7 @@ function composeChart(data, yElementsCount) {
 
   // Build Y scales and axis:
   const y = d3.scaleBand().range([0, height]).domain(myVars).padding(0.05);
-  svg.append("g").style("font-size", 15).call(d3.axisLeft(y).tickSize(0)).select(".domain").remove();
+  svg.append("g").style("font-size", 12).call(d3.axisLeft(y).tickSize(0)).select(".domain").remove();
 
   // Build color scale
   const myColor = d3.scaleSequential().interpolator(d3.interpolateInferno).domain([0, maxValue]);
@@ -174,12 +176,19 @@ function presentData(type, period) {
   loader.classList.add("loader2-container");
   element.appendChild(loader);
 
-  issueGetStatsRequest().then((data) => {
+  issueGetStatsRequest(userId).then((data) => {
+    data = userId !== undefined ? [data] : data;
+
     let parsedData = parseDataByDayOfWeek(data, type);
     if (period.toLowerCase().includes("day")) {
       parsedData = parseDataByDayOfWeek(data, type);
     } else if (period.toLowerCase().includes("month")) {
       parsedData = parseDataByMonths(data, type);
+    }
+
+    if (parsedData.length === 0) {
+      document.getElementById("chartPlaceholder").innerHTML = "<h2>No data available</h2><br/><br/>";
+      return;
     }
     composeChart(parsedData, Object.keys(data).length);
     document.getElementById(
@@ -192,4 +201,10 @@ function generateChartPDF(filename) {
   generatePDF(filename, "chartPlaceholder");
 }
 
+const userId = getParams()["user_id"];
 presentData("articles", "Day of Week");
+
+if (userId !== undefined) {
+  const header = document.querySelector("#header");
+  header.innerHTML = "Single User Activity";
+}

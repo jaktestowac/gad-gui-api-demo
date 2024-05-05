@@ -48,9 +48,15 @@ const statsRoutes = (req, res, next) => {
       const stats = parsePublishStats(fullDb(), "comments");
       res.status(HTTP_OK).json(stats);
       return;
-    } else if (req.method === "GET" && urlEnds.includes("api/stats/activity/user")) {
+    } else if (req.method === "GET" && urlEnds.endsWith("api/stats/activity/user")) {
       const activity = parseUserActivityStats(fullDb());
       res.status(HTTP_OK).json(activity);
+      return;
+    } else if (req.method === "GET" && urlEnds.includes("api/stats/activity/user/")) {
+      let userId = getIdFromUrl(urlEnds);
+      const activity = parseUserActivityStats(fullDb());
+      const userActivity = activity[userId] ?? {};
+      res.status(HTTP_OK).json(userActivity);
       return;
     } else if (req.method === "GET" && urlEnds.endsWith("api/stats/api")) {
       const stats = getApiCalls();
