@@ -283,10 +283,47 @@ function parseUserPublicationStats(dbDataJson, entityName = "articles") {
   return data;
 }
 
+function parseUserPublicationStatsByDates(dbDataJson, entityName = "articles") {
+  const entitiesData = dbDataJson[entityName];
+
+  const entitiesByYear = {};
+  const entitiesByMonth = {};
+  const entitiesByDay = {};
+
+  entitiesData.forEach((entity) => {
+    const publishedDate = new Date(entity.date);
+    const year = publishedDate.getFullYear();
+    const month = publishedDate.getMonth();
+    const day = publishedDate.getDay();
+
+    const yearMonth = `${year}-${pad(month)}`;
+    const yearMonthDay = `${year}-${pad(month)}-${pad(day)}`;
+
+    if (!entitiesByYear[year]) {
+      entitiesByYear[year] = 0;
+    }
+
+    if (!entitiesByMonth[yearMonth]) {
+      entitiesByMonth[yearMonth] = 0;
+    }
+
+    if (!entitiesByDay[yearMonthDay]) {
+      entitiesByDay[yearMonthDay] = 0;
+    }
+
+    entitiesByYear[year]++;
+    entitiesByMonth[yearMonth]++;
+    entitiesByMonth[yearMonthDay]++;
+  });
+
+  return { entitiesByYear, entitiesByMonth, entitiesByDay };
+}
+
 module.exports = {
   parseUserStats,
   parseArticleStats,
   parseUserActivityStats,
   parsePublishStats,
   parseUserPublicationStats,
+  parseUserPublicationStatsByDates,
 };

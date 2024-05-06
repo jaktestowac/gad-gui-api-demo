@@ -2293,7 +2293,7 @@
         }
       }
     },
-    "/stats/publish/articles": {
+    "/stats/publications/articles": {
       "get": {
         "tags": ["stats"],
         "summary": "Get article publish stats",
@@ -2306,7 +2306,7 @@
         }
       }
     },
-    "/stats/publish/comments": {
+    "/stats/publications/comments": {
       "get": {
         "tags": ["stats"],
         "summary": "Get comments publish stats",

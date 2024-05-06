@@ -47,11 +47,11 @@ const statsRoutes = (req, res, next) => {
       const stats = parseArticleStats(fullDb(), dataType[1] ?? "");
       res.status(HTTP_OK).json(stats);
       return;
-    } else if (req.method === "GET" && urlEnds.includes("api/stats/publish/articles")) {
+    } else if (req.method === "GET" && urlEnds.includes("api/stats/publications/articles")) {
       const stats = parsePublishStats(fullDb(), "articles");
       res.status(HTTP_OK).json(stats);
       return;
-    } else if (req.method === "GET" && urlEnds.includes("api/stats/publish/comments")) {
+    } else if (req.method === "GET" && urlEnds.includes("api/stats/publications/comments")) {
       const stats = parsePublishStats(fullDb(), "comments");
       res.status(HTTP_OK).json(stats);
       return;

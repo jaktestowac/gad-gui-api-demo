@@ -1,5 +1,5 @@
-const articlesStatsEndpoint = "../../api/stats/publish/articles";
-const commentsStatsEndpoint = "../../api/stats/publish/comments";
+const articlesStatsEndpoint = "../../api/stats/publications/articles";
+const commentsStatsEndpoint = "../../api/stats/publications/comments";
 
 const DAYS_OF_WEEK = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const MONTHS = [

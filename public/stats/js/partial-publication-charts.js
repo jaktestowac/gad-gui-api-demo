@@ -1,5 +1,5 @@
-const articlesEndpoint = "/api/stats/publish/articles/";
-const commentsEndpoint = "/api/stats/publish/comments/";
+const articlesEndpoint = "/api/stats/publications/articles/";
+const commentsEndpoint = "/api/stats/publications/comments/";
 
 let results;
 

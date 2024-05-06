@@ -97,10 +97,10 @@ describe("Endpoint /stats", () => {
         expect(response.body.articlesDataForChart).to.not.be.undefined;
       });
     });
-    describe("/publish/articles", () => {
-      it("GET /publish/articles", async () => {
+    describe("/publications/articles", () => {
+      it("GET /publications/articles", async () => {
         // Act:
-        const response = await request.get(`${baseUrl}/publish/articles`);
+        const response = await request.get(`${baseUrl}/publications/articles`);
 
         // Assert:
         expect(response.status).to.equal(200);
@@ -109,10 +109,10 @@ describe("Endpoint /stats", () => {
         expect(response.body.daily).to.not.be.undefined;
       });
     });
-    describe("/publish/comments", () => {
-      it("GET /publish/comments", async () => {
+    describe("/publications/comments", () => {
+      it("GET /publications/comments", async () => {
         // Act:
-        const response = await request.get(`${baseUrl}/publish/comments`);
+        const response = await request.get(`${baseUrl}/publications/comments`);
 
         // Assert:
         expect(response.status).to.equal(200);
@@ -221,10 +221,10 @@ describe("Endpoint /stats", () => {
         expect(response.body.articlesDataForChart).to.not.be.undefined;
       });
     });
-    describe("/publish/articles", () => {
-      it("GET /publish/articles", async () => {
+    describe("/publications/articles", () => {
+      it("GET /publications/articles", async () => {
         // Act:
-        const response = await request.get(`${baseUrl}/publish/articles`).set(headers);
+        const response = await request.get(`${baseUrl}/publications/articles`).set(headers);
 
         // Assert:
         expect(response.status).to.equal(200);
@@ -233,10 +233,10 @@ describe("Endpoint /stats", () => {
         expect(response.body.daily).to.not.be.undefined;
       });
     });
-    describe("/publish/comments", () => {
-      it("GET /publish/comments", async () => {
+    describe("/publications/comments", () => {
+      it("GET /publications/comments", async () => {
         // Act:
-        const response = await request.get(`${baseUrl}/publish/comments`).set(headers);
+        const response = await request.get(`${baseUrl}/publications/comments`).set(headers);
 
         // Assert:
         expect(response.status).to.equal(200);
