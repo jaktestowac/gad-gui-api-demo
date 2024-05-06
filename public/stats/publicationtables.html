@@ -1,7 +1,7 @@
 <html>
 
 <head>
-  <title>🦎 GAD | Publication Charts</title>
+  <title>🦎 GAD | Publication Tables</title>
   <link rel="icon" href="/data/icons/favicon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
@@ -21,19 +21,31 @@
   <br />
   <br />
 
-  <div class="container" align="center">
-    Data Type:
-    <a id="articles" href="./publicationstats.html?data=articles"><button id="btnArticles" data-testid="open-articles" class="button-primary">Articles</button></a>
-    <a id="comments" href="./publicationstats.html?data=comments"><button id="btnComments" data-testid="open-comments" class="button-primary">Comments</button></a>
-  </div>
+  <div align="center">
+    <div id="container">
+      <fieldset style="width: 170px; border-radius: 10px">
+        <legend>Show:</legend>
 
-  <iframe id="statsIframe" title="Stats iframe" width="100%" height="80%" style="border: none; max-height: 80%"></iframe>
+        <div>
+          <a id="articles" href="./publicationtables.html?data=articles"><button class="button-primary-small">Articles</button></a>
+          <a id="comments" href="./publicationtables.html?data=comments"><button class="button-primary-small">Comments</button></a>
+        </div>
+      </fieldset>
+    </div>
+    <br />
+    <div id="detailsPlaceholder"></div>
+    <br />
+    <div align="center" style="width: 500px;">
+      <div id="tablePlaceholder">
+      </div>
+    </div>
+  </div>
 </body>
 
 <script src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript" src="/js/common.js"></script>
 <script type="text/javascript" src="/js/helpers/reports.js"></script>
-<script type="text/javascript" src="./js/publication-stats.js"></script>
+<script type="text/javascript" src="./js/publication-tables.js"></script>
 <script type="text/javascript" src="/version.js"></script>
 <script type="text/javascript" src="/username.js"></script>
 <script type="text/javascript" src="/js/darkmode.js"></script>

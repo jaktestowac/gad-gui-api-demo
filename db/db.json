@@ -1987,9 +1987,9 @@
     {
       "id": 195,
       "article_id": 53,
-      "user_id": 3,
+      "user_id": 14,
       "body": "Quality assurance is the guardian angel of software. It watches over every line of code to ensure it's free from flaws. 👼",
-      "date": "2010-10-02T15:40:37Z"
+      "date": "2023-10-02T15:40:37Z"
     },
     {
       "id": 196,
@@ -2057,7 +2057,7 @@
     {
       "id": 205,
       "article_id": 5,
-      "user_id": 3,
+      "user_id": 13,
       "body": "Effective testing and quality assurance are the superheroes who protect the software world from villains like bugs and glitches. 🦸‍♂️🦸‍♀️",
       "date": "2011-10-11T10:55:28Z"
     },
@@ -2158,6 +2158,62 @@
       "user_id": 3,
       "body": "Quality assurance ensures software reliability, and that's the foundation of trust. It's the bedrock on which we build excellence. 🏰🤩",
       "date": "2011-12-12T12:25:30Z"
+    },
+    {
+      "id": 220,
+      "article_id": 5,
+      "user_id": 12,
+      "body": "Absolutely agree with your points. Keep it up!",
+      "date": "2023-10-12T12:55:30Z"
+    },
+    {
+      "id": 221,
+      "article_id": 4,
+      "user_id": 13,
+      "body": "This is a perspective I hadn't considered. Thanks for sharing.",
+      "date": "2022-07-05T14:10:05Z"
+    },
+    {
+      "id": 222,
+      "article_id": 2,
+      "user_id": 14,
+      "body": "This is a must-read for everyone in the field.",
+      "date": "2023-09-18T11:30:50Z"
+    },
+    {
+      "id": 223,
+      "article_id": 6,
+      "user_id": 14,
+      "body": "So good!",
+      "date": "2023-09-18T12:30:50Z"
+    },
+    {
+      "id": 224,
+      "article_id": 8,
+      "user_id": 14,
+      "body": "I couldn't agree more with the points you've made.",
+      "date": "2023-09-18T12:31:50Z"
+    },
+    {
+      "id": 225,
+      "article_id": 9,
+      "user_id": 14,
+      "body": "This is a must-read for everyone in the field.",
+      "date": "2023-09-22T12:32:50Z"
+    },
+    {
+      "id": 226,
+      "article_id": 3,
+      "user_id": 14,
+      "body": "So good!",
+      "date": "2023-09-27T12:33:50Z"
+    },
+    {
+      "id": 227,
+      "article_id": 9,
+      "user_id": 12,
+      "body": "I couldn't agree more with the points you've made. This is a must-read for everyone in the field. So good!",
+      "date": "2023-11-27T12:32:50Z"
     }
   ],
   "likes": [

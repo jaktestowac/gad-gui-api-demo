@@ -108,9 +108,14 @@ const displayData = () => {
     document.querySelector("#tableArea").style.visibility = "collapse";
   }
   if (typeIsTable) {
+    const sortedArticlesPerUser = Object.entries(articlesPerUser)
+      .sort((a, b) => b[1] - a[1])
+      .map(([key, value]) => ({ userId: parseInt(key), value }));
+
     const tableDataForCsv = [["User", "Articles", "Comments"]];
     const tableElement = document.getElementById("tableDataBody");
-    for (const user_id in userIdToName) {
+    for (const keyValuePair of sortedArticlesPerUser) {
+      const user_id = keyValuePair.userId;
       let userName = userIdToName[user_id];
       let userLink = `<a href="/user.html?id=${user_id}">${userName}</a>`;
       let articlesCount = articlesPerUser[user_id] ?? 0;
