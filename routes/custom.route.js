@@ -13,7 +13,7 @@ const {
   getLanguages,
 } = require("../helpers/db.helpers");
 const { formatErrorResponse, getIdFromUrl, findMaxValues } = require("../helpers/helpers");
-const { logError, logDebug, getLogs, logTrace } = require("../helpers/logger-api");
+const { logError, logDebug, logTrace } = require("../helpers/logger-api");
 const { HTTP_INTERNAL_SERVER_ERROR, HTTP_OK, HTTP_NOT_FOUND } = require("../helpers/response.helpers");
 const { getConfigValue, getFeatureFlagConfigValue } = require("../config/config-manager");
 const { ConfigKeys, FeatureFlagConfigKeys } = require("../config/enums");
