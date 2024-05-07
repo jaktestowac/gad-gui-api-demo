@@ -21,14 +21,14 @@ class TimeHistogramReporterHtml {
 
   prepareHeader() {
     return `
-      <!DOCTYPE html>
       <html lang="en">
       <head>
-          <meta charset="UTF-8">
+          <meta charset="UTF-8"></meta>
           <title>Time report</title>
-          <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+          <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css"></link>
       </head>
       <body>
+      <span id="header"></span>
       <table id="reportTable" class="display" data-order='[[ 4, "desc" ]]' data-page-length="25">
           <thead>
           <tr>

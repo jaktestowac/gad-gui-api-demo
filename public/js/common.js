@@ -142,9 +142,9 @@ const addMainMenuAndFooter = () => {
   let mainNavMenu = document.querySelector(".main-nav-menu");
   if (document.querySelector("#menu-main-gui-login")) {
     mainNavMenu.innerHTML = hamburgerMenu() + mainNavMenu.innerHTML;
-    let path = "..";
+    let path = "";
     menuContainerLeft = document.querySelector("#menu-main-gui-login");
-    menuContainerLeft.innerHTML = logoGAD(path) + mainGUIMenuHTML(path);
+    menuContainerLeft.innerHTML = logoGAD() + mainGUIMenuHTML(path);
     if (email) menuContainerLeft.innerHTML += mainGUIMenuHTMLLogged(path);
     menuContainerLeft.insertAdjacentHTML("afterend", rightMenu(path));
   }
@@ -157,10 +157,10 @@ const addMainMenuAndFooter = () => {
   }
   if (document.querySelector("#menu-main-api")) {
     mainNavMenu.innerHTML = hamburgerMenu() + mainNavMenu.innerHTML;
-    let path = "..";
+    let path = "";
     menuContainerLeft = document.querySelector("#menu-main-api");
-    menuContainerLeft.innerHTML = logoGAD(path) + mainAPIMenuHTML;
-    menuContainerLeft.insertAdjacentHTML("afterend", rightMenu(path));
+    menuContainerLeft.innerHTML = logoGAD() + mainAPIMenuHTML;
+    menuContainerLeft.insertAdjacentHTML("afterend", rightMenu());
   }
   if (document.querySelector("#menu-main")) {
     menuContainerLeft = document.querySelector("#menu-main");
@@ -303,13 +303,13 @@ const mainGUIMenuHTMLLogged = (path = "") => {
 };
 
 const mainAPIMenuHTML = `
-<a href="./index.html">
+<a href="/tools/index.html">
   <button id="btnTools" data-testid="btn-tools" class="button-primary">Tools</button>
 </a>
-<a href="./swagger.html">
+<a href="/tools/swagger.html">
   <button id="btnSwagger" data-testid="btn-swagger" class="button-primary">Swagger</button>
 </a>
-<a href="./version.html">
+<a href="/tools/version.html">
   <button id="btnVersion" data-testid="btn-version" class="button-primary">Version</button>
 </a>
 

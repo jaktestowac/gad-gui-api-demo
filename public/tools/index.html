@@ -84,13 +84,15 @@
                     <li><a href="/projects/roi.html">Advanced ROI calculator</a></li>
                   </ul>
                 </li>
-                <li><a href="../tools/version.html">Version check</a></li>
+                <li><a href="/tools/version.html">Version check</a></li>
                 <li>
                   <strong>Database helpers:</strong>
                   <ul>
-                    <li><a href="../tools/dbplayground.html">Database SQL Playground</a></li>
+                    <li><a href="/tools/dbplayground.html">Database SQL Playground</a></li>
                   </ul>
                 </li>
+
+
               </ul>
             </div>
             <div id="restore" class="containerTools">
@@ -111,9 +113,6 @@
               <h3>API: Additional endpoints</h3>
               <a href="/api/images/user">Images for user avatar</a><br />
               <a href="/api/images/posts">Images for article image</a><br />
-              <a href="/api/logs">Logs (⚠️ needs proper config flag enabled)</a><br />
-              <a href="/api/stats/api">Api Calls stats</a><br />
-              <a href="/api/health">Health Check</a><br />
             </div>
 
             <div class="containerTools">
@@ -123,6 +122,31 @@
               (❗ After 🦎GAD restart default values are restored!) <br />
               <br />
               <div id="featureTable"></div>
+            </div>
+
+            <div class="containerTools">
+              <h2>Diagnostic Info</h2>
+              Get additional info (such as logs, reports, histograms) in real time!
+              <br />
+              <br />
+              <strong><a href="/diagnostic/requests.html" target="_blank" rel="noopener"><i class="fa-solid fa-sliders"></i> Toggle diagnostic info (⚠️ performance can decrease!)</a></strong>
+              <br />
+              <br />
+              <strong>Pages:</strong>
+              <ul>
+                <li><a href="/diagnostic/requests.html">Requests (⚠️ needs proper config flag enabled)</a></li>
+              </ul>
+
+              <strong>Endpoints:</strong>
+              <ul>
+                <li><a href="/api/logs">Logs (⚠️ needs proper config flag enabled)</a></li>
+                <li><a href="/api/stats/api">Api Calls stats</a></li>
+                <li><a href="/api/stats/api/details">Api Calls stats (detailed)</a></li>
+                <li><a href="/api/stats/nonapi">Non-api Calls stats</a></li>
+                <li><a href="/api/stats/nonapi/details">Non-api Calls stats (detailed)</a></li>
+                <li><a href="/api/health">Health Check</a></li>
+                <li><a href="/api/health/dbcheck">Check DataBase integrity</a></li>
+              </ul>
             </div>
 
             <div class="containerTools">

@@ -252,14 +252,7 @@ const queryRoutes = (req, res, next) => {
 const customRoutes = (req, res, next) => {
   try {
     const urlEnds = req.url.replace(/\/\/+/g, "/");
-    if (req.method === "GET" && urlEnds.includes("api/logs")) {
-      if (getConfigValue(ConfigKeys.PUBLIC_LOGS_ENABLED)) {
-        res.status(HTTP_OK).json({ logs: getLogs() });
-      } else {
-        res.status(HTTP_OK).json({});
-      }
-      return;
-    }
+
     if (req.method === "GET" && req.url.endsWith("/db")) {
       const dbData = fullDb();
       res.json(dbData);
