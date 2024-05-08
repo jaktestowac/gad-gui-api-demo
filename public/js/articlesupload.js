@@ -148,7 +148,7 @@ const attachEventHandlers = (user_id) => {
       document.querySelector("#uploadBtn").disabled = false;
     } else {
       const container = document.querySelector("#infoContainer");
-      container.innerHTML = `<div class="warning-msg">⚠️ Invalid file type! Must be ${FILE_TYPE}</div>`;
+      container.innerHTML = `<div class="simpleErrorBox">⚠️ Invalid file type! Must be ${FILE_TYPE}</div>`;
       document.querySelector("#uploadBtn").disabled = true;
       dropArea.classList.remove("active");
     }
