@@ -25,7 +25,7 @@ function checkDatabase() {
       error,
       stack: error.stack,
     });
-    return { isOk: false, error: "DataBase is corrupted." };
+    return { isOk: false, error: "DataBase is CORRUPTED." };
   }
 }
 
