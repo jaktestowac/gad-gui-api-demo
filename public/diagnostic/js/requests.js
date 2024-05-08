@@ -8,14 +8,22 @@ async function issueGetHtmlReportRequest(settings) {
       Accept: "application/json",
       "Content-Type": "application/json",
     },
-  }).then((r) => r.text());
+  });
   return data;
 }
 
-issueGetHtmlReportRequest().then((results) => {
-  const reportPlaceholder = document.getElementById("reportPlaceholder");
-  reportPlaceholder.innerHTML = results;
-  $(document).ready(function () {
-    $("#reportTable").DataTable();
+issueGetHtmlReportRequest()
+  .then((r) => {
+    if (r.status !== 200) {
+      return `<br>Error: ${r.status} - ${r.statusText}.<br>Check config - was the diagnostics enabled?`;
+    }
+
+    return r.text();
+  })
+  .then((results) => {
+    const reportPlaceholder = document.getElementById("reportPlaceholder");
+    reportPlaceholder.innerHTML = results;
+    $(document).ready(function () {
+      $("#reportTable").DataTable();
+    });
   });
-});
