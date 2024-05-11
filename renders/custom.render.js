@@ -7,6 +7,7 @@ const { getOriginMethod } = require("../helpers/tracing-info.helper");
 
 function renderResponse(req, res) {
   // to maintain backward compatibility:
+  // TODO: remove in future version
   if (req.url.includes("users")) {
     const users = res.locals.data;
     let usersMapped;
@@ -26,6 +27,7 @@ function renderResponse(req, res) {
     }
     res.locals.data = usersMapped;
   }
+
   if (req.method === "GET" && req.url.includes("users")) {
     const users = res.locals.data;
     let loggedUser = req.cookies.id;

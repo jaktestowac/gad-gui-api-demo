@@ -614,7 +614,6 @@ const attachEventHandlers = (id = "") => {
     }
   }
   if (!isAuthorized(id)) {
-    // TODO: remove icons and methods if user is not logged
     for (let elem of document.querySelectorAll(".editName")) {
       elem.disabled = true;
       elem.style.visibility = "hidden";
