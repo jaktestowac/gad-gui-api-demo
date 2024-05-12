@@ -16,7 +16,7 @@ svg {
 }
 header {
   position: fixed;
-  z-index: 1;
+  z-index: 10;
   height: 60px;
   width: 100vw;
   /* background-image: -webkit-linear-gradient(top, #666, #111); */
