@@ -487,6 +487,7 @@ td:first-child {
     -ms-transform: translateY(25%);
     transform: translateY(25%);
     padding-left: 20px;
+    height: 40px;
   }
 
   .hamburger.active .bar:nth-child(2) {

@@ -1,5 +1,5 @@
 function openNav() {
-  document.getElementById("projects-side-panel").style.width = "250px";
+  document.getElementById("projects-side-panel").style.width = "100px";
 }
 
 function closeNav() {
@@ -15,7 +15,7 @@ function populateProjectsSidePanel(links = []) {
   const buttonElement = document.createElement("button");
   buttonElement.classList.add("openbtn");
   buttonElement.onclick = openNav;
-  buttonElement.innerHTML = "&#9776;";
+  buttonElement.innerHTML = `<i class="fa-solid fa-diagram-project"></i>`;
 
   const closeElement = document.createElement("a");
   closeElement.href = "javascript:void(0)";
@@ -26,8 +26,8 @@ function populateProjectsSidePanel(links = []) {
 
   links.forEach((link) => {
     const aElement = document.createElement("a");
-    aElement.href = link.id;
-    aElement.textContent = link.name;
+    aElement.href = link.link;
+    aElement.innerHTML = `<div class="projects-side-panel-icons" id="${link.id}" alt="${link.name}" >${link.icon}</div>`;
     divElement.appendChild(aElement);
   });
   projectsSidePanel.appendChild(divElement);
@@ -35,9 +35,30 @@ function populateProjectsSidePanel(links = []) {
 }
 
 const allLinks = [
-  { id: "/projects/1", name: "Project 1" },
-  { id: "/projects/2", name: "Project 2" },
-  { id: "/projects/3", name: "Project 3" },
+  {
+    link: "/projects/home.html",
+    id: "home-dashboard",
+    name: "Team and Projects Dashboard",
+    icon: `<i class="fa-solid fa-house"></i>`,
+  },
+  {
+    link: "/projects/home.html",
+    id: "team-management",
+    name: "Team management",
+    icon: `<i class="fa-solid fa-people-group"></i>`,
+  },
+  {
+    link: "/projects/home.html",
+    id: "project-management",
+    name: "Project management",
+    icon: `<i class="fa-solid fa-diagram-project"></i>`,
+  },
+  {
+    link: "/projects/home.html",
+    id: "projects-statistics",
+    name: "Statistics",
+    icon: `<i class="fa-solid fa-chart-column"></i>`,
+  },
 ];
 
 populateProjectsSidePanel(allLinks);
