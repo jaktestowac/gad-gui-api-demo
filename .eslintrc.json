@@ -65,6 +65,8 @@
         "issueGetLabels": "readonly",
         "formatLabelElement": "readonly",
         "updateLabelElements": "readonly",
-        "issueGetAllLabels": "readonly"
+        "issueGetAllLabels": "readonly",
+        "isAuthenticated": "readonly",
+        "setBoxMessage": "readonly"
     }
 }

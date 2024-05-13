@@ -53,10 +53,11 @@
   border: none;
   color: white;
   z-index: 1;
-  top: 50px;
+  top: 60px;
   height: 60px;
   font-size: 32px;
   width: 60px !important;
+  border-radius: 100%;
 }
 
 /* .openbtn {

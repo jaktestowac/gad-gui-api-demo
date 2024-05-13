@@ -1,5 +1,9 @@
 const repository_url = "https://github.com/jaktestowac/gad-gui-api-demo";
 
+function setBoxMessage(element, msg, className) {
+  element.innerHTML = `<div class="${className}">${msg}</div>`;
+}
+
 function saveSession(id, obj) {
   sessionStorage.setItem(id, JSON.stringify(obj));
   return true;
@@ -161,7 +165,6 @@ const menuButtonDisable = (id) => {
   }
 };
 
-
 function addLanguageSelect(languages, selectedOption) {
   const languageSelectElement = document.getElementById("languageSelect");
   if (languageSelectElement !== undefined && languageSelectElement !== null) {
@@ -237,6 +240,10 @@ function getBearerToken() {
 
 function isAuthorized(id) {
   return id?.toString() === getId() || getId() === "admin";
+}
+
+function isAuthenticated() {
+  return getId() !== undefined && getBearerToken() !== undefined;
 }
 
 function formatHeaders() {
