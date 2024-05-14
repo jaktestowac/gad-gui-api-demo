@@ -1,0 +1,175 @@
+body {
+  font-family: Arial, sans-serif;
+}
+
+.outer-container {
+  display: flex;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 10px;
+}
+
+.contacts {
+  padding-right: 20px;
+  overflow-y: auto;
+  height: 500px;
+}
+
+.contact {
+  cursor: pointer;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #f5f5f5;
+  border-radius: 5px;
+  width: 200px !important;
+}
+
+@media (max-width: 550px) {
+  .contact {
+    cursor: pointer;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #f5f5f5;
+    border-radius: 5px;
+    width: 130px !important;
+  }
+
+  .messenger-input {
+    padding: 5px;
+    width: 100px !important;
+    max-width: 400px;
+    resize: none;
+  }
+
+  .tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 12px 10px !important;
+    transition: 0.3s;
+    font-size: 13px !important;
+  }
+}
+
+@media (min-width: 550px) {
+  .messenger-input {
+    padding: 5px;
+    width: 130px !important;
+    resize: none;
+  }
+}
+
+.contact.active {
+  cursor: pointer;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #a9e7b1;
+  border-radius: 5px;
+}
+
+.contact:hover {
+  background-color: #e0e0e0;
+}
+
+.messages {
+  flex: 2;
+}
+
+.messages-history {
+  overflow-y: auto;
+  height: 400px;
+}
+
+.message {
+  background-color: #dcf8c6;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+
+.sender {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.timestamp {
+  font-size: 12px;
+  color: #888;
+}
+
+.content {
+  margin-left: 20px;
+}
+
+.search-container {
+  margin-bottom: 20px;
+}
+
+.search-button {
+  padding: 5px 10px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.send-container {
+  margin-top: 20px;
+  display: flex;
+}
+
+.message-input {
+  flex: 1;
+  padding: 5px;
+  resize: none;
+}
+
+.send-button {
+  padding: 5px 10px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  width: 40px !important;
+}
+
+.messenger-container {
+  margin-bottom: 5px;
+  display: block;
+}
+
+.tab {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  font-size: 17px;
+}
+
+.tab button:hover {
+  background-color: #ddd;
+}
+
+.tab button.active {
+  background-color: #ccc;
+}
+
+.tabcontent {
+  display: none;
+  border: 1px solid #ccc;
+  border-top: none;
+}
