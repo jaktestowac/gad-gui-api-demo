@@ -425,6 +425,21 @@ describe("Endpoint /articles", () => {
       expect(response.body).to.deep.equal(testData);
     });
 
+    it("POST /articles - should create valid article without user id", async () => {
+      // Arrange:
+      const testData = generateValidArticleData();
+      testData.user_id = undefined;
+
+      // Act:
+      const response = await request.post(baseUrl).set(headers).send(testData);
+
+      // Assert:
+      expect(response.status).to.equal(201);
+      testData.id = response.body.id;
+      testData.user_id = userId;
+      expect(response.body).to.deep.equal(testData);
+    });
+
     it("POST /articles - should not reuse ID of deleted articles @e2e", async () => {
       // Arrange:
       const testData = generateValidArticleData();
