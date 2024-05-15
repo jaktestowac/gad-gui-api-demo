@@ -2319,5 +2319,13 @@
       "user_id": "3",
       "id": 6
     }
-  ]
+  ],
+  "contacts": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "contacts": [2, 3, 4]
+    }
+  ],
+  "messages": []
 }

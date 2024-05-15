@@ -43,17 +43,9 @@
                     <input type="text" class="messenger-input" id="searchInput" placeholder="Search contacts">
                     <button class="button-primary" onclick="searchContacts()"><i class="fa-solid fa-magnifying-glass"></i></button>
                 </div>
-                <div class="contact" data-contact="John Doe" onclick="showMessages('John Doe')">John Doe</div>
-                <div class="contact" data-contact="Jane Smith" onclick="showMessages('Jane Smith')">Jane Smith</div>
-                <div class="contact" data-contact="Alice Johnson" onclick="showMessages('Alice Johnson')">Alice Johnson</div>
-                <div class="contact" data-contact="Bob Johnson" onclick="showMessages('Bob Johnson')">Bob Johnson</div>
-                <div class="contact" data-contact="Emily Davis" onclick="showMessages('Emily Davis')">Emily Davis</div>
-                <div class="contact" data-contact="Michael Brown" onclick="showMessages('Michael Brown')">Michael Brown</div>
-                <div class="contact" data-contact="Olivia Wilson" onclick="showMessages('Olivia Wilson')">Olivia Wilson</div>
-                <div class="contact" data-contact="William Taylor" onclick="showMessages('William Taylor')">William Taylor</div>
-                <div class="contact" data-contact="Sophia Anderson" onclick="showMessages('Sophia Anderson')">Sophia Anderson</div>
-                <div class="contact" data-contact="James Martinez" onclick="showMessages('James Martinez')">James Martinez</div>
-                <div class="contact" data-contact="Emma Thomas" onclick="showMessages('Emma Thomas')">Emma Thomas</div>
+                <div class="simpleInfoBox" id="no-contacts" style="display: none;">No contacts found</div>
+                <div class="contact-list">
+                </div>
             </div>
             <div class="messages" id="messageWindow">
                 <div class="messages-history" id="messageHistory">
@@ -73,18 +65,25 @@
         <div class="container">
             <div class="messenger-container" align="center">
                 <br />
-                Provide friends vaild email:
+                Provide friends valid email:
                 <br />
                 <br />
-                <input type="text" class="messenger-input" id="friendRequestInput" placeholder="Enter friend's email" style="width: 250px !important;">
+                <input type="text" onfocus="focusOnFriendRequestInput()" class="messenger-input" maxlength="128" id="friendRequestInput" placeholder="Enter friend's email" style="width: 350px !important;">
                 <button class="button-primary" onclick="sendFriendRequest()"><i class="fa-regular fa-paper-plane"></i></button>
+                <br />
+                <br />
+                <div id="friend-request-info-box" style="display: none;"></div>
+                <br />
             </div>
         </div>
     </div>
 
     <script type="text/javascript" src="/js/common.js"></script>
     <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/username.js"></script>
     <script type="text/javascript" src="/js/messenger.js"></script>
+    <script type="text/javascript" src="/js/darkmode.js"></script>
+    <script type="text/javascript" src="/js/message-notifier.js"></script>
 
 </body>
 

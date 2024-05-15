@@ -9,6 +9,7 @@ const {
   scoresDb,
   bookmarksDb,
   surveyResponsesDb,
+  contactsDb,
 } = require("./db.helpers");
 
 function searchForUserWithToken(userId, verifyTokenResult) {
@@ -88,6 +89,15 @@ function searchForCommentsByArticleId(articleId) {
     }
   });
   return foundComment;
+}
+
+function searchForContactsByUserId(userId) {
+  const foundContacts = contactsDb().find((contact) => {
+    if (areIdsEqual(contact["user_id"], userId)) {
+      return contact;
+    }
+  });
+  return foundContacts;
 }
 
 function softDeleteCommentsByArticleId(articleId) {
@@ -314,4 +324,5 @@ module.exports = {
   findUserSurveyResponse,
   searchForCommentsByArticleId,
   softDeleteCommentsByArticleId,
+  searchForContactsByUserId,
 };

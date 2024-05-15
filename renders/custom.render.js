@@ -8,6 +8,7 @@ const { getOriginMethod } = require("../helpers/tracing-info.helper");
 function renderResponse(req, res) {
   // to maintain backward compatibility:
   // TODO: remove in future version
+
   if (req.url.includes("users")) {
     const users = res.locals.data;
     let usersMapped;

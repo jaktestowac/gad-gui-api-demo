@@ -40,13 +40,13 @@ function addNotifier(number) {
     if (number > 0) {
       const newElement = document.createElement("a");
       newElement.textContent = `Message center (${number})`;
-      newElement.href = "/messages.html";
+      newElement.href = "/messenger.html";
 
       dropdownContent.insertBefore(newElement, dropdownContent.children[1]);
     } else {
       const newElement = document.createElement("a");
       newElement.textContent = `Message center (0)`;
-      newElement.href = "/messages.html";
+      newElement.href = "/messenger.html";
 
       dropdownContent.insertBefore(newElement, dropdownContent.children[1]);
     }

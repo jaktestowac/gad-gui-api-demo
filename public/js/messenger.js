@@ -1,3 +1,5 @@
+const urlContacts = "/api/messenger/contacts";
+
 let simpleSuccessBox = "simpleSuccessBox";
 let simpleErrorBox = "simpleErrorBox";
 let simpleInfoBox = "simpleInfoBox";
@@ -17,7 +19,32 @@ if (!isAuthenticated()) {
     tabs[i].readOnly = false;
   }
 
-  openTab(event, "tab1");
+  openTab(undefined, "tab1");
+}
+
+async function issueGetContactsRequest() {
+  const data = fetch(urlContacts, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+  });
+  return data;
+}
+
+async function issueAddContactRequest(email) {
+  const data = fetch(urlContacts, {
+    method: "PUT",
+    body: JSON.stringify({ email: email }),
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+  });
+  return data;
 }
 
 function openTab(evt, tabName) {
@@ -36,6 +63,28 @@ function openTab(evt, tabName) {
   } else {
     document.getElementsByClassName("tablinks")[0].className += " active";
   }
+
+  if (tabName === "tab1") {
+    // contacts
+    clearContacts();
+    issueGetContactsRequest().then((response) => {
+      if (response.status === 200) {
+        response.json().then((data) => {
+          if (data.length > 0) {
+            const noContactElement = document.getElementById("no-contacts");
+            noContactElement.style.display = "none";
+            data.forEach((contact) => {
+              const fullName = `${contact.firstname} ${contact.lastname}`;
+              addContact(fullName);
+            });
+          } else {
+            const noContactElement = document.getElementById("no-contacts");
+            noContactElement.style.display = "block";
+          }
+        });
+      }
+    });
+  }
 }
 
 function sendFriendRequest() {
@@ -43,14 +92,37 @@ function sendFriendRequest() {
   const friendEmail = friendRequestInput.value;
 
   if (friendEmail.length > 0) {
-    // TODO: check email and add new contact
-    addContact(friendEmail);
-    friendRequestInput.value = "";
+    issueAddContactRequest(friendEmail).then((response) => {
+      const friendRequestInfoBox = document.getElementById("friend-request-info-box");
+      if (response.status === 200) {
+        setBoxMessage(friendRequestInfoBox, `Friend request sent to "${friendEmail}"`, simpleSuccessBox);
+        friendRequestInput.value = "";
+      } else {
+        response.json().then((data) => {
+          setBoxMessage(
+            friendRequestInfoBox,
+            `Failed to send friend request to "${friendEmail}": ${data?.error?.message}`,
+            simpleErrorBox
+          );
+        });
+      }
+      friendRequestInfoBox.style.display = "block";
+    });
   }
 }
 
+function focusOnFriendRequestInput() {
+  const friendRequestInfoBox = document.getElementById("friend-request-info-box");
+  friendRequestInfoBox.style.display = "none";
+}
+
+function clearContacts() {
+  const contacts = document.getElementsByClassName("contact-list")[0];
+  contacts.innerHTML = "";
+}
+
 function addContact(contactName) {
-  const contacts = document.getElementsByClassName("contacts")[0];
+  const contacts = document.getElementsByClassName("contact-list")[0];
   const newContact = document.createElement("div");
   newContact.classList.add("contact");
   newContact.setAttribute("data-contact", contactName);
@@ -123,6 +195,12 @@ function showMessages(contact) {
                         <div class="content">Long time no see!</div>
                     </div>
                 `;
+  } else {
+    messageHistory.innerHTML += `
+                    <div class="message info">
+                        <div class="content">This is the beginning of your conversation with <strong>${contact}</strong>.</div>
+                    </div>
+                `;
   }
   messageHistory.scrollTop = messageHistory.scrollHeight;
 
@@ -160,11 +238,11 @@ function sendMessage() {
     const currentContact = document.querySelector(".contact.active");
 
     if (currentContact !== undefined) {
-      const sender = "User";
+      const sender = "You";
       const timestamp = new Date().toLocaleTimeString();
 
       const newMessage = `
-                        <div class="message">
+                        <div class="message you">
                             <div class="sender">${sender}</div>
                             <div class="timestamp">${timestamp}</div>
                             <div class="content">${message}</div>

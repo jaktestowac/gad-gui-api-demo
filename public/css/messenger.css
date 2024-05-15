@@ -22,6 +22,14 @@ body {
   background-color: #f5f5f5;
   border-radius: 5px;
   width: 200px !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.darkmode .contact {
+  background-color: #131313;
+  color: #b8b8b8;
 }
 
 @media (max-width: 550px) {
@@ -36,7 +44,7 @@ body {
 
   .messenger-input {
     padding: 5px;
-    width: 100px !important;
+    width: 80px !important;
     max-width: 400px;
     resize: none;
   }
@@ -69,8 +77,22 @@ body {
   border-radius: 5px;
 }
 
+.darkmode .contact.active {
+  background-color: rgb(54, 71, 54);
+}
+
 .contact:hover {
   background-color: #e0e0e0;
+}
+
+.darkmode .contact:hover {
+  background-color: rgb(54, 54, 54);
+}
+
+.darkmode textarea {
+  background-color: #242424;
+  color: #b8b8b8;
+  border: #242424;
 }
 
 .messages {
@@ -83,10 +105,43 @@ body {
 }
 
 .message {
+  background-color: #fafff3;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  word-break: break-word;
+}
+
+.message.you {
   background-color: #dcf8c6;
   padding: 10px;
   margin-bottom: 10px;
   border-radius: 5px;
+  text-align: right;
+  word-break: break-word;
+}
+
+.message.info {
+  background-color: #dcf8c6;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  text-align: center;
+  font-style: italic;
+}
+
+.darkmode .message.info {
+  background-color: rgb(31, 66, 31);
+}
+
+.darkmode .message {
+  background-color: #1b1b1b;
+  color: #b8b8b8;
+}
+
+.darkmode .message.you {
+  background-color: #333333;
+  color: #b8b8b8;
 }
 
 .sender {
@@ -101,6 +156,7 @@ body {
 
 .content {
   margin-left: 20px;
+  word-break: break-word;
 }
 
 .search-container {
@@ -149,6 +205,12 @@ body {
   background-color: #f1f1f1;
 }
 
+.darkmode .tab {
+  border: 1px solid #3b3b3b;
+  background-color: #131313;
+  color: #b8b8b8;
+}
+
 .tab button {
   background-color: inherit;
   float: left;
@@ -160,16 +222,33 @@ body {
   font-size: 17px;
 }
 
-.tab button:hover {
-  background-color: #ddd;
+.darkmode .tab button {
+  border: 1px solid #3b3b3b;
+  background-color: #131313;
+  color: #b8b8b8;
+}
+
+.darkmode .tab {
+  border: 1px solid #3b3b3b;
+  background-color: #131313;
+  color: #b8b8b8;
 }
 
 .tab button.active {
   background-color: #ccc;
 }
 
+.darkmode .tab button.active {
+  background-color: #a3a3a3;
+  color: #202020;
+}
+
 .tabcontent {
   display: none;
   border: 1px solid #ccc;
   border-top: none;
+}
+
+.darkmode .tabcontent {
+  border: 1px solid #2e2e2e;
 }
