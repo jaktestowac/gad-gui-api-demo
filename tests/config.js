@@ -23,6 +23,10 @@ const baseArticleLabelsUrl = "/api/article-labels";
 const baseSurveysUrl = "/api/surveys";
 const baseTicTacToeUrl = "/api/tic-tac-toe";
 const languagesUrl = "/api/languages";
+const messengerContactsUrl = "/api/messenger/contacts";
+const messengerMessagesUrl = "/api/messenger/messages";
+const contactsUrl = "/api/contacts";
+const messagesUrl = "/api/messages";
 
 const existingUserEmail = "Danial.Dicki@dicki.test";
 const existingUserPass = "test2";
@@ -85,4 +89,8 @@ module.exports = {
   existingUserEmail4,
   existingUserPass4,
   existingUserId4,
+  messengerContactsUrl,
+  messengerMessagesUrl,
+  contactsUrl,
+  messagesUrl,
 };

@@ -5,7 +5,12 @@ const {
   searchForUserWithEmail,
 } = require("../helpers/db-operation.helpers");
 const { logTrace } = require("../helpers/logger-api");
-const { HTTP_NOT_FOUND, HTTP_UNAUTHORIZED, HTTP_NOT_IMPLEMENTED } = require("../helpers/response.helpers");
+const {
+  HTTP_NOT_FOUND,
+  HTTP_UNAUTHORIZED,
+  HTTP_NOT_IMPLEMENTED,
+  HTTP_CONFLICT,
+} = require("../helpers/response.helpers");
 const { verifyAccessToken } = require("../helpers/validation.helpers");
 const { formatInvalidTokenErrorResponse, formatErrorResponse } = require("../helpers/helpers");
 const { areIdsEqual } = require("../helpers/compare.helpers");
@@ -31,6 +36,11 @@ function handleMessenger(req, res, isAdmin) {
     return;
   }
   if (req.method === "PUT" && req.url.endsWith("/api/messenger/messages")) {
+    // TODO:
+    res.status(HTTP_NOT_IMPLEMENTED).json({});
+    return;
+  }
+  if (req.method === "DELETE" && req.url.endsWith("/api/messenger/messages")) {
     // TODO:
     res.status(HTTP_NOT_IMPLEMENTED).json({});
     return;
@@ -96,7 +106,7 @@ function handleMessenger(req, res, isAdmin) {
     }
 
     if (areIdsEqual(foundUser.id, userToAdd.id)) {
-      res.status(HTTP_NOT_FOUND).json(formatErrorResponse("You can not add Yourself!"));
+      res.status(HTTP_CONFLICT).json(formatErrorResponse("You can not add Yourself!"));
       return;
     }
 
@@ -110,7 +120,7 @@ function handleMessenger(req, res, isAdmin) {
     }
 
     if (contacts.contacts.includes(userToAdd.id)) {
-      res.status(HTTP_NOT_FOUND).json(formatErrorResponse("User already in contacts!"));
+      res.status(HTTP_CONFLICT).json(formatErrorResponse("User already in contacts!"));
       return;
     }
 
@@ -153,6 +163,16 @@ function handleMessenger(req, res, isAdmin) {
       url: req.url,
       body: req.body,
     });
+    return;
+  }
+  if (req.method === "PATCH" && req.url.endsWith("/api/messenger/contacts")) {
+    // TODO:
+    res.status(HTTP_NOT_IMPLEMENTED).json({});
+    return;
+  }
+  if (req.method === "DELETE" && req.url.endsWith("/api/messenger/contacts")) {
+    // TODO:
+    res.status(HTTP_NOT_IMPLEMENTED).json({});
     return;
   }
 
