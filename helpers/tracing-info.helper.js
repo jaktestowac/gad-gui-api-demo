@@ -4,6 +4,9 @@ const sampleTracingInfo = {
   orgMethod: undefined,
   resourceId: undefined,
   wasAuthorized: false,
+  baseResourceId: undefined,
+  targetResourceId: undefined,
+  targetResource: undefined,
 };
 
 class TracingInfoBuilder {
@@ -24,6 +27,21 @@ class TracingInfoBuilder {
 
   setResourceId(id) {
     this.tracingInfo.resourceId = id;
+    return this;
+  }
+
+  setTargetResource(resource) {
+    this.tracingInfo.targetResource = resource;
+    return this;
+  }
+
+  setBaseResourceId(id) {
+    this.tracingInfo.baseResourceId = id;
+    return this;
+  }
+
+  setTargetResourceId(id) {
+    this.tracingInfo.targetResourceId = id;
     return this;
   }
 

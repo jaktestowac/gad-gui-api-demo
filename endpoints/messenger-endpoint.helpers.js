@@ -4,11 +4,13 @@ const {
   searchForContactsByUserId,
   searchForUserWithEmail,
 } = require("../helpers/db-operation.helpers");
-const { logTrace, logDebug } = require("../helpers/logger-api");
+const { logTrace } = require("../helpers/logger-api");
 const { HTTP_NOT_FOUND, HTTP_UNAUTHORIZED, HTTP_NOT_IMPLEMENTED } = require("../helpers/response.helpers");
 const { verifyAccessToken } = require("../helpers/validation.helpers");
 const { formatInvalidTokenErrorResponse, formatErrorResponse } = require("../helpers/helpers");
 const { areIdsEqual } = require("../helpers/compare.helpers");
+const { TracingInfoBuilder } = require("../helpers/tracing-info.helper");
+const { getRandomInt } = require("../helpers/generators/random-data.generator");
 
 function handleMessenger(req, res, isAdmin) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
@@ -60,6 +62,7 @@ function handleMessenger(req, res, isAdmin) {
       })
       .join("&");
 
+    req = new TracingInfoBuilder(req).setOriginMethod("GET").setWasAuthorized(true).build();
     req.method = "GET";
     req.url = `/api/users?${queryUrl}`;
     req.body = undefined;
@@ -97,7 +100,14 @@ function handleMessenger(req, res, isAdmin) {
       return;
     }
 
-    const contacts = searchForContactsByUserId(foundUser.id);
+    let contacts = searchForContactsByUserId(foundUser.id);
+
+    if (isUndefined(contacts)) {
+      contacts = {
+        user_id: foundUser.id,
+        contacts: [],
+      };
+    }
 
     if (contacts.contacts.includes(userToAdd.id)) {
       res.status(HTTP_NOT_FOUND).json(formatErrorResponse("User already in contacts!"));
@@ -110,6 +120,31 @@ function handleMessenger(req, res, isAdmin) {
 
     contacts.contacts.push(userToAdd.id);
 
+    let otherContacts = searchForContactsByUserId(userToAdd.id);
+    if (isUndefined(otherContacts)) {
+      let newId = 0;
+      for (let i = 0; i < 100; i++) {
+        newId = getRandomInt(1000, 999999);
+        otherContacts = searchForContactsByUserId(newId);
+        if (isUndefined(otherContacts)) {
+          break;
+        }
+      }
+
+      otherContacts = {
+        id: newId,
+        user_id: userToAdd.id,
+        contacts: [],
+      };
+    }
+    otherContacts.contacts.push(foundUser.id);
+
+    req = new TracingInfoBuilder(req)
+      .setOriginMethod("PUT")
+      .setWasAuthorized(true)
+      .setTargetResource(otherContacts)
+      .setTargetResourceId(otherContacts.id)
+      .build();
     req.method = "PUT";
     req.url = `/api/contacts/${contacts.id}`;
     req.body = contacts;

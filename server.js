@@ -38,7 +38,7 @@ const { randomErrorsRoutes } = require("./routes/error.route");
 const { checkDatabase } = require("./helpers/sanity.check");
 const { copyDefaultDbIfNotExists } = require("./helpers/setup");
 const { getOriginMethod, getTracingInfo, getWasAuthorized } = require("./helpers/tracing-info.helper");
-const { setEntitiesInactive } = require("./helpers/db-queries.helper");
+const { setEntitiesInactive, replaceRelatedContactsInDb } = require("./helpers/db-queries.helper");
 const { diagnosticRoutes } = require("./routes/diagnostic.route");
 
 const middlewares = jsonServer.defaults();
@@ -184,6 +184,16 @@ server.use(function (req, res, next) {
       setEntitiesInactive(router.db, "comments", { article_id: parseInt(tracingInfo.resourceId) });
       setEntitiesInactive(router.db, "comments", { article_id: tracingInfo.resourceId });
     });
+  }
+  if (
+    getOriginMethod(req) === "PUT" &&
+    getWasAuthorized(req) === true &&
+    req.url.includes("contacts") &&
+    res.statusCode === 200
+  ) {
+    const tracingInfo = getTracingInfo(req);
+    logDebug("UPDATE: /messenger/contacts", { url: req.url, tracingInfo });
+    replaceRelatedContactsInDb(router.db, parseInt(tracingInfo.targetResourceId), tracingInfo.targetResource);
   }
   next();
 });
