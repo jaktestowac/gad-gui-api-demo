@@ -91,6 +91,15 @@ function sendFriendRequest() {
   const friendRequestInput = document.getElementById("friendRequestInput");
   const friendEmail = friendRequestInput.value;
 
+  // Check if friendEmail is a valid email
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(friendEmail)) {
+    const friendRequestInfoBox = document.getElementById("friend-request-info-box");
+    setBoxMessage(friendRequestInfoBox, `Invalid email: "${friendEmail}"`, simpleErrorBox);
+    friendRequestInfoBox.style.display = "block";
+    return;
+  }
+
   if (friendEmail.length > 0) {
     issueAddContactRequest(friendEmail).then((response) => {
       const friendRequestInfoBox = document.getElementById("friend-request-info-box");
