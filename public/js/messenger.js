@@ -5,6 +5,10 @@ let simpleSuccessBox = "simpleSuccessBox";
 let simpleErrorBox = "simpleErrorBox";
 let simpleInfoBox = "simpleInfoBox";
 
+const intervalValue = 5000;
+
+let msgCheckInterval = undefined;
+
 if (!isAuthenticated()) {
   const dashboardInfo = document.getElementById("messenger-info");
   setBoxMessage(
@@ -35,8 +39,14 @@ async function issueGetContactsRequest() {
   return data;
 }
 
-async function issueGetMessagesWithContactRequest(contactId) {
-  const data = fetch(`${urlMessages}?userId=${contactId}`, {
+async function issueGetMessagesWithContactRequest(contactId, idFrom) {
+  let url = `${urlMessages}?userId=${contactId}`;
+
+  if (idFrom !== undefined && idFrom !== null) {
+    url += `&idFrom=${idFrom}`;
+  }
+
+  const data = fetch(url, {
     method: "GET",
     headers: {
       Accept: "application/json",
@@ -60,6 +70,31 @@ async function issueAddContactRequest(email) {
   return data;
 }
 
+function focusOnFriendRequestInput() {
+  const friendRequestInfoBox = document.getElementById("friend-request-info-box");
+  friendRequestInfoBox.style.display = "none";
+}
+
+function clearContacts() {
+  const contacts = document.getElementsByClassName("contact-list")[0];
+  contacts.innerHTML = "";
+}
+
+function clearMessageView() {
+  clearInterval(msgCheckInterval);
+  const messageHistory = document.getElementById("messageHistory");
+  messageHistory.innerHTML = "";
+}
+
+function disableSendingMessages() {
+  const sendContainer = document.getElementById("sendContainer");
+  sendContainer.style.display = "none";
+}
+function enableSendingMessages() {
+  const sendContainer = document.getElementById("sendContainer");
+  sendContainer.style.display = "block";
+}
+
 function openTab(evt, tabName) {
   const tabcontent = document.getElementsByClassName("tabcontent");
   for (let i = 0; i < tabcontent.length; i++) {
@@ -77,9 +112,11 @@ function openTab(evt, tabName) {
     document.getElementsByClassName("tablinks")[0].className += " active";
   }
 
+  displayDefaultMessage();
   if (tabName === "tab1") {
     // contacts
     clearContacts();
+    disableSendingMessages();
     issueGetContactsRequest().then((response) => {
       if (response.status === 200) {
         response.json().then((data) => {
@@ -133,14 +170,15 @@ function sendFriendRequest() {
   }
 }
 
-function focusOnFriendRequestInput() {
-  const friendRequestInfoBox = document.getElementById("friend-request-info-box");
-  friendRequestInfoBox.style.display = "none";
-}
-
-function clearContacts() {
-  const contacts = document.getElementsByClassName("contact-list")[0];
-  contacts.innerHTML = "";
+function displayDefaultMessage() {
+  clearInterval(msgCheckInterval);
+  const messageHistory = document.getElementById("messageHistory");
+  messageHistory.innerHTML = `
+        <div class="message info">
+            <div class="content">Click contact from contact list to display messages,</div><br>
+            <div class="content">or use "Send Friend Requests" to add new friend to chat!</div>
+        </div>
+    `;
 }
 
 function addContact(contactName, contactId, avatarPath) {
@@ -177,8 +215,8 @@ function formatDate(date) {
 }
 
 function showMessages(contact, contactId) {
-  const messageHistory = document.getElementById("messageHistory");
-  messageHistory.innerHTML = "";
+  clearInterval(msgCheckInterval);
+  clearMessageView();
 
   const contacts = document.getElementsByClassName("contact");
   for (let i = 0; i < contacts.length; i++) {
@@ -187,54 +225,92 @@ function showMessages(contact, contactId) {
 
   issueGetMessagesWithContactRequest(contactId).then((response) => {
     response.json().then((data) => {
-      if (data.length === 0) {
-        messageHistory.innerHTML += `
-            <div class="message info">
-                <div class="content">This is the beginning of your conversation with <strong>${contact}</strong>.</div>
-            </div>
-        `;
-      } else {
-        data.forEach((message) => {
-          const className = message.from == getId() ? "you" : "";
-          const sender = message.from == getId() ? "You" : contact;
-          const timestamp = formatDate(message.date);
-
-          const newMessage = `
-            <div class="message ${className}" id="${message.id}">
-              <div class="sender">${sender}</div>
-              <div class="timestamp">${timestamp}</div>
-              <div class="content">${message.content}</div>
-            </div>
-          `;
-          messageHistory.innerHTML += newMessage;
-        });
-        messageHistory.scrollTop = messageHistory.scrollHeight;
-      }
+      displayMessages(data, contact);
     });
   });
 
-  const sendContainer = document.getElementById("sendContainer");
-  sendContainer.style.display = "block";
+  enableSendingMessages();
+
   const clickedContact = document.querySelector('.contact[data-contact="' + contact + '"]');
   clickedContact.classList.add("active");
+
+  msgCheckInterval = setInterval(() => checkNewMessages(contact), intervalValue);
+}
+
+function displayMessages(data, contact) {
+  const messageHistory = document.getElementById("messageHistory");
+  if (data.length === 0) {
+    messageHistory.innerHTML += `
+        <div class="message info">
+            <div class="content">This is the beginning of your conversation with <strong>${contact}</strong>.</div>
+        </div>
+    `;
+  } else {
+    data.forEach((message) => {
+      const className = message.from == getId() ? "you" : "";
+      const sender = message.from == getId() ? "You" : contact;
+      const timestamp = formatDate(message.date);
+
+      const newMessage = `
+        <div class="message ${className}" id="${message.id}">
+          <div class="sender">${sender}</div>
+          <div class="timestamp">${timestamp}</div>
+          <div class="content">${message.content}</div>
+        </div>
+      `;
+      messageHistory.innerHTML += newMessage;
+    });
+    messageHistory.scrollTop = messageHistory.scrollHeight;
+  }
+}
+
+function checkNewMessages(contact) {
+  const activeContact = document.querySelector(".contact.active");
+  const contactId = activeContact.getAttribute("contact-id");
+  const messages = document.getElementsByClassName("message");
+
+  const lastMessage = messages[messages.length - 1];
+
+  if (lastMessage !== null) {
+    const lastMessageId = lastMessage.getAttribute("id");
+    issueGetMessagesWithContactRequest(contactId, lastMessageId).then((response) => {
+      response.json().then((data) => {
+        if (data.length > 0) {
+          console.log("New messages received for " + contact + " (" + data.length + " new messages)");
+          displayMessages(data, contact);
+        }
+      });
+    });
+  }
 }
 
 function searchContacts() {
+  clearMessageView();
   const messageHistory = document.getElementById("messageHistory");
   messageHistory.innerHTML = "";
 
   const searchInput = document.getElementById("searchInput").value;
   const contacts = document.getElementsByClassName("contact");
 
+  let foundContacts = 0;
   for (let i = 0; i < contacts.length; i++) {
     const contact = contacts[i];
     const contactName = contact.innerText;
 
     if (contactName.toLowerCase().includes(searchInput.toLowerCase())) {
-      contact.style.display = "block";
+      contact.style.display = "flex";
+      foundContacts += 1;
     } else {
       contact.style.display = "none";
     }
+  }
+
+  if (foundContacts === 0) {
+    const noContactElement = document.getElementById("no-contacts");
+    noContactElement.style.display = "block";
+  } else {
+    const noContactElement = document.getElementById("no-contacts");
+    noContactElement.style.display = "none";
   }
 }
 
