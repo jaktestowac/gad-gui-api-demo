@@ -3,6 +3,9 @@ const {
   searchForUserWithOnlyToken,
   searchForContactsByUserId,
   searchForUserWithEmail,
+  searchForMessagesByUserId,
+  searchForMessagesByBothUserIds,
+  getMessagesWithIdGreaterThan,
 } = require("../helpers/db-operation.helpers");
 const { logTrace } = require("../helpers/logger-api");
 const {
@@ -10,6 +13,7 @@ const {
   HTTP_UNAUTHORIZED,
   HTTP_NOT_IMPLEMENTED,
   HTTP_CONFLICT,
+  HTTP_OK,
 } = require("../helpers/response.helpers");
 const { verifyAccessToken } = require("../helpers/validation.helpers");
 const { formatInvalidTokenErrorResponse, formatErrorResponse } = require("../helpers/helpers");
@@ -26,8 +30,37 @@ function handleMessenger(req, res, isAdmin) {
   let foundUser = undefined;
 
   if (req.method === "GET" && req.url.endsWith("/api/messenger/messages")) {
-    // TODO:
-    res.status(HTTP_NOT_IMPLEMENTED).json({});
+    const verifyTokenResult = verifyAccessToken(req, res, "messenger/contacts", req.url);
+    foundUser = searchForUserWithOnlyToken(verifyTokenResult);
+    logTrace("handleMessengerContacts: foundUser:", { method: req.method, urlEnds, foundUser });
+
+    if (isUndefined(foundUser) || isUndefined(verifyTokenResult)) {
+      res.status(HTTP_UNAUTHORIZED).json(formatInvalidTokenErrorResponse());
+      return;
+    }
+
+    const messages = searchForMessagesByUserId(foundUser.id);
+    res.status(HTTP_OK).json(messages);
+    return;
+  }
+  if (req.method === "GET" && req.url.includes("/api/messenger/messages?")) {
+    const verifyTokenResult = verifyAccessToken(req, res, "messenger/contacts", req.url);
+    foundUser = searchForUserWithOnlyToken(verifyTokenResult);
+    logTrace("handleMessengerContacts: foundUser:", { method: req.method, urlEnds, foundUser });
+
+    if (isUndefined(foundUser) || isUndefined(verifyTokenResult)) {
+      res.status(HTTP_UNAUTHORIZED).json(formatInvalidTokenErrorResponse());
+      return;
+    }
+
+    const query = req.url.split("?")[1];
+    const contactId = new URLSearchParams(query).get("userId");
+    const dateFrom = new URLSearchParams(query).get("dateFrom");
+    const idFrom = new URLSearchParams(query).get("idFrom");
+
+    const messages = searchForMessagesByBothUserIds(foundUser.id, contactId);
+    const filteredMessages = getMessagesWithIdGreaterThan(messages, idFrom);
+    res.status(HTTP_OK).json(filteredMessages);
     return;
   }
   if (req.method === "POST" && req.url.endsWith("/api/messenger/messages")) {

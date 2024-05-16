@@ -2,7 +2,7 @@ const { gracefulQuit, setupEnv, sleep } = require("../helpers/helpers.js");
 const { messengerContactsUrl, messengerMessagesUrl, request, expect } = require("../config.js");
 const { authUser } = require("../helpers/data.helpers.js");
 
-describe.only("Messenger - contacts and messages", async () => {
+describe("Messenger - contacts and messages", async () => {
   before(async () => {
     await setupEnv();
   });
@@ -54,7 +54,6 @@ describe.only("Messenger - contacts and messages", async () => {
     const baseUrl = messengerContactsUrl;
     let headers;
     let userId;
-    let testArticleData;
 
     beforeEach(async () => {
       const data = await authUser();
@@ -157,12 +156,12 @@ describe.only("Messenger - contacts and messages", async () => {
 
   describe(`Without auth - ${messengerMessagesUrl}`, async () => {
     const baseUrl = messengerMessagesUrl;
-    it(`GET ${baseUrl} - should return 501`, async () => {
+    it(`GET ${baseUrl} - should return 401`, async () => {
       // Act:
       const response = await request.get(baseUrl);
 
       // Assert:
-      expect(response.status, JSON.stringify(response.body)).to.equal(501);
+      expect(response.status, JSON.stringify(response.body)).to.equal(401);
     });
     it(`POST ${baseUrl} - should return 501`, async () => {
       // Act:
@@ -191,6 +190,44 @@ describe.only("Messenger - contacts and messages", async () => {
 
       // Assert:
       expect(response.status, JSON.stringify(response.body)).to.equal(501);
+    });
+  });
+
+  describe(`With auth - ${messengerMessagesUrl}`, async () => {
+    const baseUrl = messengerMessagesUrl;
+    let headers;
+    let userId;
+
+    beforeEach(async () => {
+      const data = await authUser();
+      headers = data.headers;
+      userId = data.userId;
+    });
+
+    it(`GET ${baseUrl} - should return 200 and list of messages`, async () => {
+      // Act:
+      const response = await request.get(baseUrl).set(headers);
+
+      // Assert:
+      expect(response.status, JSON.stringify(response.body)).to.equal(200);
+      expect(response.body.length, JSON.stringify(response.body)).to.be.greaterThan(1);
+    });
+
+    it(`GET ${baseUrl}?userId= - should return 200 and list of messages`, async () => {
+      // Act:
+      const response = await request.get(`${baseUrl}?userId=1`).set(headers);
+
+      // Assert:
+      expect(response.status, JSON.stringify(response.body)).to.equal(200);
+      expect(response.body.length, JSON.stringify(response.body)).to.be.greaterThan(1);
+    });
+    it(`GET ${baseUrl}?userId= - should return 200 and empty list of messages`, async () => {
+      // Act:
+      const response = await request.get(`${baseUrl}?userId=12321312`).set(headers);
+
+      // Assert:
+      expect(response.status, JSON.stringify(response.body)).to.equal(200);
+      expect(response.body.length, JSON.stringify(response.body)).to.be.equal(0);
     });
   });
 });

@@ -25,6 +25,8 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
 }
 
 .darkmode .contact {
@@ -102,8 +104,12 @@ body {
 .messages-history {
   overflow-y: auto;
   height: 400px;
-  border: 2px solid #2c2c2c;
+  border: 2px solid #b8b8b8;
   border-radius: 10px;
+}
+
+.darkmode .messages-history {
+  border: 2px solid #2c2c2c;
 }
 
 .message {

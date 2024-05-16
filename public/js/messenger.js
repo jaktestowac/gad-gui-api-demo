@@ -1,4 +1,5 @@
 const urlContacts = "/api/messenger/contacts";
+const urlMessages = "/api/messenger/messages";
 
 let simpleSuccessBox = "simpleSuccessBox";
 let simpleErrorBox = "simpleErrorBox";
@@ -24,6 +25,18 @@ if (!isAuthenticated()) {
 
 async function issueGetContactsRequest() {
   const data = fetch(urlContacts, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+  });
+  return data;
+}
+
+async function issueGetMessagesWithContactRequest(contactId) {
+  const data = fetch(`${urlMessages}?userId=${contactId}`, {
     method: "GET",
     headers: {
       Accept: "application/json",
@@ -75,7 +88,7 @@ function openTab(evt, tabName) {
             noContactElement.style.display = "none";
             data.forEach((contact) => {
               const fullName = `${contact.firstname} ${contact.lastname}`;
-              addContact(fullName);
+              addContact(fullName, contact.id, contact.avatar);
             });
           } else {
             const noContactElement = document.getElementById("no-contacts");
@@ -130,17 +143,40 @@ function clearContacts() {
   contacts.innerHTML = "";
 }
 
-function addContact(contactName) {
+function addContact(contactName, contactId, avatarPath) {
   const contacts = document.getElementsByClassName("contact-list")[0];
   const newContact = document.createElement("div");
   newContact.classList.add("contact");
   newContact.setAttribute("data-contact", contactName);
-  newContact.setAttribute("onclick", "showMessages('" + contactName + "')");
-  newContact.textContent = contactName;
+  newContact.setAttribute("contact-id", contactId);
+  newContact.setAttribute("onclick", "showMessages('" + contactName + "', '" + contactId + "')");
+
+  const contactImage = document.createElement("img");
+  contactImage.src = avatarPath;
+  contactImage.style.width = "40px";
+  contactImage.style.paddingRight = "10px";
+  newContact.appendChild(contactImage);
+
+  const contactNameElement = document.createElement("div");
+  contactNameElement.textContent = contactName;
+  newContact.appendChild(contactNameElement);
+
   contacts.appendChild(newContact);
 }
 
-function showMessages(contact) {
+function formatDate(date) {
+  const options = {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  };
+  return new Date(date).toLocaleDateString(undefined, options);
+}
+
+function showMessages(contact, contactId) {
   const messageHistory = document.getElementById("messageHistory");
   messageHistory.innerHTML = "";
 
@@ -149,69 +185,33 @@ function showMessages(contact) {
     contacts[i].classList.remove("active");
   }
 
-  // TODO: check contact and get messages from server
-  if (contact === "John Doe") {
-    messageHistory.innerHTML += `
-                    <div class="message">
-                        <div class="sender">John Doe</div>
-                        <div class="timestamp">10:00 AM</div>
-                        <div class="content">Hello, how are you?</div>
-                    </div>
-                    <div class="message">
-                        <div class="sender">John Doe</div>
-                        <div class="timestamp">10:10 AM</div>
-                        <div class="content">I'm doing great!</div>
-                    </div>
-                    <div class="message">
-                        <div class="sender">John Doe</div>
-                        <div class="timestamp">10:12 AM</div>
-                        <div class="content">I'm doing great!</div>
-                    </div>
-                    <div class="message">
-                        <div class="sender">John Doe</div>
-                        <div class="timestamp">10:13 AM</div>
-                        <div class="content">I'm doing great!</div>
-                    </div>
-                    <div class="message">
-                        <div class="sender">John Doe</div>
-                        <div class="timestamp">10:14 AM</div>
-                        <div class="content">I'm doing great!</div>
-                    </div>
-                    <div class="message">
-                        <div class="sender">John Doe</div>
-                        <div class="timestamp">10:15 AM</div>
-                        <div class="content">I'm doing great!</div>
-                    </div>
-                `;
-  } else if (contact === "Jane Smith") {
-    messageHistory.innerHTML += `
-                    <div class="message">
-                        <div class="sender">Jane Smith</div>
-                        <div class="timestamp">10:05 AM</div>
-                        <div class="content">I'm good, thanks! How about you?</div>
-                    </div>
-                `;
-  } else if (contact === "Alice Johnson") {
-    messageHistory.innerHTML += `
-                    <div class="message">
-                        <div class="sender">Alice Johnson</div>
-                        <div class="timestamp">11:00 AM</div>
-                        <div class="content">Hey there!</div>
-                    </div>
-                    <div class="message">
-                        <div class="sender">Alice Johnson</div>
-                        <div class="timestamp">11:05 AM</div>
-                        <div class="content">Long time no see!</div>
-                    </div>
-                `;
-  } else {
-    messageHistory.innerHTML += `
-                    <div class="message info">
-                        <div class="content">This is the beginning of your conversation with <strong>${contact}</strong>.</div>
-                    </div>
-                `;
-  }
-  messageHistory.scrollTop = messageHistory.scrollHeight;
+  issueGetMessagesWithContactRequest(contactId).then((response) => {
+    response.json().then((data) => {
+      if (data.length === 0) {
+        messageHistory.innerHTML += `
+            <div class="message info">
+                <div class="content">This is the beginning of your conversation with <strong>${contact}</strong>.</div>
+            </div>
+        `;
+      } else {
+        data.forEach((message) => {
+          const className = message.from == getId() ? "you" : "";
+          const sender = message.from == getId() ? "You" : contact;
+          const timestamp = formatDate(message.date);
+
+          const newMessage = `
+            <div class="message ${className}" id="${message.id}">
+              <div class="sender">${sender}</div>
+              <div class="timestamp">${timestamp}</div>
+              <div class="content">${message.content}</div>
+            </div>
+          `;
+          messageHistory.innerHTML += newMessage;
+        });
+        messageHistory.scrollTop = messageHistory.scrollHeight;
+      }
+    });
+  });
 
   const sendContainer = document.getElementById("sendContainer");
   sendContainer.style.display = "block";
@@ -248,7 +248,7 @@ function sendMessage() {
 
     if (currentContact !== undefined) {
       const sender = "You";
-      const timestamp = new Date().toLocaleTimeString();
+      const timestamp = formatDate(new Date());
 
       const newMessage = `
                         <div class="message you">

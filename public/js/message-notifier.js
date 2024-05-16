@@ -1,9 +1,8 @@
 const url = "/api/messages";
 
-async function issueGetMessagesRequest(settings) {
+async function issueGetMessagesRequest() {
   const data = fetch(url, {
     method: "GET",
-    body: JSON.stringify(settings),
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",

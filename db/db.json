@@ -3325,5 +3325,55 @@
       "contacts": [1]
     }
   ],
-  "messages": []
+  "messages": [
+    {
+      "id": 1,
+      "from": 1,
+      "to": 2,
+      "date": "2023-10-20T15:46:30Z",
+      "content": "Hello, how are you?"
+    },
+    {
+      "id": 2,
+      "from": 2,
+      "to": 1,
+      "date": "2023-10-20T15:47:15Z",
+      "content": "Im fine thx! And how are you?"
+    },
+    {
+      "id": 3,
+      "from": 1,
+      "to": 2,
+      "date": "2023-10-20T15:47:21Z",
+      "content": "Good. Im fine too!"
+    },
+    {
+      "id": 4,
+      "from": 2,
+      "to": 1,
+      "date": "2023-10-20T15:47:33Z",
+      "content": "Good!"
+    },
+    {
+      "id": 5,
+      "from": 1,
+      "to": 2,
+      "date": "2023-10-20T15:47:36Z",
+      "content": "Want to automate something?"
+    },
+    {
+      "id": 6,
+      "from": 2,
+      "to": 1,
+      "date": "2023-10-20T15:47:55Z",
+      "content": "Sure!"
+    },
+    {
+      "id": 7,
+      "from": 1,
+      "to": 3,
+      "date": "2024-02-20T11:46:30Z",
+      "content": "Hello!"
+    }
+  ]
 }

@@ -61,6 +61,12 @@ function calculateTimeDifferenceInSeconds(date1, date2) {
   return differenceInSeconds;
 }
 
+function isDateStringGreaterThan(date1, date2) {
+  const date1Date = new Date(date1);
+  const date2Date = new Date(date2);
+  return date1Date > date2Date;
+}
+
 module.exports = {
   getCurrentDateTime,
   getCurrentDateTimeISO,
@@ -69,4 +75,5 @@ module.exports = {
   addSecondsToDate,
   dateToDateStringISO,
   calculateTimeDifferenceInSeconds,
+  isDateStringGreaterThan,
 };
