@@ -70,6 +70,19 @@ async function issueAddContactRequest(email) {
   return data;
 }
 
+async function issueSendMessageRequest(message, contactId) {
+  const data = fetch(urlMessages, {
+    method: "POST",
+    body: JSON.stringify({ content: message, to: contactId }),
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+  });
+  return data;
+}
+
 function focusOnFriendRequestInput() {
   const friendRequestInfoBox = document.getElementById("friend-request-info-box");
   friendRequestInfoBox.style.display = "none";
@@ -323,20 +336,27 @@ function sendMessage() {
     const currentContact = document.querySelector(".contact.active");
 
     if (currentContact !== undefined) {
-      const sender = "You";
-      const timestamp = formatDate(new Date());
+      issueSendMessageRequest(message, currentContact.getAttribute("contact-id")).then((response) => {
+        response.json().then((data) => {
+          let warning = "";
+          if (response.status !== 201) {
+            warning = `<span class="simpleErrorBox">Message not sent</span>`;
+          }
+          const sender = "You";
+          const timestamp = formatDate(new Date());
 
-      const newMessage = `
-                        <div class="message you">
-                            <div class="sender">${sender}</div>
-                            <div class="timestamp">${timestamp}</div>
-                            <div class="content">${message}</div>
-                        </div>
-                    `;
-
-      messageHistory.innerHTML += newMessage;
-      messageHistory.scrollTop = messageHistory.scrollHeight;
-      messageInput.value = "";
+          const newMessage = `
+              <div class="message you" id="${data.id}">
+                <div class="sender">${sender}</div>
+                <div class="timestamp">${warning}${timestamp}</div>
+                <div class="content">${message}</div>
+              </div>
+            `;
+          messageHistory.innerHTML += newMessage;
+          messageHistory.scrollTop = messageHistory.scrollHeight;
+          messageInput.value = "";
+        });
+      });
     } else {
       alert("Please select a contact to send a message.");
     }

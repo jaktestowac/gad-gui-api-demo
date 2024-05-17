@@ -18,6 +18,7 @@ const all_fields_comment_create = ["id", "article_id", "body", "date"];
 const all_fields_plugin = ["id", "name", "status", "version"];
 const mandatory_non_empty_fields_plugin = ["name", "status", "version"];
 const mandatory_non_empty_fields_survey = ["user_id", "date", "type", "answers"];
+const mandatory_non_empty_fields_message = ["to", "content"];
 
 function isLikesDataValid(body) {
   if (!isUndefined(body["comment_id"]) && !isUndefined(body["article_id"])) {
@@ -262,6 +263,7 @@ module.exports = {
   mandatory_non_empty_fields_article_labels,
   mandatory_non_empty_fields_comment_create,
   mandatory_non_empty_fields_survey,
+  mandatory_non_empty_fields_message,
   all_fields_comment_create,
   validateDateFields,
   isFieldsLengthValid,

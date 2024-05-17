@@ -14,9 +14,18 @@ const {
   HTTP_NOT_IMPLEMENTED,
   HTTP_CONFLICT,
   HTTP_OK,
+  HTTP_UNPROCESSABLE_ENTITY,
 } = require("../helpers/response.helpers");
-const { verifyAccessToken } = require("../helpers/validation.helpers");
-const { formatInvalidTokenErrorResponse, formatErrorResponse } = require("../helpers/helpers");
+const {
+  verifyAccessToken,
+  areMandatoryFieldsPresent,
+  mandatory_non_empty_fields_message,
+} = require("../helpers/validation.helpers");
+const {
+  formatInvalidTokenErrorResponse,
+  formatErrorResponse,
+  formatMissingFieldErrorResponse,
+} = require("../helpers/helpers");
 const { areIdsEqual } = require("../helpers/compare.helpers");
 const { TracingInfoBuilder } = require("../helpers/tracing-info.helper");
 const { getRandomInt } = require("../helpers/generators/random-data.generator");
@@ -55,7 +64,6 @@ function handleMessenger(req, res, isAdmin) {
 
     const query = req.url.split("?")[1];
     const contactId = new URLSearchParams(query).get("userId");
-    const dateFrom = new URLSearchParams(query).get("dateFrom");
     const idFrom = new URLSearchParams(query).get("idFrom");
 
     const messages = searchForMessagesByBothUserIds(foundUser.id, contactId);
@@ -63,9 +71,26 @@ function handleMessenger(req, res, isAdmin) {
     res.status(HTTP_OK).json(filteredMessages);
     return;
   }
+  console.log("req.url", req.url);
   if (req.method === "POST" && req.url.endsWith("/api/messenger/messages")) {
-    // TODO:
-    res.status(HTTP_NOT_IMPLEMENTED).json({});
+    const verifyTokenResult = verifyAccessToken(req, res, "messenger/messages", req.url);
+    foundUser = searchForUserWithOnlyToken(verifyTokenResult);
+    logTrace("handleMessengerContacts: foundUser:", { method: req.method, urlEnds, foundUser });
+
+    if (isUndefined(foundUser) || isUndefined(verifyTokenResult)) {
+      res.status(HTTP_UNAUTHORIZED).json(formatInvalidTokenErrorResponse());
+      return;
+    }
+
+    // validate mandatory fields:
+    if (!areMandatoryFieldsPresent(req.body, mandatory_non_empty_fields_message)) {
+      res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_message));
+      return;
+    }
+
+    req.body.from = foundUser.id;
+    req.body.date = new Date().toISOString();
+    req.url = `/api/messages`;
     return;
   }
   if (req.method === "PUT" && req.url.endsWith("/api/messenger/messages")) {
