@@ -116,7 +116,7 @@ function handleMessenger(req, res, isAdmin) {
 
     const contacts = searchForContactsByUserId(foundUser.id);
 
-    if (isUndefined(contacts.contacts) || contacts.contacts.length === 0) {
+    if (isUndefined(contacts) || isUndefined(contacts.contacts) || contacts.contacts.length === 0) {
       res.status(HTTP_NOT_FOUND).json({});
       return;
     }
@@ -213,8 +213,15 @@ function handleMessenger(req, res, isAdmin) {
       .setTargetResource(otherContacts)
       .setTargetResourceId(otherContacts.id)
       .build();
-    req.method = "PUT";
-    req.url = `/api/contacts/${contacts.id}`;
+
+    if (contacts.id === undefined) {
+      req.method = "POST";
+      req.url = `/api/contacts/`;
+    } else {
+      req.method = "PUT";
+      req.url = `/api/contacts/${contacts.id}`;
+    }
+
     req.body = contacts;
     logTrace("handleMessengerContacts: PUT -> PUT:", {
       method: req.method,

@@ -1,6 +1,6 @@
 const { gracefulQuit, setupEnv, sleep } = require("../helpers/helpers.js");
 const { messengerContactsUrl, messengerMessagesUrl, request, expect } = require("../config.js");
-const { authUser } = require("../helpers/data.helpers.js");
+const { authUser, authUser4 } = require("../helpers/data.helpers.js");
 
 describe("Messenger - contacts and messages", async () => {
   before(async () => {
@@ -54,11 +54,16 @@ describe("Messenger - contacts and messages", async () => {
     const baseUrl = messengerContactsUrl;
     let headers;
     let userId;
+    let headers2;
+    let userId2;
 
     beforeEach(async () => {
       const data = await authUser();
       headers = data.headers;
       userId = data.userId;
+      const data2 = await authUser4();
+      headers2 = data2.headers;
+      userId2 = data2.userId;
     });
 
     it(`GET ${baseUrl} - should return 200`, async () => {
@@ -94,6 +99,7 @@ describe("Messenger - contacts and messages", async () => {
       // Assert:
       expect(response.status, JSON.stringify(response.body)).to.equal(404);
     });
+
     it(`PUT ${baseUrl} - should return 200 - contact was added`, async () => {
       // Arrange:
       const data = {
@@ -106,6 +112,20 @@ describe("Messenger - contacts and messages", async () => {
       // Assert:
       expect(response.status, JSON.stringify(response.body)).to.equal(200);
     });
+
+    it(`PUT ${baseUrl} - should return 200 - contact was added (as a first contact)`, async () => {
+      // Arrange:
+      const data = {
+        email: "m.altman@test.test",
+      };
+
+      // Act:
+      const response = await request.put(baseUrl).set(headers2).send(data);
+
+      // Assert:
+      expect(response.status, JSON.stringify(response.body)).to.equal(200);
+    });
+
     it(`PUT ${baseUrl} - should return 409 - can not add yourself`, async () => {
       // Arrange:
       const data = {

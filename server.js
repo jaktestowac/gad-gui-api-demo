@@ -189,7 +189,7 @@ server.use(function (req, res, next) {
     getOriginMethod(req) === "PUT" &&
     getWasAuthorized(req) === true &&
     req.url.includes("contacts") &&
-    res.statusCode === 200
+    (res.statusCode === 200 || res.statusCode === 201)
   ) {
     const tracingInfo = getTracingInfo(req);
     logDebug("UPDATE: /messenger/contacts", { url: req.url, tracingInfo });
