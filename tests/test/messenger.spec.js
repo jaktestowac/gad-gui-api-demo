@@ -163,12 +163,12 @@ describe("Messenger - contacts and messages", async () => {
       // Assert:
       expect(response.status, JSON.stringify(response.body)).to.equal(401);
     });
-    it(`POST ${baseUrl} - should return 501`, async () => {
+    it(`POST ${baseUrl} - should return 401`, async () => {
       // Act:
       const response = await request.post(baseUrl);
 
       // Assert:
-      expect(response.status, JSON.stringify(response.body)).to.equal(501);
+      expect(response.status, JSON.stringify(response.body)).to.equal(401);
     });
     it(`PUT ${baseUrl} - should return 501`, async () => {
       // Act:
