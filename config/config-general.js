@@ -64,7 +64,7 @@ const config = {
   hangmanDataPath: "./db/hangman-words.json",
   translationsDbPath: "./data/translations/translations.json",
   defaultPort: 3000,
-  dateRegexp: /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/, // e.g. 2016-01-19T15:21:32Z
+  dateRegexp: /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/, // e.g. 2016-01-19T15:21:32Z or 2016-01-19T15:21:32.2Z or 2016-01-19T15:21:32.123Z
   emailRegexp: /^\S+@\S+\.\S+$/,
   userAvatarPath: "../public/data/users",
   articleImagePath: "../public/data/images/256",
