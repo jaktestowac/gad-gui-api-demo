@@ -150,6 +150,10 @@ function generateRandomString(length) {
   return result;
 }
 
+function listIncludes(list, value) {
+  return list.map((v) => v.toString()).includes(value.toString());
+}
+
 module.exports = {
   formatErrorResponse,
   formatInvalidFieldErrorResponse,
@@ -174,4 +178,5 @@ module.exports = {
   filterSelectedKeys,
   generateRandomString,
   isTrueWithProbability,
+  listIncludes,
 };

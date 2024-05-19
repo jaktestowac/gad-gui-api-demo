@@ -425,34 +425,21 @@ describe("Endpoint /articles", () => {
       expect(response.body).to.deep.equal(testData);
     });
 
-    it("POST /articles - should create valid article (date with one digit milliseconds)", async () => {
-      // Arrange:
-      const testData = generateValidArticleData();
-      testData.user_id = userId;
-      testData.date = testData.date.replace("Z", ".0Z");
+    [".000Z", ".0Z", ".00Z", ".000000Z"].forEach((milliseconds) => {
+      it(`POST /articles - should create valid article (date with ${milliseconds})`, async () => {
+        // Arrange:
+        const testData = generateValidArticleData();
+        testData.user_id = userId;
+        testData.date = testData.date.replace("Z", milliseconds);
 
-      // Act:
-      const response = await request.post(baseUrl).set(headers).send(testData);
+        // Act:
+        const response = await request.post(baseUrl).set(headers).send(testData);
 
-      // Assert:
-      expect(response.status).to.equal(201);
-      testData.id = response.body.id;
-      expect(response.body).to.deep.equal(testData);
-    });
-
-    it("POST /articles - should create valid article (date with three digits milliseconds)", async () => {
-      // Arrange:
-      const testData = generateValidArticleData();
-      testData.user_id = userId;
-      testData.date = testData.date.replace("Z", ".000Z");
-
-      // Act:
-      const response = await request.post(baseUrl).set(headers).send(testData);
-
-      // Assert:
-      expect(response.status).to.equal(201);
-      testData.id = response.body.id;
-      expect(response.body).to.deep.equal(testData);
+        // Assert:
+        expect(response.status, JSON.stringify(response.data)).to.equal(201);
+        testData.id = response.body.id;
+        expect(response.body).to.deep.equal(testData);
+      });
     });
 
     it("POST /articles - should create valid article without user id", async () => {

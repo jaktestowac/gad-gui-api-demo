@@ -15,16 +15,20 @@ const {
   HTTP_CONFLICT,
   HTTP_OK,
   HTTP_UNPROCESSABLE_ENTITY,
+  HTTP_FORBIDDEN,
 } = require("../helpers/response.helpers");
 const {
   verifyAccessToken,
   areMandatoryFieldsPresent,
   mandatory_non_empty_fields_message,
+  isFieldsLengthValid,
 } = require("../helpers/validation.helpers");
 const {
   formatInvalidTokenErrorResponse,
   formatErrorResponse,
   formatMissingFieldErrorResponse,
+  listIncludes,
+  formatInvalidFieldErrorResponse,
 } = require("../helpers/helpers");
 const { areIdsEqual } = require("../helpers/compare.helpers");
 const { TracingInfoBuilder } = require("../helpers/tracing-info.helper");
@@ -71,7 +75,6 @@ function handleMessenger(req, res, isAdmin) {
     res.status(HTTP_OK).json(filteredMessages);
     return;
   }
-  console.log("req.url", req.url);
   if (req.method === "POST" && req.url.endsWith("/api/messenger/messages")) {
     const verifyTokenResult = verifyAccessToken(req, res, "messenger/messages", req.url);
     foundUser = searchForUserWithOnlyToken(verifyTokenResult);
@@ -85,6 +88,21 @@ function handleMessenger(req, res, isAdmin) {
     // validate mandatory fields:
     if (!areMandatoryFieldsPresent(req.body, mandatory_non_empty_fields_message)) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_message));
+      return;
+    }
+
+    const fieldsLengthValid = isFieldsLengthValid(req.body, 128);
+    if (!fieldsLengthValid.status) {
+      res
+        .status(HTTP_UNPROCESSABLE_ENTITY)
+        .send(formatInvalidFieldErrorResponse(fieldsLengthValid, mandatory_non_empty_fields_message));
+      return;
+    }
+
+    // validate receiver:
+    const senderContacts = searchForContactsByUserId(foundUser.id);
+    if (!listIncludes(senderContacts.contacts, req.body.to)) {
+      res.status(HTTP_FORBIDDEN).send(formatErrorResponse("Receiver is not in contacts!"));
       return;
     }
 

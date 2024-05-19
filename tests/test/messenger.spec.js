@@ -138,6 +138,7 @@ describe("Messenger - contacts and messages", async () => {
       // Assert:
       expect(response.status, JSON.stringify(response.body)).to.equal(409);
     });
+
     it(`PUT ${baseUrl} - should return 409 - can not twice the same contact`, async () => {
       // Arrange:
       const data = {
@@ -241,6 +242,7 @@ describe("Messenger - contacts and messages", async () => {
       expect(response.status, JSON.stringify(response.body)).to.equal(200);
       expect(response.body.length, JSON.stringify(response.body)).to.be.greaterThan(1);
     });
+
     it(`GET ${baseUrl}?userId= - should return 200 and empty list of messages`, async () => {
       // Act:
       const response = await request.get(`${baseUrl}?userId=12321312`).set(headers);
@@ -248,6 +250,79 @@ describe("Messenger - contacts and messages", async () => {
       // Assert:
       expect(response.status, JSON.stringify(response.body)).to.equal(200);
       expect(response.body.length, JSON.stringify(response.body)).to.be.equal(0);
+    });
+
+    [1, "1"].forEach((idTo) => {
+      it(`POST ${baseUrl} - should create a message`, async () => {
+        // Arrange:
+        const messageData = { content: "test msg - should create a message", to: idTo };
+
+        // Act:
+        const response = await request.post(baseUrl).set(headers).send(messageData);
+
+        // Assert:
+        expect(response.status, JSON.stringify(response.body)).to.equal(201);
+      });
+    });
+
+    it(`POST ${baseUrl} - should create a message @e2e`, async () => {
+      // Arrange:
+      const messageData = { content: "test msg - should create a message @e2e", to: 1 };
+
+      // Act:
+      const responseMessagesBefore = await request.get(baseUrl).set(headers);
+      const numberOfMessagesBefore = responseMessagesBefore.body.length;
+
+      // Act:
+      const response = await request.post(baseUrl).set(headers).send(messageData);
+      // Assert:
+      expect(response.status, JSON.stringify(response.body)).to.equal(201);
+
+      // Act:
+      const responseMessagesAfter = await request.get(baseUrl).set(headers);
+      const numberOfMessagesAfter = responseMessagesAfter.body.length;
+      expect(numberOfMessagesAfter, JSON.stringify(responseMessagesAfter.body)).to.be.equal(numberOfMessagesBefore + 1);
+
+      // Act:
+      const response2 = await request.post(baseUrl).set(headers).send(messageData);
+      // Assert:
+      expect(response2.status, JSON.stringify(response2.body)).to.equal(201);
+
+      // Act:
+      const responseMessagesAfter2 = await request.get(baseUrl).set(headers);
+      const numberOfMessagesAfter2 = responseMessagesAfter2.body.length;
+      expect(numberOfMessagesAfter2, JSON.stringify(responseMessagesAfter2.body)).to.be.equal(
+        numberOfMessagesBefore + 2
+      );
+    });
+
+    it(`POST ${baseUrl} - should not create a message if receiver is not on contact list`, async () => {
+      // Arrange:
+      const messageData = {
+        content: "test msg - should not create a message if receiver is not on contact list",
+        to: 8,
+      };
+
+      // Act:
+      const response = await request.post(baseUrl).set(headers).send(messageData);
+
+      // Assert:
+      expect(response.status, JSON.stringify(response.body)).to.equal(403);
+    });
+
+    it(`POST ${baseUrl} - should not create a message if message is too long`, async () => {
+      // Arrange:
+      const messageData = {
+        content:
+          "test msg - should not create a message if message is too long || should not create a message if message is too long || should not create a message if message is too long || should not create a message if message is too long || should not create a message if message is too long",
+        to: 1,
+      };
+
+      // Act:
+      const response = await request.post(baseUrl).set(headers).send(messageData);
+
+      // Assert:
+      expect(response.status, JSON.stringify(response.body)).to.equal(422);
     });
   });
 });
