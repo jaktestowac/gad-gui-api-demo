@@ -113,7 +113,7 @@ describe("Messenger - contacts and messages", async () => {
       expect(response.status, JSON.stringify(response.body)).to.equal(200);
     });
 
-    it(`PUT ${baseUrl} - should return 200 - contact was added (as a first contact)`, async () => {
+    it(`PUT ${baseUrl} - should return 201 - contact was added (as a first contact)`, async () => {
       // Arrange:
       const data = {
         email: "m.altman@test.test",
@@ -123,7 +123,7 @@ describe("Messenger - contacts and messages", async () => {
       const response = await request.put(baseUrl).set(headers2).send(data);
 
       // Assert:
-      expect(response.status, JSON.stringify(response.body)).to.equal(200);
+      expect(response.status, JSON.stringify(response.body)).to.equal(201);
     });
 
     it(`PUT ${baseUrl} - should return 409 - can not add yourself`, async () => {
