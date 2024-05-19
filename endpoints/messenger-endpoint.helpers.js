@@ -121,6 +121,11 @@ function handleMessenger(req, res, isAdmin) {
     res.status(HTTP_NOT_IMPLEMENTED).json({});
     return;
   }
+  if (req.method === "PATCH" && req.url.endsWith("/api/messenger/messages")) {
+    // TODO:
+    res.status(HTTP_NOT_IMPLEMENTED).json({});
+    return;
+  }
 
   if (req.method === "GET" && req.url.endsWith("/api/messenger/contacts")) {
     const verifyTokenResult = verifyAccessToken(req, res, "messenger/contacts", req.url);
@@ -157,11 +162,6 @@ function handleMessenger(req, res, isAdmin) {
       method: req.method,
       url: req.url,
     });
-    return;
-  }
-  if (req.method === "POST" && req.url.endsWith("/api/messenger/contacts")) {
-    // TODO:
-    res.status(HTTP_NOT_IMPLEMENTED).json({});
     return;
   }
   if (req.method === "PUT" && req.url.endsWith("/api/messenger/contacts")) {
@@ -246,6 +246,11 @@ function handleMessenger(req, res, isAdmin) {
       url: req.url,
       body: req.body,
     });
+    return;
+  }
+  if (req.method === "POST" && req.url.endsWith("/api/messenger/contacts")) {
+    // TODO:
+    res.status(HTTP_NOT_IMPLEMENTED).json({});
     return;
   }
   if (req.method === "PATCH" && req.url.endsWith("/api/messenger/contacts")) {

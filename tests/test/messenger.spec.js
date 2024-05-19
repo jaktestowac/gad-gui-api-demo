@@ -198,12 +198,12 @@ describe("Messenger - contacts and messages", async () => {
       // Assert:
       expect(response.status, JSON.stringify(response.body)).to.equal(501);
     });
-    it(`PATCH ${baseUrl} - should return 404`, async () => {
+    it(`PATCH ${baseUrl} - should return 501`, async () => {
       // Act:
       const response = await request.patch(baseUrl);
 
       // Assert:
-      expect(response.status, JSON.stringify(response.body)).to.equal(404);
+      expect(response.status, JSON.stringify(response.body)).to.equal(501);
     });
     it(`DELETE ${baseUrl} - should return 501`, async () => {
       // Act:
