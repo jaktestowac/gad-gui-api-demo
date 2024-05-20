@@ -92,7 +92,7 @@ async function issueSendMessageRequest(message, contactId) {
   return data;
 }
 
-function focusOnFriendRequestInput() {
+function clearFriendRequestInfoBox() {
   const friendRequestInfoBox = document.getElementById("friend-request-info-box");
   friendRequestInfoBox.style.display = "none";
 }
@@ -164,6 +164,7 @@ function openTab(evt, tabName) {
         });
       }
     });
+    clearFriendRequestInfoBox();
   }
 }
 
