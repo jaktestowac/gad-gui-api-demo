@@ -27,6 +27,15 @@ if (!isAuthenticated()) {
   openTab(undefined, "tab1");
 }
 
+const messageInput = document.getElementById("messageInput");
+messageInput.addEventListener("keydown", function (event) {
+  if (event.key === "Enter" && event.shiftKey) {
+    // allow new lines
+  } else if (event.key === "Enter") {
+    sendMessage();
+  }
+});
+
 async function issueGetContactsRequest() {
   const data = fetch(urlContacts, {
     method: "GET",
@@ -99,10 +108,18 @@ function clearMessageView() {
   messageHistory.innerHTML = "";
 }
 
+function clearActiveContacts() {
+  const contacts = document.getElementsByClassName("contact");
+  for (let i = 0; i < contacts.length; i++) {
+    contacts[i].classList.remove("active");
+  }
+}
+
 function disableSendingMessages() {
   const sendContainer = document.getElementById("sendContainer");
   sendContainer.style.display = "none";
 }
+
 function enableSendingMessages() {
   const sendContainer = document.getElementById("sendContainer");
   sendContainer.style.display = "block";
@@ -230,11 +247,7 @@ function formatDate(date) {
 function showMessages(contact, contactId) {
   clearInterval(msgCheckInterval);
   clearMessageView();
-
-  const contacts = document.getElementsByClassName("contact");
-  for (let i = 0; i < contacts.length; i++) {
-    contacts[i].classList.remove("active");
-  }
+  clearActiveContacts();
 
   issueGetMessagesWithContactRequest(contactId).then((response) => {
     response.json().then((data) => {
@@ -264,11 +277,13 @@ function displayMessages(data, contact) {
       const sender = message.from == getId() ? "You" : contact;
       const timestamp = formatDate(message.date);
 
+      const parsedMessage = message.content.replace(/(\r\n|\n|\r)/gm, "<br>");
+
       const newMessage = `
         <div class="message ${className}" id="${message.id}">
           <div class="sender">${sender}</div>
           <div class="timestamp">${timestamp}</div>
-          <div class="content">${message.content}</div>
+          <div class="content">${parsedMessage}</div>
         </div>
       `;
       messageHistory.innerHTML += newMessage;
@@ -299,6 +314,9 @@ function checkNewMessages(contact) {
 
 function searchContacts() {
   clearMessageView();
+  clearActiveContacts();
+  disableSendingMessages();
+
   const messageHistory = document.getElementById("messageHistory");
   messageHistory.innerHTML = "";
 
@@ -329,14 +347,17 @@ function searchContacts() {
 
 function sendMessage() {
   const messageInput = document.getElementById("messageInput");
-  const message = messageInput.value;
+  const message = messageInput.value.trim();
 
-  if (message.length > 0 && message.length <= 128) {
+  // const parsedMessage = message.replace(/(\r\n|\n|\r)/gm, "");
+  const parsedMessage = message;
+
+  if (parsedMessage.length > 0 && parsedMessage.length <= 128) {
     const messageHistory = document.getElementById("messageHistory");
     const currentContact = document.querySelector(".contact.active");
 
     if (currentContact !== undefined) {
-      issueSendMessageRequest(message, currentContact.getAttribute("contact-id")).then((response) => {
+      issueSendMessageRequest(parsedMessage, currentContact.getAttribute("contact-id")).then((response) => {
         response.json().then((data) => {
           let warning = "";
           if (response.status !== 201) {
@@ -349,7 +370,7 @@ function sendMessage() {
               <div class="message you" id="${data.id}">
                 <div class="sender">${sender}</div>
                 <div class="timestamp">${warning}${timestamp}</div>
-                <div class="content">${message}</div>
+                <div class="content">${parsedMessage}</div>
               </div>
             `;
           messageHistory.innerHTML += newMessage;
