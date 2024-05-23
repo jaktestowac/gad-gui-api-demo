@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>🦎 GAD | Game: Bug Eater</title>
+  <link rel="icon" href="/data/icons/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/controls.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    #game-board {
+      width: 400px;
+      height: 400px;
+      border: 1px solid black;
+      position: relative;
+    }
+
+    .cell {
+      width: 20px;
+      height: 20px;
+      background-color: white;
+      border: 1px solid lightgray;
+      position: absolute;
+    }
+
+    .snake {
+      background-color: green;
+    }
+
+    .bug {
+      line-height: 20px !important;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+      <h1 id="menu-main-gui" class="nav-menu"></h1>
+    </div>
+  </header>
+  <div align="center" style="justify-content: center !important; display: flex; align-items: center">
+    <div class="alert" role="alert" data-testid="alert-popup" id="alertPopup" style="position: unset !important; margin: 60px 0px 0px 0px"></div>
+  </div>
+  <div id="container"></div>
+  <div align="center">
+    <button id="start-button" class="button-primary">Start</button> <br /><br />
+    <div id="game-board"></div>
+    <br />
+    <a href="./games.html">
+      <button class="button-primary button-mobile" translateId="btnReturnToGames" style="margin: 10; font-size: 16px">
+        Return to Games
+      </button>
+    </a>
+  </div>
+  <script type="text/javascript" src="/js/common.js"></script>
+  <script type="text/javascript" src="/js/header.js"></script>
+  <script type="text/javascript" src="./js/bug-eater.js"></script>
+  <script type="text/javascript" src="/version.js"></script>
+  <script type="text/javascript" src="/username.js"></script>
+  <link rel="stylesheet" href="/css/banner-cookie.css" />
+  <script type="text/javascript" src="/js/banner-cookie.js"></script>
+  <script type="text/javascript" src="/js/darkmode.js"></script>
+</body>
+
+</html>

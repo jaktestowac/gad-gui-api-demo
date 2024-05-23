@@ -2,12 +2,12 @@
 
 <head>
   <title>🦎 GAD | Tools</title>
-  <link rel="icon" href="../data/icons/favicon.png" />
+  <link rel="icon" href="/data/icons/favicon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
-  <link rel="stylesheet" href="../css/style.css" />
-  <link rel="stylesheet" href="../css/controls.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/controls.css" />
 </head>
 
 <body>
@@ -46,12 +46,13 @@
                 <li><a href="../comments.html">Comments</a></li>
                 <li><a href="../comment.html?id=1">Single Comment</a></li>
                 <li>
-                  <a href="../stats.html">Stats</a>
+                  <a href="/stats/stats.html">Stats</a>
                   <ul>
-                    <li><a href="../userstats.html">users</a></li>
-                    <li><a href="../articlestats.html">articles</a></li>
-                    <li><a href="../visitstats.html">visits</a></li>
-                    <li><a href="../publicationstats.html">publications</a></li>
+                    <li><a href="/stats/userstats.html">users</a></li>
+                    <li><a href="/stats/articlestats.html">articles</a></li>
+                    <li><a href="/stats/visitstats.html">visits</a></li>
+                    <li><a href="/stats/publicationstats.html">publications</a></li>
+                    <li><a href="/stats/publication-trends.html?data=articles&resolution=month">publication trends</a></li>
                   </ul>
                 </li>
                 <li>
@@ -62,34 +63,36 @@
                   </ul>
                 </li>
                 <li>
-                  <a href="../games.html">Games:</a>
+                  <a href="/games/games.html">Games:</a>
                   <ul>
-                    <li><a href="../quiz.html">Quiz</a></li>
-                    <li><a href="../hangman.html">Hangman</a></li>
-                    <li><a href="../matcher.html">Matcher</a></li>
-                    <li><a href="../devrun.html">DevRun</a></li>
-                    <li><a href="../whacker.html">Whack-a-Bug</a></li>
-                    <li><a href="../bug-eater.html">Bug Eater</a></li>
-                    <li><a href="../tic-tac-toe-hot-seat.html">Tic Tac Toe (Hot Seat)</a></li>
-                    <li><a href="../tic-tac-toe.html">Tic Tac Toe (Multiplayer)</a></li>
-                    <li><a href="../minesweeper.html">Minesweeper</a></li>
-                    <li><a href="../sudoku.html">Sudoku</a></li>
+                    <li><a href="/games/quiz.html">Quiz</a></li>
+                    <li><a href="/games/hangman.html">Hangman</a></li>
+                    <li><a href="/games/matcher.html">Matcher</a></li>
+                    <li><a href="/games/devrun.html">DevRun</a></li>
+                    <li><a href="/games/whacker.html">Whack-a-Bug</a></li>
+                    <li><a href="/games/bug-eater.html">Bug Eater</a></li>
+                    <li><a href="/games/tic-tac-toe-hot-seat.html">Tic Tac Toe (Hot Seat)</a></li>
+                    <li><a href="/games/tic-tac-toe.html">Tic Tac Toe (Multiplayer)</a></li>
+                    <li><a href="/games/minesweeper.html">Minesweeper</a></li>
+                    <li><a href="/games/sudoku.html">Sudoku</a></li>
                   </ul>
                 </li>
                 <li>
                   Other:
                   <ul>
-                    <li><a href="../simple-roi.html">Simple ROI calculator</a></li>
-                    <li><a href="../roi.html">Advanced ROI calculator</a></li>
+                    <li><a href="/projects/simple-roi.html">Simple ROI calculator</a></li>
+                    <li><a href="/projects/roi.html">Advanced ROI calculator</a></li>
                   </ul>
                 </li>
-                <li><a href="../tools/version.html">Version check</a></li>
+                <li><a href="/tools/version.html">Version check</a></li>
                 <li>
                   <strong>Database helpers:</strong>
                   <ul>
-                    <li><a href="../tools/dbplayground.html">Database SQL Playground</a></li>
+                    <li><a href="/tools/dbplayground.html">Database SQL Playground</a></li>
                   </ul>
                 </li>
+
+
               </ul>
             </div>
             <div id="restore" class="containerTools">
@@ -110,9 +113,6 @@
               <h3>API: Additional endpoints</h3>
               <a href="/api/images/user">Images for user avatar</a><br />
               <a href="/api/images/posts">Images for article image</a><br />
-              <a href="/api/logs">Logs (⚠️ needs proper config flag enabled)</a><br />
-              <a href="/api/stats/api">Api Calls stats</a><br />
-              <a href="/api/health">Health Check</a><br />
             </div>
 
             <div class="containerTools">
@@ -122,6 +122,38 @@
               (❗ After 🦎GAD restart default values are restored!) <br />
               <br />
               <div id="featureTable"></div>
+            </div>
+
+            <div class="containerTools">
+              <h2>Diagnostic Info</h2>
+              Get additional info (such as logs, reports, histograms) in real time!
+              <br />
+              <br />
+              <strong><a href="/api/diagnostic/toggle-diagnostics" target="_blank" rel="noopener"><i class="fa-solid fa-sliders"></i> Toggle diagnostic info</br>(⚠️ performance can decrease and memory consumption can be high!)</a></strong>
+              <br />
+              <br />
+              <h3>Pages:</h3>
+              <ul>
+                <li><a href="/diagnostic/requests.html">Requests (⚠️ needs proper config flag enabled)</a></li>
+              </ul>
+
+              <h3>Endpoints:</h3>
+              <ul>
+                <li><a href="/api/logs">Logs (⚠️ needs proper config flag enabled)</a></li>
+                <li><a href="/api/health">Health Check</a></li>
+                <li><a href="/api/health/memory">Memory usage</a></li>
+                <li><a href="/api/health/uptime">Uptime</a></li>
+                <li><a href="/api/health/db">DataBase info</a></li>
+                <li><a href="/api/health/dbcheck">Check DataBase integrity</a></li>
+              </ul>
+
+              <strong>Raw Api/Non-api Calls:</strong>
+              <ul>
+                <li><a href="/api/stats/api">Api Calls stats</a></li>
+                <li><a href="/api/stats/api/details">Api Calls stats (detailed)</a></li>
+                <li><a href="/api/stats/nonapi">Non-api Calls stats</a></li>
+                <li><a href="/api/stats/nonapi/details">Non-api Calls stats (detailed)</a></li>
+              </ul>
             </div>
 
             <div class="containerTools">
@@ -152,11 +184,12 @@
       </table>
     </div>
   </main>
-  <script type="text/javascript" src="../js/common.js"></script>
+  <script type="text/javascript" src="/js/common.js"></script>
+  <script type="text/javascript" src="/js/header.js"></script>
   <script type="text/javascript" src="index.js"></script>
 </body>
-<script type="text/javascript" src="../version.js"></script>
-<script type="text/javascript" src="../username.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="/username.js"></script>
 <script>
   menuButtonDisable("btnTools");
 </script>

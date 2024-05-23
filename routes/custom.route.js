@@ -12,24 +12,32 @@ const {
   translationsDb,
   getLanguages,
 } = require("../helpers/db.helpers");
-const {
-  formatErrorResponse,
-  getIdFromUrl,
-  parsePublishStats,
-  parseArticleStats,
-  parseUserStats,
-  findMaxValues,
-} = require("../helpers/helpers");
-const { logError, logDebug, getLogs, logTrace } = require("../helpers/logger-api");
+const { formatErrorResponse, getIdFromUrl, findMaxValues } = require("../helpers/helpers");
+const { logError, logDebug, logTrace } = require("../helpers/logger-api");
 const { HTTP_INTERNAL_SERVER_ERROR, HTTP_OK, HTTP_NOT_FOUND } = require("../helpers/response.helpers");
 const { getConfigValue, getFeatureFlagConfigValue } = require("../config/config-manager");
 const { ConfigKeys, FeatureFlagConfigKeys } = require("../config/enums");
 const { isUndefined } = require("../helpers/compare.helpers");
+const {
+  parseUserStats,
+  parseArticleStats,
+  parsePublishStats,
+  parseUserActivityStats,
+  parseUserPublicationStats,
+} = require("../helpers/stats.helpers");
 
 const statsRoutes = (req, res, next) => {
   try {
     const urlEnds = req.url.replace(/\/\/+/g, "/");
-    if (req.method === "GET" && urlEnds.includes("api/stats/users")) {
+    if (req.method === "GET" && urlEnds.includes("api/stats/users/articles")) {
+      const stats = parseUserPublicationStats(fullDb(), "articles");
+      res.status(HTTP_OK).json(stats);
+      return;
+    } else if (req.method === "GET" && urlEnds.includes("api/stats/users/comments")) {
+      const stats = parseUserPublicationStats(fullDb(), "comments");
+      res.status(HTTP_OK).json(stats);
+      return;
+    } else if (req.method === "GET" && urlEnds.includes("api/stats/users")) {
       const dataType = urlEnds.split("?chartType=");
       const stats = parseUserStats(fullDb(), dataType[1] ?? "");
       res.status(HTTP_OK).json(stats);
@@ -39,13 +47,23 @@ const statsRoutes = (req, res, next) => {
       const stats = parseArticleStats(fullDb(), dataType[1] ?? "");
       res.status(HTTP_OK).json(stats);
       return;
-    } else if (req.method === "GET" && urlEnds.includes("api/stats/publish/articles")) {
+    } else if (req.method === "GET" && urlEnds.includes("api/stats/publications/articles")) {
       const stats = parsePublishStats(fullDb(), "articles");
       res.status(HTTP_OK).json(stats);
       return;
-    } else if (req.method === "GET" && urlEnds.includes("api/stats/publish/comments")) {
+    } else if (req.method === "GET" && urlEnds.includes("api/stats/publications/comments")) {
       const stats = parsePublishStats(fullDb(), "comments");
       res.status(HTTP_OK).json(stats);
+      return;
+    } else if (req.method === "GET" && urlEnds.endsWith("api/stats/activity/user")) {
+      const activity = parseUserActivityStats(fullDb());
+      res.status(HTTP_OK).json(activity);
+      return;
+    } else if (req.method === "GET" && urlEnds.includes("api/stats/activity/user/")) {
+      let userId = getIdFromUrl(urlEnds);
+      const activity = parseUserActivityStats(fullDb());
+      const userActivity = activity[userId] ?? {};
+      res.status(HTTP_OK).json(userActivity);
       return;
     } else if (req.method === "GET" && urlEnds.endsWith("api/stats/api")) {
       const stats = getApiCalls();
@@ -234,14 +252,7 @@ const queryRoutes = (req, res, next) => {
 const customRoutes = (req, res, next) => {
   try {
     const urlEnds = req.url.replace(/\/\/+/g, "/");
-    if (req.method === "GET" && urlEnds.includes("api/logs")) {
-      if (getConfigValue(ConfigKeys.PUBLIC_LOGS_ENABLED)) {
-        res.status(HTTP_OK).json({ logs: getLogs() });
-      } else {
-        res.status(HTTP_OK).json({});
-      }
-      return;
-    }
+
     if (req.method === "GET" && req.url.endsWith("/db")) {
       const dbData = fullDb();
       res.json(dbData);

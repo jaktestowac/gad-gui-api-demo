@@ -8,12 +8,12 @@ function generateDateRange(startDate, endDate) {
   return dateRange;
 }
 
-function generateDateRangeInSteps(startDate, endDate, step) {
+function generateDateRangeInSteps(startDate, endDate, daysStep) {
   const dateRange = [];
   const currentDate = new Date(startDate);
   while (currentDate <= endDate) {
     dateRange.push(new Date(currentDate));
-    currentDate.setDate(currentDate.getDate() + step);
+    currentDate.setDate(currentDate.getDate() + daysStep);
   }
   return dateRange;
 }

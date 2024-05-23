@@ -1,4 +1,4 @@
-const { logDebug } = require("./logger-api");
+const { logDebug, logTrace } = require("./logger-api");
 const { getConfigValue, isBugDisabled } = require("../config/config-manager");
 const { ConfigKeys, BugConfigKeys } = require("../config/enums");
 const { areStringsEqualIgnoringCase, isUndefined } = require("./compare.helpers");
@@ -54,7 +54,10 @@ function isTrueWithProbability(probability) {
   return Math.random() < probability;
 }
 
-function sleep(ms) {
+function sleep(ms, msg) {
+  if (ms > 0 || msg !== undefined) {
+    logTrace(`Sleeping for ${ms} ms...`, msg);
+  }
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
@@ -82,171 +85,6 @@ function pad(num, size = 2) {
   num = num.toString();
   while (num.length < size) num = "0" + num;
   return num;
-}
-
-function parseUserStats(dbDataJson, dataType) {
-  const articlesData = dbDataJson["articles"];
-  const usersData = dbDataJson["users"];
-  const commentsData = dbDataJson["comments"];
-
-  const articlesPerUser = {};
-  const commentsPerUser = {};
-  const userIdToName = {};
-
-  for (let j = 0; j < usersData.length; j++) {
-    userIdToName[usersData[j].id] = `${usersData[j].firstname} ${usersData[j].lastname}`;
-  }
-
-  for (let j = 0; j < articlesData.length; j++) {
-    if (!(articlesData[j].user_id in articlesPerUser)) {
-      articlesPerUser[articlesData[j].user_id] = 0;
-    }
-    articlesPerUser[articlesData[j].user_id]++;
-  }
-
-  for (let j = 0; j < commentsData.length; j++) {
-    if (!(commentsData[j].user_id in commentsPerUser)) {
-      commentsPerUser[commentsData[j].user_id] = 0;
-    }
-    commentsPerUser[commentsData[j].user_id]++;
-  }
-
-  let articlesDataForChart = [["User", "Articles"]];
-  let commentsDataForChart = [["User", "Comments"]];
-
-  for (const user_id in articlesPerUser) {
-    articlesDataForChart.push([userIdToName[user_id], articlesPerUser[user_id]]);
-  }
-
-  if (isBugDisabled(BugConfigKeys.BUG_CHARTS_001)) {
-    // if there are no articlesData stats - prepare empty array
-    if (articlesData.length === 0) {
-      articlesDataForChart = [];
-    }
-  }
-
-  for (const user_id in commentsPerUser) {
-    commentsDataForChart.push([userIdToName[user_id], commentsPerUser[user_id]]);
-  }
-
-  if (isBugDisabled(BugConfigKeys.BUG_CHARTS_002)) {
-    // if there are no commentsData stats - prepare empty array
-    if (commentsData.length === 0) {
-      commentsDataForChart = [];
-    }
-  }
-
-  if (dataType.includes("table")) {
-    return {
-      articlesDataForChart: undefined,
-      commentsDataForChart: undefined,
-      userIdToName,
-      articlesPerUser,
-      commentsPerUser,
-    };
-  } else {
-    return {
-      articlesDataForChart,
-      commentsDataForChart,
-      userIdToName,
-      articlesPerUser: undefined,
-      commentsPerUser: undefined,
-    };
-  }
-}
-
-function parseArticleStats(dbDataJson, dataType) {
-  const articlesData = dbDataJson["articles"];
-  const commentsData = dbDataJson["comments"];
-
-  const commentsPerArticle = {};
-  const articleIdToTitle = {};
-
-  for (let j = 0; j < articlesData.length; j++) {
-    articleIdToTitle[articlesData[j].id] = `${articlesData[j].title?.substring(0, 200)} (...)`;
-  }
-
-  for (let j = 0; j < commentsData.length; j++) {
-    if (!(commentsData[j].article_id in commentsPerArticle)) {
-      commentsPerArticle[commentsData[j].article_id] = 0;
-    }
-    commentsPerArticle[commentsData[j].article_id]++;
-  }
-
-  const articlesDataForChart = [["Article", "Number of comments"]];
-
-  for (const article_id in commentsPerArticle) {
-    articlesDataForChart.push([articleIdToTitle[article_id], commentsPerArticle[article_id]]);
-  }
-
-  if (dataType.includes("table")) {
-    return {
-      articlesDataForChart: undefined,
-      articleIdToTitle,
-      commentsPerArticle,
-    };
-  } else {
-    return {
-      articlesDataForChart,
-      articleIdToTitle: undefined,
-      commentsPerArticle: undefined,
-    };
-  }
-}
-
-function parsePublishStats(dbDataJson, type = "comments") {
-  const yearly = {};
-  const monthly = {};
-  const daily = {};
-  let entriesData;
-
-  if (type === "articles") {
-    entriesData = dbDataJson["articles"];
-  }
-  if (type === "comments") {
-    entriesData = dbDataJson["comments"];
-  }
-
-  if (isUndefined(entriesData)) {
-    return {
-      yearly,
-      monthly,
-      daily,
-    };
-  }
-
-  for (const entry of entriesData) {
-    let date = new Date(entry.date);
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-
-    if (!(year in yearly)) {
-      yearly[year] = 0;
-    }
-    yearly[year]++;
-
-    const yearMonth = `${year}-${pad(month)}`;
-    if (!(yearMonth in monthly)) {
-      monthly[yearMonth] = 0;
-    }
-
-    if (isBugDisabled(BugConfigKeys.BUG_CHARTS_003)) {
-      monthly[yearMonth]++;
-    }
-
-    const yearMonthDay = `${year}-${pad(month)}-${pad(day)}`;
-    if (!(yearMonthDay in daily)) {
-      daily[yearMonthDay] = 0;
-    }
-    daily[yearMonthDay]++;
-  }
-
-  return {
-    yearly,
-    monthly,
-    daily,
-  };
 }
 
 function shuffleArray(array) {
@@ -312,6 +150,10 @@ function generateRandomString(length) {
   return result;
 }
 
+function listIncludes(list, value) {
+  return list.map((v) => v.toString()).includes(value.toString());
+}
+
 module.exports = {
   formatErrorResponse,
   formatInvalidFieldErrorResponse,
@@ -325,9 +167,6 @@ module.exports = {
   isAdminUser,
   isSuperAdminUser,
   isAnyAdminUser,
-  parseUserStats,
-  parseArticleStats,
-  parsePublishStats,
   getIdFromUrl,
   shuffleArray,
   pad,
@@ -339,4 +178,5 @@ module.exports = {
   filterSelectedKeys,
   generateRandomString,
   isTrueWithProbability,
+  listIncludes,
 };

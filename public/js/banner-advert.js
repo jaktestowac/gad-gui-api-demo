@@ -88,7 +88,7 @@ const advertStatisticsBanner = `<div class="popup-overlay">
       below to view the statistics.
     </p>
 
-    <a href="./stats.html" class="visit-button">Visit Statistics</a>
+    <a href="/stats/stats.html" class="visit-button">Visit Statistics</a>
   </div>
 </div>
 </div>`;

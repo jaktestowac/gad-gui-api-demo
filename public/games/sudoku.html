@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>🦎 GAD | Game: Sudoku</title>
+  <link rel="icon" href="/data/icons/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/controls.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    table {
+      border-collapse: collapse;
+    }
+
+    .grid {
+      width: 40px;
+      height: 40px;
+      text-align: center !important;
+      border: "1px solid grey";
+      vertical-align: middle !important;
+      margin: 0px !important;
+      padding: 0px !important;
+    }
+
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      margin: 0px !important;
+      padding: 0px !important;
+      -moz-appearance: textfield;
+    }
+
+    input[type="number"] {
+      -moz-appearance: textfield;
+      margin: 0px !important;
+      padding: 0px !important;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+      <h1 id="menu-main-gui" class="nav-menu"></h1>
+    </div>
+  </header>
+  <div align="center" style="justify-content: center !important; display: flex; align-items: center">
+    <div class="alert" role="alert" data-testid="alert-popup" id="alertPopup" style="position: unset !important; margin: 60px 0px 0px 0px"></div>
+  </div>
+  <div id="container"></div>
+
+  <div align="center">
+    <h1>Sudoku</h1>
+    <button class="button-primary" id="start">Start</button>
+    <br /><br />
+    <div id="game-container"></div>
+    <br />
+    <div align="center">
+      <button class="button-primary" id="check" disabled>Check</button>
+      <br /><br />
+      <div id="status">Result: ...</div>
+      <div id="score">Score: ...</div>
+      <br />
+      <a href="./games.html">
+        <button class="button-primary button-mobile" translateId="btnReturnToGames" style="margin: 10; font-size: 16px">
+          Return to Games
+        </button>
+      </a>
+    </div>
+  </div>
+</body>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="/username.js"></script>
+<script type="text/javascript" src="./js/sudoku.js"></script>
+<link rel="stylesheet" href="/css/banner-cookie.css" />
+<script type="text/javascript" src="/js/banner-cookie.js"></script>
+<script type="text/javascript" src="/js/darkmode.js"></script>
+
+</html>

@@ -56,7 +56,7 @@ function uploadFile() {
     fileInput.value = "";
   } else {
     const container = document.querySelector("#infoContainer");
-    container.innerHTML = '<div class="warning-msg">⚠️ Please select a valid JSON file.</div>';
+    container.innerHTML = '<div class="simpleErrorBox">⚠️ Please select a valid JSON file.</div>';
   }
 }
 
@@ -80,7 +80,7 @@ loadIframe(filelist);
 checkIfFeatureEnabled("feature_files").then((isEnabled) => {
   if (!isEnabled) {
     const container = document.querySelector("#warning");
-    container.innerHTML = "<div class='warning-msg'><b>⚠️ This feature is not enabled ⚠️</b><br/><br/></div>";
+    container.innerHTML = "<div class='simpleErrorBox'><b>⚠️ This feature is not enabled ⚠️</b></div><br/><br/>";
     const uploadBtn = document.querySelector("#uploadBtn2");
     uploadBtn.disabled = true;
   }

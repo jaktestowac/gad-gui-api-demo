@@ -31,6 +31,9 @@ const { handleBugEater } = require("../endpoints/bug-eater-endpoint.helpers");
 const { handleTicTacToe } = require("../endpoints/tic-tak-toe-endpoint.helpers");
 const { handleSudoku } = require("../endpoints/sudoku-endpoint.helpers");
 const { getRandomInt } = require("../helpers/generators/random-data.generator");
+const { handleMessenger } = require("../endpoints/messenger-endpoint.helpers");
+const { handleTeams } = require("../endpoints/teams-endpoint.helpers");
+const { handleProjects } = require("../endpoints/projects-endpoint.helpers");
 
 const validationsRoutes = (req, res, next) => {
   let isAdmin = false;
@@ -141,6 +144,15 @@ const validationsRoutes = (req, res, next) => {
     }
     if (req.url.includes("/api/survey")) {
       handleSurvey(req, res);
+    }
+    if (req.url.includes("/api/projects")) {
+      handleProjects(req, res);
+    }
+    if (req.url.includes("/api/teams")) {
+      handleTeams(req, res);
+    }
+    if (req.url.includes("/api/messenger") || req.url.includes("/api/contacts") || req.url.includes("/api/messages")) {
+      handleMessenger(req, res);
     }
 
     if (req.method === "DELETE" && urlEnds.includes("/api/users/")) {

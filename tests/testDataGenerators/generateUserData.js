@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-const db = require("../../db/db-base-v2.json");
+const db = require("../../db/db-base-big.json");
 const { faker } = require("@faker-js/faker");
 const fs = require("fs");
 const path = require("path");
@@ -10,9 +10,10 @@ const faceAvatars = images.filter((img) => img.includes("face_") && !img.include
 
 const users = db.users;
 
-const numberOfUsersToGenerate = 2;
+const numberOfUsersToGenerate = 60;
 
 function createUser(id, email, firstname, lastname, password, avatar) {
+  let birthdate = faker.date.between({ from: "1950-01-01", to: "2000-01-01" });
   return {
     id,
     email,
@@ -20,10 +21,10 @@ function createUser(id, email, firstname, lastname, password, avatar) {
     lastname,
     password,
     avatar,
+    birthdate,
   };
 }
 
-const baseLength = users.length;
 console.log("-----------------------------------------------------------");
 
 const generatedUsers = [];
@@ -33,7 +34,9 @@ for (let index = 0; index < numberOfUsersToGenerate; index++) {
 
   const firstname = faker.person.firstName(gender);
   const lastname = faker.person.lastName(gender);
-  const email = faker.internet.email({ firstName: firstname, lastName: lastname, provider: "test.test.dev" });
+  const email = faker.internet
+    .email({ firstName: firstname, lastName: lastname, provider: "test.test.dev" })
+    .toLowerCase();
   const pass = faker.internet.password({ length: 5 });
 
   const maxAttempts = 10;
@@ -45,7 +48,6 @@ for (let index = 0; index < numberOfUsersToGenerate; index++) {
         (gender.toLowerCase() === "male" && img.includes("_m")) ||
         (gender.toLowerCase() === "female" && img.includes("_f"))
     );
-    console.log(gender);
     const image = faceAvatarsGender[getRandomInt(0, faceAvatarsGender.length)];
     const imageName = image.split("/").pop();
 
@@ -53,8 +55,10 @@ for (let index = 0; index < numberOfUsersToGenerate; index++) {
 
     if (foundUsers.length === 0) {
       const avatar = `.\\data\\users\\${imageName}`;
-      user = createUser(baseLength + index, email, firstname, lastname, pass, avatar);
+      user = createUser(users.length, email, firstname, lastname, pass, avatar);
       break;
+    } else {
+      console.log("Found user with the same avatar: ", foundUsers.length, " Attempt: ", attempt + 1);
     }
   }
   if (user !== undefined) {
@@ -63,6 +67,6 @@ for (let index = 0; index < numberOfUsersToGenerate; index++) {
   }
 }
 
-console.log("Generated: ", generatedUsers.length);
 console.log("-----");
 console.log(generatedUsers);
+console.log("Generated: ", generatedUsers.length);

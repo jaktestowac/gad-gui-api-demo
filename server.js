@@ -1,7 +1,7 @@
 const jsonServer = require("./json-server");
 const { validationsRoutes } = require("./routes/validations.route");
-const { getConfigValue, getFeatureFlagConfigValue } = require("./config/config-manager");
-const { ConfigKeys, FeatureFlagConfigKeys } = require("./config/enums");
+const { getConfigValue, getFeatureFlagConfigValue, isBugEnabled } = require("./config/config-manager");
+const { ConfigKeys, FeatureFlagConfigKeys, BugConfigKeys } = require("./config/enums");
 const fs = require("fs");
 const path = require("path");
 
@@ -10,7 +10,7 @@ const helmet = require("helmet");
 const express = require("express");
 const { getDbPath, countEntities, visitsData, initVisits } = require("./helpers/db.helpers");
 
-const { formatErrorResponse } = require("./helpers/helpers");
+const { formatErrorResponse, sleep } = require("./helpers/helpers");
 const { logDebug, logError, logTrace } = require("./helpers/logger-api");
 const { HTTP_INTERNAL_SERVER_ERROR, HTTP_CREATED, HTTP_BAD_REQUEST } = require("./helpers/response.helpers");
 const {
@@ -37,7 +37,9 @@ const bodyParser = require("body-parser");
 const { randomErrorsRoutes } = require("./routes/error.route");
 const { checkDatabase } = require("./helpers/sanity.check");
 const { copyDefaultDbIfNotExists } = require("./helpers/setup");
-const { getOriginMethod, getTracingInfo } = require("./helpers/tracing-info.helper");
+const { getOriginMethod, getTracingInfo, getWasAuthorized } = require("./helpers/tracing-info.helper");
+const { setEntitiesInactive, replaceRelatedContactsInDb } = require("./helpers/db-queries.helper");
+const { diagnosticRoutes } = require("./routes/diagnostic.route");
 
 const middlewares = jsonServer.defaults();
 
@@ -50,6 +52,8 @@ initVisits();
 
 const server = jsonServer.create();
 const router = jsonServer.router(getDbPath(getConfigValue(ConfigKeys.DB_PATH)));
+
+server.use(diagnosticRoutes);
 
 const clearDbRoutes = (req, res, next) => {
   try {
@@ -119,7 +123,6 @@ server.use((req, res, next) => {
 
 server.use(healthCheckRoutes);
 server.use(middlewares);
-
 server.use((req, res, next) => {
   bodyParser.json()(req, res, (err) => {
     if (err) {
@@ -166,19 +169,31 @@ server.use(calcRoutes);
 
 // soft delete:
 server.use(function (req, res, next) {
-  if (getOriginMethod(req) === "DELETE" && req.url.includes("articles")) {
+  if (getOriginMethod(req) === "DELETE" && getWasAuthorized(req) === true && req.url.includes("articles")) {
     const tracingInfo = getTracingInfo(req);
-    logTrace("Hit DELETE articles -> soft deleting comments", { url: req.url, tracingInfo });
-    router.db
-      .get("comments")
-      .filter({ article_id: parseInt(tracingInfo.resourceId) })
-      .each((item) => (item._inactive = true))
-      .write();
-    router.db
-      .get("comments")
-      .filter({ article_id: tracingInfo.resourceId })
-      .each((item) => (item._inactive = true))
-      .write();
+    logDebug("SOFT_DELETE: articles -> soft deleting comments", { url: req.url, tracingInfo });
+
+    const bugEnabled = isBugEnabled(BugConfigKeys.BUG_DELAY_SOFT_DELETE_COMMENTS);
+
+    let timeout = 0;
+    if (bugEnabled) {
+      timeout = getConfigValue(ConfigKeys.COMMENTS_SOFT_DELETE_DELAY_IN_SECONDS_BUG) * 1000;
+    }
+
+    sleep(timeout, bugEnabled ?? "Bug for SOFT_DELETE was enabled").then(() => {
+      setEntitiesInactive(router.db, "comments", { article_id: parseInt(tracingInfo.resourceId) });
+      setEntitiesInactive(router.db, "comments", { article_id: tracingInfo.resourceId });
+    });
+  }
+  if (
+    getOriginMethod(req) === "PUT" &&
+    getWasAuthorized(req) === true &&
+    req.url.includes("contacts") &&
+    (res.statusCode === 200 || res.statusCode === 201)
+  ) {
+    const tracingInfo = getTracingInfo(req);
+    logDebug("UPDATE: /messenger/contacts", { url: req.url, tracingInfo });
+    replaceRelatedContactsInDb(router.db, parseInt(tracingInfo.targetResourceId), tracingInfo.targetResource);
   }
   next();
 });

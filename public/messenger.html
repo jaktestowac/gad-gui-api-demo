@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | Messenger</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="/css/messenger.css" />
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 2fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-gui" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <br />
+
+    <div class="tab">
+        <div style="display: flex; align-items: center;">
+
+            <button class="tablinks" type="button" disabled readOnly onclick="openTab(event, 'tab1')">Contacts and Messages</button>
+            <button class="tablinks" type="button" disabled readOnly onclick="openTab(event, 'tab2')">Send Friend Requests</button>
+        </div>
+    </div>
+    <div id="messenger-info" align="center">
+    </div>
+    <div class="tabcontent" id="tab1">
+        <div class="outer-container ">
+
+
+            <div class="contacts">
+                <div class="messenger-container">
+                    <input type="text" class="messenger-input" id="searchInput" placeholder="Search contacts">
+                    <button class="button-primary" onclick="searchContacts()"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </div>
+                <div class="simpleInfoBox" id="no-contacts" style="display: none;">No contacts found</div>
+                <div class="contact-list">
+                </div>
+            </div>
+            <div class="messages" id="messageWindow">
+                <div class="messages-history" id="messageHistory">
+                    <!-- Messages will be displayed here -->
+                </div>
+                <div id="sendContainer" style="display: none;">
+                    <div class="send-container">
+                        <textarea class="message-input" id="messageInput" maxlength="128" placeholder="Type your message (max 128 characters)"></textarea>
+                        <button class="send-button" onclick="sendMessage()"><i class="fa-regular fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tabcontent" id="tab2">
+        <div class="container">
+            <div class="messenger-container" align="center">
+                <br />
+                Provide friends valid email:
+                <br />
+                <br />
+                <input type="text" onfocus="clearFriendRequestInfoBox()" class="messenger-input" maxlength="128" id="friendRequestInput" placeholder="Enter friend's email" style="width: 350px !important;">
+                <button class="button-primary" onclick="sendFriendRequest()"><i class="fa-regular fa-paper-plane"></i></button>
+                <br />
+                <br />
+                <div id="friend-request-info-box" style="display: none;"></div>
+                <br />
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/username.js"></script>
+    <script type="text/javascript" src="/js/messenger.js"></script>
+    <script type="text/javascript" src="/js/darkmode.js"></script>
+    <script type="text/javascript" src="/js/message-notifier.js"></script>
+
+</body>
+
+</html>

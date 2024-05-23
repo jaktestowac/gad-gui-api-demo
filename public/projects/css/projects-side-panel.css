@@ -1,0 +1,80 @@
+.sidepanel {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  background-color: #202020;
+  overflow-x: hidden;
+  padding-top: 60px;
+  transition: 0.5s;
+}
+
+/* The sidepanel links */
+.sidepanel a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+.sidepanel a:hover {
+  color: #f1f1f1;
+}
+
+.sidepanel a:hover {
+  color: #f1f1f1;
+  border: #f1f1f1;
+  border-radius: 10px;
+}
+
+.sidepanel .closebtn {
+  /* position: absolute;
+  top: 0; */
+  right: 25px;
+  font-size: 36px;
+  /* text-align: end; */
+  /* border-width: 1px;
+  border-color: #818181;
+  border-style: solid;
+  border-radius: 10px; */
+  /* margin-left: 50px; */
+}
+
+.openbtn {
+  height: 100%;
+  position: fixed;
+  background-color: #202020;
+  overflow-x: hidden;
+  cursor: pointer;
+  border: none;
+  color: white;
+  z-index: 1;
+  top: 60px;
+  height: 60px;
+  font-size: 32px;
+  width: 60px !important;
+  border-radius: 100%;
+}
+
+/* .openbtn {
+  font-size: 20px;
+  cursor: pointer;
+  background-color: #202020;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+} */
+
+.openbtn:hover {
+  background-color: #444;
+}
+
+.projects-side-panel-icons {
+  width: 32px;
+  font-size: 32px;
+  padding-top: 12px;
+}

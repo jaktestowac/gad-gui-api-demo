@@ -1,13 +1,34 @@
 const { isBugEnabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
-const { areIdsEqual } = require("../helpers/compare.helpers");
-const { articlesDb } = require("../helpers/db.helpers");
 const { sleep } = require("../helpers/helpers");
 const { logTrace, logInsane } = require("../helpers/logger-api");
 const { addResourceCreationDate } = require("../helpers/temp-data-store");
 const { getOriginMethod } = require("../helpers/tracing-info.helper");
 
 function renderResponse(req, res) {
+  // to maintain backward compatibility:
+  // TODO: remove in future version
+
+  if (req.url.includes("users")) {
+    const users = res.locals.data;
+    let usersMapped;
+    if (users?.length > 0) {
+      usersMapped = users.map((user) => {
+        user.creationDate = undefined;
+        user.birthdate = undefined;
+
+        return user;
+      });
+    } else {
+      // This is for single user
+      usersMapped = users;
+
+      usersMapped.creationDate = undefined;
+      usersMapped.birthdate = undefined;
+    }
+    res.locals.data = usersMapped;
+  }
+
   if (req.method === "GET" && req.url.includes("users")) {
     const users = res.locals.data;
     let loggedUser = req.cookies.id;
@@ -22,6 +43,10 @@ function renderResponse(req, res) {
           user.email = "****";
         }
         user.password = "****";
+
+        user.creationDate = undefined;
+        user.birthdate = undefined;
+
         return user;
       });
 
@@ -36,6 +61,9 @@ function renderResponse(req, res) {
         usersMapped.lastname = "****";
       }
       usersMapped.password = "****";
+
+      usersMapped.creationDate = undefined;
+      usersMapped.birthdate = undefined;
 
       if (usersMapped?._inactive === true) {
         usersMapped = {};

@@ -1,0 +1,54 @@
+<html>
+
+<head>
+  <title>🦎 GAD | Publication Tables</title>
+  <link rel="icon" href="/data/icons/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/controls.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body>
+  <header>
+    <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+      <h1 id="menu-main-gui" class="nav-menu"></h1>
+    </div>
+  </header>
+  <br />
+  <br />
+  <br />
+  <br />
+
+  <div align="center">
+    <div id="container">
+      <fieldset style="width: 170px; border-radius: 10px">
+        <legend>Show:</legend>
+
+        <div>
+          <a id="articles" href="./publicationtables.html?data=articles"><button class="button-primary-small">Articles</button></a>
+          <a id="comments" href="./publicationtables.html?data=comments"><button class="button-primary-small">Comments</button></a>
+        </div>
+      </fieldset>
+    </div>
+    <br />
+    <div id="detailsPlaceholder"></div>
+    <br />
+    <div align="center" style="width: 500px;">
+      <div id="tablePlaceholder">
+      </div>
+    </div>
+  </div>
+</body>
+
+<script src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/js/helpers/reports.js"></script>
+<script type="text/javascript" src="./js/publication-tables.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="/username.js"></script>
+<script type="text/javascript" src="/js/darkmode.js"></script>
+
+</html>

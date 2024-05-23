@@ -1,0 +1,42 @@
+<html>
+
+<head>
+  <title>🦎 GAD | Publication Charts</title>
+  <link rel="icon" href="/data/icons/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/controls.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body>
+  <header>
+    <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+      <h1 id="menu-main-gui" class="nav-menu"></h1>
+    </div>
+  </header>
+  <br />
+  <br />
+  <br />
+  <br />
+
+  <div class="container" align="center">
+    Data Type:
+    <a id="articles" href="./publicationstats.html?data=articles"><button id="btnArticles" data-testid="open-articles" class="button-primary">Articles</button></a>
+    <a id="comments" href="./publicationstats.html?data=comments"><button id="btnComments" data-testid="open-comments" class="button-primary">Comments</button></a>
+  </div>
+
+  <iframe id="statsIframe" title="Stats iframe" width="100%" height="80%" style="border: none; max-height: 80%"></iframe>
+</body>
+
+<script src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/js/helpers/reports.js"></script>
+<script type="text/javascript" src="./js/publication-stats.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="/username.js"></script>
+<script type="text/javascript" src="/js/darkmode.js"></script>
+
+</html>

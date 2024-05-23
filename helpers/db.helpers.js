@@ -145,6 +145,14 @@ function commentsDb() {
   return fullDb()["comments"];
 }
 
+function contactsDb() {
+  return fullDb()["contacts"];
+}
+
+function messagesDb() {
+  return fullDb()["messages"];
+}
+
 function likesDb() {
   return fullDb()["likes"];
 }
@@ -274,6 +282,8 @@ module.exports = {
   fullDb,
   fullBaseDb,
   randomDbEntry,
+  contactsDb,
+  messagesDb,
   getDbPath,
   gamesDb,
   scoresDb,

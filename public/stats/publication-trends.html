@@ -1,0 +1,76 @@
+<html>
+
+<head>
+  <title>🦎 GAD | Publication Trends</title>
+  <link rel="icon" href="/data/icons/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <link rel="stylesheet" href="/css/controls.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <script src="/js/libs/charts/chart.js"></script>
+</head>
+
+<body>
+  <header>
+    <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+      <h1 id="menu-main-gui" class="nav-menu"></h1>
+    </div>
+  </header>
+  <br />
+  <br />
+  <br />
+  <br />
+
+  <div align="center">
+    <div id="container">
+      <fieldset style="width: 170px; border-radius: 10px">
+        <legend>By month:</legend>
+
+        <div>
+          <a id="articles" href="./publication-trends.html?data=articles&resolution=month"><button class="button-primary-small">Articles</button></a>
+          <a id="comments" href="./publication-trends.html?data=comments&resolution=month"><button class="button-primary-small">Comments</button></a>
+        </div>
+      </fieldset>
+      <fieldset style="width: 170px; border-radius: 10px">
+        <legend>By day:</legend>
+        <div>
+          <a id="articles" href="./publication-trends.html?data=articles&resolution=day"><button class="button-primary-small">Articles</button></a>
+          <a id="comments" href="./publication-trends.html?data=comments&resolution=day"><button class="button-primary-small">Comments</button></a>
+        </div>
+      </fieldset>
+      <fieldset style="width: 170px; border-radius: 10px">
+        <legend>By day of week:</legend>
+        <div>
+          <a id="articles" href="./publication-trends.html?data=articles&resolution=day-of-week"><button class="button-primary-small">Articles</button></a>
+          <a id="comments" href="./publication-trends.html?data=comments&resolution=day-of-week"><button class="button-primary-small">Comments</button></a>
+        </div>
+      </fieldset>
+    </div>
+    <br />
+    <div style="width: 500px;">
+      <canvas id="chartPlaceholder"></canvas>
+    </div>
+    <div align="center">
+      Download as:<br />
+      <a id="downloadArticlesDataCsv"><button disabled id="btnDownloadArticlesDataCsv" class="button-primary">CSV</button></a>
+      <a id="downloadArticlesDataJson"><button disabled id="btnDownloadArticlesDataJson" class="button-primary">JSON</button></a>
+      <button onclick="generateChartPDF('publication_trends.pdf')" id="btnDownloadPdfArticlesData" class="button-primary" data-testid="download-pdf">
+        PDF
+      </button>
+    </div>
+  </div>
+</body>
+
+<script src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript" src="/js/pdf-handler.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/js/helpers/reports.js"></script>
+<script type="text/javascript" src="./js/publication-trends.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="/username.js"></script>
+<script type="text/javascript" src="/js/darkmode.js"></script>
+
+</html>

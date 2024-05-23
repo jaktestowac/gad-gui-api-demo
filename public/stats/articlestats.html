@@ -1,0 +1,87 @@
+<html>
+
+<head>
+  <title>🦎 GAD | Statistics for Articles</title>
+  <link rel="icon" href="/data/icons/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/controls.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <!-- https://sheetjs.com/ -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="/js/libs/charts/chart.js"></script>
+</head>
+
+<body>
+  <header>
+    <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+      <h1 id="menu-main-gui" class="nav-menu"></h1>
+    </div>
+  </header>
+  <div align="center" style="justify-content: center !important; display: flex; align-items: center">
+    <div class="alert" role="alert" data-testid="alert-popup" id="alertPopup" style="position: unset !important; margin: 60px 0px 0px 0px"></div>
+  </div>
+  <div align="center">
+    <div id="container"></div>
+    Data Type:
+    <a id="columnChart" href="./articlestats.html"><button id="btnColumnChart" class="button-primary">Column Chart</button></a>
+    <a id="pieChart" href="./articlestats.html?type=pie"><button id="btnPieChart" class="button-primary">Pie Chart</button></a>
+    <a id="table" href="./articlestats.html?type=table"><button id="btnTableData" class="button-primary">Table</button></a>
+    <a id="polar" href="./articlestats.html?type=polar"><button id="btnPolarData" class="button-primary">Polar</button></a>
+    <br /><br />
+    <div style="width: 800px;">
+      <canvas id="canvasPolarChartArticlesData" style="display: none;"></canvas>
+    </div>
+    <table id="tableChart" style="visibility: hidden">
+      <tr>
+        <th style="width: 50%">Comments per Article</th>
+      </tr>
+      <tr>
+        <td>
+          <br />
+          <div align="center" id="commentsPerArticle"></div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <div align="center">
+            Download as:<br />
+            <a id="downloadArticlesDataCsv"><button disabled id="btnDownloadArticlesDataCsv" class="button-primary">CSV</button></a>
+            <a id="downloadArticlesDataJson"><button disabled id="btnDownloadArticlesDataJson" class="button-primary">JSON</button></a>
+            <button onclick="generateChartPDF('article_stats.pdf')" id="btnDownloadPdf" class="button-primary" data-testid="download-pdf">
+              PDF
+            </button>
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <div id="tableArea" align="center" style="visibility: hidden">
+      <table id="tableData">
+        <tbody id="tableDataBody">
+          <tr>
+            <th style="width: 75%">Article</th>
+            <th style="width: 25%">Comments</th>
+          </tr>
+        </tbody>
+      </table>
+      Download as:<br />
+      <a id="downloadTableDataCsv"><button disabled id="btnDownloadTableDataCsv" class="button-primary">CSV</button></a>
+      <a id="downloadTableDataJson"><button disabled id="btnDownloadTableDataJson" class="button-primary">JSON</button></a>
+      <a id="downloadTableDataXlsx"><button disabled id="btnDownloadTableDataXlsx" class="button-primary">Xlsx</button></a>
+    </div>
+  </div>
+</body>
+<script src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript" src="/js/pdf-handler.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/js/helpers/reports.js"></script>
+<script type="text/javascript" src="./js/articlestats.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="/username.js"></script>
+<script type="text/javascript" src="/js/darkmode.js"></script>
+
+</html>

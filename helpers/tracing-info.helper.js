@@ -1,44 +1,73 @@
-const TRACKING_INFO = "_trackingInfo";
+const TRACING_INFO = "_TracingInfo";
 
-const sampleTrackingInfo = {
+const sampleTracingInfo = {
   orgMethod: undefined,
   resourceId: undefined,
+  wasAuthorized: false,
+  baseResourceId: undefined,
+  targetResourceId: undefined,
+  targetResource: undefined,
 };
 
-class TrackingInfoBuilder {
+class TracingInfoBuilder {
   constructor(req) {
     this.req = req;
-    this.trackingInfo = req[TRACKING_INFO] || { ...sampleTrackingInfo };
+    this.tracingInfo = req[TRACING_INFO] || { ...sampleTracingInfo };
+  }
+
+  setWasAuthorized(wasAuthorized) {
+    this.tracingInfo.wasAuthorized = wasAuthorized;
+    return this;
   }
 
   setOriginMethod(orgMethod) {
-    this.trackingInfo.orgMethod = orgMethod;
+    this.tracingInfo.orgMethod = orgMethod;
     return this;
   }
 
   setResourceId(id) {
-    this.trackingInfo.resourceId = id;
+    this.tracingInfo.resourceId = id;
+    return this;
+  }
+
+  setTargetResource(resource) {
+    this.tracingInfo.targetResource = resource;
+    return this;
+  }
+
+  setBaseResourceId(id) {
+    this.tracingInfo.baseResourceId = id;
+    return this;
+  }
+
+  setTargetResourceId(id) {
+    this.tracingInfo.targetResourceId = id;
     return this;
   }
 
   build() {
-    this.req[TRACKING_INFO] = this.trackingInfo;
+    this.req[TRACING_INFO] = this.tracingInfo;
     return this.req;
   }
 }
 
 function getTracingInfo(req) {
-  return req[TRACKING_INFO];
+  return req[TRACING_INFO];
 }
 
 function getOriginMethod(req) {
   return getTracingInfo(req)?.orgMethod;
 }
 
+function getWasAuthorized(req) {
+  return getTracingInfo(req)?.wasAuthorized;
+}
+
 module.exports = {
-  TRACKING_INFO,
-  sampleTrackingInfo,
-  TrackingInfoBuilder,
+  TRACING_INFO,
+  sampleTracingInfo,
+  TracingInfoBuilder,
   getTracingInfo,
   getOriginMethod,
+  getWasAuthorized,
 };

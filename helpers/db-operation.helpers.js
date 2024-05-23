@@ -1,4 +1,5 @@
 const { areStringsEqualIgnoringCase, areIdsEqual, isUndefined } = require("./compare.helpers");
+const { isDateStringGreaterThan } = require("./datetime.helpers");
 const {
   userDb,
   articlesDb,
@@ -9,6 +10,8 @@ const {
   scoresDb,
   bookmarksDb,
   surveyResponsesDb,
+  contactsDb,
+  messagesDb,
 } = require("./db.helpers");
 
 function searchForUserWithToken(userId, verifyTokenResult) {
@@ -285,6 +288,50 @@ function aggregateSurveyAnswers(responses, surveyType, keysToSkip = ["Open-Ended
   return aggregated;
 }
 
+function searchForContactsByUserId(userId) {
+  const foundContacts = contactsDb().find((contact) => {
+    if (areIdsEqual(contact["user_id"], userId)) {
+      return contact;
+    }
+  });
+  return foundContacts;
+}
+
+function searchForMessagesByUserId(userId) {
+  const foundMessages = messagesDb().filter((message) => {
+    if (areIdsEqual(message["from"], userId) || areIdsEqual(message["to"], userId)) {
+      return message;
+    }
+  });
+  return foundMessages;
+}
+
+function searchForMessagesByBothUserIds(userId1, userId2) {
+  const foundMessages = messagesDb().filter((message) => {
+    if (
+      (areIdsEqual(message["from"], userId1) && areIdsEqual(message["to"], userId2)) ||
+      (areIdsEqual(message["from"], userId2) && areIdsEqual(message["to"], userId1))
+    ) {
+      return message;
+    }
+  });
+  return foundMessages;
+}
+
+function getMessagesWithIdGreaterThan(messages, id) {
+  const foundMessages = messages.filter((message) => {
+    return message["id"] > id;
+  });
+  return foundMessages;
+}
+
+function getMessagesWithDateGreaterThan(messages, date) {
+  const foundMessages = messages.filter((message) => {
+    return isDateStringGreaterThan(message["date"], date);
+  });
+  return foundMessages;
+}
+
 module.exports = {
   searchForUserWithToken,
   searchForUserWithEmail,
@@ -314,4 +361,9 @@ module.exports = {
   findUserSurveyResponse,
   searchForCommentsByArticleId,
   softDeleteCommentsByArticleId,
+  searchForContactsByUserId,
+  searchForMessagesByUserId,
+  searchForMessagesByBothUserIds,
+  getMessagesWithIdGreaterThan,
+  getMessagesWithDateGreaterThan,
 };

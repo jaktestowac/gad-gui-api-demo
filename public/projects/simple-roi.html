@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>🦎 GAD | Simple ROI Calculator</title>
+  <link rel="icon" href="/data/icons/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/controls.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <script src="/js/libs/charts/chart.js"></script>
+
+  <style>
+    table {
+      width: 500px !important;
+    }
+
+    table input {
+      width: 100px !important;
+    }
+
+    table tr td {
+      align-content: baseline !important;
+      text-align: left !important;
+      max-width: 400px !important;
+      text-wrap: normal !important;
+      word-break: break-word !important;
+      word-wrap: break-word !important;
+      white-space: pre-wrap !important;
+    }
+
+    .octavalidate-txt-error {
+      font-size: 10px !important;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+      <h1 id="menu-main-gui" class="nav-menu"></h1>
+    </div>
+  </header>
+
+  <br />
+  <br />
+  <br />
+  <div align="center">
+    <h1>Simple ROI Calculator for Automation Testing</h1>
+  </div>
+
+  <div align="center">
+    <form id="roiCalculator" onsubmit="event.preventDefault(); calculateSprintROI();">
+      <table>
+        <colgroup>
+          <col style="width: 90%" />
+          <col style="width: 10%" />
+        </colgroup>
+        <tr>
+          <td><label for="costPerSprint">Average Cost per Sprint (USD):</label></td>
+          <td><input type="number" id="costPerSprint" value="20" required></td>
+        </tr>
+
+        <tr>
+          <td><label for="benefitPerSprint">Average Benefit per Sprint (USD):</label></td>
+          <td><input type="number" id="benefitPerSprint" value="30" required></td>
+        </tr>
+
+        <tr>
+          <td><label for="numberOfSprints">Number of Sprints:</label></td>
+          <td><input type="number" id="numberOfSprints" value="5" required></td>
+        </tr>
+      </table>
+      <br><br>
+      <button class="button-primary button-mobile" id="calculateRoi" type="submit">Calculate ROI</button>
+    </form>
+    <p id="result"></p>
+    <table id="resultTable"></table>
+    <canvas id="chartRoi"></canvas>
+    <br />
+  </div>
+</body>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="/username.js"></script>
+<script type="text/javascript" src="/js/libs/validator/validate.js"></script>
+<script type="text/javascript" src="./js/simpe-roi.js"></script>
+<script type="text/javascript" src="/js/darkmode.js"></script>
+
+</html>

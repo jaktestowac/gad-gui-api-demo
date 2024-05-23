@@ -41,6 +41,9 @@ content-type: application/json
 ### Get random article
 GET http://localhost:3000/api/random/article
 
+### Delete an article
+DELETE http://localhost:3000/api/articles/1
+
 ### All articles visits
 GET http://localhost:3000/api/visits/articles
 

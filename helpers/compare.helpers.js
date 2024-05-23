@@ -37,7 +37,7 @@ function isStringOnTheList(value, list, caseSensitive = false) {
   }
 }
 
-function compareDbObjects(baseDb, currentDb) {
+function compareDbObjects(baseDb, currentDb, optionalKeys = ["users.birthdate", "users.creationDate"]) {
   const baseDbTables = getAllDbTables(baseDb);
   const currentDbTables = getAllDbTables(currentDb);
 
@@ -48,12 +48,16 @@ function compareDbObjects(baseDb, currentDb) {
   const entitiesCountInCurrentDb = getDbTableElementsCount(currentDb);
   const isCurrentDbEmpty = Object.values(entitiesCountInCurrentDb).every((count) => count === 0);
 
-  const keys1 = getAllDbKeys(baseDb);
-  const keys2 = getAllDbKeys(currentDb);
+  let keys1 = getAllDbKeys(baseDb);
+  let keys2 = getAllDbKeys(currentDb);
+
+  keys1 = keys1.filter((key) => !optionalKeys.includes(key));
+  keys2 = keys2.filter((key) => !optionalKeys.includes(key));
 
   const areAllKeysPresent = keys1.every((key) => keys2.includes(key));
 
   const missingKeysInCurrentDb = keys1.filter((key) => !keys2.includes(key));
+
   const areEqual = areAllKeysPresent === true && missingKeysInCurrentDb.length === 0;
 
   const invalidObjects = [];

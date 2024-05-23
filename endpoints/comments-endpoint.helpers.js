@@ -12,7 +12,7 @@ const {
 } = require("../helpers/helpers");
 const { logTrace, logDebug } = require("../helpers/logger-api");
 const { HTTP_UNPROCESSABLE_ENTITY, HTTP_UNAUTHORIZED, HTTP_NOT_FOUND } = require("../helpers/response.helpers");
-const { TrackingInfoBuilder } = require("../helpers/tracing-info.helper");
+const { TracingInfoBuilder } = require("../helpers/tracing-info.helper");
 const {
   areAllFieldsValid,
   all_fields_comment,
@@ -206,7 +206,7 @@ function handleComments(req, res, isAdmin) {
     }
 
     req.method = "PUT";
-    req = new TrackingInfoBuilder(req).setOriginMethod("DELETE").setResourceId(commentId).build();
+    req = new TracingInfoBuilder(req).setOriginMethod("DELETE").setWasAuthorized(true).setResourceId(commentId).build();
     req.url = `/api/comments/${commentId}`;
     const newCommentBody = foundComment;
     newCommentBody._inactive = true;

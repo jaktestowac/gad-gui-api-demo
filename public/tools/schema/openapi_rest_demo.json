@@ -2293,7 +2293,7 @@
         }
       }
     },
-    "/stats/publish/articles": {
+    "/stats/publications/articles": {
       "get": {
         "tags": ["stats"],
         "summary": "Get article publish stats",
@@ -2306,7 +2306,7 @@
         }
       }
     },
-    "/stats/publish/comments": {
+    "/stats/publications/comments": {
       "get": {
         "tags": ["stats"],
         "summary": "Get comments publish stats",
@@ -2315,6 +2315,55 @@
           "200": {
             "description": "Comments publish stats received",
             "content": {}
+          }
+        }
+      }
+    },
+    "/stats/activity/user": {
+      "get": {
+        "tags": ["stats"],
+        "summary": "Get user activity stats",
+        "operationId": "getUserActivityStats",
+        "responses": {
+          "200": {
+            "description": "User activity stats received",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserActivityStats"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stats/activity/user/{id}": {
+      "get": {
+        "tags": ["stats"],
+        "summary": "Get single user activity stats",
+        "operationId": "getSingleUserActivityStats",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "User ID",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Single user activity stats received",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserActivityStats"
+                }
+              }
+            }
           }
         }
       }
@@ -4724,6 +4773,247 @@
           "additionalMaintenanceHours",
           "hourlyCost"
         ]
+      },
+      "UserActivityStats": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "object",
+            "properties": {
+              "user": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              },
+              "userActivityByDay": {
+                "type": "object",
+                "properties": {
+                  "Monday": {
+                    "type": "object",
+                    "properties": {
+                      "articles": {
+                        "type": "integer"
+                      },
+                      "comments": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "Tuesday": {
+                    "type": "object",
+                    "properties": {
+                      "articles": {
+                        "type": "integer"
+                      },
+                      "comments": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "Wednesday": {
+                    "type": "object",
+                    "properties": {
+                      "articles": {
+                        "type": "integer"
+                      },
+                      "comments": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "Thursday": {
+                    "type": "object",
+                    "properties": {
+                      "articles": {
+                        "type": "integer"
+                      },
+                      "comments": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "Friday": {
+                    "type": "object",
+                    "properties": {
+                      "articles": {
+                        "type": "integer"
+                      },
+                      "comments": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "Saturday": {
+                    "type": "object",
+                    "properties": {
+                      "articles": {
+                        "type": "integer"
+                      },
+                      "comments": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "Sunday": {
+                    "type": "object",
+                    "properties": {
+                      "articles": {
+                        "type": "integer"
+                      },
+                      "comments": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              },
+              "userActivityByMonth": {
+                "type": "object",
+                "properties": {
+                  "July": {
+                    "type": "object",
+                    "properties": {
+                      "articles": {
+                        "type": "integer"
+                      },
+                      "comments": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "January": {
+                    "type": "object",
+                    "properties": {
+                      "articles": {
+                        "type": "integer"
+                      },
+                      "comments": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "August": {
+                    "type": "object",
+                    "properties": {
+                      "articles": {
+                        "type": "integer"
+                      },
+                      "comments": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "June": {
+                    "type": "object",
+                    "properties": {
+                      "articles": {
+                        "type": "integer"
+                      },
+                      "comments": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "September": {
+                    "type": "object",
+                    "properties": {
+                      "articles": {
+                        "type": "integer"
+                      },
+                      "comments": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "November": {
+                    "type": "object",
+                    "properties": {
+                      "articles": {
+                        "type": "integer"
+                      },
+                      "comments": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "October": {
+                    "type": "object",
+                    "properties": {
+                      "articles": {
+                        "type": "integer"
+                      },
+                      "comments": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "May": {
+                    "type": "object",
+                    "properties": {
+                      "articles": {
+                        "type": "integer"
+                      },
+                      "comments": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "April": {
+                    "type": "object",
+                    "properties": {
+                      "articles": {
+                        "type": "integer"
+                      },
+                      "comments": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "December": {
+                    "type": "object",
+                    "properties": {
+                      "articles": {
+                        "type": "integer"
+                      },
+                      "comments": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "February": {
+                    "type": "object",
+                    "properties": {
+                      "articles": {
+                        "type": "integer"
+                      },
+                      "comments": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "March": {
+                    "type": "object",
+                    "properties": {
+                      "articles": {
+                        "type": "integer"
+                      },
+                      "comments": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              },
+              "userActivityByYear": { "type": "object" }
+            }
+          }
+        }
       },
       "RoiCalculations": {
         "type": "object",

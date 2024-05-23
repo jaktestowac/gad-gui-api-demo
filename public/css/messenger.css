@@ -1,0 +1,256 @@
+body {
+  font-family: Arial, sans-serif;
+}
+
+.outer-container {
+  display: flex;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 10px;
+}
+
+.contacts {
+  padding-right: 20px;
+  overflow-y: auto;
+  height: 500px;
+}
+
+.contact {
+  cursor: pointer;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #f5f5f5;
+  border-radius: 5px;
+  width: 200px !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+}
+
+.darkmode .contact {
+  background-color: #131313;
+  color: #b8b8b8;
+}
+
+@media (max-width: 550px) {
+  .contact {
+    cursor: pointer;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #f5f5f5;
+    border-radius: 5px;
+    width: 130px !important;
+  }
+
+  .messenger-input {
+    padding: 5px;
+    width: 80px !important;
+    max-width: 400px;
+    resize: none;
+  }
+
+  .tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 12px 10px !important;
+    transition: 0.3s;
+    font-size: 13px !important;
+  }
+}
+
+@media (min-width: 550px) {
+  .messenger-input {
+    padding: 5px;
+    width: 130px !important;
+    resize: none;
+  }
+}
+
+.contact.active {
+  cursor: pointer;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #a9e7b1;
+  border-radius: 5px;
+}
+
+.darkmode .contact.active {
+  background-color: rgb(54, 71, 54);
+}
+
+.contact:hover {
+  background-color: #e0e0e0;
+}
+
+.darkmode .contact:hover {
+  background-color: rgb(54, 54, 54);
+}
+
+.darkmode textarea {
+  background-color: #242424;
+  color: #b8b8b8;
+  border: #242424;
+}
+
+.messages {
+  flex: 2;
+}
+
+.messages-history {
+  overflow-y: auto;
+  height: 400px;
+  border: 2px solid #b8b8b8;
+  border-radius: 10px;
+}
+
+.darkmode .messages-history {
+  border: 2px solid #2c2c2c;
+}
+
+.message {
+  background-color: #fafff3;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  word-break: break-word;
+}
+
+.message.you {
+  background-color: #dcf8c6;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  text-align: right;
+  word-break: break-word;
+}
+
+.message.info {
+  background-color: #dcf8c6;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  text-align: center;
+  font-style: italic;
+}
+
+.darkmode .message.info {
+  background-color: rgb(31, 66, 31);
+}
+
+.darkmode .message {
+  background-color: #1b1b1b;
+  color: #b8b8b8;
+}
+
+.darkmode .message.you {
+  background-color: #333333;
+  color: #b8b8b8;
+}
+
+.sender {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.timestamp {
+  font-size: 12px;
+  color: #888;
+}
+
+.content {
+  margin-left: 20px;
+  word-break: break-word;
+}
+
+.search-container {
+  margin-bottom: 20px;
+}
+
+.search-button {
+  padding: 5px 10px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.send-container {
+  margin-top: 20px;
+  display: flex;
+}
+
+.message-input {
+  flex: 1;
+  padding: 5px;
+  resize: none;
+  border-radius: 10px;
+}
+
+.send-button {
+  padding: 5px 10px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  width: 40px !important;
+}
+
+.messenger-container {
+  margin-bottom: 5px;
+  display: block;
+}
+
+.tab {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: inherit;
+}
+
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  font-size: 17px;
+}
+
+.darkmode .tab button {
+  border: 1px solid #3b3b3b;
+  background-color: #131313;
+  color: #b8b8b8;
+}
+
+.darkmode .tab {
+  border: none;
+  color: #b8b8b8;
+}
+
+.tab button.active {
+  background-color: #ccc;
+}
+
+.darkmode .tab button.active {
+  background-color: #a3a3a3;
+  color: #202020;
+}
+
+.tabcontent {
+  display: none;
+  border: 1px solid #ccc;
+  border-top: none;
+}
+
+.darkmode .tabcontent {
+  border: 1px solid #2e2e2e;
+}

@@ -1,0 +1,104 @@
+<html>
+
+<head>
+  <title>🦎 GAD | Game: DevRun</title>
+  <link rel="icon" href="/data/icons/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/controls.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+
+    #game-container {
+      width: 500px;
+      height: 150px;
+      background-color: #f7f7f7;
+      position: relative;
+      margin: 20px auto;
+    }
+
+    #devHero {
+      width: 50px;
+      height: 50px;
+      position: absolute;
+      bottom: 0;
+      left: 50px;
+    }
+
+    #devHeroIcon {
+      font-size: 43px;
+      margin: -5px;
+    }
+
+    .bug {
+      width: 20px;
+      height: 50px;
+      position: absolute;
+      bottom: 0;
+    }
+
+    .bugIcon {
+      font-size: 47px;
+      margin-top: -5px;
+    }
+
+    #score {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 24px;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+      <h1 id="menu-main-gui" class="nav-menu"></h1>
+    </div>
+  </header>
+  <div align="center" style="justify-content: center !important; display: flex; align-items: center">
+    <div class="alert" role="alert" data-testid="alert-popup" id="alertPopup" style="position: unset !important; margin: 60px 0px 0px 0px"></div>
+  </div>
+  <div id="container"></div>
+  <div align="center">
+    <h1>Press SPACE to avoid bug!</h1>
+  </div>
+  <div id="game-container">
+    <div id="devHero">
+      <div id="devHeroIcon">👨‍💻</div>
+    </div>
+    <div id="score">Score: 0</div>
+  </div>
+  <div align="center">
+    <div id="final-score-container"></div>
+    <button class="button-primary" id="start-button" data-testid="startButton" onclick="startDevRun()">Start</button>
+  </div>
+  <div align="center">
+    <button class="button-primary" id="reload-button" style="visibility: collapse" data-testid="reloadButton" onclick="reload()">
+      Reload
+    </button>
+    <br />
+    <a href="./games.html">
+      <button class="button-primary button-mobile" translateId="btnReturnToGames" style="margin: 10; font-size: 16px">
+        Return to Games
+      </button>
+    </a>
+  </div>
+</body>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="./js/devrun.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="/username.js"></script>
+<link rel="stylesheet" href="/css/banner-cookie.css" />
+<script type="text/javascript" src="/js/banner-cookie.js"></script>
+<script type="text/javascript" src="/js/darkmode.js"></script>
+
+</html>

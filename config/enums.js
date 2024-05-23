@@ -60,6 +60,8 @@ const ConfigKeys = {
   READ_ONLY: "readOnly",
   RANDOM_ERROR_RESPONSE_PROBABILITY: "randomErrorResponseProbability",
   MIN_SECONDS_FOR_RESOURCE_CREATED_RECENTLY_BUG: "minSecondsForResourceCreatedRecentlyBug",
+  COMMENTS_SOFT_DELETE_DELAY_IN_SECONDS_BUG: "commentsSoftDeleteDelayInSecondsBug",
+  DIAGNOSTICS_ENABLED: "diagnosticsEnabled",
 };
 
 const BugConfigKeys = {
@@ -108,6 +110,7 @@ const BugConfigKeys = {
   BUG_DISABLE_MODULE_ARTICLES: "bug_disable_module_articles",
   BUG_DISABLE_MODULE_USERS: "bug_disable_module_users",
   BUG_DISABLE_MODULE_AUTH: "bug_disable_module_auth",
+  BUG_DELAY_SOFT_DELETE_COMMENTS: "bug_delay_soft_delete_comments",
 };
 
 const FeatureFlagConfigKeys = {

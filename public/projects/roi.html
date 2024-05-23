@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>🦎 GAD | Advanced ROI Calculator</title>
+  <link rel="icon" href="/data/icons/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/controls.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <script src="/js/libs/charts/chart.js"></script>
+
+  <style>
+    table input {
+      width: 100px !important;
+    }
+
+    table tr td {
+      align-content: baseline !important;
+      text-align: left !important;
+      max-width: 400px !important;
+      text-wrap: normal !important;
+      word-break: break-word !important;
+      word-wrap: break-word !important;
+      white-space: pre-wrap !important;
+    }
+
+    .octavalidate-txt-error {
+      font-size: 10px !important;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+      <h1 id="menu-main-gui" class="nav-menu"></h1>
+    </div>
+  </header>
+
+  <br />
+  <br />
+  <br />
+  <div align="center">
+    <h1>ROI Calculator for Automation Testing</h1>
+  </div>
+
+  <div align="center">
+    <form id="roiForm">
+      <div id="container" align="center">
+        <table>
+          <colgroup>
+            <col style="width: 90%" />
+            <col style="width: 10%" />
+          </colgroup>
+          <tr>
+            <td>Number of Sprints:</td>
+            <td><input type="number" id="numberOfSprints" min="0" max="99999" value="12" octavalidate="R,DIGITS" /></td>
+          </tr>
+          <tr>
+            <td>Base Number of Test Cases at the first sprint (optional):</td>
+            <td><input type="number" id="baseTestCases" min="0" max="99999" value="300" onchange="change()" /></td>
+          </tr>
+          <tr id="startingValue" style="visibility: collapse">
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Number of Test Cases (to calculate %):</strong></td>
+            <td><input type="number" id="startingTestCases" min="0" max="99999" value="200" octavalidate="R,DIGITS" /></td>
+          </tr>
+          <tr>
+            <td>Number of Test Environments (Browsers, Configurations, etc.):</td>
+            <td><input type="number" id="numberOfEnvs" min="0" max="999" value="1" octavalidate="R,DIGITS" /></td>
+          </tr>
+          <tr>
+            <td>New Tests added per Release/Sprint (%):</td>
+            <td><input type="number" id="newTestsPerRelease" min="0" max="100" value="10" octavalidate="R,DIGITS" /></td>
+          </tr>
+          <tr>
+            <td>Tests modified per Release/Sprint (%):</td>
+            <td><input type="number" id="modifiedTestsPerRelease" min="0" max="100" value="10" octavalidate="R,DIGITS" /></td>
+          </tr>
+          <tr>
+            <td>Tests removed per Release/Sprint (%):</td>
+            <td><input type="number" id="removedTestsPerRelease" min="0" max="100" value="5" octavalidate="R,DIGITS" /></td>
+          </tr>
+          <tr>
+            <td>% of Manual Tests that cannot be Automated:</td>
+            <td><input type="number" id="automationNotApplicable" min="0" max="100" value="10" octavalidate="R,DIGITS" /></td>
+          </tr>
+          <tr>
+            <td>Average Effort on Modification of Manual Test (% of Effort for Creating new Manual Test):</td>
+            <td><input type="number" id="averageEffortOnModificationOfManualTC" min="0" max="100" value="10" octavalidate="R,DIGITS" /></td>
+          </tr>
+          <tr>
+            <td>Average Effort on Modification of Automated tests (% of Effort for Creating new Automation Test):</td>
+            <td>
+              <input type="number" id="averageEffortOnModificationOfAutomatedTC" min="0" max="100" value="40" octavalidate="R,DIGITS" />
+            </td>
+          </tr>
+          <tr>
+            <td>Average Number of Base Test Cases Automated each Sprint in %:</td>
+            <td><input type="number" id="numberOfAutomationOfBaseTestCases" min="0" max="100" value="10" octavalidate="R,DIGITS" /></td>
+          </tr>
+          <tr>
+            <td>Manual Effort for Case Creation (hours per 1 TC):</td>
+            <td><input type="number" id="manualCreationHours" min="0" max="999" value="1.5" octavalidate="R,DIGITS" /></td>
+          </tr>
+          <tr>
+            <td>Manual Effort for Case Execution (hours per 1 TC):</td>
+            <td><input type="number" id="manualExecutionHours" min="0" max="999" value="2" octavalidate="R,DIGITS" /></td>
+          </tr>
+          <tr>
+            <td>Effort of Creating Automated Tests (hours per 1 TC):</td>
+            <td><input type="number" id="automationCreationHours" min="0" max="999" value="8" octavalidate="R,DIGITS" /></td>
+          </tr>
+          <tr>
+            <td>Effort of Executing Automated Tests (hours per 1 TC):</td>
+            <td><input type="number" id="automationExecutionHours" min="0" max="999" value="0.05" octavalidate="R,DIGITS" /></td>
+          </tr>
+          <tr>
+            <td>Additional Cost of Maintaining Existing Automated Tests (hours per 10 new tests):</td>
+            <td><input type="number" id="additionalMaintenanceHours" min="0" max="100" value="0.5" octavalidate="R,DIGITS" /></td>
+          </tr>
+          <tr>
+            <td>Hourly Cost (USD):</td>
+            <td><input type="number" id="hourlyCost" min="0" max="999" value="50" octavalidate="R,DIGITS" /></td>
+          </tr>
+        </table>
+      </div>
+    </form>
+
+    <br />
+    <button class="button-primary button-mobile" id="calculateRoi">Calculate ROI</button>
+  </div>
+  <div id="roiTable"></div>
+  <div id="roiResult"></div>
+  <canvas id="chartEffort"></canvas>
+  <canvas id="chartCosts"></canvas>
+  <canvas id="chartRoi"></canvas>
+</body>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="/username.js"></script>
+<script type="text/javascript" src="/js/libs/validator/validate.js"></script>
+<script type="text/javascript" src="./js/roi.js"></script>
+<script type="text/javascript" src="/js/darkmode.js"></script>
+
+</html>

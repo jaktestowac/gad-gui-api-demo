@@ -1,0 +1,70 @@
+<html>
+
+<head>
+  <title>🦎 GAD | Visits</title>
+  <link rel="icon" href="/data/icons/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/controls.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+
+<body>
+  <div class="container" align="center">
+    <br />
+
+    <div align="center">
+      <fieldset style="width: 200px; border-radius: 10px">
+        <legend>Chart Type:</legend>
+
+        <div>
+          <input type="radio" id="column" name="type" value="Column" checked onclick="invokeChart()" />
+          <label for="Column">Column</label>
+
+          <input type="radio" id="pie" name="type" value="Pie" onclick="invokeChart('pie')" />
+          <label for="Pie">Pie</label>
+        </div>
+      </fieldset>
+      <div style="margin: 10px">
+        <input style="margin: 0px 0px -5px 0px" type="range" id="minValue" name="minValue" min="0" max="10" value="0" step="1" onchange="changeMinValue()" />
+        <label for="minValue">Min value set to: </label><label id="minValueLabel">0</label>
+      </div>
+    </div>
+  </div>
+  <div align="center">
+    <table id="tableChart" style="visibility: hidden">
+      <tr>
+        <th style="width: 50%">Visits</th>
+      </tr>
+      <tr>
+        <td>
+          <br />
+          <div align="center" id="visits"></div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <div align="center">
+            Download as:<br />
+            <a id="downloadVisitsDataCsv"><button disabled id="btnDownloadVisitsDataCsv" class="button-primary">CSV</button></a>
+            <a id="downloadVisitsDataJson"><button disabled id="btnDownloadVisitsDataJson" class="button-primary">JSON</button></a>
+            <button onclick="generateChartPDF('visit_stats.pdf')" id="btnDownloadPdf" class="button-primary" data-testid="download-pdf">
+              PDF
+            </button>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <script src="https://www.gstatic.com/charts/loader.js"></script>
+</body>
+<script type="text/javascript" src="/js/pdf-handler.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="./js/partial-visitscharts.js"></script>
+<script type="text/javascript" src="/js/helpers/reports.js"></script>
+<script type="text/javascript" src="/js/darkmode.js"></script>
+
+</html>

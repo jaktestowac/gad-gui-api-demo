@@ -1,0 +1,113 @@
+<html>
+
+<head>
+  <title>🦎 GAD | Statistics</title>
+  <link rel="icon" href="/data/icons/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/controls.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body>
+  <header>
+    <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+      <h1 id="menu-main-gui" class="nav-menu"></h1>
+    </div>
+  </header>
+
+  <br />
+  <br />
+  <br />
+  <br />
+  <br />
+
+  <div class="container" id="pageHeader" style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center">
+    <h1>Show statistics of:</h1>
+  </div>
+  <div class="container container-mobile" style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center">
+    <a href="./userstats.html">
+      <button class="button-primary button-mobile" id="btnUserStats" style="margin: 10; font-size: 22px">
+        Users
+      </button>
+    </a>
+    <a href="./articlestats.html">
+      <button class="button-primary button-mobile" id="btnArticleStats" style="margin: 10; font-size: 22px">
+        Articles
+      </button>
+    </a>
+    <a href="./visitstats.html">
+      <button class="button-primary button-mobile" id="btnVisitsPerArticle" style="margin: 10; font-size: 22px">
+        Visits
+      </button>
+    </a>
+  </div>
+  <div class="container" id="pageHeader" style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center">
+    <h2>Publications:</h2>
+  </div>
+  <div class="container container-mobile" style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center">
+    <a href="./publicationtables.html">
+      <button class="button-primary button-mobile" id="btnPublicationTables" style="margin: 10; font-size: 22px">
+        Tables
+      </button>
+    </a><a href="./publicationstats.html">
+      <button class="button-primary button-mobile" id="btnPublicationCharts" style="margin: 10; font-size: 22px">
+        Charts
+      </button>
+    </a>
+    <a href="./publication-trends.html?data=articles&resolution=month">
+      <button class="button-primary button-mobile" id="btnPublicationTrends" style="margin: 10; font-size: 22px">
+        Trends
+      </button>
+    </a>
+  </div>
+  <div class="container" id="pageHeader" style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center">
+    <h2>Activity Histograms:</h2>
+  </div>
+  <div class="container container-mobile" style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center">
+    <a href="./activity-histogram.html?user_id=" id="currentUserActivityLink">
+      <button class="button-primary button-mobile" id="btnCurrentUserActivity" style="margin: 10; font-size: 22px">
+        Current User
+      </button>
+    </a>
+    <a href="./activity-histogram.html">
+      <button class="button-primary button-mobile" id="btnAllActivity" style="margin: 10; font-size: 22px">
+        All Users
+      </button>
+    </a>
+  </div>
+
+  <div id="mostLiked"></div>
+  <div id="mostVisited"></div>
+  <div id="gameScores">
+    <div class="container" id="pageHeader" style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center">
+      <h1>Other:</h1>
+    </div>
+    <div class="container container-mobile" style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center">
+      <a href="/surveys.html">
+        <button class="button-primary button-mobile" id="btnPublications" style="margin: 10; font-size: 22px">
+          Surveys
+        </button>
+      </a>
+    </div>
+    <div class="container container-mobile" style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center">
+      <a href="/games/highscores.html">
+        <button class="button-primary button-mobile" id="btnHighscores" style="margin: 10; font-size: 22px">
+          Games Highscores
+        </button>
+      </a>
+    </div>
+  </div>
+</body>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="/username.js"></script>
+<script type="text/javascript" src="./js/stats.js"></script>
+<script type="text/javascript" src="/js/darkmode.js"></script>
+<script>
+  menuButtonDisable("btnStats");
+</script>
+
+</html>
