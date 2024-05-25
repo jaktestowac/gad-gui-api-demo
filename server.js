@@ -40,6 +40,8 @@ const { copyDefaultDbIfNotExists } = require("./helpers/setup");
 const { getOriginMethod, getTracingInfo, getWasAuthorized } = require("./helpers/tracing-info.helper");
 const { setEntitiesInactive, replaceRelatedContactsInDb } = require("./helpers/db-queries.helper");
 const { diagnosticRoutes } = require("./routes/diagnostic.route");
+const app = require("./app.json");
+const DatabaseManager = require("./helpers/db.manager");
 
 const middlewares = jsonServer.defaults();
 
@@ -52,6 +54,9 @@ initVisits();
 
 const server = jsonServer.create();
 const router = jsonServer.router(getDbPath(getConfigValue(ConfigKeys.DB_PATH)));
+
+const dbManager = DatabaseManager.getInstance();
+dbManager.setDb(router.db);
 
 server.use(diagnosticRoutes);
 
@@ -122,6 +127,15 @@ server.use((req, res, next) => {
 });
 
 server.use(healthCheckRoutes);
+
+// actions invoked just before returning response
+server.use((req, res, next) => {
+  res.on("finish", function () {
+    // TODO: add your custom logic here
+  });
+  next();
+});
+
 server.use(middlewares);
 server.use((req, res, next) => {
   bodyParser.json()(req, res, (err) => {
@@ -167,8 +181,8 @@ server.use(validationsRoutes);
 server.use(fileUploadRoutes);
 server.use(calcRoutes);
 
-// soft delete:
 server.use(function (req, res, next) {
+  // soft delete:
   if (getOriginMethod(req) === "DELETE" && getWasAuthorized(req) === true && req.url.includes("articles")) {
     const tracingInfo = getTracingInfo(req);
     logDebug("SOFT_DELETE: articles -> soft deleting comments", { url: req.url, tracingInfo });
@@ -185,6 +199,7 @@ server.use(function (req, res, next) {
       setEntitiesInactive(router.db, "comments", { article_id: tracingInfo.resourceId });
     });
   }
+  // add contacts:
   if (
     getOriginMethod(req) === "PUT" &&
     getWasAuthorized(req) === true &&
@@ -195,6 +210,7 @@ server.use(function (req, res, next) {
     logDebug("UPDATE: /messenger/contacts", { url: req.url, tracingInfo });
     replaceRelatedContactsInDb(router.db, parseInt(tracingInfo.targetResourceId), tracingInfo.targetResource);
   }
+
   next();
 });
 
@@ -225,7 +241,6 @@ server.use(function (req, res, next) {
 
 logDebug(`Starting 🦎 GAD on port ${port}...`);
 logDebug(`--------------------------------`);
-const app = require("./app.json");
 
 var serverApp = server.listen(port, () => {
   logDebug(`🦎 GAD listening on ${port}!`);

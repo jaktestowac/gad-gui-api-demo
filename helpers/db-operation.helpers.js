@@ -12,6 +12,7 @@ const {
   surveyResponsesDb,
   contactsDb,
   messagesDb,
+  messageCheckDb,
 } = require("./db.helpers");
 
 function searchForUserWithToken(userId, verifyTokenResult) {
@@ -288,6 +289,24 @@ function aggregateSurveyAnswers(responses, surveyType, keysToSkip = ["Open-Ended
   return aggregated;
 }
 
+function searchForMessageCheckByUserId(userId) {
+  const foundCheck = messageCheckDb().find((check) => {
+    if (areIdsEqual(check["user_id"], userId)) {
+      return check;
+    }
+  });
+  return foundCheck;
+}
+
+function searchForMessageCheckById(id) {
+  const foundCheck = messageCheckDb().find((check) => {
+    if (areIdsEqual(check["id"], id)) {
+      return check;
+    }
+  });
+  return foundCheck;
+}
+
 function searchForContactsByUserId(userId) {
   const foundContacts = contactsDb().find((contact) => {
     if (areIdsEqual(contact["user_id"], userId)) {
@@ -366,4 +385,6 @@ module.exports = {
   searchForMessagesByBothUserIds,
   getMessagesWithIdGreaterThan,
   getMessagesWithDateGreaterThan,
+  searchForMessageCheckByUserId,
+  searchForMessageCheckById,
 };

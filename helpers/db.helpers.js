@@ -149,6 +149,10 @@ function contactsDb() {
   return fullDb()["contacts"];
 }
 
+function messageCheckDb() {
+  return fullDb()["message-check"];
+}
+
 function messagesDb() {
   return fullDb()["messages"];
 }
@@ -283,6 +287,7 @@ module.exports = {
   fullBaseDb,
   randomDbEntry,
   contactsDb,
+  messageCheckDb,
   messagesDb,
   getDbPath,
   gamesDb,

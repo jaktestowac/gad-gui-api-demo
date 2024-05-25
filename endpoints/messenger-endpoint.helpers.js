@@ -6,6 +6,7 @@ const {
   searchForMessagesByUserId,
   searchForMessagesByBothUserIds,
   getMessagesWithIdGreaterThan,
+  searchForMessageCheckByUserId,
 } = require("../helpers/db-operation.helpers");
 const { logTrace } = require("../helpers/logger-api");
 const {
@@ -33,6 +34,8 @@ const {
 const { areIdsEqual } = require("../helpers/compare.helpers");
 const { TracingInfoBuilder } = require("../helpers/tracing-info.helper");
 const { getRandomInt } = require("../helpers/generators/random-data.generator");
+const DatabaseManager = require("../helpers/db.manager");
+const { updateMessageCheckTimeInDb } = require("../helpers/db-queries.helper");
 
 function handleMessenger(req, res, isAdmin) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
@@ -54,6 +57,13 @@ function handleMessenger(req, res, isAdmin) {
 
     const messages = searchForMessagesByUserId(foundUser.id);
     res.status(HTTP_OK).json(messages);
+    req = new TracingInfoBuilder(req)
+      .setOriginMethod("GET")
+      .setTargetResourceId(foundUser.id)
+      .setResourceId(undefined)
+      .setWasAuthorized(true)
+      .build();
+
     return;
   }
   if (req.method === "GET" && req.url.includes("/api/messenger/messages?")) {
@@ -73,6 +83,28 @@ function handleMessenger(req, res, isAdmin) {
     const messages = searchForMessagesByBothUserIds(foundUser.id, contactId);
     const filteredMessages = getMessagesWithIdGreaterThan(messages, idFrom);
     res.status(HTTP_OK).json(filteredMessages);
+
+    let messageCheck = searchForMessageCheckByUserId(foundUser.id);
+    if (isUndefined(messageCheck)) {
+      let newId = 0;
+      for (let i = 0; i < 100; i++) {
+        newId = getRandomInt(1000, 999999);
+        let otherMessageCheck = searchForMessageCheckById(newId);
+        if (isUndefined(otherMessageCheck)) {
+          break;
+        }
+      }
+
+      messageCheck = {
+        id: newId,
+        user_id: foundUser.id,
+        last_check: new Date().toISOString(),
+        last_checks: {},
+      };
+      messageCheck.last_checks[contactId] = new Date().toISOString();
+    }
+    updateMessageCheckTimeInDb(DatabaseManager.getInstance().getDb(), foundUser.id, messageCheck, contactId);
+
     return;
   }
   if (req.method === "POST" && req.url.endsWith("/api/messenger/messages")) {
@@ -87,7 +119,7 @@ function handleMessenger(req, res, isAdmin) {
 
     // validate mandatory fields:
     if (!areMandatoryFieldsPresent(req.body, mandatory_non_empty_fields_message)) {
-      res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_message));
+      res.status(HTTP_UNPROCESSABLE_ENTITY).json(formatMissingFieldErrorResponse(mandatory_non_empty_fields_message));
       return;
     }
 
@@ -95,7 +127,7 @@ function handleMessenger(req, res, isAdmin) {
     if (!fieldsLengthValid.status) {
       res
         .status(HTTP_UNPROCESSABLE_ENTITY)
-        .send(formatInvalidFieldErrorResponse(fieldsLengthValid, mandatory_non_empty_fields_message));
+        .json(formatInvalidFieldErrorResponse(fieldsLengthValid, mandatory_non_empty_fields_message));
       return;
     }
 

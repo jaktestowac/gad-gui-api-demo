@@ -1,36 +1,63 @@
-const { logDebug } = require("./logger-api");
+const { logDebug, logTrace } = require("./logger-api");
 
 function setEntitiesInactive(db, tableName, query) {
   const callback = (item) => (item._inactive = true);
   const resultsCallback = (r) => {
-    logDebug("SOFT_DELETE: soft deleted (set inactive):", { commentsCount: r.length, query });
+    logTrace("SOFT_DELETE: soft deleted (set inactive):", { commentsCount: r.length, query });
   };
 
   invokeQuery(db, tableName, query, callback, resultsCallback);
 }
 
 function replaceRelatedContactsInDb(db, targetResourceId, resource) {
-  logDebug("UPDATE: updating related contacts in db:", { targetResourceId, resource });
+  logTrace("UPDATE: updating related contacts in db:", { targetResourceId, resource });
   const query = { id: targetResourceId };
   const resultsCallback = (r) => {
-    logDebug("UPDATE: related contacts:", { query });
+    logTrace("UPDATE: related contacts:", { query });
   };
 
   invokeOverwriteQuery(db, "contacts", query, resource, resultsCallback);
 }
 
-function invokeQuery(db, tableName, query, callback, resultsCallback) {
-  logDebug("INVOKE_QUERY: invoking query:", { tableName, query });
+function updateMessageCheckTimeInDb(db, userId, resource, contactId) {
+  logTrace("UPDATE: updating MessageCheckTime in db:", { userId, resource });
+  const query = { user_id: userId };
+
+  const results = invokeGetQuery(db, "message-check", query);
+
+  if (results.length > 0) {
+    const callback = (item) => (
+      (item.last_check = new Date().toISOString()), (item.last_checks[contactId] = new Date().toISOString())
+    );
+    invokeQuery(db, "message-check", query, callback);
+  } else {
+    invokeInsertQuery(db, "message-check", query, resource);
+  }
+}
+
+function invokeGetQuery(db, tableName, query) {
+  logTrace("INVOKE_QUERY: invoking GET query:", { tableName, query });
+  return db.get(tableName).filter(query).value();
+}
+
+function invokeQuery(db, tableName, query, callback, resultsCallback = (r) => {}) {
+  logTrace("INVOKE_QUERY: invoking query:", { tableName, query });
   db.get(tableName).filter(query).each(callback).write().then(resultsCallback);
 }
 
-function invokeOverwriteQuery(db, tableName, query, obj, resultsCallback) {
-  logDebug("INVOKE_QUERY: invoking query:", { tableName, query, obj });
+function invokeOverwriteQuery(db, tableName, query, obj, resultsCallback = (r) => {}) {
+  logTrace("INVOKE_QUERY: invoking Overwrite query:", { tableName, query, obj });
   db.get(tableName).remove(query).write().then(resultsCallback);
+  db.get(tableName).push(obj).write().then(resultsCallback);
+}
+
+function invokeInsertQuery(db, tableName, query, obj, resultsCallback = (r) => {}) {
+  logTrace("INVOKE_QUERY: invoking Insert query:", { tableName, query, obj });
   db.get(tableName).push(obj).write().then(resultsCallback);
 }
 
 module.exports = {
   setEntitiesInactive,
   replaceRelatedContactsInDb,
+  updateMessageCheckTimeInDb,
 };

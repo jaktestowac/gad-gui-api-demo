@@ -2383,7 +2383,7 @@
       "from": 2,
       "to": 1,
       "date": "2023-10-20T15:47:55Z",
-      "content": "Sure!"
+      "content": "Sure! Lets use Playwright🎭 to do some fun automation!"
     },
     {
       "id": 7,
@@ -2391,6 +2391,18 @@
       "to": 3,
       "date": "2024-02-20T11:46:30Z",
       "content": "Hello!"
+    }
+  ],
+  "message-check": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "last_check": "2024-05-25T11:50:29.076Z",
+      "last_checks": {
+        "2": "2024-05-25T11:50:29.076Z",
+        "3": "2024-05-25T11:50:27.389Z",
+        "4": "2024-05-25T11:50:28.108Z"
+      }
     }
   ]
 }
