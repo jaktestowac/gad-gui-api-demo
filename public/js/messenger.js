@@ -174,24 +174,35 @@ function openTab(evt, tabName) {
             const noContactElement = document.getElementById("no-contacts");
             noContactElement.style.display = "block";
           }
-          issueGetUnreadMessagesRequest().then((response) => {
-            response.json().then((unreadMessagesData) => {
-              Object.keys(unreadMessagesData.unreadMessagesPerUser).forEach((userId) => {
-                console.log(unreadMessagesData.unreadMessagesPerUser[userId]);
-                const contactTab = document.querySelector(`[contact-id="${userId}"]`);
-                const unreadMessagesEl = document.createElement("div");
-                unreadMessagesEl.classList.add("unreadmessages");
-                unreadMessagesEl.style.position = "inherit";
-                unreadMessagesEl.textContent = unreadMessagesData.unreadMessagesPerUser[userId];
-                contactTab.appendChild(unreadMessagesEl);
-              });
-            });
-          });
+          updateUnreadMessages();
         });
       }
     });
     clearFriendRequestInfoBox();
   }
+}
+
+function updateUnreadMessages() {
+  const unreadMessagesElements = document.getElementsByClassName("contactunreadmessages");
+  while (unreadMessagesElements.length > 0) {
+    unreadMessagesElements[0].parentNode.removeChild(unreadMessagesElements[0]);
+  }
+
+  issueGetUnreadMessagesRequest().then((response) => {
+    response.json().then((unreadMessagesData) => {
+      Object.keys(unreadMessagesData.unreadMessagesPerUser).forEach((userId) => {
+        console.log(unreadMessagesData.unreadMessagesPerUser[userId]);
+        const contactTab = document.querySelector(`[contact-id="${userId}"]`);
+        const unreadMessagesEl = document.createElement("div");
+        unreadMessagesEl.classList.add("unreadmessages");
+        unreadMessagesEl.classList.add("contactunreadmessages");
+        unreadMessagesEl.style.position = "inherit";
+        unreadMessagesEl.textContent = unreadMessagesData.unreadMessagesPerUser[userId];
+        contactTab.appendChild(unreadMessagesEl);
+      });
+      updateNotifier(unreadMessagesData?.allUnreadMessages);
+    });
+  });
 }
 
 function sendFriendRequest() {
@@ -275,6 +286,7 @@ function showMessages(contact, contactId) {
   clearInterval(msgCheckInterval);
   clearMessageView();
   clearActiveContacts();
+  updateUnreadMessages();
 
   issueGetMessagesWithContactRequest(contactId).then((response) => {
     response.json().then((data) => {
@@ -337,6 +349,7 @@ function checkNewMessages(contact) {
       });
     });
   }
+  updateUnreadMessages();
 }
 
 function searchContacts() {

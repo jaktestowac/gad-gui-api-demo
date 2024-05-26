@@ -12,33 +12,57 @@ async function issueGetUnreadMessagesRequest() {
   return data;
 }
 
-function addNotifier(number) {
+function updateNotifier(number) {
+  const dotElement = document.getElementById("unreadMessages");
+  const messengerLinkElement = document.getElementById("messengerLink");
+
+  if (dotElement !== null && dotElement !== undefined) {
+    if (number > 0) {
+      dotElement.innerText = `${number}`;
+    } else {
+      dotElement.remove();
+    }
+  } else {
+    addDotNotifier(number);
+  }
+
+  if (messengerLinkElement !== null && messengerLinkElement !== undefined) {
+    if (number > 0) {
+      messengerLinkElement.textContent = `Message center (${number})`;
+    } else {
+      messengerLinkElement.textContent = `Message center`;
+    }
+  } else {
+    addLinkToMessenger(number);
+  }
+}
+
+function addDotNotifier(number) {
   const element = document.querySelector(`[data-testid="user-dropdown"]`);
 
   if (element !== null && element !== undefined && number !== 0 && number !== undefined) {
     const dot = document.createElement("div");
     dot.classList.add("unreadmessages");
+    dot.id = "unreadMessages";
 
     dot.innerText = `${number}`;
     element.appendChild(dot);
   }
+}
 
+function addLinkToMessenger(number) {
   const dropdownContent = document.getElementById("dropdown-content");
 
   if (dropdownContent !== null && dropdownContent !== undefined) {
+    const newElement = document.createElement("a");
     if (number > 0) {
-      const newElement = document.createElement("a");
       newElement.textContent = `Message center (${number})`;
-      newElement.href = "/messenger.html";
-
-      dropdownContent.insertBefore(newElement, dropdownContent.children[1]);
     } else {
-      const newElement = document.createElement("a");
-      newElement.textContent = `Message center (0)`;
-      newElement.href = "/messenger.html";
-
-      dropdownContent.insertBefore(newElement, dropdownContent.children[1]);
+      newElement.textContent = `Message center`;
     }
+    newElement.href = "/messenger.html";
+    newElement.id = "messengerLink";
+    dropdownContent.insertBefore(newElement, dropdownContent.children[1]);
   }
 }
 
@@ -47,5 +71,6 @@ issueGetUnreadMessagesRequest()
     return r.json();
   })
   .then((results) => {
-    addNotifier(results?.allUnreadMessages);
+    addDotNotifier(results?.allUnreadMessages);
+    addLinkToMessenger(results?.allUnreadMessages);
   });
