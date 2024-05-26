@@ -2,7 +2,7 @@ const { getUnreadMessagesPerUser } = require("../../../helpers/db-operation.help
 const { expect } = require("../../config.js");
 const { gracefulQuit } = require("../../helpers/helpers.js");
 
-describe.only("getUnreadMessagesPerUser", () => {
+describe("getUnreadMessagesPerUser", () => {
   after(() => {
     gracefulQuit();
   });
