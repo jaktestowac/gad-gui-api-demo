@@ -1041,3 +1041,17 @@ body.darkmode {
 .darkmode svg > rect {
   fill: #e9e9e9 !important;
 }
+
+.unreadmessages {
+  position: absolute;
+  bottom: 0;
+  width: 20px;
+  height: 20px;
+  background-color: red;
+  border-radius: 50%;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 40px;
+}

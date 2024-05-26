@@ -17,17 +17,7 @@ function addNotifier(number) {
 
   if (element !== null && element !== undefined && number !== 0 && number !== undefined) {
     const dot = document.createElement("div");
-    dot.style.position = "absolute";
-    dot.style.bottom = "0";
-    dot.style.width = "20px";
-    dot.style.height = "20px";
-    dot.style.backgroundColor = "red";
-    dot.style.borderRadius = "50%";
-    dot.style.color = "white";
-    dot.style.display = "flex";
-    dot.style.justifyContent = "center";
-    dot.style.alignItems = "center";
-    dot.style.marginLeft = "40px";
+    dot.classList.add("unreadmessages");
 
     dot.innerText = `${number}`;
     element.appendChild(dot);

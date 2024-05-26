@@ -1,5 +1,6 @@
 const urlContacts = "/api/messenger/contacts";
 const urlMessages = "/api/messenger/messages";
+const urlUnreadMessages = "/api/messenger/unread";
 
 let simpleSuccessBox = "simpleSuccessBox";
 let simpleErrorBox = "simpleErrorBox";
@@ -38,6 +39,18 @@ messageInput.addEventListener("keydown", function (event) {
 
 async function issueGetContactsRequest() {
   const data = fetch(urlContacts, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+  });
+  return data;
+}
+
+async function issueGetUnreadMessagesRequest() {
+  const data = fetch(urlUnreadMessages, {
     method: "GET",
     headers: {
       Accept: "application/json",
@@ -161,6 +174,19 @@ function openTab(evt, tabName) {
             const noContactElement = document.getElementById("no-contacts");
             noContactElement.style.display = "block";
           }
+          issueGetUnreadMessagesRequest().then((response) => {
+            response.json().then((unreadMessagesData) => {
+              Object.keys(unreadMessagesData.unreadMessagesPerUser).forEach((userId) => {
+                console.log(unreadMessagesData.unreadMessagesPerUser[userId]);
+                const contactTab = document.querySelector(`[contact-id="${userId}"]`);
+                const unreadMessagesEl = document.createElement("div");
+                unreadMessagesEl.classList.add("unreadmessages");
+                unreadMessagesEl.style.position = "inherit";
+                unreadMessagesEl.textContent = unreadMessagesData.unreadMessagesPerUser[userId];
+                contactTab.appendChild(unreadMessagesEl);
+              });
+            });
+          });
         });
       }
     });
