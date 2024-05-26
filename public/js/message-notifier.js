@@ -1,7 +1,7 @@
-const url = "/api/messages";
+const unreadMessages = "/api/messenger/unread";
 
-async function issueGetMessagesRequest() {
-  const data = fetch(url, {
+async function issueGetUnreadMessagesRequest() {
+  const data = fetch(unreadMessages, {
     method: "GET",
     headers: {
       Accept: "application/json",
@@ -52,11 +52,10 @@ function addNotifier(number) {
   }
 }
 
-// issueGetMessagesRequest()
-//   .then((r) => {
-//     return r.json();
-//   })
-//   .then((results) => {
-//     // const number = 3;
-//     // addNotifier(number);
-//   });
+issueGetUnreadMessagesRequest()
+  .then((r) => {
+    return r.json();
+  })
+  .then((results) => {
+    addNotifier(results?.allUnreadMessages);
+  });

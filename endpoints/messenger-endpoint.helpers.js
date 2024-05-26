@@ -7,6 +7,10 @@ const {
   searchForMessagesByBothUserIds,
   getMessagesWithIdGreaterThan,
   searchForMessageCheckByUserId,
+  searchForMessageCheckById,
+  searchForContactsById,
+  searchForMessagesSentToUserId,
+  getUnreadMessagesPerUser,
 } = require("../helpers/db-operation.helpers");
 const { logTrace } = require("../helpers/logger-api");
 const {
@@ -44,11 +48,26 @@ function handleMessenger(req, res, isAdmin) {
     res.status(HTTP_NOT_FOUND).json({});
   }
   let foundUser = undefined;
-
-  if (req.method === "GET" && req.url.endsWith("/api/messenger/messages")) {
-    const verifyTokenResult = verifyAccessToken(req, res, "messenger/contacts", req.url);
+  if (req.method === "GET" && req.url.endsWith("/api/messenger/unread")) {
+    const verifyTokenResult = verifyAccessToken(req, res, "messenger/unread", req.url);
     foundUser = searchForUserWithOnlyToken(verifyTokenResult);
-    logTrace("handleMessengerContacts: foundUser:", { method: req.method, urlEnds, foundUser });
+    logTrace("handleMessengerUnread: foundUser:", { method: req.method, urlEnds, foundUser });
+
+    if (isUndefined(foundUser) || isUndefined(verifyTokenResult)) {
+      res.status(HTTP_UNAUTHORIZED).json(formatInvalidTokenErrorResponse());
+      return;
+    }
+
+    const sentMessages = searchForMessagesSentToUserId(foundUser.id);
+    const userLastCheck = searchForMessageCheckByUserId(foundUser.id);
+    const unreadMessages = getUnreadMessagesPerUser(sentMessages, userLastCheck, foundUser.id);
+    res.status(HTTP_OK).json(unreadMessages);
+    return;
+  }
+  if (req.method === "GET" && req.url.endsWith("/api/messenger/messages")) {
+    const verifyTokenResult = verifyAccessToken(req, res, "messenger/messages", req.url);
+    foundUser = searchForUserWithOnlyToken(verifyTokenResult);
+    logTrace("handleMessengerMessages: foundUser:", { method: req.method, urlEnds, foundUser });
 
     if (isUndefined(foundUser) || isUndefined(verifyTokenResult)) {
       res.status(HTTP_UNAUTHORIZED).json(formatInvalidTokenErrorResponse());
@@ -67,9 +86,9 @@ function handleMessenger(req, res, isAdmin) {
     return;
   }
   if (req.method === "GET" && req.url.includes("/api/messenger/messages?")) {
-    const verifyTokenResult = verifyAccessToken(req, res, "messenger/contacts", req.url);
+    const verifyTokenResult = verifyAccessToken(req, res, "messenger/messages", req.url);
     foundUser = searchForUserWithOnlyToken(verifyTokenResult);
-    logTrace("handleMessengerContacts: foundUser:", { method: req.method, urlEnds, foundUser });
+    logTrace("handleMessengerMessages: foundUser:", { method: req.method, urlEnds, foundUser });
 
     if (isUndefined(foundUser) || isUndefined(verifyTokenResult)) {
       res.status(HTTP_UNAUTHORIZED).json(formatInvalidTokenErrorResponse());
@@ -110,7 +129,7 @@ function handleMessenger(req, res, isAdmin) {
   if (req.method === "POST" && req.url.endsWith("/api/messenger/messages")) {
     const verifyTokenResult = verifyAccessToken(req, res, "messenger/messages", req.url);
     foundUser = searchForUserWithOnlyToken(verifyTokenResult);
-    logTrace("handleMessengerContacts: foundUser:", { method: req.method, urlEnds, foundUser });
+    logTrace("handleMessengerMessages: foundUser:", { method: req.method, urlEnds, foundUser });
 
     if (isUndefined(foundUser) || isUndefined(verifyTokenResult)) {
       res.status(HTTP_UNAUTHORIZED).json(formatInvalidTokenErrorResponse());
@@ -243,7 +262,7 @@ function handleMessenger(req, res, isAdmin) {
       let newId = 0;
       for (let i = 0; i < 100; i++) {
         newId = getRandomInt(1000, 999999);
-        otherContacts = searchForContactsByUserId(newId);
+        otherContacts = searchForContactsById(newId);
         if (isUndefined(otherContacts)) {
           break;
         }

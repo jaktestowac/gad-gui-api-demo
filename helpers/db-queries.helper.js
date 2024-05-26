@@ -27,7 +27,9 @@ function updateMessageCheckTimeInDb(db, userId, resource, contactId) {
 
   if (results.length > 0) {
     const callback = (item) => (
-      (item.last_check = new Date().toISOString()), (item.last_checks[contactId] = new Date().toISOString())
+      (item.last_check = new Date().toISOString()),
+      item.last_checks === undefined ? (item.last_checks = {}) : (item.last_checks = item.last_checks),
+      (item.last_checks[contactId] = new Date().toISOString())
     );
     invokeQuery(db, "message-check", query, callback);
   } else {
