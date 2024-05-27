@@ -101,7 +101,7 @@ function handleMessenger(req, res, isAdmin) {
 
     const messages = searchForMessagesByBothUserIds(foundUser.id, contactId);
     const filteredMessages = getMessagesWithIdGreaterThan(messages, idFrom);
-    res.status(HTTP_OK).json(filteredMessages);
+    res.status(HTTP_OK).json({ messages: filteredMessages });
 
     let messageCheck = searchForMessageCheckByUserId(foundUser.id);
     if (isUndefined(messageCheck)) {

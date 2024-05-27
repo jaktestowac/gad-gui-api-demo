@@ -191,7 +191,6 @@ function updateUnreadMessages() {
   issueGetUnreadMessagesRequest().then((response) => {
     response.json().then((unreadMessagesData) => {
       Object.keys(unreadMessagesData.unreadMessagesPerUser).forEach((userId) => {
-        console.log(unreadMessagesData.unreadMessagesPerUser[userId]);
         const contactTab = document.querySelector(`[contact-id="${userId}"]`);
         const unreadMessagesEl = document.createElement("div");
         unreadMessagesEl.classList.add("unreadmessages");
@@ -290,7 +289,7 @@ function showMessages(contact, contactId) {
 
   issueGetMessagesWithContactRequest(contactId).then((response) => {
     response.json().then((data) => {
-      displayMessages(data, contact);
+      displayMessages(data.messages, contact);
     });
   });
 
@@ -342,9 +341,9 @@ function checkNewMessages(contact) {
     const lastMessageId = lastMessage.getAttribute("id");
     issueGetMessagesWithContactRequest(contactId, lastMessageId).then((response) => {
       response.json().then((data) => {
-        if (data.length > 0) {
+        if (data?.messages.length > 0) {
           console.log("New messages received for " + contact + " (" + data.length + " new messages)");
-          displayMessages(data, contact);
+          displayMessages(data?.messages, contact);
         }
       });
     });

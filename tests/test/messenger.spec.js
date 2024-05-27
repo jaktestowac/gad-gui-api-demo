@@ -240,7 +240,7 @@ describe("Messenger - contacts and messages", async () => {
 
       // Assert:
       expect(response.status, JSON.stringify(response.body)).to.equal(200);
-      expect(response.body.length, JSON.stringify(response.body)).to.be.greaterThan(1);
+      expect(response.body.messages.length, JSON.stringify(response.body)).to.be.greaterThan(1);
     });
 
     it(`GET ${baseUrl}?userId= - should return 200 and empty list of messages`, async () => {
@@ -249,7 +249,7 @@ describe("Messenger - contacts and messages", async () => {
 
       // Assert:
       expect(response.status, JSON.stringify(response.body)).to.equal(200);
-      expect(response.body.length, JSON.stringify(response.body)).to.be.equal(0);
+      expect(response.body.messages.length, JSON.stringify(response.body)).to.be.equal(0);
     });
 
     [1, "1"].forEach((idTo) => {

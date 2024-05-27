@@ -359,7 +359,7 @@ function getMessagesWithIdGreaterThan(messages, id) {
   const foundMessages = messages.filter((message) => {
     return message["id"] > id;
   });
-  return foundMessages;
+  return foundMessages ?? [];
 }
 
 function getMessagesWithDateGreaterThan(messages, date) {
