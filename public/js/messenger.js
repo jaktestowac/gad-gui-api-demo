@@ -160,6 +160,7 @@ function openTab(evt, tabName) {
     // contacts
     clearContacts();
     disableSendingMessages();
+
     issueGetContactsRequest().then((response) => {
       if (response.status === 200) {
         response.json().then((data) => {
@@ -188,8 +189,8 @@ function updateUnreadMessages() {
     unreadMessagesElements[0].parentNode.removeChild(unreadMessagesElements[0]);
   }
 
-  issueGetUnreadMessagesRequest().then((response) => {
-    response.json().then((unreadMessagesData) => {
+  return issueGetUnreadMessagesRequest().then((response) => {
+    return response.json().then((unreadMessagesData) => {
       Object.keys(unreadMessagesData.unreadMessagesPerUser).forEach((userId) => {
         const contactTab = document.querySelector(`[contact-id="${userId}"]`);
         const unreadMessagesEl = document.createElement("div");
@@ -200,6 +201,7 @@ function updateUnreadMessages() {
         contactTab.appendChild(unreadMessagesEl);
       });
       updateNotifier(unreadMessagesData?.allUnreadMessages);
+      return unreadMessagesData;
     });
   });
 }
@@ -338,17 +340,20 @@ function checkNewMessages(contact) {
   const lastMessage = messages[messages.length - 1];
 
   if (lastMessage !== null) {
-    const lastMessageId = lastMessage.getAttribute("id");
-    issueGetMessagesWithContactRequest(contactId, lastMessageId).then((response) => {
-      response.json().then((data) => {
-        if (data?.messages.length > 0) {
-          console.log("New messages received for " + contact + " (" + data.length + " new messages)");
-          displayMessages(data?.messages, contact);
-        }
-      });
+    updateUnreadMessages().then((unreadMessagesData) => {
+      if (unreadMessagesData.unreadMessagesPerUser[contactId] > 0) {
+        const lastMessageId = lastMessage.getAttribute("id");
+        issueGetMessagesWithContactRequest(contactId, lastMessageId).then((response) => {
+          response.json().then((data) => {
+            if (data?.messages.length > 0) {
+              console.log("New messages received for " + contact + " (" + data.length + " new messages)");
+              displayMessages(data?.messages, contact);
+            }
+          });
+        });
+      }
     });
   }
-  updateUnreadMessages();
 }
 
 function searchContacts() {
