@@ -251,28 +251,31 @@ function handleArticles(req, res, isAdmin) {
   }
 
   // soft delete:
-  if (req.method === "DELETE" && urlEnds.includes("/api/articles") && !isAdmin) {
-    const verifyTokenResult = verifyAccessToken(req, res, "DELETE articles", req.url);
+  if (req.method === "DELETE" && urlEnds.includes("/api/articles")) {
     let articleId = getIdFromUrl(urlEnds);
-
     const foundArticle = searchForArticle(articleId);
-    const foundUser = searchForUserWithToken(foundArticle?.user_id, verifyTokenResult);
 
-    logDebug("handleArticles: foundUser and user_id:", { foundUser, user_id: foundArticle?.user_id });
+    if (!isAdmin) {
+      const verifyTokenResult = verifyAccessToken(req, res, "DELETE articles", req.url);
 
-    if (isUndefined(foundArticle) || isInactive(foundArticle)) {
-      res.status(HTTP_NOT_FOUND).send({});
-      return;
-    }
+      const foundUser = searchForUserWithToken(foundArticle?.user_id, verifyTokenResult);
 
-    if (isUndefined(foundUser) && !areIdsEqual(foundUser?.id, foundArticle?.user_id)) {
-      res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
-      return;
-    }
+      logDebug("handleArticles: foundUser and user_id:", { foundUser, user_id: foundArticle?.user_id });
 
-    if (isUndefined(foundUser)) {
-      res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
-      return;
+      if (isUndefined(foundArticle) || isInactive(foundArticle)) {
+        res.status(HTTP_NOT_FOUND).send({});
+        return;
+      }
+
+      if (isUndefined(foundUser) && !areIdsEqual(foundUser?.id, foundArticle?.user_id)) {
+        res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+        return;
+      }
+
+      if (isUndefined(foundUser)) {
+        res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+        return;
+      }
     }
 
     req.method = "PUT";
