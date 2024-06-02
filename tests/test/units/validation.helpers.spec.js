@@ -31,6 +31,30 @@ describe("validation helpers", async () => {
       });
     });
 
+    it(`check date - current date (America/New_York)- should be in past`, async () => {
+      const currentDate = new Date();
+      const options = {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        timeZone: "America/New_York",
+      };
+
+      // Arrange:
+      let inputDateString = currentDate.toLocaleString("en-US", options);
+
+      inputDateString = new Date(inputDateString).toISOString();
+
+      inputDateString = inputDateString.replace("Z", "-04:00");
+      // Act:
+      const result = isDateInFuture(inputDateString);
+      // Assert:
+      expect(result.isDateInFuture, JSON.stringify(result, null, 2)).to.eql(false);
+    });
+
     it(`check date - current date ISO string - should be in past`, async () => {
       // Arrange:
       const inputDateString = new Date().toISOString();
@@ -41,7 +65,7 @@ describe("validation helpers", async () => {
       // Assert:
       expect(result.isDateInFuture, JSON.stringify(result, null, 2)).to.eql(false);
     });
-    
+
     it(`check date - current date - should be in past`, async () => {
       // Arrange:
       const inputDateString = getCurrentDate();
@@ -52,7 +76,7 @@ describe("validation helpers", async () => {
       // Assert:
       expect(result.isDateInFuture, JSON.stringify(result, null, 2)).to.eql(false);
     });
-    
+
     it(`check date - one hour in future`, async () => {
       // Arrange:
       const inputDateString = getCurrentDate(1, 0, 0);

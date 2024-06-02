@@ -188,8 +188,8 @@ const isDateValid = (date) => {
   }
 };
 
-function isDateInFuture(inputRawDateString) {
-  const inputDate = new Date(inputRawDateString); // at UTC
+function isDateInFuture(inputRawDateString, applicationDateString = undefined) {
+  const inputDate = new Date(inputRawDateString);
   let inputDateTimezoneOffsetInMinutes = 0;
   let inputDateTimezoneOffsetInHours = 0;
 
@@ -197,17 +197,16 @@ function isDateInFuture(inputRawDateString) {
   const match = inputRawDateString.match(offsetRegex);
 
   if (match) {
-    const sign = match[1];
-    const hours = parseInt(match[2], 10);
-    const minutes = parseInt(match[3], 10);
-
-    // Calculate total offset in minutes
-    inputDateTimezoneOffsetInMinutes = minutes;
-    inputDateTimezoneOffsetInHours = hours;
-    if (sign === "-") {
-      inputDateTimezoneOffsetInMinutes = -inputDateTimezoneOffsetInMinutes;
-      inputDateTimezoneOffsetInHours = -inputDateTimezoneOffsetInHours;
-    }
+    // const sign = match[1];
+    // const hours = parseInt(match[2], 10);
+    // const minutes = parseInt(match[3], 10);
+    // // Calculate total offset in minutes
+    // inputDateTimezoneOffsetInMinutes = minutes;
+    // inputDateTimezoneOffsetInHours = hours;
+    // if (sign === "-") {
+    //   inputDateTimezoneOffsetInMinutes = -inputDateTimezoneOffsetInMinutes;
+    //   inputDateTimezoneOffsetInHours = -inputDateTimezoneOffsetInHours;
+    // }
   } else {
     inputDateTimezoneOffsetInMinutes = inputDate.getTimezoneOffset();
     inputDateTimezoneOffsetInHours = Math.floor(inputDateTimezoneOffsetInMinutes / 60);
@@ -217,8 +216,13 @@ function isDateInFuture(inputRawDateString) {
     inputDateTimezoneOffsetInHours = -inputDateTimezoneOffsetInHours;
   }
 
-  const applicationDate = new Date();
-  const applicationDateRaw = new Date();
+  let applicationDate = new Date();
+  let applicationDateRaw = new Date();
+
+  if (applicationDateString !== undefined) {
+    applicationDate = new Date(applicationDateString);
+    applicationDateRaw = new Date(applicationDateString);
+  }
   applicationDate.setHours(applicationDate.getHours() + inputDateTimezoneOffsetInHours);
   applicationDate.setMinutes(applicationDate.getMinutes() + inputDateTimezoneOffsetInMinutes);
   applicationDate.setSeconds(applicationDate.getSeconds() + 10); // add possibility of offset
