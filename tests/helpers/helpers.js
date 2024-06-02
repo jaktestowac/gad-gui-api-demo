@@ -33,6 +33,12 @@ function getCurrentDate(hours = 0, minutes = 0, seconds = 0) {
   return date;
 }
 
+function addOffsetToDateString(date, offset) {
+  const newDate = date.replace("Z", offset);
+
+  return newDate;
+}
+
 function getISODateWithTimezoneOffset(date) {
   const timezoneOffset = -date.getTimezoneOffset();
   const dif = timezoneOffset >= 0 ? "+" : "-";
@@ -92,4 +98,5 @@ module.exports = {
   getCurrentDate,
   toggle404Bug,
   getISODateWithTimezoneOffset,
+  addOffsetToDateString,
 };

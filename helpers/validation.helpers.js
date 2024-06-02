@@ -190,11 +190,29 @@ const isDateValid = (date) => {
 
 function isDateInFuture(inputRawDateString) {
   const inputDate = new Date(inputRawDateString);
-  const inputDateTimezoneOffset = inputDate.getTimezoneOffset();
+  let inputDateTimezoneOffsetInMinutes = 0;
+
+  const offsetRegex = /([+-])(\d{2}):(\d{2})$/;
+  const match = inputRawDateString.match(offsetRegex);
+
+  if (match) {
+    const sign = match[1];
+    const hours = parseInt(match[2], 10);
+    const minutes = parseInt(match[3], 10);
+
+    // Calculate total offset in minutes
+    inputDateTimezoneOffsetInMinutes = hours * 60 + minutes;
+    if (sign === "-") {
+      inputDateTimezoneOffsetInMinutes = -inputDateTimezoneOffsetInMinutes;
+    }
+  } else {
+    inputDateTimezoneOffsetInMinutes = inputDate.getTimezoneOffset();
+  }
+
   const applicationDate = new Date();
-  applicationDate.setMinutes(applicationDate.getMinutes() - inputDateTimezoneOffset);
+  applicationDate.setMinutes(applicationDate.getMinutes() - inputDateTimezoneOffsetInMinutes);
   applicationDate.setSeconds(applicationDate.getSeconds() + 10); // add possibility of offset
-  logTrace("isDateInFuture:", { inputRawDateString, inputDate, inputDateTimezoneOffset, applicationDate });
+  logTrace("isDateInFuture:", { inputRawDateString, inputDate, inputDateTimezoneOffsetInMinutes, applicationDate });
 
   if (isBugEnabled(BugConfigKeys.BUG_VALIDATION_007)) {
     return true;
@@ -207,7 +225,7 @@ function isDateInFuture(inputRawDateString) {
     isDateInFuture: inputDate > applicationDate,
     inputRawDateString,
     inputDate,
-    inputDateTimezoneOffset,
+    inputDateTimezoneOffsetInMinutes,
     applicationDate,
   };
 }
@@ -274,4 +292,5 @@ module.exports = {
   validateDateFields,
   isFieldsLengthValid,
   isObjectLengthValid,
+  isDateInFuture,
 };
