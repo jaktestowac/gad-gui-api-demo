@@ -53,7 +53,9 @@ const formatDateToLocaleString = (dateString) => {
     second: "2-digit",
   };
 
-  const formattedDate = date.toLocaleString(undefined, options).replace(",", "");
+  const locale = navigator.language;
+
+  const formattedDate = date.toLocaleString(locale, options).replace(",", "");
   return formattedDate;
 };
 

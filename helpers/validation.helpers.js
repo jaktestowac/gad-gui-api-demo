@@ -113,7 +113,7 @@ function validateDateFields(body, fields = ["date"]) {
       const result = isDateInFuture(element);
       if (result.isDateInFuture === true) {
         logError("validateDateFields: Body:", { body, result });
-        error = `Field validation: "${key}" has date in future! Application date: "${result.currentDate}" Input date: "${result.inputDate}"`;
+        error = `Field validation: "${key}" has date in future! Application date: "${result.applicationDate}" Input date: "${result.inputDate}"`;
         return { status: false, error };
       }
     }
@@ -191,6 +191,7 @@ const isDateValid = (date) => {
 function isDateInFuture(inputRawDateString) {
   const inputDate = new Date(inputRawDateString);
   let inputDateTimezoneOffsetInMinutes = 0;
+  let inputDateTimezoneOffsetInHours = 0;
 
   const offsetRegex = /([+-])(\d{2}):(\d{2})$/;
   const match = inputRawDateString.match(offsetRegex);
@@ -199,20 +200,36 @@ function isDateInFuture(inputRawDateString) {
     const sign = match[1];
     const hours = parseInt(match[2], 10);
     const minutes = parseInt(match[3], 10);
-
+    
     // Calculate total offset in minutes
-    inputDateTimezoneOffsetInMinutes = hours * 60 + minutes;
+    inputDateTimezoneOffsetInMinutes = minutes;
+    inputDateTimezoneOffsetInHours = hours;
     if (sign === "-") {
       inputDateTimezoneOffsetInMinutes = -inputDateTimezoneOffsetInMinutes;
+      inputDateTimezoneOffsetInHours = -inputDateTimezoneOffsetInHours;
     }
   } else {
     inputDateTimezoneOffsetInMinutes = inputDate.getTimezoneOffset();
+    inputDateTimezoneOffsetInHours = Math.floor(inputDateTimezoneOffsetInMinutes / 60);
+    inputDateTimezoneOffsetInMinutes -= inputDateTimezoneOffsetInHours * 60;
+
+    inputDateTimezoneOffsetInMinutes = -inputDateTimezoneOffsetInMinutes;
+    inputDateTimezoneOffsetInHours = -inputDateTimezoneOffsetInHours;
   }
 
   const applicationDate = new Date();
-  applicationDate.setMinutes(applicationDate.getMinutes() - inputDateTimezoneOffsetInMinutes);
+  const applicationDateRaw = new Date();
+  applicationDate.setHours(applicationDate.getHours() + inputDateTimezoneOffsetInHours);
+  applicationDate.setMinutes(applicationDate.getMinutes() + inputDateTimezoneOffsetInMinutes);
   applicationDate.setSeconds(applicationDate.getSeconds() + 10); // add possibility of offset
-  logTrace("isDateInFuture:", { inputRawDateString, inputDate, inputDateTimezoneOffsetInMinutes, applicationDate });
+  logTrace("isDateInFuture:", {
+    inputRawDateString,
+    inputDate,
+    inputDateTimezoneOffsetInMinutes,
+    inputDateTimezoneOffsetInHours,
+    applicationDate,
+    applicationDateRaw,
+  });
 
   if (isBugEnabled(BugConfigKeys.BUG_VALIDATION_007)) {
     return true;
@@ -226,7 +243,9 @@ function isDateInFuture(inputRawDateString) {
     inputRawDateString,
     inputDate,
     inputDateTimezoneOffsetInMinutes,
+    inputDateTimezoneOffsetInHours,
     applicationDate,
+    applicationDateRaw,
   };
 }
 
