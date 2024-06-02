@@ -32,6 +32,53 @@ function getLocalStorage(id) {
   }
 }
 
+function pad(num, size = 2) {
+  num = num.toString();
+  while (num.length < size) num = "0" + num;
+  return num;
+}
+
+const formatDateToLocaleString = (dateString) => {
+  if (dateString === undefined) {
+    return "";
+  }
+
+  const date = new Date(dateString);
+  const options = {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  };
+
+  const formattedDate = date.toLocaleString(undefined, options).replace(",", "");
+  return formattedDate;
+};
+
+function getISODateWithTimezoneOffset(date) {
+  const timezoneOffset = -date.getTimezoneOffset();
+  const dif = timezoneOffset >= 0 ? "+" : "-";
+
+  const currentDatetime =
+    date.getFullYear() +
+    "-" +
+    pad(date.getMonth() + 1) +
+    "-" +
+    pad(date.getDate()) +
+    "T" +
+    pad(date.getHours()) +
+    ":" +
+    pad(date.getMinutes()) +
+    ":" +
+    pad(date.getSeconds());
+
+  const timezoneDif = dif + pad(Math.floor(Math.abs(timezoneOffset) / 60)) + ":" + pad(Math.abs(timezoneOffset) % 60);
+
+  return currentDatetime + timezoneDif;
+}
+
 function checkIfCookieExists(name) {
   let cookies = document.cookie.split(";");
   let found = "";

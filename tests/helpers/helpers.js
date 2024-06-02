@@ -33,6 +33,28 @@ function getCurrentDate(hours = 0, minutes = 0, seconds = 0) {
   return date;
 }
 
+function getISODateWithTimezoneOffset(date) {
+  const timezoneOffset = -date.getTimezoneOffset();
+  const dif = timezoneOffset >= 0 ? "+" : "-";
+
+  const currentDatetime =
+    date.getFullYear() +
+    "-" +
+    pad(date.getMonth() + 1) +
+    "-" +
+    pad(date.getDate()) +
+    "T" +
+    pad(date.getHours()) +
+    ":" +
+    pad(date.getMinutes()) +
+    ":" +
+    pad(date.getSeconds());
+
+  const timezoneDif = dif + pad(Math.floor(Math.abs(timezoneOffset) / 60)) + ":" + pad(Math.abs(timezoneOffset) % 60);
+
+  return currentDatetime + timezoneDif;
+}
+
 async function setupEnv() {
   const restoreResponse = await request.get("/api/restoreDB");
   expect(restoreResponse.status).to.equal(201);
@@ -69,4 +91,5 @@ module.exports = {
   setupEnv,
   getCurrentDate,
   toggle404Bug,
+  getISODateWithTimezoneOffset,
 };

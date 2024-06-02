@@ -278,9 +278,7 @@ const handleCreate = () => {
   const container = document.querySelector(".add-new-panel");
 
   const today = new Date();
-  const date = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}T${pad(
-    today.getHours()
-  )}:${pad(today.getMinutes())}:${pad(today.getSeconds())}Z`;
+  const date = getISODateWithTimezoneOffset(today);
 
   let data = {
     title: container.querySelector(".title").value,
@@ -314,6 +312,8 @@ const getImagesHTML = (image) => {
 };
 
 const getItemHTML = (item) => {
+  const formattedDate = formatDateToLocaleString(item.date);
+
   return `<div id="article${item.id}" class="item-card" data-testid="article-${item.id}">
   <a href="article.html?id=${item.id}" id="gotoArticle${item.id}" data-testid="article-${item.id}-link">${getImagesHTML(
     item.image
@@ -339,9 +339,7 @@ const getItemHTML = (item) => {
     
     <tr>
       <td style="padding: 0px;"><label style="width:25px !important">date:</label>&nbsp&nbsp</td>
-      <td style="padding: 0px;"><span data-testid="article-${item.id}-date">${item.date
-    .replace("T", " ")
-    .replace("Z", "")}</span></td>
+      <td style="padding: 0px;"><span data-testid="article-${item.id}-date">${formattedDate}</span></td>
     </tr>
   </table>
   

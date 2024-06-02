@@ -69,6 +69,7 @@ describe("Endpoint /likes", () => {
     describe("e2e", () => {
       beforeEach(async () => {
         await setupEnv();
+        console.log(">>> Restoring DB before e2e tests");
         await request.get("/restoreDB");
       });
 

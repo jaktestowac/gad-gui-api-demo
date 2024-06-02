@@ -209,6 +209,8 @@ const getItemHTML = (item) => {
   }
 
   const body = item.body?.replaceAll("\n", "<br/><br/>");
+  const date = formatDateToLocaleString(item?.date);
+
   return `<div class="item-card">
         ${controls}<br>
         ${getImagesHTML(item.image)}
@@ -233,7 +235,7 @@ const getItemHTML = (item) => {
         
         <tr>
           <td style="padding: 0px ;"><label style="width:10px !important">date:</label>&nbsp&nbsp</td>
-          <td style="padding: 0px ;"><span>${item?.date?.replace("T", " ").replace("Z", "")}</span></td>
+          <td style="padding: 0px ;"><span>${date}</span></td>
         </tr>
       </table>
         <div class="labels-container" id="labels-container" ></div>

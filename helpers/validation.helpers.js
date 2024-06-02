@@ -188,13 +188,13 @@ const isDateValid = (date) => {
   }
 };
 
-function isDateInFuture(dateString) {
-  const inputDate = new Date(dateString);
-  const timezoneOffset = inputDate.getTimezoneOffset();
-  const currentDate = new Date();
-  currentDate.setMinutes(currentDate.getMinutes() - timezoneOffset);
-  currentDate.setSeconds(currentDate.getSeconds() + 10); // add possibility of offset
-  logTrace("isDateInFuture:", { dateString, inputDate, currentDate });
+function isDateInFuture(inputRawDateString) {
+  const inputDate = new Date(inputRawDateString);
+  const inputDateTimezoneOffset = inputDate.getTimezoneOffset();
+  const applicationDate = new Date();
+  applicationDate.setMinutes(applicationDate.getMinutes() - inputDateTimezoneOffset);
+  applicationDate.setSeconds(applicationDate.getSeconds() + 10); // add possibility of offset
+  logTrace("isDateInFuture:", { inputRawDateString, inputDate, inputDateTimezoneOffset, applicationDate });
 
   if (isBugEnabled(BugConfigKeys.BUG_VALIDATION_007)) {
     return true;
@@ -203,7 +203,13 @@ function isDateInFuture(dateString) {
     return false;
   }
 
-  return { isDateInFuture: inputDate > currentDate, dateString, inputDate, currentDate };
+  return {
+    isDateInFuture: inputDate > applicationDate,
+    inputRawDateString,
+    inputDate,
+    inputDateTimezoneOffset,
+    applicationDate,
+  };
 }
 
 const verifyAccessToken = (req, res, endpoint = "endpoint", url = "") => {
