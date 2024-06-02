@@ -12,16 +12,16 @@ describe("validation helpers", async () => {
       ["2020-12-12T12:12:12Z", false],
       [new Date().toISOString(), false],
       [getCurrentDate(), false],
+      ["2040-12-12T12:12:12Z", true],
+      [getCurrentDate(0, 0, 12), true],
+      [getCurrentDate(1, 0, 0), true],
       [addOffsetToDateString(new Date().toISOString(), "-11:00"), true],
       [addOffsetToDateString(new Date().toISOString(), "-04:00"), true],
       [addOffsetToDateString(new Date().toISOString(), "-02:00"), true],
       [addOffsetToDateString(new Date().toISOString(), "+02:00"), false],
       [addOffsetToDateString(new Date().toISOString(), "+04:00"), false],
       [addOffsetToDateString(new Date().toISOString(), "+11:00"), false],
-      [getCurrentDate(0, 0, 12), true],
-      [getCurrentDate(1, 0, 0), true],
       [addOffsetToDateString(getCurrentDate(1, 0, 0), "-02:00"), true],
-      ["2040-12-12T12:12:12Z", true],
     ].forEach((inputDateStringPairs) => {
       it(`check date - ${inputDateStringPairs[0]} - in future - ${inputDateStringPairs[1]}`, async () => {
         // Arrange:

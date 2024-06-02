@@ -189,7 +189,7 @@ const isDateValid = (date) => {
 };
 
 function isDateInFuture(inputRawDateString) {
-  const inputDate = new Date(inputRawDateString);
+  const inputDate = new Date(inputRawDateString); // at UTC
   let inputDateTimezoneOffsetInMinutes = 0;
   let inputDateTimezoneOffsetInHours = 0;
 
