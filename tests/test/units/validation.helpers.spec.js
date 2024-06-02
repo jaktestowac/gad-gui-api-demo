@@ -10,11 +10,7 @@ describe("validation helpers", async () => {
   describe("isDateInFuture", async () => {
     [
       ["2020-12-12T12:12:12Z", false],
-      [new Date().toISOString(), false],
-      [getCurrentDate(), false],
       ["2040-12-12T12:12:12Z", true],
-      [getCurrentDate(0, 0, 12), true],
-      [getCurrentDate(1, 0, 0), true],
       [addOffsetToDateString(new Date().toISOString(), "-11:00"), true],
       [addOffsetToDateString(new Date().toISOString(), "-04:00"), true],
       [addOffsetToDateString(new Date().toISOString(), "-02:00"), true],
@@ -33,6 +29,50 @@ describe("validation helpers", async () => {
         // Assert:
         expect(result.isDateInFuture, JSON.stringify(result, null, 2)).to.eql(inputDateStringPairs[1]);
       });
+    });
+
+    it(`check date - current date ISO string - should be in past`, async () => {
+      // Arrange:
+      const inputDateString = new Date().toISOString();
+
+      // Act:
+      const result = isDateInFuture(inputDateString);
+
+      // Assert:
+      expect(result.isDateInFuture, JSON.stringify(result, null, 2)).to.eql(false);
+    });
+    
+    it(`check date - current date - should be in past`, async () => {
+      // Arrange:
+      const inputDateString = getCurrentDate();
+
+      // Act:
+      const result = isDateInFuture(inputDateString);
+
+      // Assert:
+      expect(result.isDateInFuture, JSON.stringify(result, null, 2)).to.eql(false);
+    });
+    
+    it(`check date - one hour in future`, async () => {
+      // Arrange:
+      const inputDateString = getCurrentDate(1, 0, 0);
+
+      // Act:
+      const result = isDateInFuture(inputDateString);
+
+      // Assert:
+      expect(result.isDateInFuture, JSON.stringify(result, null, 2)).to.eql(true);
+    });
+
+    it(`check date - few seconds in future`, async () => {
+      // Arrange:
+      const inputDateString = getCurrentDate(0, 0, 12);
+
+      // Act:
+      const result = isDateInFuture(inputDateString);
+
+      // Assert:
+      expect(result.isDateInFuture, JSON.stringify(result, null, 2)).to.eql(true);
     });
   });
 });

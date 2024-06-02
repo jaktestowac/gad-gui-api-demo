@@ -277,8 +277,7 @@ function pad(num, size = 2) {
 const handleCreate = () => {
   const container = document.querySelector(".add-new-panel");
 
-  const today = new Date();
-  const date = getISODateWithTimezoneOffset(today);
+  const date = getISOTodayDateWithTimezoneOffset();
 
   let data = {
     title: container.querySelector(".title").value,

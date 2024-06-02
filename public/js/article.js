@@ -534,11 +534,7 @@ function pad(num, size = 2) {
 
 const handleCommentCreate = () => {
   const container = document.querySelector(".add-new-panel");
-  const today = new Date();
-
-  const date = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}T${pad(
-    today.getHours()
-  )}:${pad(today.getMinutes())}:${pad(today.getSeconds())}Z`;
+  const date = getISOTodayDateWithTimezoneOffset();
 
   const id = parseInt(getCookieId());
   const data = {

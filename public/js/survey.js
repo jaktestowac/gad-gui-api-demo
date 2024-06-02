@@ -17,10 +17,7 @@ function pad(num, size = 2) {
 }
 
 async function issuePostSurveyResponses(responses) {
-  const today = new Date();
-  const date = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}T${pad(
-    today.getHours()
-  )}:${pad(today.getMinutes())}:${pad(today.getSeconds())}Z`;
+  const date = getISOTodayDateWithTimezoneOffset();
 
   const data = {
     answers: responses,

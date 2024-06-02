@@ -200,7 +200,7 @@ function isDateInFuture(inputRawDateString) {
     const sign = match[1];
     const hours = parseInt(match[2], 10);
     const minutes = parseInt(match[3], 10);
-    
+
     // Calculate total offset in minutes
     inputDateTimezoneOffsetInMinutes = minutes;
     inputDateTimezoneOffsetInHours = hours;
@@ -222,30 +222,36 @@ function isDateInFuture(inputRawDateString) {
   applicationDate.setHours(applicationDate.getHours() + inputDateTimezoneOffsetInHours);
   applicationDate.setMinutes(applicationDate.getMinutes() + inputDateTimezoneOffsetInMinutes);
   applicationDate.setSeconds(applicationDate.getSeconds() + 10); // add possibility of offset
+  const differenceInSeconds = Math.round((inputDate - applicationDate) / 1000);
+  let isDateInFuture = inputDate > applicationDate;
+
   logTrace("isDateInFuture:", {
-    inputRawDateString,
+    isDateInFuture,
     inputDate,
-    inputDateTimezoneOffsetInMinutes,
-    inputDateTimezoneOffsetInHours,
     applicationDate,
     applicationDateRaw,
+    inputRawDateString,
+    differenceInSeconds,
+    inputDateTimezoneOffsetInMinutes,
+    inputDateTimezoneOffsetInHours,
   });
 
   if (isBugEnabled(BugConfigKeys.BUG_VALIDATION_007)) {
-    return true;
+    isDateInFuture = false;
   }
   if (isBugEnabled(BugConfigKeys.BUG_VALIDATION_008)) {
-    return false;
+    isDateInFuture = false;
   }
 
   return {
-    isDateInFuture: inputDate > applicationDate,
-    inputRawDateString,
+    isDateInFuture,
     inputDate,
-    inputDateTimezoneOffsetInMinutes,
-    inputDateTimezoneOffsetInHours,
     applicationDate,
     applicationDateRaw,
+    inputRawDateString,
+    differenceInSeconds,
+    inputDateTimezoneOffsetInMinutes,
+    inputDateTimezoneOffsetInHours,
   };
 }
 

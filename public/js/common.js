@@ -59,6 +59,10 @@ const formatDateToLocaleString = (dateString) => {
   return formattedDate;
 };
 
+function getISOTodayDateWithTimezoneOffset() {
+  return getISODateWithTimezoneOffset(new Date());
+}
+
 function getISODateWithTimezoneOffset(date) {
   const timezoneOffset = -date.getTimezoneOffset();
   const dif = timezoneOffset >= 0 ? "+" : "-";

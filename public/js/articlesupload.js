@@ -16,10 +16,7 @@ const dragText = document.getElementById("dragdropheader");
 let file;
 
 const handleCreate = () => {
-  const today = new Date();
-  const date = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}T${pad(
-    today.getHours()
-  )}:${pad(today.getMinutes())}:${pad(today.getSeconds())}Z`;
+  const date = getISOTodayDateWithTimezoneOffset();
 
   try {
     fileContent = JSON.parse(fileContent);
