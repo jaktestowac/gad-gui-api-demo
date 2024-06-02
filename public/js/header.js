@@ -205,7 +205,7 @@ const addMainMenuAndFooter = () => {
     menuContainerLeft.insertAdjacentHTML("afterend", rightMenu());
   }
   const body = document.querySelector("body");
-  body.insertAdjacentHTML("beforeend", footerHTML(new Date().getFullYear()));
+  body.insertAdjacentHTML("beforeend", footerHTML(getCurrentYear()));
 
   const hamburger = document.querySelector(".hamburger");
   const navMenu = document.querySelector(".nav-menu");

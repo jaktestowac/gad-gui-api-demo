@@ -7,7 +7,7 @@ const cookieBanner = `<div class="cookies-infobar">
 </div>`;
 
 function hideInfobar() {
-  var infoBar = document.querySelector(".cookies-infobar");
+  const infoBar = document.querySelector(".cookies-infobar");
 
   if (infoBar !== null) {
     infoBar.className = infoBar.classList.value + " cookies-accepted";
@@ -19,11 +19,7 @@ function wasAccepted() {
 }
 
 function saveCookieAcceptInCookies(daysOfValidity) {
-  var now = new Date();
-  var time = now.getTime() + daysOfValidity * 24 * 60 * 60 * 1000;
-  var newTime = new Date(now.setTime(time));
-
-  newTime = newTime.toUTCString();
+  const newTime = addDaysToDateTime(daysOfValidity).toUTCString();
 
   document.cookie = "bannerCookie=1; expires=" + newTime + "; SameSite=Lax; path=/";
 }
@@ -37,14 +33,14 @@ function displayBanner() {
     return;
   }
 
-  var btnAccept = document.querySelector("#cookies-infobar-accept");
+  const btnAccept = document.querySelector("#cookies-infobar-accept");
   btnAccept.addEventListener("click", function (e) {
     e.preventDefault();
     hideInfobar();
     saveCookieAcceptInCookies(0.1);
   });
 
-  var btnReject = document.querySelector("#cookies-infobar-reject");
+  const btnReject = document.querySelector("#cookies-infobar-reject");
   btnReject.addEventListener("click", function (e) {
     e.preventDefault();
     hideInfobar();

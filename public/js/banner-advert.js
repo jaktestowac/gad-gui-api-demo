@@ -134,10 +134,7 @@ function checkIfAdvertSkipped() {
 }
 
 function saveAdvertSkipped(daysOfValidity) {
-  var now = new Date();
-  var time = now.getTime() + daysOfValidity * 24 * 60 * 60 * 1000;
-  var newTime = new Date(now.setTime(time));
-  newTime = newTime.toUTCString();
+  const newTime = addDaysToDateTime(daysOfValidity).toUTCString();
   // cookie version:
   // document.cookie = "advertCookie=1; expires=" + newTime + "; SameSite=Lax; path=/";
 

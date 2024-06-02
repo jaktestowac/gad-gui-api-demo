@@ -59,6 +59,33 @@ const formatDateToLocaleString = (dateString) => {
   return formattedDate;
 };
 
+function getCurrentDateFromString(dateString) {
+  return new Date(dateString);
+}
+
+function getCurrentDate() {
+  return new Date();
+}
+
+function addDaysToDateTime(daysOfValidity) {
+  const now = getCurrentDate();
+  const time = now.getTime() + daysOfValidity * 24 * 60 * 60 * 1000;
+  const newTime = new Date(now.setTime(time));
+  return newTime;
+}
+
+function getCurrentDateLocaleString() {
+  return formatDateToLocaleString(new Date());
+}
+
+function getCurrentYear() {
+  return new Date().getFullYear();
+}
+
+function getISODateWithTimezoneOffsetFromString(dateString) {
+  return getISODateWithTimezoneOffset(new Date(dateString));
+}
+
 function getISOTodayDateWithTimezoneOffset() {
   return getISODateWithTimezoneOffset(new Date());
 }
@@ -99,7 +126,7 @@ function checkIfCookieExists(name) {
       found = cookie.substring(name.length, cookie.length);
     }
   }
-  console.log("Cookie found:", found);
+
   return found;
 }
 

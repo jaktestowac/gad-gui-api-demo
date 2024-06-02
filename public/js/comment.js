@@ -133,13 +133,11 @@ const issuePutRequest = (id, data, responseHandler, basicAuth) => {
 const issueDeleteRequest = (id, responseHandler) => {
   // delete data on the server:
   const url = commentsEndpoint + "/" + id;
-  console.log("DELETE request:", url);
   fetch(url, { method: "DELETE", headers: formatHeaders() }).then(responseHandler);
 };
 
 const issuePostRequest = (data, responseHandler) => {
   // create data on the server:
-  console.log("POST request:", commentsEndpoint, data);
   fetch(commentsEndpoint, {
     method: "post",
     headers: {

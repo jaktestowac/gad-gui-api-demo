@@ -59,11 +59,7 @@ async function issueGetRequest(
 
     await processCommentsData(userComments);
   }
-  // userComments.sort(function (a, b) {
-  //   let dateA = new Date(a.date),
-  //     dateB = new Date(b.date);
-  //   return dateB - dateA;
-  // });
+
   allComments = userComments;
   hideLoading();
   await displayCommentsData(userComments, displayDelay);

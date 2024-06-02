@@ -1,7 +1,7 @@
-var countDownDate = new Date(getCookieExpired()).getTime();
+var countDownDate = getCurrentDateFromString(getCookieExpired()).getTime();
 
 var x = setInterval(function () {
-  var now = new Date().getTime();
+  var now = getCurrentDate().getTime();
   var distance = countDownDate - now;
   if (distance > 0) {
     var days = Math.floor(distance / (1000 * 60 * 60 * 24));

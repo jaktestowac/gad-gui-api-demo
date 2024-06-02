@@ -287,12 +287,12 @@ const getCommentHTML = (comments) => {
     comments.body = "<i>[Comment was removed]</i>";
   }
 
+  const date = formatDateToLocaleString(comments.date);
+
   return `<div class="comment-container item-card">
         <label>id:</label><span class="super-style">${comments.id}</span><br>
-        <label>author:</label><span><a href="user.html?id=${comments.user_id}" id="gotoUser${comments.id}-${
-    comments.user_id
-  }">${comments.user_name}</a></span><br>
-        <label>date:</label><span>${comments.date.replace("T", " ").replace("Z", "")}</span><br>
+        <label>author:</label><span><a href="user.html?id=${comments.user_id}" id="gotoUser${comments.id}-${comments.user_id}">${comments.user_name}</a></span><br>
+        <label>date:</label><span>${date}</span><br>
         <label>comment:</label><span>${comments.body}</span><br>
         <span><a href="comment.html?id=${comments.id}" id="gotoComment${comments.id}">See More...</a></span><br>
     </div>`;

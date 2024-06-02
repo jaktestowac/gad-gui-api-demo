@@ -148,7 +148,7 @@ const showMessage = (message, isError = false) => {
 const handleCreate = () => {
   const container = document.querySelector(".add-new-panel");
   let birthdate = container.querySelector(".datepicker").value;
-  birthdate = `${new Date(birthdate).toISOString()}`.split(".")[0] + "Z";
+  birthdate = getISODateWithTimezoneOffset(birthdate);
   let data = {
     firstname: container.querySelector(".firstname").value,
     lastname: container.querySelector(".lastname").value,

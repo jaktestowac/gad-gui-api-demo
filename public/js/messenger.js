@@ -271,18 +271,6 @@ function addContact(contactName, contactId, avatarPath) {
   contacts.appendChild(newContact);
 }
 
-function formatDate(date) {
-  const options = {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  };
-  return new Date(date).toLocaleDateString(undefined, options);
-}
-
 function showMessages(contact, contactId) {
   clearInterval(msgCheckInterval);
   clearMessageView();
@@ -315,7 +303,7 @@ function displayMessages(data, contact) {
     data.forEach((message) => {
       const className = message.from == getId() ? "you" : "";
       const sender = message.from == getId() ? "You" : contact;
-      const timestamp = formatDate(message.date);
+      const timestamp = formatDateToLocaleString(message.date);
 
       const parsedMessage = message.content.replace(/(\r\n|\n|\r)/gm, "<br>");
 
@@ -408,7 +396,7 @@ function sendMessage() {
             warning = `<span class="simpleErrorBox">Message not sent</span>`;
           }
           const sender = "You";
-          const timestamp = formatDate(new Date());
+          const timestamp = formatDateToLocaleString(getCurrentDate());
 
           const newMessage = `
               <div class="message you" id="${data.id}">
