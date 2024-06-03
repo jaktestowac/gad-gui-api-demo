@@ -1,6 +1,7 @@
 const { getConfigValue, isBugEnabled } = require("../config/config-manager");
 const { ConfigKeys, BugConfigKeys } = require("../config/enums");
 const { isUndefined } = require("./compare.helpers");
+const { getDateTimeFromString } = require("./datetime.helpers");
 const { verifyToken, getJwtExpiryDate } = require("./jwtauth");
 const { logDebug, logError, logTrace, logWarn, logInsane } = require("./logger-api");
 
@@ -189,7 +190,7 @@ const isDateValid = (date) => {
 };
 
 function isDateInFuture(inputRawDateString, applicationDateString = undefined) {
-  const inputDate = new Date(inputRawDateString);
+  const inputDate = getDateTimeFromString(inputRawDateString);
   let inputDateTimezoneOffsetInMinutes = 0;
   let inputDateTimezoneOffsetInHours = 0;
 
@@ -220,8 +221,8 @@ function isDateInFuture(inputRawDateString, applicationDateString = undefined) {
   let applicationDateRaw = new Date();
 
   if (applicationDateString !== undefined) {
-    applicationDate = new Date(applicationDateString);
-    applicationDateRaw = new Date(applicationDateString);
+    applicationDate = getDateTimeFromString(applicationDateString);
+    applicationDateRaw = getDateTimeFromString(applicationDateString);
   }
   applicationDate.setHours(applicationDate.getHours() + inputDateTimezoneOffsetInHours);
   applicationDate.setMinutes(applicationDate.getMinutes() + inputDateTimezoneOffsetInMinutes);

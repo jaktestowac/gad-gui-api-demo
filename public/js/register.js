@@ -27,7 +27,7 @@ const showMessage = (message, isError = false) => {
 function sendData() {
   let birthdate = document.querySelector(".datepicker").value;
   try {
-    birthdate = getISODateWithTimezoneOffsetFromString(birthdate);
+    birthdate = getISODateStringWithTimezoneOffsetFromString(birthdate);
   } catch (ex) {
     // TODO:INVOKE_BUG: nothing is done in case of invalid birth date
   }

@@ -127,7 +127,7 @@ function wasSkipped() {
 
 function checkIfAdvertSkipped() {
   const advert = getLocalStorage("advert");
-  if (advert && advert.skipped === "1" && new Date(advert.expires) > new Date()) {
+  if (advert && advert.skipped === "1" && getDateFromString(advert.expires) > getCurrentDate()) {
     return true;
   }
   return false;

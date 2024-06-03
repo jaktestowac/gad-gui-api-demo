@@ -63,7 +63,7 @@ function populateTable(table, data, addDownloadLink) {
     sizeCell.style.fontSize = "14px";
 
     const dateCell = row.insertCell(2);
-    const lastModified = new Date(item.lastModified);
+    const lastModified = getDateFromString(item.lastModified);
     dateCell.textContent = lastModified.toISOString();
     dateCell.style.textAlign = "center";
     dateCell.style.fontSize = "14px";
@@ -84,7 +84,7 @@ async function makeRequest() {
       if (filesData.length === undefined) {
         filesData = [];
       }
-      filesData.sort((a, b) => new Date(b.lastModified) - new Date(a.lastModified));
+      filesData.sort((a, b) => getDateFromString(b.lastModified) - getDateFromString(a.lastModified));
       populateTable(userTable, filesData);
     })
     .catch((err) => {
@@ -96,7 +96,7 @@ async function makeRequest() {
       if (filesData.length === undefined) {
         filesData = [];
       }
-      filesData.sort((a, b) => new Date(b.lastModified) - new Date(a.lastModified));
+      filesData.sort((a, b) => getDateFromString(b.lastModified) - getDateFromString(a.lastModified));
       populateTable(publicTable, filesData, true);
     })
     .catch((err) => {

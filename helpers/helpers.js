@@ -96,22 +96,6 @@ function shuffleArray(array) {
   return shuffledArray;
 }
 
-function getTodayDate() {
-  const today = new Date();
-  const date = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}T${pad(
-    today.getHours()
-  )}:${pad(today.getMinutes())}:${pad(today.getSeconds())}Z`;
-  return date;
-}
-
-function getTodayDateForFileName() {
-  const today = new Date();
-  const date = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}T${pad(
-    today.getHours()
-  )}-${pad(today.getMinutes())}-${pad(today.getSeconds())}Z`;
-  return date;
-}
-
 function findMaxValues(obj, count) {
   const values = Object.values(obj);
   const sortedValues = values.sort((a, b) => b - a);
@@ -170,8 +154,6 @@ module.exports = {
   getIdFromUrl,
   shuffleArray,
   pad,
-  getTodayDate,
-  getTodayDateForFileName,
   findMaxValues,
   getUniqueValues,
   formatInvalidFieldValueErrorResponse,

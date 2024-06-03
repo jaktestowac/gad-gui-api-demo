@@ -15,17 +15,13 @@ function getCurrentDateTime() {
 }
 
 function getCurrentDateTimeISO() {
-  const now = new Date();
-
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0"); // Months are zero-based
-  const day = String(now.getDate()).padStart(2, "0");
-  const hours = String(now.getHours()).padStart(2, "0");
-  const minutes = String(now.getMinutes()).padStart(2, "0");
-  const seconds = String(now.getSeconds()).padStart(2, "0");
-
-  const formattedDateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}Z`;
+  const formattedDateTime = new Date().toISOString();
   return formattedDateTime;
+}
+
+function getDateTimeFromString(dateString) {
+  const date = new Date(dateString);
+  return date;
 }
 
 function dateToDateStringISO(date) {
@@ -67,6 +63,28 @@ function isDateStringGreaterThan(date1, date2) {
   return date1Date > date2Date;
 }
 
+function pad(num, size = 2) {
+  num = num.toString();
+  while (num.length < size) num = "0" + num;
+  return num;
+}
+
+function getTodayDate() {
+  const today = new Date();
+  const date = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}T${pad(
+    today.getHours()
+  )}:${pad(today.getMinutes())}:${pad(today.getSeconds())}Z`;
+  return date;
+}
+
+function getTodayDateForFileName() {
+  const today = new Date();
+  const date = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}T${pad(
+    today.getHours()
+  )}-${pad(today.getMinutes())}-${pad(today.getSeconds())}Z`;
+  return date;
+}
+
 module.exports = {
   getCurrentDateTime,
   getCurrentDateTimeISO,
@@ -76,4 +94,7 @@ module.exports = {
   dateToDateStringISO,
   calculateTimeDifferenceInSeconds,
   isDateStringGreaterThan,
+  getTodayDate,
+  getTodayDateForFileName,
+  getDateTimeFromString,
 };

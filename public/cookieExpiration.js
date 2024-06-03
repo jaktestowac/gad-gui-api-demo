@@ -1,4 +1,4 @@
-var countDownDate = getCurrentDateFromString(getCookieExpired()).getTime();
+var countDownDate = getDateFromString(getCookieExpired()).getTime();
 
 var x = setInterval(function () {
   var now = getCurrentDate().getTime();

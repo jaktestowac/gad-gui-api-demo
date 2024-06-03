@@ -1,3 +1,4 @@
+const { getCurrentDateTimeISO } = require("./datetime.helpers");
 const { logDebug, logTrace } = require("./logger-api");
 
 function setEntitiesInactive(db, tableName, query) {
@@ -27,9 +28,9 @@ function updateMessageCheckTimeInDb(db, userId, resource, contactId) {
 
   if (results.length > 0) {
     const callback = (item) => (
-      (item.last_check = new Date().toISOString()),
+      (item.last_check = getCurrentDateTimeISO()),
       item.last_checks === undefined ? (item.last_checks = {}) : (item.last_checks = item.last_checks),
-      (item.last_checks[contactId] = new Date().toISOString())
+      (item.last_checks[contactId] = getCurrentDateTimeISO())
     );
     invokeQuery(db, "message-check", query, callback);
   } else {

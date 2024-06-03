@@ -101,7 +101,7 @@ function getCumulativeValuesByDayOfWeek(data) {
   const cumulativeData = {};
 
   for (const key in data) {
-    const date = new Date(key);
+    const date = getDateFromString(key);
     const dayOfWeek = DAYS_OF_WEEK[date.getDay()];
 
     if (cumulativeData[dayOfWeek]) {

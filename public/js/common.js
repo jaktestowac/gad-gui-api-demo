@@ -59,7 +59,7 @@ const formatDateToLocaleString = (dateString) => {
   return formattedDate;
 };
 
-function getCurrentDateFromString(dateString) {
+function getDateFromString(dateString) {
   return new Date(dateString);
 }
 
@@ -82,15 +82,15 @@ function getCurrentYear() {
   return new Date().getFullYear();
 }
 
-function getISODateWithTimezoneOffsetFromString(dateString) {
-  return getISODateWithTimezoneOffset(new Date(dateString));
+function getISODateStringWithTimezoneOffsetFromString(dateString) {
+  return getISODateStringWithTimezoneOffset(new Date(dateString));
 }
 
 function getISOTodayDateWithTimezoneOffset() {
-  return getISODateWithTimezoneOffset(new Date());
+  return getISODateStringWithTimezoneOffset(new Date());
 }
 
-function getISODateWithTimezoneOffset(date) {
+function getISODateStringWithTimezoneOffset(date) {
   const timezoneOffset = -date.getTimezoneOffset();
   const dif = timezoneOffset >= 0 ? "+" : "-";
 

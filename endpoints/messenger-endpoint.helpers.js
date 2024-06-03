@@ -40,6 +40,7 @@ const { TracingInfoBuilder } = require("../helpers/tracing-info.helper");
 const { getRandomInt } = require("../helpers/generators/random-data.generator");
 const DatabaseManager = require("../helpers/db.manager");
 const { updateMessageCheckTimeInDb } = require("../helpers/db-queries.helper");
+const { getCurrentDateTimeISO } = require("../helpers/datetime.helpers");
 
 function handleMessenger(req, res, isAdmin) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
@@ -117,10 +118,10 @@ function handleMessenger(req, res, isAdmin) {
       messageCheck = {
         id: newId,
         user_id: foundUser.id,
-        last_check: new Date().toISOString(),
+        last_check: getCurrentDateTimeISO(),
         last_checks: {},
       };
-      messageCheck.last_checks[contactId] = new Date().toISOString();
+      messageCheck.last_checks[contactId] = getCurrentDateTimeISO();
     }
     updateMessageCheckTimeInDb(DatabaseManager.getInstance().getDb(), foundUser.id, messageCheck, contactId);
 
@@ -158,7 +159,7 @@ function handleMessenger(req, res, isAdmin) {
     }
 
     req.body.from = foundUser.id;
-    req.body.date = new Date().toISOString();
+    req.body.date = getCurrentDateTimeISO();
     req.url = `/api/messages`;
     return;
   }
