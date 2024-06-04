@@ -67,3 +67,8 @@ const avatarElement = document.querySelector("#myAvatar");
 if (avatarElement) {
   avatarElement.src = `./../${avatar}`;
 }
+
+const timeZoneLabel = document.getElementById("time-zone");
+if (timeZoneLabel) {
+  timeZoneLabel.innerHTML = Intl.DateTimeFormat().resolvedOptions().timeZone;
+}

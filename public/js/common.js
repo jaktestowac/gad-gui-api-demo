@@ -67,6 +67,14 @@ function getCurrentDate() {
   return new Date();
 }
 
+// returns time zone in format: Europe/Warsaw or America/New_York or Indian/Maldives etc.
+function getLocalTimeZone() {
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  return timezone;
+}
+
+
+
 function addDaysToDateTime(daysOfValidity) {
   const now = getCurrentDate();
   const time = now.getTime() + daysOfValidity * 24 * 60 * 60 * 1000;
@@ -184,9 +192,9 @@ function getCookie(cookieName) {
 }
 
 function addCookie(cookieName, value, daysOfValidity = 9999) {
-  var now = new Date();
-  var time = now.getTime() + daysOfValidity * 24 * 60 * 60 * 1000;
-  var newTime = new Date(now.setTime(time));
+  const now = getCurrentDate();
+  const time = now.getTime() + daysOfValidity * 24 * 60 * 60 * 1000;
+  let newTime = getDateFromString(now.setTime(time));
   newTime = newTime.toUTCString();
   document.cookie = `${cookieName}=${`${value}`?.toLowerCase()}; expires=${newTime}; SameSite=Lax; path=/`;
 }

@@ -845,15 +845,15 @@ body {
 }
 
 .grid-drag {
-  max-width: 600px;
-  width: 600px;
+  max-width: 800px;
+  width: 800px;
 }
 
-@media (max-width: 550px) {
+/* @media (max-width: 550px) {
   .grid-drag {
     margin-left: -100px;
   }
-}
+} */
 
 .grid-drag:after {
   content: "";

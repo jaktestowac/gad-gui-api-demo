@@ -109,7 +109,8 @@ const rightMenu = (path = "") => {
         />
       </button>
       <div class="dropdown-content" id="dropdown-content">
-        <div align="center"><strong><div style="margin: 5px" id="username"></div></strong></div>
+      <div align="center"><strong><div style="margin: 5px" id="username"></div></strong></div>
+      <div align="center"><div style="margin: 5px" id="my-time-zone"></div></div>
         <a href="/login" id="loginBtn">My Account</a>
         <a href="/logout" id="logoutBtn" hidden>Logout</a>
         <a href="/register.html" id="registerBtn">Register</a>
