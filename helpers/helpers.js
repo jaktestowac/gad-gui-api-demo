@@ -1,7 +1,7 @@
 const { logDebug, logTrace } = require("./logger-api");
-const { getConfigValue, isBugDisabled } = require("../config/config-manager");
-const { ConfigKeys, BugConfigKeys } = require("../config/enums");
-const { areStringsEqualIgnoringCase, isUndefined } = require("./compare.helpers");
+const { getConfigValue } = require("../config/config-manager");
+const { ConfigKeys } = require("../config/enums");
+const { areStringsEqualIgnoringCase } = require("./compare.helpers");
 
 function formatErrorResponse(message, details = undefined, id = undefined) {
   const body = { error: { message: message, details: details }, id };
@@ -138,6 +138,14 @@ function listIncludes(list, value) {
   return list.map((v) => v.toString()).includes(value.toString());
 }
 
+function generateUuid() {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+    const r = (Math.random() * 16) | 0,
+      v = c === "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
 module.exports = {
   formatErrorResponse,
   formatInvalidFieldErrorResponse,
@@ -161,4 +169,5 @@ module.exports = {
   generateRandomString,
   isTrueWithProbability,
   listIncludes,
+  generateUuid,
 };

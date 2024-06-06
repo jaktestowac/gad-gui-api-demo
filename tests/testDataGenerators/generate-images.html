@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Image with Number 5</title>
+    <script>
+
+        function generateImg(value) {
+            // Generate image with number 5
+            var canvas = document.createElement('canvas');
+            canvas.width = 10;
+            canvas.height = 15;
+            var ctx = canvas.getContext('2d');
+            ctx.font = 'bold 15px Arial';
+            ctx.fillText(value, 0, 15);
+            var dataURL = canvas.toDataURL();
+            return dataURL
+        }
+
+        function generateImgDict() {
+            var imgDict = {};
+            const toGenerateArray = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, '?', '+', '-', '*', '/', '='];
+
+            toGenerateArray.forEach((value) => {
+                imgDict[value] = generateImg(value);
+            });
+
+            return imgDict;
+        }
+
+        console.log(generateImgDict());
+        // // Display the image on the HTML page
+        window.onload = function () {
+            var img = document.createElement('img');
+            img.src = generateImg(1);
+            document.body.appendChild(img);
+        };
+    </script>
+</head>
+
+<body>
+</body>
+
+</html>

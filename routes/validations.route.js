@@ -34,6 +34,7 @@ const { getRandomInt } = require("../helpers/generators/random-data.generator");
 const { handleMessenger } = require("../endpoints/messenger-endpoint.helpers");
 const { handleTeams } = require("../endpoints/teams-endpoint.helpers");
 const { handleProjects } = require("../endpoints/projects-endpoint.helpers");
+const { handleCaptcha } = require("../endpoints/captcha-endpoint.helpers");
 
 const validationsRoutes = (req, res, next) => {
   let isAdmin = false;
@@ -119,6 +120,10 @@ const validationsRoutes = (req, res, next) => {
     }
     if (req.url.includes("/api/scores")) {
       handleScores(req, res);
+      return;
+    }
+    if (req.url.includes("/api/captcha")) {
+      handleCaptcha(req, res);
       return;
     }
     if (req.url.includes("/api/quiz")) {
