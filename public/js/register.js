@@ -148,6 +148,7 @@ async function generateCaptcha() {
           var img = document.createElement("img");
           img.src = data.equation[i];
           img.style.width = "20px";
+          img.style.borderRadius = "0px";
           captchaPlaceholder.appendChild(img);
         }
         captchaInput.setAttribute("uuid", data.uuid);
