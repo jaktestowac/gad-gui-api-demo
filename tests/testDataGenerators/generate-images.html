@@ -2,17 +2,17 @@
 <html>
 
 <head>
-    <title>Image with Number 5</title>
+    <title>Generate Captcha Images </title>
     <script>
 
         function generateImg(value) {
             // Generate image with number 5
             var canvas = document.createElement('canvas');
-            canvas.width = 10;
-            canvas.height = 15;
+            canvas.width = 6;
+            canvas.height = 11;
             var ctx = canvas.getContext('2d');
-            ctx.font = 'bold 15px Arial';
-            ctx.fillText(value, 0, 15);
+            ctx.font = 'bold 11px Arial';
+            ctx.fillText(value, 0, 11);
             var dataURL = canvas.toDataURL();
             return dataURL
         }
@@ -31,9 +31,13 @@
         console.log(generateImgDict());
         // // Display the image on the HTML page
         window.onload = function () {
-            var img = document.createElement('img');
-            img.src = generateImg(1);
-            document.body.appendChild(img);
+            const imgs = generateImgDict()
+            for (const key in imgs) {
+                var img = document.createElement('img');
+                img.src = imgs[key];
+                img.style.width = "20px";
+                document.body.appendChild(img);
+            }
         };
     </script>
 </head>

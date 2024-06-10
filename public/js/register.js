@@ -40,11 +40,22 @@ function sendData() {
     avatar: `.\\data\\users\\${document.querySelector(".avatar").value}`,
   };
 
+  const captchaInput = document.querySelector(".captcha-input");
+
+  const captchaData = {};
+  let captchaAsBase64 = undefined;
+  if (captchaInput !== null) {
+    captchaData.uuid = captchaInput.getAttribute("uuid");
+    captchaData.result = captchaInput.value;
+    captchaAsBase64 = jsonToBase64(captchaData);
+  }
+
   fetch("/api/users", {
     method: "post",
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      captcha: captchaAsBase64,
     },
     body: JSON.stringify(userData),
   }).then((response) => {
@@ -60,6 +71,9 @@ function sendData() {
         }, 3000);
       } else {
         showMessage(`User not created! ${data.error?.message}`, true);
+        if (response.headers.get("captcha") !== null) {
+          generateCaptcha();
+        }
       }
     });
     return response;
@@ -103,3 +117,43 @@ document.querySelector("#registerForm").addEventListener("submit", function (e) 
     //validation failed
   }
 });
+
+const captchaEndpoint = "../api/captcha";
+
+async function issueGetCaptchaRequest() {
+  const data = fetch(captchaEndpoint, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+  }).then((r) => r.json());
+  return data;
+}
+
+async function generateCaptcha() {
+  const captchaSection = document.querySelector(".captcha-section");
+  if (captchaSection !== null) {
+    captchaSection.style.display = "block";
+
+    const captchaPlaceholder = document.querySelector(".captcha-placeholder");
+    if (captchaPlaceholder !== null) {
+      issueGetCaptchaRequest().then((data) => {
+        const captchaInput = document.querySelector(".captcha-input");
+        captchaInput.value = "";
+        while (captchaPlaceholder.firstChild) {
+          captchaPlaceholder.removeChild(captchaPlaceholder.firstChild);
+        }
+        for (let i = 0; i < data.equation.length; i++) {
+          var img = document.createElement("img");
+          img.src = data.equation[i];
+          img.style.width = "20px";
+          captchaPlaceholder.appendChild(img);
+        }
+        captchaInput.setAttribute("uuid", data.uuid);
+      });
+    }
+  }
+}
+
+generateCaptcha();

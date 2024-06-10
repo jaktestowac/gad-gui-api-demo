@@ -31,7 +31,7 @@ function handleCaptcha(req, res) {
       equationString: equationData.equationString,
       result: equationData.result,
     });
-    res.status(HTTP_OK).json({ equation: equation });
+    res.status(HTTP_OK).json({ equation: equation, uuid });
     return;
   }
   if (req.method === "POST" && req.url.endsWith("/api/captcha")) {
@@ -59,7 +59,7 @@ function handleCaptcha(req, res) {
       delete mathOperationsForCaptcha[uuid];
     }
 
-    logInsane("handleCaptcha: GET /api/captcha", {
+    logDebug("handleCaptcha: POST /api/captcha", {
       uuid,
       equationString: equationData.equationString,
       result: equationData.result,
@@ -68,7 +68,7 @@ function handleCaptcha(req, res) {
     });
 
     if (isCaptchaCorrect === false) {
-      res.status(HTTP_BAD_REQUEST).json(formatErrorResponse("Invalid response for Captcha!"));
+      res.status(HTTP_BAD_REQUEST).json(formatErrorResponse("Invalid Captcha!"));
       return;
     }
 
@@ -95,9 +95,10 @@ function handleCaptchaVerification(req, res) {
   }
 
   const captchaResponseRawBase64 = req.headers["captcha"];
+  res.setHeader("captcha", captchaResponseRawBase64);
 
   if (captchaResponseRawBase64 === undefined) {
-    res.status(HTTP_UNPROCESSABLE_ENTITY).json(formatErrorResponse("Captcha response not provided!"));
+    res.status(HTTP_UNPROCESSABLE_ENTITY).json(formatErrorResponse("Captcha solution not provided!"));
     return;
   }
 
@@ -105,7 +106,7 @@ function handleCaptchaVerification(req, res) {
   try {
     captchaResponse = base64ToJson(captchaResponseRawBase64);
   } catch (e) {
-    res.status(HTTP_UNPROCESSABLE_ENTITY).json(formatErrorResponse("Invalid captcha response!"));
+    res.status(HTTP_UNPROCESSABLE_ENTITY).json(formatErrorResponse("Invalid captcha!"));
     return;
   }
 
@@ -120,11 +121,19 @@ function handleCaptchaVerification(req, res) {
   const equationData = mathOperationsForCaptcha[uuid];
 
   if (equationData === undefined) {
-    res.status(HTTP_NOT_FOUND).json(formatErrorResponse("Captcha not found!"));
+    res.status(HTTP_NOT_FOUND).json(formatErrorResponse("Captcha solution not found!"));
     return;
   }
 
   const isCaptchaCorrect = checkCaptcha(actualResult, equationData);
+
+  logDebug("handleCaptchaVerification:", {
+    uuid,
+    equationString: equationData.equationString,
+    result: equationData.result,
+    actualResult,
+    isCaptchaCorrect,
+  });
 
   // TODO: remove the captcha from the list after it was used
   if (isCaptchaCorrect === true) {
@@ -134,7 +143,7 @@ function handleCaptchaVerification(req, res) {
   }
 
   if (isCaptchaCorrect === false) {
-    res.status(HTTP_BAD_REQUEST).json({ isCaptchaCorrect });
+    res.status(HTTP_BAD_REQUEST).json(formatErrorResponse("Invalid Captcha!"));
     return;
   }
   return;

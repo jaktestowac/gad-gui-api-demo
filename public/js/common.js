@@ -1,5 +1,15 @@
 const repository_url = "https://github.com/jaktestowac/gad-gui-api-demo";
 
+function jsonToBase64(object) {
+  const json = JSON.stringify(object);
+  return btoa(json);
+}
+
+function base64ToJson(base64String) {
+  const json = atob(base64String);
+  return JSON.parse(json);
+}
+
 function setBoxMessage(element, msg, className) {
   element.innerHTML = `<div class="${className}">${msg}</div>`;
 }
@@ -72,8 +82,6 @@ function getLocalTimeZone() {
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   return timezone;
 }
-
-
 
 function addDaysToDateTime(daysOfValidity) {
   const now = getCurrentDate();

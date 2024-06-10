@@ -1,0 +1,104 @@
+<html>
+
+<head>
+  <title>🦎 GAD | Register</title>
+  <link rel="icon" href="/data/icons/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/controls.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/js/libs/jquery/jquery-ui.css" />
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
+  <script src="/js/libs/jquery/jquery-3.6.0.js"></script>
+  <script src="/js/libs/jquery/jquery-ui.js"></script>
+  <script>
+    $(function () {
+      // https://jqueryui.com/datepicker/
+      $("#datepicker").datepicker({
+        dateFormat: "yy-mm-dd",
+        defaultDate: "1995-10-10",
+        currentText: "Now",
+        showButtonPanel: true,
+        nextText: ">",
+        prevText: "<",
+        maxDate: "+0d",
+        showOptions: { direction: "up" },
+        constrainInput: true,
+        duration: "slow",
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <header>
+    <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+      <h1 id="menu-main-gui" class="nav-menu"></h1>
+    </div>
+  </header>
+  <div id="container"></div>
+  <div id="containerComments"></div>
+  <br />
+  <br />
+  <br />
+  <div align="center" style="justify-content: center !important; position: absolute; align-items: center">
+    <div class="alert" role="alert" data-testid="alert-popup" id="alertPopup" style="position: fixed !important; margin: 40px 0px 0px 0px; transform: translateX(-50%);left: 50%;" disabled></div>
+  </div>
+  <div class="container" id="pageHeader" style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center">
+    <div class="form">
+      <form id="registerForm" style="width: 400px">
+        <div style="margin-top: 20px">
+          <h2>Register</h2>
+        </div>
+        <div id="infoContainer"></div>
+        <div class="input-field">
+          <input type="text" name="firstname" class="firstname" data-testid="firstname-input" id="firstname" style="padding: 10px 10px; margin: 6px 0" placeholder="Enter User First Name" octavalidate="R,ALPHA_ONLY" />
+        </div>
+        <div class="input-field">
+          <input type="text" name="lastname" class="lastname" data-testid="lastname-input" id="lastname" style="padding: 10px 10px; margin: 6px 0" placeholder="Enter User Last Name" octavalidate="R,ALPHA_ONLY" />
+        </div>
+        <div class="input-field">
+          <input type="text" name="email" class="email" data-testid="email-input" id="email" style="padding: 10px 10px; margin: 6px 0" placeholder="Enter User Email" octavalidate="R,EMAIL" />
+        </div>
+        <div class="input-field">
+          <input type="text" class="datepicker" class="birthdate" data-testid="birthdate-input" style="padding: 10px 10px; margin: 6px 0" placeholder="Enter Birth Date" id="datepicker" placeholder="Enter Password" octavalidate="DATE" />
+        </div>
+        <div class="input-field">
+          <input type="password" name="password" class="password" data-testid="password-input" id="password" style="padding: 10px 10px; margin: 6px 0" placeholder="Enter Password" octavalidate="R,PASS" />
+        </div>
+        <div align="center">
+          <img src="" id="userPicture" class="userPicture" style="width: 100px !important; height: 100px !important; margin: 10px" alt="" />
+        </div>
+        <div class="input-field">
+          <select name="avatar" class="avatar" id="avatar" onchange="presentPicture()"></select>
+        </div>
+        <br>
+        <div id="captcha-section" class="captcha-section" style="display: none;">
+          <h2>Please Solve Captcha:</h2>
+          <div align="center">
+            <div src="" id="captcha-placeholder" class="captcha-placeholder" style="margin: 10px">
+            </div>
+          </div>
+          <div class="input-field">
+            <input type="text" name="captcha-input" class="captcha-input" data-testid="captcha-input" id="captcha-input" style="padding: 10px 10px; margin: 6px 0" placeholder="Enter Captcha Solution" octavalidate="R,TEXT" />
+          </div>
+        </div>
+        <input type="submit" class="button-primary" style="background-color: #007bff" data-testid="register-button" id="registerButton" value="Register" />
+      </form>
+      <div align="center">
+        Already have an account? <a href="/login">Sign In</a>
+      </div>
+    </div>
+
+  </div>
+</body>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="/username.js"></script>
+<script type="text/javascript" src="/js/libs/validator/validate.js"></script>
+<script type="text/javascript" src="/js/register.js"></script>
+<script type="text/javascript" src="/js/darkmode.js"></script>
+
+</html>
