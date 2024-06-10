@@ -136,6 +136,9 @@ async function generateCaptcha() {
   if (captchaSection !== null) {
     captchaSection.style.display = "block";
 
+    const captchaInputField = document.querySelector(".captcha-input-field");
+    captchaInputField.innerHTML = `<input type="text" name="captcha-input" class="captcha-input" data-testid="captcha-input" id="captcha-input" style="padding: 10px 10px; margin: 6px 0" placeholder="Enter Captcha Solution" octavalidate="R,TEXT" />`;
+
     const captchaPlaceholder = document.querySelector(".captcha-placeholder");
     if (captchaPlaceholder !== null) {
       issueGetCaptchaRequest().then((data) => {
@@ -157,4 +160,8 @@ async function generateCaptcha() {
   }
 }
 
-generateCaptcha();
+checkIfFeatureEnabled("feature_captcha").then((enabled) => {
+  if (enabled === true) {
+    generateCaptcha();
+  }
+});
