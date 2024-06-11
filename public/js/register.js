@@ -103,11 +103,12 @@ async function getPictureList() {
 
 getPictureList();
 
-//create new instance of octavalidate
-let formVal = new octaValidate("registerForm");
-formVal.customRule("DATE", /^\d{4}-\d{2}-\d{2}$/, "Date must be in format YYYY-MM-DD");
-//attach event listener
+// attach event listener
 document.querySelector("#registerForm").addEventListener("submit", function (e) {
+  // create new instance of octavalidate
+  let formVal = new octaValidate("registerForm");
+  formVal.customRule("DATE", /^\d{4}-\d{2}-\d{2}$/, "Date must be in format YYYY-MM-DD");
+
   e.preventDefault();
   //invoke the validate method
   if (formVal.validate() === true) {

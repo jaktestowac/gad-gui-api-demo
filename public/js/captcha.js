@@ -12,14 +12,10 @@ async function issueGetCaptchaRequest() {
 }
 
 async function generateCaptcha() {
-  const captchaSection = document.querySelector(".captcha-section");
+  const captchaSection = document.querySelector(".captcha-placeholder");
   if (captchaSection !== null) {
     captchaSection.style.display = "block";
-
-    const captchaInputField = document.querySelector(".captcha-input-field");
-    captchaInputField.innerHTML = `<input type="text" name="captcha-input" class="captcha-input" data-testid="captcha-input" id="captcha-input" style="padding: 10px 10px; margin: 6px 0" placeholder="Enter Captcha Solution" octavalidate="R,TEXT" />`;
-
-    const captchaPlaceholder = document.querySelector(".captcha-placeholder");
+    const captchaPlaceholder = document.querySelector(".captcha-riddle");
     if (captchaPlaceholder !== null) {
       issueGetCaptchaRequest().then((data) => {
         const captchaInput = document.querySelector(".captcha-input");
@@ -40,8 +36,23 @@ async function generateCaptcha() {
   }
 }
 
+function createComponents() {
+  const captchaSection = document.querySelector(".captcha-placeholder");
+  captchaSection.innerHTML = `
+    <h2>Please Solve Captcha:</h2>
+    <div align="center">
+        <div src="" id="captcha-riddle" class="captcha-riddle" style="margin: 10px">
+        </div>
+    </div>
+    <div class="captcha-input-field">
+        <input type="text" name="captcha-input" class="captcha-input" data-testid="captcha-input" id="captcha-input" style="padding: 10px 10px; margin: 6px 0" placeholder="Enter Captcha Solution" octavalidate="R,TEXT" />
+    </div>
+    `;
+}
+
 checkIfFeatureEnabled("feature_captcha").then((enabled) => {
   if (enabled === true) {
+    createComponents();
     generateCaptcha();
   }
 });
