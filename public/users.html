@@ -8,6 +8,7 @@
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
   <link rel="stylesheet" href="/css/controls.css" />
   <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/infoBoxes.css" />
 </head>
 
 <body>
@@ -20,8 +21,14 @@
       </h1>
     </div>
   </header>
-  <div align="center" style="justify-content: center !important; display: flex; align-items: center">
-    <div class="alert" role="alert" data-testid="alert-popup" id="alertPopup" style="position: unset !important; margin: 60px 0px 0px 0px"></div>
+  <br />
+  <br />
+  <br />
+  <br />
+  <div align="center" style="justify-content: center !important; position: absolute; align-items: center">
+    <div class="alert" role="alert" data-testid="alert-popup" id="alertPopup" style="position: fixed !important; margin: 40px 0px 0px 0px; transform: translateX(-50%);left: 50%;" disabled></div>
+  </div>
+  <div id="authentication-info" align="center">
   </div>
 
   <div id="container"></div>

@@ -27,7 +27,6 @@ async function selectWord() {
   selectedWordData = selectedWordData[0];
 
   if (selectedWordData.status !== 200) {
-    gameContainer.innerHTML = "<strong>⛔ Please log in and return to this page ⛔</strong>";
     return false;
   } else {
     selectedWord = selectedWordData.json.word;
@@ -147,3 +146,15 @@ async function startQuiz() {
 }
 
 gameContainer.style.visibility = "collapse";
+
+if (!isAuthenticated()) {
+  startButton.style.visibility = "collapse";
+  let simpleInfoBox = "simpleInfoBox";
+  const dashboardInfo = document.getElementById("info-container");
+  setBoxMessage(
+    dashboardInfo,
+    `You are not authenticated<br/>
+              Please <a href="/login" class="btn btn-primary">login</a> or <a href="/register.html" class="btn btn-primary">register</a> to see the content`,
+    simpleInfoBox
+  );
+}

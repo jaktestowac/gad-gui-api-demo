@@ -247,6 +247,7 @@ const showEditForm = (ev) => {
     });
   return false;
 };
+
 const showEmailEditForm = (ev) => {
   const id = ev.target.id;
   const url = endpoint + "/" + id;
@@ -344,6 +345,18 @@ async function getPictureList() {
   picList = picList[0];
 }
 
-getPictureList();
-issueGetRequest();
-menuButtonDisable("btnUsers");
+let simpleInfoBox = "simpleInfoBox";
+
+if (!isAuthenticated()) {
+  const dashboardInfo = document.getElementById("authentication-info");
+  setBoxMessage(
+    dashboardInfo,
+    `You are not authenticated<br/>
+                Please <a href="/login" class="btn btn-primary">login</a> or <a href="/register.html" class="btn btn-primary">register</a> to see the content`,
+    simpleInfoBox
+  );
+} else {
+  getPictureList();
+  issueGetRequest();
+  menuButtonDisable("btnUsers");
+}

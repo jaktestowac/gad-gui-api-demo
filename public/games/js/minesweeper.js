@@ -199,13 +199,23 @@ function startGame() {
   const token = getBearerToken();
   if (token === undefined) {
     resetBtn.style.display = "none";
-    const scoreElement = document.getElementById("score");
-    scoreElement.innerHTML = "<strong>⛔ Please log in and return to this page ⛔</strong>";
   } else {
     resetBtn.style.display = "block";
     initializeBoard();
   }
 }
 
-resetBtn.addEventListener("click", resetGame);
-startGame();
+if (!isAuthenticated()) {
+  resetBtn.style.display = "none";
+  let simpleInfoBox = "simpleInfoBox";
+  const dashboardInfo = document.getElementById("info-container");
+  setBoxMessage(
+    dashboardInfo,
+    `You are not authenticated<br/>
+              Please <a href="/login" class="btn btn-primary">login</a> or <a href="/register.html" class="btn btn-primary">register</a> to see the content`,
+    simpleInfoBox
+  );
+} else {
+  resetBtn.addEventListener("click", resetGame);
+  startGame();
+}
