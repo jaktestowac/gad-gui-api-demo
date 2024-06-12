@@ -1,5 +1,5 @@
-const { getFeatureFlagConfigValue } = require("../config/config-manager");
-const { FeatureFlagConfigKeys } = require("../config/enums");
+const { getFeatureFlagConfigValue, getConfigValue } = require("../config/config-manager");
+const { FeatureFlagConfigKeys, ConfigKeys } = require("../config/enums");
 const { generateEquation, checkCaptcha } = require("../helpers/captcha.helper");
 const {
   generateUuid,
@@ -31,7 +31,15 @@ function handleCaptcha(req, res) {
       equationString: equationData.equationString,
       result: equationData.result,
     });
-    res.status(HTTP_OK).json({ equation: equation, uuid });
+
+    const responseBody = { equation: equation, uuid };
+
+    if (getConfigValue(ConfigKeys.CAPTCHA_SOLUTION_IN_RESPONSE).toLowerCase() === "true") {
+      responseBody["equationString"] = equationData.equationString;
+      responseBody["result"] = equationData.result;
+    }
+
+    res.status(HTTP_OK).json(responseBody);
     return;
   }
   if (req.method === "POST" && req.url.endsWith("/api/captcha")) {
@@ -95,12 +103,12 @@ function handleCaptchaVerification(req, res) {
   }
 
   const captchaResponseRawBase64 = req.headers["captcha"];
-  res.setHeader("captcha", captchaResponseRawBase64);
-
   if (captchaResponseRawBase64 === undefined) {
     res.status(HTTP_UNPROCESSABLE_ENTITY).json(formatErrorResponse("Captcha solution not provided!"));
     return;
   }
+
+  res.setHeader("captcha", captchaResponseRawBase64);
 
   let captchaResponse;
   try {

@@ -49,6 +49,7 @@ const configToModify = {
   minSecondsForResourceCreatedRecentlyBug: 3,
   commentsSoftDeleteDelayInSecondsBug: 3,
   diagnosticsEnabled: false,
+  captchaSolutionInResponse: false,
 };
 
 const config = {

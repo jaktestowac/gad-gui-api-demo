@@ -68,19 +68,27 @@ async function setupEnv() {
   const requestBody = {
     currentLogLevel: logLevel,
   };
-  const response = await request.post("/api/config/all").send(requestBody);
-  expect(response.status).to.equal(200);
+  await changeConfig(requestBody);
 
   // Enable all feature flags:
-  const requestFeatureBody = {
-    feature_likes: true,
-    feature_files: true,
-    feature_labels: true,
-    feature_user_bookmark_articles: true,
-  };
-  const responseFeature = await request.post("/api/config/features").send(requestFeatureBody);
+  await toggleFeatures(["feature_likes", "feature_files", "feature_labels", "feature_user_bookmark_articles"]);
 
-  expect(responseFeature.status).to.equal(200);
+  // eslint-disable-next-line no-console
+  console.log("Environment setup done.");
+}
+
+async function changeConfig(requestBody) {
+  const response = await request.post("/api/config/all").send(requestBody);
+  expect(response.status).to.equal(200);
+}
+
+async function toggleFeatures(features, enabled = true) {
+  const requestBody = {};
+  features.forEach((feature) => {
+    requestBody[feature] = enabled;
+  });
+  const response = await request.post("/api/config/features").send(requestBody);
+  expect(response.status).to.equal(200);
 }
 
 async function toggle404Bug(value) {
@@ -91,6 +99,11 @@ async function toggle404Bug(value) {
   expect(response.status).to.equal(200);
 }
 
+function jsonToBase64(object) {
+  const json = JSON.stringify(object);
+  return btoa(json);
+}
+
 module.exports = {
   sleep,
   gracefulQuit,
@@ -99,4 +112,7 @@ module.exports = {
   toggle404Bug,
   getISODateWithTimezoneOffset,
   addOffsetToDateString,
+  toggleFeatures,
+  jsonToBase64,
+  changeConfig,
 };

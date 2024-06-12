@@ -62,6 +62,7 @@ const ConfigKeys = {
   MIN_SECONDS_FOR_RESOURCE_CREATED_RECENTLY_BUG: "minSecondsForResourceCreatedRecentlyBug",
   COMMENTS_SOFT_DELETE_DELAY_IN_SECONDS_BUG: "commentsSoftDeleteDelayInSecondsBug",
   DIAGNOSTICS_ENABLED: "diagnosticsEnabled",
+  CAPTCHA_SOLUTION_IN_RESPONSE: "captchaSolutionInResponse",
 };
 
 const BugConfigKeys = {

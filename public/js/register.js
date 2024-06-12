@@ -72,7 +72,11 @@ function sendData() {
       } else {
         showMessage(`User not created! ${data.error?.message}`, true);
         if (response.headers.get("captcha") !== null) {
-          generateCaptcha();
+          try {
+            Function(`generateCaptcha();`)();
+          } catch (e) {
+            console.error("Error while trying to generate captcha.", e);
+          }
         }
       }
     });
