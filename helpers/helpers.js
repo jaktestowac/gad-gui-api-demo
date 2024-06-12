@@ -36,6 +36,10 @@ function formatInvalidDateFieldErrorResponse(isValid, fields = ["date"]) {
   return formatErrorResponse(`Date field is invalid: ${isValid.error}`, fields);
 }
 
+function formatNotUniqueFieldResponse(field) {
+  return formatErrorResponse(`Field "${field}" is not unique!`);
+}
+
 function formatMissingFieldErrorResponse(all_fields) {
   return formatErrorResponse("One of mandatory field is missing", all_fields);
 }
@@ -182,4 +186,5 @@ module.exports = {
   generateUuid,
   jsonToBase64,
   base64ToJson,
+  formatNotUniqueFieldResponse,
 };

@@ -1,7 +1,13 @@
 const { isBugDisabled, isBugEnabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
 const { areIdsEqual, isUndefined, isInactive } = require("../helpers/compare.helpers");
-const { searchForUserWithToken, searchForArticle, searchForUserWithEmail } = require("../helpers/db-operation.helpers");
+const {
+  searchForUserWithToken,
+  searchForArticle,
+  searchForUserWithEmail,
+  searchForArticlesWithTitle,
+  searchForArticlesWithTitleWithoutId,
+} = require("../helpers/db-operation.helpers");
 const { randomDbEntry, articlesDb } = require("../helpers/db.helpers");
 const {
   formatInvalidTokenErrorResponse,
@@ -10,6 +16,7 @@ const {
   formatInvalidFieldErrorResponse,
   formatInvalidDateFieldErrorResponse,
   formatErrorResponse,
+  formatNotUniqueFieldResponse,
 } = require("../helpers/helpers");
 const { logTrace, logDebug } = require("../helpers/logger-api");
 const { HTTP_UNAUTHORIZED, HTTP_UNPROCESSABLE_ENTITY, HTTP_NOT_FOUND } = require("../helpers/response.helpers");
@@ -142,6 +149,12 @@ function handleArticles(req, res, isAdmin) {
       req.body.id = undefined;
     }
     logTrace("handleArticles:POST:", { method: req.method, urlEnds, articleId: req.body.id });
+
+    const foundArticles = searchForArticlesWithTitle(req.body?.title);
+    if (foundArticles.length > 0) {
+      res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatNotUniqueFieldResponse("title"));
+      return;
+    }
   }
 
   if (req.method === "PATCH" && urlEnds.includes("/api/articles") && !isAdmin) {
@@ -179,6 +192,12 @@ function handleArticles(req, res, isAdmin) {
 
     if (isUndefined(foundUser) && !areIdsEqual(foundUser?.id, foundArticle?.user_id)) {
       res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+      return;
+    }
+
+    const foundArticles = searchForArticlesWithTitleWithoutId(req.body?.title, articleId);
+    if (foundArticles.length > 0) {
+      res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatNotUniqueFieldResponse("title"));
       return;
     }
   }
@@ -239,6 +258,11 @@ function handleArticles(req, res, isAdmin) {
     logTrace("handleArticles:PUT:", { method: req.method, articleId });
 
     if (isUndefined(foundArticle)) {
+      const foundArticles = searchForArticlesWithTitle(req.body?.title);
+      if (foundArticles.length > 0) {
+        res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatNotUniqueFieldResponse("title"));
+        return;
+      }
       req.method = "POST";
       req.url = "/api/articles";
       req.body.id = undefined;
@@ -247,6 +271,12 @@ function handleArticles(req, res, isAdmin) {
         url: req.url,
         body: req.body,
       });
+    } else {
+      const foundArticles = searchForArticlesWithTitleWithoutId(req.body?.title, articleId);
+      if (foundArticles.length > 0) {
+        res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatNotUniqueFieldResponse("title"));
+        return;
+      }
     }
   }
 

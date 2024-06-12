@@ -60,6 +60,24 @@ function searchForArticle(articleId) {
   return foundArticle;
 }
 
+function searchForArticlesWithTitle(title) {
+  const foundArticles = articlesDb().filter((article) => {
+    if (areStringsEqualIgnoringCase(article["title"], title)) {
+      return article;
+    }
+  });
+  return foundArticles;
+}
+
+function searchForArticlesWithTitleWithoutId(title, id) {
+  const foundArticles = articlesDb().filter((article) => {
+    if (areStringsEqualIgnoringCase(article["title"], title) && !areIdsEqual(article["id"], id)) {
+      return article;
+    }
+  });
+  return foundArticles;
+}
+
 function searchForArticleWithUserId(articleId, userId) {
   const foundArticle = articlesDb().find((article) => {
     if (areIdsEqual(article["id"], articleId) && areIdsEqual(article["user_id"], userId)) {
@@ -448,4 +466,6 @@ module.exports = {
   searchForContactsById,
   getUnreadMessagesPerUser,
   searchForMessagesSentToUserId,
+  searchForArticlesWithTitle,
+  searchForArticlesWithTitleWithoutId,
 };

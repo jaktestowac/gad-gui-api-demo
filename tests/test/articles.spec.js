@@ -468,7 +468,9 @@ describe("Endpoint /articles", () => {
 
       // Create new article:
       // Act:
-      const responsePost2 = await request.post(baseUrl).set(headers).send(testData);
+      const newTestData = { ...testData };
+      newTestData.title = "New title";
+      const responsePost2 = await request.post(baseUrl).set(headers).send(newTestData);
 
       await sleep(100);
 
