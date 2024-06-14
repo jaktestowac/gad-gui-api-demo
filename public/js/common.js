@@ -640,3 +640,23 @@ async function checkNewerVersion(force = false) {
 function checkRelease(force = false) {
   checkNewerVersion(force);
 }
+
+function checkIfAuthenticated(elementID, successCallback, failureCallback) {
+  if (!isAuthenticated()) {
+    let simpleInfoBox = "simpleInfoBox";
+    const dashboardInfo = document.getElementById(elementID);
+    setBoxMessage(
+      dashboardInfo,
+      `You are not authenticated<br/>
+                  Please <a href="/login" class="btn btn-primary">login</a> or <a href="/register.html" class="btn btn-primary">register</a> to see the content`,
+      simpleInfoBox
+    );
+    if (failureCallback) {
+      failureCallback();
+    }
+  } else {
+    if (successCallback) {
+      successCallback();
+    }
+  }
+}

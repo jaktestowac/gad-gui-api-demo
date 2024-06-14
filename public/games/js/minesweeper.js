@@ -205,17 +205,16 @@ function startGame() {
   }
 }
 
-if (!isAuthenticated()) {
-  resetBtn.style.display = "none";
-  let simpleInfoBox = "simpleInfoBox";
-  const dashboardInfo = document.getElementById("info-container");
-  setBoxMessage(
-    dashboardInfo,
-    `You are not authenticated<br/>
-              Please <a href="/login" class="btn btn-primary">login</a> or <a href="/register.html" class="btn btn-primary">register</a> to see the content`,
-    simpleInfoBox
-  );
-} else {
-  resetBtn.addEventListener("click", resetGame);
-  startGame();
-}
+checkIfAuthenticated(
+  "info-container",
+  () => {
+    resetBtn.addEventListener("click", resetGame);
+    startGame();
+  },
+  () => {
+    resetBtn.style.display = "none";
+    const boardContainer = document.querySelector(".board-container");
+    boardContainer.style.display = "none";
+
+  }
+);

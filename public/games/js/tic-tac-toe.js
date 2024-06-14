@@ -237,14 +237,11 @@ function resetGame() {
 
 sessionCodeInput.value = "";
 
-if (!isAuthenticated()) {
-  startButton.disabled = true;
-  joinButton.disabled = true;
-  const dashboardInfo = document.getElementById("authentication-info");
-  setBoxMessage(
-    dashboardInfo,
-    `You are not authenticated<br/>
-                Please <a href="/login" class="btn btn-primary">login</a> or <a href="/register.html" class="btn btn-primary">register</a> to see the content`,
-    simpleInfoBox
-  );
-}
+checkIfAuthenticated(
+  "infoContainer",
+  () => {},
+  () => {
+    startButton.disabled = true;
+    joinButton.disabled = true;
+  }
+);

@@ -159,15 +159,11 @@ async function startQuiz() {
   startButton.style.visibility = "collapse";
 }
 
-if (!isAuthenticated()) {
-  startButton.disabled = true;
-  quizContainer.style.visibility = "collapse";
-  let simpleInfoBox = "simpleInfoBox";
-  const dashboardInfo = document.getElementById("infoContainer");
-  setBoxMessage(
-    dashboardInfo,
-    `You are not authenticated<br/>
-                Please <a href="/login" class="btn btn-primary">login</a> or <a href="/register.html" class="btn btn-primary">register</a> to see the content`,
-    simpleInfoBox
-  );
-}
+checkIfAuthenticated(
+  "infoContainer",
+  () => {},
+  () => {
+    startButton.disabled = true;
+    quizContainer.style.visibility = "collapse";
+  }
+);

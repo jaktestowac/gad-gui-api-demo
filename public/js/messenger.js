@@ -10,23 +10,19 @@ const intervalValue = 5000;
 
 let msgCheckInterval = undefined;
 
-if (!isAuthenticated()) {
-  const dashboardInfo = document.getElementById("messenger-info");
-  setBoxMessage(
-    dashboardInfo,
-    `You are not authenticated<br/>
-                Please <a href="/login" class="btn btn-primary">login</a> or <a href="/register.html" class="btn btn-primary">register</a>`,
-    simpleInfoBox
-  );
-} else {
-  const tabs = document.getElementsByClassName("tablinks");
-  for (let i = 0; i < tabs.length; i++) {
-    tabs[i].disabled = false;
-    tabs[i].readOnly = false;
-  }
+checkIfAuthenticated(
+  "messenger-info",
+  () => {
+    const tabs = document.getElementsByClassName("tablinks");
+    for (let i = 0; i < tabs.length; i++) {
+      tabs[i].disabled = false;
+      tabs[i].readOnly = false;
+    }
 
-  openTab(undefined, "tab1");
-}
+    openTab(undefined, "tab1");
+  },
+  () => {}
+);
 
 const messageInput = document.getElementById("messageInput");
 messageInput.addEventListener("keydown", function (event) {

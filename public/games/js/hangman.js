@@ -147,14 +147,10 @@ async function startQuiz() {
 
 gameContainer.style.visibility = "collapse";
 
-if (!isAuthenticated()) {
-  startButton.style.visibility = "collapse";
-  let simpleInfoBox = "simpleInfoBox";
-  const dashboardInfo = document.getElementById("info-container");
-  setBoxMessage(
-    dashboardInfo,
-    `You are not authenticated<br/>
-              Please <a href="/login" class="btn btn-primary">login</a> or <a href="/register.html" class="btn btn-primary">register</a> to see the content`,
-    simpleInfoBox
-  );
-}
+checkIfAuthenticated(
+  "info-container",
+  () => {},
+  () => {
+    startButton.style.visibility = "collapse";
+  }
+);

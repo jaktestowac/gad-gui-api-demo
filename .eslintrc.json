@@ -67,6 +67,7 @@
         "updateLabelElements": "readonly",
         "issueGetAllLabels": "readonly",
         "isAuthenticated": "readonly",
-        "setBoxMessage": "readonly"
+        "setBoxMessage": "readonly",
+        "checkIfAuthenticated": "readonly"
     }
 }
