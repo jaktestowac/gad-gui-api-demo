@@ -179,7 +179,7 @@ async function addUserNameToArticle(item) {
 const getImagesHTML = (image) => {
   let htmlData = "";
   if (image !== undefined) {
-    htmlData += `<div align="center" ><img id="article-image" src="${image}" /></div>`;
+    htmlData += `<div align="center" id="article-image-container" ><img id="article-image" src="${image}" /></div>`;
     //        for (image of images) {
     //            htmlData += `<img src="${image}" />`;
     //            htmlData += `<br>`
@@ -818,6 +818,13 @@ if (`${is_random}` === "1" || `${is_random}`.toLowerCase() === "true" || `${arti
   });
 } else if (article_id !== undefined) {
   issueGetRequest(article_id).then((wasDisplayed) => {
+    const pageLink = window.location.href;
+
+    checkIfFeatureEnabled("feature_qrcodes").then((isEnabled) => {
+      if (!isEnabled) return;
+      addElementWithTooltipWithQrCode("article-image-container", pageLink);
+    });
+
     checkIfFeatureEnabled("feature_likes").then((isEnabled) => {
       if (!isEnabled) return;
       issueGetLikes(article_id).then((likes) => {

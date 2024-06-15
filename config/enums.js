@@ -124,6 +124,7 @@ const FeatureFlagConfigKeys = {
   FEATURE_USER_BOOKMARK_ARTICLES: "feature_user_bookmark_articles",
   FEATURE_INFINITE_SCROLL_ARTICLES: "feature_infinite_scroll_articles",
   FEATURE_CAPTCHA: "feature_captcha",
+  FEATURE_QRCODES: "feature_qrcodes",
 };
 
 module.exports = {

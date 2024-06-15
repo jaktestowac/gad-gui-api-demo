@@ -11,7 +11,23 @@ function base64ToJson(base64String) {
 }
 
 function setBoxMessage(element, msg, className) {
-  element.innerHTML = `<div class="${className}">${msg}</div>`;
+  let icon = `<i class="fa fa-info-circle" style="font-size:24px;color:orange"></i>`;
+  if (className.toLowerCase().includes("error")) {
+    icon = `<i class="fa fa-exclamation-triangle" style="font-size:24px;color:red"></i>`;
+  } else if (className.toLowerCase().includes("success")) {
+    icon = `<i class="fa fa-check-circle" style="font-size:24px;color:green"></i>`;
+  }
+
+  element.innerHTML = `<div class="${className}">
+    <table>
+      <tr>
+        <td style="width: 10%;">
+        ${icon}
+        </td>
+        <td ><div align="center">${msg}</div></td>
+      </tr>
+    </table></div>
+  `;
 }
 
 function saveSession(id, obj) {
@@ -659,4 +675,26 @@ function checkIfAuthenticated(elementID, successCallback, failureCallback) {
       successCallback();
     }
   }
+}
+
+function addTooltipWithQrCode(elementId, qrCodeText) {
+  const element = document.getElementById(elementId);
+  element.innerHTML = `<div class="hover-element" id="qrcode"></div></div></div>`;
+  const qrcode = new QRCode(document.getElementById("qrcode"), {
+    width: 150,
+    height: 150,
+  });
+  qrcode.makeCode(qrCodeText);
+}
+
+function addElementWithTooltipWithQrCode(elementId, qrCodeText) {
+  const element = document.getElementById(elementId);
+  element.classList.add("qr-container");
+
+  element.innerHTML += `<div class="qr-tooltip">
+      <i class="fa-solid fa-qrcode qr-icon"></i>
+      <span class="qr-tooltiptext" id="qr-tooltiptext">
+      </span>
+  </div>`;
+  addTooltipWithQrCode("qr-tooltiptext", qrCodeText);
 }

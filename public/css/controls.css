@@ -809,8 +809,52 @@ s .container-mobile {
   transition: opacity 0.3s ease-in-out;
 }
 
-.span-button {
+.qr-tooltip {
+  position: relative;
   display: inline-block;
+  cursor: pointer;
+}
+
+.qr-tooltip .qr-tooltiptext {
+  visibility: hidden;
+  background-color: #ffffff;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(20%) translateY(-20%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.qr-tooltip:hover .qr-tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+.qr-container {
+  position: relative;
+}
+
+.qr-icon {
+  position: absolute;
+  top: -30;
+  right: -30;
+  font-size: 20px;
+  color: rgb(36, 36, 36);
+  cursor: pointer;
+}
+
+.darkmode .qr-icon {
+  color: rgb(204, 204, 204);
+}
+
+.span-button {
+  display: rgb(223, 223, 223);
   padding: 0.2em 0.2em;
   margin: 0.2em 0.2em;
   border: 1px solid #ccc;
