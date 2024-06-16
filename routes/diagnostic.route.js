@@ -46,7 +46,9 @@ const diagnosticRoutes = (req, res, next) => {
     res.on("finish", afterFinishResponse);
   }
 
-  next();
+  if (res.headersSent !== true) {
+    next();
+  }
 };
 
 exports.diagnosticRoutes = diagnosticRoutes;
