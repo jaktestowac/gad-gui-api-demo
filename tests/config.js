@@ -28,6 +28,8 @@ const messengerMessagesUrl = "/api/messenger/messages";
 const contactsUrl = "/api/contacts";
 const messagesUrl = "/api/messages";
 const baseCaptchaUrl = "/api/captcha";
+const baseFeatureCheckUrl = "/api/config/checkfeature";
+const baseFeaturesCheckUrl = "/api/config/checkfeatures";
 
 const existingUserEmail = "Danial.Dicki@dicki.test";
 const existingUserPass = "test2";
@@ -95,4 +97,6 @@ module.exports = {
   contactsUrl,
   messagesUrl,
   baseCaptchaUrl,
+  baseFeatureCheckUrl,
+  baseFeaturesCheckUrl,
 };
