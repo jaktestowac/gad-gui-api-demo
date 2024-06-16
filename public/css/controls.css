@@ -823,12 +823,16 @@ s .container-mobile {
   border-radius: 5px;
   padding: 5px;
   position: absolute;
-  z-index: 1;
+  z-index: 99999;
   bottom: 125%;
   left: 50%;
-  transform: translateX(20%) translateY(-20%);
+  transform: translateX(-45%) translateY(-20%);
   opacity: 0;
   transition: opacity 0.3s;
+}
+
+.qr-tooltip .qr-tooltiptext {
+  transform: translateX(45%) translateY(50%);
 }
 
 .qr-tooltip:hover .qr-tooltiptext {
@@ -842,8 +846,8 @@ s .container-mobile {
 
 .qr-icon {
   position: absolute;
-  top: -30;
-  right: -30;
+  top: -20;
+  right: -20;
   font-size: 20px;
   color: rgb(36, 36, 36);
   cursor: pointer;

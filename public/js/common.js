@@ -10,6 +10,14 @@ function base64ToJson(base64String) {
   return JSON.parse(json);
 }
 
+function randomInt() {
+  return randomIntMinMax(0, 100000);
+}
+
+function randomIntMinMax(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 function setBoxMessage(element, msg, className) {
   let icon = `<i class="fa fa-info-circle" style="font-size:24px;color:orange"></i>`;
   if (className.toLowerCase().includes("error")) {
@@ -439,6 +447,24 @@ async function checkIfFeatureEnabled(featureName) {
     });
 }
 
+async function checkIfFeaturesEnabled(featureNames) {
+  const body = { names: featureNames };
+  const url = "/api/config/checkfeatures";
+
+  return fetch(url, {
+    method: "post",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  })
+    .then((r) => r.json())
+    .then((jsonBody) => {
+      return jsonBody;
+    });
+}
+
 function formatLabelElement(labelObject, showRemoveButton, callback) {
   const labelElement = document.createElement("div");
   labelElement.className = "label";
@@ -677,10 +703,12 @@ function checkIfAuthenticated(elementID, successCallback, failureCallback) {
   }
 }
 
-function addTooltipWithQrCode(elementId, qrCodeText) {
+function addTooltipWithQrCode(elementId, qrCodeText, up = true) {
   const element = document.getElementById(elementId);
-  element.innerHTML = `<div class="hover-element" id="qrcode"></div></div></div>`;
-  const qrcode = new QRCode(document.getElementById("qrcode"), {
+  const randomId = randomInt();
+
+  element.innerHTML = `<div class="hover-element" id="qrcode-${randomId}"></div></div></div>`;
+  const qrcode = new QRCode(document.getElementById(`qrcode-${randomId}`), {
     width: 150,
     height: 150,
   });
@@ -689,12 +717,17 @@ function addTooltipWithQrCode(elementId, qrCodeText) {
 
 function addElementWithTooltipWithQrCode(elementId, qrCodeText) {
   const element = document.getElementById(elementId);
+  addElementWithTooltipWithQrCodeToElement(element, qrCodeText);
+}
+
+function addElementWithTooltipWithQrCodeToElement(element, qrCodeText, up = true) {
   element.classList.add("qr-container");
 
+  const randomId = randomInt();
   element.innerHTML += `<div class="qr-tooltip">
       <i class="fa-solid fa-qrcode qr-icon"></i>
-      <span class="qr-tooltiptext" id="qr-tooltiptext">
+      <span class="qr-tooltiptext" id="qr-tooltiptext-${randomId}">
       </span>
   </div>`;
-  addTooltipWithQrCode("qr-tooltiptext", qrCodeText);
+  addTooltipWithQrCode(`qr-tooltiptext-${randomId}`, qrCodeText);
 }
