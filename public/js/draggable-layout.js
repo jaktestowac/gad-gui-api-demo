@@ -20,6 +20,7 @@ Packery.prototype.initShiftLayout = function (positions, attr) {
     try {
       positions = JSON.parse(positions);
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("JSON parse error: " + error);
       this.layout();
       return;
@@ -65,6 +66,7 @@ let initPositions = localStorage.getItem("dragPositions");
 const gridElements = document.querySelectorAll(".grid-item");
 
 if (initPositions === null || !initPositions || basePosition.length !== gridElements.length) {
+  // eslint-disable-next-line no-console
   console.log("No saved positions found, using base position");
   localStorage.setItem("dragPositions", JSON.stringify(basePosition));
   initPositions = basePosition;

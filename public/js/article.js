@@ -84,12 +84,14 @@ async function issueGetRequest(article_id) {
   // });
 
   let wasDisplayed = await issueGetRequestArticles(article_id).catch((error) => {
+    // eslint-disable-next-line no-console
     console.log(error);
     displayArticlesData(undefined, "Error loading comments. Please contact administrator");
   });
 
   if (wasDisplayed === true) {
     issueGetRequestComments(article_id).catch((error) => {
+      // eslint-disable-next-line no-console
       console.log(error);
       displayCommentsData(undefined, "Error loading comments. Please contact administrator");
     });

@@ -26,9 +26,11 @@ try {
       const newFilePath = path.join(directoryPath, newFileName);
       //   newFileName = `${newFileName}${fileExtension}`;
       fs.renameSync(oldFilePath, newFilePath);
+      // eslint-disable-next-line no-console
       console.log(`File ${file} renamed to ${newFileName}`);
     }
   });
 } catch (err) {
+  // eslint-disable-next-line no-console
   console.error("Error reading or renaming files:", err);
 }

@@ -67,6 +67,7 @@ function createFeatureRow(feature, isChecked) {
 }
 
 function handleFeatureCheckboxChange(feature, isChecked) {
+  // eslint-disable-next-line no-console
   console.log(`Feature ${feature} was ${isChecked ? "checked" : "unchecked"}`);
   const payload = {};
   payload[feature] = isChecked;
@@ -77,6 +78,7 @@ function handleFeatureCheckboxChange(feature, isChecked) {
     },
     body: JSON.stringify(payload),
   }).then((response) => {
+    // eslint-disable-next-line no-console
     console.log(`Response for feature ${feature}: ${response.status}`);
     return response.json();
   });
@@ -120,6 +122,7 @@ fetch("/api/config/bugs")
   });
 
 function handleBugCheckboxChange(bug, isChecked) {
+  // eslint-disable-next-line no-console
   console.log(`Bug ${bug} was ${isChecked ? "checked" : "unchecked"}`);
   const payload = {};
   payload[bug] = isChecked;
@@ -130,6 +133,7 @@ function handleBugCheckboxChange(bug, isChecked) {
     },
     body: JSON.stringify(payload),
   }).then((response) => {
+    // eslint-disable-next-line no-console
     console.log(`Response for bug ${bug}: ${response.status}`);
     return response.json();
   });

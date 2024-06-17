@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const repository_url = "https://github.com/jaktestowac/gad-gui-api-demo";
 
 function jsonToBase64(object) {
@@ -543,6 +544,7 @@ function getNewestVersion(gadReleases, currentVersion) {
   });
 
   if (filteredVersions.length === 0) {
+    // eslint-disable-next-line no-console
     console.log(
       `[getNewestVersion] GAD (${currentVersion}) is up to date! Latest available version: ${gadReleases[0]?.name}`
     );
@@ -561,6 +563,7 @@ function getNewerVersions(gadReleases, currentVersion) {
   });
 
   if (filteredVersions.length === 0) {
+    // eslint-disable-next-line no-console
     console.log(
       `[getNewerVersions] GAD (${currentVersion}) is up to date! Latest available version: ${gadReleases[0]?.name}`
     );
@@ -594,11 +597,13 @@ async function checkNewerVersion(force = false) {
 
   getGadVersion().then((gadStatus) => {
     const currentVersion = gadStatus.version;
+    // eslint-disable-next-line no-console
     console.log(`GAD current version is: ${currentVersion}`);
     const versionUpToDate = getVersionStatusCookie();
     const latestVersionCookie = getLatestVersionCookie();
 
     if (versionUpToDate === "1" && latestVersionCookie !== undefined) {
+      // eslint-disable-next-line no-console
       console.log("Using cached cookie data. Latest:", latestVersionCookie);
       displayUpToDateMessage(currentVersion, latestVersionCookie);
 
@@ -615,6 +620,7 @@ async function checkNewerVersion(force = false) {
       force === false &&
       latestVersionCookie !== undefined
     ) {
+      // eslint-disable-next-line no-console
       console.log("Using cached cookie data.. Latest:", latestVersionCookie);
       displayNewerVersionAvailableMessage(currentVersion, {
         name: latestVersionCookie,
@@ -628,6 +634,7 @@ async function checkNewerVersion(force = false) {
       return;
     }
 
+    // eslint-disable-next-line no-console
     console.log("Cache expired, checking releases...");
     getGadReleases().then((gadReleases) => {
       if (gadReleases.length === 0) {

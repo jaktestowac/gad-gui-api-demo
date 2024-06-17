@@ -52,10 +52,12 @@ function deleteAccount() {
           }
         })
         .catch((error) => {
+          // eslint-disable-next-line no-console
           console.error("Error:", error);
         });
     }
   } else {
+    // eslint-disable-next-line no-console
     console.log("Account deletion cancelled");
   }
 }

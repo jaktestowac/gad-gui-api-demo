@@ -208,6 +208,7 @@ function getAndDisplayData(dataType, dataResolution) {
       displayData("Comments", dataResolution, labels, dataSet, animationDuration);
     });
   } else {
+    // eslint-disable-next-line no-console
     console.error("Invalid data type");
   }
 }

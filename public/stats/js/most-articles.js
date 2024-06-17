@@ -320,6 +320,7 @@ async function makeRequest(type) {
         });
       })
       .catch((err) => {
+        // eslint-disable-next-line no-console
         console.log("Error", err);
       });
   } else if (type === "bookmarked") {
@@ -333,6 +334,7 @@ async function makeRequest(type) {
         });
       })
       .catch((err) => {
+        // eslint-disable-next-line no-console
         console.log("Error", err);
       });
   }

@@ -80,6 +80,7 @@ function populateTable(table, data, addDownloadLink) {
 async function makeRequest() {
   getUserUploadedFiles()
     .then((filesData) => {
+      // eslint-disable-next-line no-console
       console.log("Obtained:", filesData.length);
       if (filesData.length === undefined) {
         filesData = [];
@@ -88,10 +89,12 @@ async function makeRequest() {
       populateTable(userTable, filesData);
     })
     .catch((err) => {
+      // eslint-disable-next-line no-console
       console.log("Error", err);
     });
   getPublicUploadedFiles()
     .then((filesData) => {
+      // eslint-disable-next-line no-console
       console.log("Obtained:", filesData.length);
       if (filesData.length === undefined) {
         filesData = [];
@@ -100,6 +103,7 @@ async function makeRequest() {
       populateTable(publicTable, filesData, true);
     })
     .catch((err) => {
+      // eslint-disable-next-line no-console
       console.log("Error", err);
     });
 }

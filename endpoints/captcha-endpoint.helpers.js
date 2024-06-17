@@ -7,7 +7,7 @@ const {
   formatErrorResponse,
   base64ToJson,
 } = require("../helpers/helpers");
-const { logDebug, logInsane } = require("../helpers/logger-api");
+const { logDebug } = require("../helpers/logger-api");
 const { HTTP_OK, HTTP_UNPROCESSABLE_ENTITY, HTTP_NOT_FOUND, HTTP_BAD_REQUEST } = require("../helpers/response.helpers");
 
 const mathOperationsForCaptcha = {};

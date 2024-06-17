@@ -7,7 +7,7 @@
     "start": "node server.js",
     "start3001": "set PORT=3001 && node server.js",
     "pretty": "npx prettier --write .",
-    "eslint": "npx eslint",
+    "eslint": "npx eslint .",
     "start:readonly": "set READ_ONLY=1 && node server.js"
   },
   "keywords": [

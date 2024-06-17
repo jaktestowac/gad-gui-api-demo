@@ -68,6 +68,16 @@
         "issueGetAllLabels": "readonly",
         "isAuthenticated": "readonly",
         "setBoxMessage": "readonly",
-        "checkIfAuthenticated": "readonly"
+        "checkIfAuthenticated": "readonly",
+        "getSession": "readonly",
+        "getCookie": "readonly",
+        "addCookie": "readonly",
+        "getISOTodayDateWithTimezoneOffset": "readonly",
+        "formatDateToLocaleString": "readonly",
+        "getDateFromString": "readonly",
+        "getCookieExpired": "readonly",
+        "getCurrentDate": "readonly",
+        "getCurrentDateLocaleString": "readonly",
+        "getCookieUserName": "readonly"
     }
 }

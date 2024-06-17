@@ -330,6 +330,7 @@ function checkNewMessages(contact) {
         issueGetMessagesWithContactRequest(contactId, lastMessageId).then((response) => {
           response.json().then((data) => {
             if (data?.messages.length > 0) {
+              // eslint-disable-next-line no-console
               console.log("New messages received for " + contact + " (" + data.length + " new messages)");
               displayMessages(data?.messages, contact);
             }

@@ -75,6 +75,7 @@ function sendData() {
           try {
             Function(`generateCaptcha();`)();
           } catch (e) {
+            // eslint-disable-next-line no-console
             console.error("Error while trying to generate captcha.", e);
           }
         }
