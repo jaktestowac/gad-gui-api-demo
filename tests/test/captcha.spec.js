@@ -8,7 +8,7 @@ describe("Endpoint /captcha", async () => {
   before(async () => {
     await setupEnv();
     await toggleFeatures(["feature_captcha"]);
-    await changeConfig({ captchaSolutionInResponse: "true" });
+    await changeConfig({ captchaSolutionInResponse: true });
   });
 
   after(async () => {

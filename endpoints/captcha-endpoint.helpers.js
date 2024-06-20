@@ -34,7 +34,7 @@ function handleCaptcha(req, res) {
 
     const responseBody = { equation: equation, uuid };
 
-    if (getConfigValue(ConfigKeys.CAPTCHA_SOLUTION_IN_RESPONSE).toLowerCase() === "true") {
+    if (getConfigValue(ConfigKeys.CAPTCHA_SOLUTION_IN_RESPONSE) === true) {
       responseBody["equationString"] = equationData.equationString;
       responseBody["result"] = equationData.result;
     }
