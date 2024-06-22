@@ -52,17 +52,16 @@ const getItemHTML = (item) => {
   if (item.body === undefined || item.body.length === 0) {
     item.body = "<i>[Comment was removed]</i>";
   }
+
+  const date = formatDateToLocaleString(item?.date);
+
   return `<div style="width:500px;" class="item-card">
-        <span><a href="article.html?id=${item.article_id}" id="gotoArticle${
-    item.article_id
-  }" data-testid="return">Return to Article...</a></span><br>
+        <span><a href="article.html?id=${item.article_id}" id="gotoArticle${item.article_id}" data-testid="return">Return to Article...</a></span><br>
 
         ${controls}
         <label>id:</label><span data-testid="id">${item.id}</span><br>
-        <label>user:</label><span><a href="user.html?id=${item.user_id}" id="gotoUser${item.user_id}-${
-    item.id
-  }" data-testid="user-name">${item.user_name}</a></span><br>
-        <label>date:</label><span>${item.date.replace("T", " ").replace("Z", "")}</span><br>
+        <label>user:</label><span><a href="user.html?id=${item.user_id}" id="gotoUser${item.user_id}-${item.id}" data-testid="user-name">${item.user_name}</a></span><br>
+        <label>date:</label><span>${date}</span><br>
         <label>comment:</label><span style="margin:10px;" data-testid="comment-body">${item.body}</span><br>
     </div>`;
 };
@@ -134,13 +133,11 @@ const issuePutRequest = (id, data, responseHandler, basicAuth) => {
 const issueDeleteRequest = (id, responseHandler) => {
   // delete data on the server:
   const url = commentsEndpoint + "/" + id;
-  console.log("DELETE request:", url);
   fetch(url, { method: "DELETE", headers: formatHeaders() }).then(responseHandler);
 };
 
 const issuePostRequest = (data, responseHandler) => {
   // create data on the server:
-  console.log("POST request:", commentsEndpoint, data);
   fetch(commentsEndpoint, {
     method: "post",
     headers: {

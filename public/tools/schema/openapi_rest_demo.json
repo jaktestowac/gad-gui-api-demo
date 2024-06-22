@@ -100,6 +100,10 @@
       "description": "Visits of different entities"
     },
     {
+      "name": "messenger",
+      "description": "Messenger - chat with other users"
+    },
+    {
       "name": "calculators",
       "description": "Calculators"
     },
@@ -2092,6 +2096,157 @@
           "200": {
             "description": "Images received",
             "content": {}
+          }
+        }
+      }
+    },
+    "/messenger/contacts": {
+      "get": {
+        "tags": ["messenger"],
+        "summary": "Get contacts",
+        "operationId": "getContacts",
+        "responses": {
+          "200": {
+            "description": "Contacts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessengerContacts"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["messenger"],
+        "summary": "Add contact",
+        "operationId": "addContact",
+        "requestBody": {
+          "content": {
+            "email": "string"
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Contact added",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessengerContactAdded"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ErrorMessage"
+              }
+            }
+          },
+          "409": {
+            "description": "Can not add contact",
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ErrorMessage"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/messenger/unread": {
+      "get": {
+        "tags": ["messenger"],
+        "summary": "Get unread messages",
+        "operationId": "getUnreadMessages",
+        "responses": {
+          "200": {
+            "description": "Messages",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessengerUnreadMessages"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/messenger/messages": {
+      "get": {
+        "tags": ["messenger"],
+        "summary": "Get messages",
+        "operationId": "getMessages",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "userId",
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "User ID"
+          },
+          {
+            "in": "query",
+            "name": "idFrom",
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "ID of message from which to return messages"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Messages",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessengerUnreadMessages"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["messenger"],
+        "summary": "Send message",
+        "operationId": "sendMessage",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MessengerMessage"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Message sent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessengerMessageCreated"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ErrorMessage"
+              }
+            }
           }
         }
       }
@@ -4651,6 +4806,152 @@
           "totalBenefitsPerSprint",
           "sprintROI"
         ]
+      },
+      "MessengerUnreadMessages": {
+        "type": "object",
+        "properties": {
+          "allUnreadMessages": {
+            "type": "integer",
+            "description": "The total number of unread messages."
+          },
+          "unreadMessagesPerUser": {
+            "type": "object",
+            "properties": {
+              "2": {
+                "type": "integer",
+                "description": "The number of unread messages for user with ID 2."
+              }
+            },
+            "additionalProperties": false,
+            "description": "The number of unread messages per user."
+          }
+        },
+        "required": ["allUnreadMessages", "unreadMessagesPerUser"]
+      },
+      "MessengerMessages": {
+        "type": "object",
+        "properties": {
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "from": {
+                  "type": "integer"
+                },
+                "to": {
+                  "type": "integer"
+                },
+                "date": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "content": {
+                  "type": "string"
+                }
+              },
+              "required": ["id", "from", "to", "date", "content"]
+            }
+          }
+        },
+        "required": ["messages"]
+      },
+      "MessengerContacts": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "email": {
+              "type": "string"
+            },
+            "firstname": {
+              "type": "string"
+            },
+            "lastname": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            },
+            "avatar": {
+              "type": "string"
+            }
+          },
+          "required": ["id", "email", "firstname", "lastname", "password", "avatar"]
+        }
+      },
+      "MessengerContactAdded": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "user_id": {
+            "type": "integer"
+          },
+          "contacts": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
+        },
+        "required": ["id", "user_id", "contacts"]
+      },
+      "ErrorMessage": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": ["message"]
+          }
+        },
+        "required": ["error"]
+      },
+      "MessengerMessage": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "to": {
+            "type": "string"
+          }
+        },
+        "required": ["content", "to"]
+      },
+      "MessengerMessageCreated": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "to": {
+            "type": "string"
+          },
+          "from": {
+            "type": "integer"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer"
+          }
+        },
+        "required": ["content", "to", "from", "date", "id"]
       },
       "RoiParameters": {
         "type": "object",

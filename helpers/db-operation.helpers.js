@@ -12,6 +12,7 @@ const {
   surveyResponsesDb,
   contactsDb,
   messagesDb,
+  messageCheckDb,
 } = require("./db.helpers");
 
 function searchForUserWithToken(userId, verifyTokenResult) {
@@ -57,6 +58,24 @@ function searchForArticle(articleId) {
     }
   });
   return foundArticle;
+}
+
+function searchForArticlesWithTitle(title) {
+  const foundArticles = articlesDb().filter((article) => {
+    if (areStringsEqualIgnoringCase(article["title"], title)) {
+      return article;
+    }
+  });
+  return foundArticles;
+}
+
+function searchForArticlesWithTitleWithoutId(title, id) {
+  const foundArticles = articlesDb().filter((article) => {
+    if (areStringsEqualIgnoringCase(article["title"], title) && !areIdsEqual(article["id"], id)) {
+      return article;
+    }
+  });
+  return foundArticles;
 }
 
 function searchForArticleWithUserId(articleId, userId) {
@@ -288,6 +307,24 @@ function aggregateSurveyAnswers(responses, surveyType, keysToSkip = ["Open-Ended
   return aggregated;
 }
 
+function searchForMessageCheckByUserId(userId) {
+  const foundCheck = messageCheckDb().find((check) => {
+    if (areIdsEqual(check["user_id"], userId)) {
+      return check;
+    }
+  });
+  return foundCheck;
+}
+
+function searchForMessageCheckById(id) {
+  const foundCheck = messageCheckDb().find((check) => {
+    if (areIdsEqual(check["id"], id)) {
+      return check;
+    }
+  });
+  return foundCheck;
+}
+
 function searchForContactsByUserId(userId) {
   const foundContacts = contactsDb().find((contact) => {
     if (areIdsEqual(contact["user_id"], userId)) {
@@ -297,9 +334,27 @@ function searchForContactsByUserId(userId) {
   return foundContacts;
 }
 
+function searchForContactsById(id) {
+  const foundContacts = contactsDb().find((contact) => {
+    if (areIdsEqual(contact["id"], id)) {
+      return contact;
+    }
+  });
+  return foundContacts;
+}
+
 function searchForMessagesByUserId(userId) {
   const foundMessages = messagesDb().filter((message) => {
     if (areIdsEqual(message["from"], userId) || areIdsEqual(message["to"], userId)) {
+      return message;
+    }
+  });
+  return foundMessages;
+}
+
+function searchForMessagesSentToUserId(userId) {
+  const foundMessages = messagesDb().filter((message) => {
+    if (areIdsEqual(message["to"], userId)) {
       return message;
     }
   });
@@ -322,7 +377,7 @@ function getMessagesWithIdGreaterThan(messages, id) {
   const foundMessages = messages.filter((message) => {
     return message["id"] > id;
   });
-  return foundMessages;
+  return foundMessages ?? [];
 }
 
 function getMessagesWithDateGreaterThan(messages, date) {
@@ -330,6 +385,46 @@ function getMessagesWithDateGreaterThan(messages, date) {
     return isDateStringGreaterThan(message["date"], date);
   });
   return foundMessages;
+}
+
+function getNumberOfUnreadIncomingMessages(messages, userId, date, datePerUserId) {
+  const foundAllMessages = messages.filter((message) => {
+    if (areIdsEqual(message["to"], userId) && isDateStringGreaterThan(message["date"], date)) {
+      return message;
+    }
+  });
+  return { foundAllMessages };
+}
+
+function getUnreadMessagesPerUser(messages, userLastCheck, userId) {
+  const lastChecks = userLastCheck?.last_checks || {};
+
+  const unreadMessages = messages.filter((message) => {
+    const fromUserId = message.from.toString();
+    const lastCheckDate = lastChecks[fromUserId];
+    return !areIdsEqual(message["from"], userId) && (!lastCheckDate || message.date > lastCheckDate);
+  });
+
+  const unreadMessagesPerUser = {};
+
+  unreadMessages.forEach((message) => {
+    const recipientId = message.from.toString();
+    if (!unreadMessagesPerUser[recipientId]) {
+      unreadMessagesPerUser[recipientId] = 1;
+    } else {
+      unreadMessagesPerUser[recipientId]++;
+    }
+  });
+
+  // const allUnreadMessages = messages.filter((message) => {
+  //   if (areIdsEqual(message["to"], userId) && isDateStringGreaterThan(message["date"], userLastCheck.last_check)) {
+  //     return message;
+  //   }
+  // });
+
+  const totalSumFromValues = Object.values(unreadMessagesPerUser).reduce((acc, value) => acc + value, 0);
+
+  return { allUnreadMessages: totalSumFromValues, unreadMessagesPerUser };
 }
 
 module.exports = {
@@ -366,4 +461,11 @@ module.exports = {
   searchForMessagesByBothUserIds,
   getMessagesWithIdGreaterThan,
   getMessagesWithDateGreaterThan,
+  searchForMessageCheckByUserId,
+  searchForMessageCheckById,
+  searchForContactsById,
+  getUnreadMessagesPerUser,
+  searchForMessagesSentToUserId,
+  searchForArticlesWithTitle,
+  searchForArticlesWithTitleWithoutId,
 };

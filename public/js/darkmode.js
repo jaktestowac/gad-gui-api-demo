@@ -9,9 +9,9 @@ function darkmode_init() {
 
   if (getCookie("darkmode") === "1") {
     darkmodeSwitch.classList.add("active");
-    darkmodeSwitch.innerHTML = '<i class="fas fa-sun"></i>';
+    darkmodeSwitch.innerHTML = 'Toggle darkmode: <i class="fas fa-sun"></i>';
   } else {
-    darkmodeSwitch.innerHTML = '<i class="fas fa-moon"></i>';
+    darkmodeSwitch.innerHTML = 'Toggle darkmode: <i class="fas fa-moon"></i>';
   }
 
   darkmodeSwitch.addEventListener("click", (event) => {
@@ -21,10 +21,10 @@ function darkmode_init() {
 
     if (document.body.classList.contains("darkmode")) {
       addCookie("darkmode", 1);
-      darkmodeSwitch.innerHTML = '<i class="fas fa-sun"></i>';
+      darkmodeSwitch.innerHTML = 'Toggle darkmode: <i class="fas fa-sun"></i>';
     } else {
       addCookie("darkmode", 0);
-      darkmodeSwitch.innerHTML = '<i class="fas fa-moon"></i>';
+      darkmodeSwitch.innerHTML = 'Toggle darkmode: <i class="fas fa-moon"></i>';
     }
   });
 }

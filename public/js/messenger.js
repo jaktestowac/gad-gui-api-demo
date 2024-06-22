@@ -1,5 +1,6 @@
 const urlContacts = "/api/messenger/contacts";
 const urlMessages = "/api/messenger/messages";
+const urlUnreadMessages = "/api/messenger/unread";
 
 let simpleSuccessBox = "simpleSuccessBox";
 let simpleErrorBox = "simpleErrorBox";
@@ -9,23 +10,19 @@ const intervalValue = 5000;
 
 let msgCheckInterval = undefined;
 
-if (!isAuthenticated()) {
-  const dashboardInfo = document.getElementById("messenger-info");
-  setBoxMessage(
-    dashboardInfo,
-    `You are not authenticated<br/>
-                Please <a href="/login" class="btn btn-primary">login</a> or <a href="/register.html" class="btn btn-primary">register</a>`,
-    simpleInfoBox
-  );
-} else {
-  const tabs = document.getElementsByClassName("tablinks");
-  for (let i = 0; i < tabs.length; i++) {
-    tabs[i].disabled = false;
-    tabs[i].readOnly = false;
-  }
+checkIfAuthenticated(
+  "messenger-info",
+  () => {
+    const tabs = document.getElementsByClassName("tablinks");
+    for (let i = 0; i < tabs.length; i++) {
+      tabs[i].disabled = false;
+      tabs[i].readOnly = false;
+    }
 
-  openTab(undefined, "tab1");
-}
+    openTab(undefined, "tab1");
+  },
+  () => {}
+);
 
 const messageInput = document.getElementById("messageInput");
 messageInput.addEventListener("keydown", function (event) {
@@ -38,6 +35,18 @@ messageInput.addEventListener("keydown", function (event) {
 
 async function issueGetContactsRequest() {
   const data = fetch(urlContacts, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+  });
+  return data;
+}
+
+async function issueGetUnreadMessagesRequest() {
+  const data = fetch(urlUnreadMessages, {
     method: "GET",
     headers: {
       Accept: "application/json",
@@ -147,6 +156,7 @@ function openTab(evt, tabName) {
     // contacts
     clearContacts();
     disableSendingMessages();
+
     issueGetContactsRequest().then((response) => {
       if (response.status === 200) {
         response.json().then((data) => {
@@ -161,11 +171,35 @@ function openTab(evt, tabName) {
             const noContactElement = document.getElementById("no-contacts");
             noContactElement.style.display = "block";
           }
+          updateUnreadMessages();
         });
       }
     });
     clearFriendRequestInfoBox();
   }
+}
+
+function updateUnreadMessages() {
+  const unreadMessagesElements = document.getElementsByClassName("contactunreadmessages");
+  while (unreadMessagesElements.length > 0) {
+    unreadMessagesElements[0].parentNode.removeChild(unreadMessagesElements[0]);
+  }
+
+  return issueGetUnreadMessagesRequest().then((response) => {
+    return response.json().then((unreadMessagesData) => {
+      Object.keys(unreadMessagesData.unreadMessagesPerUser).forEach((userId) => {
+        const contactTab = document.querySelector(`[contact-id="${userId}"]`);
+        const unreadMessagesEl = document.createElement("div");
+        unreadMessagesEl.classList.add("unreadmessages");
+        unreadMessagesEl.classList.add("contactunreadmessages");
+        unreadMessagesEl.style.position = "inherit";
+        unreadMessagesEl.textContent = unreadMessagesData.unreadMessagesPerUser[userId];
+        contactTab.appendChild(unreadMessagesEl);
+      });
+      updateNotifier(unreadMessagesData?.allUnreadMessages);
+      return unreadMessagesData;
+    });
+  });
 }
 
 function sendFriendRequest() {
@@ -233,26 +267,15 @@ function addContact(contactName, contactId, avatarPath) {
   contacts.appendChild(newContact);
 }
 
-function formatDate(date) {
-  const options = {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  };
-  return new Date(date).toLocaleDateString(undefined, options);
-}
-
 function showMessages(contact, contactId) {
   clearInterval(msgCheckInterval);
   clearMessageView();
   clearActiveContacts();
+  updateUnreadMessages();
 
   issueGetMessagesWithContactRequest(contactId).then((response) => {
     response.json().then((data) => {
-      displayMessages(data, contact);
+      displayMessages(data.messages, contact);
     });
   });
 
@@ -276,7 +299,7 @@ function displayMessages(data, contact) {
     data.forEach((message) => {
       const className = message.from == getId() ? "you" : "";
       const sender = message.from == getId() ? "You" : contact;
-      const timestamp = formatDate(message.date);
+      const timestamp = formatDateToLocaleString(message.date);
 
       const parsedMessage = message.content.replace(/(\r\n|\n|\r)/gm, "<br>");
 
@@ -301,14 +324,19 @@ function checkNewMessages(contact) {
   const lastMessage = messages[messages.length - 1];
 
   if (lastMessage !== null) {
-    const lastMessageId = lastMessage.getAttribute("id");
-    issueGetMessagesWithContactRequest(contactId, lastMessageId).then((response) => {
-      response.json().then((data) => {
-        if (data.length > 0) {
-          console.log("New messages received for " + contact + " (" + data.length + " new messages)");
-          displayMessages(data, contact);
-        }
-      });
+    updateUnreadMessages().then((unreadMessagesData) => {
+      if (unreadMessagesData.unreadMessagesPerUser[contactId] > 0) {
+        const lastMessageId = lastMessage.getAttribute("id");
+        issueGetMessagesWithContactRequest(contactId, lastMessageId).then((response) => {
+          response.json().then((data) => {
+            if (data?.messages.length > 0) {
+              // eslint-disable-next-line no-console
+              console.log("New messages received for " + contact + " (" + data.length + " new messages)");
+              displayMessages(data?.messages, contact);
+            }
+          });
+        });
+      }
     });
   }
 }
@@ -365,7 +393,7 @@ function sendMessage() {
             warning = `<span class="simpleErrorBox">Message not sent</span>`;
           }
           const sender = "You";
-          const timestamp = formatDate(new Date());
+          const timestamp = formatDateToLocaleString(getCurrentDate());
 
           const newMessage = `
               <div class="message you" id="${data.id}">

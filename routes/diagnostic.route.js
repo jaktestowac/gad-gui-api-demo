@@ -18,6 +18,7 @@ const diagnosticRoutes = (req, res, next) => {
     );
     const logsEnabled = setConfigValue(ConfigKeys.PUBLIC_LOGS_ENABLED, !getConfigValue(ConfigKeys.PUBLIC_LOGS_ENABLED));
     res.status(HTTP_OK).json({ diagnosticsEnabled, logsEnabled });
+    return;
   }
   if (req.method === "GET" && urlEnds.includes("api/logs")) {
     if (getConfigValue(ConfigKeys.PUBLIC_LOGS_ENABLED)) {
@@ -25,6 +26,7 @@ const diagnosticRoutes = (req, res, next) => {
     } else {
       res.status(HTTP_OK).json({});
     }
+    return;
   }
   if (getConfigValue(ConfigKeys.DIAGNOSTICS_ENABLED) === true) {
     if (req.method === "GET" && urlEnds.includes("api/diagnostic/request/histogram")) {
@@ -46,7 +48,9 @@ const diagnosticRoutes = (req, res, next) => {
     res.on("finish", afterFinishResponse);
   }
 
-  next();
+  if (res.headersSent !== true) {
+    next();
+  }
 };
 
 exports.diagnosticRoutes = diagnosticRoutes;

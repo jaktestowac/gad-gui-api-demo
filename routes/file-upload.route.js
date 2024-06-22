@@ -2,7 +2,7 @@ const formidable = require("formidable");
 const { getConfigValue, getFeatureFlagConfigValue } = require("../config/config-manager");
 const { ConfigKeys, FeatureFlagConfigKeys } = require("../config/enums");
 const { logDebug, logError, logTrace } = require("../helpers/logger-api");
-const { formatErrorResponse, getTodayDate, getIdFromUrl } = require("../helpers/helpers");
+const { formatErrorResponse, getIdFromUrl } = require("../helpers/helpers");
 const {
   HTTP_INTERNAL_SERVER_ERROR,
   HTTP_OK,
@@ -21,6 +21,7 @@ const { getUploadedFilePath, getAndFilterUploadedFileList } = require("../helper
 const { formatFileName, checkFileName } = require("../helpers/file-upload.helper");
 const { searchForUserWithEmail } = require("../helpers/db-operation.helpers");
 const { isUndefined } = require("../helpers/compare.helpers");
+const { getTodayDate } = require("../helpers/datetime.helpers");
 
 const uploadDir = path.join(__dirname, "..", "uploads");
 

@@ -20,6 +20,7 @@ Packery.prototype.initShiftLayout = function (positions, attr) {
     try {
       positions = JSON.parse(positions);
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("JSON parse error: " + error);
       this.layout();
       return;
@@ -50,12 +51,13 @@ const $grid = $(".grid-drag").packery({
 });
 
 const basePosition = [
-  { attr: "1", x: 0.16666666666666666 },
-  { attr: "2", x: 0.16666666666666666 },
-  { attr: "5", x: 0.5 },
-  { attr: "3", x: 0.16666666666666666 },
-  { attr: "4", x: 0.5 },
-  { attr: "6", x: 0.16666666666666666 },
+  { attr: "1", x: 0.2505533050064281 },
+  { attr: "2", x: 0.2505533050064281 },
+  { attr: "5", x: 0.5011066100128562 },
+  { attr: "7", x: 0.2505533050064281 },
+  { attr: "4", x: 0.5011066100128562 },
+  { attr: "3", x: 0.2505533050064281 },
+  { attr: "6", x: 0.2505533050064281 },
 ];
 
 // get saved dragged positions
@@ -64,6 +66,8 @@ let initPositions = localStorage.getItem("dragPositions");
 const gridElements = document.querySelectorAll(".grid-item");
 
 if (initPositions === null || !initPositions || basePosition.length !== gridElements.length) {
+  // eslint-disable-next-line no-console
+  console.log("No saved positions found, using base position");
   localStorage.setItem("dragPositions", JSON.stringify(basePosition));
   initPositions = basePosition;
 }

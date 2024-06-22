@@ -81,11 +81,9 @@
       <div class="grid-item grid-item--width2 grid-item--height3" data-item-id="5">
         <div class="handle"></div>
         <div>
-          <img class="myAvatar" id="myAvatar" width="150px"><br />
+          <img class="myAvatar" id="myAvatar" width="100px"><br />
           <button id="btnEditDashbaord" class="button-primary-small"><i class="fa-solid fa-pen-to-square"></i> Edit this Dashboard</button><br /><br />
-          <span style="font-size: 12px;">Toggle darkmode:</span> <br />
-          <button class="darkmode button-primary-small" id="darkmode-switch" title="darkmode switch" aria-hidden="true" style="width: 30px;"></button><br />
-
+          <button class="darkmode button-primary-small" id="darkmode-switch" title="darkmode switch" aria-hidden="true"></button><br />
         </div>
       </div>
       <div class="grid-item grid-item--width2 grid-item--height1" data-item-id="6">
@@ -97,6 +95,19 @@
             <div align="center">
               <button id="btnDeleteAccount" data-testid="deleteButton" class="button-primary-danger">Delete Account</button>
             </div>
+          </div>
+        </div>
+      </div>
+      <div class="grid-item grid-item--width2 grid-item--height1" data-item-id="7">
+        <div class="handle"></div>
+        <div style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center">
+          <div style="width: 100%;">
+
+            <span style="font-size: 12px; font-weight: bold;">Current time:</span><br />
+            <span id="current-time" data-testid="current-time" style="font-size: 12px;">...</span><br />
+            <span style="font-size: 12px; font-weight: bold;">Time Zone:</span><br />
+            <span id="time-zone" data-testid="time-zone" style="font-size: 12px;">...</span><br />
+
           </div>
         </div>
       </div>

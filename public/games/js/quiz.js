@@ -158,3 +158,12 @@ async function startQuiz() {
   questionContainer.style.visibility = "visible";
   startButton.style.visibility = "collapse";
 }
+
+checkIfAuthenticated(
+  "infoContainer",
+  () => {},
+  () => {
+    startButton.disabled = true;
+    quizContainer.style.visibility = "collapse";
+  }
+);

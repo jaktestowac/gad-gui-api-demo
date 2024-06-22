@@ -1,6 +1,7 @@
 const { isBugDisabled, isBugEnabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
 const { areStringsEqualIgnoringCase, areIdsEqual, isUndefined } = require("../helpers/compare.helpers");
+const { getCurrentDateTimeISO } = require("../helpers/datetime.helpers");
 const { searchForUser } = require("../helpers/db-operation.helpers");
 const { userDb } = require("../helpers/db.helpers");
 const {
@@ -61,7 +62,7 @@ function handleUsers(req, res) {
       // remove id - otherwise - 500: Error: Insert failed, duplicate id
       req.body.id = undefined;
     }
-    req.body.creationDate = new Date().toISOString();
+    req.body.creationDate = getCurrentDateTimeISO();
     logDebug("Register User: SUCCESS:", { urlEnds, email: req.body["email"] });
   }
 
@@ -111,7 +112,7 @@ function handleUsers(req, res) {
       if (parseInt(userId).toString() === userId) {
         userId = parseInt(userId);
       }
-      req.body.creationDate = new Date().toISOString();
+      req.body.creationDate = getCurrentDateTimeISO();
       req.body.id = userId;
     }
     if (!isUndefined(foundUser)) {

@@ -84,12 +84,14 @@ async function issueGetRequest(article_id) {
   // });
 
   let wasDisplayed = await issueGetRequestArticles(article_id).catch((error) => {
+    // eslint-disable-next-line no-console
     console.log(error);
     displayArticlesData(undefined, "Error loading comments. Please contact administrator");
   });
 
   if (wasDisplayed === true) {
     issueGetRequestComments(article_id).catch((error) => {
+      // eslint-disable-next-line no-console
       console.log(error);
       displayCommentsData(undefined, "Error loading comments. Please contact administrator");
     });
@@ -179,7 +181,7 @@ async function addUserNameToArticle(item) {
 const getImagesHTML = (image) => {
   let htmlData = "";
   if (image !== undefined) {
-    htmlData += `<div align="center" ><img id="article-image" src="${image}" /></div>`;
+    htmlData += `<div align="center" id="article-image-container" ><img id="article-image" src="${image}" /></div>`;
     //        for (image of images) {
     //            htmlData += `<img src="${image}" />`;
     //            htmlData += `<br>`
@@ -209,6 +211,8 @@ const getItemHTML = (item) => {
   }
 
   const body = item.body?.replaceAll("\n", "<br/><br/>");
+  const date = formatDateToLocaleString(item?.date);
+
   return `<div class="item-card">
         ${controls}<br>
         ${getImagesHTML(item.image)}
@@ -233,7 +237,7 @@ const getItemHTML = (item) => {
         
         <tr>
           <td style="padding: 0px ;"><label style="width:10px !important">date:</label>&nbsp&nbsp</td>
-          <td style="padding: 0px ;"><span>${item?.date?.replace("T", " ").replace("Z", "")}</span></td>
+          <td style="padding: 0px ;"><span>${date}</span></td>
         </tr>
       </table>
         <div class="labels-container" id="labels-container" ></div>
@@ -285,12 +289,12 @@ const getCommentHTML = (comments) => {
     comments.body = "<i>[Comment was removed]</i>";
   }
 
+  const date = formatDateToLocaleString(comments.date);
+
   return `<div class="comment-container item-card">
         <label>id:</label><span class="super-style">${comments.id}</span><br>
-        <label>author:</label><span><a href="user.html?id=${comments.user_id}" id="gotoUser${comments.id}-${
-    comments.user_id
-  }">${comments.user_name}</a></span><br>
-        <label>date:</label><span>${comments.date.replace("T", " ").replace("Z", "")}</span><br>
+        <label>author:</label><span><a href="user.html?id=${comments.user_id}" id="gotoUser${comments.id}-${comments.user_id}">${comments.user_name}</a></span><br>
+        <label>date:</label><span>${date}</span><br>
         <label>comment:</label><span>${comments.body}</span><br>
         <span><a href="comment.html?id=${comments.id}" id="gotoComment${comments.id}">See More...</a></span><br>
     </div>`;
@@ -532,11 +536,7 @@ function pad(num, size = 2) {
 
 const handleCommentCreate = () => {
   const container = document.querySelector(".add-new-panel");
-  const today = new Date();
-
-  const date = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}T${pad(
-    today.getHours()
-  )}:${pad(today.getMinutes())}:${pad(today.getSeconds())}Z`;
+  const date = getISOTodayDateWithTimezoneOffset();
 
   const id = parseInt(getCookieId());
   const data = {
@@ -820,6 +820,13 @@ if (`${is_random}` === "1" || `${is_random}`.toLowerCase() === "true" || `${arti
   });
 } else if (article_id !== undefined) {
   issueGetRequest(article_id).then((wasDisplayed) => {
+    const pageLink = window.location.href;
+
+    checkIfFeatureEnabled("feature_qrcodes").then((isEnabled) => {
+      if (!isEnabled) return;
+      addElementWithTooltipWithQrCode("article-image-container", pageLink);
+    });
+
     checkIfFeatureEnabled("feature_likes").then((isEnabled) => {
       if (!isEnabled) return;
       issueGetLikes(article_id).then((likes) => {

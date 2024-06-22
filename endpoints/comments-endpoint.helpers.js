@@ -181,28 +181,31 @@ function handleComments(req, res, isAdmin) {
   }
 
   // soft delete:
-  if (req.method === "DELETE" && urlEnds.includes("/api/comments") && !isAdmin) {
+  if (req.method === "DELETE" && urlEnds.includes("/api/comments")) {
     const verifyTokenResult = verifyAccessToken(req, res, "DELETE comments", req.url);
     let commentId = getIdFromUrl(urlEnds);
 
     const foundComment = searchForComment(commentId);
-    const foundUser = searchForUserWithToken(foundComment?.user_id, verifyTokenResult);
 
-    logDebug("handleComments: foundUser and user_id:", { foundUser, user_id: foundComment?.user_id });
+    if (!isAdmin) {
+      const foundUser = searchForUserWithToken(foundComment?.user_id, verifyTokenResult);
 
-    if (isUndefined(foundComment) || isInactive(foundComment)) {
-      res.status(HTTP_NOT_FOUND).send({});
-      return;
-    }
+      logDebug("handleComments: foundUser and user_id:", { foundUser, user_id: foundComment?.user_id });
 
-    if (isUndefined(foundUser) && !areIdsEqual(foundUser?.id, foundComment?.user_id)) {
-      res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
-      return;
-    }
+      if (isUndefined(foundComment) || isInactive(foundComment)) {
+        res.status(HTTP_NOT_FOUND).send({});
+        return;
+      }
 
-    if (isUndefined(foundUser)) {
-      res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
-      return;
+      if (isUndefined(foundUser) && !areIdsEqual(foundUser?.id, foundComment?.user_id)) {
+        res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+        return;
+      }
+
+      if (isUndefined(foundUser)) {
+        res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+        return;
+      }
     }
 
     req.method = "PUT";

@@ -1,7 +1,7 @@
 const { logDebug, logTrace } = require("./logger-api");
-const { getConfigValue, isBugDisabled } = require("../config/config-manager");
-const { ConfigKeys, BugConfigKeys } = require("../config/enums");
-const { areStringsEqualIgnoringCase, isUndefined } = require("./compare.helpers");
+const { getConfigValue } = require("../config/config-manager");
+const { ConfigKeys } = require("../config/enums");
+const { areStringsEqualIgnoringCase } = require("./compare.helpers");
 
 function formatErrorResponse(message, details = undefined, id = undefined) {
   const body = { error: { message: message, details: details }, id };
@@ -34,6 +34,10 @@ function formatInvalidFieldValueErrorResponse(isValid, field) {
 
 function formatInvalidDateFieldErrorResponse(isValid, fields = ["date"]) {
   return formatErrorResponse(`Date field is invalid: ${isValid.error}`, fields);
+}
+
+function formatNotUniqueFieldResponse(field) {
+  return formatErrorResponse(`Field "${field}" is not unique!`);
 }
 
 function formatMissingFieldErrorResponse(all_fields) {
@@ -96,22 +100,6 @@ function shuffleArray(array) {
   return shuffledArray;
 }
 
-function getTodayDate() {
-  const today = new Date();
-  const date = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}T${pad(
-    today.getHours()
-  )}:${pad(today.getMinutes())}:${pad(today.getSeconds())}Z`;
-  return date;
-}
-
-function getTodayDateForFileName() {
-  const today = new Date();
-  const date = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}T${pad(
-    today.getHours()
-  )}-${pad(today.getMinutes())}-${pad(today.getSeconds())}Z`;
-  return date;
-}
-
 function findMaxValues(obj, count) {
   const values = Object.values(obj);
   const sortedValues = values.sort((a, b) => b - a);
@@ -154,6 +142,24 @@ function listIncludes(list, value) {
   return list.map((v) => v.toString()).includes(value.toString());
 }
 
+function generateUuid() {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+    const r = (Math.random() * 16) | 0,
+      v = c === "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
+function jsonToBase64(object) {
+  const json = JSON.stringify(object);
+  return Buffer.from(json).toString("base64");
+}
+
+function base64ToJson(base64String) {
+  const json = Buffer.from(base64String, "base64").toString();
+  return JSON.parse(json);
+}
+
 module.exports = {
   formatErrorResponse,
   formatInvalidFieldErrorResponse,
@@ -170,8 +176,6 @@ module.exports = {
   getIdFromUrl,
   shuffleArray,
   pad,
-  getTodayDate,
-  getTodayDateForFileName,
   findMaxValues,
   getUniqueValues,
   formatInvalidFieldValueErrorResponse,
@@ -179,4 +183,8 @@ module.exports = {
   generateRandomString,
   isTrueWithProbability,
   listIncludes,
+  generateUuid,
+  jsonToBase64,
+  base64ToJson,
+  formatNotUniqueFieldResponse,
 };

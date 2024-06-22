@@ -5,7 +5,13 @@ const {
   validExistingArticle,
   prepareUniqueArticle,
 } = require("../helpers/data.helpers.js");
-const { setupEnv, gracefulQuit, getCurrentDate, sleep } = require("../helpers/helpers.js");
+const {
+  setupEnv,
+  gracefulQuit,
+  getCurrentDate,
+  sleep,
+  getISODateWithTimezoneOffset,
+} = require("../helpers/helpers.js");
 
 describe("Endpoint /articles", () => {
   const baseUrl = baseArticlesUrl;
@@ -425,23 +431,6 @@ describe("Endpoint /articles", () => {
       expect(response.body).to.deep.equal(testData);
     });
 
-    [".000Z", ".0Z", ".00Z", ".000000Z"].forEach((milliseconds) => {
-      it(`POST /articles - should create valid article (date with ${milliseconds})`, async () => {
-        // Arrange:
-        const testData = generateValidArticleData();
-        testData.user_id = userId;
-        testData.date = testData.date.replace("Z", milliseconds);
-
-        // Act:
-        const response = await request.post(baseUrl).set(headers).send(testData);
-
-        // Assert:
-        expect(response.status, JSON.stringify(response.data)).to.equal(201);
-        testData.id = response.body.id;
-        expect(response.body).to.deep.equal(testData);
-      });
-    });
-
     it("POST /articles - should create valid article without user id", async () => {
       // Arrange:
       const testData = generateValidArticleData();
@@ -479,7 +468,9 @@ describe("Endpoint /articles", () => {
 
       // Create new article:
       // Act:
-      const responsePost2 = await request.post(baseUrl).set(headers).send(testData);
+      const newTestData = { ...testData };
+      newTestData.title = "New title";
+      const responsePost2 = await request.post(baseUrl).set(headers).send(newTestData);
 
       await sleep(100);
 
@@ -533,64 +524,114 @@ describe("Endpoint /articles", () => {
       expect(response.body).to.deep.equal(testData);
     });
 
-    it("POST /articles - should create article with current date", async () => {
-      // Arrange:
-      const testData = generateValidArticleData();
-      testData.user_id = userId;
+    describe("POST /articles - should not create article with invalid data", async () => {
+      it("POST /articles - should create article with current date", async () => {
+        // Arrange:
+        const testData = generateValidArticleData();
+        testData.user_id = userId;
 
-      testData.date = getCurrentDate();
+        testData.date = getCurrentDate();
 
-      // Act:
-      const response = await request.post(baseUrl).set(headers).send(testData);
+        // Act:
+        const response = await request.post(baseUrl).set(headers).send(testData);
 
-      // Assert:
-      expect(response.status, JSON.stringify(response.body)).to.equal(201);
-      testData.id = response.body.id;
-      expect(response.body).to.deep.equal(testData);
-    });
+        // Assert:
+        expect(response.status, JSON.stringify(response.body)).to.equal(201);
+        testData.id = response.body.id;
+        expect(response.body, JSON.stringify(response.data)).to.deep.equal(testData);
+      });
 
-    it("POST /articles - should create article with current date (plus few seconds)", async () => {
-      // Arrange:
-      const testData = generateValidArticleData();
-      testData.user_id = userId;
+      [".000Z", ".0Z", ".00Z"].forEach((milliseconds) => {
+        it(`POST /articles - should create valid article with date with ${milliseconds}`, async () => {
+          // Arrange:
+          const testData = generateValidArticleData();
+          testData.user_id = userId;
+          testData.date = testData.date.replace("Z", milliseconds);
 
-      testData.date = getCurrentDate(0, 0, 10);
+          // Act:
+          const response = await request.post(baseUrl).set(headers).send(testData);
 
-      // Act:
-      const response = await request.post(baseUrl).set(headers).send(testData);
+          // Assert:
+          expect(response.status, JSON.stringify(response.body)).to.equal(201);
+          testData.id = response.body.id;
+          expect(response.body, JSON.stringify(response.body)).to.deep.equal(testData);
+        });
+      });
 
-      // Assert:
-      expect(response.status, JSON.stringify(response.body)).to.equal(201);
-      testData.id = response.body.id;
-      expect(response.body).to.deep.equal(testData);
-    });
+      [".0000Z"].forEach((milliseconds) => {
+        it(`POST /articles - should not create article with date with ${milliseconds}`, async () => {
+          // Arrange:
+          const testData = generateValidArticleData();
+          testData.user_id = userId;
+          testData.date = testData.date.replace("Z", milliseconds);
 
-    it("POST /articles - should not create article with date in future", async () => {
-      // Arrange:
-      const testData = generateValidArticleData();
-      testData.user_id = userId;
+          // Act:
+          const response = await request.post(baseUrl).set(headers).send(testData);
 
-      testData.date = getCurrentDate(0, 0, 20);
+          // Assert:
+          expect(response.status, JSON.stringify(response.body)).to.equal(422);
+        });
+      });
 
-      // Act:
-      const response = await request.post(baseUrl).set(headers).send(testData);
+      it("POST /articles - should create article with current date (with offset)", async () => {
+        // Arrange:
+        const testData = generateValidArticleData();
+        testData.user_id = userId;
 
-      // Assert:
-      expect(response.status, JSON.stringify(response.body)).to.equal(422);
-    });
+        testData.date = getISODateWithTimezoneOffset(new Date());
 
-    it("POST /articles - should not create article with invalid date format", async () => {
-      // Arrange:
-      const testData = generateValidArticleData();
-      testData.user_id = userId;
+        // Act:
+        const response = await request.post(baseUrl).set(headers).send(testData);
 
-      testData.date = testData.date.replace("Z", "0Z");
+        // Assert:
+        expect(response.status, JSON.stringify(response.body)).to.equal(201);
+        testData.id = response.body.id;
+        expect(response.body).to.deep.equal(testData);
+      });
 
-      // Act:
-      const response = await request.post(baseUrl).set(headers).send(testData);
+      it("POST /articles - should create article with current date (plus few seconds)", async () => {
+        // Arrange:
+        const testData = generateValidArticleData();
+        testData.user_id = userId;
 
-      // Assert:
-      expect(response.status, JSON.stringify(response.body)).to.equal(422);
+        testData.date = getCurrentDate(0, 0, 10);
+
+        // Act:
+        const response = await request.post(baseUrl).set(headers).send(testData);
+
+        // Assert:
+        expect(response.status, JSON.stringify(response.body)).to.equal(201);
+        testData.id = response.body.id;
+        expect(response.body).to.deep.equal(testData);
+      });
+
+      it("POST /articles - should not create article with date in future", async () => {
+        // Arrange:
+        const testData = generateValidArticleData();
+        testData.user_id = userId;
+
+        testData.date = getCurrentDate(0, 0, 20);
+
+        // Act:
+        const response = await request.post(baseUrl).set(headers).send(testData);
+
+        // Assert:
+        expect(response.status, JSON.stringify(response.body)).to.equal(422);
+      });
+
+      it("POST /articles - should not create article with invalid date format", async () => {
+        // Arrange:
+        const testData = generateValidArticleData();
+        testData.user_id = userId;
+
+        testData.date = testData.date.replace("Z", "");
+
+        // Act:
+        const response = await request.post(baseUrl).set(headers).send(testData);
+
+        // Assert:
+        expect(response.status, JSON.stringify(response.body)).to.equal(422);
+      });
     });
 
     ["title", "body", "date"].forEach((field) => {

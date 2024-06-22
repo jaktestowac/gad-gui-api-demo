@@ -9,6 +9,8 @@ const featureFlagConfig = {
   feature_visits: false,
   feature_user_bookmark_articles: false,
   feature_infinite_scroll_articles: false,
+  feature_captcha: false,
+  feature_qrcodes: false,
 };
 
 module.exports = {

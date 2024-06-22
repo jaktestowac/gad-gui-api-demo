@@ -148,7 +148,7 @@ const showMessage = (message, isError = false) => {
 const handleCreate = () => {
   const container = document.querySelector(".add-new-panel");
   let birthdate = container.querySelector(".datepicker").value;
-  birthdate = `${new Date(birthdate).toISOString()}`.split(".")[0] + "Z";
+  birthdate = getISODateStringWithTimezoneOffset(birthdate);
   let data = {
     firstname: container.querySelector(".firstname").value,
     lastname: container.querySelector(".lastname").value,
@@ -247,6 +247,7 @@ const showEditForm = (ev) => {
     });
   return false;
 };
+
 const showEmailEditForm = (ev) => {
   const id = ev.target.id;
   const url = endpoint + "/" + id;
@@ -344,6 +345,12 @@ async function getPictureList() {
   picList = picList[0];
 }
 
-getPictureList();
-issueGetRequest();
-menuButtonDisable("btnUsers");
+checkIfAuthenticated(
+  "authentication-info",
+  () => {
+    getPictureList();
+    issueGetRequest();
+    menuButtonDisable("btnUsers");
+  },
+  () => {}
+);

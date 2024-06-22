@@ -127,17 +127,14 @@ function wasSkipped() {
 
 function checkIfAdvertSkipped() {
   const advert = getLocalStorage("advert");
-  if (advert && advert.skipped === "1" && new Date(advert.expires) > new Date()) {
+  if (advert && advert.skipped === "1" && getDateFromString(advert.expires) > getCurrentDate()) {
     return true;
   }
   return false;
 }
 
 function saveAdvertSkipped(daysOfValidity) {
-  var now = new Date();
-  var time = now.getTime() + daysOfValidity * 24 * 60 * 60 * 1000;
-  var newTime = new Date(now.setTime(time));
-  newTime = newTime.toUTCString();
+  const newTime = addDaysToDateTime(daysOfValidity).toUTCString();
   // cookie version:
   // document.cookie = "advertCookie=1; expires=" + newTime + "; SameSite=Lax; path=/";
 

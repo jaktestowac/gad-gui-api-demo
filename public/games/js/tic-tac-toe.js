@@ -236,3 +236,12 @@ function resetGame() {
 }
 
 sessionCodeInput.value = "";
+
+checkIfAuthenticated(
+  "infoContainer",
+  () => {},
+  () => {
+    startButton.disabled = true;
+    joinButton.disabled = true;
+  }
+);

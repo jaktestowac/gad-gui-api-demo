@@ -1,7 +1,42 @@
+/* eslint-disable no-unused-vars */
 const repository_url = "https://github.com/jaktestowac/gad-gui-api-demo";
 
+function jsonToBase64(object) {
+  const json = JSON.stringify(object);
+  return btoa(json);
+}
+
+function base64ToJson(base64String) {
+  const json = atob(base64String);
+  return JSON.parse(json);
+}
+
+function randomInt() {
+  return randomIntMinMax(0, 100000);
+}
+
+function randomIntMinMax(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 function setBoxMessage(element, msg, className) {
-  element.innerHTML = `<div class="${className}">${msg}</div>`;
+  let icon = `<i class="fa fa-info-circle" style="font-size:24px;color:orange"></i>`;
+  if (className.toLowerCase().includes("error")) {
+    icon = `<i class="fa fa-exclamation-triangle" style="font-size:24px;color:red"></i>`;
+  } else if (className.toLowerCase().includes("success")) {
+    icon = `<i class="fa fa-check-circle" style="font-size:24px;color:green"></i>`;
+  }
+
+  element.innerHTML = `<div class="${className}">
+    <table>
+      <tr>
+        <td style="width: 10%;">
+        ${icon}
+        </td>
+        <td ><div align="center">${msg}</div></td>
+      </tr>
+    </table></div>
+  `;
 }
 
 function saveSession(id, obj) {
@@ -32,6 +67,92 @@ function getLocalStorage(id) {
   }
 }
 
+function pad(num, size = 2) {
+  num = num.toString();
+  while (num.length < size) num = "0" + num;
+  return num;
+}
+
+const formatDateToLocaleString = (dateString) => {
+  if (dateString === undefined) {
+    return "";
+  }
+
+  const date = new Date(dateString);
+  const options = {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  };
+
+  const locale = navigator.language;
+
+  const formattedDate = date.toLocaleString(locale, options).replace(",", "");
+  return formattedDate;
+};
+
+function getDateFromString(dateString) {
+  return new Date(dateString);
+}
+
+function getCurrentDate() {
+  return new Date();
+}
+
+// returns time zone in format: Europe/Warsaw or America/New_York or Indian/Maldives etc.
+function getLocalTimeZone() {
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  return timezone;
+}
+
+function addDaysToDateTime(daysOfValidity) {
+  const now = getCurrentDate();
+  const time = now.getTime() + daysOfValidity * 24 * 60 * 60 * 1000;
+  const newTime = new Date(now.setTime(time));
+  return newTime;
+}
+
+function getCurrentDateLocaleString() {
+  return formatDateToLocaleString(new Date());
+}
+
+function getCurrentYear() {
+  return new Date().getFullYear();
+}
+
+function getISODateStringWithTimezoneOffsetFromString(dateString) {
+  return getISODateStringWithTimezoneOffset(new Date(dateString));
+}
+
+function getISOTodayDateWithTimezoneOffset() {
+  return getISODateStringWithTimezoneOffset(new Date());
+}
+
+function getISODateStringWithTimezoneOffset(date) {
+  const timezoneOffset = -date.getTimezoneOffset();
+  const dif = timezoneOffset >= 0 ? "+" : "-";
+
+  const currentDatetime =
+    date.getFullYear() +
+    "-" +
+    pad(date.getMonth() + 1) +
+    "-" +
+    pad(date.getDate()) +
+    "T" +
+    pad(date.getHours()) +
+    ":" +
+    pad(date.getMinutes()) +
+    ":" +
+    pad(date.getSeconds());
+
+  const timezoneDif = dif + pad(Math.floor(Math.abs(timezoneOffset) / 60)) + ":" + pad(Math.abs(timezoneOffset) % 60);
+
+  return currentDatetime + timezoneDif;
+}
+
 function checkIfCookieExists(name) {
   let cookies = document.cookie.split(";");
   let found = "";
@@ -46,7 +167,7 @@ function checkIfCookieExists(name) {
       found = cookie.substring(name.length, cookie.length);
     }
   }
-  console.log("Cookie found:", found);
+
   return found;
 }
 
@@ -104,9 +225,9 @@ function getCookie(cookieName) {
 }
 
 function addCookie(cookieName, value, daysOfValidity = 9999) {
-  var now = new Date();
-  var time = now.getTime() + daysOfValidity * 24 * 60 * 60 * 1000;
-  var newTime = new Date(now.setTime(time));
+  const now = getCurrentDate();
+  const time = now.getTime() + daysOfValidity * 24 * 60 * 60 * 1000;
+  let newTime = getDateFromString(now.setTime(time));
   newTime = newTime.toUTCString();
   document.cookie = `${cookieName}=${`${value}`?.toLowerCase()}; expires=${newTime}; SameSite=Lax; path=/`;
 }
@@ -327,6 +448,24 @@ async function checkIfFeatureEnabled(featureName) {
     });
 }
 
+async function checkIfFeaturesEnabled(featureNames) {
+  const body = { names: featureNames };
+  const url = "/api/config/checkfeatures";
+
+  return fetch(url, {
+    method: "post",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  })
+    .then((r) => r.json())
+    .then((jsonBody) => {
+      return jsonBody;
+    });
+}
+
 function formatLabelElement(labelObject, showRemoveButton, callback) {
   const labelElement = document.createElement("div");
   labelElement.className = "label";
@@ -405,6 +544,7 @@ function getNewestVersion(gadReleases, currentVersion) {
   });
 
   if (filteredVersions.length === 0) {
+    // eslint-disable-next-line no-console
     console.log(
       `[getNewestVersion] GAD (${currentVersion}) is up to date! Latest available version: ${gadReleases[0]?.name}`
     );
@@ -423,6 +563,7 @@ function getNewerVersions(gadReleases, currentVersion) {
   });
 
   if (filteredVersions.length === 0) {
+    // eslint-disable-next-line no-console
     console.log(
       `[getNewerVersions] GAD (${currentVersion}) is up to date! Latest available version: ${gadReleases[0]?.name}`
     );
@@ -456,11 +597,13 @@ async function checkNewerVersion(force = false) {
 
   getGadVersion().then((gadStatus) => {
     const currentVersion = gadStatus.version;
+    // eslint-disable-next-line no-console
     console.log(`GAD current version is: ${currentVersion}`);
     const versionUpToDate = getVersionStatusCookie();
     const latestVersionCookie = getLatestVersionCookie();
 
     if (versionUpToDate === "1" && latestVersionCookie !== undefined) {
+      // eslint-disable-next-line no-console
       console.log("Using cached cookie data. Latest:", latestVersionCookie);
       displayUpToDateMessage(currentVersion, latestVersionCookie);
 
@@ -477,6 +620,7 @@ async function checkNewerVersion(force = false) {
       force === false &&
       latestVersionCookie !== undefined
     ) {
+      // eslint-disable-next-line no-console
       console.log("Using cached cookie data.. Latest:", latestVersionCookie);
       displayNewerVersionAvailableMessage(currentVersion, {
         name: latestVersionCookie,
@@ -490,6 +634,7 @@ async function checkNewerVersion(force = false) {
       return;
     }
 
+    // eslint-disable-next-line no-console
     console.log("Cache expired, checking releases...");
     getGadReleases().then((gadReleases) => {
       if (gadReleases.length === 0) {
@@ -543,4 +688,53 @@ async function checkNewerVersion(force = false) {
 
 function checkRelease(force = false) {
   checkNewerVersion(force);
+}
+
+function checkIfAuthenticated(elementID, successCallback, failureCallback) {
+  if (!isAuthenticated()) {
+    let simpleInfoBox = "simpleInfoBox";
+    const dashboardInfo = document.getElementById(elementID);
+    setBoxMessage(
+      dashboardInfo,
+      `You are not authenticated<br/>
+                  Please <a href="/login" class="btn btn-primary">login</a> or <a href="/register.html" class="btn btn-primary">register</a> to see the content`,
+      simpleInfoBox
+    );
+    if (failureCallback) {
+      failureCallback();
+    }
+  } else {
+    if (successCallback) {
+      successCallback();
+    }
+  }
+}
+
+function addTooltipWithQrCode(elementId, qrCodeText, up = true) {
+  const element = document.getElementById(elementId);
+  const randomId = randomInt();
+
+  element.innerHTML = `<div class="hover-element" id="qrcode-${randomId}"></div></div></div>`;
+  const qrcode = new QRCode(document.getElementById(`qrcode-${randomId}`), {
+    width: 150,
+    height: 150,
+  });
+  qrcode.makeCode(qrCodeText);
+}
+
+function addElementWithTooltipWithQrCode(elementId, qrCodeText) {
+  const element = document.getElementById(elementId);
+  addElementWithTooltipWithQrCodeToElement(element, qrCodeText);
+}
+
+function addElementWithTooltipWithQrCodeToElement(element, qrCodeText, up = true) {
+  element.classList.add("qr-container");
+
+  const randomId = randomInt();
+  element.innerHTML += `<div class="qr-tooltip">
+      <i class="fa-solid fa-qrcode qr-icon"></i>
+      <span class="qr-tooltiptext" id="qr-tooltiptext-${randomId}">
+      </span>
+  </div>`;
+  addTooltipWithQrCode(`qr-tooltiptext-${randomId}`, qrCodeText);
 }

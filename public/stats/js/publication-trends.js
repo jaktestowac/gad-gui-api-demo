@@ -101,7 +101,7 @@ function getCumulativeValuesByDayOfWeek(data) {
   const cumulativeData = {};
 
   for (const key in data) {
-    const date = new Date(key);
+    const date = getDateFromString(key);
     const dayOfWeek = DAYS_OF_WEEK[date.getDay()];
 
     if (cumulativeData[dayOfWeek]) {
@@ -208,6 +208,7 @@ function getAndDisplayData(dataType, dataResolution) {
       displayData("Comments", dataResolution, labels, dataSet, animationDuration);
     });
   } else {
+    // eslint-disable-next-line no-console
     console.error("Invalid data type");
   }
 }

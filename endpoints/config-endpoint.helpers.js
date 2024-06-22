@@ -37,6 +37,21 @@ function handleConfig(req, res) {
   } else if (req.method === "GET" && req.url.includes("api/config/reset")) {
     resetConfig();
     res.status(HTTP_OK).json({});
+  } else if (req.method === "POST" && req.url.includes("api/config/checkfeatures")) {
+    const featureNames = req.body.names;
+
+    if (featureNames === undefined || !Array.isArray(featureNames)) {
+      res.status(HTTP_OK).json({ enabled: false });
+      return
+    }
+
+    const status = {};
+    for (const featureName of featureNames) {
+      const featureEnabled = getFeatureFlagConfigValue(featureName) ?? false;
+      status[featureName] = featureEnabled;
+    }
+
+    res.status(HTTP_OK).json(status);
   } else if (req.method === "POST" && req.url.includes("api/config/checkfeature")) {
     const featureName = req.body.name;
     const featureEnabled = getFeatureFlagConfigValue(featureName) ?? false;

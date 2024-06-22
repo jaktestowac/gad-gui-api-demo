@@ -6,6 +6,11 @@ const {
   searchForMessagesByUserId,
   searchForMessagesByBothUserIds,
   getMessagesWithIdGreaterThan,
+  searchForMessageCheckByUserId,
+  searchForMessageCheckById,
+  searchForContactsById,
+  searchForMessagesSentToUserId,
+  getUnreadMessagesPerUser,
 } = require("../helpers/db-operation.helpers");
 const { logTrace } = require("../helpers/logger-api");
 const {
@@ -33,6 +38,9 @@ const {
 const { areIdsEqual } = require("../helpers/compare.helpers");
 const { TracingInfoBuilder } = require("../helpers/tracing-info.helper");
 const { getRandomInt } = require("../helpers/generators/random-data.generator");
+const DatabaseManager = require("../helpers/db.manager");
+const { updateMessageCheckTimeInDb } = require("../helpers/db-queries.helper");
+const { getCurrentDateTimeISO } = require("../helpers/datetime.helpers");
 
 function handleMessenger(req, res, isAdmin) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
@@ -41,11 +49,26 @@ function handleMessenger(req, res, isAdmin) {
     res.status(HTTP_NOT_FOUND).json({});
   }
   let foundUser = undefined;
-
-  if (req.method === "GET" && req.url.endsWith("/api/messenger/messages")) {
-    const verifyTokenResult = verifyAccessToken(req, res, "messenger/contacts", req.url);
+  if (req.method === "GET" && req.url.endsWith("/api/messenger/unread")) {
+    const verifyTokenResult = verifyAccessToken(req, res, "messenger/unread", req.url);
     foundUser = searchForUserWithOnlyToken(verifyTokenResult);
-    logTrace("handleMessengerContacts: foundUser:", { method: req.method, urlEnds, foundUser });
+    logTrace("handleMessengerUnread: foundUser:", { method: req.method, urlEnds, foundUser });
+
+    if (isUndefined(foundUser) || isUndefined(verifyTokenResult)) {
+      res.status(HTTP_UNAUTHORIZED).json(formatInvalidTokenErrorResponse());
+      return;
+    }
+
+    const sentMessages = searchForMessagesSentToUserId(foundUser.id);
+    const userLastCheck = searchForMessageCheckByUserId(foundUser.id);
+    const unreadMessages = getUnreadMessagesPerUser(sentMessages, userLastCheck, foundUser.id);
+    res.status(HTTP_OK).json(unreadMessages);
+    return;
+  }
+  if (req.method === "GET" && req.url.endsWith("/api/messenger/messages")) {
+    const verifyTokenResult = verifyAccessToken(req, res, "messenger/messages", req.url);
+    foundUser = searchForUserWithOnlyToken(verifyTokenResult);
+    logTrace("handleMessengerMessages: foundUser:", { method: req.method, urlEnds, foundUser });
 
     if (isUndefined(foundUser) || isUndefined(verifyTokenResult)) {
       res.status(HTTP_UNAUTHORIZED).json(formatInvalidTokenErrorResponse());
@@ -54,12 +77,19 @@ function handleMessenger(req, res, isAdmin) {
 
     const messages = searchForMessagesByUserId(foundUser.id);
     res.status(HTTP_OK).json(messages);
+    req = new TracingInfoBuilder(req)
+      .setOriginMethod("GET")
+      .setTargetResourceId(foundUser.id)
+      .setResourceId(undefined)
+      .setWasAuthorized(true)
+      .build();
+
     return;
   }
   if (req.method === "GET" && req.url.includes("/api/messenger/messages?")) {
-    const verifyTokenResult = verifyAccessToken(req, res, "messenger/contacts", req.url);
+    const verifyTokenResult = verifyAccessToken(req, res, "messenger/messages", req.url);
     foundUser = searchForUserWithOnlyToken(verifyTokenResult);
-    logTrace("handleMessengerContacts: foundUser:", { method: req.method, urlEnds, foundUser });
+    logTrace("handleMessengerMessages: foundUser:", { method: req.method, urlEnds, foundUser });
 
     if (isUndefined(foundUser) || isUndefined(verifyTokenResult)) {
       res.status(HTTP_UNAUTHORIZED).json(formatInvalidTokenErrorResponse());
@@ -72,13 +102,35 @@ function handleMessenger(req, res, isAdmin) {
 
     const messages = searchForMessagesByBothUserIds(foundUser.id, contactId);
     const filteredMessages = getMessagesWithIdGreaterThan(messages, idFrom);
-    res.status(HTTP_OK).json(filteredMessages);
+    res.status(HTTP_OK).json({ messages: filteredMessages });
+
+    let messageCheck = searchForMessageCheckByUserId(foundUser.id);
+    if (isUndefined(messageCheck)) {
+      let newId = 0;
+      for (let i = 0; i < 100; i++) {
+        newId = getRandomInt(1000, 999999);
+        let otherMessageCheck = searchForMessageCheckById(newId);
+        if (isUndefined(otherMessageCheck)) {
+          break;
+        }
+      }
+
+      messageCheck = {
+        id: newId,
+        user_id: foundUser.id,
+        last_check: getCurrentDateTimeISO(),
+        last_checks: {},
+      };
+      messageCheck.last_checks[contactId] = getCurrentDateTimeISO();
+    }
+    updateMessageCheckTimeInDb(DatabaseManager.getInstance().getDb(), foundUser.id, messageCheck, contactId);
+
     return;
   }
   if (req.method === "POST" && req.url.endsWith("/api/messenger/messages")) {
     const verifyTokenResult = verifyAccessToken(req, res, "messenger/messages", req.url);
     foundUser = searchForUserWithOnlyToken(verifyTokenResult);
-    logTrace("handleMessengerContacts: foundUser:", { method: req.method, urlEnds, foundUser });
+    logTrace("handleMessengerMessages: foundUser:", { method: req.method, urlEnds, foundUser });
 
     if (isUndefined(foundUser) || isUndefined(verifyTokenResult)) {
       res.status(HTTP_UNAUTHORIZED).json(formatInvalidTokenErrorResponse());
@@ -87,7 +139,7 @@ function handleMessenger(req, res, isAdmin) {
 
     // validate mandatory fields:
     if (!areMandatoryFieldsPresent(req.body, mandatory_non_empty_fields_message)) {
-      res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_message));
+      res.status(HTTP_UNPROCESSABLE_ENTITY).json(formatMissingFieldErrorResponse(mandatory_non_empty_fields_message));
       return;
     }
 
@@ -95,7 +147,7 @@ function handleMessenger(req, res, isAdmin) {
     if (!fieldsLengthValid.status) {
       res
         .status(HTTP_UNPROCESSABLE_ENTITY)
-        .send(formatInvalidFieldErrorResponse(fieldsLengthValid, mandatory_non_empty_fields_message));
+        .json(formatInvalidFieldErrorResponse(fieldsLengthValid, mandatory_non_empty_fields_message));
       return;
     }
 
@@ -107,7 +159,7 @@ function handleMessenger(req, res, isAdmin) {
     }
 
     req.body.from = foundUser.id;
-    req.body.date = new Date().toISOString();
+    req.body.date = getCurrentDateTimeISO();
     req.url = `/api/messages`;
     return;
   }
@@ -211,7 +263,7 @@ function handleMessenger(req, res, isAdmin) {
       let newId = 0;
       for (let i = 0; i < 100; i++) {
         newId = getRandomInt(1000, 999999);
-        otherContacts = searchForContactsByUserId(newId);
+        otherContacts = searchForContactsById(newId);
         if (isUndefined(otherContacts)) {
           break;
         }

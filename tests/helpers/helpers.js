@@ -33,6 +33,34 @@ function getCurrentDate(hours = 0, minutes = 0, seconds = 0) {
   return date;
 }
 
+function addOffsetToDateString(date, offset) {
+  const newDate = date.replace("Z", offset);
+
+  return newDate;
+}
+
+function getISODateWithTimezoneOffset(date) {
+  const timezoneOffset = -date.getTimezoneOffset();
+  const dif = timezoneOffset >= 0 ? "+" : "-";
+
+  const currentDatetime =
+    date.getFullYear() +
+    "-" +
+    pad(date.getMonth() + 1) +
+    "-" +
+    pad(date.getDate()) +
+    "T" +
+    pad(date.getHours()) +
+    ":" +
+    pad(date.getMinutes()) +
+    ":" +
+    pad(date.getSeconds());
+
+  const timezoneDif = dif + pad(Math.floor(Math.abs(timezoneOffset) / 60)) + ":" + pad(Math.abs(timezoneOffset) % 60);
+
+  return currentDatetime + timezoneDif;
+}
+
 async function setupEnv() {
   const restoreResponse = await request.get("/api/restoreDB");
   expect(restoreResponse.status).to.equal(201);
@@ -40,19 +68,27 @@ async function setupEnv() {
   const requestBody = {
     currentLogLevel: logLevel,
   };
-  const response = await request.post("/api/config/all").send(requestBody);
-  expect(response.status).to.equal(200);
+  await changeConfig(requestBody);
 
   // Enable all feature flags:
-  const requestFeatureBody = {
-    feature_likes: true,
-    feature_files: true,
-    feature_labels: true,
-    feature_user_bookmark_articles: true,
-  };
-  const responseFeature = await request.post("/api/config/features").send(requestFeatureBody);
+  await toggleFeatures(["feature_likes", "feature_files", "feature_labels", "feature_user_bookmark_articles"]);
 
-  expect(responseFeature.status).to.equal(200);
+  // eslint-disable-next-line no-console
+  console.log("Environment setup done.");
+}
+
+async function changeConfig(requestBody) {
+  const response = await request.post("/api/config/all").send(requestBody);
+  expect(response.status).to.equal(200);
+}
+
+async function toggleFeatures(features, enabled = true) {
+  const requestBody = {};
+  features.forEach((feature) => {
+    requestBody[feature] = enabled;
+  });
+  const response = await request.post("/api/config/features").send(requestBody);
+  expect(response.status).to.equal(200);
 }
 
 async function toggle404Bug(value) {
@@ -63,10 +99,20 @@ async function toggle404Bug(value) {
   expect(response.status).to.equal(200);
 }
 
+function jsonToBase64(object) {
+  const json = JSON.stringify(object);
+  return btoa(json);
+}
+
 module.exports = {
   sleep,
   gracefulQuit,
   setupEnv,
   getCurrentDate,
   toggle404Bug,
+  getISODateWithTimezoneOffset,
+  addOffsetToDateString,
+  toggleFeatures,
+  jsonToBase64,
+  changeConfig,
 };

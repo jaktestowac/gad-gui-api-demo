@@ -1,4 +1,3 @@
-
 let firstname = getCookieUserName();
 
 const loginBtnElement = document.querySelector("#loginBtn");

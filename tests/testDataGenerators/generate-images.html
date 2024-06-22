@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Generate Captcha Images </title>
+    <script>
+
+        function generateImg(value) {
+            // Generate image with number 5
+            var canvas = document.createElement('canvas');
+            canvas.width = 6;
+            canvas.height = 11;
+            var ctx = canvas.getContext('2d');
+            ctx.font = 'bold 11px Arial';
+            ctx.fillText(value, 0, 11);
+            var dataURL = canvas.toDataURL();
+            return dataURL
+        }
+
+        function generateImgDict() {
+            var imgDict = {};
+            const toGenerateArray = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, '?', '+', '-', '*', '/', '='];
+
+            toGenerateArray.forEach((value) => {
+                imgDict[value] = generateImg(value);
+            });
+
+            return imgDict;
+        }
+
+        console.log(generateImgDict());
+        // // Display the image on the HTML page
+        window.onload = function () {
+            const imgs = generateImgDict()
+            for (const key in imgs) {
+                var img = document.createElement('img');
+                img.src = imgs[key];
+                img.style.width = "20px";
+                document.body.appendChild(img);
+            }
+        };
+    </script>
+</head>
+
+<body>
+</body>
+
+</html>

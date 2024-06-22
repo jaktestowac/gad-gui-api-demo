@@ -277,10 +277,7 @@ function pad(num, size = 2) {
 const handleCreate = () => {
   const container = document.querySelector(".add-new-panel");
 
-  const today = new Date();
-  const date = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}T${pad(
-    today.getHours()
-  )}:${pad(today.getMinutes())}:${pad(today.getSeconds())}Z`;
+  const date = getISOTodayDateWithTimezoneOffset();
 
   let data = {
     title: container.querySelector(".title").value,
@@ -308,16 +305,18 @@ const issueArticleRequest = (data, responseHandler) => {
 const getImagesHTML = (image) => {
   let htmlData = "";
   if (image !== undefined) {
-    htmlData += `<div align="center" ><img src="${image}" /></div>`;
+    htmlData += `<div align="center" class="article-image-container" ><img class="image" src="${image}" /></div>`;
   }
   return htmlData;
 };
 
 const getItemHTML = (item) => {
+  const formattedDate = formatDateToLocaleString(item.date);
+
   return `<div id="article${item.id}" class="item-card" data-testid="article-${item.id}">
-  <a href="article.html?id=${item.id}" id="gotoArticle${item.id}" data-testid="article-${item.id}-link">${getImagesHTML(
-    item.image
-  )}</a><br>
+  <a href="article.html?id=${item.id}" id="gotoArticle${item.id}" data-testid="article-${
+    item.id
+  }-link" class="image-link">${getImagesHTML(item.image)}</a><br>
   
   <div align="center" data-testid="article-${item.id}-title">
     <strong><a href="article.html?id=${item.id}">${item.title}</a></strong>
@@ -339,9 +338,7 @@ const getItemHTML = (item) => {
     
     <tr>
       <td style="padding: 0px;"><label style="width:25px !important">date:</label>&nbsp&nbsp</td>
-      <td style="padding: 0px;"><span data-testid="article-${item.id}-date">${item.date
-    .replace("T", " ")
-    .replace("Z", "")}</span></td>
+      <td style="padding: 0px;"><span data-testid="article-${item.id}-date">${formattedDate}</span></td>
     </tr>
   </table>
   
@@ -484,6 +481,17 @@ async function updateLikeElements() {
   });
 }
 
+async function updateQrCodes() {
+  const isEnabled = await checkIfFeatureEnabled("feature_qrcodes");
+  if (!isEnabled) return;
+
+  const elements = document.querySelectorAll(".image-link");
+  elements.forEach((element) => {
+    const imgEl = element.querySelector(".article-image-container");
+    addElementWithTooltipWithQrCodeToElement(imgEl, element.href);
+  });
+}
+
 // pagination:
 
 function changeItemsPerPage() {
@@ -556,6 +564,7 @@ function changePage(page, onlyDisplay = false) {
       updateLabelElements();
       updateVisitsElements();
       updateBookmarkElements();
+      updateQrCodes();
     });
   });
 }
@@ -625,6 +634,7 @@ async function checkScroll() {
           updateLabelElements();
           updateVisitsElements();
           updateBookmarkElements();
+          updateQrCodes();
           current_page++;
           checkScroll();
         }

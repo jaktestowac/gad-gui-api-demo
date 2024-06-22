@@ -52,10 +52,12 @@ function deleteAccount() {
           }
         })
         .catch((error) => {
+          // eslint-disable-next-line no-console
           console.error("Error:", error);
         });
     }
   } else {
+    // eslint-disable-next-line no-console
     console.log("Account deletion cancelled");
   }
 }
@@ -66,4 +68,9 @@ let avatar = getCookieAvatar();
 const avatarElement = document.querySelector("#myAvatar");
 if (avatarElement) {
   avatarElement.src = `./../${avatar}`;
+}
+
+const timeZoneLabel = document.getElementById("time-zone");
+if (timeZoneLabel) {
+  timeZoneLabel.innerHTML = Intl.DateTimeFormat().resolvedOptions().timeZone;
 }

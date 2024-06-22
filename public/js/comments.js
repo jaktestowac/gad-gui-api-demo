@@ -59,11 +59,7 @@ async function issueGetRequest(
 
     await processCommentsData(userComments);
   }
-  // userComments.sort(function (a, b) {
-  //   let dateA = new Date(a.date),
-  //     dateB = new Date(b.date);
-  //   return dateB - dateA;
-  // });
+
   allComments = userComments;
   hideLoading();
   await displayCommentsData(userComments, displayDelay);
@@ -161,16 +157,12 @@ const getCommentHTML = (comment) => {
     commentBodyElement = `<div align="center"><span>[Article for this comment was removed]</span></div>`;
   }
 
+  const date = formatDateToLocaleString(comment?.date);
+
   return `<div class="item-card">
         <label>article:</label></br>${articleElement}<br>
-        <label>user:</label><span><a href="user.html?id=${comment.user_id}" data-testid="comment${
-    comment.id
-  }-user" data-testid="article-${comment.id}-title" id="gotoUser${comment.user_id}-${comment.id}">${
-    comment.user_name
-  }</a></span><br>
-        <label>date:</label><span data-testid="comment${comment.id}-date">${comment.date
-    .replace("T", " ")
-    .replace("Z", "")}</span><br>
+        <label>user:</label><span><a href="user.html?id=${comment.user_id}" data-testid="comment${comment.id}-user" data-testid="article-${comment.id}-title" id="gotoUser${comment.user_id}-${comment.id}">${comment.user_name}</a></span><br>
+        <label>date:</label><span data-testid="comment${comment.id}-date">${date}</span><br>
         <label>comment:</label>${commentBodyElement}<br>
         ${seeMoreElement}<br>
     </div>`;

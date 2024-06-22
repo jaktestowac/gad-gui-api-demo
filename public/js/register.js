@@ -27,7 +27,7 @@ const showMessage = (message, isError = false) => {
 function sendData() {
   let birthdate = document.querySelector(".datepicker").value;
   try {
-    birthdate = `${new Date(birthdate).toISOString()}`.split(".")[0] + "Z";
+    birthdate = getISODateStringWithTimezoneOffsetFromString(birthdate);
   } catch (ex) {
     // TODO:INVOKE_BUG: nothing is done in case of invalid birth date
   }
@@ -40,11 +40,22 @@ function sendData() {
     avatar: `.\\data\\users\\${document.querySelector(".avatar").value}`,
   };
 
+  const captchaInput = document.querySelector(".captcha-input");
+
+  const captchaData = {};
+  let captchaAsBase64 = undefined;
+  if (captchaInput !== null) {
+    captchaData.uuid = captchaInput.getAttribute("uuid");
+    captchaData.result = captchaInput.value;
+    captchaAsBase64 = jsonToBase64(captchaData);
+  }
+
   fetch("/api/users", {
     method: "post",
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      captcha: captchaAsBase64,
     },
     body: JSON.stringify(userData),
   }).then((response) => {
@@ -60,6 +71,14 @@ function sendData() {
         }, 3000);
       } else {
         showMessage(`User not created! ${data.error?.message}`, true);
+        if (response.headers.get("captcha") !== null) {
+          try {
+            Function(`generateCaptcha();`)();
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error("Error while trying to generate captcha.", e);
+          }
+        }
       }
     });
     return response;
@@ -89,11 +108,12 @@ async function getPictureList() {
 
 getPictureList();
 
-//create new instance of octavalidate
-let formVal = new octaValidate("registerForm");
-formVal.customRule("DATE", /^\d{4}-\d{2}-\d{2}$/, "Date must be in format YYYY-MM-DD");
-//attach event listener
+// attach event listener
 document.querySelector("#registerForm").addEventListener("submit", function (e) {
+  // create new instance of octavalidate
+  let formVal = new octaValidate("registerForm");
+  formVal.customRule("DATE", /^\d{4}-\d{2}-\d{2}$/, "Date must be in format YYYY-MM-DD");
+
   e.preventDefault();
   //invoke the validate method
   if (formVal.validate() === true) {

@@ -1,6 +1,7 @@
 const { getConfigValue, isBugEnabled } = require("../config/config-manager");
 const { ConfigKeys, BugConfigKeys } = require("../config/enums");
 const { isUndefined } = require("./compare.helpers");
+const { getDateTimeFromString } = require("./datetime.helpers");
 const { verifyToken, getJwtExpiryDate } = require("./jwtauth");
 const { logDebug, logError, logTrace, logWarn, logInsane } = require("./logger-api");
 
@@ -113,7 +114,7 @@ function validateDateFields(body, fields = ["date"]) {
       const result = isDateInFuture(element);
       if (result.isDateInFuture === true) {
         logError("validateDateFields: Body:", { body, result });
-        error = `Field validation: "${key}" has date in future! Application date: "${result.currentDate}" Input date: "${result.inputDate}"`;
+        error = `Field validation: "${key}" has date in future! Application date: "${result.applicationDate}" Input date: "${result.inputDate}"`;
         return { status: false, error };
       }
     }
@@ -188,22 +189,75 @@ const isDateValid = (date) => {
   }
 };
 
-function isDateInFuture(dateString) {
-  const inputDate = new Date(dateString);
-  const timezoneOffset = inputDate.getTimezoneOffset();
-  const currentDate = new Date();
-  currentDate.setMinutes(currentDate.getMinutes() - timezoneOffset);
-  currentDate.setSeconds(currentDate.getSeconds() + 10); // add possibility of offset
-  logTrace("isDateInFuture:", { dateString, inputDate, currentDate });
+function isDateInFuture(inputRawDateString, applicationDateString = undefined) {
+  const inputDate = getDateTimeFromString(inputRawDateString);
+  let inputDateTimezoneOffsetInMinutes = 0;
+  let inputDateTimezoneOffsetInHours = 0;
+
+  const offsetRegex = /([+-])(\d{2}):(\d{2})$/;
+  const match = inputRawDateString.match(offsetRegex);
+
+  if (match) {
+    // const sign = match[1];
+    // const hours = parseInt(match[2], 10);
+    // const minutes = parseInt(match[3], 10);
+    // // Calculate total offset in minutes
+    // inputDateTimezoneOffsetInMinutes = minutes;
+    // inputDateTimezoneOffsetInHours = hours;
+    // if (sign === "-") {
+    //   inputDateTimezoneOffsetInMinutes = -inputDateTimezoneOffsetInMinutes;
+    //   inputDateTimezoneOffsetInHours = -inputDateTimezoneOffsetInHours;
+    // }
+  } else {
+    inputDateTimezoneOffsetInMinutes = inputDate.getTimezoneOffset();
+    inputDateTimezoneOffsetInHours = Math.floor(inputDateTimezoneOffsetInMinutes / 60);
+    inputDateTimezoneOffsetInMinutes -= inputDateTimezoneOffsetInHours * 60;
+
+    inputDateTimezoneOffsetInMinutes = -inputDateTimezoneOffsetInMinutes;
+    inputDateTimezoneOffsetInHours = -inputDateTimezoneOffsetInHours;
+  }
+
+  let applicationDate = new Date();
+  let applicationDateRaw = new Date();
+
+  if (applicationDateString !== undefined) {
+    applicationDate = getDateTimeFromString(applicationDateString);
+    applicationDateRaw = getDateTimeFromString(applicationDateString);
+  }
+  applicationDate.setHours(applicationDate.getHours() + inputDateTimezoneOffsetInHours);
+  applicationDate.setMinutes(applicationDate.getMinutes() + inputDateTimezoneOffsetInMinutes);
+  applicationDate.setSeconds(applicationDate.getSeconds() + 10); // add possibility of offset
+  const differenceInSeconds = Math.round((inputDate - applicationDate) / 1000);
+  let isDateInFuture = inputDate > applicationDate;
+
+  logTrace("isDateInFuture:", {
+    isDateInFuture,
+    inputDate,
+    applicationDate,
+    applicationDateRaw,
+    inputRawDateString,
+    differenceInSeconds,
+    inputDateTimezoneOffsetInMinutes,
+    inputDateTimezoneOffsetInHours,
+  });
 
   if (isBugEnabled(BugConfigKeys.BUG_VALIDATION_007)) {
-    return true;
+    isDateInFuture = false;
   }
   if (isBugEnabled(BugConfigKeys.BUG_VALIDATION_008)) {
-    return false;
+    isDateInFuture = false;
   }
 
-  return { isDateInFuture: inputDate > currentDate, dateString, inputDate, currentDate };
+  return {
+    isDateInFuture,
+    inputDate,
+    applicationDate,
+    applicationDateRaw,
+    inputRawDateString,
+    differenceInSeconds,
+    inputDateTimezoneOffsetInMinutes,
+    inputDateTimezoneOffsetInHours,
+  };
 }
 
 const verifyAccessToken = (req, res, endpoint = "endpoint", url = "") => {
@@ -268,4 +322,5 @@ module.exports = {
   validateDateFields,
   isFieldsLengthValid,
   isObjectLengthValid,
+  isDateInFuture,
 };

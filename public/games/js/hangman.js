@@ -27,7 +27,6 @@ async function selectWord() {
   selectedWordData = selectedWordData[0];
 
   if (selectedWordData.status !== 200) {
-    gameContainer.innerHTML = "<strong>⛔ Please log in and return to this page ⛔</strong>";
     return false;
   } else {
     selectedWord = selectedWordData.json.word;
@@ -147,3 +146,11 @@ async function startQuiz() {
 }
 
 gameContainer.style.visibility = "collapse";
+
+checkIfAuthenticated(
+  "info-container",
+  () => {},
+  () => {
+    startButton.style.visibility = "collapse";
+  }
+);

@@ -1,6 +1,7 @@
 const { isBugDisabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
 const { isUndefined } = require("./compare.helpers");
+const { getDateTimeFromString } = require("./datetime.helpers");
 const { pad } = require("./helpers");
 
 function parseUserStats(dbDataJson, dataType) {
@@ -156,7 +157,7 @@ function parseUserActivityStats(dbDataJson) {
 
     for (let j = 0; j < articlesData.length; j++) {
       if (articlesData[j].user_id === userId) {
-        const articleDate = new Date(articlesData[j].date);
+        const articleDate = getDateTimeFromString(articlesData[j].date);
         const month = articleDate.toLocaleDateString("en-US", { month: "long" });
         const dayOfWeek = articleDate.toLocaleDateString("en-US", { weekday: "long" });
         const year = articleDate.toLocaleDateString("en-US", { year: "numeric" });
@@ -177,7 +178,7 @@ function parseUserActivityStats(dbDataJson) {
 
     for (let j = 0; j < commentsData.length; j++) {
       if (commentsData[j].user_id === userId) {
-        const commentDate = new Date(commentsData[j].date);
+        const commentDate = getDateTimeFromString(commentsData[j].date);
         const month = commentDate.toLocaleDateString("en-US", { month: "long" });
         const dayOfWeek = commentDate.toLocaleDateString("en-US", { weekday: "long" });
         const year = commentDate.toLocaleDateString("en-US", { year: "numeric" });
@@ -230,7 +231,7 @@ function parsePublishStats(dbDataJson, type = "comments") {
   }
 
   for (const entry of entriesData) {
-    let date = new Date(entry.date);
+    let date = getDateTimeFromString(entry.date);
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
     const day = date.getDate();
@@ -291,7 +292,7 @@ function parseUserPublicationStatsByDates(dbDataJson, entityName = "articles") {
   const entitiesByDay = {};
 
   entitiesData.forEach((entity) => {
-    const publishedDate = new Date(entity.date);
+    const publishedDate = getDateTimeFromString(entity.date);
     const year = publishedDate.getFullYear();
     const month = publishedDate.getMonth();
     const day = publishedDate.getDay();

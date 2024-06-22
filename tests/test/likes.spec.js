@@ -69,6 +69,8 @@ describe("Endpoint /likes", () => {
     describe("e2e", () => {
       beforeEach(async () => {
         await setupEnv();
+        // eslint-disable-next-line no-console
+        console.log(">>> Restoring DB before e2e tests");
         await request.get("/restoreDB");
       });
 

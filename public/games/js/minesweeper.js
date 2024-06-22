@@ -199,13 +199,22 @@ function startGame() {
   const token = getBearerToken();
   if (token === undefined) {
     resetBtn.style.display = "none";
-    const scoreElement = document.getElementById("score");
-    scoreElement.innerHTML = "<strong>⛔ Please log in and return to this page ⛔</strong>";
   } else {
     resetBtn.style.display = "block";
     initializeBoard();
   }
 }
 
-resetBtn.addEventListener("click", resetGame);
-startGame();
+checkIfAuthenticated(
+  "info-container",
+  () => {
+    resetBtn.addEventListener("click", resetGame);
+    startGame();
+  },
+  () => {
+    resetBtn.style.display = "none";
+    const boardContainer = document.querySelector(".board-container");
+    boardContainer.style.display = "none";
+
+  }
+);

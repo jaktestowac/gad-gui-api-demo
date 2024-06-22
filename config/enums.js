@@ -62,6 +62,7 @@ const ConfigKeys = {
   MIN_SECONDS_FOR_RESOURCE_CREATED_RECENTLY_BUG: "minSecondsForResourceCreatedRecentlyBug",
   COMMENTS_SOFT_DELETE_DELAY_IN_SECONDS_BUG: "commentsSoftDeleteDelayInSecondsBug",
   DIAGNOSTICS_ENABLED: "diagnosticsEnabled",
+  CAPTCHA_SOLUTION_IN_RESPONSE: "captchaSolutionInResponse",
 };
 
 const BugConfigKeys = {
@@ -122,6 +123,8 @@ const FeatureFlagConfigKeys = {
   FEATURE_VISITS: "feature_visits",
   FEATURE_USER_BOOKMARK_ARTICLES: "feature_user_bookmark_articles",
   FEATURE_INFINITE_SCROLL_ARTICLES: "feature_infinite_scroll_articles",
+  FEATURE_CAPTCHA: "feature_captcha",
+  FEATURE_QRCODES: "feature_qrcodes",
 };
 
 module.exports = {

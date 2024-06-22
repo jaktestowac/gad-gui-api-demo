@@ -49,6 +49,7 @@ const configToModify = {
   minSecondsForResourceCreatedRecentlyBug: 3,
   commentsSoftDeleteDelayInSecondsBug: 3,
   diagnosticsEnabled: false,
+  captchaSolutionInResponse: false,
 };
 
 const config = {
@@ -64,7 +65,8 @@ const config = {
   hangmanDataPath: "./db/hangman-words.json",
   translationsDbPath: "./data/translations/translations.json",
   defaultPort: 3000,
-  dateRegexp: /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/, // e.g. 2016-01-19T15:21:32Z or 2016-01-19T15:21:32.2Z or 2016-01-19T15:21:32.123Z
+  dateRegexp:
+    /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z|\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?([+-]\d{2}:\d{2}))$/, // e.g. 2016-01-19T15:21:32Z or 2016-01-19T15:21:32.2Z or 2016-01-19T15:21:32.123Z or 2024-06-02T08:43:41+02:00
   emailRegexp: /^\S+@\S+\.\S+$/,
   userAvatarPath: "../public/data/users",
   articleImagePath: "../public/data/images/256",
