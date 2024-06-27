@@ -295,6 +295,49 @@ input[type="submit"]:hover {
 }
 
 /*****************************************/
+
+.add-new-popup-panel {
+  width: 300px;
+  height: 250px;
+  display: none;
+  align-items: center;
+  /* justify-content: center; */
+  flex-direction: column;
+  font-size: 1.2em;
+  line-height: 1.4em;
+  color: #444;
+}
+
+.add-new-popup-panel .flashpost-textarea {
+  width: 250px;
+  height: 100px;
+}
+
+.add-new-popup-panel.active {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 1);
+  z-index: 19999;
+  display: flex;
+}
+
+.add-new-popup-panel > div {
+  max-width: 50vw;
+}
+
+.overlay.active {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+}
+
+/*****************************************/
 .add-new-panel {
   width: 100vw;
   height: 100vh;

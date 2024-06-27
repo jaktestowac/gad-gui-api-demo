@@ -1,6 +1,6 @@
 const { baseFlashpostsUrl, request, expect } = require("../config.js");
 const { authUser } = require("../helpers/data.helpers.js");
-const { setupEnv, gracefulQuit } = require("../helpers/helpers.js");
+const { setupEnv, gracefulQuit, sleep } = require("../helpers/helpers.js");
 
 describe.only("Endpoint /flashposts", async () => {
   const baseUrl = baseFlashpostsUrl;
@@ -98,27 +98,70 @@ describe.only("Endpoint /flashposts", async () => {
       expect(response.body.length).to.be.greaterThan(1);
     });
 
-    it("POST /flashposts - create valid flashpost", async () => {
-      // Arrange:
-      const flashpost = {
+    [
+      {
         body: "Test content",
         is_public: true,
-      };
+      },
+      {
+        body: "Test content",
+        is_public: false,
+      },
+      {
+        body: "Test content",
+      },
+      {
+        body: "Test content",
+        is_public: true,
+        settings: {
+          color: "#FF0000",
+        },
+      },
+    ].forEach((flashpost) => {
+      it("POST /flashposts - create valid flashpost", async () => {
+        // get base number of flashposts:
+        const responseGet = await request.get(baseUrl).set(headers);
+        const baseCount = responseGet.body.length;
 
-      // get base number of flashposts:
-      const responseGet = await request.get(baseUrl).set(headers);
-      const baseCount = responseGet.body.length;
+        // Act:
+        const response = await request.post(baseUrl).set(headers).send(flashpost);
 
-      // Act:
-      const response = await request.post(baseUrl).set(headers).send(flashpost);
+        await sleep(500);
 
-      // Assert:
-      expect(response.status, JSON.stringify(response.body)).to.equal(201);
+        // Assert:
+        expect(response.status, JSON.stringify(response.body)).to.equal(201);
 
-      // get final number of flashposts:
+        // get final number of flashposts:
 
-      const responseGetFinal = await request.get(baseUrl).set(headers);
-      expect(responseGetFinal.body.length).to.be.equal(baseCount + 1);
+        const responseGetFinal = await request.get(baseUrl).set(headers);
+        expect(responseGetFinal.body.length).to.be.equal(baseCount + 1);
+      });
+    });
+
+    [
+      {
+        body: "Test content",
+        is_public: true,
+        settings: {
+          color: "red",
+        },
+      },
+    ].forEach((flashpost) => {
+      it("POST /flashposts - invalid color field", async () => {
+        // get base number of flashposts:
+        const responseGet = await request.get(baseUrl).set(headers);
+        const baseCount = responseGet.body.length;
+
+        // Act:
+        const response = await request.post(baseUrl).set(headers).send(flashpost);
+
+        // Assert:
+        expect(response.status, JSON.stringify(response.body)).to.equal(422);
+
+        // get final number of flashposts:
+        const responseGetFinal = await request.get(baseUrl).set(headers);
+        expect(responseGetFinal.body.length).to.be.equal(baseCount);
+      });
     });
   });
 });

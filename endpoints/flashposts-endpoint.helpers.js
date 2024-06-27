@@ -26,6 +26,8 @@ const {
   formatMissingFieldErrorResponse,
   formatInvalidFieldErrorResponse,
   getIdFromUrl,
+  isHexColor,
+  formatInvalidFieldValueErrorResponse,
 } = require("../helpers/helpers");
 const { getCurrentDateTimeISO } = require("../helpers/datetime.helpers");
 
@@ -97,6 +99,16 @@ function handleFlashPosts(req, res, isAdmin) {
         .status(HTTP_UNPROCESSABLE_ENTITY)
         .json(formatInvalidFieldErrorResponse(additionalFields, all_possible_fields_flashpost));
       return;
+    }
+
+    const settings = req.body.settings;
+    if (settings !== undefined) {
+      if (settings.color !== undefined && !isHexColor(settings.color)) {
+        res
+          .status(HTTP_UNPROCESSABLE_ENTITY)
+          .json(formatInvalidFieldValueErrorResponse({ status: false, error: "Invalid Hex color" }, "color"));
+        return;
+      }
     }
 
     if (req.body.settings === undefined) {
