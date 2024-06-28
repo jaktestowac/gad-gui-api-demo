@@ -1117,6 +1117,11 @@ body.darkmode {
   font-size: 14px;
 }
 
+.darkmode .flashpost-container {
+  border: 2px solid #7c7c7c8f;
+  background-color: #2c2c2c;
+}
+
 .flashpost-container-space {
   display: flex;
   flex-direction: column;
@@ -1136,6 +1141,12 @@ body.darkmode {
   display: flex;
   justify-content: space-between;
   color: #4646468f;
+}
+
+.darkmode .flashpost-author-and-date {
+  display: flex;
+  justify-content: space-between;
+  color: #d1d1d18f;
 }
 
 .flashpost-author-and-date-dark {
