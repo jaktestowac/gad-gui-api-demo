@@ -1126,17 +1126,24 @@ body.darkmode {
 
 .flashpost-date {
   font-size: 12px;
-  color: #4646468f;
 }
 
 .flashpost-author {
   font-size: 12px;
-  color: #4646468f;
 }
 
 .flashpost-author-and-date {
   display: flex;
   justify-content: space-between;
+  color: #4646468f;
+}
+
+.flashpost-author-and-date-dark {
+  color: #333333 !important;
+}
+
+.flashpost-author-and-date-light {
+  color: #bbbbbb !important;
 }
 
 [data-tooltip]::before {

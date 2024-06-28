@@ -82,6 +82,18 @@ function displayFlashPosts(data) {
     const flashpostAuthorAndDate = document.createElement("div");
     flashpostAuthorAndDate.classList.add("flashpost-author-and-date");
 
+    if (element.settings !== undefined && element.settings.color !== undefined) {
+      flashpostContainer.style.backgroundColor = element.settings.color;
+      const contrastRatio = getContrastRatio(element.settings.color);
+      flashpostContainer.style.color = contrastRatio > 4.5 ? "black" : "white";
+
+      if (contrastRatio > 4.5) {
+        flashpostAuthorAndDate.classList.add("flashpost-author-and-date-dark");
+      } else {
+        flashpostAuthorAndDate.classList.add("flashpost-author-and-date-light");
+      }
+    }
+
     flashpostAuthorAndDate.appendChild(flashpostAuthor);
     flashpostAuthorAndDate.appendChild(flashpostDate);
 

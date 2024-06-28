@@ -2064,18 +2064,14 @@
       "id": 3,
       "user_id": 8,
       "date": "2024-06-08T18:30:00Z",
-      "settings": {
-        "color": "#ff4500"
-      },
+      "settings": {},
       "body": "Looking for recommendations on the best programming courses online."
     },
     {
       "id": 4,
       "user_id": 3,
       "date": "2024-06-12T10:45:30Z",
-      "settings": {
-        "color": "#33c4ff"
-      },
+      "settings": {},
       "body": "New blog post is live on my site. Check it out!",
       "is_public": true
     },
@@ -2083,18 +2079,14 @@
       "id": 5,
       "user_id": 4,
       "date": "2024-06-22T14:22:10Z",
-      "settings": {
-        "color": "#800080"
-      },
+      "settings": {},
       "body": "Just finished reading a fantastic book on leadership - <strong>Extreme Ownership</strong>"
     },
     {
       "id": 6,
       "user_id": 5,
       "date": "2024-06-25T09:00:00Z",
-      "settings": {
-        "color": "#ff6600"
-      },
+      "settings": {},
       "body": "Excited to announce our new project launch tomorrow!",
       "is_public": true
     },
@@ -2102,18 +2094,14 @@
       "id": 7,
       "user_id": 1,
       "date": "2024-06-27T17:37:45Z",
-      "settings": {
-        "color": "#006400"
-      },
+      "settings": {},
       "body": "Working on a new feature, can't wait to share it with everyone!"
     },
     {
       "id": 8,
       "user_id": 6,
       "date": "2024-06-28T10:20:00Z",
-      "settings": {
-        "color": "#ff00ff"
-      },
+      "settings": {},
       "body": "Anyone up for a game of chess this weekend?"
     }
   ],
