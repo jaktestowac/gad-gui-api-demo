@@ -60,6 +60,10 @@
       "description": "Bookmarks (⚠️ needs proper feature flag enabled)"
     },
     {
+      "name": "captcha",
+      "description": "Captcha (⚠️ needs proper feature flag enabled)"
+    },
+    {
       "name": "search",
       "description": "Search, filter, pagination for given objects"
     },
@@ -1225,6 +1229,88 @@
           "404": {
             "description": "Not found",
             "content": {}
+          }
+        }
+      }
+    },
+
+    "/api/captcha": {
+      "get": {
+        "summary": "Get a captcha equation",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Captcha"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Verify a captcha solution",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/CaptchaSolution"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "isCaptchaCorrect": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid captcha",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Captcha not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Missing fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
           }
         }
       }
@@ -4350,6 +4436,34 @@
                 "type": "number"
               }
             }
+          }
+        }
+      },
+      "Captcha": {
+        "type": "object",
+        "properties": {
+          "equation": {
+            "type": "string"
+          },
+          "uuid": {
+            "type": "string"
+          },
+          "equationString": {
+            "type": "string"
+          },
+          "result": {
+            "type": "number"
+          }
+        }
+      },
+      "CaptchaSolution": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string"
+          },
+          "result": {
+            "type": "number"
           }
         }
       },

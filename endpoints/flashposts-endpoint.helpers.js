@@ -30,24 +30,33 @@ const {
   formatInvalidFieldValueErrorResponse,
 } = require("../helpers/helpers");
 const { getCurrentDateTimeISO } = require("../helpers/datetime.helpers");
+const { getConfigValue } = require("../config/config-manager");
+const { ConfigKeys } = require("../config/enums");
 
 function handleFlashPosts(req, res, isAdmin) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
 
   let foundUser = undefined;
-  if (req.method === "GET" && req.url.endsWith("/api/flashposts")) {
+  if (req.method === "GET" && (req.url.endsWith("/api/flashposts") || req.url.endsWith("/api/flashposts/"))) {
     const verifyTokenResult = verifyAccessToken(req, res, "flashposts", req.url);
     foundUser = searchForUserWithOnlyToken(verifyTokenResult);
     logTrace("handleFlashPosts: foundUser:", { method: req.method, urlEnds, foundUser });
 
+    let posts = [];
+
     if (isUndefined(foundUser) || isUndefined(verifyTokenResult)) {
-      const allPublicPosts = getAllPublicFlashposts();
-      res.status(HTTP_OK).json(allPublicPosts);
-      return;
+      posts = getAllPublicFlashposts();
+    } else {
+      posts = getAllFlashposts();
     }
 
-    const allPosts = getAllFlashposts();
-    res.status(HTTP_OK).json(allPosts);
+    const limit = getConfigValue(ConfigKeys.CAPTCHA_SOLUTION_IN_RESPONSE);
+
+    if (limit !== undefined && limit > 0) {
+      posts = posts.slice(0, limit);
+    }
+
+    res.status(HTTP_OK).json(posts);
     return;
   }
 

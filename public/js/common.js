@@ -78,7 +78,9 @@ const formatDateToLocaleString = (dateString) => {
     return "";
   }
 
-  const date = new Date(dateString);
+  const utcDate = new Date(dateString);
+  const currentDate = new Date();
+  const date = new Date(utcDate.getTime() + currentDate.getTimezoneOffset() * 60000);
   const options = {
     year: "numeric",
     month: "2-digit",
@@ -93,6 +95,20 @@ const formatDateToLocaleString = (dateString) => {
   const formattedDate = date.toLocaleString(locale, options).replace(",", "");
   return formattedDate;
 };
+
+function howManyHoursAndMinutesAndSecondsInPast(dateString) {
+  const currentDate = new Date();
+  const utcDate = new Date(dateString);
+  const date = new Date(utcDate.getTime() + currentDate.getTimezoneOffset() * 60000);
+  const now = new Date();
+
+  const diff = now - date;
+  const hours = Math.abs(Math.floor(diff / (1000 * 60 * 60)));
+  const minutes = Math.abs(Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)));
+  const seconds = Math.abs(Math.floor((diff % (1000 * 60)) / 1000));
+
+  return { hours, minutes, seconds };
+}
 
 function getDateFromString(dateString) {
   return new Date(dateString);

@@ -298,7 +298,7 @@ input[type="submit"]:hover {
 
 .add-new-popup-panel {
   width: 300px;
-  height: 250px;
+  height: 300px;
   display: none;
   align-items: center;
   /* justify-content: center; */
@@ -306,6 +306,7 @@ input[type="submit"]:hover {
   font-size: 1.2em;
   line-height: 1.4em;
   color: #444;
+  border-radius: 10px;
 }
 
 .add-new-popup-panel .flashpost-textarea {

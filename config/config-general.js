@@ -50,6 +50,7 @@ const configToModify = {
   commentsSoftDeleteDelayInSecondsBug: 3,
   diagnosticsEnabled: false,
   captchaSolutionInResponse: false,
+  maxNumberOfFlashposts: 100,
 };
 
 const config = {

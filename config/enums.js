@@ -63,6 +63,7 @@ const ConfigKeys = {
   COMMENTS_SOFT_DELETE_DELAY_IN_SECONDS_BUG: "commentsSoftDeleteDelayInSecondsBug",
   DIAGNOSTICS_ENABLED: "diagnosticsEnabled",
   CAPTCHA_SOLUTION_IN_RESPONSE: "captchaSolutionInResponse",
+  MAX_NUMBER_OF_FLASHPOSTS: "maxNumberOfFlashposts",
 };
 
 const BugConfigKeys = {

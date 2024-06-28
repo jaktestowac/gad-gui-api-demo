@@ -30,25 +30,43 @@
     <div>
         <div class="tab">
             <div style="display: flex; align-items: center;">
-                <button class="tablinks" type="button" disabled readOnly onclick="openTab(event, 'tab1')">All Flash Posts</button>
+                <button class="tablinks" type="button" disabled readOnly onclick="openTab(event, 'tab1')">Latest Flashposts</button>
             </div>
         </div>
 
-        <button class="create-flashpost-btn" onclick="openPopup()">Create Flash Post</button>
-
+        <button class="create-flashpost-btn ">Create Flashpost</button>
+        <div>
+            <div id="container" class="outer-container-space">
+                <div class="flashpost-container-space">
+                    <!-- Your Flashpost here -->
+                </div>
+            </div>
+        </div>
     </div>
 
     <div align="center">
-        <section class="add-new-popup-panel active flashpost-popup item-card">
+        <section class="add-new-popup-panel flashpost-popup item-card">
             <div class="flashpost-popup item-card">
-                <h2>Create Flash Post</h2>
-
-                <textarea class="flashpost-textarea" id="flashpost-text" maxlength="128" placeholder="Enter your flash post here"></textarea>
+                <h2>Create Flashpost</h2>
 
                 <div align="center">
-
                     <div>
-                        <button type="button" class="update save button-primary" data-testid="save">Create</button>
+                        <textarea class="flashpost-textarea" id="flashpost-text" maxlength="128" placeholder="Enter your flashpost here" style="resize: none;"></textarea>
+                        <div id="character-counter" style="font-size: 12px; position: absolute; top: 150px; right: 35px; color: #979797;">128 characters left</div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: row; justify-content: space-between;">
+                        <div style="display: flex;flex-direction: column;align-items: center;">
+                            <input style="width: 25px; height: 25px;" type="checkbox" id="public-checkbox" name="public-checkbox">
+                            <label style="font-size: 14px;" for="public-checkbox">is public?</label>
+                        </div>
+                        <div style="display: flex;flex-direction: column;align-items: center;">
+                            <input style="width: 60px; height: 32px;" type="color" id="background-color-picker" name="background-color-picker" value="#dddddd">
+                            <label style="font-size: 14px;" for="background-color-picker">Background</label>
+                        </div>
+                    </div>
+                    <div>
+                        <button type="button" class="update save button-primary">Create</button>
                         <button type="button" class="cancel">Cancel</button>
                     </div>
                 </div>
@@ -59,7 +77,9 @@
     <script type="text/javascript" src="/js/common.js"></script>
     <script type="text/javascript" src="/js/header.js"></script>
     <script type="text/javascript" src="/username.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
     <script type="text/javascript" src="/js/darkmode.js"></script>
+    <script type="text/javascript" src="/js/flashposts.js"></script>
 
 </body>
 
