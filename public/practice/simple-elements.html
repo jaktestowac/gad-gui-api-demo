@@ -43,6 +43,14 @@
                 <td style="text-align: center;"><input type="checkbox" id="id-checkbox" data-testid="dti-checkbox" name="name-checkbox" value="checkbox" onclick="checkBoxClicked()">Checkbox</td>
             </tr>
             <tr style="height: 48px;">
+                <td style="text-align: center;" id="input-description" data-testid="dti-input-description">Input</td>
+                <td style="text-align: center;"><input type="text" id="id-input" data-testid="dti-input" onchange="inputChanged()"></td>
+            </tr>
+            <tr style="height: 48px;">
+                <td style="text-align: center;" id="textarea-description" data-testid="dti-textarea-description">Textarea</td>
+                <td style="text-align: center;"><textarea id="id-textarea" data-testid="dti-textarea" onchange="textareaChanged()"></textarea></td>
+            </tr>
+            <tr style="height: 48px;">
                 <td style="text-align: center;" id="dropdown-description" data-testid="dti-dropdown-description">Dropdown</td>
                 <td style="text-align: center;">
                     <select id="id-dropdown" name="name-dropdown" style="width: 75px;" id="id-dropdown" data-testid="dti-dropdown" onchange="dropdownOnChange()">
@@ -171,6 +179,18 @@
     }
     function onmouseLeave() {
         writeResults("");
+    }
+
+    function inputChanged() {
+        const input = document.getElementById("id-input");
+        const inputValue = input.value;
+        writeResults(`Input value changed to: ${inputValue}`);
+    }
+
+    function textareaChanged() {
+        const textarea = document.getElementById("id-textarea");
+        const textareaValue = textarea.value;
+        writeResults(`Textarea value changed to: ${textareaValue}`);
     }
 
 </script>
