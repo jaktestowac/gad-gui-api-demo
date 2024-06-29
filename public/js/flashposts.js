@@ -146,6 +146,10 @@ function openTab(evt, tabName) {
     getAndDisplayFlashposts(() =>
       issueGetFlashpostsAfterDateRequest(new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
     );
+  } else if (param === "1h") {
+    getAndDisplayFlashposts(() =>
+      issueGetFlashpostsAfterDateRequest(new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString())
+    );
   }
 }
 
@@ -167,6 +171,23 @@ function displayFlashPosts(data) {
   const flashpostContainerSpace = document.querySelector(".flashpost-container-space");
   while (flashpostContainerSpace.firstChild) {
     flashpostContainerSpace.removeChild(flashpostContainerSpace.firstChild);
+  }
+
+  if (data.length === 0) {
+    const flashpostContainer = document.createElement("div");
+    flashpostContainer.classList.add("flashpost-container");
+
+    const flashpostContent = document.createElement("div");
+    flashpostContent.classList.add("flashpost-content");
+
+    const flashpostMessageElement = document.createElement("div");
+    flashpostMessageElement.classList.add("flashpost-message");
+    flashpostMessageElement.textContent = "No flashposts found";
+
+    flashpostContent.appendChild(flashpostMessageElement);
+    flashpostContainer.appendChild(flashpostContent);
+    document.querySelector(".flashpost-container-space").prepend(flashpostContainer);
+    return;
   }
 
   data.forEach((element) => {
