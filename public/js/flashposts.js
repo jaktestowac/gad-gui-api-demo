@@ -1,5 +1,6 @@
 const urlFlashposts = "/api/flashposts";
 const usersEndpoint = "../../api/users";
+const defaultColor = "#dddddd";
 
 let alertElement = document.querySelector(".alert");
 
@@ -33,8 +34,34 @@ async function issueGetFlashpostsRequest() {
   return data;
 }
 
-async function issueGetFlashpostsBeforeRequest(date) {
-  const data = await fetch(`${urlFlashposts}?before=${date}`, {
+async function issuePostFlashpostsRequest(data) {
+  const response = fetch(urlFlashposts, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+    body: JSON.stringify(data),
+  });
+  return response;
+}
+
+async function issuePatchFlashpostsRequest(flashpostId, data) {
+  const response = fetch(`${urlFlashposts}/${flashpostId}`, {
+    method: "PATCH",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+    body: JSON.stringify(data),
+  });
+  return response;
+}
+
+async function issueGetFlashpostsAfterDateRequest(date) {
+  const data = await fetch(`${urlFlashposts}?afterDate=${date}`, {
     method: "GET",
     headers: {
       Accept: "application/json",
@@ -117,9 +144,23 @@ function openTab(evt, tabName) {
     getAndDisplayFlashposts(issueGetFlashpostsRequest);
   } else if (param === "24h") {
     getAndDisplayFlashposts(() =>
-      issueGetFlashpostsBeforeRequest(new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
+      issueGetFlashpostsAfterDateRequest(new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
     );
   }
+}
+
+function formatToHowLongAgo(hours, minutes, seconds) {
+  let formattedString = "";
+  if (hours > 0) {
+    formattedString += `${hours}h `;
+  }
+  if (minutes > 0) {
+    formattedString += `${minutes}m `;
+  }
+  if (seconds > 0 && hours === 0 && minutes === 0) {
+    formattedString += `${seconds}s `;
+  }
+  return formattedString;
 }
 
 function displayFlashPosts(data) {
@@ -159,7 +200,7 @@ function displayFlashPosts(data) {
     if (hoursMinutes.hours >= 24) {
       flashpostDate.textContent = formattedDate;
     } else {
-      flashpostDate.textContent = `${hoursMinutes.hours}h ${hoursMinutes.minutes}m ago`;
+      flashpostDate.textContent = formatToHowLongAgo(hoursMinutes.hours, hoursMinutes.minutes, hoursMinutes.seconds);
       flashpostDate.setAttribute("data-tooltip", formattedDate);
       if (getId() == element.user_id) {
         const deleteButton = document.createElement("i");
@@ -210,29 +251,35 @@ function displayFlashPosts(data) {
   });
 }
 
-function flashpostOnEdit(element, flashpostMessageElement) {
+function formatFlashpostBody() {
   const container = document.querySelector(".add-new-flashpost-panel");
-  container.querySelector(".flashpost-textarea").value = element.body;
-  container.classList.add("active");
+  const flashpostText = container.querySelector(".flashpost-textarea").value;
+  const body = {
+    body: flashpostText,
+    settings: {
+      color: container.querySelector("#background-color-picker")?.value || defaultColor,
+    },
+    is_public: container.querySelector("#public-checkbox")?.checked || false,
+  };
+  return body;
+}
 
-  const overlay = document.querySelector(".overlay");
-  overlay.classList.add("active");
+function flashpostOnEdit(element, flashpostMessageElement) {
+  openCreateOrEditFlashpostPanel(element);
 
-  container.querySelector(".save").onclick = () => {
+  const container = document.querySelector(".add-new-flashpost-panel");
+
+  container.querySelector(".update").onclick = () => {
     const updatedFlashpost = container.querySelector(".flashpost-textarea").value;
-    fetch(`${urlFlashposts}/${element.id}`, {
-      method: "PATCH",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: getBearerToken(),
-      },
-      body: JSON.stringify({ body: updatedFlashpost }),
-    }).then((response) => {
+    const body = formatFlashpostBody();
+
+    issuePatchFlashpostsRequest(element.id, body).then((response) => {
       if (response.status === 200) {
         flashpostMessageElement.innerHTML = updatedFlashpost;
         container.classList.remove("active");
+        const overlay = document.querySelector(".overlay");
         overlay.classList.remove("active");
+        getAndDisplayFlashposts(issueGetFlashpostsRequest);
       } else {
         const additionalMsg = response.body?.error?.message ? response.body.error.message : "";
         showMessage(`You can't modify this flashpost. ${additionalMsg}`, true);
@@ -253,14 +300,43 @@ function flashpostOnDelete(flashpostContainer, element) {
   });
 }
 
-document.querySelector(".create-flashpost-btn").onclick = () => {
-  window.scrollTo(0, 0);
+function openCreateOrEditFlashpostPanel(element) {
   const container = document.querySelector(".add-new-flashpost-panel");
-  container.querySelector(".flashpost-textarea").value = "";
+  container.querySelector("#background-color-picker").value = defaultColor;
+  container.querySelector("#public-checkbox").checked = false;
+
+  if (element === undefined) {
+    container.querySelector(".flashpost-textarea").value = "";
+  } else {
+    container.querySelector(".flashpost-textarea").value = element.body;
+    if (element.settings !== undefined && element.settings.color !== undefined) {
+      container.querySelector("#background-color-picker").value = element.settings.color;
+    }
+    if (element.settings !== undefined && element.settings.public !== undefined) {
+      container.querySelector("#public-checkbox").checked = element.settings.public;
+    }
+  }
   container.classList.add("active");
+
+  if (element === undefined) {
+    const createBtn = document.querySelector(".create");
+    createBtn.style.display = "inline-block";
+    const updateBtn = document.querySelector(".update");
+    updateBtn.style.display = "none";
+  } else {
+    const createBtn = document.querySelector(".create");
+    createBtn.style.display = "none";
+    const updateBtn = document.querySelector(".update");
+    updateBtn.style.display = "inline-block";
+  }
 
   const overlay = document.querySelector(".overlay");
   overlay.classList.add("active");
+}
+
+document.querySelector(".create-flashpost-btn").onclick = () => {
+  window.scrollTo(0, 0);
+  openCreateOrEditFlashpostPanel();
 };
 
 document.querySelector(".cancel").onclick = () => {
@@ -269,6 +345,30 @@ document.querySelector(".cancel").onclick = () => {
 
   const overlay = document.querySelector(".overlay");
   overlay.classList.remove("active");
+};
+
+document.querySelector(".create").onclick = () => {
+  const flashpost = document.querySelector(".flashpost-textarea").value;
+  if (flashpost.length === 0) {
+    showMessage("Flashpost can't be empty", true);
+    return;
+  }
+  const data = formatFlashpostBody();
+  issuePostFlashpostsRequest(data).then((response) => {
+    if (response.status === 201) {
+      showMessage("Flashpost created successfully");
+      getAndDisplayFlashposts(issueGetFlashpostsRequest);
+
+      const container = document.querySelector(".add-new-flashpost-panel");
+      container.classList.remove("active");
+
+      const overlay = document.querySelector(".overlay");
+      overlay.classList.remove("active");
+    } else {
+      const additionalMsg = response.body?.error?.message ? response.body.error.message : "";
+      showMessage(`You can't create this flashpost. ${additionalMsg}`, true);
+    }
+  });
 };
 
 const textarea = document.getElementById("flashpost-text");

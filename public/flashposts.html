@@ -37,8 +37,10 @@
                 <button class="tablinks" type="button" id="tab2" param="24h" onclick="openTab(event, 'tab2')">Last 24h</button>
             </div>
         </div>
-
-        <button class="create-flashpost-btn ">Create Flashpost</button>
+        <br />
+        <div class="flashpost-actions">
+            <button class="create-flashpost-btn button-primary-small">Create Flashpost</button>
+        </div>
         <div>
             <div id="container" class="outer-container-space">
                 <div class="flashpost-container-space">
@@ -70,7 +72,8 @@
                         </div>
                     </div>
                     <div>
-                        <button type="button" class="update save button-primary">Create</button>
+                        <button type="button" class="create button-primary" style="display: none;">Create</button>
+                        <button type="button" class="update button-primary" style="display: none;">Update</button>
                         <button type="button" class="cancel">Cancel</button>
                     </div>
                     <span style="font-size: 10px;">You can edit/delete falshpost only within 24h after creation!</span>

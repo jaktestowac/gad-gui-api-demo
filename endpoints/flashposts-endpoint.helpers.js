@@ -31,7 +31,7 @@ const {
   formatInvalidFieldValueErrorResponse,
   formatErrorResponse,
 } = require("../helpers/helpers");
-const { getCurrentDateTimeISO, checkHowLongInThePast } = require("../helpers/datetime.helpers");
+const { getCurrentDateTimeISO, checkHowLongInThePast, isDateBeforeOtherDate } = require("../helpers/datetime.helpers");
 const { getConfigValue } = require("../config/config-manager");
 const { ConfigKeys } = require("../config/enums");
 const { areIdsEqual } = require("../helpers/compare.helpers");
@@ -40,17 +40,31 @@ function handleFlashPosts(req, res, isAdmin) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
 
   let foundUser = undefined;
-  if (req.method === "GET" && (req.url.endsWith("/api/flashposts") || req.url.endsWith("/api/flashposts/"))) {
+  if (
+    req.method === "GET" &&
+    (req.url.endsWith("/api/flashposts") ||
+      req.url.endsWith("/api/flashposts/") ||
+      req.url.includes("/api/flashposts?"))
+  ) {
     const verifyTokenResult = verifyAccessToken(req, res, "flashposts", req.url);
     foundUser = searchForUserWithOnlyToken(verifyTokenResult);
     logTrace("handleFlashPosts: foundUser:", { method: req.method, urlEnds, foundUser });
 
     let posts = [];
 
+    const query = req.url.split("?")[1];
+    const afterDate = new URLSearchParams(query).get("afterDate");
+
     if (isUndefined(foundUser) || isUndefined(verifyTokenResult)) {
       posts = getAllPublicFlashposts();
     } else {
       posts = getAllFlashposts();
+    }
+
+    if (afterDate !== null) {
+      posts = posts.filter((post) => {
+        return isDateBeforeOtherDate(post.date, afterDate);
+      });
     }
 
     const limit = getConfigValue(ConfigKeys.CAPTCHA_SOLUTION_IN_RESPONSE);
@@ -145,7 +159,7 @@ function handleFlashPosts(req, res, isAdmin) {
   if (req.method === "DELETE" && req.url.includes("/api/flashposts/")) {
     const verifyTokenResult = verifyAccessToken(req, res, "flashposts", req.url);
     foundUser = searchForUserWithOnlyToken(verifyTokenResult);
-    logTrace("handleFlashPosts: foundUser:", { method: req.method, urlEnds, foundUser });
+    logTrace("handleFlashPosts: DELETE: foundUser:", { method: req.method, urlEnds, foundUser });
 
     if (isUndefined(foundUser) || isUndefined(verifyTokenResult)) {
       res.status(HTTP_UNAUTHORIZED).json(formatInvalidTokenErrorResponse());
@@ -175,9 +189,45 @@ function handleFlashPosts(req, res, isAdmin) {
 
     return;
   }
-  if (req.method === "PATCH" && req.url.includes("/api/flashposts")) {
-    // TODO:
-    res.status(HTTP_NOT_IMPLEMENTED).json({});
+  if (req.method === "PATCH" && req.url.includes("/api/flashposts/")) {
+    const verifyTokenResult = verifyAccessToken(req, res, "flashposts", req.url);
+    foundUser = searchForUserWithOnlyToken(verifyTokenResult);
+    logTrace("handleFlashPosts: PATCH: foundUser:", { method: req.method, urlEnds, foundUser });
+
+    if (isUndefined(foundUser) || isUndefined(verifyTokenResult)) {
+      res.status(HTTP_UNAUTHORIZED).json(formatInvalidTokenErrorResponse());
+      return;
+    }
+
+    let flashpostId = getIdFromUrl(urlEnds);
+    const flashpost = getFlashpostWithId(flashpostId);
+
+    if (isUndefined(flashpost)) {
+      res.status(HTTP_NOT_FOUND).json({});
+      return;
+    }
+
+    if (!areIdsEqual(flashpost.user_id, foundUser.id)) {
+      res.status(HTTP_UNAUTHORIZED).json({});
+      return;
+    }
+
+    const additionalFields = areAnyAdditionalFieldsPresent(req.body, all_possible_fields_flashpost);
+    if (additionalFields.status) {
+      res
+        .status(HTTP_UNPROCESSABLE_ENTITY)
+        .json(formatInvalidFieldErrorResponse(additionalFields, all_possible_fields_flashpost));
+      return;
+    }
+
+    const howLongInThePast = checkHowLongInThePast(flashpost.date);
+
+    logTrace("handleFlashPosts: PATCH:", { howLongInThePast });
+    if (howLongInThePast.totalHours > 23) {
+      res.status(HTTP_FORBIDDEN).json(formatErrorResponse("You can not delete flashpost older than 24 hours!"));
+      return;
+    }
+
     return;
   }
 

@@ -14,6 +14,22 @@ function getCurrentDateTime() {
   return formattedDateTime;
 }
 
+function isDateRecentInHoursRange(dateString, hours) {
+  const now = new Date();
+  const date = getDateTimeFromString(dateString);
+  const differenceInSeconds = Math.floor((now - date) / 1000);
+  const totalHours = Math.floor(differenceInSeconds / 3600);
+
+  return totalHours < hours;
+}
+
+function isDateBeforeOtherDate(dateString, otherDateString) {
+  const date = getDateTimeFromString(dateString);
+  const otherDate = getDateTimeFromString(otherDateString);
+
+  return date > otherDate;
+}
+
 function checkHowLongInThePast(dateString) {
   const now = new Date();
   const date = getDateTimeFromString(dateString);
@@ -115,4 +131,6 @@ module.exports = {
   getTodayDateForFileName,
   getDateTimeFromString,
   checkHowLongInThePast,
+  isDateRecentInHoursRange,
+  isDateBeforeOtherDate,
 };

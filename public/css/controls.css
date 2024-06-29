@@ -1143,12 +1143,18 @@ body.darkmode {
   color: #4646468f;
 }
 
+.flashpost-actions {
+  display: flex;
+  justify-content: center;
+}
+
 .flashpost-tools {
   margin-left: 0px;
 }
 
 .flashpost-tool {
   margin-left: 10px;
+  cursor: pointer;
 }
 
 .flashpost-tool:hover {

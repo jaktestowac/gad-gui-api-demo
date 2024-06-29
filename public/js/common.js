@@ -97,9 +97,7 @@ const formatDateToLocaleString = (dateString) => {
 };
 
 function howManyHoursAndMinutesAndSecondsInPast(dateString) {
-  const currentDate = new Date();
-  const utcDate = new Date(dateString);
-  const date = new Date(utcDate.getTime() + currentDate.getTimezoneOffset() * 60000);
+  const date = new Date(dateString);
   const now = new Date();
 
   const diff = now - date;
