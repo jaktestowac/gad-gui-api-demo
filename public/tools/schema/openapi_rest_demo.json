@@ -36,6 +36,10 @@
       "description": "Comments"
     },
     {
+      "name": "flashposts",
+      "description": "Flashposts - short posts"
+    },
+    {
       "name": "random",
       "description": "Random data"
     },
@@ -1459,6 +1463,238 @@
           },
           "404": {
             "description": "Comment not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/api/flashposts": {
+      "get": {
+        "tags": ["flashposts"],
+        "summary": "Get flashposts",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Flashpost"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
+          }
+        }
+      },
+      "post": {
+        "tags": ["flashposts"],
+        "summary": "Create a new flashpost",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FlashpostCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Flashpost"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/api/flashposts/{id}": {
+      "get": {
+        "tags": ["flashposts"],
+        "summary": "Get flashpost by ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of flashpost to return",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Flashpost"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
+          }
+        }
+      },
+      "patch": {
+        "tags": ["flashposts"],
+        "summary": "Update flashpost",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of flashpost to update",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FlashpostUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Flashpost"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {}
+          }
+        }
+      },
+      "delete": {
+        "tags": ["flashposts"],
+        "summary": "Delete flashpost",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of flashpost to delete",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not found",
             "content": {}
           }
         }
@@ -4469,114 +4705,67 @@
           }
         }
       },
-      "MyLikes": {
+      "Flashpost": {
         "type": "object",
+        "required": ["id", "user_id", "date", "settings", "body", "is_public"],
         "properties": {
-          "likes": {
-            "type": "object",
-            "example": { "1": true }
-          }
-        }
-      },
-      "QuizQuestionCount": {
-        "type": "object",
-        "required": ["count"],
-        "properties": {
-          "count": {
+          "id": {
             "type": "number"
-          }
-        }
-      },
-      "HangmanRandomWord": {
-        "type": "object",
-        "required": ["word"],
-        "properties": {
-          "count": {
-            "word": "string"
-          }
-        }
-      },
-      "ScoreRecord": {
-        "type": "object",
-        "required": ["score"],
-        "properties": {
-          "score": {
+          },
+          "user_id": {
+            "type": "number"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "body": {
             "type": "string"
-          }
-        }
-      },
-      "Scores": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "game_id": {
-              "oneOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "string"
-                }
-              ]
-            },
-            "user_id": {
-              "oneOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "string"
-                }
-              ]
-            },
-            "score": {
-              "oneOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "string"
-                }
-              ]
-            },
-            "id": {
-              "oneOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "string"
-                }
-              ]
+          },
+          "is_public": {
+            "type": "boolean"
+          },
+          "settings": {
+            "type": "object",
+            "properties": {
+              "color": {
+                "type": "string"
+              }
             }
           }
-        }
-      },
-      "Games": {
-        "type": "array",
-        "items": {
+        },
+        "FlashpostCreate": {
+          "type": "object",
+          "required": ["body"],
+          "properties": {
+            "body": {
+              "type": "string"
+            }
+          }
+        },
+        "FlashpostUpdate": {
           "type": "object",
           "properties": {
-            "name": {
+            "date": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "body": {
               "type": "string"
             },
-            "id": {
-              "oneOf": [
-                {
-                  "type": "number"
-                },
-                {
+            "is_public": {
+              "type": "boolean"
+            },
+            "settings": {
+              "type": "object",
+              "properties": {
+                "color": {
                   "type": "string"
                 }
-              ]
+              }
             }
           }
         }
-      },
-      "Visits": {
-        "type": "object",
-        "example": { "1": 2 }
       },
       "CreateBookmark": {
         "type": "object",

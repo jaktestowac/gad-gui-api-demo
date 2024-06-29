@@ -218,6 +218,11 @@ function handleFlashPosts(req, res, isAdmin) {
       return;
     }
 
+    if (!areIdsEqual(flashpostId, flashpost.id)) {
+      res.status(HTTP_UNAUTHORIZED).json({});
+      return;
+    }
+
     const additionalFields = areAnyAdditionalFieldsPresent(req.body, all_possible_fields_flashpost);
     if (additionalFields.status) {
       res
