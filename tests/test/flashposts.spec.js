@@ -2,7 +2,7 @@ const { baseFlashpostsUrl, request, expect } = require("../config.js");
 const { authUser } = require("../helpers/data.helpers.js");
 const { setupEnv, gracefulQuit, sleep } = require("../helpers/helpers.js");
 
-describe.only("Endpoint /flashposts", async () => {
+describe("Endpoint /flashposts", async () => {
   const baseUrl = baseFlashpostsUrl;
 
   before(async () => {
@@ -58,19 +58,19 @@ describe.only("Endpoint /flashposts", async () => {
       });
 
       it("PATCH /flashposts", () => {
-        return request.patch(baseUrl).send({}).expect(501);
+        return request.patch(baseUrl).send({}).expect(404);
       });
 
       it("PATCH /flashposts/:id", () => {
-        return request.patch(`${baseUrl}/1`).send({}).expect(501);
+        return request.patch(`${baseUrl}/1`).send({}).expect(401);
       });
 
       it("DELETE /flashposts", () => {
-        return request.delete(baseUrl).expect(501);
+        return request.delete(baseUrl).expect(404);
       });
 
       it("DELETE /flashposts/:id", () => {
-        return request.delete(`${baseUrl}/1`).expect(501);
+        return request.delete(`${baseUrl}/1`).expect(401);
       });
 
       it("HEAD /flashposts", () => {
@@ -162,6 +162,69 @@ describe.only("Endpoint /flashposts", async () => {
         const responseGetFinal = await request.get(baseUrl).set(headers);
         expect(responseGetFinal.body.length).to.be.equal(baseCount);
       });
+    });
+    it("PATCH /flashposts - correct update", async () => {
+      const baseBody = {
+        body: "Test content",
+        is_public: true,
+        settings: {
+          color: "#000000",
+        },
+      };
+
+      const baseBodyUpdated = {
+        body: "Test content 2",
+        is_public: false,
+        settings: {
+          color: "#dddddd",
+        },
+      };
+
+      // Act:
+      const responsePost = await request.post(baseUrl).set(headers).send(baseBody);
+      await sleep(500);
+
+      const newUrl = `${baseUrl}/${responsePost.body.id}`;
+
+      // Act:
+      const responsePatch = await request.patch(newUrl).set(headers).send(baseBodyUpdated);
+
+      // Assert:
+      expect(responsePatch.status, JSON.stringify(responsePatch.body)).to.equal(200);
+      await sleep(500);
+
+      const responseGet = await request.get(newUrl);
+
+      delete responseGet.body.date;
+      baseBodyUpdated.id = responsePost.body.id;
+      baseBodyUpdated.user_id = userId;
+
+      // Assert:
+      expect(responseGet.body, JSON.stringify(responsePatch.body)).to.eql(baseBodyUpdated);
+    });
+    it("DELETE /flashposts - valid remove", async () => {
+      const baseBody = {
+        body: "Test content",
+        is_public: true,
+        settings: {
+          color: "#000000",
+        },
+      };
+
+      const responsePost = await request.post(baseUrl).set(headers).send(baseBody);
+      await sleep(500);
+
+      const newUrl = `${baseUrl}/${responsePost.body.id}`;
+
+      // Act:
+      const responseDelete = await request.delete(newUrl).set(headers);
+
+      // Assert:
+      expect(responseDelete.status, JSON.stringify(responseDelete.body)).to.equal(200);
+      await sleep(500);
+
+      const responseGet = await request.get(newUrl);
+      expect(responseGet.status, JSON.stringify(responseGet.body)).to.equal(404);
     });
   });
 });
