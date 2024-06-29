@@ -33,6 +33,30 @@ async function issueGetFlashpostsRequest() {
   return data;
 }
 
+async function issueGetFlashpostsBeforeRequest(date) {
+  const data = await fetch(`${urlFlashposts}?before=${date}`, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+  });
+  return data;
+}
+
+async function issueDeleteFlashpostRequest(flashpostId) {
+  const data = fetch(`${urlFlashposts}/${flashpostId}`, {
+    method: "DELETE",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+  });
+  return data;
+}
+
 async function issueGetUsers(userIds) {
   const userQueryId = `${userIds.join("&id=")}`;
   const userUrlQuery = `${usersEndpoint}?id=${userQueryId}`;
@@ -47,29 +71,63 @@ async function issueGetUsers(userIds) {
   return data;
 }
 
-issueGetFlashpostsRequest().then((response) => {
-  if (response.status === 200) {
-    response.json().then((data) => {
-      const userIds = new Set(data.map((element) => element.user_id));
-      displayFlashPosts(data);
-      issueGetUsers([...userIds]).then((response) => {
-        if (response.status === 200) {
-          response.json().then((data) => {
-            const users = data;
-            const flashpostAuthors = document.querySelectorAll(".flashpost-author");
-            flashpostAuthors.forEach((element) => {
-              const userId = element.getAttribute("user-id");
-              const user = users.find((user) => user.id === parseInt(userId));
-              element.textContent = `${user.firstname} ${user.lastname}`;
+async function getAndDisplayFlashposts(issueGetFlashpostsRequest) {
+  issueGetFlashpostsRequest().then((response) => {
+    if (response.status === 200) {
+      response.json().then((data) => {
+        const userIds = new Set(data.map((element) => element.user_id));
+        displayFlashPosts(data);
+        issueGetUsers([...userIds]).then((response) => {
+          if (response.status === 200) {
+            response.json().then((data) => {
+              const users = data;
+              const flashpostAuthors = document.querySelectorAll(".flashpost-author");
+              flashpostAuthors.forEach((element) => {
+                const userId = element.getAttribute("user-id");
+                const user = users.find((user) => user.id === parseInt(userId));
+                element.textContent = `${user.firstname} ${user.lastname}`;
+              });
             });
-          });
-        }
+          }
+        });
       });
-    });
+    }
+  });
+}
+
+function openTab(evt, tabName) {
+  const tabcontent = document.getElementsByClassName("tabcontent");
+  for (let i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
   }
-});
+  const tablinks = document.getElementsByClassName("tablinks");
+  for (let i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+
+  if (evt != undefined) {
+    evt.currentTarget.className += " active";
+  } else {
+    document.getElementsByClassName("tablinks")[0].className += " active";
+  }
+
+  const param = evt.currentTarget?.getAttribute("param");
+
+  if (param === "last") {
+    getAndDisplayFlashposts(issueGetFlashpostsRequest);
+  } else if (param === "24h") {
+    getAndDisplayFlashposts(() =>
+      issueGetFlashpostsBeforeRequest(new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
+    );
+  }
+}
 
 function displayFlashPosts(data) {
+  const flashpostContainerSpace = document.querySelector(".flashpost-container-space");
+  while (flashpostContainerSpace.firstChild) {
+    flashpostContainerSpace.removeChild(flashpostContainerSpace.firstChild);
+  }
+
   data.forEach((element) => {
     const flashpostContainer = document.createElement("div");
     flashpostContainer.classList.add("flashpost-container");
@@ -184,16 +242,10 @@ function flashpostOnEdit(element, flashpostMessageElement) {
 }
 
 function flashpostOnDelete(flashpostContainer, element) {
-  fetch(`${urlFlashposts}/${element.id}`, {
-    method: "DELETE",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      Authorization: getBearerToken(),
-    },
-  }).then((response) => {
+  issueDeleteFlashpostRequest(element.id).then((response) => {
     if (response.status === 200) {
       flashpostContainer.remove();
+      showMessage("Flashpost deleted successfully");
     } else {
       const additionalMsg = response.body?.error?.message ? response.body.error.message : "";
       showMessage(`You can't delete this flashpost. ${additionalMsg}`, true);
@@ -226,3 +278,5 @@ textarea.addEventListener("input", () => {
   const remainingChars = 128 - textarea.value.length;
   counter.textContent = `${remainingChars} characters left`;
 });
+
+getAndDisplayFlashposts(issueGetFlashpostsRequest);

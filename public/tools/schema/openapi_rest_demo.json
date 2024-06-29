@@ -1236,6 +1236,7 @@
 
     "/api/captcha": {
       "get": {
+        "tags": ["captcha"],
         "summary": "Get a captcha equation",
         "responses": {
           "200": {
@@ -1251,6 +1252,7 @@
         }
       },
       "post": {
+        "tags": ["captcha"],
         "summary": "Verify a captcha solution",
         "requestBody": {
           "required": true,

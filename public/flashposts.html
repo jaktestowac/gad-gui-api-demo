@@ -33,7 +33,8 @@
     <div>
         <div class="tab">
             <div style="display: flex; align-items: center;">
-                <button class="tablinks" type="button" disabled readOnly onclick="openTab(event, 'tab1')">Latest Flashposts</button>
+                <button class="tablinks active" type="button" id="tab1" param="last" onclick="openTab(event, 'tab1')">Last 100</button>
+                <button class="tablinks" type="button" id="tab2" param="24h" onclick="openTab(event, 'tab2')">Last 24h</button>
             </div>
         </div>
 

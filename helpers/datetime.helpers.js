@@ -14,6 +14,23 @@ function getCurrentDateTime() {
   return formattedDateTime;
 }
 
+function checkHowLongInThePast(dateString) {
+  const now = new Date();
+  const date = getDateTimeFromString(dateString);
+  const differenceInSeconds = Math.floor((now - date) / 1000);
+  const totalSeconds = differenceInSeconds;
+  const totalMinutes = Math.floor(totalSeconds / 60);
+  const totalHours = Math.floor(totalMinutes / 60);
+  const totalDays = Math.floor(totalHours / 24);
+
+  return {
+    totalSeconds,
+    totalMinutes,
+    totalHours,
+    totalDays,
+  };
+}
+
 function getCurrentDateTimeISO() {
   const formattedDateTime = new Date().toISOString();
   return formattedDateTime;
@@ -97,4 +114,5 @@ module.exports = {
   getTodayDate,
   getTodayDateForFileName,
   getDateTimeFromString,
+  checkHowLongInThePast,
 };

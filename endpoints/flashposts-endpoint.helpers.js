@@ -12,6 +12,7 @@ const {
   HTTP_UNPROCESSABLE_ENTITY,
   HTTP_OK,
   HTTP_NOT_FOUND,
+  HTTP_FORBIDDEN,
 } = require("../helpers/response.helpers");
 const {
   verifyAccessToken,
@@ -28,10 +29,12 @@ const {
   getIdFromUrl,
   isHexColor,
   formatInvalidFieldValueErrorResponse,
+  formatErrorResponse,
 } = require("../helpers/helpers");
-const { getCurrentDateTimeISO } = require("../helpers/datetime.helpers");
+const { getCurrentDateTimeISO, checkHowLongInThePast } = require("../helpers/datetime.helpers");
 const { getConfigValue } = require("../config/config-manager");
 const { ConfigKeys } = require("../config/enums");
+const { areIdsEqual } = require("../helpers/compare.helpers");
 
 function handleFlashPosts(req, res, isAdmin) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
@@ -139,9 +142,37 @@ function handleFlashPosts(req, res, isAdmin) {
     res.status(HTTP_NOT_IMPLEMENTED).json({});
     return;
   }
-  if (req.method === "DELETE" && req.url.includes("/api/flashposts")) {
-    // TODO:
-    res.status(HTTP_NOT_IMPLEMENTED).json({});
+  if (req.method === "DELETE" && req.url.includes("/api/flashposts/")) {
+    const verifyTokenResult = verifyAccessToken(req, res, "flashposts", req.url);
+    foundUser = searchForUserWithOnlyToken(verifyTokenResult);
+    logTrace("handleFlashPosts: foundUser:", { method: req.method, urlEnds, foundUser });
+
+    if (isUndefined(foundUser) || isUndefined(verifyTokenResult)) {
+      res.status(HTTP_UNAUTHORIZED).json(formatInvalidTokenErrorResponse());
+      return;
+    }
+
+    let flashpostId = getIdFromUrl(urlEnds);
+    const flashpost = getFlashpostWithId(flashpostId);
+
+    if (isUndefined(flashpost)) {
+      res.status(HTTP_NOT_FOUND).json({});
+      return;
+    }
+
+    if (!areIdsEqual(flashpost.user_id, foundUser.id)) {
+      res.status(HTTP_UNAUTHORIZED).json({});
+      return;
+    }
+
+    const howLongInThePast = checkHowLongInThePast(flashpost.date);
+
+    logTrace("handleFlashPosts: DELETE:", { howLongInThePast });
+    if (howLongInThePast.totalHours > 23) {
+      res.status(HTTP_FORBIDDEN).json(formatErrorResponse("You can not delete flashpost older than 24 hours!"));
+      return;
+    }
+
     return;
   }
   if (req.method === "PATCH" && req.url.includes("/api/flashposts")) {
