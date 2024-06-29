@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <div align="center">
+        <h2>Elements without any id or data-testid attributes</h2>
+        <table style="margin: 0 auto; width:  fit-content;">
+            <tr style="height: 48px;">
+                <th>Description</th>
+                <th>Elements for Test Automation</th>
+            </tr>
+            <tr style="height: 48px;">
+                <td style="text-align: center;">Label</td>
+                <td style="text-align: center;"><label>Some text for label</label></td>
+            </tr>
+            <tr style="height: 48px;">
+                <td style="text-align: center;">Button</td>
+                <td style="text-align: center;"><button onclick="populateResults()">Click me!</button></td>
+            </tr>
+            <tr style="height: 48px;">
+                <td style="text-align: center;">Checkbox</td>
+                <td style="text-align: center;"><input type="checkbox" value="checkbox" onclick="checkBoxClicked()">Checkbox</td>
+            </tr>
+            <tr style="height: 48px;">
+                <td style="text-align: center;">Input</td>
+                <td style="text-align: center;"><input type="text" onchange="inputChanged()"></td>
+            </tr>
+            <tr style="height: 48px;">
+                <td style="text-align: center;">Textarea</td>
+                <td style="text-align: center;"><textarea onchange="textareaChanged()"></textarea></td>
+            </tr>
+            <tr style="height: 48px;">
+                <td style="text-align: center;">Dropdown</td>
+                <td style="text-align: center;">
+                    <select name="name-dropdown" style="width: 75px;" onchange="dropdownOnChange()">
+                        <option value="option1">Option 1</option>
+                        <option value="option2">Option 2</option>
+                        <option value="option3">Option 3</option>
+                    </select>
+                </td>
+            </tr>
+            <tr style="height: 48px;">
+                <td style="text-align: center;">Radio Buttons</td>
+                <td style="text-align: center;">
+                    <input type="radio" onclick="radioButtonClicked(1)" name="name-radio" value="radio1">
+                    <label for="radio1">Radio Button 1</label>
+                    <br>
+                    <input type="radio" onclick="radioButtonClicked(2)" name="name-radio" value="radio2">
+                    <label for="radio2">Radio Button 2</label>
+                    <br>
+                    <input type="radio" onclick="radioButtonClicked(3)" name="name-radio" value="radio3">
+                    <label for="radio3">Radio Button 3</label>
+                </td>
+            </tr>
+            <tr style="height: 48px;">
+                <td style="text-align: center;">Range</td>
+                <td style="text-align: center;"><input type="range" min="0" max="100" value="23" onchange="rangeChanged()"></td>
+            </tr>
+            <tr style="height: 48px;">
+                <td style="text-align: center;">Label (hoover mouse over it!)</td>
+                <td style="text-align: center;"><label onmouseover="onmouseOver()" onmouseleave="onmouseLeave()">Hoover mouse here!</label></td>
+            </tr>
+            <tr style="height: 48px;">
+                <td style="text-align: center;">Date</td>
+                <td style="text-align: center;"><input type="date" onchange="datetimeChanged()"></td>
+            </tr>
+            <tr style="height: 48px;">
+                <td style="text-align: center;">Color</td>
+                <td style="text-align: center;"><input type="color" onchange="colorChanged()"></td>
+            </tr>
+        </table>
+    </div>
+    <br />
+    <div align="center">
+        <div id="results-container">
+        </div>
+    </div>
+    <br />
+    <br />
+    <br />
+    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 24px">
+        <a href="https://jaktestowac.pl" style="color: dimgray">
+            <span style="display: flex; align-items: center; justify-self: center; font-size: medium">
+                <img src="/data/icons/favicon.png" style="width: 25px !important; height: 25px !important; padding: 0; border: none" alt="" />&nbsp&nbspjaktestowac.pl
+            </span>
+        </a>
+    </div>
+</body>
+
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+
+<script>
+    function writeResults(data) {
+        const resultsContainer = document.getElementById("results-container");
+        resultsContainer.innerHTML = "";
+        const paragraph = document.createElement("p");
+        paragraph.setAttribute("data-testid", "dti-results");
+        paragraph.setAttribute("id", "results");
+        paragraph.innerHTML = data;
+        resultsContainer.appendChild(paragraph);
+    }
+
+    function populateResults() {
+        writeResults("You clicked the button!");
+    }
+
+    function checkBoxClicked() {
+        const checkbox = document.querySelector("input[type=checkbox]");
+        if (checkbox.checked) {
+            writeResults("Checkbox is checked!");
+        } else {
+            writeResults("Checkbox is unchecked!");
+        }
+    }
+
+    function dropdownOnChange() {
+        const dropdown = document.querySelector("select[name=name-dropdown]");
+        const selectedOption = dropdown.value;
+        writeResults(`Selected option: ${selectedOption}`);
+    }
+
+    function radioButtonClicked(radioNumber) {
+        writeResults(`Radio Button ${radioNumber} clicked!`);
+    }
+
+    function rangeChanged() {
+        const range = document.querySelector("input[type=range]");
+        const value = range.value;
+        writeResults(`Range value changed to: ${value}`);
+    }
+
+    function datetimeChanged() {
+        const dateInput = document.querySelector("input[type=date]");
+        const selectedDate = dateInput.value;
+        writeResults(`Selected date: ${selectedDate}`);
+    }
+
+    function hexToRgb(hex) {
+        hex = hex.replace("#", "");
+        const r = parseInt(hex.substring(0, 2), 16);
+        const g = parseInt(hex.substring(2, 4), 16);
+        const b = parseInt(hex.substring(4, 6), 16);
+        return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    function colorChanged() {
+        const colorInput = document.querySelector("input[type=color]");
+        const selectedColor = colorInput.value;
+        const rgbColor = hexToRgb(selectedColor);
+
+        writeResults(`New selected color: ${selectedColor} as hex and in RGB: ${rgbColor}`);
+    }
+
+    function onmouseOver() {
+        writeResults("Mouse over event occurred!");
+    }
+    function onmouseLeave() {
+        writeResults("");
+    }
+
+    function inputChanged() {
+        const input = document.querySelector("input[type=text]");
+        const inputValue = input.value;
+        writeResults(`Input value changed to: ${inputValue}`);
+    }
+
+    function textareaChanged() {
+        const textarea = document.querySelector("textarea");
+        const textareaValue = textarea.value;
+        writeResults(`Textarea value changed to: ${textareaValue}`);
+    }
+
+</script>
+
+</html>
