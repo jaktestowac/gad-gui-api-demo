@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <div align="center">
+        <h2>Elements with id and data-testid attributes</h2>
+        <table style="margin: 0 auto; width:  fit-content;">
+
+            <tr style="height: 48px;">
+                <th id="description" data-testid="dti-description">Description</th>
+                <th id="id-elements" data-testid="dti-elements">Elements for Test Automation</th>
+            </tr>
+            <tr style="height: 48px;">
+                <td style="text-align: center;" id="label-description" data-testid="dti-label-description">Label</td>
+                <td style="text-align: center;"><label id="id-label-element" data-testid="dti-label-element">Some text for label</label></td>
+            </tr>
+            <tr style="height: 48px;">
+                <td style="text-align: center;" id="button-description" data-testid="dti-button-description">Button</td>
+                <td style="text-align: center;"><button id="id-button-element" data-testid="dti-button-element" onclick="populateResults()">Click me!</button></td>
+            </tr>
+            <tr style="height: 48px;">
+                <td style="text-align: center;" id="checkbox-description" data-testid="dti-checkbox-description">Checkbox</td>
+                <td style="text-align: center;"><input type="checkbox" id="id-checkbox-element" data-testid="dti-checkbox-element" name="name-checkbox" value="checkbox" onclick="checkBoxClicked()">Checkbox</td>
+            </tr>
+            <tr style="height: 48px;">
+                <td style="text-align: center;" id="dropdown-description" data-testid="dti-dropdown-description">Dropdown</td>
+                <td style="text-align: center;">
+                    <select id="dropdown" name="name-dropdown" style="width: 75px;" id="id-dropdown-element" data-testid="dti-dropdown-element" onchange="dropdownOnChange()">
+                        <option value="option1">Option 1</option>
+                        <option value="option2">Option 2</option>
+                        <option value="option3">Option 3</option>
+                    </select>
+                </td>
+            </tr>
+            <tr style="height: 48px;">
+                <td style="text-align: center;" id="id-radio-buttons-description" data-testid="dti-radio-buttons-description">Radio Buttons</td>
+                <td style="text-align: center;" id="id-radio-buttons-element" data-testid="dti-radio-buttons-element">
+                    <input type="radio" id="id-radio1" data-testid="dti-radio1" onclick="radioButtonClicked(1)" name="name-radio" value="radio1">
+                    <label for="radio1">Radio Button 1</label>
+                    <br />
+                    <input type="radio" id="id-radio2" data-testid="dti-radio2" onclick="radioButtonClicked(2)" name="name-radio" value="radio2">
+                    <label for="radio2">Radio Button 2</label>
+                    <br />
+                    <input type="radio" id="id-radio3" data-testid="dti-radio3" onclick="radioButtonClicked(3)" name="name-radio" value="radio3">
+                    <label for="radio3">Radio Button 3</label>
+                </td>
+            </tr>
+            <tr style="height: 48px;">
+                <td style="text-align: center;" id="id-checkbox-description" data-testid="dti-checkbox-description">Range</td>
+                <td style="text-align: center;"><input type="range" min="0" max="100" value="23" id="id-range" data-testid="dti-range" onchange="rangeChanged()"></td>
+            </tr>
+            <tr style="height: 48px;">
+                <td style="text-align: center;" id="id-date-description" data-testid="dti-date-description">Date</td>
+                <td style="text-align: center;"><input type="date" id="id-date" data-testid="dti-date" onchange="datetimeChanged()"></td>
+            </tr>
+            <tr style="height: 48px;">
+                <td style="text-align: center;" id="id-color-description" data-testid="dti-color-description">Color</td>
+                <td style="text-align: center;"><input type="color" id="id-color" data-testid="dti-color" onchange="colorChanged()"></td>
+            </tr>
+        </table>
+    </div>
+    <br />
+    <div align="center">
+        <div id="results-container">
+        </div>
+    </div>
+    <br />
+    <br />
+    <br />
+    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 24px">
+        <a href="https://jaktestowac.pl" style="color: dimgray">
+            <span style="display: flex; align-items: center; justify-self: center; font-size: medium">
+                <img src="/data/icons/favicon.png" style="width: 25px !important; height: 25px !important; padding: 0; border: none" alt="" />&nbsp&nbspjaktestowac.pl
+            </span>
+        </a>
+    </div>
+</body>
+
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+
+<script>
+    function writeResults(data) {
+        const resultsContainer = document.getElementById("results-container");
+        resultsContainer.innerHTML = "";
+        const paragraph = document.createElement("p");
+        paragraph.setAttribute("data-testid", "dti-results");
+        paragraph.setAttribute("id", "results");
+        paragraph.innerHTML = data;
+        resultsContainer.appendChild(paragraph);
+    }
+
+    function populateResults() {
+        writeResults("You clicked the button!");
+    }
+
+    function checkBoxClicked() {
+        const checkbox = document.getElementById("checkbox");
+        if (checkbox.checked) {
+            writeResults("Checkbox is checked!");
+        } else {
+            writeResults("Checkbox is unchecked!");
+        }
+    }
+
+    function dropdownOnChange() {
+        const dropdown = document.getElementById("dropdown");
+        const selectedOption = dropdown.value;
+        writeResults(`Selected option: ${selectedOption}`);
+    }
+
+    function radioButtonClicked(radioNumber) {
+        writeResults(`Radio Button ${radioNumber} clicked!`);
+    }
+
+    function rangeChanged() {
+        const range = document.getElementById("range");
+        const value = range.value;
+        writeResults(`Range value changed to: ${value}`);
+    }
+
+    function datetimeChanged() {
+        const dateInput = document.getElementById("id-date");
+        const selectedDate = dateInput.value;
+        writeResults(`Selected date: ${selectedDate}`);
+    }
+
+    function hexToRgb(hex) {
+        hex = hex.replace("#", "");
+        const r = parseInt(hex.substring(0, 2), 16);
+        const g = parseInt(hex.substring(2, 4), 16);
+        const b = parseInt(hex.substring(4, 6), 16);
+        return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    function colorChanged() {
+        const colorInput = document.getElementById("id-color");
+        const selectedColor = colorInput.value;
+        const rgbColor = hexToRgb(selectedColor);
+
+        writeResults(`New selected color: ${selectedColor} as hex and in RGB: ${rgbColor}`);
+    }
+
+</script>
+
+</html>

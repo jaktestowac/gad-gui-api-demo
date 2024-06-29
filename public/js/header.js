@@ -51,6 +51,14 @@ const mainGUIMenuHTML = (path = "") => {
   `;
 };
 
+const mainPracticePageMenuHTML = (path = "") => {
+  return `
+  <a href="${path}/practice" class="menu-link">
+    <button id="btnPractice" data-testid="open-practice" class="button-primary">Main Practice Page</button>
+  </a>
+  `;
+};
+
 const mainGUIMenuHTMLLogged = (path = "") => {
   const mainGuiMenu = `
   <a href="${path}/users.html" class="menu-link">
@@ -212,7 +220,7 @@ const addMainMenuAndFooter = () => {
   if (document.querySelector("#menu-main-practice")) {
     mainNavMenu.innerHTML = hamburgerMenu() + mainNavMenu.innerHTML;
     menuContainerLeft = document.querySelector("#menu-main-practice");
-    menuContainerLeft.innerHTML = logoGAD();
+    menuContainerLeft.innerHTML = logoGAD() + mainPracticePageMenuHTML();
     menuContainerLeft.insertAdjacentHTML("afterend", rightMenu("", false));
   }
   const body = document.querySelector("body");
