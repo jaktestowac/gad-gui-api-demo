@@ -1143,6 +1143,27 @@ body.darkmode {
   color: #4646468f;
 }
 
+.flashpost-tools {
+  margin-left: 0px;
+}
+
+.flashpost-tool {
+  margin-left: 10px;
+}
+
+.flashpost-tool:hover {
+  color: black;
+}
+
+.darkmode .flashpost-tool:hover {
+  color: rgb(245, 245, 245);
+}
+
+.flashpost-date-and-tools {
+  display: flex;
+  justify-content: space-between;
+}
+
 .darkmode .flashpost-author-and-date {
   display: flex;
   justify-content: space-between;

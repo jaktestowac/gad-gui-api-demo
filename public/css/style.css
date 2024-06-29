@@ -296,9 +296,9 @@ input[type="submit"]:hover {
 
 /*****************************************/
 
-.add-new-popup-panel {
+.add-new-flashpost-panel {
   width: 300px;
-  height: 300px;
+  height: 320px;
   display: none;
   align-items: center;
   /* justify-content: center; */
@@ -309,12 +309,12 @@ input[type="submit"]:hover {
   border-radius: 10px;
 }
 
-.add-new-popup-panel .flashpost-textarea {
+.add-new-flashpost-panel .flashpost-textarea {
   width: 250px;
   height: 100px;
 }
 
-.add-new-popup-panel.active {
+.add-new-flashpost-panel.active {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -324,7 +324,7 @@ input[type="submit"]:hover {
   display: flex;
 }
 
-.add-new-popup-panel > div {
+.add-new-flashpost-panel > div {
   max-width: 50vw;
 }
 

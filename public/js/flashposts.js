@@ -1,6 +1,26 @@
 const urlFlashposts = "/api/flashposts";
 const usersEndpoint = "../../api/users";
 
+let alertElement = document.querySelector(".alert");
+
+const showMessage = (message, isError = false) => {
+  alertElement.innerHTML = message;
+  alertElement.style.display = "block";
+  alertElement.classList.remove("alert-error", "alert-success");
+  if (isError) {
+    alertElement.classList.add("alert-error");
+  } else {
+    alertElement.classList.add("alert-success");
+  }
+  let newMessageElement = alertElement.cloneNode(true);
+  alertElement.parentNode.replaceChild(newMessageElement, alertElement);
+  alertElement = newMessageElement;
+
+  setTimeout(() => {
+    alertElement.style.display = "none";
+  }, 3000);
+};
+
 async function issueGetFlashpostsRequest() {
   const data = fetch(urlFlashposts, {
     method: "GET",
@@ -57,26 +77,49 @@ function displayFlashPosts(data) {
     const flashpostContent = document.createElement("div");
     flashpostContent.classList.add("flashpost-content");
 
-    const flashpostMessage = document.createElement("div");
-    flashpostMessage.classList.add("flashpost-message");
-    flashpostMessage.innerHTML = element.body;
+    const flashpostMessageElement = document.createElement("div");
+    flashpostMessageElement.classList.add("flashpost-message");
+    flashpostMessageElement.innerHTML = element.body;
 
     const flashpostAuthor = document.createElement("div");
     flashpostAuthor.classList.add("flashpost-author");
     flashpostAuthor.textContent = "{{ user }}";
     flashpostAuthor.setAttribute("user-id", element.user_id);
 
+    const flashpostDateAndTools = document.createElement("div");
+    flashpostDateAndTools.classList.add("flashpost-date-and-tools");
+
     const flashpostDate = document.createElement("div");
     flashpostDate.classList.add("flashpost-date");
+
+    const flashpostTools = document.createElement("div");
+    flashpostTools.classList.add("flashpost-tools");
 
     const hoursMinutes = howManyHoursAndMinutesAndSecondsInPast(element.date);
 
     const formattedDate = formatDateToLocaleString(element.date);
-    if (hoursMinutes.hours > 24) {
+    if (hoursMinutes.hours >= 24) {
       flashpostDate.textContent = formattedDate;
     } else {
       flashpostDate.textContent = `${hoursMinutes.hours}h ${hoursMinutes.minutes}m ago`;
       flashpostDate.setAttribute("data-tooltip", formattedDate);
+      if (getId() == element.user_id) {
+        const deleteButton = document.createElement("i");
+        deleteButton.innerHTML = `<i class="fa-solid fa-trash-can"></i>`;
+        deleteButton.classList.add("flashpost-tool");
+        deleteButton.onclick = () => {
+          flashpostOnDelete(flashpostContainer, element);
+        };
+
+        const editButton = document.createElement("i");
+        editButton.innerHTML = `<i class="fa-solid fa-pen-to-square"></i>`;
+        editButton.classList.add("flashpost-tool");
+        editButton.onclick = () => {
+          flashpostOnEdit(element, flashpostMessageElement);
+        };
+        flashpostTools.appendChild(deleteButton);
+        flashpostTools.appendChild(editButton);
+      }
     }
 
     const flashpostAuthorAndDate = document.createElement("div");
@@ -94,21 +137,73 @@ function displayFlashPosts(data) {
       }
     }
 
+    flashpostDateAndTools.appendChild(flashpostDate);
+    flashpostDateAndTools.appendChild(flashpostTools);
+
     flashpostAuthorAndDate.appendChild(flashpostAuthor);
-    flashpostAuthorAndDate.appendChild(flashpostDate);
+    flashpostAuthorAndDate.appendChild(flashpostDateAndTools);
 
     flashpostContent.appendChild(flashpostAuthorAndDate);
 
-    flashpostContent.appendChild(flashpostMessage);
+    flashpostContent.appendChild(flashpostMessageElement);
 
     flashpostContainer.appendChild(flashpostContent);
     document.querySelector(".flashpost-container-space").prepend(flashpostContainer);
   });
 }
 
+function flashpostOnEdit(element, flashpostMessageElement) {
+  const container = document.querySelector(".add-new-flashpost-panel");
+  container.querySelector(".flashpost-textarea").value = element.body;
+  container.classList.add("active");
+
+  const overlay = document.querySelector(".overlay");
+  overlay.classList.add("active");
+
+  container.querySelector(".save").onclick = () => {
+    const updatedFlashpost = container.querySelector(".flashpost-textarea").value;
+    fetch(`${urlFlashposts}/${element.id}`, {
+      method: "PATCH",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: getBearerToken(),
+      },
+      body: JSON.stringify({ body: updatedFlashpost }),
+    }).then((response) => {
+      if (response.status === 200) {
+        flashpostMessageElement.innerHTML = updatedFlashpost;
+        container.classList.remove("active");
+        overlay.classList.remove("active");
+      } else {
+        const additionalMsg = response.body?.error?.message ? response.body.error.message : "";
+        showMessage(`You can't modify this flashpost. ${additionalMsg}`, true);
+      }
+    });
+  };
+}
+
+function flashpostOnDelete(flashpostContainer, element) {
+  fetch(`${urlFlashposts}/${element.id}`, {
+    method: "DELETE",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+  }).then((response) => {
+    if (response.status === 200) {
+      flashpostContainer.remove();
+    } else {
+      const additionalMsg = response.body?.error?.message ? response.body.error.message : "";
+      showMessage(`You can't delete this flashpost. ${additionalMsg}`, true);
+    }
+  });
+}
+
 document.querySelector(".create-flashpost-btn").onclick = () => {
   window.scrollTo(0, 0);
-  const container = document.querySelector(".add-new-popup-panel");
+  const container = document.querySelector(".add-new-flashpost-panel");
   container.querySelector(".flashpost-textarea").value = "";
   container.classList.add("active");
 
@@ -117,7 +212,7 @@ document.querySelector(".create-flashpost-btn").onclick = () => {
 };
 
 document.querySelector(".cancel").onclick = () => {
-  const container = document.querySelector(".add-new-popup-panel");
+  const container = document.querySelector(".add-new-flashpost-panel");
   container.classList.remove("active");
 
   const overlay = document.querySelector(".overlay");
