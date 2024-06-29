@@ -54,6 +54,7 @@ function handleFlashPosts(req, res, isAdmin) {
 
     const query = req.url.split("?")[1];
     const afterDate = new URLSearchParams(query).get("afterDate");
+    const userId = new URLSearchParams(query).get("user_id");
 
     if (isUndefined(foundUser) || isUndefined(verifyTokenResult)) {
       posts = getAllPublicFlashposts();
@@ -64,6 +65,11 @@ function handleFlashPosts(req, res, isAdmin) {
     if (afterDate !== null) {
       posts = posts.filter((post) => {
         return isDateBeforeOtherDate(post.date, afterDate);
+      });
+    }
+    if (userId !== null) {
+      posts = posts.filter((post) => {
+        return areIdsEqual(post.user_id, userId);
       });
     }
 

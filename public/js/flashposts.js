@@ -72,6 +72,18 @@ async function issueGetFlashpostsAfterDateRequest(date) {
   return data;
 }
 
+async function issueGetFlashpostsForUserRequest(userId) {
+  const data = fetch(`${urlFlashposts}?user_id=${userId}`, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+  });
+  return data;
+}
+
 async function issueDeleteFlashpostRequest(flashpostId) {
   const data = fetch(`${urlFlashposts}/${flashpostId}`, {
     method: "DELETE",
@@ -150,6 +162,8 @@ function openTab(evt, tabName) {
     getAndDisplayFlashposts(() =>
       issueGetFlashpostsAfterDateRequest(new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString())
     );
+  } else if (param === "myPosts") {
+    getAndDisplayFlashposts(() => issueGetFlashpostsForUserRequest(getId()));
   }
 }
 
@@ -400,4 +414,12 @@ textarea.addEventListener("input", () => {
   counter.textContent = `${remainingChars} characters left`;
 });
 
-getAndDisplayFlashposts(issueGetFlashpostsRequest);
+checkIfAuthenticated(
+  "authentication-info",
+  () => {
+    getAndDisplayFlashposts(issueGetFlashpostsRequest);
+  },
+  () => {
+    document.querySelector("#flashpost-container").innerHTML = "";
+  }
+);

@@ -297,7 +297,7 @@ input[type="submit"]:hover {
 /*****************************************/
 
 .add-new-flashpost-panel {
-  width: 300px;
+  width: 360px;
   height: 320px;
   display: none;
   align-items: center;
@@ -310,7 +310,7 @@ input[type="submit"]:hover {
 }
 
 .add-new-flashpost-panel .flashpost-textarea {
-  width: 250px;
+  width: 300px;
   height: 100px;
 }
 

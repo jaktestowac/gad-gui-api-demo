@@ -27,60 +27,65 @@
     </div>
     <br />
     <br />
+    <div id="authentication-info" align="center">
+    </div>
     <div class="overlay">
     </div>
 
-    <div>
-        <div class="tab">
-            <div style="display: flex; align-items: center;">
-                <button class="tablinks active" type="button" id="tab1" param="last" onclick="openTab(event, 'tab1')">Last 100</button>
-                <button class="tablinks" type="button" id="tab2" param="24h" onclick="openTab(event, 'tab2')">Last 24h</button>
-                <button class="tablinks" type="button" id="tab3" param="1h" onclick="openTab(event, 'tab3')">Last 1h</button>
-            </div>
-        </div>
-        <br />
-        <div class="flashpost-actions">
-            <button class="create-flashpost-btn button-primary-small">Create Flashpost</button>
-        </div>
+    <div id="flashpost-container">
         <div>
-            <div id="container" class="outer-container-space">
-                <div class="flashpost-container-space">
-                    <!-- Your Flashpost here -->
+            <div class="tab">
+                <div style="display: flex; align-items: center;">
+                    <button class="tablinks active" type="button" id="tab1" param="last" onclick="openTab(event, 'tab1')">Last 100</button>
+                    <button class="tablinks" type="button" id="tab2" param="24h" onclick="openTab(event, 'tab2')">Last 24h</button>
+                    <button class="tablinks" type="button" id="tab3" param="1h" onclick="openTab(event, 'tab3')">Last 1h</button>
+                    <button class="tablinks" type="button" id="tab4" param="myPosts" onclick="openTab(event, 'tab4')">My Flashposts</button>
+                </div>
+            </div>
+            <br />
+            <div class="flashpost-actions">
+                <button class="create-flashpost-btn button-primary-small">Create Flashpost</button>
+            </div>
+            <div>
+                <div id="container" class="outer-container-space">
+                    <div class="flashpost-container-space">
+                        <!-- Your Flashpost here -->
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div align="center">
-        <section class="add-new-flashpost-panel flashpost-popup item-card">
-            <div class="flashpost-popup item-card">
-                <h2>Create Flashpost</h2>
+        <div align="center">
+            <section class="add-new-flashpost-panel flashpost-popup item-card">
+                <div class="flashpost-popup item-card">
+                    <h2>Create Flashpost</h2>
 
-                <div align="center">
-                    <div>
-                        <textarea class="flashpost-textarea" id="flashpost-text" maxlength="128" placeholder="Enter your flashpost here" style="resize: none;"></textarea>
-                        <div id="character-counter" style="font-size: 12px; position: absolute; top: 150px; right: 35px; color: #979797;">128 characters left</div>
-                    </div>
-
-                    <div style="display: flex; flex-direction: row; justify-content: space-between;">
-                        <div style="display: flex;flex-direction: column;align-items: center;">
-                            <input style="width: 25px; height: 25px;" type="checkbox" id="public-checkbox" name="public-checkbox">
-                            <label style="font-size: 14px;" for="public-checkbox">is public?</label>
+                    <div align="center">
+                        <div>
+                            <textarea class="flashpost-textarea" id="flashpost-text" maxlength="128" placeholder="Enter your flashpost here" style="resize: none;"></textarea>
+                            <div id="character-counter" style="font-size: 12px; position: absolute; top: 150px; right: 35px; color: #979797;">128 characters left</div>
                         </div>
-                        <div style="display: flex;flex-direction: column;align-items: center;">
-                            <input style="width: 60px; height: 32px;" type="color" id="background-color-picker" name="background-color-picker" value="#dddddd">
-                            <label style="font-size: 14px;" for="background-color-picker">Background</label>
+
+                        <div style="display: flex; flex-direction: row; justify-content: space-between;">
+                            <div style="display: flex;flex-direction: column;align-items: center;">
+                                <input style="width: 25px; height: 25px;" type="checkbox" id="public-checkbox" name="public-checkbox">
+                                <label style="font-size: 14px;" for="public-checkbox">is public?</label>
+                            </div>
+                            <div style="display: flex;flex-direction: column;align-items: center;">
+                                <input style="width: 60px; height: 32px;" type="color" id="background-color-picker" name="background-color-picker" value="#dddddd">
+                                <label style="font-size: 14px;" for="background-color-picker">Background</label>
+                            </div>
                         </div>
+                        <div>
+                            <button type="button" class="create button-primary" style="display: none;">Create</button>
+                            <button type="button" class="update button-primary" style="display: none;">Update</button>
+                            <button type="button" class="cancel">Cancel</button>
+                        </div>
+                        <span style="font-size: 12px;">You can edit/delete falshpost only within 24h after creation!</span>
                     </div>
-                    <div>
-                        <button type="button" class="create button-primary" style="display: none;">Create</button>
-                        <button type="button" class="update button-primary" style="display: none;">Update</button>
-                        <button type="button" class="cancel">Cancel</button>
-                    </div>
-                    <span style="font-size: 10px;">You can edit/delete falshpost only within 24h after creation!</span>
                 </div>
-            </div>
-        </section>
+            </section>
+        </div>
     </div>
 
     <script type="text/javascript" src="/js/common.js"></script>
