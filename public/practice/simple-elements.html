@@ -40,12 +40,12 @@
             </tr>
             <tr style="height: 48px;">
                 <td style="text-align: center;" id="checkbox-description" data-testid="dti-checkbox-description">Checkbox</td>
-                <td style="text-align: center;"><input type="checkbox" id="id-checkbox-element" data-testid="dti-checkbox-element" name="name-checkbox" value="checkbox" onclick="checkBoxClicked()">Checkbox</td>
+                <td style="text-align: center;"><input type="checkbox" id="id-checkbox" data-testid="dti-checkbox" name="name-checkbox" value="checkbox" onclick="checkBoxClicked()">Checkbox</td>
             </tr>
             <tr style="height: 48px;">
                 <td style="text-align: center;" id="dropdown-description" data-testid="dti-dropdown-description">Dropdown</td>
                 <td style="text-align: center;">
-                    <select id="dropdown" name="name-dropdown" style="width: 75px;" id="id-dropdown-element" data-testid="dti-dropdown-element" onchange="dropdownOnChange()">
+                    <select id="id-dropdown" name="name-dropdown" style="width: 75px;" id="id-dropdown" data-testid="dti-dropdown" onchange="dropdownOnChange()">
                         <option value="option1">Option 1</option>
                         <option value="option2">Option 2</option>
                         <option value="option3">Option 3</option>
@@ -68,6 +68,10 @@
             <tr style="height: 48px;">
                 <td style="text-align: center;" id="id-checkbox-description" data-testid="dti-checkbox-description">Range</td>
                 <td style="text-align: center;"><input type="range" min="0" max="100" value="23" id="id-range" data-testid="dti-range" onchange="rangeChanged()"></td>
+            </tr>
+            <tr style="height: 48px;">
+                <td style="text-align: center;" id="tooltip-description" data-testid="dti-tooltip-description">Label (hoover mouse over it!)</td>
+                <td style="text-align: center;"><label id="id-tooltip-element" data-testid="dti-tooltip-element" onmouseover="onmouseOver()" onmouseleave="onmouseLeave()">Hoover mouse here!</label></td>
             </tr>
             <tr style="height: 48px;">
                 <td style="text-align: center;" id="id-date-description" data-testid="dti-date-description">Date</td>
@@ -116,7 +120,7 @@
     }
 
     function checkBoxClicked() {
-        const checkbox = document.getElementById("checkbox");
+        const checkbox = document.getElementById("id-checkbox");
         if (checkbox.checked) {
             writeResults("Checkbox is checked!");
         } else {
@@ -125,7 +129,7 @@
     }
 
     function dropdownOnChange() {
-        const dropdown = document.getElementById("dropdown");
+        const dropdown = document.getElementById("id-dropdown");
         const selectedOption = dropdown.value;
         writeResults(`Selected option: ${selectedOption}`);
     }
@@ -135,7 +139,7 @@
     }
 
     function rangeChanged() {
-        const range = document.getElementById("range");
+        const range = document.getElementById("id-range");
         const value = range.value;
         writeResults(`Range value changed to: ${value}`);
     }
@@ -160,6 +164,13 @@
         const rgbColor = hexToRgb(selectedColor);
 
         writeResults(`New selected color: ${selectedColor} as hex and in RGB: ${rgbColor}`);
+    }
+
+    function onmouseOver() {
+        writeResults("Mouse over event occurred!");
+    }
+    function onmouseLeave() {
+        writeResults("");
     }
 
 </script>
