@@ -102,7 +102,7 @@
 <script type="text/javascript" src="./js/test-data.js"></script>
 <script>
     const delay = getRandomValue(2000, 5000)
-    document.getElementById('statusLabel').innerHTML = 'NOT DISPLAYED'
+    document.getElementById('statusLabel').innerHTML = 'NOT PRESENT'
     document.getElementById('statusLabel').style.color = "rgb(195, 1, 1)"
     document.getElementById('delayLabel').innerHTML = (Math.round(delay / 100)) / 10
 
@@ -110,7 +110,7 @@
         selectorElementPair.forEach(element => {
             addElementsToContainer(element['selector'], element['html'])
         });
-        document.getElementById('statusLabel').innerHTML = 'DISPLAYED'
+        document.getElementById('statusLabel').innerHTML = 'PRESENT'
         document.getElementById('statusLabel').style.color = "rgb(8, 195, 1)"
     }, delay);
 </script>
