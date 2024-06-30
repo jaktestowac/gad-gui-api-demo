@@ -124,7 +124,7 @@ async function getAndDisplayFlashposts(issueGetFlashpostsRequest) {
               flashpostAuthors.forEach((element) => {
                 const userId = element.getAttribute("user-id");
                 const user = users.find((user) => user.id === parseInt(userId));
-                element.textContent = `${user.firstname} ${user.lastname}`;
+                element.innerHTML = `<span><a href="user.html?id=${userId}" style="color: inherit;" >${user.firstname} ${user.lastname}</a></span>`;
               });
             });
           }
@@ -217,7 +217,7 @@ function displayFlashPosts(data) {
 
     const flashpostAuthor = document.createElement("div");
     flashpostAuthor.classList.add("flashpost-author");
-    flashpostAuthor.textContent = "{{ user }}";
+    flashpostAuthor.innerHTML = `<span><a href="user.html?id=${element.user_id}" style="color: inherit;">{{ user }}</a></span>`;
     flashpostAuthor.setAttribute("user-id", element.user_id);
 
     const flashpostDateAndTools = document.createElement("div");
@@ -414,12 +414,13 @@ textarea.addEventListener("input", () => {
   counter.textContent = `${remainingChars} characters left`;
 });
 
-checkIfAuthenticated(
-  "authentication-info",
-  () => {
-    getAndDisplayFlashposts(issueGetFlashpostsRequest);
-  },
-  () => {
-    document.querySelector("#flashpost-container").innerHTML = "";
-  }
-);
+getAndDisplayFlashposts(issueGetFlashpostsRequest);
+// checkIfAuthenticated(
+//   "authentication-info",
+//   () => {
+//     getAndDisplayFlashposts(issueGetFlashpostsRequest);
+//   },
+//   () => {
+//     document.querySelector("#flashpost-container").innerHTML = "";
+//   }
+// );
