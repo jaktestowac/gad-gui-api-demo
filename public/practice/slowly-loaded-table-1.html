@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <div align="center">
+        <h2>Table with slowly loaded data</h2>
+        <table style="margin: 0 auto; width:  fit-content;" id="weather-table" data-testid="dti-weather-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Weather</th>
+                    <th>Temperature</th>
+                    <th>Sunrise - Sunset</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+    <br />
+    <br />
+    <br />
+    <br />
+    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 24px">
+        <a href="https://jaktestowac.pl" style="color: dimgray">
+            <span style="display: flex; align-items: center; justify-self: center; font-size: medium">
+                <img src="/data/icons/favicon.png" style="width: 25px !important; height: 25px !important; padding: 0; border: none" alt="" />&nbsp&nbspjaktestowac.pl
+            </span>
+        </a>
+    </div>
+</body>
+
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="./js/common.js"></script>
+<script type="text/javascript" src="./js/test-data.js"></script>
+
+<script>
+    const randomDelayValue = getRandomValue(200, 600)
+    weatherData.forEach((data, index) => {
+        setTimeout(() => {
+            const tableBody = document.querySelector('#weather-table tbody');
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td id='row-${index}-date' data-testid='dti-row-${index}-date'>${data.date}</td>
+                <td id='row-${index}-weather' data-testid='dti-row-${index}-weather'>${data.weather}</td>
+                <td>${data.temperature}</td>
+                <td>${data.sunriseSunset}</td>
+            `;
+            tableBody.appendChild(row);
+        }, index * randomDelayValue);
+    });
+</script>
+
+</html>

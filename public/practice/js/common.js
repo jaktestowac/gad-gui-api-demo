@@ -77,3 +77,56 @@ function textareaOnChange() {
   const textareaValue = textarea.value;
   writeResults(`Textarea value changed to: ${textareaValue}`);
 }
+
+function getRandomValue(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function getRandomValueBasedOnSeed(min, max, seed) {
+  if (seed === undefined) {
+    seed = Math.random();
+  }
+
+  const random = Math.sin(seed) * 10000;
+  const normalized = (random - Math.floor(random)) * (max - min + 1);
+  return Math.floor(normalized) + min;
+}
+
+function getRandomValueBasedOnSeedStr(min, max, seed) {
+  if (typeof seed === "string") {
+    seed = seed.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  }
+
+  if (seed === undefined) {
+    seed = Math.random();
+  }
+
+  const random = Math.sin(seed) * 10000;
+  const normalized = (random - Math.floor(random)) * (max - min + 1);
+  return Math.floor(normalized) + min;
+}
+
+class randomValueGenerator {
+  constructor(seed) {
+    this.seed = seed;
+    this.currentIndex = 0;
+  }
+
+  getNextValue(min, max) {
+    if (typeof this.seed === "string") {
+      this.seed = this.seed.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    }
+
+    const random = Math.sin(this.seed + this.currentIndex) * 10000;
+    const normalized = (random - Math.floor(random)) * (max - min + 1);
+    const value = Math.floor(normalized) + min;
+
+    this.currentIndex++;
+    return value;
+  }
+
+  resetSeed(seed) {
+    this.seed = seed;
+    this.currentIndex = 0;
+  }
+}
