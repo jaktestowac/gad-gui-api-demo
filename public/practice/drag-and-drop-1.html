@@ -23,7 +23,18 @@
     <br />
     <br />
     <div align="center">
-        <h2>TBD</h2>
+        <h2>Simple Drag & Drop</h2>
+        <div class="drag-area" id="dropzone">
+            <div class="icon">
+                <i class="fas fa-images"></i>
+            </div>
+            <span class="header" id="dragdropheader">Drag & Drop</span>
+            <span class="header">or <span class="button" id="browsebutton">browse</span></span>
+            <input type="file" id="dragdropfile" hidden />
+            <span class="support">Supports: JSON</span>
+        </div>
+        <div id="infoContainer"></div>
+        <button type="button" class="update save" id="uploadBtn" data-testid="uploadBtn" disabled>Upload</button>
 
     </div>
 
@@ -48,5 +59,9 @@
 <script type="text/javascript" src="/js/header.js"></script>
 <script type="text/javascript" src="/version.js"></script>
 <script type="text/javascript" src="./js/common.js"></script>
+<script type="text/javascript" src="./js/drag-drop.js"></script>
+<script>
+    attachEventHandlers()
+</script>
 
 </html>
