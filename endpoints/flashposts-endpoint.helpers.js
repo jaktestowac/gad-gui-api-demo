@@ -239,6 +239,8 @@ function handleFlashPosts(req, res, isAdmin) {
       return;
     }
 
+    req.body.date = flashpost.date;
+
     return;
   }
 
