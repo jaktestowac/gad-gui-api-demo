@@ -135,7 +135,7 @@ function getRandomValueBasedOnSeedStr(min, max, seed) {
   return Math.floor(normalized) + min;
 }
 
-class randomValueGenerator {
+class RandomValueGenerator {
   constructor(seed) {
     this.seed = seed;
     this.currentIndex = 0;
@@ -185,4 +185,14 @@ function invokeFunctionWithDelay(func, delay) {
 function addElementsToContainer(containerSelector, elementHTML) {
   const container = document.querySelector(containerSelector);
   container.innerHTML += elementHTML;
+}
+
+function generateDateStrings(pastDays) {
+  const dateStrings = [];
+  for (let i = 0; i < pastDays; i++) {
+    const date = new Date();
+    date.setDate(date.getDate() - i);
+    dateStrings.push(date.toISOString().split("T")[0]);
+  }
+  return dateStrings;
 }

@@ -23,7 +23,10 @@
     <br />
     <br />
     <div align="center">
-        <h2>Table with slowly loaded data</h2>
+        <h2>Table with slowly loaded random data</h2>
+        <span>The same data will be loaded every time you refresh the page, but each day will have its unique set 😉</span>
+        <br />
+        <br />
         <table style="margin: 0 auto; width:  fit-content;" id="weather-table" data-testid="dti-weather-table">
             <thead>
                 <tr>
@@ -31,6 +34,8 @@
                     <th>Weather</th>
                     <th>Temperature</th>
                     <th>Sunrise - Sunset</th>
+                    <th>WindSpeed</th>
+                    <th>Weather Alert</th>
                 </tr>
             </thead>
             <tbody>
@@ -57,7 +62,10 @@
 
 <script>
     const randomDelayValue = getRandomValue(200, 600)
-    weatherData.forEach((data, index) => {
+
+    const newWeatherData = generateWeatherDataForNDays(20)
+    console.log(newWeatherData)
+    newWeatherData.forEach((data, index) => {
         setTimeout(() => {
             const tableBody = document.querySelector('#weather-table tbody');
             const row = document.createElement('tr');
@@ -66,6 +74,8 @@
                 <td id='row-${index}-weather' data-testid='dti-row-${index}-weather'>${data.weather}</td>
                 <td>${data.temperature}</td>
                 <td>${data.sunriseSunset}</td>
+                <td>${data.windSpeed}</td>
+                <td>${data.weatherAlert.icon} ${data.weatherAlert.name}</td>
             `;
             tableBody.appendChild(row);
         }, index * randomDelayValue);
