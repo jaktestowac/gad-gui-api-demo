@@ -124,7 +124,11 @@ async function getAndDisplayFlashposts(issueGetFlashpostsRequest) {
               flashpostAuthors.forEach((element) => {
                 const userId = element.getAttribute("user-id");
                 const user = users.find((user) => user.id === parseInt(userId));
-                element.innerHTML = `<span><a href="user.html?id=${userId}" style="color: inherit;" >${user.firstname} ${user.lastname}</a></span>`;
+                if (user.lastname?.includes("***")) {
+                  element.innerHTML = `<span><a href="user.html?id=${userId}" style="color: inherit;" >${user.firstname}</a></span>`;
+                } else {
+                  element.innerHTML = `<span><a href="user.html?id=${userId}" style="color: inherit;" >${user.firstname} ${user.lastname}</a></span>`;
+                }
               });
             });
           }
@@ -426,7 +430,15 @@ textarea.addEventListener("input", () => {
   counter.textContent = `${remainingChars} characters left`;
 });
 
+function disableTobBarNavigationButton() {
+  const btnArticles = document.querySelector("#btnFlashposts");
+  btnArticles.disabled = true;
+  btnArticles.classList.remove("button-disabled");
+  btnArticles.classList.add("button-primary");
+}
+
 getAndDisplayFlashposts(issueGetFlashpostsRequest);
+disableTobBarNavigationButton();
 // checkIfAuthenticated(
 //   "authentication-info",
 //   () => {

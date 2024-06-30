@@ -48,6 +48,9 @@ const mainGUIMenuHTML = (path = "") => {
   <a href="${path}/comments.html" class="menu-link">
     <button id="btnComments" data-testid="open-comments" class="button-primary">Comments</button>
   </a>
+  <a href="${path}/flashposts.html" class="menu-link">
+    <button id="btnFlashposts" data-testid="open-flashposts" class="button-primary">Flashposts</button>
+  </a>
   `;
 };
 
