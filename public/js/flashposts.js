@@ -271,8 +271,20 @@ function displayFlashPosts(data) {
       }
     }
 
+    const flashpostVisibility = document.createElement("div");
+    flashpostVisibility.classList.add("flashpost-visibility");
+    if (element.is_public) {
+      flashpostVisibility.innerHTML = `<i class="fa-solid fa-globe"></i>`;
+      flashpostVisibility.setAttribute("data-tooltip", "Public");
+    } else {
+      flashpostVisibility.innerHTML = `<i class="fa-solid fa-lock"></i>`;
+      flashpostVisibility.setAttribute("data-tooltip", "Private");
+    }
+
     flashpostDateAndTools.appendChild(flashpostDate);
     flashpostDateAndTools.appendChild(flashpostTools);
+
+    flashpostContent.appendChild(flashpostVisibility);
 
     flashpostAuthorAndDate.appendChild(flashpostAuthor);
     flashpostAuthorAndDate.appendChild(flashpostDateAndTools);

@@ -1140,7 +1140,15 @@ body.darkmode {
 .flashpost-author-and-date {
   display: flex;
   justify-content: space-between;
-  color: #4646468f;
+  color: #000000 !important;
+}
+
+.flashpost-visibility {
+  font-size: 12px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #38383860 !important;
 }
 
 .flashpost-actions {
