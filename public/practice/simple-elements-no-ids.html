@@ -35,19 +35,19 @@
             </tr>
             <tr style="height: 48px;">
                 <td style="text-align: center;">Button</td>
-                <td style="text-align: center;"><button onclick="populateResults()">Click me!</button></td>
+                <td style="text-align: center;"><button onclick="buttonOnClick()">Click me!</button></td>
             </tr>
             <tr style="height: 48px;">
                 <td style="text-align: center;">Checkbox</td>
-                <td style="text-align: center;"><input type="checkbox" value="checkbox" onclick="checkBoxClicked()">Checkbox</td>
+                <td style="text-align: center;"><input type="checkbox" value="checkbox" onclick="checkBoxOnClick()">Checkbox</td>
             </tr>
             <tr style="height: 48px;">
                 <td style="text-align: center;">Input</td>
-                <td style="text-align: center;"><input type="text" onchange="inputChanged()"></td>
+                <td style="text-align: center;"><input type="text" onchange="inputOnChange()"></td>
             </tr>
             <tr style="height: 48px;">
                 <td style="text-align: center;">Textarea</td>
-                <td style="text-align: center;"><textarea onchange="textareaChanged()"></textarea></td>
+                <td style="text-align: center;"><textarea onchange="textareaOnChange()"></textarea></td>
             </tr>
             <tr style="height: 48px;">
                 <td style="text-align: center;">Dropdown</td>
@@ -62,31 +62,31 @@
             <tr style="height: 48px;">
                 <td style="text-align: center;">Radio Buttons</td>
                 <td style="text-align: center;">
-                    <input type="radio" onclick="radioButtonClicked(1)" name="name-radio" value="radio1">
+                    <input type="radio" onclick="radioButtonOnClick(1)" name="name-radio" value="radio1">
                     <label for="radio1">Radio Button 1</label>
                     <br>
-                    <input type="radio" onclick="radioButtonClicked(2)" name="name-radio" value="radio2">
+                    <input type="radio" onclick="radioButtonOnClick(2)" name="name-radio" value="radio2">
                     <label for="radio2">Radio Button 2</label>
                     <br>
-                    <input type="radio" onclick="radioButtonClicked(3)" name="name-radio" value="radio3">
+                    <input type="radio" onclick="radioButtonOnClick(3)" name="name-radio" value="radio3">
                     <label for="radio3">Radio Button 3</label>
                 </td>
             </tr>
             <tr style="height: 48px;">
                 <td style="text-align: center;">Range</td>
-                <td style="text-align: center;"><input type="range" min="0" max="100" value="23" onchange="rangeChanged()"></td>
+                <td style="text-align: center;"><input type="range" min="0" max="100" value="23" onchange="rangeOnChange()"></td>
             </tr>
             <tr style="height: 48px;">
                 <td style="text-align: center;">Label (hoover mouse over it!)</td>
-                <td style="text-align: center;"><label onmouseover="onmouseOver()" onmouseleave="onmouseLeave()">Hoover mouse here!</label></td>
+                <td style="text-align: center;"><label onmouseover="labelOnMouseOver()" onmouseleave="labelOnMouseLeave()">Hoover mouse here!</label></td>
             </tr>
             <tr style="height: 48px;">
                 <td style="text-align: center;">Date</td>
-                <td style="text-align: center;"><input type="date" onchange="datetimeChanged()"></td>
+                <td style="text-align: center;"><input type="date" onchange="datetimeOnChange()"></td>
             </tr>
             <tr style="height: 48px;">
                 <td style="text-align: center;">Color</td>
-                <td style="text-align: center;"><input type="color" onchange="colorChanged()"></td>
+                <td style="text-align: center;"><input type="color" onchange="colorOnChange()"></td>
             </tr>
         </table>
     </div>
@@ -110,88 +110,6 @@
 <script type="text/javascript" src="/js/common.js"></script>
 <script type="text/javascript" src="/js/header.js"></script>
 <script type="text/javascript" src="/version.js"></script>
-
-<script>
-    function writeResults(data) {
-        const resultsContainer = document.getElementById("results-container");
-        resultsContainer.innerHTML = "";
-        const paragraph = document.createElement("p");
-        paragraph.setAttribute("data-testid", "dti-results");
-        paragraph.setAttribute("id", "results");
-        paragraph.innerHTML = data;
-        resultsContainer.appendChild(paragraph);
-    }
-
-    function populateResults() {
-        writeResults("You clicked the button!");
-    }
-
-    function checkBoxClicked() {
-        const checkbox = document.querySelector("input[type=checkbox]");
-        if (checkbox.checked) {
-            writeResults("Checkbox is checked!");
-        } else {
-            writeResults("Checkbox is unchecked!");
-        }
-    }
-
-    function dropdownOnChange() {
-        const dropdown = document.querySelector("select[name=name-dropdown]");
-        const selectedOption = dropdown.value;
-        writeResults(`Selected option: ${selectedOption}`);
-    }
-
-    function radioButtonClicked(radioNumber) {
-        writeResults(`Radio Button ${radioNumber} clicked!`);
-    }
-
-    function rangeChanged() {
-        const range = document.querySelector("input[type=range]");
-        const value = range.value;
-        writeResults(`Range value changed to: ${value}`);
-    }
-
-    function datetimeChanged() {
-        const dateInput = document.querySelector("input[type=date]");
-        const selectedDate = dateInput.value;
-        writeResults(`Selected date: ${selectedDate}`);
-    }
-
-    function hexToRgb(hex) {
-        hex = hex.replace("#", "");
-        const r = parseInt(hex.substring(0, 2), 16);
-        const g = parseInt(hex.substring(2, 4), 16);
-        const b = parseInt(hex.substring(4, 6), 16);
-        return `rgb(${r}, ${g}, ${b})`;
-    }
-
-    function colorChanged() {
-        const colorInput = document.querySelector("input[type=color]");
-        const selectedColor = colorInput.value;
-        const rgbColor = hexToRgb(selectedColor);
-
-        writeResults(`New selected color: ${selectedColor} as hex and in RGB: ${rgbColor}`);
-    }
-
-    function onmouseOver() {
-        writeResults("Mouse over event occurred!");
-    }
-    function onmouseLeave() {
-        writeResults("");
-    }
-
-    function inputChanged() {
-        const input = document.querySelector("input[type=text]");
-        const inputValue = input.value;
-        writeResults(`Input value changed to: ${inputValue}`);
-    }
-
-    function textareaChanged() {
-        const textarea = document.querySelector("textarea");
-        const textareaValue = textarea.value;
-        writeResults(`Textarea value changed to: ${textareaValue}`);
-    }
-
-</script>
+<script type="text/javascript" src="./js/common.js"></script>
 
 </html>
