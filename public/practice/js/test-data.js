@@ -383,3 +383,57 @@ const geographicData = {
     },
   ],
 };
+
+const selectorElementPair = [
+  {
+    selector: "#id-label-td",
+    html: `<label style="display: inherit;" id="id-label-element" data-testid="dti-label-element">Some text for label</label>`,
+  },
+  {
+    selector: "#id-button-td",
+    html: `<button style="display: inherit;" id="id-button-element" data-testid="dti-button-element" onclick="buttonOnClick()">Click me!</button>`,
+  },
+  {
+    selector: "#id-checkbox-td",
+    html: `<input style="display: inherit;" type="checkbox" id="id-checkbox" data-testid="dti-checkbox" name="name-checkbox" value="checkbox" onclick="checkBoxOnClick()">Checkbox`,
+  },
+  {
+    selector: "#id-input-td",
+    html: `<input style="display: inherit;" type="text" id="id-input" data-testid="dti-input" onchange="inputOnChange()">`,
+  },
+  {
+    selector: "#id-textarea-td",
+    html: `<textarea style="display: inherit;" id="id-textarea" data-testid="dti-textarea" onchange="textareaOnChange()"></textarea>`,
+  },
+  {
+    selector: "#id-dropdown-td",
+    html: `<select style="display: inherit; width: 75px;" id="id-dropdown" name="name-dropdown" id="id-dropdown" data-testid="dti-dropdown" onchange="dropdownOnChange()">
+            <option value="option1">Option 1</option>
+            <option value="option2">Option 2</option>
+            <option value="option3">Option 3</option>
+          </select>`,
+  },
+  {
+    selector: "#id-radio-buttons-td",
+    html: `<input style="display: inherit;" type="radio" id="id-radio1" data-testid="dti-radio1" onclick="radioButtonOnClick(1)" name="name-radio" value="radio1">
+          <label for="radio1">Radio Button 1</label>
+          <br />
+          <input style="display: inherit;" type="radio" id="id-radio2" data-testid="dti-radio2" onclick="radioButtonOnClick(2)" name="name-radio" value="radio2">
+          <label for="radio2">Radio Button 2</label>
+          <br />
+          <input style="display: inherit;" type="radio" id="id-radio3" data-testid="dti-radio3" onclick="radioButtonOnClick(3)" name="name-radio" value="radio3">
+          <label for="radio3">Radio Button 3</label>`,
+  },
+  {
+    selector: "#id-range-td",
+    html: `<input style="display: inherit;" type="range" min="0" max="100" value="23" id="id-range" data-testid="dti-range" onchange="rangeOnChange()">`,
+  },
+  {
+    selector: "#id-date-td",
+    html: `<input style="display: inherit;" type="date" id="id-date" data-testid="dti-date" onchange="datetimeOnChange()">`,
+  },
+  {
+    selector: "#id-color-td",
+    html: `<input style="display: inherit;" type="color" id="id-color" data-testid="dti-color" onchange="colorOnChange()">`,
+  },
+];

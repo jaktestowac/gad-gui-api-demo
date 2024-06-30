@@ -8,39 +8,58 @@ function writeResults(data) {
   resultsContainer.appendChild(paragraph);
 }
 
-function buttonOnClick() {
-  writeResults("You clicked the button!");
+function formatDataToAppend(additionalData) {
+  let dataToAppend = "";
+  if (additionalData !== "" && additionalData !== undefined) {
+    dataToAppend = ` ${additionalData}`;
+  }
+  return dataToAppend;
 }
 
-function checkBoxOnClick() {
+function buttonOnClick(additionalData = "") {
+  let dataToAppend = formatDataToAppend(additionalData);
+  writeResults("You clicked the button!" + dataToAppend);
+}
+
+function checkBoxOnClick(additionalData = "") {
+  let dataToAppend = formatDataToAppend(additionalData);
+
   const checkbox = document.querySelector("input[type=checkbox]");
   if (checkbox.checked) {
-    writeResults("Checkbox is checked!");
+    writeResults("Checkbox is checked!" + dataToAppend);
   } else {
-    writeResults("Checkbox is unchecked!");
+    writeResults("Checkbox is unchecked!" + dataToAppend);
   }
 }
 
-function dropdownOnChange() {
+function dropdownOnChange(additionalData = "") {
+  let dataToAppend = formatDataToAppend(additionalData);
+
   const dropdown = document.querySelector("select[name=name-dropdown]");
   const selectedOption = dropdown.value;
-  writeResults(`Selected option: ${selectedOption}`);
+  writeResults(`Selected option: ${selectedOption}` + dataToAppend);
 }
 
-function radioButtonOnClick(radioNumber) {
-  writeResults(`Radio Button ${radioNumber} clicked!`);
+function radioButtonOnClick(radioNumber, additionalData = "") {
+  let dataToAppend = formatDataToAppend(additionalData);
+
+  writeResults(`Radio Button ${radioNumber} clicked!` + dataToAppend);
 }
 
-function rangeOnChange() {
+function rangeOnChange(additionalData = "") {
+  let dataToAppend = formatDataToAppend(additionalData);
+
   const range = document.querySelector("input[type=range]");
   const value = range.value;
-  writeResults(`Range value changed to: ${value}`);
+  writeResults(`Range value changed to: ${value}` + dataToAppend);
 }
 
-function datetimeOnChange() {
+function datetimeOnChange(additionalData = "") {
+  let dataToAppend = formatDataToAppend(additionalData);
+
   const dateInput = document.querySelector("input[type=date]");
   const selectedDate = dateInput.value;
-  writeResults(`Selected date: ${selectedDate}`);
+  writeResults(`Selected date: ${selectedDate}` + dataToAppend);
 }
 
 function hexToRgb(hex) {
@@ -51,31 +70,41 @@ function hexToRgb(hex) {
   return `rgb(${r}, ${g}, ${b})`;
 }
 
-function colorOnChange() {
+function colorOnChange(additionalData = "") {
+  let dataToAppend = formatDataToAppend(additionalData);
+
   const colorInput = document.querySelector("input[type=color]");
   const selectedColor = colorInput.value;
   const rgbColor = hexToRgb(selectedColor);
 
-  writeResults(`New selected color: ${selectedColor} as hex and in RGB: ${rgbColor}`);
+  writeResults(`New selected color: ${selectedColor} as hex and in RGB: ${rgbColor}` + dataToAppend);
 }
 
-function labelOnMouseOver() {
-  writeResults("Mouse over event occurred!");
+function labelOnMouseOver(additionalData = "") {
+  let dataToAppend = formatDataToAppend(additionalData);
+
+  writeResults("Mouse over event occurred!" + dataToAppend);
 }
-function labelOnMouseLeave() {
-  writeResults("");
+function labelOnMouseLeave(additionalData = "") {
+  let dataToAppend = formatDataToAppend(additionalData);
+
+  writeResults("" + dataToAppend);
 }
 
-function inputOnChange() {
+function inputOnChange(additionalData = "") {
+  let dataToAppend = formatDataToAppend(additionalData);
+
   const input = document.querySelector("input[type=text]");
   const inputValue = input.value;
-  writeResults(`Input value changed to: ${inputValue}`);
+  writeResults(`Input value changed to: ${inputValue}` + dataToAppend);
 }
 
-function textareaOnChange() {
+function textareaOnChange(additionalData = "") {
+  let dataToAppend = formatDataToAppend(additionalData);
+
   const textarea = document.querySelector("textarea");
   const textareaValue = textarea.value;
-  writeResults(`Textarea value changed to: ${textareaValue}`);
+  writeResults(`Textarea value changed to: ${textareaValue}` + dataToAppend);
 }
 
 function getRandomValue(min, max) {
@@ -129,4 +158,31 @@ class randomValueGenerator {
     this.seed = seed;
     this.currentIndex = 0;
   }
+}
+
+function changeElementsState(elementsCssSelectors, state, value) {
+  elementsCssSelectors.forEach((elementCssSelector) => {
+    const elements = document.querySelectorAll(elementCssSelector);
+    elements.forEach((element) => {
+      element[state] = value;
+    });
+  });
+}
+
+function changeElementsVisibility(elementsCssSelectors, state) {
+  elementsCssSelectors.forEach((elementCssSelector) => {
+    const elements = document.querySelectorAll(elementCssSelector);
+    elements.forEach((element) => {
+      element.style.display = state;
+    });
+  });
+}
+
+function invokeFunctionWithDelay(func, delay) {
+  setTimeout(func, delay);
+}
+
+function addElementsToContainer(containerSelector, elementHTML) {
+  const container = document.querySelector(containerSelector);
+  container.innerHTML += elementHTML;
 }
