@@ -1,4 +1,4 @@
-function displayCanvasData(weatherDataForCanvas, chartId) {
+function displayCanvasData(weatherDataForCanvas, chartId, animationDuration = 1000) {
   if (window.myCharts === undefined) {
     window.myCharts = {};
   }
@@ -54,6 +54,9 @@ function displayCanvasData(weatherDataForCanvas, chartId) {
       ],
     },
     options: {
+      animation: {
+        duration: animationDuration,
+      },
       plugins: {
         title: {
           display: true,
