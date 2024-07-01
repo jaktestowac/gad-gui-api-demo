@@ -204,3 +204,23 @@ function getFlagEmoji(countryCode) {
     .map((char) => 127397 + char.charCodeAt());
   return String.fromCodePoint(...codePoints);
 }
+
+function prepareButtonElement(text, onclick) {
+  const button = document.createElement("button");
+  button.textContent = text;
+  button.addEventListener("click", onclick);
+
+  return button;
+}
+
+function attachButtonToElement(selector, text, onclick) {
+  const element = document.querySelector(selector);
+  const button = prepareButtonElement(text, onclick);
+  element.appendChild(button);
+}
+
+function attachPlacesOfInterestToElement(selector, placeOfInterest) {
+  const rootElement = document.querySelector(selector);
+  const element = preparePlacesInfInterestElements([placeOfInterest])[0];
+  rootElement.appendChild(element);
+}

@@ -34,20 +34,12 @@ function attachButton(selector, text, onclick) {
   const shadowRootContainer = document.querySelector(selector);
   const shadowRoot = shadowRootContainer.attachShadow({ mode: "open" });
 
-  const button = document.createElement("button");
-  button.textContent = text;
-  button.addEventListener("click", onclick);
-
-  shadowRoot.appendChild(button);
+  shadowRoot.appendChild(prepareButtonElement(text, onclick));
 }
 
 function addButton(selector, text, onclick) {
   const shadowRootContainer = document.querySelector(selector);
   const shadowRoot = shadowRootContainer.shadowRoot;
 
-  const button = document.createElement("button");
-  button.textContent = text;
-  button.addEventListener("click", onclick);
-
-  shadowRoot.appendChild(button);
+  shadowRoot.appendChild(prepareButtonElement(text, onclick));
 }

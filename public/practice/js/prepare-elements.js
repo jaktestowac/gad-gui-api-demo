@@ -141,9 +141,8 @@ function getTimeZoneOffset(timeZone) {
   return new Date().toLocaleTimeString("en-US", { timeZone, timeZoneName: "short" });
 }
 
-function preparePlacesInfInterestElements(placesOfInterest) {
+function preparePlacesInfInterestElements(placesOfInterest, numberOfPlaces = 3) {
   const elements = [];
-  console.log(placesOfInterest);
   placesOfInterest.forEach((place) => {
     const placeOfInterestContainer = document.createElement("div");
     placeOfInterestContainer.style.backgroundColor = "lightgray";
@@ -151,8 +150,9 @@ function preparePlacesInfInterestElements(placesOfInterest) {
     placeOfInterestContainer.style.borderRadius = "5px";
     placeOfInterestContainer.style.textAlign = "center";
     placeOfInterestContainer.style.margin = "0 auto";
-    placeOfInterestContainer.style.maxWidth = "700px";
+    placeOfInterestContainer.style.maxWidth = "600px";
     placeOfInterestContainer.style.marginBottom = "10px";
+    placeOfInterestContainer.style.fontSize = "12px";
 
     const tableElement = document.createElement("table");
     tableElement.style.width = "100%";
@@ -164,7 +164,7 @@ function preparePlacesInfInterestElements(placesOfInterest) {
     restaurantNameCell.style.width = "25%";
     restaurantNameCell.style.fontWeight = "bold";
     restaurantNameCell.style.paddingBottom = "5px";
-    restaurantNameCell.style.fontSize = "20px";
+    restaurantNameCell.style.fontSize = "16px";
     tableRowElement.appendChild(restaurantNameCell);
 
     const addressCell = document.createElement("td");
@@ -174,57 +174,59 @@ function preparePlacesInfInterestElements(placesOfInterest) {
 
     tableElement.appendChild(tableRowElement);
 
-    const ratingRowElement = document.createElement("tr");
+    const detailsRowElement = document.createElement("tr");
 
-    const ratingCell = document.createElement("td");
-    ratingCell.textContent = "Rating:";
-    ratingCell.style.fontWeight = "bold";
-    ratingRowElement.appendChild(ratingCell);
+    const detailsCellElement = document.createElement("td");
+    detailsCellElement.setAttribute("colspan", "2");
 
-    const ratingValueCell = document.createElement("td");
-    ratingValueCell.textContent = `${place.rating} ⭐️`;
-    ratingRowElement.appendChild(ratingValueCell);
+    const detailsTableElement = document.createElement("table");
+    detailsTableElement.style.width = "100%";
+    detailsTableElement.style.margin = "0 auto";
+    detailsTableElement.style.fontSize = "12px";
+    detailsTableElement.style.border = "1px solid black";
 
-    tableElement.appendChild(ratingRowElement);
+    const headerRowElement = document.createElement("tr");
 
-    const cuisineTypeRowElement = document.createElement("tr");
+    const columnPrice = document.createElement("th");
+    columnPrice.textContent = "Price Range";
+    headerRowElement.appendChild(columnPrice);
 
-    const cuisineTypeCell = document.createElement("td");
-    cuisineTypeCell.textContent = "Cuisine Type:";
-    cuisineTypeCell.style.fontWeight = "bold";
-    cuisineTypeRowElement.appendChild(cuisineTypeCell);
+    const columnAddress = document.createElement("th");
+    columnAddress.textContent = "Address";
+    headerRowElement.appendChild(columnAddress);
 
-    const cuisineTypeValueCell = document.createElement("td");
-    cuisineTypeValueCell.textContent = place.cuisineType;
-    cuisineTypeRowElement.appendChild(cuisineTypeValueCell);
+    const columnRating = document.createElement("th");
+    columnRating.textContent = "Rating";
+    headerRowElement.appendChild(columnRating);
 
-    tableElement.appendChild(cuisineTypeRowElement);
+    const columnCuisine = document.createElement("th");
+    columnCuisine.textContent = "Cuisine Type";
+    headerRowElement.appendChild(columnCuisine);
 
-    const priceRangeRowElement = document.createElement("tr");
+    detailsTableElement.appendChild(headerRowElement);
 
-    const priceRangeCell = document.createElement("td");
-    priceRangeCell.textContent = "Price Range:";
-    priceRangeCell.style.fontWeight = "bold";
-    priceRangeRowElement.appendChild(priceRangeCell);
+    const rowElement = document.createElement("tr");
 
-    const priceRangeValueCell = document.createElement("td");
-    priceRangeValueCell.textContent = place.priceRange;
-    priceRangeRowElement.appendChild(priceRangeValueCell);
+    const column1 = document.createElement("td");
+    column1.textContent = "Restaurant Name";
+    rowElement.appendChild(column1);
 
-    tableElement.appendChild(priceRangeRowElement);
+    const column2 = document.createElement("td");
+    column2.textContent = place.restaurantName;
+    rowElement.appendChild(column2);
 
-    const openingHoursRowElement = document.createElement("tr");
+    const column3 = document.createElement("td");
+    column3.textContent = `${place.rating} ⭐️`;
+    rowElement.appendChild(column3);
 
-    const openingHoursCell = document.createElement("td");
-    openingHoursCell.textContent = "Opening Hours:";
-    openingHoursCell.style.fontWeight = "bold";
-    openingHoursRowElement.appendChild(openingHoursCell);
+    const column4 = document.createElement("td");
+    column4.textContent = place.cuisineType;
+    rowElement.appendChild(column4);
+    detailsTableElement.appendChild(rowElement);
 
-    const openingHoursValueCell = document.createElement("td");
-    openingHoursValueCell.textContent = place.openingHours;
-    openingHoursRowElement.appendChild(openingHoursValueCell);
-
-    tableElement.appendChild(openingHoursRowElement);
+    detailsCellElement.appendChild(detailsTableElement);
+    detailsRowElement.appendChild(detailsCellElement);
+    tableElement.appendChild(detailsRowElement);
 
     const reviewsRowElement = document.createElement("tr");
 
@@ -259,6 +261,8 @@ function preparePlacesInfInterestElements(placesOfInterest) {
     placeOfInterestContainer.appendChild(tableElement);
     elements.push(placeOfInterestContainer);
   });
+
+  elements.splice(numberOfPlaces);
 
   return elements;
 }
