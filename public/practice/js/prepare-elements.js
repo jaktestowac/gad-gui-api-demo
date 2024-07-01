@@ -141,7 +141,7 @@ function getTimeZoneOffset(timeZone) {
   return new Date().toLocaleTimeString("en-US", { timeZone, timeZoneName: "short" });
 }
 
-function preparePlacesInfInterestElements(placesOfInterest, numberOfPlaces = 3) {
+function preparePlacesInfInterestElements(placesOfInterest, numberOfPlaces = 3, addIds = true) {
   const elements = [];
   placesOfInterest.forEach((place) => {
     const placeOfInterestContainer = document.createElement("div");
@@ -153,7 +153,9 @@ function preparePlacesInfInterestElements(placesOfInterest, numberOfPlaces = 3) 
     placeOfInterestContainer.style.maxWidth = "600px";
     placeOfInterestContainer.style.marginBottom = "10px";
     placeOfInterestContainer.style.fontSize = "12px";
-    placeOfInterestContainer.setAttribute("id", `id-${formatId(place.restaurantName)}-placeholder`);
+    if (addIds) {
+      placeOfInterestContainer.setAttribute("id", `id-${formatId(place.restaurantName)}-placeholder`);
+    }
 
     const tableElement = document.createElement("table");
     tableElement.style.width = "100%";
@@ -167,7 +169,9 @@ function preparePlacesInfInterestElements(placesOfInterest, numberOfPlaces = 3) 
     restaurantNameCell.style.paddingBottom = "5px";
     restaurantNameCell.style.fontSize = "16px";
 
-    restaurantNameCell.setAttribute("id", `id-${formatId(place.restaurantName)}`);
+    if (addIds) {
+      restaurantNameCell.setAttribute("id", `id-${formatId(place.restaurantName)}`);
+    }
     tableRowElement.appendChild(restaurantNameCell);
 
     const addressCell = document.createElement("td");
@@ -212,20 +216,30 @@ function preparePlacesInfInterestElements(placesOfInterest, numberOfPlaces = 3) 
 
     const column1 = document.createElement("td");
     column1.textContent = place.priceRange;
+    if (addIds) {
+      column1.setAttribute("id", `id-${formatId(place.restaurantName)}-rating`);
+    }
     rowElement.appendChild(column1);
 
     const column2 = document.createElement("td");
     column2.textContent = place.restaurantName;
+    if (addIds) {
+      column2.setAttribute("id", `id-${formatId(place.restaurantName)}-name`);
+    }
     rowElement.appendChild(column2);
 
     const column3 = document.createElement("td");
     column3.textContent = `${place.rating} ⭐️`;
-    column3.setAttribute("id", `id-${formatId(place.restaurantName)}-rating`);
+    if (addIds) {
+      column3.setAttribute("id", `id-${formatId(place.restaurantName)}-rating`);
+    }
     rowElement.appendChild(column3);
 
     const column4 = document.createElement("td");
     column4.textContent = place.cuisineType;
-    column3.setAttribute("id", `id-${formatId(place.restaurantName)}-cuisineType`);
+    if (addIds) {
+      column4.setAttribute("id", `id-${formatId(place.restaurantName)}-cuisineType`);
+    }
     rowElement.appendChild(column4);
     detailsTableElement.appendChild(rowElement);
 
@@ -243,6 +257,10 @@ function preparePlacesInfInterestElements(placesOfInterest, numberOfPlaces = 3) 
     const reviewsValueCell = document.createElement("td");
     const toggleButton = document.createElement("button");
     toggleButton.textContent = "Toggle Reviews";
+    toggleButton.style.fontSize = "12px";
+    if (addIds) {
+      toggleButton.setAttribute("id", `id-${formatId(place.restaurantName)}-reviews-btn`);
+    }
     toggleButton.addEventListener("click", () => {
       reviewsList.style.display = reviewsList.style.display === "none" ? "block" : "none";
     });
@@ -251,9 +269,14 @@ function preparePlacesInfInterestElements(placesOfInterest, numberOfPlaces = 3) 
     const reviewsList = document.createElement("ul");
     reviewsValueCell.appendChild(reviewsList);
 
+    let idx = 1;
     place.reviews.forEach((review) => {
       const reviewItem = document.createElement("li");
       reviewItem.textContent = review;
+      if (addIds) {
+        reviewItem.setAttribute("id", `id-${formatId(place.restaurantName)}-review-${idx}`);
+        idx++;
+      }
       reviewItem.style.textAlign = "left";
       reviewsList.appendChild(reviewItem);
     });
@@ -272,6 +295,16 @@ function preparePlacesInfInterestElements(placesOfInterest, numberOfPlaces = 3) 
   return elements;
 }
 
+function randomPlacesGenerator(numberOfPlaces, restaurantNames, addresses, cuisineTypes, reviews) {
+  const places = [];
+  for (let i = 0; i < numberOfPlaces; i++) {
+    const randomPlace = randomPlaceGenerator(restaurantNames, addresses, cuisineTypes, reviews);
+    places.push(randomPlace);
+  }
+
+  return places;
+}
+
 function randomPlaceGenerator(restaurantNames, addresses, cuisineTypes, reviews) {
   const priceRanges = ["$", "$$", "$$$", "$$$$", "$$$$$"];
   const openingHours = generateRandomOpeningHours();
@@ -281,7 +314,7 @@ function randomPlaceGenerator(restaurantNames, addresses, cuisineTypes, reviews)
   const randomCuisineTypeIndex = Math.floor(Math.random() * cuisineTypes.length);
   const randomPriceRangeIndex = Math.floor(Math.random() * priceRanges.length);
 
-  const randomNumOfReviews = Math.floor(Math.random() * 3) + 1;
+  const randomNumOfReviews = Math.floor(Math.random() * 6) + 1;
   const randomReviews = [];
 
   for (let i = 0; i < randomNumOfReviews; i++) {
