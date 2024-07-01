@@ -153,6 +153,7 @@ function preparePlacesInfInterestElements(placesOfInterest, numberOfPlaces = 3) 
     placeOfInterestContainer.style.maxWidth = "600px";
     placeOfInterestContainer.style.marginBottom = "10px";
     placeOfInterestContainer.style.fontSize = "12px";
+    placeOfInterestContainer.setAttribute("id", `id-${formatId(place.restaurantName)}-placeholder`);
 
     const tableElement = document.createElement("table");
     tableElement.style.width = "100%";
@@ -165,6 +166,8 @@ function preparePlacesInfInterestElements(placesOfInterest, numberOfPlaces = 3) 
     restaurantNameCell.style.fontWeight = "bold";
     restaurantNameCell.style.paddingBottom = "5px";
     restaurantNameCell.style.fontSize = "16px";
+
+    restaurantNameCell.setAttribute("id", `id-${formatId(place.restaurantName)}`);
     tableRowElement.appendChild(restaurantNameCell);
 
     const addressCell = document.createElement("td");
@@ -208,7 +211,7 @@ function preparePlacesInfInterestElements(placesOfInterest, numberOfPlaces = 3) 
     const rowElement = document.createElement("tr");
 
     const column1 = document.createElement("td");
-    column1.textContent = "Restaurant Name";
+    column1.textContent = place.priceRange;
     rowElement.appendChild(column1);
 
     const column2 = document.createElement("td");
@@ -217,10 +220,12 @@ function preparePlacesInfInterestElements(placesOfInterest, numberOfPlaces = 3) 
 
     const column3 = document.createElement("td");
     column3.textContent = `${place.rating} ⭐️`;
+    column3.setAttribute("id", `id-${formatId(place.restaurantName)}-rating`);
     rowElement.appendChild(column3);
 
     const column4 = document.createElement("td");
     column4.textContent = place.cuisineType;
+    column3.setAttribute("id", `id-${formatId(place.restaurantName)}-cuisineType`);
     rowElement.appendChild(column4);
     detailsTableElement.appendChild(rowElement);
 

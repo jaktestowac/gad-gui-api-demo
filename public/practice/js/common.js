@@ -224,3 +224,7 @@ function attachPlacesOfInterestToElement(selector, placeOfInterest) {
   const element = preparePlacesInfInterestElements([placeOfInterest])[0];
   rootElement.appendChild(element);
 }
+
+function formatId(id) {
+  return id.toLowerCase().replace(/\s/g, "-");
+}
