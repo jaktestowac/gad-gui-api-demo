@@ -27,6 +27,7 @@
 
         <div id="shadow-root-places"></div>
 
+        <div id="shadow-root-button"></div>
     </div>
 
     <br />
@@ -55,7 +56,12 @@
 <script type="text/javascript" src="./js/shadow-dom.js"></script>
 
 <script>
-    appendPlacesOfInterests('#shadow-root-places', placesOfInterest)
+    attachPlacesOfInterests('#shadow-root-places', placesOfInterest)
+    attachButton('#shadow-root-button', "Get one more place!", () => {
+        const newPlace = randomPlaceGenerator(restaurantNames, restaurantLocations, cuisineTypes, restaurantReviews)
+        addPlacesOfInterest('#shadow-root-places', newPlace)
+    })
+
 </script>
 
 </html>
