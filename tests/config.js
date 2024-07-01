@@ -30,6 +30,7 @@ const messagesUrl = "/api/messages";
 const baseCaptchaUrl = "/api/captcha";
 const baseFeatureCheckUrl = "/api/config/checkfeature";
 const baseFeaturesCheckUrl = "/api/config/checkfeatures";
+const baseFlashpostsUrl = "/api/flashposts";
 
 const existingUserEmail = "Danial.Dicki@dicki.test";
 const existingUserPass = "test2";
@@ -99,4 +100,5 @@ module.exports = {
   baseCaptchaUrl,
   baseFeatureCheckUrl,
   baseFeaturesCheckUrl,
+  baseFlashpostsUrl,
 };

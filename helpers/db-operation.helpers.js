@@ -13,7 +13,10 @@ const {
   contactsDb,
   messagesDb,
   messageCheckDb,
+  flashpostsDb,
 } = require("./db.helpers");
+
+// Users
 
 function searchForUserWithToken(userId, verifyTokenResult) {
   const foundUser = userDb().find((user) => {
@@ -50,6 +53,8 @@ function searchForUserWithEmail(email) {
   });
   return foundUser;
 }
+
+// Articles
 
 function searchForArticle(articleId) {
   const foundArticle = articlesDb().find((article) => {
@@ -94,6 +99,8 @@ function searchForArticles(articleIds) {
   return foundArticles;
 }
 
+// Comments
+
 function searchForComment(commentId) {
   const foundComment = commentsDb().find((comment) => {
     if (areIdsEqual(comment["id"], commentId)) {
@@ -123,6 +130,8 @@ function softDeleteCommentsByArticleId(articleId) {
   return amount;
 }
 
+// Labels
+
 function searchForArticleLabels(articleId) {
   const foundLabels = articleLabelsDb().find((label) => {
     if (areIdsEqual(label["article_id"], articleId)) {
@@ -143,6 +152,8 @@ function filterArticlesByLabel(articleIds, labelId) {
   });
   return foundArticlesIds;
 }
+
+// Likes
 
 function countLikesForAllArticles() {
   const foundLikes = {};
@@ -427,6 +438,18 @@ function getUnreadMessagesPerUser(messages, userLastCheck, userId) {
   return { allUnreadMessages: totalSumFromValues, unreadMessagesPerUser };
 }
 
+function getAllFlashposts() {
+  return flashpostsDb();
+}
+
+function getAllPublicFlashposts() {
+  return flashpostsDb().filter((flashpost) => flashpost["is_public"]);
+}
+
+function getFlashpostWithId(id) {
+  return flashpostsDb().find((flashpost) => areIdsEqual(flashpost["id"], id));
+}
+
 module.exports = {
   searchForUserWithToken,
   searchForUserWithEmail,
@@ -468,4 +491,7 @@ module.exports = {
   searchForMessagesSentToUserId,
   searchForArticlesWithTitle,
   searchForArticlesWithTitleWithoutId,
+  getAllFlashposts,
+  getAllPublicFlashposts,
+  getFlashpostWithId,
 };

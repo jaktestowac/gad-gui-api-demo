@@ -2040,6 +2040,169 @@
       "date": "2011-12-12T12:25:30Z"
     }
   ],
+  "flashposts": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "date": "2024-05-27T12:32:50Z",
+      "settings": {
+        "color": "#000fd5"
+      },
+      "body": "Testing private messages!"
+    },
+    {
+      "id": 2,
+      "user_id": 1,
+      "date": "2024-05-28T12:32:50Z",
+      "settings": {
+        "color": "#008e00"
+      },
+      "body": "Conference QA Quest 2024 is coming up soon!🚀 Don't forget to register and book your spot. It's going to be an amazing event!",
+      "is_public": true
+    },
+    {
+      "id": 3,
+      "user_id": 8,
+      "date": "2024-06-08T18:30:00Z",
+      "settings": {},
+      "body": "Looking for recommendations on the best programming courses online."
+    },
+    {
+      "id": 4,
+      "user_id": 3,
+      "date": "2024-06-12T10:45:30Z",
+      "settings": {},
+      "body": "New blog post is live on my site. Check it out!",
+      "is_public": true
+    },
+    {
+      "id": 5,
+      "user_id": 4,
+      "date": "2024-06-14T14:22:10Z",
+      "settings": {},
+      "body": "Just finished reading a fantastic book on leadership - <strong>Extreme Ownership</strong>"
+    },
+    {
+      "id": 6,
+      "user_id": 5,
+      "date": "2024-06-15T09:00:00Z",
+      "settings": {},
+      "body": "Excited to announce our new project launch tomorrow!",
+      "is_public": true
+    },
+    {
+      "id": 7,
+      "user_id": 1,
+      "date": "2024-06-15T17:37:45Z",
+      "settings": {},
+      "body": "Working on a new feature, can't wait to share it with everyone!"
+    },
+    {
+      "id": 8,
+      "user_id": 1,
+      "date": "2024-06-16T10:20:00Z",
+      "settings": {},
+      "body": "Anyone up for a game of chess this weekend?"
+    },
+    {
+      "id": 9,
+      "user_id": 2,
+      "date": "2024-06-17T11:30:20Z",
+      "settings": {
+        "color": "#ff5733"
+      },
+      "body": "Just started a new book <strong>Get Smart!</strong>, can't put it down!"
+    },
+    {
+      "id": 10,
+      "user_id": 3,
+      "date": "2024-06-18T08:15:00Z",
+      "settings": {},
+      "body": "Hosting a webinar on cybersecurity next week. Join us!",
+      "is_public": true
+    },
+    {
+      "id": 11,
+      "user_id": 6,
+      "date": "2024-06-18T14:45:10Z",
+      "settings": {},
+      "body": "What are some good productivity apps?"
+    },
+    {
+      "id": 12,
+      "user_id": 7,
+      "date": "2024-06-18T16:30:30Z",
+      "settings": {},
+      "body": "Happy to share my latest travel blog. Check out my adventures in Japan!",
+      "is_public": true
+    },
+    {
+      "id": 13,
+      "user_id": 8,
+      "date": "2024-06-19T09:50:25Z",
+      "settings": {
+        "color": "#00aaff"
+      },
+      "body": "Looking for a workout buddy. Anyone interested?"
+    },
+    {
+      "id": 14,
+      "user_id": 9,
+      "date": "2024-06-20T12:32:50Z",
+      "settings": {},
+      "body": "Don't miss our upcoming sale this weekend! Huge discounts!",
+      "is_public": true
+    },
+    {
+      "id": 15,
+      "user_id": 1,
+      "date": "2024-06-29T11:22:10Z",
+      "settings": {},
+      "body": "Can anyone recommend a good documentary to watch?"
+    },
+    {
+      "id": 16,
+      "user_id": 2,
+      "date": "2024-06-29T15:00:00Z",
+      "settings": {
+        "color": "#ff00ff"
+      },
+      "body": "Happy Monday! Ready to tackle the week ahead!"
+    },
+    {
+      "id": 17,
+      "user_id": 1,
+      "date": "2024-06-29T19:25:40Z",
+      "settings": {},
+      "body": "New podcast episode is out! Tune in for some great insights.",
+      "is_public": true
+    },
+    {
+      "id": 18,
+      "user_id": 5,
+      "date": "2024-06-30T02:10:00Z",
+      "settings": {
+        "color": "#ffd700"
+      },
+      "body": "Brainstorming ideas for our next big project. Exciting times ahead!"
+    },
+    {
+      "id": 19,
+      "user_id": 7,
+      "date": "2024-06-30T08:15:30Z",
+      "settings": {},
+      "body": "Anyone have tips for maintaining work-life balance?"
+    },
+    {
+      "id": 20,
+      "user_id": 6,
+      "date": "2024-06-30T12:00:45Z",
+      "settings": {
+        "color": "#008080"
+      },
+      "body": "Our team is looking for a new designer. Spread the word!"
+    }
+  ],
   "likes": [
     { "id": 1, "user_id": 1, "comment_id": 1, "article_id": null, "date": "2023-09-25T10:00:00Z" },
     { "id": 2, "user_id": 2, "comment_id": null, "article_id": 1, "date": "2023-09-25T11:00:00Z" },

@@ -48,6 +48,17 @@ const mainGUIMenuHTML = (path = "") => {
   <a href="${path}/comments.html" class="menu-link">
     <button id="btnComments" data-testid="open-comments" class="button-primary">Comments</button>
   </a>
+  <a href="${path}/flashposts.html" class="menu-link">
+    <button id="btnFlashposts" data-testid="open-flashposts" class="button-primary">Flashposts</button>
+  </a>
+  `;
+};
+
+const mainPracticePageMenuHTML = (path = "") => {
+  return `
+  <a href="${path}/practice" class="menu-link">
+    <button id="btnPractice" data-testid="open-practice" class="button-primary">Main Practice Page</button>
+  </a>
   `;
 };
 
@@ -96,11 +107,10 @@ const logoGAD = (path = "/") => {
  `;
 };
 
-const rightMenu = (path = "") => {
-  return `
-    <span style="display: flex; align-items: center; justify-self: end; padding-right: 20px">
-    <span id="languageSelect"></span>
-    <div class="dropdown" data-testid="user-dropdown">
+const rightMenu = (path = "", withUserMenu = true) => {
+  let userMenu = `<div style="height: 30px; margin-top: 32px"></div>`;
+  if (withUserMenu !== false) {
+    userMenu = `<div class="dropdown" data-testid="user-dropdown">
       <button id="dropbtn" data-testid="btn-dropdown" class="dropbtn">
         <img id="avatar"
           src="${path}/data/icons/user.png"
@@ -115,8 +125,14 @@ const rightMenu = (path = "") => {
         <a href="/logout" id="logoutBtn" hidden>Logout</a>
         <a href="/register.html" id="registerBtn">Register</a>
       </div>
-    </div>
-    <a href="/tools/backoffice.html" style="text-decoration: none; color: white; margin-right: 15px;" >
+    </div>`;
+  }
+
+  return `
+    <span style="display: flex; align-items: center; justify-self: end; padding-right: 20px">
+    <span id="languageSelect"></span>
+    ${userMenu}
+    <a href="/tools/backoffice.html" style="text-decoration: none; color: white; margin-right: 15px; " >
    
     <div class="hovertext" data-hover="Visit Backoffice Tools">
       <img
@@ -184,26 +200,31 @@ const addMainMenuAndFooter = () => {
     menuContainerLeft = document.querySelector("#menu-main-gui");
     menuContainerLeft.innerHTML = logoGAD() + mainGUIMenuHTML();
     if (email) menuContainerLeft.innerHTML += mainGUIMenuHTMLLogged();
-    menuContainerLeft.insertAdjacentHTML("afterend", rightMenu());
+    menuContainerLeft.insertAdjacentHTML("afterend", rightMenu(""));
   }
   if (document.querySelector("#menu-main-gui-projects")) {
     mainNavMenu.innerHTML = hamburgerMenu() + mainNavMenu.innerHTML;
     menuContainerLeft = document.querySelector("#menu-main-gui-projects");
     menuContainerLeft.innerHTML = logoGAD();
     if (email) menuContainerLeft.innerHTML += mainProjectsGUIMenuHTMLLogged();
-    menuContainerLeft.insertAdjacentHTML("afterend", rightMenu());
+    menuContainerLeft.insertAdjacentHTML("afterend", rightMenu(""));
   }
   if (document.querySelector("#menu-main-api")) {
     mainNavMenu.innerHTML = hamburgerMenu() + mainNavMenu.innerHTML;
-    let path = "";
     menuContainerLeft = document.querySelector("#menu-main-api");
     menuContainerLeft.innerHTML = logoGAD() + mainAPIMenuHTML;
-    menuContainerLeft.insertAdjacentHTML("afterend", rightMenu());
+    menuContainerLeft.insertAdjacentHTML("afterend", rightMenu(""));
   }
   if (document.querySelector("#menu-main")) {
     menuContainerLeft = document.querySelector("#menu-main");
     menuContainerLeft.innerHTML = logoGAD();
-    menuContainerLeft.insertAdjacentHTML("afterend", rightMenu());
+    menuContainerLeft.insertAdjacentHTML("afterend", rightMenu(""));
+  }
+  if (document.querySelector("#menu-main-practice")) {
+    mainNavMenu.innerHTML = hamburgerMenu() + mainNavMenu.innerHTML;
+    menuContainerLeft = document.querySelector("#menu-main-practice");
+    menuContainerLeft.innerHTML = logoGAD() + mainPracticePageMenuHTML();
+    menuContainerLeft.insertAdjacentHTML("afterend", rightMenu("", false));
   }
   const body = document.querySelector("body");
   body.insertAdjacentHTML("beforeend", footerHTML(getCurrentYear()));

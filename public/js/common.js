@@ -78,7 +78,9 @@ const formatDateToLocaleString = (dateString) => {
     return "";
   }
 
-  const date = new Date(dateString);
+  const utcDate = new Date(dateString);
+  const currentDate = new Date();
+  const date = new Date(utcDate.getTime() + currentDate.getTimezoneOffset() * 60000);
   const options = {
     year: "numeric",
     month: "2-digit",
@@ -93,6 +95,18 @@ const formatDateToLocaleString = (dateString) => {
   const formattedDate = date.toLocaleString(locale, options).replace(",", "");
   return formattedDate;
 };
+
+function howManyHoursAndMinutesAndSecondsInPast(dateString) {
+  const date = new Date(dateString);
+  const now = new Date();
+
+  const diff = now - date;
+  const hours = Math.abs(Math.floor(diff / (1000 * 60 * 60)));
+  const minutes = Math.abs(Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)));
+  const seconds = Math.abs(Math.floor((diff % (1000 * 60)) / 1000));
+
+  return { hours, minutes, seconds };
+}
 
 function getDateFromString(dateString) {
   return new Date(dateString);
@@ -737,4 +751,29 @@ function addElementWithTooltipWithQrCodeToElement(element, qrCodeText, up = true
       </span>
   </div>`;
   addTooltipWithQrCode(`qr-tooltiptext-${randomId}`, qrCodeText);
+}
+
+function getContrastRatio(color) {
+  const rgb = getRGBValues(color);
+  const luminance = calculateLuminance(rgb);
+  const contrastRatio = (luminance + 0.05) / 0.05;
+  return contrastRatio;
+}
+
+function getRGBValues(color) {
+  const hex = color.replace("#", "");
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+  return { r, g, b };
+}
+
+function calculateLuminance(rgb) {
+  const { r, g, b } = rgb;
+  const sRGB = [r, g, b].map((value) => {
+    const s = value / 255;
+    return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+  });
+  const luminance = 0.2126 * sRGB[0] + 0.7152 * sRGB[1] + 0.0722 * sRGB[2];
+  return luminance;
 }

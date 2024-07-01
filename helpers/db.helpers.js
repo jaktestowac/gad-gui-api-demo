@@ -145,6 +145,10 @@ function commentsDb() {
   return fullDb()["comments"];
 }
 
+function flashpostsDb() {
+  return fullDb()["flashposts"];
+}
+
 function contactsDb() {
   return fullDb()["contacts"];
 }
@@ -281,6 +285,7 @@ module.exports = {
   articlesDb,
   commentsDb,
   likesDb,
+  flashpostsDb,
   quizQuestionsDb,
   hangmanDb,
   fullDb,
