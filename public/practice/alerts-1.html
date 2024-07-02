@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+    <style>
+        .simple-alert-on-left-1 {
+            cursor: pointer;
+            width: 260px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px 0;
+            right: 0%;
+            top: 50px;
+            margin: 2px;
+            padding: 2px;
+
+            padding: 0.75rem 1.25rem;
+            border: 1px solid transparent;
+            border-radius: 0.25rem;
+            float: right;
+            z-index: 9999;
+
+            animation: server-response 0s 0.2;
+            -webkit-animation: server-response 0.2s 1;
+            animation-fill-mode: forwards;
+
+            animation-delay: 2s;
+            -webkit-animation-delay: 2s;
+            /* Safari and Chrome */
+            -webkit-animation-fill-mode: forwards;
+        }
+    </style>
+
+    <br />
+    <br />
+    <br />
+    <div style="position: absolute; right: 300px;">
+        <div id="alerts-placeholder" style="display: flex; flex-direction: column; position: absolute;"></div>
+    </div>
+    <div align="center">
+        <h2>Popups and Alerts</h2>
+        <div style="display: flex; align-items: center; justify-content: center;">
+            <table style="margin: 0 auto; width:  fit-content;">
+
+                <tr>
+                    <th id="description" data-testid="dti-description">Description</th>
+                    <th id="id-elements" data-testid="dti-elements">Buttons</th>
+                </tr>
+                <tr>
+                    <td>Simple alert box</td>
+                    <td><button id="alert-box-btn" data-testid="dti-alert-box-btn" onclick="alert('Alert box invoked by button click!')">Click me for alert box!</button></td>
+                </tr>
+                <tr>
+                    <td>Simple alert<br />(with fade out)</td>
+                    <td><button id="alert-btn" data-testid="dti-alert-btn" onclick="displaySimpleAlert('Button clicked!')">Click me for alert popup!</button></td>
+                </tr>
+                <tr>
+                    <td>Simple alert<br />(with counter)</td>
+                    <td><button id="alert-counter-btn" data-testid="dti-alert-counter-btn" onclick="displaySimpleAlertWithCounter()">Click me to count clicks!</button></td>
+                </tr>
+                <tr>
+                    <td>Simple alert<br />(with random fade out)</td>
+                    <td><button id="alert-counter-btn" data-testid="dti-alert-counter-btn" onclick="displaySimpleAlertWithCounter2()">Click me too!</button></td>
+                </tr>
+
+            </table>
+        </div>
+    </div>
+
+    <br />
+    <br />
+    <div align="center">
+        <div id="results-container">
+        </div>
+    </div>
+    <br />
+    <br />
+    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 24px">
+        <a href="https://jaktestowac.pl" style="color: dimgray">
+            <span style="display: flex; align-items: center; justify-self: center; font-size: medium">
+                <img src="/data/icons/favicon.png" style="width: 25px !important; height: 25px !important; padding: 0; border: none" alt="" />&nbsp&nbspjaktestowac.pl
+            </span>
+        </a>
+    </div>
+</body>
+
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="./js/common.js"></script>
+<script>
+    let clickCounter1 = 0
+    let clickCounter2 = 0
+
+    function displaySimpleAlert(text) {
+        const alertDiv = document.createElement('div');
+        alertDiv.classList.add('simple-alert-on-left-1');
+        alertDiv.textContent = text;
+        document.body.appendChild(alertDiv);
+
+        document.querySelector('#alerts-placeholder').appendChild(alertDiv)
+
+        setTimeout(function () {
+            alertDiv.style.display = 'none';
+        }, 3000);
+    }
+
+    function displaySimpleAlertWithCounter() {
+        clickCounter1++
+        const alertDiv = document.createElement('div');
+        alertDiv.classList.add('simple-alert-on-left-1');
+        alertDiv.textContent = `Button clicked ${clickCounter1} times`;
+
+        alertDiv.style.backgroundColor = "black"
+
+        document.body.appendChild(alertDiv);
+
+        document.querySelector('#alerts-placeholder').appendChild(alertDiv)
+
+        setTimeout(function () {
+            alertDiv.remove();
+        }, 3000);
+    }
+
+    function displaySimpleAlertWithCounter2() {
+        clickCounter2++
+        const alertDiv = document.createElement('div');
+        alertDiv.classList.add('simple-alert-on-left-1');
+        alertDiv.textContent = `${clickCounter2} click(s)!`;
+
+        alertDiv.style.backgroundColor = getRandomColor();
+
+        document.body.appendChild(alertDiv);
+
+        document.querySelector('#alerts-placeholder').appendChild(alertDiv)
+
+        setTimeout(function () {
+            alertDiv.remove();
+        }, getRandomValue(1000, 5000));
+    }
+
+    function getRandomColor() {
+        const colors = ["red", "blue", "green", "orange", "purple", "brown"];
+        const randomIndex = Math.floor(Math.random() * colors.length);
+        return colors[randomIndex];
+    }
+
+</script>
+
+</html>
