@@ -48,6 +48,24 @@
             -webkit-animation-fill-mode: forwards;
         }
 
+        .alert-gad-emoji::before {
+            content: "🦎";
+            margin-right: 5px;
+            float: left;
+        }
+
+        .alert-finger-emoji::before {
+            content: "👉";
+            margin-right: 5px;
+            float: left;
+        }
+
+        .alert-counter-emoji::before {
+            content: "🎯";
+            margin-right: 5px;
+            float: left;
+        }
+
         .modal {
             position: fixed;
             z-index: 9999;
@@ -91,7 +109,7 @@
     <br />
     <br />
     <br />
-    <div style="position: absolute; right: 300px;">
+    <div style="position: absolute; right: 270px;">
         <div id="alerts-placeholder" style="display: flex; flex-direction: column; position: absolute;"></div>
     </div>
     <div align="center">
@@ -156,7 +174,9 @@
     function displaySimpleAlert(text) {
         const alertDiv = document.createElement('div');
         alertDiv.classList.add('simple-alert-on-left-1');
+        alertDiv.classList.add('alert-gad-emoji');
         alertDiv.textContent = text;
+        alertDiv.style.width = '250px';
         alertDiv.setAttribute('id', 'simple-alert');
         alertDiv.setAttribute('data-testid', 'dti-simple-alert');
         document.body.appendChild(alertDiv);
@@ -212,6 +232,7 @@
         clickCounter1++
         const alertDiv = document.createElement('div');
         alertDiv.classList.add('simple-alert-on-left-1');
+        alertDiv.classList.add('alert-counter-emoji');
         alertDiv.textContent = `Button clicked ${clickCounter1} times`;
         alertDiv.setAttribute('id', `alert-counter-${clickCounter1}`);
         alertDiv.setAttribute('data-testid', 'dti-simple-alert-with-counter');
@@ -231,6 +252,7 @@
         clickCounter2++
         const alertDiv = document.createElement('div');
         alertDiv.classList.add('simple-alert-on-left-1');
+        alertDiv.classList.add('alert-counter-emoji');
         alertDiv.textContent = `${clickCounter2} click(s)!`;
         alertDiv.setAttribute('id', `alert-2-${clickCounter2}`);
         alertDiv.setAttribute('data-testid', 'dti-simple-alert-with-counter-and-random-fade-out');
