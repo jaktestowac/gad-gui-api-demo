@@ -104,6 +104,24 @@ function jsonToBase64(object) {
   return btoa(json);
 }
 
+async function invokeRequestUntil(id, request, condition, maxAttempts = 10, delay = 500) {
+  let attempts = 0;
+  let response;
+  while (attempts < maxAttempts) {
+    response = await request();
+    const result = condition(response);
+    if (result) {
+      console.log(`[${id}] Attempt ${attempts + 1} succeeded with result: ${result}`);
+      break;
+    }
+    attempts++;
+    console.log(`[${id}] Attempt ${attempts} failed. Retrying in ${delay} ms.`);
+    await sleep(delay);
+  }
+
+  return response;
+}
+
 module.exports = {
   sleep,
   gracefulQuit,
@@ -115,4 +133,5 @@ module.exports = {
   toggleFeatures,
   jsonToBase64,
   changeConfig,
+  invokeRequestUntil,
 };

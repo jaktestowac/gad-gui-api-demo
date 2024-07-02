@@ -62,18 +62,18 @@ function handleFlashPosts(req, res, isAdmin) {
       posts = getAllFlashposts();
     }
 
-    if (afterDate !== null) {
+    if (afterDate !== null && afterDate !== undefined) {
       posts = posts.filter((post) => {
         return isDateBeforeOtherDate(post.date, afterDate);
       });
     }
-    if (userId !== null) {
+    if (userId !== null && userId !== undefined) {
       posts = posts.filter((post) => {
         return areIdsEqual(post.user_id, userId);
       });
     }
 
-    const limit = getConfigValue(ConfigKeys.CAPTCHA_SOLUTION_IN_RESPONSE);
+    const limit = getConfigValue(ConfigKeys.MAX_NUMBER_OF_FLASHPOSTS);
 
     if (limit !== undefined && limit > 0) {
       posts = posts.slice(0, limit);

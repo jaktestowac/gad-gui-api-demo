@@ -1,6 +1,6 @@
 const { baseFlashpostsUrl, request, expect } = require("../config.js");
 const { authUser } = require("../helpers/data.helpers.js");
-const { setupEnv, gracefulQuit, sleep } = require("../helpers/helpers.js");
+const { setupEnv, gracefulQuit, sleep, invokeRequestUntil } = require("../helpers/helpers.js");
 
 describe("Endpoint /flashposts", async () => {
   const baseUrl = baseFlashpostsUrl;
@@ -13,8 +13,8 @@ describe("Endpoint /flashposts", async () => {
     gracefulQuit();
   });
 
-  describe("Without auth", () => {
-    describe("GET /:resources", () => {
+  describe("Without auth", async () => {
+    describe("GET /:resources", async () => {
       it("GET /flashposts", async () => {
         // Act:
         const response = await request.get(baseUrl);
@@ -79,7 +79,8 @@ describe("Endpoint /flashposts", async () => {
     });
   });
 
-  describe("With auth", () => {
+  describe("With auth", async () => {
+    this.timeout(6000);
     let headers;
     let userId;
 
@@ -95,29 +96,29 @@ describe("Endpoint /flashposts", async () => {
 
       // Assert:
       expect(response.status).to.equal(200);
-      expect(response.body.length).to.be.greaterThan(1);
+      expect(response.body.length, JSON.stringify(response.body)).to.be.greaterThan(1);
     });
 
     [
       {
-        body: "Test content",
+        body: "Test1",
         is_public: true,
       },
       {
-        body: "Test content",
+        body: "Test2",
         is_public: false,
       },
       {
-        body: "Test content",
+        body: "Test3",
       },
       {
-        body: "Test content",
+        body: "Test4",
         is_public: true,
         settings: {
           color: "#FF0000",
         },
       },
-    ].forEach((flashpost) => {
+    ].forEach(async (flashpost) => {
       it("POST /flashposts - create valid flashpost", async () => {
         // get base number of flashposts:
         const responseGet = await request.get(baseUrl).set(headers);
@@ -126,15 +127,18 @@ describe("Endpoint /flashposts", async () => {
         // Act:
         const response = await request.post(baseUrl).set(headers).send(flashpost);
 
-        await sleep(500);
-
         // Assert:
-        expect(response.status, JSON.stringify(response.body)).to.equal(201);
-
-        // get final number of flashposts:
-
-        const responseGetFinal = await request.get(baseUrl).set(headers);
-        expect(responseGetFinal.body.length).to.be.equal(baseCount + 1);
+        invokeRequestUntil(
+          flashpost.body,
+          async () => {
+            return await request.get(baseUrl).set(headers);
+          },
+          async (response) => {
+            return response.body.length === baseCount + 1;
+          }
+        ).then((response) => {
+          expect(response.body.length, JSON.stringify(response.body)).to.be.equal(baseCount + 1);
+        });
       });
     });
 

@@ -153,7 +153,7 @@ describe("Endpoint /articles", () => {
 
     it("PUT /articles/:id - should not update article with date in future", async () => {
       // Act:
-      testArticleData.date = getCurrentDate(0, 0, 11);
+      testArticleData.date = getCurrentDate(0, 0, 12);
       const response = await request.put(`${baseUrl}/${articleId}`).set(headers).send(testArticleData);
 
       // Assert:
