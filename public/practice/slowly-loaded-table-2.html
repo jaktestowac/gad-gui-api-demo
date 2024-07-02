@@ -59,12 +59,12 @@
 <script type="text/javascript" src="/version.js"></script>
 <script type="text/javascript" src="./js/common.js"></script>
 <script type="text/javascript" src="./js/test-data.js"></script>
+<script type="text/javascript" src="./js/data-generators.js"></script>
 
 <script>
     const randomDelayValue = getRandomValue(200, 600)
 
     const newWeatherData = generateWeatherDataForNDays(20)
-    console.log(newWeatherData)
     newWeatherData.forEach((data, index) => {
         setTimeout(() => {
             const tableBody = document.querySelector('#weather-table tbody');

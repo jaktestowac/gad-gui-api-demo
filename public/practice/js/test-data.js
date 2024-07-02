@@ -318,6 +318,90 @@ const geographicData = {
       population: 2731571,
       timezone: "EST",
     },
+    {
+      cityName: "Twin Peaks",
+      countryName: "United States",
+      coordinates: {
+        latitude: 47.5417,
+        longitude: -121.8563,
+      },
+      postalCode: "98065",
+      region: "Washington",
+      population: 16000,
+      timezone: "PST",
+    },
+    {
+      cityName: "Camelot",
+      countryName: "United Kingdom",
+      coordinates: {
+        latitude: 51.5074,
+        longitude: -0.1278,
+      },
+      postalCode: "EC1A",
+      region: "England",
+      population: 2000,
+      timezone: "GMT",
+    },
+    {
+      cityName: "Knightsbridge",
+      countryName: "United Kingdom",
+      coordinates: {
+        latitude: 51.501,
+        longitude: -0.1606,
+      },
+      postalCode: "SW1X",
+      region: "London",
+      population: 9200,
+      timezone: "GMT",
+    },
+    {
+      cityName: "Lost Highway",
+      countryName: "United States",
+      coordinates: {
+        latitude: 34.0522,
+        longitude: -118.2437,
+      },
+      postalCode: "90001",
+      region: "California",
+      population: 3990456,
+      timezone: "PST",
+    },
+    {
+      cityName: "Swamp Castle",
+      countryName: "United Kingdom",
+      coordinates: {
+        latitude: 55.3781,
+        longitude: -3.436,
+      },
+      postalCode: "DG1",
+      region: "Scotland",
+      population: 1500,
+      timezone: "GMT",
+    },
+    {
+      cityName: "Winkie's",
+      countryName: "United States",
+      coordinates: {
+        latitude: 34.1478,
+        longitude: -118.1445,
+      },
+      postalCode: "91101",
+      region: "California",
+      population: 141371,
+      timezone: "PST",
+    },
+    {
+      cityName: "Ni Village",
+      countryName: "United Kingdom",
+      coordinates: {
+        latitude: 51.4545,
+        longitude: -2.5879,
+      },
+      postalCode: "BS1",
+      region: "England",
+      population: 463400,
+      timezone: "GMT",
+    },
   ],
 };
 
@@ -615,58 +699,6 @@ const weatherAlertTypes = [
   { name: "Avalanche Warning", icon: "❄️" },
 ];
 
-function generateWeatherDataForNDays(nSamples) {
-  const pastDays = generateDateStrings(nSamples);
-
-  const weatherData = [];
-  for (let i = 0; i < nSamples; i++) {
-    const dataGenerator = new RandomValueGenerator(pastDays[i]);
-
-    const date = pastDays[i];
-    const weather = weatherTypes[dataGenerator.getNextValue(0, weatherTypes.length - 1)];
-
-    let temperature = `${dataGenerator.getNextValue(15, 35)}°C`;
-    if (dataGenerator.getNextValue(0, 100) < 20) {
-      temperature = `${dataGenerator.getNextValue(-20, 50)}°C`;
-    }
-
-    const sunriseHour = dataGenerator.getNextValue(4, 6);
-    const sunsetHour = dataGenerator.getNextValue(19, 23);
-    const sunriseSunset = `${sunriseHour}:00 AM - ${sunsetHour}:00 PM`;
-
-    const humidity = `${dataGenerator.getNextValue(30, 90)}%`;
-
-    let windSpeed = windSpeedTypes[0];
-    if (dataGenerator.getNextValue(0, 100) < 20) {
-      windSpeed = windSpeedTypes[dataGenerator.getNextValue(0, windSpeedTypes.length - 1)];
-    }
-
-    const windDirection = dataGenerator.getNextValue(0, 360);
-    const moonPhase = moonPhaseTypes[dataGenerator.getNextValue(0, moonPhaseTypes.length - 1)];
-    const airQualityIndex = airQualityIndexAQI[dataGenerator.getNextValue(0, airQualityIndexAQI.length - 1)];
-
-    let weatherAlert = weatherAlertTypes[0];
-    if (dataGenerator.getNextValue(0, 100) < 25) {
-      weatherAlert = weatherAlertTypes[dataGenerator.getNextValue(0, weatherAlertTypes.length - 1)];
-    }
-
-    weatherData.push({
-      date,
-      weather,
-      temperature,
-      sunriseSunset,
-      humidity,
-      windSpeed,
-      windDirection,
-      moonPhase,
-      airQualityIndex,
-      weatherAlert,
-    });
-  }
-
-  return weatherData;
-}
-
 const restaurantNames = [
   "Golden Gate Grill",
   "The Italian Kitchen",
@@ -698,6 +730,7 @@ const restaurantNames = [
   "Velvet Lounge",
   "The Garden Terrace",
   "Twilight Tavern",
+  "Log Lady Cafe",
   "The Midnight Cafe",
   "The Crystal Ballroom",
   "The Emerald Isle",
@@ -718,6 +751,14 @@ const restaurantNames = [
   "Copper Canyon",
   "Eagle's Nest",
   "Crystal Bay",
+  "The Red Room Cafe",
+  "Blue Velvet Bistro",
+  "Twin Peaks Diner",
+  "Mulholland Drive Eatery",
+  "Lost Highway Lounge",
+  "The Black Lodge Bar",
+  "Fire Walk With Me Grill",
+  "Elephant Man Eatery",
   "The Golden Goose",
   "The Scarlet Room",
   "The Blue Door",
@@ -735,6 +776,15 @@ const restaurantNames = [
   "The Brass Lantern",
   "The Velvet Room",
   "The Crystal Chandelier",
+  "Knights of Ni Bistro",
+  "Holy Grail Tavern",
+  "Ministry of Silly Eats",
+  "Dead Parrot Diner",
+  "The Black Knight Pub",
+  "Life of Brian's Bistro",
+  "Argument Clinic Cafe",
+  "Cheese Shop Cafe",
+  "Camelot Cuisine",
 ];
 
 const restaurantReviews = [
@@ -773,6 +823,18 @@ const restaurantReviews = [
   "The cocktails were delicious.",
   "The menu was limited.",
   "The food was fresh and flavorful.",
+  "The Spam Shack was surreal, like a scene out of Twin Peaks. The Spam was... well, Spammy!",
+  "Knights of Ni Bistro has a peculiar charm. The shrubbery salad was divine!",
+  "Holy Grail Tavern is a quest worth taking. The ale is fit for a king!",
+  "Ministry of Silly Eats lives up to its name. The menu is absurdly delightful!",
+  "Dead Parrot Diner had a lifeless ambiance, but the food resurrected my spirits!",
+  "The Black Knight Pub is a must-visit. Even without limbs, they'd still serve the best steak!",
+  "Life of Brian's Bistro is blessed with heavenly flavors. The hummus is miraculous!",
+  "If you enjoy a debate with your dessert, this place is for you!",
+  "A cheeseless cheese shop that's somehow still satisfying!",
+  "Camelot Cuisine is a round table of culinary delights. The mutton is legendary!",
+  "Eerie yet captivating, like dining in a Lynchian dream.",
+  "Mysterious and exquisite, the lobster was otherworldly!",
   "👍 Great place with amazing food!",
   "👌 Perfect spot for a night out!",
   "😍 Loved the atmosphere and the cuisine.",
@@ -819,6 +881,15 @@ const restaurantLocations = [
   "Suburb",
   "Waterfront",
   "Mountainview",
+  "Camelot",
+  "The Black Lodge",
+  "Knightsbridge",
+  "Twin Peaks",
+  "Castle Anthrax",
+  "Lost Highway",
+  "Swamp Castle",
+  "Winkie's Diner",
+  "Ni Village",
   "Riverside",
   "Seaside",
   "Historic District",

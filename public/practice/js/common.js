@@ -182,11 +182,6 @@ function invokeFunctionWithDelay(func, delay) {
   setTimeout(func, delay);
 }
 
-function addElementsToContainer(containerSelector, elementHTML) {
-  const container = document.querySelector(containerSelector);
-  container.innerHTML += elementHTML;
-}
-
 function generateDateStrings(pastDays) {
   const dateStrings = [];
   for (let i = 0; i < pastDays; i++) {
@@ -205,26 +200,41 @@ function getFlagEmoji(countryCode) {
   return String.fromCodePoint(...codePoints);
 }
 
-function prepareButtonElement(text, onclick) {
-  const button = document.createElement("button");
-  button.textContent = text;
-  button.addEventListener("click", onclick);
-
-  return button;
-}
-
-function attachButtonToElement(selector, text, onclick) {
-  const element = document.querySelector(selector);
-  const button = prepareButtonElement(text, onclick);
-  element.appendChild(button);
-}
-
-function attachPlacesOfInterestToElement(selector, placeOfInterest) {
-  const rootElement = document.querySelector(selector);
-  const element = preparePlacesInfInterestElements([placeOfInterest])[0];
-  rootElement.appendChild(element);
-}
-
 function formatId(id) {
   return id.toLowerCase().replace(/\s/g, "-");
+}
+
+function getRandomColor() {
+  const colors = ["red", "blue", "green", "orange", "purple", "brown"];
+  const randomIndex = Math.floor(Math.random() * colors.length);
+  return colors[randomIndex];
+}
+
+function getRandomEmoji() {
+  const emojis = ["🚀", "🎉", "🚫", "🔥", "👍", "👎"];
+  const randomIndex = Math.floor(Math.random() * emojis.length);
+  return emojis[randomIndex];
+}
+
+function getRandomQuote() {
+  const quotes = [
+    "Nobody expects the Spanish Inquisition!",
+    "It's just a flesh wound!",
+    "I'm not dead yet!",
+    "We are the knights who say... NI!",
+    "What is the airspeed velocity of an unladen swallow?",
+    "I'm being repressed!",
+    "Bring out your dead!",
+    "We demand a shrubbery!",
+    "I'm not a Roman, Mum!",
+    "I'm warning you, I've got a crossbow!",
+    "I'm a lumberjack and I'm okay!",
+    "Spam, spam, spam, spam, spam, spam, baked beans, spam, spam, spam, and spam.",
+    "And now for something completely different.",
+    "I'm so worried about the flamingo!",
+    "Always look on the bright side of life.",
+    "Luxury! We used to dream of living in a corridor!",
+  ];
+  const randomIndex = Math.floor(Math.random() * quotes.length);
+  return quotes[randomIndex];
 }

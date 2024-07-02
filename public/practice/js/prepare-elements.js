@@ -141,6 +141,31 @@ function getTimeZoneOffset(timeZone) {
   return new Date().toLocaleTimeString("en-US", { timeZone, timeZoneName: "short" });
 }
 
+function prepareButtonElement(text, onclick) {
+  const button = document.createElement("button");
+  button.textContent = text;
+  button.addEventListener("click", onclick);
+
+  return button;
+}
+
+function attachButtonToElement(selector, text, onclick) {
+  const element = document.querySelector(selector);
+  const button = prepareButtonElement(text, onclick);
+  element.appendChild(button);
+}
+
+function attachPlacesOfInterestToElement(selector, placeOfInterest) {
+  const rootElement = document.querySelector(selector);
+  const element = preparePlacesInfInterestElements([placeOfInterest])[0];
+  rootElement.appendChild(element);
+}
+
+function addElementsToContainer(containerSelector, elementHTML) {
+  const container = document.querySelector(containerSelector);
+  container.innerHTML += elementHTML;
+}
+
 function preparePlacesInfInterestElements(placesOfInterest, numberOfPlaces = 3, addIds = true) {
   const elements = [];
   placesOfInterest.forEach((place) => {
@@ -293,58 +318,4 @@ function preparePlacesInfInterestElements(placesOfInterest, numberOfPlaces = 3, 
   elements.splice(numberOfPlaces);
 
   return elements;
-}
-
-function randomPlacesGenerator(numberOfPlaces, restaurantNames, addresses, cuisineTypes, reviews) {
-  const places = [];
-  for (let i = 0; i < numberOfPlaces; i++) {
-    const randomPlace = randomPlaceGenerator(restaurantNames, addresses, cuisineTypes, reviews);
-    places.push(randomPlace);
-  }
-
-  return places;
-}
-
-function randomPlaceGenerator(restaurantNames, addresses, cuisineTypes, reviews) {
-  const priceRanges = ["$", "$$", "$$$", "$$$$", "$$$$$"];
-  const openingHours = generateRandomOpeningHours();
-
-  const randomRestaurantNameIndex = Math.floor(Math.random() * restaurantNames.length);
-  const randomAddressIndex = Math.floor(Math.random() * addresses.length);
-  const randomCuisineTypeIndex = Math.floor(Math.random() * cuisineTypes.length);
-  const randomPriceRangeIndex = Math.floor(Math.random() * priceRanges.length);
-
-  const randomNumOfReviews = Math.floor(Math.random() * 6) + 1;
-  const randomReviews = [];
-
-  for (let i = 0; i < randomNumOfReviews; i++) {
-    const randomReviewIndex = Math.floor(Math.random() * reviews.length);
-    randomReviews.push(reviews[randomReviewIndex]);
-  }
-
-  const randomRating = (Math.random() * 5).toFixed(1);
-
-  const randomPlace = {
-    restaurantName: restaurantNames[randomRestaurantNameIndex],
-    address: addresses[randomAddressIndex],
-    rating: randomRating,
-    reviews: randomReviews,
-    cuisineType: cuisineTypes[randomCuisineTypeIndex],
-    priceRange: priceRanges[randomPriceRangeIndex],
-    openingHours: openingHours,
-  };
-
-  return randomPlace;
-}
-
-function generateRandomOpeningHours() {
-  const openingHour = Math.floor(Math.random() * 12) + 1;
-  const closingHour = openingHour + Math.floor(Math.random() * 12) + 1;
-  const openingPeriod = Math.random() < 0.5 ? "AM" : "PM";
-  const closingPeriod = Math.random() < 0.5 ? "AM" : "PM";
-
-  const openingTime = `${openingHour}:00 ${openingPeriod}`;
-  const closingTime = `${closingHour}:00 ${closingPeriod}`;
-
-  return `${openingTime} - ${closingTime}`;
 }
