@@ -155,9 +155,9 @@ function attachButtonToElement(selector, text, onclick) {
   element.appendChild(button);
 }
 
-function attachPlacesOfInterestToElement(selector, placeOfInterest) {
+function attachPlacesOfInterestToElement(selector, placeOfInterest, addIds = true) {
   const rootElement = document.querySelector(selector);
-  const element = preparePlacesInfInterestElements([placeOfInterest])[0];
+  const element = preparePlacesInfInterestElements([placeOfInterest], undefined, addIds)[0];
   rootElement.appendChild(element);
 }
 
@@ -315,7 +315,8 @@ function preparePlacesInfInterestElements(placesOfInterest, numberOfPlaces = 3, 
     elements.push(placeOfInterestContainer);
   });
 
-  elements.splice(numberOfPlaces);
-
+  if (numberOfPlaces !== undefined) {
+    elements.splice(numberOfPlaces);
+  }
   return elements;
 }
