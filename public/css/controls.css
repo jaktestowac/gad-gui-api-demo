@@ -277,18 +277,26 @@ td:first-child {
   }
 }
 
-@media only screen and (max-width: 850px) {
+@media only screen and (max-width: 900px) {
   header {
     font-size: 0.8rem;
   }
   button {
-    font-size: 0.8rem;
+    font-size: 0.95rem;
     padding: 5px;
   }
   header h1 {
     margin-left: 10px !important;
   }
 }
+
+@media only screen and (max-width: 800px) {
+  button {
+    font-size: 0.8rem;
+    padding: 5px;
+  }
+}
+
 /* 
 @media only screen and (max-width: 700px) {
   header {
