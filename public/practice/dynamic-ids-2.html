@@ -47,7 +47,7 @@
 <script type="text/javascript" src="/js/common.js"></script>
 <script type="text/javascript" src="/js/header.js"></script>
 <script type="text/javascript" src="/version.js"></script>
-<script type="text/javascript" src="./js/common.js"></script>
+<script type="text/javascript" src="./js/practice-common.js"></script>
 <script type="text/javascript" src="./js/test-data.js"></script>
 <script type="text/javascript" src="./js/data-generators.js"></script>
 <script type="text/javascript" src="./js/prepare-elements.js"></script>
@@ -60,6 +60,12 @@
     attachButtonToElement('#places-button', "Get one more place!", () => {
         const newPlace = randomPlaceGenerator(restaurantNames, restaurantLocations, cuisineTypes, restaurantReviews)
         attachPlacesOfInterestToElement('#places', newPlace)
+    })
+    attachButtonToElement('#places-button', "Get 3 more places!", () => {
+        const newPlaces = randomPlacesGenerator(3, restaurantNames, restaurantLocations, cuisineTypes, restaurantReviews)
+        newPlaces.forEach((element) => {
+            attachPlacesOfInterestToElement('#places', element)
+        });
     })
 </script>
 

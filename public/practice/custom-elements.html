@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <div align="center">
+        <h2>Custom elements</h2>
+        <table style="margin: 0 auto; width:  fit-content;">
+
+            <tr style="height: 48px;">
+                <th id="description" data-testid="dti-description">Description</th>
+                <th id="id-elements" data-testid="dti-elements">Elements for Test Automation</th>
+            </tr>
+            <tr style="height: 48px;">
+                <td style="text-align: center;" id="label-description" data-testid="dti-label-description">Label</td>
+                <td style="text-align: center;"><label id="id-label-element" class="my-label" data-testid="dti-label-element" custom-attribute="custom-value">Some text for label</label></td>
+            </tr>
+            <tr style="height: 48px;">
+                <td style="text-align: center;" id="input-description" data-testid="dti-input-description">Button</td>
+                <td style="text-align: center;" id="gad-button-cell"><gad-button>Click me!</gad-button></td>
+            </tr>
+            <tr style="height: 48px;">
+                <td style="text-align: center;" id="input-description" data-testid="dti-input-description">Input</td>
+                <td style="text-align: center;"><gad-input type="text" placeholder="Type something..." style="width: 200px; height: 30px; font-size: 16px; padding: 5px"></td>
+            </tr>
+        </table>
+    </div>
+
+    <br />
+    <div align="center">
+        Results:
+        <br />
+        <div id="results-container" style="border: 1px solid black; padding: 10px; margin: 10px; width: 50%; height: 80px;">
+        </div>
+    </div>
+    <br />
+    <br />
+    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 24px">
+        <a href="https://jaktestowac.pl" style="color: dimgray">
+            <span style="display: flex; align-items: center; justify-self: center; font-size: medium">
+                <img src="/data/icons/favicon.png" style="width: 25px !important; height: 25px !important; padding: 0; border: none" alt="" />&nbsp&nbspjaktestowac.pl
+            </span>
+        </a>
+    </div>
+</body>
+
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="./js/practice-common.js"></script>
+<script type="text/javascript" src="./js/customs.js"></script>
+<script type="text/javascript">
+    console.log('Custom elements loaded');
+    document.addEventListener("DOMContentLoaded", function (event) {
+        customElements.define("gad-input", GadInput, { extends: "input" });
+        customElements.define("gad-button", GadButton, { extends: "button" });
+        const element = document.querySelector('gad-button');
+        customElements.upgrade(element);
+        console.log('DOMContentLoaded');
+    });
+</script>
+
+</html>
