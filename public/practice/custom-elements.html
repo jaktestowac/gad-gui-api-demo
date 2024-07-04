@@ -35,15 +35,28 @@
                 <td style="text-align: center;"><label id="id-label-element" class="my-label" data-testid="dti-label-element" custom-attribute="custom-value">Some text for label</label></td>
             </tr>
             <tr style="height: 48px;">
-                <td style="text-align: center;" id="input-description" data-testid="dti-input-description">Button</td>
-                <td style="text-align: center;" id="gad-button-cell"><gad-button>Click me!</gad-button></td>
+                <td style="text-align: center;" id="button-description" data-testid="dti-button-description">Button</td>
+                <td style="text-align: center;" id="gad-button-cell"><gad-button class="c-gad-button">Click me!</gad-button></td>
+            </tr>
+            <tr style="height: 48px;">
+                <td style="text-align: center;" id="button-description" data-testid="dti-button-description">Another button</td>
+                <td style="text-align: center;" id="gad-button-cell"><gad-button class="c-gad-button">Click me too!</gad-button></td>
+            </tr>
+            <tr style="height: 48px;">
+                <td style="text-align: center;" id="button-description" data-testid="dti-button-description">Funky button</td>
+                <td style="text-align: center;" id="gad-button-cell"><gad-funky-button class="c-gad-button">Click me!</gad-funky-button></td>
             </tr>
             <tr style="height: 48px;">
                 <td style="text-align: center;" id="input-description" data-testid="dti-input-description">Input</td>
-                <td style="text-align: center;"><gad-input type="text" placeholder="Type something..." style="width: 200px; height: 30px; font-size: 16px; padding: 5px"></td>
+                <td style="text-align: center;"><gad-input type="text" id="id-gad-input" placeholder="Type something..." style="width: 200px; height: 30px; font-size: 16px; padding: 5px"></gad-input></td>
+            </tr>
+            <tr style="height: 48px;">
+                <td style="text-align: center;" id="input-description" data-testid="dti-input-description">Input</td>
+                <td style="text-align: center;"><gad-numeric-input></gad-numeric-input></td>
             </tr>
         </table>
     </div>
+
 
     <br />
     <div align="center">
@@ -61,22 +74,26 @@
             </span>
         </a>
     </div>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+    <script type="text/javascript" src="./js/practice-common.js"></script>
+    <script type="text/javascript" src="./js/customs.js"></script>
+    <script type="text/javascript">
+        customElements.define("gad-input", GadInput);
+        customElements.define("gad-numeric-input", GadNumericInput);
+        customElements.define("gad-button", GadButton);
+        customElements.define("gad-funky-button", GadFunkyButton);
+
+        const inputElement = document.getElementById("id-gad-input");
+        inputElement.addEventListener("keypress", () => {
+            if (event.key === "Enter") {
+                document.getElementById("results-container").innerText = "Input value: " + inputElement.getValue();
+            }
+        });
+    </script>
 </body>
 
-<script type="text/javascript" src="/js/common.js"></script>
-<script type="text/javascript" src="/js/header.js"></script>
-<script type="text/javascript" src="/version.js"></script>
-<script type="text/javascript" src="./js/practice-common.js"></script>
-<script type="text/javascript" src="./js/customs.js"></script>
-<script type="text/javascript">
-    console.log('Custom elements loaded');
-    document.addEventListener("DOMContentLoaded", function (event) {
-        customElements.define("gad-input", GadInput, { extends: "input" });
-        customElements.define("gad-button", GadButton, { extends: "button" });
-        const element = document.querySelector('gad-button');
-        customElements.upgrade(element);
-        console.log('DOMContentLoaded');
-    });
-</script>
+
 
 </html>
