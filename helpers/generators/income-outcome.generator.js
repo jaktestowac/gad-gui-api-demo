@@ -39,15 +39,22 @@ function generateDateStrings(pastDays) {
   return dateStrings;
 }
 
+function generateDateStringsFromDateToNow(pastDate) {
+  const dateStrings = [];
+  const date = new Date(pastDate);
+  const currentDate = new Date();
+  while (date < currentDate) {
+    dateStrings.push(date.toISOString().split("T")[0]);
+    date.setDate(date.getDate() + 1);
+  }
+  return dateStrings;
+}
+
 function generateIncomeOutcomeData(nSamples) {
-  const delta = 356;
-
-  const baseRange = delta + nSamples;
-
-  const pastDays = generateDateStrings(baseRange);
+  const pastDays = generateDateStringsFromDateToNow("2022-01-01");
 
   const incomeOutcomeData = [];
-  for (let i = 0; i < baseRange; i++) {
+  for (let i = 0; i < pastDays.length; i++) {
     const dataGenerator = new RandomValueGenerator(pastDays[i]);
     // const transactionsGenerator = new RandomValueGenerator(pastDays[i] + "-transactions");
 
@@ -107,7 +114,7 @@ function generateIncomeOutcomeData(nSamples) {
       transactions,
     };
 
-    incomeOutcomeData.push(cost);
+    incomeOutcomeData.unshift(cost);
   }
 
   const monthlyBalance = {};
@@ -122,8 +129,6 @@ function generateIncomeOutcomeData(nSamples) {
     monthlyBalance[month] += cost.dailyBalance;
     cost.totalBalance = monthlyBalance[month];
   }
-
-  console.log(monthlyBalance);
 
   return incomeOutcomeData.slice(0, nSamples);
 }
