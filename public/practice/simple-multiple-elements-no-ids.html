@@ -18,6 +18,12 @@
             <h1 id="menu-main-practice" class="nav-menu"></h1>
         </div>
     </header>
+    <style>
+        th,
+        td {
+            border-bottom: 2px solid #dddddd;
+        }
+    </style>
 
     <br />
     <br />
@@ -41,6 +47,26 @@
                     <button class="my-button" onclick="buttonOnClick('(Third one!)')">Click here!</button>
                 </td>
             </tr>
+        </table>
+        <table style="text-align: center; width: 200px;">
+            <tr style="text-align: center;">
+                <td style="text-align: center; width: 33%;">Row 1</td>
+                <td style="text-align: center; width: 33%;">X</td>
+                <td style="text-align: center; width: 33%;"><button class="my-button" onclick="buttonOnClick('(row 1)')">Click!</button></td>
+            </tr>
+            <tr>
+                <td style="text-align: center;">Row 2</td>
+                <td style="text-align: center;">Y</td>
+                <td style="text-align: center;"><button class="my-button" onclick="buttonOnClick('(row 2)')">Click!</button></td>
+            </tr>
+            <tr>
+                <td style="text-align: center;">Row 3</td>
+                <td style="text-align: center;">Z</td>
+                <td style="text-align: center;"><button class="my-button" onclick="buttonOnClick('(row 3)')">Click!</button></td>
+            </tr>
+        </table>
+
+        <table style="margin: 0 auto; width: 500px !important;">
             <tr style="height: 48px;">
                 <td style="text-align: center;">Checkbox</td>
                 <td style="text-align: center;"><input type="checkbox" value="checkbox" onclick="checkBoxOnClick('', this)" />Checkbox <input type="checkbox" value="checkbox" onclick="checkBoxOnClick('(Second one!)', this)" />Checkbox</td>
@@ -59,17 +85,17 @@
             <tr style="height: 48px;">
                 <td style="text-align: center;">Dropdown</td>
                 <td style="text-align: center;">
-                    <select name="name-dropdown" style="width: 75px;" onchange="dropdownOnChange('', this)">
+                    <select name="name-dropdown" title="sample dropdown" style="width: 75px;" onchange="dropdownOnChange('', this)">
                         <option value="option1">Option 1</option>
                         <option value="option2">Option 2</option>
                         <option value="option3">Option 3</option>
                     </select>
-                    <select name="name-dropdown" style="width: 75px;" onchange="dropdownOnChange('(Second one!)', this)">
+                    <select name="name-dropdown" title="sample dropdown" style="width: 75px;" onchange="dropdownOnChange('(Second one!)', this)">
                         <option value="option1">Option 1</option>
                         <option value="option2">Option 2</option>
                         <option value="option3">Option 3</option>
                     </select>
-                    <select name="name-dropdown" style="width: 75px;" onchange="dropdownOnChange('(Third one!)', this)">
+                    <select name="name-dropdown" title="sample dropdown" style="width: 75px;" onchange="dropdownOnChange('(Third one!)', this)">
                         <option value="option1">Option 1</option>
                         <option value="option2">Option 2</option>
                         <option value="option3">Option 3</option>
@@ -94,14 +120,6 @@
                 <td style="text-align: center;"><input type="range" min="0" max="100" value="23" onchange="rangeOnChange('', this)">
                     <input type="range" min="0" max="100" value="23" onchange="rangeOnChange('(Second one!)', this)">
                 </td>
-            </tr>
-            <tr style="height: 48px;">
-                <td style="text-align: center;">Date</td>
-                <td style="text-align: center;"><input type="date" onchange="datetimeOnChange('', this)"><input type="date" onchange="datetimeOnChange('(Second one!)', this)"></td>
-            </tr>
-            <tr style="height: 48px;">
-                <td style="text-align: center;">Color</td>
-                <td style="text-align: center;"><input type="color" onchange="colorOnChange('', this)"><input type="color" onchange="colorOnChange('(Second one!)', this)"></td>
             </tr>
         </table>
     </div>

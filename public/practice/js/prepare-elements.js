@@ -168,6 +168,7 @@ function addElementsToContainer(containerSelector, elementHTML) {
 
 function preparePlacesInfInterestElements(placesOfInterest, numberOfPlaces = 3, addIds = true) {
   const elements = [];
+
   placesOfInterest.forEach((place) => {
     const placeOfInterestContainer = document.createElement("div");
     placeOfInterestContainer.style.backgroundColor = "lightgray";
@@ -189,10 +190,10 @@ function preparePlacesInfInterestElements(placesOfInterest, numberOfPlaces = 3, 
 
     const restaurantNameCell = document.createElement("td");
     restaurantNameCell.textContent = place.restaurantName;
-    restaurantNameCell.style.width = "25%";
     restaurantNameCell.style.fontWeight = "bold";
     restaurantNameCell.style.paddingBottom = "5px";
     restaurantNameCell.style.fontSize = "16px";
+    restaurantNameCell.style.width = "40%";
 
     if (addIds) {
       restaurantNameCell.setAttribute("id", `id-${formatId(place.restaurantName)}`);
@@ -202,14 +203,28 @@ function preparePlacesInfInterestElements(placesOfInterest, numberOfPlaces = 3, 
     const addressCell = document.createElement("td");
     addressCell.textContent = place.address;
     addressCell.style.paddingBottom = "5px";
-    tableRowElement.appendChild(addressCell);
+    addressCell.style.width = "40%";
 
+    const bookingCell = document.createElement("td");
+    bookingCell.style.width = "20%";
+    const bookingButton = document.createElement("button");
+    bookingButton.textContent = "Book Now";
+    bookingButton.onclick = () => {
+      const resultsContainer = document.getElementById("results-container");
+      if (resultsContainer !== null) {
+        resultsContainer.innerHTML = `You have booked a table at ${place.restaurantName}!`;
+      }
+    };
+
+    bookingCell.appendChild(bookingButton);
+    tableRowElement.appendChild(addressCell);
+    tableRowElement.appendChild(bookingCell);
     tableElement.appendChild(tableRowElement);
 
     const detailsRowElement = document.createElement("tr");
 
     const detailsCellElement = document.createElement("td");
-    detailsCellElement.setAttribute("colspan", "2");
+    detailsCellElement.setAttribute("colspan", "3");
 
     const detailsTableElement = document.createElement("table");
     detailsTableElement.style.width = "100%";
@@ -277,9 +292,12 @@ function preparePlacesInfInterestElements(placesOfInterest, numberOfPlaces = 3, 
     const reviewsCell = document.createElement("td");
     reviewsCell.textContent = "Reviews:";
     reviewsCell.style.fontWeight = "bold";
+    reviewsCell.style.width = "25%";
     reviewsRowElement.appendChild(reviewsCell);
 
     const reviewsValueCell = document.createElement("td");
+
+    reviewsValueCell.setAttribute("colspan", "2");
     const toggleButton = document.createElement("button");
     toggleButton.textContent = "Toggle Reviews";
     toggleButton.style.fontSize = "12px";
@@ -318,5 +336,6 @@ function preparePlacesInfInterestElements(placesOfInterest, numberOfPlaces = 3, 
   if (numberOfPlaces !== undefined) {
     elements.splice(numberOfPlaces);
   }
+
   return elements;
 }

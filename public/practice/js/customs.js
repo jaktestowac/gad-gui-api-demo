@@ -91,6 +91,11 @@ class GadButton extends HTMLElement {
       buttonElement.style.color = "red";
       buttonElement.textContent = `Clicked ${this.clicks}!`;
       this.textContent = `Clicked ${this.clicks}!`;
+
+      const resultsContainer = document.getElementById("results-container");
+      if (resultsContainer !== null) {
+        resultsContainer.innerHTML = `Button clicked ${this.clicks}!`;
+      }
     });
     shadowRoot.appendChild(buttonElement);
   }
