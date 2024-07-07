@@ -76,12 +76,14 @@ class GadInput extends HTMLElement {
 
 class GadButton extends HTMLElement {
   clicks = 0;
+  baseDescription = "Click me!";
 
   constructor(...args) {
     super(...args);
     const shadowRoot = this.attachShadow({ mode: "open" });
     let buttonElement = document.createElement("button");
     buttonElement.textContent = this.textContent;
+    this.baseDescription = this.textContent;
 
     buttonElement.style.color = "blue";
     buttonElement.style.fontSize = "20px";
@@ -94,7 +96,7 @@ class GadButton extends HTMLElement {
 
       const resultsContainer = document.getElementById("results-container");
       if (resultsContainer !== null) {
-        resultsContainer.innerHTML = `Button clicked ${this.clicks}!`;
+        resultsContainer.innerHTML = `Button ${this.baseDescription} clicked ${this.clicks}!`;
       }
     });
     shadowRoot.appendChild(buttonElement);
@@ -124,6 +126,11 @@ class GadFunkyButton extends HTMLElement {
       buttonElement.textContent = `Clicked ${this.clicks}!`;
 
       this.textContent = `Clicked ${this.clicks}!`;
+
+      const resultsContainer = document.getElementById("results-container");
+      if (resultsContainer !== null) {
+        resultsContainer.innerHTML = `Funky button clicked ${this.clicks}!`;
+      }
     });
     shadowRoot.appendChild(buttonElement);
   }
