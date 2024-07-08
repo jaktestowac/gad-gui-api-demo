@@ -143,6 +143,7 @@ function generateTable(data, tableName, addLinks = true) {
         spanAnchor.classList.add("anchor");
         td.appendChild(spanAnchor);
       } else if (key?.includes("_ids") && isNotNullNorUndefined(value)) {
+        cellValue = cellValue.replace(/\[/, "").replace(/\]/, "");
         const foreignTable = key.split("_")[0];
 
         cellValue.split(",").forEach((id) => {
