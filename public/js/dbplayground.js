@@ -263,7 +263,10 @@ function executeSqlQuery(sqlQuery) {
       jsonTable.appendChild(generateTable(normalizedData, "Results:", false));
       setMessage(`Found: ${normalizedData?.length} records`, simpleSuccessBox);
     } else if (res === 1) {
-      setMessage("Query executed successfully (but READ-ONLY MODE!)", simpleInfoBox);
+      setMessage(
+        "Query executed successfully. <br>To see results - disable <strong>Refresh</strong> mode in top right corner!<br>Currently all operations are in memory! READ-ONLY MODE",
+        simpleInfoBox
+      );
     } else {
       setMessage(res, simpleErrorBox);
     }
