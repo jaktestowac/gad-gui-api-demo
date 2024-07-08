@@ -124,10 +124,15 @@ function generateTable(data, tableName, addLinks = true) {
       let cellValue = value;
 
       if (cellValue !== null && cellValue !== undefined) {
+        if (typeof value === "object") {
+          value = JSON.stringify(value);
+        }
+
         cellValue = `${value}`.slice(0, maxFieldLength) + (value.length > maxFieldLength ? "(...)" : "");
       } else {
         cellValue = "";
       }
+
       if (key === "id" && isNotNullNorUndefined(value)) {
         const singularTableName = tableName.slice(0, -1);
         row.setAttribute("id", `${singularTableName}_${value}`);
