@@ -153,7 +153,7 @@ function handleMessenger(req, res, isAdmin) {
 
     // validate receiver:
     const senderContacts = searchForContactsByUserId(foundUser.id);
-    if (!listIncludes(senderContacts.contacts, req.body.to)) {
+    if (!listIncludes(senderContacts.user_ids, req.body.to)) {
       res.status(HTTP_FORBIDDEN).send(formatErrorResponse("Receiver is not in contacts!"));
       return;
     }
@@ -191,15 +191,15 @@ function handleMessenger(req, res, isAdmin) {
 
     const contacts = searchForContactsByUserId(foundUser.id);
 
-    if (isUndefined(contacts) || isUndefined(contacts.contacts) || contacts.contacts.length === 0) {
+    if (isUndefined(contacts) || isUndefined(contacts.user_ids) || contacts.user_ids.length === 0) {
       res.status(HTTP_NOT_FOUND).json({});
       return;
     }
 
-    const ids = contacts.contacts.map((id) => {
+    const ids = contacts.user_ids.map((id) => {
       return `${id}`;
     });
-    const queryUrl = contacts.contacts
+    const queryUrl = contacts.user_ids
       .map((id) => {
         return `id=${id}`;
       })
@@ -243,20 +243,20 @@ function handleMessenger(req, res, isAdmin) {
     if (isUndefined(contacts)) {
       contacts = {
         user_id: foundUser.id,
-        contacts: [],
+        user_ids: [],
       };
     }
 
-    if (contacts.contacts.includes(userToAdd.id)) {
+    if (contacts.user_ids.includes(userToAdd.id)) {
       res.status(HTTP_CONFLICT).json(formatErrorResponse("User already in contacts!"));
       return;
     }
 
-    if (isUndefined(contacts.contacts)) {
-      contacts.contacts = [];
+    if (isUndefined(contacts.user_ids)) {
+      contacts.user_ids = [];
     }
 
-    contacts.contacts.push(userToAdd.id);
+    contacts.user_ids.push(userToAdd.id);
 
     let otherContacts = searchForContactsByUserId(userToAdd.id);
     if (isUndefined(otherContacts)) {
@@ -272,10 +272,10 @@ function handleMessenger(req, res, isAdmin) {
       otherContacts = {
         id: newId,
         user_id: userToAdd.id,
-        contacts: [],
+        user_ids: [],
       };
     }
-    otherContacts.contacts.push(foundUser.id);
+    otherContacts.user_ids.push(foundUser.id);
 
     req = new TracingInfoBuilder(req)
       .setOriginMethod("PUT")
