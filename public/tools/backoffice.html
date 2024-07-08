@@ -46,59 +46,79 @@
       PS. Additionally, the application has several serious design flaws - curious if you will notice them? 😉
     </div>
     <br />
-    <span style="font-size: 16px; align-content: center; display: flex; align-items: center; justify-content: center">Visit 🦎GAD official&nbsp;&nbsp;
-      <i class="fa-brands fa-github" style="font-size:24px"></i>&nbsp;<strong><a href="https://github.com/jaktestowac/gad-gui-api-demo" target="_blank" rel="noopener">GitHub Repository</a></strong>
-    </span>
+
+    <div class="container" style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center">
+      <a href="../" class="menu-link">
+        <button class="button-primary" id="btnGui" style="margin: 10; font-size: 28px">GUI</button>
+      </a>
+      <a href="./index.html">
+        <button class="button-primary" id="btnApiTools" style="margin: 10; font-size: 28px">Tools</button>
+      </a>
+      <a href="./swagger.html">
+        <button class="button-primary" id="btnApiTools" style="margin: 10; font-size: 28px">Swagger</button>
+      </a>
+    </div>
+    <div align="center" style="justify-content: center !important;margin-top: 10px;">
+      <a href="/practice" class="menu-link">
+        <button class="button-primary-small" id="btnPractice">Or visit practice page!</button>
+      </a>
+    </div>
     <br />
-    <div class="container" style="font-size: 18px; align-content: center; display: flex; align-items: center; justify-content: center">
-      <strong>Let us know what you think about 🦎 GAD!</strong>
-    </div>
-    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 14px">
-      <span style="display: flex; align-items: center; justify-self: center">
-        <a href="https://forms.gle/d2Fq6EY9ZdL9mMQ28" target="_blank" rel="noopener">
-          <button class="button-primary" style="margin: 10; font-size: 18px">Fill out the survey📝</button>
-        </a>
-      </span>
-    </div>
-    <div align="center">
-      <div class=" simpleInfoBox">
-        <span style="font-size: 16px; ">You found a&nbsp;🐛BUG in 🦎GAD?&nbsp;
-          <span class="span-button" onclick="toggleMenu('foundBugSteps')" style="font-size: 16px;"><strong>See steps!</strong></span>
-          <span id="foundBugSteps" style="display:none;"><br />
-            <div align="left" style="width: 500px;">
-              <ol>
-                <li>Check <strong>version of your 🦎GAD</strong></li>
-                <li>Check if there is <strong>newer version</strong> at <strong><a href="http://localhost:3000/tools/version.html" target="_blank" rel="noopener">version check page</a></strong></li>
-                <li>Check the <strong>Release Notes</strong> for any mention of the bug</li>
-                <li>Check the official repository <strong><a href="https://github.com/jaktestowac/gad-gui-api-demo/issues" target="_blank" rel="noopener">issues</a></strong></li>
-                <li><strong>Update your 🦎GAD</strong> if there is a newer version</li>
-                <li>If the error/problem still occurs, <strong>report it to us</strong>!
-                  <ol>
-                    <li>Got to <strong><a href="https://github.com/jaktestowac/gad-gui-api-demo/issues" target="_blank" rel="noopener">issues</a></strong></li>
-                    <li>Create <strong>new issue</strong></li>
-                    <li>Provide as much information as possible:
-                      <ul>
-                        <li>describe the bug</li>
-                        <li><strong>version of your 🦎GAD</strong></li>
-                        <li><strong>detailed steps</strong> to reproduce the bug</li>
-                        <li>other details, screens etc.</li>
-                      </ul>
-                    </li>
-                  </ol>
-                  This will help us diagnose and fix the error quickly😉
-                </li>
-              </ol>
-            </div>
+    <div align="left" style="width: 550px; ">
+      <ul>
+        <li style="padding: 5px;">
+          <span style="font-size: 16px; ">Visit 🦎GAD official&nbsp;
+            <i class="fa-brands fa-github" style="font-size:24px"></i>&nbsp;<strong><a href="https://github.com/jaktestowac/gad-gui-api-demo" target="_blank" rel="noopener">GitHub Repository</a></strong>
           </span>
-        </span>
-      </div>
+        </li>
+        <li style="padding: 5px;">
+          <span style="font-size: 16px; ">Let us know what you think about 🦎GAD!&nbsp;
+            <strong><a href="https://forms.gle/d2Fq6EY9ZdL9mMQ28" target="_blank" rel="noopener">📝 Survey / Ankieta</a></strong>
+          </span>
+        </li>
+        <li style="padding: 5px;">
+          <div>
+            <div class=" simpleInfoBox1">
+              <span style="font-size: 16px; ">You found a&nbsp;🐛BUG in 🦎GAD?&nbsp;
+                <span class="span-button" onclick="toggleMenu('foundBugSteps')" style="font-size: 16px; color: #0275d8;"><strong>See steps!</strong></span>
+                <span id="foundBugSteps" style="display:none;"><br />
+                  <div class=" simpleInfoBox">
+                    <div align="left" style="width: 500px;">
+                      <ol>
+                        <li>Check <strong>version of your 🦎GAD</strong></li>
+                        <li>Check if there is <strong>newer version</strong> at <strong><a href="http://localhost:3000/tools/version.html" target="_blank" rel="noopener">version check page</a></strong></li>
+                        <li>Check the <strong>Release Notes</strong> for any mention of the bug</li>
+                        <li>Check the official repository <strong><a href="https://github.com/jaktestowac/gad-gui-api-demo/issues" target="_blank" rel="noopener">issues</a></strong></li>
+                        <li><strong>Update your 🦎GAD</strong> if there is a newer version</li>
+                        <li>If the error/problem still occurs, <strong>report it to us</strong>!
+                          <ol>
+                            <li>Got to <strong><a href="https://github.com/jaktestowac/gad-gui-api-demo/issues" target="_blank" rel="noopener">issues</a></strong></li>
+                            <li>Create <strong>new issue</strong></li>
+                            <li>Provide as much information as possible:
+                              <ul>
+                                <li>describe the bug</li>
+                                <li><strong>version of your 🦎GAD</strong></li>
+                                <li><strong>detailed steps</strong> to reproduce the bug</li>
+                                <li>other details, screens etc.</li>
+                              </ul>
+                            </li>
+                          </ol>
+                          This will help us diagnose and fix the error quickly😉
+                        </li>
+                      </ol>
+                    </div>
+                  </div>
+                </span>
+              </span>
+            </div>
+          </div>
+        </li>
+      </ul>
     </div>
     <div align="center" style="justify-content: center !important">
       <div align="center" id="versionInfoBox"></div>
     </div>
     <br />
-
-
     <div align="center" style="justify-content: center !important">
       <div id="dbStatusInfoBox" class="simpleErrorBox" style="display: none"></div>
     </div>
@@ -109,25 +129,7 @@
       </span>
     </div>
   </div>
-
-  <div class="container" style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center">
-    <a href="../" class="menu-link">
-      <button class="button-primary" id="btnGui" style="margin: 10; font-size: 28px">GUI</button>
-    </a>
-    <a href="./index.html">
-      <button class="button-primary" id="btnApiTools" style="margin: 10; font-size: 28px">Tools</button>
-    </a>
-    <a href="./swagger.html">
-      <button class="button-primary" id="btnApiTools" style="margin: 10; font-size: 28px">Swagger</button>
-    </a>
-  </div>
-  <div align="center" style="justify-content: center !important;margin-top: 10px;">
-    <a href="/practice" class="menu-link">
-      <button class="button-primary-small" id="btnPractice">Or visit practice page!</button>
-    </a>
-  </div>
 </body>
-
 <script type="text/javascript" src="/js/common.js"></script>
 <script type="text/javascript" src="/js/header.js"></script>
 <script type="text/javascript" src="/js/dbcheck.js"></script>
