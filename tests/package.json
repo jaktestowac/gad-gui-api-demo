@@ -6,7 +6,7 @@
   "scripts": {
     "test-jest": "cross-env NODE_ENV=test PORT=3002 jest --testTimeout=10000 --detectOpenHandles",
     "test": "cross-env NODE_ENV=test PORT=3002 mocha --recursive --require hooks.js",
-    "testr": "cross-env NODE_ENV=test PORT=3002 mocha --recursive --require hooks.js --reporter mocha-junit-reporter --reporter-options mochaFile=./reports/test-report.xml"
+    "testr": "cross-env NODE_ENV=test PORT=3002 mocha --recursive --require hooks.js -R mocha-multi --reporter-options spec=-,xunit=./reports/test-report.xml"
   },
   "author": "jaktestowac.pl",
   "license": "ISC",
@@ -19,6 +19,7 @@
     "cross-env": "^7.0.3",
     "mocha": "^10.2.0",
     "mocha-junit-reporter": "^2.2.1",
+    "mocha-multi": "^1.1.7",
     "supertest": "^6.3.3"
   },
   "jest": {
