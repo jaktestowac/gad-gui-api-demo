@@ -20,6 +20,9 @@ const all_fields_plugin = ["id", "name", "status", "version"];
 const mandatory_non_empty_fields_plugin = ["name", "status", "version"];
 const mandatory_non_empty_fields_survey = ["user_id", "date", "type", "answers"];
 const mandatory_non_empty_fields_message = ["to", "content"];
+const mandatory_non_empty_fields_flashpost = ["user_id", "body"];
+const all_possible_fields_flashpost = ["user_id", "body", "settings", "date", "id", "is_public"];
+const mandatory_non_empty_fields_flashpost_settings = ["color"];
 
 function isLikesDataValid(body) {
   if (!isUndefined(body["comment_id"]) && !isUndefined(body["article_id"])) {
@@ -35,6 +38,18 @@ function isLikesDataValid(body) {
     return false;
   }
   return true;
+}
+
+function areAnyAdditionalFieldsPresent(body, all_possible_fields) {
+  const keys = Object.keys(body);
+  for (let index = 0; index < keys.length; index++) {
+    const key = keys[index];
+    if (!all_possible_fields.includes(key)) {
+      logDebug(`Field validation: additional field ${key} not in [${all_possible_fields}]`);
+      return { status: true, error: `Field validation: additional field ${key} not in [${all_possible_fields}]` };
+    }
+  }
+  return { status: false, error: "" };
 }
 
 function areMandatoryFieldsPresent(body, mandatory_non_empty_fields) {
@@ -323,4 +338,8 @@ module.exports = {
   isFieldsLengthValid,
   isObjectLengthValid,
   isDateInFuture,
+  mandatory_non_empty_fields_flashpost,
+  areAnyAdditionalFieldsPresent,
+  all_possible_fields_flashpost,
+  mandatory_non_empty_fields_flashpost_settings,
 };

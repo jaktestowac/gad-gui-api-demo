@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | Practice test automation</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+    <style>
+        th,
+        td {
+            border-bottom: 2px solid #dddddd;
+        }
+    </style>
+
+    <br />
+    <br />
+    <br />
+    <div id="pageHeader" style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center">
+        <h1>
+            Welcome to 🦎<span style="color: rgb(8, 195, 1)">G</span>UI <span style="color: rgb(8, 195, 1)">A</span>PI
+            <span style="color: rgb(8, 195, 1)">D</span>emo <span style="color: rgb(8, 195, 1)">Practice Page</span>!
+        </h1>
+    </div>
+    <div style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center">
+        <h2 style="margin: 0px;padding: 0px;">Practice your test automation skills!</h2>
+    </div>
+    <br />
+
+    <div align="center">
+        <table style="margin: 0 auto; width: auto;">
+            <tr>
+                <th style="text-align: center; ">Simple Elements</th>
+                <td> </td>
+                <td style="text-align: left;">
+                    <a href="./simple-elements.html" class="menu-link">
+                        <button class="button-primary-small" style="margin-top: 4px; font-size: 14px;">With IDs</button>
+                    </a>
+                    <a href="./simple-elements-no-ids.html" class="menu-link">
+                        <button class="button-primary-small" style="margin-top: 4px; font-size: 14px;">Without IDs</button>
+                    </a>
+                    <a href="./simple-multiple-elements-no-ids.html" class="menu-link">
+                        <button class="button-primary-small" style="margin-top: 4px; font-size: 14px;">Multiple elements</button>
+                    </a>
+                    <a href="./simple-reservation.html" class="menu-link">
+                        <button class="button-primary-small" style="margin-top: 4px; font-size: 14px;">Simple Reservation</button>
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <th style="text-align: center; ">Elements with different state</th>
+                <td> </td>
+                <td style="text-align: left;">
+                    <a href="./disabled-elements-1.html" class="menu-link">
+                        <button class="button-primary-small" style="margin-top: 4px; font-size: 14px;">Disabled</button>
+                    </a>
+                    <a href="./not-displayed-elements-1.html" class="menu-link">
+                        <button class="button-primary-small" style="margin-top: 4px; font-size: 14px;">Not displayed</button>
+                    </a>
+                    <a href="./not-present-elements-1.html" class="menu-link">
+                        <button class="button-primary-small" style="margin-top: 4px; font-size: 14px;">Not present</button>
+                    </a>
+                    <a href="./steps-to-complete-1.html" class="menu-link">
+                        <button class="button-primary-small" style="margin-top: 4px; font-size: 14px;">Simple game</button>
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <th style="text-align: center;">Tables</th>
+                <td> </td>
+                <td style="text-align: left;">
+                    <a href="./simple-tables.html" class="menu-link">
+                        <button class="button-primary-small" style="margin-top: 4px; font-size: 14px;">Weather table (IDs)</button>
+                    </a>
+                    <a href="./simple-tables-no-ids.html" class="menu-link">
+                        <button class="button-primary-small" style="margin-top: 4px; font-size: 14px;">Weather table (no IDs)</button>
+                    </a>
+                    <a href="./simple-tables-other-attributes.html" class="menu-link">
+                        <button class="button-primary-small" style="margin-top: 4px; font-size: 14px;">Weather table (other attributes)</button>
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <th style="text-align: center;">Slowly loaded data</th>
+                <td> </td>
+                <td style="text-align: left;">
+                    <a href="./slowly-loaded-table-1.html" class="menu-link">
+                        <button class="button-primary-small" style="margin-top: 4px; font-size: 14px;">Weather table</button>
+                    </a>
+                    <a href="./slowly-loaded-table-2.html" class="menu-link">
+                        <button class="button-primary-small" style="margin-top: 4px; font-size: 14px;">Weather table (random data)</button>
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <th style="text-align: center;">Charts</th>
+                <td> </td>
+                <td style="text-align: left;">
+                    <a href="./charts-1.html" class="menu-link">
+                        <button class="button-primary-small" style="margin-top: 4px; font-size: 14px;">Weather Charts</button>
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <th style="text-align: center;">Canvas</th>
+                <td> </td>
+                <td style="text-align: left;">
+                    <a href="./canvas-1.html" class="menu-link">
+                        <button class="button-primary-small" style="margin-top: 4px; font-size: 14px;">Weather Canvas</button>
+                    </a>
+                    <a href="./canvas-2.html" class="menu-link">
+                        <button class="button-primary-small" style="margin-top: 4px; font-size: 14px;">Weather Canvas (slow🐌)</button>
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <th style="text-align: center;">Drag & drop</th>
+                <td> </td>
+                <td style="text-align: left;">
+                    <a href="./drag-and-drop-1.html" class="menu-link">
+                        <button class="button-primary-small" style="margin-top: 4px; font-size: 14px;">Drag & drop 1</button>
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <th style="text-align: center;">Dynamic IDs</th>
+                <td> </td>
+                <td style="text-align: left;">
+                    <a href="./dynamic-ids-1.html" class="menu-link">
+                        <button class="button-primary-small" style="margin-top: 4px; font-size: 14px;">Locations</button>
+                    </a>
+                    <a href="./dynamic-ids-2.html" class="menu-link">
+                        <button class="button-primary-small" style="margin-top: 4px; font-size: 14px;">Random Places of Interest</button>
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <th style="text-align: center;">No IDs</th>
+                <td> </td>
+                <td style="text-align: left;">
+                    <a href="./random-places-no-ids-1.html" class="menu-link">
+                        <button class="button-primary-small" style="margin-top: 4px; font-size: 14px;">Random Places of Interest</button>
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <th style="text-align: center;">IFrames</th>
+                <td> </td>
+                <td style="text-align: left;">
+                    <a href="./iframe-1.html" class="menu-link">
+                        <button class="button-primary-small" style="margin-top: 4px; font-size: 14px;">Time Zones</button>
+                    </a>
+                    <a href="./iframe-2.html" class="menu-link">
+                        <button class="button-primary-small" style="margin-top: 4px; font-size: 14px;">Places of Interest</button>
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <th style="text-align: center;">Popup and alerts</th>
+                <td> </td>
+                <td style="text-align: left;">
+                    <a href="./alerts-1.html" class="menu-link">
+                        <button class="button-primary-small" style="margin-top: 4px; font-size: 14px;">Alerts</button>
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <th style="text-align: center;">Shadow DOM</th>
+                <td> </td>
+                <td style="text-align: left;">
+                    <a href="./shadow-dom-1.html" class="menu-link">
+                        <button class="button-primary-small" style="margin-top: 4px; font-size: 14px;">Time Zones</button>
+                    </a>
+                    <a href="./shadow-dom-2.html" class="menu-link">
+                        <button class="button-primary-small" style="margin-top: 4px; font-size: 14px;">Places of Interest</button>
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <th style="text-align: center;">Custom elements</th>
+                <td> </td>
+                <td style="text-align: left;">
+                    <a href="./custom-elements.html" class="menu-link">
+                        <button class="button-primary-small" style="margin-top: 4px; font-size: 14px;">Custom elements</button>
+                    </a>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <br />
+    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center">
+        <a href="/" class="menu-link">
+            <button class="button-primary-small" id="btnReturn" style="margin-top: 4px; font-size: 14px;">Return to main page</button>
+        </a>
+    </div>
+    <br />
+    <br />
+    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 24px">
+        <a href="https://jaktestowac.pl" style="color: dimgray">
+            <span style="display: flex; align-items: center; justify-self: center; font-size: medium">
+                <img src="/data/icons/favicon.png" style="width: 25px !important; height: 25px !important; padding: 0; border: none" alt="" />&nbsp&nbspjaktestowac.pl
+            </span>
+        </a>
+    </div>
+</body>
+
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script>
+    // disable the button
+    document.getElementById("btnPractice").disabled = true; 
+</script>
+
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+    <style>
+        th,
+        td {
+            border-bottom: 2px solid #dddddd;
+        }
+    </style>
+
+    <br />
+    <br />
+    <br />
+    <div align="center">
+        <h2>Multiple elements without any ID or data-testid attributes</h2>
+        <table style="margin: 0 auto; width: 500px !important;">
+            <tr style="height: 48px;">
+                <th>Description</th>
+                <th>Elements for Test Automation</th>
+            </tr>
+            <tr style="height: 48px;">
+                <td style="text-align: center;">Label</td>
+                <td style="text-align: center;"><label class="my-label" custom-attribute="custom-value">Some text for label</label></td>
+            </tr>
+            <tr style="height: 48px;">
+                <td style="text-align: center;">Button</td>
+                <td style="text-align: center;">
+                    <button class="my-button" onclick="buttonOnClick()">Click me!</button>
+                    <button class="my-button" onclick="buttonOnClick('(Second one!)')">Click me too!</button>
+                    <button class="my-button" onclick="buttonOnClick('(Third one!)')">Click here!</button>
+                </td>
+            </tr>
+        </table>
+        <table style="text-align: center; width: 200px;">
+            <tr style="text-align: center;">
+                <td style="text-align: center; width: 33%;">Row 1</td>
+                <td style="text-align: center; width: 33%;">X</td>
+                <td style="text-align: center; width: 33%;"><button class="my-button" style="height: 28px;padding: 0px;margin: 0px;width: 60px;" onclick="buttonOnClick('(row 1)')">Click!</button></td>
+            </tr>
+            <tr>
+                <td style="text-align: center;">Row 2</td>
+                <td style="text-align: center;">Y</td>
+                <td style="text-align: center;"><button class="my-button" style="height: 28px;padding: 0px;margin: 0px;width: 60px;" onclick="buttonOnClick('(row 2)')">Click!</button></td>
+            </tr>
+            <tr>
+                <td style="text-align: center;">Row 3</td>
+                <td style="text-align: center;">Z</td>
+                <td style="text-align: center;"><button class="my-button" style="height: 28px;padding: 0px;margin: 0px;width: 60px;" onclick="buttonOnClick('(row 3)')">Click!</button></td>
+            </tr>
+        </table>
+
+        <table style="margin: 0 auto; width: 500px !important;">
+            <tr style="height: 48px;">
+                <td style="text-align: center;">Checkbox</td>
+                <td style="text-align: center;"><input type="checkbox" value="checkbox" onclick="checkBoxOnClick('', this)" />Checkbox <input type="checkbox" value="checkbox" onclick="checkBoxOnClick('(Second one!)', this)" />Checkbox</td>
+            </tr>
+            <tr style="height: 48px;">
+                <td style="text-align: center;">Input</td>
+                <td style="text-align: center; width: 100px;"><input type="text" class="my-input" onchange="inputOnChange('', this)" style="width: 100px;" placeholder="Type something" />
+                    <input type="text" class="my-input" onchange="inputOnChange('(Second one!)', this)" style="width: 100px;" placeholder="Type something" />
+                    <input type="text" class="my-input" onchange="inputOnChange('(Third one!)', this)" style="width: 100px;" placeholder="Type here!" />
+                </td>
+            </tr>
+            <tr style="height: 48px;">
+                <td style="text-align: center;">Textarea</td>
+                <td style="text-align: center;"><textarea onchange="textareaOnChange('', this)"></textarea><textarea onchange="textareaOnChange('(Second one!)', this)"></textarea></td>
+            </tr>
+            <tr style="height: 48px;">
+                <td style="text-align: center;">Dropdown</td>
+                <td style="text-align: center;">
+                    <select name="name-dropdown" title="sample dropdown" style="width: 75px;" onchange="dropdownOnChange('', this)">
+                        <option value="option1">Option 1</option>
+                        <option value="option2">Option 2</option>
+                        <option value="option3">Option 3</option>
+                    </select>
+                    <select name="name-dropdown" title="sample dropdown" style="width: 75px;" onchange="dropdownOnChange('(Second one!)', this)">
+                        <option value="option1">Option 1</option>
+                        <option value="option2">Option 2</option>
+                        <option value="option3">Option 3</option>
+                    </select>
+                    <select name="name-dropdown" title="sample dropdown" style="width: 75px;" onchange="dropdownOnChange('(Third one!)', this)">
+                        <option value="option1">Option 1</option>
+                        <option value="option2">Option 2</option>
+                        <option value="option3">Option 3</option>
+                    </select>
+                </td>
+            </tr>
+            <tr style="height: 48px;">
+                <td style="text-align: center;">Range</td>
+                <td style="text-align: center;"><input type="range" min="0" max="100" value="23" onchange="rangeOnChange('', this)">
+                    <input type="range" min="0" max="100" value="23" onchange="rangeOnChange('(Second one!)', this)">
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div align="center">
+        Results:
+        <br />
+        <div id="results-container" style="border: 1px solid black; padding: 5px; margin: 5px; width: 50%; height: 60px;">
+        </div>
+    </div>
+    <div align="center">
+        Results history:
+        <br />
+        <textarea id="results-history-container" style="border: 1px solid black;  width: 50%; height: 80px; 
+        text-align: justify;
+        -moz-text-align-last: center; /* Firefox 12+ */
+        text-align-last: center;" readonly> </textarea>
+    </div>
+    </div>
+    <br />
+    <br />
+    <br />
+    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 24px">
+        <a href="https://jaktestowac.pl" style="color: dimgray">
+            <span style="display: flex; align-items: center; justify-self: center; font-size: medium">
+                <img src="/data/icons/favicon.png" style="width: 25px !important; height: 25px !important; padding: 0; border: none" alt="" />&nbsp&nbspjaktestowac.pl
+            </span>
+        </a>
+    </div>
+</body>
+
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="./js/practice-common.js"></script>
+
+</html>

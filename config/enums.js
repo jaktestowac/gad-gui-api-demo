@@ -63,6 +63,7 @@ const ConfigKeys = {
   COMMENTS_SOFT_DELETE_DELAY_IN_SECONDS_BUG: "commentsSoftDeleteDelayInSecondsBug",
   DIAGNOSTICS_ENABLED: "diagnosticsEnabled",
   CAPTCHA_SOLUTION_IN_RESPONSE: "captchaSolutionInResponse",
+  MAX_NUMBER_OF_FLASHPOSTS: "maxNumberOfFlashposts",
 };
 
 const BugConfigKeys = {
@@ -125,6 +126,7 @@ const FeatureFlagConfigKeys = {
   FEATURE_INFINITE_SCROLL_ARTICLES: "feature_infinite_scroll_articles",
   FEATURE_CAPTCHA: "feature_captcha",
   FEATURE_QRCODES: "feature_qrcodes",
+  FEATURE_VALIDATE_ARTICLE_TITLE: "feature_validate_article_title",
 };
 
 module.exports = {

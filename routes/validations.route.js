@@ -35,6 +35,8 @@ const { handleMessenger } = require("../endpoints/messenger-endpoint.helpers");
 const { handleTeams } = require("../endpoints/teams-endpoint.helpers");
 const { handleProjects } = require("../endpoints/projects-endpoint.helpers");
 const { handleCaptcha, handleCaptchaVerification } = require("../endpoints/captcha-endpoint.helpers");
+const { handleFlashPosts } = require("../endpoints/flashposts-endpoint.helpers");
+const { handleData } = require("../endpoints/data-endpoints");
 
 const validationsRoutes = (req, res, next) => {
   let isAdmin = false;
@@ -114,7 +116,7 @@ const validationsRoutes = (req, res, next) => {
       handleConfig(req, res);
       return;
     }
-    
+
     if (req.url.includes("/api/captcha")) {
       handleCaptcha(req, res);
       return;
@@ -232,6 +234,15 @@ const validationsRoutes = (req, res, next) => {
 
     if (req.url.includes("/api/labels") || req.url.includes("/api/article-labels")) {
       handleLabels(req, res);
+    }
+
+    if (req.url.includes("/api/flashposts")) {
+      handleFlashPosts(req, res);
+    }
+
+    if (req.url.includes("/api/data")) {
+      handleData(req, res, isAdmin);
+      return;
     }
 
     logTrace("validationsRoutes: Returning:", {

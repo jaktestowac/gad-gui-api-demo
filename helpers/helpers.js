@@ -160,6 +160,15 @@ function base64ToJson(base64String) {
   return JSON.parse(json);
 }
 
+function isHexColor(str) {
+  if (str === undefined || str === null) return false;
+  if (typeof str !== "string") return false;
+  if (str.length !== 7) return false;
+  if (str.charAt(0) !== "#") return false;
+
+  return /^#[0-9A-F]{6}$/i.test(str);
+}
+
 module.exports = {
   formatErrorResponse,
   formatInvalidFieldErrorResponse,
@@ -187,4 +196,5 @@ module.exports = {
   jsonToBase64,
   base64ToJson,
   formatNotUniqueFieldResponse,
+  isHexColor,
 };

@@ -124,10 +124,15 @@ function generateTable(data, tableName, addLinks = true) {
       let cellValue = value;
 
       if (cellValue !== null && cellValue !== undefined) {
+        if (typeof value === "object") {
+          value = JSON.stringify(value);
+        }
+
         cellValue = `${value}`.slice(0, maxFieldLength) + (value.length > maxFieldLength ? "(...)" : "");
       } else {
         cellValue = "";
       }
+
       if (key === "id" && isNotNullNorUndefined(value)) {
         const singularTableName = tableName.slice(0, -1);
         row.setAttribute("id", `${singularTableName}_${value}`);
@@ -138,6 +143,7 @@ function generateTable(data, tableName, addLinks = true) {
         spanAnchor.classList.add("anchor");
         td.appendChild(spanAnchor);
       } else if (key?.includes("_ids") && isNotNullNorUndefined(value)) {
+        cellValue = cellValue.replace(/\[/, "").replace(/\]/, "");
         const foreignTable = key.split("_")[0];
 
         cellValue.split(",").forEach((id) => {
@@ -263,7 +269,10 @@ function executeSqlQuery(sqlQuery) {
       jsonTable.appendChild(generateTable(normalizedData, "Results:", false));
       setMessage(`Found: ${normalizedData?.length} records`, simpleSuccessBox);
     } else if (res === 1) {
-      setMessage("Query executed successfully (but READ-ONLY MODE!)", simpleInfoBox);
+      setMessage(
+        "Query executed successfully. <br>To see results - disable <strong>Refresh</strong> mode in top right corner!<br>Currently all operations are in memory! READ-ONLY MODE",
+        simpleInfoBox
+      );
     } else {
       setMessage(res, simpleErrorBox);
     }

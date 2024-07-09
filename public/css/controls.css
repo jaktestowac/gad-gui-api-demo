@@ -277,18 +277,26 @@ td:first-child {
   }
 }
 
-@media only screen and (max-width: 850px) {
+@media only screen and (max-width: 900px) {
   header {
     font-size: 0.8rem;
   }
   button {
-    font-size: 0.8rem;
+    font-size: 0.95rem;
     padding: 5px;
   }
   header h1 {
     margin-left: 10px !important;
   }
 }
+
+@media only screen and (max-width: 800px) {
+  button {
+    font-size: 0.8rem;
+    padding: 5px;
+  }
+}
+
 /* 
 @media only screen and (max-width: 700px) {
   header {
@@ -1007,6 +1015,12 @@ body.darkmode {
   color: #131313;
 }
 
+.darkmode .cancel {
+  background-color: #838383;
+  color: #131313;
+  border: #afafaf;
+}
+
 .darkmode .separator::before {
   border-bottom: #b1b1b1 1px solid !important;
 }
@@ -1098,4 +1112,112 @@ body.darkmode {
   justify-content: center;
   align-items: center;
   margin-left: 40px;
+}
+
+.flashpost-container {
+  border-radius: 10px;
+  border: 2px solid #7c7c7c8f;
+  background-color: #dddddd;
+  padding: 5px;
+  margin: 3px;
+
+  display: inline-block;
+  font-size: 14px;
+}
+
+.darkmode .flashpost-container {
+  border: 2px solid #7c7c7c8f;
+  background-color: #2c2c2c;
+}
+
+.flashpost-container-space {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  max-width: 500px;
+}
+
+.flashpost-date {
+  font-size: 12px;
+}
+
+.flashpost-author {
+  font-size: 12px;
+}
+
+.flashpost-author-and-date {
+  display: flex;
+  justify-content: space-between;
+  color: #000000 !important;
+}
+
+.flashpost-visibility {
+  font-size: 12px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #38383860 !important;
+}
+
+.flashpost-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.flashpost-tools {
+  margin-left: 0px;
+}
+
+.flashpost-tool {
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.flashpost-tool:hover {
+  color: black;
+}
+
+.darkmode .flashpost-tool:hover {
+  color: rgb(245, 245, 245);
+}
+
+.flashpost-date-and-tools {
+  display: flex;
+  justify-content: space-between;
+}
+
+.darkmode .flashpost-author-and-date {
+  display: flex;
+  justify-content: space-between;
+  color: #d1d1d18f !important;
+}
+
+.flashpost-author-and-date-dark {
+  color: #333333 !important;
+}
+
+.flashpost-author-and-date-light {
+  color: #bbbbbb !important;
+}
+
+[data-tooltip]::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  opacity: 0;
+  transition: all 0.15s ease;
+  padding: 10px;
+  color: #333;
+  border-radius: 10px;
+  box-shadow: 2px 2px 1px silver;
+}
+
+[data-tooltip]:hover::before {
+  opacity: 1;
+  background: rgb(158, 158, 158);
+  margin-top: -50px;
+  margin-left: 20px;
+}
+
+[data-tooltip]:not([data-tooltip-persistent])::before {
+  pointer-events: none;
 }

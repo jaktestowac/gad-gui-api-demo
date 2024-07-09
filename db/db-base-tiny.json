@@ -49,6 +49,17 @@
     },
     { "id": 2, "article_id": 1, "user_id": 1, "body": "Interesting!", "date": "2021-11-20T03:53:00Z" }
   ],
+  "flashposts": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "date": "2024-05-27T12:32:50Z",
+      "settings": {
+        "color": "blue"
+      },
+      "body": "Conference QA Quest 2024 is coming up soon!🚀 Don't forget to register and book your spot. It's going to be an amazing event!"
+    }
+  ],
   "likes": [
     { "id": 1, "user_id": 1, "comment_id": 1, "article_id": null, "date": "2023-09-25T10:00:00Z" },
     { "id": 2, "user_id": 2, "comment_id": null, "article_id": 1, "date": "2023-09-25T11:00:00Z" }
