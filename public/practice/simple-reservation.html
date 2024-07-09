@@ -87,22 +87,22 @@
                 <tr>
                     <td style="text-align: center;">22.10.2024</td>
                     <td style="text-align: center; padding-right: 0px;">90$</td>
-                    <td style="text-align: center; padding-right: 0px;"><button class="my-button" onclick="buttonOnClick('22.10.2024', 90)">Reserve</button></td>
+                    <td style="text-align: center; padding-right: 0px;"><button class="my-button" onclick="buttonOnClick('22.10.2024', 90, this)">Reserve</button></td>
                 </tr>
                 <tr>
                     <td style="text-align: center;">23.10.2024</td>
                     <td style="text-align: center; padding-right: 0px;">100$</td>
-                    <td style="text-align: center; padding-right: 0px;"><button class="my-button" onclick="buttonOnClick('23.10.2024', 100)">Reserve</button></td>
+                    <td style="text-align: center; padding-right: 0px;"><button class="my-button" onclick="buttonOnClick('23.10.2024', 100, this)">Reserve</button></td>
                 </tr>
                 <tr>
                     <td style="text-align: center;">24.10.2024</td>
                     <td style="text-align: center; padding-right: 0px;">100$</td>
-                    <td style="text-align: center; padding-right: 0px;"><button class="my-button" onclick="buttonOnClick('24.10.2024', 100)">Reserve</button></td>
+                    <td style="text-align: center; padding-right: 0px;"><button class="my-button" onclick="buttonOnClick('24.10.2024', 100, this)">Reserve</button></td>
                 </tr>
                 <tr>
                     <td style="text-align: center;">25.10.2024</td>
                     <td style="text-align: center; padding-right: 0px;">200$</td>
-                    <td style="text-align: center; padding-right: 0px;"><button class="my-button" onclick="buttonOnClick('25.10.2024', 200)">Reserve</button></td>
+                    <td style="text-align: center; padding-right: 0px;"><button class="my-button" onclick="buttonOnClick('25.10.2024', 200, this)">Reserve</button></td>
                 </tr>
             </table>
 
@@ -160,12 +160,22 @@
         }
     }
 
-    function buttonOnClick(date, price) {
+    function clearButtonBackgroundColor() {
+        const buttons = document.querySelectorAll('.my-button');
+        buttons.forEach(button => {
+            button.style.backgroundColor = '#ededf0'
+        });
+    }
+
+    function buttonOnClick(date, price, el) {
         let featuresStr = 'No features'
         if (features.length > 0) {
             featuresStr = features.join(', ')
         }
         const finalPrice = totalPrices + price
+        clearButtonBackgroundColor()
+
+        el.style.backgroundColor = 'green'
 
         const result = `Reservation for ${date} with features: ${featuresStr} for total price: ${finalPrice}$`
         document.getElementById('results-container').innerHTML = result;

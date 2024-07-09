@@ -431,6 +431,26 @@ describe("Endpoint /articles", () => {
       expect(response.body).to.deep.equal(testData);
     });
 
+    it.only("POST /articles - should create valid article with duplicated titles [used in webinars and PW2S04L02]", async () => {
+      // Arrange:
+      const testData = generateValidArticleData();
+      testData.user_id = userId;
+
+      // Act:
+      const response = await request.post(baseUrl).set(headers).send(testData);
+
+      // Assert:
+      expect(response.status).to.equal(201);
+
+      // Act:
+      const responseSecond = await request.post(baseUrl).set(headers).send(testData);
+
+      // Assert:
+      expect(responseSecond.status).to.equal(201);
+      testData.id = responseSecond.body.id;
+      expect(responseSecond.body, JSON.stringify(responseSecond.body)).to.deep.equal(testData);
+    });
+
     it("POST /articles - should create valid article without user id", async () => {
       // Arrange:
       const testData = generateValidArticleData();
