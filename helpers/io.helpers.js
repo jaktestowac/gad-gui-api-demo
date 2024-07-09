@@ -35,13 +35,13 @@ function createDirectoryForFilePath(filePath) {
   createDirectory(directory);
 }
 
-function createDirIfNotExists(path) {
-  createDirectoryForFilePath(path);
+function createPathIfNotExists(path) {
+  createDirectory(path);
 }
 
 module.exports = {
   saveFile,
   saveJsonFile,
   createDirectoryForFilePath,
-  createDirIfNotExists,
+  createPathIfNotExists,
 };
