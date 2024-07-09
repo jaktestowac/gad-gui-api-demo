@@ -11,6 +11,7 @@ const featureFlagConfig = {
   feature_infinite_scroll_articles: false,
   feature_captcha: false,
   feature_qrcodes: false,
+  feature_validate_article_title: false,
 };
 
 module.exports = {

@@ -1,5 +1,5 @@
-const { isBugDisabled, isBugEnabled } = require("../config/config-manager");
-const { BugConfigKeys } = require("../config/enums");
+const { isBugDisabled, isBugEnabled, getFeatureFlagConfigValue } = require("../config/config-manager");
+const { BugConfigKeys, FeatureFlagConfigKeys } = require("../config/enums");
 const { areIdsEqual, isUndefined, isInactive } = require("../helpers/compare.helpers");
 const {
   searchForUserWithToken,
@@ -150,10 +150,13 @@ function handleArticles(req, res, isAdmin) {
     }
     logTrace("handleArticles:POST:", { method: req.method, urlEnds, articleId: req.body.id });
 
-    const foundArticles = searchForArticlesWithTitle(req.body?.title);
-    if (foundArticles.length > 0) {
-      res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatNotUniqueFieldResponse("title"));
-      return;
+    const isFeatureEnabled = getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_VALIDATE_ARTICLE_TITLE);
+    if (isFeatureEnabled) {
+      const foundArticles = searchForArticlesWithTitle(req.body?.title);
+      if (foundArticles.length > 0) {
+        res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatNotUniqueFieldResponse("title"));
+        return;
+      }
     }
   }
 

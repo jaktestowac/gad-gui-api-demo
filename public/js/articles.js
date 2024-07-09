@@ -359,7 +359,7 @@ const getItemHTML = (item) => {
 
 function presentPicture() {
   const userPicture = document.querySelector(".userPicture");
-  userPicture.src = `.\\data\\images\\256\\${document.querySelector(".image").value}`;
+  userPicture.src = `.\\data\\images\\256\\${document.querySelector("#image").value}`;
 }
 
 const displayPostsData = (data) => {
