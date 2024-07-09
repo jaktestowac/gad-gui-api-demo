@@ -431,7 +431,7 @@ describe("Endpoint /articles", () => {
       expect(response.body).to.deep.equal(testData);
     });
 
-    it.only("POST /articles - should create valid article with duplicated titles [used in webinars and PW2S04L02]", async () => {
+    it("POST /articles - should create valid article with duplicated titles [used in webinars and PW2S04L02]", async () => {
       // Arrange:
       const testData = generateValidArticleData();
       testData.user_id = userId;
