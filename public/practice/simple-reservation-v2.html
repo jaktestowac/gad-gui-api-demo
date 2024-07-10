@@ -121,7 +121,9 @@
                 </tr>
                 <tr>
                     <td style="text-align: center;">Number<br />of Days</td>
-                    <td style="text-align: center; padding-right: 0px;"><input type="range" id="id-range" data-testid="dti-date" min="1" max="28" onchange="rangeOnChange(this)"></td>
+                    <td style="text-align: center; padding-right: 0px;">
+                        <div style="display: flex;"><input type="range" id="id-range" data-testid="dti-date" min="1" max="28" onchange="rangeOnChange(this)"><label id="lbl-days">(00)</label></div>
+                    </td>
                 </tr>
                 <tr>
                     <td style="text-align: center;">End Date</td>
@@ -196,6 +198,7 @@
 
     const features = []
     let totalPrices = 0
+    updateDate()
 
     function checkBoxOnClick(feature, price, checkbox) {
         if (checkbox.checked === true) {
@@ -235,27 +238,48 @@
     function updateDate() {
         const date = document.getElementById('id-date').value
         const days = document.getElementById('id-range').value
+        document.getElementById('lbl-days').innerHTML = `(${days})`
 
         if (date === '') {
-            return
+            return false;
         }
 
         const currentDate = new Date();
         const selectedDate = new Date(date);
 
         if (selectedDate.toISOString().split('T')[0] < currentDate.toISOString().split('T')[0]) {
-            return;
+            return false;
         }
 
         const newDate = new Date(date)
 
         newDate.setDate(newDate.getDate() + parseInt(days))
         document.getElementById('lbl-date-to').innerHTML = `${newDate.toISOString().split('T')[0]} (${days} days)`
+        return true
+    }
+
+    function areFieldsValid() {
+        const date = document.getElementById('id-date').value
+        const days = document.getElementById('id-range').value
+
+        if (date === '') {
+            return false
+        }
+
+        if (days === '') {
+            return false
+        }
+
+        if (updateDate() === false) {
+            return false
+        }
+
+        return true
     }
 
     function buttonOnClick(el) {
         if (!areFieldsValid()) {
-            const result = 'Please fill in all fields (date and number of days)'
+            const result = 'Please fill in all fields (date in future and number of days)'
             printResults(result)
             return
         }
@@ -288,7 +312,7 @@
 
         let finalFullPrice = ((totalPrices + parseInt(days) * parseInt(pricePerDay)) * parseInt(numberOfPeople))
         let finalPrice = roundToTwoPlaces(finalFullPrice * priceModificator)
-        let discount = finalFullPrice - finalPrice
+        let discount = roundToTwoPlaces(finalFullPrice - finalPrice)
 
         const newDate = new Date(date)
         newDate.setDate(newDate.getDate() + parseInt(days))
@@ -304,21 +328,6 @@
 
     function roundToTwoPlaces(num) {
         return Math.round(num * 100) / 100
-    }
-
-    function areFieldsValid() {
-        const date = document.getElementById('id-date').value
-        const days = document.getElementById('id-range').value
-
-        if (date === '') {
-            return false
-        }
-
-        if (days === '') {
-            return false
-        }
-
-        return true
     }
 
 </script>
