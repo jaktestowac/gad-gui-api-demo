@@ -110,7 +110,7 @@ describe("Endpoint /comments", () => {
       const response = await request.put(baseUrl).set(headers).send(testCommentData);
 
       // Assert:
-      expect(response.status).to.equal(201);
+      expect(response.status, JSON.stringify(response.body)).to.equal(201);
     });
 
     it("PUT /comments/:id - update", async () => {
@@ -118,7 +118,7 @@ describe("Endpoint /comments", () => {
       const response = await request.put(`${baseUrl}/${commentId}`).set(headers).send(testCommentData);
 
       // Assert:
-      expect(response.status).to.equal(200);
+      expect(response.status, JSON.stringify(response.body)).to.equal(200);
       testCommentData.id = response.body.id;
       expect(response.body).to.deep.equal(testCommentData);
     });
@@ -137,7 +137,7 @@ describe("Endpoint /comments", () => {
       const response = await request.put(`${baseUrl}/1`).set(headers).send(testCommentData);
 
       // Assert:
-      expect(response.status).to.equal(401);
+      expect(response.status, JSON.stringify(response.body)).to.equal(401);
     });
 
     it("PATCH /comments/:id - full update with invalid fields", async () => {
@@ -147,7 +147,7 @@ describe("Endpoint /comments", () => {
       const response = await request.patch(`${baseUrl}/${commentId}`).set(headers).send(newData);
 
       // Assert:
-      expect(response.status).to.equal(422);
+      expect(response.status, JSON.stringify(response.body)).to.equal(422);
     });
 
     it("PATCH /comments/:id - should do full update", async () => {
@@ -155,7 +155,7 @@ describe("Endpoint /comments", () => {
       const response = await request.patch(`${baseUrl}/${commentId}`).set(headers).send(testCommentData);
 
       // Assert:
-      expect(response.status).to.equal(200);
+      expect(response.status, JSON.stringify(response.body)).to.equal(200);
       testCommentData.id = response.body.id;
       expect(response.body).to.deep.equal(testCommentData);
     });
@@ -174,7 +174,7 @@ describe("Endpoint /comments", () => {
       const response = await request.patch(`${baseUrl}/1`).set(headers).send(testCommentData);
 
       // Assert:
-      expect(response.status).to.equal(401);
+      expect(response.status, JSON.stringify(response.body)).to.equal(401);
     });
 
     it("PATCH /comments", async () => {
@@ -182,7 +182,18 @@ describe("Endpoint /comments", () => {
       const response = await request.patch(baseUrl).set(headers).send(testCommentData);
 
       // Assert:
-      expect(response.status).to.equal(404);
+      expect(response.status, JSON.stringify(response.body)).to.equal(404);
+    });
+
+    it("PATCH /comments/:id - should not allow to add additional fields", async () => {
+      // Arrange:
+      const newData = { invalid_field: 123 };
+
+      // Act:
+      const response = await request.patch(`${baseUrl}/${commentId}`).set(headers).send(newData);
+
+      // Assert:
+      expect(response.status, JSON.stringify(response.body)).to.equal(422);
     });
   });
 

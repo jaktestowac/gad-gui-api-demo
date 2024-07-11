@@ -21,6 +21,7 @@ const {
   areMandatoryFieldsPresent,
   mandatory_non_empty_fields_comment_create,
   validateDateFields,
+  areAnyAdditionalFieldsPresent,
 } = require("../helpers/validation.helpers");
 
 function handleComments(req, res, isAdmin) {
@@ -73,6 +74,12 @@ function handleComments(req, res, isAdmin) {
     const isDateValid = validateDateFields(req.body);
     if (!isDateValid.status) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidDateFieldErrorResponse(isDateValid));
+      return;
+    }
+
+    const additionalFields = areAnyAdditionalFieldsPresent(req.body, all_fields_comment);
+    if (additionalFields.status) {
+      res.status(HTTP_UNPROCESSABLE_ENTITY).json(formatInvalidFieldErrorResponse(additionalFields, all_fields_comment));
       return;
     }
   }
