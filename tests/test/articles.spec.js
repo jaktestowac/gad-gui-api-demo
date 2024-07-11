@@ -209,7 +209,7 @@ describe("Endpoint /articles", () => {
       const response = await request.put(baseUrl).set(headers).send(testData);
 
       // Assert:
-      expect(response.status).to.equal(422);
+      expect(response.status, JSON.stringify(response.body)).to.equal(422);
     });
 
     it("PATCH /articles/:id - should do full update", async () => {
@@ -217,7 +217,7 @@ describe("Endpoint /articles", () => {
       const response = await request.patch(`${baseUrl}/${articleId}`).set(headers).send(testArticleData);
 
       // Assert:
-      expect(response.status).to.equal(200);
+      expect(response.status, JSON.stringify(response.body)).to.equal(200);
       testArticleData.id = response.body.id;
       expect(response.body).to.deep.equal(testArticleData);
     });
@@ -228,7 +228,16 @@ describe("Endpoint /articles", () => {
       const response = await request.patch(`${baseUrl}/${articleId}`).set(headers).send(testArticleData);
 
       // Assert:
-      expect(response.status).to.equal(422);
+      expect(response.status, JSON.stringify(response.body)).to.equal(422);
+    });
+
+    it.only("PATCH /articles/:id - should not update article with additional fields", async () => {
+      // Act:
+      testArticleData.newField = "13";
+      const response = await request.patch(`${baseUrl}/${articleId}`).set(headers).send(testArticleData);
+
+      // Assert:
+      expect(response.status, JSON.stringify(response.body)).to.equal(422);
     });
 
     it("PATCH /articles/:id - should not update with different user ID", async () => {
@@ -239,7 +248,7 @@ describe("Endpoint /articles", () => {
       const response = await request.patch(`${baseUrl}/${newArticleId}`).set(headers).send(newArticleData);
 
       // Assert:
-      expect(response.status).to.equal(401);
+      expect(response.status, JSON.stringify(response.body)).to.equal(401);
     });
 
     ["title", "body", "date"].forEach((field) => {
@@ -251,7 +260,7 @@ describe("Endpoint /articles", () => {
         const response = await request.patch(`${baseUrl}/${articleId}`).set(headers).send(testData);
 
         // Assert:
-        expect(response.status).to.equal(422);
+        expect(response.status, JSON.stringify(response.body)).to.equal(422);
       });
     });
 
@@ -260,7 +269,7 @@ describe("Endpoint /articles", () => {
       const response = await request.patch(baseUrl).set(headers).send(testArticleData);
 
       // Assert:
-      expect(response.status).to.equal(404);
+      expect(response.status, JSON.stringify(response.body)).to.equal(404);
     });
 
     it("PATCH /articles/:id - should not full update different article", async () => {
@@ -268,7 +277,7 @@ describe("Endpoint /articles", () => {
       const response = await request.patch(`${baseUrl}/1`).set(headers).send(testArticleData);
 
       // Assert:
-      expect(response.status).to.equal(401);
+      expect(response.status, JSON.stringify(response.body)).to.equal(401);
     });
   });
 
@@ -429,6 +438,26 @@ describe("Endpoint /articles", () => {
       expect(response.status).to.equal(201);
       testData.id = response.body.id;
       expect(response.body).to.deep.equal(testData);
+    });
+
+    it("POST /articles - should create valid article with duplicated titles [used in webinars and PW2S04L02]", async () => {
+      // Arrange:
+      const testData = generateValidArticleData();
+      testData.user_id = userId;
+
+      // Act:
+      const response = await request.post(baseUrl).set(headers).send(testData);
+
+      // Assert:
+      expect(response.status).to.equal(201);
+
+      // Act:
+      const responseSecond = await request.post(baseUrl).set(headers).send(testData);
+
+      // Assert:
+      expect(responseSecond.status).to.equal(201);
+      testData.id = responseSecond.body.id;
+      expect(responseSecond.body, JSON.stringify(responseSecond.body)).to.deep.equal(testData);
     });
 
     it("POST /articles - should create valid article without user id", async () => {

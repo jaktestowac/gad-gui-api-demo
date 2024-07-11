@@ -6,6 +6,7 @@ const { checkFileName } = require("./file-upload.helper");
 const { logTrace, logDebug } = require("./logger-api");
 const { isUndefined } = require("./compare.helpers");
 const { getSeededRandomVisitsForEntities } = require("./generators/random-data.generator");
+const { createPathIfNotExists } = require("./io.helpers");
 
 const visits = (function () {
   let instance;
@@ -253,6 +254,7 @@ function getAndFilterUploadedFileList(userIds, isPublic = true) {
 function getUploadedFilePath(fileName) {
   const filesPath = path.join(__dirname, getConfigValue(ConfigKeys.UPLOADS_PATH));
   logTrace("getUploadedFilePath:", { filesPath });
+  createPathIfNotExists(filesPath);
 
   let files = fs.readdirSync(filesPath);
   const foundFile = files.find((file) => file === fileName);
