@@ -1,9 +1,15 @@
-const { formatErrorResponse, getIdFromUrl, formatInvalidTokenErrorResponse, sleep } = require("../helpers/helpers");
+const {
+  formatErrorResponse,
+  getIdFromUrl,
+  formatInvalidTokenErrorResponse,
+  sleep,
+  formatNoFieldsErrorResponse,
+} = require("../helpers/helpers");
 const { logDebug, logError, logTrace } = require("../helpers/logger-api");
 const { getConfigValue, isBugEnabled } = require("../config/config-manager");
 const { ConfigKeys, BugConfigKeys } = require("../config/enums");
 
-const { verifyAccessToken } = require("../helpers/validation.helpers");
+const { verifyAccessToken, areAnyFieldsPresent } = require("../helpers/validation.helpers");
 const { searchForUserWithToken, searchForUser } = require("../helpers/db-operation.helpers");
 const {
   HTTP_UNAUTHORIZED,
@@ -12,6 +18,7 @@ const {
   HTTP_METHOD_NOT_ALLOWED,
   HTTP_SERVICE_UNAVAILABLE,
   HTTP_NOT_FOUND,
+  HTTP_UNPROCESSABLE_ENTITY,
 } = require("../helpers/response.helpers");
 const { handleHangman } = require("../endpoints/hangman-endpoint.helpers");
 const { handleQuiz } = require("../endpoints/quiz-endpoint.helpers");

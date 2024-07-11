@@ -9,6 +9,7 @@ const {
   formatMissingFieldErrorResponse,
   formatErrorResponse,
   formatInvalidDateFieldErrorResponse,
+  formatNoFieldsErrorResponse,
 } = require("../helpers/helpers");
 const { logTrace, logDebug } = require("../helpers/logger-api");
 const { HTTP_UNPROCESSABLE_ENTITY, HTTP_UNAUTHORIZED, HTTP_NOT_FOUND } = require("../helpers/response.helpers");
@@ -22,6 +23,7 @@ const {
   mandatory_non_empty_fields_comment_create,
   validateDateFields,
   areAnyAdditionalFieldsPresent,
+  areAnyFieldsPresent,
 } = require("../helpers/validation.helpers");
 
 function handleComments(req, res, isAdmin) {
@@ -72,8 +74,14 @@ function handleComments(req, res, isAdmin) {
   if (req.method === "PATCH" && urlEnds.includes("/api/comments")) {
     // validate date field:
     const isDateValid = validateDateFields(req.body);
-    if (!isDateValid.status) {
+    if (isDateValid.status === false) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidDateFieldErrorResponse(isDateValid));
+      return;
+    }
+
+    const anyFields = areAnyFieldsPresent(req.body);
+    if (anyFields.status === false) {
+      res.status(HTTP_UNPROCESSABLE_ENTITY).json(formatNoFieldsErrorResponse(anyFields, all_fields_comment));
       return;
     }
 

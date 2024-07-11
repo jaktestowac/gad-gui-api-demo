@@ -28,6 +28,10 @@ function formatInvalidFieldErrorResponse(isValid, all_fields) {
   );
 }
 
+function formatNoFieldsErrorResponse(isValid, all_fields) {
+  return formatErrorResponse(`No fields were provided! ${isValid.error}`, all_fields);
+}
+
 function formatInvalidFieldValueErrorResponse(isValid, field) {
   return formatErrorResponse(`Field value is invalid: ${isValid?.error}`, field);
 }
@@ -197,4 +201,5 @@ module.exports = {
   base64ToJson,
   formatNotUniqueFieldResponse,
   isHexColor,
+  formatNoFieldsErrorResponse,
 };

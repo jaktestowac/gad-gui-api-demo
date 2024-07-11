@@ -231,10 +231,21 @@ describe("Endpoint /articles", () => {
       expect(response.status, JSON.stringify(response.body)).to.equal(422);
     });
 
-    it.only("PATCH /articles/:id - should not update article with additional fields", async () => {
+    it("PATCH /articles/:id - should not update article with additional fields", async () => {
       // Act:
       testArticleData.newField = "13";
       const response = await request.patch(`${baseUrl}/${articleId}`).set(headers).send(testArticleData);
+
+      // Assert:
+      expect(response.status, JSON.stringify(response.body)).to.equal(422);
+    });
+
+    it("PATCH /articles/:id - should not allow to add no fields", async () => {
+      // Arrange:
+      const newData = {};
+
+      // Act:
+      const response = await request.patch(`${baseUrl}/${articleId}`).set(headers).send(newData);
 
       // Assert:
       expect(response.status, JSON.stringify(response.body)).to.equal(422);

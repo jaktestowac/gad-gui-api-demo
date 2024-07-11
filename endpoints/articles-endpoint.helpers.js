@@ -17,6 +17,7 @@ const {
   formatInvalidDateFieldErrorResponse,
   formatErrorResponse,
   formatNotUniqueFieldResponse,
+  formatNoFieldsErrorResponse,
 } = require("../helpers/helpers");
 const { logTrace, logDebug } = require("../helpers/logger-api");
 const { HTTP_UNAUTHORIZED, HTTP_UNPROCESSABLE_ENTITY, HTTP_NOT_FOUND } = require("../helpers/response.helpers");
@@ -28,6 +29,7 @@ const {
   all_fields_article,
   areAllFieldsValid,
   validateDateFields,
+  areAnyFieldsPresent,
 } = require("../helpers/validation.helpers");
 
 function handleArticles(req, res, isAdmin) {
@@ -163,6 +165,12 @@ function handleArticles(req, res, isAdmin) {
   if (req.method === "PATCH" && urlEnds.includes("/api/articles") && !isAdmin) {
     const verifyTokenResult = verifyAccessToken(req, res, "PATCH articles", req.url);
     let articleId = getIdFromUrl(urlEnds);
+
+    const anyFields = areAnyFieldsPresent(req.body);
+    if (anyFields.status === false) {
+      res.status(HTTP_UNPROCESSABLE_ENTITY).json(formatNoFieldsErrorResponse(anyFields, all_fields_article));
+      return;
+    }
 
     // validate all fields:
     const isValid = areAllFieldsValid(req.body, all_fields_article, mandatory_non_empty_fields_article);

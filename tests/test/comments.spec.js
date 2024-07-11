@@ -195,6 +195,17 @@ describe("Endpoint /comments", () => {
       // Assert:
       expect(response.status, JSON.stringify(response.body)).to.equal(422);
     });
+
+    it("PATCH /comments/:id - should not allow to add no fields", async () => {
+      // Arrange:
+      const newData = {};
+
+      // Act:
+      const response = await request.patch(`${baseUrl}/${commentId}`).set(headers).send(newData);
+
+      // Assert:
+      expect(response.status, JSON.stringify(response.body)).to.equal(422);
+    });
   });
 
   describe("DELETE /comments", async () => {
