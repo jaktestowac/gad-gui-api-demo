@@ -790,13 +790,14 @@ const displayForm = (item, container) => {
 };
 
 const displayNameForm = (item, container) => {
+  const formattedDate = formatDateToLocaleString(item.date);
   container.innerHTML = `
     <div style="margin-top:7px; width:1200px;">
         ${getImagesHTML(item.image)}<br>
             <label>title:</label>
             <input type="text" id="title" data-testid="title-input" value="${item.title}"><br>
             <label>user:</label><span><a href="user.html?id=${item.user_id}">${item.user_id}</a></span><br>
-            <label>date:</label><span>${item.date}</span><br>
+            <label>date:</label><span>${formattedDate}</span><br>
             <label></label><span data-testid="article-body" >${item.body}</span><br>
             <label></label><br>
             <button type="button" data-id="${
