@@ -78,9 +78,16 @@ const formatDateToLocaleString = (dateString) => {
     return "";
   }
 
-  const utcDate = new Date(dateString);
+  const incomingDate = new Date(dateString);
   const currentDate = new Date();
-  const date = new Date(utcDate.getTime() + currentDate.getTimezoneOffset() * 60000);
+
+  // TODO: fix timezone offset
+  // const date = new Date(utcDate.getTime() + currentDate.getTimezoneOffset() * 60000);
+  // console.log("UTC Date:", incomingDate);
+  // console.log("getTimezoneOffset:", currentDate.getTimezoneOffset());
+  // console.log("incomingDate offset:", incomingDate.getTimezoneOffset());
+
+  const date = new Date(incomingDate.getTime());
   const options = {
     year: "numeric",
     month: "2-digit",
