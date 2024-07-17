@@ -153,7 +153,7 @@ function handleArticles(req, res, isAdmin) {
     logTrace("handleArticles:POST:", { method: req.method, urlEnds, articleId: req.body.id });
 
     const isFeatureEnabled = getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_VALIDATE_ARTICLE_TITLE);
-    if (isFeatureEnabled) {
+    if (isFeatureEnabled === true) {
       const foundArticles = searchForArticlesWithTitle(req.body?.title);
       if (foundArticles.length > 0) {
         res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatNotUniqueFieldResponse("title"));
@@ -206,10 +206,13 @@ function handleArticles(req, res, isAdmin) {
       return;
     }
 
-    const foundArticles = searchForArticlesWithTitleWithoutId(req.body?.title, articleId);
-    if (foundArticles.length > 0) {
-      res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatNotUniqueFieldResponse("title"));
-      return;
+    const isFeatureEnabled = getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_VALIDATE_ARTICLE_TITLE);
+    if (isFeatureEnabled === true) {
+      const foundArticles = searchForArticlesWithTitleWithoutId(req.body?.title, articleId);
+      if (foundArticles.length > 0) {
+        res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatNotUniqueFieldResponse("title"));
+        return;
+      }
     }
   }
 
@@ -283,10 +286,13 @@ function handleArticles(req, res, isAdmin) {
         body: req.body,
       });
     } else {
-      const foundArticles = searchForArticlesWithTitleWithoutId(req.body?.title, articleId);
-      if (foundArticles.length > 0) {
-        res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatNotUniqueFieldResponse("title"));
-        return;
+      const isFeatureEnabled = getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_VALIDATE_ARTICLE_TITLE);
+      if (isFeatureEnabled === true) {
+        const foundArticles = searchForArticlesWithTitleWithoutId(req.body?.title, articleId);
+        if (foundArticles.length > 0) {
+          res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatNotUniqueFieldResponse("title"));
+          return;
+        }
       }
     }
   }
