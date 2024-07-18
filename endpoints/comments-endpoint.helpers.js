@@ -1,7 +1,12 @@
 const { isBugDisabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
 const { isUndefined, areIdsEqual, isInactive } = require("../helpers/compare.helpers");
-const { searchForComment, searchForUserWithToken, searchForUserWithEmail } = require("../helpers/db-operation.helpers");
+const {
+  searchForComment,
+  searchForUserWithToken,
+  searchForUserWithEmail,
+  searchForArticle,
+} = require("../helpers/db-operation.helpers");
 const {
   formatInvalidFieldErrorResponse,
   getIdFromUrl,
@@ -85,6 +90,16 @@ function handleComments(req, res, isAdmin) {
       return;
     }
 
+    const articleId = req.body.article_id;
+    if (!isUndefined(articleId)) {
+      const foundArticle = searchForArticle(articleId);
+
+      if (isUndefined(foundArticle)) {
+        res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatErrorResponse("Article does not exist"));
+        return;
+      }
+    }
+
     const additionalFields = areAnyAdditionalFieldsPresent(req.body, all_fields_comment);
     if (additionalFields.status) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).json(formatInvalidFieldErrorResponse(additionalFields, all_fields_comment));
@@ -155,6 +170,14 @@ function handleComments(req, res, isAdmin) {
     const isDateValid = validateDateFields(req.body);
     if (!isDateValid.status) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidDateFieldErrorResponse(isDateValid));
+      return;
+    }
+
+    const articleId = req.body.article_id;
+    const foundArticle = searchForArticle(articleId);
+
+    if (isUndefined(foundArticle)) {
+      res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatErrorResponse("Article does not exist"));
       return;
     }
 
