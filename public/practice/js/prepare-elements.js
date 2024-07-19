@@ -212,7 +212,7 @@ function preparePlacesInfInterestElements(placesOfInterest, numberOfPlaces = 3, 
     bookingButton.onclick = () => {
       const resultsContainer = document.getElementById("results-container");
       if (resultsContainer !== null) {
-        resultsContainer.innerHTML = `You have booked a table at ${place.restaurantName}!`;
+        resultsContainer.innerHTML = `You have booked a table at ${place.restaurantName}! (${place.rating} ⭐️)`;
       }
     };
 
