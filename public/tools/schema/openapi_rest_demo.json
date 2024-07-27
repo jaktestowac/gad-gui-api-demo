@@ -120,6 +120,10 @@
       "description": "Statistics"
     },
     {
+      "name": "data",
+      "description": "Data - different types of data"
+    },
+    {
       "name": "healthcheck",
       "description": "Healthcheck - check status and health of 🦎GAD"
     }
@@ -3501,6 +3505,66 @@
           },
           "404": {
             "description": "Not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/data/weather": {
+      "get": {
+        "parameters": [
+          {
+            "name": "days",
+            "in": "query",
+            "description": "Number of days to get weather data for",
+            "required": false,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "tags": ["data"],
+        "summary": "Get weather data",
+        "responses": {
+          "200": {
+            "description": "Information about weather received",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/data/costs": {
+      "get": {
+        "parameters": [
+          {
+            "name": "days",
+            "in": "query",
+            "description": "Number of days to get costs data for",
+            "required": false,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "tags": ["data"],
+        "summary": "Get costs data",
+        "responses": {
+          "200": {
+            "description": "Information about costs received",
             "content": {}
           }
         }
