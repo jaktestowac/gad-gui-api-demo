@@ -78,21 +78,21 @@ const formatDateToLocaleString = (dateString) => {
     return "";
   }
 
-  const utcDate = new Date(dateString);
-  const currentDate = new Date();
-  const date = new Date(utcDate.getTime() + currentDate.getTimezoneOffset() * 60000);
+  const date = new Date(dateString);
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const targetDate = new Date(date.toLocaleString("en-US", { timeZone }));
   const options = {
     year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
+    month: "long",
+    day: "numeric",
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
   };
-
   const locale = navigator.language;
 
-  const formattedDate = date.toLocaleString(locale, options).replace(",", "");
+  const formattedDate = targetDate.toLocaleString(locale, options);
+
   return formattedDate;
 };
 

@@ -40,8 +40,18 @@ function isLikesDataValid(body) {
   return true;
 }
 
+function areAnyFieldsPresent(body) {
+  const keys = Object.keys(body);
+  if (keys.length === 0) {
+    logDebug(`Field validation: no fields present in body`);
+    return { status: false, error: "Field validation: no fields present in body" };
+  }
+  return { status: true, error: "" };
+}
+
 function areAnyAdditionalFieldsPresent(body, all_possible_fields) {
   const keys = Object.keys(body);
+  logTrace("areAnyAdditionalFieldsPresent:", { keys, all_possible_fields, body });
   for (let index = 0; index < keys.length; index++) {
     const key = keys[index];
     if (!all_possible_fields.includes(key)) {
@@ -128,8 +138,9 @@ function validateDateFields(body, fields = ["date"]) {
 
       const result = isDateInFuture(element);
       if (result.isDateInFuture === true) {
-        logError("validateDateFields: Body:", { body, result });
+        logInsane("validateDateFields: Body:", { body, result });
         error = `Field validation: "${key}" has date in future! Application date: "${result.applicationDate}" Input date: "${result.inputDate}"`;
+        logError("validateDateFields: Body:", { error, result });
         return { status: false, error };
       }
     }
@@ -340,6 +351,7 @@ module.exports = {
   isDateInFuture,
   mandatory_non_empty_fields_flashpost,
   areAnyAdditionalFieldsPresent,
+  areAnyFieldsPresent,
   all_possible_fields_flashpost,
   mandatory_non_empty_fields_flashpost_settings,
 };

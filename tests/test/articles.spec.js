@@ -196,7 +196,7 @@ describe("Endpoint /articles", () => {
       });
     });
 
-    it(`PUT /articles - empty all fields`, async () => {
+    it(`PUT /articles - should not update nor create when all fields are empty`, async () => {
       // Arrange:
       const testData = generateValidArticleData();
       testData.user_id = userId;
@@ -210,6 +210,38 @@ describe("Endpoint /articles", () => {
 
       // Assert:
       expect(response.status, JSON.stringify(response.body)).to.equal(422);
+    });
+
+    it("PATCH /articles/:id - should update article title to already existing one [feat: PW2]", async () => {
+      // Arrange:
+      const testData1 = generateValidArticleData();
+      const testData2 = generateValidArticleData();
+      testData1.user_id = userId;
+      const testData3 = { title: testData2.title };
+
+      // create article for future update
+      // Act:
+      const response1 = await request.post(baseUrl).set(headers).send(testData1);
+
+      // Assert:
+      expect(response1.status).to.equal(201);
+      const newArticleId = response1.body.id;
+
+      // create article with title that will used in update
+      // Act:
+      const response2 = await request.post(baseUrl).set(headers).send(testData2);
+
+      // Assert:
+      expect(response2.status).to.equal(201);
+
+      // Act:
+      const responsePatch = await request.patch(`${baseUrl}/${newArticleId}`).set(headers).send(testData3);
+
+      // Assert:
+      expect(responsePatch.status, JSON.stringify(responsePatch.body)).to.equal(200);
+      testData1.id = newArticleId;
+      testData1.title = testData3.title;
+      expect(responsePatch.body).to.deep.equal(testData1);
     });
 
     it("PATCH /articles/:id - should do full update", async () => {
@@ -231,10 +263,21 @@ describe("Endpoint /articles", () => {
       expect(response.status, JSON.stringify(response.body)).to.equal(422);
     });
 
-    it.only("PATCH /articles/:id - should not update article with additional fields", async () => {
+    it("PATCH /articles/:id - should not update article with additional fields", async () => {
       // Act:
       testArticleData.newField = "13";
       const response = await request.patch(`${baseUrl}/${articleId}`).set(headers).send(testArticleData);
+
+      // Assert:
+      expect(response.status, JSON.stringify(response.body)).to.equal(422);
+    });
+
+    it("PATCH /articles/:id - should not allow to add no fields", async () => {
+      // Arrange:
+      const newData = {};
+
+      // Act:
+      const response = await request.patch(`${baseUrl}/${articleId}`).set(headers).send(newData);
 
       // Assert:
       expect(response.status, JSON.stringify(response.body)).to.equal(422);
@@ -440,7 +483,7 @@ describe("Endpoint /articles", () => {
       expect(response.body).to.deep.equal(testData);
     });
 
-    it("POST /articles - should create valid article with duplicated titles [used in webinars and PW2S04L02]", async () => {
+    it("POST /articles - should create valid article with duplicated titles [feat: used in webinars and PW2S04L02]", async () => {
       // Arrange:
       const testData = generateValidArticleData();
       testData.user_id = userId;

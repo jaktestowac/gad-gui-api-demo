@@ -220,6 +220,12 @@ const addMainMenuAndFooter = () => {
     menuContainerLeft.innerHTML = logoGAD();
     menuContainerLeft.insertAdjacentHTML("afterend", rightMenu(""));
   }
+  if (document.querySelector("#menu-practice")) {
+    mainNavMenu.innerHTML = hamburgerMenu() + mainNavMenu.innerHTML;
+    menuContainerLeft = document.querySelector("#menu-practice");
+    menuContainerLeft.innerHTML = logoGAD() + mainPracticePageMenuHTML();
+    menuContainerLeft.insertAdjacentHTML("afterend", rightMenu("", false));
+  }
   if (document.querySelector("#menu-main-practice")) {
     mainNavMenu.innerHTML = hamburgerMenu() + mainNavMenu.innerHTML;
     menuContainerLeft = document.querySelector("#menu-main-practice");

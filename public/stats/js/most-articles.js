@@ -147,6 +147,7 @@ const displayItem = (item, container) => {
 
 const formatArticleHtml = (item) => {
   item.image = item.image.replace(".\\", "\\");
+  const formattedDate = formatDateToLocaleString(item.date);
 
   return `<div class="item-card" id="article${item.id}" data-testid="article-${
     item.id
@@ -174,7 +175,7 @@ const formatArticleHtml = (item) => {
     
     <tr>
       <td ><label style="width:10px !important; font-size:14px">date:</label>&nbsp&nbsp</td>
-      <td ><span data-testid="article-${item.id}-date">${item.date.replace("T", " ").replace("Z", "")}</span></td>
+      <td ><span data-testid="article-${item.id}-date">${formattedDate}</span></td>
     </tr>
   </table><br>
     <div class="labels-container" id="labels-container-${item.id}" ></div>

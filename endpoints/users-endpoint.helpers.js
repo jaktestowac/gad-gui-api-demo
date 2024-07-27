@@ -9,6 +9,7 @@ const {
   formatErrorResponse,
   getIdFromUrl,
   formatInvalidFieldErrorResponse,
+  formatNoFieldsErrorResponse,
 } = require("../helpers/helpers");
 const { logDebug } = require("../helpers/logger-api");
 const { HTTP_UNPROCESSABLE_ENTITY, HTTP_CONFLICT } = require("../helpers/response.helpers");
@@ -19,6 +20,7 @@ const {
   areAllFieldsValid,
   all_fields_user,
   verifyAccessToken,
+  areAnyFieldsPresent,
 } = require("../helpers/validation.helpers");
 
 function handleUsers(req, res) {
@@ -127,6 +129,12 @@ function handleUsers(req, res) {
     const isValid = areAllFieldsValid(req.body, all_fields_user, mandatory_non_empty_fields_user);
     if (!isValid.status) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidFieldErrorResponse(isValid, all_fields_user));
+      return;
+    }
+
+    const anyFields = areAnyFieldsPresent(req.body);
+    if (anyFields.status === false) {
+      res.status(HTTP_UNPROCESSABLE_ENTITY).json(formatNoFieldsErrorResponse(anyFields, all_fields_user));
       return;
     }
   }

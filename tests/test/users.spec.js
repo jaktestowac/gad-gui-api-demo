@@ -393,6 +393,26 @@ describe("Endpoint /users", async () => {
       expect(response.body).to.deep.equal(baseUserData);
     });
 
+    it("PATCH /users/:id - should not update user with additional fields", async () => {
+      // Act:
+      const testPartialUserData = { newField: "13" };
+      const response = await request.patch(`${baseUrl}/${userId}`).set(headers).send(testPartialUserData);
+
+      // Assert:
+      expect(response.status, JSON.stringify(response.body)).to.equal(422);
+    });
+
+    it("PATCH /users/:id - should not allow to add no fields", async () => {
+      // Arrange:
+      const newData = {};
+
+      // Act:
+      const response = await request.patch(`${baseUrl}/${userId}`).set(headers).send(newData);
+
+      // Assert:
+      expect(response.status, JSON.stringify(response.body)).to.equal(422);
+    });
+
     it("PATCH /users/:id - should not update partial with invalid data", async () => {
       // Arrange:
       const testPartialUserData = { firstname: faker.string.alphanumeric(10001) };
