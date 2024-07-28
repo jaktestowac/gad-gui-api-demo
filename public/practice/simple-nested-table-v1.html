@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/practice-controls.css" />
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+    <style>
+        th,
+        td {
+            border-bottom: 2px solid #dddddd;
+        }
+    </style>
+
+    <br />
+    <br />
+    <br />
+    <div align="center">
+        <h2>Simple nested table</h2>
+
+        <table style="text-align: center; width: 600px;">
+            <tr>
+                <th style="text-align: center;">Row</th>
+                <th style="text-align: center;">Value</th>
+                <th style="text-align: center;">Action</th>
+            </tr>
+            <tr style="text-align: center;">
+                <td style="text-align: center; width: 33%;">Row 1.0</td>
+                <td style="text-align: center; width: 33%;">X</td>
+                <td style="text-align: center; width: 33%;">
+                    <table style="text-align: center; width: 400px;">
+                        <tr style="text-align: center;">
+                            <td style="text-align: center; width: 33%;">Row 1</td>
+                            <td style="text-align: center; width: 33%;">X</td>
+                            <td style="text-align: center; width: 33%;"><button class="my-button" style="height: 28px;padding: 0px;margin: 0px;width: 60px;" onclick="buttonOnClick('(row 1-1)')">Click!</button></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;">Row 2</td>
+                            <td style="text-align: center;">Y</td>
+                            <td style="text-align: center;"><button class="my-button" style="height: 28px;padding: 0px;margin: 0px;width: 60px;" onclick="buttonOnClick('(row 1-2)')">Click!</button></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;">Row 3</td>
+                            <td style="text-align: center;">Z</td>
+                            <td style="text-align: center;"><button class="my-button" style="height: 28px;padding: 0px;margin: 0px;width: 60px;" onclick="buttonOnClick('(row 1-3)')">Click!</button></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: center;">Row 2.0</td>
+                <td style="text-align: center;">Y</td>
+                <td style="text-align: center; width: 33%;">
+                    <table style="text-align: center; width: 400px;">
+                        <tr style="text-align: center;">
+                            <td style="text-align: center; width: 33%;">Row 1</td>
+                            <td style="text-align: center; width: 33%;">X</td>
+                            <td style="text-align: center; width: 33%;">
+                                <table style="text-align: center; width: 400px;">
+                                    <tr style="text-align: center;">
+                                        <td style="text-align: center; width: 33%;">Row 1</td>
+                                        <td style="text-align: center; width: 33%;">X</td>
+                                        <td style="text-align: center; width: 33%;"><button class="my-button" style="height: 28px;padding: 0px;margin: 0px;width: 60px;" onclick="buttonOnClick('(row 2-1-1)')">Click!</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align: center;">Row 2</td>
+                                        <td style="text-align: center;">Y</td>
+                                        <td style="text-align: center;"><button class="my-button" style="height: 28px;padding: 0px;margin: 0px;width: 60px;" onclick="buttonOnClick('(row 2-1-2)')">Click!</button></td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;">Row 2</td>
+                            <td style="text-align: center;">Y</td>
+                            <td style="text-align: center;"><button class="my-button" style="height: 28px;padding: 0px;margin: 0px;width: 60px;" onclick="buttonOnClick('(row 2-2)')">Click!</button></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;">Row 3</td>
+                            <td style="text-align: center;">Z</td>
+                            <td style="text-align: center;"><button class="my-button" style="height: 28px;padding: 0px;margin: 0px;width: 60px;" onclick="buttonOnClick('(row 2-3)')">Click!</button></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: center;">Row 3.0</td>
+                <td style="text-align: center;">Z</td>
+                <td style="text-align: center; width: 33%;">
+                    <table style="text-align: center; width: 400px;">
+                        <tr style="text-align: center;">
+                            <td style="text-align: center; width: 33%;">Row 1</td>
+                            <td style="text-align: center; width: 33%;">X</td>
+                            <td style="text-align: center; width: 33%;">
+                                <table style="text-align: center; width: 400px;">
+                                    <tr style="text-align: center;">
+                                        <td style="text-align: center; width: 33%;">Row 1</td>
+                                        <td style="text-align: center; width: 33%;">X</td>
+                                        <td style="text-align: center; width: 33%;"><button class="my-button" style="height: 28px;padding: 0px;margin: 0px;width: 60px;" onclick="buttonOnClick('(row 3-1-1)')">Click!</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align: center;">Row 2</td>
+                                        <td style="text-align: center;">Y</td>
+                                        <td style="text-align: center;"><button class="my-button" style="height: 28px;padding: 0px;margin: 0px;width: 60px;" onclick="buttonOnClick('(row 3-1-2)')">Click!</button></td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;">Row 2</td>
+                            <td style="text-align: center;">Y</td>
+                            <td style="text-align: center;">
+                                <table style="text-align: center; width: 400px;">
+                                    <tr style="text-align: center;">
+                                        <td style="text-align: center; width: 33%;">Row 1</td>
+                                        <td style="text-align: center; width: 33%;">X</td>
+                                        <td style="text-align: center; width: 33%;"><button class="my-button" style="height: 28px;padding: 0px;margin: 0px;width: 60px;" onclick="buttonOnClick('(row 3-2-1)')">Click!</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align: center;">Row 2</td>
+                                        <td style="text-align: center;">Y</td>
+                                        <td style="text-align: center;"><button class="my-button" style="height: 28px;padding: 0px;margin: 0px;width: 60px;" onclick="buttonOnClick('(row 3-2-2)')">Click!</button></td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;">Row 3</td>
+                            <td style="text-align: center;">Z</td>
+                            <td style="text-align: center;"><button class="my-button" style="height: 28px;padding: 0px;margin: 0px;width: 60px;" onclick="buttonOnClick('(row 3-3)')">Click!</button></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div align="center">
+        Results:
+        <br />
+        <div class="results-container" data-testid="dti-results" id="results-container"></div>
+
+    </div>
+    <div align="center">
+        Results history:
+        <br />
+        <textarea class="results-history-container" id="results-history-container" readonly> </textarea>
+    </div>
+    </div>
+    <br />
+    <br />
+    <br />
+    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 24px">
+        <a href="https://jaktestowac.pl" style="color: dimgray">
+            <span style="display: flex; align-items: center; justify-self: center; font-size: medium">
+                <img src="/data/icons/favicon.png" style="width: 25px !important; height: 25px !important; padding: 0; border: none" alt="" />&nbsp&nbspjaktestowac.pl
+            </span>
+        </a>
+    </div>
+</body>
+
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="./js/practice-common.js"></script>
+
+</html>

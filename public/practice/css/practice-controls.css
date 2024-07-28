@@ -89,3 +89,22 @@
   align-items: center;
   justify-content: center;
 }
+
+.results-history-container {
+  border: 1px solid black;
+  width: 550px !important;
+  height: 80px;
+  text-align: justify;
+  -moz-text-align-last: center;
+  text-align-last: center;
+  -moz-text-align-last: center;
+  /* Firefox 12+ */
+}
+
+.results-container {
+  border: 1px solid black;
+  padding: 5px;
+  margin: 5px;
+  width: 50%;
+  height: 60px;
+}

@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="/css/controls.css" />
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/practice-controls.css" />
 </head>
 
 <body>
@@ -49,6 +50,11 @@
             </tr>
         </table>
         <table style="text-align: center; width: 200px;">
+            <tr>
+                <th style="text-align: center;">Row</th>
+                <th style="text-align: center;">Value</th>
+                <th style="text-align: center;">Action</th>
+            </tr>
             <tr style="text-align: center;">
                 <td style="text-align: center; width: 33%;">Row 1</td>
                 <td style="text-align: center; width: 33%;">X</td>
@@ -69,7 +75,13 @@
         <table style="margin: 0 auto; width: 500px !important;">
             <tr style="height: 48px;">
                 <td style="text-align: center;">Checkbox</td>
-                <td style="text-align: center;"><input type="checkbox" value="checkbox" onclick="checkBoxOnClick('', this)" />Checkbox <input type="checkbox" value="checkbox" onclick="checkBoxOnClick('(Second one!)', this)" />Checkbox</td>
+                <td style="text-align: center;">
+                    <input type="checkbox" value="checkbox" onclick="checkBoxOnClick('(Opt 1!)', this)" />Opt 1
+                    <input type="checkbox" value="checkbox" onclick="checkBoxOnClick('(Opt 2!)', this)" />Opt 2
+                    <input type="checkbox" value="checkbox" onclick="checkBoxOnClick('(Opt 3!)', this)" />Opt 3
+                    <input type="checkbox" value="checkbox" onclick="checkBoxOnClick('(Opt 4!)', this)" />Opt 4
+                    <input type="checkbox" value="checkbox" onclick="checkBoxOnClick('(Opt 5!)', this)" />Opt 5
+                </td>
             </tr>
             <tr style="height: 48px;">
                 <td style="text-align: center;">Input</td>
@@ -113,16 +125,12 @@
     <div align="center">
         Results:
         <br />
-        <div id="results-container" style="border: 1px solid black; padding: 5px; margin: 5px; width: 50%; height: 60px;">
-        </div>
+        <div class="results-container" data-testid="dti-results" id="results-container"></div>
     </div>
     <div align="center">
         Results history:
         <br />
-        <textarea id="results-history-container" style="border: 1px solid black;  width: 50%; height: 80px; 
-        text-align: justify;
-        -moz-text-align-last: center; /* Firefox 12+ */
-        text-align-last: center;" readonly> </textarea>
+        <textarea class="results-history-container" id="results-history-container" readonly> </textarea>
     </div>
     </div>
     <br />
