@@ -45,27 +45,27 @@
     },
     {
       "name": "likes",
-      "description": "Likes (⚠️ needs proper feature flag enabled)"
+      "description": "Likes (⚠️ needs `FEATURE_LIKES` feature flag enabled)"
     },
     {
       "name": "files",
-      "description": "Files (⚠️ needs proper feature flag enabled)"
+      "description": "Files (⚠️ needs `FEATURE_FILES` feature flag enabled)"
     },
     {
       "name": "labels",
-      "description": "Labels (⚠️ needs proper feature flag enabled)"
+      "description": "Labels (⚠️ needs `FEATURE_LABELS` feature flag enabled)"
     },
     {
       "name": "article-labels",
-      "description": "Article Labels (⚠️ needs proper feature flag enabled)"
+      "description": "Article Labels (⚠️ needs `FEATURE_LABELS` feature flag enabled)"
     },
     {
       "name": "bookmarks",
-      "description": "Bookmarks (⚠️ needs proper feature flag enabled)"
+      "description": "Bookmarks (⚠️ needs `FEATURE_USER_BOOKMARK_ARTICLES` feature flag enabled)"
     },
     {
       "name": "captcha",
-      "description": "Captcha (⚠️ needs proper feature flag enabled)"
+      "description": "Captcha (⚠️ needs `FEATURE_CAPTCHA` feature flag enabled)"
     },
     {
       "name": "search",

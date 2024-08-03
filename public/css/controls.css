@@ -1135,6 +1135,7 @@ body.darkmode {
   flex-direction: column;
   align-items: left;
   max-width: 500px;
+  width: 500px;
 }
 
 .flashpost-date {

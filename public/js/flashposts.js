@@ -148,17 +148,15 @@ function openTab(evt, tabName) {
     tablinks[i].className = tablinks[i].className.replace(" active", "");
   }
 
-  if (evt != undefined) {
+  if (evt !== undefined) {
     evt.currentTarget.className += " active";
   } else {
     document.getElementsByClassName("tablinks")[0].className += " active";
   }
 
-  const param = evt.currentTarget?.getAttribute("param");
+  const param = evt?.currentTarget?.getAttribute("param");
 
-  if (param === "last") {
-    getAndDisplayFlashposts(issueGetFlashpostsRequest);
-  } else if (param === "24h") {
+  if (param === "24h") {
     getAndDisplayFlashposts(() =>
       issueGetFlashpostsAfterDateRequest(new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
     );
@@ -168,6 +166,8 @@ function openTab(evt, tabName) {
     );
   } else if (param === "myPosts") {
     getAndDisplayFlashposts(() => issueGetFlashpostsForUserRequest(getId()));
+  } else {
+    getAndDisplayFlashposts(issueGetFlashpostsRequest);
   }
 }
 
@@ -415,6 +415,8 @@ document.querySelector(".create").onclick = () => {
 
       const overlay = document.querySelector(".overlay");
       overlay.classList.remove("active");
+
+      openTab(undefined, "tab1");
     } else {
       const additionalMsg = response.body?.error?.message ? response.body.error.message : "";
       showMessage(`You can't create this flashpost. ${additionalMsg}`, true);
