@@ -2,24 +2,25 @@ const urlFlashposts = "/api/flashposts";
 const usersEndpoint = "../../api/users";
 const defaultColor = "#dddddd";
 
-let alertElement = document.querySelector(".alert");
+// let alertElement = document.querySelector(".alert");
 
 const showMessage = (message, isError = false) => {
-  alertElement.innerHTML = message;
-  alertElement.style.display = "block";
-  alertElement.classList.remove("alert-error", "alert-success");
-  if (isError) {
-    alertElement.classList.add("alert-error");
-  } else {
-    alertElement.classList.add("alert-success");
-  }
-  let newMessageElement = alertElement.cloneNode(true);
-  alertElement.parentNode.replaceChild(newMessageElement, alertElement);
-  alertElement = newMessageElement;
+  displaySimpleAlert(message, isError);
+  // alertElement.innerHTML = message;
+  // alertElement.style.display = "block";
+  // alertElement.classList.remove("alert-error", "alert-success");
+  // if (isError) {
+  //   alertElement.classList.add("alert-error");
+  // } else {
+  //   alertElement.classList.add("alert-success");
+  // }
+  // let newMessageElement = alertElement.cloneNode(true);
+  // alertElement.parentNode.replaceChild(newMessageElement, alertElement);
+  // alertElement = newMessageElement;
 
-  setTimeout(() => {
-    alertElement.style.display = "none";
-  }, 3000);
+  // setTimeout(() => {
+  //   alertElement.style.display = "none";
+  // }, 3000);
 };
 
 async function issueGetFlashpostsRequest() {

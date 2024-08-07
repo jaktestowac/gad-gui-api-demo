@@ -777,3 +777,26 @@ function calculateLuminance(rgb) {
   const luminance = 0.2126 * sRGB[0] + 0.7152 * sRGB[1] + 0.0722 * sRGB[2];
   return luminance;
 }
+
+function displaySimpleAlert(text, isError = false) {
+  const alertDiv = document.createElement("div");
+  alertDiv.classList.add("simple-alert-on-left");
+  alertDiv.textContent = text;
+  alertDiv.style.width = "250px";
+  alertDiv.setAttribute("id", "simple-alert");
+  alertDiv.setAttribute("data-testid", "dti-simple-alert");
+  if (isError) {
+    alertDiv.classList.add("alert-error");
+    alertDiv.classList.add("alert-failure-emoji");
+  } else {
+    alertDiv.classList.add("alert-success");
+    alertDiv.classList.add("alert-success-emoji");
+  }
+  document.body.appendChild(alertDiv);
+
+  document.querySelector("#alerts-placeholder").appendChild(alertDiv);
+
+  setTimeout(function () {
+    alertDiv.style.display = "none";
+  }, 3000);
+}

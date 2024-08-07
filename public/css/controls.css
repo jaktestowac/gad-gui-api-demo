@@ -1222,3 +1222,48 @@ body.darkmode {
 [data-tooltip]:not([data-tooltip-persistent])::before {
   pointer-events: none;
 }
+
+.simple-alert-on-left {
+  cursor: pointer;
+  width: 260px;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px 0;
+  right: 0%;
+  top: 50px;
+  margin: 2px;
+  padding: 2px;
+
+  padding: 0.75rem 1.25rem;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+  float: right;
+  z-index: 9999;
+
+  animation: server-response 0s 0.2;
+  -webkit-animation: server-response 0.2s 1;
+  animation-fill-mode: forwards;
+
+  animation-delay: 2s;
+  -webkit-animation-delay: 2s;
+  /* Safari and Chrome */
+  -webkit-animation-fill-mode: forwards;
+}
+
+.alert-warning-emoji::before {
+  content: "⚠️";
+  margin-right: 5px;
+  float: left;
+}
+
+.alert-success-emoji::before {
+  content: "✅";
+  margin-right: 5px;
+  float: left;
+}
+
+.alert-failure-emoji::before {
+  content: "❌";
+  margin-right: 5px;
+  float: left;
+}
