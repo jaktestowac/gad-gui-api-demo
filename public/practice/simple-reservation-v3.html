@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/practice-controls.css" />
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+    <style>
+        th,
+        td {
+            border-bottom: 2px solid #dddddd;
+        }
+
+        .overlay.active {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .sidepanel {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 9999;
+            top: 0;
+            left: 0;
+            background-color: #202020;
+            overflow-x: hidden;
+            padding-top: 60px;
+            transition: 0.5s;
+            display: flex !important;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .side-panel-label {
+            color: white;
+            font-size: 16px;
+            padding: 8px 8px 8px 8px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .side-panel-input {
+            color: white;
+            font-size: 16px;
+            padding: 8px 8px 8px 8px;
+            text-decoration: none;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .side-panel-button {
+            color: white;
+            font-size: 12px;
+            padding: 8px 8px 8px 8px;
+            text-decoration: none;
+            display: block;
+            margin: 0 auto;
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .side-panel-button:hover {
+            background-color: #45a049;
+        }
+
+        .side-panel-button:active {
+            background-color: #3e8e41;
+        }
+
+        .sidepanel a {
+            padding: 8px 8px 8px 8px;
+            text-decoration: none;
+            font-size: 25px;
+            color: #818181;
+            transition: 0.3s;
+            display: flex !important;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .sidepanel a:hover {
+            color: #f1f1f1;
+        }
+
+        .sidepanel a:hover {
+            color: #f1f1f1;
+            border: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .sidepanel .closebtn {
+            font-size: 36px;
+            display: block;
+        }
+
+        .openbtn {
+            height: 100%;
+            position: fixed;
+            background-color: #202020;
+            overflow-x: hidden;
+            cursor: pointer;
+            border: none;
+            color: white;
+            z-index: 1;
+            top: 60px;
+            font-size: 32px;
+            width: 60px !important;
+        }
+
+        .openbtn:hover {
+            background-color: #444;
+        }
+
+        .options-side-panel-icons {
+            width: 32px;
+            font-size: 32px;
+            padding-top: 12px;
+        }
+    </style>
+
+    <br />
+    <br />
+    <br />
+    <div id="side-panel" class="sidepanel"></div>
+    <div id="overlay" class="overlay"></div>
+    <div align="center">
+        <h2>Simple Reservation V3</h2>
+
+        <div style="display: flex; align-content: center; display: flex; align-items: center; justify-content: center">
+
+
+
+        </div>
+        <td style="text-align: center; padding-right: 0px;"><button class="calculate-button" onclick="calculateOnClick(this)">Calculate</button></td>
+    </div>
+    <div align="center">
+        Results:
+        <br />
+        <div class="results-container" data-testid="dti-results-container" id="results-container"></div>
+    </div>
+    <div align="center">
+        Results history:
+        <br />
+        <textarea class="results-history-container" id="results-history-container" readonly> </textarea>
+    </div>
+    </div>
+    <br />
+    <br />
+    <br />
+    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 24px">
+        <a href="https://jaktestowac.pl" style="color: dimgray">
+            <span style="display: flex; align-items: center; justify-self: center; font-size: medium">
+                <img src="/data/icons/favicon.png" style="width: 25px !important; height: 25px !important; padding: 0; border: none" alt="" />&nbsp&nbspjaktestowac.pl
+            </span>
+        </a>
+    </div>
+</body>
+
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="./js/practice-common.js"></script>
+
+<script>
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+    });
+
+    const features = []
+    let totalPrices = 0
+
+    function checkBoxOnClick(feature, price, checkbox) {
+        if (checkbox.checked === true) {
+            if (!features.includes(feature)) {
+                features.push(feature);
+                totalPrices += price;
+            }
+        } else {
+            features.splice(features.indexOf(feature), 1);
+            totalPrices -= price;
+        }
+    }
+
+    function areFieldsValid() {
+        return true
+    }
+
+    function calculateOnClick(el) {
+
+    }
+
+    function printResults(results) {
+        document.getElementById('results-container').innerHTML = results;
+        document.getElementById('results-history-container').innerHTML = results + '\n' + document.getElementById('results-history-container').innerHTML;
+    }
+
+    function roundToTwoPlaces(num) {
+        return Math.round(num * 100) / 100
+    }
+
+
+    function openNav() {
+        document.getElementById("options-side-panel").style.width = "200px";
+
+        const overlayElement = document.getElementById('overlay')
+        overlayElement.classList.add('active')
+    }
+
+    function closeNav() {
+        document.getElementById("options-side-panel").style.width = "0";
+
+        const overlayElement = document.getElementById('overlay')
+        overlayElement.classList.remove('active')
+    }
+
+    function populateProjectsSidePanel() {
+        const projectsSidePanel = document.getElementById("side-panel");
+        projectsSidePanel.innerHTML = "";
+        const divElement = document.createElement("div");
+        divElement.id = "options-side-panel";
+        divElement.classList.add("sidepanel");
+
+        const openButtonElement = document.createElement("button");
+        openButtonElement.classList.add("openbtn");
+        openButtonElement.onclick = openNav;
+        openButtonElement.innerHTML = `<i class="fa-solid fa-gear"></i>`;
+
+        const closeElement = document.createElement("a");
+        closeElement.href = "javascript:void(0)";
+        closeElement.classList.add("closebtn");
+        closeElement.onclick = closeNav;
+        closeElement.innerHTML = `<i class="fa-regular fa-circle-xmark"></i>`;
+        divElement.appendChild(closeElement);
+
+        const labelElement = document.createElement("label");
+        labelElement.textContent = "Coupon:";
+        labelElement.classList.add("side-panel-label");
+        const inputElement = document.createElement("input");
+        labelElement.classList.add("side-panel-input");
+        inputElement.type = "text";
+        inputElement.id = "name-input";
+
+        const applyButtonElement = document.createElement("button");
+        applyButtonElement.textContent = "Apply";
+        applyButtonElement.addEventListener("click", function () {
+            // Add your button click event logic here
+        });
+        applyButtonElement.classList.add("side-panel-button");
+        divElement.appendChild(labelElement);
+        divElement.appendChild(inputElement);
+        divElement.appendChild(applyButtonElement);
+
+        projectsSidePanel.appendChild(divElement);
+        projectsSidePanel.parentElement.appendChild(openButtonElement);
+    }
+
+
+    populateProjectsSidePanel();
+
+</script>
+
+</html>

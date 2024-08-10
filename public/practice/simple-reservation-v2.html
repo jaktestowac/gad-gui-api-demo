@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="/css/controls.css" />
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/practice-controls.css" />
 </head>
 
 <body>
@@ -162,15 +163,12 @@
     <div align="center">
         Results:
         <br />
-        <div id="results-container" data-testid="dti-results" style="border: 1px solid black; padding: 5px; margin: 5px; width: 50%; height: 80px; font-size: 14px;"></div>
+        <div class="results-container" data-testid="dti-results-container" id="results-container"></div>
     </div>
     <div align="center">
         Results history:
         <br />
-        <textarea id="results-history-container" style="border: 1px solid black;  width: 50%; height: 80px; 
-        text-align: justify;
-        -moz-text-align-last: center; /* Firefox 12+ */
-        text-align-last: center;" readonly> </textarea>
+        <textarea class="results-history-container" id="results-history-container" readonly> </textarea>
     </div>
     </div>
     <br />

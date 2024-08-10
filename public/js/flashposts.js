@@ -2,24 +2,25 @@ const urlFlashposts = "/api/flashposts";
 const usersEndpoint = "../../api/users";
 const defaultColor = "#dddddd";
 
-let alertElement = document.querySelector(".alert");
+// let alertElement = document.querySelector(".alert");
 
 const showMessage = (message, isError = false) => {
-  alertElement.innerHTML = message;
-  alertElement.style.display = "block";
-  alertElement.classList.remove("alert-error", "alert-success");
-  if (isError) {
-    alertElement.classList.add("alert-error");
-  } else {
-    alertElement.classList.add("alert-success");
-  }
-  let newMessageElement = alertElement.cloneNode(true);
-  alertElement.parentNode.replaceChild(newMessageElement, alertElement);
-  alertElement = newMessageElement;
+  displaySimpleAlert(message, isError);
+  // alertElement.innerHTML = message;
+  // alertElement.style.display = "block";
+  // alertElement.classList.remove("alert-error", "alert-success");
+  // if (isError) {
+  //   alertElement.classList.add("alert-error");
+  // } else {
+  //   alertElement.classList.add("alert-success");
+  // }
+  // let newMessageElement = alertElement.cloneNode(true);
+  // alertElement.parentNode.replaceChild(newMessageElement, alertElement);
+  // alertElement = newMessageElement;
 
-  setTimeout(() => {
-    alertElement.style.display = "none";
-  }, 3000);
+  // setTimeout(() => {
+  //   alertElement.style.display = "none";
+  // }, 3000);
 };
 
 async function issueGetFlashpostsRequest() {
@@ -148,17 +149,15 @@ function openTab(evt, tabName) {
     tablinks[i].className = tablinks[i].className.replace(" active", "");
   }
 
-  if (evt != undefined) {
+  if (evt !== undefined) {
     evt.currentTarget.className += " active";
   } else {
     document.getElementsByClassName("tablinks")[0].className += " active";
   }
 
-  const param = evt.currentTarget?.getAttribute("param");
+  const param = evt?.currentTarget?.getAttribute("param");
 
-  if (param === "last") {
-    getAndDisplayFlashposts(issueGetFlashpostsRequest);
-  } else if (param === "24h") {
+  if (param === "24h") {
     getAndDisplayFlashposts(() =>
       issueGetFlashpostsAfterDateRequest(new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
     );
@@ -168,6 +167,8 @@ function openTab(evt, tabName) {
     );
   } else if (param === "myPosts") {
     getAndDisplayFlashposts(() => issueGetFlashpostsForUserRequest(getId()));
+  } else {
+    getAndDisplayFlashposts(issueGetFlashpostsRequest);
   }
 }
 
@@ -415,6 +416,8 @@ document.querySelector(".create").onclick = () => {
 
       const overlay = document.querySelector(".overlay");
       overlay.classList.remove("active");
+
+      openTab(undefined, "tab1");
     } else {
       const additionalMsg = response.body?.error?.message ? response.body.error.message : "";
       showMessage(`You can't create this flashpost. ${additionalMsg}`, true);
