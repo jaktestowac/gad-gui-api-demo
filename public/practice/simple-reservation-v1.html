@@ -197,7 +197,7 @@
 
     function buttonCheckoutOnClick(el) {
         if (!validateFields()) {
-            printResults('Please select date')
+            writeResults('Please select date')
             return
         }
 
@@ -208,12 +208,7 @@
         const finalPrice = totalPrices + datePrice
 
         const result = `Reservation for ${dateStr} with features: ${featuresStr} for total price: ${finalPrice}$`
-        printResults(result)
-    }
-
-    function printResults(results) {
-        document.getElementById('results-container').innerHTML = results;
-        document.getElementById('results-history-container').innerHTML = results + '\n' + document.getElementById('results-history-container').innerHTML;
+        writeResults(result)
     }
 
 </script>

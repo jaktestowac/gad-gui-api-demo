@@ -45,6 +45,10 @@ function displayBanner() {
     e.preventDefault();
     hideInfobar();
     saveCookieAcceptInCookies(0.01);
+    // eslint-disable-next-line no-console
+    console.log(
+      "Charlotte: I'm stuck. Does it get easier? Bob: No. - Yes, it gets easier. Charlotte: Oh yeah? Look at you. Bob: Thanks.'"
+    );
   });
 }
 

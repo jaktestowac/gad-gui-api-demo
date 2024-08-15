@@ -418,6 +418,8 @@ document.querySelector(".create").onclick = () => {
       overlay.classList.remove("active");
 
       openTab(undefined, "tab1");
+      // eslint-disable-next-line no-console
+      console.log("12:50, press Return.");
     } else {
       const additionalMsg = response.body?.error?.message ? response.body.error.message : "";
       showMessage(`You can't create this flashpost. ${additionalMsg}`, true);

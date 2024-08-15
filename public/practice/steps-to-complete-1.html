@@ -33,7 +33,7 @@
             </tr>
             <tr style="height: 48px;">
                 <td style="text-align: center;" id="description">Start by clicking this button:</td>
-                <td style="text-align: center;"><button id="id-button-element-1" class="my-button" data-testid="dti-button-element-1" onclick="button1OnClick()">Click me!</button></td>
+                <td style="text-align: center;"><button id="id-button-element-1" class="my-button" data-testid="dti-button-element-1" onclick="button1OnClick(this)">Click me!</button></td>
             </tr>
             <tr style="height: 48px;">
                 <td style="text-align: center;" id="description">Then click this button</td>
@@ -139,9 +139,11 @@
             stepStatuses.step2.completed = true;
             const div = createElementInputAndButtonToValidateText(stepStatuses.step2.nextElementId, "Secret", "Validate!", () => {
                 if (isTextValidInInput(stepStatuses.step2.nextElementId, "Secret")) {
-                    stepStatuses.step3.completed = true;
-                    const btn = createElementButton(stepStatuses.step3.nextElementId, "Click me!", button3OnClick);
-                    document.getElementById(stepStatuses.step3.nextTdElementId).appendChild(btn);
+                    if (stepStatuses.step3.completed === false) {
+                        stepStatuses.step3.completed = true;
+                        const btn = createElementButton(stepStatuses.step3.nextElementId, "Click me!", button3OnClick);
+                        document.getElementById(stepStatuses.step3.nextTdElementId).appendChild(btn);
+                    }
                 } else {
                     stepStatuses.step3.completed = false;
                     resetStepProgress()
@@ -158,9 +160,11 @@
             stepStatuses.step4.completed = true;
             const div = createCheckboxAndButtonToValidateText(stepStatuses.step4.nextElementId, "Validate!", () => {
                 if (isCheckboxSelected(stepStatuses.step4.nextElementId)) {
-                    stepStatuses.step5.completed = true;
-                    const btn = createElementButton(stepStatuses.step5.nextElementId, "Click me!", finalButtonOnClick);
-                    document.getElementById(stepStatuses.step5.nextTdElementId).appendChild(btn);
+                    if (stepStatuses.step5.completed === false) {
+                        stepStatuses.step5.completed = true;
+                        const btn = createElementButton(stepStatuses.step5.nextElementId, "Click me!", finalButtonOnClick);
+                        document.getElementById(stepStatuses.step5.nextTdElementId).appendChild(btn);
+                    }
                 } else {
                     stepStatuses.step5.completed = false;
                     resetStepProgress()

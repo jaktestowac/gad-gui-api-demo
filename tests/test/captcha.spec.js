@@ -144,7 +144,7 @@ describe("Endpoint /captcha", async () => {
         const body = {
           username: "test",
           password: "test",
-          birthdate: "2000-01-01",
+          birthDate: "2000-01-01",
           avatar: "1",
         };
 
@@ -159,7 +159,7 @@ describe("Endpoint /captcha", async () => {
         const body = {
           username: "test",
           password: "test",
-          birthdate: "2000-01-01",
+          birthDate: "2000-01-01",
           avatar: "1",
         };
 
@@ -183,7 +183,7 @@ describe("Endpoint /captcha", async () => {
         const body = {
           username: "test",
           password: "test",
-          birthdate: "2000-01-01",
+          birthDate: "2000-01-01",
           avatar: "1",
         };
 

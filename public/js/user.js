@@ -22,6 +22,8 @@ const showResponseOnDelete = (response) => {
 
 const showResponseOnUpdate = (response) => {
   if (response.status === 200) {
+    // eslint-disable-next-line no-console
+    console.log("2. Everything around us can be represented and understood through numbers.");
     showMessage("User was updated. Please loggin again", false);
 
     // if(getId() !== "admin" ) {
@@ -221,10 +223,12 @@ const attachEventHandlers = (id = "") => {
   };
   document.querySelector(".update.save").onclick = handleCreate;
 
-  document.querySelector("#btnDownloadCsv").onclick = () => {
-    download("user_data.csv");
-  };
-  document.querySelector("#btnDownloadCsv").disabled = false;
+  if (document.querySelector("#btnDownloadCsv") !== null) {
+    document.querySelector("#btnDownloadCsv").onclick = () => {
+      download("user_data.csv");
+    };
+    document.querySelector("#btnDownloadCsv").disabled = false;
+  }
 };
 
 const download = (filename) => {
@@ -284,6 +288,8 @@ const showEmailEditForm = (ev) => {
       displayEmailForm(item, cardElement);
       attachEmailFormEventHandlers(item, cardElement, id);
     });
+  // eslint-disable-next-line no-console
+  console.log("3. If you graph these numbers, patterns emerge. Therefore: There are patterns everywhere in nature.");
   return false;
 };
 

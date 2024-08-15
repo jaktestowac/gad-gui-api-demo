@@ -15,7 +15,7 @@ function renderResponse(req, res) {
     if (users?.length > 0) {
       usersMapped = users.map((user) => {
         user.creationDate = undefined;
-        user.birthdate = undefined;
+        user.birthDate = undefined;
 
         return user;
       });
@@ -24,7 +24,7 @@ function renderResponse(req, res) {
       usersMapped = users;
 
       usersMapped.creationDate = undefined;
-      usersMapped.birthdate = undefined;
+      usersMapped.birthDate = undefined;
     }
     res.locals.data = usersMapped;
   }
@@ -45,7 +45,7 @@ function renderResponse(req, res) {
         user.password = "****";
 
         user.creationDate = undefined;
-        user.birthdate = undefined;
+        user.birthDate = undefined;
 
         return user;
       });
@@ -63,7 +63,7 @@ function renderResponse(req, res) {
       usersMapped.password = "****";
 
       usersMapped.creationDate = undefined;
-      usersMapped.birthdate = undefined;
+      usersMapped.birthDate = undefined;
 
       if (usersMapped?._inactive === true) {
         usersMapped = {};

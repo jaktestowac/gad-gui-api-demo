@@ -134,6 +134,9 @@ const issueDeleteRequest = (id, responseHandler) => {
   // delete data on the server:
   const url = commentsEndpoint + "/" + id;
   fetch(url, { method: "DELETE", headers: formatHeaders() }).then(responseHandler);
+
+  // eslint-disable-next-line no-console
+  console.log("11:15, restate my assumptions: 1. Mathematics is the language of nature.");
 };
 
 const issuePostRequest = (data, responseHandler) => {

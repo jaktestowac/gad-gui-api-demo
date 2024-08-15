@@ -91,10 +91,10 @@ function handleUsers(req, res) {
       }
     });
 
-    if (!isUndefined(foundMail)) {
-      res.status(HTTP_CONFLICT).send(formatErrorResponse("Email not unique"));
-      return;
-    }
+    // if (!isUndefined(foundMail)) {
+    //   res.status(HTTP_CONFLICT).send(formatErrorResponse("Email not unique"));
+    //   return;
+    // }
 
     // TODO: test this
     // if (userId === "users") {
@@ -115,12 +115,16 @@ function handleUsers(req, res) {
         userId = parseInt(userId);
       }
       req.body.creationDate = getCurrentDateTimeISO();
+      req.body.birthDate = foundUser["birthDate"];
       req.body.id = userId;
     }
     if (!isUndefined(foundUser)) {
+      // update
       if (!req.body.password || req.body.password == "") {
         req.body.password = foundUser["password"];
       }
+      req.body.creationDate = foundUser["creationDate"];
+      req.body.birthDate = foundUser["birthDate"];
     }
   }
 

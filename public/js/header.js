@@ -161,11 +161,11 @@ const rightMenu = (path = "", withUserMenu = true) => {
 const footerHTML = (date) => {
   return `
     <footer>
-    <div class="container">
+    <div class="container" id="footer-container">
     Version: <span id="version"></span>
-    &copy; Copyright ${date}
-  <a href="https://jaktestowac.pl" target="_blank" rel="noopener">jaktestowac.pl</a>
-  </div>
+    <span id="copyright-sign">&copy;</span> Copyright ${date}
+    <a href="https://jaktestowac.pl" target="_blank" rel="noopener">jaktestowac.pl</a>
+    </div>
   </footer>
   `;
 };

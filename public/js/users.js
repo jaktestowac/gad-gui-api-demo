@@ -147,14 +147,14 @@ const showMessage = (message, isError = false) => {
 
 const handleCreate = () => {
   const container = document.querySelector(".add-new-panel");
-  let birthdate = container.querySelector(".datepicker").value;
-  birthdate = getISODateStringWithTimezoneOffset(birthdate);
+  let birthDate = container.querySelector(".datepicker").value;
+  birthDate = getISODateStringWithTimezoneOffset(birthDate);
   let data = {
     firstname: container.querySelector(".firstname").value,
     lastname: container.querySelector(".lastname").value,
     email: container.querySelector(".email").value,
     password: container.querySelector(".password").value,
-    birthdate,
+    birthDate,
     avatar: `.\\data\\users\\${container.querySelector(".avatar").value}`,
   };
   issuePostRequest(data, issueGetRequest);
