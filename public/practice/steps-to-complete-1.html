@@ -44,14 +44,6 @@
                 <td style="text-align: center;" id="description-3"></td>
                 <td style="text-align: center;" id="id-step-3"></td>
             </tr>
-            <tr style="height: 48px;">
-                <td style="text-align: center;" id="description-4"></td>
-                <td style="text-align: center;" id="id-step-4"></td>
-            </tr>
-            <tr style="height: 48px;">
-                <td style="text-align: center;" id="description-5"></td>
-                <td style="text-align: center;" id="id-step-5"></td>
-            </tr>
 
         </table>
     </div>
@@ -89,9 +81,7 @@
     const stepStatuses = {
         1: { completed: false, nextElementId: "2", thisElementId: "1" },
         2: { completed: false, nextElementId: "3", thisElementId: "2" },
-        3: { completed: false, nextElementId: "4", thisElementId: "3" },
-        4: { completed: false, nextElementId: "5", thisElementId: "4" },
-        5: { completed: false, isFinal: true, thisElementId: "4" },
+        3: { completed: false, isFinal: true, thisElementId: "3" },
     };
 
     function buttonOnClick(element, currentStep) {
