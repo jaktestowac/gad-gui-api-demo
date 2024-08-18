@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>🦎 GAD </title>
+    <title>🦎 GAD - Simple game v1 - Delayed buttons</title>
     <link rel="icon" href="/data/icons/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="/css/controls.css" />
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/practice-controls.css" />
 </head>
 
 <body>
@@ -23,7 +24,7 @@
     <br />
     <br />
     <div align="center">
-        <h2>Follow the steps</h2>
+        <h2>Simple game v1 - Delayed buttons</h2>
 
         <table class="practice-table" style="margin: 0 auto; width: 500px !important;">
 
@@ -32,28 +33,24 @@
                 <th id="id-elements" data-testid="dti-elements" style="width: 300px;">Elements for Test Automation</th>
             </tr>
             <tr style="height: 48px;">
-                <td style="text-align: center;" id="description">Start by clicking this button:</td>
-                <td style="text-align: center;"><button id="id-button-element-1" class="my-button" data-testid="dti-button-element-1" onclick="button1OnClick(this)">Click me!</button></td>
+                <td style="text-align: center;" id="description-1">Start by clicking this button:</td>
+                <td style="text-align: center;"><button id="id-button-element-1" class="my-button" data-testid="dti-button-element-1" onclick="buttonOnClick(this, 1)">Click me!</button></td>
             </tr>
             <tr style="height: 48px;">
-                <td style="text-align: center;" id="description">Then click this button</td>
+                <td style="text-align: center;" id="description-2"></td>
                 <td style="text-align: center;" id="id-step-2"></td>
             </tr>
             <tr style="height: 48px;">
-                <td style="text-align: center;" id="description">Solve this puzzle</td>
+                <td style="text-align: center;" id="description-3"></td>
                 <td style="text-align: center;" id="id-step-3"></td>
             </tr>
             <tr style="height: 48px;">
-                <td style="text-align: center;" id="description">Click this button</td>
+                <td style="text-align: center;" id="description-4"></td>
                 <td style="text-align: center;" id="id-step-4"></td>
             </tr>
             <tr style="height: 48px;">
-                <td style="text-align: center;" id="description">Solve this puzzle</td>
+                <td style="text-align: center;" id="description-5"></td>
                 <td style="text-align: center;" id="id-step-5"></td>
-            </tr>
-            <tr style="height: 48px;">
-                <td style="text-align: center;" id="description">Click this button</td>
-                <td style="text-align: center;" id="id-step-6"></td>
             </tr>
 
         </table>
@@ -62,8 +59,13 @@
     <div align="center">
         Results:
         <br />
-        <div id="results-container" style="border: 1px solid black; padding: 10px; margin: 10px; width: 50%; height: 80px;">
-        </div>
+        <div class="results-container" data-testid="dti-results-container" id="results-container"></div>
+    </div>
+    </div>
+    <div align="center">
+        Results history:
+        <br />
+        <textarea class="results-history-container" id="results-history-container" readonly> </textarea>
     </div>
     <br />
     <br />
@@ -85,193 +87,54 @@
 <script type="text/javascript" src="./js/data-generators.js"></script>
 <script>
     const stepStatuses = {
-        step1: { completed: false, nextElementId: "element-2", nextTdElementId: "id-step-2", thisTdElementId: "id-step-1" },
-        step2: { completed: false, elementId: "id-element-2", nextElementId: "element-3", nextTdElementId: "id-step-3", thisTdElementId: "id-step-2" },
-        step3: { completed: false, elementId: "id-element-3", nextElementId: "element-4", nextTdElementId: "id-step-4", thisTdElementId: "id-step-3" },
-        step4: { completed: false, elementId: "id-element-4", nextElementId: "element-5", nextTdElementId: "id-step-5", thisTdElementId: "id-step-4" },
-        step5: { completed: false, elementId: "id-element-5", nextElementId: "element-6", nextTdElementId: "id-step-6", thisTdElementId: "id-step-5" },
-        step6: { completed: false, elementId: "id-element-6", thisTdElementId: "id-step-6" },
+        1: { completed: false, nextElementId: "2", thisElementId: "1" },
+        2: { completed: false, nextElementId: "3", thisElementId: "2" },
+        3: { completed: false, nextElementId: "4", thisElementId: "3" },
+        4: { completed: false, nextElementId: "5", thisElementId: "4" },
+        5: { completed: false, isFinal: true, thisElementId: "4" },
     };
 
-    function checkIfAllStepsCompleted() {
-        const steps = Object.keys(stepStatuses);
-        for (let i = 0; i < steps.length; i++) {
-            if (stepStatuses[steps[i]].completed === false) {
-                return false;
+    function buttonOnClick(element, currentStep) {
+        if (currentStep === 1) {
+            writeResults(`Step ${currentStep} button clicked`);
+        }
+
+        const delayForEnabled = getRandomValue(1000, 2500)
+        stepStatuses[currentStep].completed = true;
+        const nextStep = stepStatuses[currentStep].nextElementId;
+
+        element.disabled = true;
+        document.getElementById(`id-step-${nextStep}`)
+        const nextButton = document.createElement("button");
+        nextButton.id = `id-button-element-${nextStep}`;
+        nextButton.className = "my-button";
+        nextButton.disabled = true;
+        nextButton.innerText = `Step ${nextStep}!`;
+        document.getElementById(`id-step-${nextStep}`).appendChild(nextButton);
+
+        nextButton.onclick = function () {
+            if (stepStatuses[nextStep].isFinal === true) {
+                writeResults(`Step ${nextStep} button clicked - this is the final step!`);
+                nextButton.disabled = true;
+                return;
+            } else {
+                buttonOnClick(nextButton, nextStep);
+                writeResults(`Step ${nextStep} button clicked`);
+                return;
             }
-        }
-        return true;
+        };
+
+        const nextDescription = `Click the button for Step ${nextStep}: <br />(will be enabled in ${getSecondsFromMilliseconds(delayForEnabled)} seconds)`;
+        document.getElementById(`description-${nextStep}`).innerHTML = nextDescription;
+
+        setTimeout(function () {
+            nextButton.disabled = false;
+        }, delayForEnabled);
     }
 
-    function resetStepProgress() {
-        const steps = Object.keys(stepStatuses);
-        for (let i = 0; i < steps.length; i++) {
-            stepStatuses[steps[i]].completed = false;
-        }
+    function getSecondsFromMilliseconds(milliseconds) {
+        return Math.round(milliseconds / 100) / 10;
     }
-
-    function removeElements(stepStatuses) {
-        const steps = Object.keys(stepStatuses);
-        for (let i = 0; i < steps.length; i++) {
-            if (stepStatuses[steps[i]].completed === false) {
-                if (stepStatuses[steps[i]].elementId !== undefined) {
-                    const element = document.getElementById(stepStatuses[steps[i]].elementId);
-                    if (element) {
-                        element.remove();
-                    }
-                }
-            }
-        }
-    }
-
-    function button1OnClick() {
-        if (stepStatuses.step1.completed === false) {
-            stepStatuses.step1.completed = true;
-            const btn = createElementButton(stepStatuses.step1.nextElementId, "Click me!", button2OnClick);
-            document.getElementById(stepStatuses.step1.nextTdElementId).appendChild(btn);
-            document.getElementById("results-container").innerHTML = "";
-        }
-    }
-
-
-    function button2OnClick() {
-        if (stepStatuses.step2.completed === false) {
-            stepStatuses.step2.completed = true;
-            const div = createElementInputAndButtonToValidateText(stepStatuses.step2.nextElementId, "Secret", "Validate!", () => {
-                if (isTextValidInInput(stepStatuses.step2.nextElementId, "Secret")) {
-                    if (stepStatuses.step3.completed === false) {
-                        stepStatuses.step3.completed = true;
-                        const btn = createElementButton(stepStatuses.step3.nextElementId, "Click me!", button3OnClick);
-                        document.getElementById(stepStatuses.step3.nextTdElementId).appendChild(btn);
-                    }
-                } else {
-                    stepStatuses.step3.completed = false;
-                    resetStepProgress()
-                    removeElements(stepStatuses);
-                    document.getElementById("results-container").innerHTML = "Failure! Try again!";
-                }
-            });
-            document.getElementById(stepStatuses.step2.nextTdElementId).appendChild(div);
-        }
-    }
-
-    function button3OnClick() {
-        if (stepStatuses.step4.completed === false) {
-            stepStatuses.step4.completed = true;
-            const div = createCheckboxAndButtonToValidateText(stepStatuses.step4.nextElementId, "Validate!", () => {
-                if (isCheckboxSelected(stepStatuses.step4.nextElementId)) {
-                    if (stepStatuses.step5.completed === false) {
-                        stepStatuses.step5.completed = true;
-                        const btn = createElementButton(stepStatuses.step5.nextElementId, "Click me!", finalButtonOnClick);
-                        document.getElementById(stepStatuses.step5.nextTdElementId).appendChild(btn);
-                    }
-                } else {
-                    stepStatuses.step5.completed = false;
-                    resetStepProgress()
-                    removeElements(stepStatuses);
-                    document.getElementById("results-container").innerHTML = "Failure! Try again!";
-                }
-            });
-            document.getElementById(stepStatuses.step4.nextTdElementId).appendChild(div);
-        }
-    }
-
-    function finalButtonOnClick() {
-        stepStatuses.step6.completed = true;
-        if (checkIfAllStepsCompleted()) {
-            document.getElementById("results-container").innerHTML = "Congratulations! You have completed all steps!";
-        } else {
-            resetStepProgress()
-            removeElements(stepStatuses);
-            document.getElementById("results-container").innerHTML = "Failure! Try again!";
-        }
-    }
-
-    function isTextValidInInput(elementId, expectedText) {
-        const input = document.getElementById(`id-${elementId}-input`);
-        return input.value === expectedText;
-    }
-
-    function isCheckboxSelected(elementId) {
-        const checkbox = document.getElementById(`id-${elementId}-input`);
-        return checkbox.checked;
-    }
-
-    function createElementButton(id, text, onClick) {
-        const btn = document.createElement("button");
-        btn.id = `id-${id}`;
-        btn.className = "my-button";
-        btn.setAttribute("data-testid", `dti-${id}`);
-        btn.onclick = onClick;
-        btn.innerHTML = text;
-        return btn;
-    }
-
-    function createElementInputAndButtonToValidateText(id, expectedText, buttonText, onClick) {
-        const input = document.createElement("input");
-        input.id = `id-${id}-input`;
-        input.setAttribute("data-testid", `dti-${id}-input`);
-        input.type = "text";
-        input.placeholder = `Type "${expectedText}" here`;
-        input.style.marginRight = "10px";
-        input.style.width = "160px";
-        input.style.fontSize = "16px";
-
-        const btn = document.createElement("button");
-        btn.id = `id-${id}-button`;
-        btn.className = "my-button";
-        btn.setAttribute("data-testid", `dti-${id}-button`);
-        btn.onclick = onClick;
-        btn.innerHTML = buttonText;
-
-        const div = document.createElement("div");
-        div.style.display = "flex";
-        div.style.alignItems = "center";
-        div.style.justifyContent = "center";
-        div.style.fontSize = "24px";
-        div.id = `id-${id}`;
-        div.appendChild(input);
-        div.appendChild(btn);
-
-        return div;
-    }
-
-    function createCheckboxAndButtonToValidateText(id, buttonText, onClick) {
-        const input = document.createElement("input");
-        input.id = `id-${id}-input`;
-        input.setAttribute("data-testid", `dti-${id}-input`);
-        input.type = "checkbox";
-        input.style.width = "30px";
-        input.style.fontSize = "16px";
-        input.style.marginRight = "10px";
-
-        const label = document.createElement("label");
-        label.htmlFor = `id-${id}-input`;
-        label.style.fontSize = "14px";
-        label.innerHTML = "Check the box:";
-        label.style.marginRight = "10px";
-
-
-        const btn = document.createElement("button");
-        btn.id = `id-${id}-button`;
-        btn.className = "my-button";
-        btn.setAttribute("data-testid", `dti-${id}-button`);
-        btn.onclick = onClick;
-        btn.innerHTML = buttonText;
-
-        const div = document.createElement("div");
-        div.style.display = "flex";
-        div.style.alignItems = "center";
-        div.style.justifyContent = "center";
-        div.style.fontSize = "24px";
-        div.id = `id-${id}`;
-        div.appendChild(label);
-        div.appendChild(input);
-        div.appendChild(btn);
-
-        return div;
-    }
-
 
 </script>
 
