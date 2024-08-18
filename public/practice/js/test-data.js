@@ -606,11 +606,15 @@ const selectorElementPair = [
     html: `<textarea style="display: inherit;" id="id-textarea" data-testid="dti-textarea" onchange="textareaOnChange()"></textarea>`,
   },
   {
+    selector: "#id-textarea-text-td",
+    html: `<textarea style="display: inherit;" id="id-textarea-text" data-testid="dti-textarea-text" onchange="textareaOnChange('', this)">Base sample text</textarea>`,
+  },
+  {
     selector: "#id-dropdown-td",
     html: `<select style="display: inherit; width: 75px;" id="id-dropdown" name="name-dropdown" id="id-dropdown" data-testid="dti-dropdown" onchange="dropdownOnChange()">
-            <option value="option1">Option 1</option>
-            <option value="option2">Option 2</option>
-            <option value="option3">Option 3</option>
+            <option style="display: inherit;" value="option1">Option 1</option>
+            <option style="display: inherit;" value="option2">Option 2</option>
+            <option style="display: inherit;" value="option3">Option 3</option>
           </select>`,
   },
   {
