@@ -25,9 +25,9 @@ const showMessage = (message, isError = false) => {
 };
 
 function sendData() {
-  let birthdate = document.querySelector(".datepicker").value;
+  let birthDate = document.querySelector(".datepicker").value;
   try {
-    birthdate = getISODateStringWithTimezoneOffsetFromString(birthdate);
+    birthDate = getISODateStringWithTimezoneOffsetFromString(birthDate);
   } catch (ex) {
     // TODO:INVOKE_BUG: nothing is done in case of invalid birth date
   }
@@ -36,7 +36,7 @@ function sendData() {
     lastname: document.querySelector(".lastname").value,
     email: document.querySelector(".email").value,
     password: document.querySelector(".password").value,
-    birthdate,
+    birthDate,
     avatar: `.\\data\\users\\${document.querySelector(".avatar").value}`,
   };
 

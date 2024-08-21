@@ -13,7 +13,7 @@ const users = db.users;
 const numberOfUsersToGenerate = 60;
 
 function createUser(id, email, firstname, lastname, password, avatar) {
-  let birthdate = faker.date.between({ from: "1950-01-01", to: "2000-01-01" });
+  let birthDate = faker.date.between({ from: "1950-01-01", to: "2000-01-01" });
   return {
     id,
     email,
@@ -21,7 +21,7 @@ function createUser(id, email, firstname, lastname, password, avatar) {
     lastname,
     password,
     avatar,
-    birthdate,
+    birthDate,
   };
 }
 

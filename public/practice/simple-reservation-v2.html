@@ -278,7 +278,7 @@
     function buttonOnClick(el) {
         if (!areFieldsValid()) {
             const result = 'Please fill in all fields (date in future and number of days)'
-            printResults(result)
+            writeResults(result)
             return
         }
 
@@ -316,12 +316,7 @@
         newDate.setDate(newDate.getDate() + parseInt(days))
 
         const result = `Reservation for ${date} - ${newDate.toISOString().split('T')[0]} for total price: ${finalPrice}$ with features: ${featuresStr}. Discount: ${discount}$`
-        printResults(result)
-    }
-
-    function printResults(results) {
-        document.getElementById('results-container').innerHTML = results;
-        document.getElementById('results-history-container').innerHTML = results + '\n' + document.getElementById('results-history-container').innerHTML;
+        writeResults(result)
     }
 
     function roundToTwoPlaces(num) {

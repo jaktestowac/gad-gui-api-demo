@@ -118,6 +118,9 @@ function toggleEditDashboard() {
     const button = document.querySelector("#btnEditDashbaord");
     button.innerHTML = `<i class="fa-solid fa-pen-to-square"></i> Edit this Dashboard`;
   }
+
+  // eslint-disable-next-line no-console
+  console.log("Log Lady says: 'My log has something to tell you. It’s not the log, it’s what’s behind the log.'");
 }
 
 hideDraggable();

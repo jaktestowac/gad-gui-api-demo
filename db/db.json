@@ -1,14 +1,14 @@
 {
   "users": [
     {
-      "id": 1,
-      "email": "Moses.Armstrong@Feest.ca",
       "firstname": "Moses",
       "lastname": "Armstrong",
-      "password": "test1",
+      "email": "Moses.Armstrong@Feest.ca",
       "avatar": ".\\data\\users\\face_1591133479.7144732.jpg",
+      "password": "test1",
       "creationDate": "2010-02-14T11:10:22.000Z",
-      "birthdate": "1964-05-17T06:47:38.258Z"
+      "birthDate": "1964-05-17T06:47:38.258Z",
+      "id": 1
     },
     {
       "id": 2,
@@ -18,7 +18,7 @@
       "password": "test2",
       "avatar": ".\\data\\users\\face_1591133060.68834.jpg",
       "creationDate": "2010-03-24T11:20:32.000Z",
-      "birthdate": "1974-01-14T01:05:10.593Z"
+      "birthDate": "1974-01-14T01:05:10.593Z"
     },
     {
       "id": 3,
@@ -28,7 +28,7 @@
       "password": "5Eleanore90",
       "avatar": ".\\data\\users\\face_1591133063.620005.jpg",
       "creationDate": "2009-09-27T15:40:37.000Z",
-      "birthdate": "1989-08-01T17:38:38.982Z"
+      "birthDate": "1989-08-01T17:38:38.982Z"
     },
     {
       "id": 4,
@@ -38,7 +38,7 @@
       "password": "5Damien43",
       "avatar": ".\\data\\users\\face_1591133112.3790507.jpg",
       "creationDate": "2009-08-07T14:35:20.000Z",
-      "birthdate": "1988-08-19T23:15:49.508Z"
+      "birthDate": "1988-08-19T23:15:49.508Z"
     },
     {
       "id": 5,
@@ -48,7 +48,7 @@
       "password": "6Selina95",
       "avatar": ".\\data\\users\\face_1591133153.523801.jpg",
       "creationDate": "2009-11-10T09:30:15.000Z",
-      "birthdate": "1996-08-24T07:48:45.691Z"
+      "birthDate": "1996-08-24T07:48:45.691Z"
     },
     {
       "id": 6,
@@ -58,7 +58,7 @@
       "password": "gdsa",
       "avatar": ".\\data\\users\\face_1591133363.1959925.jpg",
       "creationDate": "2010-07-17T09:10:22.000Z",
-      "birthdate": "1959-11-05T22:14:09.642Z"
+      "birthDate": "1959-11-05T22:14:09.642Z"
     },
     {
       "id": 7,
@@ -68,7 +68,7 @@
       "password": "fasd",
       "avatar": ".\\data\\users\\face_1591133217.1529467.jpg",
       "creationDate": "2011-03-24T11:20:32.000Z",
-      "birthdate": "1993-03-05T21:14:16.784Z"
+      "birthDate": "1993-03-05T21:14:16.784Z"
     },
     {
       "id": 8,
@@ -78,7 +78,7 @@
       "password": "23423425",
       "avatar": ".\\data\\users\\face_1591134851.6068161.jpg",
       "creationDate": "2010-09-27T15:40:37.000Z",
-      "birthdate": "1971-11-03T19:16:08.652Z"
+      "birthDate": "1971-11-03T19:16:08.652Z"
     },
     {
       "id": 9,
@@ -88,7 +88,7 @@
       "password": "6223432",
       "avatar": ".\\data\\users\\face_1591134851.6068265.jpg",
       "creationDate": "2012-05-28T08:10:03.000Z",
-      "birthdate": "1974-08-28T13:06:51.989Z"
+      "birthDate": "1974-08-28T13:06:51.989Z"
     },
     {
       "id": 10,
@@ -98,7 +98,7 @@
       "password": "1234",
       "avatar": ".\\data\\users\\face_1591137202.609116_1.jpg",
       "creationDate": "2010-11-22T08:54:51.119Z",
-      "birthdate": "1998-07-19T00:14:41.832Z"
+      "birthDate": "1998-07-19T00:14:41.832Z"
     },
     {
       "id": 11,
@@ -108,7 +108,7 @@
       "password": "1234",
       "avatar": ".\\data\\users\\face_1591137468.2648418_1.jpg",
       "creationDate": "2017-06-11T07:52:45.897Z",
-      "birthdate": "1992-12-20T22:52:19.943Z"
+      "birthDate": "1992-12-20T22:52:19.943Z"
     },
     {
       "id": 12,
@@ -118,7 +118,7 @@
       "password": "1234",
       "avatar": ".\\data\\users\\face_1591137649.060836_1.jpg",
       "creationDate": "2018-03-21T06:50:23.509Z",
-      "birthdate": "1988-08-22T23:07:23.607Z"
+      "birthDate": "1988-08-22T23:07:23.607Z"
     },
     {
       "id": 13,
@@ -128,7 +128,7 @@
       "password": "1234",
       "avatar": ".\\data\\users\\face_1591134508.3222337_1.jpg",
       "creationDate": "2010-10-01T09:35:29.242Z",
-      "birthdate": "1965-12-27T19:35:25.496Z"
+      "birthDate": "1965-12-27T19:35:25.496Z"
     },
     {
       "id": 14,
@@ -138,7 +138,7 @@
       "password": "1234",
       "avatar": ".\\data\\users\\face_1591138035.9912412_1.jpg",
       "creationDate": "2019-10-25T03:42:16.120Z",
-      "birthdate": "1970-10-18T21:42:52.191Z"
+      "birthDate": "1970-10-18T21:42:52.191Z"
     },
     {
       "id": 15,
@@ -148,7 +148,7 @@
       "password": "12345",
       "avatar": ".\\data\\users\\face_1591136402.493333_1.jpg",
       "creationDate": "2016-10-16T20:09:27.750Z",
-      "birthdate": "1985-06-30T20:15:33.214Z"
+      "birthDate": "1985-06-30T20:15:33.214Z"
     }
   ],
   "articles": [

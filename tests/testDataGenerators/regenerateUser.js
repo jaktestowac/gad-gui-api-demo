@@ -11,7 +11,7 @@ const articles = db.articles;
 for (let user of users) {
   // Find the oldest creation date among articles and comments
   let oldestDate = faker.date.between({ from: "2010-01-01", to: "2020-12-12" });
-  let birthdate = faker.date.between({ from: "1950-01-01", to: "2000-01-01" });
+  let birthDate = faker.date.between({ from: "1950-01-01", to: "2000-01-01" });
   for (const article of articles) {
     if (article.user_id === user.id) {
       const articleDate = new Date(article.date);
@@ -30,7 +30,7 @@ for (let user of users) {
   }
 
   user.creationDate = new Date(oldestDate.setDate(oldestDate.getDate() - 5)).toISOString();
-  user.birthdate = birthdate.toISOString();
+  user.birthDate = birthDate.toISOString();
 }
 
 db["users"] = users;

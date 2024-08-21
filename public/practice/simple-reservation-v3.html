@@ -60,8 +60,8 @@
         }
 
         .side-panel-input {
-            color: white;
-            font-size: 16px;
+            color: black;
+            font-size: 24px;
             padding: 8px 8px 8px 8px;
             text-decoration: none;
             display: block;
@@ -89,12 +89,20 @@
             transition: background-color 0.3s ease;
         }
 
+        .side-panel-button-warn {
+            background-color: #8e6e3e;
+        }
+
         .side-panel-button:hover {
-            background-color: #45a049;
+            background-color: #347737;
         }
 
         .side-panel-button:active {
             background-color: #3e8e41;
+        }
+
+        .side-panel-button-warn:hover {
+            background-color: #634923;
         }
 
         .sidepanel a {
@@ -192,37 +200,172 @@
 <script type="text/javascript" src="./js/practice-common.js"></script>
 
 <script>
-    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-    checkboxes.forEach(checkbox => {
-        checkbox.checked = false;
-    });
+    const features = [
+        { name: 'Food', price: 50, icon: '🥗' },
+        { name: 'Pool', price: 40, icon: '🏊‍♂️' },
+        { name: 'WiFi', price: 20, icon: '💻' },
+        { name: 'Parking', price: 20, icon: '🚗' },
+        { name: 'Gym', price: 25, icon: '🏋️‍♂️' },
+        { name: 'Spa', price: 44, icon: '🧖‍♂️' },
+        { name: 'Pet Friendly', price: 42, icon: '🐾' },
+        { name: 'Babysitting', price: 46, icon: '👶' },
+        { name: 'Entertainment', price: 50, icon: '🎭' },
+        { name: 'Car Rental', price: 120, icon: '🚗' },
+        { name: 'VIP Event Access', price: 200, icon: '🚗' },
+        { name: 'Premium Golf Package', price: 310, icon: '⛳' }
+    ]
 
-    const features = []
-    let totalPrices = 0
+    let selectedFeatures = []
+    let couponPrice = 0
 
-    function checkBoxOnClick(feature, price, checkbox) {
+    // updateDate()
+    clearAllCheckboxes()
+
+    function clearAllCheckboxes() {
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = false;
+        });
+    }
+
+    function clearAll() {
+        clearAllCheckboxes()
+        clearButtonBackgroundColor()
+        document.getElementById('id-date').value = ''
+        document.getElementById('id-range').value = ''
+        document.getElementById('lbl-days').innerHTML = '(0)'
+        document.getElementById('lbl-date-to').innerHTML = ''
+        document.getElementById('price-per-day').innerHTML = 100
+        document.querySelector('select').value = 1
+        selectedFeatures = []
+        couponPrice = 0
+        clearCoupon()
+    }
+
+    function clearCoupon() {
+        document.getElementById('coupon-input').value = ''
+        couponPrice = 0
+    }
+
+    function checkBoxOnClick(feature, checkbox) {
         if (checkbox.checked === true) {
-            if (!features.includes(feature)) {
-                features.push(feature);
-                totalPrices += price;
+            if (!selectedFeatures.includes(feature)) {
+                selectedFeatures.push(feature);
             }
         } else {
-            features.splice(features.indexOf(feature), 1);
-            totalPrices -= price;
+            selectedFeatures.splice(selectedFeatures.indexOf(feature), 1);
         }
     }
 
-    function areFieldsValid() {
+    function checkBoxHigherStandardOnClick(checkbox) {
+        if (checkbox.checked === true) {
+            document.getElementById('price-per-day').innerHTML = 150;
+        } else {
+            document.getElementById('price-per-day').innerHTML = 100;
+        }
+    }
+
+    function clearButtonBackgroundColor() {
+        const buttons = document.querySelectorAll('.my-button');
+        buttons.forEach(button => {
+            button.style.backgroundColor = '#ededf0'
+        });
+    }
+
+    function dateOnChange(el) {
+        updateDate()
+    }
+
+    function rangeOnChange(el) {
+        updateDate()
+    }
+
+    function updateDate() {
+        const date = document.getElementById('id-date').value
+        const days = document.getElementById('id-range').value
+        document.getElementById('lbl-days').innerHTML = `(${days})`
+
+        if (date === '') {
+            return false;
+        }
+
+        const currentDate = new Date();
+        const selectedDate = new Date(date);
+
+        if (formatDate(selectedDate) < formatDate(currentDate)) {
+            return false;
+        }
+
+        const newDate = new Date(date)
+
+        newDate.setDate(newDate.getDate() + parseInt(days))
+        document.getElementById('lbl-date-to').innerHTML = `${formatDate(newDate)} (${days} days)`
         return true
     }
 
-    function calculateOnClick(el) {
+    function areFieldsValid() {
+        const date = document.getElementById('id-date').value
+        const days = document.getElementById('id-range').value
 
+        if (date === '') {
+            return false
+        }
+
+        if (days === '') {
+            return false
+        }
+
+        if (updateDate() === false) {
+            return false
+        }
+
+        return true
     }
 
-    function printResults(results) {
-        document.getElementById('results-container').innerHTML = results;
-        document.getElementById('results-history-container').innerHTML = results + '\n' + document.getElementById('results-history-container').innerHTML;
+    function calculatePrice(days, pricePerDay, numberOfPeople, couponPrice, features) {
+        let finalPrice = days * pricePerDay * numberOfPeople
+        finalPrice -= finalPrice * couponPrice
+
+        return finalPrice
+    }
+
+    function applyCoupon() {
+        const couponValue = document.getElementById('coupon-input').value
+        if (couponValue === 'GAD') {
+            return 0.1
+        }
+        return 0
+    }
+
+    function calculate(el) {
+        if (!areFieldsValid()) {
+            const result = 'Please fill in all fields (date in future and number of days)'
+            writeResults(result)
+            return
+        }
+
+        let featuresStr = 'No features'
+        if (features.length > 0) {
+            featuresStr = features.join(', ')
+        }
+        updateDate()
+
+        const date = document.getElementById('id-date').value
+        const days = document.getElementById('id-range').value
+        const pricePerDay = document.getElementById('price-per-day').innerHTML
+        const numberOfPeople = document.querySelector('select').value
+
+        const finalFullPrice = calculatePrice(days, pricePerDay, numberOfPeople, couponPrice, selectedFeatures)
+
+        const finalDate = new Date(date)
+        finalDate.setDate(finalDate.getDate() + parseInt(days))
+
+        const result = `Reservation for ${date} - ${formatDate(finalDate)} for total price: ${finalFullPrice}$ with features: ${featuresStr}`
+        writeResults(result)
+    }
+
+    function formatDate(date) {
+        return `${date.toISOString().split('T')[0]}`
     }
 
     function roundToTwoPlaces(num) {
@@ -267,19 +410,29 @@
         labelElement.textContent = "Coupon:";
         labelElement.classList.add("side-panel-label");
         const inputElement = document.createElement("input");
-        labelElement.classList.add("side-panel-input");
+        inputElement.classList.add("side-panel-input");
         inputElement.type = "text";
-        inputElement.id = "name-input";
+        inputElement.id = "coupon-input";
 
         const applyButtonElement = document.createElement("button");
         applyButtonElement.textContent = "Apply";
         applyButtonElement.addEventListener("click", function () {
-            // Add your button click event logic here
+            couponPrice = applyCoupon();
         });
         applyButtonElement.classList.add("side-panel-button");
+
+        const clearButtonElement = document.createElement("button");
+        clearButtonElement.textContent = "Clear";
+        clearButtonElement.addEventListener("click", function () {
+            clearCoupon();
+        });
+        clearButtonElement.classList.add("side-panel-button");
+        clearButtonElement.classList.add("side-panel-button-warn");
+
         divElement.appendChild(labelElement);
         divElement.appendChild(inputElement);
         divElement.appendChild(applyButtonElement);
+        divElement.appendChild(clearButtonElement);
 
         projectsSidePanel.appendChild(divElement);
         projectsSidePanel.parentElement.appendChild(openButtonElement);

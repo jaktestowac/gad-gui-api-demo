@@ -37,7 +37,7 @@ function isStringOnTheList(value, list, caseSensitive = false) {
   }
 }
 
-function compareDbObjects(baseDb, currentDb, optionalKeys = ["users.birthdate", "users.creationDate"]) {
+function compareDbObjects(baseDb, currentDb, optionalKeys = ["users.birthDate", "users.creationDate"]) {
   const baseDbTables = getAllDbTables(baseDb);
   const currentDbTables = getAllDbTables(currentDb);
 

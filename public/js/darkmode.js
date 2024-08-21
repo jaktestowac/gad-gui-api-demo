@@ -26,6 +26,9 @@ function darkmode_init() {
       addCookie("darkmode", 0);
       darkmodeSwitch.innerHTML = 'Toggle darkmode: <i class="fas fa-moon"></i>';
     }
+
+    // eslint-disable-next-line no-console
+    console.log("The Giant says: 'It is happening again.'");
   });
 }
 

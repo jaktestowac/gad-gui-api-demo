@@ -37,7 +37,7 @@ Features of **🦎 GAD**:
 
 Instructions how to deploy presented service to various free hosting sites.
 
-- [Deploy to Local](#deploy-to-local)
+- [Deploy to Local](#deploy-to-local) (recommended)
 - [Deploy to Glitch](#deploy-to-glitch)
 - [Deploy to Render](#deploy-to-render)
 - [Deploy using Docker image](#deploy-using-docker-image)
@@ -142,7 +142,8 @@ PORT=3001 npm run start
 ```
 
 Windows Cmd:
-``` 
+
+```
 set PORT=3001 && npm run start
 ```
 
@@ -160,6 +161,8 @@ To see website:
 - click `🔎PREVIEW`
 - choose `👯Preview in a new window`
 
+When deploying the GAD application on Glitch, please be aware that the application may not function fully due to the limitations of the Glitch platform. However, we are making every effort to ensure the highest possible compatibility.
+
 ## Deploy to **Render**
 
 - Create free account on: https://dashboard.render.com/register
@@ -172,6 +175,8 @@ To see website:
 - wait a while and click link to project `GUI API Demo`
 - click link to open app (under project name and repository)
 - enjoy 750 free hours of service per month
+
+When deploying the GAD application on Render, please be aware that the application may not function fully due to the limitations of the Render platform. However, we are making every effort to ensure the highest possible compatibility.
 
 ## Deploy using Docker image
 

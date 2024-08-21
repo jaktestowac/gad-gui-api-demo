@@ -301,7 +301,19 @@ describe("Endpoint /users", async () => {
       expect(response.status).to.equal(401);
     });
 
-    it("PUT /users/:id - should update user", async () => {
+    it("PUT /users/:id - should update user with the same data", async () => {
+      // Act:
+      const oldUserData = { ...baseUserData };
+      oldUserData.id = userId;
+      const response = await request.put(`${baseUrl}/${userId}`).set(headers).send(oldUserData);
+
+      // Assert:
+      expect(response.status).to.equal(200);
+      testUserData.id = response.body.id;
+      expect(response.body).to.deep.equal(oldUserData);
+    });
+
+    it("PUT /users/:id - should update user with new data", async () => {
       // Act:
       const response = await request.put(`${baseUrl}/${userId}`).set(headers).send(testUserData);
 
@@ -310,7 +322,6 @@ describe("Endpoint /users", async () => {
       testUserData.id = response.body.id;
       expect(response.body).to.deep.equal(testUserData);
     });
-
     it("PUT /users/:id - should update user without providing user_id (user_id taken from token)", async () => {
       testUserData.id = undefined;
 

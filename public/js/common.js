@@ -753,6 +753,39 @@ function addElementWithTooltipWithQrCodeToElement(element, qrCodeText, up = true
   addTooltipWithQrCode(`qr-tooltiptext-${randomId}`, qrCodeText);
 }
 
+function loadAdditionalUserContent() {
+  changePixAfterClick('[aria-label="Account Management"]', "#myAvatar");
+}
+
+function loadAdditionalContent() {
+  addToolPix("#copyright-sign");
+}
+
+function addToolPix(elementSelector) {
+  const element = document.querySelector(elementSelector);
+
+  element.classList.add("tooltip-trigger");
+  element.classList.add("red-room");
+}
+
+function changePixAfterClick(triggerSelector, resultSelector, imgSrc = "./images/dale-in-his-car.jpg") {
+  const triggerElement = document.querySelector(triggerSelector);
+  const resultElement = document.querySelector(resultSelector);
+
+  if (triggerElement === null || resultElement === null) {
+    return;
+  }
+  const imageBefore = resultElement.src;
+
+  triggerElement.addEventListener("click", () => {
+    setTimeout(() => {
+      resultElement.src = imageBefore;
+    }, 1000);
+
+    resultElement.src = imgSrc;
+  });
+}
+
 function getContrastRatio(color) {
   const rgb = getRGBValues(color);
   const luminance = calculateLuminance(rgb);

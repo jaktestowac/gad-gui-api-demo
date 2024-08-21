@@ -777,6 +777,25 @@ s .container-mobile {
   margin-left: 0.25em;
 }
 
+.tooltip-trigger {
+  cursor: pointer;
+}
+
+.tooltip-trigger:hover {
+  cursor: unset;
+}
+
+.tooltip-trigger.red-room:hover {
+  content: url("/images/pix1.jpg");
+  position: absolute;
+  width: 128px;
+  height: 128px;
+  z-index: 999;
+  top: -50px;
+  background-color: black;
+  cursor: unset;
+}
+
 .tooltip {
   position: relative;
   display: inline-block;
