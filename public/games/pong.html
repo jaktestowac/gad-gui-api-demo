@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | Game: Chaotic Pong</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        canvas {
+            background: #000;
+            display: block;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-gui" class="nav-menu"></h1>
+        </div>
+    </header>
+    <div align="center" style="justify-content: center !important; display: flex; align-items: center">
+        <div class="alert" role="alert" data-testid="alert-popup" id="alertPopup" style="position: unset !important; margin: 60px 0px 0px 0px"></div>
+    </div>
+    <canvas id="pong" width="800" height="400"></canvas>
+    <div align="center">
+        <button class="button-primary" id="start-button" data-testid="startButton" onclick="startGame()">Start Game</button>
+        <br />
+        <br />
+        <label for="score" id="score-label">Score: </label>
+        <br />
+        <label for="bounces" id="bounces-label">Bounces: </label>
+        <span id="bounces">0</span>
+        <br />
+        <label for="timeElapsedInSeconds" id="timeElapsedInSeconds-label">Time Elapsed: </label>
+        <span id="timeElapsedInSeconds">0</span>
+        <br />
+        <br />
+        <a href="./games.html">
+            <button class="button-primary button-mobile" translateId="btnReturnToGames" style="margin: 10; font-size: 16px">
+                Return to Games
+            </button>
+        </a>
+    </div>
+    <script>
+        const canvas = document.getElementById("pong");
+        const context = canvas.getContext("2d");
+
+        // Create the pong paddle
+        const paddleWidth = 10, paddleHeight = 100;
+        const computerPaddleWidth = 10, computerPaddleHeight = 400;
+        const player = {
+            x: 0,
+            y: canvas.height / 2 - paddleHeight / 2,
+            width: paddleWidth,
+            height: paddleHeight,
+            color: "#FFF"
+        };
+
+        const computer = {
+            x: canvas.width - computerPaddleWidth,
+            y: canvas.height / 2 - computerPaddleHeight / 2,
+            width: computerPaddleWidth,
+            height: computerPaddleHeight,
+            color: "#FFF"
+        };
+
+        // Create the pong ball
+        let ball = createNewBall();
+        let score = initScore()
+        let timeInterval;
+
+        function createNewBall() {
+            return {
+                x: canvas.width / 2,
+                y: canvas.height / 2,
+                radius: 10,
+                speed: 1,
+                dx: 4,
+                dy: 4,
+                color: "#FFF"
+            };
+        }
+
+        function updateScore(bounces, timeElapsedInSeconds) {
+            document.getElementById("bounces").innerText = bounces;
+            document.getElementById("timeElapsedInSeconds").innerText = timeElapsedInSeconds;
+        }
+
+        function incrementBounces(score) {
+            score.bounces++;
+            updateScore(score.bounces, score.timeElapsedInSeconds);
+        }
+
+        function incrementTimeElapsedInSeconds(score) {
+            score.timeElapsedInSeconds++;
+            updateScore(score.bounces, score.timeElapsedInSeconds);
+        }
+
+        function increaseBallSpeedBasedOnElapsedTime(ball, score) {
+            if (score.timeElapsedInSeconds % 10 === 0) {
+                ball.speed += 0.1;
+            }
+        }
+
+        function initScore() {
+            return {
+                bounces: 0,
+                timeElapsedInSeconds: 0,
+            };
+        }
+
+        // Draw the paddle
+        function drawPaddle(x, y, width, height, color) {
+            context.fillStyle = color;
+            context.fillRect(x, y, width, height);
+        }
+
+        // Draw the ball
+        function drawBall(x, y, radius, color) {
+            context.fillStyle = color;
+            context.beginPath();
+            context.arc(x, y, radius, 0, Math.PI * 2, false);
+            context.closePath();
+            context.fill();
+        }
+
+        function clearCanvas() {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function redrawCanvas() {
+            clearCanvas();
+            // Draw the paddle
+            drawPaddle(player.x, player.y, player.width, player.height, player.color);
+            drawPaddle(computer.x, computer.y, computer.width, computer.height, computer.color);
+
+            // Draw the ball
+            drawBall(ball.x, ball.y, ball.radius, ball.color);
+        }
+
+        function startGame() {
+            if (gameStarted === true) {
+                return;
+            }
+            gameStarted = true;
+            score = initScore();
+            ball = createNewBall();
+
+            clearCanvas()
+            redrawCanvas()
+
+            timeInterval = setInterval(() => {
+                incrementTimeElapsedInSeconds(score);
+                increaseBallSpeedBasedOnElapsedTime(ball, score)
+            }, 1000);
+            update();
+            const button = document.getElementById("start-button");
+            button.disabled = true;
+        }
+
+        function endGame() {
+            gameStarted = false;
+            clearInterval(timeInterval);
+            cancelAnimationFrame(update);
+            const button = document.getElementById("start-button");
+            button.disabled = false;
+        }
+
+        let gameStarted = false;
+
+        // Update the canvas
+        function update() {
+            if (!gameStarted) {
+                return;
+            }
+            // Clear the canvas
+            context.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw the paddle
+            drawPaddle(player.x, player.y, player.width, player.height, player.color);
+            drawPaddle(computer.x, computer.y, computer.width, computer.height, computer.color);
+
+            // Draw the ball
+            drawBall(ball.x, ball.y, ball.radius, ball.color);
+
+            // Move the paddle
+            canvas.addEventListener("mousemove", movePaddle);
+
+            function movePaddle(event) {
+                let rect = canvas.getBoundingClientRect();
+                player.y = event.clientY - rect.top - player.height / 2;
+            }
+
+            // Move the ball
+            ball.x += ball.dx * ball.speed;
+            ball.y += ball.dy * ball.speed;
+
+            // Ball collision with top and bottom walls
+            if (ball.y + ball.radius > canvas.height || ball.y - ball.radius < 0) {
+                ball.dy *= -1;
+                incrementBounces(score);
+            }
+
+            if (ball.x - ball.radius < 0) {
+                endGame();
+            }
+
+            if (
+                ball.x - ball.radius < player.x + player.width &&
+                ball.y + ball.radius > player.y &&
+                ball.y - ball.radius < player.y + player.height
+            ) {
+                ball.dx *= -1;
+                incrementBounces(score);
+            }
+
+            if (
+                ball.x + ball.radius > computer.x &&
+                ball.y + ball.radius > computer.y &&
+                ball.y - ball.radius < computer.y + computer.height
+            ) {
+                ball.dx *= -1;
+                incrementBounces(score);
+                const randomizeBounceDirectionAndAngle = () => {
+                    ball.dy = Math.random() * 10;
+                };
+
+                randomizeBounceDirectionAndAngle();
+            }
+
+            requestAnimationFrame(update);
+        }
+
+    </script>
+</body>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="/username.js"></script>
+<script type="text/javascript" src="/js/darkmode.js"></script>
+
+</html>
