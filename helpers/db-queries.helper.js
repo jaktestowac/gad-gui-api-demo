@@ -1,10 +1,10 @@
 const { getCurrentDateTimeISO } = require("./datetime.helpers");
-const { logDebug, logTrace } = require("./logger-api");
+const { logTrace } = require("./logger-api");
 
 function setEntitiesInactive(db, tableName, query) {
   const callback = (item) => (item._inactive = true);
   const resultsCallback = (r) => {
-    logTrace("SOFT_DELETE: soft deleted (set inactive):", { commentsCount: r.length, query });
+    logTrace("SOFT_DELETE: soft deleted (set inactive):", { itemsCount: r.length, tableName, query });
   };
 
   invokeQuery(db, tableName, query, callback, resultsCallback);
@@ -63,4 +63,5 @@ module.exports = {
   setEntitiesInactive,
   replaceRelatedContactsInDb,
   updateMessageCheckTimeInDb,
+  invokeGetQuery,
 };

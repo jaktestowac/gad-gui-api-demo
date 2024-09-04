@@ -127,6 +127,7 @@ const FeatureFlagConfigKeys = {
   FEATURE_CAPTCHA: "feature_captcha",
   FEATURE_QRCODES: "feature_qrcodes",
   FEATURE_VALIDATE_ARTICLE_TITLE: "feature_validate_article_title",
+  FEATURE_SOFT_DELETE_USERS: "feature_soft_delete_users",
 };
 
 module.exports = {

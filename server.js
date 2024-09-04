@@ -182,10 +182,10 @@ server.use(fileUploadRoutes);
 server.use(calcRoutes);
 
 server.use(function (req, res, next) {
-  // soft delete:
+  // soft delete articles:
   if (getOriginMethod(req) === "DELETE" && getWasAuthorized(req) === true && req.url.includes("articles")) {
     const tracingInfo = getTracingInfo(req);
-    logDebug("SOFT_DELETE: articles -> soft deleting comments", { url: req.url, tracingInfo });
+    logTrace("SOFT_DELETE: articles -> soft deleting comments", { url: req.url, tracingInfo });
 
     const bugEnabled = isBugEnabled(BugConfigKeys.BUG_DELAY_SOFT_DELETE_COMMENTS);
 
@@ -198,6 +198,20 @@ server.use(function (req, res, next) {
       setEntitiesInactive(router.db, "comments", { article_id: parseInt(tracingInfo.resourceId) });
       setEntitiesInactive(router.db, "comments", { article_id: tracingInfo.resourceId });
     });
+  }
+  // soft delete users:
+  if (getOriginMethod(req) === "DELETE" && getWasAuthorized(req) === true && req.url.includes("users")) {
+    const isFeatureEnabled = getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_SOFT_DELETE_USERS);
+
+    if (isFeatureEnabled === true) {
+      const tracingInfo = getTracingInfo(req);
+      logTrace("SOFT_DELETE: users -> soft deleting articles", { url: req.url, tracingInfo });
+
+      const query = { user_id: tracingInfo.resourceId };
+
+      setEntitiesInactive(router.db, "articles", query);
+      setEntitiesInactive(router.db, "comments", query);
+    }
   }
   // add contacts:
   if (

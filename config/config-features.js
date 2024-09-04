@@ -12,6 +12,7 @@ const featureFlagConfig = {
   feature_captcha: false,
   feature_qrcodes: false,
   feature_validate_article_title: false,
+  feature_soft_delete_users: false,
 };
 
 module.exports = {
