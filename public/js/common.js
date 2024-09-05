@@ -757,6 +757,10 @@ function loadAdditionalUserContent() {
   changePixAfterClick('[aria-label="Account Management"]', "#myAvatar");
 }
 
+function loadAdditionalBackofficeContent() {
+  changePixAfterClick('[aria-label="Backoffice"]', ".back-img", "../images/fox-111471.jpg");
+}
+
 function loadAdditionalContent() {
   addToolPix("#copyright-sign");
 }
