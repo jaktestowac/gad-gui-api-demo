@@ -761,6 +761,15 @@ function loadAdditionalBackofficeContent() {
   changePixAfterClick('[aria-label="Backoffice"]', ".back-img", "../images/fox-111471.jpg");
 }
 
+function loadAdditionalFrontPageContent() {
+  changePixAfterClick(
+    '[aria-label="GAD"]',
+    `[aria-label="Front banner of GAD application"]`,
+    "./images/gad-v2-92348511.jpg"
+  );
+  changePixAfterClick("#copyright-sign", ".back-img");
+}
+
 function loadAdditionalContent() {
   addToolPix("#copyright-sign");
 }
