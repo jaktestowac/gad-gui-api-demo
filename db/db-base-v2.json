@@ -2201,6 +2201,16 @@
         "color": "#008080"
       },
       "body": "Our team is looking for a new designer. Spread the word!"
+    },
+    {
+      "body": "<strong>So Excited! <a href=\"https://playwright.info/vs-code-playwright-extensions\">vs code playwright extensions</a></strong>",
+      "settings": {
+        "color": "#8aff8a"
+      },
+      "is_public": true,
+      "user_id": 1,
+      "date": "2024-09-15T11:27:13.825Z",
+      "id": 21
     }
   ],
   "likes": [
