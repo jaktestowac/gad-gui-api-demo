@@ -28,9 +28,21 @@ function formatDataToAppend(additionalData) {
   return dataToAppend;
 }
 
+function buttonOnClickDelayed(additionalData = "", delay) {
+  const delayValue = delay !== undefined ? delay : getRandomValue(2000, 2500);
+  console.log(`Results from button will be displayed after ${delayValue} ms`);
+  invokeFunctionWithDelay(() => buttonOnClick(additionalData), delayValue);
+}
+
 function buttonOnClick(additionalData = "") {
   let dataToAppend = formatDataToAppend(additionalData);
   writeResults("You clicked the button!" + dataToAppend);
+}
+
+function checkBoxOnClickDelayed(additionalData = "", delay, el) {
+  const delayValue = delay !== undefined ? delay : getRandomValue(2000, 2500);
+  console.log(`Results from checkBox will be displayed after ${delayValue} ms`);
+  invokeFunctionWithDelay(() => checkBoxOnClick(additionalData, el), delayValue);
 }
 
 function checkBoxOnClick(additionalData = "", el) {
@@ -46,6 +58,12 @@ function checkBoxOnClick(additionalData = "", el) {
   } else {
     writeResults("Checkbox is unchecked!" + dataToAppend);
   }
+}
+
+function dropdownOnChangeDelayed(additionalData = "", delay) {
+  const delayValue = delay !== undefined ? delay : getRandomValue(2000, 2500);
+  console.log(`Results from dropdown will be displayed after ${delayValue} ms`);
+  invokeFunctionWithDelay(() => dropdownOnChange(additionalData), delayValue);
 }
 
 function dropdownOnChange(additionalData = "", el) {
@@ -121,6 +139,12 @@ function labelOnMouseLeave(additionalData = "") {
   writeResults("" + dataToAppend);
 }
 
+function inputOnChangeDelayed(additionalData = "", delay) {
+  const delayValue = delay !== undefined ? delay : getRandomValue(2000, 2500);
+  console.log(`Results from input will be displayed after ${delayValue} ms`);
+  invokeFunctionWithDelay(() => inputOnChange(additionalData), delayValue);
+}
+
 function inputOnChange(additionalData = "", el) {
   let dataToAppend = formatDataToAppend(additionalData);
 
@@ -131,6 +155,12 @@ function inputOnChange(additionalData = "", el) {
 
   const inputValue = input.value;
   writeResults(`Input value changed to: ${inputValue}` + dataToAppend);
+}
+
+function textareaOnChangeDelayed(additionalData = "", delay) {
+  const delayValue = delay !== undefined ? delay : getRandomValue(2000, 2500);
+  console.log(`Results from textarea will be displayed after ${delayValue} ms`);
+  invokeFunctionWithDelay(() => textareaOnChange(additionalData), delayValue);
 }
 
 function textareaOnChange(additionalData = "", el) {

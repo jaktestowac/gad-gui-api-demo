@@ -34,10 +34,6 @@
                 <th id="id-elements" data-testid="dti-elements">Elements for Test Automation</th>
             </tr>
             <tr style="height: 48px;">
-                <td style="text-align: center;" id="label-description" data-testid="dti-label-description">Label</td>
-                <td style="text-align: center;" id="id-label-td"></td>
-            </tr>
-            <tr style="height: 48px;">
                 <td style="text-align: center;" id="button-description" data-testid="dti-button-description">Button</td>
                 <td style="text-align: center;" id="id-button-td"></td>
             </tr>
@@ -54,32 +50,10 @@
                 <td style="text-align: center;" id="id-textarea-td"></td>
             </tr>
             <tr style="height: 48px;">
-                <td style="text-align: center;" id="textarea-description" data-testid="dti-textarea-text-description">Textarea with text</td>
-                <td style="text-align: center;" id="id-textarea-text-td"></td>
-            </tr>
-            <tr style="height: 48px;">
                 <td style="text-align: center;" id="dropdown-description" data-testid="dti-dropdown-description">Dropdown</td>
                 <td style="text-align: center;" id="id-dropdown-td">
 
                 </td>
-            </tr>
-            <tr style="height: 48px;">
-                <td style="text-align: center;" id="id-radio-buttons-description" data-testid="dti-radio-buttons-description">Radio Buttons</td>
-                <td style="text-align: center;" id="id-radio-buttons-td" data-testid="dti-radio-buttons-element">
-
-                </td>
-            </tr>
-            <tr style="height: 48px;">
-                <td style="text-align: center;" id="id-range-description" data-testid="dti-range-description">Range</td>
-                <td style="text-align: center;" id="id-range-td"></td>
-            </tr>
-            <tr style="height: 48px;">
-                <td style="text-align: center;" id="id-date-description" data-testid="dti-date-description">Date</td>
-                <td style="text-align: center;" id="id-date-td"></td>
-            </tr>
-            <tr style="height: 48px;">
-                <td style="text-align: center;" id="id-color-description" data-testid="dti-color-description">Color</td>
-                <td style="text-align: center;" id="id-color-td"></td>
             </tr>
         </table>
     </div>
@@ -118,7 +92,7 @@
     document.getElementById('delayLabel').innerHTML = `${(Math.round(delayForCreate / 100)) / 10}[s] for displayed and ${((Math.round(delayForEnable / 100)) / 10)} for enabled`
 
     invokeFunctionWithDelay(() => {
-        selectorElementPair.forEach(element => {
+        selectorDelayedElementPair.forEach(element => {
             const elementInDisabledState = element['html'].replaceAll(' style="', ' disabled style="')
             addElementsToContainer(element['selector'], elementInDisabledState)
         });

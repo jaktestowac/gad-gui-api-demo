@@ -126,7 +126,7 @@
     }, delayForCreate);
 
     invokeFunctionWithDelay(() => {
-        changeElementsState(['.practice-table [data-testid^="dti-"]'], 'disabled', false)
+        changeElementsState(['.practice-table [data-testid^="dti-"]', 'option'], 'disabled', false)
         document.getElementById('statusLabel').innerHTML = 'ENABLED'
         document.getElementById('statusLabel').style.color = "rgb(8, 195, 1)"
     }, delayForCreate + delayForEnable);
