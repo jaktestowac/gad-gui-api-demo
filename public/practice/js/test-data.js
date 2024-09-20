@@ -586,8 +586,12 @@ const placesOfInterest = [
 
 const selectorDelayedElementPair = [
   {
-    selector: "#id-button-td",
-    html: `<button style="display: inherit;" id="id-button-element" data-testid="dti-button-element" onclick="buttonOnClickDelayed()">Click me!</button>`,
+    selector: "#id-button-td-1",
+    html: `<button style="display: inherit;" id="id-button-element" data-testid="dti-button-element-1" onclick="buttonOnClickDelayed()">Click me!</button>`,
+  },
+  {
+    selector: "#id-button-td-2",
+    html: `<button style="display: inherit;" id="id-button-element" data-testid="dti-button-element-2" onclick="buttonOnClickComplexDelayed(' (Delayed)', getRandomValue(2600, 3500), getRandomValue(2600, 3500))">Click me! (greater delay)</button>`,
   },
   {
     selector: "#id-checkbox-td",

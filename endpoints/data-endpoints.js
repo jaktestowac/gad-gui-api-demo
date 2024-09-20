@@ -6,7 +6,7 @@ const { logDebug } = require("../helpers/logger-api");
 function handleData(req, res, isAdmin) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
 
-  if (req.method === "GET" && req.url.includes("/api/data/weather")) {
+  if (req.method === "GET" && req.url.includes("/api/v1/data/weather")) {
     const queryParams = new URLSearchParams(req.url.split("?")[1]);
 
     const days = parseInt(queryParams.get("days"));
@@ -17,7 +17,7 @@ function handleData(req, res, isAdmin) {
     res.status(HTTP_OK).json(weatherData);
   }
 
-  if (req.method === "GET" && req.url.includes("/api/data/costs")) {
+  if (req.method === "GET" && req.url.includes("/api/v1/data/costs")) {
     const queryParams = new URLSearchParams(req.url.split("?")[1]);
 
     const days = parseInt(queryParams.get("days"));

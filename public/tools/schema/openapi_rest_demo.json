@@ -3510,7 +3510,7 @@
         }
       }
     },
-    "/data/weather": {
+    "/v1/data/weather": {
       "get": {
         "parameters": [
           {

@@ -133,17 +133,26 @@ function generateWeatherDataForNDays(nSamples) {
       temperature = dataGenerator.getNextValue(-20, 50);
     }
 
+    let temperatureLow = dataGenerator.getNextValue(15, 35);
+    let temperatureHigh = dataGenerator.getNextValue(temperatureLow + 5, temperatureLow + 10);
     let highLowTemperature = {
-      low: `${dataGenerator.getNextValue(temperature - 10, temperature - 5)}°C`,
-      high: `${dataGenerator.getNextValue(temperature + 5, temperature + 10)}°C`,
+      low: `${temperatureLow}°C`,
+      high: `${temperatureHigh}°C`,
+      temperatureHigh,
+      temperatureLow,
     };
     if (dataGenerator.getNextValue(0, 100) < 10) {
+      let temperatureLow = dataGenerator.getNextValue(temperature - 30, temperature - 20);
+      let temperatureHigh = dataGenerator.getNextValue(temperature + 20, temperature + 30);
       highLowTemperature = {
-        low: `${dataGenerator.getNextValue(temperature - 30, temperature - 20)}°C`,
-        high: `${dataGenerator.getNextValue(temperature + 20, temperature + 30)}°C`,
+        low: `${temperatureLow}°C`,
+        high: `${temperatureHigh}°C`,
+        temperatureLow,
+        temperatureHigh,
       };
     }
 
+    let temperatureRaw = temperature;
     temperature = `${temperature}°C`;
 
     let pressure = `${dataGenerator.getNextValue(1000, 1050)} hPa`;
@@ -297,6 +306,7 @@ function generateWeatherDataForNDays(nSamples) {
       weather,
       cloudCover,
       temperature,
+      temperatureRaw,
       highLowTemperature,
       sunriseSunset,
       dayLength,

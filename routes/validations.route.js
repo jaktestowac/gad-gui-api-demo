@@ -247,7 +247,7 @@ const validationsRoutes = (req, res, next) => {
       handleFlashPosts(req, res);
     }
 
-    if (req.url.includes("/api/data")) {
+    if (req.url.includes("/api/v1/data")) {
       handleData(req, res, isAdmin);
       return;
     }
