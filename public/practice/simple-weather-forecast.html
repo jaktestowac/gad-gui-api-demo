@@ -28,7 +28,7 @@
     <div align="center">
         <h2>Simple Weather Forecast</h2>
 
-        <table style="margin: 0 auto; width: 600px !important;" id="weather-table" data-testid="dti-weather-table">
+        <table style="margin: 0 auto; width: 800px !important;" id="weather-table" data-testid="dti-weather-table">
             <tbody>
 
             </tbody>
@@ -94,10 +94,14 @@
         headerRow.appendChild(humidityHeader);
 
         const dayLengthHeader = document.createElement('th');
-        dayLengthHeader.textContent = 'Day Length';
+        dayLengthHeader.textContent = 'Day Length (h)';
         dayLengthHeader.style.textAlign = 'center';
         headerRow.appendChild(dayLengthHeader);
 
+        const cloudCoverHeader = document.createElement('th');
+        cloudCoverHeader.textContent = 'Cloud Cover (%)';
+        cloudCoverHeader.style.textAlign = 'center';
+        headerRow.appendChild(cloudCoverHeader);
 
         table.appendChild(headerRow);
         data.forEach((row, index) => {
@@ -143,6 +147,13 @@
             dayLengthCell.setAttribute('id', `dayLength${idSuffix}`);
             dayLengthCell.style.textAlign = 'center';
             tr.appendChild(dayLengthCell);
+
+            const cloudCoverCell = document.createElement('td');
+            cloudCoverCell.textContent = row.cloudCover;
+            cloudCoverCell.setAttribute('data-testid', `dti-cloudCover${idSuffix}`);
+            cloudCoverCell.setAttribute('id', `cloudCover${idSuffix}`);
+            cloudCoverCell.style.textAlign = 'center';
+            tr.appendChild(cloudCoverCell);
 
             table.appendChild(tr);
         });
