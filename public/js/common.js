@@ -792,10 +792,16 @@ function changePixAfterClick(triggerSelector, resultSelector, imgSrc = "./images
 
   triggerElement.addEventListener("click", () => {
     setTimeout(() => {
-      resultElement.src = imageBefore;
+      if (imageBefore === "" || imageBefore === undefined) {
+        resultElement.style.display = "none";
+      } else {
+        resultElement.style.display = "inherit";
+        resultElement.src = imageBefore;
+      }
     }, 1000);
 
     resultElement.src = imgSrc;
+    resultElement.style.display = "inherit";
   });
 }
 
