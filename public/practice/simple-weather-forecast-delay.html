@@ -65,7 +65,7 @@
     invokeFunctionWithDelay(() => { getWeatherDataAndPresent() }, getRandomValue(2000, 2500));
 
     async function getWeatherData(score) {
-        return fetch('/api/v1/data/weather?days=7', {
+        return fetch('/api/v1/data/weather?days=7&futuredays=1', {
             method: "GET",
             headers: {
                 Accept: "application/json",

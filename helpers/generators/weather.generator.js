@@ -104,7 +104,7 @@ const lightningActivityTypes = [
   { name: "Extreme", icon: "⚡⚡⚡⚡⚡", index: 5 },
 ];
 
-function generateDateStrings(pastDays) {
+function generatePasteDateStrings(pastDays) {
   const dateStrings = [];
   for (let i = 0; i < pastDays; i++) {
     const date = new Date();
@@ -114,14 +114,32 @@ function generateDateStrings(pastDays) {
   return dateStrings;
 }
 
-function generateWeatherDataForNDays(nSamples) {
-  const pastDays = generateDateStrings(nSamples);
+function generateFutureDateStrings(pastDays) {
+  const dateStrings = [];
+  for (let i = 0; i < pastDays; i++) {
+    const date = new Date();
+    date.setDate(date.getDate() + i);
+    dateStrings.push(date.toISOString().split("T")[0]);
+  }
+  return dateStrings;
+}
 
+function generateWeatherDataForNPastDays(nSamples) {
+  const pastDays = generatePasteDateStrings(nSamples);
+  return generateWeatherDataForNDays(nSamples, pastDays);
+}
+
+function generateWeatherDataForNFutureDays(nSamples) {
+  const pastDays = generateFutureDateStrings(nSamples);
+  return generateWeatherDataForNDays(nSamples, pastDays);
+}
+
+function generateWeatherDataForNDays(nSamples, dayList) {
   const weatherData = [];
   for (let i = 0; i < nSamples; i++) {
-    const dataGenerator = new RandomValueGenerator(pastDays[i]);
+    const dataGenerator = new RandomValueGenerator(dayList[i]);
 
-    const date = pastDays[i];
+    const date = dayList[i];
 
     let weather = weatherTypes[0];
     if (dataGenerator.getNextValue(0, 100) < 50) {
@@ -331,5 +349,6 @@ function generateWeatherDataForNDays(nSamples) {
 }
 
 module.exports = {
-  generateWeatherDataForNDays,
+  generateWeatherDataForNPastDays,
+  generateWeatherDataForNFutureDays,
 };

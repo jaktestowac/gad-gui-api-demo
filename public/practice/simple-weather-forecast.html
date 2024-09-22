@@ -54,7 +54,7 @@
 <script type="text/javascript" src="./js/practice-common.js"></script>
 <script>
     async function getWeatherData(score) {
-        return fetch('/api/v1/data/weather?days=7', {
+        return fetch('/api/v1/data/weather?days=7&futuredays=1', {
             method: "GET",
             headers: {
                 Accept: "application/json",
@@ -108,8 +108,10 @@
         data.forEach((row, index) => {
             let idSuffix = ''
             if (index === 0) {
-                idSuffix = '-today';
+                idSuffix = '-tomorrow';
             } else if (index === 1) {
+                idSuffix = '-today';
+            } else if (index === 2) {
                 idSuffix = '-yesterday';
             }
 
