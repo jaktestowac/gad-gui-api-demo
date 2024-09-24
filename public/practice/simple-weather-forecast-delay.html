@@ -27,7 +27,7 @@
     <br />
     <div align="center">
         <h2>Simple Weather Forecast (delayed)🐌</h2>
-        <h4>Data generated for last 7 days</h4>
+        <h4>Data generated for future and past few days</h4>
 
         <table style="margin: 0 auto; width: 800px !important;" id="weather-table" data-testid="dti-weather-table">
             <tbody>
@@ -65,7 +65,7 @@
     invokeFunctionWithDelay(() => { getWeatherDataAndPresent() }, getRandomValue(2000, 2500));
 
     async function getWeatherData(score) {
-        return fetch('/api/v1/data/weather?days=7&futuredays=1', {
+        return fetch('/api/v1/data/weather?days=7&futuredays=2', {
             method: "GET",
             headers: {
                 Accept: "application/json",
@@ -120,12 +120,26 @@
 
 
             table.appendChild(headerRow);
+            const today = new Date().toLocaleDateString();
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const tomorrowDate = tomorrow.toLocaleDateString();
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yesterdayDate = yesterday.toLocaleDateString();
+
             data.forEach((row, index) => {
                 let idSuffix = ''
-                if (index === 0) {
-                    idSuffix = '-today';
-                } else if (index === 1) {
+
+                const rowDate = new Date(row.date).toLocaleDateString();
+
+                if (rowDate === tomorrowDate) {
+                    idSuffix = '-tomorrow';
+                } else if (rowDate === yesterdayDate) {
                     idSuffix = '-yesterday';
+                }
+                if (today === rowDate) {
+                    idSuffix = '-today';
                 }
 
                 const tr = document.createElement('tr');
