@@ -630,7 +630,7 @@ const selectorElementPair = [
   },
   {
     selector: "#id-input-td",
-    html: `<input style="display: inherit;" type="text" id="id-input" data-testid="dti-input" onchange="inputOnChange()">`,
+    html: `<input style="display: inherit;" type="text" id="id-input" maxlength="64" data-testid="dti-input" onchange="inputOnChange()">`,
   },
   {
     selector: "#id-textarea-td",
