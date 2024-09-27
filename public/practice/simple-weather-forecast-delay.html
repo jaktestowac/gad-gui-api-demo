@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/practice-controls.css" />
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <div align="center">
+        <h2>Simple Weather Forecast (delayed)🐌</h2>
+        <h4>Data generated for future and past few days</h4>
+
+        <table style="margin: 0 auto; width: 800px !important;" id="weather-table" data-testid="dti-weather-table">
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+    <br />
+    <br />
+    <br />
+    <br />
+    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 24px">
+        <a href="https://jaktestowac.pl" style="color: dimgray">
+            <span style="display: flex; align-items: center; justify-self: center; font-size: medium">
+                <img src="/data/icons/favicon.png" style="width: 25px !important; height: 25px !important; padding: 0; border: none" alt="" />&nbsp&nbspjaktestowac.pl
+            </span>
+        </a>
+    </div>
+</body>
+
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="./js/practice-common.js"></script>
+<script>
+    const table = document.getElementById('weather-table').getElementsByTagName('tbody')[0];
+    const loadingRow = document.createElement('tr');
+    const loadingCell = document.createElement('td');
+    loadingCell.setAttribute('colspan', '5');
+    loadingCell.textContent = 'Loading... Please wait.';
+    loadingCell.style.textAlign = 'center';
+    loadingRow.appendChild(loadingCell);
+    table.appendChild(loadingRow);
+
+    invokeFunctionWithDelay(() => { getWeatherDataAndPresent() }, getRandomValue(2000, 2500));
+
+    async function getWeatherData(score) {
+        return fetch('/api/v1/data/weather?days=7&futuredays=2', {
+            method: "GET",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                Authorization: getBearerToken(),
+            },
+        }).then((response) => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                return {};
+            }
+        });
+    }
+
+    async function getWeatherDataAndPresent() {
+        getWeatherData().then((data) => {
+            const table = document.getElementById('weather-table').getElementsByTagName('tbody')[0];
+            table.innerHTML = "";
+
+            const headerRow = document.createElement('tr');
+
+            const dateHeader = document.createElement('th');
+            dateHeader.textContent = 'Date';
+            dateHeader.style.textAlign = 'center';
+            headerRow.appendChild(dateHeader);
+
+            const weatherHeader = document.createElement('th');
+            weatherHeader.textContent = 'Weather';
+            weatherHeader.style.textAlign = 'center';
+            headerRow.appendChild(weatherHeader);
+
+            const temperatureHeader = document.createElement('th');
+            temperatureHeader.textContent = 'Temperature (°C)';
+            temperatureHeader.style.textAlign = 'center';
+            headerRow.appendChild(temperatureHeader);
+
+            const humidityHeader = document.createElement('th');
+            humidityHeader.textContent = 'Humidity (%)';
+            humidityHeader.style.textAlign = 'center';
+            headerRow.appendChild(humidityHeader);
+
+            const dayLengthHeader = document.createElement('th');
+            dayLengthHeader.textContent = 'Day Length (h)';
+            dayLengthHeader.style.textAlign = 'center';
+            headerRow.appendChild(dayLengthHeader);
+
+            const cloudCoverHeader = document.createElement('th');
+            cloudCoverHeader.textContent = 'Cloud Cover (%)';
+            cloudCoverHeader.style.textAlign = 'center';
+            headerRow.appendChild(cloudCoverHeader);
+
+
+            table.appendChild(headerRow);
+            const today = new Date().toLocaleDateString();
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const tomorrowDate = tomorrow.toLocaleDateString();
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yesterdayDate = yesterday.toLocaleDateString();
+
+            data.forEach((row, index) => {
+                let idSuffix = ''
+
+                const rowDate = new Date(row.date).toLocaleDateString();
+
+                if (rowDate === tomorrowDate) {
+                    idSuffix = '-tomorrow';
+                } else if (rowDate === yesterdayDate) {
+                    idSuffix = '-yesterday';
+                }
+                if (today === rowDate) {
+                    idSuffix = '-today';
+                }
+
+                const tr = document.createElement('tr');
+                const dateCell = document.createElement('td');
+                dateCell.textContent = row.date;
+                dateCell.setAttribute('data-testid', `dti-date${idSuffix}`);
+                dateCell.setAttribute('id', `date${idSuffix}`);
+                dateCell.style.textAlign = 'center';
+                tr.appendChild(dateCell);
+
+                const weatherCell = document.createElement('td');
+                weatherCell.textContent = row.weather;
+                weatherCell.setAttribute('data-testid', `dti-weather${idSuffix}`);
+                weatherCell.setAttribute('id', `weather${idSuffix}`);
+                weatherCell.style.textAlign = 'center';
+                tr.appendChild(weatherCell);
+
+                const temperatureCell = document.createElement('td');
+                temperatureCell.textContent = row.temperatureRaw;
+                temperatureCell.setAttribute('data-testid', `dti-temperature${idSuffix}`);
+                temperatureCell.setAttribute('id', `temperature${idSuffix}`);
+                temperatureCell.style.textAlign = 'center';
+                tr.appendChild(temperatureCell);
+
+                const humidityCell = document.createElement('td');
+                humidityCell.textContent = row.humidity;
+                humidityCell.setAttribute('data-testid', `dti-humidity${idSuffix}`);
+                humidityCell.setAttribute('id', `humidity${idSuffix}`);
+                humidityCell.style.textAlign = 'center';
+                tr.appendChild(humidityCell);
+
+                const dayLengthCell = document.createElement('td');
+                dayLengthCell.textContent = row.dayLength;
+                dayLengthCell.setAttribute('data-testid', `dti-dayLength${idSuffix}`);
+                dayLengthCell.setAttribute('id', `dayLength${idSuffix}`);
+                dayLengthCell.style.textAlign = 'center';
+                tr.appendChild(dayLengthCell);
+
+                const cloudCoverCell = document.createElement('td');
+                cloudCoverCell.textContent = row.cloudCover;
+                cloudCoverCell.setAttribute('data-testid', `dti-cloudCover${idSuffix}`);
+                cloudCoverCell.setAttribute('id', `cloudCover${idSuffix}`);
+                cloudCoverCell.style.textAlign = 'center';
+                tr.appendChild(cloudCoverCell);
+
+                table.appendChild(tr);
+            });
+        });
+    }
+</script>
+
+</html>

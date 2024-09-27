@@ -584,6 +584,37 @@ const placesOfInterest = [
   },
 ];
 
+const selectorDelayedElementPair = [
+  {
+    selector: "#id-button-td-1",
+    html: `<button style="display: inherit;" id="id-button-element" data-testid="dti-button-element-1" onclick="buttonOnClickDelayed()">Click me!</button>`,
+  },
+  {
+    selector: "#id-button-td-2",
+    html: `<button style="display: inherit;" id="id-button-element" data-testid="dti-button-element-2" onclick="buttonOnClickComplexDelayed(' (Delayed)', getRandomValue(2600, 3500), getRandomValue(2600, 3500))">Click me! (greater delay)</button>`,
+  },
+  {
+    selector: "#id-checkbox-td",
+    html: `<input style="display: inherit;" type="checkbox" id="id-checkbox" data-testid="dti-checkbox" name="name-checkbox" value="checkbox" onclick="checkBoxOnClickDelayed()">Checkbox`,
+  },
+  {
+    selector: "#id-input-td",
+    html: `<input style="display: inherit;" type="text" id="id-input" data-testid="dti-input" onchange="inputOnChangeDelayed()">`,
+  },
+  {
+    selector: "#id-textarea-td",
+    html: `<textarea style="display: inherit;" id="id-textarea" data-testid="dti-textarea" onchange="textareaOnChangeDelayed()"></textarea>`,
+  },
+  {
+    selector: "#id-dropdown-td",
+    html: `<select style="display: inherit; width: 75px;" id="id-dropdown" name="name-dropdown" id="id-dropdown" data-testid="dti-dropdown" onchange="dropdownOnChangeDelayed()">
+            <option style="display: inherit;" value="option1">Option 1</option>
+            <option style="display: inherit;" value="option2">Option 2</option>
+            <option style="display: inherit;" value="option3">Option 3</option>
+          </select>`,
+  },
+];
+
 const selectorElementPair = [
   {
     selector: "#id-label-td",
@@ -599,7 +630,7 @@ const selectorElementPair = [
   },
   {
     selector: "#id-input-td",
-    html: `<input style="display: inherit;" type="text" id="id-input" data-testid="dti-input" onchange="inputOnChange()">`,
+    html: `<input style="display: inherit;" type="text" id="id-input" maxlength="64" data-testid="dti-input" onchange="inputOnChange()">`,
   },
   {
     selector: "#id-textarea-td",

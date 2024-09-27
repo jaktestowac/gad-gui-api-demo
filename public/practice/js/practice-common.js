@@ -20,6 +20,36 @@ function writeResults(data) {
   }
 }
 
+function writeResultsDelayed(data, elementDelay = 0, textDelay = 0) {
+  invokeFunctionWithDelay(() => {
+    const resultsContainer = document.getElementById("results-container");
+    resultsContainer.innerHTML = "";
+
+    const paragraph = document.createElement("p");
+    paragraph.setAttribute("data-testid", "dti-results");
+    paragraph.setAttribute("id", "results");
+    resultsContainer.appendChild(paragraph);
+    paragraph.innerHTML = "Processing... Please wait.";
+  }, elementDelay);
+
+  invokeFunctionWithDelay(() => {
+    const paragraph = document.getElementById("results");
+    paragraph.innerHTML = data;
+
+    const resultsHistoryContainer = document.getElementById("results-history-container");
+    if (resultsHistoryContainer !== null) {
+      const currentValue = resultsHistoryContainer.value;
+      const newText = `${data}\n` + currentValue;
+      resultsHistoryContainer.value = newText;
+      if (resultsHistoryContainer.value.split("\n").length > 100) {
+        const lines = resultsHistoryContainer.value.split("\n");
+        const newLines = lines.slice(0, 100);
+        resultsHistoryContainer.value = newLines.join("\n");
+      }
+    }
+  }, elementDelay + 0.2 + textDelay);
+}
+
 function formatDataToAppend(additionalData) {
   let dataToAppend = "";
   if (additionalData !== "" && additionalData !== undefined) {
@@ -28,9 +58,31 @@ function formatDataToAppend(additionalData) {
   return dataToAppend;
 }
 
+function buttonOnClickDelayed(additionalData = "", elementDelay) {
+  let newElementDelay = elementDelay !== undefined ? elementDelay : getRandomValue(2000, 2500);
+  console.log(`Results from button will be displayed after ${newElementDelay} ms`);
+  invokeFunctionWithDelay(() => buttonOnClick(additionalData), newElementDelay);
+}
+
+function buttonOnClickComplexDelayed(additionalData = "", elementDelay, textDelay) {
+  let newElementDelay = elementDelay !== undefined ? elementDelay : getRandomValue(2000, 2500);
+  let newTextDelay = textDelay !== undefined ? textDelay : getRandomValue(2000, 2500);
+  console.log(`Results Element be displayed after ${newElementDelay} ms`);
+  console.log(`Results from button will be displayed after ${newTextDelay} ms`);
+  // invokeFunctionWithDelay(() => buttonOnClick(additionalData), delayValue);
+  let dataToAppend = formatDataToAppend(additionalData);
+  writeResultsDelayed("You clicked the button!" + dataToAppend, newElementDelay, newTextDelay);
+}
+
 function buttonOnClick(additionalData = "") {
   let dataToAppend = formatDataToAppend(additionalData);
   writeResults("You clicked the button!" + dataToAppend);
+}
+
+function checkBoxOnClickDelayed(additionalData = "", delay, el) {
+  const delayValue = delay !== undefined ? delay : getRandomValue(2000, 2500);
+  console.log(`Results from checkBox will be displayed after ${delayValue} ms`);
+  invokeFunctionWithDelay(() => checkBoxOnClick(additionalData, el), delayValue);
 }
 
 function checkBoxOnClick(additionalData = "", el) {
@@ -46,6 +98,12 @@ function checkBoxOnClick(additionalData = "", el) {
   } else {
     writeResults("Checkbox is unchecked!" + dataToAppend);
   }
+}
+
+function dropdownOnChangeDelayed(additionalData = "", delay) {
+  const delayValue = delay !== undefined ? delay : getRandomValue(2000, 2500);
+  console.log(`Results from dropdown will be displayed after ${delayValue} ms`);
+  invokeFunctionWithDelay(() => dropdownOnChange(additionalData), delayValue);
 }
 
 function dropdownOnChange(additionalData = "", el) {
@@ -121,6 +179,12 @@ function labelOnMouseLeave(additionalData = "") {
   writeResults("" + dataToAppend);
 }
 
+function inputOnChangeDelayed(additionalData = "", delay) {
+  const delayValue = delay !== undefined ? delay : getRandomValue(2000, 2500);
+  console.log(`Results from input will be displayed after ${delayValue} ms`);
+  invokeFunctionWithDelay(() => inputOnChange(additionalData), delayValue);
+}
+
 function inputOnChange(additionalData = "", el) {
   let dataToAppend = formatDataToAppend(additionalData);
 
@@ -131,6 +195,12 @@ function inputOnChange(additionalData = "", el) {
 
   const inputValue = input.value;
   writeResults(`Input value changed to: ${inputValue}` + dataToAppend);
+}
+
+function textareaOnChangeDelayed(additionalData = "", delay) {
+  const delayValue = delay !== undefined ? delay : getRandomValue(2000, 2500);
+  console.log(`Results from textarea will be displayed after ${delayValue} ms`);
+  invokeFunctionWithDelay(() => textareaOnChange(additionalData), delayValue);
 }
 
 function textareaOnChange(additionalData = "", el) {

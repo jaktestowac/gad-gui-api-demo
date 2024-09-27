@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>🦎 GAD - Different elements - flaky Web First assertions (extend the timeout)</title>
+    <title>🦎 GAD - Different elements - from not present to enabled with delayed results</title>
     <link rel="icon" href="/data/icons/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
@@ -24,7 +24,7 @@
     <br />
     <br />
     <div align="center">
-        <h2>Different elements - flaky Web First assertions<br>(extend the timeout)</h2>
+        <h2>Different elements - from not present to enabled<br>with delayed results and extended timeout!⏰🐌</h2>
         <h3>Elements are now: <span id="statusLabel" style="font-weight: bold;">...</span><br /><span>please wait: <span id="delayLabel">...</span></span></h3>
 
         <table class="practice-table" style="margin: 0 auto; width: 500px !important;">
@@ -34,12 +34,12 @@
                 <th id="id-elements" data-testid="dti-elements">Elements for Test Automation</th>
             </tr>
             <tr style="height: 48px;">
-                <td style="text-align: center;" id="label-description" data-testid="dti-label-description">Label</td>
-                <td style="text-align: center;" id="id-label-td"></td>
+                <td style="text-align: center;" id="button-description" data-testid="dti-button-description">Button 1</td>
+                <td style="text-align: center;" id="id-button-td-1"></td>
             </tr>
             <tr style="height: 48px;">
-                <td style="text-align: center;" id="button-description" data-testid="dti-button-description">Button</td>
-                <td style="text-align: center;" id="id-button-td"></td>
+                <td style="text-align: center;" id="button-description" data-testid="dti-button-description">Button 2</td>
+                <td style="text-align: center;" id="id-button-td-2"></td>
             </tr>
             <tr style="height: 48px;">
                 <td style="text-align: center;" id="checkbox-description" data-testid="dti-checkbox-description">Checkbox</td>
@@ -54,32 +54,10 @@
                 <td style="text-align: center;" id="id-textarea-td"></td>
             </tr>
             <tr style="height: 48px;">
-                <td style="text-align: center;" id="textarea-description" data-testid="dti-textarea-text-description">Textarea with text</td>
-                <td style="text-align: center;" id="id-textarea-text-td"></td>
-            </tr>
-            <tr style="height: 48px;">
                 <td style="text-align: center;" id="dropdown-description" data-testid="dti-dropdown-description">Dropdown</td>
                 <td style="text-align: center;" id="id-dropdown-td">
 
                 </td>
-            </tr>
-            <tr style="height: 48px;">
-                <td style="text-align: center;" id="id-radio-buttons-description" data-testid="dti-radio-buttons-description">Radio Buttons</td>
-                <td style="text-align: center;" id="id-radio-buttons-td" data-testid="dti-radio-buttons-element">
-
-                </td>
-            </tr>
-            <tr style="height: 48px;">
-                <td style="text-align: center;" id="id-range-description" data-testid="dti-range-description">Range</td>
-                <td style="text-align: center;" id="id-range-td"></td>
-            </tr>
-            <tr style="height: 48px;">
-                <td style="text-align: center;" id="id-date-description" data-testid="dti-date-description">Date</td>
-                <td style="text-align: center;" id="id-date-td"></td>
-            </tr>
-            <tr style="height: 48px;">
-                <td style="text-align: center;" id="id-color-description" data-testid="dti-color-description">Color</td>
-                <td style="text-align: center;" id="id-color-td"></td>
             </tr>
         </table>
     </div>
@@ -87,7 +65,7 @@
     <div align="center">
         Results:
         <br />
-        <div id="results-container" style="border: 1px solid black; padding: 10px; margin: 10px; width: 50%; height: 80px;">
+        <div id="results-container" data-testid="dti-results-container" style="border: 1px solid black; padding: 10px; margin: 10px; width: 50%; height: 80px;">
         </div>
     </div>
     <br />
@@ -110,15 +88,15 @@
 <script type="text/javascript" src="./js/data-generators.js"></script>
 <script type="text/javascript" src="./js/prepare-elements.js"></script>
 <script>
-    const delayForCreate = getRandomValue(3000, 7000)
-    const delayForEnable = getRandomValue(3000, 7000)
+    const delayForCreate = getRandomValue(2700, 5000)
+    const delayForEnable = getRandomValue(2800, 5000)
 
     document.getElementById('statusLabel').innerHTML = 'NOT PRESENT'
     document.getElementById('statusLabel').style.color = "rgb(195, 1, 1)"
-    document.getElementById('delayLabel').innerHTML = `${(Math.round(delayForCreate / 100)) / 10}[s] for displayed and ${((Math.round(delayForEnable / 100)) / 10)}[s] for enabled`
+    document.getElementById('delayLabel').innerHTML = `${(Math.round(delayForCreate / 100)) / 10}[s] for displayed and ${((Math.round(delayForEnable / 100)) / 10)} for enabled`
 
     invokeFunctionWithDelay(() => {
-        selectorElementPair.forEach(element => {
+        selectorDelayedElementPair.forEach(element => {
             const elementInDisabledState = element['html'].replaceAll(' style="', ' disabled style="')
             addElementsToContainer(element['selector'], elementInDisabledState)
         });

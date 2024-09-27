@@ -757,6 +757,19 @@ function loadAdditionalUserContent() {
   changePixAfterClick('[aria-label="Account Management"]', "#myAvatar");
 }
 
+function loadAdditionalBackofficeContent() {
+  changePixAfterClick('[aria-label="Backoffice"]', ".back-img", "../images/fox-111471.jpg");
+}
+
+function loadAdditionalFrontPageContent() {
+  changePixAfterClick(
+    '[aria-label="GAD"]',
+    `[aria-label="Front banner of GAD application"]`,
+    "./images/gad-v2-92348511.jpg"
+  );
+  changePixAfterClick("#copyright-sign", ".back-img");
+}
+
 function loadAdditionalContent() {
   addToolPix("#copyright-sign");
 }
@@ -779,10 +792,16 @@ function changePixAfterClick(triggerSelector, resultSelector, imgSrc = "./images
 
   triggerElement.addEventListener("click", () => {
     setTimeout(() => {
-      resultElement.src = imageBefore;
+      if (imageBefore === "" || imageBefore === undefined) {
+        resultElement.style.display = "none";
+      } else {
+        resultElement.style.display = "inherit";
+        resultElement.src = imageBefore;
+      }
     }, 1000);
 
     resultElement.src = imgSrc;
+    resultElement.style.display = "inherit";
   });
 }
 

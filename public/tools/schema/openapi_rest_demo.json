@@ -3510,7 +3510,7 @@
         }
       }
     },
-    "/data/weather": {
+    "/v1/data/weather": {
       "get": {
         "parameters": [
           {
@@ -3540,7 +3540,7 @@
         }
       }
     },
-    "/data/costs": {
+    "/v1/data/costs": {
       "get": {
         "parameters": [
           {

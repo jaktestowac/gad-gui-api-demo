@@ -104,7 +104,7 @@ const lightningActivityTypes = [
   { name: "Extreme", icon: "⚡⚡⚡⚡⚡", index: 5 },
 ];
 
-function generateDateStrings(pastDays) {
+function generatePasteDateStrings(pastDays) {
   const dateStrings = [];
   for (let i = 0; i < pastDays; i++) {
     const date = new Date();
@@ -114,14 +114,32 @@ function generateDateStrings(pastDays) {
   return dateStrings;
 }
 
-function generateWeatherDataForNDays(nSamples) {
-  const pastDays = generateDateStrings(nSamples);
+function generateFutureDateStrings(pastDays) {
+  const dateStrings = [];
+  for (let i = 0; i < pastDays; i++) {
+    const date = new Date();
+    date.setDate(date.getDate() + i);
+    dateStrings.push(date.toISOString().split("T")[0]);
+  }
+  return dateStrings;
+}
 
+function generateWeatherDataForNPastDays(nSamples) {
+  const pastDays = generatePasteDateStrings(nSamples);
+  return generateWeatherDataForNDays(nSamples, pastDays);
+}
+
+function generateWeatherDataForNFutureDays(nSamples) {
+  const pastDays = generateFutureDateStrings(nSamples);
+  return generateWeatherDataForNDays(nSamples, pastDays);
+}
+
+function generateWeatherDataForNDays(nSamples, dayList) {
   const weatherData = [];
   for (let i = 0; i < nSamples; i++) {
-    const dataGenerator = new RandomValueGenerator(pastDays[i]);
+    const dataGenerator = new RandomValueGenerator(dayList[i]);
 
-    const date = pastDays[i];
+    const date = dayList[i];
 
     let weather = weatherTypes[0];
     if (dataGenerator.getNextValue(0, 100) < 50) {
@@ -133,17 +151,26 @@ function generateWeatherDataForNDays(nSamples) {
       temperature = dataGenerator.getNextValue(-20, 50);
     }
 
+    let temperatureLow = dataGenerator.getNextValue(15, 35);
+    let temperatureHigh = dataGenerator.getNextValue(temperatureLow + 5, temperatureLow + 10);
     let highLowTemperature = {
-      low: `${dataGenerator.getNextValue(temperature - 10, temperature - 5)}°C`,
-      high: `${dataGenerator.getNextValue(temperature + 5, temperature + 10)}°C`,
+      low: `${temperatureLow}°C`,
+      high: `${temperatureHigh}°C`,
+      temperatureHigh,
+      temperatureLow,
     };
     if (dataGenerator.getNextValue(0, 100) < 10) {
+      let temperatureLow = dataGenerator.getNextValue(temperature - 30, temperature - 20);
+      let temperatureHigh = dataGenerator.getNextValue(temperature + 20, temperature + 30);
       highLowTemperature = {
-        low: `${dataGenerator.getNextValue(temperature - 30, temperature - 20)}°C`,
-        high: `${dataGenerator.getNextValue(temperature + 20, temperature + 30)}°C`,
+        low: `${temperatureLow}°C`,
+        high: `${temperatureHigh}°C`,
+        temperatureLow,
+        temperatureHigh,
       };
     }
 
+    let temperatureRaw = temperature;
     temperature = `${temperature}°C`;
 
     let pressure = `${dataGenerator.getNextValue(1000, 1050)} hPa`;
@@ -297,6 +324,7 @@ function generateWeatherDataForNDays(nSamples) {
       weather,
       cloudCover,
       temperature,
+      temperatureRaw,
       highLowTemperature,
       sunriseSunset,
       dayLength,
@@ -321,5 +349,6 @@ function generateWeatherDataForNDays(nSamples) {
 }
 
 module.exports = {
-  generateWeatherDataForNDays,
+  generateWeatherDataForNPastDays,
+  generateWeatherDataForNFutureDays,
 };

@@ -24,7 +24,7 @@
   <br />
   <div class="container" id="pageHeader" style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center">
     <h1>
-      Welcome on 🦎<span style="color: rgb(8, 195, 1)">G</span>UI <span style="color: rgb(8, 195, 1)">A</span>PI
+      Welcome on <span aria-label="GAD">🦎</span><span style="color: rgb(8, 195, 1)">G</span>UI <span style="color: rgb(8, 195, 1)">A</span>PI
       <span style="color: rgb(8, 195, 1)">D</span>emo
     </h1>
   </div>
@@ -33,7 +33,7 @@
   </div>
 
   <div align="center" style="justify-content: center !important">
-    <img src="./data/gad-front-banner.png" style="max-width: 250px !important; max-height: 250px !important; margin: 10px; border-radius: 100%;" alt="" />
+    <img src="./data/gad-front-banner.png" aria-label="Front banner of GAD application" style="max-width: 250px !important; max-height: 250px !important; margin: 10px; border-radius: 100%;" alt="" />
   </div>
   <div align="center" style="justify-content: center !important">
     <div id="dbStatusInfoBox" class="simpleErrorBox" style="display: none"></div></br>
@@ -57,6 +57,7 @@
       </span>
     </a>
   </div>
+  <img class="back-img opaq" style="display: none;"></img>
 </body>
 
 <script type="text/javascript" src="/js/common.js"></script>
@@ -65,5 +66,8 @@
 <script type="text/javascript" src="/version.js"></script>
 <script type="text/javascript" src="/username.js"></script>
 <script type="text/javascript" src="/js/darkmode.js"></script>
+<script type="text/javascript">
+  loadAdditionalFrontPageContent()
+</script>
 
 </html>

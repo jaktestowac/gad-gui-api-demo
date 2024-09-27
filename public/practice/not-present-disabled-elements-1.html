@@ -25,7 +25,7 @@
     <br />
     <div align="center">
         <h2>Different elements - from not present to enabled</h2>
-        <h3>Elements are now: <span id="statusLabel" style="font-weight: bold;">...</span><br /><span>please wait: <span id="delayLabel">...</span>[s]</span></h3>
+        <h3>Elements are now: <span id="statusLabel" style="font-weight: bold;">...</span><br /><span>please wait: <span id="delayLabel">...</span></span></h3>
 
         <table class="practice-table" style="margin: 0 auto; width: 500px !important;">
 
@@ -115,7 +115,7 @@
 
     document.getElementById('statusLabel').innerHTML = 'NOT PRESENT'
     document.getElementById('statusLabel').style.color = "rgb(195, 1, 1)"
-    document.getElementById('delayLabel').innerHTML = `${(Math.round(delayForCreate / 100)) / 10} for displayed and ${((Math.round(delayForEnable / 100)) / 10)} for enabled`
+    document.getElementById('delayLabel').innerHTML = `${(Math.round(delayForCreate / 100)) / 10}[s] for displayed and ${((Math.round(delayForEnable / 100)) / 10)} for enabled`
 
     invokeFunctionWithDelay(() => {
         selectorElementPair.forEach(element => {
@@ -126,7 +126,7 @@
     }, delayForCreate);
 
     invokeFunctionWithDelay(() => {
-        changeElementsState(['.practice-table [data-testid^="dti-"]'], 'disabled', false)
+        changeElementsState(['.practice-table [data-testid^="dti-"]', 'option'], 'disabled', false)
         document.getElementById('statusLabel').innerHTML = 'ENABLED'
         document.getElementById('statusLabel').style.color = "rgb(8, 195, 1)"
     }, delayForCreate + delayForEnable);

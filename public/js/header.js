@@ -51,6 +51,9 @@ const mainGUIMenuHTML = (path = "") => {
   <a href="${path}/flashposts.html" class="menu-link">
     <button id="btnFlashposts" data-testid="open-flashposts" class="button-primary">Flashposts</button>
   </a>
+  <a href="${path}/games/games.html" class="menu-link">
+    <button id="btnGames" data-testid="open-games" class="button-primary">Games</button>
+  </a>
   `;
 };
 

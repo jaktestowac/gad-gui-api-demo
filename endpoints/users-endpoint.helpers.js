@@ -1,8 +1,8 @@
 const { isBugDisabled, isBugEnabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
-const { areStringsEqualIgnoringCase, areIdsEqual, isUndefined } = require("../helpers/compare.helpers");
+const { areStringsEqualIgnoringCase, areIdsEqual, isUndefined, isInactive } = require("../helpers/compare.helpers");
 const { getCurrentDateTimeISO } = require("../helpers/datetime.helpers");
-const { searchForUser } = require("../helpers/db-operation.helpers");
+const { searchForUser, searchForUserWithToken } = require("../helpers/db-operation.helpers");
 const { userDb } = require("../helpers/db.helpers");
 const {
   formatMissingFieldErrorResponse,
@@ -10,9 +10,16 @@ const {
   getIdFromUrl,
   formatInvalidFieldErrorResponse,
   formatNoFieldsErrorResponse,
+  formatInvalidTokenErrorResponse,
 } = require("../helpers/helpers");
-const { logDebug } = require("../helpers/logger-api");
-const { HTTP_UNPROCESSABLE_ENTITY, HTTP_CONFLICT } = require("../helpers/response.helpers");
+const { logDebug, logTrace } = require("../helpers/logger-api");
+const {
+  HTTP_UNPROCESSABLE_ENTITY,
+  HTTP_CONFLICT,
+  HTTP_NOT_FOUND,
+  HTTP_UNAUTHORIZED,
+} = require("../helpers/response.helpers");
+const { TracingInfoBuilder } = require("../helpers/tracing-info.helper");
 const {
   areMandatoryFieldsPresent,
   mandatory_non_empty_fields_user,
@@ -142,6 +149,67 @@ function handleUsers(req, res) {
       return;
     }
   }
+
+  // for soft delete articles and comments:
+  if (req.method === "DELETE" && urlEnds.includes("/api/users")) {
+    let userId = getIdFromUrl(urlEnds);
+    const foundUserToDelete = searchForUser(userId);
+
+    if (isUndefined(foundUserToDelete) || isInactive(foundUserToDelete)) {
+      res.status(HTTP_NOT_FOUND).send({});
+      return;
+    }
+
+    const verifyTokenResult = verifyAccessToken(req, res, "DELETE articles", req.url);
+    const foundUser = searchForUserWithToken(foundUserToDelete?.id, verifyTokenResult);
+
+    if (isUndefined(foundUser)) {
+      res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+      return;
+    }
+    req = new TracingInfoBuilder(req)
+      .setOriginMethod("DELETE")
+      .setWasAuthorized(true)
+      .setResourceId(foundUser.id)
+      .build();
+  }
+
+  // soft delete:
+  // NOTE: for now to preserve backward compatibility - we will not implement this
+  // if (req.method === "DELETE" && urlEnds.includes("/api/users")) {
+  //   let userId = getIdFromUrl(urlEnds);
+  //   const foundUserToDelete = searchForUser(userId);
+
+  //   const verifyTokenResult = verifyAccessToken(req, res, "DELETE articles", req.url);
+
+  //   const foundUser = searchForUserWithToken(foundUserToDelete?.id, verifyTokenResult);
+
+  //   logDebug("handleUsers: foundUser and user_id:", { foundUser, user_id: foundUserToDelete?.id });
+
+  //   if (isUndefined(foundUserToDelete) || isInactive(foundUserToDelete)) {
+  //     res.status(HTTP_NOT_FOUND).send({});
+  //     return;
+  //   }
+
+  //   if (isUndefined(foundUser)) {
+  //     res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+  //     return;
+  //   }
+
+  //   req.method = "PUT";
+  //   req = new TracingInfoBuilder(req).setOriginMethod("DELETE").setWasAuthorized(true).setResourceId(userId).build();
+  //   req.url = `/api/users/${userId}`;
+  //   const newUserBody = foundUser;
+  //   newUserBody._inactive = true;
+  //   req.body = newUserBody;
+  //   logTrace("handleUsers: SOFT DELETE: overwrite DELETE -> PUT:", {
+  //     method: req.method,
+  //     url: req.url,
+  //     body: req.body,
+  //   });
+  //   return;
+  // }
+
   return;
 }
 

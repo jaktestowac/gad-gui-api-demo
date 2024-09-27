@@ -626,3 +626,21 @@ h3 {
   font-size: 64px;
   cursor: pointer;
 }
+
+.back-img {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-25%, -50%);
+  width: 200% !important;
+  height: 200% !important;
+  scale: 2;
+  z-index: -1;
+  opacity: 0.5 !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.opaq {
+  opacity: 0.5 !important;
+}
