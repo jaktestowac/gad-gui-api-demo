@@ -4797,35 +4797,49 @@
               }
             }
           }
-        },
-        "FlashpostCreate": {
-          "type": "object",
-          "required": ["body"],
-          "properties": {
-            "body": {
-              "type": "string"
+        }
+      },
+      "FlashpostCreate": {
+        "type": "object",
+        "required": ["user_id", "body"],
+        "properties": {
+          "user_id": {
+            "type": "number"
+          },
+          "body": {
+            "type": "string"
+          },
+          "is_public": {
+            "type": "boolean"
+          },
+          "settings": {
+            "type": "object",
+            "properties": {
+              "color": {
+                "type": "string"
+              }
             }
           }
-        },
-        "FlashpostUpdate": {
-          "type": "object",
-          "properties": {
-            "date": {
-              "type": "string",
-              "format": "date-time"
-            },
-            "body": {
-              "type": "string"
-            },
-            "is_public": {
-              "type": "boolean"
-            },
-            "settings": {
-              "type": "object",
-              "properties": {
-                "color": {
-                  "type": "string"
-                }
+        }
+      },
+      "FlashpostUpdate": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "body": {
+            "type": "string"
+          },
+          "is_public": {
+            "type": "boolean"
+          },
+          "settings": {
+            "type": "object",
+            "properties": {
+              "color": {
+                "type": "string"
               }
             }
           }
