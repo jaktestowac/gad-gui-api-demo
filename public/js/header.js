@@ -87,6 +87,13 @@ const mainProjectsGUIMenuHTMLLogged = (path = "") => {
   return mainGuiMenu;
 };
 
+const mainLibraryGUIMenuHTMLLogged = (path = "") => {
+  const mainGuiMenu = `
+  `;
+
+  return mainGuiMenu;
+};
+
 const mainAPIMenuHTML = `
 <a href="/tools/index.html">
   <button id="btnTools" data-testid="btn-tools" class="button-primary">Tools</button>
@@ -210,6 +217,13 @@ const addMainMenuAndFooter = () => {
     menuContainerLeft = document.querySelector("#menu-main-gui-projects");
     menuContainerLeft.innerHTML = logoGAD();
     if (email) menuContainerLeft.innerHTML += mainProjectsGUIMenuHTMLLogged();
+    menuContainerLeft.insertAdjacentHTML("afterend", rightMenu(""));
+  }
+  if (document.querySelector("#menu-main-gui-library")) {
+    mainNavMenu.innerHTML = hamburgerMenu() + mainNavMenu.innerHTML;
+    menuContainerLeft = document.querySelector("#menu-main-gui-library");
+    menuContainerLeft.innerHTML = logoGAD();
+    if (email) menuContainerLeft.innerHTML += mainLibraryGUIMenuHTMLLogged();
     menuContainerLeft.insertAdjacentHTML("afterend", rightMenu(""));
   }
   if (document.querySelector("#menu-main-api")) {
