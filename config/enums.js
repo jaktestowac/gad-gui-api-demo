@@ -128,6 +128,7 @@ const FeatureFlagConfigKeys = {
   FEATURE_QRCODES: "feature_qrcodes",
   FEATURE_VALIDATE_ARTICLE_TITLE: "feature_validate_article_title",
   FEATURE_SOFT_DELETE_USERS: "feature_soft_delete_users",
+  STRICT_SURNAME_VALIDATION: "strict_surname_validation",
 };
 
 module.exports = {
