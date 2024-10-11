@@ -1,4 +1,4 @@
-const { gracefulQuit, setupEnv, sleep } = require("../helpers/helpers.js");
+const { gracefulQuit, setupEnv, sleep, invokeRequestUntil } = require("../helpers/helpers.js");
 const { baseUsersUrl, request, expect, faker, sleepTime } = require("../config.js");
 const {
   prepareUniqueLoggedUser,
@@ -49,8 +49,8 @@ describe("Endpoint /users", async () => {
       expect(response.status).to.equal(404);
     });
 
-    describe("POST /users (register)", () => {
-      it("empty payload", () => {
+    describe("POST /users (register)", async () => {
+      it("empty payload", async () => {
         return request.post(baseUrl).send({}).expect(422);
       });
 
@@ -84,16 +84,25 @@ describe("Endpoint /users", async () => {
       it("invalid registration - should not register with same email", async () => {
         // Arrange:
         const testUserData = generateValidUserData();
-        const response = await request.post(baseUrl).send(testUserData);
-        expect(response.status).to.equal(201);
 
-        await sleep(sleepTime);
+        await invokeRequestUntil(
+          testUserData.email,
+          async () => {
+            return await request.post(baseUrl).send(testUserData);
+          },
+          (response) => {
+            return response.status === 201;
+          }
+        ).then((response) => {
+          expect(response.status, JSON.stringify(response.body)).to.equal(201);
+          return response;
+        });
 
         // Act:
         const responseAgain = await request.post(baseUrl).send(testUserData);
 
         // Assert:
-        expect(responseAgain.status).to.equal(409);
+        expect(responseAgain.status, JSON.stringify(responseAgain.body)).to.equal(409);
       });
 
       it("invalid registration - should not register with same email (uppercase)", async () => {
@@ -109,7 +118,7 @@ describe("Endpoint /users", async () => {
         const responseAgain = await request.post(baseUrl).send(testUserData);
 
         // Assert:
-        expect(responseAgain.status).to.equal(409);
+        expect(responseAgain.status, JSON.stringify(responseAgain.body)).to.equal(409);
       });
 
       it("should not register with invalid email", async () => {
@@ -452,7 +461,7 @@ describe("Endpoint /users", async () => {
     });
   });
 
-  describe("DELETE /users", () => {
+  describe("DELETE /users", async () => {
     let headers;
     let userId;
 

@@ -94,8 +94,9 @@ function handleCaptchaVerification(req, res) {
   }
 
   const urlWithVerification = [{ url: "/api/users", method: "POST" }];
+  const reqUrl = req.url;
 
-  const isOnList = urlWithVerification.some((u) => req.url.includes(u.url) && req.method === u.method);
+  const isOnList = urlWithVerification.some((u) => reqUrl.includes(u.url) && req.method === u.method);
 
   if (isOnList === false) {
     // The endpoint is not on the list
@@ -141,6 +142,7 @@ function handleCaptchaVerification(req, res) {
     result: equationData.result,
     actualResult,
     isCaptchaCorrect,
+    reqUrl,
   });
 
   // TODO: remove the captcha from the list after it was used

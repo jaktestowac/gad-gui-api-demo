@@ -143,7 +143,7 @@ describe("Endpoint /flashposts", async () => {
           async () => {
             return await request.get(baseUrl).set(headers);
           },
-          async (response) => {
+          (response) => {
             return response.body.length === baseCount + 1;
           }
         ).then((response) => {

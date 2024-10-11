@@ -109,10 +109,16 @@ async function getPictureList() {
 getPictureList();
 
 checkIfFeatureEnabled("strict_surname_validation").then((isEnabled) => {
+  const surnameInput = document.querySelector("#lastname");
+
+  if (surnameInput === null) {
+    return;
+  }
+
   if (isEnabled) {
-    surnamInput.setAttribute("octavalidate", "R,SURNAME_V2");
+    surnameInput.setAttribute("octavalidate", "R,SURNAME_V2");
   } else {
-    surnamInput.setAttribute("octavalidate", "R,SURNAME");
+    surnameInput.setAttribute("octavalidate", "R,SURNAME");
   }
 });
 

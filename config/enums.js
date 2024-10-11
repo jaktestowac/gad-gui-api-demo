@@ -32,6 +32,7 @@ const ConfigKeys = {
   DB_BIG_RESTORE_PATH: "dbBigRestorePath",
   DB_TINY_RESTORE_PATH: "dbTinyRestorePath",
   DB_EMPTY_RESTORE_PATH: "dbEmptyRestorePath",
+  DB_TEST_RESTORE_PATH: "dbTestRestorePath",
   QUIZ_QUESTIONS_PATH: "quizQuestionsPath",
   HANGMAN_DATA_PATH: "hangmanDataPath",
   DEFAULT_PORT: "defaultPort",

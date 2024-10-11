@@ -132,7 +132,7 @@ describe("Endpoint /articles", () => {
       const response = await request.put(`${baseUrl}/${articleId}`).set(headers).send(testArticleData);
 
       // Assert:
-      expect(response.status).to.equal(200);
+      expect(response.status, JSON.stringify(response.body)).to.equal(200);
       testArticleData.id = response.body.id;
       expect(response.body).to.deep.equal(testArticleData);
     });

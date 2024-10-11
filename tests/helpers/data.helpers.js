@@ -19,7 +19,7 @@ const {
   existingUserEmail4,
   existingUserPass4,
 } = require("../config");
-const { sleep } = require("./helpers");
+const { sleep, invokeRequestUntil } = require("./helpers");
 
 const validExistingUser = {
   avatar: ".\\data\\users\\face_1591133479.7144732.jpg",
@@ -243,12 +243,33 @@ async function prepareUniqueLoggedUser() {
 
   await sleep(sleepTime); // wait for user registration // server is slow
 
-  const responseLogin = await request.post("/api/login").send({
-    email: testUserData.email,
-    password: testUserData.password,
+  const responseLogin = await invokeRequestUntil(
+    testUserData.email,
+    async () => {
+      return await request.post("/api/login").send({
+        email: testUserData.email,
+        password: testUserData.password,
+      });
+    },
+    (response) => {
+      return response.status === 200;
+    }
+  ).then((response) => {
+    expect(response.status, `${JSON.stringify(response.body)} after sending: ${JSON.stringify(testUserData)}`).to.equal(
+      200
+    );
+    return response;
   });
 
-  expect(responseLogin.status, JSON.stringify(responseLogin.body)).to.equal(200);
+  // const responseLogin = await request.post("/api/login").send({
+  //   email: testUserData.email,
+  //   password: testUserData.password,
+  // });
+
+  // expect(
+  //   responseLogin.status,
+  //   `${JSON.stringify(responseLogin.body)} after sending: ${JSON.stringify(testUserData)}`
+  // ).to.equal(200);
 
   const token = responseLogin.body.access_token;
   const headers = {

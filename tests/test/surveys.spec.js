@@ -350,7 +350,7 @@ describe(`Endpoint ${baseSurveysUrl}`, () => {
             .send(survey2);
 
           // Assert:
-          expect(response2.status).to.equal(200);
+          expect(response2.status, JSON.stringify(response2.body)).to.equal(200);
         });
       });
       describe("GET", () => {
