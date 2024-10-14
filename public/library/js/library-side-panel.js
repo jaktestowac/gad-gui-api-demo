@@ -15,7 +15,7 @@ function populateLibrarySidePanel(links = []) {
   const buttonElement = document.createElement("button");
   buttonElement.classList.add("openbtn");
   buttonElement.onclick = openNav;
-  buttonElement.innerHTML = `<i class="fa-solid fa-diagram-project"></i>`;
+  buttonElement.innerHTML = `<i class="fa-solid fa-gear"></i>`;
 
   const closeElement = document.createElement("a");
   closeElement.href = "javascript:void(0)";
@@ -36,16 +36,16 @@ function populateLibrarySidePanel(links = []) {
 
 const allLinks = [
   {
+    link: "/library/books.html",
+    id: "library-books",
+    name: "Books",
+    icon: `<i class="fa-solid fa-book"></i>`,
+  },
+  {
     link: "/library/dashboard.html",
     id: "home-dashboard",
     name: "Library Dashboard",
     icon: `<i class="fa-solid fa-house"></i>`,
-  },
-  {
-    link: "/library/dashboard.html",
-    id: "library-books",
-    name: "Books",
-    icon: `<i class="fa-solid fa-book"></i>`,
   },
   {
     link: "/library/dashboard.html",

@@ -2584,10 +2584,10 @@
       "title": "The Pragmatic Programmer",
       "author_ids": [1],
       "published_at": "1999-10-20T00:00:00Z",
-      "genre": [1],
+      "genre_ids": [1],
       "language": "English",
       "pages": 352,
-      "cover": ".\\data\\books\\the-pragmatic-programmer.jpg",
+      "cover": "..\\data\\books\\the-pragmatic-programmer.jpg",
       "description": "The Pragmatic Programmer: Your Journey to Mastery, 20th Anniversary Edition (2nd Edition) (Pragmatic Programmers)"
     },
     {
@@ -2595,10 +2595,10 @@
       "title": "Clean Code",
       "author_ids": [2],
       "published_at": "2008-08-11T00:00:00Z",
-      "genre": [1],
+      "genre_ids": [1],
       "language": "English",
       "pages": 464,
-      "cover": ".\\data\\books\\clean-code.jpg",
+      "cover": "..\\data\\books\\clean-code.jpg",
       "description": "Even bad code can function. But if code isn’t clean, it can bring a development organization to its knees. Every year, countless hours and significant resources are lost because of poorly written code. But it doesn’t have to be that way."
     },
     {
@@ -2606,10 +2606,10 @@
       "title": "Dune",
       "author_ids": [3],
       "published_at": "1965-06-01T00:00:00Z",
-      "genre": [17],
+      "genre_ids": [17],
       "language": "English",
       "pages": 412,
-      "cover": ".\\data\\books\\dune.jpg",
+      "cover": "..\\data\\books\\dune.jpg",
       "description": "Set in the far future amidst a sprawling feudal interstellar empire where planetary dynasties are controlled by noble houses that owe an allegiance to the imperial House Corrino, Dune tells the story of young Paul Atreides (the heir apparent to Duke Leto Atreides and heir of House Atreides) as he and his family accept control of the desert planet Arrakis, the only source of the 'spice' melange, the most important and valuable substance in the cosmos."
     },
     {
@@ -2617,10 +2617,10 @@
       "title": "The Lord of the Rings",
       "author_ids": [4],
       "published_at": "1954-07-29T00:00:00Z",
-      "genre": [12, 19],
+      "genre_ids": [12, 19],
       "language": "English",
       "pages": 1178,
-      "cover": ".\\data\\books\\the-lord-of-the-rings.jpg",
+      "cover": "..\\data\\books\\the-lord-of-the-rings.jpg",
       "description": "The Lord of the Rings is an epic high-fantasy novel written by English author and scholar J. R. R. Tolkien. The story began as a sequel to Tolkien's 1937 fantasy novel The Hobbit, but eventually developed into a much larger work."
     },
     {
@@ -2628,10 +2628,10 @@
       "title": "The Hitchhiker's Guide to the Galaxy",
       "author_ids": [5],
       "published_at": "1979-10-12T00:00:00Z",
-      "genre": [17],
+      "genre_ids": [17],
       "language": "English",
       "pages": 215,
-      "cover": ".\\data\\books\\the-hitchhikers-guide-to-the-galaxy.jpg",
+      "cover": "..\\data\\books\\the-hitchhikers-guide-to-the-galaxy.jpg",
       "description": "The Hitchhiker's Guide to the Galaxy is a comic science fiction series created by Douglas Adams that has become popular among fans of the genre and members of the scientific community."
     },
     {
@@ -2639,10 +2639,10 @@
       "title": "1984",
       "author_ids": [6],
       "published_at": "1949-06-08T00:00:00Z",
-      "genre": [18],
+      "genre_ids": [18],
       "language": "English",
       "pages": 328,
-      "cover": ".\\data\\books\\1984.jpg",
+      "cover": "..\\data\\books\\1984.jpg",
       "description": "1984 is a dystopian social science fiction novel by English novelist George Orwell. It was published on 8 June 1949 by Secker & Warburg as Orwell's ninth and final book completed in his lifetime."
     },
     {
@@ -2650,10 +2650,10 @@
       "title": "Animal Farm",
       "author_ids": [6],
       "published_at": "1945-08-17T00:00:00Z",
-      "genre": [18],
+      "genre_ids": [18],
       "language": "English",
       "pages": 112,
-      "cover": ".\\data\\books\\animal-farm.jpg",
+      "cover": "..\\data\\books\\animal-farm.jpg",
       "description": "Animal Farm is an allegorical novella by George Orwell, first published in England on 17 August 1945. The book tells the story of a group of farm animals who rebel against their human farmer, hoping to create a society where the animals can be equal, free, and happy."
     },
     {
@@ -2661,10 +2661,10 @@
       "title": "The Crime and the Punishment",
       "author_ids": [7],
       "published_at": "1866-11-14T00:00:00Z",
-      "genre": [18],
+      "genre_ids": [18],
       "language": "Russian",
       "pages": 671,
-      "cover": ".\\data\\books\\the-crime-and-the-punishment.jpg",
+      "cover": "..\\data\\books\\the-crime-and-the-punishment.jpg",
       "description": "Crime and Punishment is a novel by the Russian author Fyodor Dostoevsky. It was first published in the literary journal The Russian Messenger in twelve monthly installments during 1866."
     },
     {
@@ -2672,10 +2672,10 @@
       "title": "The Brothers Karamazov",
       "author_ids": [7],
       "published_at": "1880-11-26T00:00:00Z",
-      "genre": [18],
+      "genre_ids": [18],
       "language": "Russian",
       "pages": 796,
-      "cover": ".\\data\\books\\the-brothers-karamazov.jpg",
+      "cover": "..\\data\\books\\the-brothers-karamazov.jpg",
       "description": "The Brothers Karamazov is a passionate philosophical novel set in 19th century Russia, that enters deeply into the ethical debates of God, free will, and morality. It is a spiritual drama of moral struggles concerning faith, doubt, reason, and modern Russia."
     },
     {
@@ -2683,10 +2683,10 @@
       "title": "Perfekcyjna niedoskonałość",
       "author_ids": [8],
       "published_at": "2019-10-01T00:00:00Z",
-      "genre": [17],
+      "genre_ids": [17],
       "language": "Polish",
       "pages": 550,
-      "cover": ".\\data\\books\\perfekcyjna-niedoskonalosc.jpg",
+      "cover": "..\\data\\books\\perfekcyjna-niedoskonalosc.jpg",
       "description": "Jest XXIX wiek. Adam Zamoyski, tajemniczy zmartwychwstaniec, tkwi w środku rozgrywki między cywilizacjami, ludźmi, nieludźmi i istotami postludzkimi. Konkurencja stanowi motor ewolucji – konkurują ze sobą rośliny, zwierzęta, ludzie, kultury, gospodarki. Zwycięża, kto lepiej wykorzystuje naturalne środowisko, zasoby planety, ostatecznie – prawa fizyki."
     },
     {
@@ -2694,10 +2694,10 @@
       "title": "The Lean Startup",
       "author_ids": [9],
       "published_at": "2011-09-13T00:00:00Z",
-      "genre": [6],
+      "genre_ids": [6],
       "language": "English",
       "pages": 336,
-      "cover": ".\\data\\books\\the-lean-startup.jpg",
+      "cover": "..\\data\\books\\the-lean-startup.jpg",
       "description": "The Lean Startup: How Today's Entrepreneurs Use Continuous Innovation to Create Radically Successful Businesses is a book by Eric Ries describing his proposed lean startup strategy for startup companies."
     },
     {
@@ -2705,10 +2705,10 @@
       "title": "Extreme Ownership",
       "author_ids": [10],
       "published_at": "2015-10-20T00:00:00Z",
-      "genre": [5],
+      "genre_ids": [5],
       "language": "English",
       "pages": 320,
-      "cover": ".\\data\\books\\extreme-ownership.jpg",
+      "cover": "..\\data\\books\\extreme-ownership.jpg",
       "description": "Extreme Ownership: How U.S. Navy SEALs Lead and Win is a book by Jocko Willink and Leif Babin, published on October 20, 2015. The book details the authors' experiences and lessons learned from the battlefield, then teaches how to apply them to business and life."
     },
     {
@@ -2716,10 +2716,10 @@
       "title": "The Art of War",
       "author_ids": [11],
       "published_at": "5th century BC",
-      "genre": [4],
+      "genre_ids": [4],
       "language": "Chinese",
       "pages": 38,
-      "cover": ".\\data\\books\\the-art-of-war.jpg",
+      "cover": "..\\data\\books\\the-art-of-war.jpg",
       "description": "The Art of War is an ancient Chinese military treatise dating from the Late Spring and Autumn Period (roughly 5th century BC). The work, which is attributed to the ancient Chinese military strategist Sun Tzu ('Master Sun', also spelled Sunzi), is composed of 13 chapters."
     },
     {
@@ -2727,10 +2727,10 @@
       "title": "The Prince",
       "author_ids": [12],
       "published_at": "1532-12-10T00:00:00Z",
-      "genre": [4],
+      "genre_ids": [4],
       "language": "Italian",
       "pages": 140,
-      "cover": ".\\data\\books\\the-prince.jpg",
+      "cover": "..\\data\\books\\the-prince.jpg",
       "description": "The Prince is a 16th-century political treatise by the Italian diplomat and political theorist Niccolò Machiavelli. From his correspondence, a version appears to have been distributed in 1513, using a Latin title, De Principatibus (Of Principalities)."
     },
     {
@@ -2738,10 +2738,10 @@
       "title": "The Weird and The Eerie",
       "author_ids": [13],
       "published_at": "2017-01-26T00:00:00Z",
-      "genre": [10],
+      "genre_ids": [10],
       "language": "English",
       "pages": 128,
-      "cover": ".\\data\\books\\the-weird-and-the-eerie.jpg",
+      "cover": "..\\data\\books\\the-weird-and-the-eerie.jpg",
       "description": "What exactly are the Weird and the Eerie? In this new essay, Mark Fisher argues that some of the most haunting and anomalous fiction of the 20th century belongs to these two modes. The Weird and The Eerie are closely related but distinct modes, each possessing its own distinct properties. Both have often been associated with Horror, yet this emphasis overlooks the aching fascination that such texts can exercise. The Weird and the Eerie both fundamentally concern the outside and the unknown, which are not intrinsically horrifying, even if they are always unsettling."
     },
     {
@@ -2749,10 +2749,10 @@
       "title": "How to Stop Worrying and Start Living",
       "author_ids": [14],
       "published_at": "1948-10-05T00:00:00Z",
-      "genre": [11],
+      "genre_ids": [28],
       "language": "English",
       "pages": 320,
-      "cover": ".\\data\\books\\how-to-stop-worrying-and-start-living.jpg",
+      "cover": "..\\data\\books\\how-to-stop-worrying-and-start-living.jpg",
       "description": "How to Stop Worrying and Start Living is a self-help book by Dale Carnegie. It was first printed in Great Britain in 1948 by Richard Clay (The Chaucer Press), Ltd., Bungay Suffolk. It is currently published as a Mass Market Paperback of 320 pages by Pocket (Revised edition: September 15, 1990), ISBN 0-671-73335-4."
     },
     {
@@ -2760,10 +2760,10 @@
       "title": "Kwantechizm 2.0",
       "author_ids": [15],
       "published_at": "2022-01-01T00:00:00Z",
-      "genre": [38],
+      "genre_ids": [38],
       "language": "Polish",
       "pages": 344,
-      "cover": ".\\data\\books\\kwantechizm-2.0.jpg",
+      "cover": "..\\data\\books\\kwantechizm-2.0.jpg",
       "description": "Wyobrażenia o wszechświecie formułowane od wieków okazały się zbiorem przybliżeń lub nonsensów. Mówienie z pewnością o czymkolwiek jest więc, jak pisze autor tej książki, nie tylko bezczelnością, ale – co gorsza – nietaktem. Coraz lepiej poznajemy prawa rządzące rzeczywistością – nie przez ustanawianie świętych prawd, ale ich skuteczne podważanie. Wizja świata, która dzięki temu zaczęła się rysować, jest dogłębnie szokująca. By ją nam przybliżyć, Andrzej Dragan w jasny i klarowny sposób objaśnia niezwykłe wnioski wynikające z przełomowych teorii Einsteina oraz najbardziej zaskakujące prawa mechaniki kwantowej, a także przedstawia własny, nowy i rewolucyjny model łączący je ze sobą."
     },
     {
@@ -2771,10 +2771,10 @@
       "title": "Pułapki myślenia. O myśleniu szybkim i wolnym",
       "author_ids": [16],
       "published_at": "2011-10-25T00:00:00Z",
-      "genre": [11],
+      "genre_ids": [28],
       "language": "Polish",
       "pages": 672,
-      "cover": ".\\data\\books\\pulapki-myslenia.jpg",
+      "cover": "..\\data\\books\\pulapki-myslenia.jpg",
       "description": "Czytelnik znajdzie tu fascynujące opowieści o tym, jak ludzki umysł działa w różnych sytuacjach, jakie błędy popełnia, jakie pułapki go czekają. Autor pokazuje, jakie mechanizmy kierują naszymi decyzjami, jakie błędy popełniamy, jakie pułapki czyhają na nas w życiu codziennym, w pracy, w sporcie, w polityce, w biznesie. Dzięki tej książce zrozumiesz, dlaczego ludzie popełniają błędy, jakie mechanizmy kierują naszymi decyzjami, jakie pułapki czyhają na nas w życiu codziennym, w pracy, w sporcie, w polityce, w biznesie."
     },
     {
@@ -2782,10 +2782,10 @@
       "title": "Rework",
       "author_ids": [17],
       "published_at": "2010-03-09T00:00:00Z",
-      "genre": [6],
+      "genre_ids": [6],
       "language": "English",
       "pages": 288,
-      "cover": ".\\data\\books\\rework.jpg",
+      "cover": "..\\data\\books\\rework.jpg",
       "description": "Rework shows you a better, faster, easier way to succeed in business. Most business books give you the same old advice: Write a business plan, study the competition, seek investors, yadda yadda. If you're looking for a book like that, put this one back on the shelf."
     },
     {
@@ -2793,10 +2793,10 @@
       "title": "Sztuka przywództwa",
       "author_ids": [14],
       "published_at": "2020-01-01T00:00:00Z",
-      "genre": [5],
+      "genre_ids": [5],
       "language": "Polish",
       "pages": 288,
-      "cover": ".\\data\\books\\sztuka-przywodztwa.jpg",
+      "cover": "..\\data\\books\\sztuka-przywodztwa.jpg",
       "description": "Sztuka przywództwa to książka, która pomoże Ci zrozumieć, jakie cechy powinien posiadać dobry lider. Dale Carnegie, autor bestsellerów, takich jak Jak zdobyć przyjaciół i zjednać sobie ludzi czy Jak przestać się martwić i zacząć żyć, w swojej najnowszej książce zdradza sekrety skutecznego przywództwa. Dowiesz się z niej, jak zbudować zespół, który będzie działał jak zegarek, jak motywować pracowników do działania oraz jak radzić sobie z trudnymi sytuacjami w pracy."
     },
     {
@@ -2804,10 +2804,10 @@
       "title": "The Trial",
       "author_ids": [18],
       "published_at": "1925-01-01T00:00:00Z",
-      "genre": [18],
+      "genre_ids": [18],
       "language": "English",
       "pages": 208,
-      "cover": ".\\data\\books\\the-trial.jpg",
+      "cover": "..\\data\\books\\the-trial.jpg",
       "description": "The Trial (original German title: Der Process, later Der Prozess, Der Proceß and Der Prozeß) is a novel written by Franz Kafka between 1914 and 1915 and published posthumously in 1925. One of Kafka's best-known works."
     },
     {
@@ -2815,10 +2815,10 @@
       "title": "House of Leaves",
       "author_ids": [19],
       "published_at": "2000-03-07T00:00:00Z",
-      "genre": [18],
+      "genre_ids": [18],
       "language": "English",
       "pages": 709,
-      "cover": ".\\data\\books\\house-of-leaves.jpg",
+      "cover": "..\\data\\books\\house-of-leaves.jpg",
       "description": "House of Leaves is the debut novel by American author Mark Z. Danielewski, published in March 2000 by Pantheon Books. A bestseller, it has been translated into a number of languages, and is followed by a companion piece, The Whalestoe Letters. The format and structure of the novel is unconventional, with unusual page layout and style, making it a prime example of ergodic literature. It contains copious footnotes, many of which contain footnotes themselves, including references to fictional books, films or articles."
     },
     {
@@ -2826,20 +2826,20 @@
       "title": "Cain's Jawbone: A Novel Problem",
       "author_ids": [20],
       "published_at": "1934-01-01T00:00:00Z",
-      "genre": [18],
+      "genre_ids": [18],
       "language": "English",
       "pages": 216,
-      "cover": ".\\data\\books\\cains-jawbone.jpg"
+      "cover": "..\\data\\books\\cains-jawbone.jpg"
     },
     {
       "id": 24,
       "title": "Dune Messiah",
       "author_ids": [3],
       "published_at": "1969-03-01T00:00:00Z",
-      "genre": [17],
+      "genre_ids": [17],
       "language": "English",
       "pages": 331,
-      "cover": ".\\data\\books\\dune-messiah.jpg",
+      "cover": "..\\data\\books\\dune-messiah.jpg",
       "description": "Dune Messiah is a science fiction novel by American author Frank Herbert, the second in his Dune series of six novels. It was originally serialized in Galaxy magazine in 1969. The American and British editions have different prologues summarizing events in the previous novel. Dune Messiah and its sequel Children of Dune were collectively adapted by the Sci-Fi Channel in 2003 into a miniseries entitled Frank Herbert's Children of Dune."
     },
     {
@@ -2847,10 +2847,10 @@
       "title": "Children of Dune",
       "author_ids": [3],
       "published_at": "1976-04-01T00:00:00Z",
-      "genre": [17],
+      "genre_ids": [17],
       "language": "English",
       "pages": 408,
-      "cover": ".\\data\\books\\children-of-dune.jpg",
+      "cover": "..\\data\\books\\children-of-dune.jpg",
       "description": "Children of Dune is a 1976 science fiction novel by Frank Herbert, the third in his Dune series of six novels. It was originally serialized in Analog Science Fiction and Fact in 1976, and was the last Dune novel to be serialized before book publication. The novels Dune Messiah and Children of Dune were collectively adapted by the Sci-Fi Channel in 2003 into a miniseries entitled Frank Herbert's Children of Dune."
     },
     {
@@ -2858,10 +2858,10 @@
       "title": "God Emperor of Dune",
       "author_ids": [3],
       "published_at": "1981-05-01T00:00:00Z",
-      "genre": [17],
+      "genre_ids": [17],
       "language": "English",
       "pages": 412,
-      "cover": ".\\data\\books\\god-emperor-of-dune.jpg",
+      "cover": "..\\data\\books\\god-emperor-of-dune.jpg",
       "description": "God Emperor of Dune is a science fiction novel by Frank Herbert, the fourth in his Dune series of six novels. It was ranked as the No. 11 hardcover fiction best seller of 1981 by Publishers Weekly. God Emperor of Dune was serialized in Analog Science Fiction and Fact magazine from 1981 to 1982, and then published by Putnam."
     },
     {
@@ -2869,10 +2869,10 @@
       "title": "Heretics of Dune",
       "author_ids": [3],
       "published_at": "1984-05-01T00:00:00Z",
-      "genre": [17],
+      "genre_ids": [17],
       "language": "English",
       "pages": 471,
-      "cover": ".\\data\\books\\heretics-of-dune.jpg",
+      "cover": "..\\data\\books\\heretics-of-dune.jpg",
       "description": "Heretics of Dune is a 1984 science fiction novel by Frank Herbert, the fifth in his Dune series of six novels. It was ranked as the No. 13 hardcover fiction best seller of 1984 by Publishers Weekly. Heretics of Dune was serialized in Analog Science Fiction and Fact magazine from 1983 to 1984, and then published by Putnam."
     },
     {
@@ -2880,10 +2880,10 @@
       "title": "The Call of Cthulhu",
       "author_ids": [21],
       "published_at": "1928-02-20T00:00:00Z",
-      "genre": [15],
+      "genre_ids": [15],
       "language": "English",
       "pages": 35,
-      "cover": ".\\data\\books\\the-call-of-cthulhu.jpg",
+      "cover": "..\\data\\books\\the-call-of-cthulhu.jpg",
       "description": "The Call of Cthulhu is a short story by American writer H. P. Lovecraft. Written in the summer of 1926, it was first published in the pulp magazine Weird Tales in February 1928."
     },
     {
@@ -2891,10 +2891,10 @@
       "title": "The Silmarillion",
       "author_ids": [4],
       "published_at": "1977-09-15T00:00:00Z",
-      "genre": [12, 19],
+      "genre_ids": [12, 19],
       "language": "English",
       "pages": 365,
-      "cover": ".\\data\\books\\the-silmarillion.jpg",
+      "cover": "..\\data\\books\\the-silmarillion.jpg",
       "description": "The Silmarillion is a collection of mythopoeic works by English writer J. R. R. Tolkien, edited and published posthumously by his son, Christopher Tolkien, in 1977, with assistance from Guy Gavriel Kay. It is the primary and founding work of the Middle-earth legendarium, the world of The Hobbit, The Lord of the Rings, and The Silmarillion. The Silmarillion tells of the creation of Eä, the world that is, and the First Age of the world."
     },
     {
@@ -2902,10 +2902,10 @@
       "title": "The Hobbit",
       "author_ids": [4],
       "published_at": "1937-09-21T00:00:00Z",
-      "genre": [12, 19],
+      "genre_ids": [12, 19],
       "language": "English",
       "pages": 310,
-      "cover": ".\\data\\books\\the-hobbit.jpg",
+      "cover": "..\\data\\books\\the-hobbit.jpg",
       "description": "The Hobbit, or There and Back Again is a children's fantasy novel by English author J. R. R. Tolkien. It was published on 21 September 1937 to wide critical acclaim, being nominated for the Carnegie Medal and awarded a prize from the New York Herald Tribune for best juvenile fiction."
     },
     {
@@ -2913,14 +2913,30 @@
       "title": "Opowieści miłosne. Śmiertelne i tajemnicze",
       "author_ids": [22],
       "published_at": "2010-10-01T00:00:00Z",
-      "genre": [13, 15, 16],
+      "genre_ids": [13, 15, 16],
       "language": "Polish",
       "pages": 800,
-      "cover": ".\\data\\books\\opowiesci-milosne.jpg",
+      "cover": "..\\data\\books\\opowiesci-milosne.jpg",
       "description": "Opowieści miłosne. Śmiertelne i tajemnicze to zbiór opowiadań, które łączy temat miłości. W książce znajdziemy zarówno historie miłosne, jak i opowieści o miłości do literatury, sztuki, muzyki, a także o miłości do życia. Każde z opowiadań to inna historia. Wszystkie jednak łączy temat miłości, która potrafi być zarówno piękna, jak i tragiczna, tajemnicza, a nawet śmiertelna."
+    },
+    {
+      "id": 32,
+      "title": "Born from a Wish",
+      "author_ids": [23, 24],
+      "published_at": "2002-02-28T00:00:00Z",
+      "genre_ids": [7, 13],
+      "language": "English",
+      "pages": 200,
+      "cover": "..\\data\\books\\born-from-a-wish.jpg",
+      "description": "A dark narrative centered around Maria's backstory, revealing her mysterious origins and her connection to James Sunderland. The novel explores themes of identity, longing, and the blurring line between reality and nightmare."
     }
   ],
   "book-authors": [
+    {
+      "id": 0,
+      "name": "Unknown",
+      "country": "Unknown"
+    },
     {
       "id": 1,
       "name": "Andrew Hunt",
@@ -3030,6 +3046,16 @@
       "id": 22,
       "name": "Edgar Allan Poe",
       "country": "USA"
+    },
+    {
+      "id": 23,
+      "name": "Stephen Sunderland",
+      "country": "USA"
+    },
+    {
+      "id": 24,
+      "name": "Maria Sunderland",
+      "country": "USA"
     }
   ],
   "book-reviews": [
@@ -3118,10 +3144,99 @@
       "content": "Awesome book!"
     }
   ],
-  "library-roles": [
+  "book-shop-items": [
+    {
+      "id": 1,
+      "book_id": 1,
+      "price": 2500,
+      "quantity": 10
+    },
+    {
+      "id": 2,
+      "book_id": 2,
+      "price": 3000,
+      "quantity": 10
+    },
+    {
+      "id": 3,
+      "book_id": 3,
+      "price": 1800,
+      "quantity": 10
+    },
+    {
+      "id": 4,
+      "book_id": 4,
+      "price": 2000,
+      "quantity": 10
+    },
+    {
+      "id": 5,
+      "book_id": 5,
+      "price": 3000,
+      "quantity": 10
+    },
+    {
+      "id": 6,
+      "book_id": 6,
+      "price": 3100,
+      "quantity": 10
+    }
+  ],
+  "book-shop-orders": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "book_id": 1,
+      "quantity": 1,
+      "total_price": 3000,
+      "status_id": 9,
+      "created_at": "2024-05-25T11:50:28.108Z"
+    },
+    {
+      "id": 2,
+      "user_id": 2,
+      "book_id": 2,
+      "quantity": 1,
+      "total_price": 3500,
+      "status_id": 9,
+      "created_at": "2024-05-25T11:50:28.108Z"
+    },
+    {
+      "id": 3,
+      "user_id": 1,
+      "book_id": 2,
+      "quantity": 1,
+      "total_price": 3500,
+      "status": 1,
+      "created_at": "2024-05-25T11:50:28.108Z"
+    }
+  ],
+  "book-shop-order-status": [
+    {
+      "id": 1,
+      "name": "new"
+    },
+    {
+      "id": 3,
+      "name": "pending"
+    },
+    {
+      "id": 4,
+      "name": "cancelled"
+    },
+    {
+      "id": 9,
+      "name": "completed"
+    }
+  ],
+  "book-shop-roles": [
     {
       "id": 1,
       "name": "admin"
+    },
+    {
+      "id": 2,
+      "name": "reader"
     },
     {
       "id": 4,
@@ -3132,14 +3247,15 @@
       "name": "author"
     },
     {
-      "id": 6,
-      "name": "reader"
+      "id": 10,
+      "name": "delivery-coordinator"
     }
   ],
-  "library-accounts": [
+  "book-shop-accounts": [
     {
       "id": 1,
       "user_id": 1,
+      "role_id": 2,
       "borrowed_books_ids": [],
       "read_books_ids": [],
       "owned_books_ids": [],
@@ -3148,6 +3264,7 @@
     {
       "id": 2,
       "user_id": 2,
+      "role_id": 2,
       "borrowed_books_ids": [],
       "read_books_ids": [],
       "owned_books_ids": [],
@@ -3156,6 +3273,7 @@
     {
       "id": 3,
       "user_id": 3,
+      "role_id": 2,
       "borrowed_books_ids": [],
       "read_books_ids": [],
       "owned_books_ids": [],
@@ -3163,6 +3281,10 @@
     }
   ],
   "book-genres": [
+    {
+      "id": 0,
+      "name": "Unknown"
+    },
     {
       "id": 1,
       "name": "Programming"

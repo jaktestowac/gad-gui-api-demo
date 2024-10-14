@@ -44,22 +44,6 @@
   /* margin-left: 50px; */
 }
 
-.openbtn {
-  height: 100%;
-  position: fixed;
-  background-color: #202020;
-  overflow-x: hidden;
-  cursor: pointer;
-  border: none;
-  color: white;
-  z-index: 1;
-  top: 60px;
-  height: 60px;
-  font-size: 32px;
-  width: 60px !important;
-  border-radius: 100%;
-}
-
 /* .openbtn {
   font-size: 20px;
   cursor: pointer;
@@ -77,4 +61,18 @@
   width: 32px;
   font-size: 32px;
   padding-top: 12px;
+}
+
+.openbtn {
+  height: 110%;
+  position: fixed;
+  background-color: #202020;
+  overflow-x: hidden;
+  cursor: pointer;
+  border: none;
+  color: white;
+  z-index: 1;
+  top: 0px;
+  font-size: 32px;
+  width: 60px !important;
 }
