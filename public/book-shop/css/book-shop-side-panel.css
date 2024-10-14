@@ -57,7 +57,7 @@
   background-color: #444;
 }
 
-.library-side-panel-icons {
+.book-shop-side-panel-icons {
   width: 32px;
   font-size: 32px;
   padding-top: 12px;
@@ -73,6 +73,7 @@
   color: white;
   z-index: 1;
   top: 0px;
-  font-size: 32px;
-  width: 60px !important;
+  font-size: 22px !important;
+  width: 30px !important;
+  padding: 0px !important;
 }

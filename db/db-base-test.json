@@ -3064,84 +3064,64 @@
       "book_id": 1,
       "user_id": 1,
       "rating": 5,
-      "content": "Great book!"
+      "content": "Great book!",
+      "created_at": "2023-05-25T11:50:28.108Z"
     },
     {
       "id": 2,
       "book_id": 1,
       "user_id": 2,
       "rating": 4,
-      "content": "Good book!"
+      "content": "Good book!",
+      "created_at": "2024-01-25T11:50:28.108Z"
     },
     {
       "id": 3,
       "book_id": 1,
       "user_id": 3,
       "rating": 5,
-      "content": "Awesome book!"
+      "content": "Awesome book! This is a must read!",
+      "created_at": "2024-02-11T11:50:28.108Z"
     },
     {
       "id": 4,
       "book_id": 2,
       "user_id": 1,
       "rating": 5,
-      "content": "Great book!"
+      "content": "Great book! I loved it!",
+      "created_at": "2024-03-25T11:50:28.108Z"
     },
     {
       "id": 5,
       "book_id": 2,
       "user_id": 2,
       "rating": 4,
-      "content": "Good book!"
+      "content": "Good book! I believe it could be better.",
+      "created_at": "2024-04-25T11:50:28.108Z"
     },
     {
       "id": 6,
       "book_id": 2,
       "user_id": 3,
       "rating": 5,
-      "content": "Awesome book!"
+      "content": "Awesome book! I think it's the best book I've ever read!",
+      "created_at": "2024-05-25T11:50:28.108Z"
     },
     {
       "id": 7,
       "book_id": 3,
       "user_id": 1,
       "rating": 5,
-      "content": "Great book!"
+      "content": "Great book! Well I think it's a must read!",
+      "created_at": "2024-05-25T12:50:28.108Z"
     },
     {
       "id": 8,
       "book_id": 3,
       "user_id": 2,
-      "rating": 4,
-      "content": "Good book!"
-    },
-    {
-      "id": 9,
-      "book_id": 3,
-      "user_id": 3,
-      "rating": 5,
-      "content": "Awesome book!"
-    },
-    {
-      "id": 10,
-      "book_id": 4,
-      "user_id": 1,
-      "rating": 5,
-      "content": "Great book!"
-    },
-    {
-      "id": 11,
-      "book_id": 4,
-      "user_id": 2,
-      "rating": 4,
-      "content": "Good book!"
-    },
-    {
-      "id": 12,
-      "book_id": 4,
-      "user_id": 3,
-      "rating": 5,
-      "content": "Awesome book!"
+      "rating": 3,
+      "content": "Good book! But not the best. I expected more.",
+      "created_at": "2024-05-26T11:50:28.108Z"
     }
   ],
   "book-shop-items": [
@@ -3256,28 +3236,15 @@
       "id": 1,
       "user_id": 1,
       "role_id": 2,
-      "borrowed_books_ids": [],
-      "read_books_ids": [],
-      "owned_books_ids": [],
-      "funds": 15000
-    },
-    {
-      "id": 2,
-      "user_id": 2,
-      "role_id": 2,
-      "borrowed_books_ids": [],
-      "read_books_ids": [],
-      "owned_books_ids": [],
-      "funds": 20000
-    },
-    {
-      "id": 3,
-      "user_id": 3,
-      "role_id": 2,
-      "borrowed_books_ids": [],
-      "read_books_ids": [],
-      "owned_books_ids": [],
-      "funds": 50000
+      "borrowed_books_ids": [3],
+      "read_books_ids": [2],
+      "owned_books_ids": [1 , 5],
+      "funds": 15000,
+      "created_at": "2024-05-25T11:50:28.108Z",
+      "country": "Poland",
+      "city": "Warsaw",
+      "street": "Olmeków 1",
+      "postal_code": "00-000"
     }
   ],
   "book-genres": [

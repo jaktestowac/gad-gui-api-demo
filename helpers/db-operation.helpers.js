@@ -14,6 +14,7 @@ const {
   messagesDb,
   messageCheckDb,
   flashpostsDb,
+  bookShopAccountsDb,
 } = require("./db.helpers");
 
 // Users
@@ -450,6 +451,24 @@ function getFlashpostWithId(id) {
   return flashpostsDb().find((flashpost) => areIdsEqual(flashpost["id"], id));
 }
 
+function searchForBookShopAccount(profileId) {
+  const foundBookShopAccount = bookShopAccountsDb().find((user) => {
+    if (areIdsEqual(user["id"], profileId)) {
+      return user;
+    }
+  });
+  return foundBookShopAccount;
+}
+
+function searchForBookShopAccountWithUserId(userId) {
+  const foundBookShopAccount = bookShopAccountsDb().find((user) => {
+    if (areIdsEqual(user["user_id"], userId)) {
+      return user;
+    }
+  });
+  return foundBookShopAccount;
+}
+
 module.exports = {
   searchForUserWithToken,
   searchForUserWithEmail,
@@ -494,4 +513,6 @@ module.exports = {
   getAllFlashposts,
   getAllPublicFlashposts,
   getFlashpostWithId,
+  searchForBookShopAccount,
+  searchForBookShopAccountWithUserId,
 };

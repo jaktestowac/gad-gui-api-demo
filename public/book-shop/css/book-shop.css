@@ -1,0 +1,173 @@
+.books-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex-direction: row;
+}
+
+.book-title {
+  font-size: 13px;
+  font-weight: bold;
+  padding: 2px;
+  margin: 2px;
+}
+
+.book-card {
+  width: 300px;
+  border: 1px solid rgb(196, 196, 196);
+  border-radius: 5px;
+  margin: 4px;
+  background-color: rgb(250, 250, 250);
+}
+
+.book-top-details {
+  width: 95%;
+}
+
+.book-details {
+  font-size: 12px;
+  padding: 4px;
+}
+
+.book-description {
+  font-size: 12px;
+  padding: 4px;
+}
+
+.book-popup {
+  position: fixed;
+  z-index: 1;
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.book-popup-content {
+  overflow: auto;
+  min-width: 300px;
+  width: 400px;
+  border: 1px solid rgb(196, 196, 196);
+  border-radius: 5px;
+  padding: 4px;
+  background-color: rgb(250, 250, 250);
+}
+
+.book-popup-controls {
+  position: absolute;
+  display: flex;
+  justify-content: end;
+  align-items: end;
+  width: 390px;
+  padding: 4px;
+}
+
+.book-button {
+  font-size: 20px;
+}
+
+.book-clickable-component {
+  cursor: pointer;
+}
+
+.book-clickable-component:hover {
+  color: rgb(255, 0, 0);
+}
+
+.hidden-data {
+  filter: blur(5px);
+  user-select: none;
+}
+
+.account-name {
+  font-size: 16px;
+  margin: 5px;
+  padding: 5px;
+}
+
+h4.books-header {
+  font-size: 16px;
+  margin: 5px;
+  padding: 5px;
+}
+
+.profile-card {
+  min-width: 300px;
+  max-width: 500px;
+  border: 1px solid rgb(196, 196, 196);
+  border-radius: 5px;
+  margin: 4px;
+  padding: 10px;
+  background-color: rgb(250, 250, 250);
+  font-size: 12px;
+}
+
+.profile-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+
+.book-shop-button-primary {
+  font-size: 10px;
+  padding: 4px;
+  margin: 10px;
+  border: 1px solid rgb(196, 196, 196);
+  border-radius: 5px;
+  background-color: rgb(243, 243, 243);
+  cursor: pointer;
+}
+
+.book-shop-button-primary:hover {
+  background-color: rgb(209, 209, 209);
+}
+
+.profile-image-and-details {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.image-column {
+  width: 100px;
+  min-width: 100px;
+}
+
+.details-column {
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.books-list {
+  min-width: 300px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex-direction: row;
+  border: 1px solid rgb(196, 196, 196);
+  border-radius: 5px;
+  margin: 4px;
+  width: max-content;
+  background-color: rgb(250, 250, 250);
+}
+
+.books-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex-direction: row;
+}
+
+.book-table-details {
+  font-size: 12px;
+  padding: 4px;
+  width: 100%;
+}

@@ -114,6 +114,7 @@ const BugConfigKeys = {
   BUG_DISABLE_MODULE_USERS: "bug_disable_module_users",
   BUG_DISABLE_MODULE_AUTH: "bug_disable_module_auth",
   BUG_DELAY_SOFT_DELETE_COMMENTS: "bug_delay_soft_delete_comments",
+  BUG_BOOK_SHOP_ACCOUNT_001: "bug_book_shop_account_001",
 };
 
 const FeatureFlagConfigKeys = {

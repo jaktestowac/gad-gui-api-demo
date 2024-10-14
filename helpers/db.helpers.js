@@ -186,6 +186,10 @@ function bookmarksDb() {
   return fullDb()["bookmarks"];
 }
 
+function bookShopAccountsDb() {
+  return fullDb()["book-shop-accounts"];
+}
+
 function quizQuestionsDb() {
   const db = JSON.parse(fs.readFileSync(getDbPath(getConfigValue(ConfigKeys.QUIZ_QUESTIONS_PATH), "UTF-8")));
   return db;
@@ -321,4 +325,5 @@ module.exports = {
   initVisits,
   translationsDb,
   getLanguages,
+  bookShopAccountsDb,
 };
