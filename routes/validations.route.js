@@ -44,6 +44,9 @@ const { handleProjects } = require("../endpoints/projects-endpoint.helpers");
 const { handleCaptcha, handleCaptchaVerification } = require("../endpoints/captcha-endpoint.helpers");
 const { handleFlashPosts } = require("../endpoints/flashposts-endpoint.helpers");
 const { handleData } = require("../endpoints/data-endpoints");
+const { handleBooks } = require("../endpoints/library/books-endpoint.helpers");
+const { handleBookAuthors } = require("../endpoints/library/book-authors-endpoint.helpers");
+const { handleBookGenres } = require("../endpoints/library/book-genres-endpoint.helpers");
 
 const validationsRoutes = (req, res, next) => {
   let isAdmin = false;
@@ -247,6 +250,18 @@ const validationsRoutes = (req, res, next) => {
       handleFlashPosts(req, res);
     }
 
+    // Library endpoints
+    if (req.url.includes("/api/books")) {
+      handleBooks(req, res);
+    }
+    if (req.url.includes("/api/book-authors")) {
+      handleBookAuthors(req, res);
+    }
+    if (req.url.includes("/api/book-genres")) {
+      handleBookGenres(req, res);
+    }
+
+    // data endpoints
     if (req.url.includes("/api/v1/data")) {
       handleData(req, res, isAdmin);
       return;

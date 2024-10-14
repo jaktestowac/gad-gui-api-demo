@@ -20,6 +20,10 @@ function randomIntMinMax(min, max) {
 }
 
 function setBoxMessage(element, msg, className) {
+  if (element === null || element === undefined) {
+    return;
+  }
+
   let icon = `<i class="fa fa-info-circle" style="font-size:24px;color:orange"></i>`;
   if (className.toLowerCase().includes("error")) {
     icon = `<i class="fa fa-exclamation-triangle" style="font-size:24px;color:red"></i>`;
@@ -131,6 +135,10 @@ function addDaysToDateTime(daysOfValidity) {
 
 function getCurrentDateLocaleString() {
   return formatDateToLocaleString(new Date());
+}
+
+function getYearMonthDayFromDateString(date) {
+  return date.split("T")[0];
 }
 
 function getCurrentYear() {

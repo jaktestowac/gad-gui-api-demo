@@ -1,0 +1,3441 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "email": "Moses.Armstrong@Feest.ca",
+      "firstname": "Moses",
+      "lastname": "Armstrong",
+      "password": "test1",
+      "avatar": ".\\data\\users\\face_1591133479.7144732.jpg",
+      "creationDate": "2010-02-14T11:10:22.000Z",
+      "birthDate": "1964-05-17T06:47:38.258Z"
+    },
+    {
+      "id": 2,
+      "email": "Danial.Dicki@dicki.test",
+      "firstname": "Danial",
+      "lastname": "Dicki",
+      "password": "test2",
+      "avatar": ".\\data\\users\\face_1591133060.68834.jpg",
+      "creationDate": "2010-03-24T11:20:32.000Z",
+      "birthDate": "1974-01-14T01:05:10.593Z"
+    },
+    {
+      "id": 3,
+      "email": "Daryl.Parisian@gmail.test",
+      "firstname": "Daryl",
+      "lastname": "Parisian",
+      "password": "5Eleanore90",
+      "avatar": ".\\data\\users\\face_1591133063.620005.jpg",
+      "creationDate": "2009-09-27T15:40:37.000Z",
+      "birthDate": "1989-08-01T17:38:38.982Z"
+    },
+    {
+      "id": 4,
+      "email": "Dortha.Blick@Walker.name",
+      "firstname": "Dortha",
+      "lastname": "Blick",
+      "password": "5Damien43",
+      "avatar": ".\\data\\users\\face_1591133112.3790507.jpg",
+      "creationDate": "2009-08-07T14:35:20.000Z",
+      "birthDate": "1988-08-19T23:15:49.508Z"
+    },
+    {
+      "id": 5,
+      "email": "Lenore.Hoeger@test.net",
+      "firstname": "Lenore",
+      "lastname": "Hoeger",
+      "password": "6Selina95",
+      "avatar": ".\\data\\users\\face_1591133153.523801.jpg",
+      "creationDate": "2009-11-10T09:30:15.000Z",
+      "birthDate": "1996-08-24T07:48:45.691Z"
+    },
+    {
+      "id": 6,
+      "email": "Kerra.JD@test.net",
+      "firstname": "Kerra",
+      "lastname": "JD",
+      "password": "gdsa",
+      "avatar": ".\\data\\users\\face_1591133363.1959925.jpg",
+      "creationDate": "2010-07-17T09:10:22.000Z",
+      "birthDate": "1959-11-05T22:14:09.642Z"
+    },
+    {
+      "id": 7,
+      "email": "Mas.Lea@test.test",
+      "firstname": "Mas",
+      "lastname": "Lea",
+      "password": "fasd",
+      "avatar": ".\\data\\users\\face_1591133217.1529467.jpg",
+      "creationDate": "2011-03-24T11:20:32.000Z",
+      "birthDate": "1993-03-05T21:14:16.784Z"
+    },
+    {
+      "id": 8,
+      "email": "Josh.Brook@test.test",
+      "firstname": "Josh",
+      "lastname": "Brook",
+      "password": "23423425",
+      "avatar": ".\\data\\users\\face_1591134851.6068161.jpg",
+      "creationDate": "2010-09-27T15:40:37.000Z",
+      "birthDate": "1971-11-03T19:16:08.652Z"
+    },
+    {
+      "id": 9,
+      "email": "Daryl.Brook@test.test",
+      "firstname": "Daryl",
+      "lastname": "Brook",
+      "password": "6223432",
+      "avatar": ".\\data\\users\\face_1591134851.6068265.jpg",
+      "creationDate": "2012-05-28T08:10:03.000Z",
+      "birthDate": "1974-08-28T13:06:51.989Z"
+    },
+    {
+      "id": 10,
+      "email": "John.Okuplok@test.test",
+      "firstname": "John",
+      "lastname": "Okuplok",
+      "password": "1234",
+      "avatar": ".\\data\\users\\face_1591137202.609116_1.jpg",
+      "creationDate": "2010-11-22T08:54:51.119Z",
+      "birthDate": "1998-07-19T00:14:41.832Z"
+    },
+    {
+      "id": 11,
+      "email": "Henry.Spencer@test.test",
+      "firstname": "Henry",
+      "lastname": "Spencer",
+      "password": "1234",
+      "avatar": ".\\data\\users\\face_1591137468.2648418_1.jpg",
+      "creationDate": "2017-06-11T07:52:45.897Z",
+      "birthDate": "1992-12-20T22:52:19.943Z"
+    },
+    {
+      "id": 12,
+      "email": "m.altman@test.test",
+      "firstname": "Michael",
+      "lastname": "Altman",
+      "password": "1234",
+      "avatar": ".\\data\\users\\face_1591137649.060836_1.jpg",
+      "creationDate": "2018-03-21T06:50:23.509Z",
+      "birthDate": "1988-08-22T23:07:23.607Z"
+    },
+    {
+      "id": 13,
+      "email": "Abraham.Neumann@test.test",
+      "firstname": "Abraham",
+      "lastname": "Neumann",
+      "password": "1234",
+      "avatar": ".\\data\\users\\face_1591134508.3222337_1.jpg",
+      "creationDate": "2010-10-01T09:35:29.242Z",
+      "birthDate": "1965-12-27T19:35:25.496Z"
+    },
+    {
+      "id": 14,
+      "email": "v.cortez@test.test",
+      "firstname": "Vera",
+      "lastname": "Cortez",
+      "password": "1234",
+      "avatar": ".\\data\\users\\face_1591138035.9912412_1.jpg",
+      "creationDate": "2019-10-25T03:42:16.120Z",
+      "birthDate": "1970-10-18T21:42:52.191Z"
+    },
+    {
+      "id": 15,
+      "email": "j.sumderland@test.test",
+      "firstname": "James",
+      "lastname": "Sumderland",
+      "password": "12345",
+      "avatar": ".\\data\\users\\face_1591136402.493333_1.jpg",
+      "creationDate": "2016-10-16T20:09:27.750Z",
+      "birthDate": "1985-06-30T20:15:33.214Z"
+    }
+  ],
+  "articles": [
+    {
+      "id": 1,
+      "title": "How to write effective test cases",
+      "body": "Test cases are the backbone of any testing process. They define what to test, how to test, and what to expect. Writing effective test cases can save time, effort, and resources. Here are some tips for writing effective test cases:\n- Use clear and concise language\n- Follow a consistent format and structure\n- Include preconditions, steps, expected results, and postconditions\n- Cover positive, negative, and boundary scenarios\n- Prioritize test cases based on risk and importance\n- Review and update test cases regularly",
+      "user_id": 1,
+      "date": "2021-07-13T16:35:00Z",
+      "image": ".\\data\\images\\256\\chuttersnap-9cCeS9Sg6nU-unsplash.jpg"
+    },
+    {
+      "id": 2,
+      "title": "Benefits of continuous integration and delivery",
+      "body": "Continuous integration (CI) and continuous delivery (CD) are practices that aim to improve the quality and speed of software development. CI involves building and testing code frequently and automatically. CD involves deploying code to production environments quickly and reliably. Some of the benefits of CI/CD are:\n- Faster feedback and bug detection\n- Reduced integration conflicts and errors\n- Higher code quality and security\n- Shorter release cycles and time to market\n- Increased customer satisfaction and trust",
+      "user_id": 2,
+      "date": "2020-06-15T11:12:00Z",
+      "image": ".\\data\\images\\256\\christian-cueni-Us3TUHxMl3U-unsplash.jpg"
+    },
+    {
+      "id": 3,
+      "title": "What is agile software development?",
+      "body": "Agile software development is a set of principles and practices that emphasize collaboration, flexibility, and customer value. Agile software development is based on the Agile Manifesto, which states:\n- Individuals and interactions over processes and tools\n- Working software over comprehensive documentation\n- Customer collaboration over contract negotiation\n- Responding to change over following a plan Agile software development uses iterative and incremental methods, such as Scrum, Kanban, or XP, to deliver software in small batches.",
+      "user_id": 3,
+      "date": "2021-07-25T13:34:00Z",
+      "image": ".\\data\\images\\256\\jeremy-hynes-HxxNVun8HEc-unsplash.jpg"
+    },
+    {
+      "id": 4,
+      "title": "How to use Selenium for web automation",
+      "body": "Selenium is a popular open-source tool for automating web browsers. Selenium can be used to perform various tasks on web applications, such as filling forms, clicking buttons, navigating pages, verifying content, etc. Selenium supports multiple languages, such as Java, Python, C#, Ruby, etc., and multiple browsers, such as Chrome, Firefox, Edge, etc. To use Selenium for web automation, you need to:\n- Install Selenium WebDriver and a browser driver\n- Write a script that interacts with web elements using locators\n- Run the script and verify the results",
+      "user_id": "3",
+      "date": "2021-10-16T17:59:00Z",
+      "image": ".\\data\\images\\256\\joseph-chan-Es0eirjyQPQ-unsplash.jpg"
+    },
+    {
+      "id": 5,
+      "title": "Software quality assurance vs software testing",
+      "body": "Software quality assurance (SQA) and software testing are two related but distinct activities that aim to ensure the quality of software products. SQA is a proactive process that involves planning, designing, implementing, and monitoring quality standards and processes throughout the software development life cycle. Software testing is a reactive process that involves checking, verifying, and validating the functionality, performance, usability, security, etc., of software products against the requirements. SQA prevents defects while testing detects defects.",
+      "user_id": 3,
+      "date": "2021-05-01T19:34:00Z",
+      "image": ".\\data\\images\\256\\manson-yim-hogOq7t6dVQ-unsplash.jpg"
+    },
+    {
+      "id": 6,
+      "title": "Best practices for code reviews",
+      "body": "Code reviews are an essential part of software development that help improve the quality, readability, maintainability, and security of code. Code reviews also foster knowledge sharing, collaboration, and learning among developers. Here are some best practices for code reviews:\n- Define clear goals and expectations for code reviews\n- Use a code review tool or platform that facilitates communication and feedback\n- Review code in small chunks and focus on the most important issues\n- Provide constructive, respectful, and specific comments\n- Follow up on the comments and resolve them promptly",
+      "user_id": 1,
+      "date": "2021-01-01T11:21:00Z",
+      "image": ".\\data\\images\\256\\sharon-mccutcheon--8a5eJ1-mmQ-unsplash.jpg"
+    },
+    {
+      "id": 7,
+      "title": "What is test-driven development?",
+      "body": "Test-driven development (TDD) is a software development technique that involves writing tests before writing code. TDD follows a cycle of three steps:\n- Write a failing test for a feature or functionality\n- Write the minimum amount of code to make the test pass\n- Refactor the code to improve its quality and readability TDD helps developers create clean, robust, and reliable code that meets the requirements. TDD also helps developers avoid over-engineering or under-engineering their solutions.",
+      "user_id": 1,
+      "date": "2020-01-01T11:42:00Z",
+      "image": ".\\data\\images\\256\\andrew-svk-nQvFebPtqbw-unsplash.jpg"
+    },
+    {
+      "id": 8,
+      "title": "What are the responsibilities of a tester?",
+      "body": "A tester is someone who performs testing tasks on software products to ensure their quality and functionality. A tester has the following responsibilities:\n- Analyze and understand the requirements and expectations of the software\n- Plan and design test cases, scenarios, data, scripts, etc.\n- Execute test cases and record test results\n- Identify and report defects or errors in the software\n- Verify and validate the fixes or changes in the software\n- Communicate and collaborate with developers, stakeholders, customers, etc.",
+      "user_id": 1,
+      "date": "2018-08-27T07:30:31Z",
+      "image": ".\\data\\images\\256\\claudio-schwarz-yJzo1QIl9ug-unsplash.jpg"
+    },
+    {
+      "id": 9,
+      "title": "What are the responsibilities of a QA engineer?",
+      "body": "A QA engineer is someone who performs quality assurance tasks on software products to ensure their quality and reliability. A QA engineer has the following responsibilities:\n- Define and implement quality standards and processes throughout the software development life cycle\n- Monitor and measure the quality of the software products and processes\n- Perform audits and reviews on the software products and processes\n- Identify and report quality issues or risks in the software products and processes\n- Provide guidance and support to the development team and the organization on quality matters",
+      "user_id": 7,
+      "date": "2019-11-20T01:49:31Z",
+      "image": ".\\data\\images\\256\\jeremy-hynes-HxxNVun8HEc-unsplash.jpg"
+    },
+    {
+      "id": 10,
+      "title": "What are the skills of a tester?",
+      "body": "A tester is someone who performs testing tasks on software products to ensure their quality and functionality. A tester needs to have a combination of technical and soft skills that enable them to perform their tasks effectively and efficiently. Some of the skills of a tester are:\n- Analytical and logical thinking: to understand the requirements and design test cases that cover all scenarios\n- Attention to detail: to identify and report defects or errors accurately\n- Communication and collaboration: to interact with developers, stakeholders, customers, etc., clearly and respectfully\n- Curiosity and creativity: to explore and test the software from different perspectives and find new ways to break it\n- Learning and adaptability: to keep up with new technologies, tools, methodologies, etc., and adjust to changing situations",
+      "user_id": 4,
+      "date": "2016-11-27T15:34:44Z",
+      "image": ".\\data\\images\\256\\sid-balachandran-bG4IyV4eH0Q-unsplash.jpg"
+    },
+    {
+      "id": 11,
+      "title": "What are the skills of a QA engineer?",
+      "body": "A QA engineer is someone who performs quality assurance tasks on software products to ensure their quality and reliability. A QA engineer needs to have a combination of technical and soft skills that enable them to perform their tasks effectively and efficiently. Some of the skills of a QA engineer are:\n- Analytical and logical thinking: to define and implement quality standards and processes\n- Attention to detail: to monitor and measure the quality of the software products and processes\n- Communication and collaboration: to communicate and report quality issues or risks to developers, stakeholders, customers, etc.\n- Curiosity and creativity: to identify and suggest improvements or solutions for quality matters\n- Learning and adaptability: to keep up with new technologies, tools, methodologies, etc., and adjust to changing situations",
+      "user_id": 2,
+      "date": "2021-01-15T05:54:17Z",
+      "image": ".\\data\\images\\256\\hena-sheikh-jpoUR0PGk_0-unsplash.jpg"
+    },
+    {
+      "id": 12,
+      "title": "What are the tools used by QA engineers?",
+      "body": "QA engineers use various tools to automate or simplify their quality assurance tasks, such as quality planning, monitoring, measuring, auditing, reporting, etc. There are many tools available for QA engineers, depending on the type, purpose, and scope of quality assurance. Some of the popular tools used by QA engineers are:\n- SonarQube: for code quality analysis\n- Cucumber: for behavior-driven development\n- Zephyr: for test management\n- Mantis: for bug tracking and project management\n- Jenkins: for continuous integration",
+      "user_id": 1,
+      "date": "2021-06-09T16:19:49Z",
+      "image": ".\\data\\images\\256\\mahdikordi-4hCYZT_zPu8-unsplash.jpg"
+    },
+    {
+      "id": 13,
+      "title": "What are the differences between testers and QA engineers?",
+      "body": "Testers and QA engineers are both involved in ensuring the quality of software products, but they have some differences in their roles, responsibilities, and skills. Some of the differences are: \n- Testers focus on verifying the functionality and performance of the software products, while QA engineers focus on defining and implementing quality standards and processes throughout the software development life cycle.\n- Testers design and execute test cases, identify and report defects, and verify and validate fixes or changes in the software products, while QA engineers monitor and measure the quality of the software products and processes, perform audits and reviews, and identify and report quality issues or risks.\n- Testers need to have skills such as analytical and logical thinking, attention to detail, communication and collaboration, curiosity and creativity, learning and adaptability, while QA engineers need to have skills such as analytical and logical thinking, attention to detail, communication and collaboration, curiosity and creativity, learning and adaptability, as well as quality planning, monitoring, measuring, auditing, reporting, etc.",
+      "user_id": 3,
+      "date": "2016-10-31T11:55:41Z",
+      "image": ".\\data\\images\\256\\pietro-de-grandi-Rz-d5XxRsgI-unsplash.jpg"
+    },
+    {
+      "id": 14,
+      "title": "What are some examples of software design patterns?",
+      "body": "There are many types and categories of software design patterns, depending on the problem domain, scope, and level of abstraction. Some of the common types and examples of software design patterns are:\n- Creational patterns: deal with the creation and instantiation of objects. Examples are Singleton, Factory, Builder, Prototype, etc.\n- Structural patterns: deal with the composition and arrangement of objects. Examples are Adapter, Bridge, Composite, Decorator, Facade, Proxy, etc.\n- Behavioral patterns: deal with the interaction and communication of objects. Examples are Chain of Responsibility, Command, Iterator, Mediator, Observer, Strategy, Template Method, etc.",
+      "user_id": 3,
+      "date": "2015-04-25T15:45:08Z",
+      "image": ".\\data\\images\\256\\sharon-mccutcheon--8a5eJ1-mmQ-unsplash.jpg"
+    },
+    {
+      "id": 15,
+      "title": "What are software design patterns and why use them?",
+      "body": "Software design patterns are general and reusable solutions to common problems that occur in software design. Software design patterns are not ready-made code, but rather templates or guidelines that can be adapted and applied to different situations. Software design patterns can help:\n- Improve the quality and maintainability of the software\n- Simplify the communication and collaboration among developers\n- Reduce the complexity and redundancy of the code\n- Promote good practices and principles of software design",
+      "user_id": 6,
+      "date": "2020-06-07T22:59:33Z",
+      "image": ".\\data\\images\\256\\rory-mckeever-w0kMi0osklU-unsplash.jpg"
+    },
+    {
+      "id": 16,
+      "title": "What is software quality and how to measure it?",
+      "body": "Software quality is the degree to which a software product meets the requirements and expectations of the customer and the stakeholders. Software quality can be measured by various criteria, such as:\n- Functionality: the ability of the software to perform the functions and features that it is supposed to do\n- Performance: the efficiency and speed of the software under different conditions and loads\n- Usability: the ease of use and learnability of the software for the users\n- Reliability: the consistency and dependability of the software over time and across situations\n- Security: the protection of the software from unauthorized access, modification, or damage\n- Maintainability: the ease of modifying and updating the software to fix defects or add new features",
+      "user_id": 6,
+      "date": "2017-12-31T01:14:02Z",
+      "image": ".\\data\\images\\256\\chuttersnap-9cCeS9Sg6nU-unsplash.jpg"
+    },
+    {
+      "id": 17,
+      "title": "What are the types of software quality assurance activities?",
+      "body": "Software quality assurance activities are the tasks that help ensure the quality of software products. Software quality assurance activities can be classified into different types based on various criteria, such as:\n- The level of testing: unit testing, integration testing, system testing, acceptance testing\n- The purpose of testing: functional testing, non-functional testing, regression testing, smoke testing\n- The technique of testing: black-box testing, white-box testing, gray-box testing\n- The timing of testing: static testing, dynamic testing\n- The degree of automation: manual testing, automated testing",
+      "user_id": 3,
+      "date": "2018-10-17T12:56:37Z",
+      "image": ".\\data\\images\\256\\sharon-mccutcheon--8a5eJ1-mmQ-unsplash.jpg"
+    },
+    {
+      "id": 18,
+      "title": "What are the skills of a good software quality assurance engineer?",
+      "body": "A good software quality assurance engineer is someone who has a combination of technical and soft skills that enable them to perform their tasks effectively and efficiently. Some of the skills of a good software quality assurance engineer are:\n- Analytical and logical thinking: to understand the requirements and design test cases that cover all scenarios\n- Attention to detail: to identify and report defects or errors accurately\n- Communication and collaboration: to interact with developers, stakeholders, customers, etc., clearly and respectfully\n- Curiosity and creativity: to explore and test the software from different perspectives and find new ways to break it\n- Learning and adaptability: to keep up with new technologies, tools, methodologies, etc., and adjust to changing situations",
+      "user_id": 4,
+      "date": "2015-02-04T07:48:17Z",
+      "image": ".\\data\\images\\256\\rory-mckeever-w0kMi0osklU-unsplash.jpg"
+    },
+    {
+      "id": 19,
+      "title": "What is software quality assurance and why is it important?",
+      "body": "Software quality assurance (SQA) is a proactive process that involves planning, designing, implementing, and monitoring quality standards and processes throughout the software development life cycle. SQA is important because it helps:\n- Ensure the quality and reliability of the software\n- Prevent defects and errors in the software\n- Enhance customer satisfaction and trust\n- Reduce development and maintenance costs\n- Comply with standards and regulations",
+      "user_id": 1,
+      "date": "2017-09-08T03:41:58Z",
+      "image": ".\\data\\images\\256\\sharon-mccutcheon--8a5eJ1-mmQ-unsplash.jpg"
+    },
+    {
+      "id": 20,
+      "title": "What is continuous integration and why use it?",
+      "body": "Continuous integration (CI) is a software development practice that involves building and testing code frequently and automatically. CI helps detect and fix errors early in the development cycle, improving the quality and reliability of the code. CI also enables faster feedback and collaboration among developers. Some of the reasons to use CI are:\n- Faster feedback and bug detection\n- Reduced integration conflicts and errors\n- Higher code quality and security\n- Shorter release cycles and time to market\n- Increased customer satisfaction and trust",
+      "user_id": 3,
+      "date": "2016-05-15T13:48:36Z",
+      "image": ".\\data\\images\\256\\sharon-mccutcheon--8a5eJ1-mmQ-unsplash.jpg"
+    },
+    {
+      "id": 21,
+      "title": "The tools used for end-to-end testing",
+      "body": "End-to-end testing tools are software applications that help create and run end-to-end tests. End-to-end testing tools provide features such as web automation, browser drivers, page objects, data-driven techniques, etc. There are many tools available for end-to-end testing, depending on the type, scope, and complexity of end-to-end scenarios. Some of the popular tools used for end-to-end testing are:\n- Playwright: for web automation\n- Selenium: for web automation\n- Cypress: for web automation\n- Appium: for mobile automation\n- Postman: for API testing\n- Puppeteer: for headless browser automation",
+      "user_id": 7,
+      "date": "2015-01-15T01:48:39Z",
+      "image": ".\\data\\images\\256\\manson-yim-hogOq7t6dVQ-unsplash.jpg"
+    },
+    {
+      "id": 22,
+      "title": "The challenges of unit testing",
+      "body": "Unit testing is the process of verifying the functionality of individual units or components of code. Unit testing is the foundation of the test pyramid and has some challenges, such as:\n- Choosing the right level of granularity and scope for unit testing\n- Writing testable and modular code that follows the single responsibility principle\n- Isolating dependencies and side effects using mocks, stubs, or fakes\n- Measuring and improving code coverage and test quality\n- Balancing the trade-off between unit testing and other types of testing",
+      "user_id": 1,
+      "date": "2015-11-10T12:16:58Z",
+      "image": ".\\data\\images\\256\\manson-yim-hogOq7t6dVQ-unsplash.jpg"
+    },
+    {
+      "id": 23,
+      "title": "The benefits of unit testing",
+      "body": "Unit testing is the process of verifying the functionality of individual units or components of code. Unit testing is the foundation of the test pyramid and has many benefits, such as:\n- Improving the quality and reliability of the code\n- Detecting and fixing defects early in the development cycle\n- Enhancing the design and structure of the code\n- Facilitating refactoring and maintenance of the code\n- Supporting documentation and knowledge sharing of the code",
+      "user_id": 2,
+      "date": "2017-05-06T04:52:16Z",
+      "image": ".\\data\\images\\256\\h-ng-nguy-n-0iGK9zCA7Ak-unsplash.jpg"
+    },
+    {
+      "id": 24,
+      "title": "The challenges of end-to-end testing",
+      "body": "End-to-end testing is a complex and time-consuming process that involves many challenges, such as:\n- High cost and effort of creating and maintaining end-to-end tests\n- Low speed and reliability of running end-to-end tests\n- High dependency on external factors, such as network, browser, environment, etc.\n- Difficulty in debugging and isolating failures in end-to-end tests\n- Low coverage and value of end-to-end tests compared to other types of tests",
+      "user_id": 1,
+      "date": "2021-08-23T14:19:48Z",
+      "image": ".\\data\\images\\256\\sid-balachandran-bG4IyV4eH0Q-unsplash.jpg"
+    },
+    {
+      "id": 25,
+      "title": "How to write good end-to-end tests",
+      "body": "End-to-end tests are tests that verify the functionality and behavior of the whole system or application. End-to-end tests are the top layer of the test pyramid and should be comprehensive, realistic, and valuable. Here are some tips for writing good end-to-end tests:\n- Use a testing framework and a tool to create and run end-to-end tests\n- Follow a naming convention and a structure for end-to-end tests\n- Write one user story per end-to-end test\n- Use meaningful and descriptive names for end-to-end tests\n- Cover critical user journeys and business flows for each user story\n- Use page objects and data-driven techniques to simplify end-to-end tests",
+      "user_id": 3,
+      "date": "2022-03-15T10:10:51Z",
+      "image": ".\\data\\images\\256\\manson-yim-hogOq7t6dVQ-unsplash.jpg"
+    },
+    {
+      "id": 26,
+      "title": "How to write good integration tests",
+      "body": "Integration tests are tests that verify the interaction and integration of multiple units or components of code. Integration tests are the middle layer of the test pyramid and should be reliable, consistent, and realistic. Here are some tips for writing good integration tests:\n- Use a testing framework and a mocking library to create and run integration tests\n- Follow a naming convention and a structure for integration tests\n- Write one scenario per integration test\n- Use meaningful and descriptive names for integration tests\n- Cover happy path, alternative path, and exception path for each scenario\n- Manage test data and environments carefully",
+      "user_id": 5,
+      "date": "2019-12-28T21:44:06Z",
+      "image": ".\\data\\images\\256\\subtle-cinematics-ooNuyiU4d3w-unsplash.jpg"
+    },
+    {
+      "id": 27,
+      "title": "What are the advantages and disadvantages of end-to-end testing?",
+      "body": "End-to-end testing is the process of verifying the functionality and behavior of the whole system or application. End-to-end testing is the top layer of the test pyramid and has some advantages and disadvantages. Some of the advantages are:\n- Provides a comprehensive and realistic view of the software\n- Detects system-level issues that may not be found by other types of testing\n- Enhances customer satisfaction and trust Some of the disadvantages are:\n- Requires high cost and effort to create and maintain end-to-end tests\n- Has low speed and reliability compared to other types of testing\n- Has high dependency on external factors, such as network, browser, environment, etc.",
+      "user_id": 4,
+      "date": "2021-04-20T02:44:13Z",
+      "image": ".\\data\\images\\256\\subtle-cinematics-ooNuyiU4d3w-unsplash.jpg"
+    },
+    {
+      "id": 28,
+      "title": "How to improve software quality and testing?",
+      "body": "Software quality and testing are critical activities that affect the success and satisfaction of software products. Software quality and testing can be improved by following some tips, such as:\n- Understand the requirements and expectations clearly and align them with the test objectives, strategy, and scope\n- Use the test pyramid model to balance the speed, cost, and coverage of testing\n- Use automation tools and frameworks where appropriate to simplify and speed up testing tasks\n- Follow a coding standard and style guide for test scripts to ensure consistency and readability\n- Document and report test results and defects clearly and accurately\n- Review and update test cases regularly to ensure their relevance and validity\n- Perform different types of tests based on risk and importance\n- Define and implement quality standards and processes throughout the software development life cycle\n- Monitor and measure the quality of the software products and processes\n- Perform audits and reviews on the software products and processes",
+      "user_id": 7,
+      "date": "2016-12-26T06:44:52Z",
+      "image": ".\\data\\images\\256\\jeremy-hynes-HxxNVun8HEc-unsplash.jpg"
+    },
+    {
+      "id": 29,
+      "title": "What are some common software quality issues?",
+      "body": "Software quality issues are problems or defects that affect the quality and functionality of software products. Software quality issues can have various causes, impacts, and solutions. Some of the common software quality issues are:\n- Functional issues: the software does not perform the functions or features that it is supposed to do or does not meet the requirements or expectations\n- Performance issues: the software is slow, inefficient, or unstable under different conditions or loads\n- Usability issues: the software is difficult to use or learn for the users or does not meet their needs or preferences\n- Reliability issues: the software is inconsistent or unreliable over time or across situations\n- Security issues: the software is vulnerable to unauthorized access, modification, or damage",
+      "user_id": 5,
+      "date": "2018-07-18T00:39:00Z",
+      "image": ".\\data\\images\\256\\hena-sheikh-jpoUR0PGk_0-unsplash.jpg"
+    },
+    {
+      "id": 30,
+      "title": "How to write good unit tests",
+      "body": "Unit tests are tests that verify the functionality of individual units or components of code. Unit tests are the foundation of the test pyramid and should be fast, isolated, and independent. Here are some tips for writing good unit tests:\n- Use a testing framework and a mocking library to create and run unit tests\n- Follow a naming convention and a structure for unit tests\n- Write one assertion per unit test\n- Use meaningful and descriptive names for unit tests\n- Cover positive, negative, and edge cases for each unit\n- Refactor and optimize unit tests regularly",
+      "user_id": 1,
+      "date": "2016-10-09T13:50:04Z",
+      "image": ".\\data\\images\\256\\mahdikordi-4hCYZT_zPu8-unsplash.jpg"
+    },
+    {
+      "id": 31,
+      "title": "What are the advantages and disadvantages of unit testing?",
+      "body": "Unit testing is the process of verifying the functionality of individual units or components of code. Unit testing is the foundation of the test pyramid and has some advantages and disadvantages. Some of the advantages are:\n- Improves the quality and reliability of the code\n- Detects and fixes defects early in the development cycle\n- Enhances the design and structure of the code\n- Facilitates refactoring and maintenance of the code\n- Supports documentation and knowledge sharing of the code Some of the disadvantages are:\n- Requires extra time and effort to write and maintain unit tests\n- May not cover all scenarios and aspects of the software\n- May not detect integration or system-level issues",
+      "user_id": 5,
+      "date": "2018-07-16T10:15:26Z",
+      "image": ".\\data\\images\\256\\sid-balachandran-bG4IyV4eH0Q-unsplash.jpg"
+    },
+    {
+      "id": 32,
+      "title": "What is the test pyramid and why use it?",
+      "body": "The test pyramid is a model that illustrates the optimal distribution of different types of tests in a software project. The test pyramid consists of three layers:\n- Unit tests: tests that verify the functionality of individual units or components of code\n- Integration tests: tests that verify the interaction and integration of multiple units or components of code\n- End-to-end tests: tests that verify the functionality and behavior of the whole system or application The test pyramid helps to:\n- Balance the speed, cost, and coverage of testing\n- Reduce the dependency and maintenance of testing\n- Increase the reliability and confidence of testing",
+      "user_id": 3,
+      "date": "2018-08-08T02:22:04Z",
+      "image": ".\\data\\images\\256\\jeremy-hynes-HxxNVun8HEc-unsplash.jpg"
+    },
+    {
+      "id": 33,
+      "title": "What are the phases of software testing life cycle?",
+      "body": "Software testing life cycle (STLC) is a sequence of activities that guide the planning, execution, and reporting of software testing. The phases of STLC are:\n- Requirement analysis: analyze and understand the requirements and scope of testing\n- Test planning: define the test objectives, strategy, resources, schedule, etc.\n- Test design: create test cases, scenarios, data, scripts, etc.\n- Test environment setup: prepare and configure the hardware, software, network, etc., required for testing\n- Test execution: run the test cases and record the results\n- Test closure: evaluate the test results and report the outcomes",
+      "user_id": 4,
+      "date": "2020-04-12T02:17:51Z",
+      "image": ".\\data\\images\\256\\joseph-chan-Es0eirjyQPQ-unsplash.jpg"
+    },
+    {
+      "id": 34,
+      "title": "What are the skills of a good software tester?",
+      "body": "A good software tester is someone who has a combination of technical and soft skills that enable them to perform their tasks effectively and efficiently. Some of the skills of a good software tester are:\n- Analytical and logical thinking: to understand the requirements and design test cases that cover all scenarios\n- Attention to detail: to identify and report defects or errors accurately\n- Communication and collaboration: to interact with developers, stakeholders, customers, etc., clearly and respectfully\n- Curiosity and creativity: to explore and test the software from different perspectives and find new ways to break it\n- Learning and adaptability: to keep up with new technologies, tools, methodologies, etc., and adjust to changing situations",
+      "user_id": 3,
+      "date": "2021-09-13T01:47:45Z",
+      "image": ".\\data\\images\\256\\jeremy-hynes-HxxNVun8HEc-unsplash.jpg"
+    },
+    {
+      "id": 35,
+      "title": "What is software testing and why is it important?",
+      "body": "Software testing is the process of checking, verifying, and validating the functionality, performance, usability, security, etc., of software products against the requirements and expectations. Software testing is important because it helps:\n- Ensure the quality and reliability of the software\n- Detect and fix defects or errors in the software\n- Enhance customer satisfaction and trust\n- Reduce development and maintenance costs\n- Comply with standards and regulations",
+      "user_id": 1,
+      "date": "2022-05-20T05:38:12Z",
+      "image": ".\\data\\images\\256\\chuttersnap-9cCeS9Sg6nU-unsplash.jpg"
+    },
+    {
+      "id": 36,
+      "title": "What are the types of software testing?",
+      "body": "Software testing can be classified into different types based on various criteria, such as: \n- The level of testing: unit testing, integration testing, system testing, acceptance testing\n- The purpose of testing: functional testing, non-functional testing, regression testing, smoke testing \n- The technique of testing: black-box testing, white-box testing, gray-box testing\n- The timing of testing: static testing, dynamic testing\n- The degree of automation: manual testing, automated testing",
+      "user_id": 3,
+      "date": "2020-07-29T14:14:41Z",
+      "image": ".\\data\\images\\256\\claudio-schwarz-yJzo1QIl9ug-unsplash.jpg"
+    },
+    {
+      "id": 37,
+      "title": "What is Playwright and why use it?",
+      "body": "Playwright is a tool that enables reliable and fast end-to-end testing of web applications. Playwright can be used to automate various tasks on web applications, such as filling forms, clicking buttons, navigating pages, verifying content, etc. Playwright supports multiple languages, such as JavaScript, Python, Java, etc., and multiple browsers, such as Chrome, Firefox, Edge, etc. Some of the reasons to use Playwright are:\n- It provides a consistent and fluent API across browsers\n- It handles dynamic and complex web elements\n- It supports parallel and headless testing\n- It integrates with popular testing frameworks and tools",
+      "user_id": 4,
+      "date": "2022-07-05T13:20:17Z",
+      "image": ".\\data\\images\\256\\jeremy-hynes-HxxNVun8HEc-unsplash.jpg"
+    },
+    {
+      "id": 38,
+      "title": "The benefits of agile software development",
+      "body": "Agile software development is a set of principles and practices that emphasize collaboration, flexibility,and customer value. Agile software development has many benefits, such as:\n- Faster delivery of value to the customer\n- Improved quality and reliability of the software\n- Increased responsiveness and adaptability to changing requirements\n- Enhanced communication and collaboration among the team and the stakeholders\n- Higher customer satisfaction and trust\n- Greater innovation and creativity\n- Reduced waste and risk",
+      "user_id": 2,
+      "date": "2015-04-15T14:58:04Z",
+      "image": ".\\data\\images\\256\\hena-sheikh-jpoUR0PGk_0-unsplash.jpg"
+    },
+    {
+      "id": 39,
+      "title": "The events of Scrum framework",
+      "body": "Scrum is an agile framework that uses five events to organize and manage software development. The five events are:\n- Sprint: a time-boxed period (usually 2-4 weeks) in which the team delivers a potentially shippable increment of value\n- Sprint planning: a meeting at the beginning of a sprint where the team plans what to deliver and how to deliver it\n- Daily Scrum: a short (15 minutes) daily meeting where the team members synchronize their work and progress\n- Sprint review: a meeting at the end of a sprint where the team demonstrates the increment and receives feedback from the stakeholders\n- Sprint retrospective: a meeting after the sprint review where the team inspects and improves their process",
+      "user_id": 6,
+      "date": "2022-09-05T12:23:14Z",
+      "image": ".\\data\\images\\256\\chuttersnap-9cCeS9Sg6nU-unsplash.jpg"
+    },
+    {
+      "id": 40,
+      "title": "The challenges of test automation",
+      "body": "Test automation is the use of software tools or scripts to perform testing tasks that are otherwise manual, repetitive, or time-consuming. Test automation has many benefits, but it also comes with some challenges, such as:\n- Selecting the right tool or framework for the project\n- Designing and maintaining robust and reusable test cases\n- Handling dynamic or complex web elements\n- Dealing with synchronization issues and timeouts\n- Managing test data and environments\n- Integrating test automation with CI/CD pipeline\n- Measuring and improving test automation ROI",
+      "user_id": 7,
+      "date": "2021-08-30T17:55:10Z",
+      "image": ".\\data\\images\\256\\subtle-cinematics-BulYN_Vs_dw-unsplash.jpg"
+    },
+    {
+      "id": 41,
+      "title": "The artifacts of Scrum framework",
+      "body": "Scrum is an agile framework that uses three artifacts to manage and deliver software products. The three artifacts are:\n- Product backlog: a prioritized list of features and requirements that provide value to the customer\n- Sprint backlog: a subset of the product backlog that the team commits to deliver in a sprint\n- Increment: a potentially shippable piece of software that meets the definition of done and adds value to the product The artifacts are transparent and inspectable by the team and the stakeholders. The artifacts are also adaptable and refined based on feedback and changes.",
+      "user_id": 2,
+      "date": "2021-10-20T23:44:27Z",
+      "image": ".\\data\\images\\256\\saud-edum-HkSI9h3KFn0-unsplash.jpg"
+    },
+    {
+      "id": 42,
+      "title": "How to use Jenkins for continuous integration",
+      "body": "Jenkins is a widely used open-source tool for continuous integration (CI), which is a software development practice that involves building and testing code frequently and automatically. Jenkins can be used to automate various tasks in the CI pipeline, such as:\n- Triggering builds based on code changes or schedules\n- Running tests and code analysis tools\n- Reporting test results and code quality metrics\n- Deploying code to different environments\n- Sending notifications and alerts\n\nTo use Jenkins for CI, you need to:\n- Install Jenkins and configure it according to your needs\n- Create jobs that define the tasks to be performed\n- Add plugins that extend the functionality of Jenkins\n- Configure build triggers, parameters, steps, etc.\n- Run the jobs and monitor the results",
+      "user_id": 1,
+      "date": "2019-05-17T22:20:36Z",
+      "image": ".\\data\\images\\256\\joseph-chan-Es0eirjyQPQ-unsplash.jpg"
+    },
+    {
+      "id": 43,
+      "title": "The difference between agile and waterfall methodologies",
+      "body": "Agile and waterfall are two contrasting software development methodologies that differ in their approach, philosophy, and practices. Agile is an iterative and incremental method that delivers software in small batches with frequent feedback and changes. Waterfall is a linear and sequential method that delivers software in one large batch with predefined requirements and specifications. Some of the differences between agile and waterfall are:\n- Agile is adaptive and flexible, while waterfall is predictive and rigid\n- Agile is customer-centric and collaborative, while waterfall is contract-centric and siloed\n- Agile is empirical and experimental, while waterfall is analytical and planned",
+      "user_id": 6,
+      "date": "2019-07-14T12:26:14Z",
+      "image": ".\\data\\images\\256\\h-ng-nguy-n-0iGK9zCA7Ak-unsplash.jpg"
+    },
+    {
+      "id": 44,
+      "title": "What is the test pyramid and how to use it?",
+      "body": "The test pyramid is a model that illustrates the optimal distribution of different types of tests in a software project. The test pyramid consists of three layers:\n- Unit tests: tests that verify the functionality of individual units or components of code\n- Integration tests: tests that verify the interaction and integration of multiple units or components of code\n- End-to-end tests: tests that verify the functionality and behavior of the whole system or application The test pyramid helps to:\n- Balance the speed, cost, and coverage of testing\n- Reduce the dependency and maintenance of testing\n- Increase the reliability and confidence of testing To use the test pyramid, you need to:\n- Write more unit tests than integration tests, and more integration tests than end-to-end tests\n- Use automation tools and frameworks for each layer of testing\n- Run unit tests frequently and locally, integration tests occasionally and remotely, and end-to-end tests rarely and remotely",
+      "user_id": 7,
+      "date": "2015-08-30T01:42:31Z",
+      "image": ".\\data\\images\\256\\sid-balachandran-bG4IyV4eH0Q-unsplash.jpg"
+    },
+    {
+      "id": 45,
+      "title": "How to use Postman for API testing",
+      "body": "Postman is a popular tool for testing APIs (application programming interfaces). Postman can be used to send requests, receive responses, validate data, run tests, create reports, etc. To use Postman for API testing, you need to:\n- Install Postman and create an account\n- Create a collection that groups related requests\n- Add requests to the collection with the URL, method, parameters, headers, body, etc.\n- Add tests to the requests using JavaScript or Postman's built-in snippets\n- Run the requests individually or as a collection and verify the results",
+      "user_id": 5,
+      "date": "2022-09-03T12:38:55Z",
+      "image": ".\\data\\images\\256\\rory-mckeever-w0kMi0osklU-unsplash.jpg"
+    },
+    {
+      "id": 46,
+      "title": "The advantages of test automation",
+      "body": "Test automation is the use of software tools or scripts to perform testing tasks that are otherwise manual, repetitive, or time-consuming. Test automation has many advantages, such as:\n- Increased test coverage and accuracy\n- Reduced testing time and cost\n- Improved testing efficiency and productivity\n- Enhanced testing reliability and consistency\n- Faster feedback and bug detection \n- Higher customer satisfaction and quality",
+      "user_id": 7,
+      "date": "2015-04-20T17:13:48Z",
+      "image": ".\\data\\images\\256\\pietro-de-grandi-Rz-d5XxRsgI-unsplash.jpg"
+    },
+    {
+      "id": 47,
+      "title": "The roles and responsibilities of a Scrum Master",
+      "body": "A Scrum Master is a servant-leader who facilitates and coaches the Scrum team and the organization in applying Scrum. A Scrum Master has the following roles and responsibilities:\n- Ensure that the team understands and follows Scrum values, principles, and practices\n- Remove impediments and obstacles that hinder the team's progress and performance\n- Protect the team from external distractions and interferences\n- Promote self-organization, collaboration, and empowerment within the team\n- Foster a culture of continuous improvement and feedback\n- Support the Product Owner in managing the product backlog and maximizing value",
+      "user_id": 3,
+      "date": "2012-07-23T22:14:45Z",
+      "image": ".\\data\\images\\256\\subtle-cinematics-BulYN_Vs_dw-unsplash.jpg"
+    },
+    {
+      "id": 48,
+      "title": "How to use Cucumber for behavior-driven development",
+      "body": "Cucumber is a tool that supports behavior-driven development (BDD), a software development approach that focuses on the behavior and outcomes of the software. Cucumber allows writing executable specifications in a natural language called Gherkin. Gherkin uses a format of Given-When-Then to describe scenarios. To use Cucumber for BDD, you need to:\n- Write feature files that contain scenarios in Gherkin\n- Write step definitions that map the steps to the code\n- Run the feature files and verify the results",
+      "user_id": 1,
+      "date": "2021-11-27T16:47:58Z",
+      "image": ".\\data\\images\\256\\saud-edum-HkSI9h3KFn0-unsplash.jpg"
+    },
+    {
+      "id": 49,
+      "title": "The principles of agile software development",
+      "body": "Agile software development is based on four core values and twelve principles that guide the way software is developed and delivered. The four core values are:\n- Individuals and interactions over processes and tools\n- Working software over comprehensive documentation\n- Customer collaboration over contract negotiation\n- Responding to change over following a plan.\n\nThe twelve principles are:\n- Our highest priority is to satisfy the customer through early and continuous delivery of valuable software.\n- Welcome changing requirements, even late in development. Agile processes harness change for the customer's competitive advantage.\n- Deliver working software frequently, from a couple of weeks to a couple of months, with a preference to the shorter timescale.\n- Business people and developers must work together daily throughout the project.\n- Build projects around motivated individuals. Give them the environment and support they need, and trust them to get the job done.\n- The most efficient and effective method of conveying information to and within a development team is face-to-face conversation.\n- Working software is the primary measure of progress.\n- Agile processes promote sustainable development. The sponsors, developers, and users should be able to maintain a constant pace indefinitely.\n- Continuous attention to technical excellence and good design enhances agility.\n- Simplicity--the art of maximizing the amount of work not done--is essential.",
+      "user_id": 2,
+      "date": "2017-11-23T21:05:04Z",
+      "image": ".\\data\\images\\256\\manson-yim-hogOq7t6dVQ-unsplash.jpg"
+    },
+    {
+      "id": 50,
+      "title": "How to use JMeter for performance testing",
+      "body": "JMeter is a powerful open-source tool for testing the performance of web applications. JMeter can be used to simulate various load scenarios, measure response times, throughput, errors, etc., and generate reports and graphs. To use JMeter for performance testing, you need to:\n- Install JMeter and configure it according to your needs\n- Create a test plan that defines the test objectives, parameters, logic, etc.\n- Add thread groups that represent the number of users or requests\n- Add samplers that send requests to the target server\n- Add listeners that collect and display the test results",
+      "user_id": 5,
+      "date": "2014-07-27T18:03:46Z",
+      "image": ".\\data\\images\\256\\sid-balachandran-bG4IyV4eH0Q-unsplash.jpg"
+    },
+    {
+      "id": 51,
+      "title": "The difference between Scrum and Kanban",
+      "body": "Scrum and Kanban are two agile methods that share some common principles and practices, such as iterative and incremental delivery, visualization of work, and collaboration among team members. However, they also have some key differences, such as:\n- Scrum uses fixed-length sprints, while Kanban uses a continuous flow of work\n- Scrum prescribes roles, events, artifacts, and rules, while Kanban is more flexible and adaptable\n- Scrum limits work in progress (WIP) by sprint capacity, while Kanban limits WIP by column or lane\n- Scrum focuses on delivering potentially shippable increments of value, while Kanban focuses on optimizing the flow of value",
+      "user_id": 3,
+      "date": "2012-02-04T04:14:46Z",
+      "image": ".\\data\\images\\256\\andrew-svk-nQvFebPtqbw-unsplash.jpg"
+    },
+    {
+      "id": 52,
+      "title": "What is continuous testing?",
+      "body": "Continuous testing is a software testing practice that involves testing code continuously throughout the software development life cycle. Continuous testing helps ensure that the code meets the quality standards and requirements at every stage of development. Continuous testing also enables faster feedback and delivery of value to the customer. To implement continuous testing, you need to: \n- Integrate testing into the CI/CD pipeline\n- Use automation tools and frameworks to execute tests \n- Perform different types of tests, such as unit, integration, functional, performance, etc.\n- Monitor and analyze the test results and metrics",
+      "user_id": 3,
+      "date": "2015-12-30T16:13:43Z",
+      "image": ".\\data\\images\\256\\saud-edum-HkSI9h3KFn0-unsplash.jpg"
+    },
+    {
+      "id": 53,
+      "title": "How to write a good bug report",
+      "body": "A bug report is a document that describes a defect or error in a software product. A good bug report can help developers identify and fix the problem quickly and efficiently. Here are some tips for writing a good bug report:\n- Use a clear and descriptive title\n- Include the steps to reproduce the bug\n- Provide the expected and actual results\n- Attach screenshots, videos, logs, or other relevant information\n- Specify the environment and version of the software\n- Assign a priority and severity level to the bug",
+      "user_id": 4,
+      "date": "2020-09-26T08:38:47Z",
+      "image": ".\\data\\images\\256\\pietro-de-grandi-Rz-d5XxRsgI-unsplash.jpg"
+    },
+    {
+      "id": 54,
+      "title": "The benefits of Scrum methodology",
+      "body": "Scrum is an agile framework that organizes software development into short iterations called sprints. Scrum uses roles, events, artifacts, and rules to guide the team and deliver value to the customer. Some of the benefits of Scrum are:\n- Increased transparency and visibility of the project status\n- Improved communication and collaboration among the team members\n- Enhanced adaptability and flexibility to changing requirements\n- Reduced waste and risk of failure\n- Higher customer satisfaction and trust",
+      "user_id": 9,
+      "date": "2013-03-05T20:29:48Z",
+      "image": ".\\data\\images\\256\\sharon-mccutcheon--8a5eJ1-mmQ-unsplash.jpg"
+    },
+    {
+      "id": 55,
+      "title": "What is continuous integration?",
+      "body": "Continuous integration (CI) is a software development practice that involves building and testing code frequently and automatically. CI helps detect and fix errors early in the development cycle, improving the quality and reliability of the code. CI also enables faster feedback and collaboration among developers. To implement CI, you need to:\n- Use a version control system to manage your code\n- Use a CI server or tool to automate the build and test process\n- Write unit tests and code coverage tools to verify your code\n- Follow a coding standard and style guide",
+      "user_id": 8,
+      "date": "2016-04-25T14:38:34Z",
+      "image": ".\\data\\images\\256\\joseph-chan-Es0eirjyQPQ-unsplash.jpg"
+    },
+    {
+      "id": 56,
+      "title": "What is test-driven development?",
+      "body": "Test-driven development (TDD) is a software development technique that involves writing tests before writing code. TDD follows a cycle of three steps:\n- Write a failing test for a feature or functionality\n- Write the minimum amount of code to make the test pass\n- Refactor the code to improve its quality and readability TDD helps developers create clean, robust, and reliable code that meets the requirements. TDD also helps developers avoid over-engineering or under-engineering their solutions.",
+      "user_id": 4,
+      "date": "2013-06-21T13:18:57Z",
+      "image": ".\\data\\images\\256\\claudio-schwarz-yJzo1QIl9ug-unsplash.jpg"
+    },
+    {
+      "id": 57,
+      "title": "Myth: Testing is only for finding bugs",
+      "body": "This is a common myth that assumes that testing is only a negative activity that aims to find faults or errors in the software. However, testing is much more than that. Testing is also a positive activity that aims to verify and validate the functionality, performance, usability, security, etc., of the software. Testing can also help improve the design and structure of the code, facilitate refactoring and maintenance of the code, support documentation and knowledge sharing of the code, enhance customer satisfaction and trust, reduce development and maintenance costs, comply with standards and regulations, etc.",
+      "user_id": 10,
+      "date": "2023-04-18T13:18:57Z",
+      "image": ".\\data\\images\\256\\claudio-schwarz-yJzo1QIl9ug-unsplash.jpg"
+    },
+    {
+      "id": 58,
+      "title": "Myth: Testing can be done by anyone",
+      "body": "This is a common myth that assumes that testing is an easy and simple activity that does not require any skills or expertise. However, testing is a complex and challenging activity that requires a combination of technical and soft skills. Some of the skills required for testing are:\n- Analytical and logical thinking: to understand the requirements and design test cases that cover all scenarios\n- Attention to detail: to identify and report defects or errors accurately\n- Communication and collaboration: to interact with developers, stakeholders, customers, etc., clearly and respectfully\n- Curiosity and creativity: to explore and test the software from different perspectives and find new ways to break it\n- Learning and adaptability: to keep up with new technologies, tools, methodologies, etc., and adjust to changing situations",
+      "user_id": 10,
+      "date": "2023-02-18T11:13:57Z",
+      "image": ".\\data\\images\\256\\jeremy-hynes-HxxNVun8HEc-unsplash.jpg"
+    },
+    {
+      "id": 59,
+      "title": "Myth: Testing is only done at the end of development",
+      "body": "This is a common myth that assumes that testing is only a final activity that occurs after the development is completed. However, testing is an ongoing activity that occurs throughout the software development life cycle. Testing can be done at different levels, such as unit testing, integration testing, system testing, acceptance testing, etc. Testing can also be done at different stages, such as planning, design, implementation, deployment, etc. Testing can also be done in different ways, such as static testing, dynamic testing, manual testing, automated testing, etc.",
+      "user_id": 10,
+      "date": "2022-12-24T11:13:57Z",
+      "image": ".\\data\\images\\256\\sid-balachandran-bG4IyV4eH0Q-unsplash.jpg"
+    }
+  ],
+  "comments": [
+    {
+      "id": 1,
+      "article_id": 1,
+      "user_id": 3,
+      "body": "I loved your insights on usability testing. It's crucial to ensure that the software meets the needs of the end users. Have you encountered any interesting user feedback during usability testing that led to significant improvements in the product?",
+      "date": "2021-11-30T14:44:22Z"
+    },
+    { "id": 2, "article_id": 1, "user_id": 1, "body": "Interesting!", "date": "2021-11-20T03:53:00Z" },
+    {
+      "id": 3,
+      "article_id": 2,
+      "user_id": 2,
+      "body": "Great article! I found your insights on test automation frameworks very helpful. Have you come across any specific tools that work well for cross-browser testing?",
+      "date": "2021-09-09T15:35:00Z"
+    },
+    {
+      "id": 4,
+      "article_id": 2,
+      "user_id": 1,
+      "body": "Thanks for sharing these best practices for API testing. I've been struggling with handling authentication in my tests, and your tips provided some clarity. Keep up the good work!",
+      "date": "2021-04-08T22:12:44Z"
+    },
+    {
+      "id": 5,
+      "article_id": 3,
+      "user_id": 3,
+      "body": "I appreciate the thorough explanation of different types of testing methodologies. As a beginner in software testing, this article helped me understand the importance of a well-rounded testing approach.",
+      "date": "2021-05-31T13:12:00Z"
+    },
+    {
+      "id": 6,
+      "article_id": 3,
+      "user_id": 5,
+      "body": "Interesting read! I've been exploring the field of performance testing lately, and your article gave me a good starting point. Do you have any recommendations for load testing tools?",
+      "date": "2021-06-25T11:54:00Z"
+    },
+    {
+      "id": 7,
+      "article_id": 4,
+      "user_id": 5,
+      "body": "This is exactly what I was looking for! I've been struggling to implement continuous integration for my test suite, and your step-by-step guide was a lifesaver. Thank you!",
+      "date": "2021-03-05T05:16:32Z"
+    },
+    {
+      "id": 8,
+      "article_id": 4,
+      "user_id": 3,
+      "body": "I enjoyed reading your post on exploratory testing. It's a valuable approach to uncovering critical defects that might be missed through scripted testing. Do you have any tips for managing exploratory testing within agile teams?",
+      "date": "2021-02-03T19:12:00Z"
+    },
+    {
+      "id": 9,
+      "article_id": 5,
+      "user_id": 1,
+      "body": "I agree with your points on the importance of test data management. It's often an overlooked aspect of testing, but it can greatly impact the reliability of our test results. How do you handle test data generation and maintenance?",
+      "date": "2021-12-12T14:52:00Z"
+    },
+    {
+      "id": 10,
+      "article_id": 5,
+      "user_id": 3,
+      "body": "I found your article on test case prioritization strategies very informative. Prioritizing test cases based on risk and impact makes a lot of sense. Have you ever encountered challenges in convincing stakeholders to adopt this approach?",
+      "date": "2021-02-17T18:51:00Z"
+    },
+    {
+      "id": 11,
+      "article_id": 5,
+      "user_id": 2,
+      "body": "Excellent post! Your explanation of regression testing and its role in maintaining software quality was spot on. Do you have any recommendations for effective regression testing techniques?",
+      "date": "2021-10-11T11:42:00Z"
+    },
+    {
+      "id": 12,
+      "article_id": 5,
+      "user_id": 5,
+      "body": "Uncommonly surrounded considered for him are its. It we is read good soon. My to considered delightful invitation announcing of no decisively boisterous.",
+      "date": "2021-12-11T18:42:41Z"
+    },
+    { "id": 13, "article_id": 1, "user_id": 3, "body": "+1", "date": "2022-01-11T14:24:32Z" },
+    { "id": 14, "article_id": 1, "user_id": 1, "body": "So cool!", "date": "2022-01-12T09:43:00Z" },
+    { "id": 15, "article_id": 2, "user_id": 1, "body": "Thanks for sharing!", "date": "2022-01-13T07:12:21Z" },
+    {
+      "id": 16,
+      "article_id": 2,
+      "user_id": 2,
+      "body": "I thoroughly enjoyed reading this insightful piece.",
+      "date": "2022-01-01T21:13:00Z"
+    },
+    {
+      "id": 17,
+      "article_id": 1,
+      "user_id": 3,
+      "body": "It provided a fresh perspective on the topic and got me thinking. Looking forward to more from you!",
+      "date": "2022-01-01T13:55:00Z"
+    },
+    { "id": 18, "article_id": 3, "user_id": 4, "body": "Cool!", "date": "2021-01-01T11:12:00Z" },
+    {
+      "id": 19,
+      "article_id": 3,
+      "user_id": 5,
+      "body": "Wow, what an eye-opening read! I never considered this aspect before, and your article shed light on some fascinating details. Can't wait to share this with my friends!",
+      "date": "2021-12-03T06:21:00Z"
+    },
+    {
+      "id": 20,
+      "article_id": 3,
+      "user_id": 5,
+      "body": "Thank you for this wonderful article!",
+      "date": "2021-12-13T17:55:00Z"
+    },
+    {
+      "id": 21,
+      "article_id": 14,
+      "user_id": 1,
+      "body": "It was informative, well-written, and a pleasure to read. Keep up the fantastic work!",
+      "date": "2022-01-29T05:43:28Z"
+    },
+    {
+      "id": 22,
+      "article_id": 29,
+      "user_id": 6,
+      "body": "This article is a treasure trove of knowledge. ",
+      "date": "2017-01-21T00:33:46Z"
+    },
+    { "id": 23, "article_id": 5, "user_id": 4, "body": "Quo tempora possimus.", "date": "2017-06-02T23:43:15Z" },
+    { "id": 24, "article_id": 23, "user_id": 4, "body": "lol", "date": "2020-01-27T10:26:42Z" },
+    { "id": 25, "article_id": 2, "user_id": 4, "body": "Maiores libero qui facilis.", "date": "2020-12-31T12:22:29Z" },
+    { "id": 26, "article_id": 5, "user_id": 1, "body": "Can you post more?", "date": "2017-10-16T08:44:15Z" },
+    {
+      "id": 27,
+      "article_id": 19,
+      "user_id": 2,
+      "body": "The way you explained complex concepts in a clear and concise manner is commendable. I learned so much!",
+      "date": "2022-02-11T16:29:18Z"
+    },
+    { "id": 28, "article_id": 24, "user_id": 1, "body": "Quae unde voluptas eveniet.", "date": "2022-01-25T12:34:20Z" },
+    { "id": 29, "article_id": 11, "user_id": 2, "body": "It is AI generated?", "date": "2022-04-14T21:00:56Z" },
+    { "id": 30, "article_id": 40, "user_id": 4, "body": "I learned so much!", "date": "2018-03-19T00:34:56Z" },
+    {
+      "id": 31,
+      "article_id": 34,
+      "user_id": 2,
+      "body": "Your personal story shared in this article touched my heart. It reminded me of similar experiences and how important it is to cherish the little things in life. Thank you for sharing!",
+      "date": "2022-03-04T17:02:50Z"
+    },
+    {
+      "id": 32,
+      "article_id": 3,
+      "user_id": 2,
+      "body": "After reading this article, I couldn't help but reflect on my own actions and behavior. ",
+      "date": "2021-02-21T04:31:14Z"
+    },
+    {
+      "id": 33,
+      "article_id": 21,
+      "user_id": 1,
+      "body": "Your words served as a gentle reminder to be more mindful and compassionate. Thank you!",
+      "date": "2021-09-25T05:53:57Z"
+    },
+    { "id": 34, "article_id": 16, "user_id": 6, "body": "Ut qui fuga iusto veniam.", "date": "2017-05-16T21:32:21Z" },
+    {
+      "id": 35,
+      "article_id": 39,
+      "user_id": 1,
+      "body": "I just wanted to drop by and say that your writing style is captivating.",
+      "date": "2018-09-26T07:33:48Z"
+    },
+    {
+      "id": 36,
+      "article_id": 1,
+      "user_id": 6,
+      "body": "Your words have the power to transport readers into the world you're describing. ",
+      "date": "2020-07-19T18:51:17Z"
+    },
+    {
+      "id": 37,
+      "article_id": 4,
+      "user_id": 4,
+      "body": "Keep up the incredible storytelling!",
+      "date": "2012-11-20T10:01:53Z"
+    },
+    {
+      "id": 38,
+      "article_id": 23,
+      "user_id": 3,
+      "body": "This article raised some intriguing questions for me. ",
+      "date": "2014-12-14T02:11:33Z"
+    },
+    {
+      "id": 39,
+      "article_id": 20,
+      "user_id": 7,
+      "body": "I'd love to explore this topic further.",
+      "date": "2020-01-13T11:38:49Z"
+    },
+    {
+      "id": 40,
+      "article_id": 12,
+      "user_id": 1,
+      "body": "Do you have any recommended resources or reading materials on the subject?",
+      "date": "2016-02-28T07:18:39Z"
+    },
+    {
+      "id": 41,
+      "article_id": 41,
+      "user_id": 4,
+      "body": "Your words have inspired me to take action.",
+      "date": "2017-05-19T09:18:45Z"
+    },
+    {
+      "id": 42,
+      "article_id": 21,
+      "user_id": 2,
+      "body": "This article serves as a catalyst for change and motivates me to make a difference in my own life and the lives of others. Thank you for that!",
+      "date": "2013-09-05T18:17:13Z"
+    },
+    {
+      "id": 43,
+      "article_id": 5,
+      "user_id": 6,
+      "body": "As someone who's just starting out in this field, your article provided valuable guidance and encouragement. It's reassuring to know that success is attainable with dedication and perseverance.",
+      "date": "2022-08-24T16:10:17Z"
+    },
+    {
+      "id": 44,
+      "article_id": 37,
+      "user_id": 3,
+      "body": "Bravo! This article is a testament to your expertise and passion for the subject. The thoroughness with which you've covered each aspect is impressive. I appreciate the way you've organized the content, making it easy to navigate and understand. The real-life examples and case studies you've included help illustrate the concepts effectively. Your ability to break down complex ideas into digestible pieces is commendable. Thank you for sharing your knowledge and inspiring us to dive deeper into the topic!",
+      "date": "2014-03-20T13:22:28Z"
+    },
+    {
+      "id": 45,
+      "article_id": 9,
+      "user_id": 2,
+      "body": "Your article not only highlighted the issues at hand but also suggested practical steps we can take to make a difference. It's empowering to know that our actions can create positive change.",
+      "date": "2015-10-11T07:14:39Z"
+    },
+    {
+      "id": 46,
+      "article_id": 30,
+      "user_id": 6,
+      "body": "I'm grateful for stumbling upon this article. It gave me a fresh perspective and ignited a sense of curiosity within me. It's articles like these that make the internet a valuable resource.",
+      "date": "2020-03-13T08:52:14Z"
+    },
+    {
+      "id": 47,
+      "article_id": 19,
+      "user_id": 3,
+      "body": "Thank you for sharing your wisdom!",
+      "date": "2022-05-29T07:14:40Z"
+    },
+    { "id": 48, "article_id": 2, "user_id": 3, "body": "A ratione labore laborum.", "date": "2014-11-28T18:57:40Z" },
+    {
+      "id": 49,
+      "article_id": 39,
+      "user_id": 1,
+      "body": "I wanted to let you know that your article resonated with me deeply. Your words touched my soul and provided solace during a difficult time. ",
+      "date": "2020-08-23T05:57:35Z"
+    },
+    {
+      "id": 50,
+      "article_id": 4,
+      "user_id": 3,
+      "body": "Each sentence is like a brushstroke on a canvas, creating a vivid picture in the reader's mind.",
+      "date": "2021-06-05T01:22:16Z"
+    },
+    {
+      "id": 51,
+      "article_id": 50,
+      "user_id": 7,
+      "body": "Your writing has a poetic quality that beautifully captures the essence of the subject matter. ",
+      "date": "2019-06-08T05:23:29Z"
+    },
+    {
+      "id": 52,
+      "article_id": 52,
+      "user_id": 1,
+      "body": "Thank you for sharing your story!",
+      "date": "2016-02-09T00:09:38Z"
+    },
+    { "id": 53, "article_id": 34, "user_id": 7, "body": "Like!", "date": "2018-03-16T08:46:28Z" },
+    { "id": 54, "article_id": 25, "user_id": 1, "body": "Nice staff", "date": "2015-03-02T16:42:57Z" },
+    {
+      "id": 55,
+      "article_id": 8,
+      "user_id": 4,
+      "body": "Looking for help for becoming QA!",
+      "date": "2021-12-27T16:11:05Z"
+    },
+    { "id": 56, "article_id": 32, "user_id": 2, "body": "Accusamus quos quia iure.", "date": "2019-03-05T10:37:20Z" },
+    { "id": 57, "article_id": 19, "user_id": 5, "body": "Quo illum magnam vero.", "date": "2015-06-07T23:09:21Z" },
+    { "id": 58, "article_id": 41, "user_id": 6, "body": "Is Playwright good tool?", "date": "2014-12-23T22:34:25Z" },
+    {
+      "id": 59,
+      "article_id": 43,
+      "user_id": 5,
+      "body": "Thank, thank, thank you for sharing your story!",
+      "date": "2014-09-11T01:35:29Z"
+    },
+    {
+      "id": 60,
+      "article_id": 5,
+      "user_id": 7,
+      "body": "I could relate so much to the experiences you shared in this article. It's comforting to know that others have faced similar challenges and found ways to overcome them. ",
+      "date": "2012-07-14T21:32:59Z"
+    },
+    {
+      "id": 61,
+      "article_id": 38,
+      "user_id": 2,
+      "body": "I loved the comprehensive approach you took in addressing each aspect of the topic. Your attention to detail and thorough research made this article a reliable source of information.",
+      "date": "2016-07-22T07:12:45Z"
+    },
+    { "id": 62, "article_id": 11, "user_id": 4, "body": "I agree completely.", "date": "2015-12-17T10:55:20Z" },
+    { "id": 63, "article_id": 58, "user_id": 6, "body": "Short and sweet!", "date": "2012-08-18T16:31:18Z" },
+    { "id": 64, "article_id": 18, "user_id": 8, "body": "Well worth the read.", "date": "2022-03-09T08:52:48Z" },
+    { "id": 65, "article_id": 46, "user_id": 8, "body": "This made my day.", "date": "2014-11-15T19:57:02Z" },
+    { "id": 66, "article_id": 21, "user_id": 4, "body": "Expedita quia praesentium.", "date": "2014-10-18T21:32:29Z" },
+    {
+      "id": 67,
+      "article_id": 11,
+      "user_id": 5,
+      "body": "Aspernatur laborum sunt sit nisi non quas.",
+      "date": "2020-09-14T03:59:21Z"
+    },
+    { "id": 68, "article_id": 10, "user_id": 4, "body": "Keep up the good work!", "date": "2020-10-27T23:04:08Z" },
+    { "id": 69, "article_id": 19, "user_id": 3, "body": "Fantastic article!", "date": "2012-10-23T00:40:58Z" },
+    { "id": 70, "article_id": 49, "user_id": 5, "body": "Spot-on analysis.", "date": "2020-09-26T22:05:33Z" },
+    { "id": 71, "article_id": 52, "user_id": 4, "body": "So insightful!", "date": "2021-03-01T12:18:33Z" },
+    { "id": 72, "article_id": 23, "user_id": 1, "body": "This deserves attention.", "date": "2021-03-18T05:41:30Z" },
+    {
+      "id": 73,
+      "article_id": 15,
+      "user_id": 2,
+      "body": "This article is a gem! The depth of analysis and the clarity with which you've presented the concepts is truly commendable. I appreciate how you've gone the extra mile to provide real-world examples and practical tips, making it easier for readers to apply the knowledge. Your expertise in the subject matter shines through, and it's evident that you've put a lot of effort into crafting this comprehensive piece. I particularly enjoyed the section on best practices, as it highlighted some key areas that often go unnoticed. The way you've tackled the challenges and offered solutions shows a nuanced understanding of the topic. Thank you for sharing your insights and empowering us with valuable information. I look forward to reading more of your work in the future!",
+      "date": "2018-04-16T17:59:46Z"
+    },
+    {
+      "id": 74,
+      "article_id": 31,
+      "user_id": 8,
+      "body": "Wow, what an incredible article! Your in-depth analysis and thoughtful approach to the topic are truly impressive. I appreciate how you've taken the time to break down complex concepts into easily understandable chunks.",
+      "date": "2017-02-21T00:41:23Z"
+    },
+    {
+      "id": 75,
+      "article_id": 28,
+      "user_id": 1,
+      "body": "The examples you've provided are both relevant and relatable, making it easier for readers to grasp the ideas. I especially loved the practical tips you shared, as they offer actionable steps to improve our understanding and implementation. Thank you for sharing your expertise and enriching our knowledge. Keep up the fantastic work!",
+      "date": "2019-10-13T14:41:18Z"
+    },
+    {
+      "id": 76,
+      "article_id": 2,
+      "user_id": 1,
+      "body": "I must say, this article is a true masterpiece. The way you've delved into the subject matter with such precision and clarity is truly admirable. I appreciate the extensive research you've conducted and the comprehensive nature of your explanations. It's evident that you've poured your heart and soul into crafting this piece. ",
+      "date": "2018-09-24T20:34:33Z"
+    },
+    {
+      "id": 77,
+      "article_id": 49,
+      "user_id": 3,
+      "body": "The real-life case studies you've included add an extra layer of practicality and authenticity. Thank you for sharing your wisdom and insights. I eagerly await your next article!",
+      "date": "2014-02-19T22:27:40Z"
+    },
+    {
+      "id": 78,
+      "article_id": 33,
+      "user_id": 4,
+      "body": "Kudos to you for writing such an informative and engaging article. ",
+      "date": "2021-03-21T09:06:13Z"
+    },
+    {
+      "id": 79,
+      "article_id": 17,
+      "user_id": 5,
+      "body": "Your writing style is captivating, making it a pleasure to read from start to finish. The way you've structured the content is highly organized, allowing readers to follow along effortlessly. I found the section on advanced techniques particularly enlightening, as it pushed me to explore new avenues in my own practice. ",
+      "date": "2017-03-27T02:46:17Z"
+    },
+    {
+      "id": 80,
+      "article_id": 20,
+      "user_id": 6,
+      "body": "Your passion for the subject shines through, and it's contagious! Thank you for sharing your knowledge and inspiring us.",
+      "date": "2016-09-23T22:33:18Z"
+    },
+    {
+      "id": 81,
+      "article_id": 39,
+      "user_id": 6,
+      "body": "I can't thank you enough for this fantastic article. Your ability to simplify complex concepts without sacrificing depth is truly remarkable. The attention to detail and the clarity of your explanations are praiseworthy. I particularly enjoyed the practical examples you've provided, as they helped solidify my understanding. Your passion for the topic is evident, and it's inspiring to see someone so dedicated to their craft. I eagerly look forward to your future articles. ",
+      "date": "2019-06-04T18:31:40Z"
+    },
+    {
+      "id": 82,
+      "article_id": 6,
+      "user_id": 2,
+      "body": "This article is a true treasure trove of knowledge. The depth of information you've provided is astounding. I appreciate how you've gone beyond the basics and explored the nuances of the subject matter. Your writing style is engaging, and your explanations are crystal clear. ",
+      "date": "2017-08-29T05:46:01Z"
+    },
+    { "id": 83, "article_id": 15, "user_id": 2, "body": "Rem ut ut ut cupiditate.", "date": "2016-09-10T18:42:12Z" },
+    {
+      "id": 84,
+      "article_id": 47,
+      "user_id": 3,
+      "body": " The real-world examples you've shared make the content relatable and applicable. Thank you for sharing your expertise and providing such valuable insights. I'll definitely be revisiting this article as a reference in my work!",
+      "date": "2013-11-07T17:55:28Z"
+    },
+    {
+      "id": 85,
+      "article_id": 8,
+      "user_id": 2,
+      "body": "I just wanted to express my gratitude for this outstanding article. ",
+      "date": "2017-03-17T10:06:01Z"
+    },
+    {
+      "id": 86,
+      "article_id": 8,
+      "user_id": 7,
+      "body": "The amount of research and effort you've put into compiling this information is evident, and it's greatly appreciated. ",
+      "date": "2019-11-14T13:52:50Z"
+    },
+    {
+      "id": 87,
+      "article_id": 59,
+      "user_id": 7,
+      "body": "This is a very common misconception. Testing should be done throughout the development process to ensure quality and avoid bugs.",
+      "date": "2022-12-24T13:52:50Z"
+    },
+    {
+      "id": 88,
+      "article_id": 59,
+      "user_id": 8,
+      "body": "I agree with this article. Testing is not a one-time activity, but a continuous process that involves feedback and improvement.",
+      "date": "2022-12-25T23:42:50Z"
+    },
+    {
+      "id": 89,
+      "article_id": 59,
+      "user_id": 2,
+      "body": "This is a great article. It explains why testing is important and how it can be integrated into the development cycle.",
+      "date": "2022-12-26T21:42:50Z"
+    },
+    {
+      "id": 90,
+      "article_id": 59,
+      "user_id": 4,
+      "body": "I learned something new from this article. I didn't know that testing can be done in different ways and at different stages of development.",
+      "date": "2022-12-26T22:22:50Z"
+    },
+    {
+      "id": 91,
+      "article_id": 59,
+      "user_id": 6,
+      "body": "This is a very relevant article. Testing is a key skill for any developer and it should be part of their mindset and culture.",
+      "date": "2022-12-28T12:22:50Z"
+    },
+    {
+      "id": 92,
+      "article_id": 45,
+      "user_id": 3,
+      "body": "Testing is crucial in software development. It ensures the quality and reliability of the software.",
+      "date": "2015-08-20T15:10:32Z"
+    },
+    {
+      "id": 93,
+      "article_id": 12,
+      "user_id": 9,
+      "body": "I completely agree. Testing should be an integral part of the development process.",
+      "date": "2013-06-17T09:45:18Z"
+    },
+    {
+      "id": 94,
+      "article_id": 32,
+      "user_id": 2,
+      "body": "Testing helps identify and fix issues early, saving time and resources.",
+      "date": "2014-12-02T14:30:55Z"
+    },
+    {
+      "id": 95,
+      "article_id": 18,
+      "user_id": 7,
+      "body": "Testing is not just a phase, it's a mindset. It leads to better software quality.",
+      "date": "2019-03-11T11:20:40Z"
+    },
+    {
+      "id": 96,
+      "article_id": 51,
+      "user_id": 4,
+      "body": "I believe every developer should be passionate about testing. It's the foundation of great software.",
+      "date": "2016-07-05T16:55:22Z"
+    },
+    {
+      "id": 97,
+      "article_id": 23,
+      "user_id": 6,
+      "body": "Testing is a continuous journey towards excellence in software development.",
+      "date": "2017-09-28T10:40:15Z"
+    },
+    {
+      "id": 98,
+      "article_id": 9,
+      "user_id": 5,
+      "body": "Testing isn't just about finding bugs; it's about building confidence in your code.",
+      "date": "2018-04-14T08:15:30Z"
+    },
+    {
+      "id": 99,
+      "article_id": 28,
+      "user_id": 8,
+      "body": "Testing is like a safety net for your software. Don't skip it!",
+      "date": "2012-11-03T17:25:42Z"
+    },
+    {
+      "id": 100,
+      "article_id": 6,
+      "user_id": 1,
+      "body": "Testing is an art. It's about ensuring the masterpiece called software functions flawlessly.",
+      "date": "2020-10-09T13:05:58Z"
+    },
+    {
+      "id": 101,
+      "article_id": 42,
+      "user_id": 10,
+      "body": "Testing is not a one-time effort; it's a continuous process of refinement and improvement.",
+      "date": "2011-07-19T18:50:05Z"
+    },
+    {
+      "id": 102,
+      "article_id": 18,
+      "user_id": 7,
+      "body": "This article is a great resource for understanding the importance of testing in software development.",
+      "date": "2013-04-12T14:35:20Z"
+    },
+    {
+      "id": 103,
+      "article_id": 8,
+      "user_id": 2,
+      "body": "Testing is the backbone of reliable software. This article explains it perfectly.",
+      "date": "2014-09-30T11:10:42Z"
+    },
+    {
+      "id": 104,
+      "article_id": 36,
+      "user_id": 9,
+      "body": "I've always believed that testing is an art. This article reinforces that belief.",
+      "date": "2017-06-25T08:45:15Z"
+    },
+    {
+      "id": 105,
+      "article_id": 53,
+      "user_id": 3,
+      "body": "Testing is the compass that guides us through the software development journey. Great read!",
+      "date": "2015-10-05T16:20:28Z"
+    },
+    {
+      "id": 106,
+      "article_id": 28,
+      "user_id": 6,
+      "body": "This article reminds us that testing isn't just a task; it's a mindset and a culture.",
+      "date": "2018-03-07T10:55:37Z"
+    },
+    {
+      "id": 107,
+      "article_id": 12,
+      "user_id": 4,
+      "body": "Testing is like a journey through the unknown. This article is a great guide.",
+      "date": "2012-08-14T09:30:50Z"
+    },
+    {
+      "id": 108,
+      "article_id": 46,
+      "user_id": 8,
+      "body": "I couldn't agree more with the article's emphasis on testing as a quality assurance tool.",
+      "date": "2016-11-20T13:15:03Z"
+    },
+    {
+      "id": 109,
+      "article_id": 5,
+      "user_id": 10,
+      "body": "Testing is a never-ending process. This article explains why it's worth the effort.",
+      "date": "2019-04-18T12:40:22Z"
+    },
+    {
+      "id": 110,
+      "article_id": 24,
+      "user_id": 1,
+      "body": "This article showcases the pivotal role that testing plays in software development.",
+      "date": "2014-01-08T15:50:35Z"
+    },
+    {
+      "id": 111,
+      "article_id": 3,
+      "user_id": 5,
+      "body": "Testing is the foundation of software quality, and this article reinforces that notion.",
+      "date": "2020-07-02T08:25:47Z"
+    },
+    {
+      "id": 112,
+      "article_id": 28,
+      "user_id": 3,
+      "body": "Testing is the cornerstone of software quality. This article explains why it's so critical.",
+      "date": "2015-02-18T14:45:10Z"
+    },
+    {
+      "id": 113,
+      "article_id": 6,
+      "user_id": 9,
+      "body": "I found this article to be a great resource for understanding the art of software testing.",
+      "date": "2017-10-29T10:20:32Z"
+    },
+    {
+      "id": 114,
+      "article_id": 15,
+      "user_id": 5,
+      "body": "Testing isn't just about finding bugs; it's about building confidence in software. This article nails it.",
+      "date": "2014-04-23T09:15:15Z"
+    },
+    {
+      "id": 115,
+      "article_id": 42,
+      "user_id": 8,
+      "body": "I agree with the article's perspective on testing. It's an ongoing journey towards excellence.",
+      "date": "2019-08-07T17:05:28Z"
+    },
+    {
+      "id": 116,
+      "article_id": 17,
+      "user_id": 2,
+      "body": "Testing is not just a task; it's a culture. This article captures that essence perfectly.",
+      "date": "2016-06-11T15:40:37Z"
+    },
+    {
+      "id": 117,
+      "article_id": 31,
+      "user_id": 6,
+      "body": "This article emphasizes the significance of testing in building reliable software.",
+      "date": "2013-11-09T11:30:50Z"
+    },
+    {
+      "id": 118,
+      "article_id": 19,
+      "user_id": 4,
+      "body": "Testing is the bridge between code and quality. This article is a great read for developers.",
+      "date": "2018-03-15T08:55:03Z"
+    },
+    {
+      "id": 119,
+      "article_id": 8,
+      "user_id": 10,
+      "body": "I've always believed that testing is an art. This article reinforces that belief.",
+      "date": "2012-09-12T09:10:22Z"
+    },
+    {
+      "id": 120,
+      "article_id": 55,
+      "user_id": 7,
+      "body": "This article perfectly explains why testing is the compass in the world of software development.",
+      "date": "2020-12-18T07:20:35Z"
+    },
+    {
+      "id": 121,
+      "article_id": 14,
+      "user_id": 1,
+      "body": "Testing is like a journey through the unknown. This article is a great guide.",
+      "date": "2014-06-04T14:15:47Z"
+    },
+    {
+      "id": 122,
+      "article_id": 7,
+      "user_id": 3,
+      "body": "Testing is the foundation of software quality, and this article reinforces that notion.",
+      "date": "2017-05-21T17:25:10Z"
+    },
+    {
+      "id": 123,
+      "article_id": 35,
+      "user_id": 9,
+      "body": "I couldn't agree more with the article's emphasis on testing as a quality assurance tool.",
+      "date": "2015-12-09T13:30:22Z"
+    },
+    {
+      "id": 124,
+      "article_id": 22,
+      "user_id": 2,
+      "body": "This article showcases the pivotal role that testing plays in software development.",
+      "date": "2018-09-28T12:05:40Z"
+    },
+    {
+      "id": 125,
+      "article_id": 54,
+      "user_id": 8,
+      "body": "I believe every developer should be passionate about testing. It's the foundation of great software.",
+      "date": "2013-02-03T15:50:15Z"
+    },
+    {
+      "id": 126,
+      "article_id": 45,
+      "user_id": 4,
+      "body": "Testing is a continuous journey towards excellence in software development.",
+      "date": "2016-07-08T18:22:28Z"
+    },
+    {
+      "id": 127,
+      "article_id": 10,
+      "user_id": 7,
+      "body": "Testing is the safety net for software. Don't skip it! This article explains why.",
+      "date": "2019-04-14T14:40:32Z"
+    },
+    {
+      "id": 128,
+      "article_id": 51,
+      "user_id": 5,
+      "body": "Testing isn't just a phase; it's a mindset. This article highlights its significance.",
+      "date": "2011-08-25T11:20:37Z"
+    },
+    {
+      "id": 129,
+      "article_id": 23,
+      "user_id": 10,
+      "body": "Testing is like planting seeds for a bountiful software harvest. This article is a must-read.",
+      "date": "2014-10-01T09:55:50Z"
+    },
+    {
+      "id": 130,
+      "article_id": 33,
+      "user_id": 6,
+      "body": "Testing ensures the reliability of software. This article provides valuable insights.",
+      "date": "2017-03-17T08:10:03Z"
+    },
+    {
+      "id": 131,
+      "article_id": 19,
+      "user_id": 4,
+      "body": "Effective testing and test automation are essential for ensuring software quality. This article provides valuable insights.",
+      "date": "2015-08-12T14:35:20Z"
+    },
+    {
+      "id": 132,
+      "article_id": 8,
+      "user_id": 7,
+      "body": "Test automation empowers teams to achieve faster and more reliable software delivery. This article is a valuable resource.",
+      "date": "2018-03-29T10:20:32Z"
+    },
+    {
+      "id": 133,
+      "article_id": 44,
+      "user_id": 1,
+      "body": "Quality assurance plays a pivotal role in the software development process. This article emphasizes its significance.",
+      "date": "2016-05-23T09:15:15Z"
+    },
+    {
+      "id": 134,
+      "article_id": 12,
+      "user_id": 5,
+      "body": "Testing is not just a task; it's a culture of quality. This article is a testament to that philosophy.",
+      "date": "2012-11-05T17:05:28Z"
+    },
+    {
+      "id": 135,
+      "article_id": 53,
+      "user_id": 8,
+      "body": "Quality assurance is the guardian of software reliability. This article explores its vital role.",
+      "date": "2017-10-02T15:40:37Z"
+    },
+    {
+      "id": 136,
+      "article_id": 26,
+      "user_id": 9,
+      "body": "Effective test automation ensures the rapid and consistent delivery of high-quality software. This article is a must-read.",
+      "date": "2014-08-29T11:30:50Z"
+    },
+    {
+      "id": 137,
+      "article_id": 37,
+      "user_id": 3,
+      "body": "Test automation is a powerful tool for achieving software excellence. This article highlights its potential.",
+      "date": "2019-02-15T08:55:03Z"
+    },
+    {
+      "id": 138,
+      "article_id": 15,
+      "user_id": 6,
+      "body": "Quality assurance ensures that software meets the highest standards. This article is a guide to achieving those standards.",
+      "date": "2013-07-22T09:10:22Z"
+    },
+    {
+      "id": 139,
+      "article_id": 31,
+      "user_id": 10,
+      "body": "Test automation is the key to streamlining the software testing process. This article delves into its benefits.",
+      "date": "2016-12-18T07:20:35Z"
+    },
+    {
+      "id": 140,
+      "article_id": 7,
+      "user_id": 2,
+      "body": "Effective testing is the foundation of software quality. This article is a blueprint for achieving that quality.",
+      "date": "2015-01-04T14:15:47Z"
+    },
+    {
+      "id": 141,
+      "article_id": 40,
+      "user_id": 4,
+      "body": "Quality assurance is the gatekeeper of software excellence. This article opens the gates to that understanding.",
+      "date": "2018-06-21T17:25:10Z"
+    },
+    {
+      "id": 142,
+      "article_id": 23,
+      "user_id": 7,
+      "body": "Testing, test automation, and quality assurance are the cornerstones of software reliability. This article explores their roles.",
+      "date": "2011-09-12T15:50:15Z"
+    },
+    {
+      "id": 143,
+      "article_id": 48,
+      "user_id": 9,
+      "body": "This article dives into the world of testing and quality assurance, emphasizing their critical roles in software development.",
+      "date": "2017-06-02T08:10:03Z"
+    },
+    {
+      "id": 144,
+      "article_id": 20,
+      "user_id": 5,
+      "body": "Test automation streamlines the testing process, and this article provides insights into its benefits.",
+      "date": "2014-02-19T11:10:22Z"
+    },
+    {
+      "id": 145,
+      "article_id": 5,
+      "user_id": 3,
+      "body": "Effective testing and quality assurance ensure software meets the highest standards of excellence. This article is a guide to that journey.",
+      "date": "2019-10-11T10:55:28Z"
+    },
+    {
+      "id": 146,
+      "article_id": 16,
+      "user_id": 6,
+      "body": "Software testing, test automation, and quality assurance are the pillars of software reliability. This article delves into their significance.",
+      "date": "2012-05-07T13:30:50Z"
+    },
+    {
+      "id": 147,
+      "article_id": 41,
+      "user_id": 1,
+      "body": "This article sparks a conversation about the roles of testing, test automation, and quality assurance in software development.",
+      "date": "2015-09-15T16:05:03Z"
+    },
+    {
+      "id": 148,
+      "article_id": 13,
+      "user_id": 8,
+      "body": "Testing, test automation, and quality assurance lead to victory in the world of software. This article is a gold mine of knowledge.",
+      "date": "2018-04-27T09:50:22Z"
+    },
+    {
+      "id": 149,
+      "article_id": 33,
+      "user_id": 10,
+      "body": "Test automation is the rocket that launches software into the stratosphere of quality. This article is your launchpad.",
+      "date": "2013-12-02T15:15:50Z"
+    },
+    {
+      "id": 150,
+      "article_id": 25,
+      "user_id": 2,
+      "body": "Effective testing is the searchlight in the darkness of uncertainty. This article is a beacon of knowledge.",
+      "date": "2016-07-30T14:20:37Z"
+    },
+    {
+      "id": 151,
+      "article_id": 19,
+      "user_id": 4,
+      "body": "🧪 Effective testing and test automation are vital for ensuring software quality. Quality assurance is the backbone of reliability.",
+      "date": "2015-08-12T14:35:20Z"
+    },
+    {
+      "id": 152,
+      "article_id": 8,
+      "user_id": 7,
+      "body": "Test automation streamlines the testing process, leading to faster and more reliable software delivery. Quality assurance ensures top-notch quality.",
+      "date": "2018-03-29T10:20:32Z"
+    },
+    {
+      "id": 153,
+      "article_id": 44,
+      "user_id": 1,
+      "body": "Robust quality assurance practices are essential for building trustworthy software. Test automation accelerates the process.",
+      "date": "2016-05-23T09:15:15Z"
+    },
+    {
+      "id": 154,
+      "article_id": 12,
+      "user_id": 5,
+      "body": "Software testing is not just a task; it's a culture of excellence. Test automation is the future of efficiency.",
+      "date": "2012-11-05T17:05:28Z"
+    },
+    {
+      "id": 155,
+      "article_id": 53,
+      "user_id": 8,
+      "body": "🚀 Quality assurance is the guardian of software reliability. Effective testing and test automation are the pillars of success.",
+      "date": "2017-10-02T15:40:37Z"
+    },
+    {
+      "id": 156,
+      "article_id": 26,
+      "user_id": 9,
+      "body": "Effective test automation empowers teams to deliver high-quality software consistently. Quality assurance is the compass for reliability.",
+      "date": "2014-08-29T11:30:50Z"
+    },
+    {
+      "id": 157,
+      "article_id": 37,
+      "user_id": 3,
+      "body": "Test automation simplifies testing processes and enhances software quality. Quality assurance sets the bar high.",
+      "date": "2019-02-15T08:55:03Z"
+    },
+    {
+      "id": 158,
+      "article_id": 15,
+      "user_id": 6,
+      "body": "Robust quality assurance practices ensure software meets the highest standards. Test automation is the accelerator for efficiency.",
+      "date": "2013-07-22T09:10:22Z"
+    },
+    {
+      "id": 159,
+      "article_id": 31,
+      "user_id": 10,
+      "body": "Test automation is the key to rapid and reliable software testing. Quality assurance is the gatekeeper of excellence.",
+      "date": "2016-12-18T07:20:35Z"
+    },
+    {
+      "id": 160,
+      "article_id": 7,
+      "user_id": 2,
+      "body": "Effective testing is the foundation of software quality. Quality assurance ensures software reaches its peak.",
+      "date": "2015-01-04T14:15:47Z"
+    },
+    {
+      "id": 161,
+      "article_id": 40,
+      "user_id": 4,
+      "body": "Quality assurance is the guardian of software excellence. Test automation is the key to unlocking its potential.",
+      "date": "2018-06-21T17:25:10Z"
+    },
+    {
+      "id": 162,
+      "article_id": 23,
+      "user_id": 7,
+      "body": "Testing, test automation, and quality assurance are the cornerstones of software reliability. This article dives deep into their roles.",
+      "date": "2011-09-12T15:50:15Z"
+    },
+    {
+      "id": 163,
+      "article_id": 48,
+      "user_id": 9,
+      "body": "This article provides a comprehensive view of the world of testing, test automation, and quality assurance, underlining their indispensable roles in software development.",
+      "date": "2017-06-02T08:10:03Z"
+    },
+    {
+      "id": 164,
+      "article_id": 20,
+      "user_id": 5,
+      "body": "Test automation simplifies testing processes, making them efficient and effective. Quality assurance is the gatekeeper of excellence.",
+      "date": "2014-02-19T11:10:22Z"
+    },
+    {
+      "id": 165,
+      "article_id": 5,
+      "user_id": 3,
+      "body": "Effective testing and quality assurance ensure software meets the highest standards of excellence. This article is your guide to that journey.",
+      "date": "2019-10-11T10:55:28Z"
+    },
+    {
+      "id": 166,
+      "article_id": 16,
+      "user_id": 6,
+      "body": "Software testing, test automation, and quality assurance are the pillars of software reliability. This article is a testament to their importance.",
+      "date": "2012-05-07T13:30:50Z"
+    },
+    {
+      "id": 167,
+      "article_id": 41,
+      "user_id": 1,
+      "body": "This article sparks a conversation about the roles of testing, test automation, and quality assurance in software development.",
+      "date": "2015-09-15T16:05:03Z"
+    },
+    {
+      "id": 168,
+      "article_id": 13,
+      "user_id": 8,
+      "body": "Testing, test automation, and quality assurance lead to victory in the world of software. This article is a gold mine of knowledge.",
+      "date": "2018-04-27T09:50:22Z"
+    },
+    {
+      "id": 169,
+      "article_id": 33,
+      "user_id": 10,
+      "body": "Test automation is the rocket that launches software into the stratosphere of quality. This article is your launchpad.",
+      "date": "2013-12-02T15:15:50Z"
+    },
+    {
+      "id": 170,
+      "article_id": 25,
+      "user_id": 2,
+      "body": "Effective testing is the searchlight in the darkness of uncertainty. This article is a beacon of knowledge.",
+      "date": "2016-07-30T14:20:37Z"
+    },
+    {
+      "id": 171,
+      "article_id": 19,
+      "user_id": 4,
+      "body": "🧪 Effective testing and test automation are vital for ensuring software quality. Quality assurance is the backbone of reliability.",
+      "date": "2010-08-12T14:35:20Z"
+    },
+    {
+      "id": 172,
+      "article_id": 8,
+      "user_id": 7,
+      "body": "Test automation streamlines the testing process, leading to faster and more reliable software delivery. Quality assurance ensures top-notch quality.",
+      "date": "2011-03-29T10:20:32Z"
+    },
+    {
+      "id": 173,
+      "article_id": 44,
+      "user_id": 1,
+      "body": "Robust quality assurance practices are essential for building trustworthy software. Test automation accelerates the process.",
+      "date": "2012-05-23T09:15:15Z"
+    },
+    {
+      "id": 174,
+      "article_id": 12,
+      "user_id": 5,
+      "body": "Software testing is not just a task; it's a culture of excellence. Test automation is the future of efficiency.",
+      "date": "2011-11-05T17:05:28Z"
+    },
+    {
+      "id": 175,
+      "article_id": 53,
+      "user_id": 8,
+      "body": "🚀 Quality assurance is the guardian of software reliability. Effective testing and test automation are the pillars of success.",
+      "date": "2010-10-02T15:40:37Z"
+    },
+    {
+      "id": 176,
+      "article_id": 26,
+      "user_id": 9,
+      "body": "Effective test automation empowers teams to deliver high-quality software consistently. Quality assurance is the compass for reliability.",
+      "date": "2012-08-29T11:30:50Z"
+    },
+    {
+      "id": 177,
+      "article_id": 37,
+      "user_id": 3,
+      "body": "Test automation simplifies testing processes and enhances software quality. Quality assurance sets the bar high.",
+      "date": "2011-02-15T08:55:03Z"
+    },
+    {
+      "id": 178,
+      "article_id": 15,
+      "user_id": 6,
+      "body": "Robust quality assurance practices ensure software meets the highest standards. Test automation is the accelerator for efficiency.",
+      "date": "2010-07-22T09:10:22Z"
+    },
+    {
+      "id": 179,
+      "article_id": 31,
+      "user_id": 10,
+      "body": "Test automation is the key to rapid and reliable software testing. Quality assurance is the gatekeeper of excellence.",
+      "date": "2012-12-18T07:20:35Z"
+    },
+    {
+      "id": 180,
+      "article_id": 7,
+      "user_id": 2,
+      "body": "Effective testing is the foundation of software quality. Quality assurance ensures software reaches its peak.",
+      "date": "2011-01-04T14:15:47Z"
+    },
+    {
+      "id": 181,
+      "article_id": 40,
+      "user_id": 4,
+      "body": "Quality assurance is the guardian of software excellence. Test automation is the key to unlocking its potential.",
+      "date": "2010-06-21T17:25:10Z"
+    },
+    {
+      "id": 182,
+      "article_id": 23,
+      "user_id": 7,
+      "body": "Testing, test automation, and quality assurance are the cornerstones of software reliability. This article dives deep into their roles.",
+      "date": "2011-09-12T15:50:15Z"
+    },
+    {
+      "id": 183,
+      "article_id": 48,
+      "user_id": 9,
+      "body": "This article provides a comprehensive view of the world of testing, test automation, and quality assurance, underlining their indispensable roles in software development.",
+      "date": "2012-06-02T08:10:03Z"
+    },
+    {
+      "id": 184,
+      "article_id": 20,
+      "user_id": 5,
+      "body": "Test automation simplifies testing processes, making them efficient and effective. Quality assurance is the gatekeeper of excellence.",
+      "date": "2010-02-19T11:10:22Z"
+    },
+    {
+      "id": 185,
+      "article_id": 5,
+      "user_id": 3,
+      "body": "Effective testing and quality assurance ensure software meets the highest standards of excellence. This article is your guide to that journey.",
+      "date": "2011-10-11T10:55:28Z"
+    },
+    {
+      "id": 186,
+      "article_id": 16,
+      "user_id": 6,
+      "body": "Software testing, test automation, and quality assurance are the pillars of software reliability. This article is a testament to their importance.",
+      "date": "2012-05-07T13:30:50Z"
+    },
+    {
+      "id": 187,
+      "article_id": 41,
+      "user_id": 1,
+      "body": "This article sparks a conversation about the roles of testing, test automation, and quality assurance in software development.",
+      "date": "2010-09-15T16:05:03Z"
+    },
+    {
+      "id": 188,
+      "article_id": 13,
+      "user_id": 8,
+      "body": "Testing, test automation, and quality assurance lead to victory in the world of software. This article is a gold mine of knowledge.",
+      "date": "2012-04-27T09:50:22Z"
+    },
+    {
+      "id": 189,
+      "article_id": 33,
+      "user_id": 10,
+      "body": "Test automation is the rocket that launches software into the stratosphere of quality. This article is your launchpad.",
+      "date": "2011-12-02T15:15:50Z"
+    },
+    {
+      "id": 190,
+      "article_id": 25,
+      "user_id": 2,
+      "body": "Effective testing is the searchlight in the darkness of uncertainty. This article is a beacon of knowledge.",
+      "date": "2012-07-30T14:20:37Z"
+    },
+    {
+      "id": 191,
+      "article_id": 19,
+      "user_id": 4,
+      "body": "Testing is like peeling an onion. You keep uncovering new layers of potential issues, but it's all worth it for a reliable product. 🧅",
+      "date": "2010-08-12T14:35:20Z"
+    },
+    {
+      "id": 192,
+      "article_id": 8,
+      "user_id": 2,
+      "body": "When it comes to software quality, test automation is the orchestra conductor. Every piece falls into place to create a harmonious product. 🎶",
+      "date": "2011-03-29T10:20:32Z"
+    },
+    {
+      "id": 193,
+      "article_id": 44,
+      "user_id": 5,
+      "body": "Quality assurance is the Sherlock Holmes of software. It uncovers the mysteries hidden within the code. 🔍",
+      "date": "2012-05-23T09:15:15Z"
+    },
+    {
+      "id": 194,
+      "article_id": 12,
+      "user_id": 1,
+      "body": "Testing is the journey to discover the unknowns, and test automation is your trusty compass leading the way. 🗺️",
+      "date": "2011-11-05T17:05:28Z"
+    },
+    {
+      "id": 195,
+      "article_id": 53,
+      "user_id": 14,
+      "body": "Quality assurance is the guardian angel of software. It watches over every line of code to ensure it's free from flaws. 👼",
+      "date": "2023-10-02T15:40:37Z"
+    },
+    {
+      "id": 196,
+      "article_id": 26,
+      "user_id": 4,
+      "body": "Effective test automation is like having a tireless team of testers working around the clock, ensuring software quality day and night. 🌞🌛",
+      "date": "2012-08-29T11:30:50Z"
+    },
+    {
+      "id": 197,
+      "article_id": 37,
+      "user_id": 2,
+      "body": "Test automation is the conductor's baton, orchestrating a symphony of test cases to ensure the software plays beautifully. 🎵",
+      "date": "2011-02-15T08:55:03Z"
+    },
+    {
+      "id": 198,
+      "article_id": 15,
+      "user_id": 5,
+      "body": "Quality assurance is like the vigilant lighthouse, guiding the software safely through the rocky shores of defects. 🚢",
+      "date": "2010-07-22T09:10:22Z"
+    },
+    {
+      "id": 199,
+      "article_id": 31,
+      "user_id": 1,
+      "body": "Testing is the treasure hunt, and test automation is the map leading you to the goldmine of bug-free software. 🏴‍☠️",
+      "date": "2012-12-18T07:20:35Z"
+    },
+    {
+      "id": 200,
+      "article_id": 7,
+      "user_id": 3,
+      "body": "Testing is the sculptor, chiseling away imperfections to reveal the masterpiece underneath. 🎨",
+      "date": "2011-01-04T14:15:47Z"
+    },
+    {
+      "id": 201,
+      "article_id": 40,
+      "user_id": 4,
+      "body": "Quality assurance is the safety net, ensuring that no trapeze artist (software feature) falls during the performance. 🎪",
+      "date": "2010-06-21T17:25:10Z"
+    },
+    {
+      "id": 202,
+      "article_id": 23,
+      "user_id": 2,
+      "body": "Testing is the detective story, and test automation is your magnifying glass, helping you uncover even the tiniest clues. 🔍🔦",
+      "date": "2011-09-12T15:50:15Z"
+    },
+    {
+      "id": 203,
+      "article_id": 48,
+      "user_id": 5,
+      "body": "Software quality is the masterpiece, and testing, test automation, and quality assurance are the artists who craft it. 🎨🖌️",
+      "date": "2012-06-02T08:10:03Z"
+    },
+    {
+      "id": 204,
+      "article_id": 20,
+      "user_id": 1,
+      "body": "Test automation is like the magician's wand, making testing challenges disappear into thin air. 🪄✨",
+      "date": "2010-02-19T11:10:22Z"
+    },
+    {
+      "id": 205,
+      "article_id": 5,
+      "user_id": 13,
+      "body": "Effective testing and quality assurance are the superheroes who protect the software world from villains like bugs and glitches. 🦸‍♂️🦸‍♀️",
+      "date": "2011-10-11T10:55:28Z"
+    },
+    {
+      "id": 206,
+      "article_id": 16,
+      "user_id": 2,
+      "body": "Software testing, test automation, and quality assurance are like the three musketeers, defending software's honor with their trusty swords. ⚔️",
+      "date": "2012-05-07T13:30:50Z"
+    },
+    {
+      "id": 207,
+      "article_id": 41,
+      "user_id": 4,
+      "body": "Testing, test automation, and quality assurance are the architects of software excellence, building a sturdy foundation. 🏗️",
+      "date": "2010-09-15T16:05:03Z"
+    },
+    {
+      "id": 208,
+      "article_id": 13,
+      "user_id": 1,
+      "body": "Testing, test automation, and quality assurance are the dream team, turning software dreams into reality. 💭✨",
+      "date": "2012-04-27T09:50:22Z"
+    },
+    {
+      "id": 209,
+      "article_id": 33,
+      "user_id": 5,
+      "body": "Test automation is the jet engine propelling software into the skies of quality, with a sonic boom of excellence. 🛫💥",
+      "date": "2011-12-02T15:15:50Z"
+    },
+    {
+      "id": 210,
+      "article_id": 47,
+      "user_id": 4,
+      "body": "I wholeheartedly agree that testing is an art. It's about attention to detail and creating a masterpiece of bug-free software. 🖌️🧡",
+      "date": "2009-08-12T14:35:20Z"
+    },
+    {
+      "id": 211,
+      "article_id": 51,
+      "user_id": 2,
+      "body": "I couldn't agree more about test automation being a magician's wand. It magically streamlines our testing process and brings efficiency to the forefront. 🪄✨",
+      "date": "2010-03-29T10:20:32Z"
+    },
+    {
+      "id": 212,
+      "article_id": 48,
+      "user_id": 5,
+      "body": "I have a different view on quality assurance. It's not just about user satisfaction; it's about building trust in the software we create. 🤝🔍",
+      "date": "2011-05-23T09:15:15Z"
+    },
+    {
+      "id": 213,
+      "article_id": 55,
+      "user_id": 1,
+      "body": "Testing is indeed a journey of discovery, but it's not always a happy ending. Sometimes, it's about finding and fixing flaws that lurk in the code. 🗺️💔",
+      "date": "2012-01-05T17:05:28Z"
+    },
+    {
+      "id": 214,
+      "article_id": 45,
+      "user_id": 3,
+      "body": "I'm with you on quality assurance being the software architect. It ensures our software stands tall, but we must also acknowledge the testers who build its strength. 🏗️👷",
+      "date": "2009-10-02T15:40:37Z"
+    },
+    {
+      "id": 215,
+      "article_id": 56,
+      "user_id": 4,
+      "body": "Agreed, test automation is like a trusted partner. It tirelessly supports us in achieving software quality, and that's something to cherish. 🙌🤖",
+      "date": "2010-08-29T11:30:50Z"
+    },
+    {
+      "id": 216,
+      "article_id": 54,
+      "user_id": 2,
+      "body": "I see quality assurance as the custodian of the user experience, ensuring each interaction with software is seamless. It's the ultimate goal. 🛡️🌟",
+      "date": "2011-02-15T08:55:03Z"
+    },
+    {
+      "id": 217,
+      "article_id": 46,
+      "user_id": 5,
+      "body": "I agree that testing is a journey, and it's not always sunshine and rainbows. But each challenge we face makes us better testers. 🌦️💪",
+      "date": "2009-11-15T09:30:15Z"
+    },
+    {
+      "id": 218,
+      "article_id": 57,
+      "user_id": 1,
+      "body": "I couldn't agree more about the magic of test automation. It turns complex tasks into simple ones and leaves us in awe of its capabilities. 🪄👏",
+      "date": "2010-06-22T15:45:22Z"
+    },
+    {
+      "id": 219,
+      "article_id": 49,
+      "user_id": 3,
+      "body": "Quality assurance ensures software reliability, and that's the foundation of trust. It's the bedrock on which we build excellence. 🏰🤩",
+      "date": "2011-12-12T12:25:30Z"
+    },
+    {
+      "id": 220,
+      "article_id": 5,
+      "user_id": 12,
+      "body": "Absolutely agree with your points. Keep it up!",
+      "date": "2023-10-12T12:55:30Z"
+    },
+    {
+      "id": 221,
+      "article_id": 4,
+      "user_id": 13,
+      "body": "This is a perspective I hadn't considered. Thanks for sharing.",
+      "date": "2022-07-05T14:10:05Z"
+    },
+    {
+      "id": 222,
+      "article_id": 2,
+      "user_id": 14,
+      "body": "This is a must-read for everyone in the field.",
+      "date": "2023-09-18T11:30:50Z"
+    },
+    {
+      "id": 223,
+      "article_id": 6,
+      "user_id": 14,
+      "body": "So good!",
+      "date": "2023-09-18T12:30:50Z"
+    },
+    {
+      "id": 224,
+      "article_id": 8,
+      "user_id": 14,
+      "body": "I couldn't agree more with the points you've made.",
+      "date": "2023-09-18T12:31:50Z"
+    },
+    {
+      "id": 225,
+      "article_id": 9,
+      "user_id": 14,
+      "body": "This is a must-read for everyone in the field.",
+      "date": "2023-09-22T12:32:50Z"
+    },
+    {
+      "id": 226,
+      "article_id": 3,
+      "user_id": 14,
+      "body": "So good!",
+      "date": "2023-09-27T12:33:50Z"
+    },
+    {
+      "id": 227,
+      "article_id": 9,
+      "user_id": 12,
+      "body": "I couldn't agree more with the points you've made. This is a must-read for everyone in the field. So good!",
+      "date": "2023-11-27T12:32:50Z"
+    }
+  ],
+  "flashposts": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "date": "2024-05-27T12:32:50Z",
+      "settings": {
+        "color": "#000fd5"
+      },
+      "body": "Testing private messages!"
+    },
+    {
+      "id": 2,
+      "user_id": 1,
+      "date": "2024-05-28T12:32:50Z",
+      "settings": {
+        "color": "#008e00"
+      },
+      "body": "Conference QA Quest 2024 is coming up soon!🚀 Don't forget to register and book your spot. It's going to be an amazing event!",
+      "is_public": true
+    },
+    {
+      "id": 3,
+      "user_id": 8,
+      "date": "2024-06-08T18:30:00Z",
+      "settings": {},
+      "body": "Looking for recommendations on the best programming courses online."
+    },
+    {
+      "id": 4,
+      "user_id": 3,
+      "date": "2024-06-12T10:45:30Z",
+      "settings": {},
+      "body": "New blog post is live on my site. Check it out!",
+      "is_public": true
+    },
+    {
+      "id": 5,
+      "user_id": 4,
+      "date": "2024-06-14T14:22:10Z",
+      "settings": {},
+      "body": "Just finished reading a fantastic book on leadership - <strong>Extreme Ownership</strong>"
+    },
+    {
+      "id": 6,
+      "user_id": 5,
+      "date": "2024-06-15T09:00:00Z",
+      "settings": {},
+      "body": "Excited to announce our new project launch tomorrow!",
+      "is_public": true
+    },
+    {
+      "id": 7,
+      "user_id": 1,
+      "date": "2024-06-15T17:37:45Z",
+      "settings": {},
+      "body": "Working on a new feature, can't wait to share it with everyone!"
+    },
+    {
+      "id": 8,
+      "user_id": 1,
+      "date": "2024-06-16T10:20:00Z",
+      "settings": {},
+      "body": "Anyone up for a game of chess this weekend?"
+    },
+    {
+      "id": 9,
+      "user_id": 2,
+      "date": "2024-06-17T11:30:20Z",
+      "settings": {
+        "color": "#ff5733"
+      },
+      "body": "Just started a new book <strong>Get Smart!</strong>, can't put it down!"
+    },
+    {
+      "id": 10,
+      "user_id": 3,
+      "date": "2024-06-18T08:15:00Z",
+      "settings": {},
+      "body": "Hosting a webinar on cybersecurity next week. Join us!",
+      "is_public": true
+    },
+    {
+      "id": 11,
+      "user_id": 6,
+      "date": "2024-06-18T14:45:10Z",
+      "settings": {},
+      "body": "What are some good productivity apps?"
+    },
+    {
+      "id": 12,
+      "user_id": 7,
+      "date": "2024-06-18T16:30:30Z",
+      "settings": {},
+      "body": "Happy to share my latest travel blog. Check out my adventures in Japan!",
+      "is_public": true
+    },
+    {
+      "id": 13,
+      "user_id": 8,
+      "date": "2024-06-19T09:50:25Z",
+      "settings": {
+        "color": "#00aaff"
+      },
+      "body": "Looking for a workout buddy. Anyone interested?"
+    },
+    {
+      "id": 14,
+      "user_id": 9,
+      "date": "2024-06-20T12:32:50Z",
+      "settings": {},
+      "body": "Don't miss our upcoming sale this weekend! Huge discounts!",
+      "is_public": true
+    },
+    {
+      "id": 15,
+      "user_id": 1,
+      "date": "2024-06-29T11:22:10Z",
+      "settings": {},
+      "body": "Can anyone recommend a good documentary to watch?"
+    },
+    {
+      "id": 16,
+      "user_id": 2,
+      "date": "2024-06-29T15:00:00Z",
+      "settings": {
+        "color": "#ff00ff"
+      },
+      "body": "Happy Monday! Ready to tackle the week ahead!"
+    },
+    {
+      "id": 17,
+      "user_id": 1,
+      "date": "2024-06-29T19:25:40Z",
+      "settings": {},
+      "body": "New podcast episode is out! Tune in for some great insights.",
+      "is_public": true
+    },
+    {
+      "id": 18,
+      "user_id": 5,
+      "date": "2024-06-30T02:10:00Z",
+      "settings": {
+        "color": "#ffd700"
+      },
+      "body": "Brainstorming ideas for our next big project. Exciting times ahead!"
+    },
+    {
+      "id": 19,
+      "user_id": 7,
+      "date": "2024-06-30T08:15:30Z",
+      "settings": {},
+      "body": "Anyone have tips for maintaining work-life balance?"
+    },
+    {
+      "id": 20,
+      "user_id": 6,
+      "date": "2024-06-30T12:00:45Z",
+      "settings": {
+        "color": "#008080"
+      },
+      "body": "Our team is looking for a new designer. Spread the word!"
+    },
+    {
+      "body": "<strong>So Excited! <a href=\"https://playwright.info/vs-code-playwright-extensions\">vs code playwright extensions</a></strong>",
+      "settings": {
+        "color": "#8aff8a"
+      },
+      "is_public": true,
+      "user_id": 1,
+      "date": "2024-09-15T11:27:13.825Z",
+      "id": 21
+    }
+  ],
+  "likes": [
+    { "id": 1, "user_id": 1, "comment_id": 1, "article_id": null, "date": "2023-09-25T10:00:00Z" },
+    { "id": 2, "user_id": 2, "comment_id": null, "article_id": 1, "date": "2023-09-25T11:00:00Z" },
+    { "article_id": 1, "user_id": "1", "date": "2023-10-20T15:43:18Z", "id": 3 },
+    { "article_id": 56, "user_id": "1", "date": "2023-10-20T15:44:21Z", "id": 4 },
+    { "article_id": 57, "user_id": "1", "date": "2023-10-20T15:46:30Z", "id": 5 },
+    { "article_id": 45, "user_id": "1", "date": "2023-10-20T15:47:46Z", "id": 6 },
+    { "article_id": 45, "user_id": "2", "date": "2023-10-20T15:47:46Z", "id": 7 },
+    { "article_id": 45, "user_id": "3", "date": "2023-10-20T15:47:46Z", "id": 8 },
+    { "article_id": 18, "user_id": "8", "date": "2023-10-15T08:12:30Z", "id": 9 },
+    { "article_id": 3, "user_id": "2", "date": "2023-10-16T14:25:50Z", "id": 10 },
+    { "user_id": 7, "article_id": 31, "date": "2016-08-03T07:19:14Z", "id": 10 },
+    { "user_id": 11, "article_id": 32, "date": "2016-06-07T02:12:34Z", "id": 11 },
+    { "user_id": 8, "article_id": 33, "date": "2014-05-11T15:26:25Z", "id": 12 },
+    { "user_id": 13, "article_id": 29, "date": "2012-12-29T06:51:48Z", "id": 13 },
+    { "user_id": 10, "article_id": 30, "date": "2021-06-02T17:43:23Z", "id": 14 },
+    { "user_id": 14, "article_id": 32, "date": "2018-08-12T04:34:22Z", "id": 15 },
+    { "user_id": 12, "article_id": 27, "date": "2021-08-08T03:08:51Z", "id": 16 },
+    { "user_id": 10, "article_id": 31, "date": "2018-01-05T04:17:18Z", "id": 17 },
+    { "user_id": 12, "article_id": 32, "date": "2015-10-07T07:53:56Z", "id": 18 },
+    { "user_id": 6, "article_id": 27, "date": "2021-05-10T01:54:05Z", "id": 19 },
+    { "user_id": 7, "article_id": 33, "date": "2019-04-02T01:43:13Z", "id": 20 },
+    { "user_id": 4, "article_id": 58, "date": "2018-03-22T14:15:18Z", "id": 21 },
+    { "user_id": 12, "article_id": 30, "date": "2019-11-06T07:18:03Z", "id": 22 },
+    { "user_id": 4, "article_id": 30, "date": "2019-01-22T15:33:52Z", "id": 23 },
+    { "user_id": 10, "article_id": 58, "date": "2020-01-12T20:51:24Z", "id": 24 },
+    { "user_id": 1, "article_id": 29, "date": "2019-01-30T16:48:08Z", "id": 25 },
+    { "user_id": 5, "article_id": 30, "date": "2016-03-12T21:04:31Z", "id": 26 },
+    { "user_id": 11, "article_id": 31, "date": "2019-06-14T23:34:00Z", "id": 27 },
+    { "user_id": 3, "article_id": 29, "date": "2022-07-16T21:54:39Z", "id": 28 },
+    { "user_id": 14, "article_id": 31, "date": "2018-12-29T00:47:38Z", "id": 29 },
+    { "user_id": 2, "article_id": 29, "date": "2015-04-02T18:07:02Z", "id": 30 },
+    { "user_id": 13, "article_id": 28, "date": "2018-01-13T16:16:32Z", "id": 31 },
+    { "user_id": 13, "article_id": 30, "date": "2013-03-30T03:05:31Z", "id": 32 },
+    { "user_id": 6, "article_id": 32, "date": "2017-01-23T08:29:22Z", "id": 33 },
+    { "user_id": 1, "article_id": 31, "date": "2015-04-27T10:37:57Z", "id": 34 },
+    { "user_id": 14, "article_id": 35, "date": "2011-06-21T10:39:46Z", "id": 35 },
+    { "user_id": 3, "article_id": 27, "date": "2013-05-10T05:50:49Z", "id": 36 },
+    { "user_id": 8, "article_id": 32, "date": "2012-12-23T23:05:29Z", "id": 37 },
+    { "user_id": 12, "article_id": 33, "date": "2021-12-16T09:04:50Z", "id": 38 },
+    { "user_id": 2, "article_id": 27, "date": "2012-01-16T15:09:04Z", "id": 39 },
+    { "user_id": 8, "article_id": 29, "date": "2016-09-19T03:42:33Z", "id": 40 },
+    { "user_id": 12, "article_id": 58, "date": "2015-10-21T21:53:09Z", "id": 41 },
+    { "user_id": 8, "article_id": 31, "date": "2019-05-07T05:40:06Z", "id": 42 },
+    { "user_id": 7, "article_id": 30, "date": "2016-06-21T23:49:36Z", "id": 43 },
+    { "user_id": 9, "article_id": 33, "date": "2018-09-30T19:14:01Z", "id": 44 },
+    { "user_id": 3, "article_id": 26, "date": "2012-08-20T02:39:10Z", "id": 45 },
+    { "user_id": 4, "article_id": 29, "date": "2015-11-26T16:31:25Z", "id": 46 },
+    { "user_id": 4, "article_id": 31, "date": "2020-07-16T13:58:18Z", "id": 47 },
+    { "user_id": 9, "article_id": 30, "date": "2013-07-17T17:26:35Z", "id": 48 },
+    { "user_id": 3, "article_id": 58, "date": "2012-01-28T13:05:53Z", "id": 49 },
+    { "user_id": 2, "article_id": 30, "date": "2014-11-10T13:25:22Z", "id": 50 },
+    { "user_id": 11, "article_id": 25, "date": "2018-05-09T11:45:31Z", "id": 51 },
+    { "user_id": 5, "article_id": 29, "date": "2017-08-19T00:09:19Z", "id": 52 },
+    { "user_id": 3, "article_id": 30, "date": "2018-02-15T05:25:13Z", "id": 53 },
+    { "user_id": 5, "article_id": 31, "date": "2021-05-08T04:41:28Z", "id": 54 },
+    { "user_id": 10, "article_id": 26, "date": "2019-04-30T03:23:25Z", "id": 55 },
+    { "user_id": 3, "article_id": 32, "date": "2013-03-15T09:25:59Z", "id": 56 },
+    { "user_id": 9, "article_id": 58, "date": "2018-11-08T02:57:50Z", "id": 57 },
+    { "user_id": 10, "article_id": 33, "date": "2015-08-14T20:30:59Z", "id": 58 },
+    { "user_id": 2, "article_id": 58, "date": "2013-08-17T04:06:30Z", "id": 59 },
+    { "user_id": 9, "article_id": 29, "date": "2018-08-14T10:10:54Z", "id": 60 },
+    { "user_id": 10, "article_id": 27, "date": "2013-01-24T11:36:54Z", "id": 61 },
+    { "user_id": 5, "article_id": 32, "date": "2021-12-14T04:02:50Z", "id": 62 },
+    { "user_id": 10, "article_id": 29, "date": "2022-05-07T06:42:49Z", "id": 63 },
+    { "user_id": 12, "article_id": 29, "date": "2020-06-02T19:28:32Z", "id": 64 },
+    { "user_id": 8, "article_id": 35, "date": "2022-04-01T17:11:39Z", "id": 65 },
+    { "user_id": 6, "article_id": 58, "date": "2019-08-17T08:06:04Z", "id": 66 },
+    { "user_id": 5, "article_id": 33, "date": "2021-02-09T06:02:05Z", "id": 67 },
+    { "user_id": 4, "article_id": 25, "date": "2021-06-27T15:09:55Z", "id": 68 },
+    { "user_id": 8, "article_id": 27, "date": "2016-10-18T19:37:39Z", "id": 69 },
+    { "user_id": 13, "article_id": 32, "date": "2013-10-30T16:27:26Z", "id": 70 },
+    { "user_id": 1, "article_id": 30, "date": "2017-12-14T01:09:25Z", "id": 71 },
+    { "user_id": 7, "article_id": 32, "date": "2020-07-23T09:33:15Z", "id": 72 },
+    { "user_id": 12, "article_id": 25, "date": "2013-10-11T10:02:11Z", "id": 73 },
+    { "user_id": 3, "article_id": 31, "date": "2012-11-22T07:51:28Z", "id": 74 },
+    { "user_id": 9, "article_id": 32, "date": "2017-06-06T03:49:44Z", "id": 75 },
+    { "user_id": 1, "article_id": 32, "date": "2021-12-21T20:30:47Z", "id": 76 },
+    { "user_id": 2, "article_id": 25, "date": "2018-03-02T03:04:09Z", "id": 77 },
+    { "user_id": 3, "article_id": 33, "date": "2020-05-07T18:37:47Z", "id": 78 },
+    { "user_id": 1, "article_id": 58, "date": "2014-10-28T13:01:36Z", "id": 79 },
+    { "user_id": 6, "article_id": 31, "date": "2013-01-30T03:20:49Z", "id": 80 },
+    { "user_id": 5, "article_id": 34, "date": "2020-06-14T16:06:31Z", "id": 81 },
+    { "user_id": 2, "article_id": 31, "date": "2019-07-08T07:33:24Z", "id": 82 },
+    { "user_id": 6, "article_id": 36, "date": "2017-12-31T20:22:33Z", "id": 83 },
+    { "user_id": 14, "article_id": 33, "date": "2022-08-05T18:56:41Z", "id": 84 },
+    { "user_id": 11, "article_id": 35, "date": "2012-02-28T09:18:56Z", "id": 85 },
+    { "user_id": 11, "article_id": 30, "date": "2016-05-11T09:03:31Z", "id": 86 },
+    { "user_id": 5, "article_id": 58, "date": "2020-04-04T21:24:36Z", "id": 87 },
+    { "user_id": 6, "article_id": 26, "date": "2022-01-08T23:57:20Z", "id": 88 },
+    { "user_id": 3, "article_id": 34, "date": "2016-04-07T03:50:06Z", "id": 89 },
+    { "user_id": 4, "article_id": 32, "date": "2015-04-24T17:49:39Z", "id": 90 },
+    { "user_id": 14, "article_id": 30, "date": "2016-08-30T08:39:30Z", "id": 91 },
+    { "user_id": 2, "article_id": 32, "date": "2021-06-01T16:05:39Z", "id": 92 },
+    { "user_id": 12, "article_id": 34, "date": "2014-08-29T03:31:16Z", "id": 93 },
+    { "user_id": 5, "article_id": 26, "date": "2018-12-07T07:54:46Z", "id": 94 },
+    { "user_id": 6, "article_id": 29, "date": "2015-05-04T02:56:59Z", "id": 95 },
+    { "user_id": 8, "article_id": 34, "date": "2021-10-18T18:37:42Z", "id": 96 },
+    { "user_id": 9, "article_id": 26, "date": "2016-12-21T07:31:02Z", "id": 97 },
+    { "user_id": 14, "article_id": 58, "date": "2012-06-20T12:47:43Z", "id": 98 },
+    { "user_id": 12, "article_id": 31, "date": "2017-12-06T02:33:55Z", "id": 99 },
+    { "user_id": 11, "article_id": 29, "date": "2017-02-09T11:05:34Z", "id": 100 },
+    { "user_id": 6, "article_id": 34, "date": "2011-10-26T06:33:54Z", "id": 101 },
+    { "user_id": 7, "article_id": 27, "date": "2020-09-22T09:52:29Z", "id": 102 },
+    { "user_id": 9, "article_id": 27, "date": "2012-05-30T08:14:56Z", "id": 103 },
+    { "user_id": 2, "article_id": 34, "date": "2014-10-01T03:36:03Z", "id": 104 },
+    { "user_id": 6, "article_id": 23, "date": "2017-01-12T11:48:48Z", "id": 105 },
+    { "user_id": 8, "article_id": 30, "date": "2014-12-20T22:18:50Z", "id": 106 },
+    { "user_id": 6, "article_id": 30, "date": "2015-09-17T11:40:20Z", "id": 107 },
+    { "user_id": 10, "article_id": 32, "date": "2016-02-13T02:31:00Z", "id": 108 },
+    { "user_id": 11, "article_id": 58, "date": "2011-08-21T05:39:01Z", "id": 110 }
+  ],
+  "article-labels": [
+    { "id": 1, "label_ids": [3, 2], "article_id": 56 },
+    { "id": 2, "label_ids": [1, 2], "article_id": 57 },
+    { "id": 3, "label_ids": [1], "article_id": 59 },
+    { "id": 4, "label_ids": [4, 5], "article_id": 45 },
+    { "id": 5, "label_ids": [1, 2, 6], "article_id": 37 },
+    { "id": 6, "label_ids": [1], "article_id": 58 },
+    { "id": 7, "label_ids": [7], "article_id": 48 },
+    { "id": 8, "label_ids": [8, 2], "article_id": 4 },
+    { "id": 9, "label_ids": [9], "article_id": 39 },
+    { "id": 10, "label_ids": [1], "article_id": 1 },
+    { "id": 11, "label_ids": [1, 2, 11], "article_id": 2 },
+    { "id": 12, "label_ids": [1, 9], "article_id": 3 },
+    { "id": 13, "label_ids": [9], "article_id": 51 },
+    { "id": 14, "label_ids": [9], "article_id": 47 },
+    { "id": 15, "label_ids": [9], "article_id": 41 },
+    { "id": 16, "label_ids": [1, 2], "article_id": 40 },
+    { "id": 17, "label_ids": [1], "article_id": 35 }
+  ],
+  "labels": [
+    { "id": 1, "name": "Testing", "user_id": 1 },
+    { "id": 2, "name": "Automation", "user_id": 2 },
+    { "id": 3, "name": "TDD", "user_id": 2 },
+    { "id": 4, "name": "Postman", "user_id": 2 },
+    { "id": 5, "name": "REST API", "user_id": 2 },
+    { "id": 6, "name": "Playwright", "user_id": 1 },
+    { "id": 7, "name": "BDD", "user_id": 2 },
+    { "id": 8, "name": "Selenium", "user_id": 2 },
+    { "id": 9, "name": "Agile", "user_id": 1 },
+    { "id": 10, "name": "QA Basics", "user_id": 1 },
+    { "id": 11, "name": "Design Patterns", "user_id": 3 },
+    { "id": 12, "name": "CI/CD", "user_id": 3 },
+    { "id": 13, "name": "Security", "user_id": 1 },
+    { "id": 14, "name": "DevOps", "user_id": 2 },
+    { "id": 15, "name": "Agile", "user_id": 1 },
+    { "id": 16, "name": "Front-end", "user_id": 4 },
+    { "id": 17, "name": "Back-end", "user_id": 4 },
+    { "id": 18, "name": "UX Design", "user_id": 5 },
+    { "id": 19, "name": "Cybersec", "user_id": 5 },
+    { "id": 20, "name": "JavaScript", "user_id": 5 },
+    { "id": 21, "name": "TypeScript", "user_id": 5 },
+    { "id": 22, "name": "Quality", "user_id": 5 },
+    { "id": 23, "name": "Quality Assurance", "user_id": 5 },
+    { "id": 24, "name": "TDD", "user_id": 5 },
+    { "id": 25, "name": "GitHub Actions", "user_id": 3 },
+    { "id": 26, "name": "Jenkins", "user_id": 2 },
+    { "id": 27, "name": "Performance", "user_id": 1 },
+    { "id": 28, "name": "Python", "user_id": 1 },
+    { "id": 29, "name": "Test Strategy", "user_id": 1 },
+    { "id": 30, "name": "Risk", "user_id": 1 },
+    { "id": 31, "name": "Metrics", "user_id": 1 },
+    { "id": 32, "name": "Good Practice", "user_id": 4 },
+    { "id": 33, "name": "Documentation", "user_id": 4 },
+    { "id": 34, "name": "Recruitment", "user_id": 4 },
+    { "id": 35, "name": "HR", "user_id": 4 },
+    { "id": 36, "name": "Training", "user_id": 4 },
+    { "id": 37, "name": "Interview", "user_id": 4 }
+  ],
+  "scores": [
+    { "game_id": 1, "user_id": 4, "score": 5, "id": 1 },
+    { "game_id": 2, "user_id": 4, "score": 4, "id": 2 },
+    { "game_id": 1, "user_id": 7, "score": 6, "id": 3 }
+  ],
+  "bookmarks": [
+    { "id": 1, "user_id": 1, "article_ids": [1, 3, 7] },
+    { "id": 2, "user_id": 2, "article_ids": [5, 8, 10] }
+  ],
+  "survey-responses": [
+    {
+      "answers": {
+        "REST API testing": ["yes"],
+        "REST API tools": ["Swagger", "Postman", "Bruno"],
+        "Using newman": ["yes"],
+        "Using CI/CD": ["yes"],
+        "CI/CD tools": ["GitHub Actions", "Jenkins", "Azure DevOps"],
+        "testing frequency": ["weekly"],
+        "Test types": ["Integration tests", "E2e tests"],
+        "Open-Ended Questions": { "Plans to improve testing": ["Learn more Playwright for API Testing"] }
+      },
+      "type": 1,
+      "date": "2024-03-10T18:29:42Z",
+      "user_id": "7",
+      "id": 1
+    },
+    {
+      "answers": {
+        "REST API testing": ["yes"],
+        "REST API tools": ["Swagger", "Postman"],
+        "Using newman": ["no"],
+        "Using CI/CD": ["yes"],
+        "CI/CD tools": ["GitHub Actions", "Azure DevOps"],
+        "testing frequency": ["weekly"],
+        "Test types": ["Unit tests", "Module tests", "Integration tests", "E2e tests"],
+        "Open-Ended Questions": { "Plans to improve testing": [""] }
+      },
+      "type": 1,
+      "date": "2024-03-10T18:29:42Z",
+      "user_id": "9",
+      "id": 2
+    },
+    {
+      "answers": {
+        "REST API testing": ["yes"],
+        "REST API tools": ["Swagger", "Postman", "Bruno"],
+        "Using newman": ["no"],
+        "Using CI/CD": ["yes"],
+        "CI/CD tools": ["GitHub Actions", "Jenkins"],
+        "Testing frequency": ["daily"],
+        "Test types": ["Unit tests", "Module tests", "Contract tests", "Integration tests", "E2e tests"],
+        "Open-Ended Questions": { "Plans to improve testing": [""] }
+      },
+      "type": 1,
+      "date": "2024-03-10T19:25:35Z",
+      "user_id": "8",
+      "id": 3
+    },
+    {
+      "answers": {
+        "REST API testing": ["yes"],
+        "REST API tools": ["Postman"],
+        "Using newman": ["yes"],
+        "Using CI/CD": ["yes"],
+        "CI/CD tools": ["GitHub Actions"],
+        "Testing frequency": ["daily"],
+        "Test types": [
+          "Module tests",
+          "Integration tests",
+          "E2e tests",
+          "UAT tests",
+          "Performance tests",
+          "Security tests",
+          "Visual tests"
+        ],
+        "Open-Ended Questions": { "Plans to improve testing": [""] }
+      },
+      "type": 1,
+      "date": "2024-03-10T19:27:13Z",
+      "user_id": "4",
+      "id": 4
+    },
+    {
+      "answers": {
+        "REST API testing": ["yes"],
+        "REST API tools": ["Postman", "Swagger"],
+        "Using newman": ["no"],
+        "Using CI/CD": ["yes"],
+        "CI/CD tools": ["GitHub Actions"],
+        "Testing frequency": ["daily"],
+        "Test types": ["Module tests", "Integration tests", "E2e tests", "UAT tests", "Performance tests"],
+        "Open-Ended Questions": { "Plans to improve testing": ["Learn more Playwright for API Testing"] }
+      },
+      "type": 1,
+      "date": "2024-03-11T19:27:13Z",
+      "user_id": "2",
+      "id": 5
+    },
+    {
+      "answers": {
+        "experience in test automation": ["yes"],
+        "experience in test automation in years": ["2-3 years"],
+        "automation tools": ["Playwright", "Selenium"],
+        "languages for automation tools": ["JavaScript", "TypeScript", "Python"],
+        "Number of automated tests": ["50-100"],
+        "Automated test types": ["Integration tests", "E2e tests"],
+        "Open-Ended Questions": { "Plans to improve skills": ["Learn more about Playwright"] }
+      },
+      "type": 2,
+      "date": "2024-03-17T01:43:30Z",
+      "user_id": "3",
+      "id": 6
+    }
+  ],
+  "contacts": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "user_ids": [2, 3, 4]
+    },
+    {
+      "id": 2,
+      "user_id": 2,
+      "user_ids": [1]
+    },
+    {
+      "id": 3,
+      "user_id": 3,
+      "user_ids": [1]
+    },
+    {
+      "id": 4,
+      "user_id": 4,
+      "user_ids": [1]
+    }
+  ],
+  "messages": [
+    {
+      "id": 1,
+      "from": 1,
+      "to": 2,
+      "date": "2023-10-20T15:46:30Z",
+      "content": "Hello, how are you?"
+    },
+    {
+      "id": 2,
+      "from": 2,
+      "to": 1,
+      "date": "2023-10-20T15:47:15Z",
+      "content": "Im fine thx! And how are you?"
+    },
+    {
+      "id": 3,
+      "from": 1,
+      "to": 2,
+      "date": "2023-10-20T15:47:21Z",
+      "content": "Good. Im fine too!"
+    },
+    {
+      "id": 4,
+      "from": 2,
+      "to": 1,
+      "date": "2023-10-20T15:47:33Z",
+      "content": "Good!"
+    },
+    {
+      "id": 5,
+      "from": 1,
+      "to": 2,
+      "date": "2023-10-20T15:47:36Z",
+      "content": "Want to automate something?"
+    },
+    {
+      "id": 6,
+      "from": 2,
+      "to": 1,
+      "date": "2023-10-20T15:47:55Z",
+      "content": "Sure! Lets use Playwright🎭 to do some fun automation!"
+    },
+    {
+      "id": 7,
+      "from": 1,
+      "to": 3,
+      "date": "2024-02-20T11:46:30Z",
+      "content": "Hello!"
+    }
+  ],
+  "message-check": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "last_check": "2024-05-25T11:50:29.076Z",
+      "last_checks": {
+        "2": "2024-05-25T11:50:29.076Z",
+        "3": "2024-05-25T11:50:27.389Z",
+        "4": "2024-05-25T11:50:28.108Z"
+      }
+    }
+  ],
+  "books": [
+    {
+      "id": 1,
+      "title": "The Pragmatic Programmer",
+      "author_ids": [1],
+      "published_at": "1999-10-20T00:00:00Z",
+      "genre_ids": [1],
+      "language": "English",
+      "pages": 352,
+      "cover": "..\\data\\books\\the-pragmatic-programmer.jpg",
+      "description": "The Pragmatic Programmer: Your Journey to Mastery, 20th Anniversary Edition (2nd Edition) (Pragmatic Programmers)"
+    },
+    {
+      "id": 2,
+      "title": "Clean Code",
+      "author_ids": [2],
+      "published_at": "2008-08-11T00:00:00Z",
+      "genre_ids": [1],
+      "language": "English",
+      "pages": 464,
+      "cover": "..\\data\\books\\clean-code.jpg",
+      "description": "Even bad code can function. But if code isn’t clean, it can bring a development organization to its knees. Every year, countless hours and significant resources are lost because of poorly written code. But it doesn’t have to be that way."
+    },
+    {
+      "id": 3,
+      "title": "Dune",
+      "author_ids": [3],
+      "published_at": "1965-06-01T00:00:00Z",
+      "genre_ids": [17],
+      "language": "English",
+      "pages": 412,
+      "cover": "..\\data\\books\\dune.jpg",
+      "description": "Set in the far future amidst a sprawling feudal interstellar empire where planetary dynasties are controlled by noble houses that owe an allegiance to the imperial House Corrino, Dune tells the story of young Paul Atreides (the heir apparent to Duke Leto Atreides and heir of House Atreides) as he and his family accept control of the desert planet Arrakis, the only source of the 'spice' melange, the most important and valuable substance in the cosmos."
+    },
+    {
+      "id": 4,
+      "title": "The Lord of the Rings",
+      "author_ids": [4],
+      "published_at": "1954-07-29T00:00:00Z",
+      "genre_ids": [12, 19],
+      "language": "English",
+      "pages": 1178,
+      "cover": "..\\data\\books\\the-lord-of-the-rings.jpg",
+      "description": "The Lord of the Rings is an epic high-fantasy novel written by English author and scholar J. R. R. Tolkien. The story began as a sequel to Tolkien's 1937 fantasy novel The Hobbit, but eventually developed into a much larger work."
+    },
+    {
+      "id": 5,
+      "title": "The Hitchhiker's Guide to the Galaxy",
+      "author_ids": [5],
+      "published_at": "1979-10-12T00:00:00Z",
+      "genre_ids": [17],
+      "language": "English",
+      "pages": 215,
+      "cover": "..\\data\\books\\the-hitchhikers-guide-to-the-galaxy.jpg",
+      "description": "The Hitchhiker's Guide to the Galaxy is a comic science fiction series created by Douglas Adams that has become popular among fans of the genre and members of the scientific community."
+    },
+    {
+      "id": 6,
+      "title": "1984",
+      "author_ids": [6],
+      "published_at": "1949-06-08T00:00:00Z",
+      "genre_ids": [18],
+      "language": "English",
+      "pages": 328,
+      "cover": "..\\data\\books\\1984.jpg",
+      "description": "1984 is a dystopian social science fiction novel by English novelist George Orwell. It was published on 8 June 1949 by Secker & Warburg as Orwell's ninth and final book completed in his lifetime."
+    },
+    {
+      "id": 7,
+      "title": "Animal Farm",
+      "author_ids": [6],
+      "published_at": "1945-08-17T00:00:00Z",
+      "genre_ids": [18],
+      "language": "English",
+      "pages": 112,
+      "cover": "..\\data\\books\\animal-farm.jpg",
+      "description": "Animal Farm is an allegorical novella by George Orwell, first published in England on 17 August 1945. The book tells the story of a group of farm animals who rebel against their human farmer, hoping to create a society where the animals can be equal, free, and happy."
+    },
+    {
+      "id": 8,
+      "title": "The Crime and the Punishment",
+      "author_ids": [7],
+      "published_at": "1866-11-14T00:00:00Z",
+      "genre_ids": [18],
+      "language": "Russian",
+      "pages": 671,
+      "cover": "..\\data\\books\\the-crime-and-the-punishment.jpg",
+      "description": "Crime and Punishment is a novel by the Russian author Fyodor Dostoevsky. It was first published in the literary journal The Russian Messenger in twelve monthly installments during 1866."
+    },
+    {
+      "id": 9,
+      "title": "The Brothers Karamazov",
+      "author_ids": [7],
+      "published_at": "1880-11-26T00:00:00Z",
+      "genre_ids": [18],
+      "language": "Russian",
+      "pages": 796,
+      "cover": "..\\data\\books\\the-brothers-karamazov.jpg",
+      "description": "The Brothers Karamazov is a passionate philosophical novel set in 19th century Russia, that enters deeply into the ethical debates of God, free will, and morality. It is a spiritual drama of moral struggles concerning faith, doubt, reason, and modern Russia."
+    },
+    {
+      "id": 10,
+      "title": "Perfekcyjna niedoskonałość",
+      "author_ids": [8],
+      "published_at": "2019-10-01T00:00:00Z",
+      "genre_ids": [17],
+      "language": "Polish",
+      "pages": 550,
+      "cover": "..\\data\\books\\perfekcyjna-niedoskonalosc.jpg",
+      "description": "Jest XXIX wiek. Adam Zamoyski, tajemniczy zmartwychwstaniec, tkwi w środku rozgrywki między cywilizacjami, ludźmi, nieludźmi i istotami postludzkimi. Konkurencja stanowi motor ewolucji – konkurują ze sobą rośliny, zwierzęta, ludzie, kultury, gospodarki. Zwycięża, kto lepiej wykorzystuje naturalne środowisko, zasoby planety, ostatecznie – prawa fizyki."
+    },
+    {
+      "id": 11,
+      "title": "The Lean Startup",
+      "author_ids": [9],
+      "published_at": "2011-09-13T00:00:00Z",
+      "genre_ids": [6],
+      "language": "English",
+      "pages": 336,
+      "cover": "..\\data\\books\\the-lean-startup.jpg",
+      "description": "The Lean Startup: How Today's Entrepreneurs Use Continuous Innovation to Create Radically Successful Businesses is a book by Eric Ries describing his proposed lean startup strategy for startup companies."
+    },
+    {
+      "id": 12,
+      "title": "Extreme Ownership",
+      "author_ids": [10],
+      "published_at": "2015-10-20T00:00:00Z",
+      "genre_ids": [5],
+      "language": "English",
+      "pages": 320,
+      "cover": "..\\data\\books\\extreme-ownership.jpg",
+      "description": "Extreme Ownership: How U.S. Navy SEALs Lead and Win is a book by Jocko Willink and Leif Babin, published on October 20, 2015. The book details the authors' experiences and lessons learned from the battlefield, then teaches how to apply them to business and life."
+    },
+    {
+      "id": 13,
+      "title": "The Art of War",
+      "author_ids": [11],
+      "published_at": "5th century BC",
+      "genre_ids": [4],
+      "language": "Chinese",
+      "pages": 38,
+      "cover": "..\\data\\books\\the-art-of-war.jpg",
+      "description": "The Art of War is an ancient Chinese military treatise dating from the Late Spring and Autumn Period (roughly 5th century BC). The work, which is attributed to the ancient Chinese military strategist Sun Tzu ('Master Sun', also spelled Sunzi), is composed of 13 chapters."
+    },
+    {
+      "id": 14,
+      "title": "The Prince",
+      "author_ids": [12],
+      "published_at": "1532-12-10T00:00:00Z",
+      "genre_ids": [4],
+      "language": "Italian",
+      "pages": 140,
+      "cover": "..\\data\\books\\the-prince.jpg",
+      "description": "The Prince is a 16th-century political treatise by the Italian diplomat and political theorist Niccolò Machiavelli. From his correspondence, a version appears to have been distributed in 1513, using a Latin title, De Principatibus (Of Principalities)."
+    },
+    {
+      "id": 15,
+      "title": "The Weird and The Eerie",
+      "author_ids": [13],
+      "published_at": "2017-01-26T00:00:00Z",
+      "genre_ids": [10],
+      "language": "English",
+      "pages": 128,
+      "cover": "..\\data\\books\\the-weird-and-the-eerie.jpg",
+      "description": "What exactly are the Weird and the Eerie? In this new essay, Mark Fisher argues that some of the most haunting and anomalous fiction of the 20th century belongs to these two modes. The Weird and The Eerie are closely related but distinct modes, each possessing its own distinct properties. Both have often been associated with Horror, yet this emphasis overlooks the aching fascination that such texts can exercise. The Weird and the Eerie both fundamentally concern the outside and the unknown, which are not intrinsically horrifying, even if they are always unsettling."
+    },
+    {
+      "id": 16,
+      "title": "How to Stop Worrying and Start Living",
+      "author_ids": [14],
+      "published_at": "1948-10-05T00:00:00Z",
+      "genre_ids": [28],
+      "language": "English",
+      "pages": 320,
+      "cover": "..\\data\\books\\how-to-stop-worrying-and-start-living.jpg",
+      "description": "How to Stop Worrying and Start Living is a self-help book by Dale Carnegie. It was first printed in Great Britain in 1948 by Richard Clay (The Chaucer Press), Ltd., Bungay Suffolk. It is currently published as a Mass Market Paperback of 320 pages by Pocket (Revised edition: September 15, 1990), ISBN 0-671-73335-4."
+    },
+    {
+      "id": 17,
+      "title": "Kwantechizm 2.0",
+      "author_ids": [15],
+      "published_at": "2022-01-01T00:00:00Z",
+      "genre_ids": [38],
+      "language": "Polish",
+      "pages": 344,
+      "cover": "..\\data\\books\\kwantechizm-2.0.jpg",
+      "description": "Wyobrażenia o wszechświecie formułowane od wieków okazały się zbiorem przybliżeń lub nonsensów. Mówienie z pewnością o czymkolwiek jest więc, jak pisze autor tej książki, nie tylko bezczelnością, ale – co gorsza – nietaktem. Coraz lepiej poznajemy prawa rządzące rzeczywistością – nie przez ustanawianie świętych prawd, ale ich skuteczne podważanie. Wizja świata, która dzięki temu zaczęła się rysować, jest dogłębnie szokująca. By ją nam przybliżyć, Andrzej Dragan w jasny i klarowny sposób objaśnia niezwykłe wnioski wynikające z przełomowych teorii Einsteina oraz najbardziej zaskakujące prawa mechaniki kwantowej, a także przedstawia własny, nowy i rewolucyjny model łączący je ze sobą."
+    },
+    {
+      "id": 18,
+      "title": "Pułapki myślenia. O myśleniu szybkim i wolnym",
+      "author_ids": [16],
+      "published_at": "2011-10-25T00:00:00Z",
+      "genre_ids": [28],
+      "language": "Polish",
+      "pages": 672,
+      "cover": "..\\data\\books\\pulapki-myslenia.jpg",
+      "description": "Czytelnik znajdzie tu fascynujące opowieści o tym, jak ludzki umysł działa w różnych sytuacjach, jakie błędy popełnia, jakie pułapki go czekają. Autor pokazuje, jakie mechanizmy kierują naszymi decyzjami, jakie błędy popełniamy, jakie pułapki czyhają na nas w życiu codziennym, w pracy, w sporcie, w polityce, w biznesie. Dzięki tej książce zrozumiesz, dlaczego ludzie popełniają błędy, jakie mechanizmy kierują naszymi decyzjami, jakie pułapki czyhają na nas w życiu codziennym, w pracy, w sporcie, w polityce, w biznesie."
+    },
+    {
+      "id": 19,
+      "title": "Rework",
+      "author_ids": [17],
+      "published_at": "2010-03-09T00:00:00Z",
+      "genre_ids": [6],
+      "language": "English",
+      "pages": 288,
+      "cover": "..\\data\\books\\rework.jpg",
+      "description": "Rework shows you a better, faster, easier way to succeed in business. Most business books give you the same old advice: Write a business plan, study the competition, seek investors, yadda yadda. If you're looking for a book like that, put this one back on the shelf."
+    },
+    {
+      "id": 20,
+      "title": "Sztuka przywództwa",
+      "author_ids": [14],
+      "published_at": "2020-01-01T00:00:00Z",
+      "genre_ids": [5],
+      "language": "Polish",
+      "pages": 288,
+      "cover": "..\\data\\books\\sztuka-przywodztwa.jpg",
+      "description": "Sztuka przywództwa to książka, która pomoże Ci zrozumieć, jakie cechy powinien posiadać dobry lider. Dale Carnegie, autor bestsellerów, takich jak Jak zdobyć przyjaciół i zjednać sobie ludzi czy Jak przestać się martwić i zacząć żyć, w swojej najnowszej książce zdradza sekrety skutecznego przywództwa. Dowiesz się z niej, jak zbudować zespół, który będzie działał jak zegarek, jak motywować pracowników do działania oraz jak radzić sobie z trudnymi sytuacjami w pracy."
+    },
+    {
+      "id": 21,
+      "title": "The Trial",
+      "author_ids": [18],
+      "published_at": "1925-01-01T00:00:00Z",
+      "genre_ids": [18],
+      "language": "English",
+      "pages": 208,
+      "cover": "..\\data\\books\\the-trial.jpg",
+      "description": "The Trial (original German title: Der Process, later Der Prozess, Der Proceß and Der Prozeß) is a novel written by Franz Kafka between 1914 and 1915 and published posthumously in 1925. One of Kafka's best-known works."
+    },
+    {
+      "id": 22,
+      "title": "House of Leaves",
+      "author_ids": [19],
+      "published_at": "2000-03-07T00:00:00Z",
+      "genre_ids": [18],
+      "language": "English",
+      "pages": 709,
+      "cover": "..\\data\\books\\house-of-leaves.jpg",
+      "description": "House of Leaves is the debut novel by American author Mark Z. Danielewski, published in March 2000 by Pantheon Books. A bestseller, it has been translated into a number of languages, and is followed by a companion piece, The Whalestoe Letters. The format and structure of the novel is unconventional, with unusual page layout and style, making it a prime example of ergodic literature. It contains copious footnotes, many of which contain footnotes themselves, including references to fictional books, films or articles."
+    },
+    {
+      "id": 23,
+      "title": "Cain's Jawbone: A Novel Problem",
+      "author_ids": [20],
+      "published_at": "1934-01-01T00:00:00Z",
+      "genre_ids": [18],
+      "language": "English",
+      "pages": 216,
+      "cover": "..\\data\\books\\cains-jawbone.jpg"
+    },
+    {
+      "id": 24,
+      "title": "Dune Messiah",
+      "author_ids": [3],
+      "published_at": "1969-03-01T00:00:00Z",
+      "genre_ids": [17],
+      "language": "English",
+      "pages": 331,
+      "cover": "..\\data\\books\\dune-messiah.jpg",
+      "description": "Dune Messiah is a science fiction novel by American author Frank Herbert, the second in his Dune series of six novels. It was originally serialized in Galaxy magazine in 1969. The American and British editions have different prologues summarizing events in the previous novel. Dune Messiah and its sequel Children of Dune were collectively adapted by the Sci-Fi Channel in 2003 into a miniseries entitled Frank Herbert's Children of Dune."
+    },
+    {
+      "id": 25,
+      "title": "Children of Dune",
+      "author_ids": [3],
+      "published_at": "1976-04-01T00:00:00Z",
+      "genre_ids": [17],
+      "language": "English",
+      "pages": 408,
+      "cover": "..\\data\\books\\children-of-dune.jpg",
+      "description": "Children of Dune is a 1976 science fiction novel by Frank Herbert, the third in his Dune series of six novels. It was originally serialized in Analog Science Fiction and Fact in 1976, and was the last Dune novel to be serialized before book publication. The novels Dune Messiah and Children of Dune were collectively adapted by the Sci-Fi Channel in 2003 into a miniseries entitled Frank Herbert's Children of Dune."
+    },
+    {
+      "id": 26,
+      "title": "God Emperor of Dune",
+      "author_ids": [3],
+      "published_at": "1981-05-01T00:00:00Z",
+      "genre_ids": [17],
+      "language": "English",
+      "pages": 412,
+      "cover": "..\\data\\books\\god-emperor-of-dune.jpg",
+      "description": "God Emperor of Dune is a science fiction novel by Frank Herbert, the fourth in his Dune series of six novels. It was ranked as the No. 11 hardcover fiction best seller of 1981 by Publishers Weekly. God Emperor of Dune was serialized in Analog Science Fiction and Fact magazine from 1981 to 1982, and then published by Putnam."
+    },
+    {
+      "id": 27,
+      "title": "Heretics of Dune",
+      "author_ids": [3],
+      "published_at": "1984-05-01T00:00:00Z",
+      "genre_ids": [17],
+      "language": "English",
+      "pages": 471,
+      "cover": "..\\data\\books\\heretics-of-dune.jpg",
+      "description": "Heretics of Dune is a 1984 science fiction novel by Frank Herbert, the fifth in his Dune series of six novels. It was ranked as the No. 13 hardcover fiction best seller of 1984 by Publishers Weekly. Heretics of Dune was serialized in Analog Science Fiction and Fact magazine from 1983 to 1984, and then published by Putnam."
+    },
+    {
+      "id": 28,
+      "title": "The Call of Cthulhu",
+      "author_ids": [21],
+      "published_at": "1928-02-20T00:00:00Z",
+      "genre_ids": [15],
+      "language": "English",
+      "pages": 35,
+      "cover": "..\\data\\books\\the-call-of-cthulhu.jpg",
+      "description": "The Call of Cthulhu is a short story by American writer H. P. Lovecraft. Written in the summer of 1926, it was first published in the pulp magazine Weird Tales in February 1928."
+    },
+    {
+      "id": 29,
+      "title": "The Silmarillion",
+      "author_ids": [4],
+      "published_at": "1977-09-15T00:00:00Z",
+      "genre_ids": [12, 19],
+      "language": "English",
+      "pages": 365,
+      "cover": "..\\data\\books\\the-silmarillion.jpg",
+      "description": "The Silmarillion is a collection of mythopoeic works by English writer J. R. R. Tolkien, edited and published posthumously by his son, Christopher Tolkien, in 1977, with assistance from Guy Gavriel Kay. It is the primary and founding work of the Middle-earth legendarium, the world of The Hobbit, The Lord of the Rings, and The Silmarillion. The Silmarillion tells of the creation of Eä, the world that is, and the First Age of the world."
+    },
+    {
+      "id": 30,
+      "title": "The Hobbit",
+      "author_ids": [4],
+      "published_at": "1937-09-21T00:00:00Z",
+      "genre_ids": [12, 19],
+      "language": "English",
+      "pages": 310,
+      "cover": "..\\data\\books\\the-hobbit.jpg",
+      "description": "The Hobbit, or There and Back Again is a children's fantasy novel by English author J. R. R. Tolkien. It was published on 21 September 1937 to wide critical acclaim, being nominated for the Carnegie Medal and awarded a prize from the New York Herald Tribune for best juvenile fiction."
+    },
+    {
+      "id": 31,
+      "title": "Opowieści miłosne. Śmiertelne i tajemnicze",
+      "author_ids": [22],
+      "published_at": "2010-10-01T00:00:00Z",
+      "genre_ids": [13, 15, 16],
+      "language": "Polish",
+      "pages": 800,
+      "cover": "..\\data\\books\\opowiesci-milosne.jpg",
+      "description": "Opowieści miłosne. Śmiertelne i tajemnicze to zbiór opowiadań, które łączy temat miłości. W książce znajdziemy zarówno historie miłosne, jak i opowieści o miłości do literatury, sztuki, muzyki, a także o miłości do życia. Każde z opowiadań to inna historia. Wszystkie jednak łączy temat miłości, która potrafi być zarówno piękna, jak i tragiczna, tajemnicza, a nawet śmiertelna."
+    },
+    {
+      "id": 32,
+      "title": "Born from a Wish",
+      "author_ids": [23, 24],
+      "published_at": "2002-02-28T00:00:00Z",
+      "genre_ids": [7, 13],
+      "language": "English",
+      "pages": 200,
+      "cover": "..\\data\\books\\born-from-a-wish.jpg",
+      "description": "A dark narrative centered around Maria's backstory, revealing her mysterious origins and her connection to James Sunderland. The novel explores themes of identity, longing, and the blurring line between reality and nightmare."
+    }
+  ],
+  "book-authors": [
+    {
+      "id": 0,
+      "name": "Unknown",
+      "country": "Unknown"
+    },
+    {
+      "id": 1,
+      "name": "Andrew Hunt",
+      "country": "USA"
+    },
+    {
+      "id": 2,
+      "name": "Robert C. Martin",
+      "country": "USA"
+    },
+    {
+      "id": 3,
+      "name": "Frank Herbert",
+      "country": "USA"
+    },
+    {
+      "id": 4,
+      "name": "J.R.R. Tolkien",
+      "country": "UK"
+    },
+    {
+      "id": 5,
+      "name": "Douglas Adams",
+      "country": "UK"
+    },
+    {
+      "id": 6,
+      "name": "George Orwell",
+      "country": "UK"
+    },
+    {
+      "id": 7,
+      "name": "Fyodor Dostoevsky",
+      "country": "Russia"
+    },
+    {
+      "id": 8,
+      "name": "Jacek Dukaj",
+      "country": "Poland"
+    },
+    {
+      "id": 9,
+      "name": "Eric Ries",
+      "country": "USA"
+    },
+    {
+      "id": 10,
+      "name": "Jocko Willink",
+      "country": "USA"
+    },
+    {
+      "id": 11,
+      "name": "Sun Tzu",
+      "country": "China"
+    },
+    {
+      "id": 12,
+      "name": "Niccolò Machiavelli",
+      "country": "Italy"
+    },
+    {
+      "id": 13,
+      "name": "Mark Fisher",
+      "country": "UK"
+    },
+    {
+      "id": 14,
+      "name": "Dale Carnegie",
+      "country": "USA"
+    },
+    {
+      "id": 15,
+      "name": "Andrzej Dragan",
+      "country": "Poland"
+    },
+    {
+      "id": 16,
+      "name": "Daniel Kahneman",
+      "country": "USA"
+    },
+    {
+      "id": 17,
+      "name": "Jason Fried",
+      "country": "USA"
+    },
+    {
+      "id": 18,
+      "name": "Franz Kafka",
+      "country": "Czech Republic"
+    },
+    {
+      "id": 19,
+      "name": "Mark Z. Danielewski",
+      "country": "USA"
+    },
+    {
+      "id": 20,
+      "name": "Edward Powys Mathers",
+      "country": "UK"
+    },
+    {
+      "id": 21,
+      "name": "H.P. Lovecraft",
+      "country": "USA"
+    },
+    {
+      "id": 22,
+      "name": "Edgar Allan Poe",
+      "country": "USA"
+    },
+    {
+      "id": 23,
+      "name": "Stephen Sunderland",
+      "country": "USA"
+    },
+    {
+      "id": 24,
+      "name": "Maria Sunderland",
+      "country": "USA"
+    }
+  ],
+  "book-reviews": [
+    {
+      "id": 1,
+      "book_id": 1,
+      "user_id": 1,
+      "rating": 5,
+      "content": "Great book!"
+    },
+    {
+      "id": 2,
+      "book_id": 1,
+      "user_id": 2,
+      "rating": 4,
+      "content": "Good book!"
+    },
+    {
+      "id": 3,
+      "book_id": 1,
+      "user_id": 3,
+      "rating": 5,
+      "content": "Awesome book!"
+    },
+    {
+      "id": 4,
+      "book_id": 2,
+      "user_id": 1,
+      "rating": 5,
+      "content": "Great book!"
+    },
+    {
+      "id": 5,
+      "book_id": 2,
+      "user_id": 2,
+      "rating": 4,
+      "content": "Good book!"
+    },
+    {
+      "id": 6,
+      "book_id": 2,
+      "user_id": 3,
+      "rating": 5,
+      "content": "Awesome book!"
+    },
+    {
+      "id": 7,
+      "book_id": 3,
+      "user_id": 1,
+      "rating": 5,
+      "content": "Great book!"
+    },
+    {
+      "id": 8,
+      "book_id": 3,
+      "user_id": 2,
+      "rating": 4,
+      "content": "Good book!"
+    },
+    {
+      "id": 9,
+      "book_id": 3,
+      "user_id": 3,
+      "rating": 5,
+      "content": "Awesome book!"
+    },
+    {
+      "id": 10,
+      "book_id": 4,
+      "user_id": 1,
+      "rating": 5,
+      "content": "Great book!"
+    },
+    {
+      "id": 11,
+      "book_id": 4,
+      "user_id": 2,
+      "rating": 4,
+      "content": "Good book!"
+    },
+    {
+      "id": 12,
+      "book_id": 4,
+      "user_id": 3,
+      "rating": 5,
+      "content": "Awesome book!"
+    }
+  ],
+  "book-shop-items": [
+    {
+      "id": 1,
+      "book_id": 1,
+      "price": 2500,
+      "quantity": 10
+    },
+    {
+      "id": 2,
+      "book_id": 2,
+      "price": 3000,
+      "quantity": 10
+    },
+    {
+      "id": 3,
+      "book_id": 3,
+      "price": 1800,
+      "quantity": 10
+    },
+    {
+      "id": 4,
+      "book_id": 4,
+      "price": 2000,
+      "quantity": 10
+    },
+    {
+      "id": 5,
+      "book_id": 5,
+      "price": 3000,
+      "quantity": 10
+    },
+    {
+      "id": 6,
+      "book_id": 6,
+      "price": 3100,
+      "quantity": 10
+    }
+  ],
+  "book-shop-orders": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "book_id": 1,
+      "quantity": 1,
+      "total_price": 3000,
+      "status_id": 9,
+      "created_at": "2024-05-25T11:50:28.108Z"
+    },
+    {
+      "id": 2,
+      "user_id": 2,
+      "book_id": 2,
+      "quantity": 1,
+      "total_price": 3500,
+      "status_id": 9,
+      "created_at": "2024-05-25T11:50:28.108Z"
+    },
+    {
+      "id": 3,
+      "user_id": 1,
+      "book_id": 2,
+      "quantity": 1,
+      "total_price": 3500,
+      "status": 1,
+      "created_at": "2024-05-25T11:50:28.108Z"
+    }
+  ],
+  "book-shop-order-status": [
+    {
+      "id": 1,
+      "name": "new"
+    },
+    {
+      "id": 3,
+      "name": "pending"
+    },
+    {
+      "id": 4,
+      "name": "cancelled"
+    },
+    {
+      "id": 9,
+      "name": "completed"
+    }
+  ],
+  "book-shop-roles": [
+    {
+      "id": 1,
+      "name": "admin"
+    },
+    {
+      "id": 2,
+      "name": "reader"
+    },
+    {
+      "id": 4,
+      "name": "editor"
+    },
+    {
+      "id": 5,
+      "name": "author"
+    },
+    {
+      "id": 10,
+      "name": "delivery-coordinator"
+    }
+  ],
+  "book-shop-accounts": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "role_id": 2,
+      "borrowed_books_ids": [],
+      "read_books_ids": [],
+      "owned_books_ids": [],
+      "funds": 15000
+    },
+    {
+      "id": 2,
+      "user_id": 2,
+      "role_id": 2,
+      "borrowed_books_ids": [],
+      "read_books_ids": [],
+      "owned_books_ids": [],
+      "funds": 20000
+    },
+    {
+      "id": 3,
+      "user_id": 3,
+      "role_id": 2,
+      "borrowed_books_ids": [],
+      "read_books_ids": [],
+      "owned_books_ids": [],
+      "funds": 50000
+    }
+  ],
+  "book-genres": [
+    {
+      "id": 0,
+      "name": "Unknown"
+    },
+    {
+      "id": 1,
+      "name": "Programming"
+    },
+    {
+      "id": 2,
+      "name": "Design"
+    },
+    {
+      "id": 3,
+      "name": "Testing"
+    },
+    {
+      "id": 4,
+      "name": "Management"
+    },
+    {
+      "id": 5,
+      "name": "Leadership"
+    },
+    {
+      "id": 6,
+      "name": "Business"
+    },
+    {
+      "id": 7,
+      "name": "Biography"
+    },
+    {
+      "id": 8,
+      "name": "History"
+    },
+    {
+      "id": 9,
+      "name": "Science"
+    },
+    {
+      "id": 10,
+      "name": "Fiction"
+    },
+    {
+      "id": 11,
+      "name": "Non-fiction"
+    },
+    {
+      "id": 12,
+      "name": "Fantasy"
+    },
+    {
+      "id": 13,
+      "name": "Mystery"
+    },
+    {
+      "id": 14,
+      "name": "Thriller"
+    },
+    {
+      "id": 15,
+      "name": "Horror"
+    },
+    {
+      "id": 16,
+      "name": "Romance"
+    },
+    {
+      "id": 17,
+      "name": "Science Fiction"
+    },
+    {
+      "id": 18,
+      "name": "Dystopian"
+    },
+    {
+      "id": 19,
+      "name": "Adventure"
+    },
+    {
+      "id": 20,
+      "name": "Children"
+    },
+    {
+      "id": 21,
+      "name": "Young Adult"
+    },
+    {
+      "id": 22,
+      "name": "Comics"
+    },
+    {
+      "id": 23,
+      "name": "Manga"
+    },
+    {
+      "id": 24,
+      "name": "Graphic Novel"
+    },
+    {
+      "id": 25,
+      "name": "Cookbook"
+    },
+    {
+      "id": 26,
+      "name": "Health"
+    },
+    {
+      "id": 27,
+      "name": "Fitness"
+    },
+    {
+      "id": 28,
+      "name": "Self-help"
+    },
+    {
+      "id": 29,
+      "name": "Travel"
+    },
+    {
+      "id": 30,
+      "name": "Guide"
+    },
+    {
+      "id": 31,
+      "name": "Art"
+    },
+    {
+      "id": 32,
+      "name": "Photography"
+    },
+    {
+      "id": 33,
+      "name": "Crafts"
+    },
+    {
+      "id": 34,
+      "name": "Music"
+    },
+    {
+      "id": 35,
+      "name": "Film"
+    },
+    {
+      "id": 36,
+      "name": "History"
+    },
+    {
+      "id": 37,
+      "name": "Biography"
+    },
+    {
+      "id": 38,
+      "name": "Science"
+    }
+  ]
+}

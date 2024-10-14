@@ -14,6 +14,7 @@ let simpleErrorBox = "simpleErrorBox";
 let simpleInfoBox = "simpleInfoBox";
 
 const maxFieldLength = 70;
+const maxQuesryLength = 140;
 
 const sampleQueries = {
   0: "> Pick a query...",
@@ -28,7 +29,10 @@ const sampleQueries = {
   LIKE '%@test.test'`,
   5: `SELECT email, firstname, lastname
   FROM users`,
-  6: `Insert into users (email, firstname, lastname) values ('xyz@test.test', 'John', 'Doe')`,
+  6: `INSERT INTO users
+  (email, firstname, lastname, password, avatar, creationDate, birthDate)
+  VALUES ('ls@test.test.test', 'Luke', 'Skywalker', 'test1', 'test1', '2010-02-14T11:10:22.000Z', '1964-05-17T06:47:38.258Z')`,
+
   10: "-- Articles:",
   11: `SELECT *
   FROM articles
@@ -75,9 +79,13 @@ const sampleQuerySelect = document.getElementById("sampleQuerySelect");
 Object.keys(sampleQueries).forEach((key) => {
   const option = document.createElement("option");
   option.value = key;
-  option.text = sampleQueries[key];
+  option.text = truncateText(sampleQueries[key]);
   sampleQuerySelect.appendChild(option);
 });
+
+function truncateText(text) {
+  return text.length > maxQuesryLength ? text.slice(0, maxQuesryLength) + "..." : text;
+}
 
 async function issueGetDb() {
   const dbAsJson = await fetch(dbEndpoint, {}).then((r) => r.json());
@@ -259,20 +267,35 @@ function executeSqlQuery(sqlQuery) {
     Object.keys(databaseAsJson).forEach((tableName) => {
       alasql(`CREATE TABLE IF NOT EXISTS \`${tableName}\``);
       alasql.tables[tableName].data = databaseAsJson[tableName];
+
+      const baseIdentity = {
+        id: {
+          value: databaseAsJson[tableName].length + 1,
+          step: 1,
+        },
+      };
+
+      alasql.tables[tableName].identities = baseIdentity;
     });
 
     var res = alasql(sqlQuery);
 
     if (res.length >= 0) {
-      const normalizedData = normalizeObjects(res);
-      jsonTable.innerHTML = "";
-      jsonTable.appendChild(generateTable(normalizedData, "Results:", false));
-      setMessage(`Found: ${normalizedData?.length} records`, simpleSuccessBox);
+      generateTablesAfterExecutingQuery(res);
     } else if (res === 1) {
       setMessage(
         "Query executed successfully. <br>To see results - disable <strong>Refresh</strong> mode in top right corner!<br>Currently all operations are in memory! READ-ONLY MODE",
         simpleInfoBox
       );
+
+      const tableName = getTableNameFromQuesry(sqlQuery);
+      if (tableName === "") {
+        console.log("Table name not found in query!", sqlQuery);
+        return;
+      }
+      const newSqlQuery = `SELECT * FROM ${tableName}`;
+      var newRes = alasql(newSqlQuery);
+      generateTablesAfterExecutingQuery(newRes, true);
     } else {
       setMessage(res, simpleErrorBox);
     }
@@ -280,6 +303,33 @@ function executeSqlQuery(sqlQuery) {
     console.error(error);
     setMessage(error, simpleErrorBox);
   }
+}
+
+function getTableNameFromQuesry(query) {
+  if (query === undefined || query === null) {
+    return "";
+  }
+  if (query.includes("UPDATE") || query.includes("CREATE")) {
+    return query.split(" ")[1];
+  }
+  if (query.includes("INSERT") || query.includes("DELETE") || query.includes("DROP") || query.includes("ALTER")) {
+    return query.split(" ")[2];
+  }
+  if (query.includes("SELECT")) {
+    return query.split(" ")[3];
+  }
+  // TODO: extend for more cases
+
+  return "";
+}
+
+function generateTablesAfterExecutingQuery(queryResponse, quiet) {
+  const normalizedData = normalizeObjects(queryResponse);
+  jsonTable.innerHTML = "";
+  jsonTable.appendChild(generateTable(normalizedData, "Results:", false));
+
+  if (quiet) return;
+  setMessage(`Found: ${normalizedData?.length} records`, simpleSuccessBox);
 }
 
 function runQuery() {
@@ -318,7 +368,7 @@ function selectSampleQuery() {
 
 resizeBtn.addEventListener("click", function () {
   if (isExpanded) {
-    floatingBox.style.width = "400px";
+    floatingBox.style.width = "500px";
     isExpanded = false;
     sqlQuery.rows = 5;
     inputQueryArea.setSize("100%", 50);

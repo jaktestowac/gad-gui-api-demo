@@ -13,6 +13,7 @@ const featureFlagConfig = {
   feature_qrcodes: false,
   feature_validate_article_title: false,
   feature_soft_delete_users: false,
+  strict_surname_validation: false,
 };
 
 module.exports = {

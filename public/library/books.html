@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | Books</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="/css/library.css" />
+    <link rel="stylesheet" href="./css/library-side-panel.css" />
+
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-gui-library" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <div style="position: absolute; right: 270px;">
+        <div id="alerts-placeholder" style="display: flex; flex-direction: column; position: absolute;"></div>
+    </div>
+    <div style="position: absolute; right: 270px;">
+        <div id="book-details-placeholder" style="display: flex; justify-content: center; position: absolute;"></div>
+    </div>
+    <div id="side-panel" class="sidepanel">
+    </div>
+    <div align="center" class="floating navigation-bar">
+        <div align="center" style="display: flex; align-items: center; justify-content: center">
+            <label style="margin: 5px 5px 5px 5px">Sort:</label>
+            <select id="sorting" data-testid="sorting-select" onchange="changeSorting()" style="display: inline-block; width: 85px; margin: 5px 5px 5px 5px">
+                <option id="sorting-opt1" selected value="published_at DESC">date ⬇️</option>
+                <option id="sorting-opt2" value="published_at ASC">date ⬆️</option>
+                <option id="sorting-opt4" value="title DESC">title ⬇️</option>
+                <option id="sorting-opt3" value="title ASC">title ⬆️</option>
+                <option id="sorting-opt4" value="pages DESC">pages ⬇️</option>
+                <option id="sorting-opt3" value="pages ASC">pages ⬆️</option>
+            </select>
+            <div class="mobile-search-container" style="margin: 5px 15px 5px 15px">
+                <input class="search" value="" placeholder="Search..." id="search-input" data-testid="search-input" style="vertical-align: middle;width: 100px;"></input>
+                <strong>
+                    <a data-testid="search-button" style="vertical-align: middle; margin: 5px 5px 5px 5px" href="javascript:seachByText()">GO</a>
+                </strong>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div align="center">
+        <h2>Books</h2>
+    </div>
+    <div id="books-container" class="books-container" align="center">
+
+    </div>
+    <div id="scroll-loading"></div>
+
+
+</body>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="/username.js"></script>
+<script type="text/javascript" src="./js/library-side-panel.js"></script>
+<script type="text/javascript" src="./js/dashboard.js"></script>
+<script type="text/javascript" src="./js/books.js"></script>
+
+</html>

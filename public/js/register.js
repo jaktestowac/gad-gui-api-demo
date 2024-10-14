@@ -108,15 +108,37 @@ async function getPictureList() {
 
 getPictureList();
 
+checkIfFeatureEnabled("strict_surname_validation").then((isEnabled) => {
+  const surnameInput = document.querySelector("#lastname");
+
+  if (surnameInput === null) {
+    return;
+  }
+
+  if (isEnabled) {
+    surnameInput.setAttribute("octavalidate", "R,SURNAME_V2");
+  } else {
+    surnameInput.setAttribute("octavalidate", "R,SURNAME");
+  }
+});
+
 // attach event listener
 document.querySelector("#registerForm").addEventListener("submit", function (e) {
   // create new instance of octavalidate
   let formVal = new octaValidate("registerForm");
   formVal.customRule("DATE", /^\d{4}-\d{2}-\d{2}$/, "Date must be in format YYYY-MM-DD");
-  // const surnameRegexp = /^[A-Z]{1}[a-zA-Z-]{0,}[a-z]{1}$/;
-  const surnameRegexp = /^[a-zA-Z-]{0,}$/;
-  formVal.customRule("SURNAME", surnameRegexp, "Please enter only letter or hyphen. Must start with capital letter");
 
+  // const surnameRegexp = /^[A-Z]{1}[a-zA-Z-]{0,}[a-z]{1}$/;
+  const surnameRegexp = /^[a-zA-Z\s]{1,}$/;
+  formVal.customRule("SURNAME", surnameRegexp, "Please enter only letter.");
+
+  // const surnameRegexp = /^[A-Z]{1}[a-zA-Z-]{0,}[a-z]{1}$/;
+  const surnameRegexp_v2 = /^[A-Z]{1}[a-zA-Z\s-]{1,}$/;
+  formVal.customRule(
+    "SURNAME_V2",
+    surnameRegexp_v2,
+    "Please enter only letter or hyphen. Must start with capital letter"
+  );
   e.preventDefault();
   //invoke the validate method
   if (formVal.validate() === true) {

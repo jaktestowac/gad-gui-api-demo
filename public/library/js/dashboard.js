@@ -1,0 +1,5 @@
+checkIfAuthenticated(
+  "dashboard-info",
+  () => {},
+  () => {}
+);

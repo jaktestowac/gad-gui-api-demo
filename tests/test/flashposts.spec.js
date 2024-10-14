@@ -29,12 +29,22 @@ describe("Endpoint /flashposts", async () => {
         });
       });
 
-      it("GET /flashposts/:id", async () => {
+      it("GET /flashposts/:id private [KNOWN BUG]", async () => {
         // Act:
         const response = await request.get(`${baseUrl}/1`);
 
         // Assert:
         expect(response.status).to.equal(200);
+        expect(response.body.is_public).to.equal(undefined);
+      });
+
+      it("GET /flashposts/:id public", async () => {
+        // Act:
+        const response = await request.get(`${baseUrl}/2`);
+
+        // Assert:
+        expect(response.status).to.equal(200);
+        expect(response.body.is_public).to.equal(true);
       });
 
       it("GET /flashposts/:id - non existing flashposts", async () => {
@@ -133,7 +143,7 @@ describe("Endpoint /flashposts", async () => {
           async () => {
             return await request.get(baseUrl).set(headers);
           },
-          async (response) => {
+          (response) => {
             return response.body.length === baseCount + 1;
           }
         ).then((response) => {

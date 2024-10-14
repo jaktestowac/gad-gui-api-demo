@@ -46,7 +46,7 @@ th {
 }
 .floating-box {
   position: fixed;
-  width: 400px;
+  width: 500px;
   left: 100%;
   top: 0%;
   transform: translate(-100%, 0%);

@@ -97,6 +97,7 @@ function handleFlashPosts(req, res, isAdmin) {
       return;
     }
 
+    // TODO: known bug if flashpost has is_public = undefined
     if ((isUndefined(foundUser) || isUndefined(verifyTokenResult)) && flashpost.is_public === false) {
       res.status(HTTP_UNAUTHORIZED).json(flashpost);
       return;

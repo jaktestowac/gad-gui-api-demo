@@ -340,7 +340,7 @@ describe("Endpoint /comments", () => {
       const responseDelete = await request.delete(`${baseUrl}/${baseId}`).set(headers);
 
       // Assert:
-      expect(responseDelete.status).to.equal(200);
+      expect(responseDelete.status, JSON.stringify(responseDelete.body)).to.equal(200);
 
       // Create new article:
       // Act:

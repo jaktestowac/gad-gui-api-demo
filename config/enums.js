@@ -32,6 +32,7 @@ const ConfigKeys = {
   DB_BIG_RESTORE_PATH: "dbBigRestorePath",
   DB_TINY_RESTORE_PATH: "dbTinyRestorePath",
   DB_EMPTY_RESTORE_PATH: "dbEmptyRestorePath",
+  DB_TEST_RESTORE_PATH: "dbTestRestorePath",
   QUIZ_QUESTIONS_PATH: "quizQuestionsPath",
   HANGMAN_DATA_PATH: "hangmanDataPath",
   DEFAULT_PORT: "defaultPort",
@@ -128,6 +129,7 @@ const FeatureFlagConfigKeys = {
   FEATURE_QRCODES: "feature_qrcodes",
   FEATURE_VALIDATE_ARTICLE_TITLE: "feature_validate_article_title",
   FEATURE_SOFT_DELETE_USERS: "feature_soft_delete_users",
+  STRICT_SURNAME_VALIDATION: "strict_surname_validation",
 };
 
 module.exports = {

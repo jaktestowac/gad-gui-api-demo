@@ -12,7 +12,12 @@ const { getDbPath, countEntities, visitsData, initVisits } = require("./helpers/
 
 const { formatErrorResponse, sleep } = require("./helpers/helpers");
 const { logDebug, logError, logTrace } = require("./helpers/logger-api");
-const { HTTP_INTERNAL_SERVER_ERROR, HTTP_CREATED, HTTP_BAD_REQUEST } = require("./helpers/response.helpers");
+const {
+  HTTP_INTERNAL_SERVER_ERROR,
+  HTTP_CREATED,
+  HTTP_BAD_REQUEST,
+  HTTP_NOT_FOUND,
+} = require("./helpers/response.helpers");
 const {
   customRoutes,
   statsRoutes,
@@ -62,47 +67,42 @@ server.use(diagnosticRoutes);
 
 const clearDbRoutes = (req, res, next) => {
   try {
-    if (req.method === "GET" && req.url.endsWith("/restoreDB")) {
-      const db = JSON.parse(fs.readFileSync(path.join(__dirname, getConfigValue(ConfigKeys.DB_RESTORE_PATH)), "utf8"));
+    const restoreDb = (dbPath, successMessage) => {
+      const db = JSON.parse(fs.readFileSync(path.join(__dirname, getConfigValue(dbPath)), "utf8"));
       router.db.setState(db);
       const entities = countEntities(db);
-      logDebug("Restore DB was successful", entities);
+      logDebug(successMessage, entities);
       visitsData.generateVisits();
-      res.status(HTTP_CREATED).send({ message: "Database successfully restored", entities });
-    } else if (req.method === "GET" && req.url.endsWith("/restoreBigDB")) {
-      const db = JSON.parse(
-        fs.readFileSync(path.join(__dirname, getConfigValue(ConfigKeys.DB_BIG_RESTORE_PATH)), "utf8")
-      );
-      router.db.setState(db);
-      const entities = countEntities(db);
-      logDebug("Restore DB was successful", entities);
-      visitsData.generateVisits();
-      res.status(HTTP_CREATED).send({ message: "Big Database successfully restored", entities });
-    } else if (req.method === "GET" && req.url.endsWith("/restoreDB2")) {
-      const db = JSON.parse(fs.readFileSync(path.join(__dirname, getConfigValue(ConfigKeys.DB2_RESTORE_PATH)), "utf8"));
-      router.db.setState(db);
-      const entities = countEntities(db);
-      logDebug("Restore DB was successful", entities);
-      visitsData.generateVisits();
-      res.status(HTTP_CREATED).send({ message: "Database successfully restored", entities });
-    } else if (req.method === "GET" && req.url.endsWith("/restoreTinyDB")) {
-      const db = JSON.parse(
-        fs.readFileSync(path.join(__dirname, getConfigValue(ConfigKeys.DB_TINY_RESTORE_PATH)), "utf8")
-      );
-      router.db.setState(db);
-      const entities = countEntities(db);
-      logDebug("Restore DB was successful", entities);
-      visitsData.generateVisits();
-      res.status(HTTP_CREATED).send({ message: "Big Database successfully restored", entities });
-    } else if (req.method === "GET" && req.url.endsWith("/restoreEmptyDB")) {
-      const db = JSON.parse(
-        fs.readFileSync(path.join(__dirname, getConfigValue(ConfigKeys.DB_EMPTY_RESTORE_PATH)), "utf8")
-      );
-      router.db.setState(db);
-      const entities = countEntities(db);
-      logDebug("Restore empty DB was successful", entities);
-      visitsData.generateVisits();
-      res.status(HTTP_CREATED).send({ message: "Empty Database successfully restored", entities });
+      res.status(HTTP_CREATED).send({ message: successMessage, entities });
+    };
+
+    if (req.method === "GET" && req.url.includes("restore")) {
+      const url = req.url.replace(/\?.*$/, "").replace(/\/$/, "");
+      const urlLastPart = url.split("/").pop();
+      switch (urlLastPart) {
+        case "restoreDB":
+          restoreDb(ConfigKeys.DB_RESTORE_PATH, "Database successfully restored");
+          break;
+        case "restoreBigDB":
+          restoreDb(ConfigKeys.DB_BIG_RESTORE_PATH, "Big Database successfully restored");
+          break;
+        case "restoreDB2":
+          restoreDb(ConfigKeys.DB2_RESTORE_PATH, "Database successfully restored");
+          break;
+        case "restoreTinyDB":
+          restoreDb(ConfigKeys.DB_TINY_RESTORE_PATH, "Tiny Database successfully restored");
+          break;
+        case "restoreEmptyDB":
+          restoreDb(ConfigKeys.DB_EMPTY_RESTORE_PATH, "Empty Database successfully restored");
+          break;
+        case "restoreTestDB":
+          restoreDb(ConfigKeys.DB_TEST_RESTORE_PATH, "Test Database successfully restored");
+          break;
+        default:
+          logDebug("No action for restore", { url, req_url: req.url, urlLastPart });
+          res.status(HTTP_NOT_FOUND).send(formatErrorResponse("No action for restore", { parameter: urlLastPart }));
+          break;
+      }
     }
     if (res.headersSent !== true) {
       next();
