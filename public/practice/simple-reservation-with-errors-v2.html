@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/practice-controls.css" />
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+    <style>
+        th,
+        td {
+            border-bottom: 2px solid #dddddd;
+        }
+    </style>
+
+    <br />
+    <br />
+    <br />
+    <div align="center">
+        <h2>Simple Reservation V2 (with errors in console!)</h2>
+
+        <div style="display: flex; align-content: center; display: flex; align-items: center; justify-content: center">
+
+            <table style="width: 260px; padding-right: 30px;">
+                <tr>
+                    <th style="text-align: center;">Feature</th>
+                    <th style="text-align: center;">Icon</th>
+                    <th style="text-align: center;">Price</th>
+                    <th style="text-align: center;">Order?</th>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">Food</td>
+                    <td style="text-align: center; padding-right: 0px;">🥗</td>
+                    <td style="text-align: center; padding-right: 0px;">50$</td>
+                    <td style="text-align: center; padding-right: 0px;"><input type="checkbox" value="checkbox" onclick="checkBoxOnClick('Food', 50, this)" /></td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">Pool</td>
+                    <td style="text-align: center; padding-right: 0px;">🏊‍♂️</td>
+                    <td style="text-align: center; padding-right: 0px;">40$</td>
+                    <td style="text-align: center; padding-right: 0px;"><input type="checkbox" value="checkbox" onclick="checkBoxOnClick('Pool', 40, this)" /></td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">WiFi</td>
+                    <td style="text-align: center; padding-right: 0px;">💻</td>
+                    <td style="text-align: center; padding-right: 0px;">20$</td>
+                    <td style="text-align: center; padding-right: 0px;"><input type="checkbox" value="checkbox" onclick="checkBoxOnClick('WiFi', 20, this)" /></td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">Parking</td>
+                    <td style="text-align: center; padding-right: 0px;">🚗</td>
+                    <td style="text-align: center; padding-right: 0px;">20$</td>
+                    <td style="text-align: center; padding-right: 0px;"><input type="checkbox" value="checkbox" onclick="checkBoxOnClick('Parking', 20, this)" /></td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">Gym</td>
+                    <td style="text-align: center; padding-right: 0px;">🏋️‍♂️</td>
+                    <td style="text-align: center; padding-right: 0px;">25$</td>
+                    <td style="text-align: center; padding-right: 0px;"><input type="checkbox" value="checkbox" onclick="checkBoxOnClick('Gym', 25, this)" /></td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">Spa</td>
+                    <td style="text-align: center; padding-right: 0px;">🧖‍♂️</td>
+                    <td style="text-align: center; padding-right: 0px;">44$</td>
+                    <td style="text-align: center; padding-right: 0px;"><input type="checkbox" value="checkbox" onclick="checkBoxOnClick('Spa', 44, this)" /></td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">Pet Friendly</td>
+                    <td style="text-align: center; padding-right: 0px;">🐾</td>
+                    <td style="text-align: center; padding-right: 0px;">42$</td>
+                    <td style="text-align: center; padding-right: 0px;"><input type="checkbox" value="checkbox" onclick="checkBoxOnClick('Pet Friendly', 42, this)" /></td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">Babysitting</td>
+                    <td style="text-align: center; padding-right: 0px;">👶</td>
+                    <td style="text-align: center; padding-right: 0px;">46$</td>
+                    <td style="text-align: center; padding-right: 0px;"><input type="checkbox" value="checkbox" onclick="checkBoxOnClick('Babysitting', 46, this)" /></td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">Entertainment</td>
+                    <td style="text-align: center; padding-right: 0px;">🎭</td>
+                    <td style="text-align: center; padding-right: 0px;">50$</td>
+                    <td style="text-align: center; padding-right: 0px;"><input type="checkbox" value="checkbox" onclick="checkBoxOnClick('Entertainment', 50, this)" /></td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">Car Rental</td>
+                    <td style="text-align: center; padding-right: 0px;">🚗</td>
+                    <td style="text-align: center; padding-right: 0px;">120$</td>
+                    <td style="text-align: center; padding-right: 0px;"><input type="checkbox" value="checkbox" onclick="checkBoxOnClick('Car Rental', 120, this)" /></td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">VIP Event Access</td>
+                    <td style="text-align: center; padding-right: 0px;">🚗</td>
+                    <td style="text-align: center; padding-right: 0px;">200$</td>
+                    <td style="text-align: center; padding-right: 0px;"><input type="checkbox" value="checkbox" onclick="checkBoxOnClick('VIP Event Access', 200, this)" /></td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">Premium Golf Package</td>
+                    <td style="text-align: center; padding-right: 0px;">⛳</td>
+                    <td style="text-align: center; padding-right: 0px;">310$</td>
+                    <td style="text-align: center; padding-right: 0px;"><input type="checkbox" value="checkbox" onclick="checkBoxOnClick('Premium Golf Package', 310, this)" /></td>
+                </tr>
+            </table>
+
+            <table style="width: 280px; padding-left: 30px;">
+                <tr>
+                    <td style="text-align: center;">Start Date</td>
+                    <td style="text-align: center; padding-right: 0px;"><input type="date" id="id-date" data-testid="dti-date" onchange="dateOnChange(this)"></td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">Number<br />of Days</td>
+                    <td style="text-align: center; padding-right: 0px;">
+                        <div style="display: flex;"><input type="range" id="id-range" data-testid="dti-date" min="1" max="28" onchange="rangeOnChange(this)"><label id="lbl-days">(00)</label></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">End Date</td>
+                    <td style="text-align: center; padding-right: 0px;"><label id="lbl-date-to">...</label></td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">Number<br />of People</td>
+                    <td style="text-align: center; padding-right: 0px;">
+                        <select style="width: 50px;">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">$ per Day</td>
+                    <td style="text-align: center; padding-right: 0px;"><label id="price-per-day">100</label>$</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">Higher<br />Standard</td>
+                    <td style="text-align: center; padding-right: 0px;"><input type="checkbox" id="higher-standard" onclick="checkBoxHigherStandardOnClick(this)" /></td>
+                </tr>
+            </table>
+
+        </div>
+        <td style="text-align: center; padding-right: 0px;"><button class="my-button" onclick="buttonOnClick(this)">Calculate</button></td>
+    </div>
+    <div align="center">
+        Results:
+        <br />
+        <div class="results-container" data-testid="dti-results-container" id="results-container"></div>
+    </div>
+    <div align="center">
+        Results history:
+        <br />
+        <textarea class="results-history-container" id="results-history-container" readonly> </textarea>
+    </div>
+    </div>
+    <br />
+    <br />
+    <br />
+    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 24px">
+        <a href="https://jaktestowac.pl" style="color: dimgray">
+            <span style="display: flex; align-items: center; justify-self: center; font-size: medium">
+                <img src="/data/icons/favicon.png" style="width: 25px !important; height: 25px !important; padding: 0; border: none" alt="" />&nbsp&nbspjaktestowac.pl
+            </span>
+        </a>
+    </div>
+</body>
+
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="./js/practice-common.js"></script>
+
+<script>
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+    });
+
+    const features = []
+    let totalPrices = 0
+    updateDate()
+
+    function checkBoxOnClick(feature, price, checkbox) {
+        if (checkbox.checked === true) {
+            if (!features.includes(feature)) {
+                features.push(feature);
+                totalPrices += price;
+            }
+            if (features.length > 1) {
+                console.warn(`This is a warning message after selecting ${feature} and price ${price}`)
+            }
+            if (features.length > 3) {
+                console.error(`This is an error message after selecting ${feature} and price ${price}`)
+            }
+            if (features.length > 4) {
+                throw new Error(`This is an error message after selecting ${feature} and price ${price}`)
+            }
+        } else {
+            features.splice(features.indexOf(feature), 1);
+            totalPrices -= price;
+            if (totalPrices === 0) {
+                console.warn('Total price is 0')
+            }
+        }
+    }
+
+    function checkBoxHigherStandardOnClick(checkbox) {
+        if (checkbox.checked === true) {
+            document.getElementById('price-per-day').innerHTML = 150;
+        } else {
+            document.getElementById('price-per-day').innerHTML = 100;
+        }
+    }
+
+    function clearButtonBackgroundColor() {
+        const buttons = document.querySelectorAll('.my-button');
+        buttons.forEach(button => {
+            button.style.backgroundColor = '#ededf0'
+        });
+    }
+
+    function dateOnChange(el) {
+        updateDate()
+    }
+
+    function rangeOnChange(el) {
+        updateDate()
+    }
+
+    function updateDate() {
+        const date = document.getElementById('id-date').value
+        const days = document.getElementById('id-range').value
+        document.getElementById('lbl-days').innerHTML = `(${days})`
+
+        if (date === '') {
+            console.error('Date is empty')
+            return false;
+        }
+
+        if (days === '') {
+            console.error('Days is empty')
+        }
+
+        const currentDate = new Date();
+        const selectedDate = new Date(date);
+
+        if (selectedDate.toISOString().split('T')[0] < currentDate.toISOString().split('T')[0]) {
+            console.error('Date is in the past')
+            return false;
+        }
+
+        const newDate = new Date(date)
+
+        newDate.setDate(newDate.getDate() + parseInt(days))
+        document.getElementById('lbl-date-to').innerHTML = `${newDate.toISOString().split('T')[0]} (${days} days)`
+
+        if (parseInt(days) > 14) {
+            console.warn('More than 14 days')
+        }
+        if (parseInt(days) > 27) {
+            console.error('More than 26 days')
+        }
+        return true
+    }
+
+    function areFieldsValid() {
+        const date = document.getElementById('id-date').value
+        const days = document.getElementById('id-range').value
+
+        if (date === '') {
+            console.warn('Date is empty')
+            return false
+        }
+
+        if (days === '') {
+            console.warn('Days is empty')
+            return false
+        }
+
+        if (updateDate() === false) {
+            console.warn('Date is in the past')
+            return false
+        }
+
+        return true
+    }
+
+    function buttonOnClick(el) {
+        if (!areFieldsValid()) {
+            const result = 'Please fill in all fields (date in future and number of days)'
+            writeResults(result)
+            console.error(result)
+            return
+        }
+
+        let featuresStr = 'No features'
+        if (features.length > 0) {
+            featuresStr = features.join(', ')
+        } else {
+            console.error('No features selected')
+        }
+        updateDate()
+
+        const date = document.getElementById('id-date').value
+        const days = document.getElementById('id-range').value
+        const pricePerDay = document.getElementById('price-per-day').innerHTML
+        const numberOfPeople = document.querySelector('select').value
+
+        let priceModificator = 1
+
+        if (numberOfPeople > 1) {
+            priceModificator = 0.97
+        }
+        if (numberOfPeople > 3) {
+            priceModificator = 0.95
+        }
+        if (numberOfPeople > 6) {
+            priceModificator = 0.92
+        }
+        if (numberOfPeople > 9) {
+            priceModificator = 0.9
+        }
+
+        let finalFullPrice = ((totalPrices + parseInt(days) * parseInt(pricePerDay)) * parseInt(numberOfPeople))
+        let finalPrice = roundToTwoPlaces(finalFullPrice * priceModificator)
+        let discount = roundToTwoPlaces(finalFullPrice - finalPrice)
+
+        const newDate = new Date(date)
+        newDate.setDate(newDate.getDate() + parseInt(days))
+
+        const result = `Reservation for ${date} - ${newDate.toISOString().split('T')[0]} for total price: ${finalPrice}$ with features: ${featuresStr}. Discount: ${discount}$`
+        writeResults(result)
+    }
+
+    function roundToTwoPlaces(num) {
+        return Math.round(num * 100) / 100
+    }
+
+</script>
+
+</html>

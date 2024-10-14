@@ -153,6 +153,9 @@
                 totalPrices += price;
             }
             if (features.length > 2) {
+                console.error(`This is an error message during validation with date - ${new Date(dateStr)}`)
+            }
+            if (features.length > 4) {
                 throw new Error(`This is an error message after selecting ${feature} and price ${price}`)
             }
         } else {
@@ -194,6 +197,7 @@
 
     function validateFields() {
         if (dateStr === '') {
+            console.error(`This is an error message during validation with date - ${new Date(dateStr)}`)
             return false
         }
         return true
