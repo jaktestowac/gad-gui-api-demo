@@ -153,6 +153,9 @@
                 totalPrices += price;
             }
             if (features.length > 2) {
+                console.error(`This is an error message after selecting ${feature} and price ${price}`)
+            }
+            if (features.length > 4) {
                 throw new Error(`This is an error message after selecting ${feature} and price ${price}`)
             }
         } else {
