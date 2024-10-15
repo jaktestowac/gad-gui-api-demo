@@ -34,6 +34,9 @@ const configToModify = {
   sleepTimePerOneGetCommentMin: 25,
   sleepTimePerOneGetCommentMax: 50,
 
+  sleepTimeForShopAccountCreateMin: 2000,
+  sleepTimeForShopAccountCreateMax: 4000,
+
   numberOfTopLikedArticles: 10,
   numberOfTopVisitedArticles: 10,
   logsLimit: 500,

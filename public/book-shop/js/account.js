@@ -1,25 +1,9 @@
-const urlBookShopAccount = "/api/book-shop-accounts";
 const urlBookShopRoles = "/api/book-shop-roles";
-const urlUser = "/api/users";
 
-async function issueGetUserRequest() {
-  const id = getId();
-  let urlBook = `${urlUser}/${id}`;
-  const data = fetch(urlBook, {
-    method: "GET",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      Authorization: getBearerToken(),
-    },
-  });
-  return data;
-}
-
-async function issueGetBookShopAccountRequest() {
+async function issuePostBookShopAccountRequest() {
   let urlBook = `${urlBookShopAccount}`;
   const data = fetch(urlBook, {
-    method: "GET",
+    method: "POST",
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
@@ -114,7 +98,14 @@ function displayAccountInfo(accountData, userData) {
   const addressContainer = document.createElement("div");
   addressContainer.textContent = "Address: ";
   const address = document.createElement("div");
-  address.textContent = `${accountData.country}, ${accountData.city}, ${accountData.street}, ${accountData.postal_code}`;
+
+  const addressData = [accountData.country, accountData.city, accountData.street, accountData.postal_code];
+  address.innerHTML = addressData.filter((data) => data).join(", ");
+
+  if (!address.textContent) {
+    address.textContent = "No address provided";
+  }
+
   address.classList.add("account-address");
   address.classList.add("hidden-data");
   addressContainer.appendChild(address);
@@ -160,6 +151,203 @@ function displayBooks(booksData, type = "owned") {
   appendBooksData(booksData, ownedBooksList, true);
 }
 
+function questionToCreateAnAccount() {
+  const accountInfo = document.getElementById("account-info");
+  const createAccountQuestion = document.createElement("h4");
+  createAccountQuestion.innerHTML = "You don't have an account yet.<br>Do you want to create one?";
+  createAccountQuestion.classList.add("create-account-question");
+  accountInfo.appendChild(createAccountQuestion);
+
+  const createAccountButton = document.createElement("button");
+  createAccountButton.textContent = "Create Account";
+  createAccountButton.classList.add("book-shop-button-primary");
+  createAccountButton.addEventListener("click", () => {
+    createAccountPopup();
+  });
+  accountInfo.appendChild(createAccountButton);
+}
+
+function createAccountPopup() {
+  const accountInfo = document.getElementById("book-shop-modal");
+
+  const popup = document.createElement("div");
+  popup.className = "book-popup";
+
+  const popupContent = document.createElement("div");
+  popupContent.className = "book-popup-content";
+
+  const popupBody = document.createElement("div");
+  popupBody.className = "popup-body";
+
+  const popupControls = document.createElement("div");
+  popupControls.className = "book-popup-controls";
+
+  const closeButton = document.createElement("span");
+  closeButton.className = "book-popup-close-button book-clickable-component";
+  closeButton.addEventListener("click", () => {
+    document.getElementById("book-shop-modal").innerHTML = "";
+  });
+  closeButton.innerHTML = `<i class="fa-solid fa-xmark book-button"></i>`;
+  popupControls.appendChild(closeButton);
+
+  const mainBody = document.createElement("div");
+  mainBody.className = "popup-main-content";
+
+  const createAccountQuestion = document.createElement("h4");
+  createAccountQuestion.innerHTML = "BookShop account creation";
+  createAccountQuestion.classList.add("create-account-question");
+  mainBody.appendChild(createAccountQuestion);
+
+  const userProfileConnectorContainer = document.createElement("div");
+  userProfileConnectorContainer.classList.add("user-profile-connector-container");
+
+  // Create profile image
+  const profileImage = document.createElement("img");
+  profileImage.src = `./../${getCookieAvatar()}`;
+  profileImage.alt = "Profile Image";
+  profileImage.classList.add("profile-image");
+
+  // Create gad image
+  const bookShopImage = document.createElement("img");
+  bookShopImage.src = `./../data/gad-bookshop-logo.png`;
+  bookShopImage.alt = "BookShop Image";
+  bookShopImage.classList.add("profile-image");
+
+  // create connection green tick and a line
+  const connectionLine = document.createElement("div");
+  connectionLine.classList.add("connection-line");
+  connectionLine.innerHTML = `----`;
+
+  const connectionLine2 = document.createElement("div");
+  connectionLine2.classList.add("connection-line");
+  connectionLine2.innerHTML = `----`;
+
+  const connectionTick = document.createElement("div");
+  connectionTick.classList.add("green-tick");
+  connectionTick.id = "connection-tick";
+  connectionTick.innerHTML = `<i class="fa-solid fa-circle-check"></i>`;
+
+  userProfileConnectorContainer.appendChild(profileImage);
+  userProfileConnectorContainer.appendChild(connectionLine);
+  userProfileConnectorContainer.appendChild(connectionTick);
+  userProfileConnectorContainer.appendChild(connectionLine2);
+  userProfileConnectorContainer.appendChild(bookShopImage);
+
+  mainBody.appendChild(userProfileConnectorContainer);
+
+  const accountCreationProcess = document.createElement("div");
+  accountCreationProcess.classList.add("account-creation-process");
+
+  // Process is that account is created automatically based on You user profile and may take a while
+  // To create an account You need to agree that BookShop will access Your user account
+
+  accountCreationProcess.innerHTML = `
+    <h4>Step 1</h4>
+    <p>Account is created automatically based on Your user profile</p>
+    <h4>Step 2</h4>
+    <p>To create an account You need to agree that:</p>
+    
+    BookShop will access Your <strong>user account</strong><br>
+    BookShop will have access to Your <strong>user data</strong><br>
+    BookShop will have access to Your <strong>user avatar</strong><br>
+  `;
+
+  mainBody.appendChild(accountCreationProcess);
+
+  const buttonContainer = document.createElement("div");
+  buttonContainer.classList.add("button-container");
+
+  const createAccountButton = document.createElement("button");
+  createAccountButton.textContent = "I agree - create my account";
+  createAccountButton.classList.add("book-shop-button-primary");
+  createAccountButton.classList.add("green");
+  createAccountButton.addEventListener("click", () => {
+    // create new modal with loading spinner
+    document.getElementById("book-shop-modal").innerHTML = "";
+    const loadingModal = document.createElement("div");
+    loadingModal.className = "book-popup";
+    const loadingContent = document.createElement("div");
+    loadingContent.className = "book-popup-content";
+    const loadingBody = document.createElement("div");
+    loadingBody.className = "popup-body";
+    const loadingSpinner = document.createElement("div");
+    loadingSpinner.className = "loading-spinner-2";
+
+    const loadingDescription = document.createElement("div");
+    loadingDescription.className = "loading-description";
+    loadingDescription.textContent = "Creating account. Please wait...";
+    loadingBody.appendChild(loadingDescription);
+
+    const loadingError = document.createElement("div");
+    loadingError.className = "loading-error";
+    loadingBody.appendChild(loadingError);
+
+    loadingBody.appendChild(loadingSpinner);
+    loadingContent.appendChild(loadingBody);
+    loadingModal.appendChild(loadingContent);
+    document.getElementById("book-shop-modal").appendChild(loadingModal);
+
+    issuePostBookShopAccountRequest().then((response) => {
+      if (response.status === 201) {
+        response.json().then((data) => {
+          document.getElementById("book-shop-modal").innerHTML = "";
+          location.reload();
+        });
+      } else {
+        response.json().then((data) => {
+          // remove loadingSpinner
+          loadingSpinner.remove();
+          let errorMessage = data.error?.message ? data.error?.message : JSON.stringify(data);
+
+          loadingError.innerHTML = `Error while creating account. Please try again later.<br>`;
+
+          // Create gad image
+          const bookShopImage = document.createElement("img");
+          bookShopImage.src = `./../data/gad-bookshop-logo.jpg`;
+          bookShopImage.alt = "BookShop Image";
+          bookShopImage.classList.add("profile-image");
+
+          const loadingErrorDescription = document.createElement("div");
+          loadingErrorDescription.textContent = errorMessage;
+          loadingErrorDescription.className = "loading-error-description";
+          loadingError.appendChild(bookShopImage);
+          loadingError.appendChild(loadingErrorDescription);
+
+          // add close button
+          const closeButton = document.createElement("button");
+          closeButton.textContent = "Close";
+          closeButton.classList.add("book-shop-button-primary");
+          closeButton.classList.add("red");
+          closeButton.addEventListener("click", () => {
+            document.getElementById("book-shop-modal").innerHTML = "";
+            location.reload();
+          });
+          loadingBody.appendChild(closeButton);
+        });
+      }
+    });
+  });
+
+  const disagreeButton = document.createElement("button");
+  disagreeButton.textContent = "I disagree - cancel";
+  disagreeButton.classList.add("book-shop-button-primary");
+  disagreeButton.classList.add("red");
+  disagreeButton.addEventListener("click", () => {
+    document.getElementById("book-shop-modal").innerHTML = "";
+  });
+
+  buttonContainer.appendChild(createAccountButton);
+  buttonContainer.appendChild(disagreeButton);
+
+  mainBody.appendChild(buttonContainer);
+
+  popupBody.appendChild(popupControls);
+  popupBody.appendChild(mainBody);
+  popupContent.appendChild(popupBody);
+  popup.appendChild(popupContent);
+  accountInfo.appendChild(popup);
+}
+
 checkIfAuthenticated(
   "authentication-info",
   () => {
@@ -182,7 +370,27 @@ checkIfAuthenticated(
                       });
                     }
                   })
-                  .then((response) => {
+                  .then(() => {
+                    const purchasedBookIds = accountData.purchased_book_ids;
+                    issueGetBooksRequest(purchasedBookIds).then((response) => {
+                      if (response.status === 200) {
+                        response.json().then((booksData) => {
+                          displayBooks(booksData, "purchased in 🦎GAD BookShop");
+                        });
+                      }
+                    });
+                  })
+                  .then(() => {
+                    const favoriteBookIds = accountData.favorite_books_ids;
+                    issueGetBooksRequest(favoriteBookIds).then((response) => {
+                      if (response.status === 200) {
+                        response.json().then((booksData) => {
+                          displayBooks(booksData, "favorite");
+                        });
+                      }
+                    });
+                  })
+                  .then(() => {
                     const readBooksIds = accountData.read_books_ids;
                     issueGetBooksRequest(readBooksIds).then((response) => {
                       if (response.status === 200) {
@@ -192,20 +400,23 @@ checkIfAuthenticated(
                       }
                     });
                   })
-                  .then((response) => {
-                    const borrowedBooksIds = accountData.borrowed_books_ids;
-                    issueGetBooksRequest(borrowedBooksIds).then((response) => {
+                  .then(() => {
+                    const wishlistedBooksIds = accountData.wishlist_books_ids;
+                    issueGetBooksRequest(wishlistedBooksIds).then((response) => {
                       if (response.status === 200) {
                         response.json().then((booksData) => {
-                          displayBooks(booksData, "borrowed");
+                          displayBooks(booksData, "wishlisted");
                         });
                       }
                     });
                   })
-                  .then((response) => {
+                  .then(() => {
                     getBookAuthorsAndGenres();
                   });
               });
+            } else if (response.status === 404) {
+              // no account - create one
+              questionToCreateAnAccount();
             }
           });
         });

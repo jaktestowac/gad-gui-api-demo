@@ -1,16 +1,14 @@
-const {
-  formatErrorResponse,
-  getIdFromUrl,
-  formatInvalidTokenErrorResponse,
-  sleep,
-  formatNoFieldsErrorResponse,
-} = require("../helpers/helpers");
+const { formatErrorResponse, getIdFromUrl, formatInvalidTokenErrorResponse, sleep } = require("../helpers/helpers");
 const { logDebug, logError, logTrace } = require("../helpers/logger-api");
 const { getConfigValue, isBugEnabled } = require("../config/config-manager");
 const { ConfigKeys, BugConfigKeys } = require("../config/enums");
 
-const { verifyAccessToken, areAnyFieldsPresent } = require("../helpers/validation.helpers");
-const { searchForUserWithToken, searchForUser } = require("../helpers/db-operation.helpers");
+const { verifyAccessToken } = require("../helpers/validation.helpers");
+const {
+  searchForUserWithToken,
+  searchForUser,
+  searchForBookShopAccountWithUserId,
+} = require("../helpers/db-operation.helpers");
 const {
   HTTP_UNAUTHORIZED,
   HTTP_INTERNAL_SERVER_ERROR,
@@ -18,7 +16,6 @@ const {
   HTTP_METHOD_NOT_ALLOWED,
   HTTP_SERVICE_UNAVAILABLE,
   HTTP_NOT_FOUND,
-  HTTP_UNPROCESSABLE_ENTITY,
 } = require("../helpers/response.helpers");
 const { handleHangman } = require("../endpoints/hangman-endpoint.helpers");
 const { handleQuiz } = require("../endpoints/quiz-endpoint.helpers");
@@ -253,20 +250,20 @@ const validationsRoutes = (req, res, next) => {
     }
 
     // book-shop endpoints
-    if (req.url.includes("/api/books")) {
-      handleBooks(req, res);
-    }
     if (req.url.includes("/api/book-authors")) {
       handleBookAuthors(req, res);
     }
     if (req.url.includes("/api/book-genres")) {
       handleBookGenres(req, res);
     }
-    if (req.url.includes("/api/book-shop-accounts")) {
+    if (req.url.includes("/api/book-shop-accounts") || req.url.includes("/api/book-shop-authorize")) {
       handleBookShopAccount(req, res);
     }
     if (req.url.includes("/api/book-shop-roles")) {
       handleBookShopRoles(req, res);
+    }
+    if (req.url.includes("/api/books")) {
+      handleBooks(req, res);
     }
 
     // data endpoints
@@ -303,6 +300,20 @@ const validationsRoutes = (req, res, next) => {
         }
         logDebug(`[DELAY] Waiting for ${timeout} [ms] for ${urlEnds}`);
         sleep(timeout).then(() => next());
+      } else if (req.method === "POST" && urlEnds.endsWith("api/book-shop-accounts")) {
+        const timeout = getRandomInt(
+          getConfigValue(ConfigKeys.SLEEP_TIME_FOR_SHOP_ACCOUNT_CREATE_MIN),
+          getConfigValue(ConfigKeys.SLEEP_TIME_FOR_SHOP_ACCOUNT_CREATE_MAX)
+        );
+
+        logDebug(`[DELAY] Waiting for ${timeout} [ms] for ${urlEnds}`);
+        sleep(timeout).then(() => {
+          if (searchForBookShopAccountWithUserId(req.body.user_id) !== undefined) {
+            res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Account already exists"));
+            return;
+          }
+          next();
+        });
       } else {
         next();
       }

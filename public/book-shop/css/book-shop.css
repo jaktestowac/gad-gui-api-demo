@@ -48,7 +48,7 @@
 }
 
 .book-popup-content {
-  overflow: auto;
+  overflow: hidden;
   min-width: 300px;
   width: 400px;
   border: 1px solid rgb(196, 196, 196);
@@ -64,6 +64,59 @@
   align-items: end;
   width: 390px;
   padding: 4px;
+}
+
+.popup-main-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.account-creation-process {
+  font-size: 12px !important;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.user-profile-connector-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.green-tick {
+  color: rgb(110, 196, 110);
+  font-size: 32px;
+}
+
+.loading-error {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.loading-error-description {
+  display: inline;
+  font-size: 12px;
+  max-height: 200px;
+  max-width: 300px;
+}
+
+.loading-spinner {
+  width: 100%;
+  height: 200px;
+  background: url("/data/loading.gif") center no-repeat;
+}
+
+.loading-spinner-2 {
+  width: 100%;
+  height: 200px;
+  background: url("/data/swirl-1.gif") center no-repeat;
 }
 
 .book-button {
@@ -122,6 +175,14 @@ h4.books-header {
   cursor: pointer;
 }
 
+.book-shop-button-primary.red {
+  background-color: rgb(255, 158, 158);
+}
+
+.book-shop-button-primary.green {
+  background-color: rgb(110, 196, 110);
+}
+
 .book-shop-button-primary:hover {
   background-color: rgb(209, 209, 209);
 }
@@ -170,4 +231,22 @@ h4.books-header {
   font-size: 12px;
   padding: 4px;
   width: 100%;
+}
+
+.tools-panel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.book-tools-button {
+  font-size: 14px;
+  cursor: pointer;
+  padding-left: 10px;
+  padding-right: 10px;
+  color: rgb(130, 130, 130);
+}
+
+.book-tools-button.active {
+  color: rgb(9, 159, 9);
 }

@@ -32,6 +32,12 @@ async function renderBooks(records_per_page, current_page, searchPhrase, sorting
 
           appendBooksData(data, booksContainer);
           getBookAuthorsAndGenres();
+
+          checkIfAuthorizedToBookShop().then((isAuthorized) => {
+            if (isAuthorized !== undefined) {
+              addBooksToolsPanel();
+            }
+          });
           return data;
         });
       } else {
@@ -40,6 +46,18 @@ async function renderBooks(records_per_page, current_page, searchPhrase, sorting
       }
     }
   );
+}
+
+
+function addBooksToolsPanel() {
+  const toolsPanels = document.querySelectorAll(".book-tools");
+
+  toolsPanels.forEach((panel) => {
+    const bookId = panel.getAttribute("data-book-id");
+    panel.innerHTML = "";
+    const toolsPanel = createBookToolsPanel(bookId);
+    panel.appendChild(toolsPanel);
+  });
 }
 
 function noBooksFound() {

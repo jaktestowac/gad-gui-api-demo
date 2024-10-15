@@ -2703,7 +2703,7 @@
     {
       "id": 12,
       "title": "Extreme Ownership",
-      "author_ids": [10],
+      "author_ids": [10, 26],
       "published_at": "2015-10-20T00:00:00Z",
       "genre_ids": [5],
       "language": "English",
@@ -2715,7 +2715,7 @@
       "id": 13,
       "title": "The Art of War",
       "author_ids": [11],
-      "published_at": "5th century BC",
+      "published_at": "2018-11-12T00:00:00Z",
       "genre_ids": [4],
       "language": "Chinese",
       "pages": 38,
@@ -2929,6 +2929,105 @@
       "pages": 200,
       "cover": "..\\data\\books\\born-from-a-wish.jpg",
       "description": "A dark narrative centered around Maria's backstory, revealing her mysterious origins and her connection to James Sunderland. The novel explores themes of identity, longing, and the blurring line between reality and nightmare."
+    },
+    {
+      "id": 33,
+      "title": "Thinking, Fast and Slow",
+      "author_ids": [16],
+      "published_at": "2011-10-25T00:00:00Z",
+      "genre_ids": [28],
+      "language": "English",
+      "pages": 499,
+      "cover": "..\\data\\books\\thinking-fast-and-slow.jpg",
+      "description": "Thinking, Fast and Slow is a best-selling book published in 2011 by Nobel Memorial Prize in Economic Sciences laureate Daniel Kahneman. It was the 2012 winner of the National Academies Communication Award for best creative work that helps the public understanding of topics in behavioral science, engineering and medicine."
+    },
+    {
+      "id": 34,
+      "title": "Remote",
+      "author_ids": [17],
+      "published_at": "2013-10-29T00:00:00Z",
+      "genre_ids": [6],
+      "language": "English",
+      "pages": 256,
+      "cover": "..\\data\\books\\remote.jpg",
+      "description": "Remote: Office Not Required is a book by David Heinemeier Hansson and Jason Fried about the benefits of remote work. It was published in 2013 by Heinemeier Hansson's and Fried's company, 37signals."
+    },
+    {
+      "id": 35,
+      "title": "The Metamorphosis",
+      "author_ids": [18],
+      "published_at": "1915-10-15T00:00:00Z",
+      "genre_ids": [18],
+      "language": "English",
+      "pages": 201,
+      "cover": "..\\data\\books\\the-metamorphosis.jpg",
+      "description": "The Metamorphosis (German: Die Verwandlung) is a novella written by Franz Kafka which was first published in 1915. One of Kafka's best-known works, The Metamorphosis tells the story of salesman Gregor Samsa who wakes one morning to find himself inexplicably transformed into a huge insect (German ungeheures Ungeziefer, literally 'monstrous vermin'), subsequently struggling to adjust to this new condition."
+    },
+    {
+      "id": 36,
+      "title": "Moominland Midwinter",
+      "author_ids": [28],
+      "published_at": "1957-01-01T00:00:00Z",
+      "genre_ids": [20],
+      "language": "English",
+      "pages": 176,
+      "cover": "..\\data\\books\\moominland-midwinter.jpg",
+      "description": "Moominland Midwinter (Swedish: Trollvinter) is the fifth in the series of Tove Jansson's Moomins books, published in 1957. It is the first novel where the protagonist, Moomintroll, is not present throughout the entire story. The story is about Moomintroll waking up from hibernation too early and discovering a world he has never seen before."
+    },
+    {
+      "id": 37,
+      "title": "Comet in Moominland",
+      "author_ids": [28],
+      "published_at": "1946-01-01T00:00:00Z",
+      "genre_ids": [20],
+      "language": "English",
+      "pages": 160,
+      "cover": "..\\data\\books\\comet-in-moominland.jpg",
+      "description": "Comet in Moominland (Swedish: Kometjakten) is the second in the series of Tove Jansson's Moomins books, published in 1946. It is the first novel where the Moomin family is the main character. The story is about a comet approaching the Moominvalley, and the Moomins' journey to the observatory on the Lonely Mountains to find out more about the comet."
+    },
+    {
+      "id": 38,
+      "title": "Moominvalley in November",
+      "author_ids": [28],
+      "published_at": "1970-01-01T00:00:00Z",
+      "genre_ids": [20],
+      "language": "English",
+      "pages": 144,
+      "cover": "..\\data\\books\\moominvalley-in-november.jpg",
+      "description": "Moominvalley in November (Swedish: Sent i november) is the ninth and final book in the Moomin series by Finnish author Tove Jansson, published in 1970. It is the only book in the series where the Moomin family is not present. The story is about a group of characters who visit the Moominhouse while the Moomins are away."
+    },
+    {
+      "id": 39,
+      "title": "The Exploits of Moominpappa",
+      "author_ids": [28],
+      "published_at": "1950-01-01T00:00:00Z",
+      "genre_ids": [20],
+      "language": "English",
+      "pages": 176,
+      "cover": "..\\data\\books\\the-exploits-of-moominpappa.jpg",
+      "description": "The Exploits of Moominpappa (Swedish: Muminpappans bravader) is the fourth in the series of Tove Jansson's Moomins books, published in 1950. It is the first book where Moominpappa is the main character. The story is about Moominpappa's youth and his adventures with his friends."
+    },
+    {
+      "id": 40,
+      "title": "Moominsummer Madness",
+      "author_ids": [28],
+      "published_at": "1954-01-01T00:00:00Z",
+      "genre_ids": [20],
+      "language": "English",
+      "pages": 176,
+      "cover": "..\\data\\books\\moominsummer-madness.jpg",
+      "description": "Moominsummer Madness (Swedish: Farlig midsommar) is the third in the series of Tove Jansson's Moomins books, published in 1954. It is the first novel where the Moomin family is not the main character. The story is about a flood that forces the Moomins to move to a floating theatre."
+    },
+    {
+      "id": 41,
+      "title": "Moominpappa at Sea",
+      "author_ids": [28],
+      "published_at": "1965-01-01T00:00:00Z",
+      "genre_ids": [20],
+      "language": "English",
+      "pages": 176,
+      "cover": "..\\data\\books\\moominpappa-at-sea.jpg",
+      "description": "Moominpappa at Sea (Swedish: Pappan och havet) is the seventh in the series of Tove Jansson's Moomins books, published in 1965. It is the first novel where the Moomin family is not present throughout the entire story. The story is about the Moomin family's journey to a lighthouse island."
     }
   ],
   "book-authors": [
@@ -3056,6 +3155,26 @@
       "id": 24,
       "name": "Maria Sunderland",
       "country": "USA"
+    },
+    {
+      "id": 25,
+      "name": "David Heinemeier Hansson",
+      "country": "Denmark"
+    },
+    {
+      "id": 26,
+      "name": "Leif Babin",
+      "country": "USA"
+    },
+    {
+      "id": 27,
+      "name": "Christopher Tolkien",
+      "country": "UK"
+    },
+    {
+      "id": 28,
+      "name": "Tove Jansson",
+      "country": "Finland"
     }
   ],
   "book-reviews": [
@@ -3234,11 +3353,13 @@
   "book-shop-accounts": [
     {
       "id": 1,
-      "user_id": 1,
+      "user_id": 2,
       "role_id": 2,
-      "borrowed_books_ids": [3],
+      "wishlist_books_ids": [3],
+      "favorite_books_ids": [1],
+      "purchased_book_ids": [1],
       "read_books_ids": [2],
-      "owned_books_ids": [1 , 5],
+      "owned_books_ids": [1, 5],
       "funds": 15000,
       "created_at": "2024-05-25T11:50:28.108Z",
       "country": "Poland",

@@ -45,6 +45,8 @@ const ConfigKeys = {
   SLEEP_TIME_PER_ONE_GET_COMMENT: "sleepTimePerOneGetComment",
   SLEEP_TIME_PER_ONE_GET_COMMENT_MIN: "sleepTimePerOneGetCommentMin",
   SLEEP_TIME_PER_ONE_GET_COMMENT_MAX: "sleepTimePerOneGetCommentMax",
+  SLEEP_TIME_FOR_SHOP_ACCOUNT_CREATE_MIN: "sleepTimeForShopAccountCreateMin",
+  SLEEP_TIME_FOR_SHOP_ACCOUNT_CREATE_MAX: "sleepTimeForShopAccountCreateMax",
   PUBLIC_LOGS_ENABLED: "publicLogsEnabled",
   NUMBER_OF_TOP_LIKED_ARTICLES: "numberOfTopLikedArticles",
   USER_AVATAR_PATH: "userAvatarPath",
