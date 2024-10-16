@@ -132,23 +132,35 @@ function displayAccountInfo(accountData, userData) {
 }
 
 function displayBooks(booksData, type = "owned") {
-  const accountInfo = document.getElementById("account-info");
-  const ownedBooksContainer = document.createElement("div");
-  ownedBooksContainer.classList.add(`books-container`);
+  const id = `${type}-books-container`;
+  let booksContainer = document.getElementById(id);
 
-  const ownedBooksHeader = document.createElement("h4");
+  if (booksContainer) {
+    booksContainer.innerHTML = "";
+  } else {
+    booksContainer = document.createElement("div");
+    booksContainer.id = id;
+
+    const allBooksContainer = document.getElementById("all-books-container");
+    allBooksContainer.appendChild(booksContainer);
+  }
+
+  const onlyBooksContainer = document.createElement("div");
+  onlyBooksContainer.classList.add(`books-container`);
+
+  const booksHeader = document.createElement("h4");
   const typeCapital = type.charAt(0).toUpperCase() + type.slice(1);
 
-  ownedBooksHeader.textContent = `${typeCapital} Books (${booksData.length})`;
-  ownedBooksHeader.classList.add("books-header");
-  accountInfo.appendChild(ownedBooksHeader);
+  booksHeader.textContent = `${typeCapital} Books (${booksData.length})`;
+  booksHeader.classList.add("books-header");
+  booksContainer.appendChild(booksHeader);
 
-  const ownedBooksList = document.createElement("div");
-  ownedBooksList.classList.add(`books-list`);
-  ownedBooksContainer.appendChild(ownedBooksList);
-  accountInfo.appendChild(ownedBooksContainer);
+  const booksList = document.createElement("div");
+  booksList.classList.add(`books-list`);
+  onlyBooksContainer.appendChild(booksList);
+  booksContainer.appendChild(onlyBooksContainer);
 
-  appendBooksData(booksData, ownedBooksList, true);
+  appendBooksData(booksData, booksList, true);
 }
 
 function questionToCreateAnAccount() {
@@ -348,6 +360,95 @@ function createAccountPopup() {
   accountInfo.appendChild(popup);
 }
 
+async function addBooksToolPanels() {
+  const callbacks = {
+    markAsOwned: () => {
+      refreshSection("owned");
+    },
+    markAsRead: () => {
+      refreshSection("read");
+    },
+    addToCart: undefined,
+    addToWishlist: () => {
+      refreshSection("purchased");
+    },
+    markAsFav: () => {
+      refreshSection("favorite");
+    },
+  };
+
+  const bookIds = addBooksToolsPanel(true, callbacks);
+  return issueGetBookShopMyBooksRequest(bookIds).then((response) => {
+    if (response.status === 200) {
+      return response.json().then((data) => {
+        markButtonsAsActive(data);
+      });
+    }
+  });
+}
+
+function displayBookSection(response, type) {
+  if (response.status === 200) {
+    response.json().then((booksData) => {
+      displayBooks(booksData, type);
+
+      const authorIds = getAuthorsMarkedAsRaw();
+      const genresIds = getGenresMarkedAsRaw();
+
+      getBookAuthorsAndGenres(authorIds, genresIds);
+      addBooksToolPanels();
+    });
+  }
+}
+
+function refreshSection(sectionName) {
+  const sections = [
+    {
+      name: "owned",
+      display: "owned",
+      fieldName: "owned_books_ids",
+    },
+    {
+      name: "purchased",
+      display: "purchased in 🦎GAD BookShop",
+      fieldName: "purchased_book_ids",
+    },
+    {
+      name: "favorite",
+      display: "favorite",
+      fieldName: "favorite_books_ids",
+    },
+    {
+      name: "read",
+      display: "read",
+      fieldName: "read_books_ids",
+    },
+    {
+      name: "wishlisted",
+      display: "wishlisted",
+      fieldName: "wishlist_books_ids",
+    },
+  ];
+
+  issueGetBookShopAccountRequest().then((response) => {
+    if (response.status === 200) {
+      response.json().then((accountData) => {
+        const section = sections.find((section) => section.name === sectionName);
+
+        if (section === undefined) {
+          return;
+        }
+
+        const bookIds = accountData[section.fieldName];
+
+        issueGetBooksRequest(bookIds).then((response) => {
+          displayBookSection(response, section.display);
+        });
+      });
+    }
+  });
+}
+
 checkIfAuthenticated(
   "authentication-info",
   () => {
@@ -364,54 +465,31 @@ checkIfAuthenticated(
                 const ownedBooksIds = accountData.owned_books_ids;
                 issueGetBooksRequest(ownedBooksIds)
                   .then((response) => {
-                    if (response.status === 200) {
-                      response.json().then((booksData) => {
-                        displayBooks(booksData, "owned");
-                      });
-                    }
+                    displayBookSection(response, "owned");
                   })
                   .then(() => {
                     const purchasedBookIds = accountData.purchased_book_ids;
                     issueGetBooksRequest(purchasedBookIds).then((response) => {
-                      if (response.status === 200) {
-                        response.json().then((booksData) => {
-                          displayBooks(booksData, "purchased in 🦎GAD BookShop");
-                        });
-                      }
+                      displayBookSection(response, "purchased in 🦎GAD BookShop");
                     });
                   })
                   .then(() => {
                     const favoriteBookIds = accountData.favorite_books_ids;
                     issueGetBooksRequest(favoriteBookIds).then((response) => {
-                      if (response.status === 200) {
-                        response.json().then((booksData) => {
-                          displayBooks(booksData, "favorite");
-                        });
-                      }
+                      displayBookSection(response, "favorite");
                     });
                   })
                   .then(() => {
                     const readBooksIds = accountData.read_books_ids;
                     issueGetBooksRequest(readBooksIds).then((response) => {
-                      if (response.status === 200) {
-                        response.json().then((booksData) => {
-                          displayBooks(booksData, "read");
-                        });
-                      }
+                      displayBookSection(response, "read");
                     });
                   })
                   .then(() => {
                     const wishlistedBooksIds = accountData.wishlist_books_ids;
                     issueGetBooksRequest(wishlistedBooksIds).then((response) => {
-                      if (response.status === 200) {
-                        response.json().then((booksData) => {
-                          displayBooks(booksData, "wishlisted");
-                        });
-                      }
+                      displayBookSection(response, "wishlisted");
                     });
-                  })
-                  .then(() => {
-                    getBookAuthorsAndGenres();
                   });
               });
             } else if (response.status === 404) {

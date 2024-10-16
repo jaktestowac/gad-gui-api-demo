@@ -6,13 +6,30 @@ const urlBooksFavorites = "/api/books/favorites";
 const urlBookAuthors = "/api/book-authors";
 const urlBookGenres = "/api/book-genres";
 const urlBookShopAccount = "/api/book-shop-accounts";
+const urlBooksShopMyBooks = "/api/book-shop-accounts/my-books";
 const urlUser = "/api/users";
 const urlBookShopAuthorize = "/api/book-shop-authorize";
+const urlBookShopItems = "/api/book-shop-items";
+const urlBookShopOrders = "/api/book-shop-orders";
+const urlBookShopOrderStatuses = "/api/book-shop-order-statuses";
 
 async function issueGetUserRequest() {
   const id = getId();
   let urlBook = `${urlUser}/${id}`;
   const data = fetch(urlBook, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+  });
+  return data;
+}
+
+async function issueGetUserOrdersRequest() {
+  let urlOrders = `${urlBookShopOrders}`;
+  const data = fetch(urlOrders, {
     method: "GET",
     headers: {
       Accept: "application/json",
@@ -36,8 +53,43 @@ async function issueGetBookShopAccountRequest() {
   return data;
 }
 
-async function issueGetBooksRequest(booksIds) {
-  const urlQueryIds = `${booksIds.join("&id=")}`;
+async function issueGetBookShopMyBooksRequest(bookIds) {
+  if (bookIds !== undefined && bookIds.length === 0) {
+    return { status: 200, json: async () => {} };
+  }
+
+  let urlBook = `${urlBooksShopMyBooks}`;
+  const data = fetch(urlBook, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+  });
+  return data;
+}
+
+async function issueGetBookShopItemsRequest(bookIds) {
+  const urlQueryIds = `${bookIds.join("&book_id=")}`;
+  const urlQuery = `${urlBookShopItems}?book_id=${urlQueryIds}`;
+  const data = fetch(urlQuery, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+  });
+  return data;
+}
+
+async function issueGetBooksRequest(bookIds) {
+  if (bookIds !== undefined && bookIds.length === 0) {
+    return { status: 200, json: async () => [] };
+  }
+
+  const urlQueryIds = `${bookIds.join("&id=")}`;
   const urlQuery = `${urlBooks}?id=${urlQueryIds}`;
   const data = fetch(urlQuery, {
     method: "GET",
@@ -68,6 +120,18 @@ async function issueGetBookGenreRequest(genreIds) {
   const urlQueryIds = `${genreIds.join("&id=")}`;
   const urlQuery = `${urlBookGenres}?id=${urlQueryIds}`;
   const data = fetch(urlQuery, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+  });
+  return data;
+}
+
+async function issueGetBookShopOrderStatusesRequest() {
+  const data = fetch(urlBookShopOrderStatuses, {
     method: "GET",
     headers: {
       Accept: "application/json",
@@ -204,19 +268,35 @@ function toggleFavorites(bookId) {
   return data;
 }
 
-function createBookToolsPanel(bookId) {
+function createBookToolsPanel(
+  bookId,
+  callbacks = {
+    markAsOwned: undefined,
+    markAsRead: undefined,
+    addToCart: undefined,
+    addToWishlist: undefined,
+    markAsFav: undefined,
+  }
+) {
   const toolsPanel = document.createElement("div");
-  toolsPanel.className = "tools-panel";
+  toolsPanel.className = "all-tools-panel";
+  const topToolsPanel = document.createElement("div");
+  topToolsPanel.className = "tools-panel";
 
   const markAsOwnedButton = document.createElement("span");
   markAsOwnedButton.className = "book-clickable-component";
   markAsOwnedButton.classList.add("book-tools-button");
   markAsOwnedButton.setAttribute("aria-label", "Mark as owned");
   markAsOwnedButton.setAttribute("title", "Mark as owned");
+  markAsOwnedButton.setAttribute("id", `owned-button-${bookId}`);
   markAsOwnedButton.innerHTML = `<i class="fa-solid fa-house-user"></i>`;
   markAsOwnedButton.onclick = () => {
     toggleBookAsOwned(bookId).then((response) => {
       markAsOwnedButton.classList.toggle("active");
+
+      if (callbacks.markAsOwned !== undefined) {
+        callbacks.markAsOwned();
+      }
     });
   };
 
@@ -225,10 +305,15 @@ function createBookToolsPanel(bookId) {
   markAsReadButton.classList.add("book-tools-button");
   markAsReadButton.setAttribute("aria-label", "Mark as read");
   markAsReadButton.setAttribute("title", "Mark as read");
+  markAsReadButton.setAttribute("id", `read-button-${bookId}`);
   markAsReadButton.innerHTML = `<i class="fa-solid fa-book-open-reader"></i>`;
   markAsReadButton.onclick = () => {
     toggleAsRead(bookId).then((response) => {
       markAsReadButton.classList.toggle("active");
+
+      if (callbacks.markAsRead !== undefined) {
+        callbacks.markAsRead();
+      }
     });
   };
 
@@ -240,7 +325,6 @@ function createBookToolsPanel(bookId) {
   addToCartButton.innerHTML = `<i class="fa-solid fa-cart-arrow-down"></i>`;
   addToCartButton.onclick = () => {
     // addToCart(bookId);
-    addToCartButton.classList.toggle("active");
   };
 
   const wishlistButton = document.createElement("span");
@@ -248,10 +332,15 @@ function createBookToolsPanel(bookId) {
   wishlistButton.classList.add("book-tools-button");
   wishlistButton.setAttribute("aria-label", "Add to wishlist");
   wishlistButton.setAttribute("title", "Add to wishlist");
+  wishlistButton.setAttribute("id", `wishlist-button-${bookId}`);
   wishlistButton.innerHTML = `<i class="fa-solid fa-gift"></i>`;
   wishlistButton.onclick = () => {
     toggleBookAsWishlisted(bookId).then((response) => {
       wishlistButton.classList.toggle("active");
+
+      if (callbacks.addToWishlist !== undefined) {
+        callbacks.addToWishlist();
+      }
     });
   };
 
@@ -260,10 +349,15 @@ function createBookToolsPanel(bookId) {
   markAsFavButton.classList.add("book-tools-button");
   markAsFavButton.setAttribute("aria-label", "Add to favorites");
   markAsFavButton.setAttribute("title", "Add to favorites");
+  markAsFavButton.setAttribute("id", `favorite-button-${bookId}`);
   markAsFavButton.innerHTML = `<i class="fa-solid fa-heart"></i>`;
   markAsFavButton.onclick = () => {
     toggleFavorites(bookId).then((response) => {
-      wishlistButton.classList.toggle("active");
+      markAsFavButton.classList.toggle("active");
+
+      if (callbacks.markAsFav !== undefined) {
+        callbacks.markAsFav();
+      }
     });
   };
 
@@ -277,13 +371,136 @@ function createBookToolsPanel(bookId) {
     showBookDetails(bookId);
   };
 
-  toolsPanel.appendChild(wishlistButton);
-  toolsPanel.appendChild(addToCartButton);
-  toolsPanel.appendChild(markAsOwnedButton);
-  toolsPanel.appendChild(markAsReadButton);
-  toolsPanel.appendChild(markAsFavButton);
+  topToolsPanel.appendChild(wishlistButton);
+  topToolsPanel.appendChild(markAsOwnedButton);
+  topToolsPanel.appendChild(markAsReadButton);
+  topToolsPanel.appendChild(markAsFavButton);
+
+  const cartToolsPanel = document.createElement("div");
+  cartToolsPanel.className = "tools-panel";
+
+  // add number of items and their price as 2 elements with uniqe ids
+  const itemInfo = document.createElement("span");
+  itemInfo.className = "item-shop-info";
+
+  const cartItemsContainer = document.createElement("span");
+  cartItemsContainer.className = "cart-info-container";
+  const cartItems = document.createElement("span");
+  cartItems.className = "cart-items";
+  cartItems.textContent = "-";
+  cartItems.setAttribute("id", `cart-items-${bookId}`);
+  cartItems.setAttribute("bookId", bookId);
+  cartItems.setAttribute("raw", "true");
+  const cartItemsDescription = document.createElement("span");
+  cartItemsDescription.className = "cart-item-description";
+  cartItemsDescription.textContent = "In stock:";
+  cartItemsContainer.appendChild(cartItemsDescription);
+  cartItemsContainer.appendChild(cartItems);
+
+  const cartPriceContainer = document.createElement("span");
+  cartPriceContainer.className = "cart-info-container";
+  const cartPrice = document.createElement("span");
+  cartPrice.className = "cart-price";
+  cartPrice.textContent = "-.--";
+  cartPrice.setAttribute("id", `cart-price-${bookId}`);
+  cartPrice.setAttribute("bookId", bookId);
+  cartPrice.setAttribute("raw", "true");
+
+  const cartPriceDescription = document.createElement("span");
+  cartPriceDescription.className = "cart-item-description";
+  cartPriceDescription.textContent = "Price:";
+  cartPriceContainer.appendChild(cartPriceDescription);
+  cartPriceContainer.appendChild(cartPrice);
+
+  itemInfo.appendChild(cartItemsContainer);
+  itemInfo.appendChild(cartPriceContainer);
+
+  cartToolsPanel.appendChild(itemInfo);
+
+  cartToolsPanel.appendChild(addToCartButton);
+  toolsPanel.appendChild(topToolsPanel);
+  toolsPanel.appendChild(cartToolsPanel);
 
   return toolsPanel;
+}
+
+function formatPrice(price) {
+  return (price / 100).toFixed(2);
+}
+
+async function getBookShopItemsInStockAndPrice(booksIds) {
+  issueGetBookShopItemsRequest(booksIds).then((response) => {
+    if (response.status === 200) {
+      response.json().then((data) => {
+        booksIds.forEach((bookId) => {
+          const book = data.find((book) => `${book.book_id}` === `${bookId}`);
+          const cartItems = document.querySelector(`#cart-items-${bookId}`);
+          const cartPrice = document.querySelector(`#cart-price-${bookId}`);
+          if (book !== undefined) {
+            cartItems.textContent = book.quantity;
+            cartPrice.textContent = formatPrice(book.price);
+          } else {
+            cartItems.textContent = "0";
+            cartPrice.textContent = "-.--";
+          }
+        });
+      });
+    }
+  });
+}
+
+function markButtonsAsActive(userBooks) {
+  const keys = {
+    wishlist_books_ids: "wishlist-button-",
+    favorite_books_ids: "favorite-button-",
+    read_books_ids: "read-button-",
+    owned_books_ids: "owned-button-",
+  };
+
+  if (userBooks === undefined) {
+    return;
+  }
+
+  Object.keys(keys).forEach((key) => {
+    if (userBooks[key] !== undefined) {
+      userBooks[key].forEach((bookId) => {
+        const buttons = document.querySelectorAll(`#${keys[key]}${bookId}`);
+        buttons.forEach((button) => {
+          button.classList.add("active");
+        });
+      });
+    }
+  });
+}
+
+function addBooksToolsPanel(
+  overwrite = true,
+  callbacks = {
+    markAsOwned: undefined,
+    markAsRead: undefined,
+    addToCart: undefined,
+    addToWishlist: undefined,
+    markAsFav: undefined,
+  }
+) {
+  const bookIds = [];
+  const toolsPanels = document.querySelectorAll(".book-tools");
+  toolsPanels.forEach((panel) => {
+    const bookId = panel.getAttribute("data-book-id");
+    bookIds.push(bookId);
+    if (overwrite) {
+      panel.innerHTML = "";
+    } else {
+      const children = panel.children;
+      if (children.length > 0) {
+        return;
+      }
+    }
+    const toolsPanel = createBookToolsPanel(bookId, callbacks);
+    panel.appendChild(toolsPanel);
+  });
+
+  return bookIds;
 }
 
 function formatAuthors(author_ids) {
@@ -292,6 +509,9 @@ function formatAuthors(author_ids) {
     const authorSpan = document.createElement("span");
     authorSpan.id = `author-${author_id}`;
     authorSpan.textContent = author_id;
+    authorSpan.classList.add("author-component");
+    authorSpan.setAttribute("author", author_id);
+    authorSpan.setAttribute("raw", "true");
     authorsContainer.appendChild(authorSpan);
     if (index < author_ids.length - 1) {
       const commaSpan = document.createElement("span");
@@ -306,6 +526,8 @@ function formatAuthors(author_ids) {
 async function getAuthors(authorIds = undefined) {
   if (authorIds === undefined) {
     return issueGetBookAuthorsRequest();
+  } else if (authorIds.length === 0) {
+    return [];
   } else {
     return issueGetBookAuthorRequest(authorIds);
   }
@@ -314,6 +536,8 @@ async function getAuthors(authorIds = undefined) {
 async function getGenres(genreIds = undefined) {
   if (genreIds === undefined) {
     return issueGetBookGenresRequest();
+  } else if (genreIds.length === 0) {
+    return [];
   } else {
     return issueGetBookGenreRequest(genreIds);
   }
@@ -363,6 +587,9 @@ function formatGenres(genres_ids) {
   genres_ids.forEach((genre_id, index) => {
     const genreSpan = document.createElement("span");
     genreSpan.id = `genre-${genre_id}`;
+    genreSpan.classList.add("genre-component");
+    genreSpan.setAttribute("genre", genre_id);
+    genreSpan.setAttribute("raw", "true");
     genreSpan.textContent = genre_id;
     genresContainer.appendChild(genreSpan);
     if (index < genres_ids.length - 1) {
@@ -373,6 +600,56 @@ function formatGenres(genres_ids) {
   });
 
   return genresContainer;
+}
+
+function getPricesMarkedAsRaw() {
+  const prices = document.querySelectorAll(".cart-price");
+  const bookIds = [];
+  prices.forEach((price) => {
+    if (price.getAttribute("raw") === "true") {
+      bookIds.push(price.getAttribute("bookId"));
+      price.removeAttribute("raw");
+    }
+  });
+  return bookIds;
+}
+
+function getInStockMarkedAsRaw() {
+  const instock = document.querySelectorAll(".cart-items");
+  const bookIds = [];
+  instock.forEach((item) => {
+    if (item.getAttribute("raw") === "true") {
+      bookIds.push(item.getAttribute("bookId"));
+      item.removeAttribute("raw");
+    }
+  });
+  return bookIds;
+}
+
+function getAuthorsMarkedAsRaw() {
+  const authors = document.querySelectorAll(".author-component");
+  const authorsIds = [];
+  authors.forEach((author) => {
+    if (author.getAttribute("raw") === "true") {
+      authorsIds.push(author.getAttribute("author"));
+      author.removeAttribute("raw");
+    }
+  });
+
+  return authorsIds;
+}
+
+function getGenresMarkedAsRaw() {
+  const genres = document.querySelectorAll(".genre-component");
+  const genresIds = [];
+  genres.forEach((genre) => {
+    if (genre.getAttribute("raw") === "true") {
+      genresIds.push(genre.getAttribute("genre"));
+      genre.removeAttribute("raw");
+    }
+  });
+
+  return genresIds;
 }
 
 function appendBooksData(data, booksContainer, skipDescription = false) {
@@ -504,4 +781,20 @@ function createBookPopup(book, additionalToolsHTML = false) {
   }
 
   placeholder.appendChild(popup);
+}
+
+function questionToCreateAnAccountWithRedirection() {
+  const accountInfo = document.getElementById("account-info");
+  const createAccountQuestion = document.createElement("h4");
+  createAccountQuestion.innerHTML = "You don't have an account yet.<br>Do you want to create one?";
+  createAccountQuestion.classList.add("create-account-question");
+  accountInfo.appendChild(createAccountQuestion);
+
+  const createAccountButton = document.createElement("button");
+  createAccountButton.textContent = "Create Account";
+  createAccountButton.classList.add("book-shop-button-primary");
+  createAccountButton.addEventListener("click", () => {
+    window.location.href = "/book-shop/account.html";
+  });
+  accountInfo.appendChild(createAccountButton);
 }

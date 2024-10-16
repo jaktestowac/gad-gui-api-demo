@@ -239,14 +239,49 @@ h4.books-header {
   align-items: center;
 }
 
+.all-tools-panel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
 .book-tools-button {
   font-size: 14px;
   cursor: pointer;
   padding-left: 10px;
   padding-right: 10px;
-  color: rgb(130, 130, 130);
+  color: rgb(193, 193, 193);
 }
 
 .book-tools-button.active {
   color: rgb(9, 159, 9);
+}
+
+.item-shop-info {
+  font-size: 12px;
+}
+
+.cart-info-container {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.cart-item-description {
+  font-weight: bold;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.orders-list {
+  min-width: 300px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex-direction: row;
+  border: 1px solid rgb(196, 196, 196);
+  border-radius: 5px;
+  margin: 4px;
+  width: max-content;
+  background-color: rgb(250, 250, 250);
 }

@@ -45,6 +45,33 @@ function handleBookShopAccount(req, res, isAdmin) {
 
     req.url = `/api/book-shop-accounts/${foundAccount.id}`;
     return true;
+  } else if (req.method === "GET" && req.url.endsWith("/api/book-shop-accounts/my-books")) {
+    const verifyTokenResult = verifyAccessToken(req, res, "GET book-shop-accounts", req.url);
+    const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
+
+    logDebug("handleBookShopAccount: Found User", { id: foundUser?.id });
+
+    if (isUndefined(foundUser)) {
+      res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+      return false;
+    }
+
+    const booksShopAccount = searchForBookShopAccountWithUserId(foundUser.id);
+
+    if (booksShopAccount === undefined) {
+      res.status(HTTP_NOT_FOUND).send(formatErrorResponse("User does not have a book shop account"));
+      return false;
+    }
+
+    res.status(HTTP_OK).send({
+      wishlist_books_ids: booksShopAccount.wishlist_books_ids,
+      read_books_ids: booksShopAccount.read_books_ids,
+      owned_books_ids: booksShopAccount.owned_books_ids,
+      purchased_book_ids: booksShopAccount.purchased_book_ids,
+      favorite_books_ids: booksShopAccount.favorite_books_ids,
+    });
+
+    return true;
   } else if (req.method === "GET" && req.url.includes("/api/book-shop-accounts/")) {
     const verifyTokenResult = verifyAccessToken(req, res, "GET book-shop-accounts/{id}", req.url);
     const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
@@ -82,9 +109,12 @@ function handleBookShopAccount(req, res, isAdmin) {
       return false;
     }
 
-    res
-      .status(HTTP_OK)
-      .send({ user_id: booksShopAccount.user_id, role_id: booksShopAccount.role_id, id: booksShopAccount.id });
+    res.status(HTTP_OK).send({
+      user_id: booksShopAccount.user_id,
+      role_id: booksShopAccount.role_id,
+      id: booksShopAccount.id,
+    });
+
     return true;
   } else if (req.method === "POST" && req.url.endsWith("/api/book-shop-accounts")) {
     const verifyTokenResult = verifyAccessToken(req, res, "GET book-shop-accounts/{id}", req.url);
@@ -125,7 +155,6 @@ function handleBookShopAccount(req, res, isAdmin) {
     logDebug("handleBookShopAccount: Not Found", { url: req.url, urlEnds });
     res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found"));
   }
-  // TODO:
   return;
 }
 

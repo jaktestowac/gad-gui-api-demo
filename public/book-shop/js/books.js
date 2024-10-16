@@ -35,7 +35,20 @@ async function renderBooks(records_per_page, current_page, searchPhrase, sorting
 
           checkIfAuthorizedToBookShop().then((isAuthorized) => {
             if (isAuthorized !== undefined) {
-              addBooksToolsPanel();
+              addBooksToolsPanel(false);
+              issueGetBookShopMyBooksRequest().then((response) => {
+                if (response.status === 200) {
+                  return response.json().then((data) => {
+                    markButtonsAsActive(data);
+                  });
+                }
+              });
+
+              const bookIds1 = getPricesMarkedAsRaw();
+              const bookIds2 = getInStockMarkedAsRaw();
+              const uniqueBookIds = [...new Set([...bookIds1, ...bookIds2])];
+
+              getBookShopItemsInStockAndPrice(uniqueBookIds);
             }
           });
           return data;
@@ -46,18 +59,6 @@ async function renderBooks(records_per_page, current_page, searchPhrase, sorting
       }
     }
   );
-}
-
-
-function addBooksToolsPanel() {
-  const toolsPanels = document.querySelectorAll(".book-tools");
-
-  toolsPanels.forEach((panel) => {
-    const bookId = panel.getAttribute("data-book-id");
-    panel.innerHTML = "";
-    const toolsPanel = createBookToolsPanel(bookId);
-    panel.appendChild(toolsPanel);
-  });
 }
 
 function noBooksFound() {

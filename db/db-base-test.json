@@ -3028,6 +3028,104 @@
       "pages": 176,
       "cover": "..\\data\\books\\moominpappa-at-sea.jpg",
       "description": "Moominpappa at Sea (Swedish: Pappan och havet) is the seventh in the series of Tove Jansson's Moomins books, published in 1965. It is the first novel where the Moomin family is not present throughout the entire story. The story is about the Moomin family's journey to a lighthouse island."
+    },
+    {
+      "id": 42,
+      "title": "The Fellowship of the Ring",
+      "author_ids": [4],
+      "published_at": "1954-07-29T00:00:00Z",
+      "genre_ids": [12, 19],
+      "language": "English",
+      "pages": 398,
+      "cover": "..\\data\\books\\the-fellowship-of-the-ring.jpg",
+      "description": "The Fellowship of the Ring is the first of three volumes of the epic novel The Lord of the Rings by the English author J. R. R. Tolkien. It is followed by The Two Towers and The Return of the King. It takes place in the fictional universe of Middle-earth. It was originally published on 29 July 1954 in the United Kingdom."
+    },
+    {
+      "id": 43,
+      "title": "The Two Towers",
+      "author_ids": [4],
+      "published_at": "1954-11-11T00:00:00Z",
+      "genre_ids": [12, 19],
+      "language": "English",
+      "pages": 327,
+      "cover": "..\\data\\books\\the-two-towers.jpg",
+      "description": "The Two Towers is the second volume of J.R.R. Tolkien's high fantasy novel The Lord of the Rings. It is preceded by The Fellowship of the Ring and followed by The Return of the King. The Lord of the Rings is composed of six 'books', aside from an introduction, a prologue and six appendices. The novel was originally published on 11 November 1954."
+    },
+    {
+      "id": 44,
+      "title": "100 years of solitude",
+      "author_ids": [5],
+      "published_at": "1967-05-30T00:00:00Z",
+      "genre_ids": [16, 39, 40],
+      "language": "English",
+      "pages": 417,
+      "cover": "..\\data\\books\\100-years-of-solitude.jpg",
+      "description": "One Hundred Years of Solitude is a landmark 1967 novel by Colombian author Gabriel García Márquez that tells the multi-generational story of the Buendía family, whose patriarch, José Arcadio Buendía, founded the town of Macondo, a fictitious town in the country of Colombia."
+    },
+    {
+      "id": 45,
+      "title": "Norwegian Wood",
+      "author_ids": [30],
+      "published_at": "1987-08-20T00:00:00Z",
+      "genre_ids": [16, 39, 40],
+      "language": "English",
+      "pages": 472,
+      "cover": "..\\data\\books\\norwegian-wood.jpg",
+      "description": "Norwegian Wood (ノルウェイの森, Noruwei no Mori) is a 1987 novel by Japanese author Haruki Murakami. The novel is a nostalgic story of loss and burgeoning sexuality. It is told from the first-person perspective of Toru Watanabe, who looks back on his days as a college student living in Tokyo."
+    },
+    {
+      "id": 46,
+      "title": "The Wind-Up Bird Chronicle",
+      "author_ids": [30],
+      "published_at": "1994-10-17T00:00:00Z",
+      "genre_ids": [16, 39, 40],
+      "language": "English",
+      "pages": 607,
+      "cover": "..\\data\\books\\the-wind-up-bird-chronicle.jpg",
+      "description": "The Wind-Up Bird Chronicle (ねじまき鳥クロニクル, Nejimaki-dori Kuronikuru) is a novel published in 1994 by Japanese author Haruki Murakami. The American translation and its British adaptation, dubbed the 'only official translations' are by Jay Rubin and were first published in 1997."
+    },
+    {
+      "id": 47,
+      "title": "Kafka on the Shore",
+      "author_ids": [30],
+      "published_at": "2002-09-12T00:00:00Z",
+      "genre_ids": [16, 39, 40],
+      "language": "English",
+      "pages": 467,
+      "cover": "..\\data\\books\\kafka-on-the-shore.jpg",
+      "description": "Kafka on the Shore (海辺のカフカ, Umibe no Kafuka) is a 2002 novel by Japanese author Haruki Murakami. Its 2005 English translation was among 'The 10 Best Books of 2005' from The New York Times and received the World Fantasy Award for 2006."
+    },
+    {
+      "id": 48,
+      "title": "1Q84",
+      "author_ids": [30],
+      "published_at": "2009-05-29T00:00:00Z",
+      "genre_ids": [16, 39, 40],
+      "language": "English",
+      "pages": 925,
+      "cover": "..\\data\\books\\1q84.jpg",
+      "description": "1Q84 is a dystopian novel written by Japanese writer Haruki Murakami, first published in three volumes in Japan in 2009–10. It covers a fictionalized year of 1984 in parallel with a 'real' one. Its first printing sold out on the day it was released and sales reached a million within a month."
+    },
+    {
+      "id": 49,
+      "title": "Colorless Tsukuru Tazaki and His Years of Pilgrimage",
+      "author_ids": [30],
+      "published_at": "2013-04-12T00:00:00Z",
+      "genre_ids": [16, 39, 40],
+      "language": "English",
+      "pages": 386,
+      "cover": "..\\data\\books\\colorless-tsukuru-tazaki-and-his-years-of-pilgrimage.jpg",
+      "description": "Colorless Tsukuru Tazaki and His Years of Pilgrimage (色彩を持たない多崎つくると、彼の巡礼の年, Shikisai o motanai Tazaki Tsukuru to, kare no junrei no toshi) is the thirteenth novel by Japanese writer Haruki Murakami. It was first published by Bungeishunjū in 2013."
+    },
+    {
+      "id": 50,
+      "title": "The City and Its Uncertain Walls",
+      "author_ids": [30],
+      "published_at": "2024-11-19T00:00:00Z",
+      "genre_ids": [16, 39, 40],
+      "language": "English",
+      "pages": 464,
+      "cover": "..\\data\\books\\the-city-and-its-uncertain-walls.jpg"
     }
   ],
   "book-authors": [
@@ -3175,6 +3273,16 @@
       "id": 28,
       "name": "Tove Jansson",
       "country": "Finland"
+    },
+    {
+      "id": 29,
+      "name": "Gabriel García Márquez",
+      "country": "Colombia"
+    },
+    {
+      "id": 30,
+      "name": "Haruki Murakami",
+      "country": "Japan"
     }
   ],
   "book-reviews": [
@@ -3279,52 +3387,91 @@
       "book_id": 6,
       "price": 3100,
       "quantity": 10
+    },
+    {
+      "id": 7,
+      "book_id": 50,
+      "price": 6500,
+      "quantity": 10
+    },
+    {
+      "id": 8,
+      "book_id": 49,
+      "price": 9900,
+      "quantity": 2
+    },
+    {
+      "id": 9,
+      "book_id": 48,
+      "price": 3300,
+      "quantity": 15
+    },
+    {
+      "id": 10,
+      "book_id": 32,
+      "price": 99900,
+      "quantity": 1
+    },
+    {
+      "id": 11,
+      "book_id": 22,
+      "price": 12900,
+      "quantity": 4
     }
   ],
   "book-shop-orders": [
     {
       "id": 1,
       "user_id": 1,
-      "book_id": 1,
-      "quantity": 1,
+      "book_ids": [1],
       "total_price": 3000,
-      "status_id": 9,
+      "status_id": 99,
       "created_at": "2024-05-25T11:50:28.108Z"
     },
     {
       "id": 2,
       "user_id": 2,
-      "book_id": 2,
-      "quantity": 1,
+      "book_ids": [2],
       "total_price": 3500,
-      "status_id": 9,
+      "status_id": 99,
       "created_at": "2024-05-25T11:50:28.108Z"
     },
     {
       "id": 3,
       "user_id": 1,
-      "book_id": 2,
-      "quantity": 1,
+      "book_ids": [2],
       "total_price": 3500,
-      "status": 1,
+      "status_id": 1,
       "created_at": "2024-05-25T11:50:28.108Z"
     }
   ],
-  "book-shop-order-status": [
+  "book-shop-order-statuses": [
     {
       "id": 1,
       "name": "new"
     },
     {
-      "id": 3,
+      "id": 5,
+      "name": "sent"
+    },
+    {
+      "id": 10,
       "name": "pending"
     },
     {
-      "id": 4,
+      "id": 20,
       "name": "cancelled"
     },
     {
-      "id": 9,
+      "id": 30,
+      "name": "returned"
+    },
+    {
+      "id": 40,
+      "name": "delivered"
+    },
+    {
+      "id": 99,
       "name": "completed"
     }
   ],
@@ -3524,6 +3671,14 @@
     {
       "id": 38,
       "name": "Science"
+    },
+    {
+      "id": 39,
+      "name": "Drama"
+    },
+    {
+      "id": 40,
+      "name": "Magical Realism"
     }
   ]
 }

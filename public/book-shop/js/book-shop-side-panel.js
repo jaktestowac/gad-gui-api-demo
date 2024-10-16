@@ -25,10 +25,21 @@ function populateLibrarySidePanel(links = []) {
   divElement.appendChild(closeElement);
 
   links.forEach((link) => {
-    const aElement = document.createElement("a");
-    aElement.href = link.link;
-    aElement.innerHTML = `<div class="book-shop-side-panel-icons" id="${link.id}" alt="${link.name}" >${link.icon}</div>`;
-    divElement.appendChild(aElement);
+    if (link.accountRequired === true) {
+      checkIfAuthorizedToBookShop().then((isAuthorized) => {
+        if (isAuthorized !== undefined) {
+          const aElement = document.createElement("a");
+          aElement.href = link.link;
+          aElement.innerHTML = `<div class="book-shop-side-panel-icons" id="${link.id}" alt="${link.name}" >${link.icon}</div>`;
+          divElement.appendChild(aElement);
+        }
+      });
+    } else {
+      const aElement = document.createElement("a");
+      aElement.href = link.link;
+      aElement.innerHTML = `<div class="book-shop-side-panel-icons" id="${link.id}" alt="${link.name}" >${link.icon}</div>`;
+      divElement.appendChild(aElement);
+    }
   });
   librarySidePanel.appendChild(divElement);
   librarySidePanel.parentElement.appendChild(buttonElement);
@@ -53,12 +64,13 @@ const allLinks = [
   //   name: "Authors",
   //   icon: `<i class="fa-solid fa-address-book"></i>`,
   // },
-  // {
-  //   link: "/book-shop/dashboard.html",
-  //   id: "book-shop-shopping",
-  //   name: "Shopping",
-  //   icon: `<i class="fa-solid fa-cart-shopping"></i>`,
-  // },
+  {
+    link: "/book-shop/orders.html",
+    id: "book-shop-shopping",
+    name: "Orders",
+    icon: `<i class="fa-solid fa-cart-shopping"></i>`,
+    accountRequired: true,
+  },
   // {
   //   link: "/book-shop/dashboard.html",
   //   id: "book-shop-statistics",

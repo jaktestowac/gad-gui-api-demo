@@ -190,6 +190,10 @@ function bookShopAccountsDb() {
   return fullDb()["book-shop-accounts"];
 }
 
+function bookShopOrdersDb() {
+  return fullDb()["book-shop-orders"];
+}
+
 function quizQuestionsDb() {
   const db = JSON.parse(fs.readFileSync(getDbPath(getConfigValue(ConfigKeys.QUIZ_QUESTIONS_PATH), "UTF-8")));
   return db;
@@ -326,4 +330,5 @@ module.exports = {
   translationsDb,
   getLanguages,
   bookShopAccountsDb,
+  bookShopOrdersDb,
 };
