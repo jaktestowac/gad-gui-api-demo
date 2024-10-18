@@ -16,6 +16,7 @@ const {
   flashpostsDb,
   bookShopAccountsDb,
   bookShopOrdersDb,
+  bookShopActionsDb,
 } = require("./db.helpers");
 
 // Users
@@ -488,6 +489,15 @@ function searchForBookShopOrdersWithStatusForUser(userId, orderStatusId) {
   return foundBookShopOrders;
 }
 
+function searchForBookShopActions(actionName) {
+  const foundBookShopAction = bookShopActionsDb().find((action) => {
+    if (areStringsEqualIgnoringCase(action?.name, actionName)) {
+      return action;
+    }
+  });
+  return foundBookShopAction;
+}
+
 module.exports = {
   searchForUserWithToken,
   searchForUserWithEmail,
@@ -536,4 +546,5 @@ module.exports = {
   searchForBookShopAccountWithUserId,
   searchForBookShopOrdersForUser,
   searchForBookShopOrdersWithStatusForUser,
+  searchForBookShopActions,
 };

@@ -1,5 +1,33 @@
 const urlBookShopRoles = "/api/book-shop-roles";
 
+const sections = [
+  {
+    name: "wishlisted",
+    header: "wishlisted",
+    fieldName: "wishlist_books_ids",
+  },
+  {
+    name: "purchased",
+    header: "purchased in 🦎GAD BookShop",
+    fieldName: "purchased_book_ids",
+  },
+  {
+    name: "favorite",
+    header: "favorite",
+    fieldName: "favorite_books_ids",
+  },
+  {
+    name: "owned",
+    header: "owned",
+    fieldName: "owned_books_ids",
+  },
+  {
+    name: "read",
+    header: "read",
+    fieldName: "read_books_ids",
+  },
+];
+
 async function issuePostBookShopAccountRequest() {
   let urlBook = `${urlBookShopAccount}`;
   const data = fetch(urlBook, {
@@ -131,25 +159,19 @@ function displayAccountInfo(accountData, userData) {
   accountInfo.appendChild(profileCard);
 }
 
-function displayBooks(booksData, type = "owned") {
+function displayBooks(booksData, type = "owned", sectionHeader = "owned") {
   const id = `${type}-books-container`;
   let booksContainer = document.getElementById(id);
-
+  console.log(id);
   if (booksContainer) {
     booksContainer.innerHTML = "";
-  } else {
-    booksContainer = document.createElement("div");
-    booksContainer.id = id;
-
-    const allBooksContainer = document.getElementById("all-books-container");
-    allBooksContainer.appendChild(booksContainer);
   }
 
   const onlyBooksContainer = document.createElement("div");
   onlyBooksContainer.classList.add(`books-container`);
 
   const booksHeader = document.createElement("h4");
-  const typeCapital = type.charAt(0).toUpperCase() + type.slice(1);
+  const typeCapital = sectionHeader.charAt(0).toUpperCase() + sectionHeader.slice(1);
 
   booksHeader.textContent = `${typeCapital} Books (${booksData.length})`;
   booksHeader.classList.add("books-header");
@@ -368,7 +390,9 @@ async function addBooksToolPanels() {
     markAsRead: () => {
       refreshSection("read");
     },
-    addToCart: undefined,
+    addToCart: () => {
+      // TODO: add to cart
+    },
     addToWishlist: () => {
       refreshSection("purchased");
     },
@@ -381,56 +405,31 @@ async function addBooksToolPanels() {
   return issueGetBookShopMyBooksRequest(bookIds).then((response) => {
     if (response.status === 200) {
       return response.json().then((data) => {
-        markButtonsAsActive(data);
+        return markButtonsAsActive(data);
       });
     }
+    return [];
   });
 }
 
-function displayBookSection(response, type) {
+async function displayBookSection(response, type, sectionHeader) {
   if (response.status === 200) {
-    response.json().then((booksData) => {
-      displayBooks(booksData, type);
+    return response.json().then((booksData) => {
+      displayBooks(booksData, type, sectionHeader);
 
       const authorIds = getAuthorsMarkedAsRaw();
       const genresIds = getGenresMarkedAsRaw();
 
       getBookAuthorsAndGenres(authorIds, genresIds);
-      addBooksToolPanels();
+      return addBooksToolPanels();
     });
+  } else {
+    return async () => {};
   }
 }
 
 function refreshSection(sectionName) {
-  const sections = [
-    {
-      name: "owned",
-      display: "owned",
-      fieldName: "owned_books_ids",
-    },
-    {
-      name: "purchased",
-      display: "purchased in 🦎GAD BookShop",
-      fieldName: "purchased_book_ids",
-    },
-    {
-      name: "favorite",
-      display: "favorite",
-      fieldName: "favorite_books_ids",
-    },
-    {
-      name: "read",
-      display: "read",
-      fieldName: "read_books_ids",
-    },
-    {
-      name: "wishlisted",
-      display: "wishlisted",
-      fieldName: "wishlist_books_ids",
-    },
-  ];
-
-  issueGetBookShopAccountRequest().then((response) => {
+  return issueGetBookShopAccountRequest().then((response) => {
     if (response.status === 200) {
       response.json().then((accountData) => {
         const section = sections.find((section) => section.name === sectionName);
@@ -442,11 +441,21 @@ function refreshSection(sectionName) {
         const bookIds = accountData[section.fieldName];
 
         issueGetBooksRequest(bookIds).then((response) => {
-          displayBookSection(response, section.display);
+          displayBookSection(response, section.name, section.header).then(() => {
+            getBookShopItemsInStockAndPrice(bookIds);
+          });
         });
       });
     }
   });
+}
+
+function createBookSections(sectionId) {
+  const allBooksContainer = document.getElementById("all-books-container");
+
+  const booksContainer = document.createElement("div");
+  booksContainer.id = `${sectionId}-books-container`;
+  allBooksContainer.appendChild(booksContainer);
 }
 
 checkIfAuthenticated(
@@ -461,36 +470,44 @@ checkIfAuthenticated(
                 displayAccountInfo(accountData, userData);
                 formatRoles();
 
-                // get books
+                sections.forEach((section) => {
+                  createBookSections(section.name);
+                });
+
                 const ownedBooksIds = accountData.owned_books_ids;
-                issueGetBooksRequest(ownedBooksIds)
-                  .then((response) => {
-                    displayBookSection(response, "owned");
-                  })
-                  .then(() => {
-                    const purchasedBookIds = accountData.purchased_book_ids;
-                    issueGetBooksRequest(purchasedBookIds).then((response) => {
-                      displayBookSection(response, "purchased in 🦎GAD BookShop");
-                    });
-                  })
-                  .then(() => {
-                    const favoriteBookIds = accountData.favorite_books_ids;
-                    issueGetBooksRequest(favoriteBookIds).then((response) => {
-                      displayBookSection(response, "favorite");
-                    });
-                  })
-                  .then(() => {
-                    const readBooksIds = accountData.read_books_ids;
-                    issueGetBooksRequest(readBooksIds).then((response) => {
-                      displayBookSection(response, "read");
-                    });
-                  })
-                  .then(() => {
-                    const wishlistedBooksIds = accountData.wishlist_books_ids;
-                    issueGetBooksRequest(wishlistedBooksIds).then((response) => {
-                      displayBookSection(response, "wishlisted");
-                    });
-                  });
+                const favoriteBookIds = accountData.favorite_books_ids;
+                const purchasedBookIds = accountData.purchased_book_ids;
+                const readBooksIds = accountData.read_books_ids;
+                const wishlistedBooksIds = accountData.wishlist_books_ids;
+
+                Promise.all([
+                  issueGetBooksRequest(wishlistedBooksIds).then((response) => {
+                    return displayBookSection(response, "wishlisted", "wishlisted");
+                  }),
+                  issueGetBooksRequest(ownedBooksIds).then((response) => {
+                    return displayBookSection(response, "owned", "owned");
+                  }),
+                  issueGetBooksRequest(purchasedBookIds).then((response) => {
+                    return displayBookSection(response, "purchased", "purchased in 🦎GAD BookShop");
+                  }),
+                  issueGetBooksRequest(favoriteBookIds).then((response) => {
+                    return displayBookSection(response, "favorite", "favorite");
+                  }),
+                  issueGetBooksRequest(readBooksIds).then((response) => {
+                    return displayBookSection(response, "read", "read");
+                  }),
+                ]).then(() => {
+                  const uniqueBookIds = [
+                    ...new Set([
+                      ...ownedBooksIds,
+                      ...favoriteBookIds,
+                      ...purchasedBookIds,
+                      ...readBooksIds,
+                      ...wishlistedBooksIds,
+                    ]),
+                  ];
+                  return getBookShopItemsInStockAndPrice(uniqueBookIds);
+                });
               });
             } else if (response.status === 404) {
               // no account - create one

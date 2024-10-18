@@ -13,6 +13,65 @@ const urlBookShopItems = "/api/book-shop-items";
 const urlBookShopOrders = "/api/book-shop-orders";
 const urlBookShopOrderStatuses = "/api/book-shop-order-statuses";
 
+const showSimpleAlert = (message, isError = false) => {
+  displaySimpleAlert(message, isError);
+};
+
+async function issuePostAuthorizeRequest() {
+  const data = fetch(urlBookShopAuthorize, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+  });
+  return data;
+}
+
+async function checkIfAuthorizedToBookShop() {
+  return issuePostAuthorizeRequest().then((response) => {
+    if (response.status === 200) {
+      return response.json().then((userData) => {
+        return userData;
+      });
+    } else {
+      return undefined;
+    }
+  });
+}
+
+async function checkIfUserCanManageOtherUsers() {
+  return issuePostAuthorizeRequest().then((response) => {
+    if (response.status === 200) {
+      return response.json().then((userData) => {
+        return userData;
+      });
+    } else {
+      return undefined;
+    }
+  });
+}
+
+async function issueCancelOrderRequest(orderId) {
+  let urlBook = `${urlBookShopOrders}/${orderId}`;
+
+  const body = {
+    status_id: 20,
+  };
+
+  const data = fetch(urlBook, {
+    method: "PATCH",
+    body: JSON.stringify(body),
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+  });
+  return data;
+}
+
 async function issueGetUserRequest() {
   const id = getId();
   let urlBook = `${urlUser}/${id}`;
@@ -179,30 +238,6 @@ async function issueGetBookGenresRequest() {
   return data;
 }
 
-async function issuePostAuthorizeRequest() {
-  const data = fetch(urlBookShopAuthorize, {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      Authorization: getBearerToken(),
-    },
-  });
-  return data;
-}
-
-async function checkIfAuthorizedToBookShop() {
-  return issuePostAuthorizeRequest().then((response) => {
-    if (response.status === 200) {
-      return response.json().then((userData) => {
-        return userData;
-      });
-    } else {
-      return undefined;
-    }
-  });
-}
-
 function toggleBookAsOwned(bookId) {
   let urlBook = `${urlBooksOwned}/${bookId}`;
   const data = fetch(urlBook, {
@@ -324,6 +359,25 @@ function createBookToolsPanel(
   addToCartButton.setAttribute("title", "Add to cart");
   addToCartButton.innerHTML = `<i class="fa-solid fa-cart-arrow-down"></i>`;
   addToCartButton.onclick = () => {
+    const parent = addToCartButton.parentElement;
+    const inStock = parent.querySelector(".in-stock");
+    console.log(inStock);
+    if (inStock === null) {
+      return;
+    }
+
+    const inStockValue = inStock.textContent;
+    if (inStockValue === "0") {
+      const bookTitleElement = document.querySelector(`.book-title-${bookId}`);
+      if (bookTitleElement !== null) {
+        const bookTitle = bookTitleElement.textContent;
+        showSimpleAlert(`Book <i>"${bookTitle}"</i> is out of stock`, true);
+      } else {
+        showSimpleAlert("Book is out of stock", true);
+      }
+      return;
+    }
+
     // addToCart(bookId);
   };
 
@@ -377,7 +431,8 @@ function createBookToolsPanel(
   topToolsPanel.appendChild(markAsFavButton);
 
   const cartToolsPanel = document.createElement("div");
-  cartToolsPanel.className = "tools-panel";
+  cartToolsPanel.classList.add("tools-panel");
+  cartToolsPanel.classList.add("book-tools-shopping");
 
   // add number of items and their price as 2 elements with uniqe ids
   const itemInfo = document.createElement("span");
@@ -386,9 +441,9 @@ function createBookToolsPanel(
   const cartItemsContainer = document.createElement("span");
   cartItemsContainer.className = "cart-info-container";
   const cartItems = document.createElement("span");
-  cartItems.className = "cart-items";
+  cartItems.className = "in-stock";
   cartItems.textContent = "-";
-  cartItems.setAttribute("id", `cart-items-${bookId}`);
+  cartItems.setAttribute("id", `in-stock-${bookId}`);
   cartItems.setAttribute("bookId", bookId);
   cartItems.setAttribute("raw", "true");
   const cartItemsDescription = document.createElement("span");
@@ -429,20 +484,28 @@ function formatPrice(price) {
 }
 
 async function getBookShopItemsInStockAndPrice(booksIds) {
-  issueGetBookShopItemsRequest(booksIds).then((response) => {
+  return issueGetBookShopItemsRequest(booksIds).then((response) => {
     if (response.status === 200) {
-      response.json().then((data) => {
+      return response.json().then((data) => {
         booksIds.forEach((bookId) => {
           const book = data.find((book) => `${book.book_id}` === `${bookId}`);
-          const cartItems = document.querySelector(`#cart-items-${bookId}`);
-          const cartPrice = document.querySelector(`#cart-price-${bookId}`);
-          if (book !== undefined) {
-            cartItems.textContent = book.quantity;
-            cartPrice.textContent = formatPrice(book.price);
-          } else {
-            cartItems.textContent = "0";
-            cartPrice.textContent = "-.--";
-          }
+          const cartItems = document.querySelectorAll(`#in-stock-${bookId}`);
+          const cartPrices = document.querySelectorAll(`#cart-price-${bookId}`);
+
+          cartItems.forEach((cartItem) => {
+            if (book !== undefined) {
+              cartItem.textContent = book.quantity;
+            } else {
+              cartItem.textContent = "0";
+            }
+          });
+          cartPrices.forEach((cartPrice) => {
+            if (book !== undefined) {
+              cartPrice.textContent = formatPrice(book.price);
+            } else {
+              cartPrice.textContent = "-.--";
+            }
+          });
         });
       });
     }
@@ -615,7 +678,7 @@ function getPricesMarkedAsRaw() {
 }
 
 function getInStockMarkedAsRaw() {
-  const instock = document.querySelectorAll(".cart-items");
+  const instock = document.querySelectorAll(".in-stock");
   const bookIds = [];
   instock.forEach((item) => {
     if (item.getAttribute("raw") === "true") {
@@ -675,8 +738,11 @@ function appendBooksData(data, booksContainer, skipDescription = false) {
     }
 
     bookCard.innerHTML = `
-          <div style="display: flex; flex-direction: column; align-items: center;">
-              <div align="center" style="width: 100%;">
+          <div style="display: flex; flex-direction: column; align-items: center; height: 100%;">
+              <div align="center" style="width: 100%; height: 100%;">
+              <table class="book-table">
+                <tr>
+                <td>
                   <div align="center" class="book-top-details">
                       <table class="book-table-details">
                           <tr>
@@ -688,9 +754,9 @@ function appendBooksData(data, booksContainer, skipDescription = false) {
                                   </div>
                               </td>
                               <td>
-                                  <h4 class="book-title book-clickable-component" onclick="showBookDetails(${
+                                  <h4 class="book-title book-clickable-component book-title-${
                                     book.id
-                                  })">${book.title}</h4>
+                                  }" onclick="showBookDetails(${book.id})">${book.title}</h4>
                                   <div class="book-details">
                                       <span><strong>Author:</strong> ${
                                         formatAuthors(book.author_ids).innerHTML
@@ -704,11 +770,22 @@ function appendBooksData(data, booksContainer, skipDescription = false) {
                           </tr>
                       </table>
                   </div>
+                  </td>
+                  </tr>
+                <tr>
+                <td>
                   <div class="book-tools" id="book-tools-${book.id}" data-book-id="${book.id}">
                   </div>
+                  </td>
+                  </tr>
+                <tr>
+                <td>
                   <div class="book-description">
                       ${shortenedDescription}
                   </div>
+                  </td>
+                  </tr>
+                  </table>
               </div>
           </div>
       `;

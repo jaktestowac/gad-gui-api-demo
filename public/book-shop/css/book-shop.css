@@ -187,6 +187,10 @@ h4.books-header {
   background-color: rgb(209, 209, 209);
 }
 
+.book-shop-button-primary.thin {
+  margin: 0px;
+}
+
 .profile-image-and-details {
   display: flex;
   flex-direction: row;
@@ -285,3 +289,37 @@ h4.books-header {
   width: max-content;
   background-color: rgb(250, 250, 250);
 }
+
+.book-table-details td {
+  text-wrap: auto;
+  white-space: unset;
+}
+
+.book-table td {
+  text-wrap: auto;
+  white-space: unset;
+}
+
+.order-item {
+  font-size: 12px;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid rgb(196, 196, 196);
+  border-radius: 5px;
+  margin: 4px;
+  padding: 4px;
+  background-color: rgb(250, 250, 250);
+}
+
+.order-status {
+  font-size: 12px;
+  font-weight: bold;
+  padding: 4px;
+  margin: 4px;
+}
+
+.book-shop-side-panel-icons.active {
+  color: rgb(210, 210, 210);
+}
+
+

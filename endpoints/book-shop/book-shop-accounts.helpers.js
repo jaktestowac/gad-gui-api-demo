@@ -3,10 +3,17 @@ const {
   searchForUserWithOnlyToken,
   searchForBookShopAccount,
   searchForBookShopAccountWithUserId,
+  searchForBookShopActions,
 } = require("../../helpers/db-operation.helpers");
 const { formatErrorResponse, getIdFromUrl, formatInvalidTokenErrorResponse } = require("../../helpers/helpers");
 const { logDebug } = require("../../helpers/logger-api");
-const { HTTP_NOT_FOUND, HTTP_UNAUTHORIZED, HTTP_CONFLICT, HTTP_OK } = require("../../helpers/response.helpers");
+const {
+  HTTP_NOT_FOUND,
+  HTTP_UNAUTHORIZED,
+  HTTP_CONFLICT,
+  HTTP_OK,
+  HTTP_FORBIDDEN,
+} = require("../../helpers/response.helpers");
 const { verifyAccessToken } = require("../../helpers/validation.helpers");
 const { areIdsEqual } = require("../../helpers/compare.helpers");
 const { isBugEnabled } = require("../../config/config-manager");
@@ -95,7 +102,7 @@ function handleBookShopAccount(req, res, isAdmin) {
     const verifyTokenResult = verifyAccessToken(req, res, "GET book-shop-accounts", req.url);
     const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
 
-    logDebug("handleBookShopAccount: Found User", { id: foundUser?.id });
+    logDebug("handleBookShopAuthorize: Found User", { id: foundUser?.id });
 
     if (isUndefined(foundUser)) {
       res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
@@ -103,6 +110,8 @@ function handleBookShopAccount(req, res, isAdmin) {
     }
 
     const booksShopAccount = searchForBookShopAccountWithUserId(foundUser.id);
+
+    logDebug("handleBookShopAuthorize: Found ShopAccount", { id: booksShopAccount?.id });
 
     if (booksShopAccount === undefined) {
       res.status(HTTP_NOT_FOUND).send(formatErrorResponse("User does not have a book shop account"));
@@ -115,6 +124,43 @@ function handleBookShopAccount(req, res, isAdmin) {
       id: booksShopAccount.id,
     });
 
+    return true;
+  } else if (req.method === "POST" && req.url.endsWith("/api/book-shop-accounts/check-action")) {
+    const verifyTokenResult = verifyAccessToken(req, res, "GET book-shop-accounts", req.url);
+
+    const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
+    logDebug("handleBookShopAccount: check-action: Found User", { id: foundUser?.id });
+
+    if (isUndefined(foundUser)) {
+      res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+      return false;
+    }
+
+    const booksShopAccount = searchForBookShopAccountWithUserId(foundUser.id);
+    logDebug("handleBookShopAccount: check-action: Found ShopAccount", { id: booksShopAccount?.id });
+
+    if (booksShopAccount === undefined) {
+      res.status(HTTP_NOT_FOUND).send(formatErrorResponse("User does not have a book shop account"));
+      return false;
+    }
+
+    const foundAction = searchForBookShopActions(req.body.action);
+    logDebug("handleBookShopAccount: check-action: Found foundAction", { id: foundAction?.id });
+
+    if (foundAction === undefined) {
+      res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Action not found"));
+      return false;
+    }
+
+    const roleAllowedForAction = foundAction.role_ids.includes(booksShopAccount.role_id);
+    logDebug("handleBookShopAccount: check-action: Found foundAction", { id: foundAction?.id });
+
+    if (roleAllowedForAction === undefined || roleAllowedForAction === false) {
+      res.status(HTTP_FORBIDDEN).send(formatErrorResponse("Action not allowed"));
+      return false;
+    }
+
+    res.status(HTTP_OK).send({});
     return true;
   } else if (req.method === "POST" && req.url.endsWith("/api/book-shop-accounts")) {
     const verifyTokenResult = verifyAccessToken(req, res, "GET book-shop-accounts/{id}", req.url);

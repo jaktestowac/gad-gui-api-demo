@@ -841,7 +841,7 @@ function calculateLuminance(rgb) {
 function displaySimpleAlert(text, isError = false) {
   const alertDiv = document.createElement("div");
   alertDiv.classList.add("simple-alert-on-left");
-  alertDiv.textContent = text;
+  alertDiv.innerHTML = text;
   alertDiv.style.width = "250px";
   alertDiv.setAttribute("id", "simple-alert");
   alertDiv.setAttribute("data-testid", "dti-simple-alert");
@@ -857,6 +857,6 @@ function displaySimpleAlert(text, isError = false) {
   document.querySelector("#alerts-placeholder").appendChild(alertDiv);
 
   setTimeout(function () {
-    alertDiv.style.display = "none";
+    alertDiv.remove();
   }, 3000);
 }

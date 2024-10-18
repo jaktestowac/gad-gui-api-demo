@@ -25,8 +25,14 @@
 
     <br />
     <br />
+    <div style="position: absolute; right: 270px;">
+        <div id="alerts-placeholder" style="display: flex; flex-direction: column; position: absolute;"></div>
+    </div>
     <br />
     <br />
+    <div style="position: absolute; right: 270px;">
+        <div id="book-details-placeholder" style="display: flex; justify-content: center; position: absolute;"></div>
+    </div>
     <div id="side-panel" class="sidepanel">
     </div>
     <div align="center">
@@ -40,6 +46,8 @@
     </div>
     <div id="orders-container" align="center">
     </div>
+    <div id="book-shop-modal" align="center">
+    </div>
 
 
     <!-- <button class="openbtn" onclick="openNav()">&#9776; Toggle Sidepanel</button> -->
@@ -51,5 +59,8 @@
 <script type="text/javascript" src="./js/book-common.js"></script>
 <script type="text/javascript" src="./js/book-shop-side-panel.js"></script>
 <script type="text/javascript" src="./js/orders.js"></script>
+<script type="text/javascript">
+    setIconActive('book-shop-shopping')
+</script>
 
 </html>

@@ -69,6 +69,8 @@ function handleBookShopOrders(req, res, isAdmin) {
       user_id: foundUser.id,
       status_id: 1,
       book_ids: [],
+      books_price: {},
+      additional_price: {},
       total_price: 0,
       created_at: getCurrentDateTimeISO(),
     };

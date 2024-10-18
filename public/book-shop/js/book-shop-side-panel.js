@@ -85,4 +85,24 @@ const allLinks = [
   },
 ];
 
+function setIconActive(iconId) {
+  const icons = document.querySelectorAll(".book-shop-side-panel-icons");
+  icons.forEach((icon) => {
+    icon.classList.remove("active");
+  });
+
+  const icon = document.getElementById(iconId);
+
+  for (let i = 0; i < 5; i++) {
+    if (icon && icon.id === iconId) {
+      icon.classList.add("active");
+      break;
+    } else {
+      setTimeout(() => {
+        setIconActive(iconId);
+      }, 250);
+    }
+  }
+}
+
 populateLibrarySidePanel(allLinks);
