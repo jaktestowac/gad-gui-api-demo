@@ -123,6 +123,20 @@
   font-size: 20px;
 }
 
+.book-clickable-component.clickable-btn {
+  font-size: 16px;
+  padding: 4px;
+  margin: 4px;
+}
+
+.book-clickable-component.clickable-btn-wide {
+  font-size: 14px;
+  padding-left: 4px;
+  padding-right: 4px;
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
 .book-clickable-component {
   cursor: pointer;
 }
@@ -173,6 +187,7 @@ h4.books-header {
   border-radius: 5px;
   background-color: rgb(243, 243, 243);
   cursor: pointer;
+  box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.7);
 }
 
 .book-shop-button-primary.red {
@@ -185,10 +200,16 @@ h4.books-header {
 
 .book-shop-button-primary:hover {
   background-color: rgb(209, 209, 209);
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.2);
+}
+
+.book-shop-button-primary.disabled {
+  background-color: rgb(196, 196, 196);
+  cursor: default;
 }
 
 .book-shop-button-primary.thin {
-  margin: 0px;
+  margin: 2px;
 }
 
 .profile-image-and-details {
@@ -322,4 +343,148 @@ h4.books-header {
   color: rgb(210, 210, 210);
 }
 
+.order-total {
+  font-size: 12px;
+  font-weight: bold;
+}
 
+.additional-costs {
+  font-size: 12px;
+  border: 1px solid rgb(196, 196, 196);
+  border-radius: 5px;
+  width: fit-content;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.orders-controls {
+  width: fit-content;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 10px;
+  display: inline-block;
+}
+
+.orders-legend {
+  font-size: 12px;
+}
+
+.account-edit-columns {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.account-edit-popup-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.account-edit-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.account-edit-column.right {
+  align-items: start;
+}
+
+.account-edit-column.left {
+  align-items: end;
+}
+
+.account-edit-label {
+  font-size: 12px;
+  padding: 4px;
+  margin: 2px;
+}
+
+.account-edit-input {
+  font-size: 12px;
+  padding: 4px;
+  margin: 2px;
+}
+
+.account-edit-input.wide {
+  font-size: 12px;
+  padding: 4px;
+  margin: 2px;
+  width: 200px;
+}
+
+.account-edit-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.account-edit-form {
+  padding-top: 20px;
+}
+
+.order-item-price-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.order-label-base {
+  font-size: 12px;
+  padding: 2px;
+  margin: 4px;
+  border-radius: 5px;
+  border-color: #042e00;
+}
+
+.order-label-base.label-new {
+  color: #000000;
+  background-color: #6aff5d;
+}
+
+.order-label-base.label-new::before {
+  content: "🌱";
+  margin-right: 5px;
+}
+
+.order-label-base.label-cancelled {
+  color: #ffffff;
+  background-color: #ababab;
+}
+
+.order-label-base.label-cancelled::before {
+  content: "🧺";
+  margin-right: 5px;
+}
+
+.order-label-base.label-sent {
+  color: #3b3b3b;
+  background-color: #ffd96fd3;
+}
+
+.order-label-base.label-sent::before {
+  content: "📨";
+  margin-right: 5px;
+}
+
+.order-label-base.label-completed {
+  color: #ebebeb;
+  background-color: #33844f;
+}
+
+.order-label-base.label-completed::before {
+  content: "✅";
+  margin-right: 5px;
+}
+
+.account-edit-description {
+  font-size: 12px;
+  padding: 4px;
+  margin: 2px;
+}

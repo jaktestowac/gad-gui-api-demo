@@ -12,10 +12,33 @@ const urlBookShopAuthorize = "/api/book-shop-authorize";
 const urlBookShopItems = "/api/book-shop-items";
 const urlBookShopOrders = "/api/book-shop-orders";
 const urlBookShopOrderStatuses = "/api/book-shop-order-statuses";
+const urlAddItemToOrder = "/api/book-shop-orders/items";
 
-const showSimpleAlert = (message, isError = false) => {
-  displaySimpleAlert(message, isError);
+const showSimpleAlert = (message, type = 0, timeout = 3000) => {
+  displaySimpleAlert(message, type, timeout);
 };
+
+async function issueUpdateAccountRequest(profileId, country, city, street, postalCode) {
+  let urlBook = `${urlBookShopAccount}/${profileId}`;
+
+  const body = {
+    country: country,
+    city: city,
+    street: street,
+    postal_code: postalCode,
+  };
+
+  const data = fetch(urlBook, {
+    method: "PATCH",
+    body: JSON.stringify(body),
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+  });
+  return data;
+}
 
 async function issuePostAuthorizeRequest() {
   const data = fetch(urlBookShopAuthorize, {
@@ -72,10 +95,55 @@ async function issueCancelOrderRequest(orderId) {
   return data;
 }
 
+async function issueApproveAndSendOrderRequest(orderId) {
+  let urlBook = `${urlBookShopOrders}/${orderId}`;
+
+  const body = {
+    status_id: 5,
+  };
+
+  const data = fetch(urlBook, {
+    method: "PATCH",
+    body: JSON.stringify(body),
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+  });
+  return data;
+}
+
 async function issueGetUserRequest() {
   const id = getId();
   let urlBook = `${urlUser}/${id}`;
   const data = fetch(urlBook, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+  });
+  return data;
+}
+
+async function issueCreateUserOrderRequest() {
+  let urlOrders = `${urlBookShopOrders}`;
+  const data = fetch(urlOrders, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+  });
+  return data;
+}
+
+async function issueGetUserOrderRequest(orderId) {
+  let urlOrders = `${urlBookShopOrders}/${orderId}`;
+  const data = fetch(urlOrders, {
     method: "GET",
     headers: {
       Accept: "application/json",
@@ -192,6 +260,40 @@ async function issueGetBookGenreRequest(genreIds) {
 async function issueGetBookShopOrderStatusesRequest() {
   const data = fetch(urlBookShopOrderStatuses, {
     method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+  });
+  return data;
+}
+
+async function issueAddItemToOrderRequest(bookId) {
+  const body = {
+    book_id: bookId,
+  };
+
+  const data = fetch(urlAddItemToOrder, {
+    method: "POST",
+    body: JSON.stringify(body),
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+  });
+  return data;
+}
+
+async function issueRemoveItemFromOrderRequest(bookId) {
+  const body = {
+    book_id: bookId,
+  };
+
+  const data = fetch(urlAddItemToOrder, {
+    method: "DELETE",
+    body: JSON.stringify(body),
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
@@ -332,6 +434,7 @@ function createBookToolsPanel(
       if (callbacks.markAsOwned !== undefined) {
         callbacks.markAsOwned();
       }
+      showSimpleAlert("Book marked as owned!", 0, 3000);
     });
   };
 
@@ -349,6 +452,7 @@ function createBookToolsPanel(
       if (callbacks.markAsRead !== undefined) {
         callbacks.markAsRead();
       }
+      showSimpleAlert("Book marked as read!", 0, 3000);
     });
   };
 
@@ -361,7 +465,6 @@ function createBookToolsPanel(
   addToCartButton.onclick = () => {
     const parent = addToCartButton.parentElement;
     const inStock = parent.querySelector(".in-stock");
-    console.log(inStock);
     if (inStock === null) {
       return;
     }
@@ -371,14 +474,30 @@ function createBookToolsPanel(
       const bookTitleElement = document.querySelector(`.book-title-${bookId}`);
       if (bookTitleElement !== null) {
         const bookTitle = bookTitleElement.textContent;
-        showSimpleAlert(`Book <i>"${bookTitle}"</i> is out of stock`, true);
+        showSimpleAlert(`Book <i>"${bookTitle}"</i> is out of stock`, 2);
       } else {
-        showSimpleAlert("Book is out of stock", true);
+        showSimpleAlert("Book is out of stock", 2);
       }
       return;
     }
 
-    // addToCart(bookId);
+    issueAddItemToOrderRequest(bookId).then((response) => {
+      if (response.status === 200) {
+        showSimpleAlert("Book added to order!<br><a href='/book-shop/orders.html'>Go to orders</a>");
+        if (callbacks.addToCart !== undefined) {
+          callbacks.addToCart();
+        }
+      } else if (response.status === 201) {
+        showSimpleAlert("Book added to new order!<br><a href='/book-shop/orders.html'>Go to orders</a>");
+        if (callbacks.addToCart !== undefined) {
+          callbacks.addToCart();
+        }
+      } else {
+        response.json().then((data) => {
+          showSimpleAlert(`Error while adding book to cart. ${data.error?.message}`, 2);
+        });
+      }
+    });
   };
 
   const wishlistButton = document.createElement("span");
@@ -395,6 +514,7 @@ function createBookToolsPanel(
       if (callbacks.addToWishlist !== undefined) {
         callbacks.addToWishlist();
       }
+      showSimpleAlert("Book added to wishlist!", 0, 3000);
     });
   };
 
@@ -412,6 +532,7 @@ function createBookToolsPanel(
       if (callbacks.markAsFav !== undefined) {
         callbacks.markAsFav();
       }
+      showSimpleAlert("Book added to favorites!", 0, 3000);
     });
   };
 
@@ -434,7 +555,6 @@ function createBookToolsPanel(
   cartToolsPanel.classList.add("tools-panel");
   cartToolsPanel.classList.add("book-tools-shopping");
 
-  // add number of items and their price as 2 elements with uniqe ids
   const itemInfo = document.createElement("span");
   itemInfo.className = "item-shop-info";
 
@@ -727,14 +847,16 @@ function appendBooksData(data, booksContainer, skipDescription = false) {
     if (book.description) {
       if (book.description.length > 250) {
         shortenedDescription = book.description.slice(0, 250) + "...";
-        shortenedDescription += `<span class="book-clickable-component" title="Preview book" onclick="showBookDetails(${book.id})"><i class="fa-regular fa-eye"></i></span>`;
+        shortenedDescription += ` <span class="book-clickable-component" title="Preview book" onclick="showBookDetails(${book.id})"><i class="fa-regular fa-eye"></i></span>`;
       } else {
         shortenedDescription = book.description;
       }
     }
 
+    let displayType = "";
     if (skipDescription) {
       shortenedDescription = "";
+      displayType = 'style="display: none;"';
     }
 
     bookCard.innerHTML = `
@@ -773,12 +895,12 @@ function appendBooksData(data, booksContainer, skipDescription = false) {
                   </td>
                   </tr>
                 <tr>
-                <td>
-                  <div class="book-tools" id="book-tools-${book.id}" data-book-id="${book.id}">
-                  </div>
-                  </td>
-                  </tr>
-                <tr>
+                  <td>
+                    <div class="book-tools" id="book-tools-${book.id}" data-book-id="${book.id}">
+                    </div>
+                    </td>
+                </tr>
+                <tr ${displayType}>
                 <td>
                   <div class="book-description">
                       ${shortenedDescription}
@@ -791,6 +913,377 @@ function appendBooksData(data, booksContainer, skipDescription = false) {
       `;
     booksContainer.appendChild(bookCard);
   });
+}
+
+function createAccountPaymentCardEditPopup(userData, callbackOnSave = undefined) {
+  const placeholder = document.getElementById("book-details-placeholder");
+  placeholder.innerHTML = "";
+
+  const popup = document.createElement("div");
+  popup.className = "book-popup";
+
+  const popupContent = document.createElement("div");
+  popupContent.className = "book-popup-content";
+
+  const popupBody = document.createElement("div");
+  popupBody.className = "popup-body";
+
+  const bookPopupControls = document.createElement("div");
+  bookPopupControls.className = "book-popup-controls";
+
+  const closeButton = document.createElement("span");
+
+  closeButton.className = "book-popup-close-button book-clickable-component";
+  closeButton.innerHTML = `<i class="fa-solid fa-xmark book-button"></i>`;
+  closeButton.addEventListener("click", () => {
+    document.getElementById("book-details-placeholder").innerHTML = "";
+  });
+
+  bookPopupControls.appendChild(closeButton);
+
+  const form = document.createElement("div");
+  form.className = "account-edit-form";
+
+  const description = document.createElement("div");
+  description.className = "account-edit-description";
+  description.innerHTML = `Edit your payment card details.<br>Please provide your card number, expiration date, and CVV.<br>
+   <ul>
+   <li>Card number must be 20 characters long.</li>
+   <li>Expiration date must be in format YYYY-MM-DD.</li>
+   <li>CVV must be 5 characters long.</li>
+   <li>All fields are required.</li></ul>
+   New card will overwrite your old card.<br>
+   <strong>Remember values provided!</strong><br>
+   You will need them for account top up.
+   `;
+
+  const cardNumberLabel = document.createElement("label");
+  cardNumberLabel.textContent = "Card Number";
+  cardNumberLabel.className = "account-edit-label";
+
+  const cardNumberInput = document.createElement("input");
+  cardNumberInput.type = "password";
+  cardNumberInput.placeholder = "Card Number";
+  cardNumberInput.value = userData.card_number;
+  cardNumberInput.className = "account-edit-input";
+  cardNumberInput.id = "card-number-input";
+  cardNumberInput.classList.add("wide");
+  cardNumberInput.maxLength = 20;
+  cardNumberInput.value = "";
+  cardNumberInput.addEventListener("blur", () => {
+    const cardNumberInput = document.getElementById("card-number-input");
+    const expirationDateInput = document.getElementById("expiration-date-input");
+    const cvvInput = document.getElementById("cvv-input");
+    checkCardValidity(cardNumberInput.value, expirationDateInput.value, cvvInput.value);
+  });
+
+  const expirationDateLabel = document.createElement("label");
+  expirationDateLabel.textContent = "Expiration Date";
+  expirationDateLabel.className = "account-edit-label";
+
+  const expirationDateInput = document.createElement("input");
+  expirationDateInput.type = "text";
+  expirationDateInput.placeholder = "YYYY-MM-DD";
+  expirationDateInput.value = userData.expiration_date;
+  expirationDateInput.className = "account-edit-input";
+  expirationDateInput.maxLength = 10;
+  expirationDateInput.id = "expiration-date-input";
+  expirationDateInput.classList.add("wide");
+  expirationDateInput.value = "";
+  expirationDateInput.addEventListener("blur", () => {
+    const cardNumberInput = document.getElementById("card-number-input");
+    const expirationDateInput = document.getElementById("expiration-date-input");
+    const cvvInput = document.getElementById("cvv-input");
+    checkCardValidity(cardNumberInput.value, expirationDateInput.value, cvvInput.value);
+  });
+
+  const cvvLabel = document.createElement("label");
+  cvvLabel.textContent = "CVV";
+  cvvLabel.className = "account-edit-label";
+
+  const cvvInput = document.createElement("input");
+  cvvInput.type = "password";
+  cvvInput.placeholder = "CVV";
+  cvvInput.value = userData.cvv;
+  cvvInput.maxLength = 5;
+  cvvInput.className = "account-edit-input";
+  cvvInput.classList.add("wide");
+  cvvInput.id = "cvv-input";
+  cvvInput.value = "";
+  cvvInput.addEventListener("blur", () => {
+    const cardNumberInput = document.getElementById("card-number-input");
+    const expirationDateInput = document.getElementById("expiration-date-input");
+    const cvvInput = document.getElementById("cvv-input");
+    checkCardValidity(cardNumberInput.value, expirationDateInput.value, cvvInput.value);
+  });
+
+  const saveButton = document.createElement("button");
+  saveButton.textContent = "Save";
+  saveButton.className = "book-shop-button-primary";
+  saveButton.id = "save-card-button";
+
+  saveButton.addEventListener("click", () => {
+    // TODO:
+  });
+
+  const cancelButton = document.createElement("button");
+  cancelButton.textContent = "Cancel";
+
+  cancelButton.className = "book-shop-button-primary";
+
+  cancelButton.addEventListener("click", () => {
+    document.getElementById("book-details-placeholder").innerHTML = "";
+  });
+
+  const leftColumn = document.createElement("div");
+  leftColumn.className = "account-edit-column";
+  leftColumn.classList.add("left");
+
+  const rightColumn = document.createElement("div");
+  rightColumn.className = "account-edit-column";
+  rightColumn.classList.add("right");
+
+  leftColumn.appendChild(cardNumberLabel);
+  leftColumn.appendChild(expirationDateLabel);
+  leftColumn.appendChild(cvvLabel);
+
+  rightColumn.appendChild(cardNumberInput);
+  rightColumn.appendChild(expirationDateInput);
+  rightColumn.appendChild(cvvInput);
+
+  form.appendChild(leftColumn);
+  form.appendChild(rightColumn);
+
+  const columnsContainer = document.createElement("div");
+  columnsContainer.className = "account-edit-columns";
+
+  columnsContainer.appendChild(leftColumn);
+  columnsContainer.appendChild(rightColumn);
+
+  form.appendChild(description);
+  form.appendChild(columnsContainer);
+
+  // create container for save and cancel button
+  const buttonsContainer = document.createElement("div");
+  buttonsContainer.className = "account-edit-buttons";
+
+  buttonsContainer.appendChild(saveButton);
+  buttonsContainer.appendChild(cancelButton);
+
+  form.appendChild(buttonsContainer);
+  popupBody.appendChild(bookPopupControls);
+
+  popupBody.appendChild(form);
+  popupContent.appendChild(popupBody);
+  popup.appendChild(popupContent);
+  placeholder.appendChild(popup);
+
+  disableAddNewCardButton();
+  return popup;
+}
+
+function checkCardValidity(cardNumber, expirationDate, cvv) {
+  const actualCardNumber = cardNumber.replace(/[^0-9]/g, "");
+  const actualExpirationDate = expirationDate.replace(/[^0-9-]/g, "");
+  const dateParts = actualExpirationDate.split("-");
+
+  if (dateParts.length !== 3) {
+    disableAddNewCardButton();
+    return;
+  }
+
+  const year = parseInt(dateParts[0]);
+  const month = parseInt(dateParts[1]);
+  const day = parseInt(dateParts[2]);
+
+  if (isNaN(year) || isNaN(month) || isNaN(day)) {
+    disableAddNewCardButton();
+    return;
+  }
+
+  const currentDate = new Date();
+  const expirationDateValue = new Date(year, month - 1, day);
+
+  if (expirationDateValue < currentDate) {
+    disableAddNewCardButton();
+    return;
+  }
+
+  const actualCvv = cvv.replace(/[^0-9]/g, "");
+
+  if (actualCardNumber.length === 20 && actualExpirationDate.length === 10 && actualCvv.length === 5) {
+    enableAddNewCardButton();
+  } else {
+    disableAddNewCardButton();
+  }
+}
+
+function disableAddNewCardButton() {
+  const createCardButton = document.getElementById("save-card-button");
+  createCardButton.disabled = true;
+  createCardButton.classList.add("disabled");
+}
+
+function enableAddNewCardButton() {
+  const createCardButton = document.getElementById("save-card-button");
+  createCardButton.disabled = false;
+  createCardButton.classList.remove("disabled");
+}
+
+function createAccountEditPopup(userData, callbackOnSave = undefined) {
+  const placeholder = document.getElementById("book-details-placeholder");
+  placeholder.innerHTML = "";
+
+  const popup = document.createElement("div");
+  popup.className = "book-popup";
+
+  const popupContent = document.createElement("div");
+  popupContent.className = "book-popup-content";
+
+  const popupBody = document.createElement("div");
+  popupBody.className = "popup-body";
+
+  const bookPopupControls = document.createElement("div");
+  bookPopupControls.className = "book-popup-controls";
+
+  const closeButton = document.createElement("span");
+
+  closeButton.className = "book-popup-close-button book-clickable-component";
+  closeButton.innerHTML = `<i class="fa-solid fa-xmark book-button"></i>`;
+  closeButton.addEventListener("click", () => {
+    document.getElementById("book-details-placeholder").innerHTML = "";
+  });
+
+  bookPopupControls.appendChild(closeButton);
+
+  const form = document.createElement("div");
+  form.className = "account-edit-form";
+
+  const countryLabel = document.createElement("label");
+  countryLabel.textContent = "Country";
+  countryLabel.className = "account-edit-label";
+
+  const countryInput = document.createElement("input");
+  countryInput.type = "text";
+  countryInput.placeholder = "Country";
+  countryInput.value = userData.country;
+  countryInput.className = "account-edit-input";
+  countryInput.maxLength = 256;
+
+  const cityLabel = document.createElement("label");
+  cityLabel.textContent = "City";
+  cityLabel.className = "account-edit-label";
+
+  const cityInput = document.createElement("input");
+  cityInput.type = "text";
+  cityInput.placeholder = "City";
+  cityInput.value = userData.city;
+  cityInput.className = "account-edit-input";
+  cityInput.maxLength = 256;
+
+  const streetLabel = document.createElement("label");
+  streetLabel.textContent = "Street";
+  streetLabel.className = "account-edit-label";
+
+  const streetInput = document.createElement("input");
+  streetInput.type = "text";
+  streetInput.placeholder = "Street";
+  streetInput.value = userData.street;
+  streetInput.className = "account-edit-input";
+  streetInput.maxLength = 256;
+
+  const postalCodeLabel = document.createElement("label");
+  postalCodeLabel.textContent = "Postal Code";
+  postalCodeLabel.className = "account-edit-label";
+
+  const postalCodeInput = document.createElement("input");
+  postalCodeInput.type = "text";
+  postalCodeInput.placeholder = "Postal Code";
+  postalCodeInput.value = userData.postal_code;
+  postalCodeInput.className = "account-edit-input";
+  postalCodeInput.maxLength = 256;
+
+  const saveButton = document.createElement("button");
+  saveButton.textContent = "Save";
+  saveButton.className = "book-shop-button-primary";
+  saveButton.addEventListener("click", () => {
+    issueUpdateAccountRequest(
+      userData.id,
+      countryInput.value,
+      cityInput.value,
+      streetInput.value,
+      postalCodeInput.value
+    ).then((response) => {
+      if (response.status === 200) {
+        showSimpleAlert("Account updated successfully");
+        saveButton.disabled = true;
+
+        if (callbackOnSave !== undefined) {
+          response.json().then((data) => {
+            callbackOnSave(data);
+          });
+        }
+
+        setTimeout(() => {
+          document.getElementById("book-details-placeholder").innerHTML = "";
+        }, 2000);
+      } else {
+        showSimpleAlert("Account update failed", 2);
+      }
+    });
+  });
+
+  const cancelButton = document.createElement("button");
+  cancelButton.textContent = "Cancel";
+  cancelButton.className = "book-shop-button-primary";
+  cancelButton.addEventListener("click", () => {
+    document.getElementById("book-details-placeholder").innerHTML = "";
+  });
+
+  const leftColumn = document.createElement("div");
+  leftColumn.className = "account-edit-column";
+  leftColumn.classList.add("left");
+
+  const rightColumn = document.createElement("div");
+  rightColumn.className = "account-edit-column";
+  rightColumn.classList.add("right");
+
+  leftColumn.appendChild(countryLabel);
+  leftColumn.appendChild(cityLabel);
+  leftColumn.appendChild(postalCodeLabel);
+  leftColumn.appendChild(streetLabel);
+
+  rightColumn.appendChild(countryInput);
+  rightColumn.appendChild(cityInput);
+  rightColumn.appendChild(postalCodeInput);
+  rightColumn.appendChild(streetInput);
+
+  form.appendChild(leftColumn);
+  form.appendChild(rightColumn);
+
+  const columnsContainer = document.createElement("div");
+  columnsContainer.className = "account-edit-columns";
+
+  columnsContainer.appendChild(leftColumn);
+  columnsContainer.appendChild(rightColumn);
+
+  form.appendChild(columnsContainer);
+
+  // create container for save and cancel button
+  const buttonsContainer = document.createElement("div");
+  buttonsContainer.className = "account-edit-buttons";
+
+  buttonsContainer.appendChild(saveButton);
+  buttonsContainer.appendChild(cancelButton);
+
+  form.appendChild(buttonsContainer);
+
+  popupBody.appendChild(bookPopupControls);
+
+  popupBody.appendChild(form);
+  popupContent.appendChild(popupBody);
+  popup.appendChild(popupContent);
+  placeholder.appendChild(popup);
 }
 
 function createBookPopup(book, additionalToolsHTML = false) {

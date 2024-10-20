@@ -20,6 +20,16 @@ function replaceRelatedContactsInDb(db, targetResourceId, resource) {
   invokeOverwriteQuery(db, "contacts", query, resource, resultsCallback);
 }
 
+function changeUserFunds(db, accountId, newValue) {
+  const query = { id: accountId };
+  const callback = (item) => (item.funds = newValue);
+  const resultsCallback = (r) => {
+    logTrace("UPDATE: book-shop-accounts:", { query, newValue });
+  };
+
+  invokeQuery(db, "book-shop-accounts", query, callback, resultsCallback);
+}
+
 function updateMessageCheckTimeInDb(db, userId, resource, contactId) {
   logTrace("UPDATE: updating MessageCheckTime in db:", { userId, resource });
   const query = { user_id: userId };
@@ -64,4 +74,5 @@ module.exports = {
   replaceRelatedContactsInDb,
   updateMessageCheckTimeInDb,
   invokeGetQuery,
+  changeUserFunds,
 };

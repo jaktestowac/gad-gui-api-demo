@@ -17,6 +17,9 @@ const {
   bookShopAccountsDb,
   bookShopOrdersDb,
   bookShopActionsDb,
+  bookShopAccountPaymentCardDb,
+  bookShopItemsDb,
+  bookShopOrderStatusesDb,
 } = require("./db.helpers");
 
 // Users
@@ -462,6 +465,15 @@ function searchForBookShopAccount(profileId) {
   return foundBookShopAccount;
 }
 
+function searchForBookShopAccountPaymentCardByAccountId(accountId) {
+  const foundCard = bookShopAccountPaymentCardDb().find((card) => {
+    if (areIdsEqual(card["account_id"], accountId)) {
+      return card;
+    }
+  });
+  return foundCard;
+}
+
 function searchForBookShopAccountWithUserId(userId) {
   const foundBookShopAccount = bookShopAccountsDb().find((user) => {
     if (areIdsEqual(user["user_id"], userId)) {
@@ -481,7 +493,7 @@ function searchForBookShopOrdersForUser(userId) {
 }
 
 function searchForBookShopOrdersWithStatusForUser(userId, orderStatusId) {
-  const foundBookShopOrders = bookShopOrdersDb().find((order) => {
+  const foundBookShopOrders = bookShopOrdersDb().filter((order) => {
     if (areIdsEqual(order["user_id"], userId) && areIdsEqual(order["status_id"], orderStatusId)) {
       return order;
     }
@@ -490,12 +502,39 @@ function searchForBookShopOrdersWithStatusForUser(userId, orderStatusId) {
 }
 
 function searchForBookShopActions(actionName) {
-  const foundBookShopAction = bookShopActionsDb().find((action) => {
+  const foundBookShopAction = bookShopActionsDb().filter((action) => {
     if (areStringsEqualIgnoringCase(action?.name, actionName)) {
       return action;
     }
   });
   return foundBookShopAction;
+}
+
+function searchForBookShopItem(itemId) {
+  const foundBookShopItem = bookShopItemsDb().filter((item) => {
+    if (areIdsEqual(item["id"], itemId)) {
+      return item;
+    }
+  });
+  return foundBookShopItem;
+}
+
+function searchForBookShopItemByBookId(bookId) {
+  const foundBookShopItem = bookShopItemsDb().filter((item) => {
+    if (areIdsEqual(item["book_id"], bookId)) {
+      return item;
+    }
+  });
+  return foundBookShopItem;
+}
+
+function searchForBookShopOrderStatusesDb(statusId) {
+  const foundStatus = bookShopOrderStatusesDb().find((status) => {
+    if (areIdsEqual(status["id"], statusId)) {
+      return status;
+    }
+  });
+  return foundStatus;
 }
 
 module.exports = {
@@ -547,4 +586,8 @@ module.exports = {
   searchForBookShopOrdersForUser,
   searchForBookShopOrdersWithStatusForUser,
   searchForBookShopActions,
+  searchForBookShopAccountPaymentCardByAccountId,
+  searchForBookShopItem,
+  searchForBookShopItemByBookId,
+  searchForBookShopOrderStatusesDb,
 };

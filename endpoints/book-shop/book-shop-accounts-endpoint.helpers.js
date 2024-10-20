@@ -5,8 +5,13 @@ const {
   searchForBookShopAccountWithUserId,
   searchForBookShopActions,
 } = require("../../helpers/db-operation.helpers");
-const { formatErrorResponse, getIdFromUrl, formatInvalidTokenErrorResponse } = require("../../helpers/helpers");
-const { logDebug } = require("../../helpers/logger-api");
+const {
+  formatErrorResponse,
+  getIdFromUrl,
+  formatInvalidTokenErrorResponse,
+  formatInvalidFieldErrorResponse,
+} = require("../../helpers/helpers");
+const { logDebug, logTrace } = require("../../helpers/logger-api");
 const {
   HTTP_NOT_FOUND,
   HTTP_UNAUTHORIZED,
@@ -14,7 +19,12 @@ const {
   HTTP_OK,
   HTTP_FORBIDDEN,
 } = require("../../helpers/response.helpers");
-const { verifyAccessToken } = require("../../helpers/validation.helpers");
+const {
+  verifyAccessToken,
+  isFieldsLengthValid,
+  areAnyAdditionalFieldsPresent,
+  all_possible_fields_book_shop_account,
+} = require("../../helpers/validation.helpers");
 const { areIdsEqual } = require("../../helpers/compare.helpers");
 const { isBugEnabled } = require("../../config/config-manager");
 const { BugConfigKeys } = require("../../config/enums");
@@ -99,7 +109,7 @@ function handleBookShopAccount(req, res, isAdmin) {
 
     return true;
   } else if (req.method === "POST" && req.url.endsWith("/api/book-shop-authorize")) {
-    const verifyTokenResult = verifyAccessToken(req, res, "GET book-shop-accounts", req.url);
+    const verifyTokenResult = verifyAccessToken(req, res, "POST book-shop-authorize", req.url);
     const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
 
     logDebug("handleBookShopAuthorize: Found User", { id: foundUser?.id });
@@ -126,7 +136,7 @@ function handleBookShopAccount(req, res, isAdmin) {
 
     return true;
   } else if (req.method === "POST" && req.url.endsWith("/api/book-shop-accounts/check-action")) {
-    const verifyTokenResult = verifyAccessToken(req, res, "GET book-shop-accounts", req.url);
+    const verifyTokenResult = verifyAccessToken(req, res, "POST book-shop-accounts/check-action", req.url);
 
     const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
     logDebug("handleBookShopAccount: check-action: Found User", { id: foundUser?.id });
@@ -163,7 +173,7 @@ function handleBookShopAccount(req, res, isAdmin) {
     res.status(HTTP_OK).send({});
     return true;
   } else if (req.method === "POST" && req.url.endsWith("/api/book-shop-accounts")) {
-    const verifyTokenResult = verifyAccessToken(req, res, "GET book-shop-accounts/{id}", req.url);
+    const verifyTokenResult = verifyAccessToken(req, res, "POST book-shop-accounts", req.url);
     const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
 
     logDebug("handleBookShopAccount: Found User", { id: foundUser?.id });
@@ -188,12 +198,55 @@ function handleBookShopAccount(req, res, isAdmin) {
       owned_books_ids: [],
       purchased_book_ids: [],
       favorite_books_ids: [],
-      funds: 0,
+      funds: 10000, // first bonus
       created_at: getCurrentDateTimeISO(),
       country: "",
       city: "",
       street: "",
       postal_code: "",
+    };
+
+    return true;
+  } else if (req.method === "PATCH" && req.url.includes("/api/book-shop-accounts/")) {
+    const verifyTokenResult = verifyAccessToken(req, res, "PATCH book-shop-accounts/{id}", req.url);
+    const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
+
+    if (isUndefined(foundUser)) {
+      res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+      return false;
+    }
+
+    let accountId = getIdFromUrl(urlEnds);
+    const foundAccount = searchForBookShopAccount(accountId);
+
+    logTrace("handleBookShopAccount: Found Account", { id: foundAccount?.id, accountIdFromUrl: accountId });
+
+    if (isUndefined(foundAccount) || areIdsEqual(foundAccount.user_id, foundUser.id) === false) {
+      res.status(HTTP_NOT_FOUND).send(formatInvalidTokenErrorResponse());
+      return false;
+    }
+
+    if (areIdsEqual(accountId, foundAccount.id) === false) {
+      res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+      return false;
+    }
+
+    const fieldsLengthValid = isFieldsLengthValid(req.body, 256);
+    const anyAdditionalFields = areAnyAdditionalFieldsPresent(req.body, all_possible_fields_book_shop_account);
+
+    logDebug("handleBookShopAccount: Fields Length Valid", { status: fieldsLengthValid.status });
+    logDebug("handleBookShopAccount: Additional Fields Present", { status: anyAdditionalFields.status });
+
+    if (fieldsLengthValid.status === false || anyAdditionalFields.status === true) {
+      res.status(HTTP_FORBIDDEN).send(formatInvalidFieldErrorResponse(anyAdditionalFields.error));
+      return false;
+    }
+
+    req.body = {
+      country: req.body.country,
+      city: req.body.city,
+      street: req.body.street,
+      postal_code: req.body.postal_code,
     };
 
     return true;

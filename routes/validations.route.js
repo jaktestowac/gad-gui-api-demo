@@ -44,10 +44,13 @@ const { handleData } = require("../endpoints/data-endpoints");
 const { handleBooks } = require("../endpoints/book-shop/books-endpoint.helpers");
 const { handleBookAuthors } = require("../endpoints/book-shop/book-authors-endpoint.helpers");
 const { handleBookGenres } = require("../endpoints/book-shop/book-genres-endpoint.helpers");
-const { handleBookShopAccount } = require("../endpoints/book-shop/book-shop-accounts.helpers");
+const { handleBookShopAccount } = require("../endpoints/book-shop/book-shop-accounts-endpoint.helpers");
 const { handleBookShopRoles } = require("../endpoints/book-shop/book-shop-roles-endpoint.helpers");
 const { handleBookShopItems } = require("../endpoints/book-shop/book-shop-items-endpoint.helpers");
 const { handleBookShopOrders } = require("../endpoints/book-shop/book-shop-orders-endpoint.helpers");
+const {
+  handleBookShopAccountPaymentCards,
+} = require("../endpoints/book-shop/book-shop-account-payment-cards-endpoint.helpers");
 
 const validationsRoutes = (req, res, next) => {
   let isAdmin = false;
@@ -252,6 +255,13 @@ const validationsRoutes = (req, res, next) => {
     }
 
     // book-shop endpoints
+    if (req.url.includes("/api/book-shop-items")) {
+      handleBookShopItems(req, res);
+    }
+    if (req.url.includes("/api/book-shop-account-payment-cards")) {
+      handleBookShopAccountPaymentCards(req, res);
+    }
+
     if (req.url.includes("/api/book-authors")) {
       handleBookAuthors(req, res);
     }
@@ -263,9 +273,6 @@ const validationsRoutes = (req, res, next) => {
     }
     if (req.url.includes("/api/book-shop-roles")) {
       handleBookShopRoles(req, res);
-    }
-    if (req.url.includes("/api/book-shop-items")) {
-      handleBookShopItems(req, res);
     }
     if (req.url.includes("/api/book-shop-orders")) {
       handleBookShopOrders(req, res);

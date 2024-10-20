@@ -190,8 +190,16 @@ function bookShopAccountsDb() {
   return fullDb()["book-shop-accounts"];
 }
 
+function bookShopAccountPaymentCardDb() {
+  return fullDb()["book-shop-account-payment-cards"];
+}
+
 function bookShopOrdersDb() {
   return fullDb()["book-shop-orders"];
+}
+
+function bookShopOrderStatusesDb() {
+  return fullDb()["book-shop-order-statuses"];
 }
 
 function bookShopActionsDb() {
@@ -200,6 +208,10 @@ function bookShopActionsDb() {
 
 function bookShopRolesDb() {
   return fullDb()["book-shop-roles"];
+}
+
+function bookShopItemsDb() {
+  return fullDb()["book-shop-items"];
 }
 
 function quizQuestionsDb() {
@@ -341,4 +353,7 @@ module.exports = {
   bookShopOrdersDb,
   bookShopActionsDb,
   bookShopRolesDb,
+  bookShopAccountPaymentCardDb,
+  bookShopItemsDb,
+  bookShopOrderStatusesDb,
 };

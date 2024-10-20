@@ -43,6 +43,12 @@ function populateLibrarySidePanel(links = []) {
   });
   librarySidePanel.appendChild(divElement);
   librarySidePanel.parentElement.appendChild(buttonElement);
+
+  window.onclick = function (event) {
+    if (!event.target.matches(".sidepanel") && !event.target.matches(".openbtn")) {
+      closeNav();
+    }
+  };
 }
 
 const allLinks = [

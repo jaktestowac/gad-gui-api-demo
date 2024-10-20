@@ -838,16 +838,23 @@ function calculateLuminance(rgb) {
   return luminance;
 }
 
-function displaySimpleAlert(text, isError = false) {
+// types:
+// 0 - info
+// 1 - warning
+// 2 - error
+function displaySimpleAlert(text, type = 0, timeout = 3000) {
   const alertDiv = document.createElement("div");
   alertDiv.classList.add("simple-alert-on-left");
   alertDiv.innerHTML = text;
   alertDiv.style.width = "250px";
   alertDiv.setAttribute("id", "simple-alert");
   alertDiv.setAttribute("data-testid", "dti-simple-alert");
-  if (isError) {
+  if (type === 2) {
     alertDiv.classList.add("alert-error");
     alertDiv.classList.add("alert-failure-emoji");
+  } else if (type === 1) {
+    alertDiv.classList.add("alert-warning");
+    alertDiv.classList.add("alert-warning-emoji");
   } else {
     alertDiv.classList.add("alert-success");
     alertDiv.classList.add("alert-success-emoji");
@@ -858,5 +865,5 @@ function displaySimpleAlert(text, isError = false) {
 
   setTimeout(function () {
     alertDiv.remove();
-  }, 3000);
+  }, timeout);
 }

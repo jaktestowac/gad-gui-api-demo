@@ -7,6 +7,8 @@ const sampleTracingInfo = {
   baseResourceId: undefined,
   targetResourceId: undefined,
   targetResource: undefined,
+  fieldName: undefined,
+  fieldNewValue: undefined,
 };
 
 class TracingInfoBuilder {
@@ -42,6 +44,16 @@ class TracingInfoBuilder {
 
   setTargetResourceId(id) {
     this.tracingInfo.targetResourceId = id;
+    return this;
+  }
+
+  setFieldNameToChange(fieldName) {
+    this.tracingInfo.fieldName = fieldName;
+    return this;
+  }
+
+  setFieldNewValue(fieldNewValue) {
+    this.tracingInfo.fieldNewValue = fieldNewValue;
     return this;
   }
 

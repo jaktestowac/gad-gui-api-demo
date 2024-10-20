@@ -3453,6 +3453,12 @@
       "book_id": 31,
       "price": 8950,
       "quantity": 20
+    },
+    {
+      "id": 18,
+      "book_id": 20,
+      "price": 7500,
+      "quantity": 10
     }
   ],
   "book-shop-orders": [
@@ -3460,9 +3466,9 @@
       "id": 1,
       "user_id": 1,
       "book_ids": [1],
-      "books_price": { "1": 2500 },
-      "additional_price": { "shipping": 500 },
-      "total_price": 3000,
+      "books_cost": { "1": 2500 },
+      "additional_costs": { "shipping": 500 },
+      "total_cost": 3000,
       "status_id": 99,
       "created_at": "2024-05-25T11:50:28.108Z"
     },
@@ -3470,9 +3476,9 @@
       "id": 2,
       "user_id": 2,
       "book_ids": [2],
-      "books_price": { "2": 3000 },
-      "additional_price": { "shipping": 500 },
-      "total_price": 3500,
+      "books_cost": { "2": 3000 },
+      "additional_costs": { "shipping": 500 },
+      "total_cost": 3500,
       "status_id": 99,
       "created_at": "2024-05-25T11:50:28.108Z"
     },
@@ -3480,41 +3486,48 @@
       "id": 3,
       "user_id": 1,
       "book_ids": [2, 3],
-      "books_price": { "2": 3000, "3": 1000 },
-      "additional_price": { "shipping": 500 },
-      "total_price": 4500,
+      "books_cost": { "2": 3000, "3": 1000 },
+      "additional_costs": { "shipping": 500 },
+      "total_cost": 4500,
       "status_id": 1,
-      "created_at": "2024-05-25T11:50:28.108Z"
+      "created_at": "2024-05-25T12:50:28.108Z"
     }
   ],
   "book-shop-order-statuses": [
     {
       "id": 1,
-      "name": "new"
+      "name": "new",
+      "possible_next_statuses": [5, 20]
     },
     {
       "id": 5,
-      "name": "sent"
+      "name": "sent",
+      "possible_next_statuses": [10]
     },
     {
       "id": 10,
-      "name": "pending"
+      "name": "pending",
+      "possible_next_statuses": [30, 40]
     },
     {
       "id": 20,
-      "name": "cancelled"
+      "name": "cancelled",
+      "possible_next_statuses": []
     },
     {
       "id": 30,
-      "name": "returned"
+      "name": "returned",
+      "possible_next_statuses": []
     },
     {
       "id": 40,
-      "name": "delivered"
+      "name": "delivered",
+      "possible_next_statuses": [99]
     },
     {
       "id": 99,
-      "name": "completed"
+      "name": "completed",
+      "possible_next_statuses": []
     }
   ],
   "book-shop-actions": [
@@ -3567,12 +3580,22 @@
       "purchased_book_ids": [1],
       "read_books_ids": [2],
       "owned_books_ids": [1, 5],
-      "funds": 15000,
+      "funds": 10000,
       "created_at": "2024-05-25T11:50:28.108Z",
       "country": "Poland",
       "city": "Warsaw",
       "street": "Olmeków 1",
       "postal_code": "00-000"
+    }
+  ],
+  "book-shop-account-payment-cards": [
+    {
+      "id": 1,
+      "account_id": 1,
+      "card_number": "1234 5678 9012 3456 2121",
+      "expiration_date": "2025-05-25",
+      "cvv": "12345",
+      "limit": 10000
     }
   ],
   "book-genres": [

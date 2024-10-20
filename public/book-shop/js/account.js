@@ -75,36 +75,50 @@ function displayAccountInfo(accountData, userData) {
   const profileImageAndDetails = document.createElement("div");
   profileImageAndDetails.classList.add("profile-image-and-details");
 
-  // Create profile card
   const profileCard = document.createElement("div");
   profileCard.classList.add("profile-card");
 
-  // Create profile image column
   const imageColumn = document.createElement("div");
   imageColumn.classList.add("image-column");
 
-  // Create profile image
   const profileImage = document.createElement("img");
   profileImage.src = `./../${userData.avatar}`;
   profileImage.alt = "Profile Image";
   profileImage.classList.add("profile-image");
   imageColumn.appendChild(profileImage);
 
-  // Create account details column
+  const editButton = document.createElement("span");
+  editButton.innerHTML = `<i class="fa-solid fa-pen-to-square"></i>`;
+  editButton.title = "Edit Account";
+  editButton.classList.add("book-clickable-component");
+  editButton.classList.add("clickable-btn");
+  editButton.classList.add("edit-account-button");
+  editButton.addEventListener("click", () => {
+    issueGetBookShopAccountRequest().then((response) => {
+      if (response.status === 200) {
+        response.json().then((accountData) => {
+          createAccountEditPopup(accountData, updateAccountAddressData);
+        });
+      } else {
+        response.json().then((data) => {
+          showSimpleAlert(`Error while getting account data. ${data.error?.message}`, 2);
+        });
+      }
+    });
+  });
+  imageColumn.appendChild(editButton);
+
   const detailsColumn = document.createElement("div");
   detailsColumn.classList.add("details-column");
 
-  // Create profile details
   const profileDetails = document.createElement("div");
   profileDetails.classList.add("profile-details");
 
-  // Create name
   const name = document.createElement("h4");
   name.textContent = userData.firstname + " " + userData.lastname;
   name.classList.add("account-name");
   profileDetails.appendChild(name);
 
-  // Create role
   const roleContainer = document.createElement("div");
   roleContainer.textContent = "Role: ";
   roleContainer.classList.add("account-role");
@@ -114,18 +128,43 @@ function displayAccountInfo(accountData, userData) {
   roleContainer.appendChild(role);
   profileDetails.appendChild(roleContainer);
 
-  // Create founds
+  const fundsContainer = document.createElement("div");
   const funds = document.createElement("div");
-  funds.textContent = `Funds: ${accountData.funds} PLN`;
+  funds.textContent = `Funds: ${formatPrice(accountData.funds)} PLN`;
   funds.classList.add("account-funds");
-  profileDetails.appendChild(funds);
 
+  const fundsManagementContainer = document.createElement("div");
+  const cardManagementButton = document.createElement("span");
+  cardManagementButton.innerHTML = `<i class="fa-regular fa-credit-card"></i>`;
+  cardManagementButton.classList.add("book-clickable-component");
+  cardManagementButton.classList.add("clickable-btn");
+  cardManagementButton.title = "Manage Card";
+  cardManagementButton.addEventListener("click", () => {
+    createAccountPaymentCardEditPopup(userData)
+  });
+
+  const fundsManagementButton = document.createElement("span");
+  fundsManagementButton.innerHTML = `<i class="fa-solid fa-money-bill-transfer"></i>`;
+  fundsManagementButton.classList.add("book-clickable-component");
+  fundsManagementButton.classList.add("clickable-btn");
+  fundsManagementButton.title = "Manage Funds";
+  fundsManagementButton.addEventListener("click", () => {
+    // TODO
+  });
+
+  fundsManagementContainer.appendChild(cardManagementButton);
+  fundsManagementContainer.appendChild(fundsManagementButton);
+  fundsContainer.appendChild(funds);
+  fundsContainer.appendChild(fundsManagementContainer);
+
+  profileDetails.appendChild(fundsContainer);
   profileDetails.appendChild(document.createElement("br"));
 
-  // Create address
   const addressContainer = document.createElement("div");
   addressContainer.textContent = "Address: ";
   const address = document.createElement("div");
+  address.classList.add("account-address");
+  address.classList.add("hidden-data");
 
   const addressData = [accountData.country, accountData.city, accountData.street, accountData.postal_code];
   address.innerHTML = addressData.filter((data) => data).join(", ");
@@ -134,12 +173,9 @@ function displayAccountInfo(accountData, userData) {
     address.textContent = "No address provided";
   }
 
-  address.classList.add("account-address");
-  address.classList.add("hidden-data");
   addressContainer.appendChild(address);
   profileDetails.appendChild(addressContainer);
 
-  // Create button to show/hide address
   const toggleButton = document.createElement("button");
   toggleButton.textContent = "Show Address";
   toggleButton.classList.add("toggle-button");
@@ -159,10 +195,19 @@ function displayAccountInfo(accountData, userData) {
   accountInfo.appendChild(profileCard);
 }
 
+function updateAccountAddressData(accountData) {
+  const accountAddress = document.querySelector(".account-address");
+  const addressData = [accountData.country, accountData.city, accountData.street, accountData.postal_code];
+
+  accountAddress.innerHTML = addressData.filter((data) => data).join(", ");
+  if (!accountAddress.textContent) {
+    accountAddress.textContent = "No address provided";
+  }
+}
+
 function displayBooks(booksData, type = "owned", sectionHeader = "owned") {
   const id = `${type}-books-container`;
   let booksContainer = document.getElementById(id);
-  console.log(id);
   if (booksContainer) {
     booksContainer.innerHTML = "";
   }
@@ -235,19 +280,16 @@ function createAccountPopup() {
   const userProfileConnectorContainer = document.createElement("div");
   userProfileConnectorContainer.classList.add("user-profile-connector-container");
 
-  // Create profile image
   const profileImage = document.createElement("img");
   profileImage.src = `./../${getCookieAvatar()}`;
   profileImage.alt = "Profile Image";
   profileImage.classList.add("profile-image");
 
-  // Create gad image
   const bookShopImage = document.createElement("img");
   bookShopImage.src = `./../data/gad-bookshop-logo.png`;
   bookShopImage.alt = "BookShop Image";
   bookShopImage.classList.add("profile-image");
 
-  // create connection green tick and a line
   const connectionLine = document.createElement("div");
   connectionLine.classList.add("connection-line");
   connectionLine.innerHTML = `----`;
