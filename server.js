@@ -280,7 +280,7 @@ if (sslEnabled !== true) {
   const sslServer = https.createServer(options, server);
   sslServer.listen(port, () => {
     logDebug(`🔒 SSL 🦎 GAD listening on ${port}!`);
-    let address = serverApp.address().address;
+    let address = sslServer.address().address;
     address = address == "::" ? "localhost" : "localhost";
     logDebug(`Visit it on -> https://${address}:${port}`);
     logDebug(`🎉 Your custom 🔒 SSL 🦎 GAD (${app.version}) is up and running!!!`);
