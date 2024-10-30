@@ -253,16 +253,39 @@ server.use(function (req, res, next) {
   res.type("txt").send("Not found");
 });
 
-logDebug(`Starting 🦎 GAD on port ${port}...`);
-logDebug(`--------------------------------`);
+const sslEnabled = getConfigValue(ConfigKeys.SSL_ENABLED);
 
-var serverApp = server.listen(port, () => {
-  logDebug(`🦎 GAD listening on ${port}!`);
-  var address = serverApp.address().address;
-  address = address == "::" ? "localhost" : "localhost";
-  logDebug(`Visit it on -> http://${address}:${port}`);
-  logDebug(`🎉 Your custom 🦎 GAD (${app.version}) is up and running!!!`);
-});
+if (sslEnabled !== true) {
+  logDebug(`Starting 🦎 GAD on port ${port}...`);
+  logDebug(`--------------------------------`);
+
+  var serverApp = server.listen(port, () => {
+    logDebug(`🦎 GAD listening on ${port}!`);
+    var address = serverApp.address().address;
+    address = address == "::" ? "localhost" : "localhost";
+    logDebug(`Visit it on -> http://${address}:${port}`);
+    logDebug(`🎉 Your custom 🦎 GAD (${app.version}) is up and running!!!`);
+  });
+} else {
+  logDebug(`Starting 🔒 SSL 🦎 GAD on port ${port}...`);
+  logDebug(`--------------------------------`);
+
+  const options = {
+    key: fs.readFileSync(path.join(__dirname, "./certs/key.pem")),
+    cert: fs.readFileSync(path.join(__dirname, "./certs/cert.pem")),
+  };
+
+  const https = require("https");
+
+  const sslServer = https.createServer(options, server);
+  sslServer.listen(port, () => {
+    logDebug(`🔒 SSL 🦎 GAD listening on ${port}!`);
+    let address = serverApp.address().address;
+    address = address == "::" ? "localhost" : "localhost";
+    logDebug(`Visit it on -> https://${address}:${port}`);
+    logDebug(`🎉 Your custom 🔒 SSL 🦎 GAD (${app.version}) is up and running!!!`);
+  });
+}
 
 module.exports = {
   serverApp,

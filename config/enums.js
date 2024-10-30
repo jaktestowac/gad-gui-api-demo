@@ -47,6 +47,10 @@ const ConfigKeys = {
   SLEEP_TIME_PER_ONE_GET_COMMENT_MAX: "sleepTimePerOneGetCommentMax",
   SLEEP_TIME_FOR_SHOP_ACCOUNT_CREATE_MIN: "sleepTimeForShopAccountCreateMin",
   SLEEP_TIME_FOR_SHOP_ACCOUNT_CREATE_MAX: "sleepTimeForShopAccountCreateMax",
+  SLEEP_TIME_FOR_SHOP_ACCOUNT_PAYMENT_CARDS_MIN: "sleepTimeForShopAccountPaymentCardsMin",
+  SLEEP_TIME_FOR_SHOP_ACCOUNT_PAYMENT_CARDS_MAX: "sleepTimeForShopAccountPaymentCardsMax",
+  SLEEP_TIME_FOR_SHOP_ACCOUNT_TOP_UP_MIN: "sleepTimeForShopAccountTopUpMin",
+  SLEEP_TIME_FOR_SHOP_ACCOUNT_TOP_UP_MAX: "sleepTimeForShopAccountTopUpMax",
   PUBLIC_LOGS_ENABLED: "publicLogsEnabled",
   NUMBER_OF_TOP_LIKED_ARTICLES: "numberOfTopLikedArticles",
   USER_AVATAR_PATH: "userAvatarPath",
@@ -67,6 +71,7 @@ const ConfigKeys = {
   DIAGNOSTICS_ENABLED: "diagnosticsEnabled",
   CAPTCHA_SOLUTION_IN_RESPONSE: "captchaSolutionInResponse",
   MAX_NUMBER_OF_FLASHPOSTS: "maxNumberOfFlashposts",
+  SSL_ENABLED: "sslEnabled",
 };
 
 const BugConfigKeys = {

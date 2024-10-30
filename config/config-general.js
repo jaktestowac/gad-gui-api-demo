@@ -37,6 +37,12 @@ const configToModify = {
   sleepTimeForShopAccountCreateMin: 2000,
   sleepTimeForShopAccountCreateMax: 4000,
 
+  sleepTimeForShopAccountPaymentCardsMin: 500,
+  sleepTimeForShopAccountPaymentCardsMax: 2000,
+
+  sleepTimeForShopAccountTopUpMin: 7000,
+  sleepTimeForShopAccountTopUpMax: 15000,
+
   numberOfTopLikedArticles: 10,
   numberOfTopVisitedArticles: 10,
   logsLimit: 500,
@@ -77,6 +83,7 @@ const config = {
   articleImagePath: "../public/data/images/256",
   uploadsPath: "../uploads",
   readOnly: `${process.env.READ_ONLY}`.trim() === "1" ? true : false,
+  sslEnabled: `${process.env.SSL_ENABLED}`.trim() === "1" ? true : false,
 };
 
 module.exports = {
