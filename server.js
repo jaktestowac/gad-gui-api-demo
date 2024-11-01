@@ -271,8 +271,8 @@ if (sslEnabled !== true) {
   logDebug(`--------------------------------`);
 
   const options = {
-    key: fs.readFileSync(path.join(__dirname, "./certs/key.pem")),
-    cert: fs.readFileSync(path.join(__dirname, "./certs/cert.pem")),
+    key: fs.readFileSync(path.join(__dirname, "./certs/ca-key.pem")),
+    cert: fs.readFileSync(path.join(__dirname, "./certs/ca-cert.pem")),
   };
 
   const https = require("https");

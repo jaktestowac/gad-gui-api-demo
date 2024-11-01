@@ -2,7 +2,26 @@
 
 ## Automated tests with self-signed certificates
 
+[experimental, not fully working]
+
 To use it in Playwright tests, use following configuration:
+
+```
+use: {
+    baseURL: "https://127.0.0.1:3001",
+
+    trace: "on",
+    clientCertificates: [
+      {
+        origin: "https://127.0.0.1:3001",
+        certPath: "./certs/client-cert.pem",
+        keyPath: "./certs/client-key.pem",
+      },
+    ],
+  },
+```
+
+Those setting ignores errors related to self-signed certificates but also does not require clientCertificates:
 
 ```
 use: {
@@ -17,8 +36,8 @@ use: {
     clientCertificates: [
       {
         origin: "https://127.0.0.1:3001",
-        certPath: "./certs/cert.pem",
-        keyPath: "./certs/key.pem",
+        certPath: "./certs/client-cert.pem",
+        keyPath: "./certs/client-key.pem",
       },
     ],
   },
