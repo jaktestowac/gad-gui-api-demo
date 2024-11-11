@@ -93,6 +93,26 @@ class RandomValueGenerator {
   }
 }
 
+class RandomValueGeneratorWithSeed {
+  constructor(seed) {
+    this.seed = seed;
+    this.generator = seedrandom(seed);
+  }
+
+  getNextValue(min, max) {
+    return Math.floor(this.generator() * (max - min + 1) + min);
+  }
+
+  getNextValueFloat(min, max) {
+    return this.generator() * (max - min) + min;
+  }
+
+  resetSeed(seed) {
+    this.seed = seed;
+    this.generator = seedrandom(seed);
+  }
+}
+
 module.exports = {
   getRandomVisitsForEntities,
   getSeededRandomVisitsForEntities,
@@ -102,4 +122,5 @@ module.exports = {
   getRandomIdBasedOnDay,
   getRandomIntBasedOnDay,
   RandomValueGenerator,
+  RandomValueGeneratorWithSeed,
 };

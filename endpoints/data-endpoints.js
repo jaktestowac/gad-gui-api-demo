@@ -45,6 +45,20 @@ function handleData(req, res, isAdmin) {
       }
     }
 
+    if (req.url.includes("/api/v1/data/weather-simple")) {
+      weatherData = weatherData.map((weather) => {
+        return {
+          date: weather.date,
+          temperature: weather.temperatureRaw,
+          temperatureMin: weather.highLowTemperature.temperatureLow,
+          temperatureMax: weather.highLowTemperature.temperatureHigh,
+          humidity: weather.humidity,
+          dayLength: weather.dayLength,
+          windSpeed: weather.windSpeedData.actual,
+        };
+      });
+    }
+
     res.status(HTTP_OK).json(weatherData);
   }
 

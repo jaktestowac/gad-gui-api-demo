@@ -1,4 +1,4 @@
-const { RandomValueGenerator } = require("./random-data.generator");
+const { RandomValueGeneratorWithSeed } = require("./random-data.generator");
 
 const categoryTypes = [
   { name: "groceries", index: 20, emoji: "🛒" },
@@ -94,7 +94,7 @@ function generateIncomeOutcomeData(nSamples) {
 
   const incomeOutcomeData = [];
   for (let i = 0; i < pastDays.length; i++) {
-    const dataGenerator = new RandomValueGenerator(pastDays[i]);
+    const dataGenerator = new RandomValueGeneratorWithSeed(pastDays[i]);
     // const transactionsGenerator = new RandomValueGenerator(pastDays[i] + "-transactions");
 
     const date = pastDays[i];

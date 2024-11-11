@@ -1,4 +1,4 @@
-const { RandomValueGenerator } = require("./random-data.generator");
+const { RandomValueGeneratorWithSeed } = require("./random-data.generator");
 
 const weatherTypes = [
   "☀️ Sunny",
@@ -180,7 +180,7 @@ function generateWeatherDataForNFutureDaysFromDate(date, nSamples) {
 function generateWeatherDataForNDays(nSamples, dayList) {
   const weatherData = [];
   for (let i = 0; i < nSamples; i++) {
-    const dataGenerator = new RandomValueGenerator(dayList[i]);
+    const dataGenerator = new RandomValueGeneratorWithSeed(dayList[i]);
 
     const date = dayList[i];
 
