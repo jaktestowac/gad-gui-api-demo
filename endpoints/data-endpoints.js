@@ -2,6 +2,8 @@ const { generateIncomeOutcomeData } = require("../helpers/generators/income-outc
 const {
   generateWeatherDataForNPastDays,
   generateWeatherDataForNFutureDays,
+  generateWeatherDataForNPastDaysFromDate,
+  generateWeatherDataForNFutureDaysFromDate,
 } = require("../helpers/generators/weather.generator");
 const { HTTP_OK } = require("../helpers/response.helpers");
 const { logDebug } = require("../helpers/logger-api");
@@ -14,14 +16,27 @@ function handleData(req, res, isAdmin) {
 
     const days = parseInt(queryParams.get("days"));
     const future = parseInt(queryParams.get("futuredays"));
+    const date = queryParams.get("date");
     const limitedDays = Math.min(days || 31, 90);
     let limitedFutureDays = Math.min(future || 0, 90);
-    logDebug(`Requested weather data for:`, { days, limitedDays, limitedFutureDays });
-    const weatherData = generateWeatherDataForNPastDays(limitedDays);
+    logDebug(`Requested weather data for:`, { days, limitedDays, limitedFutureDays, date });
+
+    let weatherData = [];
+    if (date === null || date === undefined || date === "") {
+      weatherData = generateWeatherDataForNPastDays(limitedDays);
+    } else {
+      weatherData = generateWeatherDataForNPastDaysFromDate(date, limitedDays);
+    }
 
     if (limitedFutureDays > 0) {
       limitedFutureDays += 1; // Add one more day because 1 is today
-      const weatherDataFuture = generateWeatherDataForNFutureDays(limitedFutureDays);
+      let weatherDataFuture = [];
+
+      if (date === null || date === undefined || date === "") {
+        weatherDataFuture = generateWeatherDataForNFutureDays(limitedFutureDays);
+      } else {
+        weatherDataFuture = generateWeatherDataForNFutureDaysFromDate(date, limitedFutureDays);
+      }
 
       if (weatherDataFuture.length > 1) {
         for (let i = 1; i < limitedFutureDays; i++) {

@@ -41,7 +41,20 @@ const windSpeedTypes = [
   "25-30 km/h",
   "30-35 km/h",
   "35-40 km/h",
+  "40+ km/h",
 ];
+
+const windSpeedRange = {
+  "0-5 km/h": { min: 0, max: 5 },
+  "5-10 km/h": { min: 5, max: 10 },
+  "10-15 km/h": { min: 10, max: 15 },
+  "15-20 km/h": { min: 15, max: 20 },
+  "20-25 km/h": { min: 20, max: 25 },
+  "25-30 km/h": { min: 25, max: 30 },
+  "30-35 km/h": { min: 30, max: 35 },
+  "35-40 km/h": { min: 35, max: 40 },
+  "40+ km/h": { min: 40, max: 100 },
+};
 
 const weatherAlertTypes = [
   { name: "None", icon: "" },
@@ -114,6 +127,16 @@ function generatePasteDateStrings(pastDays) {
   return dateStrings;
 }
 
+function generatePastDateStringsFromDate(dateStr, pastDays) {
+  const dateStrings = [];
+  for (let i = 0; i < pastDays; i++) {
+    const date = new Date(dateStr);
+    date.setDate(date.getDate() - i);
+    dateStrings.push(date.toISOString().split("T")[0]);
+  }
+  return dateStrings;
+}
+
 function generateFutureDateStrings(pastDays) {
   const dateStrings = [];
   for (let i = 0; i < pastDays; i++) {
@@ -124,6 +147,21 @@ function generateFutureDateStrings(pastDays) {
   return dateStrings;
 }
 
+function generateFutureDateStringsFromDate(dateStr, pastDays) {
+  const dateStrings = [];
+  for (let i = 0; i < pastDays; i++) {
+    const date = new Date(dateStr);
+    date.setDate(date.getDate() + i);
+    dateStrings.push(date.toISOString().split("T")[0]);
+  }
+  return dateStrings;
+}
+
+function generateWeatherDataForNPastDaysFromDate(date, nSamples) {
+  const pastDays = generatePastDateStringsFromDate(date, nSamples);
+  return generateWeatherDataForNDays(nSamples, pastDays);
+}
+
 function generateWeatherDataForNPastDays(nSamples) {
   const pastDays = generatePasteDateStrings(nSamples);
   return generateWeatherDataForNDays(nSamples, pastDays);
@@ -131,6 +169,11 @@ function generateWeatherDataForNPastDays(nSamples) {
 
 function generateWeatherDataForNFutureDays(nSamples) {
   const pastDays = generateFutureDateStrings(nSamples);
+  return generateWeatherDataForNDays(nSamples, pastDays);
+}
+
+function generateWeatherDataForNFutureDaysFromDate(date, nSamples) {
+  const pastDays = generateFutureDateStringsFromDate(date, nSamples);
   return generateWeatherDataForNDays(nSamples, pastDays);
 }
 
@@ -151,8 +194,8 @@ function generateWeatherDataForNDays(nSamples, dayList) {
       temperature = dataGenerator.getNextValue(-20, 50);
     }
 
-    let temperatureLow = dataGenerator.getNextValue(15, 35);
-    let temperatureHigh = dataGenerator.getNextValue(temperatureLow + 5, temperatureLow + 10);
+    let temperatureLow = dataGenerator.getNextValue(temperature - 15, temperature);
+    let temperatureHigh = dataGenerator.getNextValue(temperature, temperature + 15);
     let highLowTemperature = {
       low: `${temperatureLow}°C`,
       high: `${temperatureHigh}°C`,
@@ -217,9 +260,17 @@ function generateWeatherDataForNDays(nSamples, dayList) {
     }
 
     let windSpeed = windSpeedTypes[0];
-    if (dataGenerator.getNextValue(0, 100) < 20 || weather === "💨 Windy") {
+    if (dataGenerator.getNextValue(0, 100) < 10 || weather === "💨 Windy") {
       windSpeed = windSpeedTypes[dataGenerator.getNextValue(0, windSpeedTypes.length - 1)];
     }
+
+    let windSpeedData = {};
+    const tempWindSpeed = windSpeedRange[windSpeed];
+    windSpeedData = {
+      min: `${tempWindSpeed.min} km/h`,
+      max: `${tempWindSpeed.max} km/h`,
+      actual: dataGenerator.getNextValue(tempWindSpeed.min, tempWindSpeed.max),
+    };
 
     let pollutants = ["CO", "NO2", "O3", "PM2.5", "PM10", "SO2"];
     let pollutantsData = {};
@@ -330,6 +381,7 @@ function generateWeatherDataForNDays(nSamples, dayList) {
       dayLength,
       humidity,
       windSpeed,
+      windSpeedData,
       windDirection,
       moonPhase,
       airQualityIndex,
@@ -351,4 +403,6 @@ function generateWeatherDataForNDays(nSamples, dayList) {
 module.exports = {
   generateWeatherDataForNPastDays,
   generateWeatherDataForNFutureDays,
+  generateWeatherDataForNPastDaysFromDate,
+  generateWeatherDataForNFutureDaysFromDate,
 };

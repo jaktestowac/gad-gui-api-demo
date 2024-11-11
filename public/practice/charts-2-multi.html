@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>🦎 GAD - Simple canvas (slowly loaded 🐌)</title>
+    <title>🦎 GAD - Multiple weather charts</title>
     <link rel="icon" href="/data/icons/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/infoBoxes.css" />
     <link rel="stylesheet" href="./css/practice-controls.css" />
-    <script src="/js/libs/charts/chart.js"></script>
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
 </head>
 
 <body>
@@ -26,9 +26,12 @@
     <br />
     <br />
     <div align="center">
-        <h2>Simple canvas (slowly loaded 🐌)</h2>
-        <div style="max-width: 1000px;">
-            <canvas id="sampleChart"></canvas>
+        <h2 style="padding: 0px; margin: 0px;">Multiple weather charts</h2>
+        <div>
+            <div id="sampleStaticChart"></div>
+        </div>
+        <div>
+            <div id="sampleDynamicChart"></div>
         </div>
     </div>
     <br />
@@ -45,11 +48,17 @@
 <script type="text/javascript" src="/js/common.js"></script>
 <script type="text/javascript" src="/js/header.js"></script>
 <script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="./js/test-data.js"></script>
+<script type="text/javascript" src="./js/data-generators.js"></script>
 <script type="text/javascript" src="./js/practice-common.js"></script>
 <script type="text/javascript" src="./js/test-data-canvas.js"></script>
-<script type="text/javascript" src="./js/display-canvas.js"></script>
+<script type="text/javascript" src="./js/display-charts.js"></script>
 <script>
-    displayCanvasData(weatherStaticDataForCanvas, 'sampleChart', 4000);
+    const dataPart = { weatherData: weatherStaticDataForCanvas.weatherData.slice(0, 8) };
+    displayChartsData(dataPart, 'sampleStaticChart', 1000, 300);
+
+    const data = generateWeatherDataForNSeconds(10);
+    displayGeneratedData(data, 'sampleDynamicChart', 1000, 300);
 </script>
 
 </html>
