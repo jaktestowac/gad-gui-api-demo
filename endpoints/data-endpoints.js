@@ -1,4 +1,7 @@
-const { generateIncomeOutcomeData } = require("../helpers/generators/income-outcome.generator");
+const {
+  generateIncomeOutcomeData,
+  generateRandomSimplifiedIncomeOutcomeData,
+} = require("../helpers/generators/income-outcome.generator");
 const {
   generateWeatherDataForNPastDays,
   generateWeatherDataForNFutureDays,
@@ -70,6 +73,17 @@ function handleData(req, res, isAdmin) {
     logDebug(`Requested costs data for:`, { days, limitedDays });
 
     const incomeOutcomeData = generateIncomeOutcomeData(limitedDays);
+    res.status(HTTP_OK).json(incomeOutcomeData);
+  }
+
+  if (req.method === "GET" && req.url.includes("/api/v1/data/random/costs")) {
+    const queryParams = new URLSearchParams(req.url.split("?")[1]);
+
+    const days = parseInt(queryParams.get("days"));
+    const limitedDays = Math.min(days || 31, 90);
+    logDebug(`Requested costs data for:`, { days, limitedDays });
+
+    const incomeOutcomeData = generateRandomSimplifiedIncomeOutcomeData(limitedDays);
     res.status(HTTP_OK).json(incomeOutcomeData);
   }
 

@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD - Random Household Expenses (from API)</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/practice-controls.css" />
+    <script src="/js/libs/charts/chart.js"></script>
+    <style>
+        .transactions-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid black;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .transactions-row {
+            border: 1px solid black;
+        }
+
+        .expenses-cell {
+            padding: 0px !important;
+        }
+
+        .table-cell {
+            padding: 0px !important;
+        }
+
+        .results-table {
+            width: 700px;
+            border-collapse: collapse;
+            border: 1px solid black;
+            text-align: center;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <div align="center">
+        <h2>Random Household Expenses (from API)</h2>
+
+    </div>
+    <div align="center">
+        <div style="max-width: 800px;">
+            <canvas id="sampleChart"></canvas>
+        </div>
+        <div id="results-container">
+        </div>
+    </div>
+    <br />
+    <br />
+    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 24px">
+        <a href="https://jaktestowac.pl" style="color: dimgray">
+            <span style="display: flex; align-items: center; justify-self: center; font-size: medium">
+                <img src="/data/icons/favicon.png" style="width: 25px !important; height: 25px !important; padding: 0; border: none" alt="" />&nbsp&nbspjaktestowac.pl
+            </span>
+        </a>
+    </div>
+</body>
+
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="./js/practice-common.js"></script>
+<script type="text/javascript" src="./js/display-canvas.js"></script>
+<script>
+    async function getCostsData() {
+        return fetch('/api/v1/data/random/costs?days=7', {
+            method: "GET",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                Authorization: getBearerToken(),
+            },
+        }).then((response) => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                return {};
+            }
+        });
+    }
+
+    const data =
+        [
+            {
+                "date": "2024-11-14",
+                "numberOfTransactions": 2,
+                "dailyBalance": -1777,
+                "transactions": [
+                    {
+                        "category": {
+                            "name": "commission",
+                            "index": 12,
+                            "emoji": "💸"
+                        },
+                        "amount": 119
+                    },
+                    {
+                        "category": {
+                            "name": "travel",
+                            "index": 17,
+                            "emoji": "✈️"
+                        },
+                        "amount": -1896
+                    }
+                ]
+            },
+            {
+                "date": "2024-11-13",
+                "numberOfTransactions": 5,
+                "dailyBalance": 28,
+                "transactions": [
+                    {
+                        "category": {
+                            "name": "childcare",
+                            "index": 23,
+                            "emoji": "👶"
+                        },
+                        "amount": -299
+                    },
+                    {
+                        "category": {
+                            "name": "loan",
+                            "index": 2,
+                            "emoji": "💳"
+                        },
+                        "amount": 306
+                    },
+                    {
+                        "category": {
+                            "name": "other",
+                            "index": 7,
+                            "emoji": "🔧"
+                        },
+                        "amount": -281
+                    },
+                    {
+                        "category": {
+                            "name": "dividends",
+                            "index": 5,
+                            "emoji": "💵"
+                        },
+                        "amount": 436
+                    },
+                    {
+                        "category": {
+                            "name": "gift",
+                            "index": 9,
+                            "emoji": "🎁"
+                        },
+                        "amount": -134
+                    }
+                ]
+            },
+            {
+                "date": "2024-11-12",
+                "numberOfTransactions": 2,
+                "dailyBalance": -202,
+                "transactions": [
+                    {
+                        "category": {
+                            "name": "personal care",
+                            "index": 21,
+                            "emoji": "💇"
+                        },
+                        "amount": -140
+                    },
+                    {
+                        "category": {
+                            "name": "tools",
+                            "index": 37,
+                            "emoji": "🔧"
+                        },
+                        "amount": -62
+                    }
+                ]
+            },
+            {
+                "date": "2024-11-11",
+                "numberOfTransactions": 2,
+                "dailyBalance": 1652,
+                "transactions": [
+                    {
+                        "category": {
+                            "name": "other",
+                            "index": 4,
+                            "emoji": "🔍"
+                        },
+                        "amount": 1946
+                    },
+                    {
+                        "category": {
+                            "name": "cleaning",
+                            "index": 8,
+                            "emoji": "🧹"
+                        },
+                        "amount": -294
+                    }
+                ]
+            },
+            {
+                "date": "2024-11-10",
+                "numberOfTransactions": 2,
+                "dailyBalance": 178,
+                "transactions": [
+                    {
+                        "category": {
+                            "name": "childcare",
+                            "index": 23,
+                            "emoji": "👶"
+                        },
+                        "amount": -221
+                    },
+                    {
+                        "category": {
+                            "name": "lottery",
+                            "index": 19,
+                            "emoji": "🎲"
+                        },
+                        "amount": 399
+                    }
+                ]
+            },
+            {
+                "date": "2024-11-09",
+                "numberOfTransactions": 1,
+                "dailyBalance": 256,
+                "transactions": [
+                    {
+                        "category": {
+                            "name": "cashback",
+                            "index": 23,
+                            "emoji": "💳"
+                        },
+                        "amount": 256
+                    }
+                ]
+            },
+            {
+                "date": "2024-11-08",
+                "numberOfTransactions": 1,
+                "dailyBalance": -739,
+                "transactions": [
+                    {
+                        "category": {
+                            "name": "beauty",
+                            "index": 27,
+                            "emoji": "💄"
+                        },
+                        "amount": -739
+                    }
+                ]
+            }
+        ]
+
+    function formatCurrency(value) {
+        if (value === undefined) {
+            return value;
+        }
+
+        return value.toLocaleString('pl', {
+            style: 'currency',
+            currency: 'PLN',
+        });
+    }
+
+    getCostsData().then((data) => {
+
+        const resultsContainer = document.getElementById('results-container');
+        const table = document.createElement('table');
+        table.classList.add('results-table');
+        table.setAttribute('id', 'results-table');
+        table.setAttribute('class', 'results-table');
+        table.style.borderCollapse = 'collapse';
+        table.style.textAlign = 'center';
+
+        const headerRow = document.createElement('tr');
+        headerRow.style.backgroundColor = 'lightgray';
+        headerRow.style.border = '1px solid black';
+
+        const headerDate = document.createElement('th');
+        headerDate.textContent = 'Date';
+        headerDate.style.border = '1px solid black';
+        headerDate.style.textAlign = 'center';
+        headerRow.appendChild(headerDate);
+
+        const headerNumberOfTransactions = document.createElement('th');
+        headerNumberOfTransactions.textContent = 'Number of Transactions';
+        headerNumberOfTransactions.style.border = '1px solid black';
+        headerNumberOfTransactions.style.textAlign = 'center';
+        headerRow.appendChild(headerNumberOfTransactions);
+
+        const headerTotalBalance = document.createElement('th');
+        headerTotalBalance.textContent = 'Total Balance';
+        headerTotalBalance.style.border = '1px solid black';
+        headerTotalBalance.style.textAlign = 'center';
+        headerRow.appendChild(headerTotalBalance);
+
+        const headerDailyBalance = document.createElement('th');
+        headerDailyBalance.textContent = 'Daily Balance';
+        headerDailyBalance.style.border = '1px solid black';
+        headerDailyBalance.style.textAlign = 'center';
+        headerRow.appendChild(headerDailyBalance);
+
+        const headerTransactions = document.createElement('th');
+        headerTransactions.textContent = 'Transactions';
+        headerTransactions.style.border = '1px solid black';
+        headerTransactions.style.textAlign = 'center';
+        headerRow.appendChild(headerTransactions);
+
+        table.appendChild(headerRow);
+
+        data.forEach((row, index) => {
+            let idSuffix = ''
+
+            const tr = document.createElement('tr');
+            tr.classList.add('transactions-row');
+            const dateCell = document.createElement('td');
+            dateCell.textContent = row.date;
+            dateCell.setAttribute('data-testid', `dti-date${idSuffix}`);
+            dateCell.setAttribute('id', `date${idSuffix}`);
+            dateCell.classList.add('table-cell');
+            dateCell.style.textAlign = 'center';
+            tr.appendChild(dateCell);
+
+            const numberOfTransactionsCell = document.createElement('td');
+            numberOfTransactionsCell.textContent = row.numberOfTransactions;
+            numberOfTransactionsCell.setAttribute('data-testid', `dti-numberOfTransactions${idSuffix}`);
+            numberOfTransactionsCell.setAttribute('id', `numberOfTransactions${idSuffix}`);
+            numberOfTransactionsCell.style.textAlign = 'center';
+            numberOfTransactionsCell.classList.add('table-cell');
+            tr.appendChild(numberOfTransactionsCell);
+
+            const weeklyBalanceCell = document.createElement('td');
+            let weeklyBalance = 0;
+            for (let i = index; i < data.length; i++) {
+                weeklyBalance += data[i].dailyBalance;
+            }
+
+            weeklyBalanceCell.textContent = formatCurrency(weeklyBalance);
+            weeklyBalanceCell.setAttribute('data-testid', `dti-weeklyBalance${idSuffix}`);
+            weeklyBalanceCell.setAttribute('id', `weeklyBalance${idSuffix}`);
+            weeklyBalanceCell.classList.add('table-cell');
+            weeklyBalanceCell.style.textAlign = 'center';
+            tr.appendChild(weeklyBalanceCell);
+
+            const dailyBalanceCell = document.createElement('td');
+            dailyBalanceCell.textContent = formatCurrency(row.dailyBalance);
+            dailyBalanceCell.setAttribute('data-testid', `dti-dailyBalance${idSuffix}`);
+            dailyBalanceCell.setAttribute('id', `dailyBalance${idSuffix}`);
+            dailyBalanceCell.style.textAlign = 'center';
+            dailyBalanceCell.classList.add('table-cell');
+            tr.appendChild(dailyBalanceCell);
+
+            const transactionsCell = document.createElement('td');
+            transactionsCell.setAttribute('data-testid', `dti-transactions${idSuffix}`);
+            transactionsCell.setAttribute('id', `transactions${idSuffix}`);
+            transactionsCell.style.textAlign = 'center';
+            transactionsCell.style.width = '300px';
+            transactionsCell.classList.add('expenses-cell');
+
+            const transactionsTable = document.createElement('table');
+            transactionsTable.classList.add('transactions-table');
+            transactionsTable.style.width = '100%';
+            transactionsTable.style.borderCollapse = 'collapse';
+            transactionsTable.style.border = '1px solid black';
+            transactionsTable.style.textAlign = 'center';
+
+            const transactionsHeaderRow = document.createElement('tr');
+            transactionsHeaderRow.style.backgroundColor = 'lightgray';
+            transactionsHeaderRow.style.border = '1px solid black';
+
+            const transactionsHeaderCategoryIcon = document.createElement('th');
+            transactionsHeaderCategoryIcon.textContent = 'Icon';
+            transactionsHeaderCategoryIcon.style.border = '1px solid black';
+            transactionsHeaderCategoryIcon.style.textAlign = 'center';
+            transactionsHeaderCategoryIcon.style.width = '100px';
+            transactionsHeaderRow.appendChild(transactionsHeaderCategoryIcon);
+
+            const transactionsHeaderCategory = document.createElement('th');
+            transactionsHeaderCategory.textContent = 'Category';
+            transactionsHeaderCategory.style.border = '1px solid black';
+            transactionsHeaderCategory.style.textAlign = 'center';
+            transactionsHeaderCategoryIcon.style.width = '200px';
+            transactionsHeaderRow.appendChild(transactionsHeaderCategory);
+
+            const transactionsHeaderAmount = document.createElement('th');
+            transactionsHeaderAmount.textContent = 'Amount';
+            transactionsHeaderAmount.style.border = '1px solid black';
+            transactionsHeaderAmount.style.textAlign = 'center';
+            transactionsHeaderAmount.style.width = '100px';
+            transactionsHeaderRow.appendChild(transactionsHeaderAmount);
+
+            transactionsTable.appendChild(transactionsHeaderRow);
+
+            row.transactions.forEach(transaction => {
+                const transactionsRow = document.createElement('tr');
+
+                const transactionsCategoryEmojiCell = document.createElement('td');
+                transactionsCategoryEmojiCell.textContent = transaction.category.emoji;
+                transactionsRow.appendChild(transactionsCategoryEmojiCell);
+
+                const transactionsCategoryCell = document.createElement('td');
+                transactionsCategoryCell.textContent = `${transaction.category.name}`;
+                transactionsRow.appendChild(transactionsCategoryCell);
+
+                const transactionsAmountCell = document.createElement('td');
+                transactionsAmountCell.textContent = formatCurrency(transaction.amount);
+                transactionsRow.appendChild(transactionsAmountCell);
+
+                transactionsTable.appendChild(transactionsRow);
+            });
+
+            if (row.transactions.length === 0) {
+                const transactionsRow = document.createElement('tr');
+
+                const transactionsCategoryEmojiCell = document.createElement('td');
+                transactionsCategoryEmojiCell.textContent = ' ';
+                transactionsRow.appendChild(transactionsCategoryEmojiCell);
+
+                const transactionsCategoryCell = document.createElement('td');
+                transactionsCategoryCell.textContent = 'No transactions';
+                transactionsRow.appendChild(transactionsCategoryCell);
+
+                const transactionsAmountCell = document.createElement('td');
+                transactionsAmountCell.textContent = `${formatCurrency(row.transactions[0]?.amount)}`;
+                transactionsRow.appendChild(transactionsAmountCell);
+
+                transactionsTable.appendChild(transactionsRow);
+            }
+
+            transactionsCell.appendChild(transactionsTable);
+
+            tr.appendChild(transactionsCell);
+
+            table.appendChild(tr);
+
+        });
+
+        resultsContainer.appendChild(table);
+        displaySimpleHouseholdExpenses(data, 'sampleChart');
+    });
+</script>
+
+</html>

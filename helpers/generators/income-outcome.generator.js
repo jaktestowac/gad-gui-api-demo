@@ -89,6 +89,69 @@ function generateDateStringsFromDateToNow(pastDate) {
   return dateStrings;
 }
 
+function generateRandomSimplifiedIncomeOutcomeData(nSamples) {
+  const fromDate = new Date();
+  fromDate.setDate(fromDate.getDate() - nSamples);
+
+  const pastDays = generateDateStringsFromDateToNow(fromDate);
+  const incomeOutcomeData = [];
+  for (let i = 0; i < nSamples; i++) {
+    const dataGenerator = new RandomValueGeneratorWithSeed(Math.random().toString());
+    const transactions = [];
+    const date = pastDays[i];
+
+    const maxNumberOfTransactions = date.endsWith("01") || date.endsWith("31") ? 10 : 5;
+    const minNumberOfTransactions = date.endsWith("01") || date.endsWith("31") ? 3 : 1;
+
+    const numberOfTransactions = dataGenerator.getNextValue(minNumberOfTransactions, maxNumberOfTransactions);
+    for (let j = 0; j < numberOfTransactions; j++) {
+      if (dataGenerator.getNextValue(0, 100) < 40) {
+        // add income
+        const randomCategoryIdx = dataGenerator.getNextValue(0, incomeSources.length - 1);
+        const category = incomeSources[randomCategoryIdx];
+        let amount = dataGenerator.getNextValue(50, 500);
+
+        if (dataGenerator.getNextValue(0, 100) < 20) {
+          amount = dataGenerator.getNextValue(1000, 2000);
+        }
+
+        transactions.push({
+          category: category,
+          amount: amount,
+        });
+      } else {
+        // add expense
+        const randomCategoryIdx = dataGenerator.getNextValue(0, categoryTypes.length - 1);
+        const category = categoryTypes[randomCategoryIdx];
+
+        let amount = dataGenerator.getNextValue(50, 300) * -1;
+
+        if (dataGenerator.getNextValue(0, 100) < 10) {
+          amount = dataGenerator.getNextValue(100, 2000) * -1;
+        }
+
+        transactions.push({
+          category: category,
+          amount: amount,
+        });
+      }
+    }
+
+    const dailyBalance = transactions.reduce((acc, transaction) => acc + transaction.amount, 0);
+
+    const cost = {
+      date: date,
+      numberOfTransactions: transactions.length,
+      dailyBalance,
+      transactions,
+    };
+
+    incomeOutcomeData.unshift(cost);
+  }
+
+  return incomeOutcomeData;
+}
+
 function generateIncomeOutcomeData(nSamples) {
   const pastDays = generateDateStringsFromDateToNow("2022-01-01");
 
@@ -203,4 +266,5 @@ function generateIncomeOutcomeData(nSamples) {
 
 module.exports = {
   generateIncomeOutcomeData,
+  generateRandomSimplifiedIncomeOutcomeData,
 };
