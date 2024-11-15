@@ -86,6 +86,10 @@ function displaySimpleHouseholdExpenses(dataForCanvas, chartId, animationDuratio
     window.myCharts[chartId].destroy();
   }
 
+  if (document.getElementById(chartId) === null) {
+    return;
+  }
+
   var ctx = document.getElementById(chartId).getContext("2d");
 
   const dates = dataForCanvas.map((data) => data.date);
