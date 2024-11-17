@@ -1,4 +1,4 @@
-async function getRandomSimpleWeatherData(daysBack = 1) {
+async function getRandomSimpleWeatherData(daysBack = 3) {
   return fetch(`/api/v1/data/random/weather-simple?days=${daysBack}`, {
     method: "GET",
     headers: {
@@ -13,6 +13,30 @@ async function getRandomSimpleWeatherData(daysBack = 1) {
       return {};
     }
   });
+}
+
+function calculateMeanValue(data, key) {
+  const values = data.map((item) => item[key]);
+  const filteredValues = values.filter((value) => value !== undefined);
+  const sum = filteredValues.reduce((acc, value) => acc + parseFloat(value), 0);
+  const mean = sum / filteredValues.length;
+  return mean.toFixed(2);
+}
+
+function calculateMeanValueFromRange(data, key) {
+  const values = data.map((item) => item[key]);
+  const filteredValues = values.filter((value) => value !== undefined);
+  const sum = filteredValues.reduce((acc, value) => {
+    const range = value.split("-");
+    const min = parseInt(range[0]);
+    if (range.length === 1) {
+      return acc + min * 10; // 🐞
+    }
+    const max = parseInt(range[1]);
+    return acc + (min + max) / 2;
+  }, 0);
+  const mean = sum / filteredValues.length;
+  return mean.toFixed(2);
 }
 
 function presentDataOnUIAsATable(weatherData) {
@@ -67,7 +91,7 @@ function presentDataOnUIAsATable(weatherData) {
   table.appendChild(headerRow);
 
   weatherData.forEach((row, index) => {
-    let idSuffix = "";
+    let idSuffix = index;
 
     const tr = document.createElement("tr");
     tr.classList.add("transactions-row");
@@ -78,7 +102,7 @@ function presentDataOnUIAsATable(weatherData) {
       dateCell.textContent = "Unknown";
     }
 
-    dateCell.setAttribute("data-testid", `dti-date${idSuffix}`);
+    dateCell.setAttribute("data-testid", `dti-date-${idSuffix}`);
     dateCell.setAttribute("id", `date${idSuffix}`);
     dateCell.classList.add("table-cell");
     dateCell.style.textAlign = "center";
@@ -89,8 +113,8 @@ function presentDataOnUIAsATable(weatherData) {
     if (row.temperature === undefined) {
       temperatureCell.textContent = "Unknown";
     }
-    temperatureCell.setAttribute("data-testid", `dti-temperature${idSuffix}`);
-    temperatureCell.setAttribute("id", `temperature${idSuffix}`);
+    temperatureCell.setAttribute("data-testid", `dti-temperature-${idSuffix}`);
+    temperatureCell.setAttribute("id", `temperature-${idSuffix}`);
     temperatureCell.classList.add("table-cell");
     temperatureCell.style.textAlign = "center";
     tr.appendChild(temperatureCell);
@@ -100,8 +124,8 @@ function presentDataOnUIAsATable(weatherData) {
     if (row.humidity === undefined) {
       humidityCell.textContent = ""; // 🐞
     }
-    humidityCell.setAttribute("data-testid", `dti-humidity${idSuffix}`);
-    humidityCell.setAttribute("id", `humidity${idSuffix}`);
+    humidityCell.setAttribute("data-testid", `dti-humidity-${idSuffix}`);
+    humidityCell.setAttribute("id", `humidity-${idSuffix}`);
     humidityCell.classList.add("table-cell");
     humidityCell.style.textAlign = "center";
     tr.appendChild(humidityCell);
@@ -111,8 +135,8 @@ function presentDataOnUIAsATable(weatherData) {
     if (row.dayLength === undefined) {
       dayLengthCell.textContent = "Unknown";
     }
-    dayLengthCell.setAttribute("data-testid", `dti-dayLength${idSuffix}`);
-    dayLengthCell.setAttribute("id", `dayLength${idSuffix}`);
+    dayLengthCell.setAttribute("data-testid", `dti-dayLength-${idSuffix}`);
+    dayLengthCell.setAttribute("id", `dayLength-${idSuffix}`);
     dayLengthCell.classList.add("table-cell");
     dayLengthCell.style.textAlign = "center";
     tr.appendChild(dayLengthCell);
@@ -122,8 +146,8 @@ function presentDataOnUIAsATable(weatherData) {
     if (row.windSpeed === undefined) {
       dayLengthCell.textContent = "Unknown"; // 🐞
     }
-    windSpeedCell.setAttribute("data-testid", `dti-windSpeed${idSuffix}`);
-    windSpeedCell.setAttribute("id", `windSpeed${idSuffix}`);
+    windSpeedCell.setAttribute("data-testid", `dti-windSpeed-${idSuffix}`);
+    windSpeedCell.setAttribute("id", `windSpeed-${idSuffix}`);
     windSpeedCell.classList.add("table-cell");
     windSpeedCell.style.textAlign = "center";
     tr.appendChild(windSpeedCell);
@@ -134,21 +158,94 @@ function presentDataOnUIAsATable(weatherData) {
     if (row.windSpeedRange === undefined) {
       windSpeedRangeCell.textContent = "Unknown";
     }
-    windSpeedRangeCell.setAttribute("data-testid", `dti-windSpeedRange${idSuffix}`);
-    windSpeedRangeCell.setAttribute("id", `windSpeedRange${idSuffix}`);
+    windSpeedRangeCell.setAttribute("data-testid", `dti-windSpeedRange-${idSuffix}`);
+    windSpeedRangeCell.setAttribute("id", `windSpeedRange-${idSuffix}`);
     windSpeedRangeCell.classList.add("table-cell");
     windSpeedRangeCell.style.textAlign = "center";
     tr.appendChild(windSpeedRangeCell);
 
     table.appendChild(tr);
   });
+
+  // calculate meanTemperatureValue from weatherData
+  const meanTemperatureValue = calculateMeanValue(weatherData, "temperature");
+  const meanHumidityValue = calculateMeanValue(weatherData, "humidity");
+  const meanDayLengthValue = calculateMeanValue(weatherData, "dayLength");
+  const meanWindSpeedValue = calculateMeanValue(weatherData, "windSpeed");
+  const meanWindSpeedRangeValue = calculateMeanValueFromRange(weatherData, "windSpeedRange");
+
+  const meanRow = document.createElement("tr");
+  meanRow.style.backgroundColor = "lightgray";
+  meanRow.style.border = "1px solid black";
+
+  const meanLabel = document.createElement("td");
+  meanLabel.textContent = "Mean values";
+  meanLabel.style.border = "1px solid black";
+  meanLabel.style.textAlign = "center";
+  meanLabel.classList.add("table-cell");
+  meanRow.appendChild(meanLabel);
+
+  const meanTemperature = document.createElement("td");
+  meanTemperature.textContent = meanTemperatureValue;
+  meanTemperature.style.border = "1px solid black";
+  meanTemperature.style.textAlign = "center";
+  meanTemperature.classList.add("table-cell");
+  meanTemperature.setAttribute("data-testid", `dti-meanTemperature`);
+  meanTemperature.setAttribute("id", `meanTemperature`);
+
+  meanRow.appendChild(meanTemperature);
+
+  const meanHumidity = document.createElement("td");
+  meanHumidity.textContent = meanHumidityValue;
+  meanHumidity.style.border = "1px solid black";
+  meanHumidity.style.textAlign = "center";
+  meanHumidity.classList.add("table-cell");
+  meanHumidity.setAttribute("data-testid", `dti-meanHumidity`);
+  meanHumidity.setAttribute("id", `meanHumidity`);
+
+  meanRow.appendChild(meanHumidity);
+
+  const meanDayLength = document.createElement("td");
+  meanDayLength.textContent = meanDayLengthValue;
+  meanDayLength.style.border = "1px solid black";
+  meanDayLength.style.textAlign = "center";
+  meanDayLength.classList.add("table-cell");
+  meanDayLength.setAttribute("data-testid", `dti-meanDayLength`);
+  meanDayLength.setAttribute("id", `meanDayLength`);
+
+  meanRow.appendChild(meanDayLength);
+
+  const meanWindSpeed = document.createElement("td");
+  meanWindSpeed.textContent = meanWindSpeedValue;
+  meanWindSpeed.style.border = "1px solid black";
+  meanWindSpeed.style.textAlign = "center";
+  meanWindSpeed.classList.add("table-cell");
+  meanWindSpeed.setAttribute("data-testid", `dti-meanWindSpeed`);
+  meanWindSpeed.setAttribute("id", `meanWindSpeed`);
+
+  meanRow.appendChild(meanWindSpeed);
+
+  const meanWindSpeedRange = document.createElement("td");
+  meanWindSpeedRange.textContent = meanWindSpeedRangeValue;
+  meanWindSpeedRange.style.border = "1px solid black";
+  meanWindSpeedRange.style.textAlign = "center";
+  meanWindSpeedRange.classList.add("table-cell");
+  meanWindSpeedRange.setAttribute("data-testid", `dti-meanWindSpeedRange`);
+  meanWindSpeedRange.setAttribute("id", `meanWindSpeedRange`);
+
+  meanRow.appendChild(meanWindSpeedRange);
+
+  table.appendChild(meanRow);
+
   resultsContainer.appendChild(table);
 
   // add comment based on weather data - about temperature, wind speed, humidity, and min/max temperature
   const summaryContainer = document.getElementById("results-summary");
 
   const comment = document.createElement("p");
+  comment.innerHTML = `Weather for today:<br>`;
   comment.setAttribute("id", "comment");
+  comment.setAttribute("data-testid", "comment");
   comment.setAttribute("class", "comment");
 
   const temperature = weatherData[0].temperature;
@@ -160,15 +257,15 @@ function presentDataOnUIAsATable(weatherData) {
 
   if (temperature < 10) {
     const emoji = temperature < 5 ? "❄️" : "🥶";
-    comment.innerHTML = `It's cold ${emoji} outside`;
+    comment.innerHTML += `It's cold ${emoji} outside`;
   } else if (temperature >= 10 && temperature < 20) {
     const emoji = temperature < 15 ? "🌤️" : "🌥️";
-    comment.innerHTML = `It's cool ${emoji} outside`;
+    comment.innerHTML += `It's cool ${emoji} outside`;
   } else if (temperature >= 20) {
     const emoji = temperature < 25 ? "🌞" : "🔥";
-    comment.innerHTML = `It's warm ${emoji} outside`;
+    comment.innerHTML += `It's warm ${emoji} outside`;
   } else {
-    comment.innerHTML = `Temperate is unknown`;
+    comment.innerHTML += `Temperate is unknown`;
   }
 
   if (windSpeed < 10) {
