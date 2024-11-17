@@ -157,30 +157,34 @@ function generateFutureDateStringsFromDate(dateStr, pastDays) {
   return dateStrings;
 }
 
-function generateWeatherDataForNPastDaysFromDate(date, nSamples) {
+function generateWeatherDataForNPastDaysFromDate(date, nSamples, totalRandom = false) {
   const pastDays = generatePastDateStringsFromDate(date, nSamples);
-  return generateWeatherDataForNDays(nSamples, pastDays);
+  return generateWeatherDataForNDays(nSamples, pastDays, totalRandom);
 }
 
-function generateWeatherDataForNPastDays(nSamples) {
+function generateWeatherDataForNPastDays(nSamples, totalRandom = false) {
   const pastDays = generatePasteDateStrings(nSamples);
-  return generateWeatherDataForNDays(nSamples, pastDays);
+  return generateWeatherDataForNDays(nSamples, pastDays, totalRandom);
 }
 
-function generateWeatherDataForNFutureDays(nSamples) {
+function generateWeatherDataForNFutureDays(nSamples, totalRandom = false) {
   const pastDays = generateFutureDateStrings(nSamples);
-  return generateWeatherDataForNDays(nSamples, pastDays);
+  return generateWeatherDataForNDays(nSamples, pastDays, totalRandom);
 }
 
-function generateWeatherDataForNFutureDaysFromDate(date, nSamples) {
+function generateWeatherDataForNFutureDaysFromDate(date, nSamples, totalRandom = false) {
   const pastDays = generateFutureDateStringsFromDate(date, nSamples);
-  return generateWeatherDataForNDays(nSamples, pastDays);
+  return generateWeatherDataForNDays(nSamples, pastDays, totalRandom);
 }
 
-function generateWeatherDataForNDays(nSamples, dayList) {
+function generateWeatherDataForNDays(nSamples, dayList, totalRandom = false) {
   const weatherData = [];
   for (let i = 0; i < nSamples; i++) {
-    const dataGenerator = new RandomValueGeneratorWithSeed(dayList[i]);
+    let dataGenerator = new RandomValueGeneratorWithSeed(dayList[i]);
+
+    if (totalRandom === true) {
+      dataGenerator = new RandomValueGeneratorWithSeed(Math.random().toString());
+    }
 
     const date = dayList[i];
 

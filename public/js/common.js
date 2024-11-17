@@ -34,10 +34,10 @@ function setBoxMessage(element, msg, className) {
   element.innerHTML = `<div class="${className}">
     <table>
       <tr>
-        <td style="width: 10%;">
+        <td style="width: 10%; padding: 2px;">
         ${icon}
         </td>
-        <td ><div align="center">${msg}</div></td>
+        <td style="padding: 0px;"><div align="center">${msg}</div></td>
       </tr>
     </table></div>
   `;
@@ -859,6 +859,8 @@ function displaySimpleAlert(text, type = 0, timeout = 3000) {
     alertDiv.classList.add("alert-success");
     alertDiv.classList.add("alert-success-emoji");
   }
+
+  alertDiv.classList.add("longer-3");
   document.body.appendChild(alertDiv);
 
   document.querySelector("#alerts-placeholder").appendChild(alertDiv);

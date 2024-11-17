@@ -213,6 +213,15 @@ input.button-secondary {
   -webkit-animation-fill-mode: forwards;
 }
 
+.alert.longer-3 {
+  animation-delay: 3s !important;
+  -webkit-animation-delay: 3s !important;
+}
+.alert.longer-4 {
+  animation-delay: 4s !important;
+  -webkit-animation-delay: 4s !important;
+}
+
 .alert-error {
   color: #721c24;
   background-color: #f8d7da;
@@ -1260,7 +1269,6 @@ body.darkmode {
   display: flex;
   justify-content: flex-end;
   flex-flow: column;
-  padding: 10px;
   position: fixed !important;
 }
 
@@ -1276,6 +1284,7 @@ body.darkmode {
   border: 1px solid transparent;
   border-radius: 0.25rem;
   z-index: 9999;
+  padding: 10px;
 
   animation: server-response 0s 0.2;
   -webkit-animation: server-response 0.2s 1;

@@ -17,6 +17,8 @@ async function getCostsData(daysBack) {
 
 function formatCurrency(value) {
   if (value === undefined) {
+    // eslint-disable-next-line no-console
+    console.log("Congratulations! You have found a bug in the code!");
     return value;
   }
 

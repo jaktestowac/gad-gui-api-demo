@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>🦎 GAD - Random 7-days Household Expenses (from API)</title>
+    <title>🦎 GAD - Random Weather for Today (from API)</title>
     <link rel="icon" href="/data/icons/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
@@ -25,16 +25,12 @@
             border: 1px solid black;
         }
 
-        .expenses-cell {
-            padding: 0px !important;
-        }
-
         .table-cell {
-            padding: 0px !important;
+            padding: 4px !important;
         }
 
         .results-table {
-            width: 700px;
+            max-width: 700px;
             border-collapse: collapse;
             border: 1px solid black;
             text-align: center;
@@ -54,15 +50,14 @@
     <br />
     <br />
     <div align="center">
-        <h2 style="padding: 0px; margin-bottom: 0px;">Random 7-days Household Expenses (from API)</h2>
-        <span style="font-size: 10px">PS. This page has hidden error. Can you find it? 😉</span>
+        <h2 style="padding: 0px; margin-bottom: 0px;">Random Weather for Today (from API)</h2>
+        <span style="font-size: 10px">PS. This page contains some logic on front-end. Can you test it? 😉</span>
     </div>
     <br />
     <div align="center">
-        <div style="max-width: 800px;">
-            <canvas id="sampleChart"></canvas>
-        </div>
         <div id="results-container">
+        </div>
+        <div id="results-summary">
         </div>
     </div>
     <br />
@@ -81,9 +76,9 @@
 <script type="text/javascript" src="/version.js"></script>
 <script type="text/javascript" src="./js/practice-common.js"></script>
 <script type="text/javascript" src="./js/display-canvas.js"></script>
-<script type="text/javascript" src="./js/household-expences.js"></script>
+<script type="text/javascript" src="./js/random-weather.js"></script>
 <script>
-    getAndShowData(7)
+    getAndPresentRandomWeatherData()
 </script>
 
 </html>
