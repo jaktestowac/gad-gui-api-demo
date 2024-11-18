@@ -13,9 +13,9 @@
 
 /* The sidepanel links */
 .sidepanel a {
-  padding: 8px 8px 8px 32px;
+  padding: 8px 8px 8px 24px;
   text-decoration: none;
-  font-size: 25px;
+  font-size: 20px;
   color: #818181;
   display: block;
   transition: 0.3s;
@@ -35,7 +35,7 @@
   /* position: absolute;
   top: 0; */
   right: 25px;
-  font-size: 36px;
+  font-size: 30px;
   /* text-align: end; */
   /* border-width: 1px;
   border-color: #818181;
@@ -58,9 +58,42 @@
 }
 
 .book-shop-side-panel-icons {
-  width: 32px;
-  font-size: 32px;
-  padding-top: 12px;
+  width: 26px;
+  font-size: 26px;
+  padding-top: 10px;
+}
+
+@media only screen and (max-width: 768px) {
+  .book-shop-side-panel-icons {
+    width: 20px !important;
+    font-size: 20px !important;
+    padding-top: 10px;
+  }
+
+  .fa-stack {
+    width: 20px !important;
+    font-size: 20px !important;
+    padding-top: 10px;
+  }
+}
+
+@media only screen and (max-width: 568px) {
+  .book-shop-side-panel-icons {
+    width: 16px !important;
+    font-size: 16px !important;
+    padding-top: 10px;
+  }
+
+  .sidepanel .closebtn {
+    padding-top: 20px;
+    font-size: 26px;
+  }
+
+  .fa-stack {
+    width: 16px !important;
+    font-size: 16px !important;
+    padding-top: 10px;
+  }
 }
 
 .openbtn {
@@ -76,4 +109,22 @@
   font-size: 22px !important;
   width: 30px !important;
   padding: 0px !important;
+}
+
+.fa-stack {
+  display: inherit;
+  height: 0%;
+  line-height: 0em;
+  vertical-align: inherit;
+  width: 26px;
+  font-size: 26px;
+  height: 40px;
+  padding-top: 20px;
+}
+
+.fa-edit-icon {
+  color: tomato;
+  font-size: 24px;
+  left: 20px;
+  top: 20px;
 }

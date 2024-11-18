@@ -869,3 +869,22 @@ function displaySimpleAlert(text, type = 0, timeout = 3000) {
     alertDiv.remove();
   }, timeout);
 }
+
+function toggleSpoiler(id, buttonElement) {
+  const spoilerElement = document.getElementById(id);
+  if (spoilerElement === null) {
+    return;
+  }
+
+  if (spoilerElement.style.display === "none") {
+    spoilerElement.style.display = null;
+    if (buttonElement !== null) {
+      buttonElement.textContent = buttonElement.textContent.replace("Show", "Hide");
+    }
+  } else {
+    spoilerElement.style.display = "none";
+    if (buttonElement !== null) {
+      buttonElement.textContent = buttonElement.textContent.replace("Hide", "Show");
+    }
+  }
+}

@@ -1319,3 +1319,19 @@ body.darkmode {
   margin-right: 5px;
   float: left;
 }
+
+.toggleSpoilerButton {
+  cursor: pointer;
+  color: #007bff;
+  background-color: #f8f9fa;
+  font-size: 16px;
+  color: #003f7a;
+  font-weight: bold;
+  box-shadow: #0000001f 2px 2px 2px;
+}
+
+.toggleSpoilerButton:hover {
+  color: #0056b3;
+  background-color: #e9ecef;
+  box-shadow: #0000001f 0px 0px 0px;
+}
