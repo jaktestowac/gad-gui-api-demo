@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>🦎 GAD - Random Weather for Today (from API)</title>
+    <title>🦎 GAD - Random Simple User (from API)</title>
     <link rel="icon" href="/data/icons/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
@@ -13,28 +13,39 @@
     <link rel="stylesheet" href="./css/practice-controls.css" />
     <script src="/js/libs/charts/chart.js"></script>
     <style>
-        .transactions-table {
-            width: 100%;
-            border-collapse: collapse;
-            border: 1px solid black;
-            text-align: center;
-            font-size: 12px;
+        .user-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: row;
+            border: 2px solid rgb(110, 110, 110);
+            padding: 10px;
+            margin: 10px;
+            border-radius: 10px;
         }
 
-        .transactions-row {
-            border: 1px solid black;
-        }
-
-        .table-cell {
-            padding: 4px !important;
-        }
-
-        .results-table {
-            max-width: 700px;
-            border-collapse: collapse;
-            border: 1px solid black;
-            text-align: center;
+        .user-label {
             font-size: 14px;
+            font-style: italic;
+            margin: 10px;
+        }
+
+        .status-label {
+            font-size: 14px;
+            margin: 10px;
+            background-color: rgb(151, 151, 151);
+            color: white;
+            padding: 5px;
+            border-radius: 5px;
+            border-color: rgb(119, 119, 119);
+            border-style: solid;
+            border-width: 2px;
+        }
+
+        .user-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
         }
     </style>
 </head>
@@ -50,7 +61,7 @@
     <br />
     <br />
     <div align="center">
-        <h2 style="padding: 0px; margin-bottom: 0px;">Random Weather for Today (from API)</h2>
+        <h2 style="padding: 0px; margin-bottom: 0px;">Random Simple User (from API)</h2>
         <span style="font-size: 10px">PS. This page contains some logic on front-end. Can you test it? 😉</span><br>
     </div>
     <br />
@@ -71,27 +82,12 @@
                         <div align="left" style="width: 600px;">
                             <h4>Business Context (Summary)</h4>
                             <p>
-                                This page represents a <strong>simplified weather forecast</strong> for a weather application.</br>
+                                This page represents a <strong>simplified user profile</strong> for a social media application.</br>
                                 It integrates API data with frontend logic to:
                             <ul>
-                                <li>Display weather details for today</li>
-                                <li>Calculate and display mean values</li>
-                                <li>Provide a descriptive summary</li>
-                            </ul>
-                            </p>
+                                <li>Display user's profile picture, name, and description</li>
+                                <li>Calculate user's age based on the birth date</li>
 
-                            <h4>Key Highlights</h4>
-                            <ul>
-                                <li><strong>API:</strong> The API provides weather details (<strong>date</strong>, <strong>temperature</strong>, <strong>temperatureMin</strong>, <strong>temperatureMax</strong>, <strong>humidity</strong>, <strong>dayLength</strong>, <strong>windSpeed</strong>, <strong>windSpeedRange</strong>)</li>
-                                <li><strong>UI with Core Logic:</strong> The frontend calculates <strong>mean values</strong> and provides a <strong>descriptive summary</strong> for the weather forecast.</li>
-                                <li><strong>Risks:</strong> The frontend logic is critical for user satisfaction and weather accuracy.</li>
-                                <li><strong>Testing Relevance:</strong>
-                                    <ul>
-                                        <li>Verify accuracy of frontend calculations (mean values).</li>
-                                        <li>Ensure proper integration and display of API data.</li>
-                                        <li>Wind Speed Range (km/h)</code> possible values: <code>0-5 km/h</code>, <code>5-10 km/h</code>, <code>10-15 km/h</code>, ..., up to <code>40+ km/h</code></li>
-                                    </ul>
-                                </li>
                             </ul>
                         </div>
                     </div>
@@ -114,9 +110,9 @@
 <script type="text/javascript" src="/version.js"></script>
 <script type="text/javascript" src="./js/practice-common.js"></script>
 <script type="text/javascript" src="./js/display-canvas.js"></script>
-<script type="text/javascript" src="./js/random-weather.js"></script>
+<script type="text/javascript" src="./js/random-user.js"></script>
 <script>
-    getAndPresentRandomWeatherData()
+    getAndPresentRandomUserData()
 </script>
 
 </html>

@@ -268,7 +268,9 @@ function presentDataOnUIAsATable(weatherData) {
     comment.innerHTML += `Temperate is unknown`;
   }
 
-  if (windSpeed < 10) {
+  if (windSpeed < 0) {
+    comment.innerHTML += comment.innerHTML;
+  } else if (windSpeed < 10) {
     const emoji = windSpeed < 5 ? "🍃" : "🌬️";
     comment.innerHTML += ` and wind is calm ${emoji}.`;
   } else if (windSpeed >= 10 && windSpeed < 30) {
@@ -278,12 +280,14 @@ function presentDataOnUIAsATable(weatherData) {
     const emoji = windSpeed < 40 ? "💨" : "🌪️";
     comment.innerHTML += ` and wind is strong ${emoji}.`;
   } else {
-    comment.innerHTML = ` and wind is unknown. Stay safe!`;
+    comment.innerHTML += ` and wind is unknown. Stay safe!`;
   }
 
   comment.innerHTML += "<br>";
 
-  if (humidityValue < 30) {
+  if (windSpeed < 0) {
+    comment.innerHTML += comment.innerHTML;
+  } else if (humidityValue < 30) {
     comment.innerHTML += " The air is dry.";
   } else if (humidityValue >= 30 && humidityValue < 60) {
     comment.innerHTML += " The air is moderate.";

@@ -186,32 +186,44 @@ function bookmarksDb() {
   return fullDb()["bookmarks"];
 }
 
+function booksDb() {
+  return fullDb()["books"] || [];
+}
+
 function bookShopAccountsDb() {
-  return fullDb()["book-shop-accounts"];
+  return fullDb()["book-shop-accounts"] || [];
 }
 
 function bookShopAccountPaymentCardDb() {
-  return fullDb()["book-shop-account-payment-cards"];
+  return fullDb()["book-shop-account-payment-cards"] || [];
+}
+
+function bookShopOrderCouponsDb() {
+  return fullDb()["book-shop-order-coupons"] || [];
 }
 
 function bookShopOrdersDb() {
-  return fullDb()["book-shop-orders"];
+  return fullDb()["book-shop-orders"] || [];
 }
 
 function bookShopOrderStatusesDb() {
-  return fullDb()["book-shop-order-statuses"];
+  return fullDb()["book-shop-order-statuses"] || [];
 }
 
 function bookShopActionsDb() {
-  return fullDb()["book-shop-actions"];
+  return fullDb()["book-shop-actions"] || [];
 }
 
 function bookShopRolesDb() {
-  return fullDb()["book-shop-roles"];
+  return fullDb()["book-shop-roles"] || [];
+}
+
+function bookShopBookReviewsDb() {
+  return fullDb()["book-reviews"] || [];
 }
 
 function bookShopItemsDb() {
-  return fullDb()["book-shop-items"];
+  return fullDb()["book-shop-items"] || [];
 }
 
 function quizQuestionsDb() {
@@ -356,4 +368,7 @@ module.exports = {
   bookShopAccountPaymentCardDb,
   bookShopItemsDb,
   bookShopOrderStatusesDb,
+  bookShopOrderCouponsDb,
+  booksDb,
+  bookShopBookReviewsDb,
 };
