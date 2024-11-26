@@ -43,11 +43,11 @@ describe("Endpoint /book-shop-account-payment-cards", async () => {
     });
 
     it(`DELETE ${baseUrl}`, () => {
-      return request.delete(baseUrl).expect(404);
+      return request.delete(baseUrl).expect(401);
     });
 
     it(`DELETE ${baseUrl}/:id`, () => {
-      return request.delete(`${baseUrl}/1`).expect(404);
+      return request.delete(`${baseUrl}/1`).expect(401);
     });
 
     it(`HEAD ${baseUrl}`, () => {

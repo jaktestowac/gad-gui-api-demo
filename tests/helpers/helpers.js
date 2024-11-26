@@ -62,7 +62,7 @@ function getISODateWithTimezoneOffset(date) {
 }
 
 async function setupEnv() {
-  await clearDB()
+  await clearDB();
 
   // Lower log level to WARNING:
   const requestBody = {
@@ -110,12 +110,12 @@ function jsonToBase64(object) {
   return btoa(json);
 }
 
-async function invokeRequestUntil(id, request, condition, maxAttempts = 10, delay = 200) {
+async function invokeRequestUntil(id, requestFun, conditionFun, maxAttempts = 10, delay = 200) {
   let attempts = 0;
   let response;
   while (attempts < maxAttempts) {
-    response = await request();
-    const result = condition(response);
+    response = await requestFun();
+    const result = conditionFun(response);
     if (result) {
       console.log(`[${id}] Attempt ${attempts + 1} succeeded with result: ${result}`);
       break;
