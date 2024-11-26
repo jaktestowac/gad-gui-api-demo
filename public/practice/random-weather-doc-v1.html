@@ -12,6 +12,12 @@
     <link rel="stylesheet" href="/css/infoBoxes.css" />
     <link rel="stylesheet" href="./css/practice-controls.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Run docxtemplater, pizzip, and filesaver scripts !-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.54.0/docxtemplater.js"></script>
+    <script src="https://unpkg.com/pizzip@3.1.7/dist/pizzip.js"></script>
+    <script src="https://unpkg.com/pizzip@3.1.7/dist/pizzip-utils.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.js"></script>
     <script src="/js/libs/charts/chart.js"></script>
     <style>
         .transactions-table {
@@ -118,7 +124,28 @@
 <script type="text/javascript" src="./js/random-weather.js"></script>
 <script type="text/javascript" src="/js/helpers/reports.js"></script>
 <script>
-    getAndPresentRandomWeatherData()
+    getAndPresentRandomWeatherData().then((data) => {
+        // Generate DOCX button
+        const buttonsContainer = document.getElementById("buttons-container");
+        const docxButton = document.createElement("button");
+        docxButton.innerHTML = "Download DOCX";
+        docxButton.classList.add("btn");
+        docxButton.classList.add("button-primary");
+        docxButton.style.margin = "2px";
+        docxButton.style.padding = "2px";
+        docxButton.onclick = () => generateDocx(data);
+        buttonsContainer.appendChild(docxButton);
+
+        const pdfButton = document.createElement("button");
+        pdfButton.innerHTML = "Download PDF";
+        pdfButton.classList.add("btn");
+        pdfButton.classList.add("button-primary");
+        pdfButton.style.margin = "2px";
+        pdfButton.style.padding = "2px";
+        pdfButton.onclick = () => generatePDF('weather-data', "results-container");
+        buttonsContainer.appendChild(pdfButton);
+    });
+
 </script>
 
 </html>

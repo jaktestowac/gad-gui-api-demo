@@ -15,6 +15,20 @@ async function getRandomSimpleUserData() {
   });
 }
 
+const possibleStatuses = {
+  0: "inactive",
+  1: "active",
+  2: "banned",
+  3: "deleted",
+  4: "suspended",
+};
+
+function calculateDifferenceInDatesInDays(date1, date2) {
+  const differenceInMilliseconds = Math.abs(date1 - date2);
+  const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
+  return differenceInDays;
+}
+
 function presentSimpleUserDataOnUI(userData) {
   const resultsContainer = document.getElementById("results-container");
   resultsContainer.innerHTML = "";
@@ -31,6 +45,8 @@ function presentSimpleUserDataOnUI(userData) {
 
   const userInfoContainer = document.createElement("div");
   const userFullName = document.createElement("h2");
+  userFullName.setAttribute("id", "user-full-name");
+  userFullName.setAttribute("data-testid", "user-full-name");
   userFullName.textContent = `${userData.firstName} ${userData.lastName}`;
   userInfoContainer.appendChild(userFullName);
 
@@ -39,6 +55,8 @@ function presentSimpleUserDataOnUI(userData) {
   userUsernameLabel.classList.add("user-label");
   userUsernameLabel.textContent = "Username:";
   const userUsernameValue = document.createElement("span");
+  userUsernameValue.setAttribute("id", "user-username");
+  userUsernameValue.setAttribute("data-testid", "user-username");
   userUsernameValue.textContent = userData.username;
   userUsername.appendChild(userUsernameLabel);
   userUsername.appendChild(userUsernameValue);
@@ -50,6 +68,8 @@ function presentSimpleUserDataOnUI(userData) {
   userEmailLabel.classList.add("user-label");
   userEmailLabel.textContent = "Email:";
   const userEmailValue = document.createElement("span");
+  userEmailValue.setAttribute("id", "user-email");
+  userEmailValue.setAttribute("data-testid", "user-email");
   userEmailValue.textContent = userData.email;
   userEmail.appendChild(userEmailLabel);
   userEmail.appendChild(userEmailValue);
@@ -60,6 +80,8 @@ function presentSimpleUserDataOnUI(userData) {
   userPhoneLabel.classList.add("user-label");
   userPhoneLabel.textContent = "Phone:";
   const userPhoneValue = document.createElement("span");
+  userPhoneValue.setAttribute("id", "user-phone");
+  userPhoneValue.setAttribute("data-testid", "user-phone");
   userPhoneValue.textContent = userData.phone || "N/A";
   userPhone.appendChild(userPhoneLabel);
   userPhone.appendChild(userPhoneValue);
@@ -70,6 +92,8 @@ function presentSimpleUserDataOnUI(userData) {
   userDateOfBirthLabel.classList.add("user-label");
   userDateOfBirthLabel.textContent = "Date of Birth:";
   const userDateOfBirthValue = document.createElement("span");
+  userDateOfBirthValue.setAttribute("id", "user-date-of-birth");
+  userDateOfBirthValue.setAttribute("data-testid", "user-date-of-birth");
 
   if (userData.dateOfBirth === undefined) {
     userDateOfBirthValue.innerHTML = undefined;
@@ -85,10 +109,13 @@ function presentSimpleUserDataOnUI(userData) {
   userAgeLabel.classList.add("user-label");
   userAgeLabel.textContent = "Age:";
   const userAgeValue = document.createElement("span");
+  userAgeValue.setAttribute("id", "user-age");
+  userAgeValue.setAttribute("data-testid", "user-age");
+
   if (userData.dateOfBirth === undefined) {
     userAgeValue.innerHTML = undefined;
   } else {
-    userAgeValue.textContent = new Date().getFullYear() - new Date(userData.dateOfBirth).getFullYear();
+    userAgeValue.textContent = (new Date().getFullYear() - new Date(userData.dateOfBirth).getFullYear()) % 100; // 🐞
   }
   userAge.appendChild(userAgeLabel);
   userAge.appendChild(userAgeValue);
@@ -99,6 +126,9 @@ function presentSimpleUserDataOnUI(userData) {
   userAddressLabel.classList.add("user-label");
   userAddressLabel.textContent = "Address:";
   const userAddressValue = document.createElement("span");
+  userAddressValue.setAttribute("id", "user-address");
+  userAddressValue.setAttribute("data-testid", "user-address");
+
   userAddressValue.textContent = `${userData.address.street}, ${userData.address.city}, ${userData.address.postalCode}, ${userData.address.country}`;
   userAddress.appendChild(userAddressLabel);
   userAddress.appendChild(userAddressValue);
@@ -109,9 +139,20 @@ function presentSimpleUserDataOnUI(userData) {
   userLastLoginLabel.classList.add("user-label");
   userLastLoginLabel.textContent = "Last Login:";
   const userLastLoginValue = document.createElement("span");
+  userLastLoginValue.setAttribute("id", "user-last-login");
+  userLastLoginValue.setAttribute("data-testid", "user-last-login");
   userLastLoginValue.textContent = new Date(userData.lastLogin).toLocaleDateString();
+
+  const userLastLoginInfo = document.createElement("span");
+  userLastLoginInfo.classList.add("user-small-label");
+  userLastLoginInfo.setAttribute("data-testid", "user-last-login-info");
+  userLastLoginInfo.setAttribute("id", "user-last-login-info");
+  const howLongAgoInDaysValue = calculateDifferenceInDatesInDays(new Date(), new Date(userData.lastLogin));
+  userLastLoginInfo.textContent = `(Last login was ${Math.round(howLongAgoInDaysValue)} days ago)`;
+
   userLastLogin.appendChild(userLastLoginLabel);
   userLastLogin.appendChild(userLastLoginValue);
+  userLastLogin.appendChild(userLastLoginInfo);
   userInfoContainer.appendChild(userLastLogin);
 
   const userAccountCreated = document.createElement("p");
@@ -119,11 +160,20 @@ function presentSimpleUserDataOnUI(userData) {
   userAccountCreatedLabel.classList.add("user-label");
   userAccountCreatedLabel.textContent = "Account Created:";
   const userAccountCreatedValue = document.createElement("span");
+  userAccountCreatedValue.setAttribute("id", "user-account-created");
+  userAccountCreatedValue.setAttribute("data-testid", "user-account-created");
 
-  // get only the date
+  const userAccountCreatedInfo = document.createElement("span");
+  userAccountCreatedInfo.classList.add("user-small-label");
+  userAccountCreatedInfo.setAttribute("data-testid", "user-account-created-info");
+  userAccountCreatedInfo.setAttribute("id", "user-account-created-info");
+  const howLongAgoCreatedInDaysValue = calculateDifferenceInDatesInDays(new Date(), new Date(userData.accountCreated));
+  userAccountCreatedInfo.textContent = `(Account created ${Math.round(howLongAgoCreatedInDaysValue)} days ago)`;
+
   userAccountCreatedValue.textContent = new Date(userData.accountCreated).toLocaleDateString();
   userAccountCreated.appendChild(userAccountCreatedLabel);
   userAccountCreated.appendChild(userAccountCreatedValue);
+  userAccountCreated.appendChild(userAccountCreatedInfo);
   userInfoContainer.appendChild(userAccountCreated);
 
   const userStatus = document.createElement("p");
@@ -132,7 +182,12 @@ function presentSimpleUserDataOnUI(userData) {
   userStatusLabel.textContent = "Status:";
   const userStatusValue = document.createElement("span");
   userStatusValue.classList.add("status-label");
-  userStatusValue.textContent = userData.status;
+  userStatusValue.setAttribute("id", "user-status");
+  userStatusValue.setAttribute("data-testid", "user-status");
+
+  const statusText = possibleStatuses[userData.status];
+
+  userStatusValue.textContent = statusText;
   userStatus.appendChild(userStatusLabel);
   userStatus.appendChild(userStatusValue);
   userInfoContainer.appendChild(userStatus);

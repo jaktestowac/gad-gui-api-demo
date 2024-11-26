@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>🦎 GAD - Random Weather (from API)</title>
+    <title>🦎 GAD - Simple Bus Card Ticket (from API)</title>
     <link rel="icon" href="/data/icons/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
@@ -26,16 +26,35 @@
             border: 1px solid black;
         }
 
+        .expenses-cell {
+            padding: 0px !important;
+        }
+
         .table-cell {
             padding: 4px !important;
         }
 
         .results-table {
-            max-width: 700px;
+            width: 700px;
             border-collapse: collapse;
             border: 1px solid black;
             text-align: center;
             font-size: 14px;
+        }
+
+        h5 {
+            margin: 2px;
+            padding: 2px;
+        }
+
+        p {
+            margin: 2px;
+            padding: 2px;
+        }
+
+        ul {
+            margin: 2px;
+            padding: 2px;
         }
     </style>
 </head>
@@ -51,14 +70,12 @@
     <br />
     <br />
     <div align="center">
-        <h2 style="padding: 0px; margin-bottom: 0px;">Random Weather (from API)</h2>
-        <span style="font-size: 10px">PS. This page contains some logic on front-end. Can you test it? 😉</span><br>
+        <h2 style="padding: 0px; margin-bottom: 0px;">Simple Bus Card Ticket (from API)</h2>
+        <span style="font-size: 10px">PS. This page has hidden error. Can you find it? 😉</span>
     </div>
     <br />
     <div align="center">
         <div id="results-container">
-        </div>
-        <div id="results-summary">
         </div>
     </div>
     <br />
@@ -72,27 +89,22 @@
                         <div align="left" style="width: 600px;">
                             <h4>Business Context (Summary)</h4>
                             <p>
-                                This page represents a <strong>simplified weather forecast</strong> for a weather application.</br>
+                                This page represents a <strong>simplified bus card ticket</strong> for a public transport application.</br>
                                 It integrates API data with frontend logic to:
                             <ul>
-                                <li>Display weather details for today</li>
-                                <li>Calculate and display mean values</li>
-                                <li>Provide a descriptive summary</li>
+                                <li>Display <strong>ticket details</strong> (e.g., <strong>date</strong>, <strong>price</strong>, <strong>route</strong>, <strong>passenger</strong>)</li>
+                                <li>Calculate <strong>total expenses</strong> for the passenger</li>
+                                <li>Calculates card <strong>expiration date</strong></li>
+                                <li>Provide a <strong>summary</strong> for the trips</li>
+                                <li>Count <strong>total trips</strong> for the passenger</li>
                             </ul>
                             </p>
 
                             <h4>Key Highlights</h4>
                             <ul>
-                                <li><strong>API:</strong> The API provides weather details (<strong>date</strong>, <strong>temperature</strong>, <strong>temperatureMin</strong>, <strong>temperatureMax</strong>, <strong>humidity</strong>, <strong>dayLength</strong>, <strong>windSpeed</strong>, <strong>windSpeedRange</strong>)</li>
-                                <li><strong>UI with Core Logic:</strong> The frontend calculates <strong>mean values</strong> and provides a <strong>descriptive summary</strong> for the weather forecast.</li>
-                                <li><strong>Risks:</strong> The frontend logic is critical for user satisfaction and weather accuracy.</li>
-                                <li><strong>Testing Relevance:</strong>
-                                    <ul>
-                                        <li>Verify accuracy of frontend calculations (mean values).</li>
-                                        <li>Ensure proper integration and display of API data.</li>
-                                        <li>Wind Speed Range (km/h)</code> possible values: <code>0-5 km/h</code>, <code>5-10 km/h</code>, <code>10-15 km/h</code>, ..., up to <code>40+ km/h</code></li>
-                                    </ul>
-                                </li>
+                                <li><strong>API:</strong> The page uses a simple API to fetch ticket data with info about the passenger, route, and price.</li>
+                                <li><strong>Frontend Logic:</strong> The page calculates the total expenses for the passenger and displays a summary of the trips (e.g., total trips, trips time or mean price).</li>
+                                <li><strong>Design:</strong> The page has a simple design with a table to display the ticket details and expenses.</li>
                             </ul>
                         </div>
                     </div>
@@ -114,11 +126,10 @@
 <script type="text/javascript" src="/js/header.js"></script>
 <script type="text/javascript" src="/version.js"></script>
 <script type="text/javascript" src="./js/practice-common.js"></script>
-<script type="text/javascript" src="./js/display-canvas.js"></script>
-<script type="text/javascript" src="./js/random-weather.js"></script>
+<script type="text/javascript" src="./js/simple-bus-card-ticket.js"></script>
 <script type="text/javascript" src="/js/helpers/reports.js"></script>
 <script>
-    getAndPresentRandomWeatherData()
+    getAndShowSimpleTicketData()
 </script>
 
 </html>

@@ -39,6 +39,10 @@ function calculateMeanValueFromRange(data, key) {
   return mean.toFixed(2);
 }
 
+function downloadWeatherDataAsXLSX(filename, dataToDownload) {
+  downloadXlsx(`weather-data-${filename}.xlsx`, dataToDownload);
+}
+
 function presentDataOnUIAsATable(weatherData) {
   const resultsContainer = document.getElementById("results-container");
   const table = document.createElement("table");
@@ -239,6 +243,42 @@ function presentDataOnUIAsATable(weatherData) {
 
   resultsContainer.appendChild(table);
 
+  const downloadButton = document.createElement("button");
+  downloadButton.classList.add("btn", "button-primary");
+  downloadButton.textContent = "Download XLSX";
+  downloadButton.style.margin = "2px";
+  downloadButton.style.padding = "2px";
+  downloadButton.addEventListener("click", () => {
+    const dataToDownload = [
+      [
+        "Date",
+        "Temperature (°C)",
+        "Humidity (%)",
+        "Day Length (hours)",
+        "Wind Speed (km/h)",
+        "Wind Speed Range (km/h)",
+      ],
+      ...weatherData.map((row) => [
+        row.date,
+        row.temperature,
+        row.humidity,
+        row.dayLength,
+        row.windSpeed,
+        row.windSpeedRange,
+      ]),
+    ];
+
+    downloadWeatherDataAsXLSX("1", dataToDownload);
+  });
+
+  const buttonsContainer = document.createElement("div");
+  buttonsContainer.setAttribute("id", "buttons-container");
+  buttonsContainer.style.display = "flex";
+  buttonsContainer.style.justifyContent = "center";
+
+  buttonsContainer.appendChild(downloadButton);
+  resultsContainer.appendChild(buttonsContainer);
+
   // add comment based on weather data - about temperature, wind speed, humidity, and min/max temperature
   const summaryContainer = document.getElementById("results-summary");
 
@@ -326,7 +366,80 @@ function presentDataOnUIAsATable(weatherData) {
 }
 
 function getAndPresentRandomWeatherData() {
-  getRandomSimpleWeatherData().then((data) => {
+  return getRandomSimpleWeatherData().then((data) => {
     presentDataOnUIAsATable(data);
+    return data;
+  });
+}
+
+const sampleData = [
+  {
+    date: "2024-11-26",
+    temperature: 33,
+    temperatureMin: 21,
+    temperatureMax: 37,
+    humidity: "49%",
+    dayLength: 15,
+    windSpeed: 1,
+    windSpeedRange: "0-5 km/h",
+  },
+  {
+    date: "2024-11-25",
+    temperature: 18,
+    temperatureMin: 14,
+    temperatureMax: 26,
+    humidity: "59%",
+    dayLength: 14,
+    windSpeed: 5,
+    windSpeedRange: "0-5 km/h",
+  },
+  {
+    date: "2024-11-24",
+    temperature: 18,
+    temperatureMin: 7,
+    temperatureMax: 28,
+    humidity: "30%",
+    dayLength: 18,
+    windSpeed: 0,
+    windSpeedRange: "0-5 km/h",
+  },
+];
+
+function formatDataAsStringForDoc(data) {
+  const lines = data.map((row) => {
+    return `Date: ${row.date},\r\nTemperature: ${row.temperature}, Humidity: ${row.humidity}, Day Length: ${row.dayLength}, Wind Speed: ${row.windSpeed}, Wind Speed Range: ${row.windSpeedRange}`;
+  });
+  return lines.join("\r\n\r\n");
+}
+
+function loadFile(url, callback) {
+  PizZipUtils.getBinaryContent(url, callback);
+}
+
+function generateDocx(data) {
+  loadFile("./data/input.docx", function (error, content) {
+    if (error) {
+      throw error;
+    }
+    const zip = new PizZip(content);
+    const doc = new window.docxtemplater(zip, {
+      paragraphLoop: true,
+      linebreaks: true,
+    });
+
+    doc.render({
+      first_name: "John",
+      last_name: "Doe",
+      phone: "+",
+      description: "GAD application",
+      content: formatDataAsStringForDoc(data),
+    });
+
+    const blob = doc.getZip().generate({
+      type: "blob",
+      mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      compression: "DEFLATE",
+    });
+    saveAs(blob, "weather-data.docx");
   });
 }
