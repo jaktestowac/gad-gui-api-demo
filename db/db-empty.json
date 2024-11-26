@@ -11,5 +11,18 @@
   "survey-responses": [],
   "contacts": [],
   "messages": [],
-  "message-check": []
+  "message-check": [],
+  "books": [],
+  "book-authors": [],
+  "book-reviews": [],
+  "book-shop-items": [],
+  "book-shop-orders": [],
+  "book-shop-order-coupons": [],
+  "book-shop-order-statuses": [],
+  "book-shop-actions": [],
+  "book-shop-roles": [],
+  "book-shop-accounts": [],
+  "book-shop-account-payment-cards": [],
+  "book-genres": []
 }
+
