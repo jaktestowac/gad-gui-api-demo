@@ -105,6 +105,17 @@ function handleComments(req, res, isAdmin) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).json(formatInvalidFieldErrorResponse(additionalFields, all_fields_comment));
       return;
     }
+
+    const verifyTokenResult = verifyAccessToken(req, res, "comments", req.url);
+    const foundUser = searchForUserWithEmail(verifyTokenResult?.email);
+
+    logTrace("handleComments:", { method: req.method, urlEnds, foundUser });
+
+    if (isUndefined(foundUser)) {
+      res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+      return;
+    }
+    req.body["user_id"] = foundUser.id;
   }
 
   if (req.method === "POST" && urlEnds.includes("/api/comments")) {
@@ -150,6 +161,15 @@ function handleComments(req, res, isAdmin) {
   // update or create:
   if (req.method === "PUT" && urlEnds.includes("/api/comments") && !isAdmin) {
     const verifyTokenResult = verifyAccessToken(req, res, "PUT comments", req.url);
+
+    const foundUserFromToken = searchForUserWithEmail(verifyTokenResult?.email);
+
+    logTrace("handleComments:", { method: req.method, urlEnds, foundUserFromToken });
+
+    if (isUndefined(foundUserFromToken)) {
+      res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+      return;
+    }
 
     // validate mandatory fields:
     if (!areMandatoryFieldsPresent(req.body, mandatory_non_empty_fields_comment_create)) {
@@ -203,6 +223,8 @@ function handleComments(req, res, isAdmin) {
     if (commentId === "comments") {
       commentId = "";
     }
+
+    req.body["user_id"] = foundUserFromToken.id;
 
     logTrace("handleComments:PUT:", { method: req.method, commentId });
 

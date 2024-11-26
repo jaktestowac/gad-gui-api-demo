@@ -218,7 +218,7 @@ function sendFriendRequest() {
   if (friendEmail.length > 0) {
     issueAddContactRequest(friendEmail).then((response) => {
       const friendRequestInfoBox = document.getElementById("friend-request-info-box");
-      if (response.status === 200) {
+      if (response.status === 200 || response.status === 201) {
         setBoxMessage(friendRequestInfoBox, `Friend request sent to "${friendEmail}"`, simpleSuccessBox);
         friendRequestInput.value = "";
       } else {

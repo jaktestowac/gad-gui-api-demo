@@ -173,6 +173,95 @@ function isHexColor(str) {
   return /^#[0-9A-F]{6}$/i.test(str);
 }
 
+function validateCardNumber(cardNumber, length) {
+  if (cardNumber === undefined) {
+    return false;
+  }
+
+  cardNumber = cardNumber.replace(/\s/g, "");
+
+  if (cardNumber.length !== length) {
+    return false;
+  }
+
+  if (!/^\d+$/.test(cardNumber)) {
+    return false;
+  }
+
+  return true;
+}
+
+function validateDate(date) {
+  if (date === undefined) {
+    return false;
+  }
+
+  const actualDate = date.replace(/[^0-9-]/g, "");
+  const dateParts = actualDate.split("-");
+
+  if (dateParts.length !== 3) {
+    return false;
+  }
+
+  const year = parseInt(dateParts[0]);
+  const month = parseInt(dateParts[1]);
+  const day = parseInt(dateParts[2]);
+
+  if (isNaN(year) || isNaN(month) || isNaN(day)) {
+    return false;
+  }
+
+  const currentDate = new Date();
+  const expirationDateValue = new Date(year, month - 1, day);
+
+  if (
+    expirationDateValue.getFullYear() !== year ||
+    expirationDateValue.getMonth() !== month - 1 ||
+    expirationDateValue.getDate() !== day
+  ) {
+    return false;
+  }
+
+  if (expirationDateValue < currentDate) {
+    return false;
+  }
+
+  return true;
+}
+
+function formatCardNumberPretty(cardNumber) {
+  if (cardNumber === undefined) {
+    return "";
+  }
+
+  cardNumber = cardNumber.replace(/\s/g, "");
+  // format from "12345678901234562121" to "1234 5678 9012 3456 2121"
+  return cardNumber.replace(/(.{4})/g, "$1 ");
+}
+
+function cardNumberFormat(cardNumber) {
+  if (cardNumber === undefined) {
+    return "";
+  }
+
+  cardNumber = cardNumber.replace(/-/g, "");
+  return cardNumber.replace(/\s/g, "");
+}
+
+function hideCardNumber(cardNumber) {
+  const cardNumberFormatted = cardNumberFormat(cardNumber);
+  return cardNumberFormatted.slice(0, 16).replace(/\d/g, "*") + cardNumberFormatted.slice(16);
+}
+
+function isValidNumber(value) {
+  return Number.isInteger(parseInt(value));
+}
+
+function isStringValidNumberInRange(value, min, max) {
+  const number = parseInt(value);
+  return Number.isInteger(number) && number >= min && number <= max;
+}
+
 module.exports = {
   formatErrorResponse,
   formatInvalidFieldErrorResponse,
@@ -202,4 +291,10 @@ module.exports = {
   formatNotUniqueFieldResponse,
   isHexColor,
   formatNoFieldsErrorResponse,
+  validateCardNumber,
+  validateDate,
+  formatCardNumberPretty,
+  hideCardNumber,
+  isValidNumber,
+  isStringValidNumberInRange,
 };

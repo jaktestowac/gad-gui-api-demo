@@ -96,6 +96,21 @@ input.button-secondary {
     box-shadow 0.15s ease-in-out;
 }
 
+.button-primary-thin:hover {
+  color: #fff;
+  background-color: #0069d9;
+  border: none;
+}
+
+.button-primary-thin {
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  padding: 6px;
+  font-size: 14px;
+  margin: 2px;
+}
+
 .button-primary:hover {
   color: #fff;
   background-color: #0069d9;

@@ -2,6 +2,7 @@ const { isUndefined } = require("lodash");
 const {
   searchForUserWithOnlyToken,
   searchForBookShopAccountWithUserId,
+  searchForBookWithId,
 } = require("../../helpers/db-operation.helpers");
 const { formatErrorResponse, formatInvalidTokenErrorResponse, getIdFromUrl } = require("../../helpers/helpers");
 const { logDebug } = require("../../helpers/logger-api");
@@ -38,6 +39,15 @@ function handleBooks(req, res, isAdmin) {
     }
     const book_id = getIdFromUrl(urlEnds);
 
+    if (book_id === undefined) {
+      res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Book not found in URL"));
+      return false;
+    }
+
+    if (searchForBookWithId(book_id) === undefined) {
+      res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Book not found"));
+    }
+
     const fieldNames = {
       owned: "owned_books_ids",
       wishlist: "wishlist_books_ids",
@@ -64,7 +74,7 @@ function handleBooks(req, res, isAdmin) {
     logDebug("handleBooks: Not Found", { url: req.url, urlEnds });
     res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found"));
   }
-  // TODO:
+  
   return;
 }
 

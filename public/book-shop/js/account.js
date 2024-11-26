@@ -62,6 +62,7 @@ async function formatRoles() {
           const genreSpans = document.querySelectorAll(`#role-${role.id}`);
           genreSpans.forEach((span) => {
             span.innerHTML = role.name;
+            span.classList.add(`account-role-${role.name}`);
           });
         });
       });
@@ -124,13 +125,14 @@ function displayAccountInfo(accountData, userData) {
   roleContainer.classList.add("account-role");
   const role = document.createElement("span");
   role.textContent = "";
+  role.classList.add("account-role-name");
   role.setAttribute("id", `role-${accountData.role_id}`);
   roleContainer.appendChild(role);
   profileDetails.appendChild(roleContainer);
 
   const fundsContainer = document.createElement("div");
   const funds = document.createElement("div");
-  funds.textContent = `Funds: ${formatPrice(accountData.funds)} PLN`;
+  funds.textContent = `Funds: ${formatPrice(accountData.funds)}`;
   funds.classList.add("account-funds");
 
   const fundsManagementContainer = document.createElement("div");
@@ -140,7 +142,7 @@ function displayAccountInfo(accountData, userData) {
   cardManagementButton.classList.add("clickable-btn");
   cardManagementButton.title = "Manage Card";
   cardManagementButton.addEventListener("click", () => {
-    createAccountPaymentCardEditPopup(userData)
+    createAccountPaymentCardEditPopup(userData);
   });
 
   const fundsManagementButton = document.createElement("span");
@@ -149,7 +151,7 @@ function displayAccountInfo(accountData, userData) {
   fundsManagementButton.classList.add("clickable-btn");
   fundsManagementButton.title = "Manage Funds";
   fundsManagementButton.addEventListener("click", () => {
-    // TODO
+    createAccountFundsTopupPopup(userData);
   });
 
   fundsManagementContainer.appendChild(cardManagementButton);
@@ -436,7 +438,7 @@ async function addBooksToolPanels() {
       // TODO: add to cart
     },
     addToWishlist: () => {
-      refreshSection("purchased");
+      refreshSection("wishlisted");
     },
     markAsFav: () => {
       refreshSection("favorite");
@@ -559,8 +561,6 @@ checkIfAuthenticated(
         });
       }
     });
-
-    // get profile info
   },
   () => {}
 );

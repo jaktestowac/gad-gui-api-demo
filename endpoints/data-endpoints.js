@@ -12,6 +12,7 @@ const { HTTP_OK } = require("../helpers/response.helpers");
 const { logDebug } = require("../helpers/logger-api");
 const { generateEcommerceShoppingCart } = require("../helpers/generators/ecommerce-shopping-cart.generator");
 const { generateRandomUser } = require("../helpers/generators/user.generator");
+const { generateRandomSimpleBusTicketCard } = require("../helpers/generators/bus-ticket.generator");
 
 function generateWeatherResponse(queryParams, simplified = false, totalRandom = false) {
   const days = parseInt(queryParams.get("days"));
@@ -142,6 +143,12 @@ function handleData(req, res, isAdmin) {
   if (req.method === "GET" && req.url.includes("/api/v1/data/random/simple-user")) {
     const userData = generateRandomUser();
     res.status(HTTP_OK).json(userData);
+    return;
+  }
+
+  if (req.method === "GET" && req.url.includes("/api/v1/data/random/simple-bus-ticket-card")) {
+    const busTicketCard = generateRandomSimpleBusTicketCard();
+    res.status(HTTP_OK).json(busTicketCard);
     return;
   }
   return;

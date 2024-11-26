@@ -92,14 +92,49 @@ function createOrderItemData(order, orderElement) {
       });
     };
     orderHeader.appendChild(approveAndSend);
+
+    const addItemsCoupon = document.createElement("span");
+
+    addItemsCoupon.classList.add("book-clickable-component");
+    addItemsCoupon.classList.add("clickable-btn-wide");
+    addItemsCoupon.title = "Add order coupon";
+    addItemsCoupon.innerHTML = `<i class="fa-solid fa-ticket"></i>`;
+    addItemsCoupon.onclick = () => {
+      createAddItemsCouponPopup(order.id);
+    };
+    orderHeader.appendChild(addItemsCoupon);
   }
 
   const orderDetails = document.createElement("div");
   orderDetails.classList.add("order-details");
 
+  const orderDates = document.createElement("div");
+  orderDates.classList.add("order-dates");
+
   const orderDate = document.createElement("div");
-  orderDate.classList.add("order-date");
+  orderDates.classList.add("order-date");
   orderDate.innerHTML = `Order Date: ${order.created_at}`;
+
+  if (order.sent_at !== undefined) {
+    const orderSentDate = document.createElement("div");
+    orderSentDate.classList.add("order-date");
+    orderSentDate.innerHTML = `Sent at: ${order.sent_at}`;
+    orderDates.appendChild(orderSentDate);
+  }
+  if (order.cancelled_at !== undefined) {
+    const orderCancelledDate = document.createElement("div");
+    orderCancelledDate.classList.add("order-date");
+    orderCancelledDate.innerHTML = `Cancelled at: ${order.cancelled_at}`;
+    orderDates.appendChild(orderCancelledDate);
+  }
+  if (order.completed_at !== undefined) {
+    const orderDeliveredDate = document.createElement("div");
+    orderDeliveredDate.classList.add("order-date");
+    orderDeliveredDate.innerHTML = `Delivered at: ${order.delivered_at}`;
+    orderDates.appendChild(orderDeliveredDate);
+  }
+
+  orderDates.appendChild(orderDate);
 
   const orderTotal = document.createElement("div");
   orderTotal.classList.add("order-total");
@@ -109,19 +144,19 @@ function createOrderItemData(order, orderElement) {
   additionalCosts.classList.add("additional-costs");
 
   const separator = document.createElement("div");
-  separator.innerHTML = "Additional costs:";
+  separator.innerHTML = "Partial costs:";
   additionalCosts.appendChild(separator);
-  if (order.additional_costs !== undefined && Object.keys(order.additional_costs).length > 0) {
-    for (let key in order.additional_costs) {
+  if (order.partial_costs !== undefined && Object.keys(order.partial_costs).length > 0) {
+    for (let key in order.partial_costs) {
       const additionalCost = document.createElement("div");
       additionalCost.classList.add("additional-cost");
-      additionalCost.innerHTML = `${key}: ${formatPrice(order.additional_costs[key])}`;
+      additionalCost.innerHTML = `${key}: ${formatPrice(order.partial_costs[key])}`;
       additionalCosts.appendChild(additionalCost);
     }
   } else {
     const noAdditionalCosts = document.createElement("div");
     noAdditionalCosts.classList.add("no-additional-costs");
-    noAdditionalCosts.innerHTML = "No additional costs";
+    noAdditionalCosts.innerHTML = "No Partial costs";
     additionalCosts.appendChild(noAdditionalCosts);
   }
 
@@ -162,7 +197,9 @@ function createOrderItemData(order, orderElement) {
             issueGetUserOrderRequest(order.id).then((response) => {
               if (response.status === 200) {
                 return response.json().then((orderData) => {
-                  checkIfHasOrders();
+                  setTimeout(function () {
+                    checkIfHasOrders();
+                  }, 1000);
                 });
               }
             });
@@ -237,18 +274,7 @@ function checkIfHasOrders() {
           return issueGetBookShopOrderStatusesRequest().then((response) => {
             if (response.status === 200) {
               return response.json().then((orderStatusesData) => {
-                const statusIds = getOrderStatusesMarkedAsRaw();
-                statusIds.forEach((statusId) => {
-                  const foundStatus = orderStatusesData.find((status) => `${status.id}` === `${statusId}`);
-                  const orderStatuses = document.querySelectorAll(`.order-status[statusId="${statusId}"]`);
-                  orderStatuses.forEach((orderStatus) => {
-                    orderStatus.innerHTML = foundStatus.name;
-                    orderStatus.classList.add(`order-label-base`);
-                    orderStatus.classList.add(`label-${foundStatus.name}`);
-                    orderStatus.removeAttribute("raw");
-                  });
-                });
-
+                formatOrderStatus(orderStatusesData);
                 return ordersData;
               });
             } else {
@@ -298,16 +324,135 @@ function updateItemsInfo(bookIds) {
   });
 }
 
-function getOrderStatusesMarkedAsRaw() {
-  const orderStatuses = document.querySelectorAll(".order-status");
-  const statusIds = [];
-  orderStatuses.forEach((orderStatus) => {
-    if (orderStatus.getAttribute("raw") === "true") {
-      statusIds.push(orderStatus.getAttribute("statusId"));
-      orderStatus.removeAttribute("raw");
-    }
+function createAddItemsCouponPopup(orderId) {
+  const placeholder = document.getElementById("book-details-placeholder");
+  placeholder.innerHTML = "";
+
+  const popup = document.createElement("div");
+  popup.className = "book-popup";
+
+  const popupContent = document.createElement("div");
+  popupContent.className = "book-popup-content";
+  popupContent.classList.add("wide-300");
+
+  const popupBody = document.createElement("div");
+  popupBody.className = "popup-body";
+
+  const bookPopupControls = document.createElement("div");
+  bookPopupControls.className = "book-popup-controls";
+
+  const closeButton = document.createElement("span");
+
+  closeButton.className = "book-popup-close-button book-clickable-component";
+  closeButton.innerHTML = `<i class="fa-solid fa-xmark book-button"></i>`;
+  closeButton.addEventListener("click", () => {
+    document.getElementById("book-details-placeholder").innerHTML = "";
   });
-  return statusIds;
+
+  bookPopupControls.appendChild(closeButton);
+
+  const form = document.createElement("div");
+  form.className = "account-edit-form";
+
+  const description = document.createElement("div");
+  description.className = "account-edit-description";
+  description.innerHTML = `Add coupon to order #${orderId} to get discount on items!`;
+
+  const couponLabel = document.createElement("label");
+  couponLabel.textContent = "Coupon";
+  couponLabel.className = "account-edit-label";
+
+  const couponInput = document.createElement("input");
+  couponInput.type = "text";
+  couponInput.placeholder = "Coupon value";
+  couponInput.value = "";
+  couponInput.maxLength = 10;
+  couponInput.className = "account-edit-input";
+  couponInput.id = "amount-input";
+  couponInput.classList.add("wide");
+
+  // change all to uppercase
+  couponInput.addEventListener("input", () => {
+    couponInput.value = couponInput.value.toUpperCase();
+  });
+
+  const saveButton = document.createElement("button");
+  saveButton.textContent = "Save";
+  saveButton.className = "book-shop-button-primary";
+  saveButton.id = "execute-coupon-button";
+
+  saveButton.addEventListener("click", () => {
+    const couponValue = couponInput.value;
+
+    if (couponValue === "") {
+      showSimpleAlert("Coupon value cannot be empty", 1);
+      return;
+    }
+
+    issueAddCouponToOrderRequest(orderId, couponValue).then((response) => {
+      if (response.status === 200) {
+        showSimpleAlert("Coupon added to order", 0);
+        document.getElementById("book-details-placeholder").innerHTML = "";
+        setTimeout(function () {
+          checkIfHasOrders();
+        }, 1000);
+      } else {
+        response.json().then((data) => {
+          if (data.error?.message) {
+            showSimpleAlert(`Coupon could not be added to order. ${data.error.message}`, 2);
+          } else {
+            showSimpleAlert("Coupon could not be added to order", 2);
+          }
+        });
+      }
+    });
+  });
+
+  const cancelButton = document.createElement("button");
+  cancelButton.textContent = "Cancel";
+
+  cancelButton.className = "book-shop-button-primary";
+
+  cancelButton.addEventListener("click", () => {
+    document.getElementById("book-details-placeholder").innerHTML = "";
+  });
+
+  const leftColumn = document.createElement("div");
+  leftColumn.className = "account-edit-column";
+  leftColumn.classList.add("left");
+
+  const rightColumn = document.createElement("div");
+  rightColumn.className = "account-edit-column";
+  rightColumn.classList.add("right");
+
+  leftColumn.appendChild(couponLabel);
+
+  rightColumn.appendChild(couponInput);
+
+  const columnsContainer = document.createElement("div");
+  columnsContainer.className = "account-edit-columns";
+
+  columnsContainer.appendChild(leftColumn);
+  columnsContainer.appendChild(rightColumn);
+
+  form.appendChild(description);
+  form.appendChild(columnsContainer);
+
+  const buttonsContainer = document.createElement("div");
+  buttonsContainer.className = "account-edit-buttons";
+
+  buttonsContainer.appendChild(saveButton);
+  buttonsContainer.appendChild(cancelButton);
+
+  form.appendChild(buttonsContainer);
+  popupBody.appendChild(bookPopupControls);
+
+  popupBody.appendChild(form);
+  popupContent.appendChild(popupBody);
+  popup.appendChild(popupContent);
+  placeholder.appendChild(popup);
+
+  return popup;
 }
 
 function disableAddNewOrderButton() {
@@ -325,6 +470,10 @@ function enableAddNewOrderButton() {
 function createOrdersControls() {
   const controlsContainer = document.getElementById("controls-container");
 
+  if (controlsContainer === null) {
+    return;
+  }
+
   const ordersControls = document.createElement("fieldset");
   ordersControls.classList.add("orders-controls");
 
@@ -341,7 +490,9 @@ function createOrdersControls() {
   createOrderButton.onclick = () => {
     issueCreateUserOrderRequest().then((response) => {
       if (response.status === 201) {
-        checkIfHasOrders();
+        setTimeout(function () {
+          checkIfHasOrders();
+        }, 1000);
       } else {
         showSimpleAlert(`Error while creating new order.`, 2);
         response.json().then((data) => {
@@ -353,7 +504,16 @@ function createOrdersControls() {
     });
   };
 
+  const openBooks = document.createElement("button");
+  openBooks.classList.add("book-shop-button-primary");
+  openBooks.classList.add("thin");
+  openBooks.innerHTML = "Open Books";
+  openBooks.onclick = () => {
+    window.location.href = "/book-shop/books.html";
+  };
+
   ordersControls.appendChild(createOrderButton);
+  ordersControls.appendChild(openBooks);
 
   controlsContainer.appendChild(ordersControls);
 

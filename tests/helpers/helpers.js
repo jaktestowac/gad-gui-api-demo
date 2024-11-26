@@ -1,5 +1,5 @@
 const { serverApp } = require("../../server");
-const { request, expect, logLevel } = require("../config");
+const { request, expect, logLevel, restoreDbPath } = require("../config");
 
 async function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -62,11 +62,17 @@ function getISODateWithTimezoneOffset(date) {
 }
 
 async function setupEnv() {
-  const restoreResponse = await request.get("/api/restoreDB");
-  expect(restoreResponse.status).to.equal(201);
+  await clearDB()
+
   // Lower log level to WARNING:
   const requestBody = {
     currentLogLevel: logLevel,
+    sleepTimeForShopAccountCreateMin: 1,
+    sleepTimeForShopAccountCreateMax: 2,
+    sleepTimeForShopAccountPaymentCardsMin: 1,
+    sleepTimeForShopAccountPaymentCardsMax: 2,
+    sleepTimeForShopAccountTopUpMin: 1,
+    sleepTimeForShopAccountTopUpMax: 2,
   };
   await changeConfig(requestBody);
 
@@ -122,6 +128,11 @@ async function invokeRequestUntil(id, request, condition, maxAttempts = 10, dela
   return response;
 }
 
+async function clearDB() {
+  const response = await request.get(restoreDbPath);
+  expect(response.status).to.equal(201);
+}
+
 module.exports = {
   sleep,
   gracefulQuit,
@@ -134,4 +145,5 @@ module.exports = {
   jsonToBase64,
   changeConfig,
   invokeRequestUntil,
+  clearDB,
 };

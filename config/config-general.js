@@ -63,8 +63,8 @@ const configToModify = {
 };
 
 const config = {
-  authUserDb: "./db/db.json",
   dbPath: "./db/db.json",
+  dbCustomPath: process.env.DB ?? "",
   dbRestorePath: "./db/db-base.json",
   db2RestorePath: "./db/db-base-v2.json",
   dbBigRestorePath: "./db/db-base-big.json",

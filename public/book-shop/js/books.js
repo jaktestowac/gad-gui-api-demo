@@ -1,3 +1,10 @@
+let sortingType = "published_at";
+let sortingOrder = "desc";
+let current_page = 1;
+let scrollLoading = false;
+let searchPhrase = undefined;
+let records_per_page = 12;
+
 async function issueGetBooksRequest(
   limit = 6,
   page = 1,
@@ -49,6 +56,9 @@ async function renderBooks(records_per_page, current_page, searchPhrase, sorting
               const uniqueBookIds = [...new Set([...bookIds1, ...bookIds2])];
 
               getBookShopItemsInStockAndPrice(uniqueBookIds);
+              formatReviewsMarkedAsRaw();
+            } else {
+              addBooksToolsPanelForUnauthorizedUser(false);
             }
           });
           return data;
@@ -69,13 +79,6 @@ function noBooksFound() {
   element.innerHTML = `<h3>No books found</h3> <p>Try searching for something else</p>`;
   booksContainer.appendChild(element);
 }
-
-let sortingType = "published_at";
-let sortingOrder = "desc";
-let current_page = 1;
-let scrollLoading = false;
-let searchPhrase = undefined;
-let records_per_page = 9;
 
 renderBooks(records_per_page, current_page, searchPhrase, sortingType, sortingOrder);
 

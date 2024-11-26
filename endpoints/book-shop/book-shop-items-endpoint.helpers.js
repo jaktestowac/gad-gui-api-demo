@@ -4,7 +4,7 @@ const {
   searchForBookShopAccountWithUserId,
 } = require("../../helpers/db-operation.helpers");
 const { formatErrorResponse, formatInvalidTokenErrorResponse } = require("../../helpers/helpers");
-const { logDebug } = require("../../helpers/logger-api");
+const { logDebug, logTrace } = require("../../helpers/logger-api");
 const { HTTP_NOT_FOUND, HTTP_UNAUTHORIZED } = require("../../helpers/response.helpers");
 const { verifyAccessToken } = require("../../helpers/validation.helpers");
 
@@ -14,7 +14,7 @@ function handleBookShopItems(req, res, isAdmin) {
     const verifyTokenResult = verifyAccessToken(req, res, "GET book-shop-accounts", req.url);
     const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
 
-    logDebug("handleBookShopItems: Found User", { id: foundUser?.id });
+    logTrace("handleBookShopItems: Found User", { id: foundUser?.id });
 
     if (isUndefined(foundUser)) {
       res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());

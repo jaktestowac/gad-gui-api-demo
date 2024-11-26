@@ -62,15 +62,28 @@ function addLinkToMessenger(number) {
     }
     newElement.href = "/messenger.html";
     newElement.id = "messengerLink";
-    dropdownContent.insertBefore(newElement, dropdownContent.children[1]);
+
+    if (dropdownContent.children.length < 3) {
+      dropdownContent.insertBefore(newElement, dropdownContent.children[1]);
+    } else {
+      dropdownContent.insertBefore(newElement, dropdownContent.children[3]);
+    }
   }
 }
 
-issueGetUnreadMessagesRequest()
-  .then((r) => {
-    return r.json();
-  })
-  .then((results) => {
-    addDotNotifier(results?.allUnreadMessages);
-    addLinkToMessenger(results?.allUnreadMessages);
-  });
+checkIfAuthenticated(
+  undefined,
+  () => {
+    issueGetUnreadMessagesRequest()
+      .then((r) => {
+        return r.json();
+      })
+      .then((results) => {
+        addDotNotifier(results?.allUnreadMessages);
+        addLinkToMessenger(results?.allUnreadMessages);
+      });
+  },
+  () => {
+    // console.log("Not authenticated");
+  }
+);

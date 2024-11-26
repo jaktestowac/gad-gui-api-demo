@@ -47,14 +47,17 @@ const { setEntitiesInactive, replaceRelatedContactsInDb } = require("./helpers/d
 const { diagnosticRoutes } = require("./routes/diagnostic.route");
 const app = require("./app.json");
 const DatabaseManager = require("./helpers/db.manager");
+const { simpleMigrator, checkIfDbExists, overwriteDbIfDefined } = require("./db/migrators/migrator");
 
 const middlewares = jsonServer.defaults();
 
 const port = process.env.PORT || getConfigValue(ConfigKeys.DEFAULT_PORT);
 
 copyDefaultDbIfNotExists();
-checkDatabase();
+overwriteDbIfDefined();
 
+simpleMigrator(getDbPath(getConfigValue(ConfigKeys.DB_PATH)), getDbPath(getConfigValue(ConfigKeys.DB_RESTORE_PATH)));
+checkDatabase();
 initVisits();
 
 const server = jsonServer.create();
@@ -207,10 +210,13 @@ server.use(function (req, res, next) {
       const tracingInfo = getTracingInfo(req);
       logTrace("SOFT_DELETE: users -> soft deleting articles", { url: req.url, tracingInfo });
 
-      const query = { user_id: tracingInfo.resourceId };
+      const query = { user_id: parseInt(tracingInfo.resourceId) };
+      const query2 = { user_id: tracingInfo.resourceId };
 
       setEntitiesInactive(router.db, "articles", query);
       setEntitiesInactive(router.db, "comments", query);
+      setEntitiesInactive(router.db, "articles", query2);
+      setEntitiesInactive(router.db, "comments", query2);
     }
   }
   // add contacts:

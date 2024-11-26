@@ -51,6 +51,10 @@ const { handleBookShopOrders } = require("../endpoints/book-shop/book-shop-order
 const {
   handleBookShopAccountPaymentCards,
 } = require("../endpoints/book-shop/book-shop-account-payment-cards-endpoint.helpers");
+const { handleBookShopOrderStatuses } = require("../endpoints/book-shop/book-shop-order-statuses-endpoint.helpers");
+const { handleBookShopManage } = require("../endpoints/book-shop/book-shop-manage-endpoint.helpers");
+const { handleBookShopOrdersStats } = require("../endpoints/book-shop/book-shop-order-stats-endpoint.helpers");
+const { handleBookShopBookReviews } = require("../endpoints/book-shop/book-shop-book-reviews-endpoint.helpers");
 
 const validationsRoutes = (req, res, next) => {
   let isAdmin = false;
@@ -274,12 +278,25 @@ const validationsRoutes = (req, res, next) => {
     if (req.url.includes("/api/book-shop-roles")) {
       handleBookShopRoles(req, res);
     }
+    if (req.url.includes("/api/book-shop-book-reviews")) {
+      handleBookShopBookReviews(req, res);
+    }
+
+    if (req.url.includes("/api/book-shop-order-statuses")) {
+      handleBookShopOrderStatuses(req, res);
+    }
+    if (req.url.includes("/api/book-shop-stats")) {
+      handleBookShopOrdersStats(req, res, isAdmin);
+      return;
+    }
     if (req.url.includes("/api/book-shop-orders")) {
       handleBookShopOrders(req, res);
     }
-
     if (req.url.includes("/api/books")) {
       handleBooks(req, res);
+    }
+    if (req.url.includes("/api/book-shop-manage")) {
+      handleBookShopManage(req, res, isAdmin);
     }
 
     // data endpoints
@@ -328,6 +345,16 @@ const validationsRoutes = (req, res, next) => {
             res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Account already exists"));
             return;
           }
+          next();
+        });
+      } else if (req.method === "GET" && req.url.includes("book-shop-account-payment-cards")) {
+        const timeout = getRandomInt(
+          getConfigValue(ConfigKeys.SLEEP_TIME_FOR_SHOP_ACCOUNT_PAYMENT_CARDS_MIN),
+          getConfigValue(ConfigKeys.SLEEP_TIME_FOR_SHOP_ACCOUNT_PAYMENT_CARDS_MAX)
+        );
+
+        logDebug(`[DELAY] Waiting for ${timeout} [ms] for ${urlEnds}`);
+        sleep(timeout).then(() => {
           next();
         });
       } else {

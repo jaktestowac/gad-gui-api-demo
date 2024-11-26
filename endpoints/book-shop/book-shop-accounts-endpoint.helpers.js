@@ -41,7 +41,7 @@ function handleBookShopAccount(req, res, isAdmin) {
       return false;
     }
 
-    logDebug("handleBookShopAccount: Found User", { id: foundUser?.id });
+    logTrace("handleBookShopAccount: Found User", { id: foundUser?.id });
 
     const bug001Enabled = isBugEnabled(BugConfigKeys.BUG_BOOK_SHOP_ACCOUNT_001);
     if (bug001Enabled === true) {
@@ -66,7 +66,7 @@ function handleBookShopAccount(req, res, isAdmin) {
     const verifyTokenResult = verifyAccessToken(req, res, "GET book-shop-accounts", req.url);
     const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
 
-    logDebug("handleBookShopAccount: Found User", { id: foundUser?.id });
+    logTrace("handleBookShopAccount: Found User", { id: foundUser?.id });
 
     if (isUndefined(foundUser)) {
       res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
@@ -95,7 +95,7 @@ function handleBookShopAccount(req, res, isAdmin) {
     let accountId = getIdFromUrl(urlEnds);
     const foundAccount = searchForBookShopAccount(accountId);
 
-    logDebug("handleBookShopAccount: Found User", { id: foundUser?.id, accountId, foundAccount });
+    logTrace("handleBookShopAccount: Found User", { id: foundUser?.id, accountId, foundAccount });
 
     if (isUndefined(foundUser)) {
       res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
@@ -109,10 +109,11 @@ function handleBookShopAccount(req, res, isAdmin) {
 
     return true;
   } else if (req.method === "POST" && req.url.endsWith("/api/book-shop-authorize")) {
+    logDebug("handleBookShopAccount: User authorization");
     const verifyTokenResult = verifyAccessToken(req, res, "POST book-shop-authorize", req.url);
     const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
 
-    logDebug("handleBookShopAuthorize: Found User", { id: foundUser?.id });
+    logTrace("handleBookShopAuthorize: Found User", { id: foundUser?.id });
 
     if (isUndefined(foundUser)) {
       res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
@@ -128,6 +129,16 @@ function handleBookShopAccount(req, res, isAdmin) {
       return false;
     }
 
+    if (req.body.role_ids !== undefined) {
+      logDebug("handleBookShopAuthorize: Check if account has one of roles:", { role_ids: req.body.role_ids });
+      const roleAllowed = req.body.role_ids.includes(booksShopAccount.role_id);
+
+      if (roleAllowed === false) {
+        res.status(HTTP_FORBIDDEN).send(formatErrorResponse("User does not have the required role"));
+        return false;
+      }
+    }
+
     res.status(HTTP_OK).send({
       user_id: booksShopAccount.user_id,
       role_id: booksShopAccount.role_id,
@@ -135,48 +146,12 @@ function handleBookShopAccount(req, res, isAdmin) {
     });
 
     return true;
-  } else if (req.method === "POST" && req.url.endsWith("/api/book-shop-accounts/check-action")) {
-    const verifyTokenResult = verifyAccessToken(req, res, "POST book-shop-accounts/check-action", req.url);
-
-    const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
-    logDebug("handleBookShopAccount: check-action: Found User", { id: foundUser?.id });
-
-    if (isUndefined(foundUser)) {
-      res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
-      return false;
-    }
-
-    const booksShopAccount = searchForBookShopAccountWithUserId(foundUser.id);
-    logDebug("handleBookShopAccount: check-action: Found ShopAccount", { id: booksShopAccount?.id });
-
-    if (booksShopAccount === undefined) {
-      res.status(HTTP_NOT_FOUND).send(formatErrorResponse("User does not have a book shop account"));
-      return false;
-    }
-
-    const foundAction = searchForBookShopActions(req.body.action);
-    logDebug("handleBookShopAccount: check-action: Found foundAction", { id: foundAction?.id });
-
-    if (foundAction === undefined) {
-      res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Action not found"));
-      return false;
-    }
-
-    const roleAllowedForAction = foundAction.role_ids.includes(booksShopAccount.role_id);
-    logDebug("handleBookShopAccount: check-action: Found foundAction", { id: foundAction?.id });
-
-    if (roleAllowedForAction === undefined || roleAllowedForAction === false) {
-      res.status(HTTP_FORBIDDEN).send(formatErrorResponse("Action not allowed"));
-      return false;
-    }
-
-    res.status(HTTP_OK).send({});
-    return true;
   } else if (req.method === "POST" && req.url.endsWith("/api/book-shop-accounts")) {
+    logDebug("handleBookShopAccount: Creation of user account");
     const verifyTokenResult = verifyAccessToken(req, res, "POST book-shop-accounts", req.url);
     const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
 
-    logDebug("handleBookShopAccount: Found User", { id: foundUser?.id });
+    logTrace("handleBookShopAccount: Found User", { id: foundUser?.id });
 
     if (isUndefined(foundUser)) {
       res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
@@ -208,6 +183,8 @@ function handleBookShopAccount(req, res, isAdmin) {
 
     return true;
   } else if (req.method === "PATCH" && req.url.includes("/api/book-shop-accounts/")) {
+    logDebug("handleBookShopAccount: Update account", { url: req.url, urlEnds });
+
     const verifyTokenResult = verifyAccessToken(req, res, "PATCH book-shop-accounts/{id}", req.url);
     const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
 
@@ -231,11 +208,16 @@ function handleBookShopAccount(req, res, isAdmin) {
       return false;
     }
 
+    if (Object.keys(req.body).length === 0) {
+      res.status(HTTP_FORBIDDEN).send(formatErrorResponse("No fields to update"));
+      return false;
+    }
+
     const fieldsLengthValid = isFieldsLengthValid(req.body, 256);
     const anyAdditionalFields = areAnyAdditionalFieldsPresent(req.body, all_possible_fields_book_shop_account);
 
-    logDebug("handleBookShopAccount: Fields Length Valid", { status: fieldsLengthValid.status });
-    logDebug("handleBookShopAccount: Additional Fields Present", { status: anyAdditionalFields.status });
+    logTrace("handleBookShopAccount: Fields Length Valid", { status: fieldsLengthValid.status });
+    logTrace("handleBookShopAccount: Additional Fields Present", { status: anyAdditionalFields.status });
 
     if (fieldsLengthValid.status === false || anyAdditionalFields.status === true) {
       res.status(HTTP_FORBIDDEN).send(formatInvalidFieldErrorResponse(anyAdditionalFields.error));

@@ -105,29 +105,19 @@ Steps:
 1. Run `npm run start`
    - to start GAD
 
-### Read Only mode
+### CLI options
 
-This mode disables all POST, PUT, and PATCH methods, besides login.
+| Option       | Description                                                                                                                          |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| READ_ONLY=1  | Run in Read Only mode. This disables all POST, PUT, and PATCH methods, besides login.                                                |
+| PORT=3001    | Run on selected port. GAD runs on default port `3000`.                                                                               |
+| DB="db_name" | Use selected database file. GAD uses `db.json` as default database. Example (for PowerShell): `$env:DB="db-base-big"; npm run start` |
 
-To run GAD in **Read Only mode**, use the following commands:
+⚠️ Warning: Any environment variables set in the terminal will be used by the application. If you want to run the application without any options, make sure to clear the environment variables.
 
-PowerShell:
+#### Running CLI options
 
-```PowerShell
-$env:READ_ONLY=1; npm run start
-```
-
-Bash:
-
-```Bash
-READ_ONLY=1 npm run start
-```
-
-### Run on selected port
-
-GAD runs on default port `3000`.
-
-To run GAD on **selected port**, use the following commands:
+To run GAD with **CLI options**, use the following commands e.g.:
 
 PowerShell:
 

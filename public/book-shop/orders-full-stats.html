@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | BookShop Full Orders Stats</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/book-shop-side-panel.css" />
+    <link rel="stylesheet" href="./css/book-shop.css" />
+    <script src="/js/libs/charts/chart.js"></script>
+
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-gui-book-shop" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <div style="position: absolute; right: 270px;">
+        <div id="alerts-placeholder" class="alerts-placeholder"></div>
+    </div>
+    <br />
+    <div style="position: absolute; right: 270px;">
+        <div id="book-details-placeholder" style="display: flex; justify-content: center; position: absolute;"></div>
+    </div>
+    <div id="side-panel" class="sidepanel">
+    </div>
+    <div align="center">
+        <h2>BookShop Orders Stats</h2>
+    </div>
+    <div class="book-shop-description" align="center">
+    </div>
+    <div id="account-info" align="center">
+    </div>
+    <div id="controls-container" align="center">
+    </div>
+    <div id="orders-messages" align="center"></div>
+
+    <div id="book-shop-modal" align="center">
+    </div>
+    <div align="center">
+        <fieldset id="manage-charts-container" class="manage-charts-container" align="center">
+            <legend>Display charts:</legend>
+            <div id="manage-charts-controls" class="manage-charts-controls">
+
+            </div>
+        </fieldset>
+    </div>
+    <div id="dashboard-info" align="center">
+    </div>
+    <div id="authentication-info" align="center">
+    </div>
+    <div align="center" class="raw-stats-container">
+        General statistics:
+        <div id="raw-stats-container" class="raw-stats-container" align="center">
+        </div>
+    </div>
+    <div id="charts" align="center">
+        <div id="costCharts" align="center">
+            <div style="width: 600px;">
+                <canvas id="booksCountChartCanvas"></canvas>
+            </div>
+            <div style="width: 600px;">
+                <canvas id="totalCostsPerPartialCostChartCanvas"></canvas>
+            </div>
+            <div style="width: 600px;">
+                <canvas id="orderStatusesCountChartCanvas"></canvas>
+            </div>
+        </div>
+        <div id="userCharts" align="center" style="display: none;">
+            <div style="width: 600px;">
+                <canvas id="totalCostsPerUserChartCanvas"></canvas>
+            </div>
+            <div style="width: 600px;">
+                <canvas id="totalBooksPerUserChartCanvas"></canvas>
+            </div>
+        </div>
+        <div id="itemsCharts" align="center" style="display: none;">
+            <div style="width: 600px;">
+                <canvas id="totalItemsPerPriceChartCanvas"></canvas>
+            </div>
+            <div style="width: 600px;">
+                <canvas id="totalItemsPerQuantityChartCanvas"></canvas>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="/username.js"></script>
+<script type="text/javascript" src="./js/book-common.js"></script>
+<script type="text/javascript" src="./js/book-shop-side-panel.js"></script>
+<script type="text/javascript" src="./js/orders-full-stats.js"></script>
+<script type="text/javascript" src="/js/message-notifier.js"></script>
+<script type="text/javascript">
+    setIconActive('book-shop-orders-full-stats')
+</script>
+
+</html>

@@ -1,3 +1,11 @@
+const {
+  randomNames,
+  randomSurnames,
+  randomCities,
+  randomCountries,
+  randomStreets,
+  randomEmailProviders,
+} = require("./base.data");
 const { RandomValueGeneratorWithSeed } = require("./random-data.generator");
 
 const sampleUser = {
@@ -17,192 +25,8 @@ const sampleUser = {
   },
   lastLogin: "2023-10-20T14:35:00Z",
   accountCreated: "2020-01-10T09:15:00Z",
-  status: "Active",
+  status: 1,
 };
-
-const randomStreets = [
-  "Elm Street",
-  "Maple Street",
-  "Oak Street",
-  "Pine Street",
-  "Cedar Street",
-  "Hill Street",
-  "Lake Street",
-  "River Street",
-  "Park Street",
-];
-
-const randomCities = [
-  "Springfield",
-  "Rivertown",
-  "Lakeside",
-  "Hill Valley",
-  "Sunnydale",
-  "Smallville",
-  "Gotham",
-  "Metropolis",
-  "Central City",
-];
-
-const randomCountries = [
-  "USA",
-  "Canada",
-  "Mexico",
-  "Brazil",
-  "Argentina",
-  "UK",
-  "France",
-  "Germany",
-  "Italy",
-  "Spain",
-  "Russia",
-  "China",
-  "Japan",
-  "India",
-  "Australia",
-  "South Africa",
-  "Nigeria",
-  "Egypt",
-  "Saudi Arabia",
-  "UAE",
-  "Turkey",
-  "Greece",
-];
-
-const randomNames = [
-  "John",
-  "Jane",
-  "Alice",
-  "Bob",
-  "Charlie",
-  "David",
-  "Eve",
-  "Frank",
-  "Grace",
-  "Heidi",
-  "Ivy",
-  "Jack",
-  "Kate",
-  "Luke",
-  "Mary",
-  "Nancy",
-  "Oliver",
-  "Pam",
-  "Quinn",
-  "Ruth",
-  "Steve",
-  "Tina",
-  "Victor",
-  "Wendy",
-  "Xander",
-  "Yvonne",
-  "Zack",
-];
-
-const randomSurnames = [
-  "Smith",
-  "Johnson",
-  "Williams",
-  "Jones",
-  "Brown",
-  "Davis",
-  "Miller",
-  "Wilson",
-  "Moore",
-  "Taylor",
-  "Anderson",
-  "Thomas",
-  "Jackson",
-  "White",
-  "Harris",
-  "Martin",
-  "Thompson",
-  "Garcia",
-  "Martinez",
-  "Robinson",
-  "Clark",
-  "Rodriguez",
-  "Lewis",
-  "Lee",
-  "Walker",
-  "Hall",
-  "Allen",
-  "Young",
-  "Hernandez",
-  "King",
-  "Wright",
-  "Lopez",
-  "Hill",
-  "Scott",
-  "Green",
-  "Adams",
-  "Baker",
-  "Gonzalez",
-  "Nelson",
-  "Carter",
-  "Mitchell",
-  "Perez",
-  "Roberts",
-  "Turner",
-  "Phillips",
-  "Campbell",
-  "Parker",
-  "Evans",
-  "Edwards",
-  "Collins",
-  "Stewart",
-  "Sanchez",
-  "Morris",
-  "Rogers",
-  "Reed",
-  "Cook",
-  "Morgan",
-  "Bell",
-  "Murphy",
-  "Bailey",
-  "Rivera",
-  "Cooper",
-  "Richardson",
-  "Cox",
-  "Howard",
-  "Ward",
-  "Torres",
-  "Peterson",
-  "Gray",
-  "Ramirez",
-  "James",
-  "Watson",
-  "Brooks",
-  "Kelly",
-  "Sanders",
-  "Price",
-  "Bennett",
-  "Wood",
-  "Barnes",
-  "Ross",
-  "Henderson",
-  "Coleman",
-  "Jenkins",
-  "Perry",
-  "Powell",
-  "Long",
-  "Patterson",
-  "Hughes",
-  "Flores",
-  "Washington",
-  "Butler",
-  "Simmons",
-  "Foster",
-  "Gonzales",
-  "Bryant",
-  "Alexander",
-  "Russell",
-  "Griffin",
-  "Diaz",
-  "Hayes",
-];
-
-const randomEmailProviders = ["test.test.com", "test2.test.com", "test3.test.com"];
 
 const randomPhoneCodes = ["555", "666", "777", "888", "999"];
 
@@ -220,7 +44,13 @@ const randomProfilePictures = [
   "6d4598e5-9778-4e9d-8a96-dd1a625b9f0a.jpg",
 ];
 
-const possibleStatuses = ["Active", "Inactive", "Suspended"];
+const possibleStatuses = {
+  0: "inactive",
+  1: "active",
+  2: "banned",
+  3: "deleted",
+  4: "suspended",
+};
 
 function generateRandomUser(totalRandom = false) {
   let dataGenerator = new RandomValueGeneratorWithSeed(Math.random().toString());
@@ -230,7 +60,6 @@ function generateRandomUser(totalRandom = false) {
   }
 
   const user = { ...sampleUser };
-  // overwrite all data with random values
 
   user.userId = "U" + dataGenerator.getNextValue(1000, 9999);
   user.firstName = randomNames[dataGenerator.getNextValue(0, randomNames.length - 1)];
@@ -267,7 +96,7 @@ function generateRandomUser(totalRandom = false) {
     dataGenerator.getNextValue(0, 11),
     dataGenerator.getNextValue(1, 28)
   ).toISOString();
-  user.status = possibleStatuses[dataGenerator.getNextValue(0, 2)];
+  user.status = dataGenerator.getNextValue(0, 4);
 
   return user;
 }
