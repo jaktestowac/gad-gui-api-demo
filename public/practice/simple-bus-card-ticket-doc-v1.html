@@ -155,6 +155,9 @@
         pdfButton.style.padding = "2px";
         pdfButton.onclick = () => generatePDF('ticket-data', "results-container");
         buttonsContainer.appendChild(pdfButton);
+
+        const xlsxButton = createXlsxDownloadButton(data);
+        buttonsContainer.appendChild(xlsxButton);
     });
 </script>
 

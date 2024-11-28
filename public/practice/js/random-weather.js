@@ -243,40 +243,11 @@ function presentDataOnUIAsATable(weatherData) {
 
   resultsContainer.appendChild(table);
 
-  const downloadButton = document.createElement("button");
-  downloadButton.classList.add("btn", "button-primary");
-  downloadButton.textContent = "Download XLSX";
-  downloadButton.style.margin = "2px";
-  downloadButton.style.padding = "2px";
-  downloadButton.addEventListener("click", () => {
-    const dataToDownload = [
-      [
-        "Date",
-        "Temperature (°C)",
-        "Humidity (%)",
-        "Day Length (hours)",
-        "Wind Speed (km/h)",
-        "Wind Speed Range (km/h)",
-      ],
-      ...weatherData.map((row) => [
-        row.date,
-        row.temperature,
-        row.humidity,
-        row.dayLength,
-        row.windSpeed,
-        row.windSpeedRange,
-      ]),
-    ];
-
-    downloadWeatherDataAsXLSX("1", dataToDownload);
-  });
-
   const buttonsContainer = document.createElement("div");
   buttonsContainer.setAttribute("id", "buttons-container");
   buttonsContainer.style.display = "flex";
   buttonsContainer.style.justifyContent = "center";
 
-  buttonsContainer.appendChild(downloadButton);
   resultsContainer.appendChild(buttonsContainer);
 
   // add comment based on weather data - about temperature, wind speed, humidity, and min/max temperature

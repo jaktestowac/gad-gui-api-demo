@@ -144,6 +144,35 @@
         pdfButton.style.padding = "2px";
         pdfButton.onclick = () => generatePDF('weather-data', "results-container");
         buttonsContainer.appendChild(pdfButton);
+
+        const xlsxButton = document.createElement("button");
+        xlsxButton.classList.add("btn", "button-primary");
+        xlsxButton.textContent = "Download XLSX";
+        xlsxButton.style.margin = "2px";
+        xlsxButton.style.padding = "2px";
+        xlsxButton.addEventListener("click", () => {
+            const dataToDownload = [
+                [
+                    "Date",
+                    "Temperature (°C)",
+                    "Humidity (%)",
+                    "Day Length (hours)",
+                    "Wind Speed (km/h)",
+                    "Wind Speed Range (km/h)",
+                ],
+                ...data.map((row) => [
+                    row.date,
+                    row.temperature,
+                    row.humidity,
+                    row.dayLength,
+                    row.windSpeed,
+                    row.windSpeedRange,
+                ]),
+            ];
+
+            downloadWeatherDataAsXLSX("1", dataToDownload);
+        });
+        buttonsContainer.appendChild(xlsxButton);
     });
 
 </script>

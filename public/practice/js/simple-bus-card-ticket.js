@@ -79,6 +79,43 @@ function downloadTicketAsXLSX(ticketNumber, dataToDownload) {
   downloadXlsx(`bus-ticket-data-${ticketNumber}.xlsx`, dataToDownload);
 }
 
+function createXlsxDownloadButton(data) {
+  const downloadButton = document.createElement("button");
+  downloadButton.classList.add("btn", "button-primary");
+  downloadButton.textContent = "Download XLSX";
+  downloadButton.style.margin = "2px";
+  downloadButton.style.padding = "2px";
+  downloadButton.addEventListener("click", () => {
+    const dataToDownload = [
+      ["Ticket Number", "Owner", "Age", "Funds", "Valid Until", "Status"],
+      [
+        data.ticketNumber,
+        data.owner.name,
+        data.owner.age,
+        formatCurrency(data.funds),
+        new Date(data.validUntil).toLocaleDateString(),
+        possibleStatuses[data.status],
+      ],
+    ];
+
+    const tripsData = data.useHistory.map((history) => [
+      new Date(history.date).toLocaleDateString(),
+      history.from,
+      history.to,
+      formatCurrency(history.cost),
+      formatTimeElapsedFromMinutes(history.timeInMinutes),
+    ]);
+
+    const tripsDataToDownload = [["Date", "From", "To", "Cost", "Time"], ...tripsData];
+
+    const allDataToDownload = [...dataToDownload, [], ["Trips History"], ...tripsDataToDownload];
+
+    downloadTicketAsXLSX(data.ticketNumber, allDataToDownload);
+  });
+
+  return downloadButton;
+}
+
 function getAndShowSimpleTicketData() {
   return getTicketCardData(getTicketCardData).then((data) => {
     const resultsContainer = document.getElementById("results-container");
@@ -189,38 +226,6 @@ function getAndShowSimpleTicketData() {
     statusValue.textContent = possibleStatuses[data.status];
     dateCell.appendChild(statusValue);
 
-    const downloadButton = document.createElement("button");
-    downloadButton.classList.add("btn", "button-primary");
-    downloadButton.textContent = "Download XLSX";
-    downloadButton.style.margin = "2px";
-    downloadButton.style.padding = "2px";
-    downloadButton.addEventListener("click", () => {
-      const dataToDownload = [
-        ["Ticket Number", "Owner", "Age", "Funds", "Valid Until", "Status"],
-        [
-          data.ticketNumber,
-          data.owner.name,
-          data.owner.age,
-          formatCurrency(data.funds),
-          new Date(data.validUntil).toLocaleDateString(),
-          possibleStatuses[data.status],
-        ],
-      ];
-
-      const tripsData = data.useHistory.map((history) => [
-        new Date(history.date).toLocaleDateString(),
-        history.from,
-        history.to,
-        formatCurrency(history.cost),
-        formatTimeElapsedFromMinutes(history.timeInMinutes),
-      ]);
-
-      const tripsDataToDownload = [["Date", "From", "To", "Cost", "Time"], ...tripsData];
-
-      const allDataToDownload = [...dataToDownload, [], ["Trips History"], ...tripsDataToDownload];
-
-      downloadTicketAsXLSX(data.ticketNumber, allDataToDownload);
-    });
     dateCell.appendChild(document.createElement("br"));
 
     const buttonsContainer = document.createElement("div");
@@ -229,7 +234,6 @@ function getAndShowSimpleTicketData() {
     buttonsContainer.style.flexDirection = "column";
     buttonsContainer.style.justifyContent = "center";
 
-    buttonsContainer.appendChild(downloadButton);
     dateCell.appendChild(buttonsContainer);
 
     dataRow.appendChild(dateCell);
