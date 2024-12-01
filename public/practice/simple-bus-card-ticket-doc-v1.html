@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD - Simple Bus Card Ticket (from API)</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/practice-controls.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- Run docxtemplater, pizzip, and filesaver scripts !-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.54.0/docxtemplater.js"></script>
+    <script src="https://unpkg.com/pizzip@3.1.7/dist/pizzip.js"></script>
+    <script src="https://unpkg.com/pizzip@3.1.7/dist/pizzip-utils.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="/js/libs/charts/chart.js"></script>
+    <style>
+        .transactions-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid black;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .transactions-row {
+            border: 1px solid black;
+        }
+
+        .expenses-cell {
+            padding: 0px !important;
+        }
+
+        .table-cell {
+            padding: 4px !important;
+        }
+
+        .results-table {
+            width: 700px;
+            border-collapse: collapse;
+            border: 1px solid black;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        h5 {
+            margin: 2px;
+            padding: 2px;
+        }
+
+        p {
+            margin: 2px;
+            padding: 2px;
+        }
+
+        ul {
+            margin: 2px;
+            padding: 2px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <div align="center">
+        <h2 style="padding: 0px; margin-bottom: 0px;">Simple Bus Card Ticket (from API)</h2>
+        <span style="font-size: 10px">PS. This page has hidden error. Can you find it? 😉</span>
+    </div>
+    <br />
+    <div align="center">
+        <div id="results-container">
+        </div>
+    </div>
+    <br />
+    <div align="center">
+        <div id="business-context">
+            <span class="simpleInfoBox" style="font-size: 16px; ">PS. See sample business context!&nbsp;
+                <span class="span-button toggleSpoilerButton" onclick="toggleSpoiler('businessContext', this)">Show context!</span></span>
+            <span>
+                <span id="businessContext" style="display:none;"><br />
+                    <div class="simpleInfoBox1">
+                        <div align="left" style="width: 600px;">
+                            <h4>Business Context (Summary)</h4>
+                            <p>
+                                This page represents a <strong>simplified bus card ticket</strong> for a public transport application.</br>
+                                It integrates API data with frontend logic to:
+                            <ul>
+                                <li>Display <strong>ticket details</strong> (e.g., <strong>date</strong>, <strong>price</strong>, <strong>route</strong>, <strong>passenger</strong>)</li>
+                                <li>Calculate <strong>total expenses</strong> for the passenger</li>
+                                <li>Calculates card <strong>expiration date</strong></li>
+                                <li>Provide a <strong>summary</strong> for the trips</li>
+                                <li>Count <strong>total trips</strong> for the passenger</li>
+                            </ul>
+                            </p>
+
+                            <h4>Key Highlights</h4>
+                            <ul>
+                                <li><strong>API:</strong> The page uses a simple API to fetch ticket data with info about the passenger, route, and price.</li>
+                                <li><strong>Frontend Logic:</strong> The page calculates the total expenses for the passenger and displays a summary of the trips (e.g., total trips, trips time or mean price).</li>
+                                <li><strong>Design:</strong> The page has a simple design with a table to display the ticket details and expenses.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </span>
+            </span>
+        </div>
+    </div>
+    <br />
+    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 24px">
+        <a href="https://jaktestowac.pl" style="color: dimgray">
+            <span style="display: flex; align-items: center; justify-self: center; font-size: medium">
+                <img src="/data/icons/favicon.png" style="width: 25px !important; height: 25px !important; padding: 0; border: none" alt="" />&nbsp&nbspjaktestowac.pl
+            </span>
+        </a>
+    </div>
+</body>
+
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="./js/practice-common.js"></script>
+<script type="text/javascript" src="./js/simple-bus-card-ticket.js"></script>
+<script type="text/javascript" src="/js/helpers/reports.js"></script>
+<script>
+    getAndShowSimpleTicketData().then((data) => {
+        // Generate DOCX button
+        const buttonsContainer = document.getElementById("buttons-container");
+        const docxButton = document.createElement("button");
+        docxButton.innerHTML = "Download DOCX";
+        docxButton.classList.add("btn");
+        docxButton.classList.add("button-primary");
+        docxButton.style.margin = "2px";
+        docxButton.style.padding = "2px";
+        docxButton.onclick = () => generateDocx(data);
+        buttonsContainer.appendChild(docxButton);
+
+        const pdfButton = document.createElement("button");
+        pdfButton.innerHTML = "Download PDF";
+        pdfButton.classList.add("btn");
+        pdfButton.classList.add("button-primary");
+        pdfButton.style.margin = "2px";
+        pdfButton.style.padding = "2px";
+        pdfButton.onclick = () => generatePDF('ticket-data', "results-container");
+        buttonsContainer.appendChild(pdfButton);
+
+        const xlsxButton = createXlsxDownloadButton(data);
+        buttonsContainer.appendChild(xlsxButton);
+    });
+</script>
+
+</html>

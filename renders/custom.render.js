@@ -1,7 +1,7 @@
 const { isBugEnabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
-const { sleep } = require("../helpers/helpers");
-const { logTrace, logInsane } = require("../helpers/logger-api");
+const { sleep, hideCardNumber } = require("../helpers/helpers");
+const { logTrace, logInsane, logDebug } = require("../helpers/logger-api");
 const { addResourceCreationDate } = require("../helpers/temp-data-store");
 const { getOriginMethod } = require("../helpers/tracing-info.helper");
 
@@ -27,6 +27,20 @@ function renderResponse(req, res) {
       usersMapped.birthDate = undefined;
     }
     res.locals.data = usersMapped;
+  }
+
+  if (req.method === "GET" && req.url.includes("book-shop-account-payment-cards")) {
+    const card = res.locals.data;
+    logTrace("RenderResponse: book-shop-account-payment-card anonymization:", { card });
+
+    if (card !== undefined) {
+      res.locals.data = {
+        card_number: hideCardNumber(card.card_number),
+        balance: card.balance,
+      };
+
+      return res.jsonp(res.locals.data);
+    }
   }
 
   if (req.method === "GET" && req.url.includes("users")) {
@@ -76,7 +90,14 @@ function renderResponse(req, res) {
     sleep(100).then((x) => {
       res.jsonp(res.locals.data);
     });
-  } else if (req.method === "GET" && (req.url.includes("articles") || req.url.includes("comments"))) {
+  } else if (
+    req.method === "GET" &&
+    (req.url.includes("articles") ||
+      req.url.includes("comments") ||
+      req.url.includes("users") ||
+      req.url.includes("items") ||
+      req.url.includes("book-shop"))
+  ) {
     const resources = res.locals.data;
     let resourcesMapped = resources;
     logInsane("RenderResponse: returning resources:", { length: resources.length });
@@ -88,7 +109,7 @@ function renderResponse(req, res) {
         const { _inactive, ...rest } = resource;
         return rest;
       });
-      logTrace("RenderResponse: Articles:", {
+      logTrace("RenderResponse::", {
         withInactive: resources.length,
         withoutInactive: resourcesMapped.length,
       });

@@ -186,6 +186,46 @@ function bookmarksDb() {
   return fullDb()["bookmarks"];
 }
 
+function booksDb() {
+  return fullDb()["books"] || [];
+}
+
+function bookShopAccountsDb() {
+  return fullDb()["book-shop-accounts"] || [];
+}
+
+function bookShopAccountPaymentCardDb() {
+  return fullDb()["book-shop-account-payment-cards"] || [];
+}
+
+function bookShopOrderCouponsDb() {
+  return fullDb()["book-shop-order-coupons"] || [];
+}
+
+function bookShopOrdersDb() {
+  return fullDb()["book-shop-orders"] || [];
+}
+
+function bookShopOrderStatusesDb() {
+  return fullDb()["book-shop-order-statuses"] || [];
+}
+
+function bookShopActionsDb() {
+  return fullDb()["book-shop-actions"] || [];
+}
+
+function bookShopRolesDb() {
+  return fullDb()["book-shop-roles"] || [];
+}
+
+function bookShopBookReviewsDb() {
+  return fullDb()["book-reviews"] || [];
+}
+
+function bookShopItemsDb() {
+  return fullDb()["book-shop-items"] || [];
+}
+
 function quizQuestionsDb() {
   const db = JSON.parse(fs.readFileSync(getDbPath(getConfigValue(ConfigKeys.QUIZ_QUESTIONS_PATH), "UTF-8")));
   return db;
@@ -321,4 +361,14 @@ module.exports = {
   initVisits,
   translationsDb,
   getLanguages,
+  bookShopAccountsDb,
+  bookShopOrdersDb,
+  bookShopActionsDb,
+  bookShopRolesDb,
+  bookShopAccountPaymentCardDb,
+  bookShopItemsDb,
+  bookShopOrderStatusesDb,
+  bookShopOrderCouponsDb,
+  booksDb,
+  bookShopBookReviewsDb,
 };

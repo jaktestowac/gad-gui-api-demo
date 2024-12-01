@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD - Weather charts grid</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/practice-controls.css" />
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <br />
+    <div align="center">
+        <h2 style="padding: 0px; margin: 0px;">Weather charts grid</h2>
+        <div align="center">
+            <div align="center" style="display: flex; align-items: center; justify-content: center;">
+                <span style="padding: 5px;">
+                    <div id="sampleStaticChart"></div>
+                </span>
+                <span style="padding: 5px;">
+                    <div id="sampleDynamicChart"></div>
+                </span>
+            </div>
+            <div align="center" style="display: flex; align-items: center; justify-content: center;">
+                <span style="padding: 5px;">
+                    <div id="sampleStaticChart2"></div>
+                </span>
+                <span style="padding: 5px;">
+                    <div id="sampleStaticChart3"></div>
+                </span>
+            </div>
+        </div>
+    </div>
+    <br />
+    <br />
+    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 24px">
+        <a href="https://jaktestowac.pl" style="color: dimgray">
+            <span style="display: flex; align-items: center; justify-self: center; font-size: medium">
+                <img src="/data/icons/favicon.png" style="width: 25px !important; height: 25px !important; padding: 0; border: none" alt="" />&nbsp&nbspjaktestowac.pl
+            </span>
+        </a>
+    </div>
+</body>
+
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="./js/test-data.js"></script>
+<script type="text/javascript" src="./js/data-generators.js"></script>
+<script type="text/javascript" src="./js/practice-common.js"></script>
+<script type="text/javascript" src="./js/test-data-canvas.js"></script>
+<script type="text/javascript" src="./js/display-charts.js"></script>
+<script>
+    const dataPart = { weatherData: weatherStaticDataForCanvas.weatherData.slice(0, 5) };
+    displayChartsData(dataPart, 'sampleStaticChart', 400, 300);
+
+    const dataPart2 = { weatherData: weatherStaticDataForCanvas.weatherData.slice(4, 10) };
+    displayChartsData(dataPart2, 'sampleStaticChart2', 400, 300);
+
+    const dataPart3 = { weatherData: weatherStaticDataForCanvas.weatherData.slice(9, 15) };
+    displayChartsData(dataPart3, 'sampleStaticChart3', 400, 300);
+
+    const data = generateWeatherDataForNSeconds(5);
+    displayGeneratedData(data, 'sampleDynamicChart', 400, 300);
+</script>
+
+</html>

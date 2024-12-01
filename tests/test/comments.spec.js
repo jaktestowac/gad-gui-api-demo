@@ -173,7 +173,7 @@ describe("Endpoint /comments", () => {
 
     it("PATCH /comments/:id - should not update comment with date in future", async () => {
       // Act:
-      testCommentData.date = getCurrentDate(0, 0, 11);
+      testCommentData.date = getCurrentDate(0, 0, 30);
       const response = await request.patch(`${baseUrl}/${commentId}`).set(headers).send(testCommentData);
 
       // Assert:

@@ -1,4 +1,4 @@
-const { request, expect, baseLikesUrl, sleepTime } = require("../config.js");
+const { request, expect, baseLikesUrl, sleepTime, restoreDbPath } = require("../config.js");
 const { authUser, generateLikesBody } = require("../helpers/data.helpers.js");
 const { setupEnv, gracefulQuit, sleep } = require("../helpers/helpers.js");
 
@@ -71,7 +71,7 @@ describe("Endpoint /likes", () => {
         await setupEnv();
         // eslint-disable-next-line no-console
         console.log(">>> Restoring DB before e2e tests");
-        await request.get("/restoreDB");
+        await request.get(restoreDbPath);
       });
 
       [

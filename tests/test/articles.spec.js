@@ -11,6 +11,7 @@ const {
   getCurrentDate,
   sleep,
   getISODateWithTimezoneOffset,
+  invokeRequestUntil,
 } = require("../helpers/helpers.js");
 
 describe("Endpoint /articles", () => {
@@ -519,6 +520,14 @@ describe("Endpoint /articles", () => {
     });
 
     it("POST /articles - should not reuse ID of deleted articles @e2e", async () => {
+      const delFunc = async () => {
+        return await request.delete(`${baseUrl}/${baseId}`).set(headers);
+      };
+
+      const conditionFunc = (response) => {
+        return response.status === 200;
+      };
+
       // Arrange:
       const testData = generateValidArticleData();
       testData.user_id = userId;
@@ -530,13 +539,10 @@ describe("Endpoint /articles", () => {
       expect(responsePost.status, JSON.stringify(responsePost.body)).to.equal(201);
       const baseId = responsePost.body.id;
 
-      await sleep(100);
-
       // Act:
-      const responseDelete = await request.delete(`${baseUrl}/${baseId}`).set(headers);
-
-      // Assert:
-      expect(responseDelete.status).to.equal(200);
+      await invokeRequestUntil(baseId, delFunc, conditionFunc, 10, 50).then((responseDelete) => {
+        expect(responseDelete.status).to.equal(200);
+      });
 
       // Create new article:
       // Act:

@@ -47,6 +47,7 @@ const bugConfig = {
   bug_disable_module_users: false,
   bug_disable_module_articles: false,
   bug_disable_module_auth: false,
+  bug_book_shop_account_001: false,
 };
 
 module.exports = {

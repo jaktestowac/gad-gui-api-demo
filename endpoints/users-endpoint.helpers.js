@@ -172,6 +172,19 @@ function handleUsers(req, res) {
       .setWasAuthorized(true)
       .setResourceId(foundUser.id)
       .build();
+
+      
+    req.method = "PUT";
+    req.url = `/api/users/${userId}`;
+    const newUserBody = foundUser;
+    newUserBody._inactive = true;
+    req.body = newUserBody;
+    logTrace("handleUsers: SOFT DELETE: overwrite DELETE -> PUT:", {
+      method: req.method,
+      url: req.url,
+      body: req.body,
+    });
+    return;
   }
 
   // soft delete:

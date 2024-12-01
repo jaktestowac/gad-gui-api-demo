@@ -17,14 +17,14 @@ issueGetDbCheckRequest().then((data) => {
     if (dbStatusInfoContainer !== null) {
       const missingTables =
         data.result?.missingTablesInCurrentDb?.length > 0
-          ? `- <strong>tables</strong> are missing <span class="span-button" onclick="toggleMenu('missingTables')">Show more</span></br>
+          ? `- <strong>tables</strong> are missing <span class="span-button toggleSpoilerButton" onclick="toggleMenu('missingTables')">Show more</span></br>
       <span id="missingTables" style="display:none;"><strong>${data.result?.missingTablesInCurrentDb.join(
         ", "
       )}</strong></br></br>(check REST API response for more details about invalidObjects)</br></span>`
           : [];
       const missingMandatoryColumns =
         data.result?.missingKeysInCurrentDb?.length > 0
-          ? `- <strong>mandatory columns</strong> are missing (in one or more entities) <span class="span-button" onclick="toggleMenu('missingColumns')">Show more</span></br>
+          ? `- <strong>mandatory columns</strong> are missing (in one or more entities) <span class="span-button toggleSpoilerButton" onclick="toggleMenu('missingColumns')">Show more</span></br>
              <span id="missingColumns" style="display:none;"><strong>${data.result?.missingKeysInCurrentDb.join(
                ", "
              )}</strong></br></br>(check REST API response for more details about invalidObjects)</br></span>`

@@ -31,6 +31,17 @@ const baseCaptchaUrl = "/api/captcha";
 const baseFeatureCheckUrl = "/api/config/checkfeature";
 const baseFeaturesCheckUrl = "/api/config/checkfeatures";
 const baseFlashpostsUrl = "/api/flashposts";
+const bookShopPaymentCardsUrl = "/api/book-shop-account-payment-cards";
+const bookShopAccountUrl = "/api/book-shop-accounts";
+const bookShopAccountAuthorizeUrl = "/api/book-shop-authorize";
+const booksUrl = "/api/books";
+const bookShopRolesUrl = "/api/book-shop-roles";
+const bookShopAuthorsUrl = "/api/book-authors";
+const bookShopGenresUrl = "/api/book-genres";
+const bookShopItemsUrl = "/api/book-shop-items";
+const bookShopOrderStatusesUrl = "/api/book-shop-order-statuses";
+const bookShopOrdersUrl = "/api/book-shop-orders";
+const bookShopManageUrl = "/api/book-shop-manage";
 
 const existingUserEmail = "Danial.Dicki@dicki.test";
 const existingUserPass = "test2";
@@ -46,14 +57,25 @@ const existingUserId3 = 12;
 
 const existingUserEmail4 = "v.cortez@test.test";
 const existingUserPass4 = "1234";
-const existingUserId4 = 13;
+const existingUserId4 = 14;
+
+const existingUserEmail5 = "Mas.Lea@test.test";
+const existingUserPass5 = "fasd";
+const existingUserId5 = 7;
+
+const existingUserBookShopAdminEmail = "v.cortez@test.test";
+const existingUserBookShopAdminPass = "1234";
+const existingUserBookShopAdminId = 14;
 
 const sleepTime = 200; // in ms
 const logLevel = 2;
 const clearDbAfter = false;
 const clearDbBefore = true;
 
+const restoreDbPath = "/api/restoreTestDB";
+
 module.exports = {
+  restoreDbPath,
   expect,
   request,
   faker,
@@ -93,6 +115,9 @@ module.exports = {
   existingUserEmail4,
   existingUserPass4,
   existingUserId4,
+  existingUserEmail5,
+  existingUserPass5,
+  existingUserId5,
   messengerContactsUrl,
   messengerMessagesUrl,
   contactsUrl,
@@ -101,4 +126,18 @@ module.exports = {
   baseFeatureCheckUrl,
   baseFeaturesCheckUrl,
   baseFlashpostsUrl,
+  bookShopPaymentCardsUrl,
+  booksUrl,
+  bookShopAccountUrl,
+  bookShopRolesUrl,
+  bookShopAuthorsUrl,
+  bookShopGenresUrl,
+  bookShopItemsUrl,
+  bookShopOrderStatusesUrl,
+  bookShopOrdersUrl,
+  bookShopAccountAuthorizeUrl,
+  bookShopManageUrl,
+  existingUserBookShopAdminEmail,
+  existingUserBookShopAdminPass,
+  existingUserBookShopAdminId,
 };

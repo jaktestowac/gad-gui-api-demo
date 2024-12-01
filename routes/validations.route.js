@@ -1,16 +1,14 @@
-const {
-  formatErrorResponse,
-  getIdFromUrl,
-  formatInvalidTokenErrorResponse,
-  sleep,
-  formatNoFieldsErrorResponse,
-} = require("../helpers/helpers");
+const { formatErrorResponse, getIdFromUrl, formatInvalidTokenErrorResponse, sleep } = require("../helpers/helpers");
 const { logDebug, logError, logTrace } = require("../helpers/logger-api");
 const { getConfigValue, isBugEnabled } = require("../config/config-manager");
 const { ConfigKeys, BugConfigKeys } = require("../config/enums");
 
-const { verifyAccessToken, areAnyFieldsPresent } = require("../helpers/validation.helpers");
-const { searchForUserWithToken, searchForUser } = require("../helpers/db-operation.helpers");
+const { verifyAccessToken } = require("../helpers/validation.helpers");
+const {
+  searchForUserWithToken,
+  searchForUser,
+  searchForBookShopAccountWithUserId,
+} = require("../helpers/db-operation.helpers");
 const {
   HTTP_UNAUTHORIZED,
   HTTP_INTERNAL_SERVER_ERROR,
@@ -18,7 +16,6 @@ const {
   HTTP_METHOD_NOT_ALLOWED,
   HTTP_SERVICE_UNAVAILABLE,
   HTTP_NOT_FOUND,
-  HTTP_UNPROCESSABLE_ENTITY,
 } = require("../helpers/response.helpers");
 const { handleHangman } = require("../endpoints/hangman-endpoint.helpers");
 const { handleQuiz } = require("../endpoints/quiz-endpoint.helpers");
@@ -44,9 +41,20 @@ const { handleProjects } = require("../endpoints/projects-endpoint.helpers");
 const { handleCaptcha, handleCaptchaVerification } = require("../endpoints/captcha-endpoint.helpers");
 const { handleFlashPosts } = require("../endpoints/flashposts-endpoint.helpers");
 const { handleData } = require("../endpoints/data-endpoints");
-const { handleBooks } = require("../endpoints/library/books-endpoint.helpers");
-const { handleBookAuthors } = require("../endpoints/library/book-authors-endpoint.helpers");
-const { handleBookGenres } = require("../endpoints/library/book-genres-endpoint.helpers");
+const { handleBooks } = require("../endpoints/book-shop/books-endpoint.helpers");
+const { handleBookAuthors } = require("../endpoints/book-shop/book-authors-endpoint.helpers");
+const { handleBookGenres } = require("../endpoints/book-shop/book-genres-endpoint.helpers");
+const { handleBookShopAccount } = require("../endpoints/book-shop/book-shop-accounts-endpoint.helpers");
+const { handleBookShopRoles } = require("../endpoints/book-shop/book-shop-roles-endpoint.helpers");
+const { handleBookShopItems } = require("../endpoints/book-shop/book-shop-items-endpoint.helpers");
+const { handleBookShopOrders } = require("../endpoints/book-shop/book-shop-orders-endpoint.helpers");
+const {
+  handleBookShopAccountPaymentCards,
+} = require("../endpoints/book-shop/book-shop-account-payment-cards-endpoint.helpers");
+const { handleBookShopOrderStatuses } = require("../endpoints/book-shop/book-shop-order-statuses-endpoint.helpers");
+const { handleBookShopManage } = require("../endpoints/book-shop/book-shop-manage-endpoint.helpers");
+const { handleBookShopOrdersStats } = require("../endpoints/book-shop/book-shop-order-stats-endpoint.helpers");
+const { handleBookShopBookReviews } = require("../endpoints/book-shop/book-shop-book-reviews-endpoint.helpers");
 
 const validationsRoutes = (req, res, next) => {
   let isAdmin = false;
@@ -250,15 +258,45 @@ const validationsRoutes = (req, res, next) => {
       handleFlashPosts(req, res);
     }
 
-    // Library endpoints
-    if (req.url.includes("/api/books")) {
-      handleBooks(req, res);
+    // book-shop endpoints
+    if (req.url.includes("/api/book-shop-items")) {
+      handleBookShopItems(req, res);
     }
+    if (req.url.includes("/api/book-shop-account-payment-cards")) {
+      handleBookShopAccountPaymentCards(req, res);
+    }
+
     if (req.url.includes("/api/book-authors")) {
       handleBookAuthors(req, res);
     }
     if (req.url.includes("/api/book-genres")) {
       handleBookGenres(req, res);
+    }
+    if (req.url.includes("/api/book-shop-accounts") || req.url.includes("/api/book-shop-authorize")) {
+      handleBookShopAccount(req, res);
+    }
+    if (req.url.includes("/api/book-shop-roles")) {
+      handleBookShopRoles(req, res);
+    }
+    if (req.url.includes("/api/book-shop-book-reviews")) {
+      handleBookShopBookReviews(req, res);
+    }
+
+    if (req.url.includes("/api/book-shop-order-statuses")) {
+      handleBookShopOrderStatuses(req, res);
+    }
+    if (req.url.includes("/api/book-shop-stats")) {
+      handleBookShopOrdersStats(req, res, isAdmin);
+      return;
+    }
+    if (req.url.includes("/api/book-shop-orders")) {
+      handleBookShopOrders(req, res);
+    }
+    if (req.url.includes("/api/books")) {
+      handleBooks(req, res);
+    }
+    if (req.url.includes("/api/book-shop-manage")) {
+      handleBookShopManage(req, res, isAdmin);
     }
 
     // data endpoints
@@ -295,6 +333,30 @@ const validationsRoutes = (req, res, next) => {
         }
         logDebug(`[DELAY] Waiting for ${timeout} [ms] for ${urlEnds}`);
         sleep(timeout).then(() => next());
+      } else if (req.method === "POST" && urlEnds.endsWith("api/book-shop-accounts")) {
+        const timeout = getRandomInt(
+          getConfigValue(ConfigKeys.SLEEP_TIME_FOR_SHOP_ACCOUNT_CREATE_MIN),
+          getConfigValue(ConfigKeys.SLEEP_TIME_FOR_SHOP_ACCOUNT_CREATE_MAX)
+        );
+
+        logDebug(`[DELAY] Waiting for ${timeout} [ms] for ${urlEnds}`);
+        sleep(timeout).then(() => {
+          if (searchForBookShopAccountWithUserId(req.body.user_id) !== undefined) {
+            res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Account already exists"));
+            return;
+          }
+          next();
+        });
+      } else if (req.method === "GET" && req.url.includes("book-shop-account-payment-cards")) {
+        const timeout = getRandomInt(
+          getConfigValue(ConfigKeys.SLEEP_TIME_FOR_SHOP_ACCOUNT_PAYMENT_CARDS_MIN),
+          getConfigValue(ConfigKeys.SLEEP_TIME_FOR_SHOP_ACCOUNT_PAYMENT_CARDS_MAX)
+        );
+
+        logDebug(`[DELAY] Waiting for ${timeout} [ms] for ${urlEnds}`);
+        sleep(timeout).then(() => {
+          next();
+        });
       } else {
         next();
       }

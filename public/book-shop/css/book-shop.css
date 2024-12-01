@@ -1,0 +1,1124 @@
+.books-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex-direction: row;
+}
+
+.book-title {
+  font-size: 13px;
+  font-weight: bold;
+  padding: 2px;
+  margin: 2px;
+}
+
+.book-card {
+  overflow: scroll;
+  scrollbar-color: rgb(148, 148, 148) rgb(207, 207, 207);
+  scrollbar-width: thin;
+}
+
+.book-card {
+  width: 300px;
+  border: 1px solid rgb(196, 196, 196);
+  border-radius: 5px;
+  margin: 4px;
+  background-color: rgb(250, 250, 250);
+  height: 330px;
+  overflow: auto;
+}
+
+.all-books-container .book-card {
+  height: 230px;
+  overflow: auto;
+}
+
+.order-item .book-card {
+  height: 170px;
+  overflow: auto;
+}
+
+.book-top-details {
+  width: 95%;
+}
+
+.book-details {
+  font-size: 12px;
+  padding: 4px;
+}
+
+.book-description {
+  font-size: 12px;
+  padding: 4px;
+}
+
+.book-popup {
+  position: fixed;
+  z-index: 1;
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.book-popup-content {
+  overflow: hidden;
+  min-width: 300px;
+  width: 400px;
+  border: 1px solid rgb(196, 196, 196);
+  border-radius: 5px;
+  padding: 4px;
+  background-color: rgb(250, 250, 250);
+}
+
+.book-popup-content-limited {
+  overflow: auto;
+  min-width: 300px;
+  width: 400px;
+  border: 1px solid rgb(196, 196, 196);
+  border-radius: 5px;
+  padding: 4px;
+  background-color: rgb(250, 250, 250);
+  max-height: 300px;
+  height: 400px;
+  scroll-behavior: auto;
+  scrollbar-color: rgb(148, 148, 148) rgb(207, 207, 207);
+  scrollbar-width: thin;
+}
+
+.book-popup-content.wide-300 {
+  width: 300px !important;
+}
+
+.book-popup-controls {
+  position: relative;
+  /* position: absolute;
+  padding: 4px;
+  display: flex;
+  justify-content: end;
+  align-items: end;
+  width: 390px; */
+}
+
+.popup-main-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.account-creation-process {
+  font-size: 12px !important;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.user-profile-connector-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.green-tick {
+  color: rgb(110, 196, 110);
+  font-size: 32px;
+}
+
+.loading-error {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.loading-error-description {
+  display: inline;
+  font-size: 12px;
+  max-height: 200px;
+  max-width: 300px;
+}
+
+.loading-spinner {
+  width: 100%;
+  height: 200px;
+  background: url("/data/loading.gif") center no-repeat;
+}
+
+.loading-spinner-2 {
+  width: 100%;
+  height: 200px;
+  background: url("/data/swirl-1.gif") center no-repeat;
+}
+
+.book-button {
+  font-size: 20px;
+}
+
+.book-clickable-component.clickable-btn {
+  font-size: 16px;
+  padding: 4px;
+  margin: 4px;
+}
+
+.book-clickable-component.clickable-btn-wide {
+  font-size: 14px;
+  padding-left: 4px;
+  padding-right: 4px;
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+.book-clickable-component {
+  cursor: pointer;
+}
+
+.book-clickable-component:hover {
+  color: rgb(255, 0, 0);
+}
+
+.hidden-data {
+  filter: blur(5px);
+  user-select: none;
+}
+
+.account-name {
+  font-size: 16px;
+  margin: 5px;
+  padding: 5px;
+}
+
+h4.books-header {
+  font-size: 16px;
+  margin: 5px;
+  padding: 5px;
+}
+
+.profile-card {
+  min-width: 300px;
+  max-width: 500px;
+  border: 1px solid rgb(196, 196, 196);
+  border-radius: 5px;
+  margin: 4px;
+  padding: 10px;
+  background-color: rgb(250, 250, 250);
+  font-size: 12px;
+}
+
+.profile-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+
+.book-shop-button-primary {
+  font-size: 10px;
+  padding: 4px;
+  margin: 10px;
+  font-weight: 600;
+  color: white;
+  border: 1px solid rgb(73, 73, 73);
+  border-radius: 5px;
+  background-color: rgb(43, 43, 43);
+  cursor: pointer;
+  box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.7);
+}
+
+.book-shop-button-primary.red {
+  background-color: rgb(255, 158, 158);
+}
+
+.book-shop-button-primary.green {
+  background-color: rgb(110, 196, 110);
+}
+
+.book-shop-button-primary:hover {
+  background-color: rgb(104, 104, 104);
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.2);
+  color: white;
+}
+
+.book-shop-button-primary.disabled {
+  background-color: rgb(196, 196, 196);
+  cursor: default;
+}
+
+.book-shop-button-primary.thin {
+  margin: 2px;
+}
+
+.profile-image-and-details {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.image-column {
+  width: 100px;
+  min-width: 100px;
+}
+
+.details-column {
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.books-list {
+  min-width: 300px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex-direction: row;
+  border: 1px solid rgb(196, 196, 196);
+  border-radius: 5px;
+  margin: 4px;
+  width: max-content;
+  background-color: rgb(250, 250, 250);
+}
+
+.books-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex-direction: row;
+}
+
+.book-table-details {
+  font-size: 12px;
+  padding: 4px;
+  width: 100%;
+}
+
+.tools-panel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.all-tools-panel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.book-tools-button {
+  font-size: 14px;
+  cursor: pointer;
+  padding-left: 10px;
+  padding-right: 10px;
+  color: rgb(193, 193, 193);
+}
+
+.book-tools-button.active {
+  color: rgb(9, 159, 9);
+}
+
+.item-shop-info {
+  font-size: 12px;
+}
+
+.cart-info-container {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.cart-item-description {
+  font-weight: bold;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.orders-list {
+  min-width: 300px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex-direction: row;
+  border: 1px solid rgb(196, 196, 196);
+  border-radius: 5px;
+  margin: 4px;
+  width: max-content;
+  background-color: rgb(250, 250, 250);
+}
+
+.book-table-details td {
+  text-wrap: auto;
+  white-space: unset;
+}
+
+.book-table td {
+  text-wrap: auto;
+  white-space: unset;
+  padding: 0px;
+  padding-bottom: 4px;
+  margin: 0px;
+}
+
+.order-item {
+  font-size: 12px;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid rgb(196, 196, 196);
+  border-radius: 5px;
+  margin: 4px;
+  padding: 4px;
+  background-color: rgb(250, 250, 250);
+}
+
+.book-shop-side-panel-icons.active {
+  color: rgb(210, 210, 210);
+}
+
+.order-total {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.additional-costs {
+  font-size: 12px;
+  border: 1px solid rgb(196, 196, 196);
+  border-radius: 5px;
+  width: fit-content;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.orders-controls {
+  width: fit-content;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 10px;
+  display: inline-block;
+}
+
+.orders-legend {
+  font-size: 12px;
+}
+
+.account-edit-columns {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.account-edit-popup-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.account-edit-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.account-edit-column.right {
+  align-items: start;
+}
+
+.account-edit-column.left {
+  align-items: end;
+}
+
+.account-edit-label {
+  font-size: 12px;
+  padding: 4px;
+  margin: 2px;
+}
+
+.account-edit-label.bold {
+  font-weight: bold;
+}
+
+.account-edit-input {
+  font-size: 12px;
+  padding: 4px;
+  margin: 2px;
+}
+
+.account-edit-input.wide {
+  font-size: 12px;
+  padding: 4px;
+  margin: 2px;
+  width: 200px;
+}
+
+.account-edit-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.account-edit-form {
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.order-item-price-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.order-status {
+  font-size: 12px;
+  font-weight: bold;
+  padding: 4px;
+  margin: 6px;
+}
+
+.order-label-base {
+  font-size: 12px;
+  padding: 0px;
+  padding-left: 6px;
+  padding-right: 6px;
+  margin-top: 8px !important;
+  margin-bottom: 8px !important;
+  margin-right: 5px;
+  border-radius: 5px;
+  border-color: #042e00;
+  color: #3a3a3a;
+  border: 1px solid #0b860046;
+}
+
+.order-label-base.label-new {
+  background-color: #15ff0046;
+  border-color: #0b860046;
+}
+
+.order-label-base.label-new::before {
+  content: "🌱";
+  padding-right: 4px;
+}
+
+.order-label-base.label-cancelled {
+  background-color: #99999980;
+  border-color: #5c5c5c46;
+}
+
+.order-label-base.label-cancelled::before {
+  content: "🧺";
+  padding-right: 4px;
+}
+
+.order-label-base.label-sent {
+  background-color: #ffd96f69;
+  border-color: #7c6a3769;
+}
+
+.order-label-base.label-sent::before {
+  content: "📨";
+  padding-right: 4px;
+}
+
+.order-label-base.label-delivered {
+  background-color: #207e2877;
+  border-color: #20523163;
+}
+
+.order-label-base.label-delivered::before {
+  content: "📦";
+  padding-right: 4px;
+}
+
+.order-label-base.label-returned {
+  background-color: #ff000069;
+  border-color: #7c376969;
+}
+
+.order-label-base.label-returned::before {
+  content: "🔙";
+  padding-right: 4px;
+}
+
+.order-label-base.label-pending {
+  background-color: #ffd96f69;
+  border-color: #7c6a3769;
+}
+
+.order-label-base.label-pending::before {
+  content: "🕒";
+  padding-right: 4px;
+}
+
+.order-label-base.label-completed {
+  background-color: #15ff0046;
+  border-color: #0b860046;
+}
+
+.order-label-base.label-completed::before {
+  content: "✅";
+  padding-right: 4px;
+}
+
+.account-edit-description {
+  font-size: 12px;
+  padding: 4px;
+  margin: 2px;
+}
+
+.book-shop-description {
+  font-size: 12px;
+}
+
+.order-dates {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.book-popup-close-button {
+  margin-left: auto;
+  position: absolute;
+  right: 0;
+}
+
+.manage-orders-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.order-element {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid rgb(196, 196, 196);
+  padding: 4px;
+  margin: 4px;
+}
+
+.order-element-base-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px !important;
+  font-weight: bold !important;
+  padding-left: 14px;
+  padding-right: 14px;
+  border: 1px solid rgb(196, 196, 196);
+}
+
+.order-element-actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px !important;
+  font-weight: bold !important;
+  padding-left: 14px;
+  padding-right: 14px;
+  border: 1px solid rgb(196, 196, 196);
+}
+
+.order-status-value {
+  padding-top: 0px !important;
+  margin-top: 0px !important;
+}
+
+.manage-order-select {
+  font-size: 12px;
+  cursor: pointer;
+  padding-left: 4px;
+  padding-right: 4px;
+  width: 80px;
+}
+
+.manage-order-button {
+  font-size: 14px;
+  cursor: pointer;
+  padding-left: 8px;
+  padding-right: 8px;
+  margin-left: 2px;
+  margin-right: 2px;
+  width: 60px;
+  border: 1px solid rgb(160, 160, 160);
+  border-radius: 6px;
+}
+
+.order-partial-cost {
+  font-size: 12px;
+  padding: 2px;
+  margin: 2px;
+}
+
+.account-role-name {
+  border: 1px solid rgba(0, 128, 0, 0.507);
+  border-radius: 10px;
+  padding: 4px;
+  background-color: rgba(0, 255, 0, 0.103);
+}
+
+.account-role-reader {
+  border: 1px solid rgba(0, 0, 255, 0.507);
+  border-radius: 10px;
+  padding: 4px;
+  background-color: rgba(0, 0, 255, 0.103);
+}
+
+.account-role-admin {
+  border: 1px solid rgba(255, 0, 0, 0.507);
+  border-radius: 10px;
+  padding: 4px;
+  background-color: rgba(255, 0, 0, 0.103);
+}
+
+.account-role-author {
+  border: 1px solid rgba(255, 255, 0, 0.507);
+  border-radius: 10px;
+  padding: 4px;
+  background-color: rgba(255, 255, 0, 0.103);
+}
+
+.account-role-manager {
+  border: 1px solid rgba(255, 0, 255, 0.507);
+  border-radius: 10px;
+  padding: 4px;
+  background-color: rgba(255, 0, 255, 0.103);
+}
+
+.account-role-delivery-coordinator {
+  border: 1px solid rgba(0, 255, 255, 0.507);
+  border-radius: 10px;
+  padding: 4px;
+  background-color: rgba(0, 255, 255, 0.103);
+}
+
+.account-role {
+  padding: 4px;
+  margin: 2px;
+}
+
+.manage-orders-filtering-controls-statuses {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.manage-roles-filtering-controls-statuses {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.manage-orders-filtering-container {
+  max-width: 500px;
+  border-radius: 10px;
+}
+
+.manage-orders-filtering-container legend {
+  font-size: 12px;
+}
+
+.manage-roles-filtering-container {
+  max-width: 500px;
+  border-radius: 10px;
+}
+
+.manage-roles-filtering-container legend {
+  font-size: 12px;
+}
+
+.manage-orders-filtering-controls-status {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  padding-left: 8px;
+  padding-right: 8px;
+  margin: 2px;
+}
+
+.manage-roles-filtering-controls-status {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  padding-left: 8px;
+  padding-right: 8px;
+  margin: 2px;
+}
+
+.order-element .order-label {
+  font-size: 14px;
+  padding: 2px;
+  margin: 2px;
+  font-weight: bold;
+}
+
+.order-element .order-value {
+  font-size: 14px;
+  padding: 2px;
+  margin: 2px;
+}
+
+.item-element {
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center; */
+  border: 1px solid rgb(196, 196, 196);
+  padding: 4px;
+  margin: 4px;
+  width: 300px;
+  height: 175px;
+  font-size: 12px;
+}
+
+.manage-items-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.item-label {
+  font-size: 12px;
+  padding: 2px;
+  margin: 2px;
+  font-weight: bold;
+}
+
+.item-book-title {
+  font-size: 12px;
+  padding: 2px;
+  margin: 2px;
+  font-style: italic;
+}
+
+.item-book-info-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.item-book-img {
+  max-height: 100px;
+}
+
+.item-book-img-new {
+  height: 100px;
+}
+
+.item-element-base-info {
+  width: 100%;
+}
+
+.items-search-element {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 300px;
+}
+
+.display-items-mode-select {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  display: inline;
+}
+
+.item-element.compact {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  /* align-items: center; */
+  width: 250px !important;
+  height: 125px !important;
+  padding: 0px;
+  margin: 2px;
+}
+
+.item-element.compact tr td {
+  margin: 0px;
+  padding: 0px;
+}
+
+.item-element.compact table {
+  margin: 0px;
+  padding: 0px;
+}
+
+.item-element.compact img {
+  display: none;
+}
+
+.display-mode-element-container {
+  font-size: 12px;
+  display: inline;
+}
+
+.no-orders-message {
+  font-size: 14px;
+  padding: 4px;
+  margin: 2px;
+  border-radius: 10px;
+  padding: 4px;
+  background-color: rgba(255, 145, 0, 0.103);
+}
+
+.book-shop-error-message {
+  font-size: 14px;
+  padding: 4px;
+  margin: 2px;
+  border-radius: 10px;
+  padding: 4px;
+  background-color: rgba(255, 0, 0, 0.103);
+}
+
+.book-shop-warning-message {
+  font-size: 14px;
+  padding: 4px;
+  margin: 2px;
+  border-radius: 10px;
+  padding: 4px;
+  background-color: rgba(255, 145, 0, 0.103);
+}
+
+.item-book-details-container {
+  color: #3a3a3a;
+}
+
+.item-element.compact .item-book-details-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.item-element.compact .item-book-details-container .column {
+  padding-right: 12px;
+}
+
+.edit-item-element {
+  width: 30px;
+}
+
+.items-actions-element {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  padding-left: 8px;
+  padding-right: 8px;
+  margin: 4px;
+  padding: 6px;
+}
+
+.add-item-book-select {
+  font-size: 12px;
+  cursor: pointer;
+  padding-left: 4px;
+  padding-right: 4px;
+  width: 150px;
+}
+
+.manage-charts-container {
+  width: 300px;
+  border-radius: 10px;
+}
+
+.manage-charts-container legend {
+  font-size: 12px;
+}
+
+.manage-charts-controls {
+  font-size: 12px;
+}
+
+.book-shop-links {
+  font-size: 12px;
+}
+
+.table-small {
+  font-size: 12px;
+  display: inline-table;
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: fit-content;
+}
+
+.table-small th {
+  padding: 4px;
+  margin: 2px;
+  font-weight: bold;
+}
+
+.table-small td {
+  padding: 4px;
+  margin: 2px;
+}
+
+.table-small tr {
+  padding: 4px;
+  margin: 2px;
+}
+
+.table-small tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.table-small tr:hover {
+  background-color: #dbdbdb;
+}
+
+.raw-stats-container {
+  font-size: 12px;
+  padding: 4px;
+  margin: 4px;
+}
+
+.book-review {
+  font-size: 12px;
+  padding: 4px;
+  margin: 4px;
+}
+
+.book-review-date {
+  font-size: 10px;
+  padding: 4px;
+  margin: 4px;
+}
+
+.book-review-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr;
+  grid-template-areas: "column1 column2 column3";
+  justify-content: space-between;
+  align-items: center;
+}
+
+.book-review-rating-value {
+  font-size: 15px;
+  font-weight: bold;
+  color: #c52020;
+}
+.book-review-rating-value::before {
+  /* content: "⭐"; */
+  font-size: 12px;
+  padding-right: 4px;
+}
+
+.book-review-general-info {
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-areas: "column1 column2";
+  font-size: 12px;
+  justify-content: space-around;
+  align-items: baseline;
+}
+
+.book-reviews-spacing {
+  padding-left: 4px;
+  padding-right: 4px;
+
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+.book-review-author {
+  font-size: 12px;
+  font-style: italic;
+}
+
+.book-review-content {
+  /* its a quote */
+  font-size: 12px;
+  text-align: left;
+  padding-left: 8px;
+  padding-right: 4px;
+  padding-bottom: 2px;
+  margin-bottom: 2px;
+  border-left: 4px solid #5f5f5f;
+}
+
+.book-review-separator {
+  border-top: 1px dashed #777777;
+  border-bottom: none;
+  margin: 0px;
+  padding: 0px;
+}
+
+.team-card-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+
+.team-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  width: 300px;
+  border: 1px solid rgb(196, 196, 196);
+  border-radius: 5px;
+  margin: 10px;
+  padding: 10px;
+  background-color: rgb(250, 250, 250);
+  font-size: 12px;
+}
+
+.team-card-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 2px;
+  padding: 2px;
+  width: 200px;
+}
+
+.team-card-name {
+  font-size: 16px;
+  font-weight: bold;
+  padding: 4px;
+  margin: 4px;
+}
+
+.team-card-role-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.manage-roles-accounts-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}

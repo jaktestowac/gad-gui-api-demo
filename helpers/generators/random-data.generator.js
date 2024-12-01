@@ -68,14 +68,15 @@ function getGaussianRandomInt(min, max, sigma) {
 }
 
 class RandomValueGenerator {
-  constructor(seed) {
+  constructor(seed, power = 1) {
     this.seed = seed;
     this.currentIndex = 0;
+    this.power = power;
   }
 
   getNextValue(min, max) {
     if (typeof this.seed === "string") {
-      this.seed = this.seed.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
+      this.seed = this.seed.split("").reduce((acc, char) => acc + char.charCodeAt(0) * this.power, 0);
     }
 
     const random = Math.sin(this.seed + this.currentIndex) * 10000;
@@ -92,6 +93,26 @@ class RandomValueGenerator {
   }
 }
 
+class RandomValueGeneratorWithSeed {
+  constructor(seed) {
+    this.seed = seed;
+    this.generator = seedrandom(seed);
+  }
+
+  getNextValue(min, max) {
+    return Math.floor(this.generator() * (max - min + 1) + min);
+  }
+
+  getNextValueFloat(min, max) {
+    return this.generator() * (max - min) + min;
+  }
+
+  resetSeed(seed) {
+    this.seed = seed;
+    this.generator = seedrandom(seed);
+  }
+}
+
 module.exports = {
   getRandomVisitsForEntities,
   getSeededRandomVisitsForEntities,
@@ -101,4 +122,5 @@ module.exports = {
   getRandomIdBasedOnDay,
   getRandomIntBasedOnDay,
   RandomValueGenerator,
+  RandomValueGeneratorWithSeed,
 };

@@ -1,4 +1,4 @@
-const weatherDataForCanvas = {
+const weatherStaticDataForCanvas = {
   weatherData: [
     {
       date: "2024-06-20",

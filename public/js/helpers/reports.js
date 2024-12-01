@@ -1,6 +1,6 @@
 const downloadXlsx = (filename, data) => {
-  var workbook = XLSX.utils.book_new(),
-    worksheet = XLSX.utils.aoa_to_sheet(data);
+  const workbook = XLSX.utils.book_new();
+  const worksheet = XLSX.utils.aoa_to_sheet(data);
   workbook.SheetNames.push("UserData");
   workbook.Sheets["UserData"] = worksheet;
   XLSX.writeFile(workbook, filename);

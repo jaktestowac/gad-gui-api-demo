@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | BookShop Dashboard</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/book-shop-side-panel.css" />
+    <link rel="stylesheet" href="./css/book-shop.css" />
+    <script src="/js/libs/charts/chart.js"></script>
+
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-gui-book-shop" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <div id="side-panel" class="sidepanel">
+    </div>
+    <div align="center">
+        <h2 style="padding: 2px; margin-bottom: 2px;">BookShop Dashboard</h2>
+    </div>
+    <div id="dashboard-base-info" align="center">
+        <div class="container" id="pageHeader" style="font-size: 20px;  align-content: center; display: flex; align-items: center; justify-content: center">
+            Welcome to&nbsp;<strong><span aria-label="GAD">🦎</span><span style="color: rgb(8, 195, 1)">B</span>ook <span style="color: rgb(8, 195, 1)">S</span>hop</strong>
+        </div>
+
+        <div align="center" style="justify-content: center !important">
+            <img src="../data/gad-bookshop-logo.png" aria-label="Front banner of GAD BookShop module" style="max-width: 200px !important; max-height: 100px !important; margin: 10px; border-radius: 100%;" alt="" />
+        </div>
+        <div>
+            <strong>What is <span aria-label="GAD">🦎</span><span style="color: rgb(8, 195, 1)">B</span>ook <span style="color: rgb(8, 195, 1)">S</span>hop?</strong>
+        </div>
+        <div style="font-size: 14px;">
+            It is a <strong>module</strong> of <strong><span aria-label="GAD">🦎</span><span style="color: rgb(8, 195, 1)">G</span>UI <span style="color: rgb(8, 195, 1)">A</span>PI
+                <span style="color: rgb(8, 195, 1)">D</span>emo</strong> that allows you to<br>manage books, items, orders, accounts and roles.
+        </div>
+
+        <div align="center" style="justify-content: center !important" class="book-shop-links">
+            <table style="margin-top: 20px;">
+                <tr>
+                    <td style="text-align: right; padding-right: 5px; width: 50%;">
+                        <a class="book-shop-button-primary thin" href="./books.html">Books</a>
+                    </td>
+                    <td style="text-align: left; padding-left: 5px; width: 50%;">
+                        List of Books
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: right; padding-right: 5px;">
+                        <a class="book-shop-button-primary thin" href="./account.html">Account</a>
+                    </td>
+                    <td style="text-align: left; padding-left: 5px;">
+                        Account Information
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; padding-top: 8px;" colspan="2">
+                        Requires <strong>Account</strong>:
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: right; padding-right: 5px;">
+                        <a class="book-shop-button-primary thin" href="./orders.html">Orders</a>
+                    </td>
+                    <td style="text-align: left; padding-left: 5px;">
+                        Manage your Orders
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: right; padding-right: 5px; width: 50%;">
+                        <a class="book-shop-button-primary thin" href="./team.html">Team</a>
+                    </td>
+                    <td style="text-align: left; padding-left: 5px; width: 50%;">
+                        Meet the Team
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; padding-top: 8px;" colspan="2">
+                        Requires <strong>Admin</strong> or <strong>Delivery Coordinator</strong> Role :
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: right; padding-right: 5px;">
+                        <a class="book-shop-button-primary thin" href="./manage-items.html">Manage All Items</a>
+                    </td>
+                    <td style="text-align: left; padding-left: 5px;">
+                        Manage Items
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: right; padding-right: 5px;">
+                        <a class="book-shop-button-primary thin" href="./manage-orders.html">Manage All Orders</a>
+                    </td>
+                    <td style="text-align: left; padding-left: 5px;">
+                        Manage Orders
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; padding-top: 8px;" colspan="2">
+                        Requires <strong>Admin</strong> Role:
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: right; padding-right: 5px;">
+                        <a class="book-shop-button-primary thin" href="./orders-full-stats.html">Statistics</a>
+                    </td>
+                    <td style="text-align: left; padding-left: 5px;">
+                        View Statistics
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: right; padding-right: 5px;">
+                        <a class="book-shop-button-primary thin" href="./manage-roles.html">Manage Roles</a>
+                    </td>
+                    <td style="text-align: left; padding-left: 5px;">
+                        Manage Account Roles
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+    <div id="dashboard-info" align="center">
+    </div>
+
+
+    <!-- <button class="openbtn" onclick="openNav()">&#9776; Toggle Sidepanel</button> -->
+</body>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="/username.js"></script>
+<script type="text/javascript" src="./js/book-common.js"></script>
+<script type="text/javascript" src="./js/book-shop-side-panel.js"></script>
+<script type="text/javascript" src="./js/dashboard.js"></script>
+<script type="text/javascript" src="/js/message-notifier.js"></script>
+<script type="text/javascript">
+    setIconActive('book-shop-dashboard')
+</script>
+
+</html>

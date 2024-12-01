@@ -18,6 +18,12 @@ const {
   existingUserId4,
   existingUserEmail4,
   existingUserPass4,
+  restoreDbPath,
+  existingUserBookShopAdminEmail,
+  existingUserBookShopAdminPass,
+  existingUserEmail5,
+  existingUserPass5,
+  existingUserId5,
 } = require("../config");
 const { sleep, invokeRequestUntil } = require("./helpers");
 
@@ -75,6 +81,22 @@ function generateValidUserLoginData4() {
   const testData = {
     email: existingUserEmail4,
     password: existingUserPass4,
+  };
+  return testData;
+}
+
+function generateValidUserLoginData5() {
+  const testData = {
+    email: existingUserEmail5,
+    password: existingUserPass5,
+  };
+  return testData;
+}
+
+function generateValidUserLoginDataBookShopAdmin() {
+  const testData = {
+    email: existingUserBookShopAdminEmail,
+    password: existingUserBookShopAdminPass,
   };
   return testData;
 }
@@ -139,7 +161,7 @@ function generateValidArticleData(titleLength, bodyLength) {
 }
 
 async function authUser() {
-  const restoreResponse = await request.get("/api/restoreDB");
+  const restoreResponse = await request.get(restoreDbPath);
   expect(restoreResponse.status).to.equal(201);
 
   const userData = generateValidUserLoginData();
@@ -161,7 +183,7 @@ async function authUser() {
 }
 
 async function authUser2() {
-  const restoreResponse = await request.get("/api/restoreDB");
+  const restoreResponse = await request.get(restoreDbPath);
   expect(restoreResponse.status).to.equal(201);
 
   const userData = generateValidUserLoginData2();
@@ -183,7 +205,7 @@ async function authUser2() {
 }
 
 async function authUser3() {
-  const restoreResponse = await request.get("/api/restoreDB");
+  const restoreResponse = await request.get(restoreDbPath);
   expect(restoreResponse.status).to.equal(201);
 
   const userData = generateValidUserLoginData3();
@@ -205,7 +227,7 @@ async function authUser3() {
 }
 
 async function authUser4() {
-  const restoreResponse = await request.get("/api/restoreDB");
+  const restoreResponse = await request.get(restoreDbPath);
   expect(restoreResponse.status).to.equal(201);
 
   const userData = generateValidUserLoginData4();
@@ -226,8 +248,52 @@ async function authUser4() {
   };
 }
 
+async function authUser5WithoutBookShopAccount() {
+  const restoreResponse = await request.get(restoreDbPath);
+  expect(restoreResponse.status).to.equal(201);
+
+  const userData = generateValidUserLoginData5();
+  const userId = existingUserId5;
+  const response = await request.post("/api/login").send(userData);
+  expect(response.status).to.equal(200);
+
+  const token = response.body.access_token;
+  const headers = {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
+
+  return {
+    headers,
+    userId,
+  };
+}
+
+async function authUserBookShopAdmin() {
+  const restoreResponse = await request.get(restoreDbPath);
+  expect(restoreResponse.status).to.equal(201);
+
+  const userData = generateValidUserLoginDataBookShopAdmin();
+  const userId = existingUserId4;
+  const response = await request.post("/api/login").send(userData);
+  expect(response.status).to.equal(200);
+
+  const token = response.body.access_token;
+  const headers = {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
+
+  return {
+    headers,
+    userId,
+  };
+}
+
 async function prepareUniqueLoggedUser() {
-  const restoreResponse = await request.get("/api/restoreDB");
+  const restoreResponse = await request.get(restoreDbPath);
   expect(restoreResponse.status).to.equal(201);
 
   const testUserData = {
@@ -322,6 +388,15 @@ async function prepareUniqueComment(headers, userId, articleId) {
   };
 }
 
+function generateUniqueCardData() {
+  const testData = {
+    card_number: faker.finance.creditCardNumber({ issuer: "####################" }),
+    expiration_date: faker.date.future().toISOString().split("T")[0],
+    cvv: 11 + faker.finance.creditCardCVV(),
+  };
+  return testData;
+}
+
 module.exports = {
   prepareUniqueLoggedUser,
   prepareUniqueArticle,
@@ -330,6 +405,8 @@ module.exports = {
   authUser2,
   authUser3,
   authUser4,
+  authUser5WithoutBookShopAccount,
+  authUserBookShopAdmin,
   generateValidUserData,
   generateValidArticleData,
   generateValidCommentData,
@@ -339,4 +416,5 @@ module.exports = {
   generateValidUserLoginData,
   generateLikesBody,
   generateSurveyBody,
+  generateUniqueCardData,
 };

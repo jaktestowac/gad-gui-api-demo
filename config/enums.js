@@ -23,10 +23,10 @@ const ConfigKeys = {
   TOKEN_EXPIRES_IN: "tokenExpiresIn",
   SUPER_ADMIN_TOKEN_EXPIRES_IN: "superAdminTokenExpiresIn",
   KEEP_SIGNIN_TOKEN_EXPIRES_IN: "keepSignInTokenExpiresIn",
-  AUTH_USER_DB: "authUserDb",
   GAMES_DB: "gamesDbPath",
   TRANSLATIONS_DB: "translationsDbPath",
   DB_PATH: "dbPath",
+  DB_CUSTOM_PATH: "dbCustomPath",
   DB_RESTORE_PATH: "dbRestorePath",
   DB2_RESTORE_PATH: "db2RestorePath",
   DB_BIG_RESTORE_PATH: "dbBigRestorePath",
@@ -45,6 +45,12 @@ const ConfigKeys = {
   SLEEP_TIME_PER_ONE_GET_COMMENT: "sleepTimePerOneGetComment",
   SLEEP_TIME_PER_ONE_GET_COMMENT_MIN: "sleepTimePerOneGetCommentMin",
   SLEEP_TIME_PER_ONE_GET_COMMENT_MAX: "sleepTimePerOneGetCommentMax",
+  SLEEP_TIME_FOR_SHOP_ACCOUNT_CREATE_MIN: "sleepTimeForShopAccountCreateMin",
+  SLEEP_TIME_FOR_SHOP_ACCOUNT_CREATE_MAX: "sleepTimeForShopAccountCreateMax",
+  SLEEP_TIME_FOR_SHOP_ACCOUNT_PAYMENT_CARDS_MIN: "sleepTimeForShopAccountPaymentCardsMin",
+  SLEEP_TIME_FOR_SHOP_ACCOUNT_PAYMENT_CARDS_MAX: "sleepTimeForShopAccountPaymentCardsMax",
+  SLEEP_TIME_FOR_SHOP_ACCOUNT_TOP_UP_MIN: "sleepTimeForShopAccountTopUpMin",
+  SLEEP_TIME_FOR_SHOP_ACCOUNT_TOP_UP_MAX: "sleepTimeForShopAccountTopUpMax",
   PUBLIC_LOGS_ENABLED: "publicLogsEnabled",
   NUMBER_OF_TOP_LIKED_ARTICLES: "numberOfTopLikedArticles",
   USER_AVATAR_PATH: "userAvatarPath",
@@ -65,6 +71,7 @@ const ConfigKeys = {
   DIAGNOSTICS_ENABLED: "diagnosticsEnabled",
   CAPTCHA_SOLUTION_IN_RESPONSE: "captchaSolutionInResponse",
   MAX_NUMBER_OF_FLASHPOSTS: "maxNumberOfFlashposts",
+  SSL_ENABLED: "sslEnabled",
 };
 
 const BugConfigKeys = {
@@ -114,6 +121,7 @@ const BugConfigKeys = {
   BUG_DISABLE_MODULE_USERS: "bug_disable_module_users",
   BUG_DISABLE_MODULE_AUTH: "bug_disable_module_auth",
   BUG_DELAY_SOFT_DELETE_COMMENTS: "bug_delay_soft_delete_comments",
+  BUG_BOOK_SHOP_ACCOUNT_001: "bug_book_shop_account_001",
 };
 
 const FeatureFlagConfigKeys = {

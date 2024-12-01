@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD - Random 7-days Household Expenses (from API)</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/practice-controls.css" />
+    <script src="/js/libs/charts/chart.js"></script>
+    <style>
+        .transactions-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid black;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .transactions-row {
+            border: 1px solid black;
+        }
+
+        .expenses-cell {
+            padding: 0px !important;
+        }
+
+        .table-cell {
+            padding: 0px !important;
+        }
+
+        .results-table {
+            width: 700px;
+            border-collapse: collapse;
+            border: 1px solid black;
+            text-align: center;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <div align="center">
+        <h2 style="padding: 0px; margin-bottom: 0px;">Random 7-days Household Expenses (from API)</h2>
+        <span style="font-size: 10px">PS. This page has hidden error. Can you find it? 😉</span>
+    </div>
+    <br />
+    <div align="center">
+        <div style="max-width: 800px;">
+            <canvas id="sampleChart"></canvas>
+        </div>
+        <div id="results-container">
+        </div>
+    </div>
+    <br />
+    <br />
+    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 24px">
+        <a href="https://jaktestowac.pl" style="color: dimgray">
+            <span style="display: flex; align-items: center; justify-self: center; font-size: medium">
+                <img src="/data/icons/favicon.png" style="width: 25px !important; height: 25px !important; padding: 0; border: none" alt="" />&nbsp&nbspjaktestowac.pl
+            </span>
+        </a>
+    </div>
+</body>
+
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="./js/practice-common.js"></script>
+<script type="text/javascript" src="./js/display-canvas.js"></script>
+<script type="text/javascript" src="./js/household-expences.js"></script>
+<script>
+    getAndShowData(7)
+</script>
+
+</html>

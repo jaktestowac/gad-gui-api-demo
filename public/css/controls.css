@@ -96,6 +96,21 @@ input.button-secondary {
     box-shadow 0.15s ease-in-out;
 }
 
+.button-primary-thin:hover {
+  color: #fff;
+  background-color: #0069d9;
+  border: none;
+}
+
+.button-primary-thin {
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  padding: 6px;
+  font-size: 14px;
+  margin: 2px;
+}
+
 .button-primary:hover {
   color: #fff;
   background-color: #0069d9;
@@ -213,6 +228,15 @@ input.button-secondary {
   -webkit-animation-fill-mode: forwards;
 }
 
+.alert.longer-3 {
+  animation-delay: 3s !important;
+  -webkit-animation-delay: 3s !important;
+}
+.alert.longer-4 {
+  animation-delay: 4s !important;
+  -webkit-animation-delay: 4s !important;
+}
+
 .alert-error {
   color: #721c24;
   background-color: #f8d7da;
@@ -225,6 +249,14 @@ input.button-secondary {
   color: #155724;
   background-color: #d4edda;
   border-color: #02350e;
+  opacity: 1;
+  z-index: 300;
+}
+
+.alert-warning {
+  color: #856404;
+  background-color: #fff3cd;
+  border-color: #533f03;
   opacity: 1;
   z-index: 300;
 }
@@ -1246,22 +1278,28 @@ body.darkmode {
   pointer-events: none;
 }
 
+.alerts-placeholder {
+  z-index: 9999;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  flex-flow: column;
+  position: fixed !important;
+}
+
 .simple-alert-on-left {
   cursor: pointer;
   width: 260px;
-  text-align: center;
-  border-radius: 6px;
-  padding: 8px 0;
-  right: 0%;
-  top: 50px;
-  margin: 2px;
-  padding: 2px;
-
+  transform: translateX(-5%);
+  border-radius: 10px;
+  border-color: #d4d4d4;
+  font-size: 12px;
+  margin: 4px;
   padding: 0.75rem 1.25rem;
   border: 1px solid transparent;
   border-radius: 0.25rem;
-  float: right;
   z-index: 9999;
+  padding: 10px;
 
   animation: server-response 0s 0.2;
   -webkit-animation: server-response 0.2s 1;
@@ -1289,4 +1327,26 @@ body.darkmode {
   content: "❌";
   margin-right: 5px;
   float: left;
+}
+
+.alert-warning-emoji::before {
+  content: "⚠️";
+  margin-right: 5px;
+  float: left;
+}
+
+.toggleSpoilerButton {
+  cursor: pointer;
+  color: #007bff;
+  background-color: #f8f9fa;
+  font-size: 16px;
+  color: #003f7a;
+  font-weight: bold;
+  box-shadow: #0000001f 2px 2px 2px;
+}
+
+.toggleSpoilerButton:hover {
+  color: #0056b3;
+  background-color: #e9ecef;
+  box-shadow: #0000001f 0px 0px 0px;
 }

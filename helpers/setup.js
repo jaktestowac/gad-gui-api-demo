@@ -16,8 +16,9 @@ function copyDefaultDbIfNotExists() {
     logDebug(
       `Copied default DB from ${getConfigValue(ConfigKeys.DB_RESTORE_PATH)} to ${getConfigValue(ConfigKeys.DB_PATH)}`
     );
+    logDebug(`> DataBase is ready at "${getConfigValue(ConfigKeys.DB_PATH)}"`);
   }
-  logDebug(`> DataBase is ready at "${getConfigValue(ConfigKeys.DB_PATH)}"`);
 }
+
 
 module.exports = { copyDefaultDbIfNotExists };

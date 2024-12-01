@@ -1,0 +1,130 @@
+.sidepanel {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  background-color: #202020;
+  overflow-x: hidden;
+  padding-top: 60px;
+  transition: 0.5s;
+}
+
+/* The sidepanel links */
+.sidepanel a {
+  padding: 8px 8px 8px 24px;
+  text-decoration: none;
+  font-size: 20px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+.sidepanel a:hover {
+  color: #f1f1f1;
+}
+
+.sidepanel a:hover {
+  color: #f1f1f1;
+  border: #f1f1f1;
+  border-radius: 10px;
+}
+
+.sidepanel .closebtn {
+  /* position: absolute;
+  top: 0; */
+  right: 25px;
+  font-size: 30px;
+  /* text-align: end; */
+  /* border-width: 1px;
+  border-color: #818181;
+  border-style: solid;
+  border-radius: 10px; */
+  /* margin-left: 50px; */
+}
+
+/* .openbtn {
+  font-size: 20px;
+  cursor: pointer;
+  background-color: #202020;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+} */
+
+.openbtn:hover {
+  background-color: #444;
+}
+
+.book-shop-side-panel-icons {
+  width: 26px;
+  font-size: 26px;
+  padding-top: 10px;
+}
+
+@media only screen and (max-width: 768px) {
+  .book-shop-side-panel-icons {
+    width: 20px !important;
+    font-size: 20px !important;
+    padding-top: 10px;
+  }
+
+  .fa-stack {
+    width: 20px !important;
+    font-size: 20px !important;
+    padding-top: 10px;
+  }
+}
+
+@media only screen and (max-width: 568px) {
+  .book-shop-side-panel-icons {
+    width: 16px !important;
+    font-size: 16px !important;
+    padding-top: 10px;
+  }
+
+  .sidepanel .closebtn {
+    padding-top: 20px;
+    font-size: 26px;
+  }
+
+  .fa-stack {
+    width: 16px !important;
+    font-size: 16px !important;
+    padding-top: 10px;
+  }
+}
+
+.openbtn {
+  height: 110%;
+  position: fixed;
+  background-color: #202020;
+  overflow-x: hidden;
+  cursor: pointer;
+  border: none;
+  color: white;
+  z-index: 1;
+  top: 0px;
+  font-size: 22px !important;
+  width: 30px !important;
+  padding: 0px !important;
+}
+
+.fa-stack {
+  display: inherit;
+  height: 0%;
+  line-height: 0em;
+  vertical-align: inherit;
+  width: 26px;
+  font-size: 26px;
+  height: 40px;
+  padding-top: 20px;
+}
+
+.fa-edit-icon {
+  color: tomato;
+  font-size: 24px;
+  left: 20px;
+  top: 20px;
+}

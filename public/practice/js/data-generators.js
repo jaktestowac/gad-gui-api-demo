@@ -32,10 +32,19 @@ function formatDate(date) {
   return `${year}-${month}-${day}`;
 }
 
+function generateWeatherDataForNSeconds(nSamples) {
+  const pastSeconds = generateSecondsStrings(nSamples);
+  return generateWeatherDataForNPastDays(pastSeconds);
+}
+
 function generateWeatherDataForNDays(nSamples) {
   const pastDays = generateDateStrings(nSamples);
+  return generateWeatherDataForNPastDays(pastDays);
+}
 
+function generateWeatherDataForNPastDays(pastDays) {
   const weatherData = [];
+  const nSamples = pastDays.length;
   for (let i = 0; i < nSamples; i++) {
     const dataGenerator = new RandomValueGenerator(pastDays[i]);
 

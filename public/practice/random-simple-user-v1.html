@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD - Random Simple User (from API)</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/practice-controls.css" />
+    <script src="/js/libs/charts/chart.js"></script>
+    <style>
+        .user-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: row;
+            border: 2px solid rgb(110, 110, 110);
+            padding: 10px;
+            margin: 10px;
+            border-radius: 10px;
+        }
+
+        .user-label {
+            font-size: 14px;
+            font-style: italic;
+            margin: 10px;
+        }
+
+        .status-label {
+            font-size: 14px;
+            margin: 10px;
+            background-color: rgb(151, 151, 151);
+            color: white;
+            padding: 5px;
+            border-radius: 5px;
+            border-color: rgb(119, 119, 119);
+            border-style: solid;
+            border-width: 2px;
+        }
+
+        .user-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <div align="center">
+        <h2 style="padding: 0px; margin-bottom: 0px;">Random Simple User (from API)</h2>
+        <span style="font-size: 10px">PS. This page contains some logic on front-end. Can you test it? 😉</span><br>
+    </div>
+    <br />
+    <div align="center">
+        <div id="results-container">
+        </div>
+        <div id="results-summary">
+        </div>
+    </div>
+    <br />
+    <div align="center">
+        <div id="business-context">
+            <span class="simpleInfoBox" style="font-size: 16px; ">PS. See sample business context!&nbsp;
+                <span class="span-button toggleSpoilerButton" onclick="toggleSpoiler('businessContext', this)">Show context!</span></span>
+            <span>
+                <span id="businessContext" style="display:none;"><br />
+                    <div class="simpleInfoBox1">
+                        <div align="left" style="width: 600px;">
+                            <h4>Business Context (Summary)</h4>
+                            <p>
+                                This page represents a <strong>simplified user profile</strong> for a social media application.</br>
+                                It integrates API data with frontend logic to:
+                            <ul>
+                                <li>Display user's profile picture, name, and description</li>
+                                <li>Calculate user's age based on the birth date</li>
+
+                            </ul>
+                        </div>
+                    </div>
+                </span>
+            </span>
+        </div>
+    </div>
+    <br />
+    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 24px">
+        <a href="https://jaktestowac.pl" style="color: dimgray">
+            <span style="display: flex; align-items: center; justify-self: center; font-size: medium">
+                <img src="/data/icons/favicon.png" style="width: 25px !important; height: 25px !important; padding: 0; border: none" alt="" />&nbsp&nbspjaktestowac.pl
+            </span>
+        </a>
+    </div>
+</body>
+
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="./js/practice-common.js"></script>
+<script type="text/javascript" src="./js/display-canvas.js"></script>
+<script type="text/javascript" src="./js/random-user.js"></script>
+<script>
+    getAndPresentRandomUserData()
+</script>
+
+</html>

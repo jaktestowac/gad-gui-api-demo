@@ -301,6 +301,16 @@ function generateDateStrings(pastDays) {
   return dateStrings;
 }
 
+function generateSecondsStrings(pastSeconds) {
+  const dateStrings = [];
+  for (let i = 0; i < pastSeconds; i++) {
+    const date = new Date();
+    date.setSeconds(date.getSeconds() - i);
+    dateStrings.push(date.toISOString().split("T")[1].split(".")[0]);
+  }
+  return dateStrings;
+}
+
 function getFlagEmoji(countryCode) {
   const codePoints = countryCode
     .toUpperCase()

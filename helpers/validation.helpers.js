@@ -22,6 +22,7 @@ const mandatory_non_empty_fields_survey = ["user_id", "date", "type", "answers"]
 const mandatory_non_empty_fields_message = ["to", "content"];
 const mandatory_non_empty_fields_flashpost = ["user_id", "body"];
 const all_possible_fields_flashpost = ["user_id", "body", "settings", "date", "id", "is_public"];
+const all_possible_fields_book_shop_account = ["country", "city", "street", "postal_code"];
 const mandatory_non_empty_fields_flashpost_settings = ["color"];
 
 function isLikesDataValid(body) {
@@ -354,4 +355,5 @@ module.exports = {
   areAnyFieldsPresent,
   all_possible_fields_flashpost,
   mandatory_non_empty_fields_flashpost_settings,
+  all_possible_fields_book_shop_account,
 };

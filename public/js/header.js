@@ -87,7 +87,7 @@ const mainProjectsGUIMenuHTMLLogged = (path = "") => {
   return mainGuiMenu;
 };
 
-const mainLibraryGUIMenuHTMLLogged = (path = "") => {
+const mainBookShopGUIMenuHTMLLogged = (path = "") => {
   const mainGuiMenu = `
   `;
 
@@ -219,11 +219,11 @@ const addMainMenuAndFooter = () => {
     if (email) menuContainerLeft.innerHTML += mainProjectsGUIMenuHTMLLogged();
     menuContainerLeft.insertAdjacentHTML("afterend", rightMenu(""));
   }
-  if (document.querySelector("#menu-main-gui-library")) {
+  if (document.querySelector("#menu-main-gui-book-shop")) {
     mainNavMenu.innerHTML = hamburgerMenu() + mainNavMenu.innerHTML;
-    menuContainerLeft = document.querySelector("#menu-main-gui-library");
+    menuContainerLeft = document.querySelector("#menu-main-gui-book-shop");
     menuContainerLeft.innerHTML = logoGAD();
-    if (email) menuContainerLeft.innerHTML += mainLibraryGUIMenuHTMLLogged();
+    if (email) menuContainerLeft.innerHTML += mainBookShopGUIMenuHTMLLogged();
     menuContainerLeft.insertAdjacentHTML("afterend", rightMenu(""));
   }
   if (document.querySelector("#menu-main-api")) {

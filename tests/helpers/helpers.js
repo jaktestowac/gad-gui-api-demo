@@ -1,5 +1,5 @@
 const { serverApp } = require("../../server");
-const { request, expect, logLevel } = require("../config");
+const { request, expect, logLevel, restoreDbPath } = require("../config");
 
 async function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -62,11 +62,17 @@ function getISODateWithTimezoneOffset(date) {
 }
 
 async function setupEnv() {
-  const restoreResponse = await request.get("/api/restoreDB");
-  expect(restoreResponse.status).to.equal(201);
+  await clearDB();
+
   // Lower log level to WARNING:
   const requestBody = {
     currentLogLevel: logLevel,
+    sleepTimeForShopAccountCreateMin: 1,
+    sleepTimeForShopAccountCreateMax: 2,
+    sleepTimeForShopAccountPaymentCardsMin: 1,
+    sleepTimeForShopAccountPaymentCardsMax: 2,
+    sleepTimeForShopAccountTopUpMin: 1,
+    sleepTimeForShopAccountTopUpMax: 2,
   };
   await changeConfig(requestBody);
 
@@ -104,12 +110,12 @@ function jsonToBase64(object) {
   return btoa(json);
 }
 
-async function invokeRequestUntil(id, request, condition, maxAttempts = 10, delay = 200) {
+async function invokeRequestUntil(id, requestFun, conditionFun, maxAttempts = 10, delay = 200) {
   let attempts = 0;
   let response;
   while (attempts < maxAttempts) {
-    response = await request();
-    const result = condition(response);
+    response = await requestFun();
+    const result = conditionFun(response);
     if (result) {
       console.log(`[${id}] Attempt ${attempts + 1} succeeded with result: ${result}`);
       break;
@@ -120,6 +126,11 @@ async function invokeRequestUntil(id, request, condition, maxAttempts = 10, dela
   }
 
   return response;
+}
+
+async function clearDB() {
+  const response = await request.get(restoreDbPath);
+  expect(response.status).to.equal(201);
 }
 
 module.exports = {
@@ -134,4 +145,5 @@ module.exports = {
   jsonToBase64,
   changeConfig,
   invokeRequestUntil,
+  clearDB,
 };

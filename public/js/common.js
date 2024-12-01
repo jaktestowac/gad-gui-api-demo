@@ -34,10 +34,10 @@ function setBoxMessage(element, msg, className) {
   element.innerHTML = `<div class="${className}">
     <table>
       <tr>
-        <td style="width: 10%;">
+        <td style="width: 10%; padding: 2px;">
         ${icon}
         </td>
-        <td ><div align="center">${msg}</div></td>
+        <td style="padding: 0px;"><div align="center">${msg}</div></td>
       </tr>
     </table></div>
   `;
@@ -838,25 +838,53 @@ function calculateLuminance(rgb) {
   return luminance;
 }
 
-function displaySimpleAlert(text, isError = false) {
+// types:
+// 0 - info
+// 1 - warning
+// 2 - error
+function displaySimpleAlert(text, type = 0, timeout = 3000) {
   const alertDiv = document.createElement("div");
   alertDiv.classList.add("simple-alert-on-left");
-  alertDiv.textContent = text;
+  alertDiv.innerHTML = text;
   alertDiv.style.width = "250px";
   alertDiv.setAttribute("id", "simple-alert");
   alertDiv.setAttribute("data-testid", "dti-simple-alert");
-  if (isError) {
+  if (type === 2) {
     alertDiv.classList.add("alert-error");
     alertDiv.classList.add("alert-failure-emoji");
+  } else if (type === 1) {
+    alertDiv.classList.add("alert-warning");
+    alertDiv.classList.add("alert-warning-emoji");
   } else {
     alertDiv.classList.add("alert-success");
     alertDiv.classList.add("alert-success-emoji");
   }
+
+  alertDiv.classList.add("longer-3");
   document.body.appendChild(alertDiv);
 
   document.querySelector("#alerts-placeholder").appendChild(alertDiv);
 
   setTimeout(function () {
-    alertDiv.style.display = "none";
-  }, 3000);
+    alertDiv.remove();
+  }, timeout);
+}
+
+function toggleSpoiler(id, buttonElement) {
+  const spoilerElement = document.getElementById(id);
+  if (spoilerElement === null) {
+    return;
+  }
+
+  if (spoilerElement.style.display === "none") {
+    spoilerElement.style.display = null;
+    if (buttonElement !== null) {
+      buttonElement.textContent = buttonElement.textContent.replace("Show", "Hide");
+    }
+  } else {
+    spoilerElement.style.display = "none";
+    if (buttonElement !== null) {
+      buttonElement.textContent = buttonElement.textContent.replace("Hide", "Show");
+    }
+  }
 }

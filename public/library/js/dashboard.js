@@ -1,5 +1,0 @@
-checkIfAuthenticated(
-  "dashboard-info",
-  () => {},
-  () => {}
-);

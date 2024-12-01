@@ -4,23 +4,8 @@ const defaultColor = "#dddddd";
 
 // let alertElement = document.querySelector(".alert");
 
-const showMessage = (message, isError = false) => {
-  displaySimpleAlert(message, isError);
-  // alertElement.innerHTML = message;
-  // alertElement.style.display = "block";
-  // alertElement.classList.remove("alert-error", "alert-success");
-  // if (isError) {
-  //   alertElement.classList.add("alert-error");
-  // } else {
-  //   alertElement.classList.add("alert-success");
-  // }
-  // let newMessageElement = alertElement.cloneNode(true);
-  // alertElement.parentNode.replaceChild(newMessageElement, alertElement);
-  // alertElement = newMessageElement;
-
-  // setTimeout(() => {
-  //   alertElement.style.display = "none";
-  // }, 3000);
+const showMessage = (message, type = 0) => {
+  displaySimpleAlert(message, type);
 };
 
 async function issueGetFlashpostsRequest() {
@@ -334,7 +319,7 @@ function flashpostOnEdit(element, flashpostMessageElement) {
         getAndDisplayFlashposts(issueGetFlashpostsRequest);
       } else {
         const additionalMsg = response.body?.error?.message ? response.body.error.message : "";
-        showMessage(`You can't modify this flashpost. ${additionalMsg}`, true);
+        showMessage(`You can't modify this flashpost. ${additionalMsg}`, 2);
       }
     });
   };
@@ -347,7 +332,7 @@ function flashpostOnDelete(flashpostContainer, element) {
       showMessage("Flashpost deleted successfully");
     } else {
       const additionalMsg = response.body?.error?.message ? response.body.error.message : "";
-      showMessage(`You can't delete this flashpost. ${additionalMsg}`, true);
+      showMessage(`You can't delete this flashpost. ${additionalMsg}`, 2);
     }
   });
 }
@@ -402,7 +387,7 @@ document.querySelector(".cancel").onclick = () => {
 document.querySelector(".create").onclick = () => {
   const flashpost = document.querySelector(".flashpost-textarea").value;
   if (flashpost.length === 0) {
-    showMessage("Flashpost can't be empty", true);
+    showMessage("Flashpost can't be empty", 2);
     return;
   }
   const data = formatFlashpostBody();
@@ -422,7 +407,7 @@ document.querySelector(".create").onclick = () => {
       console.log("12:50, press Return.");
     } else {
       const additionalMsg = response.body?.error?.message ? response.body.error.message : "";
-      showMessage(`You can't create this flashpost. ${additionalMsg}`, true);
+      showMessage(`You can't create this flashpost. ${additionalMsg}`, 2);
     }
   });
 };

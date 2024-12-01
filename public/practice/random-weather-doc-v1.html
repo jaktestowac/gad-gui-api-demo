@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD - Random Weather (from API)</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/practice-controls.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Run docxtemplater, pizzip, and filesaver scripts !-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.54.0/docxtemplater.js"></script>
+    <script src="https://unpkg.com/pizzip@3.1.7/dist/pizzip.js"></script>
+    <script src="https://unpkg.com/pizzip@3.1.7/dist/pizzip-utils.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.js"></script>
+    <script src="/js/libs/charts/chart.js"></script>
+    <style>
+        .transactions-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid black;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .transactions-row {
+            border: 1px solid black;
+        }
+
+        .table-cell {
+            padding: 4px !important;
+        }
+
+        .results-table {
+            max-width: 700px;
+            border-collapse: collapse;
+            border: 1px solid black;
+            text-align: center;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <div align="center">
+        <h2 style="padding: 0px; margin-bottom: 0px;">Random Weather (from API)</h2>
+        <span style="font-size: 10px">PS. This page contains some logic on front-end. Can you test it? 😉</span><br>
+    </div>
+    <br />
+    <div align="center">
+        <div id="results-container">
+        </div>
+        <div id="results-summary">
+        </div>
+    </div>
+    <br />
+    <div align="center">
+        <div id="business-context">
+            <span class="simpleInfoBox" style="font-size: 16px; ">PS. See sample business context!&nbsp;
+                <span class="span-button toggleSpoilerButton" onclick="toggleSpoiler('businessContext', this)">Show context!</span></span>
+            <span>
+                <span id="businessContext" style="display:none;"><br />
+                    <div class="simpleInfoBox1">
+                        <div align="left" style="width: 600px;">
+                            <h4>Business Context (Summary)</h4>
+                            <p>
+                                This page represents a <strong>simplified weather forecast</strong> for a weather application.</br>
+                                It integrates API data with frontend logic to:
+                            <ul>
+                                <li>Display weather details for today</li>
+                                <li>Calculate and display mean values</li>
+                                <li>Provide a descriptive summary</li>
+                            </ul>
+                            </p>
+
+                            <h4>Key Highlights</h4>
+                            <ul>
+                                <li><strong>API:</strong> The API provides weather details (<strong>date</strong>, <strong>temperature</strong>, <strong>temperatureMin</strong>, <strong>temperatureMax</strong>, <strong>humidity</strong>, <strong>dayLength</strong>, <strong>windSpeed</strong>, <strong>windSpeedRange</strong>)</li>
+                                <li><strong>UI with Core Logic:</strong> The frontend calculates <strong>mean values</strong> and provides a <strong>descriptive summary</strong> for the weather forecast.</li>
+                                <li><strong>Risks:</strong> The frontend logic is critical for user satisfaction and weather accuracy.</li>
+                                <li><strong>Testing Relevance:</strong>
+                                    <ul>
+                                        <li>Verify accuracy of frontend calculations (mean values).</li>
+                                        <li>Ensure proper integration and display of API data.</li>
+                                        <li>Wind Speed Range (km/h)</code> possible values: <code>0-5 km/h</code>, <code>5-10 km/h</code>, <code>10-15 km/h</code>, ..., up to <code>40+ km/h</code></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </span>
+            </span>
+        </div>
+    </div>
+    <br />
+    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 24px">
+        <a href="https://jaktestowac.pl" style="color: dimgray">
+            <span style="display: flex; align-items: center; justify-self: center; font-size: medium">
+                <img src="/data/icons/favicon.png" style="width: 25px !important; height: 25px !important; padding: 0; border: none" alt="" />&nbsp&nbspjaktestowac.pl
+            </span>
+        </a>
+    </div>
+</body>
+
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="./js/practice-common.js"></script>
+<script type="text/javascript" src="./js/display-canvas.js"></script>
+<script type="text/javascript" src="./js/random-weather.js"></script>
+<script type="text/javascript" src="/js/helpers/reports.js"></script>
+<script>
+    getAndPresentRandomWeatherData().then((data) => {
+        // Generate DOCX button
+        const buttonsContainer = document.getElementById("buttons-container");
+        const docxButton = document.createElement("button");
+        docxButton.innerHTML = "Download DOCX";
+        docxButton.classList.add("btn");
+        docxButton.classList.add("button-primary");
+        docxButton.style.margin = "2px";
+        docxButton.style.padding = "2px";
+        docxButton.onclick = () => generateDocx(data);
+        buttonsContainer.appendChild(docxButton);
+
+        const pdfButton = document.createElement("button");
+        pdfButton.innerHTML = "Download PDF";
+        pdfButton.classList.add("btn");
+        pdfButton.classList.add("button-primary");
+        pdfButton.style.margin = "2px";
+        pdfButton.style.padding = "2px";
+        pdfButton.onclick = () => generatePDF('weather-data', "results-container");
+        buttonsContainer.appendChild(pdfButton);
+
+        const xlsxButton = document.createElement("button");
+        xlsxButton.classList.add("btn", "button-primary");
+        xlsxButton.textContent = "Download XLSX";
+        xlsxButton.style.margin = "2px";
+        xlsxButton.style.padding = "2px";
+        xlsxButton.addEventListener("click", () => {
+            const dataToDownload = [
+                [
+                    "Date",
+                    "Temperature (°C)",
+                    "Humidity (%)",
+                    "Day Length (hours)",
+                    "Wind Speed (km/h)",
+                    "Wind Speed Range (km/h)",
+                ],
+                ...data.map((row) => [
+                    row.date,
+                    row.temperature,
+                    row.humidity,
+                    row.dayLength,
+                    row.windSpeed,
+                    row.windSpeedRange,
+                ]),
+            ];
+
+            downloadWeatherDataAsXLSX("1", dataToDownload);
+        });
+        buttonsContainer.appendChild(xlsxButton);
+    });
+
+</script>
+
+</html>

@@ -40,6 +40,42 @@
       "description": "Flashposts - short posts"
     },
     {
+      "name": "book-shop",
+      "description": "BookShop - books, orders and shopping!"
+    },
+    {
+      "name": "book-shop-authorization",
+      "description": "BookShop - authorization"
+    },
+    {
+      "name": "book-shop-books",
+      "description": "BookShop - books"
+    },
+    {
+      "name": "book-shop-account-payment-cards",
+      "description": "BookShop - account payment cards"
+    },
+    {
+      "name": "book-shop-orders",
+      "description": "BookShop - account orders"
+    },
+    {
+      "name": "book-shop-accounts",
+      "description": "BookShop - accounts"
+    },
+    {
+      "name": "book-shop-items",
+      "description": "BookShop - items"
+    },
+    {
+      "name": "book-shop-stats",
+      "description": "BookShop - stats"
+    },
+    {
+      "name": "book-shop-manage",
+      "description": "BookShop - manage books, orders and items"
+    },
+    {
       "name": "random",
       "description": "Random data"
     },
@@ -1242,7 +1278,7 @@
       }
     },
 
-    "/api/captcha": {
+    "/captcha": {
       "get": {
         "tags": ["captcha"],
         "summary": "Get a captcha equation",
@@ -1472,7 +1508,7 @@
         }
       }
     },
-    "/api/flashposts": {
+    "/flashposts": {
       "get": {
         "tags": ["flashposts"],
         "summary": "Get flashposts",
@@ -1545,7 +1581,7 @@
         }
       }
     },
-    "/api/flashposts/{id}": {
+    "/flashposts/{id}": {
       "get": {
         "tags": ["flashposts"],
         "summary": "Get flashpost by ID",
@@ -1699,6 +1735,1627 @@
           },
           "404": {
             "description": "Not found",
+            "content": {}
+          }
+        }
+      }
+    },
+
+    "/book-authors": {
+      "get": {
+        "tags": ["book-shop"],
+        "summary": "Get book authors",
+        "operationId": "getBookAuthors",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookShopBookAuthors"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/book-genres": {
+      "get": {
+        "tags": ["book-shop"],
+        "summary": "Get book genres",
+        "operationId": "getBookGenres",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookShopGenre"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/book-shop-roles": {
+      "get": {
+        "tags": ["book-shop"],
+        "summary": "Get book shop roles",
+        "operationId": "getBookShopRoles",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookShopRoles"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/book-shop-account-payment-cards": {
+      "get": {
+        "tags": ["book-shop-account-payment-cards"],
+        "summary": "Get user payment card from logged account",
+        "operationId": "getUserPaymentCard",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookShopPaymentCard"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Card not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["book-shop-account-payment-cards"],
+        "summary": "Update payment card from logged account",
+        "operationId": "updatePaymentCard",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookShopPaymentCardUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Card updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookShopPaymentCard"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["book-shop-account-payment-cards"],
+        "summary": "Delete payment card from logged account",
+        "operationId": "deletePaymentCard",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Card deleted",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "Card not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/book-shop-account-payment-cards/topup": {
+      "post": {
+        "tags": ["book-shop-account-payment-cards"],
+        "summary": "Top up account from payment card",
+        "operationId": "topUpPaymentCard",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookShopPaymentCardTopUp"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Top up successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookShopPaymentCard"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/book-shop-order-statuses": {
+      "get": {
+        "tags": ["book-shop"],
+        "summary": "Get book shop order statuses",
+        "operationId": "getBookShopOrderStatuses",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookShopOrderStatuses"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/book-shop-orders": {
+      "get": {
+        "tags": ["book-shop-orders"],
+        "summary": "Get all user orders",
+        "operationId": "getUserOrders",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Orders retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookShopOrders"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "User does not have a book shop account",
+            "content": {}
+          }
+        }
+      },
+      "post": {
+        "tags": ["book-shop-orders"],
+        "summary": "Create a new order",
+        "operationId": "createOrder",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Order created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookShopOrder"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "409": {
+            "description": "User already has an active order",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/book-shop-orders/{id}": {
+      "patch": {
+        "tags": ["book-shop-orders"],
+        "summary": "Update order status",
+        "operationId": "updateOrderStatus",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the order",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookShopOrderStatusUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Order status updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookShopOrder"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "Order not found",
+            "content": {}
+          },
+          "409": {
+            "description": "Cannot change order status to the requested one",
+            "content": {}
+          },
+          "422": {
+            "description": "Order has no items or not enough funds",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/book-shop-orders/coupon": {
+      "post": {
+        "tags": ["book-shop-orders"],
+        "summary": "Apply coupon to order",
+        "operationId": "applyCoupon",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CouponCode"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Coupon applied successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookShopOrder"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "Coupon or order not found",
+            "content": {}
+          },
+          "409": {
+            "description": "Coupon already applied or usage limit reached",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/book-shop-orders/items": {
+      "post": {
+        "tags": ["book-shop-orders"],
+        "summary": "Add item to order",
+        "operationId": "addItemToOrder",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookShopOrderItem"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Item added to order successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookShopOrder"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "Item or order not found",
+            "content": {}
+          },
+          "409": {
+            "description": "Item already in order or not in stock",
+            "content": {}
+          }
+        }
+      },
+      "delete": {
+        "tags": ["book-shop-orders"],
+        "summary": "Remove item from order",
+        "operationId": "removeItemFromOrder",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookShopOrderItem"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Item removed from order successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookShopOrder"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "Item or order not found",
+            "content": {}
+          }
+        }
+      }
+    },
+
+    "/books": {
+      "get": {
+        "tags": ["book-shop-books"],
+        "summary": "Get books",
+        "operationId": "getBooks",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookShopBooks"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/books/owned/{id}": {
+      "post": {
+        "tags": ["book-shop-books"],
+        "summary": "Add or remove book from owned list",
+        "operationId": "updateOwnedBooks",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the book",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Book updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookShopAccount"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/books/wishlist/{id}": {
+      "post": {
+        "tags": ["book-shop-books"],
+        "summary": "Add or remove book from wishlist",
+        "operationId": "updateWishlistBooks",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the book",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Book updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookShopAccount"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/books/read/{id}": {
+      "post": {
+        "tags": ["book-shop-books"],
+        "summary": "Add or remove book from read list",
+        "operationId": "updateReadBooks",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the book",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Book updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookShopAccount"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/books/favorites/{id}": {
+      "post": {
+        "tags": ["book-shop-books"],
+        "summary": "Add or remove book from favorites",
+        "operationId": "updateFavoriteBooks",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the book",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Book updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookShopAccount"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
+          }
+        }
+      }
+    },
+
+    "/book-shop-accounts": {
+      "get": {
+        "tags": ["book-shop-accounts"],
+        "summary": "Get book shop account",
+        "operationId": "getBookShopAccount",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Book shop account found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookShopAccount"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        }
+      },
+      "post": {
+        "tags": ["book-shop-accounts"],
+        "summary": "Create book shop account",
+        "operationId": "createBookShopAccount",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookShopAccount"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Book shop account created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookShopAccount"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "409": {
+            "description": "Conflict - User already has a book shop account",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/book-shop-accounts/my-books": {
+      "get": {
+        "tags": ["book-shop-accounts"],
+        "summary": "Get user's books",
+        "operationId": "getUserBooks",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User's books retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookShopAccount"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "User does not have a book shop account",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/book-shop-accounts/{id}": {
+      "get": {
+        "tags": ["book-shop-accounts"],
+        "summary": "Get book shop account by ID",
+        "operationId": "getBookShopAccountById",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the book shop account",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Book shop account found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookShopAccount"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        }
+      },
+      "patch": {
+        "tags": ["book-shop-accounts"],
+        "summary": "Update book shop account",
+        "operationId": "updateBookShopAccount",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the book shop account",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookShopAccount"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Book shop account updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookShopAccount"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden - No fields to update or invalid fields",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/book-shop-authorize": {
+      "post": {
+        "tags": ["book-shop-authorization"],
+        "summary": "Check if user has a book shop account with the required roles",
+        "operationId": "authorizeBookShopAccount",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "role_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookShopUserRole"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden - User does not have the required role",
+            "content": {}
+          },
+          "404": {
+            "description": "User does not have a book shop account",
+            "content": {}
+          }
+        }
+      }
+    },
+
+    "/book-shop-items": {
+      "get": {
+        "tags": ["book-shop-items"],
+        "summary": "Get book shop items",
+        "operationId": "getBookShopItems",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Book shop items retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookShopItems"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User does not have a book shop account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/book-shop-stats/orders": {
+      "get": {
+        "tags": ["book-shop-stats"],
+        "summary": "Get book shop orders statistics",
+        "operationId": "getBookShopOrdersStats",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Book shop orders statistics retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/bookShopOrdersStats"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/book-shop-stats/users": {
+      "get": {
+        "tags": ["book-shop-stats"],
+        "summary": "Get book shop users statistics",
+        "operationId": "getBookShopUsersStats",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Book shop users statistics retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/bookShopUsersStats"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/book-shop-stats/all": {
+      "get": {
+        "tags": ["book-shop-stats"],
+        "summary": "Get all book shop statistics",
+        "operationId": "getAllBookShopStats",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All book shop statistics retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/allBookShopStats"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        }
+      }
+    },
+
+    "/book-shop-book-reviews": {
+      "get": {
+        "tags": ["book-shop"],
+        "summary": "Get book reviews",
+        "operationId": "getBookReviews",
+        "parameters": [
+          {
+            "name": "book_ids",
+            "in": "query",
+            "description": "IDs of the book in format book_ids=id1,id2,... Works only with mean parameter",
+            "required": false,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          {
+            "name": "book_id",
+            "in": "query",
+            "description": "ID of the book",
+            "required": false,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          {
+            "name": "mean",
+            "in": "query",
+            "description": "Return mean rating",
+            "required": false,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reviews retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookReviews"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/book-shop-manage/orders": {
+      "get": {
+        "tags": ["book-shop-manage"],
+        "summary": "Get all orders",
+        "operationId": "getAllOrders",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Orders retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookShopOrders"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "User does not have a book shop account",
+            "content": {}
+          }
+        }
+      },
+      "patch": {
+        "tags": ["book-shop-manage"],
+        "summary": "Update order status",
+        "operationId": "updateOrderStatus",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the order",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookShopOrderStatusUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Order status updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookShopOrder"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "Order not found",
+            "content": {}
+          },
+          "409": {
+            "description": "Cannot change order status to the requested one",
+            "content": {}
+          },
+          "422": {
+            "description": "Order has no items or not enough funds",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/book-shop-manage/items": {
+      "get": {
+        "tags": ["book-shop-manage"],
+        "summary": "Get all items",
+        "operationId": "getAllItems",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Items retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookShopItems"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          }
+        }
+      },
+      "post": {
+        "tags": ["book-shop-manage"],
+        "summary": "Create a new item",
+        "operationId": "createItem",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookShopItem"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Item created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookShopItem"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "409": {
+            "description": "Item already exists",
+            "content": {}
+          },
+          "422": {
+            "description": "Invalid input",
+            "content": {}
+          }
+        }
+      },
+      "patch": {
+        "tags": ["book-shop-manage"],
+        "summary": "Update an item",
+        "operationId": "updateItem",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the item",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookShopItem"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Item updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookShopItem"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "Item not found",
+            "content": {}
+          },
+          "422": {
+            "description": "Invalid input",
+            "content": {}
+          }
+        }
+      },
+      "delete": {
+        "tags": ["book-shop-manage"],
+        "summary": "Delete an item",
+        "operationId": "deleteItem",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the item",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item deleted successfully",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "Item not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/book-shop-manage/items?book_id={book_id}": {
+      "get": {
+        "tags": ["book-shop-manage"],
+        "summary": "Get item by book ID",
+        "operationId": "getItemByBookId",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "book_id",
+            "in": "query",
+            "description": "ID of the book",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookShopItem"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "Item not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/book-shop-manage/books-without-items": {
+      "get": {
+        "tags": ["book-shop-manage"],
+        "summary": "Get books without items",
+        "operationId": "getBooksWithoutItems",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Books retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookShopBooks"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/book-shop-manage/users": {
+      "get": {
+        "tags": ["book-shop-manage"],
+        "summary": "Get users",
+        "operationId": "getUsers",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "ID of the user",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Users retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Users"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "User not found",
             "content": {}
           }
         }
@@ -4769,6 +6426,605 @@
           }
         }
       },
+      "BookShopBookAuthors": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/BookShopBookAuthor"
+        }
+      },
+      "BookShopBookAuthor": {
+        "type": "object",
+        "required": ["name", "id", "country"],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "id": {
+            "type": "number"
+          }
+        }
+      },
+      "BookShopGenres": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/BookShopGenre"
+        }
+      },
+      "BookShopGenre": {
+        "type": "object",
+        "required": ["name", "id"],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "id": {
+            "type": "number"
+          }
+        }
+      },
+
+      "BookShopRoles": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/BookShopRole"
+        }
+      },
+      "BookShopRole": {
+        "type": "object",
+        "required": ["name", "id"],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "id": {
+            "type": "number"
+          }
+        }
+      },
+      "BookShopUserRole": {
+        "type": "object",
+        "required": ["role_id", "user_id", "id"],
+        "properties": {
+          "role_id": {
+            "type": "number"
+          },
+          "account_id": {
+            "type": "number"
+          },
+          "id": {
+            "type": "number"
+          }
+        }
+      },
+      "BookShopPaymentCardTopUp": {
+        "type": "object",
+        "required": ["card_number", "amount"],
+        "properties": {
+          "card_number": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          }
+        }
+      },
+      "BookShopPaymentCard": {
+        "type": "object",
+        "required": ["card_number", "expiry_date", "cvv", "balance", "account_id", "id"],
+        "properties": {
+          "card_number": {
+            "type": "string"
+          },
+          "expiry_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "cvv": {
+            "type": "string",
+            "example": "12345"
+          },
+          "balance": {
+            "type": "number"
+          },
+          "account_id": {
+            "type": "number"
+          },
+          "id": {
+            "type": "number"
+          }
+        }
+      },
+
+      "BookShopPaymentCardUpdate": {
+        "type": "object",
+        "required": ["card_number", "expiry_date", "cvv"],
+        "properties": {
+          "card_number": {
+            "type": "string",
+            "example": "12345678901234567890"
+          },
+          "expiry_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "cvv": {
+            "type": "string",
+            "example": "12345"
+          }
+        }
+      },
+
+      "BookShopOrderStatuses": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/BookShopOrderStatus"
+        }
+      },
+
+      "BookShopOrderStatus": {
+        "type": "object",
+        "required": ["status", "id", "name", "icon", "possible_next_statuses"],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "icon": {
+            "type": "string"
+          },
+          "possible_next_statuses": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+
+      "BookShopAccount": {
+        "type": "object",
+        "required": [
+          "user_id",
+          "id",
+          "role_id",
+          "funds",
+          "created_at",
+          "wishlist_books_ids",
+          "favorite_books_ids",
+          "purchased_book_ids",
+          "read_books_ids",
+          "owned_books_ids",
+          "funds"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "user_id": {
+            "type": "integer"
+          },
+          "role_id": {
+            "type": "integer"
+          },
+          "wishlist_books_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "favorite_books_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "purchased_book_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "read_books_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "owned_books_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "funds": {
+            "type": "integer"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "country": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "street": {
+            "type": "string"
+          },
+          "postal_code": {
+            "type": "string"
+          }
+        }
+      },
+      "BookShopBooks": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/BookShopBook"
+        }
+      },
+      "BookShopBook": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "author_ids",
+          "published_at",
+          "genre_ids",
+          "language",
+          "pages",
+          "cover",
+          "description"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "author_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "published_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "genre_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "language": {
+            "type": "string"
+          },
+          "pages": {
+            "type": "integer"
+          },
+          "cover": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+
+      "BookShopItems": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/BookShopItem"
+        }
+      },
+
+      "BookShopItem": {
+        "type": "object",
+        "required": ["id", "book_id", "price", "quantity", "created_at"],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "book_id": {
+            "type": "integer"
+          },
+          "price": {
+            "type": "number"
+          },
+          "quantity": {
+            "type": "integer"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-06-30T15:44:31Z"
+          }
+        }
+      },
+
+      "allBookShopStats": {
+        "type": "object",
+        "properties": {
+          "totalOrders": {
+            "type": "integer"
+          },
+          "totalBooks": {
+            "type": "integer"
+          },
+          "totalCost": {
+            "type": "number"
+          },
+          "totalPartialCosts": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number"
+            }
+          },
+          "totalBooksPerType": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer"
+            }
+          },
+          "totalStatusesPerType": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer"
+            }
+          },
+          "costsPerUser": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number"
+            }
+          },
+          "booksPerUser": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer"
+            }
+          },
+          "booksPerUserPerOrderStatus": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      },
+
+      "bookShopUsersStats": {
+        "type": "object",
+        "properties": {
+          "totalOrders": {
+            "type": "integer"
+          },
+          "totalBooks": {
+            "type": "integer"
+          },
+          "totalCost": {
+            "type": "number"
+          },
+          "costsPerUser": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number"
+            }
+          },
+          "booksPerUser": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer"
+            }
+          },
+          "booksPerUserPerOrderStatus": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      },
+
+      "bookShopOrdersStats": {
+        "type": "object",
+        "properties": {
+          "totalOrders": {
+            "type": "integer"
+          },
+          "totalBooks": {
+            "type": "integer"
+          },
+          "totalCost": {
+            "type": "number"
+          },
+          "totalPartialCosts": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number"
+            }
+          },
+          "totalBooksPerType": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer"
+            }
+          },
+          "totalStatusesPerType": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+
+      "CouponCode": {
+        "type": "object",
+        "required": ["order_id", "coupon_code"],
+        "properties": {
+          "order_id": {
+            "type": "integer"
+          },
+          "coupon_code": {
+            "type": "string"
+          }
+        }
+      },
+
+      "BookShopOrderItem": {
+        "type": "object",
+        "required": ["book_id"],
+        "properties": {
+          "book_id": {
+            "type": "integer"
+          }
+        }
+      },
+
+      "BookShopOrders": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/BookShopOrder"
+        }
+      },
+
+      "BookShopOrder": {
+        "type": "object",
+        "required": [
+          "user_id",
+          "status_id",
+          "book_ids",
+          "books_cost",
+          "partial_costs",
+          "total_cost",
+          "created_at",
+          "id"
+        ],
+        "properties": {
+          "user_id": {
+            "type": "integer"
+          },
+          "status_id": {
+            "type": "integer"
+          },
+          "book_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "books_cost": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer"
+            }
+          },
+          "partial_costs": {
+            "type": "object",
+            "properties": {
+              "shipping": {
+                "type": "integer"
+              },
+              "books": {
+                "type": "integer"
+              }
+            }
+          },
+          "total_cost": {
+            "type": "integer"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer"
+          }
+        }
+      },
+
+      "BookShopOrderStatusUpdate": {
+        "type": "object",
+        "required": ["status_id"],
+        "properties": {
+          "status_id": {
+            "type": "integer"
+          }
+        }
+      },
+
+      "BookReviews": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/BookReviews"
+        }
+      },
+
+      "BookReview": {
+        "type": "object",
+        "required": ["id", "book_id", "user_id", "rating", "content", "created_at"],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "book_id": {
+            "type": "integer"
+          },
+          "user_id": {
+            "type": "integer"
+          },
+          "rating": {
+            "type": "integer"
+          },
+          "content": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+
+      "BookReviewStats": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/BookReviewStat"
+        }
+      },
+
+      "BookReviewStat": {
+        "type": "object",
+        "properties": {
+          "book_id": {
+            "type": "integer"
+          },
+          "mean": {
+            "type": "number",
+            "format": "float"
+          },
+          "numberOfReviews": {
+            "type": "integer"
+          }
+        },
+        "required": ["book_id", "mean", "numberOfReviews"]
+      },
+
       "Flashpost": {
         "type": "object",
         "required": ["id", "user_id", "date", "settings", "body", "is_public"],

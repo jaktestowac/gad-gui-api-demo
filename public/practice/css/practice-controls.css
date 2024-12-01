@@ -117,3 +117,9 @@ button:hover {
 button:active {
   background-color: #6e6e6e;
 }
+
+.user-small-label {
+  font-size: 12px;
+  font-style: italic;
+  padding: 4px;
+}

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | BookShop Manage Roles</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/book-shop-side-panel.css" />
+    <link rel="stylesheet" href="./css/book-shop.css" />
+
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-gui-book-shop" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <div style="position: absolute; right: 270px;">
+        <div id="alerts-placeholder" class="alerts-placeholder"></div>
+    </div>
+    <br />
+    <div style="position: absolute; right: 270px;">
+        <div id="account-details-placeholder" style="display: flex; justify-content: center; position: absolute;"></div>
+    </div>
+    <div id="side-panel" class="sidepanel">
+    </div>
+    <div align="center">
+        <h2>BookShop Manage Roles</h2>
+    </div>
+    <div id="manage-roles-controls-container" align="center">
+        <fieldset id="manage-roles-filtering-container" class="manage-roles-filtering-container" align="center">
+            <legend>Filter by roles:</legend>
+            <div id="manage-roles-filtering-controls">
+
+            </div>
+        </fieldset>
+    </div>
+    <div id="dashboard-info" align="center">
+    </div>
+    <div id="authentication-info" align="center">
+    </div>
+    <div id="manage-roles-messages" align="center"></div>
+    <div id="manage-roles-accounts-container" class="manage-roles-accounts-container" align="center">
+    </div>
+
+
+</body>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="/username.js"></script>
+<script type="text/javascript" src="./js/book-common.js"></script>
+<script type="text/javascript" src="./js/book-shop-side-panel.js"></script>
+<script type="text/javascript" src="./js/roles-manage.js"></script>
+<script type="text/javascript" src="/js/message-notifier.js"></script>
+<script type="text/javascript">
+    setIconActive('book-shop-manage-roles')
+</script>
+
+</html>
