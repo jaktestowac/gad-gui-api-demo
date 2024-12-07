@@ -9,6 +9,39 @@ async function getRandomSimpleWeatherData(daysBack = 3) {
   });
 }
 
+async function getWeatherForCity(city, date, daysBack = 3, futureDays = 3) {
+  const body = {
+    city: city,
+    futuredays: futureDays,
+    days: daysBack,
+    date: date,
+  };
+
+  return fetch("/api/v1/data/random/weather-simple", {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+    body: JSON.stringify(body),
+  });
+}
+
+async function getWeatherForCityWithGet(city, date, daysBack = 3, futureDays = 3) {
+  return fetch(
+    `/api/v1/data/random/weather-simple?city=${city}&date=${date}&days=${daysBack}&futuredays=${futureDays}`,
+    {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: getBearerToken(),
+      },
+    }
+  );
+}
+
 function calculateMeanValue(data, key) {
   const values = data.map((item) => item[key]);
   const filteredValues = values.filter((value) => value !== undefined);
@@ -39,6 +72,7 @@ function downloadWeatherDataAsXLSX(filename, dataToDownload) {
 
 function presentDataOnUIAsATable(weatherData) {
   const resultsContainer = document.getElementById("results-container");
+  resultsContainer.innerHTML = "";
   const table = document.createElement("table");
   table.classList.add("results-table");
   table.setAttribute("id", "results-table");
@@ -246,6 +280,7 @@ function presentDataOnUIAsATable(weatherData) {
 
   // add comment based on weather data - about temperature, wind speed, humidity, and min/max temperature
   const summaryContainer = document.getElementById("results-summary");
+  summaryContainer.innerHTML = "";
 
   const comment = document.createElement("p");
   comment.innerHTML = `Weather for today:<br>`;
@@ -335,6 +370,63 @@ function getAndPresentRandomWeatherData() {
     if (response.status === 200) {
       return response.json().then((data) => {
         presentDataOnUIAsATable(data);
+        return data;
+      });
+    } else {
+      console.error("Something went wrong", response);
+      invokeActionsOnDifferentStatusCodes(response.status, response);
+      return response.json().then((data) => {
+        return data;
+      });
+    }
+  });
+}
+
+function getOnePastDayData() {
+  // find oldest day from storedWeatherData
+  const oldestDay = storedWeatherData[storedWeatherData.length - 1];
+  if (oldestDay === undefined) {
+    return;
+  }
+  const oldestDayDate = oldestDay.date;
+  const oneDayInPast = new Date(oldestDayDate);
+  oneDayInPast.setDate(oneDayInPast.getDate() - 1);
+  const oldestDayDateFormatted = oneDayInPast.toISOString().split("T")[0];
+
+  return getWeatherForCityWithGet(storedCityData, oldestDayDateFormatted, 1, 0).then((response) => {
+    if (response.status === 200) {
+      return response.json().then((data) => {
+        storedWeatherData.push(data[0]);
+        presentDataOnUIAsATable(storedWeatherData);
+        return data;
+      });
+    } else {
+      console.error("Something went wrong", response);
+      invokeActionsOnDifferentStatusCodes(response.status, response);
+      return response.json().then((data) => {
+        return data;
+      });
+    }
+  });
+}
+
+let storedWeatherData = [];
+let storedCityData = undefined;
+
+function getAndDisplayWeatherForCity() {
+  const city = document.getElementById("city").value;
+  const futureDays = document.getElementById("futureDays").value;
+  storedCityData = city;
+  return getWeatherForCity(city, undefined, 1, futureDays).then((response) => {
+    if (response.status === 200) {
+      return response.json().then((data) => {
+        presentDataOnUIAsATable(data);
+        const getWeatherPastDayButton = document.getElementById("get-weather-past-day");
+        if (getWeatherPastDayButton) {
+          getWeatherPastDayButton.style.display = "block";
+        }
+        storedWeatherData = data;
+        storedCityData = city;
         return data;
       });
     } else {

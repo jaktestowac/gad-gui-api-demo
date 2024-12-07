@@ -14,12 +14,16 @@ const { generateEcommerceShoppingCart } = require("../helpers/generators/ecommer
 const { generateRandomUser } = require("../helpers/generators/user.generator");
 const { generateRandomSimpleBusTicketCard } = require("../helpers/generators/bus-ticket.generator");
 
-function generateWeatherResponse(queryParams, simplified = false, totalRandom = false) {
+function generateWeatherResponseBasedOnQuery(queryParams, simplified = false, totalRandom = false) {
   const days = parseInt(queryParams.get("days"));
   const future = parseInt(queryParams.get("futuredays"));
   const date = queryParams.get("date");
   const limitedDays = Math.min(days || 31, 90);
   let limitedFutureDays = Math.min(future || 0, 90);
+  return generateWeatherResponse(date, days, limitedDays, limitedFutureDays, simplified, totalRandom);
+}
+
+function generateWeatherResponse(date, days, limitedDays, limitedFutureDays, simplified = false, totalRandom = false) {
   logDebug(`Requested weather data for:`, { days, limitedDays, limitedFutureDays, date });
 
   let weatherData = [];
@@ -85,7 +89,10 @@ function handleData(req, res, isAdmin) {
   ) {
     const queryParams = new URLSearchParams(req.url.split("?")[1]);
 
-    const weatherData = generateWeatherResponse(queryParams, req.url.includes("/api/v1/data/weather-simple"));
+    const weatherData = generateWeatherResponseBasedOnQuery(
+      queryParams,
+      req.url.includes("/api/v1/data/weather-simple")
+    );
 
     res.status(HTTP_OK).json(weatherData);
     return;
@@ -120,7 +127,28 @@ function handleData(req, res, isAdmin) {
     (req.url.includes("/api/v1/data/random/weather") || req.url.includes("/api/v1/data/random/weather-simple"))
   ) {
     const queryParams = new URLSearchParams(req.url.split("?")[1]);
-    const weatherData = generateWeatherResponse(queryParams, req.url.includes("weather-simple"), true);
+    const weatherData = generateWeatherResponseBasedOnQuery(queryParams, req.url.includes("weather-simple"), true);
+    res.status(HTTP_OK).json(weatherData);
+    return;
+  }
+  if (
+    req.method === "POST" &&
+    (req.url.includes("/api/v1/data/random/weather") || req.url.includes("/api/v1/data/random/weather-simple"))
+  ) {
+    const days = parseInt(req.body.days);
+    const futuredays = parseInt(req.body.futuredays);
+    const date = req.body.date;
+    const limitedDays = Math.min(days || 31, 90);
+    let limitedFutureDays = Math.min(futuredays || 0, 90);
+
+    const weatherData = generateWeatherResponse(
+      date,
+      days,
+      limitedDays,
+      limitedFutureDays,
+      req.url.includes("weather-simple"),
+      true
+    );
     res.status(HTTP_OK).json(weatherData);
     return;
   }
