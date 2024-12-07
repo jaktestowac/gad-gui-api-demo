@@ -6,12 +6,6 @@ async function getRandomSimpleWeatherData(daysBack = 3) {
       "Content-Type": "application/json",
       Authorization: getBearerToken(),
     },
-  }).then((response) => {
-    if (response.ok) {
-      return response.json();
-    } else {
-      return {};
-    }
   });
 }
 
@@ -337,9 +331,19 @@ function presentDataOnUIAsATable(weatherData) {
 }
 
 function getAndPresentRandomWeatherData() {
-  return getRandomSimpleWeatherData().then((data) => {
-    presentDataOnUIAsATable(data);
-    return data;
+  return getRandomSimpleWeatherData().then((response) => {
+    if (response.status === 200) {
+      return response.json().then((data) => {
+        presentDataOnUIAsATable(data);
+        return data;
+      });
+    } else {
+      console.error("Something went wrong", response);
+      invokeActionsOnDifferentStatusCodes(response.status, response);
+      return response.json().then((data) => {
+        return data;
+      });
+    }
   });
 }
 

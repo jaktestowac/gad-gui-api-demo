@@ -23,6 +23,10 @@ function formatCurrency(value) {
 }
 
 function presentData(data) {
+  if (data === undefined) {
+    data = [{ transactions: [] }];
+  }
+
   const resultsContainer = document.getElementById("results-container");
   const table = document.createElement("table");
   table.classList.add("results-table");
@@ -207,7 +211,8 @@ function getAndShowData(daysBack = 7) {
       });
     } else {
       console.error("Something went wrong", response);
-      displaySimpleAlertWithCustomMessage("Something went wrong", "red", true);
+      presentData();
+      invokeActionsOnDifferentStatusCodes(response.status, response);
     }
   });
 }

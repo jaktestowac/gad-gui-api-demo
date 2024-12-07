@@ -86,6 +86,11 @@
     </div>
     <br />
     <div align="center">
+        <div id="message-container" class="simpleInfoBox" style="display: none;">
+        </div>
+    </div>
+    <br />
+    <div align="center">
         <div id="business-context">
             <span class="simpleInfoBox" style="font-size: 16px; ">PS. See sample business context!&nbsp;
                 <span class="span-button toggleSpoilerButton" onclick="toggleSpoiler('businessContext', this)">Show context!</span></span>
@@ -134,6 +139,8 @@
 <script type="text/javascript" src="./js/practice-common.js"></script>
 <script type="text/javascript" src="./js/simple-bus-card-ticket.js"></script>
 <script type="text/javascript" src="/js/helpers/reports.js"></script>
+<script type="text/javascript" src="./js/alerts.js"></script>
+<script type="text/javascript" src="./js/response-helpers.js"></script>
 <script>
     getAndShowSimpleTicketData().then((data) => {
         // Generate DOCX button

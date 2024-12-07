@@ -6,12 +6,6 @@ async function getRandomSimpleShoppingCartData() {
       "Content-Type": "application/json",
       Authorization: getBearerToken(),
     },
-  }).then((response) => {
-    if (response.ok) {
-      return response.json();
-    } else {
-      return {};
-    }
   });
 }
 
@@ -239,7 +233,18 @@ function presentSimpleShoppingCartDataOnUIAsATable(shoppingCartData) {
 }
 
 function getAndPresentRandomShoppingCartData() {
-  getRandomSimpleShoppingCartData().then((data) => {
-    presentSimpleShoppingCartDataOnUIAsATable(data);
+  return getRandomSimpleShoppingCartData().then((response) => {
+    if (response.status === 200) {
+      return response.json().then((data) => {
+        presentSimpleShoppingCartDataOnUIAsATable(data);
+        return data;
+      });
+    } else {
+      console.error("Something went wrong", response);
+      invokeActionsOnDifferentStatusCodes(response.status, response);
+      return response.json().then((data) => {
+        return data;
+      });
+    }
   });
 }
