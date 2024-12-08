@@ -59,41 +59,44 @@ function presentSimpleShoppingCartDataOnUIAsATable(shoppingCartData) {
   table.appendChild(headerRow);
 
   shoppingCartData.cartItems.forEach((cartItem) => {
-    cartItem.product.icon = cartItem.product.icon ?? undefined;
-    cartItem.product.price = isNumber(cartItem.product.price) ? cartItem.product.price : NaN;
-    cartItem.subtotal = isNumber(cartItem.subtotal) ? cartItem.subtotal : NaN;
-    cartItem.subtotal = cartItem.subtotal !== 0 ? cartItem.subtotal : NaN;
+    // check if all required fields are present
+    cartItem.product = cartItem?.product ?? {};
+    cartItem.product.name = cartItem?.product?.name ?? "Unknown product";
+
+    cartItem.product.icon = cartItem?.product?.icon ?? undefined;
+    cartItem.product.price = isNumber(cartItem?.product?.price) ? cartItem?.product?.price : NaN;
+    cartItem.subtotal = isNumber(cartItem?.subtotal) ? cartItem?.subtotal : NaN;
 
     const row = document.createElement("tr");
     row.style.border = "1px solid black";
 
     const product = document.createElement("td");
-    product.textContent = cartItem.product.name;
+    product.textContent = cartItem?.product?.name;
     product.style.border = "1px solid black";
     product.classList.add("table-cell");
     row.appendChild(product);
 
     const productIcon = document.createElement("td");
-    productIcon.innerHTML = cartItem.product.icon;
+    productIcon.innerHTML = cartItem?.product?.icon;
     productIcon.style.border = "1px solid black";
     productIcon.style.fontSize = "1.5em";
     productIcon.classList.add("table-cell");
     row.appendChild(productIcon);
 
     const price = document.createElement("td");
-    price.textContent = cartItem.product.price;
+    price.textContent = cartItem.product?.price;
     price.style.border = "1px solid black";
     price.classList.add("table-cell");
     row.appendChild(price);
 
     const quantity = document.createElement("td");
-    quantity.innerHTML = cartItem.quantity;
+    quantity.innerHTML = cartItem?.quantity;
     quantity.style.border = "1px solid black";
     quantity.classList.add("table-cell");
     row.appendChild(quantity);
 
     const subtotal = document.createElement("td");
-    subtotal.innerHTML = cartItem.subtotal;
+    subtotal.innerHTML = cartItem?.subtotal;
     subtotal.style.border = "1px solid black";
     subtotal.classList.add("table-cell");
     row.appendChild(subtotal);
@@ -152,10 +155,6 @@ function presentSimpleShoppingCartDataOnUIAsATable(shoppingCartData) {
   shippingLabel.style.backgroundColor = "lightgray";
   shippingRow.appendChild(shippingLabel);
 
-  const totalQuantityValue2 = shoppingCartData.cartItems.reduce(
-    (acc, item) => acc + (!isNumber(item.quantity) || item.quantity === 0 ? "NaN" : item.quantity),
-    0
-  );
   const shippingCost = document.createElement("td");
   // const shippingCostValue = (totalPriceValue % 100) * 1.75 + (totalQuantityValue2 % 3) * 10;
   const shippingCostValue = totalSubtotalValue / 10;
