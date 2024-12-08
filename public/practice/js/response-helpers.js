@@ -1,5 +1,15 @@
+function removeErrorMessage() {
+  const messageElement = document.getElementById("message-container");
+  if (messageElement !== null) {
+    messageElement.innerHTML = "";
+    messageElement.style.display = "none";
+  }
+}
+
 function invokeActionsOnDifferentStatusCodes(statusCode, response) {
   const messageElement = document.getElementById("message-container");
+  messageElement.innerHTML = "";
+
   let message = "";
   switch (statusCode) {
     case 200:
@@ -98,6 +108,7 @@ function invokeActionsOnDifferentStatusCodes(statusCode, response) {
 
   if (messageElement !== null) {
     const messageEl = document.createElement("div");
+    messageEl.setAttribute("data-testid", "error-message");
     messageEl.innerHTML = message;
 
     messageElement.appendChild(messageEl);

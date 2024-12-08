@@ -18,12 +18,21 @@ function generateWeatherResponseBasedOnQuery(queryParams, simplified = false, to
   const days = parseInt(queryParams.get("days"));
   const future = parseInt(queryParams.get("futuredays"));
   const date = queryParams.get("date");
+  const city = queryParams.get("city");
   const limitedDays = Math.min(days || 31, 90);
   let limitedFutureDays = Math.min(future || 0, 90);
-  return generateWeatherResponse(date, days, limitedDays, limitedFutureDays, simplified, totalRandom);
+  return generateWeatherResponse(date, days, city, limitedDays, limitedFutureDays, simplified, totalRandom);
 }
 
-function generateWeatherResponse(date, days, limitedDays, limitedFutureDays, simplified = false, totalRandom = false) {
+function generateWeatherResponse(
+  date,
+  days,
+  city,
+  limitedDays,
+  limitedFutureDays,
+  simplified = false,
+  totalRandom = false
+) {
   logDebug(`Requested weather data for:`, { days, limitedDays, limitedFutureDays, date });
 
   let weatherData = [];
@@ -50,10 +59,18 @@ function generateWeatherResponse(date, days, limitedDays, limitedFutureDays, sim
     }
   }
 
+  if (city !== null && city !== undefined && city !== "") {
+    weatherData = weatherData.map((weather) => {
+      weather.city = city;
+      return weather;
+    });
+  }
+
   if (simplified) {
     weatherData = weatherData.map((weather) => {
       return {
         date: weather.date,
+        city: weather.city ?? undefined,
         temperature: weather.temperatureRaw,
         temperatureMin: weather.highLowTemperature.temperatureLow,
         temperatureMax: weather.highLowTemperature.temperatureHigh,
@@ -131,11 +148,13 @@ function handleData(req, res, isAdmin) {
     res.status(HTTP_OK).json(weatherData);
     return;
   }
+
   if (
-    req.method === "POST" &&
+    (req.method === "POST" || req.method === "PUT") &&
     (req.url.includes("/api/v1/data/random/weather") || req.url.includes("/api/v1/data/random/weather-simple"))
   ) {
     const days = parseInt(req.body.days);
+    const city = req.body.city;
     const futuredays = parseInt(req.body.futuredays);
     const date = req.body.date;
     const limitedDays = Math.min(days || 31, 90);
@@ -144,6 +163,7 @@ function handleData(req, res, isAdmin) {
     const weatherData = generateWeatherResponse(
       date,
       days,
+      city,
       limitedDays,
       limitedFutureDays,
       req.url.includes("weather-simple"),

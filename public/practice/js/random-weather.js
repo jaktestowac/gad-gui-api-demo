@@ -42,6 +42,25 @@ async function getWeatherForCityWithGet(city, date, daysBack = 3, futureDays = 3
   );
 }
 
+async function getWeatherForCityWithPut(city, date, daysBack = 3, futureDays = 3) {
+  const body = {
+    city: city,
+    futuredays: futureDays,
+    days: daysBack,
+    date: date,
+  };
+
+  return fetch("/api/v1/data/random/weather-simple", {
+    method: "PUT",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+    body: JSON.stringify(body),
+  });
+}
+
 function calculateMeanValue(data, key) {
   const values = data.map((item) => item[key]);
   const filteredValues = values.filter((value) => value !== undefined);
@@ -76,6 +95,7 @@ function presentDataOnUIAsATable(weatherData) {
   const table = document.createElement("table");
   table.classList.add("results-table");
   table.setAttribute("id", "results-table");
+  table.setAttribute("data-testid", "results-table");
   table.setAttribute("class", "results-table");
   table.style.borderCollapse = "collapse";
   table.style.textAlign = "center";
@@ -370,6 +390,7 @@ function getAndPresentRandomWeatherData() {
     if (response.status === 200) {
       return response.json().then((data) => {
         presentDataOnUIAsATable(data);
+        removeErrorMessage();
         return data;
       });
     } else {
@@ -393,11 +414,12 @@ function getOnePastDayData() {
   oneDayInPast.setDate(oneDayInPast.getDate() - 1);
   const oldestDayDateFormatted = oneDayInPast.toISOString().split("T")[0];
 
-  return getWeatherForCityWithGet(storedCityData, oldestDayDateFormatted, 1, 0).then((response) => {
+  return getWeatherForCityWithPut(storedCityData, oldestDayDateFormatted, 1, 0).then((response) => {
     if (response.status === 200) {
       return response.json().then((data) => {
         storedWeatherData.push(data[0]);
         presentDataOnUIAsATable(storedWeatherData);
+        removeErrorMessage();
         return data;
       });
     } else {
@@ -427,6 +449,7 @@ function getAndDisplayWeatherForCity() {
         }
         storedWeatherData = data;
         storedCityData = city;
+        removeErrorMessage();
         return data;
       });
     } else {
