@@ -61,7 +61,7 @@ function presentSimpleShoppingCartDataOnUIAsATable(shoppingCartData) {
   shoppingCartData.cartItems.forEach((cartItem) => {
     // check if all required fields are present
     cartItem.quantity = cartItem?.product?.name ? cartItem?.quantity : NaN;
-    cartItem.subtotal = cartItem?.product?.name ? cartItem?.subtotal ? NaN;
+    cartItem.subtotal = cartItem?.product?.name ? cartItem?.subtotal : NaN;
     cartItem.product = cartItem?.product ?? {};
     cartItem.product.name = cartItem?.product?.name ?? "Unknown product";
 
