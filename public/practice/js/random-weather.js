@@ -303,7 +303,13 @@ function presentDataOnUIAsATable(weatherData) {
   summaryContainer.innerHTML = "";
 
   const comment = document.createElement("p");
-  comment.innerHTML = `Weather for today:<br>`;
+
+  if (weatherData[0]?.city === undefined) {
+    comment.innerHTML = `Weather for today:<br>`;
+  } else {
+    comment.innerHTML = `Weather for <strong>${weatherData[0].city}</strong> today:<br>`;
+  }
+
   comment.setAttribute("id", "comment");
   comment.setAttribute("data-testid", "comment");
   comment.setAttribute("class", "comment");
