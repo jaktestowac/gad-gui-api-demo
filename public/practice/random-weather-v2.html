@@ -59,48 +59,49 @@
     <br />
     <div align="center">
         <span style="display: flex; align-items: center; justify-content: center; flex-direction: row;">
-            <label for="city" style="padding: 4px; margin: 4px;">City:</label>
-            <select id="city" data-testid="city" name="city" style="width: 100px;padding: 4px;margin: 4px;">
-                <option value="Warsaw">Warsaw</option>
-                <option value="Berlin">Berlin</option>
-                <option value="Paris">Paris</option>
-                <option value="London">London</option>
-                <option value="Madrid">Madrid</option>
-                <option value="Rome">Rome</option>
-                <option value="Lisbon">Lisbon</option>
-                <option value="Athens">Athens</option>
-                <option value="Moscow">Moscow</option>
-                <option value="Stockholm">Stockholm</option>
-                <option value="Oslo">Oslo</option>
-                <option value="Helsinki">Helsinki</option>
-                <option value="Copenhagen">Copenhagen</option>
-                <option value="Dublin">Dublin</option>
-                <option value="Reykjavik">Reykjavik</option>
-                <option value="Tallinn">Tallinn</option>
-                <option value="Riga">Riga</option>
-                <option value="Vilnius">Vilnius</option>
-                <option value="Kiev">Kiev</option>
-                <option value="Minsk">Minsk</option>
-                <option value="Sofia">Sofia</option>
-                <option value="Bucharest">Bucharest</option>
-                <option value="Budapest">Budapest</option>
-                <option value="Prague">Prague</option>
-                <option value="Vienna">Vienna</option>
-                <option value="Bratislava">Bratislava</option>
-                <option value="Ljubljana">Ljubljana</option>
-                <option value="Zagreb">Zagreb</option>
-                <option value="Belgrade">Belgrade</option>
-                <option value="Sarajevo">Sarajevo</option>
-                <option value="Podgorica">Podgorica</option>
-                <option value="Pristina">Pristina</option>
-                <option value="Skopje">Skopje</option>
-            </select>
-        </span>
-        <span style="display: flex; align-items: center; justify-content: center;">
-            <label for="futureDays" style="padding: 4px; margin: 4px;">Days:</label>
-            <input type="number" id="futureDays" name="futureDays" value="2" style="width: 50px;padding: 4px;margin: 4px;" min="1" max="7" />
-        </span>
-        <button id="get-weather" data-testid="get-weather" class="button-primary-small" style="padding: 4px; margin: 4px;" onclick="getAndDisplayWeatherForCity()">Get Weather</button>
+            <span style="display: flex; align-items: center; justify-content: center;">
+                <label for="city" style="padding: 4px; margin: 4px;">City:</label>
+                <select id="city" data-testid="city" name="city" style="width: 100px;padding: 4px;margin: 4px;">
+                    <option value="Warsaw">Warsaw</option>
+                    <option value="Berlin">Berlin</option>
+                    <option value="Paris">Paris</option>
+                    <option value="London">London</option>
+                    <option value="Madrid">Madrid</option>
+                    <option value="Rome">Rome</option>
+                    <option value="Lisbon">Lisbon</option>
+                    <option value="Athens">Athens</option>
+                    <option value="Moscow">Moscow</option>
+                    <option value="Stockholm">Stockholm</option>
+                    <option value="Oslo">Oslo</option>
+                    <option value="Helsinki">Helsinki</option>
+                    <option value="Copenhagen">Copenhagen</option>
+                    <option value="Dublin">Dublin</option>
+                    <option value="Reykjavik">Reykjavik</option>
+                    <option value="Tallinn">Tallinn</option>
+                    <option value="Riga">Riga</option>
+                    <option value="Vilnius">Vilnius</option>
+                    <option value="Kiev">Kiev</option>
+                    <option value="Minsk">Minsk</option>
+                    <option value="Sofia">Sofia</option>
+                    <option value="Bucharest">Bucharest</option>
+                    <option value="Budapest">Budapest</option>
+                    <option value="Prague">Prague</option>
+                    <option value="Vienna">Vienna</option>
+                    <option value="Bratislava">Bratislava</option>
+                    <option value="Ljubljana">Ljubljana</option>
+                    <option value="Zagreb">Zagreb</option>
+                    <option value="Belgrade">Belgrade</option>
+                    <option value="Sarajevo">Sarajevo</option>
+                    <option value="Podgorica">Podgorica</option>
+                    <option value="Pristina">Pristina</option>
+                    <option value="Skopje">Skopje</option>
+                </select>
+            </span>
+            <span style="display: flex; align-items: center; justify-content: center;">
+                <label for="futureDays" style="padding: 4px; margin: 4px;">Days:</label>
+                <input type="number" id="futureDays" name="futureDays" value="2" style="width: 50px;padding: 4px;margin: 4px;" min="1" max="7" />
+            </span>
+            <button id="get-weather" data-testid="get-weather" class="button-primary-small" style="padding: 4px; margin: 4px;" onclick="getAndDisplayWeatherForCity()">Get Weather</button>
     </div>
     <div align="center">
         <div id="results-container">
