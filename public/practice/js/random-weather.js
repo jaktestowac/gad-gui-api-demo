@@ -423,7 +423,9 @@ function getOnePastDayData() {
   return getWeatherForCityWithPut(storedCityData, oldestDayDateFormatted, 1, 0).then((response) => {
     if (response.status === 200) {
       return response.json().then((data) => {
-        storedWeatherData.push(data[0]);
+        for (const row of data) {
+          storedWeatherData.push(row);
+        }
         presentDataOnUIAsATable(storedWeatherData);
         removeErrorMessage();
         return data;
