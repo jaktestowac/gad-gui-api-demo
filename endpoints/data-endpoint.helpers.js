@@ -154,8 +154,19 @@ function handleData(req, res, isAdmin) {
     (req.url.includes("/api/v1/data/random/weather") || req.url.includes("/api/v1/data/random/weather-simple"))
   ) {
     const days = parseInt(req.body.days);
-    const city = req.body.city;
     const futuredays = parseInt(req.body.futuredays);
+
+    if (days < 1) {
+      res.status(400).json({ error: "Days must be greater than 0" });
+      return;
+    }
+
+    if (futuredays < 1) {
+      res.status(400).json({ error: "Future days must be greater than 0" });
+      return;
+    }
+
+    const city = req.body.city;
     const date = req.body.date;
     const limitedDays = Math.min(days || 31, 90);
     let limitedFutureDays = Math.min(futuredays || 0, 90);

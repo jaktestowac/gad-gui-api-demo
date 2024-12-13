@@ -400,11 +400,9 @@ function getAndPresentRandomWeatherData() {
         return data;
       });
     } else {
-      console.error("Something went wrong", response);
+      storedWeatherData = [];
       invokeActionsOnDifferentStatusCodes(response.status, response);
-      return response.json().then((data) => {
-        return data;
-      });
+      return response;
     }
   });
 }
@@ -415,12 +413,17 @@ function getOnePastDayData() {
   if (oldestDay === undefined) {
     return;
   }
+
+  if (storedWeatherData.length === 0) {
+    return;
+  }
+
   const oldestDayDate = oldestDay.date;
   const oneDayInPast = new Date(oldestDayDate);
   oneDayInPast.setDate(oneDayInPast.getDate() - 1);
   const oldestDayDateFormatted = oneDayInPast.toISOString().split("T")[0];
 
-  return getWeatherForCityWithPut(storedCityData, oldestDayDateFormatted, 1, 0).then((response) => {
+  return getWeatherForCityWithPut(storedCityData, oldestDayDateFormatted, 1, 1).then((response) => {
     if (response.status === 200) {
       return response.json().then((data) => {
         for (const row of data) {
@@ -431,11 +434,9 @@ function getOnePastDayData() {
         return data;
       });
     } else {
-      console.error("Something went wrong", response);
+      storedWeatherData = [];
       invokeActionsOnDifferentStatusCodes(response.status, response);
-      return response.json().then((data) => {
-        return data;
-      });
+      return response;
     }
   });
 }
@@ -461,11 +462,11 @@ function getAndDisplayWeatherForCity() {
         return data;
       });
     } else {
-      console.error("Something went wrong", response);
+      storedWeatherData = [];
+      const resultsContainer = document.getElementById("results-container");
+      resultsContainer.innerHTML = "";
       invokeActionsOnDifferentStatusCodes(response.status, response);
-      return response.json().then((data) => {
-        return data;
-      });
+      return response;
     }
   });
 }
