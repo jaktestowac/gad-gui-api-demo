@@ -48,6 +48,7 @@ const { diagnosticRoutes } = require("./routes/diagnostic.route");
 const app = require("./app.json");
 const DatabaseManager = require("./helpers/db.manager");
 const { simpleMigrator, checkIfDbExists, overwriteDbIfDefined } = require("./db/migrators/migrator");
+const { exitRoutes, restartRoutes } = require("./routes/debug.route");
 
 const middlewares = jsonServer.defaults();
 
@@ -172,6 +173,9 @@ server.post("/process_login", processLoginRoutes);
 server.get("/login", loginRoutes);
 server.get("/welcome", welcomeRoutes);
 server.get("/logout", logoutRoutes);
+
+server.get("/api/debug/restart", restartRoutes);
+server.get("/api/debug/exit", exitRoutes);
 
 server.use(clearDbRoutes);
 server.use(statsRoutes);
