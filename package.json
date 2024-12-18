@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "start3001": "set PORT=3001 && node server.js",
-    "p:start": "pm2 start ecosystem.config.js --name gad2 server.js",
+    "p:start": "pm2 start ecosystem.config.js",
     "p:list": "pm2 list",
     "p:stop": "pm2 stop gad2",
     "p:del": "pm2 delete gad2",
