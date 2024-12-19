@@ -7,8 +7,8 @@ const exitRoutes = (req, res) => {
 };
 
 const restartRoutes = (req, res) => {
-  logDebug("Restarting the 🦎 GAD service... (lets hope that pm2 is running!");
-  res.status(200).json({ message: "Restarting the 🦎 GAD service... (lets hope that pm2 is running!" });
+  logDebug("Restarting the 🦎 GAD service... (lets hope that pm2 is running!)");
+  res.status(200).json({ message: "Restarting the 🦎 GAD service... (lets hope that pm2 is running!)" });
   process.exit(0);
 };
 
