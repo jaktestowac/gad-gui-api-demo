@@ -48,10 +48,16 @@
 
     <br />
     <br />
+    <div style="position: absolute; right: 270px;">
+        <div id="alerts-placeholder" style="display: flex; flex-direction: column; position: absolute;"></div>
+    </div>
     <br />
     <div align="center">
         <h2 style="padding: 0px; margin-bottom: 0px;">Random Shopping Cart (from API)</h2>
         <span style="font-size: 10px">PS. This page contains some logic on front-end. Can you test it? 😉</span>
+    </div>
+    <div style="position: absolute; right: 270px;">
+        <div id="alerts-placeholder" style="display: flex; flex-direction: column; position: absolute;"></div>
     </div>
     <br />
     <div align="center">
@@ -90,6 +96,16 @@
                                     </ul>
                                 </li>
                             </ul>
+                            <h4>Important notes</h4>
+                            <ul>
+                                <li>All calculations of tax, shipping, and total are based on the subtotal of the products.</li>
+                                <li>Shipping and tax are calculated as 10% of the subtotal.</li>
+                                <li>The total amount is the sum of the subtotal, shipping, and tax.</li>
+                                <li><strong>Only products with valid data are included in the calculations.</strong></li>
+                                <li><strong>Products with invalid data are ignored in the calculations, but they are still displayed in the list.</strong></li>
+                            </ul>
+
+                            This are the requirements for the page. But... <strong>there are hidden bugs</strong> in the code. Can you find them? 😉
                         </div>
                     </div>
                 </span>
@@ -113,6 +129,8 @@
 <script type="text/javascript" src="./js/practice-common.js"></script>
 <script type="text/javascript" src="./js/display-canvas.js"></script>
 <script type="text/javascript" src="./js/random-shopping-cart.js"></script>
+<script type="text/javascript" src="./js/alerts.js"></script>
+<script type="text/javascript" src="./js/response-helpers.js"></script>
 <script>
     getAndPresentRandomShoppingCartData();
 </script>

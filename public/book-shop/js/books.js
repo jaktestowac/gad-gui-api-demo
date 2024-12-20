@@ -3,7 +3,7 @@ let sortingOrder = "desc";
 let current_page = 1;
 let scrollLoading = false;
 let searchPhrase = undefined;
-let records_per_page = 12;
+let records_per_page = 16;
 
 async function issueGetBooksRequest(
   limit = 6,
@@ -56,10 +56,10 @@ async function renderBooks(records_per_page, current_page, searchPhrase, sorting
               const uniqueBookIds = [...new Set([...bookIds1, ...bookIds2])];
 
               getBookShopItemsInStockAndPrice(uniqueBookIds);
-              formatReviewsMarkedAsRaw();
             } else {
               addBooksToolsPanelForUnauthorizedUser(false);
             }
+            formatReviewsMarkedAsRaw();
           });
           return data;
         });

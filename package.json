@@ -1,11 +1,17 @@
 {
   "name": "gad-gui-api-demo-v2",
-  "version": "2.7.9",
+  "version": "2.7.10",
   "description": "Simple application with GUI and API to deploy to Heroku, Glitch, Railway, Vercel etc.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "start3001": "set PORT=3001 && node server.js",
+    "p:start": "pm2 start ecosystem.config.js",
+    "p:list": "pm2 list",
+    "p:stop": "pm2 stop gad2",
+    "p:del": "pm2 delete gad2",
+    "p:log": "pm2 logs gad2",
+    "p:kill": "pm2 kill",
     "pretty": "npx prettier --write .",
     "eslint": "npx eslint .",
     "start:readonly": "set READ_ONLY=1 && node server.js",

@@ -272,10 +272,13 @@ function handleArticles(req, res, isAdmin) {
     logTrace("handleArticles:PUT:", { method: req.method, articleId });
 
     if (isUndefined(foundArticle)) {
-      const foundArticles = searchForArticlesWithTitle(req.body?.title);
-      if (foundArticles.length > 0) {
-        res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatNotUniqueFieldResponse("title"));
-        return;
+      const isFeatureEnabled = getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_VALIDATE_ARTICLE_TITLE);
+      if (isFeatureEnabled === true) {
+        const foundArticles = searchForArticlesWithTitle(req.body?.title);
+        if (foundArticles.length > 0) {
+          res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatNotUniqueFieldResponse("title"));
+          return;
+        }
       }
       req.method = "POST";
       req.url = "/api/articles";

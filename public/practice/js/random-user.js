@@ -1,4 +1,4 @@
-async function getRandomSimpleUserData() {
+async function getRandomSimpleUserData(daysBack) {
   return fetch(`/api/v1/data/random/simple-user`, {
     method: "GET",
     headers: {
@@ -6,12 +6,6 @@ async function getRandomSimpleUserData() {
       "Content-Type": "application/json",
       Authorization: getBearerToken(),
     },
-  }).then((response) => {
-    if (response.ok) {
-      return response.json();
-    } else {
-      return {};
-    }
   });
 }
 
@@ -198,7 +192,14 @@ function presentSimpleUserDataOnUI(userData) {
 }
 
 function getAndPresentRandomUserData() {
-  getRandomSimpleUserData().then((data) => {
-    presentSimpleUserDataOnUI(data);
+  getRandomSimpleUserData().then((response) => {
+    if (response.status === 200) {
+      response.json().then((data) => {
+        presentSimpleUserDataOnUI(data);
+      });
+    } else {
+      console.error("Something went wrong", response);
+      invokeActionsOnDifferentStatusCodes(response.status, response);
+    }
   });
 }

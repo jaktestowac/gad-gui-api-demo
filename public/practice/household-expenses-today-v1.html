@@ -53,6 +53,9 @@
     <br />
     <br />
     <br />
+    <div style="position: absolute; right: 270px;">
+        <div id="alerts-placeholder" style="display: flex; flex-direction: column; position: absolute;"></div>
+    </div>
     <div align="center">
         <h2 style="padding: 0px; margin-bottom: 0px;">Random 1-day Household Expenses (from API)</h2>
         <span style="font-size: 10px">PS. This page has hidden error. Can you find it? 😉</span>
@@ -60,6 +63,11 @@
     <br />
     <div align="center">
         <div id="results-container">
+        </div>
+    </div>
+    <br />
+    <div align="center">
+        <div id="message-container" class="simpleInfoBox" style="display: none;">
         </div>
     </div>
     <br />
@@ -79,6 +87,8 @@
 <script type="text/javascript" src="./js/practice-common.js"></script>
 <script type="text/javascript" src="./js/display-canvas.js"></script>
 <script type="text/javascript" src="./js/household-expences.js"></script>
+<script type="text/javascript" src="./js/alerts.js"></script>
+<script type="text/javascript" src="./js/response-helpers.js"></script>
 <script>
     getAndShowData(1)
 </script>

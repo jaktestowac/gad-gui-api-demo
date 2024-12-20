@@ -1114,6 +1114,7 @@ function formatBookReviews(bookId, reviews) {
 
 function formatReviewsMarkedAsRaw() {
   const bookIds = getReviewsMarkedAsRaw();
+  console.log(bookIds);
 
   issueGetReviewsStatsRequest(bookIds).then((response) => {
     if (response.status === 200) {
@@ -1224,7 +1225,7 @@ function formatOrderUserAccountNamesSimple(usersData) {
 
 function getReviewsMarkedAsRaw() {
   const reviews = document.querySelectorAll(".book-review-mean-rating");
-
+  
   const bookIds = [];
   reviews.forEach((review) => {
     if (review.getAttribute("raw") === "true") {

@@ -6,12 +6,58 @@ async function getRandomSimpleWeatherData(daysBack = 3) {
       "Content-Type": "application/json",
       Authorization: getBearerToken(),
     },
-  }).then((response) => {
-    if (response.ok) {
-      return response.json();
-    } else {
-      return {};
+  });
+}
+
+async function getWeatherForCity(city, date, daysBack = 3, futureDays = 3) {
+  const body = {
+    city: city,
+    futuredays: futureDays,
+    days: daysBack,
+    date: date,
+  };
+
+  return fetch("/api/v1/data/random/weather-simple", {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+    body: JSON.stringify(body),
+  });
+}
+
+async function getWeatherForCityWithGet(city, date, daysBack = 3, futureDays = 3) {
+  return fetch(
+    `/api/v1/data/random/weather-simple?city=${city}&date=${date}&days=${daysBack}&futuredays=${futureDays}`,
+    {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: getBearerToken(),
+      },
     }
+  );
+}
+
+async function getWeatherForCityWithPut(city, date, daysBack = 3, futureDays = 3) {
+  const body = {
+    city: city,
+    futuredays: futureDays,
+    days: daysBack,
+    date: date,
+  };
+
+  return fetch("/api/v1/data/random/weather-simple", {
+    method: "PUT",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+    body: JSON.stringify(body),
   });
 }
 
@@ -45,9 +91,11 @@ function downloadWeatherDataAsXLSX(filename, dataToDownload) {
 
 function presentDataOnUIAsATable(weatherData) {
   const resultsContainer = document.getElementById("results-container");
+  resultsContainer.innerHTML = "";
   const table = document.createElement("table");
   table.classList.add("results-table");
   table.setAttribute("id", "results-table");
+  table.setAttribute("data-testid", "results-table");
   table.setAttribute("class", "results-table");
   table.style.borderCollapse = "collapse";
   table.style.textAlign = "center";
@@ -252,9 +300,16 @@ function presentDataOnUIAsATable(weatherData) {
 
   // add comment based on weather data - about temperature, wind speed, humidity, and min/max temperature
   const summaryContainer = document.getElementById("results-summary");
+  summaryContainer.innerHTML = "";
 
   const comment = document.createElement("p");
-  comment.innerHTML = `Weather for today:<br>`;
+
+  if (weatherData[0]?.city === undefined) {
+    comment.innerHTML = `Weather for today:<br>`;
+  } else {
+    comment.innerHTML = `Weather for <strong>${weatherData[0].city}</strong> today:<br>`;
+  }
+
   comment.setAttribute("id", "comment");
   comment.setAttribute("data-testid", "comment");
   comment.setAttribute("class", "comment");
@@ -337,9 +392,82 @@ function presentDataOnUIAsATable(weatherData) {
 }
 
 function getAndPresentRandomWeatherData() {
-  return getRandomSimpleWeatherData().then((data) => {
-    presentDataOnUIAsATable(data);
-    return data;
+  return getRandomSimpleWeatherData().then((response) => {
+    if (response.status === 200) {
+      return response.json().then((data) => {
+        presentDataOnUIAsATable(data);
+        removeErrorMessage();
+        return data;
+      });
+    } else {
+      storedWeatherData = [];
+      invokeActionsOnDifferentStatusCodes(response.status, response);
+      return response;
+    }
+  });
+}
+
+function getOnePastDayData() {
+  // find oldest day from storedWeatherData
+  const oldestDay = storedWeatherData[storedWeatherData.length - 1];
+  if (oldestDay === undefined) {
+    return;
+  }
+
+  if (storedWeatherData.length === 0) {
+    return;
+  }
+
+  const oldestDayDate = oldestDay.date;
+  const oneDayInPast = new Date(oldestDayDate);
+  oneDayInPast.setDate(oneDayInPast.getDate() - 1);
+  const oldestDayDateFormatted = oneDayInPast.toISOString().split("T")[0];
+
+  return getWeatherForCityWithPut(storedCityData, oldestDayDateFormatted, 1, 1).then((response) => {
+    if (response.status === 200) {
+      return response.json().then((data) => {
+        for (const row of data) {
+          storedWeatherData.push(row);
+        }
+        presentDataOnUIAsATable(storedWeatherData);
+        removeErrorMessage();
+        return data;
+      });
+    } else {
+      storedWeatherData = [];
+      invokeActionsOnDifferentStatusCodes(response.status, response);
+      return response;
+    }
+  });
+}
+
+let storedWeatherData = [];
+let storedCityData = undefined;
+
+function getAndDisplayWeatherForCity() {
+  const city = document.getElementById("city").value;
+  const futureDays = document.getElementById("futureDays").value;
+  storedCityData = city;
+  return getWeatherForCity(city, undefined, 1, futureDays).then((response) => {
+    if (response.status === 200) {
+      return response.json().then((data) => {
+        presentDataOnUIAsATable(data);
+        const getWeatherPastDayButton = document.getElementById("get-weather-past-day");
+        if (getWeatherPastDayButton) {
+          getWeatherPastDayButton.style.display = "block";
+        }
+        storedWeatherData = data;
+        storedCityData = city;
+        removeErrorMessage();
+        return data;
+      });
+    } else {
+      storedWeatherData = [];
+      const resultsContainer = document.getElementById("results-container");
+      resultsContainer.innerHTML = "";
+      invokeActionsOnDifferentStatusCodes(response.status, response);
+      return response;
+    }
   });
 }
 

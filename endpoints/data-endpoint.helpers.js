@@ -13,13 +13,27 @@ const { logDebug } = require("../helpers/logger-api");
 const { generateEcommerceShoppingCart } = require("../helpers/generators/ecommerce-shopping-cart.generator");
 const { generateRandomUser } = require("../helpers/generators/user.generator");
 const { generateRandomSimpleBusTicketCard } = require("../helpers/generators/bus-ticket.generator");
+const { generateRandomStudentsData } = require("../helpers/generators/student-grades-manager.generator");
 
-function generateWeatherResponse(queryParams, simplified = false, totalRandom = false) {
+function generateWeatherResponseBasedOnQuery(queryParams, simplified = false, totalRandom = false) {
   const days = parseInt(queryParams.get("days"));
   const future = parseInt(queryParams.get("futuredays"));
   const date = queryParams.get("date");
+  const city = queryParams.get("city");
   const limitedDays = Math.min(days || 31, 90);
   let limitedFutureDays = Math.min(future || 0, 90);
+  return generateWeatherResponse(date, days, city, limitedDays, limitedFutureDays, simplified, totalRandom);
+}
+
+function generateWeatherResponse(
+  date,
+  days,
+  city,
+  limitedDays,
+  limitedFutureDays,
+  simplified = false,
+  totalRandom = false
+) {
   logDebug(`Requested weather data for:`, { days, limitedDays, limitedFutureDays, date });
 
   let weatherData = [];
@@ -46,10 +60,18 @@ function generateWeatherResponse(queryParams, simplified = false, totalRandom = 
     }
   }
 
+  if (city !== null && city !== undefined && city !== "") {
+    weatherData = weatherData.map((weather) => {
+      weather.city = city;
+      return weather;
+    });
+  }
+
   if (simplified) {
     weatherData = weatherData.map((weather) => {
       return {
         date: weather.date,
+        city: weather.city ?? undefined,
         temperature: weather.temperatureRaw,
         temperatureMin: weather.highLowTemperature.temperatureLow,
         temperatureMax: weather.highLowTemperature.temperatureHigh,
@@ -85,7 +107,10 @@ function handleData(req, res, isAdmin) {
   ) {
     const queryParams = new URLSearchParams(req.url.split("?")[1]);
 
-    const weatherData = generateWeatherResponse(queryParams, req.url.includes("/api/v1/data/weather-simple"));
+    const weatherData = generateWeatherResponseBasedOnQuery(
+      queryParams,
+      req.url.includes("/api/v1/data/weather-simple")
+    );
 
     res.status(HTTP_OK).json(weatherData);
     return;
@@ -120,7 +145,42 @@ function handleData(req, res, isAdmin) {
     (req.url.includes("/api/v1/data/random/weather") || req.url.includes("/api/v1/data/random/weather-simple"))
   ) {
     const queryParams = new URLSearchParams(req.url.split("?")[1]);
-    const weatherData = generateWeatherResponse(queryParams, req.url.includes("weather-simple"), true);
+    const weatherData = generateWeatherResponseBasedOnQuery(queryParams, req.url.includes("weather-simple"), true);
+    res.status(HTTP_OK).json(weatherData);
+    return;
+  }
+
+  if (
+    (req.method === "POST" || req.method === "PUT") &&
+    (req.url.includes("/api/v1/data/random/weather") || req.url.includes("/api/v1/data/random/weather-simple"))
+  ) {
+    const days = parseInt(req.body.days);
+    const futuredays = parseInt(req.body.futuredays);
+
+    if (days < 1) {
+      res.status(400).json({ error: "Days must be greater than 0" });
+      return;
+    }
+
+    if (futuredays < 1) {
+      res.status(400).json({ error: "Future days must be greater than 0" });
+      return;
+    }
+
+    const city = req.body.city;
+    const date = req.body.date;
+    const limitedDays = Math.min(days || 31, 90);
+    let limitedFutureDays = Math.min(futuredays || 0, 90);
+
+    const weatherData = generateWeatherResponse(
+      date,
+      days,
+      city,
+      limitedDays,
+      limitedFutureDays,
+      req.url.includes("weather-simple"),
+      true
+    );
     res.status(HTTP_OK).json(weatherData);
     return;
   }
@@ -149,6 +209,15 @@ function handleData(req, res, isAdmin) {
   if (req.method === "GET" && req.url.includes("/api/v1/data/random/simple-bus-ticket-card")) {
     const busTicketCard = generateRandomSimpleBusTicketCard();
     res.status(HTTP_OK).json(busTicketCard);
+    return;
+  }
+
+  if (req.method === "GET" && req.url.includes("/api/v1/data/random/students")) {
+    const queryParams = new URLSearchParams(req.url.split("?")[1]);
+    const seed = queryParams.get("seed");
+
+    const studentsData = generateRandomStudentsData({ seed });
+    res.status(HTTP_OK).json(studentsData);
     return;
   }
   return;

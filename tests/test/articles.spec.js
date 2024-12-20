@@ -213,6 +213,38 @@ describe("Endpoint /articles", () => {
       expect(response.status, JSON.stringify(response.body)).to.equal(422);
     });
 
+    it("PUT /articles/:id - should create new article with already existing title [feat: PW2]", async () => {
+      // Arrange:
+      const testData1 = generateValidArticleData();
+      testData1.user_id = userId;
+
+      // Act:
+      const response1 = await request.put(`${baseUrl}/412321`).set(headers).send(testData1);
+
+      // Assert:
+      expect(response1.status).to.equal(201);
+
+      // poll for the article
+      await invokeRequestUntil(
+        response1.body.id,
+        async () => {
+          return await request.get(`${baseUrl}/${response1.body.id}`).set(headers);
+        },
+        (response) => {
+          return response.status === 200;
+        }
+      ).then((response) => {
+        expect(response.status, JSON.stringify(response.body)).to.equal(200);
+        return response;
+      });
+
+      // Act:
+      const response2 = await request.put(`${baseUrl}/412321`).set(headers).send(testData1);
+
+      // Assert:
+      expect(response2.status).to.equal(201);
+    });
+
     it("PATCH /articles/:id - should update article title to already existing one [feat: PW2]", async () => {
       // Arrange:
       const testData1 = generateValidArticleData();

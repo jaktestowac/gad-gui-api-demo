@@ -55,6 +55,9 @@
 
     <br />
     <br />
+    <div style="position: absolute; right: 270px;">
+        <div id="alerts-placeholder" style="display: flex; flex-direction: column; position: absolute;"></div>
+    </div>
     <br />
     <div align="center">
         <h2 style="padding: 0px; margin-bottom: 0px;">Random Weather (from API)</h2>
@@ -65,6 +68,11 @@
         <div id="results-container">
         </div>
         <div id="results-summary">
+        </div>
+    </div>
+    <br />
+    <div align="center">
+        <div id="message-container" class="simpleInfoBox" style="display: none;">
         </div>
     </div>
     <br />
@@ -123,6 +131,8 @@
 <script type="text/javascript" src="./js/display-canvas.js"></script>
 <script type="text/javascript" src="./js/random-weather.js"></script>
 <script type="text/javascript" src="/js/helpers/reports.js"></script>
+<script type="text/javascript" src="./js/alerts.js"></script>
+<script type="text/javascript" src="./js/response-helpers.js"></script>
 <script>
     getAndPresentRandomWeatherData().then((data) => {
         // Generate DOCX button

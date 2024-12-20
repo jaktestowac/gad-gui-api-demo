@@ -18,7 +18,7 @@ function displaySimpleAlert(text) {
   }, 3000);
 }
 
-function displaySimpleAlertWithCustomMessage(text, color) {
+function displaySimpleAlertWithCustomMessage(text, color, disableOnClick = false) {
   const alertDiv = document.createElement("div");
   alertDiv.classList.add("simple-alert-on-left-1");
   alertDiv.textContent = text;
@@ -35,9 +35,11 @@ function displaySimpleAlertWithCustomMessage(text, color) {
     alertDiv.remove();
   }, 3000);
 
-  alertDiv.onclick = function () {
-    displaySimpleAlertWithRandomFlavour();
-  };
+  if (disableOnClick === false) {
+    alertDiv.onclick = function () {
+      displaySimpleAlertWithRandomFlavour();
+    };
+  }
 }
 
 function displaySimpleAlertWithRandomFlavour() {
