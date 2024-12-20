@@ -93,12 +93,51 @@ const advertStatisticsBanner = `<div class="popup-overlay">
 </div>
 </div>`;
 
+const advertBookStoreBanner = `<div class="popup-overlay">
+<div class="popup-container" style="background-image: url('../images/advert6-bg.jpg'); ">
+
+  <div class="right" style="color: black;">
+    <div class="skip-button" style="color: white;">Skip in ${remainingTime}s</div>
+    <p class="logo">🦎GAD</p>
+    <h2 class="popup-heading">World of Books!</h2>
+    <p class="description"> 
+      Check out the infinite world of books!<br>
+      Hundreds of books are waiting for you!<br>
+      Click the button to visit the shop 👇
+    </p>
+
+    <a href="/book-shop" class="visit-button">Visit Book Shop!</a>
+  </div>
+</div>
+</div>`;
+
+const advertBookStoreBanner2 = `<div class="popup-overlay">
+<div class="popup-container" style="background-image: url('../images/advert7-bg.jpg'); ">
+
+  <div class="right" style="color: black;">
+    <div class="skip-button" style="color: white;">Skip in ${remainingTime}s</div>
+    <p class="logo">🦎GAD</p>
+    <h2 class="popup-heading">World of Books!</h2>
+    <p class="description"> 
+      Check out the infinite world of books!<br>
+      Hundreds of books are waiting for you!<br>
+      Click the button to visit the shop 👇
+    </p>
+
+    <a href="/book-shop" class="visit-button">Visit Book Shop!</a>
+  </div>
+</div>
+</div>`;
+
 const listOfBanners = [
   advertArticlesBanner1,
   advertCommentsBanner,
   advertStatisticsBanner,
   advertSudokuBanner,
   advertMinesweeperBanner,
+  advertBookStoreBanner,
+  advertBookStoreBanner2,
+  advertBookStoreBanner,
 ];
 
 function wasSkipped() {
