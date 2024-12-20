@@ -965,6 +965,13 @@ function generateRandomStudentsData(options) {
   const classes = generateRandomClasses(dataGenerator, generatorOptions.minClasses, generatorOptions.maxClasses);
   const studentsInClasses = generateRandomStudentsInClasses(dataGenerator, students, classes);
   const grades = generateRandomGrades(dataGenerator, students, subjects);
+
+  logDebug("Generated random students data:", {
+    students: students.length,
+    subjects: subjects.length,
+    classes: classes.length,
+  });
+
   return {
     students,
     subjects,

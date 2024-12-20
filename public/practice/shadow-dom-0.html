@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD - Simple Shadow DOM</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/practice-controls.css" />
+    <style>
+        label {
+            font-weight: bold;
+        }
+
+        input {
+            margin: 5px;
+            padding: 5px;
+            width: 200px !important;
+        }
+
+        button {
+            padding: 5px;
+            background-color: lightblue;
+            border: none;
+            cursor: pointer;
+        }
+
+        .regular-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            margin: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <div align="center">
+        <h2>Simple Shadow DOM</h2>
+        <br />
+        <div>💡 Below is a simple example of regular elements:</div>
+        <br />
+        <div id="regular-host" class="regular-host"></div>
+        <br />
+        <div>💡 Below is a simple example of Shadow DOM:</div>
+        <br />
+        <div id="shadow-host"></div>
+
+    </div>
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 24px">
+        <a href="https://jaktestowac.pl" style="color: dimgray">
+            <span style="display: flex; align-items: center; justify-self: center; font-size: medium">
+                <img src="/data/icons/favicon.png" style="width: 25px !important; height: 25px !important; padding: 0; border: none" alt="" />&nbsp&nbspjaktestowac.pl
+            </span>
+        </a>
+    </div>
+</body>
+
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="./js/practice-common.js"></script>
+<script type="text/javascript" src="./js/test-data.js"></script>
+<script type="text/javascript" src="./js/prepare-elements.js"></script>
+
+<script>
+    addShadowElements()
+    addRegularElements()
+
+    function addShadowElements() {
+        const shadowHost = document.getElementById('shadow-host');
+        const shadowRoot = shadowHost.attachShadow({
+            mode: 'open'
+        });
+
+        const divContainer = document.createElement('div');
+
+        const header = document.createElement('h3');
+        header.textContent = 'Hello from Shadow DOM!';
+        divContainer.appendChild(header);
+
+        const label = document.createElement('label');
+        label.textContent = 'Enter your name: ';
+        const input = document.createElement('input');
+        input.id = 'shadow-name-input';
+        input.type = 'text';
+        const button = document.createElement('button');
+        button.id = 'shadow-submit';
+        button.textContent = 'Submit';
+
+        const shadowResultsContainer = document.createElement('div');
+        shadowResultsContainer.id = 'shadow-results';
+        shadowResultsContainer.classList.add('shadow-results-container');
+        button.addEventListener('click', () => {
+            shadowResultsContainer.textContent = `Hello, ${input.value}!`;
+        });
+
+        divContainer.appendChild(label);
+        divContainer.appendChild(input);
+        divContainer.appendChild(button);
+
+        const style = document.createElement('style');
+        style.textContent = `
+        divContainer {
+            border: 1px solid black;
+            padding: 10px;
+            margin: 10px;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        shadow-results-container {
+            margin-top: 10px;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        h3 {
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        label {
+            font-weight: bold;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        input {
+            margin: 5px;
+            padding: 5px;
+        }
+
+        button {
+            padding: 5px;
+            background-color: lightyellow;
+            border: none;
+            cursor: pointer;
+            font-family: 'Times New Roman', Times, serif;
+        }
+    `;
+        shadowRoot.appendChild(style);
+        shadowRoot.appendChild(divContainer);
+        divContainer.appendChild(shadowResultsContainer);
+
+    }
+
+    function addRegularElements() {
+        const regularHost = document.getElementById('regular-host');
+
+        const header = document.createElement('h3');
+        header.textContent = 'Hello from regular DOM!';
+        regularHost.appendChild(header);
+
+        const divContainer = document.createElement('div');
+        divContainer.classList.add('regular-container');
+
+        const label = document.createElement('label');
+        label.textContent = 'Enter your name: ';
+        const input = document.createElement('input');
+        input.id = 'name-input';
+        input.type = 'text';
+        const button = document.createElement('button');
+        button.id = 'submit';
+        button.textContent = 'Submit';
+
+        const resultsContainer = document.createElement('div');
+        resultsContainer.id = 'results';
+        resultsContainer.classList.add('results-container-div');
+        button.addEventListener('click', () => {
+            resultsContainer.textContent = `Hello, ${input.value}!`;
+        });
+
+        divContainer.appendChild(label);
+        divContainer.appendChild(input);
+        divContainer.appendChild(button);
+
+        regularHost.appendChild(divContainer);
+        regularHost.appendChild(resultsContainer);
+    }
+</script>
+
+</html>
