@@ -123,3 +123,12 @@ button:active {
   font-style: italic;
   padding: 4px;
 }
+
+.today-cell {
+  background-color: #ddebd8;
+  font-weight: 600;
+}
+
+.today-row {
+  background-color: #ddebd8;
+}
