@@ -20,6 +20,7 @@
             margin: 5px;
             padding: 5px;
             width: 200px !important;
+            border: 1px solid black;
         }
 
         button {
@@ -36,6 +37,18 @@
             align-items: center;
             margin: 10px;
         }
+
+        .invalid-input {
+            border: 2px solid red !important;
+        }
+
+        .round-container {
+            margin-top: 10px;
+            border-radius: 14px;
+            padding: 10px;
+            width: 50%;
+            border: 3px solid rgb(226, 226, 226);
+        }
     </style>
 </head>
 
@@ -51,14 +64,19 @@
     <br />
     <div align="center">
         <h2>Simple Shadow DOM</h2>
+        <div class="round-container">
+            <div>💡 Below is a simple example of regular elements:</div>
+            <br />
+            <div id="regular-host" class="regular-host"></div>
+            <br />
+        </div>
         <br />
-        <div>💡 Below is a simple example of regular elements:</div>
-        <br />
-        <div id="regular-host" class="regular-host"></div>
-        <br />
-        <div>💡 Below is a simple example of Shadow DOM:</div>
-        <br />
-        <div id="shadow-host"></div>
+        <div class="round-container">
+            <div>💡 Below is a simple example of Shadow DOM:</div>
+            <br />
+            <div id="shadow-host"></div>
+            <br />
+        </div>
 
     </div>
     <br />
@@ -103,15 +121,25 @@
         label.textContent = 'Enter your name: ';
         const input = document.createElement('input');
         input.id = 'shadow-name-input';
+        input.setAttribute('data-testid', 'shadow-name-input');
         input.type = 'text';
         const button = document.createElement('button');
         button.id = 'shadow-submit';
+        button.setAttribute('data-testid', 'shadow-submit');
         button.textContent = 'Submit';
 
         const shadowResultsContainer = document.createElement('div');
         shadowResultsContainer.id = 'shadow-results';
+        shadowResultsContainer.setAttribute('data-testid', 'shadow-results');
         shadowResultsContainer.classList.add('shadow-results-container');
         button.addEventListener('click', () => {
+            if (input.value === '') {
+                input.classList.add('invalid');
+                shadowResultsContainer.textContent = 'Please enter your name!';
+                return;
+            }
+            input.classList.remove('invalid');
+
             shadowResultsContainer.textContent = `Hello, ${input.value}!`;
         });
 
@@ -145,6 +173,7 @@
         input {
             margin: 5px;
             padding: 5px;
+            border: 1px solid black;
         }
 
         button {
@@ -153,6 +182,10 @@
             border: none;
             cursor: pointer;
             font-family: 'Times New Roman', Times, serif;
+        }
+            
+        .invalid {
+            border: 2px solid red;
         }
     `;
         shadowRoot.appendChild(style);
@@ -173,22 +206,31 @@
 
         const label = document.createElement('label');
         label.textContent = 'Enter your name: ';
-        const input = document.createElement('input');
-        input.id = 'name-input';
-        input.type = 'text';
+        const regularInput = document.createElement('input');
+        regularInput.id = 'name-input';
+        regularInput.setAttribute('data-testid', 'name-input');
+        regularInput.type = 'text';
         const button = document.createElement('button');
         button.id = 'submit';
+        button.setAttribute('data-testid', 'submit');
         button.textContent = 'Submit';
 
         const resultsContainer = document.createElement('div');
         resultsContainer.id = 'results';
+        resultsContainer.setAttribute('data-testid', 'results');
         resultsContainer.classList.add('results-container-div');
         button.addEventListener('click', () => {
-            resultsContainer.textContent = `Hello, ${input.value}!`;
+            if (regularInput.value === '') {
+                regularInput.classList.add('invalid-input');
+                resultsContainer.textContent = 'Please enter your name!';
+                return;
+            }
+            regularInput.classList.remove('invalid-input');
+            resultsContainer.textContent = `Hello, ${regularInput.value}!`;
         });
 
         divContainer.appendChild(label);
-        divContainer.appendChild(input);
+        divContainer.appendChild(regularInput);
         divContainer.appendChild(button);
 
         regularHost.appendChild(divContainer);
