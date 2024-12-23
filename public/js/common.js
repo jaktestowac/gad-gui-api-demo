@@ -559,10 +559,12 @@ async function getGadReleases() {
 }
 
 function getNewestVersion(gadReleases, currentVersion) {
-  gadReleases.sort((a, b) => b.name.localeCompare(a.name));
+  // gadReleases.sort((a, b) => b.name.localeCompare(a.name));
+  gadReleases.sort((a, b) => compareVersions(b.name, a.name));
 
   const filteredVersions = gadReleases.filter((release) => {
-    return release.name > currentVersion;
+    // return release.name > currentVersion;
+    return isVersionANewer(release.name, currentVersion);
   });
 
   if (filteredVersions.length === 0) {
@@ -570,6 +572,7 @@ function getNewestVersion(gadReleases, currentVersion) {
     console.log(
       `[getNewestVersion] GAD (${currentVersion}) is up to date! Latest available version: ${gadReleases[0]?.name}`
     );
+    addLatestVersionCookie(gadReleases[0]?.name);
     return undefined;
   }
   filteredVersions.sort((a, b) => b.name.localeCompare(a.name));
@@ -581,7 +584,8 @@ function getNewerVersions(gadReleases, currentVersion) {
   gadReleases.sort((a, b) => b.name.localeCompare(a.name));
 
   const filteredVersions = gadReleases.filter((release) => {
-    return release.name > currentVersion;
+    // return release.name > currentVersion;
+    return isVersionANewer(release.name, currentVersion);
   });
 
   if (filteredVersions.length === 0) {
@@ -611,6 +615,54 @@ function displayNewerVersionAvailableMessage(currentVersion, latestVersion) {
   }
 }
 
+/**
+ * Compare two versions in format x.y.z (SemVer)
+ *
+ * @param {number} a
+ * @param {number} b
+ * @returns {number} 1 if a is newer, -1 if b is newer, 0 if versions are the same
+ */
+function compareVersions(a, b) {
+  const aParts = a.split(".");
+  const bParts = b.split(".");
+
+  for (let i = 0; i < 3; i++) {
+    const aPart = parseInt(aParts[i]);
+    const bPart = parseInt(bParts[i]);
+    if (aPart > bPart) {
+      return 1;
+    }
+    if (aPart < bPart) {
+      return -1;
+    }
+  }
+  return 0;
+}
+
+/**
+ * Check if version a is newer than version b
+ * @param {string} a
+ * @param {string} b
+ * @returns {boolean} true if a is newer than b
+ */
+function isVersionANewer(a, b) {
+  return compareVersions(a, b) === 1;
+}
+
+/**
+ * Checks for a newer version of the GAD application and updates the UI accordingly.
+ *
+ * This function performs the following steps:
+ * 1. Retrieves the current version of the GAD application.
+ * 2. Checks if the version information is already cached in cookies.
+ * 3. If cached data is available and valid, it uses the cached data to update the UI.
+ * 4. If cached data is not available or expired, it fetches the latest releases from the repository.
+ * 5. Compares the current version with the latest version and updates the UI to indicate if a newer version is available.
+ * 6. Updates the cookies with the latest version information.
+ *
+ * @param {boolean} [force=false] - If true, forces a check for the latest version even if cached data is available.
+ * @returns {Promise<void>} - A promise that resolves when the version check is complete.
+ */
 async function checkNewerVersion(force = false) {
   const versionInfoContainer = document.getElementById("versionInfoBox");
   if (versionInfoContainer === null) {
@@ -624,7 +676,7 @@ async function checkNewerVersion(force = false) {
     const versionUpToDate = getVersionStatusCookie();
     const latestVersionCookie = getLatestVersionCookie();
 
-    if (versionUpToDate === "1" && latestVersionCookie !== undefined) {
+    if (versionUpToDate === "1" && force === false && latestVersionCookie !== undefined) {
       // eslint-disable-next-line no-console
       console.log("Using cached cookie data. Latest:", latestVersionCookie);
       displayUpToDateMessage(currentVersion, latestVersionCookie);
@@ -669,6 +721,9 @@ async function checkNewerVersion(force = false) {
         }
         return;
       }
+
+      // eslint-disable-next-line no-console
+      console.log(`Found ${gadReleases.length} releases. Checking for newer version than current ${currentVersion}...`);
 
       const latestVersion = getNewestVersion(gadReleases, currentVersion);
       if (latestVersion !== undefined) {
@@ -838,10 +893,26 @@ function calculateLuminance(rgb) {
   return luminance;
 }
 
-// types:
-// 0 - info
-// 1 - warning
-// 2 - error
+/**
+ * Displays a temporary alert message on the left side of the screen.
+ * @param {string} text - The message text to display in the alert.
+ * @param {number} [type=0] - The type of alert to display:
+ *                           0: Success (green with success emoji)
+ *                           1: Warning (yellow with warning emoji)
+ *                           2: Error (red with failure emoji)
+ * @param {number} [timeout=3000] - Duration in milliseconds before the alert disappears.
+ * @description Creates a temporary alert div element with specified styling and message,
+ *              appends it to the #alerts-placeholder element, and removes it after the specified timeout.
+ * @example
+ * // Display a success message for 3 seconds
+ * displaySimpleAlert("Operation successful!", 0);
+ *
+ * // Display a warning message for 5 seconds
+ * displaySimpleAlert("Please check your input", 1, 5000);
+ *
+ * // Display an error message for 3 seconds
+ * displaySimpleAlert("Operation failed!", 2);
+ */
 function displaySimpleAlert(text, type = 0, timeout = 3000) {
   const alertDiv = document.createElement("div");
   alertDiv.classList.add("simple-alert-on-left");
