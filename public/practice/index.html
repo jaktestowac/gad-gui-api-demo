@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="/css/controls.css" />
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="/css/tools-style.css" />
     <link rel="stylesheet" href="./css/practice-controls.css" />
 </head>
 
@@ -43,7 +44,7 @@
     <div align="center">
         <table style="margin: 0 auto; width: auto;">
             <tr>
-                <th style="text-align: center; ">Simple Elements</th>
+                <th style="text-align: center; " id="simpleElements" class="anchorWithStickyNavbar">Simple Elements<a href="#simpleElements" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;">
                     <a href="./simple-elements.html" class="menu-link">
@@ -61,7 +62,7 @@
                 </td>
             </tr>
             <tr>
-                <th style="text-align: center; ">Elements with changing state</th>
+                <th style="text-align: center; " id="elementsChangingState" class="anchorWithStickyNavbar">Elements with changing state<a href="#elementsChangingState" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;">
                     <a href="./disabled-elements-1.html" class="menu-link">
@@ -79,7 +80,7 @@
                 </td>
             </tr>
             <tr>
-                <th style="text-align: center; ">Elements with changing state<br>(extended timeout and delayed)</th>
+                <th style="text-align: center; " id="elementsChangingStateExtended" class="anchorWithStickyNavbar">Elements with changing state<br>(extended timeout and delayed)<a href="#elementsChangingStateExtended" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;">
                     <a href="./not-present-disabled-elements-2.html" class="menu-link">
@@ -94,7 +95,7 @@
                 </td>
             </tr>
             <tr>
-                <th style="text-align: center;">Tables</th>
+                <th style="text-align: center;" id="tables" class="anchorWithStickyNavbar">Tables<a href="#tables" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;">
                     <a href="./simple-tables.html" class="menu-link">
@@ -121,7 +122,7 @@
                 </td>
             </tr>
             <tr>
-                <th style="text-align: center;">Slowly loaded data</th>
+                <th style="text-align: center;" id="slowlyLoadedData" class="anchorWithStickyNavbar">Slowly loaded data<a href="#slowlyLoadedData" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;">
                     <a href="./slowly-loaded-table-1.html" class="menu-link">
@@ -133,7 +134,7 @@
                 </td>
             </tr>
             <tr>
-                <th style="text-align: center;">Charts</th>
+                <th style="text-align: center;" id="charts" class="anchorWithStickyNavbar">Charts<a href="#charts" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;">
                     <a href="./charts-1.html" class="menu-link">
@@ -153,7 +154,7 @@
                 </td>
             </tr>
             <tr>
-                <th style="text-align: center;">Canvas</th>
+                <th style="text-align: center;" id="canvas" class="anchorWithStickyNavbar">Canvas<a href="#canvas" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;">
                     <a href="./canvas-1.html" class="menu-link">
@@ -165,7 +166,7 @@
                 </td>
             </tr>
             <tr>
-                <th style="text-align: center;">Drag & drop</th>
+                <th style="text-align: center;"  id="dragDrop" class="anchorWithStickyNavbar">Drag & drop<a href="#dragDrop" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;">
                     <a href="./drag-and-drop-1.html" class="menu-link">
@@ -186,7 +187,7 @@
                 </td>
             </tr>
             <tr>
-                <th style="text-align: center;">No IDs</th>
+                <th style="text-align: center;" id="noIds" class="anchorWithStickyNavbar">No IDs<a href="#noIds" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;">
                     <a href="./random-places-no-ids-1.html" class="menu-link">
@@ -195,7 +196,7 @@
                 </td>
             </tr>
             <tr>
-                <th style="text-align: center;">IFrames</th>
+                <th style="text-align: center;" id="iFrames" class="anchorWithStickyNavbar">IFrames<a href="#iFrames" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;">
                     <a href="./iframe-1.html" class="menu-link">
@@ -207,7 +208,7 @@
                 </td>
             </tr>
             <tr>
-                <th style="text-align: center;">Popup and alerts</th>
+                <th style="text-align: center;" id="popupAlerts" class="anchorWithStickyNavbar">Popup and alerts<a href="#popupAlerts" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;">
                     <a href="./alerts-1.html" class="menu-link">
@@ -216,7 +217,7 @@
                 </td>
             </tr>
             <tr>
-                <th style="text-align: center;">Shadow DOM</th>
+                <th style="text-align: center;" id="shadowDom" class="anchorWithStickyNavbar">Shadow DOM<a href="#shadowDom" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;">
                     <a href="./shadow-dom-0.html" class="menu-link">
@@ -231,7 +232,7 @@
                 </td>
             </tr>
             <tr>
-                <th style="text-align: center;">Custom elements</th>
+                <th style="text-align: center;" id="customElements" class="anchorWithStickyNavbar">Custom elements<a href="#customElements" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;">
                     <a href="./custom-elements.html" class="menu-link">
@@ -240,7 +241,7 @@
                 </td>
             </tr>
             <tr>
-                <th style="text-align: center;">Other challenges</th>
+                <th style="text-align: center;" id="otherChallenges" class="anchorWithStickyNavbar">Other challenges<a href="#otherChallenges" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;">
                     <a href="./simple-reservation-v1.html" class="menu-link">
@@ -264,7 +265,7 @@
                 </td>
             </tr>
             <tr>
-                <th style="text-align: center;">Mocking challenges</th>
+                <th style="text-align: center;" id="mocking" class="anchorWithStickyNavbar">Mocking challenges<a href="#mocking" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;">
                     <a href="./random-simple-user-v1.html" class="menu-link">
@@ -291,7 +292,7 @@
                 </td>
             </tr>
             <tr>
-                <th style="text-align: center;">Documents (docx, xlsx)</th>
+                <th style="text-align: center;" id="docs" class="anchorWithStickyNavbar">Documents (docx, xlsx)<a href="#docs" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;">
                     <a href="./random-weather-doc-v1.html" class="menu-link">

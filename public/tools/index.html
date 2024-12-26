@@ -33,7 +33,7 @@
                 <li><a href="../user.html?id=1">Single user</a></li>
                 <li><a href="../articles.html">Articles</a></li>
                 <li>
-                  <strong>Upload article:</strong>
+                  <strong id="uploadArticle" class="anchorWithStickyNavbar">Upload article:<a href="#uploadArticle" class="hash-link">#</a></strong>
                   <ul>
                     <li><a href="../articlesupload.html">drag and drop</a></li>
                     <li><a href="../fileupload.html">file upload (⚠️ needs `FEATURE_FILES` feature flag enabled)</a></li>
@@ -97,7 +97,7 @@
                   </ul>
                 </li>
                 <li>
-                  Other:
+                  <strong id="otherPages" class="anchorWithStickyNavbar">Other:<a href="#otherPages" class="hash-link">#</a></strong>
                   <ul>
                     <li><a href="/projects/simple-roi.html">Simple ROI calculator</a></li>
                     <li><a href="/projects/roi.html">Advanced ROI calculator</a></li>
@@ -118,7 +118,7 @@
             <div id="restore" class="containerTools">
               <h2 id="apiRestore" class="anchorWithStickyNavbar">API: 💣 Restore DB<a href="#apiRestore" class="hash-link">#</a></h2>
               <p>❗❗ Using/clicking endpoint below restores database. All changes will be lost! ❗❗</p>
-              Default:<br />
+              <span id="restoreDefault" class="anchorWithStickyNavbar">Default:<a href="#restoreDefault" class="hash-link">#</a></span><br />
               <a href="/api/restoreDB" target="_blank" rel="noopener"><strong>💣 Restore Default Database</strong> with sample data</a><br /><br />
 
               Other:<br />
@@ -169,7 +169,7 @@
                 <li><a href="/api/health/dbcheck">Check DataBase integrity</a></li>
               </ul>
 
-              <strong>Raw Api/Non-api Calls:</strong>
+              <strong id="rawApiCalls" class="anchorWithStickyNavbar">Raw Api/Non-api Calls:<a href="#rawApiCalls" class="hash-link">#</a></strong>
               <ul>
                 <li><a href="/api/stats/api">Api Calls stats</a></li>
                 <li><a href="/api/stats/api/details">Api Calls stats (detailed)</a></li>
@@ -183,7 +183,8 @@
 
               <a href="./swagger.html" id="swagger" target="_blank" rel="noopener">Swagger UI</a><br />
               <a href="schema/openapi_rest_demo.json" target="_blank" rel="noopener">Open API schema</a><br /><br />
-              External:<br /><br />
+
+              <strong id="external" class="anchorWithStickyNavbar">External:<a href="#external" class="hash-link">#</a></strong><br /><br />
               <a href="https://editor.swagger.io/#?url=schema/openapi_rest_demo.json" id="swaggerEditor" target="_blank" rel="noopener">Swagger Editor (external)</a><br />
             </div>
             <div class="containerTools">
