@@ -1,1 +1,1 @@
-checkRelease();
+checkRelease(false);

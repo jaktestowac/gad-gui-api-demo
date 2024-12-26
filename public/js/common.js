@@ -255,11 +255,11 @@ function addCookie(cookieName, value, daysOfValidity = 9999) {
 }
 
 function addVersionStatusCookie(status) {
-  addCookie("versionStatus", `${status}`, 0.005);
+  addCookie("versionStatus", `${status}`, 5 / 1440);
 }
 
 function addLatestVersionCookie(version) {
-  addCookie("versionLatest", version, 7);
+  addCookie("versionLatest", version, 2);
 }
 
 function getVersionStatusCookie() {
@@ -575,13 +575,15 @@ function getNewestVersion(gadReleases, currentVersion) {
     addLatestVersionCookie(gadReleases[0]?.name);
     return undefined;
   }
-  filteredVersions.sort((a, b) => b.name.localeCompare(a.name));
+  // filteredVersions.sort((a, b) => b.name.localeCompare(a.name));
+  filteredVersions.sort((a, b) => compareVersions(b.name, a.name));
   const latestVersion = filteredVersions[0];
   return latestVersion;
 }
 
 function getNewerVersions(gadReleases, currentVersion) {
-  gadReleases.sort((a, b) => b.name.localeCompare(a.name));
+  // gadReleases.sort((a, b) => b.name.localeCompare(a.name));
+  gadReleases.sort((a, b) => compareVersions(b.name, a.name));
 
   const filteredVersions = gadReleases.filter((release) => {
     // return release.name > currentVersion;
@@ -595,7 +597,8 @@ function getNewerVersions(gadReleases, currentVersion) {
     );
     return [];
   }
-  filteredVersions.sort((a, b) => b.name.localeCompare(a.name));
+  // filteredVersions.sort((a, b) => b.name.localeCompare(a.name));
+  filteredVersions.sort((a, b) => compareVersions(b.name, a.name));
   return filteredVersions;
 }
 
@@ -664,6 +667,10 @@ function isVersionANewer(a, b) {
  * @returns {Promise<void>} - A promise that resolves when the version check is complete.
  */
 async function checkNewerVersion(force = false) {
+  if (force === true) {
+    console.log("Forcing version check...");
+  }
+
   const versionInfoContainer = document.getElementById("versionInfoBox");
   if (versionInfoContainer === null) {
     return;
@@ -734,6 +741,7 @@ async function checkNewerVersion(force = false) {
         addVersionStatusCookie(2); // new version
         addLatestVersionCookie(latestVersion.name);
       } else {
+        console.log("GAD is up to date!");
         addVersionStatusCookie(1); // version up to date
       }
 
