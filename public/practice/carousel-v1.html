@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/practice-controls.css" />
+</head>
+
+<body>
+    <style>
+        #carousel {
+            width: 400px;
+            height: 300px;
+            overflow: hidden;
+            position: relative;
+            margin: 20px auto;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .carousel-items {
+            display: flex;
+            transition: transform 1s ease-in-out;
+        }
+
+        .carousel-item {
+            width: 400px;
+            height: 300px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .carousel-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-bottom: 2px solid #ccc;
+        }
+
+        .carousel-item .carousel-button {
+            margin-top: 10px;
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .nav-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 1;
+            padding: 10px;
+        }
+
+        .prev {
+            left: 10px;
+        }
+
+        .next {
+            right: 10px;
+        }
+
+        .cart {
+            width: 400px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            padding: 2px;
+            margin: 2px auto;
+        }
+
+        .cart-header {
+            padding: 8px;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .cart-total {
+            font-weight: bold;
+            padding: 8px;
+        }
+    </style>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <div align="center">
+        <h2> Carousel with Items </h2>
+        <div id="carousel">
+            <button class="nav-button prev">❮</button>
+            <div class="carousel-items">
+                <div align="center" class="carousel-item">
+                    <img src="./images/img1.jpg" alt="Image 1" class="carousel-image">
+                    <button class="carousel-button" onclick="displayDetails(1)">Details</button>
+                </div>
+                <div align="center" class="carousel-item">
+                    <img src="./images/img2.jpg" alt="Image 2" class="carousel-image">
+                    <button class="carousel-button" onclick="displayDetails(2)">Details</button>
+                </div>
+                <div align="center" class="carousel-item">
+                    <img src="./images/img3.jpg" alt="Image 3" class="carousel-image">
+                    <button class="carousel-button" onclick="displayDetails(3)">Details</button>
+                </div>
+                <div align="center" class="carousel-item">
+                    <img src="./images/img4.jpg" alt="Image 4" class="carousel-image">
+                    <button class="carousel-button" onclick="displayDetails(4)">Details</button>
+                </div>
+                <div align="center" class="carousel-item">
+                    <img src="./images/img5.jpg" alt="Image 5" class="carousel-image">
+                    <button class="carousel-button" onclick="displayDetails(5)">Details</button>
+                </div>
+                <div align="center" class="carousel-item">
+                    <img src="./images/img6.jpg" alt="Image 6" class="carousel-image">
+                    <button class="carousel-button" onclick="displayDetails(6)">Details</button>
+                </div>
+                <div align="center" class="carousel-item">
+                    <img src="./images/img7.jpg" alt="Image 7" class="carousel-image">
+                    <button class="carousel-button" onclick="displayDetails(7)">Details</button>
+                </div>
+            </div>
+            <button class="nav-button next">❯</button>
+        </div>
+    </div>
+    <div align="center">
+        <div id="results-container" data-testid="results-container">
+        </div>
+        <div id="my-cart" data-testid="my-cart" class="cart">
+            <div class="cart-header"> My Cart </div>
+            <div id="cart-items" data-testid="cart-items" class="cart-items">
+            </div>
+            <button id="clear-cart" onclick="clearCart()" data-testid="clear-cart" class="button-primary-small" style="padding: 4px; margin: 4px;">Clear Cart</button>
+
+        </div>
+    </div>
+    <br />
+    <br />
+    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 24px">
+        <a href="https://jaktestowac.pl" style="color: dimgray">
+            <span style="display: flex; align-items: center; justify-self: center; font-size: medium">
+                <img src="/data/icons/favicon.png" style="width: 25px !important; height: 25px !important; padding: 0; border: none" alt="" />&nbsp&nbspjaktestowac.pl
+            </span>
+        </a>
+    </div>
+</body>
+
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="./js/practice-common.js"></script>
+
+<script>
+    const itemDetails = {
+        1: {
+            title: 'Hand Painted Mug',
+            description: 'This is a hand painted mug. It is a type of cup typically used for drinking hot beverages, such as coffee, hot chocolate, soup, or tea. Its a perfect gift for your loved ones.',
+            price: 10.00
+        },
+        2: {
+            title: 'Red Umbrella',
+            description: 'An umbrella or parasol is a folding canopy supported by wooden or metal ribs that is usually mounted on a wooden, metal, or plastic pole. It is designed to protect a person against rain or sunlight. The word "umbrella" typically refers to a device used for protection from rain.',
+            price: 20.00
+        },
+        3: {
+            title: 'Yellow Umbrella',
+            description: 'An umbrella that will protect You from the rain. It is a folding canopy supported by wooden or metal ribs that is usually mounted on a wooden, metal, or plastic pole. Its a must have for the rainy days.',
+            price: 21.00
+        },
+        4: {
+            title: 'Green Frog Sculpture',
+            description: 'A frog is any member of a diverse and largely carnivorous group of short-bodied, tailless amphibians composing the order Anura. The oldest fossil "proto-frog" appeared in the early Triassic of Madagascar, but molecular clock dating suggests their origins may extend further back to the Permian, 265 million years ago.',
+            price: 15.00
+        },
+        5: {
+            title: 'Hand Painted Flower Pot',
+            description: 'A flowerpot, flower pot, planter, or plant pot is a container in which flowers and other plants are cultivated and displayed. Historically, and still to a significant extent today, they are made from terracotta. Flowerpots are now often also made from plastic, wood, stone, or sometimes biodegradable material.',
+            price: 12.00
+        },
+        6: {
+            title: 'Big Teddy Bear',
+            description: 'A teddy bear is a stuffed toy in the form of a bear. Its a perfect gift for your loved ones.',
+            price: 30.00
+        },
+        7: {
+            title: 'Huge Robot Toy',
+            description: 'A robot is a machine—especially one programmable by a computer—capable of carrying out a complex series of actions automatically. Robots can be guided by an external control device or the control may be embedded within. Robots may be constructed on the lines of human form, but most robots are machines designed to perform a task with no regard to their aesthetics.',
+            price: 25.00
+        }
+    }
+
+    const carouselItems = document.querySelector('.carousel-items');
+    const items = document.querySelectorAll('.carousel-item');
+    const prevButton = document.querySelector('.prev');
+    const nextButton = document.querySelector('.next');
+    const resultContainer = document.getElementById('results-container');
+    const totalItems = items.length;
+    const itemWidth = 400;
+
+    const cartItems = []
+
+    const minIndex = -Math.floor(totalItems / 2);
+    const maxIndex = Math.floor(totalItems / 2);
+
+    let currentIndex = 0;
+
+    updateCart()
+    function clearCart() {
+        cartItems.length = 0;
+        updateCart();
+    }
+
+    function addToCart(idx) {
+        cartItems.push(itemDetails[idx]);
+        updateCart();
+    }
+
+    function updateCart() {
+        const cartItemsContainer = document.getElementById('cart-items');
+        cartItemsContainer.innerHTML = '';
+
+        if (cartItems.length === 0) {
+            const emptyCart = document.createElement('div');
+            emptyCart.textContent = 'Your cart is empty';
+            cartItemsContainer.appendChild(emptyCart);
+            return;
+        }
+
+        cartItems.forEach((item, idx) => {
+            const cartItem = document.createElement('div');
+            cartItem.textContent = `${idx + 1}. ${item.title} - $${item.price}`;
+            cartItemsContainer.appendChild(cartItem);
+        });
+
+        const total = cartItems.reduce((acc, item) => acc + item.price, 0);
+        const totalElement = document.createElement('div');
+        totalElement.textContent = `Total: $${total}`;
+        totalElement.classList.add('cart-total');
+        totalElement.setAttribute('data-testid', 'cart-total');
+        totalElement.setAttribute('id', 'cart-total');
+        cartItemsContainer.appendChild(totalElement);
+    }
+
+    function displayDetails(idx) {
+        const details = itemDetails[idx];
+        const title = document.createElement('h3');
+        title.textContent = details.title;
+        const description = document.createElement('p');
+        description.textContent = details.description;
+        const price = document.createElement('p');
+        price.textContent = `Price: $${details.price}`;
+        // add button to add to cart
+        const addToCartButton = document.createElement('button');
+        addToCartButton.textContent = 'Add to Cart';
+        addToCartButton.style.padding = '8px 16px';
+        addToCartButton.style.backgroundColor = '#007bff';
+        addToCartButton.style.color = 'white';
+        addToCartButton.style.border = 'none';
+        addToCartButton.style.borderRadius = '4px';
+        addToCartButton.style.cursor = 'pointer';
+        addToCartButton.addEventListener('click', () => {
+            addToCart(idx);
+        });
+
+        resultContainer.innerHTML = '';
+        resultContainer.appendChild(title);
+        resultContainer.appendChild(description);
+        resultContainer.appendChild(price);
+        resultContainer.appendChild(addToCartButton);
+    }
+
+    function updateCarousel() {
+        const offset = currentIndex * -itemWidth;
+        carouselItems.style.transform = `translateX(${offset}px)`;
+        resultContainer.innerHTML = '';
+    }
+
+    nextButton.addEventListener('click', () => {
+        currentIndex = currentIndex + 1 > maxIndex ? minIndex : currentIndex + 1;
+        updateCarousel();
+    });
+
+    prevButton.addEventListener('click', () => {
+        currentIndex = currentIndex - 1 < minIndex ? maxIndex : currentIndex - 1;
+        updateCarousel();
+    });
+
+    updateCarousel();
+</script>
+
+</html>

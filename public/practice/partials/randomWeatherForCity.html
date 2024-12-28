@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+
+<link rel="icon" href="/data/icons/favicon.png" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+<link rel="stylesheet" href="/css/controls.css" />
+<link rel="stylesheet" href="/css/style.css" />
+<link rel="stylesheet" href="/css/infoBoxes.css" />
+<link rel="stylesheet" href="../css/practice-controls.css" />
+<script src="/js/libs/charts/chart.js"></script>
+<style>
+    body {
+        font-family: 'Open Sans', sans-serif;
+        font-size: 16px;
+        color: #333;
+        background-color: #eeeeee;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .transactions-table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid black;
+        text-align: center;
+        font-size: 12px;
+    }
+
+    .transactions-row {
+        border: 1px solid black;
+    }
+
+    .table-cell {
+        padding: 4px !important;
+    }
+
+    .results-table {
+        max-width: 700px;
+        border-collapse: collapse;
+        border: 1px solid black;
+        text-align: center;
+        font-size: 14px;
+    }
+</style>
+
+<body>
+    <div style="position: absolute; right: 270px;">
+        <div id="alerts-placeholder" style="display: flex; flex-direction: column; position: absolute;"></div>
+    </div>
+    <div align="center">
+        <span style="display: flex; align-items: center; justify-content: center; flex-direction: row;">
+            <span style="display: flex; align-items: center; justify-content: center;">
+                <label for="city" style="padding: 4px; margin: 4px;">City:</label>
+                <select id="city" data-testid="city" name="city" style="width: 100px;padding: 4px;margin: 4px;">
+                    <option value="Warsaw">Warsaw</option>
+                    <option value="Berlin">Berlin</option>
+                    <option value="Paris">Paris</option>
+                    <option value="London">London</option>
+                    <option value="Madrid">Madrid</option>
+                    <option value="Rome">Rome</option>
+                    <option value="Lisbon">Lisbon</option>
+                    <option value="Athens">Athens</option>
+                    <option value="Moscow">Moscow</option>
+                    <option value="Stockholm">Stockholm</option>
+                    <option value="Oslo">Oslo</option>
+                    <option value="Helsinki">Helsinki</option>
+                    <option value="Copenhagen">Copenhagen</option>
+                    <option value="Dublin">Dublin</option>
+                    <option value="Reykjavik">Reykjavik</option>
+                    <option value="Tallinn">Tallinn</option>
+                    <option value="Riga">Riga</option>
+                    <option value="Vilnius">Vilnius</option>
+                    <option value="Kiev">Kiev</option>
+                    <option value="Minsk">Minsk</option>
+                    <option value="Sofia">Sofia</option>
+                    <option value="Bucharest">Bucharest</option>
+                    <option value="Budapest">Budapest</option>
+                    <option value="Prague">Prague</option>
+                    <option value="Vienna">Vienna</option>
+                    <option value="Bratislava">Bratislava</option>
+                    <option value="Ljubljana">Ljubljana</option>
+                    <option value="Zagreb">Zagreb</option>
+                    <option value="Belgrade">Belgrade</option>
+                    <option value="Sarajevo">Sarajevo</option>
+                    <option value="Podgorica">Podgorica</option>
+                    <option value="Pristina">Pristina</option>
+                    <option value="Skopje">Skopje</option>
+                </select>
+            </span>
+            <span style="display: flex; align-items: center; justify-content: center;">
+                <label for="futureDays" style="padding: 4px; margin: 4px;">Days:</label>
+                <input type="number" id="futureDays" name="futureDays" value="2" style="width: 50px;padding: 4px;margin: 4px;" min="1" max="7" />
+            </span>
+        </span>
+        <button id="get-weather" data-testid="get-weather" class="button-primary-small" style="padding: 4px; margin: 4px;" onclick="getAndDisplayWeatherForCity()">Get Weather</button>
+    </div>
+    <div align="center">
+        <div id="results-container">
+        </div>
+        <button id="get-weather-past-day" data-testid="get-weather-past-day" class="button-primary-small" style="padding: 4px; margin: 4px;display: none;" onclick="getOnePastDayData()">Get one more day from past</button>
+        <div id="results-summary">
+        </div>
+    </div>
+    <br />
+    <div align="center">
+        <div id="business-context">
+            <span class="simpleInfoBox" style="font-size: 16px; ">PS. See sample business context!&nbsp;
+                <span class="span-button toggleSpoilerButton" onclick="toggleSpoiler('businessContext', this)">Show context!</span></span>
+            <span>
+                <span id="businessContext" style="display:none;"><br />
+                    <div class="simpleInfoBox1">
+                        <div align="left" style="width: 600px;">
+                            <h4>Business Context (Summary)</h4>
+                            <p>
+                                This page represents a <strong>simplified weather forecast</strong> for a weather application.</br>
+                                It integrates API data with frontend logic to:
+                            <ul>
+                                <li>Display weather details for today</li>
+                                <li>Calculate and display mean values</li>
+                                <li>Provide a descriptive summary</li>
+                            </ul>
+                            </p>
+
+                            <h4>Key Highlights</h4>
+                            <ul>
+                                <li><strong>API:</strong> The API provides weather details (<strong>date</strong>, <strong>temperature</strong>, <strong>temperatureMin</strong>, <strong>temperatureMax</strong>, <strong>humidity</strong>, <strong>dayLength</strong>, <strong>windSpeed</strong>, <strong>windSpeedRange</strong>)</li>
+                                <li><strong>UI with Core Logic:</strong> The frontend calculates <strong>mean values</strong> and provides a <strong>descriptive summary</strong> for the weather forecast.</li>
+                                <li><strong>Risks:</strong> The frontend logic is critical for user satisfaction and weather accuracy.</li>
+                                <li><strong>Testing Relevance:</strong>
+                                    <ul>
+                                        <li>Verify accuracy of frontend calculations (mean values).</li>
+                                        <li>Ensure proper integration and display of API data.</li>
+                                        <li>Wind Speed Range (km/h)</code> possible values: <code>0-5 km/h</code>, <code>5-10 km/h</code>, <code>10-15 km/h</code>, ..., up to <code>40+ km/h</code></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </span>
+            </span>
+        </div>
+    </div>
+    <br />
+    <div align="center">
+        <div id="message-container" class="simpleInfoBox" style="display: none;">
+        </div>
+    </div>
+    <br />
+</body>
+
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="../js/practice-common.js"></script>
+<script type="text/javascript" src="../js/display-canvas.js"></script>
+<script type="text/javascript" src="../js/random-weather.js"></script>
+<script type="text/javascript" src="../js/alerts.js"></script>
+<script type="text/javascript" src="../js/response-helpers.js"></script>
+
+</html>
