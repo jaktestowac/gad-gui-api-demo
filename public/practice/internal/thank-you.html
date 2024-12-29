@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD - Thank You for Submission!</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="../css/practice-controls.css" />
+    <style>
+        .info-box-icon {
+            width: 50px;
+            height: 50px;
+            color: #189e00;
+        }
+
+        .summary {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 15px;
+            background: #f9f9f9;
+        }
+
+        .summary h3 {
+            margin-top: 0;
+        }
+
+        .summary p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <div align="center">
+        <h2>Thank You for Submission!</h2>
+    </div>
+    <div align="center">
+        <div id="results-container">
+        </div>
+    </div>
+    <br />
+    <div>
+        <div align="center">
+            <strong><a href="/practice" class="btn btn-primary">Go to Home Page 🏠</a></strong>
+        </div>
+    </div>
+    <br />
+    <br />
+    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 24px">
+        <a href="https://jaktestowac.pl" style="color: dimgray">
+            <span style="display: flex; align-items: center; justify-self: center; font-size: medium">
+                <img src="/data/icons/favicon.png" style="width: 25px !important; height: 25px !important; padding: 0; border: none" alt="" />&nbsp&nbspjaktestowac.pl
+            </span>
+        </a>
+    </div>
+</body>
+
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="../js/practice-common.js"></script>
+<script>
+    // get parameters from url
+    const urlParams = new URLSearchParams(window.location.search);
+    const ref = urlParams.get('ref'); const data = urlParams.get('data'); function updatePageOnRef(ref, rawData) {
+        if (ref === 'multi-step-form') {
+            const data = JSON.parse(atob(rawData))
+            const results = document.getElementById('results-container')
+            results.innerHTML = ` <div class="info-box info-box-success">
+            <div class="info-box-icon">
+                <i class="fa-solid fa-circle-check fa-4x"></i>
+            </div>
+            <div class="info-box-content">
+                <h3 class="info-box-title">Thank you ${data.name ?? ""} for submitting the form!</h3>
+                <p class="info-box-text">We will get back to you shortly.</p>
+            </div>
+
+            <div class="summary" id="summary">
+                <p><strong>Name:</strong> ${data.name || "[NOT SET]"}</p>
+                <p><strong>Email:</strong> ${data.email || "[NOT SET]"}</p>
+                <p><strong>Favorite Food:</strong> ${data.favoriteFood || "[NOT SET]"}</p>
+                <p><strong>Country:</strong> ${data.country || "[NOT SET]"}</p>
+                <p><strong>City:</strong> ${data.city || "[NOT SET]"}</p>
+                <p><strong>Job Title:</strong> ${data.jobTitle || "[NOT SET]"}</p>
+                <p><strong>Years of Experience:</strong> ${data.yearsExperience || "[NOT SET]"}</p>
+                <p><strong>Hobbies:</strong> ${data.hobbies || "[NOT SET]"}</p>
+                <p><strong>Interests:</strong> ${data.interests || "[NOT SET]"}</p>
+            </div>
+    </div>
+    `
+        }
+    }
+
+    updatePageOnRef(ref, data)
+</script>
+
+</html>

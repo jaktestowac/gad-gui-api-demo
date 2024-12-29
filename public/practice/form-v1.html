@@ -1,0 +1,167 @@
+<head>
+    <title>🦎 GAD - Multi-Step Form with Summary</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/practice-controls.css" />
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+    <style>
+        .form-container {
+            width: 80%;
+            margin: auto;
+        }
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        select,
+        input[type="text"],
+        input[type="email"],
+        input[type="number"] {
+            padding: 10px;
+            margin-bottom: 10px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .form-navigation {
+            margin-top: 20px;
+        }
+
+        .form-navigation button {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .form-navigation button.disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .summary {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 15px;
+            background: #f9f9f9;
+        }
+
+        .summary h3 {
+            margin-top: 0;
+        }
+
+        .summary p {
+            margin: 5px 0;
+        }
+    </style>
+
+    <body>
+        <br />
+        <br />
+        <br />
+        <div style="position: absolute; right: 270px;">
+            <div id="alerts-placeholder" style="display: flex; flex-direction: column; position: absolute;"></div>
+        </div>
+        <div align="center">
+            <h2>Multi-Step Form with Summary</h2>
+        </div>
+        <div class="form-container">
+            <form id="multiStepForm">
+                <div class="step active">
+                    <h3>Step 1: Personal Information</h3>
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" required>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" required>
+                    <p id="emailError" style="color: red; display: none;">Please enter a valid email address.</p>
+                </div>
+
+                <div class="step">
+                    <h3>Step 2: Preferences</h3>
+                    <label for="autocomplete">Favorite Food:</label>
+                    <input type="text" id="autocomplete" placeholder="Type to search...">
+                </div>
+
+                <div class="step">
+                    <h3>Step 3: Location</h3>
+                    <label for="country">Country:</label>
+                    <select id="country" required>
+                        <option value="">Select a country</option>
+
+                    </select>
+                    <label for="city">City:</label>
+                    <select id="city" disabled required>
+                        <option value="">Select a city</option>
+                    </select>
+                </div>
+
+                <div class="step">
+                    <h3>Step 4: Employment Information</h3>
+                    <label for="jobTitle">Job Title:</label>
+                    <input type="text" id="jobTitle" placeholder="Enter your job title" required>
+                    <label for="yearsExperience">Years of Experience:</label>
+                    <input type="number" id="yearsExperience" placeholder="Enter years of experience" required>
+                </div>
+
+                <div class="step">
+                    <h3>Step 5: Hobbies and Interests</h3>
+                    <label for="hobbies">Hobbies:</label>
+                    <input type="text" id="hobbies" placeholder="E.g., Reading, Traveling">
+                    <label for="interests">Interests:</label>
+                    <input type="text" id="interests" placeholder="E.g., Technology, Art">
+                </div>
+
+                <div class="step">
+                    <h3>Summary</h3>
+                    <div class="summary" id="summary">
+                    </div>
+                    <p>Please confirm that the information provided is accurate:</p>
+                    <label>
+                        <input type="checkbox" id="confirmationCheckbox" required>
+                        I confirm the information is correct.
+                    </label>
+                </div>
+
+                <div class="form-navigation">
+                    <button type="button" id="prevButton" class="disabled">Previous</button>
+                    <button type="button" id="nextButton">Next</button>
+                    <button type="button" id="submitButton" style="display: none;">Submit</button>
+                </div>
+            </form>
+        </div>
+    </body>
+
+
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+    <script type="text/javascript" src="./js/practice-common.js"></script>
+    <script type="text/javascript" src="./js/test-data.js"></script>
+    <script type="text/javascript" src="./js/alerts.js"></script>
+    <script type="text/javascript" src="./js/form-v1.js"></script>
+    <script>
+        updateSteps();
+    </script>
+
+    </html>
