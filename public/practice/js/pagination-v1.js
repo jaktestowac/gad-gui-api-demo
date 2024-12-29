@@ -1,4 +1,4 @@
-const data = [
+const predefinedData = [
   {
     id: 1,
     name: "John Doe",
@@ -881,9 +881,11 @@ const data = [
   },
 ];
 
+let data = predefinedData;
+
 let currentPage = 1;
 const rowsPerPage = 10;
-let filteredData = [...data];
+let filteredData = [];
 let selectedFilters = { name: [], role: [], status: [] };
 let sortColumn = null;
 let sortDirection = "asc";
@@ -932,6 +934,9 @@ function populateDropdownItems(dropdownItemsContainer, type, filter = "") {
     .map((row) => row[type])
     .filter((value, index, self) => self.indexOf(value) === index)
     .filter((value) => value?.toLowerCase().includes(filter.toLowerCase()));
+
+  // sort alphabetically
+  filteredOptions.sort((a, b) => a.localeCompare(b));
 
   filteredOptions.forEach((value) => {
     const item = document.createElement("div");
@@ -1030,7 +1035,7 @@ function renderTable() {
     const tr = document.createElement("tr");
     tr.innerHTML = `
                 <td>${row.id}</td>
-                <td>${row.name}</td>
+                <td>${row.name ?? "[NOT SET]"}</td>
                 <td>${row.role ?? "[NOT SET]"}</td>
                 <td>${row.location ?? "[NOT SET]"}</td>
                 <td>${row.department ?? "[NOT SET]"}</td>
@@ -1096,6 +1101,14 @@ dropdownSearchName.addEventListener("input", (e) =>
   populateDropdownItems(dropdownItemsNamesContainer, "name", e.target.value)
 );
 
+dropdownSearchRole.addEventListener("input", (e) =>
+  populateDropdownItems(dropdownItemsRolesContainer, "role", e.target.value)
+);
+
+dropdownSearchStatus.addEventListener("input", (e) =>
+  populateDropdownItems(dropdownItemsStatusContainer, "status", e.target.value)
+);
+
 function updateSelectedItems() {
   selectedItemsContainer.innerHTML = "";
 
@@ -1119,7 +1132,35 @@ function updateSelectedItems() {
   });
 }
 
-populateDropdownItems(dropdownItemsNamesContainer, "name");
-populateDropdownItems(dropdownItemsRolesContainer, "role");
-populateDropdownItems(dropdownItemsStatusContainer, "status");
-renderTable();
+async function getRandomEmployeesData() {
+  return fetch(`/api/v1/data/random/employees`, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+  });
+}
+
+function populateDataFromAPI() {
+  getRandomEmployeesData()
+    .then((response) => response.json())
+    .then((json) => {
+      populateData(json, false);
+    });
+}
+
+function populateData(customData, usePredefinedData = true) {
+  if (usePredefinedData === true) {
+    data = predefinedData;
+  } else {
+    data = customData;
+  }
+
+  filteredData = [...data];
+  populateDropdownItems(dropdownItemsNamesContainer, "name");
+  populateDropdownItems(dropdownItemsRolesContainer, "role");
+  populateDropdownItems(dropdownItemsStatusContainer, "status");
+  renderTable();
+}
