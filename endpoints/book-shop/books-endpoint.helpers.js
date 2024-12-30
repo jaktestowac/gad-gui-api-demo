@@ -1,14 +1,14 @@
 const { isUndefined } = require("lodash");
-const {
-  searchForUserWithOnlyToken,
-  searchForBookShopAccountWithUserId,
-  searchForBookWithId,
-} = require("../../helpers/db-operation.helpers");
+const { searchForUserWithOnlyToken } = require("../../helpers/db-operation.helpers");
 const { formatErrorResponse, formatInvalidTokenErrorResponse, getIdFromUrl } = require("../../helpers/helpers");
 const { logDebug } = require("../../helpers/logger-api");
 const { HTTP_NOT_FOUND, HTTP_UNAUTHORIZED } = require("../../helpers/response.helpers");
 const { verifyAccessToken } = require("../../helpers/validation.helpers");
 const { areIdsEqual } = require("../../helpers/compare.helpers");
+const {
+  searchForBookShopAccountWithUserId,
+  searchForBookWithId,
+} = require("../../helpers/db-operations/db-book-shop.operations");
 
 function handleBooks(req, res, isAdmin) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
@@ -74,7 +74,7 @@ function handleBooks(req, res, isAdmin) {
     logDebug("handleBooks: Not Found", { url: req.url, urlEnds });
     res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found"));
   }
-  
+
   return;
 }
 

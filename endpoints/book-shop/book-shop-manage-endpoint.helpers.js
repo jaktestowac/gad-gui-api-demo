@@ -1,19 +1,5 @@
 const { isUndefined } = require("lodash");
-const {
-  searchForUserWithOnlyToken,
-  searchForBookShopAccountWithUserId,
-  searchForBookShopActions,
-  searchForBookShopOrderStatuses,
-  searchForUser,
-  searchForBookShopOrder,
-  searchForBookShopItem,
-  searchForBookShopItemByBookId,
-  searchForBookWithId,
-  getAllActiveBookShopItems,
-  searchForBookShopAccountsWithRoles,
-  searchForBookShopAccount,
-  searchForBookShopAccountRole,
-} = require("../../helpers/db-operation.helpers");
+const { searchForUserWithOnlyToken, searchForUser } = require("../../helpers/db-operation.helpers");
 const { formatErrorResponse, formatInvalidTokenErrorResponse, getIdFromUrl } = require("../../helpers/helpers");
 const { logTrace, logDebug } = require("../../helpers/logger-api");
 const {
@@ -34,6 +20,19 @@ const {
 } = require("../../helpers/db.helpers");
 const { registerSentOrder, registerBookOnAccount } = require("../../helpers/book-shop.helpers");
 const { TracingInfoBuilder } = require("../../helpers/tracing-info.helper");
+const {
+  searchForBookShopAccountWithUserId,
+  searchForBookShopActions,
+  searchForBookShopAccountsWithRoles,
+  searchForBookShopItemByBookId,
+  searchForBookWithId,
+  getAllActiveBookShopItems,
+  searchForBookShopOrderStatuses,
+  searchForBookShopOrder,
+  searchForBookShopAccountRole,
+  searchForBookShopAccount,
+  searchForBookShopItem,
+} = require("../../helpers/db-operations/db-book-shop.operations");
 
 const orderStatuses = {
   new: 1,

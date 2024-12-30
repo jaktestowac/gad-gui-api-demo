@@ -1,4 +1,4 @@
-const { searchForBookShopItemByBookId } = require("./db-operation.helpers");
+const { searchForBookShopItemByBookId } = require("./db-operations/db-book-shop.operations");
 const { changeBookShopStockItems, changeUserFunds, addBooksToAccount } = require("./db-queries.helper");
 const DatabaseManager = require("./db.manager");
 const { logDebug, logTrace } = require("./logger-api");

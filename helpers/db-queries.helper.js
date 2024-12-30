@@ -1,5 +1,5 @@
 const { getCurrentDateTimeISO } = require("./datetime.helpers");
-const { logTrace, logDebug } = require("./logger-api");
+const { logTrace } = require("./logger-api");
 
 function setEntitiesInactive(db, tableName, query) {
   const callback = (item) => (item._inactive = true);

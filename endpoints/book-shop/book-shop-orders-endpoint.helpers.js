@@ -1,14 +1,5 @@
 const { isUndefined } = require("lodash");
-const {
-  searchForUserWithOnlyToken,
-  searchForBookShopAccountWithUserId,
-  searchForBookShopOrdersForUser,
-  searchForBookShopOrdersWithStatusForUser,
-  searchForBookShopItemByBookId,
-  searchForBookShopOrderStatuses,
-  searchForBookShopOrderCoupon,
-  searchForBookWithId,
-} = require("../../helpers/db-operation.helpers");
+const { searchForUserWithOnlyToken } = require("../../helpers/db-operation.helpers");
 const { formatErrorResponse, formatInvalidTokenErrorResponse } = require("../../helpers/helpers");
 const { logDebug, logTrace } = require("../../helpers/logger-api");
 const {
@@ -24,6 +15,15 @@ const { getCurrentDateTimeISO } = require("../../helpers/datetime.helpers");
 const { isStringOnTheList, areIdsEqual } = require("../../helpers/compare.helpers");
 const { bookShopOrderStatusesDb } = require("../../helpers/db.helpers");
 const { registerSentOrder } = require("../../helpers/book-shop.helpers");
+const {
+  searchForBookShopOrderCoupon,
+  searchForBookShopAccountWithUserId,
+  searchForBookShopOrdersWithStatusForUser,
+  searchForBookShopOrderStatuses,
+  searchForBookShopOrdersForUser,
+  searchForBookShopItemByBookId,
+  searchForBookWithId,
+} = require("../../helpers/db-operations/db-book-shop.operations");
 
 function countCostsInOrder(order) {
   order.total_cost = 0;

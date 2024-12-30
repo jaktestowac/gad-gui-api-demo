@@ -4,11 +4,7 @@ const { getConfigValue, isBugEnabled } = require("../config/config-manager");
 const { ConfigKeys, BugConfigKeys } = require("../config/enums");
 
 const { verifyAccessToken } = require("../helpers/validation.helpers");
-const {
-  searchForUserWithToken,
-  searchForUser,
-  searchForBookShopAccountWithUserId,
-} = require("../helpers/db-operation.helpers");
+const { searchForUserWithToken, searchForUser } = require("../helpers/db-operation.helpers");
 const {
   HTTP_UNAUTHORIZED,
   HTTP_INTERNAL_SERVER_ERROR,
@@ -55,6 +51,7 @@ const { handleBookShopOrderStatuses } = require("../endpoints/book-shop/book-sho
 const { handleBookShopManage } = require("../endpoints/book-shop/book-shop-manage-endpoint.helpers");
 const { handleBookShopOrdersStats } = require("../endpoints/book-shop/book-shop-order-stats-endpoint.helpers");
 const { handleBookShopBookReviews } = require("../endpoints/book-shop/book-shop-book-reviews-endpoint.helpers");
+const { searchForBookShopAccountWithUserId } = require("../helpers/db-operations/db-book-shop.operations");
 
 const validationsRoutes = (req, res, next) => {
   let isAdmin = false;
