@@ -231,6 +231,11 @@ function quizQuestionsDb() {
   return db;
 }
 
+function userRolesDb() {
+  const db = JSON.parse(fs.readFileSync(getDbPath(getConfigValue(ConfigKeys.USER_ROLES_PATH), "UTF-8")));
+  return db;
+}
+
 function hangmanDb() {
   const db = JSON.parse(fs.readFileSync(getDbPath(getConfigValue(ConfigKeys.HANGMAN_DATA_PATH), "UTF-8")));
   return db;
@@ -329,6 +334,7 @@ module.exports = {
   likesDb,
   flashpostsDb,
   quizQuestionsDb,
+  userRolesDb,
   hangmanDb,
   fullDb,
   fullBaseDb,

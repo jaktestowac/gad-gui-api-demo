@@ -1,5 +1,5 @@
-const { isBugDisabled, isBugEnabled } = require("../config/config-manager");
-const { BugConfigKeys } = require("../config/enums");
+const { isBugDisabled, isBugEnabled, getFeatureFlagConfigValue } = require("../config/config-manager");
+const { BugConfigKeys, FeatureFlagConfigKeys } = require("../config/enums");
 const { areStringsEqualIgnoringCase, areIdsEqual, isUndefined, isInactive } = require("../helpers/compare.helpers");
 const { getCurrentDateTimeISO } = require("../helpers/datetime.helpers");
 const { searchForUser, searchForUserWithToken } = require("../helpers/db-operation.helpers");
@@ -173,55 +173,22 @@ function handleUsers(req, res) {
       .setResourceId(foundUser.id)
       .build();
 
-      
-    req.method = "PUT";
-    req.url = `/api/users/${userId}`;
-    const newUserBody = foundUser;
-    newUserBody._inactive = true;
-    req.body = newUserBody;
-    logTrace("handleUsers: SOFT DELETE: overwrite DELETE -> PUT:", {
-      method: req.method,
-      url: req.url,
-      body: req.body,
-    });
+    const isFeatureEnabled = getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_SOFT_DELETE_USERS);
+
+    if (isFeatureEnabled === true) {
+      req.method = "PUT";
+      req.url = `/api/users/${userId}`;
+      const newUserBody = foundUser;
+      newUserBody._inactive = true;
+      req.body = newUserBody;
+      logTrace("handleUsers: SOFT DELETE: overwrite DELETE -> PUT:", {
+        method: req.method,
+        url: req.url,
+        body: req.body,
+      });
+    }
     return;
   }
-
-  // soft delete:
-  // NOTE: for now to preserve backward compatibility - we will not implement this
-  // if (req.method === "DELETE" && urlEnds.includes("/api/users")) {
-  //   let userId = getIdFromUrl(urlEnds);
-  //   const foundUserToDelete = searchForUser(userId);
-
-  //   const verifyTokenResult = verifyAccessToken(req, res, "DELETE articles", req.url);
-
-  //   const foundUser = searchForUserWithToken(foundUserToDelete?.id, verifyTokenResult);
-
-  //   logDebug("handleUsers: foundUser and user_id:", { foundUser, user_id: foundUserToDelete?.id });
-
-  //   if (isUndefined(foundUserToDelete) || isInactive(foundUserToDelete)) {
-  //     res.status(HTTP_NOT_FOUND).send({});
-  //     return;
-  //   }
-
-  //   if (isUndefined(foundUser)) {
-  //     res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
-  //     return;
-  //   }
-
-  //   req.method = "PUT";
-  //   req = new TracingInfoBuilder(req).setOriginMethod("DELETE").setWasAuthorized(true).setResourceId(userId).build();
-  //   req.url = `/api/users/${userId}`;
-  //   const newUserBody = foundUser;
-  //   newUserBody._inactive = true;
-  //   req.body = newUserBody;
-  //   logTrace("handleUsers: SOFT DELETE: overwrite DELETE -> PUT:", {
-  //     method: req.method,
-  //     url: req.url,
-  //     body: req.body,
-  //   });
-  //   return;
-  // }
 
   return;
 }

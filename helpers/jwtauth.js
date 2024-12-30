@@ -51,7 +51,9 @@ function isAuthenticated({ email, password }) {
   }
 
   return (
-    userDb().findIndex((user) => areStringsEqualIgnoringCase(user.email, email) && user.password === password) !== -1
+    userDb().findIndex(
+      (user) => areStringsEqualIgnoringCase(user.email, email) && user.password === password && user._inactive !== true
+    ) !== -1
   );
 }
 

@@ -71,6 +71,10 @@ function sleep(ms, msg) {
   });
 }
 
+// TODO: DEPRECATED: Remove this code after the new admin / role system is implemented
+/**
+ * @deprecated This function is deprecated and will be removed in future versions.
+ */
 function isAdminUser(email, pass) {
   return (
     areStringsEqualIgnoringCase(email, getConfigValue(ConfigKeys.ADMIN_USER_EMAIL)) &&
@@ -78,6 +82,10 @@ function isAdminUser(email, pass) {
   );
 }
 
+// TODO: DEPRECATED: Remove this code after the new admin / role system is implemented
+/**
+ * @deprecated This function is deprecated and will be removed in future versions.
+ */
 function isSuperAdminUser(email, pass) {
   return (
     areStringsEqualIgnoringCase(email, getConfigValue(ConfigKeys.SUPER_ADMIN_USER_EMAIL)) &&
@@ -85,6 +93,10 @@ function isSuperAdminUser(email, pass) {
   );
 }
 
+// TODO: DEPRECATED: Remove this code after the new admin / role system is implemented
+/**
+ * @deprecated This function is deprecated and will be removed in future versions.
+ */
 function isAnyAdminUser(email, pass) {
   return isAdminUser(email, pass) || isSuperAdminUser(email, pass);
 }

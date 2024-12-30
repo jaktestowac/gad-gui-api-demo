@@ -9,8 +9,12 @@ const LogLevels = {
 };
 
 const ConfigKeys = {
+  // TODO: DEPRECATED: Remove this code after the new admin / role system is implemented
   ADMIN_USER_EMAIL: "adminUserEmail",
   ADMIN_USER_PASS: "adminUserPass",
+  SUPER_ADMIN_USER_EMAIL: "superAdminUserEmail",
+  SUPER_ADMIN_USER_PASS: "superAdminUserPass",
+
   BEARER_TOKEN: "bearerToken",
   BASIC_AUTH: "basicAuth",
   CHARACTERS: "characters",
@@ -34,10 +38,9 @@ const ConfigKeys = {
   DB_EMPTY_RESTORE_PATH: "dbEmptyRestorePath",
   DB_TEST_RESTORE_PATH: "dbTestRestorePath",
   QUIZ_QUESTIONS_PATH: "quizQuestionsPath",
+  USER_ROLES_PATH: "userRolesPath",
   HANGMAN_DATA_PATH: "hangmanDataPath",
   DEFAULT_PORT: "defaultPort",
-  SUPER_ADMIN_USER_EMAIL: "superAdminUserEmail",
-  SUPER_ADMIN_USER_PASS: "superAdminUserPass",
   DATE_REGEXP: "dateRegexp",
   EMAIL_REGEXP: "emailRegexp",
   UPLOAD_SIZE_LIMIT_BYTES: "uploadSizeLimitBytes",

@@ -151,6 +151,12 @@
       "birthDate": "1985-06-30T20:15:33.214Z"
     }
   ],
+  "user-roles": [
+    {
+      "id" : 1,
+      "role_id": 1
+    }
+  ],
   "articles": [
     {
       "id": 1,

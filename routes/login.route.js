@@ -12,6 +12,7 @@ const loginApiRoutes = (req, res) => {
   logTrace("login: endpoint called:", { email });
   logTrace("login: endpoint called:", { email, password, keepSignIn });
 
+  // TODO: DEPRECATED: Remove this code after the new admin / role system is implemented
   let isAdmin = isAnyAdminUser(email, password);
   let isSuperAdmin = isSuperAdminUser(email, password);
 
@@ -53,6 +54,8 @@ const loginRoutes = (req, res) => {
 const processLoginRoutes = (req, res) => {
   let { username, password, keepSignIn } = req.body;
   logDebug("process_login: { email, password, keepSignIn }:", { username, password, keepSignIn });
+  
+  // TODO: DEPRECATED: Remove this code after the new admin / role system is implemented
   let isAdmin = isAnyAdminUser(username, password);
   let isSuperAdmin = isSuperAdminUser(username, password);
 

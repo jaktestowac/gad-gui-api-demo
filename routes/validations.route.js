@@ -1,5 +1,5 @@
 const { formatErrorResponse, getIdFromUrl, formatInvalidTokenErrorResponse, sleep } = require("../helpers/helpers");
-const { logDebug, logError, logTrace } = require("../helpers/logger-api");
+const { logDebug, logError, logTrace, logWarn } = require("../helpers/logger-api");
 const { getConfigValue, isBugEnabled } = require("../config/config-manager");
 const { ConfigKeys, BugConfigKeys } = require("../config/enums");
 
@@ -93,6 +93,7 @@ const validationsRoutes = (req, res, next) => {
     }
 
     // check if admin:
+    // TODO: DEPRECATED: Remove this code after the new admin / role system is implemented
     try {
       let verifyTokenResult = verifyAccessToken(req, res, "isAdmin", req.url);
       if (
@@ -101,6 +102,7 @@ const validationsRoutes = (req, res, next) => {
       ) {
         isAdmin = true;
         logDebug("validations: isAdmin:", isAdmin);
+        logWarn("[🚨DEPRECATED🚨] THIS FEATURE IS DEPRECATED AND WILL BE REMOVED IN THE FUTURE!");
       }
 
       if (isUndefined(verifyTokenResult)) {
