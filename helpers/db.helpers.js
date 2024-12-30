@@ -233,7 +233,12 @@ function quizQuestionsDb() {
 
 function userRolesDb() {
   const db = JSON.parse(fs.readFileSync(getDbPath(getConfigValue(ConfigKeys.USER_ROLES_PATH), "UTF-8")));
-  return db;
+  return db["roles"];
+}
+
+function userRoleActionsDb() {
+  const db = JSON.parse(fs.readFileSync(getDbPath(getConfigValue(ConfigKeys.USER_ROLE_ACTIONS_PATH), "UTF-8")));
+  return db["actions"];
 }
 
 function hangmanDb() {
@@ -377,4 +382,5 @@ module.exports = {
   bookShopOrderCouponsDb,
   booksDb,
   bookShopBookReviewsDb,
+  userRoleActionsDb,
 };

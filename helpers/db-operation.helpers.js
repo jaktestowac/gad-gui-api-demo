@@ -14,16 +14,6 @@ const {
   messagesDb,
   messageCheckDb,
   flashpostsDb,
-  // bookShopAccountsDb,
-  // bookShopOrdersDb,
-  // bookShopActionsDb,
-  // bookShopAccountPaymentCardDb,
-  // bookShopItemsDb,
-  // bookShopOrderStatusesDb,
-  // bookShopOrderCouponsDb,
-  // booksDb,
-  // bookShopBookReviewsDb,
-  // bookShopRolesDb,
 } = require("./db.helpers");
 
 // Users

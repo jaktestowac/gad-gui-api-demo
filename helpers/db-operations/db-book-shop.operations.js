@@ -163,7 +163,6 @@ function searchForBookShopAccountsWithRoles(roleIds) {
 
 module.exports = {
   searchForBookShopAccount,
-  searchForBookShopAccountRole,
   searchForBookShopAccountPaymentCardByAccountId,
   searchForBookShopAccountPaymentCardByCardNumber,
   searchForBookShopAccountWithUserId,
@@ -178,5 +177,6 @@ module.exports = {
   searchForBookWithId,
   getAllActiveBookShopItems,
   searchForBookShopBookReviews,
+  searchForBookShopAccountRole,
   searchForBookShopAccountsWithRoles,
 };
