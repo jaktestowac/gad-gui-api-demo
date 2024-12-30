@@ -30,8 +30,31 @@ const {
   areAnyFieldsPresent,
 } = require("../helpers/validation.helpers");
 
-function handleUsers(req, res) {
+function handleUsers(req, res, isAdmin) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
+
+  if (
+    req.method !== "GET" &&
+    req.method !== "POST" &&
+    req.method !== "HEAD" &&
+    urlEnds.includes("/api/users") &&
+    !isAdmin
+  ) {
+    logTrace("Validators: Check user auth", { url: urlEnds });
+    let userId = getIdFromUrl(urlEnds);
+    const verifyTokenResult = verifyAccessToken(req, res, "users", req.url);
+    if (isUndefined(verifyTokenResult)) {
+      res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
+      return;
+    }
+
+    const foundUser = searchForUserWithToken(userId, verifyTokenResult);
+
+    if (isUndefined(foundUser)) {
+      res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+      return;
+    }
+  }
 
   // register user:
   if (req.method === "POST" && urlEnds.includes("/api/users")) {

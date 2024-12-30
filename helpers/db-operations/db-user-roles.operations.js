@@ -19,6 +19,13 @@ function searchForUserRoleActions(actionName) {
   return foundBookShopAction;
 }
 
+/**
+ * Checks if a user action is allowed based on the user's role.
+ *
+ * @param {number} roleId - The ID of the user's role.
+ * @param {string} actionName - The name of the action to check.
+ * @returns {boolean} - Returns true if the action is allowed for the user's role, otherwise false.
+ */
 function isUserActionAllowed(roleId, actionName) {
   const role = searchForUserRole(roleId);
   if (role === undefined) {

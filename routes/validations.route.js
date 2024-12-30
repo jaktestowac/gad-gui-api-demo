@@ -194,28 +194,6 @@ const validationsRoutes = (req, res, next) => {
         return;
       }
     }
-    if (
-      req.method !== "GET" &&
-      req.method !== "POST" &&
-      req.method !== "HEAD" &&
-      urlEnds.includes("/api/users") &&
-      !isAdmin
-    ) {
-      logTrace("Validators: Check user auth", { url: urlEnds });
-      let userId = getIdFromUrl(urlEnds);
-      const verifyTokenResult = verifyAccessToken(req, res, "users", req.url);
-      if (isUndefined(verifyTokenResult)) {
-        res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
-        return;
-      }
-
-      const foundUser = searchForUserWithToken(userId, verifyTokenResult);
-
-      if (isUndefined(foundUser)) {
-        res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
-        return;
-      }
-    }
 
     if (req.method !== "GET" && req.method !== "HEAD" && urlEnds?.includes("/api/articles") && !isAdmin) {
       const verifyTokenResult = verifyAccessToken(req, res, "articles", req.url);
@@ -234,7 +212,7 @@ const validationsRoutes = (req, res, next) => {
     }
 
     if (req.url.includes("/api/users")) {
-      handleUsers(req, res);
+      handleUsers(req, res, isAdmin);
     }
 
     if (req.url.includes("/api/articles") || req.url.includes("/api/random/article")) {
@@ -246,7 +224,7 @@ const validationsRoutes = (req, res, next) => {
     }
 
     if (req.url.includes("/api/likes")) {
-      handleLikes(req, res, isAdmin);
+      handleLikes(req, res);
     }
 
     if (req.url.includes("/api/labels") || req.url.includes("/api/article-labels")) {
@@ -285,7 +263,7 @@ const validationsRoutes = (req, res, next) => {
       handleBookShopOrderStatuses(req, res);
     }
     if (req.url.includes("/api/book-shop-stats")) {
-      handleBookShopOrdersStats(req, res, isAdmin);
+      handleBookShopOrdersStats(req, res);
       return;
     }
     if (req.url.includes("/api/book-shop-orders")) {
@@ -295,12 +273,12 @@ const validationsRoutes = (req, res, next) => {
       handleBooks(req, res);
     }
     if (req.url.includes("/api/book-shop-manage")) {
-      handleBookShopManage(req, res, isAdmin);
+      handleBookShopManage(req, res);
     }
 
     // data endpoints
     if (req.url.includes("/api/v1/data")) {
-      handleData(req, res, isAdmin);
+      handleData(req, res);
       return;
     }
 

@@ -16,17 +16,17 @@
   "actions": [
     {
       "id": 1,
-      "name": "manage-articles",
+      "name": "manage-all-articles",
       "role_ids": [1, 3]
     },
     {
       "id": 2,
-      "name": "manage-users",
+      "name": "manage-all-users",
       "role_ids": [1]
     },
     {
       "id": 3,
-      "name": "manage-comments",
+      "name": "manage-all-comments",
       "role_ids": [1, 3]
     }
   ]
