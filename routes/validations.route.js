@@ -96,11 +96,6 @@ const validationsRoutes = (req, res, next) => {
         userAuth.isAdmin = true;
         logDebug("validations: userAuth:", userAuth);
       }
-
-      if (isUndefined(verifyTokenResult)) {
-        res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
-        return;
-      }
     } catch (error) {
       logError("Error: check if admin:", {
         error,
