@@ -54,7 +54,7 @@ const { handleBookShopBookReviews } = require("../endpoints/book-shop/book-shop-
 const { searchForBookShopAccountWithUserId } = require("../helpers/db-operations/db-book-shop.operations");
 
 const validationsRoutes = (req, res, next) => {
-  let isAdmin = false;
+  const userAuth = { isAdmin: false, isSuperAdmin: false };
 
   if (req.url.includes("/api/users") && isBugEnabled(BugConfigKeys.BUG_DISABLE_MODULE_USERS)) {
     res.status(HTTP_SERVICE_UNAVAILABLE).send({ message: "Module users is disabled" });
@@ -89,17 +89,12 @@ const validationsRoutes = (req, res, next) => {
       }
     }
 
-    // check if admin:
-    // TODO: DEPRECATED: Remove this code after the new admin / role system is implemented
     try {
-      let verifyTokenResult = verifyAccessToken(req, res, "isAdmin", req.url);
-      if (
-        areStringsEqualIgnoringCase(verifyTokenResult?.email, getConfigValue(ConfigKeys.ADMIN_USER_EMAIL)) ||
-        areStringsEqualIgnoringCase(verifyTokenResult?.email, getConfigValue(ConfigKeys.SUPER_ADMIN_USER_EMAIL))
-      ) {
-        isAdmin = true;
-        logDebug("validations: isAdmin:", isAdmin);
-        logWarn("[🚨DEPRECATED🚨] THIS FEATURE IS DEPRECATED AND WILL BE REMOVED IN THE FUTURE!");
+      let verifyTokenResult = verifyAccessToken(req, res, "isSuperAdmin", req.url);
+      if (areStringsEqualIgnoringCase(verifyTokenResult?.email, getConfigValue(ConfigKeys.SUPER_ADMIN_USER_EMAIL))) {
+        userAuth.isSuperAdmin = true;
+        userAuth.isAdmin = true;
+        logDebug("validations: userAuth:", userAuth);
       }
 
       if (isUndefined(verifyTokenResult)) {
@@ -195,32 +190,16 @@ const validationsRoutes = (req, res, next) => {
       }
     }
 
-    if (req.method !== "GET" && req.method !== "HEAD" && urlEnds?.includes("/api/articles") && !isAdmin) {
-      const verifyTokenResult = verifyAccessToken(req, res, "articles", req.url);
-      if (isUndefined(verifyTokenResult)) {
-        res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
-        return;
-      }
-    }
-
-    if (req.method !== "GET" && req.method !== "HEAD" && urlEnds.includes("/api/comments") && !isAdmin) {
-      const verifyTokenResult = verifyAccessToken(req, res, "comments", req.url);
-      if (isUndefined(verifyTokenResult)) {
-        res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
-        return;
-      }
-    }
-
     if (req.url.includes("/api/users")) {
-      handleUsers(req, res, isAdmin);
+      handleUsers(req, res, userAuth);
     }
 
     if (req.url.includes("/api/articles") || req.url.includes("/api/random/article")) {
-      handleArticles(req, res, isAdmin);
+      handleArticles(req, res, userAuth);
     }
 
     if (req.url.includes("/api/comments")) {
-      handleComments(req, res, isAdmin);
+      handleComments(req, res, userAuth);
     }
 
     if (req.url.includes("/api/likes")) {

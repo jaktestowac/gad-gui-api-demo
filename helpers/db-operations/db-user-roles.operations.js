@@ -1,6 +1,15 @@
 const { areIdsEqual, areStringsEqualIgnoringCase, isStringOnTheList } = require("../compare.helpers");
 const { userRolesDb, userRoleActionsDb } = require("../db.helpers");
 
+function searchForRoleByUserId(userId) {
+  const foundRole = userRolesDb().find((role) => {
+    if (areIdsEqual(role["user_id"], userId)) {
+      return role;
+    }
+  });
+  return foundRole;
+}
+
 function searchForUserRole(roleId) {
   const foundRole = userRolesDb().find((role) => {
     if (areIdsEqual(role["id"], roleId)) {
@@ -40,4 +49,4 @@ function isUserActionAllowed(roleId, actionName) {
   return isStringOnTheList(roleId, action.role_ids);
 }
 
-module.exports = { searchForUserRole, searchForUserRoleActions, isUserActionAllowed };
+module.exports = { searchForUserRole, searchForUserRoleActions, isUserActionAllowed, searchForRoleByUserId };

@@ -10,8 +10,6 @@ const LogLevels = {
 
 const ConfigKeys = {
   // TODO: DEPRECATED: Remove this code after the new admin / role system is implemented
-  ADMIN_USER_EMAIL: "adminUserEmail",
-  ADMIN_USER_PASS: "adminUserPass",
   SUPER_ADMIN_USER_EMAIL: "superAdminUserEmail",
   SUPER_ADMIN_USER_PASS: "superAdminUserPass",
 

@@ -1,3 +1,4 @@
+const { first } = require("lodash");
 const { isBugDisabled, isBugEnabled, getFeatureFlagConfigValue } = require("../config/config-manager");
 const { BugConfigKeys, FeatureFlagConfigKeys } = require("../config/enums");
 const { areStringsEqualIgnoringCase, areIdsEqual, isUndefined, isInactive } = require("../helpers/compare.helpers");
@@ -18,6 +19,7 @@ const {
   HTTP_CONFLICT,
   HTTP_NOT_FOUND,
   HTTP_UNAUTHORIZED,
+  HTTP_OK,
 } = require("../helpers/response.helpers");
 const { TracingInfoBuilder } = require("../helpers/tracing-info.helper");
 const {
@@ -30,7 +32,7 @@ const {
   areAnyFieldsPresent,
 } = require("../helpers/validation.helpers");
 
-function handleUsers(req, res, isAdmin) {
+function handleUsers(req, res, { isAdmin }) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
 
   if (
@@ -54,6 +56,11 @@ function handleUsers(req, res, isAdmin) {
       res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
       return;
     }
+  }
+
+  if (req.method === "GET" && urlEnds.includes("/api/users/admin")) {
+    res.status(HTTP_OK).send({ id: "admin", firstname: "admin", lastname: "" });
+    return;
   }
 
   // register user:

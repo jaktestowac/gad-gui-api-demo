@@ -32,8 +32,16 @@ const {
   areAnyFieldsPresent,
 } = require("../helpers/validation.helpers");
 
-function handleArticles(req, res, isAdmin) {
+function handleArticles(req, res, { isAdmin }) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
+
+  if (req.method !== "GET" && req.method !== "HEAD" && urlEnds?.includes("/api/articles") && !isAdmin) {
+    const verifyTokenResult = verifyAccessToken(req, res, "articles", req.url);
+    if (isUndefined(verifyTokenResult)) {
+      res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
+      return;
+    }
+  }
 
   if (urlEnds?.includes("/api/files/articles/upload") && !isAdmin) {
     const verifyTokenResult = verifyAccessToken(req, res, "files/articles/upload", req.url);
@@ -201,6 +209,10 @@ function handleArticles(req, res, isAdmin) {
         return;
       }
     }
+
+    if (isAdmin && !isUndefined(foundArticle)) {
+      req.body["user_id"] = foundArticle.user_id;
+    }
   }
 
   // update or create:
@@ -289,6 +301,10 @@ function handleArticles(req, res, isAdmin) {
         }
       }
     }
+
+    if (isAdmin && !isUndefined(foundArticle)) {
+      req.body["user_id"] = foundArticle.user_id;
+    }
   }
 
   // soft delete:
@@ -330,6 +346,10 @@ function handleArticles(req, res, isAdmin) {
       url: req.url,
       body: req.body,
     });
+
+    if (isAdmin && !isUndefined(foundArticle)) {
+      req.body["user_id"] = foundArticle.user_id;
+    }
     return;
   }
 
