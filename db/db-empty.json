@@ -1,5 +1,6 @@
 {
   "users": [],
+  "user-roles": [],
   "articles": [],
   "comments": [],
   "flashposts": [],
@@ -25,4 +26,3 @@
   "book-shop-account-payment-cards": [],
   "book-genres": []
 }
-
