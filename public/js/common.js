@@ -382,7 +382,7 @@ function getBearerToken() {
 }
 
 function isAuthorized(id) {
-  return id?.toString() === getId() || getId() === "admin";
+  return id?.toString() === getId();
 }
 
 function isAuthenticated() {
@@ -775,14 +775,38 @@ function checkRelease(force = false) {
   checkNewerVersion(force);
 }
 
-function checkIfAuthenticated(elementID, successCallback, failureCallback) {
+/**
+ * Checks if the user is authenticated and performs actions based on the authentication status.
+ *
+ * @param {string} elementID - The ID of the HTML element to display the message.
+ * @param {Function} successCallback - The callback function to execute if the user is authenticated.
+ * @param {Function} failureCallback - The callback function to execute if the user is not authenticated.
+ * @param {Object} options - Additional options for redirection.
+ * @param {boolean} options.defaultRedirect - Whether to use the current URL for redirection.
+ * @param {string} options.redirectUrl - The URL to redirect to after login or registration.
+ */
+function checkIfAuthenticated(
+  elementID,
+  successCallback,
+  failureCallback,
+  { defaultRedirect = false, redirectUrl = "" } = {}
+) {
   if (!isAuthenticated()) {
+    if (defaultRedirect) {
+      const url = new URL(window.location.href);
+      redirectUrl = url.pathname;
+    }
+
     let simpleInfoBox = "simpleInfoBox";
     const dashboardInfo = document.getElementById(elementID);
+
+    const loginUrl = "/login" + (redirectUrl ? `?redirectURL=${redirectUrl}` : "");
+    const registerUrl = "/register.html" + (redirectUrl ? `?redirectURL=${redirectUrl}` : "");
+
     setBoxMessage(
       dashboardInfo,
       `You are not authenticated<br/>
-                  Please <a href="/login" class="btn btn-primary">login</a> or <a href="/register.html" class="btn btn-primary">register</a> to see the content`,
+                  Please <a href="${loginUrl}" class="btn btn-primary">login</a> or <a href="${registerUrl}" class="btn btn-primary">register</a> to see the content`,
       simpleInfoBox
     );
     if (failureCallback) {

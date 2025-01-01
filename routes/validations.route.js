@@ -1,10 +1,10 @@
 const { formatErrorResponse, getIdFromUrl, formatInvalidTokenErrorResponse, sleep } = require("../helpers/helpers");
-const { logDebug, logError, logTrace, logWarn } = require("../helpers/logger-api");
+const { logDebug, logError, logTrace, logWarn, logInsane } = require("../helpers/logger-api");
 const { getConfigValue, isBugEnabled } = require("../config/config-manager");
 const { ConfigKeys, BugConfigKeys } = require("../config/enums");
 
 const { verifyAccessToken } = require("../helpers/validation.helpers");
-const { searchForUserWithToken, searchForUser } = require("../helpers/db-operation.helpers");
+const { searchForUser, searchForUserWithOnlyToken } = require("../helpers/db-operation.helpers");
 const {
   HTTP_UNAUTHORIZED,
   HTTP_INTERNAL_SERVER_ERROR,
@@ -52,9 +52,14 @@ const { handleBookShopManage } = require("../endpoints/book-shop/book-shop-manag
 const { handleBookShopOrdersStats } = require("../endpoints/book-shop/book-shop-order-stats-endpoint.helpers");
 const { handleBookShopBookReviews } = require("../endpoints/book-shop/book-shop-book-reviews-endpoint.helpers");
 const { searchForBookShopAccountWithUserId } = require("../helpers/db-operations/db-book-shop.operations");
+const {
+  searchForRoleByUserId,
+  getAllAllowedActionsForRole,
+} = require("../helpers/db-operations/db-user-roles.operations");
+const { userBaseAuth, updateUserActions, getAdminAuth } = require("../helpers/user-auth.helpers");
 
 const validationsRoutes = (req, res, next) => {
-  const userAuth = { isAdmin: false, isSuperAdmin: false };
+  let userAuth = userBaseAuth;
 
   if (req.url.includes("/api/users") && isBugEnabled(BugConfigKeys.BUG_DISABLE_MODULE_USERS)) {
     res.status(HTTP_SERVICE_UNAVAILABLE).send({ message: "Module users is disabled" });
@@ -89,12 +94,35 @@ const validationsRoutes = (req, res, next) => {
       }
     }
 
+    // data endpoints
+    if (req.url.includes("/api/v1/data")) {
+      handleData(req, res);
+      return;
+    }
+
+    if (req.url.includes("/api/config")) {
+      handleConfig(req, res);
+      return;
+    }
+
+    // check user privileges
     try {
       let verifyTokenResult = verifyAccessToken(req, res, "isSuperAdmin", req.url);
-      if (areStringsEqualIgnoringCase(verifyTokenResult?.email, getConfigValue(ConfigKeys.SUPER_ADMIN_USER_EMAIL))) {
-        userAuth.isSuperAdmin = true;
-        userAuth.isAdmin = true;
-        logDebug("validations: userAuth:", userAuth);
+      if (!isUndefined(verifyTokenResult)) {
+        if (areStringsEqualIgnoringCase(verifyTokenResult?.email, getConfigValue(ConfigKeys.SUPER_ADMIN_USER_EMAIL))) {
+          userAuth = getAdminAuth();
+          logTrace("validations: userAuth:", userAuth);
+        } else {
+          const foundUser = searchForUserWithOnlyToken(verifyTokenResult?.token);
+          if (!isUndefined(foundUser)) {
+            const role = searchForRoleByUserId(foundUser.id);
+            if (!isUndefined(role)) {
+              const allActions = getAllAllowedActionsForRole(role.role_id);
+              userAuth = updateUserActions(userAuth, allActions);
+              logInsane("validations: userAuth:", userAuth);
+            }
+          }
+        }
       }
     } catch (error) {
       logError("Error: check if admin:", {
@@ -116,11 +144,6 @@ const validationsRoutes = (req, res, next) => {
 
     if (readOnlyMode === true && req.method !== "GET") {
       res.status(HTTP_METHOD_NOT_ALLOWED).send(formatErrorResponse("Method not allowed in READ ONLY MODE"));
-      return;
-    }
-
-    if (req.url.includes("/api/config")) {
-      handleConfig(req, res);
       return;
     }
 
@@ -248,12 +271,6 @@ const validationsRoutes = (req, res, next) => {
     }
     if (req.url.includes("/api/book-shop-manage")) {
       handleBookShopManage(req, res);
-    }
-
-    // data endpoints
-    if (req.url.includes("/api/v1/data")) {
-      handleData(req, res);
-      return;
     }
 
     logTrace("validationsRoutes: Returning:", {

@@ -18,7 +18,7 @@ const {
   bookShopRolesDb,
   bookShopAccountsDb,
 } = require("../../helpers/db.helpers");
-const { registerSentOrder, registerBookOnAccount } = require("../../helpers/book-shop.helpers");
+const { registerSentOrder, registerBookOnAccount, registerOrderReturn } = require("../../helpers/book-shop.helpers");
 const { TracingInfoBuilder } = require("../../helpers/tracing-info.helper");
 const {
   searchForBookShopAccountWithUserId,
@@ -243,6 +243,13 @@ function handleBookShopManage(req, res, isAdmin) {
       }
 
       registerSentOrder(booksShopAccount, orderBase, currentOrderStatus, newStatusId);
+    }
+
+    if (
+      areIdsEqual(newStatusId, orderStatuses.returned) === true ||
+      areIdsEqual(newStatusId, orderStatuses.cancelled) === true
+    ) {
+      registerOrderReturn(booksShopAccount, orderBase, currentOrderStatus, newStatusId);
     }
 
     // if status is delivered then add books to user account

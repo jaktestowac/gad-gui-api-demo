@@ -562,5 +562,6 @@ checkIfAuthenticated(
       }
     });
   },
-  () => {}
+  () => {},
+  { defaultRedirect: true }
 );

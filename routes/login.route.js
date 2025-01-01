@@ -50,8 +50,15 @@ const loginRoutes = (req, res) => {
 };
 
 const processLoginRoutes = (req, res) => {
-  let { username, password, keepSignIn } = req.body;
-  logDebug("process_login: { email, password, keepSignIn }:", { username, password, keepSignIn });
+  let { username, password, keepSignIn, redirectURL } = req.body;
+  logDebug("process_login: { email, password, keepSignIn }:", { username, password, keepSignIn, redirectURL });
+
+  if (redirectURL && redirectURL.includes("http")) {
+    redirectURL = redirectURL.split("/").slice(3).join("/");
+  }
+  if (redirectURL && redirectURL.charAt(0) === "/") {
+    redirectURL = redirectURL.substring(1);
+  }
 
   // TODO: DEPRECATED: Remove this code after the new admin / role system is implemented
   let isSuperAdmin = isSuperAdminUser(username, password);
@@ -60,8 +67,7 @@ const processLoginRoutes = (req, res) => {
   logDebug("process_login: { isSuperAdmin, authenticated }:", { isSuperAdmin, authenticated });
 
   if ((!isSuperAdmin && authenticated === false) || authenticated === undefined) {
-    // redirect with a fail msg
-    return res.redirect("/login?msg=Invalid username or password");
+    return res.redirect("/login?msg=Invalid username or password" + (redirectURL ? "&redirectURL=" + redirectURL : ""));
   }
   const cookieMaxAge = prepareCookieMaxAge(isSuperAdmin, keepSignIn);
   const access_token = createToken({ email: username, data: "TBD" }, isSuperAdmin, keepSignIn);
@@ -101,7 +107,12 @@ const processLoginRoutes = (req, res) => {
   res.cookie("avatar", foundUser.avatar, {
     maxAge: cookieMaxAge,
   });
-  // redirect
+
+  if (redirectURL && !redirectURL.includes("/login") && redirectURL !== "/") {
+    logDebug("process_login: Redirect URL:", { redirectURL });
+    return res.redirect(redirectURL);
+  }
+
   return res.redirect("/welcome");
 };
 

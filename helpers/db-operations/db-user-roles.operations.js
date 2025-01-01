@@ -49,4 +49,24 @@ function isUserActionAllowed(roleId, actionName) {
   return isStringOnTheList(roleId, action.role_ids);
 }
 
-module.exports = { searchForUserRole, searchForUserRoleActions, isUserActionAllowed, searchForRoleByUserId };
+function getAllAllowedActionsForRole(roleId) {
+  const role = searchForUserRole(roleId);
+  if (role === undefined) {
+    return [];
+  }
+ 
+  const allowedActions = userRoleActionsDb().reduce((acc, action) => {
+    acc[action.name] = isStringOnTheList(roleId, action.role_ids);
+    return acc;
+  }, {});
+
+  return allowedActions;
+}
+
+module.exports = {
+  searchForUserRole,
+  searchForUserRoleActions,
+  isUserActionAllowed,
+  searchForRoleByUserId,
+  getAllAllowedActionsForRole,
+};

@@ -326,7 +326,7 @@ td:first-child {
   }
 }
 
-@media only screen and (max-width: 800px) {
+@media only screen and (max-width: 836px) {
   button {
     font-size: 0.7rem;
     padding: 5px;
@@ -473,6 +473,12 @@ td:first-child {
 
 .container-space {
   margin-top: 40px;
+}
+
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 @media only screen and (max-width: 650px) {

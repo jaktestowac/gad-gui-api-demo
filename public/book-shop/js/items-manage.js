@@ -1108,5 +1108,6 @@ checkIfAuthenticated(
       }
     });
   },
-  () => {}
+  () => {},
+  { defaultRedirect: true }
 );
