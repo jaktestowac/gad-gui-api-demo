@@ -15,5 +15,6 @@
 checkIfAuthenticated(
   "dashboard-info",
   () => {},
-  () => {}
+  () => {},
+  { defaultRedirect: true }
 );

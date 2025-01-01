@@ -165,5 +165,6 @@ checkIfAuthenticated(
   () => {
     startButton.disabled = true;
     quizContainer.style.visibility = "collapse";
-  }
+  },
+  { defaultRedirect: true }
 );

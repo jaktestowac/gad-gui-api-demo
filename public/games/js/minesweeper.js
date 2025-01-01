@@ -215,6 +215,6 @@ checkIfAuthenticated(
     resetBtn.style.display = "none";
     const boardContainer = document.querySelector(".board-container");
     boardContainer.style.display = "none";
-
-  }
+  },
+  { defaultRedirect: true }
 );

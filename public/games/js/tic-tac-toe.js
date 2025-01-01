@@ -243,5 +243,6 @@ checkIfAuthenticated(
   () => {
     startButton.disabled = true;
     joinButton.disabled = true;
-  }
+  },
+  { defaultRedirect: true }
 );
