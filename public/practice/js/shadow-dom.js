@@ -213,7 +213,7 @@ function addRegularElements() {
   const regularHost = document.getElementById("regular-host");
 
   const header = document.createElement("h3");
-  header.textContent = "Hello from regular DOM!";
+  header.textContent = "Hello from normal (light) DOM!";
   regularHost.appendChild(header);
 
   const { divContainer, resultsContainer } = prepareRegularElements();
