@@ -54,6 +54,43 @@ function getStyleForShadowHost() {
         }`;
 }
 
+function getStyleForNestedShadowHost() {
+  return `
+        .round-host-container {
+            margin-top: 10px;
+            border-radius: 14px;
+            padding: 10px;
+            border: 3px solid rgb(226, 226, 226);
+            font-family: 'Caveat', cursive;
+            font-size: 15px;
+        }
+        
+        input {
+            margin: 5px;
+            padding: 5px;
+            border: 2px solid black !important;
+            border-radius: 5px;
+            background-color: lightyellow;
+        }
+
+        button {
+            padding: 5px;
+            background-color: lightgreen;
+            cursor: pointer;
+            font-family: 'Caveat', cursive;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: lightblue;
+        }
+
+        div {
+            background-color: lightgray;
+        }
+  `;
+}
+
 function getValidationStyleForShadowHost() {
   return `
     input {
@@ -98,6 +135,9 @@ function getDefaultStyleForShadowHost() {
       font-family: 'Times New Roman', Times, serif;
   }
     
+  button:hover {
+      background-color: yellow;
+  }
 `;
 }
 
@@ -126,7 +166,7 @@ function addNestedShadowElements(baseHostId = "nested-shadow-host", prefix = "ne
   const nestedElements = prepareShadowElements(prefix + "nested-", "Hello from nested Shadow DOM!");
   nestedShadowRoot.appendChild(nestedElements);
   const style2 = document.createElement("style");
-  style2.textContent = getStyleForShadowHost();
+  style2.textContent = getStyleForNestedShadowHost();
   style2.textContent += getValidationStyleForShadowHost();
   nestedShadowRoot.appendChild(style2);
 

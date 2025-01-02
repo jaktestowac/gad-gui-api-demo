@@ -974,13 +974,13 @@ function filterTableByAll() {
       (selectedFilters.status.length === 0 || selectedFilters.status.includes(row.status))
   );
   currentPage = 1;
-  renderTable();
+  renderTableGlobalCallback();
 }
 
 function filterTableByType(type) {
   filteredData = data.filter((row) => selectedFilters[type].length === 0 || selectedFilters[type].includes(row[type]));
   currentPage = 1;
-  renderTable();
+  renderTableGlobalCallback();
 }
 
 document.querySelectorAll(".data-grid th").forEach((header) => {
@@ -1010,7 +1010,7 @@ function sortTable() {
     }
     return 0;
   });
-  renderTable();
+  renderTableGlobalCallback();
 }
 
 function updateSortIcons() {
@@ -1025,7 +1025,7 @@ function updateSortIcons() {
   });
 }
 
-function renderTable() {
+function renderSimpleTable() {
   dataGridBody.innerHTML = "";
   const start = (currentPage - 1) * rowsPerPage;
   const end = start + rowsPerPage;
@@ -1036,6 +1036,7 @@ function renderTable() {
     tr.innerHTML = `
                 <td>${row.id}</td>
                 <td>${row.name ?? "[NOT SET]"}</td>
+                <td>${row.age ?? "[NOT SET]"}</td>
                 <td>${row.role ?? "[NOT SET]"}</td>
                 <td>${row.location ?? "[NOT SET]"}</td>
                 <td>${row.department ?? "[NOT SET]"}</td>
@@ -1061,14 +1062,14 @@ function updateElementsCount(count) {
 prevPageButton.addEventListener("click", () => {
   if (currentPage > 1) {
     currentPage--;
-    renderTable();
+    renderTableGlobalCallback();
   }
 });
 
 nextPageButton.addEventListener("click", () => {
   if (currentPage < Math.ceil(filteredData.length / rowsPerPage)) {
     currentPage++;
-    renderTable();
+    renderTableGlobalCallback();
   }
 });
 
@@ -1147,20 +1148,30 @@ function populateDataFromAPI() {
   getRandomEmployeesData()
     .then((response) => response.json())
     .then((json) => {
-      populateData(json, false);
+      populateData(json, false, renderSimpleTable);
     });
 }
 
-function populateData(customData, usePredefinedData = true) {
+function populateDataPredefined() {
+  populateData(undefined, true, renderSimpleTable);
+}
+
+let renderTableGlobalCallback = renderSimpleTable;
+
+function populateData(customData, usePredefinedData = true, renderTableVCallback) {
   if (usePredefinedData === true) {
     data = predefinedData;
   } else {
     data = customData;
   }
 
+  if (renderTableVCallback !== undefined) {
+    renderTableGlobalCallback = renderTableVCallback;
+  }
+
   filteredData = [...data];
   populateDropdownItems(dropdownItemsNamesContainer, "name");
   populateDropdownItems(dropdownItemsRolesContainer, "role");
   populateDropdownItems(dropdownItemsStatusContainer, "status");
-  renderTable();
+  renderTableGlobalCallback();
 }
