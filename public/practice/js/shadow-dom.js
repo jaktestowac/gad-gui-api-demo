@@ -163,7 +163,7 @@ function addNestedShadowElements(baseHostId = "nested-shadow-host", prefix = "ne
   spanTitle.textContent = "(this is another shadow root!)";
   nestedShadowRoot.appendChild(spanTitle);
 
-  const nestedElements = prepareShadowElements(prefix + "nested-", "Hello from nested Shadow DOM!");
+  const nestedElements = prepareShadowElements(prefix, "Hello from nested Shadow DOM!");
   nestedShadowRoot.appendChild(nestedElements);
   const style2 = document.createElement("style");
   style2.textContent = getStyleForNestedShadowHost();
