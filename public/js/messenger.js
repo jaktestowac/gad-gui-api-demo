@@ -411,6 +411,5 @@ checkIfAuthenticated(
     openTab(undefined, "tab1");
   },
   () => {},
-  { redirect: true },
   { defaultRedirect: true }
 );
