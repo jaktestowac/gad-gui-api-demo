@@ -3057,87 +3057,131 @@
   "article-labels": [
     {
       "id": 1,
-      "label_ids": [3, 2],
+      "label_ids": [
+        3,
+        2
+      ],
       "article_id": 56
     },
     {
       "id": 2,
-      "label_ids": [1, 2],
+      "label_ids": [
+        1,
+        2
+      ],
       "article_id": 57
     },
     {
       "id": 3,
-      "label_ids": [1],
+      "label_ids": [
+        1
+      ],
       "article_id": 59
     },
     {
       "id": 4,
-      "label_ids": [4, 5],
+      "label_ids": [
+        4,
+        5
+      ],
       "article_id": 45
     },
     {
       "id": 5,
-      "label_ids": [1, 2, 6],
+      "label_ids": [
+        1,
+        2,
+        6
+      ],
       "article_id": 37
     },
     {
       "id": 6,
-      "label_ids": [1],
+      "label_ids": [
+        1
+      ],
       "article_id": 58
     },
     {
       "id": 7,
-      "label_ids": [7],
+      "label_ids": [
+        7
+      ],
       "article_id": 48
     },
     {
       "id": 8,
-      "label_ids": [8, 2],
+      "label_ids": [
+        8,
+        2
+      ],
       "article_id": 4
     },
     {
       "id": 9,
-      "label_ids": [9],
+      "label_ids": [
+        9
+      ],
       "article_id": 39
     },
     {
       "id": 10,
-      "label_ids": [1],
+      "label_ids": [
+        1
+      ],
       "article_id": 1
     },
     {
       "id": 11,
-      "label_ids": [1, 2, 11],
+      "label_ids": [
+        1,
+        2,
+        11
+      ],
       "article_id": 2
     },
     {
       "id": 12,
-      "label_ids": [1, 9],
+      "label_ids": [
+        1,
+        9
+      ],
       "article_id": 3
     },
     {
       "id": 13,
-      "label_ids": [9],
+      "label_ids": [
+        9
+      ],
       "article_id": 51
     },
     {
       "id": 14,
-      "label_ids": [9],
+      "label_ids": [
+        9
+      ],
       "article_id": 47
     },
     {
       "id": 15,
-      "label_ids": [9],
+      "label_ids": [
+        9
+      ],
       "article_id": 41
     },
     {
       "id": 16,
-      "label_ids": [1, 2],
+      "label_ids": [
+        1,
+        2
+      ],
       "article_id": 40
     },
     {
       "id": 17,
-      "label_ids": [1],
+      "label_ids": [
+        1
+      ],
       "article_id": 35
     }
   ],
@@ -3352,26 +3396,55 @@
     {
       "id": 1,
       "user_id": 1,
-      "article_ids": [1, 3, 7]
+      "article_ids": [
+        1,
+        3,
+        7
+      ]
     },
     {
       "id": 2,
       "user_id": 2,
-      "article_ids": [5, 8, 10]
+      "article_ids": [
+        5,
+        8,
+        10
+      ]
     }
   ],
   "survey-responses": [
     {
       "answers": {
-        "REST API testing": ["yes"],
-        "REST API tools": ["Swagger", "Postman", "Bruno"],
-        "Using newman": ["yes"],
-        "Using CI/CD": ["yes"],
-        "CI/CD tools": ["GitHub Actions", "Jenkins", "Azure DevOps"],
-        "testing frequency": ["weekly"],
-        "Test types": ["Integration tests", "E2e tests"],
+        "REST API testing": [
+          "yes"
+        ],
+        "REST API tools": [
+          "Swagger",
+          "Postman",
+          "Bruno"
+        ],
+        "Using newman": [
+          "yes"
+        ],
+        "Using CI/CD": [
+          "yes"
+        ],
+        "CI/CD tools": [
+          "GitHub Actions",
+          "Jenkins",
+          "Azure DevOps"
+        ],
+        "testing frequency": [
+          "weekly"
+        ],
+        "Test types": [
+          "Integration tests",
+          "E2e tests"
+        ],
         "Open-Ended Questions": {
-          "Plans to improve testing": ["Learn more Playwright for API Testing"]
+          "Plans to improve testing": [
+            "Learn more Playwright for API Testing"
+          ]
         }
       },
       "type": 1,
@@ -3381,15 +3454,36 @@
     },
     {
       "answers": {
-        "REST API testing": ["yes"],
-        "REST API tools": ["Swagger", "Postman"],
-        "Using newman": ["no"],
-        "Using CI/CD": ["yes"],
-        "CI/CD tools": ["GitHub Actions", "Azure DevOps"],
-        "testing frequency": ["weekly"],
-        "Test types": ["Unit tests", "Module tests", "Integration tests", "E2e tests"],
+        "REST API testing": [
+          "yes"
+        ],
+        "REST API tools": [
+          "Swagger",
+          "Postman"
+        ],
+        "Using newman": [
+          "no"
+        ],
+        "Using CI/CD": [
+          "yes"
+        ],
+        "CI/CD tools": [
+          "GitHub Actions",
+          "Azure DevOps"
+        ],
+        "testing frequency": [
+          "weekly"
+        ],
+        "Test types": [
+          "Unit tests",
+          "Module tests",
+          "Integration tests",
+          "E2e tests"
+        ],
         "Open-Ended Questions": {
-          "Plans to improve testing": [""]
+          "Plans to improve testing": [
+            ""
+          ]
         }
       },
       "type": 1,
@@ -3399,15 +3493,38 @@
     },
     {
       "answers": {
-        "REST API testing": ["yes"],
-        "REST API tools": ["Swagger", "Postman", "Bruno"],
-        "Using newman": ["no"],
-        "Using CI/CD": ["yes"],
-        "CI/CD tools": ["GitHub Actions", "Jenkins"],
-        "Testing frequency": ["daily"],
-        "Test types": ["Unit tests", "Module tests", "Contract tests", "Integration tests", "E2e tests"],
+        "REST API testing": [
+          "yes"
+        ],
+        "REST API tools": [
+          "Swagger",
+          "Postman",
+          "Bruno"
+        ],
+        "Using newman": [
+          "no"
+        ],
+        "Using CI/CD": [
+          "yes"
+        ],
+        "CI/CD tools": [
+          "GitHub Actions",
+          "Jenkins"
+        ],
+        "Testing frequency": [
+          "daily"
+        ],
+        "Test types": [
+          "Unit tests",
+          "Module tests",
+          "Contract tests",
+          "Integration tests",
+          "E2e tests"
+        ],
         "Open-Ended Questions": {
-          "Plans to improve testing": [""]
+          "Plans to improve testing": [
+            ""
+          ]
         }
       },
       "type": 1,
@@ -3417,12 +3534,24 @@
     },
     {
       "answers": {
-        "REST API testing": ["yes"],
-        "REST API tools": ["Postman"],
-        "Using newman": ["yes"],
-        "Using CI/CD": ["yes"],
-        "CI/CD tools": ["GitHub Actions"],
-        "Testing frequency": ["daily"],
+        "REST API testing": [
+          "yes"
+        ],
+        "REST API tools": [
+          "Postman"
+        ],
+        "Using newman": [
+          "yes"
+        ],
+        "Using CI/CD": [
+          "yes"
+        ],
+        "CI/CD tools": [
+          "GitHub Actions"
+        ],
+        "Testing frequency": [
+          "daily"
+        ],
         "Test types": [
           "Module tests",
           "Integration tests",
@@ -3433,7 +3562,9 @@
           "Visual tests"
         ],
         "Open-Ended Questions": {
-          "Plans to improve testing": [""]
+          "Plans to improve testing": [
+            ""
+          ]
         }
       },
       "type": 1,
@@ -3443,15 +3574,36 @@
     },
     {
       "answers": {
-        "REST API testing": ["yes"],
-        "REST API tools": ["Postman", "Swagger"],
-        "Using newman": ["no"],
-        "Using CI/CD": ["yes"],
-        "CI/CD tools": ["GitHub Actions"],
-        "Testing frequency": ["daily"],
-        "Test types": ["Module tests", "Integration tests", "E2e tests", "UAT tests", "Performance tests"],
+        "REST API testing": [
+          "yes"
+        ],
+        "REST API tools": [
+          "Postman",
+          "Swagger"
+        ],
+        "Using newman": [
+          "no"
+        ],
+        "Using CI/CD": [
+          "yes"
+        ],
+        "CI/CD tools": [
+          "GitHub Actions"
+        ],
+        "Testing frequency": [
+          "daily"
+        ],
+        "Test types": [
+          "Module tests",
+          "Integration tests",
+          "E2e tests",
+          "UAT tests",
+          "Performance tests"
+        ],
         "Open-Ended Questions": {
-          "Plans to improve testing": ["Learn more Playwright for API Testing"]
+          "Plans to improve testing": [
+            "Learn more Playwright for API Testing"
+          ]
         }
       },
       "type": 1,
@@ -3461,14 +3613,32 @@
     },
     {
       "answers": {
-        "experience in test automation": ["yes"],
-        "experience in test automation in years": ["2-3 years"],
-        "automation tools": ["Playwright", "Selenium"],
-        "languages for automation tools": ["JavaScript", "TypeScript", "Python"],
-        "Number of automated tests": ["50-100"],
-        "Automated test types": ["Integration tests", "E2e tests"],
+        "experience in test automation": [
+          "yes"
+        ],
+        "experience in test automation in years": [
+          "2-3 years"
+        ],
+        "automation tools": [
+          "Playwright",
+          "Selenium"
+        ],
+        "languages for automation tools": [
+          "JavaScript",
+          "TypeScript",
+          "Python"
+        ],
+        "Number of automated tests": [
+          "50-100"
+        ],
+        "Automated test types": [
+          "Integration tests",
+          "E2e tests"
+        ],
         "Open-Ended Questions": {
-          "Plans to improve skills": ["Learn more about Playwright"]
+          "Plans to improve skills": [
+            "Learn more about Playwright"
+          ]
         }
       },
       "type": 2,
@@ -3481,22 +3651,32 @@
     {
       "id": 1,
       "user_id": 1,
-      "user_ids": [2, 3, 4]
+      "user_ids": [
+        2,
+        3,
+        4
+      ]
     },
     {
       "id": 2,
       "user_id": 2,
-      "user_ids": [1]
+      "user_ids": [
+        1
+      ]
     },
     {
       "id": 3,
       "user_id": 3,
-      "user_ids": [1]
+      "user_ids": [
+        1
+      ]
     },
     {
       "id": 4,
       "user_id": 4,
-      "user_ids": [1]
+      "user_ids": [
+        1
+      ]
     }
   ],
   "messages": [
@@ -3566,9 +3746,13 @@
     {
       "id": 1,
       "title": "Whispers of the Eternal Clock",
-      "author_ids": [1],
+      "author_ids": [
+        1
+      ],
       "published_at": "1999-10-20T00:00:00Z",
-      "genre_ids": [1],
+      "genre_ids": [
+        1
+      ],
       "language": "English",
       "pages": 352,
       "cover": "..\\data\\books\\whispers-of-the-eternal-clock.jpg",
@@ -3577,9 +3761,13 @@
     {
       "id": 2,
       "title": "Code of Shadows",
-      "author_ids": [2],
+      "author_ids": [
+        2
+      ],
       "published_at": "2008-08-11T00:00:00Z",
-      "genre_ids": [1],
+      "genre_ids": [
+        1
+      ],
       "language": "English",
       "pages": 464,
       "cover": "..\\data\\books\\code-of-shadows.jpg",
@@ -3588,9 +3776,13 @@
     {
       "id": 3,
       "title": "Sands of the Infinite",
-      "author_ids": [3],
+      "author_ids": [
+        3
+      ],
       "published_at": "1965-06-01T00:00:00Z",
-      "genre_ids": [17],
+      "genre_ids": [
+        17
+      ],
       "language": "English",
       "pages": 412,
       "cover": "..\\data\\books\\sands-of-the-infinite.jpg",
@@ -3599,9 +3791,14 @@
     {
       "id": 4,
       "title": "Legends of the Crystal Keep",
-      "author_ids": [4],
+      "author_ids": [
+        4
+      ],
       "published_at": "1954-07-29T00:00:00Z",
-      "genre_ids": [12, 19],
+      "genre_ids": [
+        12,
+        19
+      ],
       "language": "English",
       "pages": 1178,
       "cover": "..\\data\\books\\legends-of-the-crystal-keep.jpg",
@@ -3610,9 +3807,13 @@
     {
       "id": 5,
       "title": "The Cosmic Voyage",
-      "author_ids": [5],
+      "author_ids": [
+        5
+      ],
       "published_at": "1979-10-12T00:00:00Z",
-      "genre_ids": [17],
+      "genre_ids": [
+        17
+      ],
       "language": "English",
       "pages": 215,
       "cover": "..\\data\\books\\the-cosmic-voyage.jpg",
@@ -3621,9 +3822,13 @@
     {
       "id": 6,
       "title": "The Iron Veil",
-      "author_ids": [6],
+      "author_ids": [
+        6
+      ],
       "published_at": "1949-06-08T00:00:00Z",
-      "genre_ids": [18],
+      "genre_ids": [
+        18
+      ],
       "language": "English",
       "pages": 328,
       "cover": "..\\data\\books\\the-iron-veil.jpg",
@@ -3632,9 +3837,13 @@
     {
       "id": 7,
       "title": "Rebellion of the Lost Meadow",
-      "author_ids": [6],
+      "author_ids": [
+        6
+      ],
       "published_at": "1945-08-17T00:00:00Z",
-      "genre_ids": [18],
+      "genre_ids": [
+        18
+      ],
       "language": "English",
       "pages": 112,
       "cover": "..\\data\\books\\rebellion-of-the-lost-meadow.jpg",
@@ -3643,9 +3852,13 @@
     {
       "id": 8,
       "title": "Echoes of Redemption",
-      "author_ids": [7],
+      "author_ids": [
+        7
+      ],
       "published_at": "1866-11-14T00:00:00Z",
-      "genre_ids": [18],
+      "genre_ids": [
+        18
+      ],
       "language": "Russian",
       "pages": 671,
       "cover": "..\\data\\books\\echoes-of-redemption.jpg",
@@ -3654,9 +3867,13 @@
     {
       "id": 9,
       "title": "The House of the Eternal Flame",
-      "author_ids": [7],
+      "author_ids": [
+        7
+      ],
       "published_at": "1880-11-26T00:00:00Z",
-      "genre_ids": [18],
+      "genre_ids": [
+        18
+      ],
       "language": "Russian",
       "pages": 796,
       "cover": "..\\data\\books\\house-of-the-eternal-flame.jpg",
@@ -3665,9 +3882,13 @@
     {
       "id": 10,
       "title": "The Last Chronicle of Stars",
-      "author_ids": [8],
+      "author_ids": [
+        8
+      ],
       "published_at": "2019-10-01T00:00:00Z",
-      "genre_ids": [17],
+      "genre_ids": [
+        17
+      ],
       "language": "Polish",
       "pages": 550,
       "cover": "..\\data\\books\\the-last-chronicle-of-stars.jpg",
@@ -3676,9 +3897,13 @@
     {
       "id": 11,
       "title": "The Alchemist's Labyrinth",
-      "author_ids": [9],
+      "author_ids": [
+        9
+      ],
       "published_at": "2011-09-13T00:00:00Z",
-      "genre_ids": [6],
+      "genre_ids": [
+        6
+      ],
       "language": "English",
       "pages": 336,
       "cover": "..\\data\\books\\the-alchemists-labyrinth.jpg",
@@ -3687,9 +3912,14 @@
     {
       "id": 12,
       "title": "Commanders of the Eternal Horizon",
-      "author_ids": [10, 26],
+      "author_ids": [
+        10,
+        26
+      ],
       "published_at": "2015-10-20T00:00:00Z",
-      "genre_ids": [5],
+      "genre_ids": [
+        5
+      ],
       "language": "English",
       "pages": 320,
       "cover": "..\\data\\books\\commanders-of-the-eternal-horizon.jpg",
@@ -3698,9 +3928,13 @@
     {
       "id": 13,
       "title": "The Battle of Celestial Shores",
-      "author_ids": [11],
+      "author_ids": [
+        11
+      ],
       "published_at": "2018-11-12T00:00:00Z",
-      "genre_ids": [4],
+      "genre_ids": [
+        4
+      ],
       "language": "Chinese",
       "pages": 38,
       "cover": "..\\data\\books\\battle-of-celestial-shores.jpg",
@@ -3709,9 +3943,13 @@
     {
       "id": 14,
       "title": "The Sovereign's Gambit",
-      "author_ids": [12],
+      "author_ids": [
+        12
+      ],
       "published_at": "1532-12-10T00:00:00Z",
-      "genre_ids": [4],
+      "genre_ids": [
+        4
+      ],
       "language": "Italian",
       "pages": 140,
       "cover": "..\\data\\books\\sovereigns-gambit.jpg",
@@ -3720,9 +3958,13 @@
     {
       "id": 15,
       "title": "Echoes of the Unseen",
-      "author_ids": [13],
+      "author_ids": [
+        13
+      ],
       "published_at": "2017-01-26T00:00:00Z",
-      "genre_ids": [10],
+      "genre_ids": [
+        10
+      ],
       "language": "English",
       "pages": 128,
       "cover": "..\\data\\books\\echoes-of-the-unseen.jpg",
@@ -3731,9 +3973,13 @@
     {
       "id": 16,
       "title": "Mind's Liberation",
-      "author_ids": [14],
+      "author_ids": [
+        14
+      ],
       "published_at": "1948-10-05T00:00:00Z",
-      "genre_ids": [28],
+      "genre_ids": [
+        28
+      ],
       "language": "English",
       "pages": 320,
       "cover": "..\\data\\books\\minds-liberation.jpg",
@@ -3742,9 +3988,13 @@
     {
       "id": 17,
       "title": "Quantum Myths and Realities",
-      "author_ids": [15],
+      "author_ids": [
+        15
+      ],
       "published_at": "2022-01-01T00:00:00Z",
-      "genre_ids": [38],
+      "genre_ids": [
+        38
+      ],
       "language": "Polish",
       "pages": 344,
       "cover": "..\\data\\books\\quantum-myths-realities.jpg",
@@ -3753,9 +4003,13 @@
     {
       "id": 18,
       "title": "Labyrinths of the Mind",
-      "author_ids": [16],
+      "author_ids": [
+        16
+      ],
       "published_at": "2011-10-25T00:00:00Z",
-      "genre_ids": [28],
+      "genre_ids": [
+        28
+      ],
       "language": "Polish",
       "pages": 672,
       "cover": "..\\data\\books\\labyrinths-of-the-mind.jpg",
@@ -3764,9 +4018,13 @@
     {
       "id": 19,
       "title": "Dreamers of Tomorrow",
-      "author_ids": [17],
+      "author_ids": [
+        17
+      ],
       "published_at": "2010-03-09T00:00:00Z",
-      "genre_ids": [6],
+      "genre_ids": [
+        6
+      ],
       "language": "English",
       "pages": 288,
       "cover": "..\\data\\books\\dreamers-of-tomorrow.jpg",
@@ -3775,9 +4033,13 @@
     {
       "id": 20,
       "title": "The Art of Leadership",
-      "author_ids": [14],
+      "author_ids": [
+        14
+      ],
       "published_at": "2020-01-01T00:00:00Z",
-      "genre_ids": [5],
+      "genre_ids": [
+        5
+      ],
       "language": "Polish",
       "pages": 288,
       "cover": "..\\data\\books\\the-art-of-leadership.jpg",
@@ -3786,9 +4048,13 @@
     {
       "id": 21,
       "title": "Trials of the Shadow Realm",
-      "author_ids": [18],
+      "author_ids": [
+        18
+      ],
       "published_at": "1925-01-01T00:00:00Z",
-      "genre_ids": [18],
+      "genre_ids": [
+        18
+      ],
       "language": "English",
       "pages": 208,
       "cover": "..\\data\\books\\trials-of-the-shadow-realm.jpg",
@@ -3797,9 +4063,13 @@
     {
       "id": 22,
       "title": "Leaves of the Forgotten Galaxy",
-      "author_ids": [19],
+      "author_ids": [
+        19
+      ],
       "published_at": "2000-03-07T00:00:00Z",
-      "genre_ids": [18],
+      "genre_ids": [
+        18
+      ],
       "language": "English",
       "pages": 709,
       "cover": "..\\data\\books\\leaves-of-the-forgotten-galaxy.jpg",
@@ -3808,9 +4078,13 @@
     {
       "id": 23,
       "title": "The Riddle of Cain",
-      "author_ids": [20],
+      "author_ids": [
+        20
+      ],
       "published_at": "1934-01-01T00:00:00Z",
-      "genre_ids": [18],
+      "genre_ids": [
+        18
+      ],
       "language": "English",
       "pages": 216,
       "cover": "..\\data\\books\\the-riddle-of-cain.jpg",
@@ -3819,9 +4093,13 @@
     {
       "id": 24,
       "title": "Desert Chronicles: Ascension",
-      "author_ids": [3],
+      "author_ids": [
+        3
+      ],
       "published_at": "1969-03-01T00:00:00Z",
-      "genre_ids": [17],
+      "genre_ids": [
+        17
+      ],
       "language": "English",
       "pages": 331,
       "cover": "..\\data\\books\\desert-chronicles-ascension.jpg",
@@ -3830,9 +4108,13 @@
     {
       "id": 25,
       "title": "Children of the Ember",
-      "author_ids": [3],
+      "author_ids": [
+        3
+      ],
       "published_at": "1976-04-01T00:00:00Z",
-      "genre_ids": [17],
+      "genre_ids": [
+        17
+      ],
       "language": "English",
       "pages": 408,
       "cover": "..\\data\\books\\children-of-the-ember.jpg",
@@ -3841,9 +4123,13 @@
     {
       "id": 26,
       "title": "Eclipse of Eternity",
-      "author_ids": [3],
+      "author_ids": [
+        3
+      ],
       "published_at": "1981-05-01T00:00:00Z",
-      "genre_ids": [17],
+      "genre_ids": [
+        17
+      ],
       "language": "English",
       "pages": 412,
       "cover": "..\\data\\books\\eclipse-of-eternity.jpg",
@@ -3852,9 +4138,13 @@
     {
       "id": 27,
       "title": "Heralds of the New Dawn",
-      "author_ids": [3],
+      "author_ids": [
+        3
+      ],
       "published_at": "1984-05-01T00:00:00Z",
-      "genre_ids": [17],
+      "genre_ids": [
+        17
+      ],
       "language": "English",
       "pages": 471,
       "cover": "..\\data\\books\\heralds-of-the-new-dawn.jpg",
@@ -3863,9 +4153,13 @@
     {
       "id": 28,
       "title": "Whispers of Eldritch Tides",
-      "author_ids": [21],
+      "author_ids": [
+        21
+      ],
       "published_at": "1928-02-20T00:00:00Z",
-      "genre_ids": [15],
+      "genre_ids": [
+        15
+      ],
       "language": "English",
       "pages": 35,
       "cover": "..\\data\\books\\whispers-of-eldritch-tides.jpg",
@@ -3874,9 +4168,14 @@
     {
       "id": 29,
       "title": "Chronicles of the Eternal Flame",
-      "author_ids": [4],
+      "author_ids": [
+        4
+      ],
       "published_at": "1977-09-15T00:00:00Z",
-      "genre_ids": [12, 19],
+      "genre_ids": [
+        12,
+        19
+      ],
       "language": "English",
       "pages": 365,
       "cover": "..\\data\\books\\chronicles-of-the-eternal-flame.jpg",
@@ -3885,9 +4184,14 @@
     {
       "id": 30,
       "title": "Adventures of the Hidden Vale",
-      "author_ids": [4],
+      "author_ids": [
+        4
+      ],
       "published_at": "1937-09-21T00:00:00Z",
-      "genre_ids": [12, 19],
+      "genre_ids": [
+        12,
+        19
+      ],
       "language": "English",
       "pages": 310,
       "cover": "..\\data\\books\\adventures-of-the-hidden-vale.jpg",
@@ -3896,9 +4200,15 @@
     {
       "id": 31,
       "title": "Tales of Shadows and Stars",
-      "author_ids": [22],
+      "author_ids": [
+        22
+      ],
       "published_at": "2010-10-01T00:00:00Z",
-      "genre_ids": [13, 15, 16],
+      "genre_ids": [
+        13,
+        15,
+        16
+      ],
       "language": "Polish",
       "pages": 800,
       "cover": "..\\data\\books\\tales-of-shadows-and-stars.jpg",
@@ -3907,9 +4217,15 @@
     {
       "id": 32,
       "title": "The Forgotten Wish",
-      "author_ids": [23, 24],
+      "author_ids": [
+        23,
+        24
+      ],
       "published_at": "2002-02-28T00:00:00Z",
-      "genre_ids": [7, 13],
+      "genre_ids": [
+        7,
+        13
+      ],
       "language": "English",
       "pages": 200,
       "cover": "..\\data\\books\\the-forgotten-wish.jpg",
@@ -3918,9 +4234,13 @@
     {
       "id": 33,
       "title": "Echoes of Thought",
-      "author_ids": [16],
+      "author_ids": [
+        16
+      ],
       "published_at": "2011-10-25T00:00:00Z",
-      "genre_ids": [28],
+      "genre_ids": [
+        28
+      ],
       "language": "English",
       "pages": 499,
       "cover": "..\\data\\books\\echoes-of-thought.jpg",
@@ -3929,9 +4249,13 @@
     {
       "id": 34,
       "title": "Remote Horizons",
-      "author_ids": [17],
+      "author_ids": [
+        17
+      ],
       "published_at": "2013-10-29T00:00:00Z",
-      "genre_ids": [6],
+      "genre_ids": [
+        6
+      ],
       "language": "English",
       "pages": 256,
       "cover": "..\\data\\books\\remote-horizons.jpg",
@@ -3940,9 +4264,13 @@
     {
       "id": 35,
       "title": "Shadows of Transformation",
-      "author_ids": [18],
+      "author_ids": [
+        18
+      ],
       "published_at": "1915-10-15T00:00:00Z",
-      "genre_ids": [18],
+      "genre_ids": [
+        18
+      ],
       "language": "English",
       "pages": 201,
       "cover": "..\\data\\books\\shadows-of-transformation.jpg",
@@ -3951,9 +4279,13 @@
     {
       "id": 36,
       "title": "Winter Tales of the Vale",
-      "author_ids": [28],
+      "author_ids": [
+        28
+      ],
       "published_at": "1957-01-01T00:00:00Z",
-      "genre_ids": [20],
+      "genre_ids": [
+        20
+      ],
       "language": "English",
       "pages": 176,
       "cover": "..\\data\\books\\winter-tales-of-the-vale.jpg",
@@ -3962,9 +4294,13 @@
     {
       "id": 37,
       "title": "The Comet Chronicles",
-      "author_ids": [28],
+      "author_ids": [
+        28
+      ],
       "published_at": "1946-01-01T00:00:00Z",
-      "genre_ids": [20],
+      "genre_ids": [
+        20
+      ],
       "language": "English",
       "pages": 160,
       "cover": "..\\data\\books\\the-comet-chronicles.jpg",
@@ -3973,9 +4309,13 @@
     {
       "id": 38,
       "title": "November Whispers",
-      "author_ids": [28],
+      "author_ids": [
+        28
+      ],
       "published_at": "1970-01-01T00:00:00Z",
-      "genre_ids": [20],
+      "genre_ids": [
+        20
+      ],
       "language": "English",
       "pages": 144,
       "cover": "..\\data\\books\\november-whispers.jpg",
@@ -3984,9 +4324,13 @@
     {
       "id": 39,
       "title": "The Young Keeper's Tales",
-      "author_ids": [28],
+      "author_ids": [
+        28
+      ],
       "published_at": "1950-01-01T00:00:00Z",
-      "genre_ids": [20],
+      "genre_ids": [
+        20
+      ],
       "language": "English",
       "pages": 176,
       "cover": "..\\data\\books\\the-young-keepers-tales.jpg",
@@ -3995,9 +4339,13 @@
     {
       "id": 40,
       "title": "Midsummer Mysteries",
-      "author_ids": [28],
+      "author_ids": [
+        28
+      ],
       "published_at": "1954-01-01T00:00:00Z",
-      "genre_ids": [20],
+      "genre_ids": [
+        20
+      ],
       "language": "English",
       "pages": 176,
       "cover": "..\\data\\books\\midsummer-mysteries.jpg",
@@ -4006,9 +4354,13 @@
     {
       "id": 41,
       "title": "Voyage to the Lighthouse Isles",
-      "author_ids": [28],
+      "author_ids": [
+        28
+      ],
       "published_at": "1965-01-01T00:00:00Z",
-      "genre_ids": [20],
+      "genre_ids": [
+        20
+      ],
       "language": "English",
       "pages": 176,
       "cover": "..\\data\\books\\voyage-to-the-lighthouse-isles.jpg",
@@ -4017,9 +4369,14 @@
     {
       "id": 42,
       "title": "The Ringbearer's Legacy",
-      "author_ids": [4],
+      "author_ids": [
+        4
+      ],
       "published_at": "1954-07-29T00:00:00Z",
-      "genre_ids": [12, 19],
+      "genre_ids": [
+        12,
+        19
+      ],
       "language": "English",
       "pages": 398,
       "cover": "..\\data\\books\\ringbearers-legacy.jpg",
@@ -4028,9 +4385,14 @@
     {
       "id": 43,
       "title": "Towers of the Twilight Realm",
-      "author_ids": [4],
+      "author_ids": [
+        4
+      ],
       "published_at": "1954-11-11T00:00:00Z",
-      "genre_ids": [12, 19],
+      "genre_ids": [
+        12,
+        19
+      ],
       "language": "English",
       "pages": 327,
       "cover": "..\\data\\books\\towers-of-the-twilight-realm.jpg",
@@ -4039,9 +4401,15 @@
     {
       "id": 44,
       "title": "Centuries of Solitude",
-      "author_ids": [29],
+      "author_ids": [
+        29
+      ],
       "published_at": "1967-05-30T00:00:00Z",
-      "genre_ids": [16, 39, 40],
+      "genre_ids": [
+        16,
+        39,
+        40
+      ],
       "language": "English",
       "pages": 417,
       "cover": "..\\data\\books\\centuries-of-solitude.jpg",
@@ -4050,9 +4418,15 @@
     {
       "id": 45,
       "title": "Melodies of the Northern Woods",
-      "author_ids": [30],
+      "author_ids": [
+        30
+      ],
       "published_at": "1987-08-20T00:00:00Z",
-      "genre_ids": [16, 39, 40],
+      "genre_ids": [
+        16,
+        39,
+        40
+      ],
       "language": "English",
       "pages": 472,
       "cover": "..\\data\\books\\melodies-of-the-northern-woods.jpg",
@@ -4061,9 +4435,15 @@
     {
       "id": 46,
       "title": "Chronicles of the Clockwork Bird",
-      "author_ids": [30],
+      "author_ids": [
+        30
+      ],
       "published_at": "1994-10-17T00:00:00Z",
-      "genre_ids": [16, 39, 40],
+      "genre_ids": [
+        16,
+        39,
+        40
+      ],
       "language": "English",
       "pages": 607,
       "cover": "..\\data\\books\\chronicles-of-the-clockwork-bird.jpg",
@@ -4072,9 +4452,15 @@
     {
       "id": 47,
       "title": "Dreams Upon the Shore",
-      "author_ids": [30],
+      "author_ids": [
+        30
+      ],
       "published_at": "2002-09-12T00:00:00Z",
-      "genre_ids": [16, 39, 40],
+      "genre_ids": [
+        16,
+        39,
+        40
+      ],
       "language": "English",
       "pages": 467,
       "cover": "..\\data\\books\\dreams-upon-the-shore.jpg",
@@ -4083,9 +4469,15 @@
     {
       "id": 48,
       "title": "Parallel Horizons",
-      "author_ids": [30],
+      "author_ids": [
+        30
+      ],
       "published_at": "2009-05-29T00:00:00Z",
-      "genre_ids": [16, 39, 40],
+      "genre_ids": [
+        16,
+        39,
+        40
+      ],
       "language": "English",
       "pages": 925,
       "cover": "..\\data\\books\\parallel-horizons.jpg",
@@ -4094,9 +4486,15 @@
     {
       "id": 49,
       "title": "The Colorless Wanderer",
-      "author_ids": [30],
+      "author_ids": [
+        30
+      ],
       "published_at": "2013-04-12T00:00:00Z",
-      "genre_ids": [16, 39, 40],
+      "genre_ids": [
+        16,
+        39,
+        40
+      ],
       "language": "English",
       "pages": 386,
       "cover": "..\\data\\books\\the-colorless-wanderer.jpg",
@@ -4105,9 +4503,15 @@
     {
       "id": 50,
       "title": "Walls of a Shifting City",
-      "author_ids": [30],
+      "author_ids": [
+        30
+      ],
       "published_at": "2024-11-19T00:00:00Z",
-      "genre_ids": [16, 39, 40],
+      "genre_ids": [
+        16,
+        39,
+        40
+      ],
       "language": "English",
       "pages": 464,
       "cover": "..\\data\\books\\walls-of-a-shifting-city.jpg",
@@ -4116,9 +4520,15 @@
     {
       "id": 51,
       "title": "Brutalist Dreams",
-      "author_ids": [0],
+      "author_ids": [
+        0
+      ],
       "published_at": "2020-10-19T00:00:00Z",
-      "genre_ids": [31, 41, 42],
+      "genre_ids": [
+        31,
+        41,
+        42
+      ],
       "language": "English",
       "pages": 568,
       "cover": "..\\data\\books\\brutalist-dreams.jpg",
@@ -4127,9 +4537,15 @@
     {
       "id": 52,
       "title": "Art of Shadows",
-      "author_ids": [0],
+      "author_ids": [
+        0
+      ],
       "published_at": "2015-11-01T00:00:00Z",
-      "genre_ids": [31, 42, 43],
+      "genre_ids": [
+        31,
+        42,
+        43
+      ],
       "language": "English",
       "pages": 576,
       "cover": "..\\data\\books\\art-of-shadows.jpg",
@@ -4138,9 +4554,15 @@
     {
       "id": 53,
       "title": "Leonardo's Vision",
-      "author_ids": [0],
+      "author_ids": [
+        0
+      ],
       "published_at": "2022-03-01T00:00:00Z",
-      "genre_ids": [31, 42, 43],
+      "genre_ids": [
+        31,
+        42,
+        43
+      ],
       "language": "English",
       "pages": 712,
       "cover": "..\\data\\books\\leonardos-vision.jpg",
@@ -4149,9 +4571,14 @@
     {
       "id": 54,
       "title": "Mysteries of Twin Peaks",
-      "author_ids": [31],
+      "author_ids": [
+        31
+      ],
       "published_at": "2016-10-18T00:00:00Z",
-      "genre_ids": [13, 14],
+      "genre_ids": [
+        13,
+        14
+      ],
       "language": "English",
       "pages": 368,
       "cover": "..\\data\\books\\mysteries-of-twin-peaks.jpg",
@@ -4160,9 +4587,16 @@
     {
       "id": 55,
       "title": "Lessons from the Software Frontier",
-      "author_ids": [32, 33, 34],
+      "author_ids": [
+        32,
+        33,
+        34
+      ],
       "published_at": "2001-10-18T00:00:00Z",
-      "genre_ids": [3, 4],
+      "genre_ids": [
+        3,
+        4
+      ],
       "language": "English",
       "pages": 368,
       "cover": "..\\data\\books\\lessons-from-the-software-frontier.jpg",
@@ -4171,9 +4605,16 @@
     {
       "id": 56,
       "title": "The Google Code Playbook",
-      "author_ids": [35, 36, 37],
+      "author_ids": [
+        35,
+        36,
+        37
+      ],
       "published_at": "2012-03-01T00:00:00Z",
-      "genre_ids": [3, 4],
+      "genre_ids": [
+        3,
+        4
+      ],
       "language": "English",
       "pages": 320,
       "cover": "..\\data\\books\\google-code-playbook.jpg",
@@ -4182,9 +4623,15 @@
     {
       "id": 57,
       "title": "Team Code Chronicles",
-      "author_ids": [38, 39],
+      "author_ids": [
+        38,
+        39
+      ],
       "published_at": "2021-11-15T00:00:00Z",
-      "genre_ids": [3, 4],
+      "genre_ids": [
+        3,
+        4
+      ],
       "language": "English",
       "pages": 188,
       "cover": "..\\data\\books\\team-code-chronicles.jpg",
@@ -4193,9 +4640,14 @@
     {
       "id": 58,
       "title": "Voices of Justice",
-      "author_ids": [50],
+      "author_ids": [
+        50
+      ],
       "published_at": "1960-07-11T00:00:00Z",
-      "genre_ids": [18, 19],
+      "genre_ids": [
+        18,
+        19
+      ],
       "language": "English",
       "pages": 281,
       "cover": "..\\data\\books\\voices-of-justice.jpg",
@@ -4204,9 +4656,14 @@
     {
       "id": 59,
       "title": "Reflections in the Manor",
-      "author_ids": [51],
+      "author_ids": [
+        51
+      ],
       "published_at": "1813-01-28T00:00:00Z",
-      "genre_ids": [19, 15],
+      "genre_ids": [
+        19,
+        15
+      ],
       "language": "English",
       "pages": 279,
       "cover": "..\\data\\books\\reflections-in-the-manor.jpg",
@@ -4215,9 +4672,13 @@
     {
       "id": 60,
       "title": "Echoes of Wealth",
-      "author_ids": [52],
+      "author_ids": [
+        52
+      ],
       "published_at": "1925-04-10T00:00:00Z",
-      "genre_ids": [19],
+      "genre_ids": [
+        19
+      ],
       "language": "English",
       "pages": 180,
       "cover": "..\\data\\books\\echoes-of-wealth.jpg",
@@ -4226,9 +4687,14 @@
     {
       "id": 61,
       "title": "Empires of Struggle",
-      "author_ids": [53],
+      "author_ids": [
+        53
+      ],
       "published_at": "1869-01-01T00:00:00Z",
-      "genre_ids": [19, 18],
+      "genre_ids": [
+        19,
+        18
+      ],
       "language": "Russian",
       "pages": 1225,
       "cover": "..\\data\\books\\empires-of-struggle.jpg",
@@ -4237,9 +4703,13 @@
     {
       "id": 62,
       "title": "Fields of Youth",
-      "author_ids": [54],
+      "author_ids": [
+        54
+      ],
       "published_at": "1951-07-16T00:00:00Z",
-      "genre_ids": [18],
+      "genre_ids": [
+        18
+      ],
       "language": "English",
       "pages": 214,
       "cover": "..\\data\\books\\fields-of-youth.jpg",
@@ -4248,9 +4718,13 @@
     {
       "id": 63,
       "title": "Beneath the White Waves",
-      "author_ids": [55],
+      "author_ids": [
+        55
+      ],
       "published_at": "1851-10-18T00:00:00Z",
-      "genre_ids": [19],
+      "genre_ids": [
+        19
+      ],
       "language": "English",
       "pages": 635,
       "cover": "..\\data\\books\\beneath-the-white-waves.jpg",
@@ -4259,9 +4733,14 @@
     {
       "id": 64,
       "title": "The Seeker's Compass",
-      "author_ids": [56],
+      "author_ids": [
+        56
+      ],
       "published_at": "1988-01-01T00:00:00Z",
-      "genre_ids": [18, 19],
+      "genre_ids": [
+        18,
+        19
+      ],
       "language": "Portuguese",
       "pages": 208,
       "cover": "..\\data\\books\\seekers-compass.jpg",
@@ -4270,9 +4749,14 @@
     {
       "id": 65,
       "title": "The Thief's Tale",
-      "author_ids": [57],
+      "author_ids": [
+        57
+      ],
       "published_at": "2005-03-14T00:00:00Z",
-      "genre_ids": [18, 19],
+      "genre_ids": [
+        18,
+        19
+      ],
       "language": "English",
       "pages": 552,
       "cover": "..\\data\\books\\thiefs-tale.jpg",
@@ -4281,9 +4765,14 @@
     {
       "id": 66,
       "title": "Whispers of the Moors",
-      "author_ids": [58],
+      "author_ids": [
+        58
+      ],
       "published_at": "1847-12-01T00:00:00Z",
-      "genre_ids": [19, 15],
+      "genre_ids": [
+        19,
+        15
+      ],
       "language": "English",
       "pages": 416,
       "cover": "..\\data\\books\\whispers-of-the-moors.jpg",
@@ -4292,9 +4781,15 @@
     {
       "id": 67,
       "title": "Journeys of a Modern Mind",
-      "author_ids": [65],
+      "author_ids": [
+        65
+      ],
       "published_at": "1922-02-02T00:00:00Z",
-      "genre_ids": [19, 10, 39],
+      "genre_ids": [
+        19,
+        10,
+        39
+      ],
       "language": "English",
       "pages": 730,
       "cover": "..\\data\\books\\modern-mind-journeys.jpg",
@@ -4303,9 +4798,15 @@
     {
       "id": 68,
       "title": "Dark Currents",
-      "author_ids": [64],
+      "author_ids": [
+        64
+      ],
       "published_at": "1899-11-01T00:00:00Z",
-      "genre_ids": [19, 39, 18],
+      "genre_ids": [
+        19,
+        39,
+        18
+      ],
       "language": "English",
       "pages": 96,
       "cover": "..\\data\\books\\dark-currents.jpg",
@@ -4314,9 +4815,14 @@
     {
       "id": 69,
       "title": "Timeless Echoes",
-      "author_ids": [66],
+      "author_ids": [
+        66
+      ],
       "published_at": "1913-11-14T00:00:00Z",
-      "genre_ids": [10, 39],
+      "genre_ids": [
+        10,
+        39
+      ],
       "language": "French",
       "pages": 4215,
       "cover": "..\\data\\books\\timeless-echoes.jpg",
@@ -4325,9 +4831,15 @@
     {
       "id": 70,
       "title": "The Enigmatic Manuscript",
-      "author_ids": [68],
+      "author_ids": [
+        68
+      ],
       "published_at": "1980-11-01T00:00:00Z",
-      "genre_ids": [13, 10, 39],
+      "genre_ids": [
+        13,
+        10,
+        39
+      ],
       "language": "Italian",
       "pages": 512,
       "cover": "..\\data\\books\\enigmatic-manuscript.jpg",
@@ -4336,9 +4848,15 @@
     {
       "id": 71,
       "title": "Horizons of Rebellion",
-      "author_ids": [69],
+      "author_ids": [
+        69
+      ],
       "published_at": "1957-10-10T00:00:00Z",
-      "genre_ids": [10, 39, 6],
+      "genre_ids": [
+        10,
+        39,
+        6
+      ],
       "language": "English",
       "pages": 1168,
       "cover": "..\\data\\books\\horizons-of-rebellion.jpg",
@@ -4347,9 +4865,15 @@
     {
       "id": 72,
       "title": "Paradox Squadron",
-      "author_ids": [70],
+      "author_ids": [
+        70
+      ],
       "published_at": "1961-11-10T00:00:00Z",
-      "genre_ids": [10, 39, 18],
+      "genre_ids": [
+        10,
+        39,
+        18
+      ],
       "language": "English",
       "pages": 453,
       "cover": "..\\data\\books\\paradox-squadron.jpg",
@@ -4358,9 +4882,15 @@
     {
       "id": 73,
       "title": "The Shadowed Count",
-      "author_ids": [71],
+      "author_ids": [
+        71
+      ],
       "published_at": "1897-05-26T00:00:00Z",
-      "genre_ids": [15, 10, 13],
+      "genre_ids": [
+        15,
+        10,
+        13
+      ],
       "language": "English",
       "pages": 418,
       "cover": "..\\data\\books\\shadowed-count.jpg",
@@ -4369,9 +4899,15 @@
     {
       "id": 74,
       "title": "Mysteries of the Serpent's Mark",
-      "author_ids": [72],
+      "author_ids": [
+        72
+      ],
       "published_at": "2005-08-27T00:00:00Z",
-      "genre_ids": [13, 14, 10],
+      "genre_ids": [
+        13,
+        14,
+        10
+      ],
       "language": "Swedish",
       "pages": 672,
       "cover": "..\\data\\books\\serpents-mark.jpg",
@@ -4380,9 +4916,15 @@
     {
       "id": 75,
       "title": "City of Whispering Tombs",
-      "author_ids": [73],
+      "author_ids": [
+        73
+      ],
       "published_at": "2006-12-15T00:00:00Z",
-      "genre_ids": [44, 18, 17],
+      "genre_ids": [
+        44,
+        18,
+        17
+      ],
       "language": "Japanese",
       "pages": 224,
       "cover": "..\\data\\books\\whispering-tombs.jpg",
@@ -4391,9 +4933,15 @@
     {
       "id": 76,
       "title": "Echoes of the Digital Abyss",
-      "author_ids": [73],
+      "author_ids": [
+        73
+      ],
       "published_at": "2022-08-15T00:00:00Z",
-      "genre_ids": [44, 18, 17],
+      "genre_ids": [
+        44,
+        18,
+        17
+      ],
       "language": "Japanese",
       "pages": 2200,
       "cover": "..\\data\\books\\digital-abyss.jpg",
@@ -4402,9 +4950,15 @@
     {
       "id": 77,
       "title": "Bio-Cyber Chronicles",
-      "author_ids": [73],
+      "author_ids": [
+        73
+      ],
       "published_at": "2024-07-04T00:00:00Z",
-      "genre_ids": [44, 18, 17],
+      "genre_ids": [
+        44,
+        18,
+        17
+      ],
       "language": "Japanese",
       "pages": 1632,
       "cover": "..\\data\\books\\bio-cyber-chronicles.jpg",
@@ -5145,7 +5699,9 @@
     {
       "id": 1,
       "user_id": 2,
-      "book_ids": [1],
+      "book_ids": [
+        1
+      ],
       "books_cost": {
         "1": 2500
       },
@@ -5160,7 +5716,9 @@
     {
       "id": 2,
       "user_id": 2,
-      "book_ids": [2],
+      "book_ids": [
+        2
+      ],
       "books_cost": {
         "2": 3000
       },
@@ -5175,7 +5733,10 @@
     {
       "id": 3,
       "user_id": 2,
-      "book_ids": [2, 3],
+      "book_ids": [
+        2,
+        3
+      ],
       "books_cost": {
         "2": 3000,
         "3": 1000
@@ -5191,7 +5752,11 @@
     {
       "user_id": 5,
       "status_id": 5,
-      "book_ids": [17, 10, 2],
+      "book_ids": [
+        17,
+        10,
+        2
+      ],
       "books_cost": {
         "2": 3000,
         "10": 2750,
@@ -5208,7 +5773,10 @@
     {
       "user_id": 5,
       "status_id": 1,
-      "book_ids": [50, 20],
+      "book_ids": [
+        50,
+        20
+      ],
       "books_cost": {
         "20": 7500,
         "50": 6500
@@ -5264,19 +5832,27 @@
       "id": 1,
       "name": "new",
       "icon": "fa-plus",
-      "possible_next_statuses": [5, 20]
+      "possible_next_statuses": [
+        5,
+        20
+      ]
     },
     {
       "id": 5,
       "name": "sent",
       "icon": "fa-paper-plane",
-      "possible_next_statuses": [10]
+      "possible_next_statuses": [
+        10
+      ]
     },
     {
       "id": 10,
       "name": "pending",
       "icon": "fa-spinner",
-      "possible_next_statuses": [30, 40]
+      "possible_next_statuses": [
+        30,
+        40
+      ]
     },
     {
       "id": 20,
@@ -5294,7 +5870,9 @@
       "id": 40,
       "name": "delivered",
       "icon": "fa-check",
-      "possible_next_statuses": [99]
+      "possible_next_statuses": [
+        99
+      ]
     },
     {
       "id": 99,
@@ -5307,32 +5885,47 @@
     {
       "id": 1,
       "name": "manage-orders",
-      "role_ids": [1, 16]
+      "role_ids": [
+        1,
+        16
+      ]
     },
     {
       "id": 2,
       "name": "manage-users",
-      "role_ids": [1]
+      "role_ids": [
+        1
+      ]
     },
     {
       "id": 3,
       "name": "manage-items",
-      "role_ids": [1, 16]
+      "role_ids": [
+        1,
+        16
+      ]
     },
     {
       "id": 4,
       "name": "read-users",
-      "role_ids": [1, 16]
+      "role_ids": [
+        1,
+        16
+      ]
     },
     {
       "id": 5,
       "name": "manage-accounts",
-      "role_ids": [1]
+      "role_ids": [
+        1
+      ]
     },
     {
       "id": 6,
       "name": "view-stats",
-      "role_ids": [1]
+      "role_ids": [
+        1
+      ]
     }
   ],
   "book-shop-roles": [
@@ -5362,11 +5955,22 @@
       "id": 1,
       "user_id": 2,
       "role_id": 2,
-      "wishlist_books_ids": [3],
-      "favorite_books_ids": [1],
-      "purchased_book_ids": [1],
-      "read_books_ids": [2],
-      "owned_books_ids": [1, 5],
+      "wishlist_books_ids": [
+        3
+      ],
+      "favorite_books_ids": [
+        1
+      ],
+      "purchased_book_ids": [
+        1
+      ],
+      "read_books_ids": [
+        2
+      ],
+      "owned_books_ids": [
+        1,
+        5
+      ],
       "funds": 10000,
       "created_at": "2024-05-25T11:50:28.108Z",
       "country": "Poland",

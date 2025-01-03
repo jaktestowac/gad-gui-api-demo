@@ -1,6 +1,6 @@
 "use strict";
 
-var nanoid = require("nanoid");
+const { nanoid } = import("nanoid");
 var pluralize = require("pluralize");
 
 module.exports = {
