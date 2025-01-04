@@ -1117,3 +1117,7 @@ h4.books-header {
   align-items: center;
   flex-wrap: wrap;
 }
+
+.invalid-input {
+  border: 2px solid red !important;
+}

@@ -452,6 +452,12 @@ function formatBookmarkArticle(alreadyBookmark, articleId) {
   return out;
 }
 
+/**
+ * Checks if the specified feature is enabled by making a POST request to the server.
+ *
+ * @param {string} featureName - A feature name to check.
+ * @returns {Promise<Object>} A promise that resolves to the JSON response from the server.
+ */
 async function checkIfFeatureEnabled(featureName) {
   const body = { name: featureName };
   const url = "/api/config/checkfeature";
@@ -470,6 +476,12 @@ async function checkIfFeatureEnabled(featureName) {
     });
 }
 
+/**
+ * Checks if the specified features are enabled by making a POST request to the server.
+ *
+ * @param {string[]} featureNames - An array of feature names to check.
+ * @returns {Promise<Object>} A promise that resolves to the JSON response from the server.
+ */
 async function checkIfFeaturesEnabled(featureNames) {
   const body = { names: featureNames };
   const url = "/api/config/checkfeatures";
@@ -923,6 +935,62 @@ function calculateLuminance(rgb) {
   });
   const luminance = 0.2126 * sRGB[0] + 0.7152 * sRGB[1] + 0.0722 * sRGB[2];
   return luminance;
+}
+
+let clickCount = 0;
+
+document.addEventListener("DOMContentLoaded", () => {
+  if (window.location.pathname === "/") {
+    document.addEventListener("click", (event) => {
+      const banner = document.getElementById("frontbanner");
+      if (banner === null) {
+        return;
+      }
+
+      if (!banner.contains(event.target)) {
+        clickCount = 0;
+      } else {
+        clickCount++;
+      }
+
+      if (clickCount === 6) {
+        startFireworks();
+        clickCount = 0;
+      }
+    });
+  }
+});
+
+function startFireworks() {
+  const margin = 150;
+  const numberOfFireworks = randomIntMinMax(5, 20);
+  for (let i = 0; i < numberOfFireworks; i++) {
+    const firework = document.createElement("div");
+    firework.classList.add("firework");
+    firework.style.left = Math.random() * (window.innerWidth - margin * 2) + margin + "px";
+    firework.style.top = Math.random() * (window.innerHeight - margin * 2) + margin + "px";
+    firework.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+    document.body.appendChild(firework);
+    setTimeout(() => {
+      createBurst(firework.style.left, firework.style.top);
+      firework.remove();
+    }, 1000);
+  }
+}
+
+function createBurst(x, y) {
+  const numberOfParticles = randomIntMinMax(5, 15);
+  for (let i = 0; i < numberOfParticles; i++) {
+    const particle = document.createElement("div");
+    particle.classList.add("firework-burst");
+    particle.style.left = x;
+    particle.style.top = y;
+    particle.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+    particle.style.setProperty("--x", `${Math.random() * 300 - 150}px`);
+    particle.style.setProperty("--y", `${Math.random() * 300 - 150}px`);
+    document.body.appendChild(particle);
+    setTimeout(() => particle.remove(), 1000);
+  }
 }
 
 /**

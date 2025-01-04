@@ -158,6 +158,12 @@ const allLinks = [
     name: "Account",
     icon: `<i class="fa-solid fa-address-card"></i>`,
   },
+  {
+    link: "/book-shop/payment-history.html",
+    id: "book-shop-payment-history",
+    name: "Payment History",
+    icon: `<i class="fa-solid fa-file-invoice"></i>`,
+  },
 ];
 
 function _setIconActive(iconId) {

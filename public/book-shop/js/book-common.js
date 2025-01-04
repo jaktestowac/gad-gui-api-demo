@@ -1494,6 +1494,16 @@ function createAccountPaymentCardEditPopup(userData, callbackOnSave = undefined)
     checkCardValidity(cardNumberInput.value, expirationDateInput.value, cvvInput.value);
   });
 
+  cardNumberInput.addEventListener("blur", () => {
+    const cardNumberInput = document.getElementById("card-number-input");
+
+    if (!isCardNumberValid(cardNumberInput.value)) {
+      cardNumberInput.classList.add("invalid-input");
+    } else {
+      cardNumberInput.classList.remove("invalid-input");
+    }
+  });
+
   const expirationDateLabel = document.createElement("label");
   expirationDateLabel.textContent = "Expiration Date";
   expirationDateLabel.className = "account-edit-label";
@@ -1514,6 +1524,16 @@ function createAccountPaymentCardEditPopup(userData, callbackOnSave = undefined)
     checkCardValidity(cardNumberInput.value, expirationDateInput.value, cvvInput.value);
   });
 
+  expirationDateInput.addEventListener("blur", () => {
+    const expirationDateInput = document.getElementById("expiration-date-input");
+
+    if (!isExpirationDateValid(expirationDateInput.value)) {
+      expirationDateInput.classList.add("invalid-input");
+    } else {
+      expirationDateInput.classList.remove("invalid-input");
+    }
+  });
+
   const cvvLabel = document.createElement("label");
   cvvLabel.textContent = "CVV";
   cvvLabel.className = "account-edit-label";
@@ -1532,6 +1552,16 @@ function createAccountPaymentCardEditPopup(userData, callbackOnSave = undefined)
     const expirationDateInput = document.getElementById("expiration-date-input");
     const cvvInput = document.getElementById("cvv-input");
     checkCardValidity(cardNumberInput.value, expirationDateInput.value, cvvInput.value);
+  });
+
+  cvvInput.addEventListener("blur", () => {
+    const cvvInput = document.getElementById("cvv-input");
+
+    if (!isCvvValid(cvvInput.value)) {
+      cvvInput.classList.add("invalid-input");
+    } else {
+      cvvInput.classList.remove("invalid-input");
+    }
   });
 
   const saveButton = document.createElement("button");
@@ -1732,6 +1762,16 @@ function createAccountFundsTopupPopup(userData, callbackOnSave = undefined) {
     checkTopupValidity(amountInput.value, cvvInput.value);
   });
 
+  cvvInput.addEventListener("blur", () => {
+    const cvvInput = document.getElementById("cvv-input");
+
+    if (!isCvvValid(cvvInput.value)) {
+      cvvInput.classList.add("invalid-input");
+    } else {
+      cvvInput.classList.remove("invalid-input");
+    }
+  });
+
   const amountLabel = document.createElement("label");
   amountLabel.textContent = "Amount";
   amountLabel.className = "account-edit-label";
@@ -1749,6 +1789,12 @@ function createAccountFundsTopupPopup(userData, callbackOnSave = undefined) {
     const cvvInput = document.getElementById("cvv-input");
     checkTopupValidity(amountInput.value, cvvInput.value);
     amountInput.value = parseFloat(amountInput.value).toFixed(2);
+
+    if (!isAmountValid(amountInput.value)) {
+      amountInput.classList.add("invalid-input");
+    } else {
+      amountInput.classList.remove("invalid-input");
+    }
   });
 
   const saveButton = document.createElement("button");
@@ -1896,11 +1942,19 @@ function isAmountValid(amount) {
   return true;
 }
 
-function isCardValid(cardNumber, expirationDate, cvv) {
+function isCardNumberValid(cardNumber) {
   const actualCardNumber = cardNumber.replace(/[^0-9]/g, "");
+
+  if (actualCardNumber.length === 20) {
+    return true;
+  }
+
+  return false;
+}
+
+function isExpirationDateValid(expirationDate) {
   const actualExpirationDate = expirationDate.replace(/[^0-9-]/g, "");
   const dateParts = actualExpirationDate.split("-");
-
   if (dateParts.length !== 3) {
     return false;
   }
@@ -1920,9 +1974,11 @@ function isCardValid(cardNumber, expirationDate, cvv) {
     return false;
   }
 
-  const actualCvv = cvv.replace(/[^0-9]/g, "");
+  return true;
+}
 
-  if (actualCardNumber.length === 20 && actualExpirationDate.length === 10 && actualCvv.length === 5) {
+function isCardValid(cardNumber, expirationDate, cvv) {
+  if (isCardNumberValid(cardNumber) && isExpirationDateValid(expirationDate) && isCvvValid(cvv)) {
     return true;
   }
 

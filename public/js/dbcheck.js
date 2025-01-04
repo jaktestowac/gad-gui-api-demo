@@ -40,6 +40,7 @@ issueGetDbCheckRequest().then((data) => {
       dbStatusInfoContainer.innerHTML = text;
 
       dbStatusInfoContainer.style.display = "";
+      dbStatusInfoContainer.parentElement.style.display = "";
     }
   }
 });
