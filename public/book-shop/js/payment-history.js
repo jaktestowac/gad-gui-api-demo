@@ -122,7 +122,9 @@ function displayPaymentHistory(paymentHistoryData, paymentHistoryContainer) {
     paymentSummary.innerHTML = `
       <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; flex: 1;">
         <span style="text-align: left">${payment.date}</span>
-        <span style="text-align: center" class="payment-status-${payment.paymentDetails.status}">${payment.activityType.toUpperCase()}</span>
+        <span style="text-align: center" class="payment-status-${
+          payment.paymentDetails.status
+        }">${payment.activityType.toUpperCase()}</span>
         <strong style="text-align: right">${payment.paymentDetails.amount} ${payment.paymentDetails.currency}</strong>
       </div>
     `;
@@ -155,7 +157,6 @@ checkIfAuthenticated(
   () => {
     issueGetBookShopAccountRequest().then((response) => {
       if (response.status === 200) {
-        createSearchTools(); // Add search tools
         issueGetPaymentHistoryRequest().then((response) => {
           if (response.status === 200) {
             return response.json().then((data) => {
@@ -163,6 +164,7 @@ checkIfAuthenticated(
               userPaymentHistory = data;
               paymentContainer.innerHTML = "";
               displayPaymentHistory(data, paymentContainer);
+              createSearchTools();
             });
           } else {
             if (response.status === 401) {
