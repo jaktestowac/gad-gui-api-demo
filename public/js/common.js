@@ -100,6 +100,29 @@ const formatDateToLocaleString = (dateString) => {
   return formattedDate;
 };
 
+const formatDateToLocaleStringShort = (dateString) => {
+  if (dateString === undefined) {
+    return "";
+  }
+
+  const date = new Date(dateString);
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const targetDate = new Date(date.toLocaleString("en-US", { timeZone }));
+  const options = {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  };
+  const locale = navigator.language;
+
+  const formattedDate = targetDate.toLocaleString(locale, options);
+
+  return formattedDate;
+};
+
 function howManyHoursAndMinutesAndSecondsInPast(dateString) {
   const date = new Date(dateString);
   const now = new Date();

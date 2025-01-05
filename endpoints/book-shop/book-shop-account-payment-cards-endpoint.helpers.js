@@ -19,7 +19,7 @@ const {
 const { verifyAccessToken } = require("../../helpers/validation.helpers");
 const { areIdsEqual } = require("../../helpers/compare.helpers");
 const DatabaseManager = require("../../helpers/db.manager");
-const { changeUserFunds, getMaxId, addCardToDataBase } = require("../../helpers/db-queries.helper");
+const { changeUserFunds, addCardToDataBase } = require("../../helpers/db-queries.helper");
 const { getConfigValue } = require("../../config/config-manager");
 const { ConfigKeys } = require("../../config/enums");
 const { getRandomInt } = require("../../helpers/generators/random-data.generator");

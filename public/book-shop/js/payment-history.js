@@ -22,13 +22,19 @@ function createSearchTools() {
     <div class="payment-history-search-tools">
       <input type="text" id="payment-search" placeholder="Search payments..." 
         style="padding: 8px; border-radius: 4px; border: 1px solid #ddd; width: 200px;">
-      <select id="payment-status-filter" style="padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
+      <select id="payment-status-filter" class="payment-status-filter">
         <option value="">All Status</option>
       </select>
       <div class="date-range-filter">
         <input type="date" id="date-from" style="padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
         <span>to</span>
         <input type="date" id="date-to" style="padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
+      </div>
+      <button id="reset-filters" class="reset-button" title="Reset Filters">
+        <i class="fas fa-undo"></i>
+      </button>
+      <div class="toggle-buttons">
+        <button id="toggle-all" title="Toggle All"><i class="fa-solid fa-up-right-and-down-left-from-center"></i></button>
       </div>
     </div>
   `;
@@ -72,6 +78,25 @@ function createSearchTools() {
     option.textContent = status.charAt(0).toUpperCase() + status.slice(1);
     statusFilter.appendChild(option);
   });
+  initializeCollapseExpandButtons();
+
+  // Add reset button listener
+  document.getElementById("reset-filters").addEventListener("click", resetFilters);
+}
+
+function resetFilters() {
+  const searchInput = document.getElementById("payment-search");
+  const statusFilter = document.getElementById("payment-status-filter");
+  const dateFrom = document.getElementById("date-from");
+  const dateTo = document.getElementById("date-to");
+
+  searchInput.value = "";
+  statusFilter.value = "";
+  dateFrom.value = "";
+  dateTo.value = "";
+
+  filterPayments();
+  showSimpleAlert("Filters reset to default", 1);
 }
 
 function filterPayments() {
@@ -119,9 +144,11 @@ function displayPaymentHistory(paymentHistoryData, paymentHistoryContainer) {
     paymentSummary.classList.add("payment-summary");
     paymentSummary.style.display = "flex";
     paymentSummary.style.alignItems = "center";
+
+    const dateFormatted = formatDateToLocaleStringShort(new Date(payment.date));
     paymentSummary.innerHTML = `
       <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; flex: 1;">
-        <span style="text-align: left">${payment.date}</span>
+        <span style="text-align: left">${dateFormatted}</span>
         <span style="text-align: center" class="payment-status-${
           payment.paymentDetails.status
         }">${payment.activityType.toUpperCase()}</span>
@@ -131,9 +158,9 @@ function displayPaymentHistory(paymentHistoryData, paymentHistoryContainer) {
 
     const paymentDetails = document.createElement("div");
     paymentDetails.classList.add("payment-details");
-    paymentDetails.style.display = "none";
     paymentDetails.innerHTML = `
       <p><strong>Payment Method:</strong> ${payment.paymentDetails.paymentMethod.replace("_", " ").toUpperCase()}</p>
+      <p><strong>Order ID:</strong> #${payment.paymentDetails.order_id || "N/A"}</p>
       <p><strong>Status:</strong> <span class="payment-status-${payment.paymentDetails.status}">${
       payment.paymentDetails.status
     }</span></p>
@@ -142,14 +169,51 @@ function displayPaymentHistory(paymentHistoryData, paymentHistoryContainer) {
     `;
 
     paymentSummary.addEventListener("click", () => {
-      paymentDetails.style.display = paymentDetails.style.display === "none" ? "block" : "none";
+      paymentDetails.classList.toggle("visible");
       paymentSummary.classList.toggle("active");
+      updateToggleButtonState();
     });
 
     paymentBox.appendChild(paymentSummary);
     paymentBox.appendChild(paymentDetails);
     paymentHistoryContainer.appendChild(paymentBox);
   });
+}
+
+function initializeCollapseExpandButtons() {
+  const toggleBtn = document.getElementById("toggle-all");
+  if (!toggleBtn) return;
+
+  toggleBtn.addEventListener("click", () => {
+    const details = document.querySelectorAll(".payment-details");
+    const summaries = document.querySelectorAll(".payment-summary");
+    const hasExpandedItems = document.querySelectorAll(".payment-details.visible").length > 0;
+
+    if (hasExpandedItems) {
+      details.forEach((detail) => detail.classList.remove("visible"));
+      summaries.forEach((summary) => summary.classList.remove("active"));
+      showSimpleAlert("All payments collapsed", 0);
+    } else {
+      details.forEach((detail) => detail.classList.add("visible"));
+      summaries.forEach((summary) => summary.classList.add("active"));
+      showSimpleAlert("All payments expanded", 0);
+    }
+
+    updateToggleButtonState();
+  });
+}
+
+function updateToggleButtonState() {
+  const toggleBtn = document.getElementById("toggle-all");
+  if (!toggleBtn) return;
+
+  const expandedDetails = document.querySelectorAll(".payment-details.visible").length;
+
+  if (expandedDetails > 0) {
+    toggleBtn.innerHTML = '<i class="fa-solid fa-down-left-and-up-right-to-center"></i>';
+  } else {
+    toggleBtn.innerHTML = '<i class="fa-solid fa-up-right-and-down-left-from-center"></i>';
+  }
 }
 
 checkIfAuthenticated(

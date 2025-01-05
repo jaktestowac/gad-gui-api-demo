@@ -5,7 +5,7 @@
   overflow: hidden;
   background: #fff;
   transition: all 0.3s ease;
-  width: 400px;
+  width: 500px;
   font-size: 14px;
 }
 
@@ -28,7 +28,7 @@
   content: "▼";
   font-size: 12px;
   color: #666;
-  transition: transform 0.3s ease;
+  transition: transform 0.5s ease;
   padding-left: 12px;
   padding-right: 12px;
 }
@@ -38,10 +38,17 @@
 }
 
 .payment-details {
-  padding: 16px;
   border-top: 1px solid #eee;
   background: #fff;
-  animation: slideDown 0.3s ease;
+  animation: slideDown 0.5s ease;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+}
+
+.payment-details.visible {
+  max-height: 200px;
+  padding: 16px;
 }
 
 .payment-details p {
@@ -78,7 +85,7 @@
   gap: 10px;
   justify-content: center;
   align-items: center;
-  width: 700px !important;
+  width: 800px !important;  /* increased width to accommodate buttons */
 }
 
 .date-range-filter {
@@ -114,4 +121,63 @@
 
 .payment-status {
   font-size: 14px;
+}
+
+.payment-status-filter {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  width: 100px;
+}
+
+/* Remove .floating-buttons styles */
+
+.toggle-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.toggle-buttons button {
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #007bff;
+  background: white;
+  color: #007bff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-buttons button:hover {
+  background: #007bff;
+  color: white;
+}
+
+.toggle-buttons button i {
+  font-size: 14px;
+  transition: transform 0.3s ease;
+}
+
+.reset-button {
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #dc3545;
+  background: white;
+  color: #dc3545;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reset-button:hover {
+  background: #dc3545;
+  color: white;
 }
