@@ -205,7 +205,7 @@ function handleUsers(req, res, { isAdmin }) {
 
     const isFeatureEnabled = getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_SOFT_DELETE_USERS);
 
-    if (isFeatureEnabled === true) {
+    if (isFeatureEnabled) {
       req.method = "PUT";
       req.url = `/api/users/${userId}`;
       const newUserBody = foundUser;
