@@ -35,15 +35,15 @@ function createSearchTools() {
 
   document.getElementById("payment-search").addEventListener("input", filterPayments);
   document.getElementById("payment-status-filter").addEventListener("change", filterPayments);
-  
+
   const dateFrom = document.getElementById("date-from");
   const dateTo = document.getElementById("date-to");
 
   if (userPaymentHistory.length > 0) {
-    const dates = userPaymentHistory.map(p => new Date(p.date));
-    const minDate = new Date(Math.min(...dates)).toISOString().split('T')[0];
-    const maxDate = new Date(Math.max(...dates)).toISOString().split('T')[0];
-    
+    const dates = userPaymentHistory.map((p) => new Date(p.date));
+    const minDate = new Date(Math.min(...dates)).toISOString().split("T")[0];
+    const maxDate = new Date(Math.max(...dates)).toISOString().split("T")[0];
+
     dateFrom.min = minDate;
     dateFrom.max = maxDate;
     dateTo.min = minDate;
@@ -95,8 +95,7 @@ function filterPayments() {
 
     const matchesSearch = !searchTerm || paymentString.includes(searchTerm);
     const matchesStatus = !statusFilter || payment.paymentDetails.status === statusFilter;
-    const matchesDateRange = (!fromDate || paymentDate >= fromDate) && 
-                           (!toDate || paymentDate <= toDate);
+    const matchesDateRange = (!fromDate || paymentDate >= fromDate) && (!toDate || paymentDate <= toDate);
 
     return matchesSearch && matchesStatus && matchesDateRange;
   });
@@ -123,7 +122,7 @@ function displayPaymentHistory(paymentHistoryData, paymentHistoryContainer) {
     paymentSummary.innerHTML = `
       <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; flex: 1;">
         <span style="text-align: left">${payment.date}</span>
-        <span style="text-align: center">${payment.activityType.toUpperCase()}</span>
+        <span style="text-align: center" class="payment-status-${payment.paymentDetails.status}">${payment.activityType.toUpperCase()}</span>
         <strong style="text-align: right">${payment.paymentDetails.amount} ${payment.paymentDetails.currency}</strong>
       </div>
     `;
@@ -133,9 +132,9 @@ function displayPaymentHistory(paymentHistoryData, paymentHistoryContainer) {
     paymentDetails.style.display = "none";
     paymentDetails.innerHTML = `
       <p><strong>Payment Method:</strong> ${payment.paymentDetails.paymentMethod.replace("_", " ").toUpperCase()}</p>
-      <p><strong>Status:</strong> <span style="color: ${
-        payment.paymentDetails.status === "completed" ? "#28a745" : "#dc3545"
-      }">${payment.paymentDetails.status}</span></p>
+      <p><strong>Status:</strong> <span class="payment-status-${payment.paymentDetails.status}">${
+      payment.paymentDetails.status
+    }</span></p>
       <p><strong>Balance Before:</strong> ${payment.balanceBefore} ${payment.paymentDetails.currency}</p>
       <p><strong>Balance After:</strong> ${payment.balanceAfter} ${payment.paymentDetails.currency}</p>
     `;

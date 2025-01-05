@@ -91,3 +91,27 @@
   color: #666;
   font-size: 14px;
 }
+
+.payment-status-completed {
+  color: #28a745;
+}
+
+.payment-status-pending {
+  color: #ffc107;
+}
+
+.payment-status-cancelled {
+  color: #dc3545;
+}
+
+.payment-status-rejected {
+  color: #dc3545;
+}
+
+.payment-status-refunded {
+  color: #007bff;
+}
+
+.payment-status {
+  font-size: 14px;
+}

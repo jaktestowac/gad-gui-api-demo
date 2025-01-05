@@ -45,6 +45,58 @@ function handleBookShopPaymentHistory(req, res, isAdmin) {
           status: "completed",
         },
       },
+      {
+        id: 4,
+        date: "2025-01-03",
+        activityType: "payment",
+        balanceBefore: 0.0,
+        balanceAfter: 0.0,
+        paymentDetails: {
+          paymentMethod: "credit_card",
+          amount: 0.0,
+          currency: "PLN",
+          status: "rejected",
+        },
+      },
+      {
+        id: 5,
+        date: "2025-01-03",
+        activityType: "payment",
+        balanceBefore: 0.0,
+        balanceAfter: 0.0,
+        paymentDetails: {
+          paymentMethod: "credit_card",
+          amount: 0.0,
+          currency: "PLN",
+          status: "pending",
+        },
+      },
+      {
+        id: 6,
+        date: "2025-01-04",
+        activityType: "refund",
+        balanceBefore: 0.0,
+        balanceAfter: 50.0,
+        paymentDetails: {
+          paymentMethod: "credit_card",
+          amount: 50.0,
+          currency: "PLN",
+          status: "completed",
+        },
+      },
+      {
+        id: 7,
+        date: "2025-01-05",
+        activityType: "payment",
+        balanceBefore: 50.0,
+        balanceAfter: 0.0,
+        paymentDetails: {
+          paymentMethod: "credit_card",
+          amount: 50.0,
+          currency: "PLN",
+          status: "completed",
+        },
+      },
     ];
 
     res.status(HTTP_OK).send(samplePaymentHistory);
