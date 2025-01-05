@@ -57,6 +57,7 @@ const {
   getAllAllowedActionsForRole,
 } = require("../helpers/db-operations/db-user-roles.operations");
 const { userBaseAuth, updateUserActions, getAdminAuth } = require("../helpers/user-auth.helpers");
+const { handleBookShopPaymentHistory } = require("../endpoints/book-shop/book-shop-payment-history-endpoint.helpers");
 
 const validationsRoutes = (req, res, next) => {
   let userAuth = userBaseAuth;
@@ -271,6 +272,9 @@ const validationsRoutes = (req, res, next) => {
     }
     if (req.url.includes("/api/book-shop-manage")) {
       handleBookShopManage(req, res);
+    }
+    if (req.url.includes("/api/book-shop-payment-history")) {
+      handleBookShopPaymentHistory(req, res);
     }
 
     logTrace("validationsRoutes: Returning:", {

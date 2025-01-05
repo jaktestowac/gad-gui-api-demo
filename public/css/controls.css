@@ -1398,6 +1398,7 @@ body.darkmode {
   background-color: #e9ecef;
   box-shadow: #0000001f 0px 0px 0px;
 }
+
 .modules-container {
   display: flex;
   justify-content: center;
@@ -1408,7 +1409,7 @@ body.darkmode {
 }
 
 .module {
-  display: flex;
+  /* display: flex; */
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -1432,6 +1433,7 @@ body.darkmode {
 }
 
 .module-content {
+  margin-top: 24px;
   text-align: center;
   padding: 4px;
 }
