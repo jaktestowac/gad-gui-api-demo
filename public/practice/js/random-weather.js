@@ -150,6 +150,13 @@ function presentDataOnUIAsATable(weatherData) {
     const dateCell = document.createElement("td");
     dateCell.textContent = row.date;
 
+    // if date is today, highlight the row
+    const today = new Date().toISOString().split("T")[0];
+    if (row.date === today) {
+      dateCell.classList.add("today-cell");
+      tr.classList.add("today-row");
+    }
+
     if (row.date === undefined) {
       dateCell.textContent = "Unknown";
     }
@@ -304,22 +311,28 @@ function presentDataOnUIAsATable(weatherData) {
 
   const comment = document.createElement("p");
 
-  if (weatherData[0]?.city === undefined) {
+  let weatherDataForToday = weatherData.filter((row) => row.date === new Date().toISOString().split("T")[0])[0];
+
+  if (weatherDataForToday === undefined || weatherDataForToday.length === 0) {
+    weatherDataForToday = weatherData[0];
+  }
+
+  if (weatherDataForToday?.city === undefined) {
     comment.innerHTML = `Weather for today:<br>`;
   } else {
-    comment.innerHTML = `Weather for <strong>${weatherData[0].city}</strong> today:<br>`;
+    comment.innerHTML = `Weather for <strong>${weatherDataForToday.city}</strong> today (${weatherDataForToday.date}):<br>`;
   }
 
   comment.setAttribute("id", "comment");
   comment.setAttribute("data-testid", "comment");
   comment.setAttribute("class", "comment");
 
-  const temperature = weatherData[0].temperature;
-  const windSpeed = weatherData[0].windSpeed;
-  const humidity = weatherData[0].humidity;
+  const temperature = weatherDataForToday.temperature;
+  const windSpeed = weatherDataForToday.windSpeed;
+  const humidity = weatherDataForToday.humidity;
   const humidityValue = parseInt(humidity.slice(0, -1));
-  const temperatureMin = weatherData[0].temperatureMin;
-  const temperatureMax = weatherData[0].temperatureMax;
+  const temperatureMin = weatherDataForToday.temperatureMin;
+  const temperatureMax = weatherDataForToday.temperatureMax;
 
   if (temperature < 10) {
     const emoji = temperature < 5 ? "❄️" : "🥶";

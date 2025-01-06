@@ -1,10 +1,5 @@
 const { isUndefined } = require("lodash");
-const {
-  searchForUserWithOnlyToken,
-  searchForBookShopAccount,
-  searchForBookShopAccountWithUserId,
-  searchForBookShopActions,
-} = require("../../helpers/db-operation.helpers");
+const { searchForUserWithOnlyToken } = require("../../helpers/db-operation.helpers");
 const {
   formatErrorResponse,
   getIdFromUrl,
@@ -29,6 +24,10 @@ const { areIdsEqual } = require("../../helpers/compare.helpers");
 const { isBugEnabled } = require("../../config/config-manager");
 const { BugConfigKeys } = require("../../config/enums");
 const { getCurrentDateTimeISO } = require("../../helpers/datetime.helpers");
+const {
+  searchForBookShopAccountWithUserId,
+  searchForBookShopAccount,
+} = require("../../helpers/db-operations/db-book-shop.operations");
 
 function handleBookShopAccount(req, res, isAdmin) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");

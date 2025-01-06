@@ -381,5 +381,6 @@ checkIfAuthenticated(
       }
     });
   },
-  () => {}
+  () => {},
+  { defaultRedirect: true }
 );

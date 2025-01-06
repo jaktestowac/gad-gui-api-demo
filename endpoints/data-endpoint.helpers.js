@@ -14,6 +14,7 @@ const { generateEcommerceShoppingCart } = require("../helpers/generators/ecommer
 const { generateRandomUser } = require("../helpers/generators/user.generator");
 const { generateRandomSimpleBusTicketCard } = require("../helpers/generators/bus-ticket.generator");
 const { generateRandomStudentsData } = require("../helpers/generators/student-grades-manager.generator");
+const { generateRandomEmployeesData } = require("../helpers/generators/employees.generator");
 
 function generateWeatherResponseBasedOnQuery(queryParams, simplified = false, totalRandom = false) {
   const days = parseInt(queryParams.get("days"));
@@ -218,6 +219,15 @@ function handleData(req, res, isAdmin) {
 
     const studentsData = generateRandomStudentsData({ seed });
     res.status(HTTP_OK).json(studentsData);
+    return;
+  }
+
+  if (req.method === "GET" && req.url.includes("/api/v1/data/random/employees")) {
+    const queryParams = new URLSearchParams(req.url.split("?")[1]);
+    const seed = queryParams.get("seed") || Math.random().toString();
+
+    const employeesData = generateRandomEmployeesData({ seed });
+    res.status(HTTP_OK).json(employeesData);
     return;
   }
   return;

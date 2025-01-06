@@ -10,20 +10,6 @@ const intervalValue = 5000;
 
 let msgCheckInterval = undefined;
 
-checkIfAuthenticated(
-  "messenger-info",
-  () => {
-    const tabs = document.getElementsByClassName("tablinks");
-    for (let i = 0; i < tabs.length; i++) {
-      tabs[i].disabled = false;
-      tabs[i].readOnly = false;
-    }
-
-    openTab(undefined, "tab1");
-  },
-  () => {}
-);
-
 const messageInput = document.getElementById("messageInput");
 messageInput.addEventListener("keydown", function (event) {
   if (event.key === "Enter" && event.shiftKey) {
@@ -412,3 +398,18 @@ function sendMessage() {
     }
   }
 }
+
+checkIfAuthenticated(
+  "messenger-info",
+  () => {
+    const tabs = document.getElementsByClassName("tablinks");
+    for (let i = 0; i < tabs.length; i++) {
+      tabs[i].disabled = false;
+      tabs[i].readOnly = false;
+    }
+
+    openTab(undefined, "tab1");
+  },
+  () => {},
+  { defaultRedirect: true }
+);

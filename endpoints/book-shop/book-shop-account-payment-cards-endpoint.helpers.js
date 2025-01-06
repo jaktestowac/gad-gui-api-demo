@@ -1,10 +1,5 @@
 const { isUndefined } = require("lodash");
-const {
-  searchForUserWithOnlyToken,
-  searchForBookShopAccountPaymentCardByAccountId,
-  searchForBookShopAccountWithUserId,
-  searchForBookShopAccountPaymentCardByCardNumber,
-} = require("../../helpers/db-operation.helpers");
+const { searchForUserWithOnlyToken } = require("../../helpers/db-operation.helpers");
 const {
   formatErrorResponse,
   formatInvalidTokenErrorResponse,
@@ -19,16 +14,20 @@ const {
   HTTP_NOT_FOUND,
   HTTP_UNAUTHORIZED,
   HTTP_UNPROCESSABLE_ENTITY,
-  HTTP_CREATED,
   HTTP_OK,
 } = require("../../helpers/response.helpers");
 const { verifyAccessToken } = require("../../helpers/validation.helpers");
 const { areIdsEqual } = require("../../helpers/compare.helpers");
 const DatabaseManager = require("../../helpers/db.manager");
-const { changeUserFunds, getMaxId, addCardToDataBase } = require("../../helpers/db-queries.helper");
+const { changeUserFunds, addCardToDataBase } = require("../../helpers/db-queries.helper");
 const { getConfigValue } = require("../../config/config-manager");
 const { ConfigKeys } = require("../../config/enums");
 const { getRandomInt } = require("../../helpers/generators/random-data.generator");
+const {
+  searchForBookShopAccountPaymentCardByAccountId,
+  searchForBookShopAccountWithUserId,
+  searchForBookShopAccountPaymentCardByCardNumber,
+} = require("../../helpers/db-operations/db-book-shop.operations");
 
 function handleBookShopAccountPaymentCards(req, res, isAdmin) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");

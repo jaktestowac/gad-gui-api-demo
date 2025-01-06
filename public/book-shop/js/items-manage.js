@@ -1075,6 +1075,10 @@ function refreshAllItems() {
         refreshItemsDetails();
       });
     } else {
+      if (response.status === 401) {
+        const dashboardInfo = document.getElementById("dashboard-info");
+        setBoxMessage(dashboardInfo, "You dont have permission to see accounts", "simpleInfoBox");
+      }
       response.json().then((data) => {
         if (data.error?.message) {
           showSimpleAlert(`${data.error.message}`, 2);
@@ -1108,5 +1112,6 @@ checkIfAuthenticated(
       }
     });
   },
-  () => {}
+  () => {},
+  { defaultRedirect: true }
 );

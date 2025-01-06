@@ -5,8 +5,8 @@
     <title>🦎 GAD | BookShop Dashboard</title>
     <link rel="icon" href="/data/icons/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
     <link rel="stylesheet" href="/css/controls.css" />
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/infoBoxes.css" />
@@ -29,10 +29,10 @@
     <div id="side-panel" class="sidepanel">
     </div>
     <div align="center">
-        <h2 style="padding: 2px; margin-bottom: 2px;">BookShop Dashboard</h2>
+        <h2 style="padding: 2px; margin-bottom: 2px;font-size: 20px;">BookShop Dashboard</h2>
     </div>
     <div id="dashboard-base-info" align="center">
-        <div class="container" id="pageHeader" style="font-size: 20px;  align-content: center; display: flex; align-items: center; justify-content: center">
+        <div class="container" id="pageHeader" style="font-size: 16px;  align-content: center; display: flex; align-items: center; justify-content: center">
             Welcome to&nbsp;<strong><span aria-label="GAD">🦎</span><span style="color: rgb(8, 195, 1)">B</span>ook <span style="color: rgb(8, 195, 1)">S</span>hop</strong>
         </div>
 
@@ -47,6 +47,88 @@
                 <span style="color: rgb(8, 195, 1)">D</span>emo</strong> that allows you to<br>manage books, items, orders, accounts and roles.
         </div>
 
+        <div class="main-container">
+            <div class="main-links-container">
+                <a href="./books.html" class="main-page-box-link">
+                    <div class="main-page-box">
+                        <i class="fas fa-book box-icon"></i>
+                        <h3 class="main-page-box-header">Books</h3>
+
+                    </div>
+                </a>
+                <a href="./account.html" class="main-page-box-link">
+                    <div class="main-page-box">
+                        <i class="fas fa-user box-icon"></i>
+                        <h3 class="main-page-box-header">Account</h3>
+
+                    </div>
+                </a>
+            </div>
+            <div class="section-description">
+                Requires <strong>Account</strong>:
+            </div>
+            <div class="main-links-container">
+                <a href="./orders.html" class="main-page-box-link">
+                    <div class="main-page-box">
+                        <i class="fas fa-shopping-cart box-icon"></i>
+                        <h3 class="main-page-box-header">Orders</h3>
+                    </div>
+                </a>
+                <a href="./team.html" class="main-page-box-link">
+                    <div class="main-page-box">
+                        <i class="fas fa-users box-icon"></i>
+                        <h3 class="main-page-box-header">Team</h3>
+                    </div>
+                </a>
+                <a href="./payment-history.html" class="main-page-box-link">
+                    <div class="main-page-box">
+                        <i class="fas fa-money-check-alt box-icon"></i>
+                        <h3 class="main-page-box-header">Payment History</h3>
+                    </div>
+                </a>
+            </div>
+            <div class="section-description">
+                Requires <strong>Admin</strong> or <strong>Delivery Coordinator</strong> Role:
+            </div>
+            <div class="main-links-container">
+                <a href="./manage-items.html" class="main-page-box-link">
+                    <div class="main-page-box">
+                        <i class="fas fa-cogs box-icon"></i>
+                        <h3 class="main-page-box-header">Manage All Items</h3>
+
+                    </div>
+                </a>
+                <a href="./manage-orders.html" class="main-page-box-link">
+                    <div class="main-page-box">
+                        <i class="fas fa-tasks box-icon"></i>
+                        <h3 class="main-page-box-header">Manage All Orders</h3>
+
+                    </div>
+                </a>
+            </div>
+            <div class="section-description">
+                Requires <strong>Admin</strong> Role:
+            </div>
+            <div class="main-links-container">
+                <a href="./orders-full-stats.html" class="main-page-box-link">
+                    <div class="main-page-box">
+                        <i class="fas fa-chart-line box-icon"></i>
+                        <h3 class="main-page-box-header">Statistics</h3>
+
+                    </div>
+                </a>
+                <a href="./manage-roles.html" class="main-page-box-link">
+                    <div class="main-page-box">
+                        <i class="fas fa-user-cog box-icon"></i>
+                        <h3 class="main-page-box-header">Manage Roles</h3>
+
+                    </div>
+                </a>
+            </div>
+        </div>
+
+
+        <!--
         <div align="center" style="justify-content: center !important" class="book-shop-links">
             <table style="margin-top: 20px;">
                 <tr>
@@ -84,6 +166,14 @@
                     </td>
                     <td style="text-align: left; padding-left: 5px; width: 50%;">
                         Meet the Team
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: right; padding-right: 5px; width: 50%;">
+                        <a class="book-shop-button-primary thin" href="./manage-items.html">Payment History</a>
+                    </td>
+                    <td style="text-align: left; padding-left: 5px; width: 50%;">
+                        See Your Payments
                     </td>
                 </tr>
                 <tr>
@@ -130,13 +220,11 @@
                 </tr>
             </table>
         </div>
-
+    -->
     </div>
     <div id="dashboard-info" align="center">
     </div>
 
-
-    <!-- <button class="openbtn" onclick="openNav()">&#9776; Toggle Sidepanel</button> -->
 </body>
 <script type="text/javascript" src="/js/common.js"></script>
 <script type="text/javascript" src="/js/header.js"></script>

@@ -1,8 +1,9 @@
+const { ADMIN_USER } = require("../config/admin-user.data");
 const { getConfigValue } = require("../config/config-manager");
 const { ConfigKeys } = require("../config/enums");
 const { isUndefined, areStringsEqualIgnoringCase } = require("../helpers/compare.helpers");
 const { userDb } = require("../helpers/db.helpers");
-const { isAnyAdminUser, isSuperAdminUser } = require("../helpers/helpers");
+const { isSuperAdminUser } = require("../helpers/helpers");
 const { isAuthenticated, createToken, prepareCookieMaxAge } = require("../helpers/jwtauth");
 const { logTrace, logDebug } = require("../helpers/logger-api");
 const { HTTP_UNAUTHORIZED, HTTP_OK } = require("../helpers/response.helpers");
@@ -12,19 +13,17 @@ const loginApiRoutes = (req, res) => {
   logTrace("login: endpoint called:", { email });
   logTrace("login: endpoint called:", { email, password, keepSignIn });
 
-  let isAdmin = isAnyAdminUser(email, password);
+  // TODO: DEPRECATED: Remove this code after the new admin / role system is implemented
   let isSuperAdmin = isSuperAdminUser(email, password);
 
-  isAdmin = isAdmin || isSuperAdmin;
-
-  if (isAuthenticated({ email, password }) === false && !isAdmin) {
+  if (isAuthenticated({ email, password }) === false && !isSuperAdmin) {
     const message = "Incorrect email or password";
     res.status(HTTP_UNAUTHORIZED).json({ status: HTTP_UNAUTHORIZED, message });
     return;
   }
-  const cookieMaxAge = prepareCookieMaxAge(isAdmin, keepSignIn);
-  const access_token = createToken({ email, data: "TBD" }, isAdmin, keepSignIn);
-  logDebug("login: access token:", { email, password, access_token, cookieMaxAge, isAdmin });
+  const cookieMaxAge = prepareCookieMaxAge(isSuperAdmin, keepSignIn);
+  const access_token = createToken({ email, data: "TBD" }, isSuperAdmin, keepSignIn);
+  logDebug("login: access token:", { email, password, access_token, cookieMaxAge, isSuperAdmin });
   res.status(HTTP_OK).json({ access_token });
 };
 
@@ -51,39 +50,40 @@ const loginRoutes = (req, res) => {
 };
 
 const processLoginRoutes = (req, res) => {
-  let { username, password, keepSignIn } = req.body;
-  logDebug("process_login: { email, password, keepSignIn }:", { username, password, keepSignIn });
-  let isAdmin = isAnyAdminUser(username, password);
+  let { username, password, keepSignIn, redirectURL } = req.body;
+  logDebug("process_login: { email, password, keepSignIn }:", { username, password, keepSignIn, redirectURL });
+
+  if (redirectURL && redirectURL.includes("http")) {
+    redirectURL = redirectURL.split("/").slice(3).join("/");
+  }
+  if (redirectURL && redirectURL.charAt(0) === "/") {
+    redirectURL = redirectURL.substring(1);
+  }
+
+  // TODO: DEPRECATED: Remove this code after the new admin / role system is implemented
   let isSuperAdmin = isSuperAdminUser(username, password);
 
-  isAdmin = isAdmin || isSuperAdmin;
   const authenticated = isAuthenticated({ email: username, password });
-  logDebug("process_login: { isAdmin, isSuperAdmin, authenticated }:", { isAdmin, isSuperAdmin, authenticated });
+  logDebug("process_login: { isSuperAdmin, authenticated }:", { isSuperAdmin, authenticated });
 
-  if ((!isAdmin && authenticated === false) || authenticated === undefined) {
-    // redirect with a fail msg
-    return res.redirect("/login?msg=Invalid username or password");
+  if ((!isSuperAdmin && authenticated === false) || authenticated === undefined) {
+    return res.redirect("/login?msg=Invalid username or password" + (redirectURL ? "&redirectURL=" + redirectURL : ""));
   }
   const cookieMaxAge = prepareCookieMaxAge(isSuperAdmin, keepSignIn);
   const access_token = createToken({ email: username, data: "TBD" }, isSuperAdmin, keepSignIn);
-  logDebug("process_login: { cookieMaxAge, isAdmin, isSuperAdmin }:", { cookieMaxAge, isAdmin, isSuperAdmin });
+  logDebug("process_login: { cookieMaxAge, isSuperAdmin }:", { cookieMaxAge, isSuperAdmin });
 
   let foundUser = undefined;
-  if (!isAdmin) {
+  if (!isSuperAdmin) {
     foundUser = userDb().find((user) => {
       if (areStringsEqualIgnoringCase(user["email"], username)) {
         return user;
       }
     });
   } else {
-    foundUser = {
-      firstname: getConfigValue(ConfigKeys.ADMIN_USER_EMAIL),
-      username: getConfigValue(ConfigKeys.ADMIN_USER_EMAIL),
-      id: getConfigValue(ConfigKeys.ADMIN_USER_EMAIL),
-      avatar: ".\\data\\users\\face_admin.png",
-    };
+    foundUser = ADMIN_USER;
   }
-  logDebug("process_login: Access Token:", { email: username, password, access_token, cookieMaxAge, isAdmin });
+  logDebug("process_login: Access Token:", { email: username, password, access_token, cookieMaxAge, isSuperAdmin });
 
   // saving the data to the cookies
   res.cookie("firstname", foundUser.firstname, {
@@ -107,7 +107,12 @@ const processLoginRoutes = (req, res) => {
   res.cookie("avatar", foundUser.avatar, {
     maxAge: cookieMaxAge,
   });
-  // redirect
+
+  if (redirectURL && !redirectURL.includes("/login") && redirectURL !== "/") {
+    logDebug("process_login: Redirect URL:", { redirectURL });
+    return res.redirect(redirectURL);
+  }
+
   return res.redirect("/welcome");
 };
 

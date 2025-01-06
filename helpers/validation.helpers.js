@@ -289,6 +289,11 @@ function isDateInFuture(inputRawDateString, applicationDateString = undefined) {
 
 const verifyAccessToken = (req, res, endpoint = "endpoint", url = "") => {
   const authorization = req.headers["authorization"];
+
+  if (isUndefined(authorization)) {
+    return undefined;
+  }
+
   let access_token = authorization?.split(" ")[1];
 
   let logFunction = logTrace;

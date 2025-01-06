@@ -1,15 +1,15 @@
 const { isUndefined } = require("lodash");
-const {
-  searchForUserWithOnlyToken,
-  searchForBookShopAccountWithUserId,
-  searchForBookShopActions,
-} = require("../../helpers/db-operation.helpers");
+const { searchForUserWithOnlyToken } = require("../../helpers/db-operation.helpers");
 const { formatErrorResponse, formatInvalidTokenErrorResponse } = require("../../helpers/helpers");
 const { logDebug, logTrace } = require("../../helpers/logger-api");
 const { HTTP_NOT_FOUND, HTTP_UNAUTHORIZED, HTTP_OK } = require("../../helpers/response.helpers");
 const { verifyAccessToken } = require("../../helpers/validation.helpers");
 const { isStringOnTheList } = require("../../helpers/compare.helpers");
 const { bookShopOrdersDb, bookShopItemsDb } = require("../../helpers/db.helpers");
+const {
+  searchForBookShopAccountWithUserId,
+  searchForBookShopActions,
+} = require("../../helpers/db-operations/db-book-shop.operations");
 
 function handleBookShopOrdersStats(req, res, isAdmin) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");

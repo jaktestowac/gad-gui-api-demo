@@ -31,8 +31,16 @@ const {
   areAnyFieldsPresent,
 } = require("../helpers/validation.helpers");
 
-function handleComments(req, res, isAdmin) {
+function handleComments(req, res, { isAdmin }) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
+
+  if (req.method !== "GET" && req.method !== "HEAD" && urlEnds.includes("/api/comments") && !isAdmin) {
+    const verifyTokenResult = verifyAccessToken(req, res, "comments", req.url);
+    if (isUndefined(verifyTokenResult)) {
+      res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
+      return;
+    }
+  }
 
   if (req.method !== "GET" && req.method !== "HEAD" && urlEnds.includes("/api/comments")) {
     // validate all fields:
@@ -74,9 +82,14 @@ function handleComments(req, res, isAdmin) {
         return;
       }
     }
+  } else if (req.method !== "GET" && req.method !== "HEAD" && urlEnds.includes("/api/comments") && isAdmin) {
+    req.body["user_id"] = "admin";
   }
 
   if (req.method === "PATCH" && urlEnds.includes("/api/comments")) {
+    let commentId = getIdFromUrl(urlEnds);
+    const foundComment = searchForComment(commentId);
+
     // validate date field:
     const isDateValid = validateDateFields(req.body);
     if (isDateValid.status === false) {
@@ -106,16 +119,22 @@ function handleComments(req, res, isAdmin) {
       return;
     }
 
-    const verifyTokenResult = verifyAccessToken(req, res, "comments", req.url);
-    const foundUser = searchForUserWithEmail(verifyTokenResult?.email);
+    if (!isAdmin) {
+      const verifyTokenResult = verifyAccessToken(req, res, "comments", req.url);
+      const foundUser = searchForUserWithEmail(verifyTokenResult?.email);
 
-    logTrace("handleComments:", { method: req.method, urlEnds, foundUser });
+      logTrace("handleComments:", { method: req.method, urlEnds, foundUser });
 
-    if (isUndefined(foundUser)) {
-      res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
-      return;
+      if (isUndefined(foundUser)) {
+        res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+        return;
+      }
+      req.body["user_id"] = foundUser.id;
     }
-    req.body["user_id"] = foundUser.id;
+
+    if (isAdmin && !isUndefined(foundComment)) {
+      req.body["user_id"] = foundComment.user_id;
+    }
   }
 
   if (req.method === "POST" && urlEnds.includes("/api/comments")) {
@@ -146,29 +165,33 @@ function handleComments(req, res, isAdmin) {
       req.body.id = undefined;
     }
 
-    const verifyTokenResult = verifyAccessToken(req, res, "comments", req.url);
-    const foundUser = searchForUserWithEmail(verifyTokenResult?.email);
+    if (!isAdmin) {
+      const verifyTokenResult = verifyAccessToken(req, res, "comments", req.url);
+      const foundUser = searchForUserWithEmail(verifyTokenResult?.email);
 
-    logTrace("handleComments:", { method: req.method, urlEnds, foundUser });
+      logTrace("handleComments:", { method: req.method, urlEnds, foundUser });
 
-    if (isUndefined(foundUser)) {
-      res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
-      return;
+      if (isUndefined(foundUser)) {
+        res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+        return;
+      }
+      req.body["user_id"] = foundUser.id;
+    } else {
+      req.body["user_id"] = "admin";
     }
-    req.body["user_id"] = foundUser.id;
   }
 
   // update or create:
   if (req.method === "PUT" && urlEnds.includes("/api/comments") && !isAdmin) {
     const verifyTokenResult = verifyAccessToken(req, res, "PUT comments", req.url);
-
     const foundUserFromToken = searchForUserWithEmail(verifyTokenResult?.email);
-
     logTrace("handleComments:", { method: req.method, urlEnds, foundUserFromToken });
 
-    if (isUndefined(foundUserFromToken)) {
-      res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
-      return;
+    if (!isAdmin) {
+      if (isUndefined(foundUserFromToken)) {
+        res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+        return;
+      }
     }
 
     // validate mandatory fields:
@@ -204,27 +227,33 @@ function handleComments(req, res, isAdmin) {
     let commentId = getIdFromUrl(urlEnds);
     const foundComment = searchForComment(commentId);
 
-    const foundUser = searchForUserWithToken(foundComment?.user_id, verifyTokenResult);
+    if (!isAdmin) {
+      const foundUser = searchForUserWithToken(foundComment?.user_id, verifyTokenResult);
 
-    logDebug("handleComments: foundUser and user_id:", { commentId, foundUser, user_id: foundComment?.user_id });
+      logDebug("handleComments: foundUser and user_id:", { commentId, foundUser, user_id: foundComment?.user_id });
 
-    if (!isUndefined(foundUser)) {
-      req.body.user_id = foundUser.id;
+      if (!isUndefined(foundUser)) {
+        req.body.user_id = foundUser.id;
+      }
+
+      if (
+        (isUndefined(foundUser) && !isUndefined(foundComment)) ||
+        (!isUndefined(foundComment?.user_id) &&
+          !isUndefined(foundUser) &&
+          !areIdsEqual(foundUser?.id, req.body?.user_id))
+      ) {
+        res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("You can not edit comment if You are not an owner"));
+        return;
+      }
+
+      if (commentId === "comments") {
+        commentId = "";
+      }
+
+      req.body["user_id"] = foundUserFromToken.id;
+    } else {
+      req.body["user_id"] = "admin";
     }
-
-    if (
-      (isUndefined(foundUser) && !isUndefined(foundComment)) ||
-      (!isUndefined(foundComment?.user_id) && !isUndefined(foundUser) && !areIdsEqual(foundUser?.id, req.body?.user_id))
-    ) {
-      res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("You can not edit comment if You are not an owner"));
-      return;
-    }
-
-    if (commentId === "comments") {
-      commentId = "";
-    }
-
-    req.body["user_id"] = foundUserFromToken.id;
 
     logTrace("handleComments:PUT:", { method: req.method, commentId });
 
@@ -237,6 +266,10 @@ function handleComments(req, res, isAdmin) {
         url: req.url,
         body: req.body,
       });
+    }
+
+    if (isAdmin && !isUndefined(foundComment)) {
+      req.body["user_id"] = foundComment.user_id;
     }
   }
 
@@ -279,6 +312,10 @@ function handleComments(req, res, isAdmin) {
       url: req.url,
       body: req.body,
     });
+
+    if (isAdmin && !isUndefined(foundComment)) {
+      req.body["user_id"] = foundComment.user_id;
+    }
     return;
   }
 

@@ -100,6 +100,29 @@ const formatDateToLocaleString = (dateString) => {
   return formattedDate;
 };
 
+const formatDateToLocaleStringShort = (dateString) => {
+  if (dateString === undefined) {
+    return "";
+  }
+
+  const date = new Date(dateString);
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const targetDate = new Date(date.toLocaleString("en-US", { timeZone }));
+  const options = {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  };
+  const locale = navigator.language;
+
+  const formattedDate = targetDate.toLocaleString(locale, options);
+
+  return formattedDate;
+};
+
 function howManyHoursAndMinutesAndSecondsInPast(dateString) {
   const date = new Date(dateString);
   const now = new Date();
@@ -255,11 +278,11 @@ function addCookie(cookieName, value, daysOfValidity = 9999) {
 }
 
 function addVersionStatusCookie(status) {
-  addCookie("versionStatus", `${status}`, 0.005);
+  addCookie("versionStatus", `${status}`, 5 / 1440);
 }
 
 function addLatestVersionCookie(version) {
-  addCookie("versionLatest", version, 7);
+  addCookie("versionLatest", version, 2);
 }
 
 function getVersionStatusCookie() {
@@ -382,7 +405,7 @@ function getBearerToken() {
 }
 
 function isAuthorized(id) {
-  return id?.toString() === getId() || getId() === "admin";
+  return id?.toString() === getId();
 }
 
 function isAuthenticated() {
@@ -452,6 +475,12 @@ function formatBookmarkArticle(alreadyBookmark, articleId) {
   return out;
 }
 
+/**
+ * Checks if the specified feature is enabled by making a POST request to the server.
+ *
+ * @param {string} featureName - A feature name to check.
+ * @returns {Promise<Object>} A promise that resolves to the JSON response from the server.
+ */
 async function checkIfFeatureEnabled(featureName) {
   const body = { name: featureName };
   const url = "/api/config/checkfeature";
@@ -470,6 +499,12 @@ async function checkIfFeatureEnabled(featureName) {
     });
 }
 
+/**
+ * Checks if the specified features are enabled by making a POST request to the server.
+ *
+ * @param {string[]} featureNames - An array of feature names to check.
+ * @returns {Promise<Object>} A promise that resolves to the JSON response from the server.
+ */
 async function checkIfFeaturesEnabled(featureNames) {
   const body = { names: featureNames };
   const url = "/api/config/checkfeatures";
@@ -559,10 +594,12 @@ async function getGadReleases() {
 }
 
 function getNewestVersion(gadReleases, currentVersion) {
-  gadReleases.sort((a, b) => b.name.localeCompare(a.name));
+  // gadReleases.sort((a, b) => b.name.localeCompare(a.name));
+  gadReleases.sort((a, b) => compareVersions(b.name, a.name));
 
   const filteredVersions = gadReleases.filter((release) => {
-    return release.name > currentVersion;
+    // return release.name > currentVersion;
+    return isVersionANewer(release.name, currentVersion);
   });
 
   if (filteredVersions.length === 0) {
@@ -570,18 +607,22 @@ function getNewestVersion(gadReleases, currentVersion) {
     console.log(
       `[getNewestVersion] GAD (${currentVersion}) is up to date! Latest available version: ${gadReleases[0]?.name}`
     );
+    addLatestVersionCookie(gadReleases[0]?.name);
     return undefined;
   }
-  filteredVersions.sort((a, b) => b.name.localeCompare(a.name));
+  // filteredVersions.sort((a, b) => b.name.localeCompare(a.name));
+  filteredVersions.sort((a, b) => compareVersions(b.name, a.name));
   const latestVersion = filteredVersions[0];
   return latestVersion;
 }
 
 function getNewerVersions(gadReleases, currentVersion) {
-  gadReleases.sort((a, b) => b.name.localeCompare(a.name));
+  // gadReleases.sort((a, b) => b.name.localeCompare(a.name));
+  gadReleases.sort((a, b) => compareVersions(b.name, a.name));
 
   const filteredVersions = gadReleases.filter((release) => {
-    return release.name > currentVersion;
+    // return release.name > currentVersion;
+    return isVersionANewer(release.name, currentVersion);
   });
 
   if (filteredVersions.length === 0) {
@@ -591,7 +632,8 @@ function getNewerVersions(gadReleases, currentVersion) {
     );
     return [];
   }
-  filteredVersions.sort((a, b) => b.name.localeCompare(a.name));
+  // filteredVersions.sort((a, b) => b.name.localeCompare(a.name));
+  filteredVersions.sort((a, b) => compareVersions(b.name, a.name));
   return filteredVersions;
 }
 
@@ -611,7 +653,59 @@ function displayNewerVersionAvailableMessage(currentVersion, latestVersion) {
   }
 }
 
+/**
+ * Compare two versions in format x.y.z (SemVer)
+ *
+ * @param {number} a
+ * @param {number} b
+ * @returns {number} 1 if a is newer, -1 if b is newer, 0 if versions are the same
+ */
+function compareVersions(a, b) {
+  const aParts = a.split(".");
+  const bParts = b.split(".");
+
+  for (let i = 0; i < 3; i++) {
+    const aPart = parseInt(aParts[i]);
+    const bPart = parseInt(bParts[i]);
+    if (aPart > bPart) {
+      return 1;
+    }
+    if (aPart < bPart) {
+      return -1;
+    }
+  }
+  return 0;
+}
+
+/**
+ * Check if version a is newer than version b
+ * @param {string} a
+ * @param {string} b
+ * @returns {boolean} true if a is newer than b
+ */
+function isVersionANewer(a, b) {
+  return compareVersions(a, b) === 1;
+}
+
+/**
+ * Checks for a newer version of the GAD application and updates the UI accordingly.
+ *
+ * This function performs the following steps:
+ * 1. Retrieves the current version of the GAD application.
+ * 2. Checks if the version information is already cached in cookies.
+ * 3. If cached data is available and valid, it uses the cached data to update the UI.
+ * 4. If cached data is not available or expired, it fetches the latest releases from the repository.
+ * 5. Compares the current version with the latest version and updates the UI to indicate if a newer version is available.
+ * 6. Updates the cookies with the latest version information.
+ *
+ * @param {boolean} [force=false] - If true, forces a check for the latest version even if cached data is available.
+ * @returns {Promise<void>} - A promise that resolves when the version check is complete.
+ */
 async function checkNewerVersion(force = false) {
+  if (force === true) {
+    console.log("Forcing version check...");
+  }
+
   const versionInfoContainer = document.getElementById("versionInfoBox");
   if (versionInfoContainer === null) {
     return;
@@ -624,7 +718,7 @@ async function checkNewerVersion(force = false) {
     const versionUpToDate = getVersionStatusCookie();
     const latestVersionCookie = getLatestVersionCookie();
 
-    if (versionUpToDate === "1" && latestVersionCookie !== undefined) {
+    if (versionUpToDate === "1" && force === false && latestVersionCookie !== undefined) {
       // eslint-disable-next-line no-console
       console.log("Using cached cookie data. Latest:", latestVersionCookie);
       displayUpToDateMessage(currentVersion, latestVersionCookie);
@@ -670,6 +764,9 @@ async function checkNewerVersion(force = false) {
         return;
       }
 
+      // eslint-disable-next-line no-console
+      console.log(`Found ${gadReleases.length} releases. Checking for newer version than current ${currentVersion}...`);
+
       const latestVersion = getNewestVersion(gadReleases, currentVersion);
       if (latestVersion !== undefined) {
         displayNewerVersionAvailableMessage(currentVersion, latestVersion);
@@ -679,6 +776,7 @@ async function checkNewerVersion(force = false) {
         addVersionStatusCookie(2); // new version
         addLatestVersionCookie(latestVersion.name);
       } else {
+        console.log("GAD is up to date!");
         addVersionStatusCookie(1); // version up to date
       }
 
@@ -712,14 +810,38 @@ function checkRelease(force = false) {
   checkNewerVersion(force);
 }
 
-function checkIfAuthenticated(elementID, successCallback, failureCallback) {
+/**
+ * Checks if the user is authenticated and performs actions based on the authentication status.
+ *
+ * @param {string} elementID - The ID of the HTML element to display the message.
+ * @param {Function} successCallback - The callback function to execute if the user is authenticated.
+ * @param {Function} failureCallback - The callback function to execute if the user is not authenticated.
+ * @param {Object} options - Additional options for redirection.
+ * @param {boolean} options.defaultRedirect - Whether to use the current URL for redirection.
+ * @param {string} options.redirectUrl - The URL to redirect to after login or registration.
+ */
+function checkIfAuthenticated(
+  elementID,
+  successCallback,
+  failureCallback,
+  { defaultRedirect = false, redirectUrl = "" } = {}
+) {
   if (!isAuthenticated()) {
+    if (defaultRedirect) {
+      const url = new URL(window.location.href);
+      redirectUrl = url.pathname;
+    }
+
     let simpleInfoBox = "simpleInfoBox";
     const dashboardInfo = document.getElementById(elementID);
+
+    const loginUrl = "/login" + (redirectUrl ? `?redirectURL=${redirectUrl}` : "");
+    const registerUrl = "/register.html" + (redirectUrl ? `?redirectURL=${redirectUrl}` : "");
+
     setBoxMessage(
       dashboardInfo,
       `You are not authenticated<br/>
-                  Please <a href="/login" class="btn btn-primary">login</a> or <a href="/register.html" class="btn btn-primary">register</a> to see the content`,
+                  Please <a href="${loginUrl}" class="btn btn-primary">login</a> or <a href="${registerUrl}" class="btn btn-primary">register</a> to see the content`,
       simpleInfoBox
     );
     if (failureCallback) {
@@ -838,10 +960,82 @@ function calculateLuminance(rgb) {
   return luminance;
 }
 
-// types:
-// 0 - info
-// 1 - warning
-// 2 - error
+let clickCount = 0;
+
+document.addEventListener("DOMContentLoaded", () => {
+  if (window.location.pathname === "/") {
+    document.addEventListener("click", (event) => {
+      const banner = document.getElementById("frontbanner");
+      if (banner === null) {
+        return;
+      }
+
+      if (!banner.contains(event.target)) {
+        clickCount = 0;
+      } else {
+        clickCount++;
+      }
+
+      if (clickCount === 6) {
+        startFireworks();
+        clickCount = 0;
+      }
+    });
+  }
+});
+
+function startFireworks() {
+  const margin = 150;
+  const numberOfFireworks = randomIntMinMax(5, 20);
+  for (let i = 0; i < numberOfFireworks; i++) {
+    const firework = document.createElement("div");
+    firework.classList.add("firework");
+    firework.style.left = Math.random() * (window.innerWidth - margin * 2) + margin + "px";
+    firework.style.top = Math.random() * (window.innerHeight - margin * 2) + margin + "px";
+    firework.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+    document.body.appendChild(firework);
+    setTimeout(() => {
+      createBurst(firework.style.left, firework.style.top);
+      firework.remove();
+    }, 1000);
+  }
+}
+
+function createBurst(x, y) {
+  const numberOfParticles = randomIntMinMax(5, 15);
+  for (let i = 0; i < numberOfParticles; i++) {
+    const particle = document.createElement("div");
+    particle.classList.add("firework-burst");
+    particle.style.left = x;
+    particle.style.top = y;
+    particle.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+    particle.style.setProperty("--x", `${Math.random() * 300 - 150}px`);
+    particle.style.setProperty("--y", `${Math.random() * 300 - 150}px`);
+    document.body.appendChild(particle);
+    setTimeout(() => particle.remove(), 1000);
+  }
+}
+
+/**
+ * Displays a temporary alert message on the left side of the screen.
+ * @param {string} text - The message text to display in the alert.
+ * @param {number} [type=0] - The type of alert to display:
+ *                           0: Success (green with success emoji)
+ *                           1: Warning (yellow with warning emoji)
+ *                           2: Error (red with failure emoji)
+ * @param {number} [timeout=3000] - Duration in milliseconds before the alert disappears.
+ * @description Creates a temporary alert div element with specified styling and message,
+ *              appends it to the #alerts-placeholder element, and removes it after the specified timeout.
+ * @example
+ * // Display a success message for 3 seconds
+ * displaySimpleAlert("Operation successful!", 0);
+ *
+ * // Display a warning message for 5 seconds
+ * displaySimpleAlert("Please check your input", 1, 5000);
+ *
+ * // Display an error message for 3 seconds
+ * displaySimpleAlert("Operation failed!", 2);
+ */
 function displaySimpleAlert(text, type = 0, timeout = 3000) {
   const alertDiv = document.createElement("div");
   alertDiv.classList.add("simple-alert-on-left");

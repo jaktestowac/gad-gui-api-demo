@@ -85,5 +85,6 @@ checkIfAuthenticated(
   },
   () => {
     // console.log("Not authenticated");
-  }
+  },
+  { defaultRedirect: true }
 );

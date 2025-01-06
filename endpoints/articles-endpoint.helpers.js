@@ -32,8 +32,16 @@ const {
   areAnyFieldsPresent,
 } = require("../helpers/validation.helpers");
 
-function handleArticles(req, res, isAdmin) {
+function handleArticles(req, res, { isAdmin }) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
+
+  if (req.method !== "GET" && req.method !== "HEAD" && urlEnds?.includes("/api/articles") && !isAdmin) {
+    const verifyTokenResult = verifyAccessToken(req, res, "articles", req.url);
+    if (isUndefined(verifyTokenResult)) {
+      res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
+      return;
+    }
+  }
 
   if (urlEnds?.includes("/api/files/articles/upload") && !isAdmin) {
     const verifyTokenResult = verifyAccessToken(req, res, "files/articles/upload", req.url);
@@ -113,20 +121,7 @@ function handleArticles(req, res, isAdmin) {
     req.body["user_id"] = "admin";
   }
 
-  // if (req.method === "GET" && urlEnds.includes("/api/articles?ids=")) {
-  //   const articleIdsRaw = urlEnds.split("?ids=").slice(-1)[0];
-  //   if (articleIdsRaw)) {
-  //     res.status(HTTP_NOT_FOUND).json({});
-  //     return;
-  //   }
-
-  //   const articleIds = articleIdsRaw.split(",");
-  //   const foundArticles = searchForArticles(articleIds);
-  //   res.status(HTTP_OK).json(foundArticles);
-  //   return;
-  // }
-
-  if (req.method === "POST" && urlEnds.includes("/api/articles") && !urlEnds.includes("/upload") && !isAdmin) {
+  if (req.method === "POST" && urlEnds.includes("/api/articles") && !urlEnds.includes("/upload")) {
     // validate mandatory fields:
     if (!areMandatoryFieldsPresent(req.body, mandatory_non_empty_fields_article)) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_article));
@@ -162,7 +157,7 @@ function handleArticles(req, res, isAdmin) {
     }
   }
 
-  if (req.method === "PATCH" && urlEnds.includes("/api/articles") && !isAdmin) {
+  if (req.method === "PATCH" && urlEnds.includes("/api/articles")) {
     const verifyTokenResult = verifyAccessToken(req, res, "PATCH articles", req.url);
     let articleId = getIdFromUrl(urlEnds);
 
@@ -214,10 +209,14 @@ function handleArticles(req, res, isAdmin) {
         return;
       }
     }
+
+    if (isAdmin && !isUndefined(foundArticle)) {
+      req.body["user_id"] = foundArticle.user_id;
+    }
   }
 
   // update or create:
-  if (req.method === "PUT" && urlEnds.includes("/api/articles") && !isAdmin) {
+  if (req.method === "PUT" && urlEnds.includes("/api/articles")) {
     const verifyTokenResult = verifyAccessToken(req, res, "PUT articles", req.url);
 
     // validate mandatory fields:
@@ -243,26 +242,30 @@ function handleArticles(req, res, isAdmin) {
     let articleId = getIdFromUrl(urlEnds);
     const foundArticle = searchForArticle(articleId);
 
-    const foundUser = searchForUserWithToken(foundArticle?.user_id, verifyTokenResult);
+    if (!isAdmin) {
+      const foundUser = searchForUserWithToken(foundArticle?.user_id, verifyTokenResult);
 
-    logDebug("handleArticles: foundUser and user_id:", { articleId, foundUser, user_id: foundArticle?.user_id });
+      logDebug("handleArticles: foundUser and user_id:", { articleId, foundUser, user_id: foundArticle?.user_id });
 
-    const bug002Enabled = isBugEnabled(BugConfigKeys.BUG_ARTICLES_002);
-    if (bug002Enabled && !isUndefined(foundUser)) {
-      foundUser.id = req.body?.user_id;
-    }
+      const bug002Enabled = isBugEnabled(BugConfigKeys.BUG_ARTICLES_002);
+      if (bug002Enabled && !isUndefined(foundUser)) {
+        foundUser.id = req.body?.user_id;
+      }
 
-    if (!isUndefined(foundUser)) {
-      req.body.user_id = foundUser.id;
-    }
+      if (!isUndefined(foundUser)) {
+        req.body.user_id = foundUser.id;
+      }
 
-    if (
-      isUndefined(req.body.user_id) ||
-      (isUndefined(foundUser) && !isUndefined(foundArticle)) ||
-      (!isUndefined(foundArticle?.user_id) && !isUndefined(foundUser) && !areIdsEqual(foundUser?.id, req.body?.user_id))
-    ) {
-      res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("You can not edit articles if You are not an owner"));
-      return;
+      if (
+        isUndefined(req.body.user_id) ||
+        (isUndefined(foundUser) && !isUndefined(foundArticle)) ||
+        (!isUndefined(foundArticle?.user_id) &&
+          !isUndefined(foundUser) &&
+          !areIdsEqual(foundUser?.id, req.body?.user_id))
+      ) {
+        res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("You can not edit articles if You are not an owner"));
+        return;
+      }
     }
 
     if (articleId === "articles") {
@@ -297,6 +300,10 @@ function handleArticles(req, res, isAdmin) {
           return;
         }
       }
+    }
+
+    if (isAdmin && !isUndefined(foundArticle)) {
+      req.body["user_id"] = foundArticle.user_id;
     }
   }
 
@@ -339,6 +346,10 @@ function handleArticles(req, res, isAdmin) {
       url: req.url,
       body: req.body,
     });
+
+    if (isAdmin && !isUndefined(foundArticle)) {
+      req.body["user_id"] = foundArticle.user_id;
+    }
     return;
   }
 

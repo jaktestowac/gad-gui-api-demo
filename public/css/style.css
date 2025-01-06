@@ -164,10 +164,12 @@ header h1 {
   margin-bottom: -15px;
 }
 .edit,
+.editName,
 .delete {
   cursor: pointer;
 }
 .edit:hover,
+.editName:hover,
 .delete:hover {
   color: rgba(0, 164, 207, 1);
 }
@@ -387,8 +389,12 @@ input[type="submit"]:hover {
   background: rgba(0, 0, 0, 0.4);
 }
 
-.dropdown {
+.dropdown-left {
   float: left;
+  overflow: hidden;
+}
+
+.dropdown {
   overflow: hidden;
 }
 
@@ -432,6 +438,39 @@ input[type="submit"]:hover {
 
 .dropdown:hover .dropdown-content {
   display: block;
+}
+
+.dropdown-content-abs {
+  display: none;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  position: absolute;
+}
+
+.dropdown-content-abs a {
+  float: none;
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+.dropdown-content-abs a:hover {
+  background-color: #ddd;
+}
+
+.dropdown:hover .dropdown-content-abs {
+  display: block;
+}
+
+.font-norm {
+  font-family: "Open Sans", sans-serif;
+  line-height: normal;
+  font-size: 0.75rem;
+  font-weight: 400;
 }
 
 .loader-container {

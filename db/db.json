@@ -151,6 +151,7 @@
       "birthDate": "1985-06-30T20:15:33.214Z"
     }
   ],
+  "user-roles": [],
   "articles": [
     {
       "id": 1,
@@ -3056,131 +3057,87 @@
   "article-labels": [
     {
       "id": 1,
-      "label_ids": [
-        3,
-        2
-      ],
+      "label_ids": [3, 2],
       "article_id": 56
     },
     {
       "id": 2,
-      "label_ids": [
-        1,
-        2
-      ],
+      "label_ids": [1, 2],
       "article_id": 57
     },
     {
       "id": 3,
-      "label_ids": [
-        1
-      ],
+      "label_ids": [1],
       "article_id": 59
     },
     {
       "id": 4,
-      "label_ids": [
-        4,
-        5
-      ],
+      "label_ids": [4, 5],
       "article_id": 45
     },
     {
       "id": 5,
-      "label_ids": [
-        1,
-        2,
-        6
-      ],
+      "label_ids": [1, 2, 6],
       "article_id": 37
     },
     {
       "id": 6,
-      "label_ids": [
-        1
-      ],
+      "label_ids": [1],
       "article_id": 58
     },
     {
       "id": 7,
-      "label_ids": [
-        7
-      ],
+      "label_ids": [7],
       "article_id": 48
     },
     {
       "id": 8,
-      "label_ids": [
-        8,
-        2
-      ],
+      "label_ids": [8, 2],
       "article_id": 4
     },
     {
       "id": 9,
-      "label_ids": [
-        9
-      ],
+      "label_ids": [9],
       "article_id": 39
     },
     {
       "id": 10,
-      "label_ids": [
-        1
-      ],
+      "label_ids": [1],
       "article_id": 1
     },
     {
       "id": 11,
-      "label_ids": [
-        1,
-        2,
-        11
-      ],
+      "label_ids": [1, 2, 11],
       "article_id": 2
     },
     {
       "id": 12,
-      "label_ids": [
-        1,
-        9
-      ],
+      "label_ids": [1, 9],
       "article_id": 3
     },
     {
       "id": 13,
-      "label_ids": [
-        9
-      ],
+      "label_ids": [9],
       "article_id": 51
     },
     {
       "id": 14,
-      "label_ids": [
-        9
-      ],
+      "label_ids": [9],
       "article_id": 47
     },
     {
       "id": 15,
-      "label_ids": [
-        9
-      ],
+      "label_ids": [9],
       "article_id": 41
     },
     {
       "id": 16,
-      "label_ids": [
-        1,
-        2
-      ],
+      "label_ids": [1, 2],
       "article_id": 40
     },
     {
       "id": 17,
-      "label_ids": [
-        1
-      ],
+      "label_ids": [1],
       "article_id": 35
     }
   ],
@@ -3395,55 +3352,26 @@
     {
       "id": 1,
       "user_id": 1,
-      "article_ids": [
-        1,
-        3,
-        7
-      ]
+      "article_ids": [1, 3, 7]
     },
     {
       "id": 2,
       "user_id": 2,
-      "article_ids": [
-        5,
-        8,
-        10
-      ]
+      "article_ids": [5, 8, 10]
     }
   ],
   "survey-responses": [
     {
       "answers": {
-        "REST API testing": [
-          "yes"
-        ],
-        "REST API tools": [
-          "Swagger",
-          "Postman",
-          "Bruno"
-        ],
-        "Using newman": [
-          "yes"
-        ],
-        "Using CI/CD": [
-          "yes"
-        ],
-        "CI/CD tools": [
-          "GitHub Actions",
-          "Jenkins",
-          "Azure DevOps"
-        ],
-        "testing frequency": [
-          "weekly"
-        ],
-        "Test types": [
-          "Integration tests",
-          "E2e tests"
-        ],
+        "REST API testing": ["yes"],
+        "REST API tools": ["Swagger", "Postman", "Bruno"],
+        "Using newman": ["yes"],
+        "Using CI/CD": ["yes"],
+        "CI/CD tools": ["GitHub Actions", "Jenkins", "Azure DevOps"],
+        "testing frequency": ["weekly"],
+        "Test types": ["Integration tests", "E2e tests"],
         "Open-Ended Questions": {
-          "Plans to improve testing": [
-            "Learn more Playwright for API Testing"
-          ]
+          "Plans to improve testing": ["Learn more Playwright for API Testing"]
         }
       },
       "type": 1,
@@ -3453,36 +3381,15 @@
     },
     {
       "answers": {
-        "REST API testing": [
-          "yes"
-        ],
-        "REST API tools": [
-          "Swagger",
-          "Postman"
-        ],
-        "Using newman": [
-          "no"
-        ],
-        "Using CI/CD": [
-          "yes"
-        ],
-        "CI/CD tools": [
-          "GitHub Actions",
-          "Azure DevOps"
-        ],
-        "testing frequency": [
-          "weekly"
-        ],
-        "Test types": [
-          "Unit tests",
-          "Module tests",
-          "Integration tests",
-          "E2e tests"
-        ],
+        "REST API testing": ["yes"],
+        "REST API tools": ["Swagger", "Postman"],
+        "Using newman": ["no"],
+        "Using CI/CD": ["yes"],
+        "CI/CD tools": ["GitHub Actions", "Azure DevOps"],
+        "testing frequency": ["weekly"],
+        "Test types": ["Unit tests", "Module tests", "Integration tests", "E2e tests"],
         "Open-Ended Questions": {
-          "Plans to improve testing": [
-            ""
-          ]
+          "Plans to improve testing": [""]
         }
       },
       "type": 1,
@@ -3492,38 +3399,15 @@
     },
     {
       "answers": {
-        "REST API testing": [
-          "yes"
-        ],
-        "REST API tools": [
-          "Swagger",
-          "Postman",
-          "Bruno"
-        ],
-        "Using newman": [
-          "no"
-        ],
-        "Using CI/CD": [
-          "yes"
-        ],
-        "CI/CD tools": [
-          "GitHub Actions",
-          "Jenkins"
-        ],
-        "Testing frequency": [
-          "daily"
-        ],
-        "Test types": [
-          "Unit tests",
-          "Module tests",
-          "Contract tests",
-          "Integration tests",
-          "E2e tests"
-        ],
+        "REST API testing": ["yes"],
+        "REST API tools": ["Swagger", "Postman", "Bruno"],
+        "Using newman": ["no"],
+        "Using CI/CD": ["yes"],
+        "CI/CD tools": ["GitHub Actions", "Jenkins"],
+        "Testing frequency": ["daily"],
+        "Test types": ["Unit tests", "Module tests", "Contract tests", "Integration tests", "E2e tests"],
         "Open-Ended Questions": {
-          "Plans to improve testing": [
-            ""
-          ]
+          "Plans to improve testing": [""]
         }
       },
       "type": 1,
@@ -3533,24 +3417,12 @@
     },
     {
       "answers": {
-        "REST API testing": [
-          "yes"
-        ],
-        "REST API tools": [
-          "Postman"
-        ],
-        "Using newman": [
-          "yes"
-        ],
-        "Using CI/CD": [
-          "yes"
-        ],
-        "CI/CD tools": [
-          "GitHub Actions"
-        ],
-        "Testing frequency": [
-          "daily"
-        ],
+        "REST API testing": ["yes"],
+        "REST API tools": ["Postman"],
+        "Using newman": ["yes"],
+        "Using CI/CD": ["yes"],
+        "CI/CD tools": ["GitHub Actions"],
+        "Testing frequency": ["daily"],
         "Test types": [
           "Module tests",
           "Integration tests",
@@ -3561,9 +3433,7 @@
           "Visual tests"
         ],
         "Open-Ended Questions": {
-          "Plans to improve testing": [
-            ""
-          ]
+          "Plans to improve testing": [""]
         }
       },
       "type": 1,
@@ -3573,36 +3443,15 @@
     },
     {
       "answers": {
-        "REST API testing": [
-          "yes"
-        ],
-        "REST API tools": [
-          "Postman",
-          "Swagger"
-        ],
-        "Using newman": [
-          "no"
-        ],
-        "Using CI/CD": [
-          "yes"
-        ],
-        "CI/CD tools": [
-          "GitHub Actions"
-        ],
-        "Testing frequency": [
-          "daily"
-        ],
-        "Test types": [
-          "Module tests",
-          "Integration tests",
-          "E2e tests",
-          "UAT tests",
-          "Performance tests"
-        ],
+        "REST API testing": ["yes"],
+        "REST API tools": ["Postman", "Swagger"],
+        "Using newman": ["no"],
+        "Using CI/CD": ["yes"],
+        "CI/CD tools": ["GitHub Actions"],
+        "Testing frequency": ["daily"],
+        "Test types": ["Module tests", "Integration tests", "E2e tests", "UAT tests", "Performance tests"],
         "Open-Ended Questions": {
-          "Plans to improve testing": [
-            "Learn more Playwright for API Testing"
-          ]
+          "Plans to improve testing": ["Learn more Playwright for API Testing"]
         }
       },
       "type": 1,
@@ -3612,32 +3461,14 @@
     },
     {
       "answers": {
-        "experience in test automation": [
-          "yes"
-        ],
-        "experience in test automation in years": [
-          "2-3 years"
-        ],
-        "automation tools": [
-          "Playwright",
-          "Selenium"
-        ],
-        "languages for automation tools": [
-          "JavaScript",
-          "TypeScript",
-          "Python"
-        ],
-        "Number of automated tests": [
-          "50-100"
-        ],
-        "Automated test types": [
-          "Integration tests",
-          "E2e tests"
-        ],
+        "experience in test automation": ["yes"],
+        "experience in test automation in years": ["2-3 years"],
+        "automation tools": ["Playwright", "Selenium"],
+        "languages for automation tools": ["JavaScript", "TypeScript", "Python"],
+        "Number of automated tests": ["50-100"],
+        "Automated test types": ["Integration tests", "E2e tests"],
         "Open-Ended Questions": {
-          "Plans to improve skills": [
-            "Learn more about Playwright"
-          ]
+          "Plans to improve skills": ["Learn more about Playwright"]
         }
       },
       "type": 2,
@@ -3650,32 +3481,22 @@
     {
       "id": 1,
       "user_id": 1,
-      "user_ids": [
-        2,
-        3,
-        4
-      ]
+      "user_ids": [2, 3, 4]
     },
     {
       "id": 2,
       "user_id": 2,
-      "user_ids": [
-        1
-      ]
+      "user_ids": [1]
     },
     {
       "id": 3,
       "user_id": 3,
-      "user_ids": [
-        1
-      ]
+      "user_ids": [1]
     },
     {
       "id": 4,
       "user_id": 4,
-      "user_ids": [
-        1
-      ]
+      "user_ids": [1]
     }
   ],
   "messages": [
@@ -3744,1512 +3565,1141 @@
   "books": [
     {
       "id": 1,
-      "title": "The Pragmatic Programmer",
-      "author_ids": [
-        1
-      ],
+      "title": "Whispers of the Eternal Clock",
+      "author_ids": [1],
       "published_at": "1999-10-20T00:00:00Z",
-      "genre_ids": [
-        1
-      ],
+      "genre_ids": [1],
       "language": "English",
       "pages": 352,
-      "cover": "..\\data\\books\\the-pragmatic-programmer.jpg",
-      "description": "The Pragmatic Programmer: Your Journey to Mastery, 20th Anniversary Edition (2nd Edition) (Pragmatic Programmers)"
+      "cover": "..\\data\\books\\whispers-of-the-eternal-clock.jpg",
+      "description": "An enchanting tale of a mystical clock that controls the passage of time, and the three guardians sworn to protect its secrets from falling into the wrong hands."
     },
     {
       "id": 2,
-      "title": "Clean Code",
-      "author_ids": [
-        2
-      ],
+      "title": "Code of Shadows",
+      "author_ids": [2],
       "published_at": "2008-08-11T00:00:00Z",
-      "genre_ids": [
-        1
-      ],
+      "genre_ids": [1],
       "language": "English",
       "pages": 464,
-      "cover": "..\\data\\books\\clean-code.jpg",
-      "description": "Even bad code can function. But if code isn’t clean, it can bring a development organization to its knees. Every year, countless hours and significant resources are lost because of poorly written code. But it doesn’t have to be that way."
+      "cover": "..\\data\\books\\code-of-shadows.jpg",
+      "description": "A riveting adventure into a world where coding shapes reality, and a group of renegades fight to uncover the truth behind the mysterious Shadow Algorithm."
     },
     {
       "id": 3,
-      "title": "Dune",
-      "author_ids": [
-        3
-      ],
+      "title": "Sands of the Infinite",
+      "author_ids": [3],
       "published_at": "1965-06-01T00:00:00Z",
-      "genre_ids": [
-        17
-      ],
+      "genre_ids": [17],
       "language": "English",
       "pages": 412,
-      "cover": "..\\data\\books\\dune.jpg",
-      "description": "Set in the far future amidst a sprawling feudal interstellar empire where planetary dynasties are controlled by noble houses that owe an allegiance to the imperial House Corrino, Dune tells the story of young Paul Atreides (the heir apparent to Duke Leto Atreides and heir of House Atreides) as he and his family accept control of the desert planet Arrakis, the only source of the 'spice' melange, the most important and valuable substance in the cosmos."
+      "cover": "..\\data\\books\\sands-of-the-infinite.jpg",
+      "description": "A young prince must traverse a desert world filled with ancient ruins and warring factions to find the mythical Sands of the Infinite and secure peace for his people."
     },
     {
       "id": 4,
-      "title": "The Lord of the Rings",
-      "author_ids": [
-        4
-      ],
+      "title": "Legends of the Crystal Keep",
+      "author_ids": [4],
       "published_at": "1954-07-29T00:00:00Z",
-      "genre_ids": [
-        12,
-        19
-      ],
+      "genre_ids": [12, 19],
       "language": "English",
       "pages": 1178,
-      "cover": "..\\data\\books\\the-lord-of-the-rings.jpg",
-      "description": "The Lord of the Rings is an epic high-fantasy novel written by English author and scholar J. R. R. Tolkien. The story began as a sequel to Tolkien's 1937 fantasy novel The Hobbit, but eventually developed into a much larger work."
+      "cover": "..\\data\\books\\legends-of-the-crystal-keep.jpg",
+      "description": "An epic saga of heroes, magic, and betrayal, set in a world where the Crystal Keep holds the power to reshape destiny itself."
     },
     {
       "id": 5,
-      "title": "The Hitchhiker's Guide to the Galaxy",
-      "author_ids": [
-        5
-      ],
+      "title": "The Cosmic Voyage",
+      "author_ids": [5],
       "published_at": "1979-10-12T00:00:00Z",
-      "genre_ids": [
-        17
-      ],
+      "genre_ids": [17],
       "language": "English",
       "pages": 215,
-      "cover": "..\\data\\books\\the-hitchhikers-guide-to-the-galaxy.jpg",
-      "description": "The Hitchhiker's Guide to the Galaxy is a comic science fiction series created by Douglas Adams that has become popular among fans of the genre and members of the scientific community."
+      "cover": "..\\data\\books\\the-cosmic-voyage.jpg",
+      "description": "A comedic yet profound journey through the galaxy, exploring the absurdities of life, love, and the universe with a hapless captain and his misfit crew."
     },
     {
       "id": 6,
-      "title": "1984",
-      "author_ids": [
-        6
-      ],
+      "title": "The Iron Veil",
+      "author_ids": [6],
       "published_at": "1949-06-08T00:00:00Z",
-      "genre_ids": [
-        18
-      ],
+      "genre_ids": [18],
       "language": "English",
       "pages": 328,
-      "cover": "..\\data\\books\\1984.jpg",
-      "description": "1984 is a dystopian social science fiction novel by English novelist George Orwell. It was published on 8 June 1949 by Secker & Warburg as Orwell's ninth and final book completed in his lifetime."
+      "cover": "..\\data\\books\\the-iron-veil.jpg",
+      "description": "A dystopian tale of a world divided by an unbreakable iron curtain, where one woman dares to uncover the truth behind the regime’s iron grip."
     },
     {
       "id": 7,
-      "title": "Animal Farm",
-      "author_ids": [
-        6
-      ],
+      "title": "Rebellion of the Lost Meadow",
+      "author_ids": [6],
       "published_at": "1945-08-17T00:00:00Z",
-      "genre_ids": [
-        18
-      ],
+      "genre_ids": [18],
       "language": "English",
       "pages": 112,
-      "cover": "..\\data\\books\\animal-farm.jpg",
-      "description": "Animal Farm is an allegorical novella by George Orwell, first published in England on 17 August 1945. The book tells the story of a group of farm animals who rebel against their human farmer, hoping to create a society where the animals can be equal, free, and happy."
+      "cover": "..\\data\\books\\rebellion-of-the-lost-meadow.jpg",
+      "description": "In a hidden meadow, creatures rise against their oppressors in a stirring allegory of freedom, equality, and the cost of revolution."
     },
     {
       "id": 8,
-      "title": "The Crime and the Punishment",
-      "author_ids": [
-        7
-      ],
+      "title": "Echoes of Redemption",
+      "author_ids": [7],
       "published_at": "1866-11-14T00:00:00Z",
-      "genre_ids": [
-        18
-      ],
+      "genre_ids": [18],
       "language": "Russian",
       "pages": 671,
-      "cover": "..\\data\\books\\the-crime-and-the-punishment.jpg",
-      "description": "Crime and Punishment is a novel by the Russian author Fyodor Dostoevsky. It was first published in the literary journal The Russian Messenger in twelve monthly installments during 1866."
+      "cover": "..\\data\\books\\echoes-of-redemption.jpg",
+      "description": "A harrowing journey of a man seeking forgiveness in the shadows of a crime that reshaped his destiny, set against a backdrop of philosophical turmoil."
     },
     {
       "id": 9,
-      "title": "The Brothers Karamazov",
-      "author_ids": [
-        7
-      ],
+      "title": "The House of the Eternal Flame",
+      "author_ids": [7],
       "published_at": "1880-11-26T00:00:00Z",
-      "genre_ids": [
-        18
-      ],
+      "genre_ids": [18],
       "language": "Russian",
       "pages": 796,
-      "cover": "..\\data\\books\\the-brothers-karamazov.jpg",
-      "description": "The Brothers Karamazov is a passionate philosophical novel set in 19th century Russia, that enters deeply into the ethical debates of God, free will, and morality. It is a spiritual drama of moral struggles concerning faith, doubt, reason, and modern Russia."
+      "cover": "..\\data\\books\\house-of-the-eternal-flame.jpg",
+      "description": "A gripping tale of family, faith, and betrayal in 19th-century Russia, where the discovery of an eternal flame challenges their beliefs and bonds."
     },
     {
       "id": 10,
-      "title": "Perfekcyjna niedoskonałość",
-      "author_ids": [
-        8
-      ],
+      "title": "The Last Chronicle of Stars",
+      "author_ids": [8],
       "published_at": "2019-10-01T00:00:00Z",
-      "genre_ids": [
-        17
-      ],
+      "genre_ids": [17],
       "language": "Polish",
       "pages": 550,
-      "cover": "..\\data\\books\\perfekcyjna-niedoskonalosc.jpg",
-      "description": "Jest XXIX wiek. Adam Zamoyski, tajemniczy zmartwychwstaniec, tkwi w środku rozgrywki między cywilizacjami, ludźmi, nieludźmi i istotami postludzkimi. Konkurencja stanowi motor ewolucji – konkurują ze sobą rośliny, zwierzęta, ludzie, kultury, gospodarki. Zwycięża, kto lepiej wykorzystuje naturalne środowisko, zasoby planety, ostatecznie – prawa fizyki."
+      "cover": "..\\data\\books\\the-last-chronicle-of-stars.jpg",
+      "description": "In the distant future, humanity’s remnants compete for survival among the stars, while an ancient artifact threatens to unearth long-forgotten truths."
     },
     {
       "id": 11,
-      "title": "The Lean Startup",
-      "author_ids": [
-        9
-      ],
+      "title": "The Alchemist's Labyrinth",
+      "author_ids": [9],
       "published_at": "2011-09-13T00:00:00Z",
-      "genre_ids": [
-        6
-      ],
+      "genre_ids": [6],
       "language": "English",
       "pages": 336,
-      "cover": "..\\data\\books\\the-lean-startup.jpg",
-      "description": "The Lean Startup: How Today's Entrepreneurs Use Continuous Innovation to Create Radically Successful Businesses is a book by Eric Ries describing his proposed lean startup strategy for startup companies."
+      "cover": "..\\data\\books\\the-alchemists-labyrinth.jpg",
+      "description": "An inventor discovers a labyrinthine world of alchemical wonders and perilous traps, where he must master ancient knowledge to find his lost apprentice."
     },
     {
       "id": 12,
-      "title": "Extreme Ownership",
-      "author_ids": [
-        10,
-        26
-      ],
+      "title": "Commanders of the Eternal Horizon",
+      "author_ids": [10, 26],
       "published_at": "2015-10-20T00:00:00Z",
-      "genre_ids": [
-        5
-      ],
+      "genre_ids": [5],
       "language": "English",
       "pages": 320,
-      "cover": "..\\data\\books\\extreme-ownership.jpg",
-      "description": "Extreme Ownership: How U.S. Navy SEALs Lead and Win is a book by Jocko Willink and Leif Babin, published on October 20, 2015. The book details the authors' experiences and lessons learned from the battlefield, then teaches how to apply them to business and life."
+      "cover": "..\\data\\books\\commanders-of-the-eternal-horizon.jpg",
+      "description": "Two military leaders recount their experiences defending humanity from an enigmatic alien race, blending strategy, courage, and the weight of command."
     },
     {
       "id": 13,
-      "title": "The Art of War",
-      "author_ids": [
-        11
-      ],
+      "title": "The Battle of Celestial Shores",
+      "author_ids": [11],
       "published_at": "2018-11-12T00:00:00Z",
-      "genre_ids": [
-        4
-      ],
+      "genre_ids": [4],
       "language": "Chinese",
       "pages": 38,
-      "cover": "..\\data\\books\\the-art-of-war.jpg",
-      "description": "The Art of War is an ancient Chinese military treatise dating from the Late Spring and Autumn Period (roughly 5th century BC). The work, which is attributed to the ancient Chinese military strategist Sun Tzu ('Master Sun', also spelled Sunzi), is composed of 13 chapters."
+      "cover": "..\\data\\books\\battle-of-celestial-shores.jpg",
+      "description": "A short yet profound tale of an ancient warrior facing cosmic forces on the shores of an uncharted planet, blending myth and science fiction."
     },
     {
       "id": 14,
-      "title": "The Prince",
-      "author_ids": [
-        12
-      ],
+      "title": "The Sovereign's Gambit",
+      "author_ids": [12],
       "published_at": "1532-12-10T00:00:00Z",
-      "genre_ids": [
-        4
-      ],
+      "genre_ids": [4],
       "language": "Italian",
       "pages": 140,
-      "cover": "..\\data\\books\\the-prince.jpg",
-      "description": "The Prince is a 16th-century political treatise by the Italian diplomat and political theorist Niccolò Machiavelli. From his correspondence, a version appears to have been distributed in 1513, using a Latin title, De Principatibus (Of Principalities)."
+      "cover": "..\\data\\books\\sovereigns-gambit.jpg",
+      "description": "A timeless treatise on political intrigue and power struggles, told through the rise and fall of a cunning leader in a fictional empire."
     },
     {
       "id": 15,
-      "title": "The Weird and The Eerie",
-      "author_ids": [
-        13
-      ],
+      "title": "Echoes of the Unseen",
+      "author_ids": [13],
       "published_at": "2017-01-26T00:00:00Z",
-      "genre_ids": [
-        10
-      ],
+      "genre_ids": [10],
       "language": "English",
       "pages": 128,
-      "cover": "..\\data\\books\\the-weird-and-the-eerie.jpg",
-      "description": "What exactly are the Weird and the Eerie? In this new essay, Mark Fisher argues that some of the most haunting and anomalous fiction of the 20th century belongs to these two modes. The Weird and The Eerie are closely related but distinct modes, each possessing its own distinct properties. Both have often been associated with Horror, yet this emphasis overlooks the aching fascination that such texts can exercise. The Weird and the Eerie both fundamentally concern the outside and the unknown, which are not intrinsically horrifying, even if they are always unsettling."
+      "cover": "..\\data\\books\\echoes-of-the-unseen.jpg",
+      "description": "An exploration of eerie landscapes and haunting phenomena, weaving stories that blur the boundaries between reality and imagination."
     },
     {
       "id": 16,
-      "title": "How to Stop Worrying and Start Living",
-      "author_ids": [
-        14
-      ],
+      "title": "Mind's Liberation",
+      "author_ids": [14],
       "published_at": "1948-10-05T00:00:00Z",
-      "genre_ids": [
-        28
-      ],
+      "genre_ids": [28],
       "language": "English",
       "pages": 320,
-      "cover": "..\\data\\books\\how-to-stop-worrying-and-start-living.jpg",
-      "description": "How to Stop Worrying and Start Living is a self-help book by Dale Carnegie. It was first printed in Great Britain in 1948 by Richard Clay (The Chaucer Press), Ltd., Bungay Suffolk. It is currently published as a Mass Market Paperback of 320 pages by Pocket (Revised edition: September 15, 1990), ISBN 0-671-73335-4."
+      "cover": "..\\data\\books\\minds-liberation.jpg",
+      "description": "A transformative guide to overcoming personal struggles, cultivating resilience, and embracing a life of freedom and purpose."
     },
     {
       "id": 17,
-      "title": "Kwantechizm 2.0",
-      "author_ids": [
-        15
-      ],
+      "title": "Quantum Myths and Realities",
+      "author_ids": [15],
       "published_at": "2022-01-01T00:00:00Z",
-      "genre_ids": [
-        38
-      ],
+      "genre_ids": [38],
       "language": "Polish",
       "pages": 344,
-      "cover": "..\\data\\books\\kwantechizm-2.0.jpg",
-      "description": "Wyobrażenia o wszechświecie formułowane od wieków okazały się zbiorem przybliżeń lub nonsensów. Mówienie z pewnością o czymkolwiek jest więc, jak pisze autor tej książki, nie tylko bezczelnością, ale – co gorsza – nietaktem. Coraz lepiej poznajemy prawa rządzące rzeczywistością – nie przez ustanawianie świętych prawd, ale ich skuteczne podważanie. Wizja świata, która dzięki temu zaczęła się rysować, jest dogłębnie szokująca. By ją nam przybliżyć, Andrzej Dragan w jasny i klarowny sposób objaśnia niezwykłe wnioski wynikające z przełomowych teorii Einsteina oraz najbardziej zaskakujące prawa mechaniki kwantowej, a także przedstawia własny, nowy i rewolucyjny model łączący je ze sobą."
+      "cover": "..\\data\\books\\quantum-myths-realities.jpg",
+      "description": "A riveting exploration of quantum mechanics and its philosophical implications, challenging readers to rethink the fabric of reality."
     },
     {
       "id": 18,
-      "title": "Pułapki myślenia. O myśleniu szybkim i wolnym",
-      "author_ids": [
-        16
-      ],
+      "title": "Labyrinths of the Mind",
+      "author_ids": [16],
       "published_at": "2011-10-25T00:00:00Z",
-      "genre_ids": [
-        28
-      ],
+      "genre_ids": [28],
       "language": "Polish",
       "pages": 672,
-      "cover": "..\\data\\books\\pulapki-myslenia.jpg",
-      "description": "Czytelnik znajdzie tu fascynujące opowieści o tym, jak ludzki umysł działa w różnych sytuacjach, jakie błędy popełnia, jakie pułapki go czekają. Autor pokazuje, jakie mechanizmy kierują naszymi decyzjami, jakie błędy popełniamy, jakie pułapki czyhają na nas w życiu codziennym, w pracy, w sporcie, w polityce, w biznesie. Dzięki tej książce zrozumiesz, dlaczego ludzie popełniają błędy, jakie mechanizmy kierują naszymi decyzjami, jakie pułapki czyhają na nas w życiu codziennym, w pracy, w sporcie, w polityce, w biznesie."
+      "cover": "..\\data\\books\\labyrinths-of-the-mind.jpg",
+      "description": "An enlightening guide to understanding human cognition, decision-making, and the psychological traps that shape our lives."
     },
     {
       "id": 19,
-      "title": "Rework",
-      "author_ids": [
-        17
-      ],
+      "title": "Dreamers of Tomorrow",
+      "author_ids": [17],
       "published_at": "2010-03-09T00:00:00Z",
-      "genre_ids": [
-        6
-      ],
+      "genre_ids": [6],
       "language": "English",
       "pages": 288,
-      "cover": "..\\data\\books\\rework.jpg",
-      "description": "Rework shows you a better, faster, easier way to succeed in business. Most business books give you the same old advice: Write a business plan, study the competition, seek investors, yadda yadda. If you're looking for a book like that, put this one back on the shelf."
+      "cover": "..\\data\\books\\dreamers-of-tomorrow.jpg",
+      "description": "A thought-provoking look at innovation and perseverance, told through the stories of visionaries who dared to dream beyond their time."
     },
     {
       "id": 20,
-      "title": "Sztuka przywództwa",
-      "author_ids": [
-        14
-      ],
+      "title": "The Art of Leadership",
+      "author_ids": [14],
       "published_at": "2020-01-01T00:00:00Z",
-      "genre_ids": [
-        5
-      ],
+      "genre_ids": [5],
       "language": "Polish",
       "pages": 288,
-      "cover": "..\\data\\books\\sztuka-przywodztwa.jpg",
-      "description": "Sztuka przywództwa to książka, która pomoże Ci zrozumieć, jakie cechy powinien posiadać dobry lider. Dale Carnegie, autor bestsellerów, takich jak Jak zdobyć przyjaciół i zjednać sobie ludzi czy Jak przestać się martwić i zacząć żyć, w swojej najnowszej książce zdradza sekrety skutecznego przywództwa. Dowiesz się z niej, jak zbudować zespół, który będzie działał jak zegarek, jak motywować pracowników do działania oraz jak radzić sobie z trudnymi sytuacjami w pracy."
+      "cover": "..\\data\\books\\the-art-of-leadership.jpg",
+      "description": "A practical guide to building effective teams, motivating individuals, and leading with integrity in times of change and challenge."
     },
     {
       "id": 21,
-      "title": "The Trial",
-      "author_ids": [
-        18
-      ],
+      "title": "Trials of the Shadow Realm",
+      "author_ids": [18],
       "published_at": "1925-01-01T00:00:00Z",
-      "genre_ids": [
-        18
-      ],
+      "genre_ids": [18],
       "language": "English",
       "pages": 208,
-      "cover": "..\\data\\books\\the-trial.jpg",
-      "description": "The Trial (original German title: Der Process, later Der Prozess, Der Proceß and Der Prozeß) is a novel written by Franz Kafka between 1914 and 1915 and published posthumously in 1925. One of Kafka's best-known works."
+      "cover": "..\\data\\books\\trials-of-the-shadow-realm.jpg",
+      "description": "A surreal journey through a mysterious shadow world, where a man must unravel its secrets to save his own soul."
     },
     {
       "id": 22,
-      "title": "House of Leaves",
-      "author_ids": [
-        19
-      ],
+      "title": "Leaves of the Forgotten Galaxy",
+      "author_ids": [19],
       "published_at": "2000-03-07T00:00:00Z",
-      "genre_ids": [
-        18
-      ],
+      "genre_ids": [18],
       "language": "English",
       "pages": 709,
-      "cover": "..\\data\\books\\house-of-leaves.jpg",
-      "description": "House of Leaves is the debut novel by American author Mark Z. Danielewski, published in March 2000 by Pantheon Books. A bestseller, it has been translated into a number of languages, and is followed by a companion piece, The Whalestoe Letters. The format and structure of the novel is unconventional, with unusual page layout and style, making it a prime example of ergodic literature. It contains copious footnotes, many of which contain footnotes themselves, including references to fictional books, films or articles."
+      "cover": "..\\data\\books\\leaves-of-the-forgotten-galaxy.jpg",
+      "description": "An intricate narrative exploring the forgotten tales of a galaxy on the brink of rediscovery, weaving together myth and mystery."
     },
     {
       "id": 23,
-      "title": "Cain's Jawbone: A Novel Problem",
-      "author_ids": [
-        20
-      ],
+      "title": "The Riddle of Cain",
+      "author_ids": [20],
       "published_at": "1934-01-01T00:00:00Z",
-      "genre_ids": [
-        18
-      ],
+      "genre_ids": [18],
       "language": "English",
       "pages": 216,
-      "cover": "..\\data\\books\\cains-jawbone.jpg"
+      "cover": "..\\data\\books\\the-riddle-of-cain.jpg",
+      "description": "A cryptic puzzle leads a group of adventurers on a treacherous journey, uncovering dark secrets that change their world forever."
     },
     {
       "id": 24,
-      "title": "Dune Messiah",
-      "author_ids": [
-        3
-      ],
+      "title": "Desert Chronicles: Ascension",
+      "author_ids": [3],
       "published_at": "1969-03-01T00:00:00Z",
-      "genre_ids": [
-        17
-      ],
+      "genre_ids": [17],
       "language": "English",
       "pages": 331,
-      "cover": "..\\data\\books\\dune-messiah.jpg",
-      "description": "Dune Messiah is a science fiction novel by American author Frank Herbert, the second in his Dune series of six novels. It was originally serialized in Galaxy magazine in 1969. The American and British editions have different prologues summarizing events in the previous novel. Dune Messiah and its sequel Children of Dune were collectively adapted by the Sci-Fi Channel in 2003 into a miniseries entitled Frank Herbert's Children of Dune."
+      "cover": "..\\data\\books\\desert-chronicles-ascension.jpg",
+      "description": "The saga continues as the desert planet’s inhabitants rise to reclaim their legacy amidst chaos and intrigue."
     },
     {
       "id": 25,
-      "title": "Children of Dune",
-      "author_ids": [
-        3
-      ],
+      "title": "Children of the Ember",
+      "author_ids": [3],
       "published_at": "1976-04-01T00:00:00Z",
-      "genre_ids": [
-        17
-      ],
+      "genre_ids": [17],
       "language": "English",
       "pages": 408,
-      "cover": "..\\data\\books\\children-of-dune.jpg",
-      "description": "Children of Dune is a 1976 science fiction novel by Frank Herbert, the third in his Dune series of six novels. It was originally serialized in Analog Science Fiction and Fact in 1976, and was the last Dune novel to be serialized before book publication. The novels Dune Messiah and Children of Dune were collectively adapted by the Sci-Fi Channel in 2003 into a miniseries entitled Frank Herbert's Children of Dune."
+      "cover": "..\\data\\books\\children-of-the-ember.jpg",
+      "description": "Amidst the ruins of an ancient civilization, a new generation discovers their inherited power to reshape the world."
     },
     {
       "id": 26,
-      "title": "God Emperor of Dune",
-      "author_ids": [
-        3
-      ],
+      "title": "Eclipse of Eternity",
+      "author_ids": [3],
       "published_at": "1981-05-01T00:00:00Z",
-      "genre_ids": [
-        17
-      ],
+      "genre_ids": [17],
       "language": "English",
       "pages": 412,
-      "cover": "..\\data\\books\\god-emperor-of-dune.jpg",
-      "description": "God Emperor of Dune is a science fiction novel by Frank Herbert, the fourth in his Dune series of six novels. It was ranked as the No. 11 hardcover fiction best seller of 1981 by Publishers Weekly. God Emperor of Dune was serialized in Analog Science Fiction and Fact magazine from 1981 to 1982, and then published by Putnam."
+      "cover": "..\\data\\books\\eclipse-of-eternity.jpg",
+      "description": "As a celestial phenomenon threatens the galaxy, an unlikely band of heroes must unite to preserve existence itself."
     },
     {
       "id": 27,
-      "title": "Heretics of Dune",
-      "author_ids": [
-        3
-      ],
+      "title": "Heralds of the New Dawn",
+      "author_ids": [3],
       "published_at": "1984-05-01T00:00:00Z",
-      "genre_ids": [
-        17
-      ],
+      "genre_ids": [17],
       "language": "English",
       "pages": 471,
-      "cover": "..\\data\\books\\heretics-of-dune.jpg",
-      "description": "Heretics of Dune is a 1984 science fiction novel by Frank Herbert, the fifth in his Dune series of six novels. It was ranked as the No. 13 hardcover fiction best seller of 1984 by Publishers Weekly. Heretics of Dune was serialized in Analog Science Fiction and Fact magazine from 1983 to 1984, and then published by Putnam."
+      "cover": "..\\data\\books\\heralds-of-the-new-dawn.jpg",
+      "description": "Amid a crumbling empire, whispers of a new beginning challenge the order of a stagnant society."
     },
     {
       "id": 28,
-      "title": "The Call of Cthulhu",
-      "author_ids": [
-        21
-      ],
+      "title": "Whispers of Eldritch Tides",
+      "author_ids": [21],
       "published_at": "1928-02-20T00:00:00Z",
-      "genre_ids": [
-        15
-      ],
+      "genre_ids": [15],
       "language": "English",
       "pages": 35,
-      "cover": "..\\data\\books\\the-call-of-cthulhu.jpg",
-      "description": "The Call of Cthulhu is a short story by American writer H. P. Lovecraft. Written in the summer of 1926, it was first published in the pulp magazine Weird Tales in February 1928."
+      "cover": "..\\data\\books\\whispers-of-eldritch-tides.jpg",
+      "description": "An eerie account of a town's descent into madness after an ancient artifact washes ashore, awakening eldritch horrors."
     },
     {
       "id": 29,
-      "title": "The Silmarillion",
-      "author_ids": [
-        4
-      ],
+      "title": "Chronicles of the Eternal Flame",
+      "author_ids": [4],
       "published_at": "1977-09-15T00:00:00Z",
-      "genre_ids": [
-        12,
-        19
-      ],
+      "genre_ids": [12, 19],
       "language": "English",
       "pages": 365,
-      "cover": "..\\data\\books\\the-silmarillion.jpg",
-      "description": "The Silmarillion is a collection of mythopoeic works by English writer J. R. R. Tolkien, edited and published posthumously by his son, Christopher Tolkien, in 1977, with assistance from Guy Gavriel Kay. It is the primary and founding work of the Middle-earth legendarium, the world of The Hobbit, The Lord of the Rings, and The Silmarillion. The Silmarillion tells of the creation of Eä, the world that is, and the First Age of the world."
+      "cover": "..\\data\\books\\chronicles-of-the-eternal-flame.jpg",
+      "description": "A mythical collection of stories from an ancient realm where the Eternal Flame holds the key to unlocking the secrets of the universe."
     },
     {
       "id": 30,
-      "title": "The Hobbit",
-      "author_ids": [
-        4
-      ],
+      "title": "Adventures of the Hidden Vale",
+      "author_ids": [4],
       "published_at": "1937-09-21T00:00:00Z",
-      "genre_ids": [
-        12,
-        19
-      ],
+      "genre_ids": [12, 19],
       "language": "English",
       "pages": 310,
-      "cover": "..\\data\\books\\the-hobbit.jpg",
-      "description": "The Hobbit, or There and Back Again is a children's fantasy novel by English author J. R. R. Tolkien. It was published on 21 September 1937 to wide critical acclaim, being nominated for the Carnegie Medal and awarded a prize from the New York Herald Tribune for best juvenile fiction."
+      "cover": "..\\data\\books\\adventures-of-the-hidden-vale.jpg",
+      "description": "A whimsical journey of a young adventurer as they explore the mysterious Hidden Vale and its enchanting creatures."
     },
     {
       "id": 31,
-      "title": "Opowieści miłosne. Śmiertelne i tajemnicze",
-      "author_ids": [
-        22
-      ],
+      "title": "Tales of Shadows and Stars",
+      "author_ids": [22],
       "published_at": "2010-10-01T00:00:00Z",
-      "genre_ids": [
-        13,
-        15,
-        16
-      ],
+      "genre_ids": [13, 15, 16],
       "language": "Polish",
       "pages": 800,
-      "cover": "..\\data\\books\\opowiesci-milosne.jpg",
-      "description": "Opowieści miłosne. Śmiertelne i tajemnicze to zbiór opowiadań, które łączy temat miłości. W książce znajdziemy zarówno historie miłosne, jak i opowieści o miłości do literatury, sztuki, muzyki, a także o miłości do życia. Każde z opowiadań to inna historia. Wszystkie jednak łączy temat miłości, która potrafi być zarówno piękna, jak i tragiczna, tajemnicza, a nawet śmiertelna."
+      "cover": "..\\data\\books\\tales-of-shadows-and-stars.jpg",
+      "description": "A captivating anthology of stories that traverse love, mystery, and the cosmos, where every tale shines with its own unique brilliance."
     },
     {
       "id": 32,
-      "title": "Born from a Wish",
-      "author_ids": [
-        23,
-        24
-      ],
+      "title": "The Forgotten Wish",
+      "author_ids": [23, 24],
       "published_at": "2002-02-28T00:00:00Z",
-      "genre_ids": [
-        7,
-        13
-      ],
+      "genre_ids": [7, 13],
       "language": "English",
       "pages": 200,
-      "cover": "..\\data\\books\\born-from-a-wish.jpg",
-      "description": "A dark narrative centered around Maria's backstory, revealing her mysterious origins and her connection to James Sunderland. The novel explores themes of identity, longing, and the blurring line between reality and nightmare."
+      "cover": "..\\data\\books\\the-forgotten-wish.jpg",
+      "description": "A haunting narrative of a young woman uncovering her past and the mysterious wish that binds her to a forgotten realm."
     },
     {
       "id": 33,
-      "title": "Thinking, Fast and Slow",
-      "author_ids": [
-        16
-      ],
+      "title": "Echoes of Thought",
+      "author_ids": [16],
       "published_at": "2011-10-25T00:00:00Z",
-      "genre_ids": [
-        28
-      ],
+      "genre_ids": [28],
       "language": "English",
       "pages": 499,
-      "cover": "..\\data\\books\\thinking-fast-and-slow.jpg",
-      "description": "Thinking, Fast and Slow is a best-selling book published in 2011 by Nobel Memorial Prize in Economic Sciences laureate Daniel Kahneman. It was the 2012 winner of the National Academies Communication Award for best creative work that helps the public understanding of topics in behavioral science, engineering and medicine."
+      "cover": "..\\data\\books\\echoes-of-thought.jpg",
+      "description": "A deep dive into the human mind, unraveling the layers of thought and the silent forces that guide our decisions."
     },
     {
       "id": 34,
-      "title": "Remote",
-      "author_ids": [
-        17
-      ],
+      "title": "Remote Horizons",
+      "author_ids": [17],
       "published_at": "2013-10-29T00:00:00Z",
-      "genre_ids": [
-        6
-      ],
+      "genre_ids": [6],
       "language": "English",
       "pages": 256,
-      "cover": "..\\data\\books\\remote.jpg",
-      "description": "Remote: Office Not Required is a book by David Heinemeier Hansson and Jason Fried about the benefits of remote work. It was published in 2013 by Heinemeier Hansson's and Fried's company, 37signals."
+      "cover": "..\\data\\books\\remote-horizons.jpg",
+      "description": "An insightful guide to embracing the modern era of remote living and working, blending practical tips with inspiring stories."
     },
     {
       "id": 35,
-      "title": "The Metamorphosis",
-      "author_ids": [
-        18
-      ],
+      "title": "Shadows of Transformation",
+      "author_ids": [18],
       "published_at": "1915-10-15T00:00:00Z",
-      "genre_ids": [
-        18
-      ],
+      "genre_ids": [18],
       "language": "English",
       "pages": 201,
-      "cover": "..\\data\\books\\the-metamorphosis.jpg",
-      "description": "The Metamorphosis (German: Die Verwandlung) is a novella written by Franz Kafka which was first published in 1915. One of Kafka's best-known works, The Metamorphosis tells the story of salesman Gregor Samsa who wakes one morning to find himself inexplicably transformed into a huge insect (German ungeheures Ungeziefer, literally 'monstrous vermin'), subsequently struggling to adjust to this new condition."
+      "cover": "..\\data\\books\\shadows-of-transformation.jpg",
+      "description": "A surreal tale of a man waking up to a reality where his life has inexplicably transformed, challenging his very existence."
     },
     {
       "id": 36,
-      "title": "Moominland Midwinter",
-      "author_ids": [
-        28
-      ],
+      "title": "Winter Tales of the Vale",
+      "author_ids": [28],
       "published_at": "1957-01-01T00:00:00Z",
-      "genre_ids": [
-        20
-      ],
+      "genre_ids": [20],
       "language": "English",
       "pages": 176,
-      "cover": "..\\data\\books\\moominland-midwinter.jpg",
-      "description": "Moominland Midwinter (Swedish: Trollvinter) is the fifth in the series of Tove Jansson's Moomins books, published in 1957. It is the first novel where the protagonist, Moomintroll, is not present throughout the entire story. The story is about Moomintroll waking up from hibernation too early and discovering a world he has never seen before."
+      "cover": "..\\data\\books\\winter-tales-of-the-vale.jpg",
+      "description": "A heartwarming story of self-discovery and friendship as the inhabitants of the Vale brave a long and mystical winter."
     },
     {
       "id": 37,
-      "title": "Comet in Moominland",
-      "author_ids": [
-        28
-      ],
+      "title": "The Comet Chronicles",
+      "author_ids": [28],
       "published_at": "1946-01-01T00:00:00Z",
-      "genre_ids": [
-        20
-      ],
+      "genre_ids": [20],
       "language": "English",
       "pages": 160,
-      "cover": "..\\data\\books\\comet-in-moominland.jpg",
-      "description": "Comet in Moominland (Swedish: Kometjakten) is the second in the series of Tove Jansson's Moomins books, published in 1946. It is the first novel where the Moomin family is the main character. The story is about a comet approaching the Moominvalley, and the Moomins' journey to the observatory on the Lonely Mountains to find out more about the comet."
+      "cover": "..\\data\\books\\the-comet-chronicles.jpg",
+      "description": "An enchanting journey as the Vale's adventurers seek the wisdom of the stars in the wake of a celestial event."
     },
     {
       "id": 38,
-      "title": "Moominvalley in November",
-      "author_ids": [
-        28
-      ],
+      "title": "November Whispers",
+      "author_ids": [28],
       "published_at": "1970-01-01T00:00:00Z",
-      "genre_ids": [
-        20
-      ],
+      "genre_ids": [20],
       "language": "English",
       "pages": 144,
-      "cover": "..\\data\\books\\moominvalley-in-november.jpg",
-      "description": "Moominvalley in November (Swedish: Sent i november) is the ninth and final book in the Moomin series by Finnish author Tove Jansson, published in 1970. It is the only book in the series where the Moomin family is not present. The story is about a group of characters who visit the Moominhouse while the Moomins are away."
+      "cover": "..\\data\\books\\november-whispers.jpg",
+      "description": "A poetic exploration of a silent world, where memories and stories intertwine under the cold November skies."
     },
     {
       "id": 39,
-      "title": "The Exploits of Moominpappa",
-      "author_ids": [
-        28
-      ],
+      "title": "The Young Keeper's Tales",
+      "author_ids": [28],
       "published_at": "1950-01-01T00:00:00Z",
-      "genre_ids": [
-        20
-      ],
+      "genre_ids": [20],
       "language": "English",
       "pages": 176,
-      "cover": "..\\data\\books\\the-exploits-of-moominpappa.jpg",
-      "description": "The Exploits of Moominpappa (Swedish: Muminpappans bravader) is the fourth in the series of Tove Jansson's Moomins books, published in 1950. It is the first book where Moominpappa is the main character. The story is about Moominpappa's youth and his adventures with his friends."
+      "cover": "..\\data\\books\\the-young-keepers-tales.jpg",
+      "description": "A vibrant recount of youthful adventures and lessons learned in the magical realms of the Vale."
     },
     {
       "id": 40,
-      "title": "Moominsummer Madness",
-      "author_ids": [
-        28
-      ],
+      "title": "Midsummer Mysteries",
+      "author_ids": [28],
       "published_at": "1954-01-01T00:00:00Z",
-      "genre_ids": [
-        20
-      ],
+      "genre_ids": [20],
       "language": "English",
       "pages": 176,
-      "cover": "..\\data\\books\\moominsummer-madness.jpg",
-      "description": "Moominsummer Madness (Swedish: Farlig midsommar) is the third in the series of Tove Jansson's Moomins books, published in 1954. It is the first novel where the Moomin family is not the main character. The story is about a flood that forces the Moomins to move to a floating theatre."
+      "cover": "..\\data\\books\\midsummer-mysteries.jpg",
+      "description": "A tale of courage and discovery as the Vale's residents navigate a summer filled with unexpected surprises."
     },
     {
       "id": 41,
-      "title": "Moominpappa at Sea",
-      "author_ids": [
-        28
-      ],
+      "title": "Voyage to the Lighthouse Isles",
+      "author_ids": [28],
       "published_at": "1965-01-01T00:00:00Z",
-      "genre_ids": [
-        20
-      ],
+      "genre_ids": [20],
       "language": "English",
       "pages": 176,
-      "cover": "..\\data\\books\\moominpappa-at-sea.jpg",
-      "description": "Moominpappa at Sea (Swedish: Pappan och havet) is the seventh in the series of Tove Jansson's Moomins books, published in 1965. It is the first novel where the Moomin family is not present throughout the entire story. The story is about the Moomin family's journey to a lighthouse island."
+      "cover": "..\\data\\books\\voyage-to-the-lighthouse-isles.jpg",
+      "description": "A poignant journey of self-discovery as a family explores a remote island, unlocking long-forgotten secrets."
     },
     {
       "id": 42,
-      "title": "The Fellowship of the Ring",
-      "author_ids": [
-        4
-      ],
+      "title": "The Ringbearer's Legacy",
+      "author_ids": [4],
       "published_at": "1954-07-29T00:00:00Z",
-      "genre_ids": [
-        12,
-        19
-      ],
+      "genre_ids": [12, 19],
       "language": "English",
       "pages": 398,
-      "cover": "..\\data\\books\\the-fellowship-of-the-ring.jpg",
-      "description": "The Fellowship of the Ring is the first of three volumes of the epic novel The Lord of the Rings by the English author J. R. R. Tolkien. It is followed by The Two Towers and The Return of the King. It takes place in the fictional universe of Middle-earth. It was originally published on 29 July 1954 in the United Kingdom."
+      "cover": "..\\data\\books\\ringbearers-legacy.jpg",
+      "description": "An epic tale of friendship and courage, as a fellowship unites to protect their realm from an ancient evil."
     },
     {
       "id": 43,
-      "title": "The Two Towers",
-      "author_ids": [
-        4
-      ],
+      "title": "Towers of the Twilight Realm",
+      "author_ids": [4],
       "published_at": "1954-11-11T00:00:00Z",
-      "genre_ids": [
-        12,
-        19
-      ],
+      "genre_ids": [12, 19],
       "language": "English",
       "pages": 327,
-      "cover": "..\\data\\books\\the-two-towers.jpg",
-      "description": "The Two Towers is the second volume of J.R.R. Tolkien's high fantasy novel The Lord of the Rings. It is preceded by The Fellowship of the Ring and followed by The Return of the King. The Lord of the Rings is composed of six 'books', aside from an introduction, a prologue and six appendices. The novel was originally published on 11 November 1954."
+      "cover": "..\\data\\books\\towers-of-the-twilight-realm.jpg",
+      "description": "A gripping continuation of a saga, as allies battle against growing shadows threatening their homeland."
     },
     {
       "id": 44,
-      "title": "100 years of solitude",
-      "author_ids": [
-        29
-      ],
+      "title": "Centuries of Solitude",
+      "author_ids": [29],
       "published_at": "1967-05-30T00:00:00Z",
-      "genre_ids": [
-        16,
-        39,
-        40
-      ],
+      "genre_ids": [16, 39, 40],
       "language": "English",
       "pages": 417,
-      "cover": "..\\data\\books\\100-years-of-solitude.jpg",
-      "description": "One Hundred Years of Solitude is a landmark 1967 novel by Colombian author Gabriel García Márquez that tells the multi-generational story of the Buendía family, whose patriarch, José Arcadio Buendía, founded the town of Macondo, a fictitious town in the country of Colombia."
+      "cover": "..\\data\\books\\centuries-of-solitude.jpg",
+      "description": "A generational tale of resilience and discovery within a mystical town caught in the threads of time."
     },
     {
       "id": 45,
-      "title": "Norwegian Wood",
-      "author_ids": [
-        30
-      ],
+      "title": "Melodies of the Northern Woods",
+      "author_ids": [30],
       "published_at": "1987-08-20T00:00:00Z",
-      "genre_ids": [
-        16,
-        39,
-        40
-      ],
+      "genre_ids": [16, 39, 40],
       "language": "English",
       "pages": 472,
-      "cover": "..\\data\\books\\norwegian-wood.jpg",
-      "description": "Norwegian Wood (ノルウェイの森, Noruwei no Mori) is a 1987 novel by Japanese author Haruki Murakami. The novel is a nostalgic story of loss and burgeoning sexuality. It is told from the first-person perspective of Toru Watanabe, who looks back on his days as a college student living in Tokyo."
+      "cover": "..\\data\\books\\melodies-of-the-northern-woods.jpg",
+      "description": "A heartfelt story of love, memory, and music, set against the serene backdrop of the northern forests."
     },
     {
       "id": 46,
-      "title": "The Wind-Up Bird Chronicle",
-      "author_ids": [
-        30
-      ],
+      "title": "Chronicles of the Clockwork Bird",
+      "author_ids": [30],
       "published_at": "1994-10-17T00:00:00Z",
-      "genre_ids": [
-        16,
-        39,
-        40
-      ],
+      "genre_ids": [16, 39, 40],
       "language": "English",
       "pages": 607,
-      "cover": "..\\data\\books\\the-wind-up-bird-chronicle.jpg",
-      "description": "The Wind-Up Bird Chronicle (ねじまき鳥クロニクル, Nejimaki-dori Kuronikuru) is a novel published in 1994 by Japanese author Haruki Murakami. The American translation and its British adaptation, dubbed the 'only official translations' are by Jay Rubin and were first published in 1997."
+      "cover": "..\\data\\books\\chronicles-of-the-clockwork-bird.jpg",
+      "description": "An enigmatic tale of intertwined fates and the mysteries of a mechanical bird that knows too much."
     },
     {
       "id": 47,
-      "title": "Kafka on the Shore",
-      "author_ids": [
-        30
-      ],
+      "title": "Dreams Upon the Shore",
+      "author_ids": [30],
       "published_at": "2002-09-12T00:00:00Z",
-      "genre_ids": [
-        16,
-        39,
-        40
-      ],
+      "genre_ids": [16, 39, 40],
       "language": "English",
       "pages": 467,
-      "cover": "..\\data\\books\\kafka-on-the-shore.jpg",
-      "description": "Kafka on the Shore (海辺のカフカ, Umibe no Kafuka) is a 2002 novel by Japanese author Haruki Murakami. Its 2005 English translation was among 'The 10 Best Books of 2005' from The New York Times and received the World Fantasy Award for 2006."
+      "cover": "..\\data\\books\\dreams-upon-the-shore.jpg",
+      "description": "A lyrical exploration of memory and destiny, where the sea whispers truths to those who listen."
     },
     {
       "id": 48,
-      "title": "1Q84",
-      "author_ids": [
-        30
-      ],
+      "title": "Parallel Horizons",
+      "author_ids": [30],
       "published_at": "2009-05-29T00:00:00Z",
-      "genre_ids": [
-        16,
-        39,
-        40
-      ],
+      "genre_ids": [16, 39, 40],
       "language": "English",
       "pages": 925,
-      "cover": "..\\data\\books\\1q84.jpg",
-      "description": "1Q84 is a dystopian novel written by Japanese writer Haruki Murakami, first published in three volumes in Japan in 2009–10. It covers a fictionalized year of 1984 in parallel with a 'real' one. Its first printing sold out on the day it was released and sales reached a million within a month."
+      "cover": "..\\data\\books\\parallel-horizons.jpg",
+      "description": "A dystopian narrative weaving through alternate realities, uncovering the fragile threads of identity."
     },
     {
       "id": 49,
-      "title": "Colorless Tsukuru Tazaki and His Years of Pilgrimage",
-      "author_ids": [
-        30
-      ],
+      "title": "The Colorless Wanderer",
+      "author_ids": [30],
       "published_at": "2013-04-12T00:00:00Z",
-      "genre_ids": [
-        16,
-        39,
-        40
-      ],
+      "genre_ids": [16, 39, 40],
       "language": "English",
       "pages": 386,
-      "cover": "..\\data\\books\\colorless-tsukuru-tazaki-and-his-years-of-pilgrimage.jpg",
-      "description": "Colorless Tsukuru Tazaki and His Years of Pilgrimage (色彩を持たない多崎つくると、彼の巡礼の年, Shikisai o motanai Tazaki Tsukuru to, kare no junrei no toshi) is the thirteenth novel by Japanese writer Haruki Murakami. It was first published by Bungeishunjū in 2013."
+      "cover": "..\\data\\books\\the-colorless-wanderer.jpg",
+      "description": "A philosophical journey of a solitary traveler searching for meaning across a vibrant, enigmatic landscape."
     },
     {
       "id": 50,
-      "title": "The City and Its Uncertain Walls",
-      "author_ids": [
-        30
-      ],
+      "title": "Walls of a Shifting City",
+      "author_ids": [30],
       "published_at": "2024-11-19T00:00:00Z",
-      "genre_ids": [
-        16,
-        39,
-        40
-      ],
+      "genre_ids": [16, 39, 40],
       "language": "English",
       "pages": 464,
-      "cover": "..\\data\\books\\the-city-and-its-uncertain-walls.jpg"
+      "cover": "..\\data\\books\\walls-of-a-shifting-city.jpg",
+      "description": "An evocative tale of a city where the boundaries of reality and illusion blur, drawing its inhabitants into an endless dance."
     },
     {
       "id": 51,
-      "title": "Atlas of Brutalist Architecture",
-      "author_ids": [
-        0
-      ],
+      "title": "Brutalist Dreams",
+      "author_ids": [0],
       "published_at": "2020-10-19T00:00:00Z",
-      "genre_ids": [
-        31,
-        41,
-        42
-      ],
+      "genre_ids": [31, 41, 42],
       "language": "English",
       "pages": 568,
-      "cover": "..\\data\\books\\atlas-of-brutalist-architecture.jpg",
-      "description": "A landmark survey of one of architecture's most controversial yet popular styles - in a great, new, classic edition The Brutalist aesthetic is enjoying a renaissance - and this book documents Brutalism as never before. In the most wide-ranging investigation ever undertaken into one of architecture's most powerful movements, more than 850 Brutalist buildings - existing and demolished, classic and contemporary - are organized geographically into nine continental regions. Much-loved masterpieces in the UK and USA sit alongside lesser-known examples in Europe, Asia, Australia, and beyond - 102 countries in all, proving that Brutalism was, and continues to be, a truly international architectural phenomenon."
+      "cover": "..\\data\\books\\brutalist-dreams.jpg",
+      "description": "An architectural masterpiece documenting the evolution and allure of Brutalist design across the world."
     },
     {
       "id": 52,
-      "title": "Beksiński 1-4",
-      "author_ids": [
-        0
-      ],
+      "title": "Art of Shadows",
+      "author_ids": [0],
       "published_at": "2015-11-01T00:00:00Z",
-      "genre_ids": [
-        31,
-        42,
-        43
-      ],
+      "genre_ids": [31, 42, 43],
       "language": "English",
       "pages": 576,
-      "cover": "..\\data\\books\\beksinski-1-4.jpg"
+      "cover": "..\\data\\books\\art-of-shadows.jpg",
+      "description": "An intricate collection showcasing the power of light and shadow in art and architecture."
     },
     {
       "id": 53,
-      "title": "Leonardo. The Complete Paintings and Drawings",
-      "author_ids": [
-        0
-      ],
+      "title": "Leonardo's Vision",
+      "author_ids": [0],
       "published_at": "2022-03-01T00:00:00Z",
-      "genre_ids": [
-        31,
-        42,
-        43
-      ],
+      "genre_ids": [31, 42, 43],
       "language": "English",
       "pages": 712,
-      "cover": "..\\data\\books\\leonardo-the-complete-paintings-and-drawings.jpg",
-      "description": "Leonardo da Vinci (1452–1519) possessed one of the greatest minds of all time; his importance and influence are inestimable. This XXL-format comprehensive survey is the most complete book ever made on the subject of this Italian painter, sculptor, architect, engineer, scientist and all-around genius."
+      "cover": "..\\data\\books\\leonardos-vision.jpg",
+      "description": "A detailed exploration of Leonardo da Vinci's artistic genius and his revolutionary ideas that transcended his era."
     },
     {
       "id": 54,
-      "title": "The Secret History of Twin Peaks",
-      "author_ids": [
-        31
-      ],
+      "title": "Mysteries of Twin Peaks",
+      "author_ids": [31],
       "published_at": "2016-10-18T00:00:00Z",
-      "genre_ids": [
-        13,
-        14
-      ],
+      "genre_ids": [13, 14],
       "language": "English",
       "pages": 368,
-      "cover": "..\\data\\books\\the-secret-history-of-twin-peaks.jpg",
-      "description": "From the co-creator of the landmark series, the story millions of fans have been waiting to get their hands on for 25 long years. The Secret History of Twin Peaks enlarges the world of the original series, placing the unexplained phenomena that unfolded there into a vastly layered, wide-ranging history, beginning with the journals of Lewis and Clark and ending with the shocking events that closed the finale. The perfect way to get in the mood for the upcoming Showtime series."
+      "cover": "..\\data\\books\\mysteries-of-twin-peaks.jpg",
+      "description": "A deep dive into the enigmatic town of Twin Peaks, unraveling its secrets and the unseen forces at play."
     },
     {
       "id": 55,
-      "title": "Lessons Learned in Software Testing: A Context-Driven Approach",
-      "author_ids": [
-        32,
-        33,
-        34
-      ],
+      "title": "Lessons from the Software Frontier",
+      "author_ids": [32, 33, 34],
       "published_at": "2001-10-18T00:00:00Z",
-      "genre_ids": [
-        3,
-        4
-      ],
+      "genre_ids": [3, 4],
       "language": "English",
       "pages": 368,
-      "cover": "..\\data\\books\\lessons-learned-in-software-testing.jpg",
-      "description": "Warren Buffett once said, “It’s good to learn from your mistakes. It’s better to learn from other people’s mistakes.” This incredible book is all about sharing the priceless knowledge of three leading software testing experts. The authors, Cem, James, and Bret, have decades of experience in key roles within the industry. With more than 200 lessons that are described in the book, you could gain valuable tips on what to do, as well as what to avoid."
+      "cover": "..\\data\\books\\lessons-from-the-software-frontier.jpg",
+      "description": "A comprehensive guide filled with hard-earned lessons and strategies from pioneers in software testing."
     },
     {
       "id": 56,
-      "title": "How Google Tests Software",
-      "author_ids": [
-        35,
-        36,
-        37
-      ],
+      "title": "The Google Code Playbook",
+      "author_ids": [35, 36, 37],
       "published_at": "2012-03-01T00:00:00Z",
-      "genre_ids": [
-        3,
-        4
-      ],
+      "genre_ids": [3, 4],
       "language": "English",
       "pages": 320,
-      "cover": "..\\data\\books\\how-google-tests-software.jpg",
-      "description": "In How Google Tests Software, James Whittaker, Jason Arbon, and Jeff Carollo deliver crucial insights into how Google tests software, offering brand-new best practices you can use even if you’re not working for a tech giant. The authors explain how to test new code, build a testing program, and assess your own organization’s testing processes. They also present career advice for testers, and how to apply what you already know to the next job."
+      "cover": "..\\data\\books\\google-code-playbook.jpg",
+      "description": "Insights and methodologies from Google's approach to code testing and software development excellence."
     },
     {
       "id": 57,
-      "title": "Team Guide to Software Testability: Better software through greater testability (Team Guides for Software) ",
-      "author_ids": [
-        38,
-        39
-      ],
+      "title": "Team Code Chronicles",
+      "author_ids": [38, 39],
       "published_at": "2021-11-15T00:00:00Z",
-      "genre_ids": [
-        3,
-        4
-      ],
+      "genre_ids": [3, 4],
       "language": "English",
       "pages": 188,
-      "cover": "..\\data\\books\\team-guide-to-software-testability.jpg",
-      "description": "The Team Guide to Software Testability provides practical advice, examples, and exercises that will help your team improve product quality through better testing. Learn how to test for quality, not just for bugs. Create testable software designs that make testing straightforward. Select and use testing techniques that reveal important information about your software. Evaluate the testing strategies available to your team. Plan testing to support your team’s goals and capabilities. Share testing responsibilities among team members."
+      "cover": "..\\data\\books\\team-code-chronicles.jpg",
+      "description": "A practical guide to improving software quality through enhanced collaboration and shared testing practices."
     },
     {
       "id": 58,
-      "title": "To Kill a Mockingbird",
-      "author_ids": [
-        50
-      ],
+      "title": "Voices of Justice",
+      "author_ids": [50],
       "published_at": "1960-07-11T00:00:00Z",
-      "genre_ids": [
-        18,
-        19
-      ],
+      "genre_ids": [18, 19],
       "language": "English",
       "pages": 281,
-      "cover": "..\\data\\books\\to-kill-a-mockingbird.jpg",
-      "description": "A novel by Harper Lee, focusing on racial injustice in the Deep South through the eyes of young Scout Finch."
+      "cover": "..\\data\\books\\voices-of-justice.jpg",
+      "description": "A heartfelt narrative exploring societal struggles and justice through the eyes of a young protagonist."
     },
     {
       "id": 59,
-      "title": "Pride and Prejudice",
-      "author_ids": [
-        51
-      ],
+      "title": "Reflections in the Manor",
+      "author_ids": [51],
       "published_at": "1813-01-28T00:00:00Z",
-      "genre_ids": [
-        19,
-        15
-      ],
+      "genre_ids": [19, 15],
       "language": "English",
       "pages": 279,
-      "cover": "..\\data\\books\\pride-and-prejudice.jpg",
-      "description": "Jane Austen's romantic novel exploring manners, morality, and marriage in 19th-century England."
+      "cover": "..\\data\\books\\reflections-in-the-manor.jpg",
+      "description": "A romantic exploration of social norms and personal growth set in a quaint English estate."
     },
     {
       "id": 60,
-      "title": "The Great Gatsby",
-      "author_ids": [
-        52
-      ],
+      "title": "Echoes of Wealth",
+      "author_ids": [52],
       "published_at": "1925-04-10T00:00:00Z",
-      "genre_ids": [
-        19
-      ],
+      "genre_ids": [19],
       "language": "English",
       "pages": 180,
-      "cover": "..\\data\\books\\the-great-gatsby.jpg",
-      "description": "F. Scott Fitzgerald's masterpiece delves into themes of wealth, love, and the American Dream."
+      "cover": "..\\data\\books\\echoes-of-wealth.jpg",
+      "description": "A vivid portrayal of ambition, love, and societal decadence during a roaring decade."
     },
     {
       "id": 61,
-      "title": "War and Peace",
-      "author_ids": [
-        53
-      ],
+      "title": "Empires of Struggle",
+      "author_ids": [53],
       "published_at": "1869-01-01T00:00:00Z",
-      "genre_ids": [
-        19,
-        18
-      ],
+      "genre_ids": [19, 18],
       "language": "Russian",
       "pages": 1225,
-      "cover": "..\\data\\books\\war-and-peace.jpg",
-      "description": "Leo Tolstoy's epic novel intertwines the lives of individuals with the grand sweep of history during Napoleon's invasion of Russia."
+      "cover": "..\\data\\books\\empires-of-struggle.jpg",
+      "description": "A sweeping saga intertwining personal lives with grand historical events during an era of upheaval."
     },
     {
       "id": 62,
-      "title": "The Catcher in the Rye",
-      "author_ids": [
-        54
-      ],
+      "title": "Fields of Youth",
+      "author_ids": [54],
       "published_at": "1951-07-16T00:00:00Z",
-      "genre_ids": [
-        18
-      ],
+      "genre_ids": [18],
       "language": "English",
       "pages": 214,
-      "cover": "..\\data\\books\\the-catcher-in-the-rye.jpg",
-      "description": "J.D. Salinger's classic coming-of-age story follows Holden Caulfield as he navigates adolescence and alienation."
+      "cover": "..\\data\\books\\fields-of-youth.jpg",
+      "description": "A coming-of-age story navigating the challenges of growing up in a complex world."
     },
     {
       "id": 63,
-      "title": "Moby-Dick",
-      "author_ids": [
-        55
-      ],
+      "title": "Beneath the White Waves",
+      "author_ids": [55],
       "published_at": "1851-10-18T00:00:00Z",
-      "genre_ids": [
-        19
-      ],
+      "genre_ids": [19],
       "language": "English",
       "pages": 635,
-      "cover": "..\\data\\books\\moby-dick.jpg",
-      "description": "Herman Melville's tale of obsession and revenge, as Captain Ahab hunts the white whale that maimed him."
+      "cover": "..\\data\\books\\beneath-the-white-waves.jpg",
+      "description": "An epic journey of obsession and adventure under the vast, uncharted oceans."
     },
     {
       "id": 64,
-      "title": "The Alchemist",
-      "author_ids": [
-        56
-      ],
+      "title": "The Seeker's Compass",
+      "author_ids": [56],
       "published_at": "1988-01-01T00:00:00Z",
-      "genre_ids": [
-        18,
-        19
-      ],
+      "genre_ids": [18, 19],
       "language": "Portuguese",
       "pages": 208,
-      "cover": "..\\data\\books\\the-alchemist.jpg",
-      "description": "Paulo Coelho's allegorical novel about Santiago, a shepherd on a journey to fulfill his personal legend."
+      "cover": "..\\data\\books\\seekers-compass.jpg",
+      "description": "A spiritual quest of self-discovery and purpose across a timeless landscape."
     },
     {
       "id": 65,
-      "title": "The Book Thief",
-      "author_ids": [
-        57
-      ],
+      "title": "The Thief's Tale",
+      "author_ids": [57],
       "published_at": "2005-03-14T00:00:00Z",
-      "genre_ids": [
-        18,
-        19
-      ],
+      "genre_ids": [18, 19],
       "language": "English",
       "pages": 552,
-      "cover": "..\\data\\books\\the-book-thief.jpg",
-      "description": "Markus Zusak's poignant tale of a young girl in Nazi Germany, narrated by Death."
+      "cover": "..\\data\\books\\thiefs-tale.jpg",
+      "description": "A poignant story of resilience and courage set during a turbulent era."
     },
     {
       "id": 66,
-      "title": "Wuthering Heights",
-      "author_ids": [
-        58
-      ],
+      "title": "Whispers of the Moors",
+      "author_ids": [58],
       "published_at": "1847-12-01T00:00:00Z",
-      "genre_ids": [
-        19,
-        15
-      ],
+      "genre_ids": [19, 15],
       "language": "English",
       "pages": 416,
-      "cover": "..\\data\\books\\wuthering-heights.jpg",
-      "description": "Emily Brontë's gothic tale of love, revenge, and obsession on the Yorkshire moors."
+      "cover": "..\\data\\books\\whispers-of-the-moors.jpg",
+      "description": "A haunting narrative of love and betrayal set in the windswept moors."
     },
     {
       "id": 67,
-      "title": "Ulysses",
-      "author_ids": [
-        65
-      ],
+      "title": "Journeys of a Modern Mind",
+      "author_ids": [65],
       "published_at": "1922-02-02T00:00:00Z",
-      "genre_ids": [
-        19,
-        10,
-        39
-      ],
+      "genre_ids": [19, 10, 39],
       "language": "English",
       "pages": 730,
-      "cover": "..\\data\\books\\ulysses.jpg",
-      "description": "James Joyce's groundbreaking modernist novel follows a single day in the life of Leopold Bloom in Dublin, Ireland, exploring themes of identity, time, and human consciousness through experimental narrative techniques."
+      "cover": "..\\data\\books\\modern-mind-journeys.jpg",
+      "description": "A single day in the life of an individual reflecting the complexities of modern existence."
     },
     {
       "id": 68,
-      "title": "Heart of Darkness",
-      "author_ids": [
-        64
-      ],
+      "title": "Dark Currents",
+      "author_ids": [64],
       "published_at": "1899-11-01T00:00:00Z",
-      "genre_ids": [
-        19,
-        39,
-        18
-      ],
+      "genre_ids": [19, 39, 18],
       "language": "English",
       "pages": 96,
-      "cover": "..\\data\\books\\heart-of-darkness.jpg",
-      "description": "Joseph Conrad's novella explores the psychological and moral complexities of colonialism as Marlow narrates his harrowing journey up the Congo River in search of the enigmatic Kurtz, revealing the darkness within both the human soul and civilization."
+      "cover": "..\\data\\books\\dark-currents.jpg",
+      "description": "A journey through colonial struggles, exploring the depths of humanity and the unknown."
     },
     {
       "id": 69,
-      "title": "In Search of Lost Time",
-      "author_ids": [
-        66
-      ],
+      "title": "Timeless Echoes",
+      "author_ids": [66],
       "published_at": "1913-11-14T00:00:00Z",
-      "genre_ids": [
-        10,
-        39
-      ],
+      "genre_ids": [10, 39],
       "language": "French",
       "pages": 4215,
-      "cover": "..\\data\\books\\in-search-of-lost-time.jpg",
-      "description": "Marcel Proust's monumental novel, originally published in seven volumes, is a profound exploration of memory, time, and the nature of art, centered around the narrator's experiences and observations of French society."
+      "cover": "..\\data\\books\\timeless-echoes.jpg",
+      "description": "An expansive narrative of memory, art, and the flow of time across generations."
     },
     {
       "id": 70,
-      "title": "The Name of the Rose",
-      "author_ids": [
-        68
-      ],
+      "title": "The Enigmatic Manuscript",
+      "author_ids": [68],
       "published_at": "1980-11-01T00:00:00Z",
-      "genre_ids": [
-        13,
-        10,
-        39
-      ],
+      "genre_ids": [13, 10, 39],
       "language": "Italian",
       "pages": 512,
-      "cover": "..\\data\\books\\the-name-of-the-rose.jpg",
-      "description": "Umberto Eco's medieval mystery novel combines philosophy, history, and detective fiction as Franciscan monk William of Baskerville investigates a series of murders in a secluded monastery."
+      "cover": "..\\data\\books\\enigmatic-manuscript.jpg",
+      "description": "A gripping medieval mystery revolving around a hidden manuscript and its deadly secrets."
     },
     {
       "id": 71,
-      "title": "Atlas Shrugged",
-      "author_ids": [
-        69
-      ],
+      "title": "Horizons of Rebellion",
+      "author_ids": [69],
       "published_at": "1957-10-10T00:00:00Z",
-      "genre_ids": [
-        10,
-        39,
-        6
-      ],
+      "genre_ids": [10, 39, 6],
       "language": "English",
       "pages": 1168,
-      "cover": "..\\data\\books\\atlas-shrugged.jpg",
-      "description": "Ayn Rand's epic novel explores the philosophy of Objectivism through the struggles of industrialist Dagny Taggart and other innovators as they confront societal collapse and moral decay."
+      "cover": "..\\data\\books\\horizons-of-rebellion.jpg",
+      "description": "A sweeping narrative of industrialists and innovators rising against societal decay to forge a new future."
     },
     {
       "id": 72,
-      "title": "Catch-22",
-      "author_ids": [
-        70
-      ],
+      "title": "Paradox Squadron",
+      "author_ids": [70],
       "published_at": "1961-11-10T00:00:00Z",
-      "genre_ids": [
-        10,
-        39,
-        18
-      ],
+      "genre_ids": [10, 39, 18],
       "language": "English",
       "pages": 453,
-      "cover": "..\\data\\books\\catch-22.jpg",
-      "description": "Joseph Heller's satirical World War II novel follows Captain John Yossarian and his squadron as they navigate the absurdities and contradictions of war, bureaucracy, and survival."
+      "cover": "..\\data\\books\\paradox-squadron.jpg",
+      "description": "A satirical exploration of war and bureaucracy through the eyes of a misfit squadron in surreal scenarios."
     },
     {
       "id": 73,
-      "title": "Dracula",
-      "author_ids": [
-        71
-      ],
+      "title": "The Shadowed Count",
+      "author_ids": [71],
       "published_at": "1897-05-26T00:00:00Z",
-      "genre_ids": [
-        15,
-        10,
-        13
-      ],
+      "genre_ids": [15, 10, 13],
       "language": "English",
       "pages": 418,
-      "cover": "..\\data\\books\\dracula.jpg",
-      "description": "Bram Stoker's iconic Gothic horror novel tells the story of Count Dracula's attempt to move from Transylvania to England and the battle to stop his reign of terror, combining themes of fear, seduction, and the supernatural."
+      "cover": "..\\data\\books\\shadowed-count.jpg",
+      "description": "A gothic tale of a reclusive nobleman shrouded in mystery, blending fear, seduction, and the supernatural."
     },
     {
       "id": 74,
-      "title": "The Girl with the Dragon Tattoo",
-      "author_ids": [
-        72
-      ],
+      "title": "Mysteries of the Serpent's Mark",
+      "author_ids": [72],
       "published_at": "2005-08-27T00:00:00Z",
-      "genre_ids": [
-        13,
-        14,
-        10
-      ],
+      "genre_ids": [13, 14, 10],
       "language": "Swedish",
       "pages": 672,
-      "cover": "..\\data\\books\\the-girl-with-the-dragon-tattoo.jpg",
-      "description": "Stieg Larsson's gripping mystery-thriller introduces journalist Mikael Blomkvist and hacker Lisbeth Salander as they unravel a decades-old disappearance in the shadow of corporate corruption and family secrets."
+      "cover": "..\\data\\books\\serpents-mark.jpg",
+      "description": "An intricately woven thriller where a journalist and hacker delve into a labyrinth of secrets and betrayal."
     },
     {
       "id": 75,
-      "title": "Abara",
-      "author_ids": [
-        73
-      ],
+      "title": "City of Whispering Tombs",
+      "author_ids": [73],
       "published_at": "2006-12-15T00:00:00Z",
-      "genre_ids": [
-        44,
-        18,
-        17
-      ],
+      "genre_ids": [44, 18, 17],
       "language": "Japanese",
       "pages": 224,
-      "cover": "..\\data\\books\\abara.jpg",
-      "description": "A vast city lies under the shadow of colossal, ancient tombs, the identity of their builders lost to time. In the streets of the city something is preying on the inhabitants, something that moves faster than the human eye can see and leaves unimaginable horror in its wake. Tsutomu Nihei’s dazzling, harrowing dystopian thriller is presented here in a single-volume hardcover edition featuring full-color pages and foldout illustrations."
+      "cover": "..\\data\\books\\whispering-tombs.jpg",
+      "description": "A dystopian saga set in a forgotten city, where shadows hold the key to humanity’s survival."
     },
     {
       "id": 76,
-      "title": "Blame! Master edition",
-      "author_ids": [
-        73
-      ],
+      "title": "Echoes of the Digital Abyss",
+      "author_ids": [73],
       "published_at": "2022-08-15T00:00:00Z",
-      "genre_ids": [
-        44,
-        18,
-        17
-      ],
+      "genre_ids": [44, 18, 17],
       "language": "Japanese",
       "pages": 2200,
-      "cover": "..\\data\\books\\blame.jpg",
-      "description": "In a future version of Earth, there is a city grown so chaotically massive that its inhabitants no longer recall what 'land' is. Within this megastructure the silent, stoic Kyrii is on a mission to find the Net Terminal Gene—a genetic mutation that once allowed humans to access the cybernetic NetSphere. Armed with a powerful Graviton Beam Emitter, Kyrii fends off waves of attacks from fellow humans, cyborgs and silicon-based lifeforms. Along the way, he encounters a highly-skilled scientist whose body has deteriorated from a lengthy imprisonment who promises to help Kyrii find the Net Terminal Gene, once she settles a score for herself..."
+      "cover": "..\\data\\books\\digital-abyss.jpg",
+      "description": "An epic chronicle of a silent warrior navigating a labyrinthine city in search of humanity's lost connection to the NetSphere."
     },
     {
       "id": 77,
-      "title": "Biomega-Abara. Master edition",
-      "author_ids": [
-        73
-      ],
+      "title": "Bio-Cyber Chronicles",
+      "author_ids": [73],
       "published_at": "2024-07-04T00:00:00Z",
-      "genre_ids": [
-        44,
-        18,
-        17
-      ],
+      "genre_ids": [44, 18, 17],
       "language": "Japanese",
       "pages": 1632,
-      "cover": "..\\data\\books\\biomega.jpg",
-      "description": "In Tsutomu Nihei's nightmare vision of the future, the N5S virus has swept across the earth, turning most of the population into zombie-like drones. Zoichi Kanoe, an agent of Toa Heavy Industry, is humanity's last hope, and he's not even human! With the help of Fuyu, a digitized intelligence built into the computer system of his Heavy Dual Coil motorcycle, Zoichi's search for the key to salvation will take him on a journey across surreal landscapes and hurl him into battle against mind-bending evil. Prepare yourself for the ultimate trip--prepare yourself for the world of BIOMEGA."
+      "cover": "..\\data\\books\\bio-cyber-chronicles.jpg",
+      "description": "A visionary tale of a cybernetic hero combating an apocalyptic virus in a surreal, decaying world."
     }
   ],
   "book-authors": [
     {
       "id": 0,
-      "name": "Unknown",
+      "name": "Mystery Writer",
       "country": "Unknown"
     },
     {
       "id": 1,
-      "name": "Andrew Hunt",
+      "name": "Elias Harper",
       "country": "USA"
     },
     {
       "id": 2,
-      "name": "Robert C. Martin",
+      "name": "Jonas Blackwell",
       "country": "USA"
     },
     {
       "id": 3,
-      "name": "Frank Herbert",
+      "name": "Ronan Edge",
       "country": "USA"
     },
     {
       "id": 4,
-      "name": "J.R.R. Tolkien",
+      "name": "Cillian Bright",
       "country": "UK"
     },
     {
       "id": 5,
-      "name": "Douglas Adams",
+      "name": "Samantha Vance",
       "country": "UK"
     },
     {
       "id": 6,
-      "name": "George Orwell",
+      "name": "Oliver Kain",
       "country": "UK"
     },
     {
       "id": 7,
-      "name": "Fyodor Dostoevsky",
+      "name": "Ivan Markov",
       "country": "Russia"
     },
     {
       "id": 8,
-      "name": "Jacek Dukaj",
+      "name": "Jan Kowalski",
       "country": "Poland"
     },
     {
       "id": 9,
-      "name": "Eric Ries",
+      "name": "Michael Rhodes",
       "country": "USA"
     },
     {
       "id": 10,
-      "name": "Jocko Willink",
+      "name": "Arthur Steele",
       "country": "USA"
     },
     {
       "id": 11,
-      "name": "Sun Tzu",
+      "name": "Chao Feng",
       "country": "China"
     },
     {
       "id": 12,
-      "name": "Niccolò Machiavelli",
+      "name": "Luca Moretti",
       "country": "Italy"
     },
     {
       "id": 13,
-      "name": "Mark Fisher",
+      "name": "Marcus Vale",
       "country": "UK"
     },
     {
       "id": 14,
-      "name": "Dale Carnegie",
+      "name": "Daniel Emerson",
       "country": "USA"
     },
     {
       "id": 15,
-      "name": "Andrzej Dragan",
+      "name": "Mateusz Novak",
       "country": "Poland"
     },
     {
       "id": 16,
-      "name": "Daniel Kahneman",
+      "name": "Samuel Carter",
       "country": "USA"
     },
     {
       "id": 17,
-      "name": "Jason Fried",
+      "name": "Dylan Hayes",
       "country": "USA"
     },
     {
       "id": 18,
-      "name": "Franz Kafka",
+      "name": "Victor Kessler",
       "country": "Czech Republic"
     },
     {
       "id": 19,
-      "name": "Mark Z. Danielewski",
+      "name": "Zane Matthews",
       "country": "USA"
     },
     {
       "id": 20,
-      "name": "Edward Powys Mathers",
+      "name": "Edgar Holloway",
       "country": "UK"
     },
     {
       "id": 21,
-      "name": "H.P. Lovecraft",
+      "name": "Henry Whitmore",
       "country": "USA"
     },
     {
       "id": 22,
-      "name": "Edgar Allan Poe",
+      "name": "Gabriel Cross",
       "country": "USA"
     },
     {
       "id": 23,
-      "name": "Stephen Sunderland",
+      "name": "Stephen Moore",
       "country": "USA"
     },
     {
       "id": 24,
-      "name": "Maria Sunderland",
+      "name": "Maria Voss",
       "country": "USA"
     },
     {
       "id": 25,
-      "name": "David Heinemeier Hansson",
+      "name": "David Nystrom",
       "country": "Denmark"
     },
     {
       "id": 26,
-      "name": "Leif Babin",
+      "name": "Nathaniel Grayson",
       "country": "USA"
     },
     {
       "id": 27,
-      "name": "Christopher Tolkien",
+      "name": "Christopher Fox",
       "country": "UK"
     },
     {
       "id": 28,
-      "name": "Tove Jansson",
+      "name": "Tove Nielsen",
       "country": "Finland"
     },
     {
       "id": 29,
-      "name": "Gabriel García Márquez",
+      "name": "Javier Morales",
       "country": "Colombia"
     },
     {
       "id": 30,
-      "name": "Haruki Murakami",
+      "name": "Hiroshi Tanaka",
       "country": "Japan"
     },
     {
       "id": 31,
-      "name": "Mark Frost",
+      "name": "Mark Finley",
       "country": "USA"
     },
     {
       "id": 32,
-      "name": "Cem Kaner",
+      "name": "Evan Baxter",
       "country": "USA"
     },
     {
       "id": 33,
-      "name": "James Marcus Bach",
+      "name": "James Parker",
       "country": "USA"
     },
     {
       "id": 34,
-      "name": "Bret Pettichord",
+      "name": "Brett Harris",
       "country": "USA"
     },
     {
       "id": 35,
-      "name": "James Whittaker",
+      "name": "Lucas Wren",
       "country": "USA"
     },
     {
       "id": 36,
-      "name": "Jason Arbon",
+      "name": "Jason Arnett",
       "country": "USA"
     },
     {
       "id": 37,
-      "name": "Jeff Carollo",
+      "name": "Jeffrey Cole",
       "country": "USA"
     },
     {
       "id": 38,
-      "name": "Ash Winter",
+      "name": "Asher Quinn",
       "country": "USA"
     },
     {
       "id": 39,
-      "name": "Rob Meaney",
+      "name": "Robert Finlay",
       "country": "USA"
     },
     {
       "id": 50,
-      "name": "Harper Lee",
+      "name": "Harper Sloan",
       "country": "USA"
     },
     {
       "id": 51,
-      "name": "Jane Austen",
+      "name": "Jane Archer",
       "country": "UK"
     },
     {
       "id": 52,
-      "name": "F. Scott Fitzgerald",
+      "name": "Francis Bell",
       "country": "USA"
     },
     {
       "id": 53,
-      "name": "Leo Tolstoy",
+      "name": "Leonid Turgenev",
       "country": "Russia"
     },
     {
       "id": 54,
-      "name": "J.D. Salinger",
+      "name": "Julian Dyer",
       "country": "USA"
     },
     {
       "id": 55,
-      "name": "Herman Melville",
+      "name": "Harrison Drake",
       "country": "USA"
     },
     {
       "id": 56,
-      "name": "Paulo Coelho",
+      "name": "Paulo Santos",
       "country": "Brazil"
     },
     {
       "id": 57,
-      "name": "Markus Zusak",
+      "name": "Marcus Bellamy",
       "country": "Australia"
     },
     {
       "id": 58,
-      "name": "Emily Brontë",
+      "name": "Emily Stone",
       "country": "UK"
     },
     {
       "id": 64,
-      "name": "Joseph Conrad",
+      "name": "Joseph Korwin",
       "country": "Poland/UK"
     },
     {
       "id": 65,
-      "name": "James Joyce",
+      "name": "James Finnegan",
       "country": "Ireland"
     },
     {
       "id": 66,
-      "name": "Marcel Proust",
+      "name": "Marcel Dupont",
       "country": "France"
     },
     {
       "id": 68,
-      "name": "Umberto Eco",
+      "name": "Umberto Rossi",
       "country": "Italy"
     },
     {
       "id": 69,
-      "name": "Ayn Rand",
+      "name": "Alyssa Kendall",
       "country": "USA"
     },
     {
       "id": 70,
-      "name": "Joseph Heller",
+      "name": "Joseph Tanner",
       "country": "USA"
     },
     {
       "id": 71,
-      "name": "Bram Stoker",
+      "name": "Benjamin Stirling",
       "country": "Ireland"
     },
     {
       "id": 72,
-      "name": "Stieg Larsson",
+      "name": "Stefan Larson",
       "country": "Sweden"
     },
     {
       "id": 73,
-      "name": "Tsutomu Nihei",
+      "name": "Takashi Minami",
       "country": "Japan"
     }
   ],
@@ -5695,9 +5145,7 @@
     {
       "id": 1,
       "user_id": 2,
-      "book_ids": [
-        1
-      ],
+      "book_ids": [1],
       "books_cost": {
         "1": 2500
       },
@@ -5712,9 +5160,7 @@
     {
       "id": 2,
       "user_id": 2,
-      "book_ids": [
-        2
-      ],
+      "book_ids": [2],
       "books_cost": {
         "2": 3000
       },
@@ -5729,10 +5175,7 @@
     {
       "id": 3,
       "user_id": 2,
-      "book_ids": [
-        2,
-        3
-      ],
+      "book_ids": [2, 3],
       "books_cost": {
         "2": 3000,
         "3": 1000
@@ -5748,11 +5191,7 @@
     {
       "user_id": 5,
       "status_id": 5,
-      "book_ids": [
-        17,
-        10,
-        2
-      ],
+      "book_ids": [17, 10, 2],
       "books_cost": {
         "2": 3000,
         "10": 2750,
@@ -5769,10 +5208,7 @@
     {
       "user_id": 5,
       "status_id": 1,
-      "book_ids": [
-        50,
-        20
-      ],
+      "book_ids": [50, 20],
       "books_cost": {
         "20": 7500,
         "50": 6500
@@ -5828,27 +5264,19 @@
       "id": 1,
       "name": "new",
       "icon": "fa-plus",
-      "possible_next_statuses": [
-        5,
-        20
-      ]
+      "possible_next_statuses": [5, 20]
     },
     {
       "id": 5,
       "name": "sent",
       "icon": "fa-paper-plane",
-      "possible_next_statuses": [
-        10
-      ]
+      "possible_next_statuses": [10]
     },
     {
       "id": 10,
       "name": "pending",
       "icon": "fa-spinner",
-      "possible_next_statuses": [
-        30,
-        40
-      ]
+      "possible_next_statuses": [30, 40]
     },
     {
       "id": 20,
@@ -5866,9 +5294,7 @@
       "id": 40,
       "name": "delivered",
       "icon": "fa-check",
-      "possible_next_statuses": [
-        99
-      ]
+      "possible_next_statuses": [99]
     },
     {
       "id": 99,
@@ -5881,47 +5307,32 @@
     {
       "id": 1,
       "name": "manage-orders",
-      "role_ids": [
-        1,
-        16
-      ]
+      "role_ids": [1, 16]
     },
     {
       "id": 2,
       "name": "manage-users",
-      "role_ids": [
-        1
-      ]
+      "role_ids": [1]
     },
     {
       "id": 3,
       "name": "manage-items",
-      "role_ids": [
-        1,
-        16
-      ]
+      "role_ids": [1, 16]
     },
     {
       "id": 4,
       "name": "read-users",
-      "role_ids": [
-        1,
-        16
-      ]
+      "role_ids": [1, 16]
     },
     {
       "id": 5,
       "name": "manage-accounts",
-      "role_ids": [
-        1
-      ]
+      "role_ids": [1]
     },
     {
       "id": 6,
       "name": "view-stats",
-      "role_ids": [
-        1
-      ]
+      "role_ids": [1]
     }
   ],
   "book-shop-roles": [
@@ -5951,22 +5362,11 @@
       "id": 1,
       "user_id": 2,
       "role_id": 2,
-      "wishlist_books_ids": [
-        3
-      ],
-      "favorite_books_ids": [
-        1
-      ],
-      "purchased_book_ids": [
-        1
-      ],
-      "read_books_ids": [
-        2
-      ],
-      "owned_books_ids": [
-        1,
-        5
-      ],
+      "wishlist_books_ids": [3],
+      "favorite_books_ids": [1],
+      "purchased_book_ids": [1],
+      "read_books_ids": [2],
+      "owned_books_ids": [1, 5],
       "funds": 10000,
       "created_at": "2024-05-25T11:50:28.108Z",
       "country": "Poland",

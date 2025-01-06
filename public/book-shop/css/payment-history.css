@@ -1,0 +1,183 @@
+.payment-history-box {
+  margin: 12px 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  background: #fff;
+  transition: all 0.3s ease;
+  width: 500px;
+  font-size: 14px;
+}
+
+.payment-history-box:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.payment-summary {
+  padding: 16px;
+  background: #f8f9fa;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.payment-summary::after {
+  content: "▼";
+  font-size: 12px;
+  color: #666;
+  transition: transform 0.5s ease;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+.payment-summary.active::after {
+  transform: rotate(180deg);
+}
+
+.payment-details {
+  border-top: 1px solid #eee;
+  background: #fff;
+  animation: slideDown 0.5s ease;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+}
+
+.payment-details.visible {
+  max-height: 200px;
+  padding: 16px;
+}
+
+.payment-details p {
+  margin: 8px 0;
+  color: #555;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.payment-tools-panel input,
+.payment-tools-panel select {
+  transition: all 0.3s ease;
+}
+
+.payment-tools-panel input:focus,
+.payment-tools-panel select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.payment-history-search-tools {
+  margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  width: 800px !important;
+}
+
+.date-range-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.date-range-filter span {
+  color: #666;
+  font-size: 14px;
+}
+
+.payment-status-completed {
+  color: #28a745;
+}
+
+.payment-status-pending {
+  color: #ffc107;
+}
+
+.payment-status-cancelled {
+  color: #dc3545;
+}
+
+.payment-status-rejected {
+  color: #dc3545;
+}
+
+.payment-status-refunded {
+  color: #007bff;
+}
+
+.payment-status {
+  font-size: 14px;
+}
+
+.payment-status-filter {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  width: 100px;
+}
+
+/* Remove .floating-buttons styles */
+
+.toggle-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.toggle-buttons button {
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #007bff;
+  background: white;
+  color: #007bff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-buttons button:hover {
+  background: #007bff;
+  color: white;
+}
+
+.toggle-buttons button i {
+  font-size: 14px;
+  transition: transform 0.3s ease;
+}
+
+.reset-button {
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #dc3545;
+  background: white;
+  color: #dc3545;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reset-button:hover {
+  background: #dc3545;
+  color: white;
+}

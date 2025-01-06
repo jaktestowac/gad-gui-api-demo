@@ -1,14 +1,10 @@
 const { formatErrorResponse, getIdFromUrl, formatInvalidTokenErrorResponse, sleep } = require("../helpers/helpers");
-const { logDebug, logError, logTrace } = require("../helpers/logger-api");
+const { logDebug, logError, logTrace, logWarn, logInsane } = require("../helpers/logger-api");
 const { getConfigValue, isBugEnabled } = require("../config/config-manager");
 const { ConfigKeys, BugConfigKeys } = require("../config/enums");
 
 const { verifyAccessToken } = require("../helpers/validation.helpers");
-const {
-  searchForUserWithToken,
-  searchForUser,
-  searchForBookShopAccountWithUserId,
-} = require("../helpers/db-operation.helpers");
+const { searchForUser, searchForUserWithOnlyToken } = require("../helpers/db-operation.helpers");
 const {
   HTTP_UNAUTHORIZED,
   HTTP_INTERNAL_SERVER_ERROR,
@@ -55,9 +51,16 @@ const { handleBookShopOrderStatuses } = require("../endpoints/book-shop/book-sho
 const { handleBookShopManage } = require("../endpoints/book-shop/book-shop-manage-endpoint.helpers");
 const { handleBookShopOrdersStats } = require("../endpoints/book-shop/book-shop-order-stats-endpoint.helpers");
 const { handleBookShopBookReviews } = require("../endpoints/book-shop/book-shop-book-reviews-endpoint.helpers");
+const { searchForBookShopAccountWithUserId } = require("../helpers/db-operations/db-book-shop.operations");
+const {
+  searchForRoleByUserId,
+  getAllAllowedActionsForRole,
+} = require("../helpers/db-operations/db-user-roles.operations");
+const { userBaseAuth, updateUserActions, getAdminAuth } = require("../helpers/user-auth.helpers");
+const { handleBookShopPaymentHistory } = require("../endpoints/book-shop/book-shop-payment-history-endpoint.helpers");
 
 const validationsRoutes = (req, res, next) => {
-  let isAdmin = false;
+  let userAuth = userBaseAuth;
 
   if (req.url.includes("/api/users") && isBugEnabled(BugConfigKeys.BUG_DISABLE_MODULE_USERS)) {
     res.status(HTTP_SERVICE_UNAVAILABLE).send({ message: "Module users is disabled" });
@@ -92,20 +95,35 @@ const validationsRoutes = (req, res, next) => {
       }
     }
 
-    // check if admin:
-    try {
-      let verifyTokenResult = verifyAccessToken(req, res, "isAdmin", req.url);
-      if (
-        areStringsEqualIgnoringCase(verifyTokenResult?.email, getConfigValue(ConfigKeys.ADMIN_USER_EMAIL)) ||
-        areStringsEqualIgnoringCase(verifyTokenResult?.email, getConfigValue(ConfigKeys.SUPER_ADMIN_USER_EMAIL))
-      ) {
-        isAdmin = true;
-        logDebug("validations: isAdmin:", isAdmin);
-      }
+    // data endpoints
+    if (req.url.includes("/api/v1/data")) {
+      handleData(req, res);
+      return;
+    }
 
-      if (isUndefined(verifyTokenResult)) {
-        res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
-        return;
+    if (req.url.includes("/api/config")) {
+      handleConfig(req, res);
+      return;
+    }
+
+    // check user privileges
+    try {
+      let verifyTokenResult = verifyAccessToken(req, res, "isSuperAdmin", req.url);
+      if (!isUndefined(verifyTokenResult)) {
+        if (areStringsEqualIgnoringCase(verifyTokenResult?.email, getConfigValue(ConfigKeys.SUPER_ADMIN_USER_EMAIL))) {
+          userAuth = getAdminAuth();
+          logTrace("validations: userAuth:", userAuth);
+        } else {
+          const foundUser = searchForUserWithOnlyToken(verifyTokenResult?.token);
+          if (!isUndefined(foundUser)) {
+            const role = searchForRoleByUserId(foundUser.id);
+            if (!isUndefined(role)) {
+              const allActions = getAllAllowedActionsForRole(role.role_id);
+              userAuth = updateUserActions(userAuth, allActions);
+              logInsane("validations: userAuth:", userAuth);
+            }
+          }
+        }
       }
     } catch (error) {
       logError("Error: check if admin:", {
@@ -127,11 +145,6 @@ const validationsRoutes = (req, res, next) => {
 
     if (readOnlyMode === true && req.method !== "GET") {
       res.status(HTTP_METHOD_NOT_ALLOWED).send(formatErrorResponse("Method not allowed in READ ONLY MODE"));
-      return;
-    }
-
-    if (req.url.includes("/api/config")) {
-      handleConfig(req, res);
       return;
     }
 
@@ -195,59 +208,21 @@ const validationsRoutes = (req, res, next) => {
         return;
       }
     }
-    if (
-      req.method !== "GET" &&
-      req.method !== "POST" &&
-      req.method !== "HEAD" &&
-      urlEnds.includes("/api/users") &&
-      !isAdmin
-    ) {
-      logTrace("Validators: Check user auth", { url: urlEnds });
-      let userId = getIdFromUrl(urlEnds);
-      const verifyTokenResult = verifyAccessToken(req, res, "users", req.url);
-      if (isUndefined(verifyTokenResult)) {
-        res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
-        return;
-      }
-
-      const foundUser = searchForUserWithToken(userId, verifyTokenResult);
-
-      if (isUndefined(foundUser)) {
-        res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
-        return;
-      }
-    }
-
-    if (req.method !== "GET" && req.method !== "HEAD" && urlEnds?.includes("/api/articles") && !isAdmin) {
-      const verifyTokenResult = verifyAccessToken(req, res, "articles", req.url);
-      if (isUndefined(verifyTokenResult)) {
-        res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
-        return;
-      }
-    }
-
-    if (req.method !== "GET" && req.method !== "HEAD" && urlEnds.includes("/api/comments") && !isAdmin) {
-      const verifyTokenResult = verifyAccessToken(req, res, "comments", req.url);
-      if (isUndefined(verifyTokenResult)) {
-        res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
-        return;
-      }
-    }
 
     if (req.url.includes("/api/users")) {
-      handleUsers(req, res);
+      handleUsers(req, res, userAuth);
     }
 
     if (req.url.includes("/api/articles") || req.url.includes("/api/random/article")) {
-      handleArticles(req, res, isAdmin);
+      handleArticles(req, res, userAuth);
     }
 
     if (req.url.includes("/api/comments")) {
-      handleComments(req, res, isAdmin);
+      handleComments(req, res, userAuth);
     }
 
     if (req.url.includes("/api/likes")) {
-      handleLikes(req, res, isAdmin);
+      handleLikes(req, res);
     }
 
     if (req.url.includes("/api/labels") || req.url.includes("/api/article-labels")) {
@@ -286,7 +261,7 @@ const validationsRoutes = (req, res, next) => {
       handleBookShopOrderStatuses(req, res);
     }
     if (req.url.includes("/api/book-shop-stats")) {
-      handleBookShopOrdersStats(req, res, isAdmin);
+      handleBookShopOrdersStats(req, res);
       return;
     }
     if (req.url.includes("/api/book-shop-orders")) {
@@ -296,13 +271,10 @@ const validationsRoutes = (req, res, next) => {
       handleBooks(req, res);
     }
     if (req.url.includes("/api/book-shop-manage")) {
-      handleBookShopManage(req, res, isAdmin);
+      handleBookShopManage(req, res);
     }
-
-    // data endpoints
-    if (req.url.includes("/api/v1/data")) {
-      handleData(req, res, isAdmin);
-      return;
+    if (req.url.includes("/api/book-shop-payment-history")) {
+      handleBookShopPaymentHistory(req, res);
     }
 
     logTrace("validationsRoutes: Returning:", {

@@ -3,6 +3,11 @@ const form = document.getElementById("registerForm");
 const pictureListEndpoint = "../../api/images/user";
 let picList = [];
 
+// get redirect link from url:
+const urlParams = new URLSearchParams(window.location.search);
+const redirectLink = urlParams.get("redirectURL");
+const defaultRedirectLink = "/login/";
+
 // Add 'submit' event handler
 form.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -67,7 +72,7 @@ function sendData() {
 
         showMessage("User created", false);
         setTimeout(function () {
-          window.location.href = "/login/";
+          window.location.href = redirectLink ?? defaultRedirectLink;
         }, 3000);
       } else {
         showMessage(`User not created! ${data.error?.message}`, true);

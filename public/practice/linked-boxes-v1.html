@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD - Movable Linked Boxes</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/practice-controls.css" />
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+
+        #container {
+            position: absolute;
+            width: 100vw;
+            height: 100vh;
+            background: #f0f0f0;
+        }
+
+        .instructions {
+            position: absolute;
+            top: 100px;
+            left: 10px;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            z-index: 10;
+            font-size: 10px;
+            cursor: grab;
+        }
+
+        .instructions.dragging {
+            cursor: grabbing;
+        }
+
+        .linkedBox {
+            position: absolute;
+            width: 126px !important;
+            height: 50px !important;
+            background: #007bff;
+            color: white;
+            text-align: center;
+            line-height: 50px;
+            cursor: grab;
+            user-select: none;
+            border-radius: 5px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            box-sizing: border-box;
+            padding-left: 5px;
+            padding: 0px;
+        }
+
+        .line {
+            position: absolute;
+            stroke: black;
+            stroke-width: 2;
+        }
+
+        .summary-panel {
+            position: absolute;
+            top: 300px;
+            left: 10px;
+            width: 200px;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            z-index: 10;
+            cursor: grab;
+        }
+
+        .summary-panel.dragging {
+            cursor: grabbing;
+        }
+
+        .summary-panel h3 {
+            margin: 0;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .summary-panel ul {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0 0;
+        }
+
+        .summary-panel ul li {
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .selected-icon {
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        #colorMenu {
+            position: absolute;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            z-index: 20;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            max-width: 200px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #colorMenu div {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        #colorMenu div:hover {
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+            transform: scale(1.1);
+        }
+
+        .remove-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .remove-option:hover {
+            background: #f8d7da;
+            border-color: #dc3545;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+            transform: scale(1.1);
+        }
+
+        .remove-option img {
+            width: 20px;
+            height: 20px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+
+    <div class="instructions">
+        <strong>Instructions:</strong>
+        <ul>
+            <li>Drag the boxes to move them.</li>
+            <li>Click two boxes to connect them with a line.</li>
+            <li>Click "Add Box" to create a new box.</li>
+            <li>Right-click on a box to change its color.</li>
+        </ul>
+        <button id="addBoxButton" class="boxContainer">Add Box</button>
+        <button id="resetBoxesButton">Reset Box Positions</button>
+    </div>
+
+    <div class="summary-panel">
+        <h3>Connections Summary</h3>
+        <ul id="connectionsList">
+        </ul>
+    </div>
+
+    <div id="container"></div>
+
+    <br />
+
+    <div style="position: absolute; bottom: 50px; width: 100%; text-align: center;">
+        <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 24px">
+            <a href="https://jaktestowac.pl" style="color: dimgray">
+                <span style="display: flex; align-items: center; justify-self: center; font-size: medium">
+                    <img src="/data/icons/favicon.png" style="width: 25px !important; height: 25px !important; padding: 0; border: none" alt="" />&nbsp&nbspjaktestowac.pl
+                </span>
+            </a>
+        </div>
+    </div>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+    <script type="text/javascript" src="./js/practice-common.js"></script>
+    <script type="text/javascript" src="./js/linked-boxes-v1.js"></script>
+
+</body>
+<script>
+    // move footer to the bottom of the page
+    const footer = document.querySelector('footer');
+    footer.style.position = 'absolute';
+    footer.style.bottom = '0';
+    footer.style.width = '100%';
+    footer.style.textAlign = 'center';
+    footer.style.padding = '10px';
+</script>
+
+</html>

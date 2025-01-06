@@ -1,10 +1,9 @@
 const { LogLevels } = require("./enums");
 
 const configToModify = {
-  adminUserEmail: "admin",
-  adminUserPass: "admin",
-  superAdminUserEmail: "super",
-  superAdminUserPass: "a",
+  // TODO: DEPRECATED: Remove this code after the new admin / role system is implemented
+  superAdminUserEmail: "admin",
+  superAdminUserPass: "admin",
 
   bearerToken: "Bearer SecretToken",
   basicAuth: "Basic dXNlcjpwYXNz", // user:pass
@@ -72,6 +71,7 @@ const config = {
   dbEmptyRestorePath: "./db/db-empty.json",
   dbTestRestorePath: "./db/db-base-test.json",
   quizQuestionsPath: "./db/quiz-questions.json",
+  userRolesPath: "./db/user-roles-db.json",
   gamesDbPath: "./db/games-db.json",
   hangmanDataPath: "./db/hangman-words.json",
   translationsDbPath: "./data/translations/translations.json",

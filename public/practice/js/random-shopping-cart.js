@@ -1,5 +1,5 @@
 async function getRandomSimpleShoppingCartData() {
-  return fetch(`http://localhost:3000/api/v1/data/random/ecommerce-shopping-cart-simple`, {
+  return fetch(`/api/v1/data/random/ecommerce-shopping-cart-simple`, {
     method: "GET",
     headers: {
       Accept: "application/json",

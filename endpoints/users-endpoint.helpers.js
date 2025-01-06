@@ -1,5 +1,6 @@
-const { isBugDisabled, isBugEnabled } = require("../config/config-manager");
-const { BugConfigKeys } = require("../config/enums");
+const { first } = require("lodash");
+const { isBugDisabled, isBugEnabled, getFeatureFlagConfigValue } = require("../config/config-manager");
+const { BugConfigKeys, FeatureFlagConfigKeys } = require("../config/enums");
 const { areStringsEqualIgnoringCase, areIdsEqual, isUndefined, isInactive } = require("../helpers/compare.helpers");
 const { getCurrentDateTimeISO } = require("../helpers/datetime.helpers");
 const { searchForUser, searchForUserWithToken } = require("../helpers/db-operation.helpers");
@@ -18,6 +19,7 @@ const {
   HTTP_CONFLICT,
   HTTP_NOT_FOUND,
   HTTP_UNAUTHORIZED,
+  HTTP_OK,
 } = require("../helpers/response.helpers");
 const { TracingInfoBuilder } = require("../helpers/tracing-info.helper");
 const {
@@ -30,8 +32,36 @@ const {
   areAnyFieldsPresent,
 } = require("../helpers/validation.helpers");
 
-function handleUsers(req, res) {
+function handleUsers(req, res, { isAdmin }) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
+
+  if (
+    req.method !== "GET" &&
+    req.method !== "POST" &&
+    req.method !== "HEAD" &&
+    urlEnds.includes("/api/users") &&
+    !isAdmin
+  ) {
+    logTrace("Validators: Check user auth", { url: urlEnds });
+    let userId = getIdFromUrl(urlEnds);
+    const verifyTokenResult = verifyAccessToken(req, res, "users", req.url);
+    if (isUndefined(verifyTokenResult)) {
+      res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
+      return;
+    }
+
+    const foundUser = searchForUserWithToken(userId, verifyTokenResult);
+
+    if (isUndefined(foundUser)) {
+      res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+      return;
+    }
+  }
+
+  if (req.method === "GET" && urlEnds.includes("/api/users/admin")) {
+    res.status(HTTP_OK).send({ id: "admin", firstname: "admin", lastname: "" });
+    return;
+  }
 
   // register user:
   if (req.method === "POST" && urlEnds.includes("/api/users")) {
@@ -173,55 +203,22 @@ function handleUsers(req, res) {
       .setResourceId(foundUser.id)
       .build();
 
-      
-    req.method = "PUT";
-    req.url = `/api/users/${userId}`;
-    const newUserBody = foundUser;
-    newUserBody._inactive = true;
-    req.body = newUserBody;
-    logTrace("handleUsers: SOFT DELETE: overwrite DELETE -> PUT:", {
-      method: req.method,
-      url: req.url,
-      body: req.body,
-    });
+    const isFeatureEnabled = getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_SOFT_DELETE_USERS);
+
+    if (isFeatureEnabled) {
+      req.method = "PUT";
+      req.url = `/api/users/${userId}`;
+      const newUserBody = foundUser;
+      newUserBody._inactive = true;
+      req.body = newUserBody;
+      logTrace("handleUsers: SOFT DELETE: overwrite DELETE -> PUT:", {
+        method: req.method,
+        url: req.url,
+        body: req.body,
+      });
+    }
     return;
   }
-
-  // soft delete:
-  // NOTE: for now to preserve backward compatibility - we will not implement this
-  // if (req.method === "DELETE" && urlEnds.includes("/api/users")) {
-  //   let userId = getIdFromUrl(urlEnds);
-  //   const foundUserToDelete = searchForUser(userId);
-
-  //   const verifyTokenResult = verifyAccessToken(req, res, "DELETE articles", req.url);
-
-  //   const foundUser = searchForUserWithToken(foundUserToDelete?.id, verifyTokenResult);
-
-  //   logDebug("handleUsers: foundUser and user_id:", { foundUser, user_id: foundUserToDelete?.id });
-
-  //   if (isUndefined(foundUserToDelete) || isInactive(foundUserToDelete)) {
-  //     res.status(HTTP_NOT_FOUND).send({});
-  //     return;
-  //   }
-
-  //   if (isUndefined(foundUser)) {
-  //     res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
-  //     return;
-  //   }
-
-  //   req.method = "PUT";
-  //   req = new TracingInfoBuilder(req).setOriginMethod("DELETE").setWasAuthorized(true).setResourceId(userId).build();
-  //   req.url = `/api/users/${userId}`;
-  //   const newUserBody = foundUser;
-  //   newUserBody._inactive = true;
-  //   req.body = newUserBody;
-  //   logTrace("handleUsers: SOFT DELETE: overwrite DELETE -> PUT:", {
-  //     method: req.method,
-  //     url: req.url,
-  //     body: req.body,
-  //   });
-  //   return;
-  // }
 
   return;
 }

@@ -491,6 +491,9 @@ checkIfAuthenticated(
               refreshOrderDetails();
               formatUsersAndBooks();
             });
+          } else if (response.status === 401) {
+            const dashboardInfo = document.getElementById("dashboard-info");
+            setBoxMessage(dashboardInfo, "You dont have permission to see accounts", "simpleInfoBox");
           }
         });
       } else {
@@ -501,5 +504,6 @@ checkIfAuthenticated(
       }
     });
   },
-  () => {}
+  () => {},
+  { defaultRedirect: true }
 );

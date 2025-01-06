@@ -1,12 +1,10 @@
 const { isUndefined } = require("lodash");
-const {
-  searchForUserWithOnlyToken,
-  searchForBookShopAccountWithUserId,
-} = require("../../helpers/db-operation.helpers");
+const { searchForUserWithOnlyToken } = require("../../helpers/db-operation.helpers");
 const { formatErrorResponse, formatInvalidTokenErrorResponse } = require("../../helpers/helpers");
 const { logDebug, logTrace } = require("../../helpers/logger-api");
 const { HTTP_NOT_FOUND, HTTP_UNAUTHORIZED } = require("../../helpers/response.helpers");
 const { verifyAccessToken } = require("../../helpers/validation.helpers");
+const { searchForBookShopAccountWithUserId } = require("../../helpers/db-operations/db-book-shop.operations");
 
 function handleBookShopItems(req, res, isAdmin) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");

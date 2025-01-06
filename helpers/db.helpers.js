@@ -7,6 +7,7 @@ const { logTrace, logDebug } = require("./logger-api");
 const { isUndefined } = require("./compare.helpers");
 const { getSeededRandomVisitsForEntities } = require("./generators/random-data.generator");
 const { createPathIfNotExists } = require("./io.helpers");
+const { roles, actions } = require("../db/user-roles-db");
 
 const visits = (function () {
   let instance;
@@ -231,6 +232,18 @@ function quizQuestionsDb() {
   return db;
 }
 
+function userRolesDb() {
+  // const db = JSON.parse(fs.readFileSync(getDbPath(getConfigValue(ConfigKeys.USER_ROLES_PATH), "UTF-8")));
+  // return db["roles"];
+  return roles;
+}
+
+function userRoleActionsDb() {
+  // const db = JSON.parse(fs.readFileSync(getDbPath(getConfigValue(ConfigKeys.USER_ROLE_ACTIONS_PATH), "UTF-8")));
+  // return db["actions"];
+  return actions;
+}
+
 function hangmanDb() {
   const db = JSON.parse(fs.readFileSync(getDbPath(getConfigValue(ConfigKeys.HANGMAN_DATA_PATH), "UTF-8")));
   return db;
@@ -329,6 +342,7 @@ module.exports = {
   likesDb,
   flashpostsDb,
   quizQuestionsDb,
+  userRolesDb,
   hangmanDb,
   fullDb,
   fullBaseDb,
@@ -371,4 +385,5 @@ module.exports = {
   bookShopOrderCouponsDb,
   booksDb,
   bookShopBookReviewsDb,
+  userRoleActionsDb,
 };

@@ -352,5 +352,6 @@ checkIfAuthenticated(
     issueGetRequest();
     menuButtonDisable("btnUsers");
   },
-  () => {}
+  () => {},
+  { defaultRedirect: true }
 );

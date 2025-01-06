@@ -550,6 +550,7 @@ checkIfAuthenticated(
                       ...wishlistedBooksIds,
                     ]),
                   ];
+                  formatReviewsMarkedAsRaw();
                   return getBookShopItemsInStockAndPrice(uniqueBookIds);
                 });
               });
@@ -562,5 +563,6 @@ checkIfAuthenticated(
       }
     });
   },
-  () => {}
+  () => {},
+  { defaultRedirect: true }
 );

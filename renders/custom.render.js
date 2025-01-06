@@ -1,3 +1,4 @@
+const { ADMIN_USER } = require("../config/admin-user.data");
 const { isBugEnabled } = require("../config/config-manager");
 const { BugConfigKeys } = require("../config/enums");
 const { sleep, hideCardNumber } = require("../helpers/helpers");
@@ -49,6 +50,10 @@ function renderResponse(req, res) {
     let usersMapped;
     logTrace("RenderResponse: User anonymization:", { length: users.length, loggedUser });
     if (users?.length > 0) {
+      if (req.url.includes("=admin")) {
+        users.push(ADMIN_USER);
+      }
+
       usersMapped = users.map((user) => {
         if (!loggedUser) {
           user.lastname = "****";

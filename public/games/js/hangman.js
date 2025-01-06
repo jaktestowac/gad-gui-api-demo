@@ -152,5 +152,6 @@ checkIfAuthenticated(
   () => {},
   () => {
     startButton.style.visibility = "collapse";
-  }
+  },
+  { defaultRedirect: true }
 );

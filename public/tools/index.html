@@ -4,10 +4,11 @@
   <title>🦎 GAD | Tools</title>
   <link rel="icon" href="/data/icons/favicon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+  <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+  <link href="/css/fonts/fonts.css" rel="stylesheet" />
   <link rel="stylesheet" href="/css/style.css" />
   <link rel="stylesheet" href="/css/controls.css" />
+  <link rel="stylesheet" href="/css/tools-style.css" />
 </head>
 
 <body>
@@ -26,13 +27,13 @@
         <tr>
           <td>
             <div class="containerTools">
-              <h2>GUI: Pages <span class="tooltip" text="All pages available from UI"></span></h2>
+              <h2 id="guiPages" class="anchorWithStickyNavbar">GUI: Pages<a href="#guiPages" class="hash-link">#</a></h2>
               <ul>
                 <li><a href="../users.html">Users</a></li>
                 <li><a href="../user.html?id=1">Single user</a></li>
                 <li><a href="../articles.html">Articles</a></li>
                 <li>
-                  <strong>Upload article:</strong>
+                  <strong id="uploadArticle" class="anchorWithStickyNavbar">Upload article:<a href="#uploadArticle" class="hash-link">#</a></strong>
                   <ul>
                     <li><a href="../articlesupload.html">drag and drop</a></li>
                     <li><a href="../fileupload.html">file upload (⚠️ needs `FEATURE_FILES` feature flag enabled)</a></li>
@@ -96,7 +97,7 @@
                   </ul>
                 </li>
                 <li>
-                  Other:
+                  <strong id="otherPages" class="anchorWithStickyNavbar">Other:<a href="#otherPages" class="hash-link">#</a></strong>
                   <ul>
                     <li><a href="/projects/simple-roi.html">Simple ROI calculator</a></li>
                     <li><a href="/projects/roi.html">Advanced ROI calculator</a></li>
@@ -105,7 +106,7 @@
                 </li>
                 <li><a href="/tools/version.html">Version check</a></li>
                 <li>
-                  <strong>Database helpers:</strong>
+                  <strong id="dbTools" class="anchorWithStickyNavbar">Database Tools<a href="#dbTools" class="hash-link">#</a></strong>
                   <ul>
                     <li><a href="/tools/dbplayground.html">Database SQL Playground</a></li>
                   </ul>
@@ -115,9 +116,9 @@
               </ul>
             </div>
             <div id="restore" class="containerTools">
-              <h2>API: 💣 Restore DB</h2>
+              <h2 id="apiRestore" class="anchorWithStickyNavbar">API: 💣 Restore DB<a href="#apiRestore" class="hash-link">#</a></h2>
               <p>❗❗ Using/clicking endpoint below restores database. All changes will be lost! ❗❗</p>
-              Default:<br />
+              <span id="restoreDefault" class="anchorWithStickyNavbar">Default:<a href="#restoreDefault" class="hash-link">#</a></span><br />
               <a href="/api/restoreDB" target="_blank" rel="noopener"><strong>💣 Restore Default Database</strong> with sample data</a><br /><br />
 
               Other:<br />
@@ -126,16 +127,17 @@
               <a href="/api/restoreTinyDB" target="_blank" rel="noopener">💣 Restore Tiny Database</a><br />
               <a href="/api/restoreBigDB" target="_blank" rel="noopener">💣 Restore Big Database</a><br />
 
-              <h2>API: Endpoints</h2>
+              <h2 id="endpoints" class="anchorWithStickyNavbar">API: Endpoints<a href="#endpoints" class="hash-link">#</a></h2>
 
               <div id="resources"></div>
-              <h3>API: Additional endpoints</h3>
+              <h3 id="additionalEndpoints" class="anchorWithStickyNavbar">API: Additional endpoints<a href="#additionalEndpoints" class="hash-link">#</a></h3>
+
               <a href="/api/images/user">Images for user avatar</a><br />
               <a href="/api/images/posts">Images for article image</a><br />
             </div>
 
             <div class="containerTools">
-              <h2>API: Feature Flags</h2>
+              <h2 id="featureFlags" class="anchorWithStickyNavbar">API: Feature Flags<a href="#featureFlags" class="hash-link">#</a></h2>
 
               Easily enable and disable different <strong>🦎GAD Features</strong> (no restart required): <br />
               (❗ After 🦎GAD restart default values are restored!) <br />
@@ -144,19 +146,20 @@
             </div>
 
             <div class="containerTools">
-              <h2>Diagnostic Info</h2>
+              <h2 id="diagnostic" class="anchorWithStickyNavbar">Diagnostic Info<a href="#diagnostic" class="hash-link">#</a></h2>
+
               Get additional info (such as logs, reports, histograms) in real time!
               <br />
               <br />
               <strong><a href="/api/diagnostic/toggle-diagnostics" target="_blank" rel="noopener"><i class="fa-solid fa-sliders"></i> Toggle diagnostic info</br>(⚠️ performance can decrease and memory consumption can be high!)</a></strong>
               <br />
               <br />
-              <h3>Pages:</h3>
+              <h3 id="diagnosticPages" class="anchorWithStickyNavbar">Pages<a href="#diagnosticPages" class="hash-link">#</a></h3>
               <ul>
                 <li><a href="/diagnostic/requests.html">Requests (⚠️ needs `DIAGNOSTICS` config flag enabled)</a></li>
               </ul>
 
-              <h3>Endpoints:</h3>
+              <h3 id="diagnosticEndpoints" class="anchorWithStickyNavbar">Endpoints<a href="#diagnosticEndpoints" class="hash-link">#</a></h3>
               <ul>
                 <li><a href="/api/logs">Logs (⚠️ needs `PUBLIC_LOGS` config flag enabled)</a></li>
                 <li><a href="/api/health">Health Check</a></li>
@@ -166,7 +169,7 @@
                 <li><a href="/api/health/dbcheck">Check DataBase integrity</a></li>
               </ul>
 
-              <strong>Raw Api/Non-api Calls:</strong>
+              <strong id="rawApiCalls" class="anchorWithStickyNavbar">Raw Api/Non-api Calls:<a href="#rawApiCalls" class="hash-link">#</a></strong>
               <ul>
                 <li><a href="/api/stats/api">Api Calls stats</a></li>
                 <li><a href="/api/stats/api/details">Api Calls stats (detailed)</a></li>
@@ -176,14 +179,16 @@
             </div>
 
             <div class="containerTools">
-              <h2>API: Documentation</h2>
+              <h3 id="apiDocs" class="anchorWithStickyNavbar">API: Documentation<a href="#apiDocs" class="hash-link">#</a></h3>
+
               <a href="./swagger.html" id="swagger" target="_blank" rel="noopener">Swagger UI</a><br />
               <a href="schema/openapi_rest_demo.json" target="_blank" rel="noopener">Open API schema</a><br /><br />
-              External:<br /><br />
+
+              <strong id="external" class="anchorWithStickyNavbar">External:<a href="#external" class="hash-link">#</a></strong><br /><br />
               <a href="https://editor.swagger.io/#?url=schema/openapi_rest_demo.json" id="swaggerEditor" target="_blank" rel="noopener">Swagger Editor (external)</a><br />
             </div>
             <div class="containerTools">
-              <h2>API: Bugs enabled / disabled</h2>
+              <h2 id="bugs" class="anchorWithStickyNavbar">API: Bugs enabled / disabled<a href="#bugs" class="hash-link">#</a></h2>
               Easily enable and disable different <strong>🦎GAD Bugs</strong> (no restart required).<br />
               This functionality gives You possibility to enable/disable mutations in code.<br />
               It also gives possibility <strong>to test Your automated test framework</strong>: if it covers and
@@ -191,9 +196,9 @@
               <strong><a href="./bugs.html" id="bugs">Bugs configuration</a></strong>
             </div>
 
-
             <div class="containerTools">
-              <h2>External links</h2>
+              <h2 id="externalLinks" class="anchorWithStickyNavbar">External links<a href="#externalLinks" class="hash-link">#</a></h2>
+
               <span>Visit 🦎GAD official&nbsp;&nbsp;<i class="fa-brands fa-github" style="font-size:24px"></i>&nbsp;<strong><a href="https://github.com/jaktestowac/gad-gui-api-demo" target="_blank" rel="noopener">GitHub Repository</a></strong>
               </span>
             </div>

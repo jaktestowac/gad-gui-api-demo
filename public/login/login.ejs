@@ -5,8 +5,8 @@
   <title>🦎 GAD | Login</title>
   <link rel="icon" href="/favicon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+  <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+  <link href="/css/fonts/fonts.css" rel="stylesheet" />
   <link rel="stylesheet" href="/css/controls.css" />
   <link rel="stylesheet" href="/css/style.css" />
 </head>
@@ -39,6 +39,7 @@
             </div>
             <input type="checkbox" id="keepSignIn" name="keepSignIn" value="true" />
             <label for="keepSignIn"> keep me sign in</label><br />
+            <input type="hidden" id="redirectURL" name="redirectURL" id="redirectURL" value="" />
             <input type="submit" class="button-primary" id="loginButton" value="LogIn" />
       </form>
       <div align="center">
@@ -55,5 +56,6 @@
 <script type="text/javascript" src="/blockback.js"></script>
 <script type="text/javascript" src="/js/darkmode.js"></script>
 <script type="text/javascript" src="/js/message-notifier.js"></script>
+<script type="text/javascript" src="/js/login.js"></script>
 
 </html>

@@ -1,5 +1,5 @@
 const { getCurrentDateTimeISO } = require("./datetime.helpers");
-const { logTrace, logDebug } = require("./logger-api");
+const { logTrace } = require("./logger-api");
 
 function setEntitiesInactive(db, tableName, query) {
   const callback = (item) => (item._inactive = true);
@@ -63,7 +63,7 @@ function updateMessageCheckTimeInDb(db, userId, resource, contactId) {
       );
       invokeQuery(db, "message-check", query, callback);
     } else {
-      invokeInsertQuery(db, "message-check", query, resource);
+      invokeInsertQuery(db, "message-check", resource);
     }
   });
 }
@@ -76,19 +76,26 @@ async function addCardToDataBase(db, accountId, cardData) {
     if (results.length > 0) {
       cardData.id = results[0].id;
       invokeDelQuery(db, "book-shop-account-payment-cards", query).then(() => {
-        invokeInsertQuery(db, "book-shop-account-payment-cards", query, cardData);
+        invokeInsertQuery(db, "book-shop-account-payment-cards", cardData);
       });
     } else {
       getElementWithMaxId(db, "book-shop-account-payment-cards").then((element) => {
         cardData.id = element.id + 1;
-        invokeInsertQuery(db, "book-shop-account-payment-cards", query, cardData);
+        invokeInsertQuery(db, "book-shop-account-payment-cards", cardData);
       });
     }
   });
 }
 
-async function invokeInsertQuery(db, tableName, query, obj, resultsCallback = (r) => {}) {
-  logTrace("INVOKE_QUERY: invoking Insert query:", { tableName, query, obj });
+async function insertPaymentEntryToPaymentHistory(db, paymentData) {
+  getElementWithMaxId(db, "book-shop-payment-history").then((element) => {
+    paymentData.id = element.id + 1;
+    invokeInsertQuery(db, "book-shop-payment-history", paymentData);
+  });
+}
+
+async function invokeInsertQuery(db, tableName, obj, resultsCallback = (r) => {}) {
+  logTrace("INVOKE_QUERY: invoking Insert query:", { tableName, obj });
   return db.get(tableName).push(obj).write().then(resultsCallback);
 }
 
@@ -129,4 +136,5 @@ module.exports = {
   addBooksToAccount,
   getElementWithMaxId,
   addCardToDataBase,
+  insertPaymentEntryToPaymentHistory,
 };

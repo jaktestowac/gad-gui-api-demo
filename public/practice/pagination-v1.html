@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD - Multi-Select Dropdown with Search in Data Grid with Pagination</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/practice-controls.css" />
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+    <style>
+        .data-grid-container {
+            width: 80%;
+            margin: auto;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .data-grid-header {
+            padding: 10px;
+            background: #f9f9f9;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .dropdown-container {
+            position: relative;
+        }
+
+        .dropdown-header {
+            border: 1px solid #ccc;
+            padding: 8px;
+            cursor: pointer;
+            background: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 5px;
+            width: 150px;
+        }
+
+        .dropdown-arrow {
+            transform: rotate(0deg);
+            transition: transform 0.3s;
+        }
+
+        .dropdown-arrow.open {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background: #fff;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1;
+            display: none;
+        }
+
+        .dropdown-list.show {
+            display: block;
+        }
+
+        .search-box input {
+            width: 90%;
+            padding: 8px;
+            border: none;
+            border-bottom: 1px solid #ccc;
+            outline: none;
+        }
+
+        .dropdown-item {
+            padding: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .dropdown-item:hover {
+            background: #f0f0f0;
+        }
+
+        .dropdown-item.selected {
+            background: #007bff;
+            color: white;
+        }
+
+        .data-grid {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-grid th,
+        .data-grid td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+
+        .data-grid th {
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        .pagination button {
+            padding: 8px 16px;
+            margin: 0 5px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .pagination button.disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .selected-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .selected-item {
+            background: #007bff;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+        }
+
+        .selected-name-item {
+            background: #007bff;
+        }
+
+        .selected-role-item {
+            background: #28a745;
+        }
+
+        .selected-status-item {
+            background: #dc3545;
+        }
+
+        .remove-item {
+            margin-left: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .data-grid {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+        }
+
+        .sort-icon {
+            font-size: 10px;
+            margin-left: 5px;
+            color: white;
+        }
+
+        .dropdowns {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            font-size: 14px;
+        }
+
+        th {
+            min-width: 60px;
+        }
+
+        .infoCount {
+            display: block;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+    </style>
+
+    <br />
+    <br />
+    <br />
+    <div align="center">
+        <h2>Multi-Select Dropdown with Search in Data Grid with Pagination</h2>
+        <div class="data-grid-container">
+            <div class="data-grid-header">
+                <div class="dropdowns">
+                    <div class="dropdown-container dropdown-names-container">
+                        <div class="dropdown-names-header dropdown-header">
+                            <span>Filter by Name</span>
+                            <span class="dropdown-names-arrow dropdown-arrow">&#9660;</span>
+                        </div>
+                        <div class="dropdown-names-list dropdown-list">
+                            <div class="search-box">
+                                <input type="text" placeholder="Search..." id="dropdownSearchName">
+                            </div>
+                            <div id="dropdownItemsNames">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dropdown-container dropdown-roles-container">
+                        <div class="dropdown-roles-header dropdown-header">
+                            <span>Filter by Role</span>
+                            <span class="dropdown-roles-arrow dropdown-arrow">&#9660;</span>
+                        </div>
+                        <div class="dropdown-roles-list dropdown-list">
+                            <div class="search-box">
+                                <input type="text" placeholder="Search..." id="dropdownSearchRole">
+                            </div>
+                            <div id="dropdownItemsRoles">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dropdown-container dropdown-status-container">
+                        <div class="dropdown-status-header dropdown-header">
+                            <span>Filter by Status</span>
+                            <span class="dropdown-status-arrow dropdown-arrow">&#9660;</span>
+                        </div>
+                        <div class="dropdown-status-list dropdown-list">
+                            <div class="search-box">
+                                <input type="text" placeholder="Search..." id="dropdownSearchStatus">
+                            </div>
+                            <div id="dropdownItemsStatus">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="selected-items" id="selectedItems"></div>
+            </div>
+            <table class="data-grid">
+                <thead>
+                    <tr>
+                        <th data-column="id">ID <span class="sort-icon"></span></th>
+                        <th data-column="name">Name <span class="sort-icon"></span></th>
+                        <th data-column="age">Age <span class="sort-icon"></span></th>
+                        <th data-column="role">Role <span class="sort-icon"></span></th>
+                        <th data-column="location">Location <span class="sort-icon"></span></th>
+                        <th data-column="department">Department <span class="sort-icon"></span></th>
+                        <th data-column="status">Status <span class="sort-icon"></span></th>
+                    </tr>
+                </thead>
+                <tbody id="dataGridBody">
+                </tbody>
+            </table>
+            <div class="pagination">
+                <button id="prevPage" class="disabled">Previous</button>
+                <span id="pageInfo"></span>
+                <button id="nextPage">Next</button>
+            </div>
+            <span id="elementsCount" class="infoCount">No data found</span>
+        </div>
+    </div>
+    <br />
+    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 24px">
+        <a href="https://jaktestowac.pl" style="color: dimgray">
+            <span style="display: flex; align-items: center; justify-self: center; font-size: medium">
+                <img src="/data/icons/favicon.png" style="width: 25px !important; height: 25px !important; padding: 0; border: none" alt="" />&nbsp&nbspjaktestowac.pl
+            </span>
+        </a>
+    </div>
+</body>
+
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="./js/practice-common.js"></script>
+<script type="text/javascript" src="./js/test-data.js"></script>
+<script type="text/javascript" src="./js/data-generators.js"></script>
+<script type="text/javascript" src="./js/prepare-elements.js"></script>
+<script type="text/javascript" src="./js/pagination-v1.js"></script>
+<script>
+    populateDataPredefined()
+</script>
+
+</html>

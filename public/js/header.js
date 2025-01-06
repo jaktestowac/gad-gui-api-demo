@@ -80,6 +80,23 @@ const mainGUIMenuHTMLLogged = (path = "") => {
   return mainGuiMenu;
 };
 
+const mainGUIAdminMenuHTML = (path = "") => {
+  const mainGuiMenu = `
+    <span class="dropdown dropdown-abs font-norm" data-testid="admin-dropdown">
+      <button id="admin-dropbtn" data-testid="btn-admin-dropdown" class="dropbtn">
+        <i class="fa-solid fa-gear"></i>
+      </button>
+      <span class="dropdown-content-abs" id="admin-dropdown-content">
+          <a href="/login" id="loginBtn">My Account</a>
+          <a href="/logout" id="logoutBtn" hidden>Logout</a>
+      </span>
+    </span>
+  
+  `;
+
+  return "";
+};
+
 const mainProjectsGUIMenuHTMLLogged = (path = "") => {
   const mainGuiMenu = `
   `;
@@ -120,7 +137,7 @@ const logoGAD = (path = "/") => {
 const rightMenu = (path = "", withUserMenu = true) => {
   let userMenu = `<div style="height: 30px; margin-top: 32px"></div>`;
   if (withUserMenu !== false) {
-    userMenu = `<div class="dropdown" data-testid="user-dropdown">
+    userMenu = `<div class="dropdown dropdown-left" data-testid="user-dropdown">
       <button id="dropbtn" data-testid="btn-dropdown" class="dropbtn">
         <img id="avatar"
           src="${path}/data/icons/user.png"
@@ -203,6 +220,7 @@ const addMainMenuAndFooter = () => {
     menuContainerLeft = document.querySelector("#menu-main-gui-login");
     menuContainerLeft.innerHTML = logoGAD() + mainGUIMenuHTML(path);
     if (email) menuContainerLeft.innerHTML += mainGUIMenuHTMLLogged(path);
+    menuContainerLeft.innerHTML += mainGUIAdminMenuHTML(path);
     menuContainerLeft.insertAdjacentHTML("afterend", rightMenu(path));
   }
   if (document.querySelector("#menu-main-gui")) {
@@ -210,6 +228,7 @@ const addMainMenuAndFooter = () => {
     menuContainerLeft = document.querySelector("#menu-main-gui");
     menuContainerLeft.innerHTML = logoGAD() + mainGUIMenuHTML();
     if (email) menuContainerLeft.innerHTML += mainGUIMenuHTMLLogged();
+    menuContainerLeft.innerHTML += mainGUIAdminMenuHTML();
     menuContainerLeft.insertAdjacentHTML("afterend", rightMenu(""));
   }
   if (document.querySelector("#menu-main-gui-projects")) {

@@ -158,6 +158,13 @@ const allLinks = [
     name: "Account",
     icon: `<i class="fa-solid fa-address-card"></i>`,
   },
+  {
+    link: "/book-shop/payment-history.html",
+    id: "book-shop-payment-history",
+    name: "Payment History",
+    icon: `<i class="fa-solid fa-money-check-alt"></i>`,
+    accountRequired: true,
+  },
 ];
 
 function _setIconActive(iconId) {
@@ -168,14 +175,28 @@ function _setIconActive(iconId) {
   icon.classList.add("active");
 }
 
-function setIconActive(iconId) {
-  const icons = document.querySelectorAll(".book-shop-side-panel-icons");
-  icons.forEach((icon) => {
+function setIconActive(iconId, retry) {
+  if (retry === undefined) {
+    retry = 0;
+  }
+
+  const icons = document.getElementsByClassName("book-shop-side-panel-icons");
+  if (icons.length === 0 && retry < 5) {
+    setTimeout(() => {
+      setIconActive(iconId, retry + 1);
+    }, 350);
+  } else {
+    _setIconAsActive(iconId, icons);
+  }
+}
+
+function _setIconAsActive(iconId, icons) {
+  for (let i = 0; i < icons.length; i++) {
+    const icon = icons[i];
     icon.classList.remove("active");
-  });
+  }
 
   const icon = document.getElementById(iconId);
-
   for (let i = 0; i < 5; i++) {
     if (icon && icon.id === iconId) {
       _setIconActive(iconId);

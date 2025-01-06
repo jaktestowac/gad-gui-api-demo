@@ -1,4 +1,4 @@
-const { searchForBookShopBookReviews } = require("../../helpers/db-operation.helpers");
+const { searchForBookShopBookReviews } = require("../../helpers/db-operations/db-book-shop.operations");
 const { formatErrorResponse } = require("../../helpers/helpers");
 const { logDebug } = require("../../helpers/logger-api");
 const { roundNumber } = require("../../helpers/number.helper");

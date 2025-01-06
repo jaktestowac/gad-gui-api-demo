@@ -4,11 +4,11 @@
   <title>🦎 GAD</title>
   <link rel="icon" href="/data/icons/favicon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto" rel="stylesheet" />
+  <link href="/css/fonts/fonts.css" rel="stylesheet" />
   <link rel="stylesheet" href="/css/controls.css" />
   <link rel="stylesheet" href="/css/style.css" />
   <link rel="stylesheet" href="/css/infoBoxes.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -48,7 +48,35 @@
     <img class="back-img opaq" style="display: none;"></img>
     <br />
 
-    <div class="container" style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center">
+    <div class="main-container">
+      <div class="main-links-container">
+        <a href="../" id="btnGui" class="main-page-box-link">
+          <div class="main-page-box main-page-box-96">
+            <i class="fas fa-book box-icon  fa-2x"></i>
+            <h3 class="main-page-box-header">GUI</h3>
+          </div>
+        </a>
+        <a href="./index.html" id="btnApiTools" class="main-page-box-link">
+          <div class="main-page-box main-page-box-96">
+            <i class="fas fa-tools box-icon  fa-2x"></i>
+            <h3 class="main-page-box-header">Tools</h3>
+          </div>
+        </a>
+        <a href="./swagger.html" id="btnApiTools" class="main-page-box-link">
+          <div class="main-page-box main-page-box-96">
+            <i class="fas fa-code box-icon  fa-2x"></i>
+            <h3 class="main-page-box-header">Swagger</h3>
+          </div>
+        </a>
+        <a href="../practice" id="btnApiTools" class="main-page-box-link">
+          <div class="main-page-box main-page-box-96">
+            <i class="fas fa-flask box-icon  fa-2x"></i>
+            <h3 class="main-page-box-header">Practice pages</h3>
+          </div>
+        </a>
+      </div>
+    </div>
+    <!-- <div class="container" style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center">
       <a href="../" class="menu-link">
         <button class="button-primary" id="btnGui" style="margin: 10; font-size: 28px">GUI</button>
       </a>
@@ -60,12 +88,6 @@
       </a>
       <a href="../practice">
         <button class="button-primary" id="btnApiTools" style="margin: 10; font-size: 22px; line-height:1.1">Practice<br />pages</button>
-      </a>
-    </div>
-    <!-- <div align="center" style="display: flex; flex-direction: column; justify-content: center !important;">
-      <label>Or practice your test automation skills:</label></br>
-      <a href="/practice" class="menu-link" style="margin-top: 10px;">
-        <button class="button-primary-small" id="btnPractice">Practice pages</button>
       </a>
     </div> -->
     <br />

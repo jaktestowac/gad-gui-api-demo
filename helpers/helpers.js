@@ -71,22 +71,15 @@ function sleep(ms, msg) {
   });
 }
 
-function isAdminUser(email, pass) {
-  return (
-    areStringsEqualIgnoringCase(email, getConfigValue(ConfigKeys.ADMIN_USER_EMAIL)) &&
-    pass === getConfigValue(ConfigKeys.ADMIN_USER_PASS)
-  );
-}
-
+// TODO: DEPRECATED: Remove this code after the new admin / role system is implemented
+/**
+ * @deprecated This function is deprecated and will be removed in future versions.
+ */
 function isSuperAdminUser(email, pass) {
   return (
     areStringsEqualIgnoringCase(email, getConfigValue(ConfigKeys.SUPER_ADMIN_USER_EMAIL)) &&
     pass === getConfigValue(ConfigKeys.SUPER_ADMIN_USER_PASS)
   );
-}
-
-function isAnyAdminUser(email, pass) {
-  return isAdminUser(email, pass) || isSuperAdminUser(email, pass);
 }
 
 function pad(num, size = 2) {
@@ -272,9 +265,7 @@ module.exports = {
   formatInvalidEntityErrorResponse,
   formatInvalidDateFieldErrorResponse,
   sleep,
-  isAdminUser,
   isSuperAdminUser,
-  isAnyAdminUser,
   getIdFromUrl,
   shuffleArray,
   pad,

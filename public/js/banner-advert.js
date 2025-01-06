@@ -135,9 +135,9 @@ const listOfBanners = [
   advertStatisticsBanner,
   advertSudokuBanner,
   advertMinesweeperBanner,
-  advertBookStoreBanner,
-  advertBookStoreBanner2,
-  advertBookStoreBanner,
+  // advertBookStoreBanner,
+  // advertBookStoreBanner2,
+  // advertBookStoreBanner,
 ];
 
 function wasSkipped() {
