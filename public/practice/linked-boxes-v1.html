@@ -164,6 +164,21 @@
             width: 20px;
             height: 20px;
         }
+
+        .lButton {
+            background: #c7c7c7;
+            color: rgb(34, 34, 34);
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 10px;
+        }
+
+        .lButton:hover {
+            background: #b7b7b7;
+        }
     </style>
 
 </head>
@@ -184,8 +199,10 @@
             <li>Click "Add Box" to create a new box.</li>
             <li>Right-click on a box to change its color.</li>
         </ul>
-        <button id="addBoxButton" class="boxContainer">Add Box</button>
-        <button id="resetBoxesButton">Reset Box Positions</button>
+        <button id="addBoxButton" class="lButton">Add Box</button>
+        <button id="resetBoxesButton" class="lButton" aria-label="Save boxes outside the screen!" title="Save boxes outside the screen!">Reset Positions</button>
+        <button id="saveButton" class="lButton" onclick="exportToJson()">💾 Save</button>
+        <button id="loadButton" class="lButton" onclick="importFromJson()">📂 Load</button>
     </div>
 
     <div class="summary-panel">
@@ -196,6 +213,12 @@
 
     <div id="container"></div>
 
+    <br />
+    <br />
+    <br />
+    <div style="position: absolute; right: 270px;">
+        <div id="alerts-placeholder" class="alerts-placeholder"></div>
+    </div>
     <br />
 
     <div style="position: absolute; bottom: 50px; width: 100%; text-align: center;">

@@ -1,6 +1,6 @@
 const container = document.getElementById("container");
 const addBoxButton = document.getElementById("addBoxButton");
-let boxCount = 3;
+let boxCount = 0;
 
 const colors = ["#007bff", "#28a745", "#ffc107", "#dc3545", "#6f42c1", "#17a2b8", "#fd7e14", "#6c757d", "#343a40"];
 const darkColors = {
@@ -36,8 +36,12 @@ function generateUUID() {
 
 const boxData = {};
 
-function createBox(x, y, label) {
-  const uuid = generateUUID();
+function createBox(x, y, label, uuid) {
+  if (!uuid) {
+    uuid = generateUUID();
+  }
+
+  boxCount += 1;
   const box = document.createElement("div");
   box.classList.add("linkedBox");
   box.style.left = `${x}px`;
@@ -225,22 +229,6 @@ function openColorMenu(x, y, uuid) {
     },
     { once: true }
   );
-}
-
-function removeBox(uuid) {
-  const box = boxData[uuid].element;
-
-  lines.forEach((line, index) => {
-    if (line.uuid1 === uuid || line.uuid2 === uuid) {
-      line.line.remove();
-      line.uuid1 = "";
-      line.uuid2 = "";
-    }
-  });
-  box.remove();
-  delete boxData[uuid];
-
-  updateConnectionsSummary();
 }
 
 function createLineRemoveIcon() {
@@ -459,6 +447,163 @@ resetBoxesButton.addEventListener("click", () => {
 
   updateLines();
 });
+
+function exportToJson() {
+  const exportData = {
+    boxes: Object.values(boxData).map(({ uuid, label, color, element }) => ({
+      uuid,
+      label,
+      color,
+      position: {
+        x: parseInt(element.style.left),
+        y: parseInt(element.style.top),
+      },
+    })),
+    connections: lines.map(({ uuid1, uuid2 }) => ({
+      from: uuid1,
+      to: uuid2,
+    })),
+  };
+
+  const dataStr = JSON.stringify(exportData, null, 2);
+  const blob = new Blob([dataStr], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const downloadLink = document.createElement("a");
+  downloadLink.href = url;
+  downloadLink.download = "boxes-layout.json";
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  document.body.removeChild(downloadLink);
+  URL.revokeObjectURL(url);
+}
+
+function clearAll() {
+  Object.keys(boxData).forEach((uuid) => {
+    removeBox(uuid, false);
+  });
+  updateConnectionsSummary();
+}
+
+function removeBox(uuid, updateLines = true) {
+  const box = boxData[uuid].element;
+
+  lines.forEach((line, index) => {
+    if (line.uuid1 === uuid || line.uuid2 === uuid) {
+      line.line.remove();
+      line.uuid1 = "";
+      line.uuid2 = "";
+      line.removeIcon.remove();
+    }
+  });
+  box.remove();
+  boxData[uuid].element = null;
+  delete boxData[uuid];
+  boxCount -= 1;
+
+  if (updateLines) updateConnectionsSummary();
+}
+
+function importFromJson() {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = ".json";
+
+  input.onchange = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      try {
+        const data = JSON.parse(event.target.result);
+
+        clearAll();
+
+        data.boxes.forEach(({ uuid, label, color, position }) => {
+          const box = createBox(position.x, position.y, label, uuid);
+          box.style.background = color;
+          boxData[uuid] = {
+            uuid,
+            label,
+            color,
+            element: box,
+          };
+          box.dataset.uuid = uuid;
+        });
+
+        data.connections.forEach(({ from, to }) => {
+          createLine(from, to);
+        });
+
+        updateConnectionsSummary();
+      } catch (err) {
+        console.error("Error importing file:", err);
+        displaySimpleAlert("Error importing file. Please check if the file format is correct.", 2);
+      }
+    };
+
+    reader.readAsText(file);
+  };
+
+  input.click();
+}
+
+container.addEventListener("contextmenu", (e) => {
+  if (e.target === container || e.target === svg) {
+    e.preventDefault();
+    showCanvasMenu(e.clientX, e.clientY);
+  }
+});
+
+function showCanvasMenu(x, y) {
+  const existingMenu = document.getElementById("canvasMenu");
+  if (existingMenu) existingMenu.remove();
+
+  const menu = document.createElement("div");
+  menu.id = "canvasMenu";
+  menu.style.position = "absolute";
+  menu.style.left = `${x}px`;
+  menu.style.top = `${y}px`;
+  menu.style.background = "white";
+  menu.style.border = "1px solid #ccc";
+  menu.style.borderRadius = "5px";
+  menu.style.padding = "5px";
+  menu.style.boxShadow = "0 2px 5px rgba(0,0,0,0.2)";
+  menu.style.zIndex = "1000";
+
+  const addBoxOption = document.createElement("div");
+  addBoxOption.innerHTML = `<i class="fa-regular fa-square-plus"></i> &nbsp;Add Box Here`;
+  addBoxOption.style.padding = "8px 12px";
+  addBoxOption.style.cursor = "pointer";
+  addBoxOption.style.fontSize = "14px";
+
+  addBoxOption.addEventListener("mouseover", () => {
+    addBoxOption.style.background = "#f0f0f0";
+  });
+
+  addBoxOption.addEventListener("mouseout", () => {
+    addBoxOption.style.background = "white";
+  });
+
+  addBoxOption.addEventListener("click", () => {
+    boxCount++;
+    createBox(x, y, `Box ${boxCount}`);
+    menu.remove();
+  });
+
+  menu.appendChild(addBoxOption);
+  document.body.appendChild(menu);
+
+  document.addEventListener(
+    "click",
+    (e) => {
+      if (!menu.contains(e.target)) {
+        menu.remove();
+      }
+    },
+    { once: true }
+  );
+}
 
 createBox(300, 400, "Box 1");
 createBox(300, 200, "Box 2");
