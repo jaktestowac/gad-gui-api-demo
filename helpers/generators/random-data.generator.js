@@ -111,6 +111,15 @@ class RandomValueGeneratorWithSeed {
     this.seed = seed;
     this.generator = seedrandom(seed);
   }
+
+  getNValuesFromList(list, n) {
+    const values = [];
+    for (let i = 0; i < n; i++) {
+      values.push(list[this.getNextValue(0, list.length - 1)]);
+    }
+
+    return values;
+  }
 }
 
 module.exports = {

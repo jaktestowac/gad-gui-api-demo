@@ -225,8 +225,9 @@ function handleData(req, res, isAdmin) {
   if (req.method === "GET" && req.url.includes("/api/v1/data/random/employees")) {
     const queryParams = new URLSearchParams(req.url.split("?")[1]);
     const seed = queryParams.get("seed") || Math.random().toString();
+    const details = queryParams.get("details") === "true";
 
-    const employeesData = generateRandomEmployeesData({ seed });
+    const employeesData = generateRandomEmployeesData({ seed, details });
     res.status(HTTP_OK).json(employeesData);
     return;
   }
