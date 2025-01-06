@@ -48,10 +48,12 @@ function createBox(x, y, label) {
   boxData[uuid] = { uuid, label, element: box, color: "#007bff" };
 
   let isDragging = false;
+  let hasMoved = false;
 
   box.addEventListener("mousedown", (e) => {
     if (e.button === 2) return;
     isDragging = true;
+    hasMoved = false;
     box.style.cursor = "grabbing";
 
     const offsetX = e.clientX - box.offsetLeft;
@@ -59,6 +61,7 @@ function createBox(x, y, label) {
 
     const onMouseMove = (e) => {
       if (isDragging) {
+        hasMoved = true;
         const newX = e.clientX - offsetX;
         const newY = e.clientY - offsetY;
         box.style.left = `${newX}px`;
@@ -113,7 +116,12 @@ function createBox(x, y, label) {
     openColorMenu(e.clientX, e.clientY, uuid);
   });
 
-  box.addEventListener("click", () => {
+  box.addEventListener("click", (e) => {
+    if (hasMoved) {
+      hasMoved = false;
+      return;
+    }
+
     const icon = box.querySelector(".selected-icon");
     if (selectedBox === null) {
       selectedBox = box;
@@ -235,6 +243,26 @@ function removeBox(uuid) {
   updateConnectionsSummary();
 }
 
+function createLineRemoveIcon() {
+  const removeIcon = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+  const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+
+  circle.setAttribute("r", "8");
+  circle.setAttribute("fill", "#dc3545");
+
+  text.textContent = "×";
+  text.setAttribute("fill", "white");
+  text.setAttribute("font-size", "12");
+  text.setAttribute("text-anchor", "middle");
+  text.setAttribute("dominant-baseline", "middle");
+  text.style.cursor = "pointer";
+
+  removeIcon.appendChild(circle);
+  removeIcon.appendChild(text);
+  return removeIcon;
+}
+
 function createLine(uuid1, uuid2) {
   if (
     lines.some(
@@ -246,20 +274,36 @@ function createLine(uuid1, uuid2) {
 
   const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
   line.classList.add("line");
-  svg.appendChild(line);
 
-  lines.push({ line, uuid1, uuid2 });
+  const removeIcon = createLineRemoveIcon();
+  removeIcon.style.cursor = "pointer";
+
+  removeIcon.addEventListener("click", () => {
+    line.remove();
+    removeIcon.remove();
+    lines.splice(
+      lines.findIndex((l) => l.line === line),
+      1
+    );
+    updateConnectionsSummary();
+  });
+
+  svg.appendChild(line);
+  svg.appendChild(removeIcon);
+
+  lines.push({ line, uuid1, uuid2, removeIcon });
   updateLines();
   updateConnectionsSummary();
 }
 
 function updateLines() {
-  lines.forEach(({ line, uuid1, uuid2 }) => {
+  lines.forEach(({ line, uuid1, uuid2, removeIcon }) => {
     const box1 = boxData[uuid1]?.element;
     const box2 = boxData[uuid2]?.element;
 
     if (!box1 || !box2) {
       line.remove();
+      removeIcon?.remove();
       return;
     }
 
@@ -268,7 +312,6 @@ function updateLines() {
 
     const x1 = box1Rect.left + box1Rect.width / 2;
     const y1 = box1Rect.top + box1Rect.height / 2;
-
     const x2 = box2Rect.left + box2Rect.width / 2;
     const y2 = box2Rect.top + box2Rect.height / 2;
 
@@ -276,6 +319,12 @@ function updateLines() {
     line.setAttribute("y1", y1);
     line.setAttribute("x2", x2);
     line.setAttribute("y2", y2);
+
+    // Position remove icon at middle of line
+    const midX = (x1 + x2) / 2;
+    const midY = (y1 + y2) / 2;
+
+    removeIcon.setAttribute("transform", `translate(${midX}, ${midY})`);
   });
 }
 
