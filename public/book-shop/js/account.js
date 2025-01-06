@@ -550,6 +550,7 @@ checkIfAuthenticated(
                       ...wishlistedBooksIds,
                     ]),
                   ];
+                  formatReviewsMarkedAsRaw();
                   return getBookShopItemsInStockAndPrice(uniqueBookIds);
                 });
               });

@@ -1413,8 +1413,8 @@ body.darkmode {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 200px;
-  height: 200px;
+  width: 190px;
+  height: 180px;
   background-color: #f1f1f1;
   border-radius: 4px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
@@ -1433,7 +1433,7 @@ body.darkmode {
 }
 
 .module-content {
-  margin-top: 24px;
+  margin-top: 12px;
   text-align: center;
   padding: 4px;
 }
@@ -1445,7 +1445,7 @@ body.darkmode {
 }
 
 .module-description {
-  font-size: 11px;
+  font-size: 10px;
 }
 
 .page-header {

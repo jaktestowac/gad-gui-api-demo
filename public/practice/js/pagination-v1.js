@@ -1133,8 +1133,14 @@ function updateSelectedItems() {
   });
 }
 
-async function getRandomEmployeesData() {
-  return fetch(`/api/v1/data/random/employees`, {
+async function getRandomEmployeesData(seed) {
+  let url = `/api/v1/data/random/employees`;
+
+  if (seed !== undefined) {
+    url += `?seed=${seed}`;
+  }
+
+  return fetch(url, {
     method: "GET",
     headers: {
       Accept: "application/json",
@@ -1144,8 +1150,13 @@ async function getRandomEmployeesData() {
   });
 }
 
-function populateDataFromAPI() {
-  getRandomEmployeesData()
+function populateDataFromAPI(random = false) {
+  let seed = undefined;
+  if (random === false) {
+    seed = "test";
+  }
+
+  getRandomEmployeesData(seed)
     .then((response) => response.json())
     .then((json) => {
       populateData(json, false, renderSimpleTable);

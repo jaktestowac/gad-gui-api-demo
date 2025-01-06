@@ -169,6 +169,7 @@ function openColorMenu(x, y, uuid) {
       box.style.background = color;
       boxData[uuid].color = color;
       document.body.removeChild(menu);
+      updateConnectionsSummary();
     });
 
     menu.appendChild(colorOption);
@@ -363,11 +364,16 @@ function updateConnectionsSummary() {
   sortedLinesByFirstName.forEach(({ uuid1, uuid2 }) => {
     const label1 = boxData[uuid1]?.label;
     const label2 = boxData[uuid2]?.label;
+    const color1 = boxData[uuid1]?.color;
+    const color2 = boxData[uuid2]?.color;
 
     if (!label1 || !label2) return;
 
     const listItem = document.createElement("li");
-    listItem.textContent = `${label1} ↔ ${label2}`;
+    listItem.innerHTML = `
+      <span style="color: ${color1}">${label1}</span> ↔ 
+      <span style="color: ${color2}">${label2}</span>
+    `;
     connectionsList.appendChild(listItem);
   });
 }

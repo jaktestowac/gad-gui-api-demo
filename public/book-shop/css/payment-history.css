@@ -85,7 +85,7 @@
   gap: 10px;
   justify-content: center;
   align-items: center;
-  width: 800px !important;  /* increased width to accommodate buttons */
+  width: 800px !important;
 }
 
 .date-range-filter {

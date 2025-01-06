@@ -45,16 +45,16 @@ function createSearchTools() {
   const dateFrom = document.getElementById("date-from");
   const dateTo = document.getElementById("date-to");
 
-  if (userPaymentHistory.length > 0) {
-    const dates = userPaymentHistory.map((p) => new Date(p.date));
-    const minDate = new Date(Math.min(...dates)).toISOString().split("T")[0];
-    const maxDate = new Date(Math.max(...dates)).toISOString().split("T")[0];
+  // if (userPaymentHistory.length > 0) {
+  //   const dates = userPaymentHistory.map((p) => new Date(p.date));
+  //   const minDate = new Date(Math.min(...dates)).toISOString().split("T")[0];
+  //   const maxDate = new Date(Math.max(...dates)).toISOString().split("T")[0];
 
-    dateFrom.min = minDate;
-    dateFrom.max = maxDate;
-    dateTo.min = minDate;
-    dateTo.max = maxDate;
-  }
+  //   dateFrom.min = minDate;
+  //   dateFrom.max = maxDate;
+  //   dateTo.min = minDate;
+  //   dateTo.max = maxDate;
+  // }
 
   dateFrom.addEventListener("change", (e) => {
     dateTo.min = e.target.value;

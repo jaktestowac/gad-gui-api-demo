@@ -162,7 +162,7 @@ const allLinks = [
     link: "/book-shop/payment-history.html",
     id: "book-shop-payment-history",
     name: "Payment History",
-    icon: `<i class="fa-solid fa-file-invoice"></i>`,
+    icon: `<i class="fa-solid fa-money-check-alt"></i>`,
     accountRequired: true,
   },
 ];
