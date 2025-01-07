@@ -1,5 +1,4 @@
 const container = document.getElementById("container");
-const addBoxButton = document.getElementById("addBoxButton");
 let boxCount = 0;
 
 const colors = ["#007bff", "#28a745", "#ffc107", "#dc3545", "#6f42c1", "#17a2b8", "#fd7e14", "#6c757d", "#343a40"];
@@ -16,6 +15,15 @@ const darkColors = {
   "#343a40": "#1d2124",
 };
 
+const shapes = ["rectangle", "circle", "triangle"];
+const shapeSizes = {
+  rectangle: { width: 100, height: 50 },
+  circle: { width: 100, height: 100 },
+  triangle: { width: 100, height: 100 },
+};
+
+const defaultName = "Object";
+
 const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 svg.style.position = "absolute";
 svg.style.width = "100%";
@@ -23,6 +31,25 @@ svg.style.height = "100%";
 svg.style.top = "0";
 svg.style.left = "0";
 container.appendChild(svg);
+
+// Add marker definitions for both forward and backward arrows
+const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+const markerEnd = document.createElementNS("http://www.w3.org/2000/svg", "marker");
+markerEnd.setAttribute("id", "arrow-end");
+markerEnd.setAttribute("markerWidth", "10");
+markerEnd.setAttribute("markerHeight", "10");
+markerEnd.setAttribute("refX", "9");
+markerEnd.setAttribute("refY", "5");
+markerEnd.setAttribute("orient", "auto");
+markerEnd.setAttribute("markerUnits", "strokeWidth");
+
+const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+path.setAttribute("d", "M 0 0 L 10 5 L 0 10 z");
+path.setAttribute("fill", "black");
+
+markerEnd.appendChild(path);
+defs.appendChild(markerEnd);
+svg.appendChild(defs);
 
 const lines = [];
 let selectedBox = null;
@@ -36,7 +63,7 @@ function generateUUID() {
 
 const boxData = {};
 
-function createBox(x, y, label, uuid) {
+function createBox(x, y, label, uuid, shape = "rectangle") {
   if (!uuid) {
     uuid = generateUUID();
   }
@@ -44,12 +71,29 @@ function createBox(x, y, label, uuid) {
   boxCount += 1;
   const box = document.createElement("div");
   box.classList.add("linkedBox");
+
+  // check possible types of shapes
+  if (shape === "rectangle") {
+    box.style.width = shapeSizes.rectangle.width + "px";
+    box.style.height = shapeSizes.rectangle.height + "px";
+    box.style.borderRadius = "5px";
+  } else if (shape === "circle") {
+    box.style.borderRadius = "50%";
+    box.style.width = shapeSizes.circle.width + "px";
+    box.style.height = shapeSizes.circle.height + "px";
+    box.style.display = "flex";
+    box.style.alignItems = "center";
+    box.style.justifyContent = "center";
+  } else {
+    console.error("Invalid shape type", shape);
+  }
+
   box.style.left = `${x}px`;
   box.style.top = `${y}px`;
   box.textContent = label;
 
   box.dataset.uuid = uuid;
-  boxData[uuid] = { uuid, label, element: box, color: "#007bff" };
+  boxData[uuid] = { uuid, label, element: box, color: "#007bff", shape };
 
   let isDragging = false;
   let hasMoved = false;
@@ -251,6 +295,38 @@ function createLineRemoveIcon() {
   return removeIcon;
 }
 
+function isPointNearLine(x, y, x1, y1, x2, y2, threshold = 5) {
+  const A = x - x1;
+  const B = y - y1;
+  const C = x2 - x1;
+  const D = y2 - y1;
+
+  const dot = A * C + B * D;
+  const lenSq = C * C + D * D;
+  let param = -1;
+
+  if (lenSq !== 0) param = dot / lenSq;
+
+  let xx, yy;
+
+  if (param < 0) {
+    xx = x1;
+    yy = y1;
+  } else if (param > 1) {
+    xx = x2;
+    yy = y2;
+  } else {
+    xx = x1 + param * C;
+    yy = y1 + param * D;
+  }
+
+  const dx = x - xx;
+  const dy = y - yy;
+  const distance = Math.sqrt(dx * dx + dy * dy);
+
+  return distance <= threshold;
+}
+
 function createLine(uuid1, uuid2) {
   if (
     lines.some(
@@ -262,12 +338,34 @@ function createLine(uuid1, uuid2) {
 
   const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
   line.classList.add("line");
+  line.setAttribute("marker-end", "url(#arrow-end)");
+
+  line.style.strokeWidth = "2";
+  line.style.stroke = "black";
+
+  const hitArea = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  hitArea.style.stroke = "transparent";
+  hitArea.style.strokeWidth = "15";
+  hitArea.classList.add("line-hit-area");
 
   const removeIcon = createLineRemoveIcon();
+  const lineData = { line, hitArea, uuid1, uuid2, removeIcon, direction: "forward" };
+
+  line.addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+    showLineMenu(e.clientX, e.clientY, lineData);
+  });
+
+  hitArea.addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+    showLineMenu(e.clientX, e.clientY, lineData);
+  });
+
   removeIcon.style.cursor = "pointer";
 
   removeIcon.addEventListener("click", () => {
     line.remove();
+    hitArea.remove();
     removeIcon.remove();
     lines.splice(
       lines.findIndex((l) => l.line === line),
@@ -276,21 +374,23 @@ function createLine(uuid1, uuid2) {
     updateConnectionsSummary();
   });
 
+  svg.appendChild(hitArea);
   svg.appendChild(line);
   svg.appendChild(removeIcon);
 
-  lines.push({ line, uuid1, uuid2, removeIcon });
+  lines.push(lineData);
   updateLines();
   updateConnectionsSummary();
 }
 
 function updateLines() {
-  lines.forEach(({ line, uuid1, uuid2, removeIcon }) => {
+  lines.forEach(({ line, hitArea, uuid1, uuid2, removeIcon, direction }) => {
     const box1 = boxData[uuid1]?.element;
     const box2 = boxData[uuid2]?.element;
 
     if (!box1 || !box2) {
       line.remove();
+      hitArea?.remove();
       removeIcon?.remove();
       return;
     }
@@ -303,25 +403,120 @@ function updateLines() {
     const x2 = box2Rect.left + box2Rect.width / 2;
     const y2 = box2Rect.top + box2Rect.height / 2;
 
-    line.setAttribute("x1", x1);
-    line.setAttribute("y1", y1);
-    line.setAttribute("x2", x2);
-    line.setAttribute("y2", y2);
+    const angle = Math.atan2(y2 - y1, x2 - x1);
+    const boxPaddingY1 = shapeSizes[boxData[uuid1].shape].height / 2;
+    const boxPaddingX1 = shapeSizes[boxData[uuid1].shape].width / 2;
+    const boxPaddingY2 = shapeSizes[boxData[uuid2].shape].height / 2;
+    const boxPaddingX2 = shapeSizes[boxData[uuid2].shape].width / 2;
 
-    // Position remove icon at middle of line
-    const midX = (x1 + x2) / 2;
-    const midY = (y1 + y2) / 2;
+    const endX1 = x1 + Math.cos(angle) * boxPaddingX1;
+    const endY1 = y1 + Math.sin(angle) * boxPaddingY1;
+    const endX2 = x2 - Math.cos(angle) * boxPaddingX2;
+    const endY2 = y2 - Math.sin(angle) * boxPaddingY2;
 
+    if (direction === "forward") {
+      line.setAttribute("x1", endX1);
+      line.setAttribute("y1", endY1);
+      line.setAttribute("x2", endX2);
+      line.setAttribute("y2", endY2);
+      hitArea.setAttribute("x1", endX1);
+      hitArea.setAttribute("y1", endY1);
+      hitArea.setAttribute("x2", endX2);
+      hitArea.setAttribute("y2", endY2);
+    } else {
+      line.setAttribute("x1", endX2);
+      line.setAttribute("y1", endY2);
+      line.setAttribute("x2", endX1);
+      line.setAttribute("y2", endY1);
+      hitArea.setAttribute("x1", endX2);
+      hitArea.setAttribute("y1", endY2);
+      hitArea.setAttribute("x2", endX1);
+      hitArea.setAttribute("y2", endY1);
+    }
+
+    const midX = (endX1 + endX2) / 2;
+    const midY = (endY1 + endY2) / 2;
     removeIcon.setAttribute("transform", `translate(${midX}, ${midY})`);
   });
 }
 
-addBoxButton.addEventListener("click", () => {
-  const randomX = Math.random() * (window.innerWidth - 100);
-  const randomY = Math.random() * (window.innerHeight - 50);
-  boxCount++;
-  createBox(randomX, randomY, `Box ${boxCount}`);
-});
+function showLineMenu(x, y, lineData) {
+  const existingMenu = document.getElementById("lineMenu");
+  if (existingMenu) existingMenu.remove();
+
+  const menu = document.createElement("div");
+  menu.id = "lineMenu";
+  menu.style.position = "absolute";
+  menu.style.background = "white";
+  menu.style.border = "1px solid #ccc";
+  menu.style.borderRadius = "5px";
+  menu.style.padding = "5px";
+  menu.style.boxShadow = "0 2px 5px rgba(0,0,0,0.2)";
+  menu.style.zIndex = "1000";
+
+  const toggleDirectionOption = document.createElement("div");
+  toggleDirectionOption.innerHTML = `<i class="fa-solid fa-arrow-right-arrow-left"></i> &nbsp;Change Direction`;
+  toggleDirectionOption.style.padding = "8px 12px";
+  toggleDirectionOption.style.cursor = "pointer";
+  toggleDirectionOption.style.fontSize = "14px";
+
+  const removeLineOption = document.createElement("div");
+  removeLineOption.innerHTML = `<i class="fa-solid fa-trash"></i> &nbsp;Remove Line`;
+  removeLineOption.style.padding = "8px 12px";
+  removeLineOption.style.cursor = "pointer";
+  removeLineOption.style.fontSize = "14px";
+  removeLineOption.style.color = "#dc3545";
+
+  [toggleDirectionOption, removeLineOption].forEach((option) => {
+    option.addEventListener("mouseover", () => {
+      option.style.background = "#f0f0f0";
+    });
+
+    option.addEventListener("mouseout", () => {
+      option.style.background = "white";
+    });
+  });
+
+  toggleDirectionOption.addEventListener("click", () => {
+    lineData.direction = lineData.direction === "forward" ? "backward" : "forward";
+    updateLines();
+    updateConnectionsSummary();
+    menu.remove();
+  });
+
+  removeLineOption.addEventListener("click", () => {
+    lineData.line.remove();
+    lineData.hitArea.remove();
+    lineData.removeIcon.remove();
+    lines.splice(
+      lines.findIndex((l) => l.line === lineData.line),
+      1
+    );
+    updateConnectionsSummary();
+    menu.remove();
+  });
+
+  menu.appendChild(toggleDirectionOption);
+  menu.appendChild(removeLineOption);
+  document.body.appendChild(menu);
+
+  const menuRect = menu.getBoundingClientRect();
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+
+  menu.style.left = `${x + menuRect.width > viewportWidth ? x - menuRect.width : x}px`;
+  menu.style.top = `${y + menuRect.height > viewportHeight ? y - menuRect.height : y}px`;
+
+  document.addEventListener(
+    "click",
+    (e) => {
+      if (!menu.contains(e.target)) {
+        menu.remove();
+      }
+    },
+    { once: true }
+  );
+}
 
 const instructions = document.querySelector(".instructions");
 
@@ -357,37 +552,47 @@ instructions.addEventListener("mousedown", (e) => {
 
 const summaryPanel = document.querySelector(".summary-panel");
 const connectionsList = document.getElementById("connectionsList");
+const resizeHandle = document.querySelector(".resize-handle");
 
 let isDraggingPanel = false;
+let isResizing = false;
 let panelOffsetX, panelOffsetY;
+let initialWidth, initialHeight, initialX, initialY;
 
-summaryPanel.addEventListener("mousedown", (e) => {
-  isDraggingPanel = true;
-  summaryPanel.classList.add("dragging");
+// ...existing code for panel dragging...
 
-  panelOffsetX = e.clientX - summaryPanel.offsetLeft;
-  panelOffsetY = e.clientY - summaryPanel.offsetTop;
+resizeHandle.addEventListener("mousedown", (e) => {
+    e.stopPropagation(); // Prevent panel dragging when resizing
+    isResizing = true;
+    initialWidth = summaryPanel.offsetWidth;
+    initialHeight = summaryPanel.offsetHeight;
+    initialX = e.clientX;
+    initialY = e.clientY;
 
-  const onMouseMove = (e) => {
-    if (isDraggingPanel) {
-      const newX = e.clientX - panelOffsetX;
-      const newY = e.clientY - panelOffsetY;
+    const onMouseMove = (e) => {
+        if (!isResizing) return;
 
-      summaryPanel.style.left = `${newX}px`;
-      summaryPanel.style.top = `${newY}px`;
-    }
-  };
+        const deltaX = e.clientX - initialX;
+        const deltaY = e.clientY - initialY;
 
-  const onMouseUp = () => {
-    isDraggingPanel = false;
-    summaryPanel.classList.remove("dragging");
-    document.removeEventListener("mousemove", onMouseMove);
-    document.removeEventListener("mouseup", onMouseUp);
-  };
+        const newWidth = Math.max(150, initialWidth + deltaX);
+        const newHeight = Math.max(100, initialHeight + deltaY);
 
-  document.addEventListener("mousemove", onMouseMove);
-  document.addEventListener("mouseup", onMouseUp);
+        summaryPanel.style.width = `${newWidth}px`;
+        summaryPanel.style.height = `${newHeight}px`;
+    };
+
+    const onMouseUp = () => {
+        isResizing = false;
+        document.removeEventListener("mousemove", onMouseMove);
+        document.removeEventListener("mouseup", onMouseUp);
+    };
+
+    document.addEventListener("mousemove", onMouseMove);
+    document.addEventListener("mouseup", onMouseUp);
 });
+
+// ...rest of existing code...
 
 function updateConnectionsSummary() {
   connectionsList.innerHTML = "";
@@ -398,7 +603,7 @@ function updateConnectionsSummary() {
     return label1?.localeCompare(label2);
   });
 
-  sortedLinesByFirstName.forEach(({ uuid1, uuid2 }) => {
+  sortedLinesByFirstName.forEach(({ uuid1, uuid2, direction }) => {
     const label1 = boxData[uuid1]?.label;
     const label2 = boxData[uuid2]?.label;
     const color1 = boxData[uuid1]?.color;
@@ -406,10 +611,14 @@ function updateConnectionsSummary() {
 
     if (!label1 || !label2) return;
 
+    const arrow = direction === "forward" ? "→" : "←";
+    const [firstLabel, firstColor, secondLabel, secondColor] =
+      direction === "forward" ? [label1, color1, label2, color2] : [label2, color2, label1, color1];
+
     const listItem = document.createElement("li");
     listItem.innerHTML = `
-      <span style="color: ${color1}">${label1}</span> ↔ 
-      <span style="color: ${color2}">${label2}</span>
+      <span style="color: ${firstColor}">${firstLabel}</span><span style="font-size:12px;">${arrow}</span>
+      <span style="color: ${secondColor}">${secondLabel}</span>
     `;
     connectionsList.appendChild(listItem);
   });
@@ -450,10 +659,11 @@ resetBoxesButton.addEventListener("click", () => {
 
 function exportToJson() {
   const exportData = {
-    boxes: Object.values(boxData).map(({ uuid, label, color, element }) => ({
+    boxes: Object.values(boxData).map(({ uuid, label, color, element, shape }) => ({
       uuid,
       label,
       color,
+      shape,
       position: {
         x: parseInt(element.style.left),
         y: parseInt(element.style.top),
@@ -491,6 +701,7 @@ function removeBox(uuid, updateLines = true) {
   lines.forEach((line, index) => {
     if (line.uuid1 === uuid || line.uuid2 === uuid) {
       line.line.remove();
+      line.hitArea.remove();
       line.uuid1 = "";
       line.uuid2 = "";
       line.removeIcon.remove();
@@ -519,13 +730,14 @@ function importFromJson() {
 
         clearAll();
 
-        data.boxes.forEach(({ uuid, label, color, position }) => {
-          const box = createBox(position.x, position.y, label, uuid);
+        data.boxes.forEach(({ uuid, label, color, position, shape }) => {
+          const box = createBox(position.x, position.y, label, uuid, shape);
           box.style.background = color;
           boxData[uuid] = {
             uuid,
             label,
             color,
+            shape,
             element: box,
           };
           box.dataset.uuid = uuid;
@@ -571,28 +783,60 @@ function showCanvasMenu(x, y) {
   menu.style.boxShadow = "0 2px 5px rgba(0,0,0,0.2)";
   menu.style.zIndex = "1000";
 
-  const addBoxOption = document.createElement("div");
-  addBoxOption.innerHTML = `<i class="fa-regular fa-square-plus"></i> &nbsp;Add Box Here`;
-  addBoxOption.style.padding = "8px 12px";
-  addBoxOption.style.cursor = "pointer";
-  addBoxOption.style.fontSize = "14px";
+  const addRectangleOption = document.createElement("div");
+  addRectangleOption.innerHTML = `<i class="fa-regular fa-square"></i> &nbsp;Add Rectangle Box`;
+  addRectangleOption.style.padding = "8px 12px";
+  addRectangleOption.style.cursor = "pointer";
+  addRectangleOption.style.fontSize = "14px";
 
-  addBoxOption.addEventListener("mouseover", () => {
-    addBoxOption.style.background = "#f0f0f0";
+  const addCircleOption = document.createElement("div");
+  addCircleOption.innerHTML = `<i class="fa-regular fa-circle"></i> &nbsp;Add Circle Box`;
+  addCircleOption.style.padding = "8px 12px";
+  addCircleOption.style.cursor = "pointer";
+  addCircleOption.style.fontSize = "14px";
+
+  [addRectangleOption, addCircleOption].forEach((option) => {
+    option.addEventListener("mouseover", () => {
+      option.style.background = "#f0f0f0";
+    });
+
+    option.addEventListener("mouseout", () => {
+      option.style.background = "white";
+    });
   });
 
-  addBoxOption.addEventListener("mouseout", () => {
-    addBoxOption.style.background = "white";
-  });
-
-  addBoxOption.addEventListener("click", () => {
+  addRectangleOption.addEventListener("click", () => {
     boxCount++;
-    createBox(x, y, `Box ${boxCount}`);
+    createBox(x, y, `${defaultName} ${boxCount}`, null, "rectangle");
     menu.remove();
   });
 
-  menu.appendChild(addBoxOption);
+  addCircleOption.addEventListener("click", () => {
+    boxCount++;
+    createBox(x, y, `${defaultName} ${boxCount}`, null, "circle");
+    menu.remove();
+  });
+
+  menu.appendChild(addRectangleOption);
+  menu.appendChild(addCircleOption);
+
   document.body.appendChild(menu);
+
+  const menuRect = menu.getBoundingClientRect();
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+
+  if (menuRect.right > viewportWidth) {
+    menu.style.left = `${x - menuRect.width}px`;
+  } else {
+    menu.style.left = `${x}px`;
+  }
+
+  if (menuRect.bottom > viewportHeight) {
+    menu.style.top = `${y - menuRect.height}px`;
+  } else {
+    menu.style.top = `${y}px`;
+  }
 
   document.addEventListener(
     "click",
@@ -605,6 +849,6 @@ function showCanvasMenu(x, y) {
   );
 }
 
-createBox(300, 400, "Box 1");
-createBox(300, 200, "Box 2");
-createBox(500, 100, "Box 3");
+createBox(300, 400, `${defaultName} 1`, null, "rectangle");
+createBox(300, 200, `${defaultName} 2`, null, "rectangle");
+createBox(500, 100, `${defaultName} 3`, null, "circle");

@@ -44,8 +44,6 @@
 
         .linkedBox {
             position: absolute;
-            width: 126px !important;
-            height: 50px !important;
             background: #007bff;
             color: white;
             text-align: center;
@@ -78,6 +76,21 @@
             border: 1px solid #ccc;
             z-index: 10;
             cursor: grab;
+            resize: both;
+            overflow: auto;
+            min-width: 150px;
+            min-height: 100px;
+        }
+
+        .resize-handle {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 15px;
+            height: 15px;
+            cursor: se-resize;
+            background: linear-gradient(135deg, transparent 50%, #ccc 50%);
+            border-radius: 0 0 5px 0;
         }
 
         .summary-panel.dragging {
@@ -196,10 +209,10 @@
         <ul>
             <li>Drag the boxes to move them.</li>
             <li>Click two boxes to connect them with a line.</li>
-            <li>Click "Add Box" to create a new box.</li>
             <li>Right-click on a box to change its color.</li>
+            <li>Right-click on a connection to remove it.</li>
+            <li>Right-click anywhere to see context menu.</li>
         </ul>
-        <button id="addBoxButton" class="lButton">Add Box</button>
         <button id="resetBoxesButton" class="lButton" aria-label="Save boxes outside the screen!" title="Save boxes outside the screen!">Reset Positions</button>
         <button id="saveButton" class="lButton" onclick="exportToJson()">💾 Save</button>
         <button id="loadButton" class="lButton" onclick="importFromJson()">📂 Load</button>
@@ -209,6 +222,7 @@
         <h3>Connections Summary</h3>
         <ul id="connectionsList">
         </ul>
+        <div class="resize-handle"></div>
     </div>
 
     <div id="container"></div>
@@ -238,7 +252,6 @@
 
 </body>
 <script>
-    // move footer to the bottom of the page
     const footer = document.querySelector('footer');
     footer.style.position = 'absolute';
     footer.style.bottom = '0';

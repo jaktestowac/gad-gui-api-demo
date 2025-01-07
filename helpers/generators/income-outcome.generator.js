@@ -158,7 +158,6 @@ function generateIncomeOutcomeData(nSamples) {
   const incomeOutcomeData = [];
   for (let i = 0; i < pastDays.length; i++) {
     const dataGenerator = new RandomValueGeneratorWithSeed(pastDays[i]);
-    // const transactionsGenerator = new RandomValueGenerator(pastDays[i] + "-transactions");
 
     const date = pastDays[i];
     const transactions = [];
