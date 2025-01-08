@@ -38,11 +38,15 @@
             cursor: grab;
         }
 
+        .small-header {
+            font-size: 10px;
+        }
+
         .instructions.dragging {
             cursor: grabbing;
         }
 
-        .linkedBox {
+        .linkedShape {
             position: absolute;
             background: #007bff;
             color: white;
@@ -57,6 +61,7 @@
             box-sizing: border-box;
             padding-left: 5px;
             padding: 0px;
+            font-size: 12px;
         }
 
         .line {
@@ -219,7 +224,7 @@
     </div>
 
     <div class="summary-panel">
-        <h3>Connections Summary</h3>
+        <strong class="small-header">Connections Summary:</strong>
         <ul id="connectionsList">
         </ul>
         <div class="resize-handle"></div>

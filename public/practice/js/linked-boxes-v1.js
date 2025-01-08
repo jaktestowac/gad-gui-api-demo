@@ -15,11 +15,10 @@ const darkColors = {
   "#343a40": "#1d2124",
 };
 
-const shapes = ["rectangle", "circle", "triangle"];
 const shapeSizes = {
   rectangle: { width: 100, height: 50 },
   circle: { width: 100, height: 100 },
-  triangle: { width: 100, height: 100 },
+  box: { width: 50, height: 50 },
 };
 
 const defaultName = "Object";
@@ -32,7 +31,6 @@ svg.style.top = "0";
 svg.style.left = "0";
 container.appendChild(svg);
 
-// Add marker definitions for both forward and backward arrows
 const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
 const markerEnd = document.createElementNS("http://www.w3.org/2000/svg", "marker");
 markerEnd.setAttribute("id", "arrow-end");
@@ -51,6 +49,22 @@ markerEnd.appendChild(path);
 defs.appendChild(markerEnd);
 svg.appendChild(defs);
 
+const markerStart = document.createElementNS("http://www.w3.org/2000/svg", "marker");
+markerStart.setAttribute("id", "arrow-start");
+markerStart.setAttribute("markerWidth", "10");
+markerStart.setAttribute("markerHeight", "10");
+markerStart.setAttribute("refX", "0");
+markerStart.setAttribute("refY", "5");
+markerStart.setAttribute("orient", "auto");
+markerStart.setAttribute("markerUnits", "strokeWidth");
+
+const startPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+startPath.setAttribute("d", "M 10 0 L 0 5 L 10 10 z");
+startPath.setAttribute("fill", "black");
+
+markerStart.appendChild(startPath);
+defs.appendChild(markerStart);
+
 const lines = [];
 let selectedBox = null;
 function generateUUID() {
@@ -63,20 +77,31 @@ function generateUUID() {
 
 const boxData = {};
 
-function createBox(x, y, label, uuid, shape = "rectangle") {
-  if (!uuid) {
+function createBox(x, y, boxOptions) {
+  const label = boxOptions.label;
+  let uuid = boxOptions.uuid;
+  const shape = boxOptions.shape || "rectangle";
+  const color = boxOptions.color || "#007bff";
+
+  if (uuid === null || uuid === undefined) {
     uuid = generateUUID();
   }
 
   boxCount += 1;
   const box = document.createElement("div");
-  box.classList.add("linkedBox");
+  box.classList.add("linkedShape");
 
-  // check possible types of shapes
   if (shape === "rectangle") {
     box.style.width = shapeSizes.rectangle.width + "px";
     box.style.height = shapeSizes.rectangle.height + "px";
     box.style.borderRadius = "5px";
+  } else if (shape === "box") {
+    box.style.width = shapeSizes.box.width + "px";
+    box.style.height = shapeSizes.box.height + "px";
+    box.style.borderRadius = "5px";
+    box.style.display = "flex";
+    box.style.alignItems = "center";
+    box.style.justifyContent = "center";
   } else if (shape === "circle") {
     box.style.borderRadius = "50%";
     box.style.width = shapeSizes.circle.width + "px";
@@ -91,9 +116,10 @@ function createBox(x, y, label, uuid, shape = "rectangle") {
   box.style.left = `${x}px`;
   box.style.top = `${y}px`;
   box.textContent = label;
+  box.style.background = color;
 
   box.dataset.uuid = uuid;
-  boxData[uuid] = { uuid, label, element: box, color: "#007bff", shape };
+  boxData[uuid] = { uuid, label, element: box, color, shape };
 
   let isDragging = false;
   let hasMoved = false;
@@ -434,6 +460,14 @@ function updateLines() {
       hitArea.setAttribute("y2", endY1);
     }
 
+    if (direction === "bidirectional") {
+      line.setAttribute("marker-start", "url(#arrow-start)");
+      line.setAttribute("marker-end", "url(#arrow-end)");
+    } else {
+      line.setAttribute("marker-start", "none");
+      line.setAttribute("marker-end", "url(#arrow-end)");
+    }
+
     const midX = (endX1 + endX2) / 2;
     const midY = (endY1 + endY2) / 2;
     removeIcon.setAttribute("transform", `translate(${midX}, ${midY})`);
@@ -467,7 +501,13 @@ function showLineMenu(x, y, lineData) {
   removeLineOption.style.fontSize = "14px";
   removeLineOption.style.color = "#dc3545";
 
-  [toggleDirectionOption, removeLineOption].forEach((option) => {
+  const toggleBidirectionalOption = document.createElement("div");
+  toggleBidirectionalOption.innerHTML = `<i class="fa-solid fa-arrows-left-right"></i> &nbsp;Toggle Bidirectional`;
+  toggleBidirectionalOption.style.padding = "8px 12px";
+  toggleBidirectionalOption.style.cursor = "pointer";
+  toggleBidirectionalOption.style.fontSize = "14px";
+
+  [toggleDirectionOption, removeLineOption, toggleBidirectionalOption].forEach((option) => {
     option.addEventListener("mouseover", () => {
       option.style.background = "#f0f0f0";
     });
@@ -496,7 +536,19 @@ function showLineMenu(x, y, lineData) {
     menu.remove();
   });
 
+  toggleBidirectionalOption.addEventListener("click", () => {
+    if (lineData.direction === "bidirectional") {
+      lineData.direction = "forward";
+    } else {
+      lineData.direction = "bidirectional";
+    }
+    updateLines();
+    updateConnectionsSummary();
+    menu.remove();
+  });
+
   menu.appendChild(toggleDirectionOption);
+  menu.appendChild(toggleBidirectionalOption);
   menu.appendChild(removeLineOption);
   document.body.appendChild(menu);
 
@@ -559,40 +611,36 @@ let isResizing = false;
 let panelOffsetX, panelOffsetY;
 let initialWidth, initialHeight, initialX, initialY;
 
-// ...existing code for panel dragging...
-
 resizeHandle.addEventListener("mousedown", (e) => {
-    e.stopPropagation(); // Prevent panel dragging when resizing
-    isResizing = true;
-    initialWidth = summaryPanel.offsetWidth;
-    initialHeight = summaryPanel.offsetHeight;
-    initialX = e.clientX;
-    initialY = e.clientY;
+  e.stopPropagation();
+  isResizing = true;
+  initialWidth = summaryPanel.offsetWidth;
+  initialHeight = summaryPanel.offsetHeight;
+  initialX = e.clientX;
+  initialY = e.clientY;
 
-    const onMouseMove = (e) => {
-        if (!isResizing) return;
+  const onMouseMove = (e) => {
+    if (!isResizing) return;
 
-        const deltaX = e.clientX - initialX;
-        const deltaY = e.clientY - initialY;
+    const deltaX = e.clientX - initialX;
+    const deltaY = e.clientY - initialY;
 
-        const newWidth = Math.max(150, initialWidth + deltaX);
-        const newHeight = Math.max(100, initialHeight + deltaY);
+    const newWidth = Math.max(150, initialWidth + deltaX);
+    const newHeight = Math.max(100, initialHeight + deltaY);
 
-        summaryPanel.style.width = `${newWidth}px`;
-        summaryPanel.style.height = `${newHeight}px`;
-    };
+    summaryPanel.style.width = `${newWidth}px`;
+    summaryPanel.style.height = `${newHeight}px`;
+  };
 
-    const onMouseUp = () => {
-        isResizing = false;
-        document.removeEventListener("mousemove", onMouseMove);
-        document.removeEventListener("mouseup", onMouseUp);
-    };
+  const onMouseUp = () => {
+    isResizing = false;
+    document.removeEventListener("mousemove", onMouseMove);
+    document.removeEventListener("mouseup", onMouseUp);
+  };
 
-    document.addEventListener("mousemove", onMouseMove);
-    document.addEventListener("mouseup", onMouseUp);
+  document.addEventListener("mousemove", onMouseMove);
+  document.addEventListener("mouseup", onMouseUp);
 });
-
-// ...rest of existing code...
 
 function updateConnectionsSummary() {
   connectionsList.innerHTML = "";
@@ -611,7 +659,8 @@ function updateConnectionsSummary() {
 
     if (!label1 || !label2) return;
 
-    const arrow = direction === "forward" ? "→" : "←";
+    const arrow =
+      direction === "forward" ? "→" : direction === "backward" ? "←" : direction === "bidirectional" ? "↔" : "→";
     const [firstLabel, firstColor, secondLabel, secondColor] =
       direction === "forward" ? [label1, color1, label2, color2] : [label2, color2, label1, color1];
 
@@ -669,9 +718,10 @@ function exportToJson() {
         y: parseInt(element.style.top),
       },
     })),
-    connections: lines.map(({ uuid1, uuid2 }) => ({
+    connections: lines.map(({ uuid1, uuid2, direction }) => ({
       from: uuid1,
       to: uuid2,
+      direction: direction,
     })),
   };
 
@@ -731,7 +781,7 @@ function importFromJson() {
         clearAll();
 
         data.boxes.forEach(({ uuid, label, color, position, shape }) => {
-          const box = createBox(position.x, position.y, label, uuid, shape);
+          const box = createBox(position.x, position.y, { label, uuid, shape });
           box.style.background = color;
           boxData[uuid] = {
             uuid,
@@ -743,8 +793,11 @@ function importFromJson() {
           box.dataset.uuid = uuid;
         });
 
-        data.connections.forEach(({ from, to }) => {
+        data.connections.forEach(({ from, to, direction }) => {
           createLine(from, to);
+          const line = lines[lines.length - 1];
+          line.direction = direction || "forward";
+          updateLines();
         });
 
         updateConnectionsSummary();
@@ -784,18 +837,24 @@ function showCanvasMenu(x, y) {
   menu.style.zIndex = "1000";
 
   const addRectangleOption = document.createElement("div");
-  addRectangleOption.innerHTML = `<i class="fa-regular fa-square"></i> &nbsp;Add Rectangle Box`;
+  addRectangleOption.innerHTML = `<i class="fa-regular fa-square"></i> &nbsp;Add Rectangle`;
   addRectangleOption.style.padding = "8px 12px";
   addRectangleOption.style.cursor = "pointer";
   addRectangleOption.style.fontSize = "14px";
 
   const addCircleOption = document.createElement("div");
-  addCircleOption.innerHTML = `<i class="fa-regular fa-circle"></i> &nbsp;Add Circle Box`;
+  addCircleOption.innerHTML = `<i class="fa-regular fa-circle"></i> &nbsp;Add Circle`;
   addCircleOption.style.padding = "8px 12px";
   addCircleOption.style.cursor = "pointer";
   addCircleOption.style.fontSize = "14px";
 
-  [addRectangleOption, addCircleOption].forEach((option) => {
+  const addBoxOption = document.createElement("div");
+  addBoxOption.innerHTML = `<i class="fa-regular fa-square"></i> &nbsp;Add Box`;
+  addBoxOption.style.padding = "8px 12px";
+  addBoxOption.style.cursor = "pointer";
+  addBoxOption.style.fontSize = "14px";
+
+  [addRectangleOption, addCircleOption, addBoxOption].forEach((option) => {
     option.addEventListener("mouseover", () => {
       option.style.background = "#f0f0f0";
     });
@@ -807,17 +866,24 @@ function showCanvasMenu(x, y) {
 
   addRectangleOption.addEventListener("click", () => {
     boxCount++;
-    createBox(x, y, `${defaultName} ${boxCount}`, null, "rectangle");
+    createBox(x, y, { label: `${defaultName} ${boxCount}`, uuid: null, shape: "rectangle" });
     menu.remove();
   });
 
   addCircleOption.addEventListener("click", () => {
     boxCount++;
-    createBox(x, y, `${defaultName} ${boxCount}`, null, "circle");
+    createBox(x, y, { label: `${defaultName} ${boxCount}`, uuid: null, shape: "circle" });
+    menu.remove();
+  });
+
+  addBoxOption.addEventListener("click", () => {
+    boxCount++;
+    createBox(x, y, { label: `${defaultName} ${boxCount}`, uuid: null, shape: "box" });
     menu.remove();
   });
 
   menu.appendChild(addRectangleOption);
+  menu.appendChild(addBoxOption);
   menu.appendChild(addCircleOption);
 
   document.body.appendChild(menu);
@@ -849,6 +915,6 @@ function showCanvasMenu(x, y) {
   );
 }
 
-createBox(300, 400, `${defaultName} 1`, null, "rectangle");
-createBox(300, 200, `${defaultName} 2`, null, "rectangle");
-createBox(500, 100, `${defaultName} 3`, null, "circle");
+createBox(300, 400, { label: `${defaultName} 1`, uuid: null, shape: "rectangle", color: "#28a745" });
+createBox(300, 200, { label: `${defaultName} 2`, uuid: null, shape: "rectangle" });
+createBox(500, 100, { label: `${defaultName} 3`, uuid: null, shape: "circle" });
