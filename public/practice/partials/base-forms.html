@@ -12,7 +12,15 @@
         margin-top: 10px;
         border-radius: 14px;
         padding: 10px;
-        width: 50%;
+        width: 400px;
+        border: 5px solid rgb(226, 226, 226);
+    }
+
+    .big-round-container {
+        margin-top: 10px;
+        border-radius: 14px;
+        padding: 10px;
+        width: 500px;
         border: 5px solid rgb(226, 226, 226);
     }
 
@@ -58,8 +66,10 @@
 <body>
 
     <div align="center">
-        <div id="regular-host" class="round-container"></div>
-        <div id="sample-elements" class="round-container">
+        <div class="big-round-container">
+            <h3>Hello from IFrame!</h3>
+            <div id="regular-host" class="round-container"></div>
+            <div id="sample-elements" class="round-container"></div>
         </div>
     </div>
 
@@ -72,8 +82,8 @@
 <script type="text/javascript" src="../js/base-forms.js"></script>
 
 <script>
-    addSimpleForm("regular-host", "Hello from IFrame!")
-    addSimpleElements("sample-elements", "Hello from another IFrame!")
+    addSimpleForm("regular-host", " ")
+    addSimpleElements("sample-elements", " ")
 </script>
 
 </html>
