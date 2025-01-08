@@ -21,6 +21,12 @@ const shapeSizes = {
   box: { width: 50, height: 50 },
 };
 
+const lineStyles = {
+  solid: { style: "solid", label: "Solid", strokeDasharray: "none" },
+  dashed: { style: "dashed", label: "Dashed", strokeDasharray: "5,5" },
+  dotted: { style: "dotted", label: "Dotted", strokeDasharray: "1,1" },
+};
+
 const defaultName = "Object";
 
 const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -375,7 +381,7 @@ function createLine(uuid1, uuid2) {
   hitArea.classList.add("line-hit-area");
 
   const removeIcon = createLineRemoveIcon();
-  const lineData = { line, hitArea, uuid1, uuid2, removeIcon, direction: "forward" };
+  const lineData = { line, hitArea, uuid1, uuid2, removeIcon, direction: "forward", lineStyle: "solid" };
 
   line.addEventListener("contextmenu", (e) => {
     e.preventDefault();
@@ -410,7 +416,7 @@ function createLine(uuid1, uuid2) {
 }
 
 function updateLines() {
-  lines.forEach(({ line, hitArea, uuid1, uuid2, removeIcon, direction }) => {
+  lines.forEach(({ line, hitArea, uuid1, uuid2, removeIcon, direction, lineStyle }) => {
     const box1 = boxData[uuid1]?.element;
     const box2 = boxData[uuid2]?.element;
 
@@ -468,6 +474,8 @@ function updateLines() {
       line.setAttribute("marker-end", "url(#arrow-end)");
     }
 
+    line.style.strokeDasharray = lineStyles[lineStyle].strokeDasharray;
+
     const midX = (endX1 + endX2) / 2;
     const midY = (endY1 + endY2) / 2;
     removeIcon.setAttribute("transform", `translate(${midX}, ${midY})`);
@@ -507,21 +515,73 @@ function showLineMenu(x, y, lineData) {
   toggleBidirectionalOption.style.cursor = "pointer";
   toggleBidirectionalOption.style.fontSize = "14px";
 
-  [toggleDirectionOption, removeLineOption, toggleBidirectionalOption].forEach((option) => {
+  const lineStyleOption = document.createElement("div");
+  lineStyleOption.innerHTML = `<i class="fa-solid fa-ruler"></i> &nbsp;Line Style&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▸`;
+  lineStyleOption.style.padding = "8px 12px";
+  lineStyleOption.style.cursor = "pointer";
+  lineStyleOption.style.fontSize = "14px";
+  lineStyleOption.style.position = "relative";
+
+  const lineStyleSubMenu = document.createElement("div");
+  lineStyleSubMenu.style.position = "absolute";
+  lineStyleSubMenu.style.left = "100%";
+  lineStyleSubMenu.style.top = "0";
+  lineStyleSubMenu.style.background = "white";
+  lineStyleSubMenu.style.border = "1px solid #ccc";
+  lineStyleSubMenu.style.borderRadius = "5px";
+  lineStyleSubMenu.style.padding = "5px";
+  lineStyleSubMenu.style.boxShadow = "0 2px 5px rgba(0,0,0,0.2)";
+  lineStyleSubMenu.style.display = "none";
+
+  Object.entries(lineStyles).forEach(([style, { label }]) => {
+    const styleOption = document.createElement("div");
+    styleOption.textContent = label;
+    styleOption.style.padding = "8px 12px";
+    styleOption.style.cursor = "pointer";
+    styleOption.style.fontSize = "14px";
+
+    styleOption.addEventListener("mouseover", () => {
+      styleOption.style.background = "#f0f0f0";
+    });
+
+    styleOption.addEventListener("mouseout", () => {
+      styleOption.style.background = "white";
+    });
+
+    styleOption.addEventListener("click", () => {
+      lineData.lineStyle = style;
+      updateLines();
+      menu.remove();
+    });
+
+    lineStyleSubMenu.appendChild(styleOption);
+  });
+
+  lineStyleOption.appendChild(lineStyleSubMenu);
+
+  lineStyleOption.addEventListener("mouseover", () => {
+    lineStyleOption.style.background = "#f0f0f0";
+    lineStyleSubMenu.style.display = "block";
+  });
+
+  lineStyleOption.addEventListener("mouseout", (e) => {
+    if (!lineStyleOption.contains(e.relatedTarget)) {
+      lineStyleOption.style.background = "white";
+      lineStyleSubMenu.style.display = "none";
+    }
+  });
+
+  [toggleDirectionOption, removeLineOption, toggleBidirectionalOption, lineStyleOption].forEach((option) => {
     option.addEventListener("mouseover", () => {
+      if (option !== lineStyleOption) {
+        lineStyleSubMenu.style.display = "none";
+      }
       option.style.background = "#f0f0f0";
     });
 
     option.addEventListener("mouseout", () => {
       option.style.background = "white";
     });
-  });
-
-  toggleDirectionOption.addEventListener("click", () => {
-    lineData.direction = lineData.direction === "forward" ? "backward" : "forward";
-    updateLines();
-    updateConnectionsSummary();
-    menu.remove();
   });
 
   removeLineOption.addEventListener("click", () => {
@@ -536,19 +596,9 @@ function showLineMenu(x, y, lineData) {
     menu.remove();
   });
 
-  toggleBidirectionalOption.addEventListener("click", () => {
-    if (lineData.direction === "bidirectional") {
-      lineData.direction = "forward";
-    } else {
-      lineData.direction = "bidirectional";
-    }
-    updateLines();
-    updateConnectionsSummary();
-    menu.remove();
-  });
-
   menu.appendChild(toggleDirectionOption);
   menu.appendChild(toggleBidirectionalOption);
+  menu.appendChild(lineStyleOption);
   menu.appendChild(removeLineOption);
   document.body.appendChild(menu);
 
@@ -718,10 +768,11 @@ function exportToJson() {
         y: parseInt(element.style.top),
       },
     })),
-    connections: lines.map(({ uuid1, uuid2, direction }) => ({
+    connections: lines.map(({ uuid1, uuid2, direction, lineStyle }) => ({
       from: uuid1,
       to: uuid2,
       direction: direction,
+      lineStyle: lineStyle || "solid",
     })),
   };
 
@@ -793,10 +844,11 @@ function importFromJson() {
           box.dataset.uuid = uuid;
         });
 
-        data.connections.forEach(({ from, to, direction }) => {
+        data.connections.forEach(({ from, to, direction, lineStyle }) => {
           createLine(from, to);
           const line = lines[lines.length - 1];
           line.direction = direction || "forward";
+          line.lineStyle = lineStyle || "solid";
           updateLines();
         });
 
