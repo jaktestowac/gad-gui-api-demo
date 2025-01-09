@@ -695,6 +695,7 @@ const summaryPanel = document.querySelector(".summary-panel");
 const connectionsPanel = document.getElementById("connectionsPanel");
 const connectionsList = document.getElementById("connectionsList");
 const resizeHandle = document.querySelector(".resize-handle");
+const connectionPanelDragHandle = document.querySelector(".connections-panel-drag-handle");
 
 const instructions = document.querySelector(".instructions");
 
@@ -725,11 +726,11 @@ instructions.addEventListener("mousedown", (e) => {
   document.addEventListener("mouseup", onMouseUp);
 });
 
-connectionsList.addEventListener("mousedown", (e) => {
+connectionPanelDragHandle.addEventListener("mousedown", (e) => {
   e.stopPropagation();
 
   isDraggingConnectionsPanel = true;
-  connectionsPanel.classList.add("dragging");
+  connectionPanelDragHandle.classList.add("dragging");
   offsetX = e.clientX - connectionsPanel.offsetLeft;
   offsetY = e.clientY - connectionsPanel.offsetTop;
 
@@ -744,7 +745,7 @@ connectionsList.addEventListener("mousedown", (e) => {
 
   const onMouseUp = () => {
     isDraggingConnectionsPanel = false;
-    connectionsPanel.classList.remove("dragging");
+    connectionPanelDragHandle.classList.remove("dragging");
     document.removeEventListener("mousemove", onMouseMove);
     document.removeEventListener("mouseup", onMouseUp);
   };
