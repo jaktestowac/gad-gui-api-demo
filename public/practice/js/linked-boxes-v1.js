@@ -272,6 +272,7 @@ function openColorMenu(x, y, uuid) {
   const lockIcon = document.createElement("span");
   lockIcon.innerHTML = isLocked ? "🔓" : "🔒";
   lockIcon.alt = isLocked ? "Unlock Box" : "Lock Box";
+  lockIcon.title = isLocked ? "Unlock Box" : "Lock Box";
   lockOption.appendChild(lockIcon);
 
   // const lockText = document.createElement("span");
@@ -291,6 +292,7 @@ function openColorMenu(x, y, uuid) {
   const trashIcon = document.createElement("span");
   trashIcon.innerHTML = "🗑️";
   trashIcon.alt = "Remove Box";
+  trashIcon.title = "Remove Box";
   removeOption.appendChild(trashIcon);
 
   removeOption.addEventListener("click", () => {
@@ -360,6 +362,7 @@ function createLineRemoveIcon() {
   circle.setAttribute("fill", "#dc3545");
 
   text.textContent = "×";
+  text.title = "Remove Line";
   text.setAttribute("fill", "white");
   text.setAttribute("font-size", "12");
   text.setAttribute("text-anchor", "middle");
@@ -682,10 +685,18 @@ function showLineMenu(x, y, lineData) {
   );
 }
 
-const instructions = document.querySelector(".instructions");
-
+let isResizing = false;
+let initialWidth, initialHeight, initialX, initialY;
 let isDraggingInstructions = false;
+let isDraggingConnectionsPanel = false;
 let offsetX, offsetY;
+
+const summaryPanel = document.querySelector(".summary-panel");
+const connectionsPanel = document.getElementById("connectionsPanel");
+const connectionsList = document.getElementById("connectionsList");
+const resizeHandle = document.querySelector(".resize-handle");
+
+const instructions = document.querySelector(".instructions");
 
 instructions.addEventListener("mousedown", (e) => {
   isDraggingInstructions = true;
@@ -714,14 +725,33 @@ instructions.addEventListener("mousedown", (e) => {
   document.addEventListener("mouseup", onMouseUp);
 });
 
-const summaryPanel = document.querySelector(".summary-panel");
-const connectionsList = document.getElementById("connectionsList");
-const resizeHandle = document.querySelector(".resize-handle");
+connectionsList.addEventListener("mousedown", (e) => {
+  e.stopPropagation();
 
-let isDraggingPanel = false;
-let isResizing = false;
-let panelOffsetX, panelOffsetY;
-let initialWidth, initialHeight, initialX, initialY;
+  isDraggingConnectionsPanel = true;
+  connectionsPanel.classList.add("dragging");
+  offsetX = e.clientX - connectionsPanel.offsetLeft;
+  offsetY = e.clientY - connectionsPanel.offsetTop;
+
+  const onMouseMove = (e) => {
+    if (!isDraggingConnectionsPanel || isResizing) return;
+    const newX = e.clientX - offsetX;
+    const newY = e.clientY - offsetY;
+
+    connectionsPanel.style.left = `${newX}px`;
+    connectionsPanel.style.top = `${newY}px`;
+  };
+
+  const onMouseUp = () => {
+    isDraggingConnectionsPanel = false;
+    connectionsPanel.classList.remove("dragging");
+    document.removeEventListener("mousemove", onMouseMove);
+    document.removeEventListener("mouseup", onMouseUp);
+  };
+
+  document.addEventListener("mousemove", onMouseMove);
+  document.addEventListener("mouseup", onMouseUp);
+});
 
 resizeHandle.addEventListener("mousedown", (e) => {
   e.stopPropagation();

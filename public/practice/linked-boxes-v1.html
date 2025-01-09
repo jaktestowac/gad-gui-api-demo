@@ -96,6 +96,7 @@
             cursor: se-resize;
             background: linear-gradient(135deg, transparent 50%, #ccc 50%);
             border-radius: 0 0 5px 0;
+            z-index: 10;
         }
 
         .summary-panel.dragging {
@@ -228,7 +229,7 @@
         <button id="loadButton" class="lButton" onclick="importFromJson()">📂 Load</button>
     </div>
 
-    <div class="summary-panel">
+    <div class="summary-panel" id="connectionsPanel">
         <strong class="small-header">Connections Summary:</strong>
         <ul id="connectionsList">
         </ul>
