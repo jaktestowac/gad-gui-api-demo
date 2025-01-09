@@ -88,6 +88,7 @@ function createBox(x, y, boxOptions) {
   let uuid = boxOptions.uuid;
   const shape = boxOptions.shape || "rectangle";
   const color = boxOptions.color || "#007bff";
+  const locked = boxOptions.locked || false;
 
   if (uuid === null || uuid === undefined) {
     uuid = generateUUID();
@@ -125,13 +126,13 @@ function createBox(x, y, boxOptions) {
   box.style.background = color;
 
   box.dataset.uuid = uuid;
-  boxData[uuid] = { uuid, label, element: box, color, shape };
+  boxData[uuid] = { uuid, label, element: box, color, shape, locked };
 
   let isDragging = false;
   let hasMoved = false;
 
   box.addEventListener("mousedown", (e) => {
-    if (e.button === 2) return;
+    if (e.button === 2 || boxData[uuid].locked) return;
     isDragging = true;
     hasMoved = false;
     box.style.cursor = "grabbing";
@@ -163,6 +164,7 @@ function createBox(x, y, boxOptions) {
   });
 
   box.addEventListener("dblclick", () => {
+    if (boxData[uuid].locked) return;
     const currentLabel = boxData[uuid].label;
 
     const input = document.createElement("input");
@@ -263,6 +265,26 @@ function openColorMenu(x, y, uuid) {
     menu.appendChild(colorOption);
   });
 
+  const lockOption = document.createElement("div");
+  lockOption.classList.add("lock-option");
+
+  const isLocked = boxData[uuid].locked;
+  const lockIcon = document.createElement("span");
+  lockIcon.innerHTML = isLocked ? "🔓" : "🔒";
+  lockIcon.alt = isLocked ? "Unlock Box" : "Lock Box";
+  lockOption.appendChild(lockIcon);
+
+  // const lockText = document.createElement("span");
+  // lockText.innerHTML = ` ${isLocked ? "Unlock" : "Lock"}`;
+  // lockOption.appendChild(lockText);
+
+  lockOption.addEventListener("click", () => {
+    boxData[uuid].locked = !boxData[uuid].locked;
+    const box = boxData[uuid].element;
+    updateBoxLockIndicator(box, uuid);
+    document.body.removeChild(menu);
+  });
+
   const removeOption = document.createElement("div");
   removeOption.classList.add("remove-option");
 
@@ -272,10 +294,13 @@ function openColorMenu(x, y, uuid) {
   removeOption.appendChild(trashIcon);
 
   removeOption.addEventListener("click", () => {
-    removeBox(uuid);
-    document.body.removeChild(menu);
+    if (!boxData[uuid].locked) {
+      removeBox(uuid);
+      document.body.removeChild(menu);
+    }
   });
 
+  menu.appendChild(lockOption);
   menu.appendChild(removeOption);
 
   document.body.appendChild(menu);
@@ -305,6 +330,25 @@ function openColorMenu(x, y, uuid) {
     },
     { once: true }
   );
+}
+
+function updateBoxLockIndicator(box, uuid) {
+  const existingLockIcon = box.querySelector(".lock-indicator");
+  if (existingLockIcon) {
+    existingLockIcon.remove();
+  }
+
+  if (boxData[uuid].locked) {
+    const lockIcon = document.createElement("span");
+    lockIcon.classList.add("lock-indicator");
+    lockIcon.innerHTML = "🔒";
+    lockIcon.style.position = "absolute";
+    lockIcon.style.top = "5px";
+    lockIcon.style.left = "5px";
+    lockIcon.style.fontSize = "12px";
+    lockIcon.style.opacity = "0.7";
+    box.appendChild(lockIcon);
+  }
 }
 
 function createLineRemoveIcon() {
@@ -596,6 +640,24 @@ function showLineMenu(x, y, lineData) {
     menu.remove();
   });
 
+  toggleDirectionOption.addEventListener("click", () => {
+    lineData.direction = lineData.direction === "forward" ? "backward" : "forward";
+    updateLines();
+    updateConnectionsSummary();
+    menu.remove();
+  });
+
+  toggleBidirectionalOption.addEventListener("click", () => {
+    if (lineData.direction === "bidirectional") {
+      lineData.direction = "forward";
+    } else {
+      lineData.direction = "bidirectional";
+    }
+    updateLines();
+    updateConnectionsSummary();
+    menu.remove();
+  });
+
   menu.appendChild(toggleDirectionOption);
   menu.appendChild(toggleBidirectionalOption);
   menu.appendChild(lineStyleOption);
@@ -758,11 +820,12 @@ resetBoxesButton.addEventListener("click", () => {
 
 function exportToJson() {
   const exportData = {
-    boxes: Object.values(boxData).map(({ uuid, label, color, element, shape }) => ({
+    boxes: Object.values(boxData).map(({ uuid, label, color, element, shape, locked }) => ({
       uuid,
       label,
       color,
       shape,
+      locked,
       position: {
         x: parseInt(element.style.left),
         y: parseInt(element.style.top),
@@ -797,6 +860,8 @@ function clearAll() {
 }
 
 function removeBox(uuid, updateLines = true) {
+  if (boxData[uuid].locked) return;
+
   const box = boxData[uuid].element;
 
   lines.forEach((line, index) => {
@@ -831,17 +896,19 @@ function importFromJson() {
 
         clearAll();
 
-        data.boxes.forEach(({ uuid, label, color, position, shape }) => {
-          const box = createBox(position.x, position.y, { label, uuid, shape });
+        data.boxes.forEach(({ uuid, label, color, position, shape, locked }) => {
+          const box = createBox(position.x, position.y, { label, uuid, shape, locked });
           box.style.background = color;
           boxData[uuid] = {
             uuid,
             label,
             color,
             shape,
+            locked,
             element: box,
           };
           box.dataset.uuid = uuid;
+          updateBoxLockIndicator(box, uuid);
         });
 
         data.connections.forEach(({ from, to, direction, lineStyle }) => {
