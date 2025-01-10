@@ -158,13 +158,18 @@ function handleData(req, res, isAdmin) {
     const days = parseInt(req.body.days);
     const futuredays = parseInt(req.body.futuredays);
 
-    if (days < 1) {
+    if (days < 0) {
       res.status(400).json({ error: "Days must be greater than 0" });
       return;
     }
 
-    if (futuredays < 1) {
+    if (futuredays < 0) {
       res.status(400).json({ error: "Future days must be greater than 0" });
+      return;
+    }
+
+    if (days === 0 && futuredays === 0) {
+      res.status(HTTP_OK).json([]);
       return;
     }
 
