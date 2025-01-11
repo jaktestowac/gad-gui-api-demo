@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD - Infinite Scroll</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/practice-controls.css" />
+    <style>
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .items-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            align-content: center;
+            justify-content: center;
+        }
+
+        .item {
+            background: #f2f2f2;
+            border: 1px solid #ddd;
+            border-radius: 15px;
+            padding: 5px;
+            margin: 5px;
+            text-align: center;
+            font-size: 1em;
+            width: 300px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            align-content: center;
+            justify-content: left;
+            gap: 50px;
+        }
+
+        #loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+
+        .small-description {
+            font-size: 0.8em;
+            color: #666;
+            text-align: center;
+        }
+
+        .id {
+            font-weight: bold;
+            font-size: 1em;
+            width: 100px;
+            text-align: left;
+        }
+
+        .details {
+            display: flex;
+            flex-direction: column;
+            align-items: left;
+            align-content: left;
+            justify-content: left;
+            gap: 5px;
+            width: 200px;
+        }
+
+        .item-label {
+            font-weight: bold;
+            font-size: 0.8em;
+        }
+
+        .item-value {
+            font-weight: normal;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <div align="center">
+        <h2>Infinite Scroll</h2>
+        <div class="small-description">Scroll down to load more items. You can test:
+            <ul>
+                <li>💡 If ID of items is increasing</li>
+                <li>💡 If there are no empty names and surnames in first 100 items</li>
+            </ul>
+        </div>
+        <div class="items-container" id="items-container">
+
+        </div>
+
+        <div id="loading">Loading more items...</div>
+    </div>
+
+    <br />
+    <br />
+    <div align="center">
+        <div id="results-container">
+        </div>
+    </div>
+    <br />
+    <br />
+    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 24px">
+        <a href="https://jaktestowac.pl" style="color: dimgray">
+            <span style="display: flex; align-items: center; justify-self: center; font-size: medium">
+                <img src="/data/icons/favicon.png" style="width: 25px !important; height: 25px !important; padding: 0; border: none" alt="" />&nbsp&nbspjaktestowac.pl
+            </span>
+        </a>
+    </div>
+</body>
+
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="./js/practice-common.js"></script>
+<script type="text/javascript" src="./js/data-generators.js"></script>
+<script>
+    const container = document.getElementById('items-container');
+    const loading = document.getElementById('loading');
+    let itemCount = 0;
+    createElements();
+
+    function createElements(numberOfItems = 10, firstId = 1) {
+        const usersData = generateRandomUsers(numberOfItems, firstId)
+        for (let i = 0; i < numberOfItems; i++) {
+            itemCount++;
+            addElementToContainer(usersData[i]);
+        }
+    }
+
+    function addElementToContainer(item) {
+        const newItem = document.createElement('div');
+        newItem.className = 'item';
+
+        const idDiv = document.createElement('div');
+        idDiv.textContent = `ID: ${item.id}`;
+        idDiv.classList.add('id');
+        newItem.appendChild(idDiv);
+
+        const detailsDiv = document.createElement('div');
+        detailsDiv.classList.add('details');
+
+        const nameDiv = document.createElement('div');
+        const nameLabelSpan = document.createElement('span');
+        nameLabelSpan.textContent = 'Name: ';
+        nameLabelSpan.classList.add('item-label');
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = item.name;
+        nameSpan.classList.add('item-value');
+        nameDiv.appendChild(nameSpan);
+        nameDiv.prepend(nameLabelSpan);
+        detailsDiv.appendChild(nameDiv);
+
+        const surnameDiv = document.createElement('div');
+        const surnameLabelSpan = document.createElement('span');
+        surnameLabelSpan.textContent = 'Surname: ';
+        surnameLabelSpan.classList.add('item-label');
+        const surnameSpan = document.createElement('span');
+        surnameSpan.textContent = item.surname;
+        surnameSpan.classList.add('item-value');
+        surnameDiv.appendChild(surnameLabelSpan);
+        surnameDiv.appendChild(surnameSpan);
+        detailsDiv.appendChild(surnameDiv);
+
+        const locationDiv = document.createElement('div');
+        const locationLabelSpan = document.createElement('span');
+        locationLabelSpan.textContent = 'Location: ';
+        locationLabelSpan.classList.add('item-label');
+        const locationSpan = document.createElement('span');
+        locationSpan.textContent = item.location;
+        locationSpan.classList.add('item-value');
+        locationDiv.appendChild(locationLabelSpan);
+        locationDiv.appendChild(locationSpan);
+        detailsDiv.appendChild(locationDiv);
+
+        newItem.appendChild(detailsDiv);
+        container.appendChild(newItem);
+    }
+
+    const loadMoreItems = () => {
+        loading.style.display = 'block';
+
+        setTimeout(() => {
+            createElements(10, itemCount + 1)
+            loading.style.display = 'none';
+        }, 1000);
+    };
+
+    const handleScroll = () => {
+        const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+        if (scrollTop + clientHeight >= scrollHeight - 5) {
+            loadMoreItems();
+        }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+</script>
+
+</html>

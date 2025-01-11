@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD - Sortable Lists Challenge</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/practice-controls.css" />
+</head>
+<style>
+    .sortable-container {
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background: #f9f9f9;
+    }
+
+    .sortable-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .sortable-item {
+        margin: 5px 0;
+        padding: 10px;
+        background: #e6e6e6;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        cursor: grab;
+    }
+
+    .sortable-item:active {
+        cursor: grabbing;
+    }
+
+    .dragging {
+        opacity: 0.5;
+    }
+
+    .invalid-order {
+        background: #ffcccc;
+    }
+</style>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <div align="center">
+        <h2>Sortable Lists Challenge</h2>
+        <div class="sortable-container">
+            <p>Drag and drop the items to sort them.</p>
+            <ul class="sortable-list" id="sortableList">
+            </ul>
+        </div>
+
+        <button onclick="checkOrder()">Check Order</button>
+
+    </div>
+
+    <br />
+    <div align="center">
+        <div id="results-container">
+        </div>
+    </div>
+    <br />
+    <br />
+    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 24px">
+        <a href="https://jaktestowac.pl" style="color: dimgray">
+            <span style="display: flex; align-items: center; justify-self: center; font-size: medium">
+                <img src="/data/icons/favicon.png" style="width: 25px !important; height: 25px !important; padding: 0; border: none" alt="" />&nbsp&nbspjaktestowac.pl
+            </span>
+        </a>
+    </div>
+</body>
+
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="./js/practice-common.js"></script>
+
+<script>
+    const sortableList = document.getElementById('sortableList');
+    let draggingItem = null;
+
+    sortableList.addEventListener('dragstart', (e) => {
+        if (e.target && e.target.classList.contains('sortable-item')) {
+            draggingItem = e.target;
+            e.target.classList.add('dragging');
+            clearResults()
+        }
+    });
+
+    sortableList.addEventListener('dragend', (e) => {
+        if (draggingItem) {
+            draggingItem.classList.remove('dragging');
+            draggingItem = null;
+            clearResults()
+        }
+    });
+
+    sortableList.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        const afterElement = getDragAfterElement(sortableList, e.clientY);
+        if (afterElement == null) {
+            sortableList.appendChild(draggingItem);
+        } else {
+            sortableList.insertBefore(draggingItem, afterElement);
+        }
+    });
+
+    function getDragAfterElement(container, y) {
+        const draggableElements = [...container.querySelectorAll('.sortable-item:not(.dragging)')];
+
+        return draggableElements.reduce((closest, child) => {
+            const box = child.getBoundingClientRect();
+            const offset = y - box.top - box.height / 2;
+            if (offset < 0 && offset > closest.offset) {
+                return { offset: offset, element: child };
+            } else {
+                return closest;
+            }
+        }, { offset: Number.NEGATIVE_INFINITY }).element;
+    }
+
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    function addElementsInRandomOrder(numberOfItems = 5) {
+        const items = Array.from({ length: numberOfItems }, (_, i) => `Item ${i + 1}`);
+        shuffle(items);
+        items.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = item;
+            li.classList.add('sortable-item');
+            li.draggable = true;
+            sortableList.appendChild(li);
+        });
+    }
+
+    function clearResults() {
+        const resultsContainer = document.getElementById('results-container');
+        resultsContainer.innerHTML = '';
+    }
+
+    function checkOrder() {
+        const items = [...sortableList.querySelectorAll('.sortable-item')];
+        const sortedItems = items.map(item => item.textContent);
+        const isSorted = JSON.stringify(items.map(item => item.textContent)) === JSON.stringify(sortedItems.sort());
+        if (isSorted) {
+            const resultsContainer = document.getElementById('results-container');
+            resultsContainer.innerHTML = '<div class="simpleSuccessBox">Items are sorted!</div>';
+        } else {
+            const resultsContainer = document.getElementById('results-container');
+            resultsContainer.innerHTML = '<div class="simpleErrorBox">Items are not sorted!</div>';
+        }
+        // mark red invalid items
+        items.forEach((item, index) => {
+            if (item.textContent !== sortedItems[index]) {
+                item.classList.add('invalid-order');
+            } else {
+                item.classList.remove('invalid-order');
+            }
+        });
+    }
+
+    addElementsInRandomOrder()
+</script>
+
+</html>
