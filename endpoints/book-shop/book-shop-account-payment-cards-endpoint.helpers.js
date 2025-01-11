@@ -28,6 +28,7 @@ const {
   searchForBookShopAccountWithUserId,
   searchForBookShopAccountPaymentCardByCardNumber,
 } = require("../../helpers/db-operations/db-book-shop.operations");
+const { registerPaymentInBookShopPaymentHistory } = require("../../helpers/book-shop.helpers");
 
 function handleBookShopAccountPaymentCards(req, res, isAdmin) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
@@ -129,8 +130,17 @@ function handleBookShopAccountPaymentCards(req, res, isAdmin) {
       const newFundsValue = foundAccount.funds + topUpAmountInt;
       logDebug(`Changing User Funds ${foundAccount.funds} -> ${newFundsValue}`);
 
-      changeUserFunds(DatabaseManager.getInstance().getDb(), foundAccount.id, newFundsValue);
-      logDebug(`User Funds changed to ${newFundsValue}`);
+      changeUserFunds(DatabaseManager.getInstance().getDb(), foundAccount.id, newFundsValue).then(() => {
+        logDebug(`User Funds changed to ${newFundsValue}`);
+        registerPaymentInBookShopPaymentHistory({
+          accountId: foundAccount.id,
+          activityType: "topup",
+          balanceBefore: foundAccount.funds,
+          balanceAfter: newFundsValue,
+          orderId: null,
+          amount: topUpAmountInt,
+        });
+      });
     });
 
     return;

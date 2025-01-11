@@ -54,7 +54,8 @@
         .small-description {
             font-size: 0.8em;
             color: #666;
-            text-align: center;
+            text-align: left;
+            width: 400px;
         }
 
         .id {
@@ -198,10 +199,12 @@
     const loadMoreItems = () => {
         loading.style.display = 'block';
 
+        const delay = Math.floor(Math.random() * 500) + 1500;
+
         setTimeout(() => {
             createElements(10, itemCount + 1)
             loading.style.display = 'none';
-        }, 1000);
+        }, delay);
     };
 
     const handleScroll = () => {

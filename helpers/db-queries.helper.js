@@ -1,5 +1,5 @@
 const { getCurrentDateTimeISO } = require("./datetime.helpers");
-const { logTrace } = require("./logger-api");
+const { logTrace, logDebug } = require("./logger-api");
 
 function setEntitiesInactive(db, tableName, query) {
   const callback = (item) => (item._inactive = true);
@@ -80,6 +80,10 @@ async function addCardToDataBase(db, accountId, cardData) {
       });
     } else {
       getElementWithMaxId(db, "book-shop-account-payment-cards").then((element) => {
+        if (element === undefined) {
+          element = { id: 0 };
+        }
+
         cardData.id = element.id + 1;
         invokeInsertQuery(db, "book-shop-account-payment-cards", cardData);
       });
@@ -88,9 +92,13 @@ async function addCardToDataBase(db, accountId, cardData) {
 }
 
 async function insertPaymentEntryToPaymentHistory(db, paymentData) {
-  getElementWithMaxId(db, "book-shop-payment-history").then((element) => {
+  getElementWithMaxId(db, "book-shop-account-payment-history").then((element) => {
+    if (element === undefined) {
+      element = { id: 0 };
+    }
+
     paymentData.id = element.id + 1;
-    invokeInsertQuery(db, "book-shop-payment-history", paymentData);
+    invokeInsertQuery(db, "book-shop-account-payment-history", paymentData);
   });
 }
 

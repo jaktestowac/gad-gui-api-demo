@@ -1,10 +1,37 @@
+const { searchForPaymentHistory } = require("../../helpers/db-operations/db-book-shop.operations");
 const { formatErrorResponse } = require("../../helpers/helpers");
 const { logDebug } = require("../../helpers/logger-api");
-const { HTTP_NOT_FOUND, HTTP_OK } = require("../../helpers/response.helpers");
+const { HTTP_NOT_FOUND, HTTP_OK, HTTP_UNAUTHORIZED } = require("../../helpers/response.helpers");
+const { isUndefined } = require("lodash");
+const { searchForUserWithOnlyToken } = require("../../helpers/db-operation.helpers");
+const { formatInvalidTokenErrorResponse } = require("../../helpers/helpers");
+const { verifyAccessToken } = require("../../helpers/validation.helpers");
+const { searchForBookShopAccountWithUserId } = require("../../helpers/db-operations/db-book-shop.operations");
 
 function handleBookShopPaymentHistory(req, res, isAdmin) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
   if (req.method === "GET" && req.url.includes("/api/book-shop-payment-history")) {
+    const verifyTokenResult = verifyAccessToken(req, res, "GET book-shop-accounts", req.url);
+    const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
+
+    logDebug("handleBookShopOrders: Found User", { id: foundUser?.id });
+
+    if (isUndefined(foundUser)) {
+      res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+      return false;
+    }
+
+    const booksShopAccount = searchForBookShopAccountWithUserId(foundUser.id);
+
+    if (booksShopAccount === undefined) {
+      res.status(HTTP_NOT_FOUND).send(formatErrorResponse("User does not have a book shop account"));
+      return false;
+    }
+
+    const paymentHistory = searchForPaymentHistory(booksShopAccount.id);
+
+    res.status(HTTP_OK).send(paymentHistory);
+  } else if (req.method === "GET" && req.url.includes("/api/book-shop-payment-history/mock")) {
     const samplePaymentHistory = [
       {
         id: 1,

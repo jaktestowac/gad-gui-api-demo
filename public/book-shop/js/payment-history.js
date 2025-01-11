@@ -131,6 +131,14 @@ function filterPayments() {
 }
 
 function displayPaymentHistory(paymentHistoryData, paymentHistoryContainer) {
+  if (paymentHistoryData.length === 0) {
+    const element = document.createElement("div");
+    element.classList.add("no-orders-message");
+    element.textContent = "No payments found";
+    paymentHistoryContainer.appendChild(element);
+    return;
+  }
+
   paymentHistoryData.sort((a, b) => {
     return new Date(b.date) - new Date(a.date);
   });
@@ -152,7 +160,9 @@ function displayPaymentHistory(paymentHistoryData, paymentHistoryContainer) {
         <span style="text-align: center" class="payment-status-${
           payment.paymentDetails.status
         }">${payment.activityType.toUpperCase()}</span>
-        <strong style="text-align: right">${payment.paymentDetails.amount} ${payment.paymentDetails.currency}</strong>
+        <strong style="text-align: right">${formatPriceWithoutCurrency(payment.paymentDetails.amount)} ${
+      payment.paymentDetails.currency
+    }</strong>
       </div>
     `;
 
@@ -164,8 +174,12 @@ function displayPaymentHistory(paymentHistoryData, paymentHistoryContainer) {
       <p><strong>Status:</strong> <span class="payment-status-${payment.paymentDetails.status}">${
       payment.paymentDetails.status
     }</span></p>
-      <p><strong>Balance Before:</strong> ${payment.balanceBefore} ${payment.paymentDetails.currency}</p>
-      <p><strong>Balance After:</strong> ${payment.balanceAfter} ${payment.paymentDetails.currency}</p>
+      <p><strong>Balance Before:</strong> ${formatPriceWithoutCurrency(payment.balanceBefore)} ${
+      payment.paymentDetails.currency
+    }</p>
+      <p><strong>Balance After:</strong> ${formatPriceWithoutCurrency(payment.balanceAfter)} ${
+      payment.paymentDetails.currency
+    }</p>
     `;
 
     paymentSummary.addEventListener("click", () => {
