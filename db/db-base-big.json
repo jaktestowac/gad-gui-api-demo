@@ -10631,6 +10631,11 @@
       "id": 6,
       "name": "view-stats",
       "role_ids": [1]
+    },
+    {
+      "id": 7,
+      "name": "manage-books",
+      "role_ids": [1, 4, 16]
     }
   ],
   "book-shop-roles": [

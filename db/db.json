@@ -5333,6 +5333,11 @@
       "id": 6,
       "name": "view-stats",
       "role_ids": [1]
+    },
+    {
+      "id": 7,
+      "name": "manage-books",
+      "role_ids": [1, 4, 16]
     }
   ],
   "book-shop-roles": [
@@ -5429,22 +5434,6 @@
       "street": "",
       "postal_code": "",
       "id": 5
-    },
-    {
-      "user_id": 1,
-      "role_id": 2,
-      "wishlist_books_ids": [],
-      "read_books_ids": [],
-      "owned_books_ids": [],
-      "purchased_book_ids": [],
-      "favorite_books_ids": [],
-      "funds": 10000,
-      "created_at": "2025-01-11T22:31:39.776Z",
-      "country": "",
-      "city": "",
-      "street": "",
-      "postal_code": "",
-      "id": 6
     }
   ],
   "book-shop-account-payment-history": [],

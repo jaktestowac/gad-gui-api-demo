@@ -1,4 +1,3 @@
-const { isUndefined } = require("lodash");
 const { searchForUserWithOnlyToken, searchForUser } = require("../../helpers/db-operation.helpers");
 const { formatErrorResponse, formatInvalidTokenErrorResponse, getIdFromUrl } = require("../../helpers/helpers");
 const { logTrace, logDebug } = require("../../helpers/logger-api");
@@ -33,6 +32,7 @@ const {
   searchForBookShopAccount,
   searchForBookShopItem,
 } = require("../../helpers/db-operations/db-book-shop.operations");
+const { isUndefined } = require("../../helpers/compare.helpers");
 
 const orderStatuses = {
   new: 1,
