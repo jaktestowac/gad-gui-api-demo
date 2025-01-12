@@ -198,6 +198,28 @@
         }
       }
     },
+    "/login/validate": {
+      "get": {
+        "tags": ["authentication"],
+        "summary": "Validate if token is correct and user is logged in",
+        "operationId": "userValidation",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          }
+        }
+      }
+    },
     "/articles": {
       "get": {
         "tags": ["articles"],

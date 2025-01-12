@@ -1,12 +1,37 @@
 const { ADMIN_USER } = require("../config/admin-user.data");
-const { getConfigValue } = require("../config/config-manager");
-const { ConfigKeys } = require("../config/enums");
 const { isUndefined, areStringsEqualIgnoringCase } = require("../helpers/compare.helpers");
 const { userDb } = require("../helpers/db.helpers");
 const { isSuperAdminUser } = require("../helpers/helpers");
 const { isAuthenticated, createToken, prepareCookieMaxAge } = require("../helpers/jwtauth");
 const { logTrace, logDebug } = require("../helpers/logger-api");
 const { HTTP_UNAUTHORIZED, HTTP_OK } = require("../helpers/response.helpers");
+const { verifyAccessToken } = require("../helpers/validation.helpers");
+const { formatErrorResponse, formatInvalidTokenErrorResponse } = require("../helpers/helpers");
+const { searchForUserWithOnlyToken } = require("../helpers/db-operation.helpers");
+
+const loginValidateRoutes = (req, res) => {
+  const verifyTokenResult = verifyAccessToken(req, res, "users", req.url);
+  const authorization = req.headers["authorization"];
+
+  if (isUndefined(authorization)) {
+    res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
+  }
+
+  if (isUndefined(verifyTokenResult)) {
+    res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token is invalid!"));
+    return;
+  }
+
+  const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
+
+  if (isUndefined(foundUser)) {
+    res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+    return;
+  }
+
+  res.status(HTTP_OK).send({});
+  return;
+};
 
 const loginApiRoutes = (req, res) => {
   const { email, password, keepSignIn } = req.body;
@@ -149,3 +174,4 @@ exports.welcomeRoutes = welcomeRoutes;
 exports.loginApiRoutes = loginApiRoutes;
 exports.loginRoutes = loginRoutes;
 exports.logoutRoutes = logoutRoutes;
+exports.loginValidateRoutes = loginValidateRoutes;

@@ -3,7 +3,11 @@ const { isBugDisabled, isBugEnabled, getFeatureFlagConfigValue } = require("../c
 const { BugConfigKeys, FeatureFlagConfigKeys } = require("../config/enums");
 const { areStringsEqualIgnoringCase, areIdsEqual, isUndefined, isInactive } = require("../helpers/compare.helpers");
 const { getCurrentDateTimeISO } = require("../helpers/datetime.helpers");
-const { searchForUser, searchForUserWithToken } = require("../helpers/db-operation.helpers");
+const {
+  searchForUser,
+  searchForUserWithToken,
+  searchForUserWithOnlyToken,
+} = require("../helpers/db-operation.helpers");
 const { userDb } = require("../helpers/db.helpers");
 const {
   formatMissingFieldErrorResponse,
@@ -34,6 +38,26 @@ const {
 
 function handleUsers(req, res, { isAdmin }) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
+  
+  if (urlEnds.includes("/api/users/validate")) {
+    logTrace("Validators: Check user auth", { url: urlEnds });
+    const verifyTokenResult = verifyAccessToken(req, res, "users", req.url);
+
+    if (isUndefined(verifyTokenResult)) {
+      res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
+      return;
+    }
+
+    const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
+
+    if (isUndefined(foundUser)) {
+      res.status(HTTP_UNAUTHORIZED).send(formatInvalidTokenErrorResponse());
+      return;
+    }
+
+    res.status(HTTP_OK).send({});
+    return;
+  }
 
   if (
     req.method !== "GET" &&

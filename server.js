@@ -35,6 +35,7 @@ const {
   loginRoutes,
   welcomeRoutes,
   logoutRoutes,
+  loginValidateRoutes,
 } = require("./routes/login.route");
 const { calcRoutes } = require("./routes/calc.route");
 
@@ -47,8 +48,9 @@ const { setEntitiesInactive, replaceRelatedContactsInDb } = require("./helpers/d
 const { diagnosticRoutes } = require("./routes/diagnostic.route");
 const app = require("./app.json");
 const DatabaseManager = require("./helpers/db.manager");
-const { simpleMigrator, checkIfDbExists, overwriteDbIfDefined } = require("./db/migrators/migrator");
+const { simpleMigrator, overwriteDbIfDefined } = require("./db/migrators/migrator");
 const { exitRoutes, restartRoutes } = require("./routes/debug.route");
+const { bookShopCoverUploadRoutes, multerUpload, multerErrorHandling } = require("./routes/file-upload-v2.route");
 
 const middlewares = jsonServer.defaults();
 
@@ -169,6 +171,7 @@ server.get("/home", homeRoutes);
 
 // Login to one of the users from ./users.json
 server.post("/api/login", loginApiRoutes);
+server.get("/api/login/validate", loginValidateRoutes);
 server.post("/process_login", processLoginRoutes);
 server.get("/login", loginRoutes);
 server.get("/welcome", welcomeRoutes);
@@ -176,6 +179,8 @@ server.get("/logout", logoutRoutes);
 
 server.get("/api/debug/restart", restartRoutes);
 server.get("/api/debug/exit", exitRoutes);
+
+server.post("/api/book-shop/upload/cover", multerUpload.single("file"), multerErrorHandling, bookShopCoverUploadRoutes);
 
 server.use(clearDbRoutes);
 server.use(statsRoutes);
