@@ -1408,6 +1408,13 @@ body.darkmode {
   flex-wrap: wrap;
 }
 
+.max-width-800 {
+  max-width: 800px;
+}
+.max-width-700 {
+  max-width: 700px;
+}
+
 .module {
   /* display: flex; */
   flex-direction: column;
@@ -1420,6 +1427,28 @@ body.darkmode {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   transition: 0.3s;
   margin: 4px;
+}
+
+.module-small {
+  width: 140px;
+  height: 140px;
+}
+
+.size-x2 {
+  transform: scale(2);
+}
+
+.size-x4 {
+  transform: scale(2);
+}
+
+.non-button {
+  pointer-events: none;
+  border: none;
+  background-color: inherit;
+  margin: 0;
+  padding: 0;
+  color: inherit;
 }
 
 .module:hover {
@@ -1440,6 +1469,13 @@ body.darkmode {
 
 .module-header {
   font-size: 18px;
+  margin-bottom: 4px;
+  padding-bottom: 4px;
+}
+
+.margin-vertical-4p {
+  margin-top: 4px;
+  padding-top: 4px;
   margin-bottom: 4px;
   padding-bottom: 4px;
 }

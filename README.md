@@ -40,17 +40,32 @@ Features of **🦎 GAD**:
 
 - **GUI** (front-end)
 - **REST API** (back-end)
-- **Swagger** Doc
-- Simple **DataBase** (JSON) with REST API endpoints to clear/restore all data
-- Different **data sets** (small, medium, big)
-- **Authentication** and **Authorization**
-- **User** <-> resources logic (calculations, statistics)
+- **Two Application Domains**:
+  - **Testers Blog**
+    - Resources - Articles, Users, Comments, and more
+    - Functionalities - Likes, Comments, Tags, and user engagement tools
+    - Insights - Statistics and charts (e.g., likes per user, comments per article)
+    - **Authentication** and **Authorization**
+  - **Practice pages**
+    - A collection of pages featuring automation challenges, such as:
+      - Iframes
+      - File uploads
+      - Drag-and-drop
+      - Dynamic elements
+      - Likes, labels, and surveys
+      - Banners, pop-ups, front-end, and back-end logic
+      - Games and more!
+- **Swagger Documentation** - API documentation for seamless integration
+- **Simple Database** - JSON-based database with REST API endpoints for clearing/restoring data
+- **Various Data Sets** - Small, medium, and large datasets to simulate real-world scenarios
+- **Dynamic Configuration** - Adjust application settings **easily from the UI**
+  - **Feature Flags** - Enable or disable features
+  - **Bug Flags** - Introduce or remove bugs for testing purposes
 - Different **data presentation** (charts, tables etc.)
-- **Feature flags** configurable from UI!
-- **Bug flags** to enable/disable different bugs - configurable from UI!
-- **Dynamic config**
 - **Challenging elements for test automation** (iframes, file uploads, drag&drop, likes, labels, surveys, banners, pop-ups, logic on front-end and back-end, dynamic elements, games etc.)
-- **Admins "backoffice"** with additional tools and functionalities (DB reset, SQL Playground)
+- **Admins' Backoffice**: Includes advanced functionalities such as:
+  - Database reset
+  - SQL playground for experimenting and testing queries
 
 # Deployment
 
