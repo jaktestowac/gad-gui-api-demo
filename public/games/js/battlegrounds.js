@@ -1,0 +1,1437 @@
+function startGame(level) {
+  const useCustomArmy = document.getElementById("useCustomArmy").checked;
+
+  if (useCustomArmy && selectedUnits.length === 0) {
+    alert("Please select at least one unit for your army!");
+    return;
+  }
+
+  const armyToUse = useCustomArmy ? selectedUnits : levelArmies[level];
+
+  document.getElementById("levelSelect").style.display = "none";
+  document.getElementById("gameContainer").style.display = "block";
+  window.currentGame = new Game(level, armyToUse);
+  window.currentGame.addToHistory({ type: "turn", turn: window.currentGame.turnNumber });
+}
+
+function unitFactory(player, unitName, x, y) {
+  switch (unitName) {
+    case "Swordsman":
+      return new Unit(player, "Swordsman", 15, 5, 3, x, y);
+    case "Archer":
+      return new Unit(player, "Archer", 10, 6, 2, x, y);
+    case "Knight":
+      return new Unit(player, "Knight", 20, 4, 4, x, y);
+    case "Skeleton":
+      return new Unit(player, "Skeleton", 8, 4, 2, x, y);
+    case "Zombie":
+      return new Unit(player, "Zombie", 12, 3, 3, x, y);
+    case "Ghost":
+      return new Unit(player, "Ghost", 10, 5, 1, x, y);
+    case "Vampire":
+      return new Unit(player, "Vampire", 15, 6, 2, x, y);
+    case "Peasant":
+      return new Unit(player, "Peasant", 5, 2, 1, x, y);
+    case "Dragon":
+      return new Unit(player, "Dragon", 25, 8, 6, x, y);
+    case "Golem":
+      return new Unit(player, "Golem", 18, 6, 5, x, y);
+    case "Wizard":
+      return new Unit(player, "Wizard", 12, 7, 2, x, y);
+    case "Skeleton Archer":
+      return new Unit(player, "Skeleton Archer", 10, 5, 2, x, y);
+    case "Snake":
+      return new Unit(player, "Snake", 8, 3, 1, x, y);
+    case "Boar":
+      return new Unit(player, "Boar", 15, 4, 3, x, y);
+    case "Flame Spirit":
+      return new Unit(player, "Flame Spirit", 12, 6, 2, x, y);
+    case "Water Spirit":
+      return new Unit(player, "Water Spirit", 12, 5, 3, x, y);
+    case "Wind Spirit":
+      return new Unit(player, "Wind Spirit", 12, 4, 4, x, y);
+    case "Goblin":
+      return new Unit(player, "Goblin", 5, 4, 1, x, y);
+    case "Unicorn":
+      return new Unit(player, "Unicorn", 20, 5, 5, x, y);
+    case "Genie":
+      return new Unit(player, "Genie", 10, 6, 2, x, y);
+    case "Imp":
+      return new Unit(player, "Imp", 8, 4, 1, x, y);
+    case "Pixie":
+      return new Unit(player, "Pixie", 8, 3, 1, x, y);
+    case "Phoenix":
+      return new Unit(player, "Phoenix", 15, 6, 3, x, y);
+    case "Minotaur":
+      return new Unit(player, "Minotaur", 18, 7, 4, x, y);
+    case "Witch":
+      return new Unit(player, "Witch", 10, 5, 2, x, y);
+    case "Manticore":
+      return new Unit(player, "Manticore", 20, 6, 5, x, y);
+    default:
+      throw new Error("Invalid unit name", unitName);
+  }
+}
+
+const allUnits = [
+  "Swordsman",
+  "Archer",
+  "Knight",
+  "Skeleton",
+  "Zombie",
+  "Ghost",
+  "Vampire",
+  "Peasant",
+  "Dragon",
+  "Golem",
+  "Wizard",
+  "Skeleton Archer",
+  "Snake",
+  "Boar",
+  "Flame Spirit",
+  "Water Spirit",
+  "Wind Spirit",
+  "Goblin",
+  "Unicorn",
+  "Genie",
+  "Imp",
+  "Pixie",
+  "Phoenix",
+  "Minotaur",
+  "Witch",
+  "Manticore",
+];
+
+const availableUnits = [
+  "Swordsman",
+  "Archer",
+  "Knight",
+  "Peasant",
+  "Wizard",
+  "Dragon",
+  "Golem",
+  "Water Spirit",
+  "Wind Spirit",
+  "Flame Spirit",
+];
+
+const presetArmy = ["Knight", "Dragon", "Wizard", "Archer", "Golem", "Water Spirit"];
+let selectedUnits = [];
+
+// Add predefined armies for each level
+const levelArmies = {
+  1: ["Swordsman", "Archer", "Knight", "Peasant"],
+  2: ["Knight", "Archer", "Wizard", "Swordsman", "Peasant"],
+  3: ["Knight", "Dragon", "Wizard", "Archer", "Swordsman"],
+  4: ["Dragon", "Wizard", "Knight", "Golem", "Water Spirit", "Archer"],
+  5: ["Dragon", "Dragon", "Wizard", "Golem", "Water Spirit", "Wind Spirit"],
+  6: ["Dragon", "Dragon", "Wizard", "Golem", "Flame Spirit", "Water Spirit"],
+  42: Array.from({ length: 6 }, () => allUnits[Math.floor(Math.random() * allUnits.length)]),
+};
+
+function initializeUnitSelection() {
+  const armySelection = document.getElementById("armySelection");
+  const unitSelection = document.getElementById("unitSelection");
+  const selectedUnitsList = document.getElementById("selectedUnitsList");
+  const usePresetArmyCheckbox = document.getElementById("usePresetArmy");
+  const useCustomArmyCheckbox = document.getElementById("useCustomArmy");
+  const armySelectionDiv = document.querySelector(".army-selection");
+
+  // Initialize UI state
+  const showCustomSelection = useCustomArmyCheckbox.checked;
+  unitSelection.style.display = showCustomSelection ? "flex" : "none";
+  armySelection.style.display = showCustomSelection ? "flex" : "none";
+  selectedUnitsList.style.display = showCustomSelection ? "flex" : "none";
+  usePresetArmyCheckbox.parentElement.style.display = showCustomSelection ? "block" : "none";
+
+  unitSelection.innerHTML = availableUnits
+    .map(
+      (unit) => `
+        <button class="unit-option" onclick="addUnit('${unit}')">
+            <span class="icon">${Unit.getIcon(unit)}</span>
+            <span>${unit}</span>
+        </button>
+    `
+    )
+    .join("");
+
+  // Add event listener for custom army toggle
+  useCustomArmyCheckbox.addEventListener("change", function () {
+    const showCustom = this.checked;
+    armySelection.style.display = showCustom ? "flex" : "none";
+    unitSelection.style.display = showCustom ? "flex" : "none";
+    selectedUnitsList.style.display = showCustom ? "flex" : "none";
+    usePresetArmyCheckbox.parentElement.style.display = showCustom ? "block" : "none";
+
+    if (!showCustom) {
+      selectedUnits = [];
+      updateSelectedUnitsList();
+    }
+  });
+
+  usePresetArmyCheckbox.addEventListener("change", function () {
+    if (this.checked) {
+      selectedUnits = [...presetArmy];
+    } else {
+      selectedUnits = [];
+    }
+    updateSelectedUnitsList();
+    updateUnitSelectionUI();
+  });
+
+  updateSelectedUnitsList();
+  updateUnitSelectionUI();
+}
+
+function addUnit(unitName) {
+  const usePresetArmy = document.getElementById("usePresetArmy");
+  if (usePresetArmy.checked) {
+    usePresetArmy.checked = false;
+    selectedUnits = [];
+  }
+  if (selectedUnits.length < 6) {
+    selectedUnits.push(unitName);
+    updateSelectedUnitsList();
+    updateUnitSelectionUI();
+  }
+}
+
+function toggleUnit(unitName) {
+  const usePresetArmy = document.getElementById("usePresetArmy");
+  if (usePresetArmy.checked) {
+    usePresetArmy.checked = false;
+    selectedUnits = [];
+  }
+
+  const maxUnits = 6;
+  const index = selectedUnits.indexOf(unitName);
+
+  if (index === -1 && selectedUnits.length < maxUnits) {
+    selectedUnits.push(unitName);
+  } else if (index !== -1) {
+    selectedUnits.splice(index, 1);
+  }
+
+  updateSelectedUnitsList();
+  updateUnitSelectionUI();
+}
+
+function updateSelectedUnitsList() {
+  const selectedUnitsList = document.getElementById("selectedUnitsList");
+  const unitCount = document.getElementById("unitCount");
+
+  unitCount.textContent = `${selectedUnits.length}/6`;
+
+  selectedUnitsList.innerHTML = selectedUnits
+    .map(
+      (unit) => `
+        <div class="selected-unit">
+            <span>${Unit.getIcon(unit)}</span>
+            <span>${unit}</span>
+            <button onclick="toggleUnit('${unit}')">&times;</button>
+        </div>
+    `
+    )
+    .join("");
+}
+
+function updateUnitSelectionUI() {
+  const unitOptions = document.querySelectorAll(".unit-option");
+  unitOptions.forEach((option) => {
+    const unitName = option.querySelector("span:not(.icon)").textContent;
+    option.classList.toggle("selected", selectedUnits.includes(unitName));
+  });
+}
+
+class Unit {
+  constructor(type, name, hp, attack, defense, x, y) {
+    this.type = type;
+    this.name = name;
+    this.maxHp = hp;
+    this.hp = hp;
+    this.attack = attack;
+    this.defense = defense;
+    this.x = x;
+    this.y = y;
+    this.hasMoved = false;
+    this.moveRange = Unit.getMoveRange(name);
+    this.icon = Unit.getIcon(name);
+    this.range = Unit.getAttackRange(name);
+    this.hasAttacked = false;
+    this.isFlying = Unit.isFlying(name);
+  }
+
+  static getIcon(name) {
+    const icons = {
+      Swordsman: "⚔️",
+      Archer: "🏹",
+      Knight: "🐎",
+      Skeleton: "💀",
+      Zombie: "🧟",
+      Ghost: "👻",
+      Vampire: "🧛",
+      Peasant: "👨‍🌾",
+      Dragon: "🐉",
+      Golem: "🗿",
+      Wizard: "🧙",
+      "Skeleton Archer": "💀🏹",
+      Snake: "🐍",
+      Boar: "🐗",
+      "Flame Spirit": "🔥",
+      "Water Spirit": "💧",
+      "Wind Spirit": "💨",
+      Goblin: "👺",
+      Unicorn: "🦄",
+      Genie: "🧞",
+      Imp: "👹",
+      Pixie: "🧚",
+      Phoenix: "🐦",
+      Minotaur: "🐂",
+      Witch: "🧙‍♀️",
+      Manticore: "🦁",
+    };
+    return icons[name] || "⚔️";
+  }
+
+  static getUnitValue(unitName) {
+    const values = {
+      Peasant: 10,
+      Goblin: 15,
+      Snake: 20,
+      Skeleton: 25,
+      Zombie: 30,
+      Ghost: 35,
+      "Skeleton Archer": 40,
+      Archer: 45,
+      Swordsman: 50,
+      "Water Spirit": 55,
+      "Wind Spirit": 60,
+      "Flame Spirit": 65,
+      Vampire: 70,
+      Wizard: 80,
+      Knight: 85,
+      Boar: 90,
+      Golem: 100,
+      Dragon: 150,
+      Unicorn: 120,
+      Genie: 110,
+      Imp: 25,
+      Pixie: 30,
+      Phoenix: 140,
+      Minotaur: 130,
+      Witch: 75,
+      Manticore: 160,
+    };
+    return values[unitName] || 30;
+  }
+
+  static getMoveRange(name) {
+    const ranges = {
+      Archer: 2,
+      Ghost: 4,
+      Swordsman: 3,
+      Knight: 5,
+      Skeleton: 3,
+      Zombie: 2,
+      Vampire: 4,
+      Peasant: 2,
+      Dragon: 7,
+      Golem: 2,
+      Wizard: 2,
+      "Skeleton Archer": 2,
+      Snake: 1,
+      Boar: 4,
+      "Flame Spirit": 3,
+      "Water Spirit": 3,
+      "Wind Spirit": 3,
+      Goblin: 2,
+      Unicorn: 5,
+      Genie: 5,
+      Imp: 3,
+      Pixie: 3,
+      Phoenix: 6,
+      Minotaur: 4,
+      Witch: 3,
+      Manticore: 5,
+    };
+    return ranges[name] || 1;
+  }
+
+  static getAttackRange(name) {
+    const ranges = {
+      Archer: 20,
+      Ghost: 2,
+      Swordsman: 1,
+      Knight: 1,
+      Skeleton: 1,
+      Zombie: 1,
+      Vampire: 1,
+      Peasant: 1,
+      Dragon: 1,
+      Golem: 1,
+      Wizard: 20,
+      "Skeleton Archer": 20,
+      Snake: 1,
+      Boar: 1,
+      "Flame Spirit": 5,
+      "Water Spirit": 5,
+      "Wind Spirit": 5,
+      Goblin: 2,
+      Unicorn: 1,
+      Genie: 3,
+      Imp: 1,
+      Pixie: 1,
+      Phoenix: 1,
+      Minotaur: 1,
+      Witch: 20,
+      Manticore: 1,
+    };
+    return ranges[name] || 1;
+  }
+
+  static isFlying(name) {
+    return ["dragon", "vampire", "ghost", "wind spirit"].includes(name.toLowerCase());
+  }
+
+  calculateDamage(defender) {
+    const baseDamage = Math.max(1, this.attack - Math.floor(defender.defense * 0.3));
+    // Random damage variation 15%
+    const variation = Math.random() * 0.3 - 0.15;
+    let finalDamage = Math.round(baseDamage * (1 + variation));
+
+    // 2% chance of critical hit (2.5x damage)
+    const isCritical = Math.random() < 0.02;
+    if (isCritical) {
+      finalDamage *= 2.5;
+    }
+
+    return {
+      damage: Math.round(finalDamage),
+      isCritical: isCritical,
+    };
+  }
+
+  calculateRangedDamage(defender, distance) {
+    const maxPenalty = 0.6; // Maximum 60% penalty
+    const rangePenalty = Math.min(maxPenalty, Math.max(0, distance - 1) * 0.1); // 10% penalty per hex
+    const baseDamage = Math.max(1, Math.floor(this.attack * (1 - rangePenalty) - defender.defense * 0.3));
+
+    // Random damage variation 15%
+    const variation = Math.random() * 0.3 - 0.15;
+    let finalDamage = Math.round(baseDamage * (1 + variation));
+
+    // 2% chance of critical hit (2.5x damage)
+    const isCritical = Math.random() < 0.02;
+    if (isCritical) {
+      finalDamage *= 2.5;
+    }
+
+    return {
+      damage: Math.round(finalDamage),
+      isCritical: isCritical,
+    };
+  }
+}
+
+class Obstacle {
+  constructor(type, x, y) {
+    this.type = type;
+    this.x = x;
+    this.y = y;
+    this.icon = Obstacle.getIcon(type);
+  }
+
+  static getIcon(type) {
+    const icons = {
+      mountain: "⛰️",
+      lake: "💧",
+      forest: "🌲",
+    };
+    return icons[type];
+  }
+}
+
+class Game {
+  constructor(level, playerUnits) {
+    this.level = level;
+    this.playerUnits = playerUnits;
+    this.grid = Array(8)
+      .fill()
+      .map(() => Array(12).fill(null));
+    this.selectedUnit = null;
+    this.currentTurn = "player";
+    this.obstacles = [];
+    this.gameOver = false;
+    this.moveHistory = [];
+    this.turnNumber = 1;
+    this.turnStats = {
+      player: { damageDealt: 0, unitsLost: 0 },
+      enemy: { damageDealt: 0, unitsLost: 0 },
+    };
+    this.gameStats = {
+      player: {
+        damageDealt: 0,
+        unitsLost: 0,
+        unitsKilled: [],
+        totalPoints: 0,
+      },
+      enemy: {
+        damageDealt: 0,
+        unitsLost: 0,
+        unitsKilled: [],
+        totalPoints: 0,
+      },
+    };
+    this.initialize();
+  }
+
+  addToHistory(entry) {
+    this.moveHistory.push(entry);
+    this.renderHistory();
+  }
+
+  renderHistory() {
+    const historyPanel = document.getElementById("historyPanel");
+    historyPanel.innerHTML = this.moveHistory
+      .slice()
+      .reverse()
+      .map((entry) => {
+        if (entry.type === "turn") {
+          return `<div class="history-turn">Turn ${entry.turn}</div>`;
+        }
+        if (this.gameOver && entry.type === "summary") {
+          return `<div class="history-summary">${entry.text.replace(/\n/g, "<br>")}</div>`;
+        }
+        return `<div class="history-entry ${entry.actor}">${entry.text}</div>`;
+      })
+      .join("");
+  }
+
+  addDamageToStats(attacker, damage) {
+    this.turnStats[attacker.type].damageDealt += damage;
+  }
+
+  addUnitLostToStats(unit) {
+    const oppositeType = unit.type === "player" ? "enemy" : "player";
+    this.turnStats[oppositeType].unitsLost++;
+  }
+
+  addToHistoryTurnSummary() {
+    const stats = this.turnStats;
+    if (
+      stats.player.damageDealt > 0 ||
+      stats.enemy.damageDealt > 0 ||
+      stats.player.unitsLost > 0 ||
+      stats.enemy.unitsLost > 0
+    ) {
+      this.addToHistory({
+        type: "summary",
+        text: `Turn ${this.turnNumber} Summary:<br>
+               🔵 Player dealt ${stats["player"].damageDealt} damage<br>
+               🔴 Enemy dealt ${stats["enemy"].damageDealt} damage<br>
+               💀 Units lost total: Player ${stats.player.unitsLost} | Enemy ${stats.enemy.unitsLost}`,
+      });
+    }
+
+    this.gameStats.player.damageDealt += stats.player.damageDealt;
+    this.gameStats.enemy.damageDealt += stats.enemy.damageDealt;
+    this.gameStats.player.unitsLost += stats.player.unitsLost;
+    this.gameStats.enemy.unitsLost += stats.enemy.unitsLost;
+
+    this.turnStats = {
+      player: { damageDealt: 0, unitsLost: 0 },
+      enemy: { damageDealt: 0, unitsLost: 0 },
+    };
+  }
+
+  initialize() {
+    this.generateObstacles();
+
+    const playerUnits = this.getPlayerUnitsForLevel(this.level);
+    playerUnits.forEach((unit) => this.addUnitInValidPosition(unit));
+
+    const enemyUnits = this.getEnemyUnitsForLevel(this.level);
+    enemyUnits.forEach((unit) => this.addUnitInValidPosition(unit));
+
+    this.render();
+    this.updateTurnIndicator();
+    document.getElementById("gameControls").style.display = "flex";
+  }
+
+  getPlayerUnitsForLevel(level) {
+    const units = [];
+    const positions = [
+      [6, 1],
+      [6, 3],
+      [6, 5],
+      [6, 7],
+      [6, 9],
+      [6, 11],
+    ];
+
+    this.playerUnits.forEach((unitName, index) => {
+      if (index < positions.length) {
+        const [x, y] = positions[index];
+        units.push(unitFactory("player", unitName, x, y));
+      }
+    });
+
+    return units;
+  }
+
+  getEnemyUnitsForLevel(level) {
+    const units = [];
+    switch (level) {
+      case 1:
+        units.push(
+          unitFactory("enemy", "Skeleton", 1, 2),
+          unitFactory("enemy", "Zombie", 1, 4),
+          unitFactory("enemy", "Ghost", 1, 6)
+        );
+        break;
+      case 2:
+        units.push(
+          unitFactory("enemy", "Skeleton", 1, 2),
+          unitFactory("enemy", "Zombie", 1, 4),
+          unitFactory("enemy", "Ghost", 1, 6),
+          unitFactory("enemy", "Vampire", 1, 8)
+        );
+        break;
+      case 3:
+        units.push(
+          unitFactory("enemy", "Vampire", 1, 2),
+          unitFactory("enemy", "Ghost", 1, 4),
+          unitFactory("enemy", "Ghost", 1, 6),
+          unitFactory("enemy", "Skeleton Archer", 1, 8),
+          unitFactory("enemy", "Wizard", 1, 10)
+        );
+        break;
+      case 4:
+        units.push(
+          unitFactory("enemy", "Dragon", 1, 2),
+          unitFactory("enemy", "Vampire", 1, 4),
+          unitFactory("enemy", "Ghost", 1, 6),
+          unitFactory("enemy", "Wizard", 1, 8),
+          unitFactory("enemy", "Skeleton Archer", 1, 10)
+        );
+        break;
+      case 5:
+        units.push(
+          unitFactory("enemy", "Dragon", 1, 2),
+          unitFactory("enemy", "Golem", 1, 4),
+          unitFactory("enemy", "Wizard", 1, 6),
+          unitFactory("enemy", "Vampire", 1, 8),
+          unitFactory("enemy", "Ghost", 1, 10),
+          unitFactory("enemy", "Skeleton Archer", 1, 3)
+        );
+        break;
+      case 6:
+        units.push(
+          unitFactory("enemy", "Dragon", 1, 2),
+          unitFactory("enemy", "Golem", 1, 4),
+          unitFactory("enemy", "Wizard", 1, 6),
+          unitFactory("enemy", "Vampire", 1, 8),
+          unitFactory("enemy", "Ghost", 1, 10),
+          unitFactory("enemy", "Skeleton Archer", 2, 3),
+          unitFactory("enemy", "Snake", 2, 5),
+          unitFactory("enemy", "Boar", 2, 7),
+          unitFactory("enemy", "Flame Spirit", 2, 9)
+        );
+        break;
+      case 42: {
+        const randomUnits = Array.from(
+          { length: Math.floor(Math.random() * 6) + 5 },
+          () => allUnits[Math.floor(Math.random() * allUnits.length)]
+        );
+        randomUnits.forEach((unitName, index) => {
+          units.push(unitFactory("enemy", unitName, 1, 1 * index + 1));
+        });
+      }
+    }
+
+    return units;
+  }
+
+  generateObstacles() {
+    const obstacleTypes = ["mountain", "lake", "forest"];
+    const numObstacles = Math.floor(Math.random() * 8) + 8; // 8-15 obstacles
+
+    for (let i = 0; i < numObstacles; i++) {
+      const type = obstacleTypes[Math.floor(Math.random() * obstacleTypes.length)];
+      let x, y;
+      let maxTries = 10;
+      let tries = 0;
+      do {
+        x = Math.floor(Math.random() * 8);
+        y = Math.floor(Math.random() * 12);
+        // Avoid placing obstacles in the first and last two rows
+        tries++;
+      } while ((this.grid[x][y] || x < 2 || x > 5) && tries < maxTries);
+
+      const obstacle = new Obstacle(type, x, y);
+      this.obstacles.push(obstacle);
+      this.grid[x][y] = obstacle;
+    }
+  }
+
+  addUnitInValidPosition(unit) {
+    if (!this.grid[unit.x][unit.y]) {
+      this.grid[unit.x][unit.y] = unit;
+    } else {
+      // Find nearest empty position
+      let found = false;
+      let maxTries = 10;
+      let tries = 0;
+      let radius = 1;
+      while (!found && radius < 5 && tries < maxTries) {
+        tries++;
+        for (let dx = -radius; dx <= radius; dx++) {
+          for (let dy = -radius; dy <= radius; dy++) {
+            const newX = unit.x + dx;
+            const newY = unit.y + dy;
+            if (newX >= 0 && newX < 8 && newY >= 0 && newY < 12 && !this.grid[newX][newY]) {
+              unit.x = newX;
+              unit.y = newY;
+              this.grid[newX][newY] = unit;
+              found = true;
+              break;
+            }
+          }
+          if (found) break;
+        }
+        radius++;
+      }
+    }
+  }
+
+  isInRange(fromX, fromY, toX, toY, range) {
+    return Math.abs(toX - fromX) + Math.abs(toY - fromY) <= range;
+  }
+
+  findPath(startX, startY, endX, endY, range) {
+    const key = (x, y) => `${x},${y}`;
+    const heuristic = (x, y) => Math.abs(x - endX) + Math.abs(y - endY);
+    const unit = this.grid[startX][startY];
+    const isFlying = unit?.isFlying || false;
+
+    const openSet = new Map();
+    const closedSet = new Set();
+    const cameFrom = new Map();
+    const gScore = new Map();
+    const fScore = new Map();
+
+    openSet.set(key(startX, startY), { x: startX, y: startY });
+    gScore.set(key(startX, startY), 0);
+    fScore.set(key(startX, startY), heuristic(startX, startY));
+
+    const maxIterations = 1000;
+    let iterations = 0;
+
+    while (openSet.size > 0 && iterations < maxIterations) {
+      iterations += 1;
+
+      let current = null;
+      let lowestF = Infinity;
+      for (const [nodeKey, node] of openSet) {
+        const f = fScore.get(nodeKey);
+        if (f < lowestF) {
+          lowestF = f;
+          current = node;
+        }
+      }
+
+      if (current.x === endX && current.y === endY) {
+        const path = [];
+        let currentKey = key(current.x, current.y);
+        while (cameFrom.has(currentKey)) {
+          path.unshift(currentKey);
+          currentKey = cameFrom.get(currentKey);
+        }
+        return path.map((k) => {
+          const [x, y] = k.split(",").map(Number);
+          return { x, y };
+        });
+      }
+
+      openSet.delete(key(current.x, current.y));
+      closedSet.add(key(current.x, current.y));
+
+      const neighbors = [
+        { x: current.x - 1, y: current.y },
+        { x: current.x + 1, y: current.y },
+        { x: current.x, y: current.y - 1 },
+        { x: current.x, y: current.y + 1 },
+      ];
+
+      for (const neighbor of neighbors) {
+        if (neighbor.x < 0 || neighbor.x >= 8 || neighbor.y < 0 || neighbor.y >= 12) continue;
+
+        const neighborKey = key(neighbor.x, neighbor.y);
+        if (closedSet.has(neighborKey)) continue;
+
+        const cell = this.grid[neighbor.x][neighbor.y];
+        // Allow flying units to pass over obstacles
+        if (
+          (!isFlying && cell instanceof Obstacle) ||
+          (cell instanceof Unit && (neighbor.x !== endX || neighbor.y !== endY))
+        ) {
+          continue;
+        }
+
+        const tentativeG = gScore.get(key(current.x, current.y)) + 1;
+
+        if (tentativeG > range) continue;
+
+        if (!openSet.has(neighborKey)) {
+          openSet.set(neighborKey, neighbor);
+        } else if (tentativeG >= gScore.get(neighborKey)) {
+          continue;
+        }
+
+        cameFrom.set(neighborKey, key(current.x, current.y));
+        gScore.set(neighborKey, tentativeG);
+        fScore.set(neighborKey, tentativeG + heuristic(neighbor.x, neighbor.y));
+      }
+    }
+
+    return null;
+  }
+
+  isValidMove(fromX, fromY, toX, toY, range) {
+    if (!this.isInRange(fromX, fromY, toX, toY, range)) return false;
+    const unit = this.grid[fromX][fromY];
+
+    // Flying units can move to spots with obstacles
+    if (!unit?.isFlying && this.grid[toX][toY] instanceof Obstacle) return false;
+
+    // Check if there's a valid path
+    const path = this.findPath(fromX, fromY, toX, toY, range);
+    return path !== null;
+  }
+
+  updateTurnIndicator() {
+    document.getElementById("turnIndicator").textContent = `${
+      this.currentTurn.charAt(0).toUpperCase() + this.currentTurn.slice(1)
+    }'s Turn`;
+  }
+
+  render() {
+    const grid = document.getElementById("hexGrid");
+    grid.innerHTML = "";
+
+    for (let i = 0; i < 8; i++) {
+      for (let j = 0; j < 12; j++) {
+        const hex = document.createElement("div");
+        hex.className = "hex";
+
+        if (this.selectedUnit) {
+          // Show movement range if unit hasn't moved
+          if (
+            !this.selectedUnit.hasMoved &&
+            this.isValidMove(this.selectedUnit.x, this.selectedUnit.y, i, j, this.selectedUnit.moveRange)
+          ) {
+            hex.classList.add("movable");
+            if (this.selectedUnit.isFlying && this.grid[i][j] instanceof Obstacle) {
+              hex.classList.add("flying-move");
+            }
+          }
+
+          // Show attack indicators if unit hasn't attacked
+          if (!this.selectedUnit.hasAttacked && this.grid[i][j]?.type === "enemy") {
+            const distance = Math.abs(this.selectedUnit.x - i) + Math.abs(this.selectedUnit.y - j);
+            if (distance === 1) {
+              hex.classList.add("attackable");
+              const indicator = document.createElement("div");
+              indicator.className = "attack-indicator melee";
+              indicator.textContent = "⚔️";
+              hex.appendChild(indicator);
+            } else if (this.selectedUnit.range > 1 && distance <= this.selectedUnit.range) {
+              hex.classList.add("ranged-attack");
+              const indicator = document.createElement("div");
+              indicator.className = "attack-indicator ranged";
+              indicator.textContent = "🎯";
+              hex.appendChild(indicator);
+            }
+          }
+        }
+
+        const cell = this.grid[i][j];
+        if (cell instanceof Obstacle) {
+          hex.classList.add("obstacle", cell.type);
+          const icon = document.createElement("div");
+          icon.className = "obstacle-icon";
+          icon.textContent = cell.icon;
+          hex.appendChild(icon);
+        } else if (cell instanceof Unit) {
+          const unitDiv = document.createElement("div");
+          unitDiv.className = `unit ${cell.type}`;
+          unitDiv.innerHTML = cell.icon; // Add icon to unit div
+
+          const stats = document.createElement("div");
+          stats.className = "stats";
+          stats.textContent = `${cell.hp}♥ ${cell.attack}⚔ ${cell.defense}🛡`;
+
+          // Add hover events for unit info
+          unitDiv.addEventListener("mouseenter", () => this.updateInfoPanel(cell));
+          unitDiv.addEventListener("mouseleave", () => {
+            // When mouse leaves, show selected unit info or clear panel
+            if (this.selectedUnit) {
+              this.updateInfoPanel(this.selectedUnit);
+            } else {
+              this.updateInfoPanel(null);
+            }
+          });
+
+          unitDiv.appendChild(stats);
+          hex.appendChild(unitDiv);
+
+          if (cell === this.selectedUnit) {
+            hex.classList.add("selected");
+          }
+        }
+
+        hex.onclick = () => this.handleClick(i, j);
+        grid.appendChild(hex);
+      }
+    }
+  }
+
+  handleClick(x, y) {
+    if (this.gameOver) return; // Add this line
+    const clickedCell = this.grid[x][y];
+
+    // Always show info for clicked unit, regardless of turn or type
+    if (clickedCell instanceof Unit) {
+      this.updateInfoPanel(clickedCell);
+    }
+
+    if (clickedCell instanceof Obstacle) {
+      this.updateInfoPanel({
+        name: clickedCell.type.charAt(0).toUpperCase() + clickedCell.type.slice(1),
+        icon: clickedCell.icon,
+        description: "Impassable terrain",
+      });
+      return;
+    }
+
+    if (this.currentTurn !== "player") return;
+
+    let suspendRender = false;
+    if (this.selectedUnit) {
+      if (clickedCell === this.selectedUnit) {
+        this.selectedUnit = null;
+        this.render();
+        return;
+      }
+
+      if (clickedCell instanceof Unit && clickedCell.type === "player" && !clickedCell.hasMoved) {
+        this.selectedUnit = clickedCell;
+        this.render();
+        return;
+      }
+
+      if (clickedCell instanceof Unit && clickedCell.type === "enemy" && !this.selectedUnit.hasAttacked) {
+        const distance = Math.abs(this.selectedUnit.x - x) + Math.abs(this.selectedUnit.y - y);
+        if (distance === 1 || (this.selectedUnit.range > 1 && distance <= this.selectedUnit.range)) {
+          this.performAttack(this.selectedUnit, clickedCell);
+          if (this.selectedUnit.hasMoved || !this.canUnitMove(this.selectedUnit)) {
+            this.selectedUnit = null;
+          }
+        }
+      } else if (
+        !clickedCell &&
+        !this.selectedUnit.hasMoved &&
+        this.isValidMove(this.selectedUnit.x, this.selectedUnit.y, x, y, this.selectedUnit.moveRange)
+      ) {
+        this.moveUnit(this.selectedUnit, x, y);
+        suspendRender = true;
+        if (this.selectedUnit.hasAttacked || !this.canUnitAttack(this.selectedUnit)) {
+          this.selectedUnit = null;
+        }
+      }
+    } else if (clickedCell instanceof Unit && clickedCell.type === "player" && !clickedCell.hasMoved) {
+      this.selectedUnit = clickedCell;
+    }
+
+    if (!suspendRender) this.render();
+
+    // Check if player turn is over
+    let playerUnitsCanMove = false;
+    for (let i = 0; i < 8; i++) {
+      for (let j = 0; j < 12; j++) {
+        const unit = this.grid[i][j];
+        if (unit && unit.type === "player" && !unit.hasMoved) {
+          playerUnitsCanMove = true;
+          break;
+        }
+      }
+    }
+
+    if (!playerUnitsCanMove) {
+      this.currentTurn = "enemy";
+      this.turnNumber++;
+      this.addToHistory({ type: "turn", turn: this.turnNumber });
+      this.updateTurnIndicator();
+      setTimeout(() => this.enemyTurn(), 1000);
+    }
+  }
+
+  performAttack(attacker, defender) {
+    const distance = Math.abs(attacker.x - defender.x) + Math.abs(attacker.y - defender.y);
+    const damageResult =
+      distance === 1 ? attacker.calculateDamage(defender) : attacker.calculateRangedDamage(defender, distance);
+
+    this.addDamageToStats(attacker, damageResult.damage);
+    this.addToHistory({
+      actor: attacker.type,
+      text: `${attacker.icon} ${attacker.name} ${distance > 1 ? "shoots" : "attacks"} ${defender.icon} ${
+        defender.name
+      } for ${damageResult.damage} damage${damageResult.isCritical ? " (CRITICAL HIT!)" : ""}`,
+    });
+
+    defender.hp -= damageResult.damage;
+    attacker.hasAttacked = true;
+    attacker.hasMoved = true;
+
+    const unitDiv = document.querySelector(`.hex:nth-child(${defender.x * 12 + defender.y + 1}) .unit`);
+    unitDiv.classList.add("attacked");
+    if (damageResult.isCritical) {
+      unitDiv.classList.add("critical");
+    }
+    setTimeout(() => {
+      unitDiv.classList.remove("attacked");
+      unitDiv.classList.remove("critical");
+      this.updateInfoPanel(defender);
+    }, 500);
+
+    if (defender.hp <= 0) {
+      this.gameStats[attacker.type].unitsKilled.push({
+        name: defender.name,
+        icon: defender.icon,
+      });
+      this.gameStats[defender.type].unitsLost++;
+      this.addUnitLostToStats(defender);
+      this.grid[defender.x][defender.y] = null;
+      this.updateInfoPanel(null);
+      this.checkGameOver();
+
+      this.addToHistory({ actor: defender.type, text: `${defender.icon} ${defender.name} was defeated!` });
+    }
+
+    // Add damage to game stats (not just turn stats)
+    this.gameStats[attacker.type].damageDealt += damageResult.damage;
+  }
+
+  moveUnit(unit, targetX, targetY) {
+    const path = this.findPath(unit.x, unit.y, targetX, targetY, unit.moveRange);
+    if (!path) return;
+
+    const oldX = unit.x;
+    const oldY = unit.y;
+
+    path.unshift({ x: oldX, y: oldY });
+
+    this.addToHistory({
+      actor: unit.type,
+      text: `${unit.icon} ${unit.name} moved`,
+    });
+
+    this.grid[targetX][targetY] = unit;
+    this.grid[unit.x][unit.y] = null;
+    unit.x = targetX;
+    unit.y = targetY;
+    unit.hasMoved = true;
+
+    this.render();
+
+    // Show movement trail for each step
+    path.forEach((pos, index) => {
+      setTimeout(() => {
+        this.addTrailingEffect(pos.x, pos.y);
+      }, index * 100);
+    });
+  }
+
+  addTrailingEffect(oldX, oldY) {
+    setTimeout(() => {
+      const fromHex = document.querySelector(`.hex:nth-child(${oldX * 12 + oldY + 1})`);
+      if (fromHex) {
+        const trail = document.createElement("div");
+        trail.className = "move-trail";
+        fromHex.appendChild(trail);
+
+        setTimeout(() => trail.remove(), 2800);
+      }
+    }, 0);
+  }
+
+  canUnitMove(unit) {
+    if (unit.hasMoved) return false;
+    if (unit.hasAttacked) return false;
+    for (let i = -unit.moveRange; i <= unit.moveRange; i++) {
+      for (let j = -unit.moveRange; j <= unit.moveRange; j++) {
+        const newX = unit.x + i;
+        const newY = unit.y + j;
+        if (this.isValidMove(unit.x, unit.y, newX, newY, unit.moveRange)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  canUnitAttack(unit) {
+    if (unit.hasAttacked) return false;
+    for (let i = -unit.range; i <= unit.range; i++) {
+      for (let j = -unit.range; j <= unit.range; j++) {
+        const x = unit.x + i;
+        const y = unit.y + j;
+        if (
+          x >= 0 &&
+          x < 8 &&
+          y >= 0 &&
+          y < 12 &&
+          this.grid[x][y] instanceof Unit &&
+          this.grid[x][y].type === "enemy"
+        ) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  updateInfoPanel(unit) {
+    const infoPanel = document.getElementById("infoPanel");
+    if (!unit) {
+      infoPanel.innerHTML = "Select a unit to see information";
+      return;
+    }
+
+    if (unit instanceof Unit === false) {
+      infoPanel.innerHTML = `
+            <div class="unit-name">${unit.icon} ${unit.name.charAt(0).toUpperCase() + unit.name.slice(1)}</div>
+            <div class="unit-stats
+                <span>
+                <div class="stat">
+                    <span>Description:</span>
+                    <span>${unit.name}</span>
+                </div>
+                </span>
+            </div>
+        `;
+      return;
+    }
+
+    infoPanel.innerHTML = `
+            <div class="unit-name">${unit.icon} ${unit.name}</div>
+            <div class="unit-stats">
+                <span>
+                <div class="stat">
+                    <span>❤️ HP:</span>
+                    <span>${unit.hp}/${unit.maxHp}</span>
+                </div>
+                <div class="stat">
+                    <span>⚔️ Attack:</span>
+                    <span>${unit.attack}</span>
+                </div>
+                </span>
+                <span>
+                <div class="stat">
+                    <span>🛡️ Defense:</span>
+                    <span>${unit.defense}</span>
+                </div>
+                <div class="stat">
+                    <span>🏃 Move Range:</span>
+                    <span>${unit.moveRange}</span>
+                </div>
+                </span>
+                <span>
+                <div class="stat">
+                    <span>🏹 Range:</span>
+                    <span>${unit.range}</span>
+                </div>
+                <div class="stat">
+                    <span>Status:</span>
+                    <span>${unit.hasMoved ? "✖️ Moved" : "✔️ Ready"}</span>
+                </div>
+                </span>
+            </div>
+        `;
+  }
+
+  enemyTurn() {
+    if (this.gameOver) return;
+
+    const trailing = [];
+    const actions = [];
+    for (let i = 0; i < 8; i++) {
+      for (let j = 0; j < 12; j++) {
+        const unit = this.grid[i][j];
+        if (unit && unit.type === "enemy") {
+          // Find all player units within range
+          let targetInRange = null;
+          let nearestPlayer = null;
+          let minDist = Infinity;
+
+          for (let x = 0; x < 8; x++) {
+            for (let y = 0; y < 12; y++) {
+              const target = this.grid[x][y];
+              if (target && target.type === "player") {
+                const dist = Math.abs(x - i) + Math.abs(y - j);
+
+                if (dist <= unit.range) {
+                  if (!targetInRange || dist < Math.abs(targetInRange.x - i) + Math.abs(targetInRange.y - j)) {
+                    targetInRange = { unit: target, x, y };
+                  }
+                }
+
+                if (dist < minDist) {
+                  minDist = dist;
+                  nearestPlayer = { unit: target, x, y };
+                }
+              }
+            }
+          }
+
+          // Attack if target in range
+          if (targetInRange) {
+            const distance = Math.abs(targetInRange.x - i) + Math.abs(targetInRange.y - j);
+            const damageResult =
+              distance === 1
+                ? unit.calculateDamage(targetInRange.unit)
+                : unit.calculateRangedDamage(targetInRange.unit, distance);
+
+            this.addToHistory({
+              actor: "enemy",
+              text: `${unit.icon} ${unit.name} ${distance > 1 ? "shoots" : "attacks"} ${targetInRange.unit.icon} ${
+                targetInRange.unit.name
+              } for ${damageResult.damage} damage${damageResult.isCritical ? " (CRITICAL HIT!)" : ""}`,
+            });
+            actions.push({ type: "attack", unit, target: targetInRange, damage: damageResult.damage });
+
+            targetInRange.unit.hp -= damageResult.damage;
+
+            // Visual feedback and death check
+            const unitDiv = document.querySelector(
+              `.hex:nth-child(${targetInRange.x * 12 + targetInRange.y + 1}) .unit`
+            );
+            if (unitDiv) {
+              unitDiv.classList.add("attacked");
+              if (damageResult.isCritical) {
+                unitDiv.classList.add("critical");
+              }
+              setTimeout(() => {
+                unitDiv.classList.remove("attacked");
+                unitDiv.classList.remove("critical");
+              }, 500);
+            }
+
+            if (targetInRange.unit.hp <= 0) {
+              this.addToHistory({
+                actor: "enemy",
+                text: `${targetInRange.unit.icon} ${targetInRange.unit.name} was defeated`,
+              });
+              this.grid[targetInRange.x][targetInRange.y] = null;
+              this.checkGameOver();
+              actions.push({ type: "defeat", unit: targetInRange.unit });
+            }
+          }
+          // Move towards nearest player if no target in range
+          else if (nearestPlayer) {
+            const dx = Math.sign(nearestPlayer.x - i);
+            const dy = Math.sign(nearestPlayer.y - j);
+            let moved = false;
+
+            if (this.grid[i + dx]?.[j] === null) {
+              this.grid[i + dx][j] = unit;
+              this.grid[i][j] = null;
+              unit.x = i + dx;
+              unit.y = j;
+              moved = true;
+            } else if (this.grid[i]?.[j + dy] === null) {
+              this.grid[i][j + dy] = unit;
+              this.grid[i][j] = null;
+              unit.x = i;
+              unit.y = j + dy;
+              moved = true;
+            }
+
+            if (moved) {
+              trailing.push({ unit, x: i, y: j });
+              this.addToHistory({
+                actor: "enemy",
+                text: `${unit.icon} ${unit.name} moves towards ${nearestPlayer.unit.icon} ${nearestPlayer.unit.name}`,
+              });
+              actions.push({ type: "move", unit, x: unit.x, y: unit.y });
+            } else {
+              this.addToHistory({
+                actor: "enemy",
+                text: `${unit.icon} ${unit.name} is blocked and cannot move`,
+              });
+            }
+          }
+        }
+      }
+    }
+
+    for (let i = 0; i < 8; i++) {
+      for (let j = 0; j < 12; j++) {
+        const unit = this.grid[i][j];
+        if (unit && unit.type === "player") {
+          unit.hasMoved = false;
+          unit.hasAttacked = false;
+        }
+      }
+    }
+
+    if (actions.length === 0) {
+      this.addToHistory({ actor: "enemy", text: "🏳️ Skipped remaining moves" });
+    }
+
+    this.addToHistoryTurnSummary();
+    this.currentTurn = "player";
+    this.turnNumber++;
+    this.addToHistory({ type: "turn", turn: this.turnNumber });
+    this.updateTurnIndicator();
+    this.render();
+
+    for (let move of trailing) {
+      this.addTrailingEffect(move.x, move.y);
+    }
+  }
+
+  checkGameOver() {
+    let playerUnits = 0;
+    let enemyUnits = 0;
+
+    for (let i = 0; i < 8; i++) {
+      for (let j = 0; j < 12; j++) {
+        const unit = this.grid[i][j];
+        if (unit instanceof Unit) {
+          if (unit.type === "player") playerUnits++;
+          if (unit.type === "enemy") enemyUnits++;
+        }
+      }
+    }
+
+    if (playerUnits === 0 || enemyUnits === 0) {
+      this.gameOver = true;
+      const winner = playerUnits > 0 ? "Player" : "Enemy";
+      this.showGameOver(winner);
+    }
+
+    return this.gameOver;
+  }
+
+  calculateFinalScore(winner) {
+    const stats = this.gameStats.player;
+    let score = 0;
+
+    // Points for damage dealt (1 point per 2 damage)
+    score += Math.floor(stats.damageDealt / 2);
+
+    stats.unitsKilled.forEach((unit) => {
+      score += Unit.getUnitValue(unit.name);
+    });
+
+    // Penalty for lost units
+    score -= stats.unitsLost * 25;
+
+    // Bonus for winning/surviving
+    if (winner === "Player") {
+      score += 500;
+      // Bonus for remaining units' health
+      this.grid.forEach((row) => {
+        row.forEach((cell) => {
+          if (cell instanceof Unit && cell.type === "player") {
+            score += Math.floor((cell.hp / cell.maxHp) * 50);
+          }
+        });
+      });
+    }
+
+    return Math.max(0, score); // Ensure score doesn't go negative
+  }
+
+  showGameOver(winner) {
+    const finalScore = this.calculateFinalScore(winner);
+    this.gameStats.player.totalPoints = finalScore;
+
+    document.getElementById("gameControls").style.display = "none";
+
+    const stats = this.gameStats.player;
+    const gameOverDiv = document.createElement("div");
+    gameOverDiv.className = "game-over";
+    gameOverDiv.innerHTML = `
+      <h2>${winner} Wins!</h2>
+      <div class="final-stats">
+        <h3>Battle Statistics</h3>
+        <div class="stat-row">🗡️ Damage Dealt: ${stats.damageDealt}</div>
+        <div class="stat-row">💀 Enemy Units Defeated: ${stats.unitsKilled.length}</div>
+        <div class="stat-row">🏆 Units Lost: ${stats.unitsLost}</div>
+        <div class="stat-row">
+          <div class="killed-units">
+            ${stats.unitsKilled
+              .map(
+                (unit) => `
+              <div class="killed-unit">
+                <span>${unit.icon}</span>
+                <span>${unit.name}</span>
+                <span>+${Unit.getUnitValue(unit.name)}</span>
+              </div>
+            `
+              )
+              .join("")}
+          </div>
+        </div>
+        <div class="final-score">Final Score: ${finalScore}</div>
+      </div>
+      <button onclick="location.reload()">Play Again</button>
+    `;
+    document.body.appendChild(gameOverDiv);
+    this.addToHistoryTurnSummary();
+  }
+
+  endTurn() {
+    if (this.currentTurn === "player" && !this.gameOver) {
+      this.addToHistory({
+        actor: "player",
+        text: "🏳️ Skipped remaining moves",
+      });
+
+      this.addToHistoryTurnSummary();
+
+      for (let i = 0; i < 8; i++) {
+        for (let j = 0; j < 12; j++) {
+          const unit = this.grid[i][j];
+          if (unit instanceof Unit && unit.type === "player") {
+            unit.hasMoved = true;
+            unit.hasAttacked = true;
+          }
+        }
+      }
+
+      this.selectedUnit = null;
+      this.currentTurn = "enemy";
+      this.turnNumber++;
+      this.addToHistory({ type: "turn", turn: this.turnNumber });
+      this.updateTurnIndicator();
+      this.render();
+      setTimeout(() => this.enemyTurn(), 1000);
+    }
+  }
+
+  surrender() {
+    if (!this.gameOver) {
+      this.addToHistory({
+        actor: "player",
+        text: "🏳️ Surrendered the battle",
+      });
+      this.gameOver = true;
+      this.showGameOver("Enemy");
+    }
+  }
+}
+
+document.addEventListener("DOMContentLoaded", initializeUnitSelection);

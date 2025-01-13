@@ -796,6 +796,12 @@ s .container-mobile {
 .flag {
   font-size: 20px;
   color: #00f;
+  background-color: #5ecf76;
+}
+
+.death-field {
+  font-size: 20px;
+  background-color: rgb(172, 64, 64);
 }
 
 .separator {
