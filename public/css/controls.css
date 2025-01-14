@@ -121,6 +121,7 @@ input.button-secondary {
   color: #fff;
   background-color: #007bff;
   border: none;
+  cursor: pointer;
 }
 
 .button-primary-small:hover {
@@ -1436,8 +1437,8 @@ body.darkmode {
 }
 
 .module-small {
-  width: 140px;
-  height: 140px;
+  width: 120px;
+  height: 120px;
 }
 
 .size-x2 {

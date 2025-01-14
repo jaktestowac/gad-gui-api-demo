@@ -15,6 +15,7 @@ const loginValidateRoutes = (req, res) => {
 
   if (isUndefined(authorization)) {
     res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Access token not provided!"));
+    return;
   }
 
   if (isUndefined(verifyTokenResult)) {
@@ -29,7 +30,17 @@ const loginValidateRoutes = (req, res) => {
     return;
   }
 
-  res.status(HTTP_OK).send({});
+  logDebug("loginValidateRoutes: verifyTokenResult:", verifyTokenResult);
+  const data = {};
+
+  if (req.headers["verbose"] !== undefined) {
+    data["iat"] = verifyTokenResult.iat;
+    data["exp"] = verifyTokenResult.exp;
+    data["iatDate"] = new Date(verifyTokenResult.iat * 1000).toUTCString();
+    data["expDate"] = new Date(verifyTokenResult.exp * 1000).toUTCString();
+  }
+
+  res.status(HTTP_OK).send(data);
   return;
 };
 
