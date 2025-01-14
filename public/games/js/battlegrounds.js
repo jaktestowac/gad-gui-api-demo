@@ -1,3 +1,11 @@
+let verbose = false;
+
+function logOnConsole(obj, msg) {
+  if (verbose) {
+    console.log(msg, obj);
+  }
+}
+
 function startGame(level) {
   const useCustomArmy = document.getElementById("useCustomArmy").checked;
 
@@ -708,6 +716,59 @@ class Game {
     return Math.abs(toX - fromX) + Math.abs(toY - fromY) <= range;
   }
 
+  isInHexNeighbors(currentX, currentY, x, y) {
+    const oddRow = currentX % 2 === 1;
+
+    // od rows has i and i+1 columns abvoe nad below, even has i-1 and i columns above and below
+    // hex row-1_col-1 has following neighbours:
+    // hex row-0_col-1
+    // hex row-0_col-2
+    // hex row-1_col-0
+    // hex row-1_col-1
+    // hex row-2_col-1
+    // hex row-2_col-2
+
+    // hex row-2_col-1  has following neighbours:
+    // hex row-1_col-0
+    // hex row-1_col-1
+    // hex row-3_col-0
+    // hex row-3_col-1
+    // hex row-2_col-0
+    // hex row-2_col-2
+
+    if (oddRow) {
+      if (
+        (x === currentX - 1 && y === currentY) ||
+        (x === currentX - 1 && y === currentY + 1) ||
+        (x === currentX && y === currentY - 1) ||
+        (x === currentX && y === currentY + 1) ||
+        (x === currentX + 1 && y === currentY) ||
+        (x === currentX + 1 && y === currentY + 1)
+      ) {
+        return true;
+      }
+    } else {
+      if (
+        (x === currentX - 1 && y === currentY - 1) ||
+        (x === currentX - 1 && y === currentY) ||
+        (x === currentX && y === currentY - 1) ||
+        (x === currentX && y === currentY + 1) ||
+        (x === currentX + 1 && y === currentY - 1) ||
+        (x === currentX + 1 && y === currentY)
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  calculateHexDistance(x1, y1, x2, y2) {
+    const dx = Math.abs(x2 - x1);
+    const dy = Math.abs(y2 - y1);
+    return dx + Math.max(0, (dy - dx) / 2);
+  }
+
   findPath(startX, startY, endX, endY, range) {
     const key = (x, y) => `${x},${y}`;
     const heuristic = (x, y) => Math.abs(x - endX) + Math.abs(y - endY);
@@ -756,16 +817,31 @@ class Game {
       openSet.delete(key(current.x, current.y));
       closedSet.add(key(current.x, current.y));
 
-      const neighbors = [
-        { x: current.x - 1, y: current.y },
-        { x: current.x + 1, y: current.y },
-        { x: current.x, y: current.y - 1 },
-        { x: current.x, y: current.y + 1 },
+      // Get all possible neighbors including diagonal moves
+      const neighbors = [];
+      const directions = [
+        [-1, 0],
+        [1, 0], // Vertical
+        [0, -1],
+        [0, 1], // Horizontal
+        [-1, -1],
+        [-1, 1], // Diagonal left
+        [1, -1],
+        [1, 1], // Diagonal right
       ];
 
-      for (const neighbor of neighbors) {
-        if (neighbor.x < 0 || neighbor.x >= 8 || neighbor.y < 0 || neighbor.y >= 12) continue;
+      for (const [dx, dy] of directions) {
+        const newX = current.x + dx;
+        const newY = current.y + dy;
 
+        if (newX < 0 || newX >= 8 || newY < 0 || newY >= 12) continue;
+
+        if (this.calculateHexDistance(startX, startY, newX, newY) <= range) {
+          neighbors.push({ x: newX, y: newY });
+        }
+      }
+
+      for (const neighbor of neighbors) {
         const neighborKey = key(neighbor.x, neighbor.y);
         if (closedSet.has(neighborKey)) continue;
 
@@ -823,6 +899,7 @@ class Game {
       for (let j = 0; j < 12; j++) {
         const hex = document.createElement("div");
         hex.className = "hex";
+        hex.classList.add(`row-${i}_col-${j}`);
 
         if (this.selectedUnit) {
           // Show movement range if unit hasn't moved
@@ -839,7 +916,9 @@ class Game {
           // Show attack indicators if unit hasn't attacked
           if (!this.selectedUnit.hasAttacked && this.grid[i][j]?.type === "enemy") {
             const distance = Math.abs(this.selectedUnit.x - i) + Math.abs(this.selectedUnit.y - j);
-            if (distance === 1) {
+            const isNeighbor = this.isInHexNeighbors(this.selectedUnit.x, this.selectedUnit.y, i, j);
+
+            if (isNeighbor) {
               hex.classList.add("attackable");
               const indicator = document.createElement("div");
               indicator.className = "attack-indicator melee";
@@ -865,7 +944,19 @@ class Game {
         } else if (cell instanceof Unit) {
           const unitDiv = document.createElement("div");
           unitDiv.className = `unit ${cell.type}`;
-          unitDiv.innerHTML = cell.icon; // Add icon to unit div
+
+          if (cell.hasMoved || cell.hasAttacked) {
+            unitDiv.classList.add("exhausted");
+          }
+
+          // Add indicator for units that can attack
+          if (cell.type === "player" && !cell.hasAttacked && this.currentTurn === "player") {
+            if (this.canUnitAttack(cell)) {
+              unitDiv.classList.add("can-attack");
+            }
+          }
+
+          unitDiv.innerHTML = cell.icon;
 
           const stats = document.createElement("div");
           stats.className = "stats";
@@ -931,8 +1022,23 @@ class Game {
       }
 
       if (clickedCell instanceof Unit && clickedCell.type === "enemy" && !this.selectedUnit.hasAttacked) {
-        const distance = Math.abs(this.selectedUnit.x - x) + Math.abs(this.selectedUnit.y - y);
-        if (distance === 1 || (this.selectedUnit.range > 1 && distance <= this.selectedUnit.range)) {
+        const distance = this.calculateHexDistance(this.selectedUnit.x, this.selectedUnit.y, x, y);
+        const isNeighbor = this.isInHexNeighbors(this.selectedUnit.x, this.selectedUnit.y, x, y);
+
+        logOnConsole(`handleClick:`, {
+          distance,
+          isNeighbor,
+          selectedUnitY: this.selectedUnit.y,
+          y,
+          selectedUnitX: this.selectedUnit.x,
+          x,
+        });
+
+        if (
+          distance === 1 ||
+          (distance === 0.5 && this.selectedUnit.x === x) ||
+          (this.selectedUnit.range > 1 && distance <= this.selectedUnit.range)
+        ) {
           this.performAttack(this.selectedUnit, clickedCell);
           if (this.selectedUnit.hasMoved || !this.canUnitMove(this.selectedUnit)) {
             this.selectedUnit = null;
@@ -1092,7 +1198,8 @@ class Game {
           y >= 0 &&
           y < 12 &&
           this.grid[x][y] instanceof Unit &&
-          this.grid[x][y].type === "enemy"
+          this.grid[x][y].type === "enemy" &&
+          this.calculateHexDistance(unit.x, unit.y, x, y) <= unit.range
         ) {
           return true;
         }
@@ -1178,7 +1285,7 @@ class Game {
             for (let y = 0; y < 12; y++) {
               const target = this.grid[x][y];
               if (target && target.type === "player") {
-                const dist = Math.abs(x - i) + Math.abs(y - j);
+                const dist = this.calculateHexDistance(x, y, i, j);
 
                 if (dist <= unit.range) {
                   if (!targetInRange || dist < Math.abs(targetInRange.x - i) + Math.abs(targetInRange.y - j)) {

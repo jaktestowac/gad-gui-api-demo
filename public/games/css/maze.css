@@ -1,0 +1,107 @@
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+#status {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+#mazeCanvas {
+  border: 2px solid #333;
+  margin: 10px;
+}
+
+#newGame {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+#newGame:hover {
+  background-color: #45a049;
+}
+
+.menu {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.size-selector {
+  margin: 20px 0;
+}
+
+.size-selector label {
+  margin-right: 10px;
+}
+
+.size-selector select {
+  padding: 5px;
+  font-size: 16px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+#startGame {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+#startGame:hover {
+  background-color: #45a049;
+}
+
+.gameUi {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.maze-grid {
+    display: grid;
+    gap: 0;
+    margin: 20px auto;
+}
+
+.cell {
+    width: 20px;
+    height: 20px;
+}
+
+.wall {
+    background-color: #333;
+}
+
+.path {
+    background-color: white;
+}
+
+.player {
+    background-color: red;
+}
+
+.goal {
+    background-color: green;
+}
+
+.win-overlay {
+    background-color: rgba(255, 215, 0, 0.3);
+}

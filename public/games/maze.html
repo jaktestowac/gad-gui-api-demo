@@ -1,0 +1,64 @@
+<html>
+
+<head>
+    <title>🦎 GAD | Game: Maze</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="./css/maze.css" />
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-gui" class="nav-menu"></h1>
+        </div>
+    </header>
+    <br />
+    <br />
+    <br />
+    <div class="game-container">
+        <div id="menu" class="menu">
+            <h2>Maze Explorer</h2>
+            <div class="size-selector">
+                <label for="mazeSize">Maze Size:</label>
+                <select id="mazeSize">
+                    <option value="9">9 x 9</option>
+                    <option value="13">13 x 13</option>
+                    <option value="15">15 x 15</option>
+                    <option value="19">19 x 19</option>
+                    <option value="21">21 x 21</option>
+                    <option value="25">25 x 25</option>
+                    <option value="27">27 x 27</option>
+                    <option value="31">31 x 31</option>
+                </select>
+            </div>
+            <button id="startGame">Start Game</button>
+        </div>
+        <div id="gameUI" class="gameUi hidden">
+            <div id="status">Time: 0s</div>
+            <div id="mazeContainer" class="maze-grid"></div>
+            <button id="newGame">New Game</button>
+        </div>
+        <br />
+        <a href="./games.html">
+            <button class="button-primary button-mobile" translateId="btnReturnToGames" style="margin: 10; font-size: 16px">
+                Return to Games
+            </button>
+        </a>
+    </div>
+    <script src="js/maze.js"></script>
+</body>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="/username.js"></script>
+<script type="text/javascript" src="/js/darkmode.js"></script>
+<script type="text/javascript" src="/js/message-notifier.js"></script>
+<link rel="stylesheet" href="/css/banner-cookie.css" />
+<script type="text/javascript" src="/js/banner-cookie.js"></script>
+
+</html>

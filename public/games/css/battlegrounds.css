@@ -89,7 +89,7 @@
 }
 
 .hex.flying-move::after {
-  content: '☁️';
+  content: "☁️";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -145,9 +145,31 @@
   animation: shake 0.5s;
 }
 
+.unit.exhausted {
+  opacity: 0.5;
+  filter: grayscale(30%);
+}
+
+.unit.can-attack::after {
+  content: '⚔️';
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  font-size: 12px;
+  opacity: 0.7;
+  animation: pulse 2s infinite;
+  filter: drop-shadow(0 0 2px rgba(255, 100, 100, 0.8));
+  pointer-events: none;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.2); opacity: 0.9; }
+  100% { transform: scale(1); opacity: 0.7; }
+}
+
 .tooltip {
   display: none;
-  /* Remove tooltip */
 }
 
 .info-panel {
