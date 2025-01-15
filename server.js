@@ -171,7 +171,7 @@ server.get("/home", homeRoutes);
 
 // Login to one of the users from ./users.json
 server.post("/api/login", loginApiRoutes);
-server.get("/api/login/validate", loginValidateRoutes);
+server.get("/api/login", loginValidateRoutes);
 server.post("/process_login", processLoginRoutes);
 server.get("/login", loginRoutes);
 server.get("/welcome", welcomeRoutes);

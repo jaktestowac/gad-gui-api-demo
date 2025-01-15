@@ -196,9 +196,7 @@
             "content": {}
           }
         }
-      }
-    },
-    "/login/validate": {
+      },
       "get": {
         "tags": ["authentication"],
         "summary": "Validate if token is correct and user is logged in",
