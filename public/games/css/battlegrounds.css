@@ -151,7 +151,7 @@
 }
 
 .unit.can-attack::after {
-  content: '⚔️';
+  content: "⚔️";
   position: absolute;
   top: -1px;
   right: -1px;
@@ -163,9 +163,18 @@
 }
 
 @keyframes pulse {
-  0% { transform: scale(1); opacity: 0.7; }
-  50% { transform: scale(1.2); opacity: 0.9; }
-  100% { transform: scale(1); opacity: 0.7; }
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
 }
 
 .tooltip {
@@ -663,4 +672,36 @@
   font-size: 24px;
   color: gold;
   font-weight: bold;
+}
+
+.grave-effect {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 24px;
+  height: 24px;
+  font-size: 24px;
+  animation: fadeGrave 2.5s forwards;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.grave-effect::before {
+  content: "👻";
+}
+
+@keyframes fadeGrave {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: translate(-50%, -80%) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -100%) scale(0.8);
+  }
 }

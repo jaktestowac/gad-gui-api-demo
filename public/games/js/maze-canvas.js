@@ -4,10 +4,28 @@ const statusEl = document.getElementById("status");
 const menuEl = document.getElementById("menu");
 const gameUI = document.getElementById("gameUI");
 const mazeSizeSelect = document.getElementById("mazeSize");
+const seedInput = document.getElementById("mazeSeed");
+const startButton = document.getElementById("startGame");
+const mazeScoreEndpoint = "../../api/maze/score";
 
-const CELL_SIZE = 10;
+async function issuePostScoreRequest(time, size) {
+  const finalScore = Math.floor((size * 1000) / time);
+  const data = { time: time, size: size, score: finalScore };
+  fetch(mazeScoreEndpoint, {
+    method: "POST",
+    body: JSON.stringify(data),
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+  });
+}
+
+const CELL_SIZE = 20;
 let ROWS = 9;
 let COLS = 9;
+let currentSeed = Date.now();
 
 canvas.width = COLS * CELL_SIZE;
 canvas.height = ROWS * CELL_SIZE;
@@ -16,6 +34,11 @@ let maze = [];
 let player = { x: 1, y: 1 };
 let startTime = 0;
 let gameActive = false;
+
+function seededRandom() {
+  const x = Math.sin(currentSeed++) * 10000;
+  return x - Math.floor(x);
+}
 
 function initMaze() {
   maze = Array(ROWS)
@@ -43,7 +66,7 @@ function shuffleDirections() {
     [0, 1],
     [-1, 0],
   ];
-  return dirs.sort(() => Math.random() - 0.5);
+  return dirs.sort(() => seededRandom() - 0.5);
 }
 
 function drawMaze() {
@@ -73,9 +96,33 @@ function updateTimer() {
   }
 }
 
+function validateSeed() {
+  const seedValue = seedInput.value;
+  const errorMessage = seedInput.parentElement.querySelector(".error-message");
+
+  if (seedValue === "") {
+    seedInput.classList.remove("invalid");
+    errorMessage.classList.remove("show");
+    startButton.disabled = false;
+    return true;
+  }
+
+  const isValid = /^\d+$/.test(seedValue) && parseInt(seedValue) >= 0;
+
+  seedInput.classList.toggle("invalid", !isValid);
+  errorMessage.classList.toggle("show", !isValid);
+  startButton.disabled = !isValid;
+
+  return isValid;
+}
+
 function initGame() {
+  if (!validateSeed()) return;
+
   ROWS = parseInt(mazeSizeSelect.value);
   COLS = parseInt(mazeSizeSelect.value);
+  currentSeed = seedInput.value ? parseInt(seedInput.value) : Date.now();
+
   canvas.width = COLS * CELL_SIZE;
   canvas.height = ROWS * CELL_SIZE;
 
@@ -112,6 +159,8 @@ function checkWin() {
   if (distance < CELL_SIZE && gameActive) {
     gameActive = false;
     const finalTime = ((Date.now() - startTime) / 1000).toFixed(1);
+
+    issuePostScoreRequest(finalTime, COLS * ROWS);
     statusEl.textContent = `Completed in ${finalTime}s! Press New Game to play again.`;
     ctx.fillStyle = "rgba(255, 215, 0, 0.3)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -160,6 +209,7 @@ document.addEventListener("keydown", (e) => {
   checkWin();
 });
 
+seedInput.addEventListener("input", validateSeed);
 document.getElementById("startGame").addEventListener("click", initGame);
 document.getElementById("newGame").addEventListener("click", showMenu);
 

@@ -23,6 +23,14 @@
     {
       "id": 6,
       "name": "Sudoku"
+    },
+    {
+      "id": 7,
+      "name": "Maze"
+    },
+    {
+      "id": 8,
+      "name": "BattleGrounds"
     }
   ]
 }

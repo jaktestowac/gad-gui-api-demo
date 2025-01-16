@@ -58,6 +58,7 @@ const {
 } = require("../helpers/db-operations/db-user-roles.operations");
 const { userBaseAuth, updateUserActions, getAdminAuth } = require("../helpers/user-auth.helpers");
 const { handleBookShopPaymentHistory } = require("../endpoints/book-shop/book-shop-payment-history-endpoint.helpers");
+const { handleMaze } = require("../endpoints/maze-endpoint.helpers");
 
 const validationsRoutes = (req, res, next) => {
   let userAuth = userBaseAuth;
@@ -174,6 +175,9 @@ const validationsRoutes = (req, res, next) => {
     }
     if (req.url.includes("/api/minesweeper")) {
       handleMinesweeper(req, res);
+    }
+    if (req.url.includes("/api/maze")) {
+      handleMaze(req, res);
     }
     if (req.url.includes("/api/sudoku")) {
       handleSudoku(req, res);
