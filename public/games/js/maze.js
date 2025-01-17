@@ -8,9 +8,9 @@ const startButton = document.getElementById("startGame");
 let currentSeed = Date.now();
 const mazeScoreEndpoint = "../../api/maze/score";
 
-async function issuePostScoreRequest(time, size) {
+async function issuePostScoreRequest(time, size, seed) {
   const finalScore = Math.floor((size * 1000) / time);
-  const data = { time: time, size: size, score: finalScore };
+  const data = { time: time, size: size, score: finalScore, seed };
   fetch(mazeScoreEndpoint, {
     method: "POST",
     body: JSON.stringify(data),
@@ -158,7 +158,7 @@ function checkWin() {
   if (player.x === COLS - 2 && player.y === ROWS - 2 && gameActive) {
     gameActive = false;
     const finalTime = ((Date.now() - startTime) / 1000).toFixed(1);
-    issuePostScoreRequest(finalTime, COLS * ROWS);
+    issuePostScoreRequest(finalTime, COLS * ROWS, currentSeed);
     statusEl.textContent = `Completed in ${finalTime}s! Press New Game to play again.`;
     mazeContainer.classList.add("win-overlay");
   }

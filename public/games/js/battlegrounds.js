@@ -1,6 +1,6 @@
 let verbose = false;
 
-function logOnConsole(obj, msg) {
+function logOnConsole(msg, obj) {
   if (verbose) {
     console.log(msg, obj);
   }
@@ -540,6 +540,179 @@ const units = {
     value: 10,
     attackRange: 1,
   },
+  Angel: {
+    icon: "😇",
+    hp: 20,
+    attack: 7,
+    defense: 6,
+    moveRange: 6,
+    range: 1,
+    isFlying: true,
+    value: 150,
+    attackRange: 1,
+  },
+  Cavalier: {
+    icon: "🐴",
+    hp: 15,
+    attack: 6,
+    defense: 4,
+    moveRange: 5,
+    range: 1,
+    isFlying: false,
+    value: 90,
+    attackRange: 1,
+  },
+  "Undead Lord": {
+    icon: "👑💀",
+    hp: 25,
+    attack: 8,
+    defense: 8,
+    moveRange: 5,
+    range: 1,
+    isFlying: false,
+    value: 300,
+    attackRange: 1,
+    special: true,
+  },
+  "Dragon Lord": {
+    icon: "👑🐉",
+    hp: 30,
+    attack: 10,
+    defense: 8,
+    moveRange: 7,
+    range: 1,
+    isFlying: true,
+    value: 300,
+    attackRange: 1,
+    special: true,
+  },
+  Wilbur: {
+    icon: "👑🐷",
+    hp: 10,
+    attack: 20,
+    defense: 2,
+    moveRange: 7,
+    range: 1,
+    isFlying: false,
+    value: 300,
+    attackRange: 1,
+    special: true,
+  },
+  "Giant Spider": {
+    icon: "🕷️",
+    hp: 15,
+    attack: 6,
+    defense: 3,
+    moveRange: 3,
+    range: 1,
+    isFlying: false,
+    value: 70,
+    attackRange: 1,
+  },
+  Maggot: {
+    icon: "🐛",
+    hp: 5,
+    attack: 2,
+    defense: 1,
+    moveRange: 2,
+    range: 1,
+    isFlying: false,
+    value: 10,
+    attackRange: 1,
+  },
+  Paladin: {
+    icon: "🛡️🗡️",
+    hp: 15,
+    attack: 6,
+    defense: 15,
+    moveRange: 4,
+    range: 1,
+    isFlying: false,
+    value: 250,
+    attackRange: 1,
+    special: true,
+  },
+  "Evil Necromancer": {
+    icon: "🧟‍♂️",
+    hp: 10,
+    attack: 10,
+    defense: 2,
+    moveRange: 3,
+    range: 20,
+    isFlying: false,
+    value: 250,
+    attackRange: 20,
+    special: true,
+  },
+  "King Devil": {
+    icon: "👑😈",
+    hp: 30,
+    attack: 12,
+    defense: 6,
+    moveRange: 6,
+    range: 1,
+    isFlying: false,
+    value: 300,
+    attackRange: 1,
+    special: true,
+  },
+  "Queen Fairy": {
+    icon: "👑🧚",
+    hp: 20,
+    attack: 8,
+    defense: 2,
+    moveRange: 6,
+    range: 1,
+    isFlying: true,
+    value: 300,
+    attackRange: 1,
+    special: true,
+  },
+  Juggernaut: {
+    icon: "👑🤖",
+    hp: 20,
+    attack: 8,
+    defense: 12,
+    moveRange: 3,
+    range: 1,
+    isFlying: false,
+    value: 200,
+    attackRange: 1,
+    special: true,
+  },
+  Rat: {
+    icon: "🐀",
+    hp: 4,
+    attack: 4,
+    defense: 1,
+    moveRange: 10,
+    range: 1,
+    isFlying: false,
+    value: 15,
+    attackRange: 1,
+  },
+  "Plague Rat": {
+    icon: "💀🐀",
+    hp: 8,
+    attack: 4,
+    defense: 2,
+    moveRange: 15,
+    range: 1,
+    isFlying: false,
+    value: 25,
+    attackRange: 1,
+  },
+  "Giant Rat": {
+    icon: "🐁",
+    hp: 10,
+    attack: 5,
+    defense: 3,
+    moveRange: 10,
+    range: 1,
+    isFlying: false,
+    value: 30,
+    attackRange: 1,
+  },
 };
 
 function unitFactory(player, unitName, x, y) {
@@ -552,7 +725,7 @@ function unitFactory(player, unitName, x, y) {
 
 const allUnits = Object.keys(units);
 
-const availableUnits = ["Swordsman", "Archer", "Knight", "Peasant", "Wizard", "Dragon", "Golem", "Manticore"];
+const availableUnits = ["Swordsman", "Archer", "Knight", "Peasant", "Wizard", "Dragon", "Golem", "Paladin", "Monk"];
 
 const presetArmy = ["Knight", "Dragon", "Wizard", "Archer", "Golem"];
 let selectedUnits = [];
@@ -560,11 +733,14 @@ let selectedUnits = [];
 // Add predefined armies for each level
 const levelArmies = {
   1: ["Swordsman", "Archer", "Knight", "Peasant"],
-  2: ["Knight", "Archer", "Wizard", "Swordsman", "Peasant"],
-  3: ["Knight", "Dragon", "Wizard", "Archer", "Swordsman"],
-  4: ["Dragon", "Wizard", "Knight", "Golem", "Archer", "Swordsman"],
-  5: ["Dragon", "Dragon", "Wizard", "Golem", "Archer", "Swordsman", "Knight"],
-  6: ["Dragon", "Dragon", "Wizard", "Golem", "Archer", "Swordsman", "Knight", "Knight", "Knight", "Knight"],
+  2: ["Swordsman", "Archer", "Knight", "Wizard"],
+  3: ["Swordsman", "Archer", "Knight", "Wizard", "Peasant"],
+  4: ["Swordsman", "Archer", "Knight", "Wizard", "Archer", "Archer"],
+  5: ["Swordsman", "Archer", "Knight", "Wizard", "Archer", "Cavalier"],
+  6: ["Swordsman", "Archer", "Knight", "Wizard", "Archer", "Archer", "Cavalier"],
+  7: ["Swordsman", "Archer", "Knight", "Wizard", "Archer", "Archer", "Cavalier", "Cavalier"],
+  8: ["Swordsman", "Archer", "Knight", "Wizard", "Archer", "Archer", "Cavalier", "Cavalier", "Angel"],
+  9: ["Swordsman", "Archer", "Knight", "Wizard", "Archer", "Archer", "Cavalier", "Cavalier", "Angel", "Titan"],
   42: Array.from({ length: 6 }, () => allUnits[Math.floor(Math.random() * allUnits.length)]),
 };
 
@@ -782,6 +958,7 @@ class Game {
   constructor(level, playerUnits) {
     this.level = level;
     this.playerUnits = playerUnits;
+    this.basePlayerUnits = [...playerUnits];
     this.grid = Array(8)
       .fill()
       .map(() => Array(12).fill(null));
@@ -894,6 +1071,11 @@ class Game {
       [6, 7],
       [6, 9],
       [6, 11],
+      [7, 1],
+      [7, 3],
+      [7, 5],
+      [7, 7],
+      [7, 8],
     ];
 
     this.playerUnits.forEach((unitName, index) => {
@@ -963,6 +1145,46 @@ class Game {
           unitFactory("enemy", "Snake", 2, 5),
           unitFactory("enemy", "Boar", 2, 7),
           unitFactory("enemy", "Octopus", 2, 9)
+        );
+        break;
+      case 7:
+        units.push(
+          unitFactory("enemy", "Dragon", 1, 2),
+          unitFactory("enemy", "Golem", 1, 4),
+          unitFactory("enemy", "Wizard", 1, 6),
+          unitFactory("enemy", "Vampire", 1, 8),
+          unitFactory("enemy", "Ghost", 1, 10),
+          unitFactory("enemy", "Skeleton Archer", 2, 3),
+          unitFactory("enemy", "Snake", 2, 5),
+          unitFactory("enemy", "Boar", 2, 7),
+          unitFactory("enemy", "Octopus", 2, 9),
+          unitFactory("enemy", "Mummy", 2, 11)
+        );
+        break;
+      case 8:
+        units.push(
+          unitFactory("enemy", "Automaton", 1, 2),
+          unitFactory("enemy", "Golem", 1, 4),
+          unitFactory("enemy", "Dragon", 1, 6),
+          unitFactory("enemy", "Golem", 1, 8),
+          unitFactory("enemy", "Phoenix", 1, 10),
+          unitFactory("enemy", "Titan", 2, 2),
+          unitFactory("enemy", "Behemoth", 2, 4),
+          unitFactory("enemy", "Manticore", 2, 6)
+        );
+        break;
+      case 9:
+        units.push(
+          unitFactory("enemy", "Skeleton", 1, 2),
+          unitFactory("enemy", "Mummy", 1, 4),
+          unitFactory("enemy", "Zombie", 1, 6),
+          unitFactory("enemy", "Zombie", 1, 8),
+          unitFactory("enemy", "Vampire", 1, 10),
+          unitFactory("enemy", "Undead Lord", 2, 2),
+          unitFactory("enemy", "Vampire", 2, 4),
+          unitFactory("enemy", "Zombie", 2, 6),
+          unitFactory("enemy", "Skeleton Archer", 2, 8),
+          unitFactory("enemy", "Skeleton Archer", 2, 10)
         );
         break;
       case 42: {
@@ -1307,7 +1529,7 @@ class Game {
   }
 
   handleClick(x, y) {
-    let killed = {};
+    let attackDetails = {};
     if (this.gameOver) return; // Add this line
     const clickedCell = this.grid[x][y];
 
@@ -1355,11 +1577,11 @@ class Game {
         });
 
         if (
-          distance === 1 ||
+          (distance === 1 && isNeighbor) ||
           (distance === 0.5 && this.selectedUnit.x === x) ||
           (this.selectedUnit.range > 1 && distance <= this.selectedUnit.range)
         ) {
-          killed = this.performAttack(this.selectedUnit, clickedCell);
+          attackDetails = this.performAttack(this.selectedUnit, clickedCell);
 
           if (this.selectedUnit.hasMoved || !this.canUnitMove(this.selectedUnit)) {
             this.selectedUnit = null;
@@ -1382,8 +1604,11 @@ class Game {
 
     if (suspendRender === false) this.render();
 
-    if (killed.wasKilled) {
-      this.addGraveEffect(killed.unit.x, killed.unit.y);
+    if (attackDetails.wasAttacked) {
+      this.addHitEffect(attackDetails.unit.x, attackDetails.unit.y);
+    }
+    if (attackDetails.wasKilled) {
+      this.addGraveEffect(attackDetails.unit.x, attackDetails.unit.y);
     }
 
     // Check if player turn is over
@@ -1408,7 +1633,8 @@ class Game {
   }
 
   performAttack(attacker, defender) {
-    const killed = {};
+    const attackDetails = {};
+    attackDetails.unit = defender;
     const distance = Math.abs(attacker.x - defender.x) + Math.abs(attacker.y - defender.y);
     const damageResult =
       distance === 1 ? attacker.calculateDamage(defender) : attacker.calculateRangedDamage(defender, distance);
@@ -1429,7 +1655,10 @@ class Game {
     unitDiv.classList.add("attacked");
     if (damageResult.isCritical) {
       unitDiv.classList.add("critical");
+      attackDetails.wasCritical = true;
     }
+    attackDetails.wasAttacked = true;
+
     setTimeout(() => {
       unitDiv.classList.remove("attacked");
       unitDiv.classList.remove("critical");
@@ -1437,8 +1666,7 @@ class Game {
     }, 500);
 
     if (defender.hp <= 0) {
-      killed.unit = defender;
-      killed.wasKilled = true;
+      attackDetails.wasKilled = true;
 
       this.gameStats[attacker.type].unitsKilled.push({
         name: defender.name,
@@ -1456,7 +1684,7 @@ class Game {
     // Add damage to game stats (not just turn stats)
     this.gameStats[attacker.type].damageDealt += damageResult.damage;
 
-    return killed;
+    return attackDetails;
   }
 
   moveUnit(unit, targetX, targetY) {
@@ -1487,6 +1715,19 @@ class Game {
         this.addTrailingEffect(pos.x, pos.y);
       }, index * 100);
     });
+  }
+
+  addHitEffect(oldX, oldY) {
+    setTimeout(() => {
+      const fromHex = document.querySelector(`.hex:nth-child(${oldX * 12 + oldY + 1})`);
+      if (fromHex) {
+        const trail = document.createElement("div");
+        trail.className = "hit-effect";
+        fromHex.appendChild(trail);
+
+        setTimeout(() => trail.remove(), 3000);
+      }
+    }, 0);
   }
 
   addGraveEffect(oldX, oldY) {
@@ -1616,6 +1857,7 @@ class Game {
 
     const trailing = [];
     const kills = [];
+    const hits = [];
     const actions = [];
     for (let i = 0; i < 8; i++) {
       for (let j = 0; j < 12; j++) {
@@ -1673,10 +1915,8 @@ class Game {
               if (damageResult.isCritical) {
                 unitDiv.classList.add("critical");
               }
-              setTimeout(() => {
-                unitDiv.classList.remove("attacked");
-                unitDiv.classList.remove("critical");
-              }, 500);
+
+              hits.push({ x: targetInRange.x, y: targetInRange.y });
             }
 
             if (targetInRange.unit.hp <= 0) {
@@ -1758,6 +1998,10 @@ class Game {
     for (let kill of kills) {
       this.addGraveEffect(kill.x, kill.y);
     }
+
+    for (let hit of hits) {
+      this.addHitEffect(hit.x, hit.y);
+    }
   }
 
   checkGameOver() {
@@ -1785,32 +2029,53 @@ class Game {
 
   calculateFinalScore(winner) {
     const stats = this.gameStats.player;
-    let score = 0;
 
     // Points for damage dealt (1 point per 2 damage)
-    score += Math.floor(stats.damageDealt / 2);
+    const damageScore = Math.floor(stats.damageDealt / 2);
 
+    let killedUnitsScore = 0;
     stats.unitsKilled.forEach((unit) => {
-      score += Unit.getUnitValue(unit.name);
+      killedUnitsScore += Unit.getUnitValue(unit.name);
     });
 
     // Penalty for lost units
-    score -= stats.unitsLost * 25;
+    const lostUnitsPenalty = stats.unitsLost * 25;
 
     // Bonus for winning/surviving
+    let survivedUnitsScore = 0;
     if (winner === "Player") {
-      score += 500;
+      survivedUnitsScore += 500;
       // Bonus for remaining units' health
       this.grid.forEach((row) => {
         row.forEach((cell) => {
           if (cell instanceof Unit && cell.type === "player") {
-            score += Math.floor((cell.hp / cell.maxHp) * 50);
+            survivedUnitsScore += Math.floor((cell.hp / cell.maxHp) * 50);
           }
         });
       });
     }
 
-    return Math.max(0, score); // Ensure score doesn't go negative
+    // include players base army strength - stronger army = lower score
+    let playerArmyStrength = 0;
+    this.basePlayerUnits.forEach((unitName) => {
+      playerArmyStrength += Unit.getUnitValue(unitName);
+    });
+
+    const playerArmyStrengthScore = Math.floor(playerArmyStrength / 3);
+
+    // Reduce points based on the strength of the player's base army
+    const finalScore = damageScore + killedUnitsScore + survivedUnitsScore - lostUnitsPenalty - playerArmyStrengthScore;
+
+    logOnConsole(`calculateFinalScore:`, {
+      finalScore,
+      damageScore,
+      killedUnitsScore,
+      survivedUnitsScore,
+      lostUnitsPenalty,
+      playerArmyStrengthScore,
+    });
+
+    return Math.max(0, finalScore); // Ensure score doesn't go negative
   }
 
   showGameOver(winner) {

@@ -77,7 +77,7 @@ function handleMaze(req, res) {
         req.method = "POST";
         req.url = `/api/scores`;
       }
-      req.body = { game_id: gameId, user_id: user.id, score: score.score, size: score.size, time: score.time };
+      req.body = { game_id: gameId, user_id: user.id, score: score.score, size: score.size, time: score.time, seed: score.seed };
       logDebug("handleMaze:stop -> PUT/POST scores:", {
         method: req.method,
         url: req.url,

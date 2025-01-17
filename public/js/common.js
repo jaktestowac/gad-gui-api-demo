@@ -898,6 +898,8 @@ function loadAdditionalFrontPageContent() {
     "./images/gad-v2-92348511.jpg"
   );
   changePixAfterClick("#copyright-sign", ".back-img");
+  // eslint-disable-next-line no-console
+  console.log("The chickens are not what they seem");
 }
 
 function loadAdditionalContent() {

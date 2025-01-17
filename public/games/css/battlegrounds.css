@@ -139,6 +139,7 @@
 .unit.enemy {
   background: #cc2244;
   border: 2px solid #ff3366;
+  line-height: 0.7em;
 }
 
 .unit.attacked {
@@ -703,5 +704,58 @@
   100% {
     opacity: 0;
     transform: translate(-50%, -100%) scale(0.8);
+  }
+}
+
+@keyframes spark {
+  0% {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--x), var(--y));
+    opacity: 0;
+  }
+}
+
+.spark {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: #ffd700;
+  border-radius: 50%;
+  animation: spark 0.5s linear forwards;
+  pointer-events: none;
+}
+
+.hit-effect {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  font-size: 24px;
+  animation: fadeGrave 2.5s forwards;
+  pointer-events: none;
+  z-index: 6;
+}
+
+.hit-effect::before {
+  content: "💥";
+}
+
+@keyframes hitEffect {
+  0% {
+    transform: scale(0.5);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
   }
 }
