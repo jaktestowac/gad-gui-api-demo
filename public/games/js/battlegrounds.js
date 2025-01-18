@@ -713,6 +713,130 @@ const units = {
     value: 30,
     attackRange: 1,
   },
+  Kraken: {
+    icon: "🦑",
+    hp: 35,
+    attack: 10,
+    defense: 8,
+    moveRange: 2,
+    range: 3,
+    isFlying: false,
+    value: 250,
+    attackRange: 3,
+  },
+  "Time Weaver": {
+    icon: "⏳",
+    hp: 18,
+    attack: 5,
+    defense: 4,
+    moveRange: 4,
+    range: 10,
+    isFlying: false,
+    value: 150,
+    attackRange: 10,
+  },
+  Cyclops: {
+    icon: "👁️",
+    hp: 28,
+    attack: 9,
+    defense: 6,
+    moveRange: 4,
+    range: 1,
+    isFlying: false,
+    value: 200,
+    attackRange: 1,
+  },
+  Leviathan: {
+    icon: "🐋",
+    hp: 40,
+    attack: 10,
+    defense: 9,
+    moveRange: 1,
+    range: 1,
+    isFlying: false,
+    value: 250,
+    attackRange: 1,
+    special: true,
+  },
+  Siren: {
+    icon: "🧜",
+    hp: 18,
+    attack: 7,
+    defense: 1,
+    moveRange: 2,
+    range: 1,
+    isFlying: false,
+    value: 50,
+    attackRange: 1,
+  },
+  "Star Mage": {
+    icon: "✨",
+    hp: 15,
+    attack: 15,
+    defense: 3,
+    moveRange: 2,
+    range: 20,
+    isFlying: false,
+    value: 220,
+    attackRange: 15,
+  },
+  Hole: {
+    icon: "🕳️",
+    hp: 20,
+    attack: 15,
+    defense: 5,
+    moveRange: 6,
+    range: 1,
+    isFlying: true,
+    value: 120,
+    attackRange: 1,
+  },
+  Timeless: {
+    icon: "🌀",
+    hp: 100,
+    attack: 20,
+    defense: 20,
+    moveRange: 20,
+    range: 20,
+    isFlying: true,
+    value: 1000,
+    attackRange: 20,
+  },
+  Potato: {
+    icon: "🥔",
+    hp: 1,
+    attack: 1,
+    defense: 1,
+    moveRange: 1,
+    range: 1,
+    isFlying: false,
+    value: 1,
+    attackRange: 1,
+  },
+  "Void Sentinel": {
+    icon: "🌑",
+    hp: 30,
+    attack: 8,
+    defense: 9,
+    moveRange: 2,
+    range: 1,
+    isFlying: false,
+    value: 240,
+    attackRange: 1,
+    special: true,
+  },
+  "Abyss Walker": {
+    icon: "👣",
+    hp: 22,
+    attack: 8,
+    defense: 5,
+    moveRange: 5,
+    range: 1,
+    isFlying: true,
+    value: 170,
+    attackRange: 1,
+    special: true,
+  },
 };
 
 function unitFactory(player, unitName, x, y) {
@@ -871,7 +995,7 @@ class Unit {
     this.hasMoved = false;
     this.moveRange = Unit.getMoveRange(name);
     this.icon = Unit.getIcon(name);
-    this.range = Unit.getAttackRange(name);
+    this.attackRange = Unit.getAttackRange(name);
     this.hasAttacked = false;
     this.isFlying = Unit.isFlying(name);
   }
@@ -1465,7 +1589,7 @@ class Game {
               indicator.className = "attack-indicator melee";
               indicator.textContent = "⚔️";
               hex.appendChild(indicator);
-            } else if (this.selectedUnit.range > 1 && distance <= this.selectedUnit.range) {
+            } else if (this.selectedUnit.attackRange > 1 && distance <= this.selectedUnit.attackRange) {
               hex.classList.add("ranged-attack");
               const indicator = document.createElement("div");
               indicator.className = "attack-indicator ranged";
@@ -1579,7 +1703,7 @@ class Game {
         if (
           (distance === 1 && isNeighbor) ||
           (distance === 0.5 && this.selectedUnit.x === x) ||
-          (this.selectedUnit.range > 1 && distance <= this.selectedUnit.range)
+          (this.selectedUnit.attackRange > 1 && distance <= this.selectedUnit.attackRange)
         ) {
           attackDetails = this.performAttack(this.selectedUnit, clickedCell);
 
@@ -1773,8 +1897,8 @@ class Game {
 
   canUnitAttack(unit) {
     if (unit.hasAttacked) return false;
-    for (let i = -unit.range; i <= unit.range; i++) {
-      for (let j = -unit.range; j <= unit.range; j++) {
+    for (let i = -unit.attackRange; i <= unit.attackRange; i++) {
+      for (let j = -unit.attackRange; j <= unit.attackRange; j++) {
         const x = unit.x + i;
         const y = unit.y + j;
         if (
@@ -1784,7 +1908,7 @@ class Game {
           y < 12 &&
           this.grid[x][y] instanceof Unit &&
           this.grid[x][y].type === "enemy" &&
-          this.calculateHexDistance(unit.x, unit.y, x, y) <= unit.range
+          this.calculateHexDistance(unit.x, unit.y, x, y) <= unit.attackRange
         ) {
           return true;
         }
@@ -1841,7 +1965,7 @@ class Game {
                 <span>
                 <div class="stat">
                     <span>🏹 Range:</span>
-                    <span>${unit.range}</span>
+                    <span>${unit.attackRange}</span>
                 </div>
                 <div class="stat">
                     <span>Status:</span>
@@ -1874,7 +1998,7 @@ class Game {
               if (target && target.type === "player") {
                 const dist = this.calculateHexDistance(x, y, i, j);
 
-                if (dist <= unit.range) {
+                if (dist <= unit.attackRange) {
                   if (!targetInRange || dist < Math.abs(targetInRange.x - i) + Math.abs(targetInRange.y - j)) {
                     targetInRange = { unit: target, x, y };
                   }

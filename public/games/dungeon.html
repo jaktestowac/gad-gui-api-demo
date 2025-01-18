@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD | Game: Dungeon</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="./css/dungeon.css" />
+</head>
+
+<body class="bg-body">
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-gui" class="nav-menu"></h1>
+        </div>
+    </header>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class="game-container">
+        <canvas id="dungeon-grid"></canvas>
+        <div class="ui-overlay">
+            <div id="stats">
+                HP: <span id="hp">100</span>
+                Level: <span id="level">1</span>
+                Score: <span id="score">0</span>
+                Dungeon: <span id="dungeon-level">1</span>
+                Time: <span id="time">00:00</span>
+            </div>
+        </div>
+        <div class="ui-overlay from-top">
+            <div id="inventory"></div>
+        </div>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <script src="js/dungeon.js"></script>
+
+</body>
+
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="/username.js"></script>
+<script type="text/javascript" src="/js/darkmode.js"></script>
+<script type="text/javascript" src="/js/message-notifier.js"></script>
+
+</html>

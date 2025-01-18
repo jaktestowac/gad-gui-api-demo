@@ -1,0 +1,415 @@
+.game-container {
+  position: relative;
+  width: 800px;
+  height: 600px;
+  margin: 0 auto;
+  overflow: hidden;
+  box-shadow: 0 0 80px #1a1a2e;
+}
+
+canvas {
+  background: #000;
+  display: block;
+}
+
+.ui-overlay {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  color: white;
+  font-family: Arial, sans-serif;
+  pointer-events: none;
+}
+
+.from-top {
+  top: 60px;
+}
+
+#stats {
+  background: rgba(0, 0, 0, 0.7);
+  padding: 10px;
+  border-radius: 5px;
+}
+
+#inventory {
+  margin-top: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 10px;
+  border-radius: 5px;
+}
+
+#dungeon-view {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+#dungeon-grid {
+  position: absolute;
+  transform-origin: 0 0;
+}
+
+.tile {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  transition: transform 0.2s;
+}
+
+.floor {
+  background: #222;
+}
+.wall {
+  background: #666;
+}
+.monster {
+  background: #f0f;
+}
+.item-health {
+  background: #f00;
+}
+.item-weapon {
+  background: #ff0;
+}
+
+.entrance {
+  background: #00f !important;
+  box-shadow: 0 0 10px #00f;
+}
+
+.exit {
+  background: #f80 !important;
+  box-shadow: 0 0 10px #f80;
+}
+
+.player-unit {
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+  text-shadow: 0 0 5px #0f0;
+}
+
+.player-container {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: right;
+  justify-content: end;
+  z-index: 100;
+  left: 384px;
+  top: 284px;
+  transition: transform 0.2s;
+}
+
+.start-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.start-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: cardFloat 1s ease-out;
+}
+
+.start-screen h1 {
+  color: #fff;
+  font-size: 2.5rem;
+  margin: 0 0 1.5rem;
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
+}
+
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.option-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  padding: 0.8rem;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.option-btn small {
+  opacity: 0.8;
+  font-size: 0.8rem;
+  line-height: 1.2;
+}
+
+.option-btn.selected small {
+  opacity: 1;
+}
+
+.option-btn:hover {
+  background: rgba(76, 175, 80, 0.2);
+  border-color: #4caf50;
+  transform: translateY(-2px);
+}
+
+.option-btn.selected {
+  background: #4caf50;
+  border-color: #4caf50;
+}
+
+.start-screen input {
+  width: 100%;
+  padding: 0.8rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  color: white;
+  font-size: 1rem;
+  margin: 1rem 0;
+  transition: all 0.3s ease;
+}
+
+.start-screen input:focus {
+  outline: none;
+  border-color: #4caf50;
+  box-shadow: 0 0 15px rgba(76, 175, 80, 0.3);
+}
+
+.start-btn {
+  width: 100%;
+  padding: 1rem;
+  background: #4caf50;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+.start-btn:hover {
+  background: #45a049;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+}
+
+.controls-info {
+  margin-top: 1.5rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+@keyframes cardFloat {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bg-body {
+  background: #000000;
+  color: #fff;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.end-adventure-btn {
+  position: fixed;
+  bottom: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 16px;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.end-adventure-btn:hover {
+  background: #c82333;
+  transform: translateX(-50%) translateY(-2px);
+  box-shadow: 0 3px 10px rgba(220, 53, 69, 0.4);
+}
+
+.level-complete {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+  z-index: 100;
+}
+
+.end-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Segoe UI", Arial, sans-serif;
+  animation: fadeIn 0.5s ease-in;
+}
+
+.end-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 500px;
+  text-align: center;
+  color: white;
+}
+
+.end-card h1 {
+  color: #dc3545;
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 20px rgba(220, 53, 69, 0.5);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin: 2rem 0;
+  font-size: 1.2rem;
+}
+
+.retry-btn {
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.retry-btn:hover {
+  background: #45a049;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.confirmation-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  padding: 20px 40px;
+  border-radius: 10px;
+  text-align: center;
+  z-index: 1000;
+}
+
+.confirmation-dialog button {
+  margin: 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.confirmation-dialog .confirm-btn {
+  background: #dc3545;
+  color: white;
+}
+
+.confirmation-dialog .cancel-btn {
+  background: #6c757d;
+  color: white;
+}
+
+.damage-popup {
+  position: absolute;
+  color: red;
+  font-size: 20px;
+  font-weight: bold;
+  animation: fadeOut 2s ease-in-out forwards;
+}
+
+.heal-popup {
+  position: absolute;
+  color: rgb(31, 199, 31);
+  font-size: 20px;
+  font-weight: bold;
+  animation: fadeOut 2s ease-in-out forwards;
+}
+
+.pickup-popup {
+  position: absolute;
+  color: rgb(31, 199, 31);
+  font-size: 20px;
+  font-weight: bold;
+  animation: fadeOut 2s ease-in-out forwards;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
