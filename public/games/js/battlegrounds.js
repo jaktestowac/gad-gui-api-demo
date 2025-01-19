@@ -499,7 +499,7 @@ const units = {
   Berserk: {
     icon: "🤬",
     hp: 10,
-    attack: 8,
+    attack: 10,
     defense: 1,
     moveRange: 5,
     range: 1,
@@ -542,10 +542,10 @@ const units = {
   },
   Angel: {
     icon: "😇",
-    hp: 20,
+    hp: 30,
     attack: 7,
     defense: 6,
-    moveRange: 6,
+    moveRange: 7,
     range: 1,
     isFlying: true,
     value: 150,
@@ -622,9 +622,9 @@ const units = {
   },
   Paladin: {
     icon: "🛡️🗡️",
-    hp: 15,
+    hp: 20,
     attack: 6,
-    defense: 15,
+    defense: 20,
     moveRange: 4,
     range: 1,
     isFlying: false,
@@ -671,8 +671,8 @@ const units = {
   Juggernaut: {
     icon: "👑🤖",
     hp: 20,
-    attack: 8,
-    defense: 12,
+    attack: 15,
+    defense: 15,
     moveRange: 3,
     range: 1,
     isFlying: false,
@@ -815,25 +815,37 @@ const units = {
   },
   "Void Sentinel": {
     icon: "🌑",
-    hp: 30,
+    hp: 50,
     attack: 8,
     defense: 9,
-    moveRange: 2,
+    moveRange: 4,
     range: 1,
     isFlying: false,
-    value: 240,
+    value: 300,
     attackRange: 1,
     special: true,
   },
   "Abyss Walker": {
     icon: "👣",
     hp: 22,
-    attack: 8,
+    attack: 20,
     defense: 5,
     moveRange: 5,
     range: 1,
     isFlying: true,
     value: 170,
+    attackRange: 1,
+    special: true,
+  },
+  "Abyss Lord": {
+    icon: "🌕",
+    hp: 22,
+    attack: 50,
+    defense: 10,
+    moveRange: 5,
+    range: 1,
+    isFlying: false,
+    value: 300,
     attackRange: 1,
     special: true,
   },
@@ -849,7 +861,19 @@ function unitFactory(player, unitName, x, y) {
 
 const allUnits = Object.keys(units);
 
-const availableUnits = ["Swordsman", "Archer", "Knight", "Peasant", "Wizard", "Dragon", "Golem", "Paladin", "Monk"];
+const availableUnits = [
+  "Swordsman",
+  "Archer",
+  "Knight",
+  "Peasant",
+  "Wizard",
+  "Dragon",
+  "Golem",
+  "Paladin",
+  "Monk",
+  "Cavalier",
+  "Angel",
+];
 
 const presetArmy = ["Knight", "Dragon", "Wizard", "Archer", "Golem"];
 let selectedUnits = [];
