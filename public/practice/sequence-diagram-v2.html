@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD - Sequence Diagram Editor</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="css/sequence-diagram-v2.css">
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+    <br>
+    <br>
+    <div class="sq-container">
+        <div class="floating-toolbar">
+            <div class="toolbar-group">
+                <button id="addParticipant" title="Add Participant">👤</button>
+                <button id="addMessage" title="Add Message">↔️</button>
+            </div>
+            <div class="toolbar-group">
+                <button id="addAltBlock" title="Alt Block">⚡</button>
+                <button id="addLoopBlock" title="Loop Block">🔄</button>
+                <button id="addOptBlock" title="Opt Block">❔</button>
+            </div>
+            <div class="toolbar-group">
+                <button id="saveButton" title="Save">💾</button>
+                <button id="loadButton" title="Load">📂</button>
+                <button id="clear" title="Clear">🗑️</button>
+            </div>
+        </div>
+        <div class="diagram-container">
+            <div id="diagram" class="diagram">
+                <div id="participants-container"></div>
+                <div id="messages-container"></div>
+                <div id="blocks-container"></div>
+            </div>
+        </div>
+        <div id="contextMenu" class="context-menu">
+            <div class="menu-item" id="contextAddParticipant">Add Participant</div>
+            <div class="menu-item" id="contextAddMessage">Add Message</div>
+            <div class="menu-item" id="contextAddAltBlock">Add Alt Block</div>
+            <div class="menu-item" id="contextAddLoopBlock">Add Loop Block</div>
+            <div class="menu-item" id="contextAddOptBlock">Add Opt Block</div>
+            <div id="contextDelete" class="menu-item">Delete</div>
+        </div>
+        <div id="messageContextMenu" class="context-menu">
+            <div class="menu-item" id="toggleMessageDirection">Reverse Message</div>
+            <div class="menu-item" id="removeMessage">Remove Message</div>
+        </div>
+    </div>
+    <script src="js/sequence-diagram-v2.js"></script>
+</body>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="./js/practice-common.js"></script>
+
+</html>

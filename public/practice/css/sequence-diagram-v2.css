@@ -1,0 +1,367 @@
+.sq-container {
+  display: flex;
+  flex-direction: column;
+  height: 93vh;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 600px) {
+  .floating-toolbar {
+    top: 30px !important;
+    padding: 3px !important;
+  }
+
+  .floating-toolbar button {
+    width: 24px !important;
+    height: 24px !important;
+    padding: 2px !important;
+    font-size: 12px !important;
+  }
+}
+
+.floating-toolbar {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 5px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.toolbar-group {
+  display: flex;
+  gap: 5px;
+  padding: 0 5px;
+  border-right: 1px solid #ddd;
+}
+
+.toolbar-group:last-child {
+  border-right: none;
+}
+
+.floating-toolbar button {
+  width: 32px;
+  height: 32px;
+  padding: 4px;
+  font-size: 16px;
+  background: transparent;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.floating-toolbar button:hover {
+  background: #f0f0f0;
+  transform: translateY(-1px);
+}
+
+.toolbar {
+  display: none;
+}
+
+#addAltBlock,
+#addLoopBlock,
+#addOptBlock,
+#saveButton,
+#loadButton {
+  background: transparent !important;
+}
+
+#addAltBlock:hover,
+#addLoopBlock:hover,
+#addOptBlock:hover,
+#saveButton:hover,
+#loadButton:hover {
+  background: #f0f0f0 !important;
+}
+
+.canvas-container {
+  flex: 1;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+#diagramCanvas {
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  cursor: default;
+  user-select: none;
+}
+
+#diagramCanvas:hover {
+  cursor: default;
+}
+
+.context-menu {
+  display: none;
+  position: fixed;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  z-index: 1000;
+}
+
+.menu-item {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.menu-item:hover {
+  background-color: #f0f0f0;
+}
+
+.menu-item#removeMessage {
+  color: #ff4444;
+}
+
+.menu-item#removeMessage:hover {
+  background-color: #ffeeee;
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+}
+
+#footer-container {
+  padding: 4px;
+  margin: 0px;
+  font-size: 12px !important;
+}
+
+.diagram-container {
+  flex: 1;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  overflow: auto;
+  position: relative;
+  background: white;
+}
+
+.diagram {
+  position: relative;
+  min-height: 100%;
+  min-width: 100%;
+  padding: 20px;
+}
+
+.participant {
+  position: absolute;
+  top: 50px;
+  background: black;
+  width: 100px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: move;
+  user-select: none;
+}
+
+.participant.editing {
+  background: white;
+  border: 1px solid black;
+  color: black;
+}
+
+.participant.highlighted {
+  background: #4caf50;
+}
+
+.participant.selectable {
+  border: 2px solid #4caf50;
+}
+
+.participant-name {
+  width: 100%;
+  text-align: center;
+  padding: 2px;
+}
+
+.participant-lifeline {
+  position: absolute;
+  width: 0;
+  border-left: 2px dashed black;
+  top: 80px;
+  bottom: 50px;
+  pointer-events: none;
+}
+
+.message {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  min-width: 50px;
+  height: 20px;
+}
+
+.message-line {
+  position: relative;
+  width: 100%;
+  height: 2px;
+  background: black;
+}
+
+.message-arrow {
+  position: absolute;
+  right: 0px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 5px 0 5px 8px;
+  border-color: transparent transparent transparent black;
+  transform: scale(2);
+}
+
+.message.reverse .message-arrow {
+  left: 0px;
+  right: auto;
+  border-width: 5px 8px 5px 0;
+  border-color: transparent black transparent transparent;
+}
+
+.message-text {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  top: -20px;
+  color: black;
+  cursor: pointer;
+}
+
+.message.editing .message-text {
+  background: white;
+  border: 1px solid #ccc;
+  padding: 2px;
+}
+
+.message:hover {
+  opacity: 0.8;
+}
+
+.message:hover .message-line {
+  background: #4caf50;
+}
+
+.message:hover .message-arrow {
+  border-color: transparent transparent transparent #4caf50;
+}
+
+.message.reverse:hover .message-arrow {
+  border-color: transparent #4caf50 transparent transparent;
+}
+
+.message:hover .message-text {
+  background: #e8f5e9;
+  border-radius: 3px;
+  padding: 2px 4px;
+}
+
+.activation-bar {
+  position: absolute;
+  width: 10px;
+  background: #666;
+  transform: translateX(-50%);
+}
+
+.block {
+  position: absolute;
+  background: rgba(240, 240, 240, 0.5);
+  border: 1px solid #666;
+  min-width: 150px;
+  min-height: 50px;
+  user-select: none;
+  cursor: move;
+  transition: background-color 0.2s;
+}
+
+.block:hover {
+  background: rgba(240, 240, 240, 0.8);
+}
+
+.block.dragging {
+  opacity: 0.8;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.block.editing .block-condition {
+  background: white;
+  border: 1px solid #ccc;
+  padding: 2px 4px;
+  outline: none;
+}
+
+.block-header {
+  display: flex;
+  height: 20px;
+  background: #666;
+  color: white;
+  align-items: center;
+  padding: 0 5px;
+  cursor: move;
+}
+
+.block-type {
+  width: 60px;
+  text-align: center;
+}
+
+.block-condition {
+  margin-left: 10px;
+  color: black;
+  cursor: text;
+}
+
+.block-resize {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 10px;
+  height: 10px;
+  background: #666;
+  cursor: se-resize;
+}
+
+.block-resize-horizontal {
+  position: absolute;
+  width: 4px;
+  height: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #666;
+  cursor: ew-resize;
+}
+
+.block-resize-horizontal.left {
+  left: 0;
+}
+
+.block-resize-horizontal.right {
+  right: 0;
+}
+
+.editing-input {
+  border: none;
+  background: white;
+  padding: 2px;
+  width: 100%;
+  outline: none;
+  font-family: inherit;
+  font-size: inherit;
+}
