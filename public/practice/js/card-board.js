@@ -340,32 +340,24 @@ function showColorPaletteForCard(card) {
   const colorPalette = document.getElementById("colorPalette");
   if (!colorPalette) return;
 
-  // Only hide other menus, not the card context menu
   const menus = document.querySelectorAll(".context-menu:not(#cardContextMenu)");
   menus.forEach((menu) => {
     if (menu) menu.style.display = "none";
   });
 
-  // Get positions for context menu and card
   const contextMenu = document.getElementById("cardContextMenu");
   const contextMenuRect = contextMenu.getBoundingClientRect();
   const viewportWidth = window.innerWidth;
-  const paletteWidth = 160; // Width of the color palette
+  const paletteWidth = 160;
 
-  // Calculate position relative to context menu
-  let left = contextMenuRect.right + 2; // Add small gap
+  let left = contextMenuRect.right + 2;
   if (left + paletteWidth > viewportWidth) {
-    // If would go off screen right, position to left of context menu
     left = contextMenuRect.left - paletteWidth - 2;
   }
 
-  // Use same vertical alignment as context menu
   colorPalette.style.top = `${contextMenuRect.top}px`;
   colorPalette.style.left = `${left}px`;
   colorPalette.classList.add("visible");
-
-  // Rest of the color palette setup...
-  // ...existing color option handling code...
 }
 
 function hideColorPicker() {
@@ -422,8 +414,16 @@ function handleCardClick(e) {
 }
 
 function createConnection(source, target) {
-  connections = connections.filter((conn) => conn.source.isConnected && conn.target.isConnected);
+  const existingConnection = connections.find(
+    (conn) => (conn.source === source && conn.target === target) || (conn.source === target && conn.target === source)
+  );
 
+  if (existingConnection) {
+    console.log("Connection already exists between these cards!");
+    return;
+  }
+
+  connections = connections.filter((conn) => conn.source.isConnected && conn.target.isConnected);
   connections.push({ source, target });
   drawConnections();
 }
@@ -432,7 +432,7 @@ function drawConnections() {
   const svg = document.getElementById("connections");
   const board = document.getElementById("board");
   const boardRect = board.getBoundingClientRect();
-  const OFFSET = 8;
+  const OFFSET = 4;
 
   svg.innerHTML = "";
   const viewBoxWidth = boardRect.width / currentZoom;
@@ -476,21 +476,47 @@ function drawConnections() {
       target.y += dy > 0 ? -target.height / 2 : target.height / 2;
     }
 
-    const key = `${sourceSide}_${targetSide}_${conn.source.id}_${conn.target.id}_${
+    let key = `${sourceSide}_${targetSide}_${conn.source.id}_${conn.target.id}_${
       isHorizontal ? `H_${Math.round(source.y)}` : `V_${Math.round(source.x)}`
     }`;
+
+    const otherConns = Object.values(connectionGroups).filter((otherGroup) => {
+      otherGroup = otherGroup[0];
+      if (
+        ((otherGroup.sourceId === conn.source.id && otherGroup.sourceSide === sourceSide) ||
+          (otherGroup.targetId === conn.target.id && otherGroup.targetSide === targetSide) ||
+          (otherGroup.sourceId === conn.source.id && otherGroup.sourceSide === targetSide) ||
+          (otherGroup.targetId === conn.target.id && otherGroup.targetSide === sourceSide)) &&
+        otherGroup.key !== key
+      ) {
+        return true;
+      }
+      return false;
+    });
 
     if (!connectionGroups[key]) {
       connectionGroups[key] = [];
     }
-    connectionGroups[key].push({ conn, source, target, isHorizontal, sourceSide, targetSide });
+
+    connectionGroups[key].push({
+      conn,
+      source,
+      target,
+      isHorizontal,
+      sourceSide,
+      targetSide,
+      sourceId: conn.source.id,
+      targetId: conn.target.id,
+      key,
+      otherConnsCount: otherConns.length,
+    });
   });
 
-  Object.values(connectionGroups).forEach((group) => {
-    const sameSideConnections = group.length > 1;
-    group.forEach((item, index) => {
-      const { source, target, isHorizontal, sourceSide, targetSide } = item;
-      const offset = sameSideConnections ? (index - (group.length - 1) / 2) * OFFSET : 0;
+  Object.values(connectionGroups).forEach((group, index) => {
+    group.forEach((item) => {
+      const { source, target, isHorizontal, sourceSide, targetSide, sourceId, targetId, key, otherConnsCount } = item;
+
+      const offset = otherConnsCount > 0 ? index * OFFSET : 0;
 
       const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
       let d;
@@ -518,7 +544,6 @@ function drawConnections() {
       path.setAttribute("data-source", item.conn.source.id);
       path.setAttribute("data-target", item.conn.target.id);
 
-      // Add both contextmenu and click handlers
       path.addEventListener("contextmenu", (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -528,11 +553,9 @@ function drawConnections() {
         showConnectionContextMenu(x, y, path);
       });
 
-      // Optional: still keep click deletion as alternative
       path.addEventListener("click", (e) => {
         e.stopPropagation();
         if (e.ctrlKey) {
-          // Only delete on Ctrl+Click
           if (confirm("Remove this connection?")) {
             removeConnection(item.conn.source.id, item.conn.target.id);
           }
@@ -648,7 +671,7 @@ function zoomIn() {
   if (currentZoom < MAX_ZOOM) {
     currentZoom = Math.min(currentZoom + ZOOM_STEP, MAX_ZOOM);
     applyZoom();
-    drawConnections(); // Add explicit redraw
+    drawConnections();
   }
   updateZoomButtons();
 }
@@ -657,7 +680,7 @@ function zoomOut() {
   if (currentZoom > MIN_ZOOM) {
     currentZoom = Math.max(currentZoom - ZOOM_STEP, MIN_ZOOM);
     applyZoom();
-    drawConnections(); // Add explicit redraw
+    drawConnections();
   }
   updateZoomButtons();
 }
@@ -679,19 +702,15 @@ function updateZoomButtons() {
 
 function applyZoom() {
   const board = document.getElementById("board");
-  
-  // Update board scale and grid
+
   board.style.transform = `scale(${currentZoom})`;
   board.style.backgroundSize = `${20 * currentZoom}px ${20 * currentZoom}px`;
 
-  // Update zoom level display
   document.getElementById("zoomLevel").textContent = `${Math.round(currentZoom * 100)}%`;
 
-  // Remove existing requestAnimationFrame call since we're calling drawConnections directly
   updateZoomButtons();
 }
 
-// Update wheel zoom handler
 document.getElementById("board").addEventListener("wheel", function (e) {
   if (e.ctrlKey) {
     e.preventDefault();
@@ -700,7 +719,6 @@ document.getElementById("board").addEventListener("wheel", function (e) {
     } else {
       zoomOut();
     }
-    // Force connection redraw after zoom
     requestAnimationFrame(drawConnections);
   }
 });
