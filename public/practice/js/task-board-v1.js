@@ -24,6 +24,90 @@ const COLORS = [
   "blue-grey",
 ];
 
+const COLOR_PALETTES = [
+  {
+    name: "Classic",
+    background: "#f1f2f4",
+    textColor: "#172b4d",
+    textColorSecondary: "#ffffff",
+    columnColor: "#ffffff",
+    headerColor: "#ffffff",
+    tasksColor: "#f8f9fa",
+  },
+  {
+    name: "Dark",
+    background: "#2f363d",
+    textColor: "#ffffff",
+    textColorSecondary: "#9e9e9e",
+    columnColor: "#444d56",
+    headerColor: "#24292e",
+    tasksColor: "#383f45",
+  },
+  {
+    name: "Ocean",
+    background: "#e3f2fd",
+    textColor: "#1e3a5f",
+    textColorSecondary: "#4a148c",
+    columnColor: "#ffffff",
+    headerColor: "#bbdefb",
+    tasksColor: "#e3f2fd",
+  },
+  {
+    name: "Forest",
+    background: "#e8f5e9",
+    textColor: "#1b5e20",
+    textColorSecondary: "#4a148c",
+    columnColor: "#ffffff",
+    headerColor: "#c8e6c9",
+    tasksColor: "#e8f5e9",
+  },
+  {
+    name: "Dark Forest",
+    background: "#1b5e20",
+    textColor: "#ffffff",
+    textColorSecondary: "#9e9e9e",
+    columnColor: "#2e7d32",
+    headerColor: "#388e3c",
+    tasksColor: "#1b5e20",
+  },
+  {
+    name: "Sunset",
+    background: "#fff3e0",
+    textColor: "#e65100",
+    textColorSecondary: "#4a148c",
+    columnColor: "#ffffff",
+    headerColor: "#ffe0b2",
+    tasksColor: "#fff3e0",
+  },
+  {
+    name: "Midnight",
+    background: "#303030",
+    textColor: "#ffffff",
+    textColorSecondary: "#9e9e9e",
+    columnColor: "#424242",
+    headerColor: "#212121",
+    tasksColor: "#383838",
+  },
+  {
+    name: "Rose",
+    background: "#fce4ec",
+    textColor: "#880e4f",
+    textColorSecondary: "#4a148c",
+    columnColor: "#ffffff",
+    headerColor: "#f8bbd0",
+    tasksColor: "#fce4ec",
+  },
+  {
+    name: "Obsidian",
+    background: "#263238",
+    textColor: "#ffffff",
+    textColorSecondary: "#243640",
+    columnColor: "#37474f",
+    headerColor: "#1a2428",
+    tasksColor: "#2c3a41",
+  },
+];
+
 function generateRandomId() {
   return Date.now() + "_" + Math.random().toString(36).substr(2, 9);
 }
@@ -34,21 +118,6 @@ const defaultColumns = [
   { id: `done-${generateRandomId()}`, name: "Done", color: "blue-grey" },
 ];
 
-let users = [
-  {
-    id: `user-${generateRandomId()}`,
-    name: "John Doe",
-    email: "john@test.test.com",
-    groupId: "group-1",
-  },
-  {
-    id: `user-${generateRandomId()}`,
-    name: "Jane Smith",
-    email: "jane@test.test.com",
-    groupId: "group-1",
-  },
-];
-
 let groups = [
   {
     id: `group-1`,
@@ -57,15 +126,215 @@ let groups = [
   },
 ];
 
+let boardData = {
+  title: "Task Board",
+  description: "",
+  style: {
+    background: "#f1f2f4",
+    textColor: "#172b4d",
+    textColorSecondary: "#262626",
+    columnColor: "#ffffff",
+    headerColor: "#ffffff",
+    tasksColor: "#f8f9fa",
+  },
+};
+
+const defaultUsers = [
+  {
+    id: `user-${generateRandomId()}`,
+    name: "John Doe",
+    email: "john@example.com",
+    groupId: "group-dev",
+  },
+  {
+    id: `user-${generateRandomId()}`,
+    name: "Jane Smith",
+    email: "jane@example.com",
+    groupId: "group-dev",
+  },
+  {
+    id: `user-${generateRandomId()}`,
+    name: "Mike Johnson",
+    email: "mike@example.com",
+    groupId: "group-qa",
+  },
+];
+
+let users = defaultUsers;
+
+const defaultGroups = [
+  {
+    id: "group-dev",
+    name: "Development Team",
+    description: "Software developers and engineers",
+  },
+  {
+    id: "group-qa",
+    name: "QA Team",
+    description: "Quality assurance and testing team",
+  },
+];
+
+function setCookie(name, value, days = 365) {
+  const d = new Date();
+  d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
+  const expires = "expires=" + d.toUTCString();
+  document.cookie = name + "=" + JSON.stringify(value) + ";" + expires + ";path=/";
+}
+
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) {
+    try {
+      return JSON.parse(parts.pop().split(";").shift());
+    } catch (e) {
+      return null;
+    }
+  }
+  return null;
+}
+
+function saveBoardToStorage() {
+  const boardStorage = {
+    title: boardData.title,
+    description: boardData.description,
+    style: boardData.style,
+    columns: [],
+    users,
+    groups,
+    archivedTasks,
+  };
+
+  document.querySelectorAll(".column").forEach((column) => {
+    const columnData = {
+      id: column.id,
+      name: column.querySelector("h2").textContent,
+      color: COLORS.find((color) => column.classList.contains(`color-${color}`)) || "grey",
+      tasks: [],
+    };
+
+    column.querySelectorAll(".task").forEach((task) => {
+      columnData.tasks.push({
+        id: task.id,
+        title: task.querySelector(".task-title").textContent,
+        description: task.querySelector(".task-description")?.textContent || "",
+        color: COLORS.find((color) => task.classList.contains(`color-${color}`)) || "grey",
+        assigneeId: task.getAttribute("data-assignee") || "",
+      });
+    });
+
+    boardStorage.columns.push(columnData);
+  });
+
+  localStorage.setItem("taskBoardState", JSON.stringify(boardStorage));
+}
+
+function loadBoardFromStorage() {
+  const savedBoard = localStorage.getItem("taskBoardState");
+  if (!savedBoard) return false;
+
+  try {
+    const boardStorage = JSON.parse(savedBoard);
+
+    boardData = {
+      title: boardStorage.title || "Task Board",
+      description: boardStorage.description || "",
+      style: { ...boardData.style, ...boardStorage.style },
+    };
+
+    users = boardStorage.users || [];
+    groups = boardStorage.groups || [];
+    archivedTasks = boardStorage.archivedTasks || [];
+
+    const board = document.getElementById("task-board");
+    board.innerHTML = "";
+
+    boardStorage.columns.forEach((columnData) => {
+      const column = createColumn(columnData.name, columnData.id, columnData.color);
+      const tasksContainer = column.querySelector(".tasks");
+
+      columnData.tasks.forEach((taskData) => {
+        const task = createTask(taskData);
+        tasksContainer.appendChild(task);
+      });
+
+      board.appendChild(column);
+    });
+
+    updateBoardHeader();
+    updateBoardStyle();
+    return true;
+  } catch (error) {
+    console.error("Error loading board from storage:", error);
+    return false;
+  }
+}
+
+function createTask(taskData) {
+  const task = document.createElement("div");
+  task.className = `task color-${taskData.color}`;
+  task.draggable = true;
+  task.id = taskData.id;
+  if (taskData.assigneeId) {
+    task.setAttribute("data-assignee", taskData.assigneeId);
+  }
+
+  const assignee = users.find((u) => u.id === taskData.assigneeId);
+  task.innerHTML = `
+      <div class="task-title" title="${taskData.title}">${taskData.title}</div>
+      ${taskData.description ? `<div class="task-description">${taskData.description}</div>` : ""}
+      ${
+        assignee
+          ? `
+          <div class="task-assignee">
+              <i class="fa-solid fa-user"></i>
+              <span>${assignee.name}</span>
+          </div>
+      `
+          : ""
+      }
+      <div class="task-actions">
+          <button class="task-edit" onclick="editTask('${taskData.id}')" title="Edit task">
+              <i class="fa-solid fa-pen"></i>
+          </button>
+          <button class="task-archive" onclick="archiveTask('${taskData.id}')" title="Archive task">
+              <i class="fa-solid fa-box-archive"></i>
+          </button>
+          <button class="task-delete" onclick="deleteTask('${taskData.id}')" title="Delete task">
+              <i class="fa-solid fa-trash"></i>
+          </button>
+      </div>
+  `;
+
+  task.addEventListener("dragstart", (e) => {
+    e.dataTransfer.setData("text/plain", e.target.id);
+  });
+
+  return task;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+  const savedStyle = getCookie("taskBoardStyle");
+  if (savedStyle) {
+    boardData.style = { ...boardData.style, ...savedStyle };
+  }
+
   initializeColorPicker("taskColor");
   initializeColorPicker("columnColor");
+  initializeColorPicker("boardBackgroundColor");
+  initializeColorPicker("boardTextColor");
+  initializeColorPicker("boardColumnColor");
 
   const board = document.getElementById("task-board");
-  defaultColumns.forEach((colData) => {
-    const column = createColumn(colData.name, colData.id, colData.color);
-    board.appendChild(column);
-  });
+  const loaded = loadBoardFromStorage();
+
+  if (!loaded) {
+    defaultColumns.forEach((colData) => {
+      const column = createColumn(colData.name, colData.id, colData.color);
+      board.appendChild(column);
+    });
+  }
 
   ["taskTitle", "columnName"].forEach((id) => {
     const input = document.getElementById(id);
@@ -87,12 +356,79 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  ["boardTitleInput", "boardDescriptionInput"].forEach((id) => {
+    const input = document.getElementById(id);
+    const counter = document.getElementById(id + "Count");
+    const maxLength = parseInt(input.getAttribute("maxlength"));
+
+    if (input && counter) {
+      counter.textContent = "0";
+
+      input.addEventListener("input", () => {
+        const count = input.value.length;
+        const isAtLimit = count >= maxLength;
+
+        counter.textContent = count;
+        counter.parentElement.classList.toggle("limit", isAtLimit);
+
+        if (id === "boardTitleInput") {
+          const formGroup = input.closest(".form-group");
+          if (input.value.trim()) {
+            formGroup.classList.remove("error");
+          } else {
+            formGroup.classList.add("error");
+          }
+        }
+
+        if (isAtLimit) {
+          input.classList.add("at-limit");
+        } else {
+          input.classList.remove("at-limit");
+        }
+      });
+    }
+  });
+
+  // Add task description counter
+  const taskDesc = document.getElementById("taskDescription");
+  const taskDescCounter = document.getElementById("taskDescriptionCount");
+  if (taskDesc && taskDescCounter) {
+    taskDescCounter.textContent = "0";
+    taskDesc.addEventListener("input", () => {
+      const count = taskDesc.value.length;
+      taskDescCounter.textContent = count;
+      taskDescCounter.parentElement.classList.toggle("limit", count >= 4096);
+
+      if (count >= 4096) {
+        taskDesc.classList.add("at-limit");
+      } else {
+        taskDesc.classList.remove("at-limit");
+      }
+    });
+  }
+
   renderUsers();
   renderGroups();
+  updateBoardHeader();
+  updateBoardStyle();
+
+  const paletteSelect = document.getElementById("colorPaletteSelect");
+  if (paletteSelect) {
+    paletteSelect.innerHTML = `
+        <option value="">Custom</option>
+        ${COLOR_PALETTES.map(
+          (palette, index) => `
+            <option value="${index}">${palette.name}</option>
+        `
+        ).join("")}
+    `;
+  }
 });
 
 function initializeColorPicker(id) {
   const colorPicker = document.getElementById(id);
+  if (colorPicker === null) return;
+
   COLORS.forEach((color) => {
     const option = document.createElement("div");
     option.className = `color-option color-${color}`;
@@ -105,6 +441,7 @@ function initializeColorPicker(id) {
 function selectColor(element) {
   const color = element.getAttribute("data-color");
   const colorPicker = element.closest(".color-picker");
+  const computedStyle = getComputedStyle(element);
 
   colorPicker.querySelectorAll(".color-option").forEach((opt) => opt.classList.remove("selected"));
   element.classList.add("selected");
@@ -113,7 +450,8 @@ function selectColor(element) {
   if (container) {
     const trigger = container.querySelector(".selected-color");
     if (trigger) {
-      trigger.className = "selected-color color-" + color;
+      trigger.style.backgroundColor = computedStyle.backgroundColor;
+      trigger.className = "selected-color";
       colorPicker.classList.remove("active");
     }
   }
@@ -181,6 +519,12 @@ function editTask(taskId) {
     counter.parentElement.classList.toggle("limit", title.length >= 256);
   }
 
+  const descCounter = document.getElementById("taskDescriptionCount");
+  if (descCounter) {
+    descCounter.textContent = description.length;
+    descCounter.parentElement.classList.toggle("limit", description.length >= 4096);
+  }
+
   modal.classList.add("active");
 }
 
@@ -214,6 +558,10 @@ function saveTask() {
     return;
   }
   const description = document.getElementById("taskDescription").value.trim();
+  if (description.length > 4096) {
+    alert("Task description cannot exceed 4096 characters");
+    return;
+  }
   const selectedColor = document.querySelector(".color-option.selected")?.getAttribute("data-color") || COLORS[0];
   const assigneeId = document.getElementById("taskAssignee").value;
   const taskId = editingTaskId || "task-" + generateRandomId();
@@ -265,6 +613,8 @@ function saveTask() {
 
       tasksContainer.appendChild(task);
     }
+
+    saveBoardToStorage();
     closeModal("taskModal");
   }
 }
@@ -304,6 +654,7 @@ function deleteTask(taskId) {
     () => {
       const task = document.getElementById(taskId);
       task.remove();
+      saveBoardToStorage();
     },
     true
   );
@@ -330,6 +681,7 @@ function archiveTask(taskId) {
 
       archivedTasks.push(taskData);
       task.remove();
+      saveBoardToStorage();
       closeModal("taskModal");
     }
   );
@@ -343,22 +695,88 @@ function deleteArchivedTask(taskId) {
     () => {
       archivedTasks = archivedTasks.filter((t) => t.id !== taskId);
       renderArchivedTasks();
+      saveBoardToStorage();
     },
     true
   );
 }
 
 function removeColumn(button) {
-  showDialogue(
-    "Delete Column",
-    "Are you sure you want to delete this column and all its tasks? This action cannot be undone.",
-    "Delete",
-    () => {
-      const column = button.closest(".column");
-      column.remove();
-    },
-    true
-  );
+  const column = button.closest(".column");
+  const tasks = column.querySelectorAll(".task");
+
+  if (tasks.length === 0) {
+    showDialogue(
+      "Delete Column",
+      "Are you sure you want to delete this empty column?",
+      "Delete",
+      () => {
+        column.remove();
+        saveBoardToStorage();
+      },
+      true
+    );
+    return;
+  }
+
+  const dialogue = document.getElementById("customDialogue");
+  const dialogueTitle = document.getElementById("dialogueTitle");
+  const dialogueMessage = document.getElementById("dialogueMessage");
+  const footer = dialogue.querySelector(".dialogue-footer");
+
+  dialogueTitle.textContent = "Delete Column";
+  dialogueMessage.textContent = `This column contains ${tasks.length} task${
+    tasks.length > 1 ? "s" : ""
+  }. What would you like to do with them?`;
+
+  const originalFooter = footer.innerHTML;
+
+  footer.innerHTML = `
+        <button class="btn cancel" onclick="closeDialogue()">Cancel</button>
+        <button class="btn primary" onclick="archiveColumnTasks('${column.id}')">Archive Tasks</button>
+        <button class="btn primary warning" onclick="deleteColumnAndTasks('${column.id}')">Delete All</button>
+    `;
+
+  dialogue.offsetHeight;
+  dialogue.classList.add("active");
+
+  window.closeDialogue = () => {
+    dialogue.classList.remove("active");
+    setTimeout(() => {
+      footer.innerHTML = originalFooter;
+    }, 200);
+  };
+}
+
+function archiveColumnTasks(columnId) {
+  const column = document.getElementById(columnId);
+  const tasks = column.querySelectorAll(".task");
+
+  tasks.forEach((task) => {
+    const taskData = {
+      id: task.id,
+      title: task.querySelector(".task-title").textContent,
+      description: task.querySelector(".task-description")?.textContent || "",
+      assigneeId: task.getAttribute("data-assignee") || "",
+      color: Array.from(task.classList)
+        .find((cls) => cls.startsWith("color-"))
+        ?.replace("color-", ""),
+      archivedFrom: column.querySelector("h2").textContent,
+      archiveDate: new Date().toLocaleString(),
+    };
+    archivedTasks.push(taskData);
+  });
+
+  column.remove();
+  saveBoardToStorage();
+  closeDialogue();
+}
+
+function deleteColumnAndTasks(columnId) {
+  const column = document.getElementById(columnId);
+  column.remove();
+  saveBoardToStorage();
+  closeDialogue();
 }
 
 document.addEventListener("click", (e) => {
@@ -444,6 +862,7 @@ function drop(e) {
     if (tasksContainer) {
       tasksContainer.appendChild(task);
     }
+    saveBoardToStorage();
     return;
   }
 }
@@ -483,6 +902,7 @@ function dropColumn(e) {
   clearDropTargets();
   draggedColumn = null;
   dropTarget = null;
+  saveBoardToStorage();
 }
 
 function clearDropTargets() {
@@ -531,7 +951,10 @@ function saveColumn() {
     const columnId = "column-" + generateRandomId();
     const column = createColumn(columnName, columnId, selectedColor);
     document.getElementById("task-board").appendChild(column);
+    saveBoardToStorage();
     closeColumnModal();
+    updateBoardHeader();
+    updateBoardStyle();
   }
 }
 
@@ -569,6 +992,27 @@ function createColumn(name, id, color) {
   return column;
 }
 
+function changeColumnColor(columnId, color) {
+  const column = document.getElementById(columnId);
+  const colorElement = document.querySelector(`.color-option.color-${color}`);
+  const computedStyle = getComputedStyle(colorElement);
+
+  COLORS.forEach((c) => column.classList.remove(`color-${c}`));
+  column.classList.add(`color-${color}`);
+
+  column.style.backgroundColor = computedStyle.backgroundColor;
+
+  const header = column.querySelector(".column-header");
+  if (header) {
+    header.style.backgroundColor = computedStyle.backgroundColor;
+  }
+
+  document.querySelectorAll(".column-color-picker .color-picker").forEach((picker) => {
+    picker.classList.remove("active");
+  });
+  saveBoardToStorage();
+}
+
 function toggleColumnColors(btn, event) {
   event.stopPropagation();
 
@@ -580,14 +1024,16 @@ function toggleColumnColors(btn, event) {
 
   const picker = btn.nextElementSibling;
   picker.classList.toggle("active");
-}
 
-function changeColumnColor(columnId, color) {
-  const column = document.getElementById(columnId);
-  COLORS.forEach((c) => column.classList.remove(`color-${c}`));
-  column.classList.add(`color-${color}`);
-  document.querySelectorAll(".column-color-picker .color-picker").forEach((picker) => {
-    picker.classList.remove("active");
+  const colorOptions = picker.querySelectorAll(".color-option");
+  colorOptions.forEach((option) => {
+    if (!option.onclick) {
+      option.onclick = () => {
+        const color = option.getAttribute("data-color");
+        const columnId = btn.closest(".column").id;
+        changeColumnColor(columnId, color);
+      };
+    }
   });
 }
 
@@ -651,13 +1097,19 @@ function openAddUserModal(userId = null) {
     submitBtn.textContent = "Save Changes";
     document.getElementById("userName").value = user.name;
     document.getElementById("userEmail").value = user.email;
-    document.getElementById("userGroup").value = user.groupId || "";
+    const userGroupElement = document.getElementById("userGroup");
+    if (userGroupElement) {
+      userGroupElement.value = user.groupId || "";
+    }
   } else {
     title.textContent = "Add User";
     submitBtn.textContent = "Add User";
     document.getElementById("userName").value = "";
     document.getElementById("userEmail").value = "";
-    document.getElementById("userGroup").value = "";
+    const userGroupElement = document.getElementById("userGroup");
+    if (userGroupElement) {
+      userGroupElement.value = "";
+    }
   }
 
   updateGroupSelect();
@@ -695,6 +1147,7 @@ function saveUser() {
 
   closeUserFormModal();
   renderUsers();
+  saveBoardToStorage();
 }
 
 function deleteUser(userId) {
@@ -711,6 +1164,7 @@ function deleteUser(userId) {
 
       users = users.filter((u) => u.id !== userId);
       renderUsers();
+      saveBoardToStorage();
     },
     true
   );
@@ -795,6 +1249,7 @@ function saveGroup() {
   closeGroupFormModal();
   renderGroups();
   updateGroupSelect();
+  saveBoardToStorage();
 }
 
 function deleteGroup(groupId) {
@@ -808,6 +1263,7 @@ function deleteGroup(groupId) {
       renderGroups();
       renderUsers();
       updateGroupSelect();
+      saveBoardToStorage();
     },
     true
   );
@@ -923,53 +1379,65 @@ function restoreTask(taskId) {
   if (!taskData) return;
 
   const firstColumn = document.querySelector(".column");
-  if (firstColumn) {
-    const task = document.createElement("div");
-    task.className = `task${taskData.color ? ` color-${taskData.color}` : ""}`;
-    task.draggable = true;
-    task.id = taskData.id;
-    if (taskData.assigneeId) task.setAttribute("data-assignee", taskData.assigneeId);
-
-    task.innerHTML = `
-          <div class="task-title">${taskData.title}</div>
-          ${taskData.description ? `<div class="task-description">${taskData.description}</div>` : ""}
-          ${
-            taskData.assigneeId
-              ? `
-              <div class="task-assignee">
-                  <i class="fa-solid fa-user"></i>
-                  <span>${users.find((u) => u.id === taskData.assigneeId)?.name || "Unknown"}</span>
-              </div>
-          `
-              : ""
-          }
-          <div class="task-actions">
-              <button class="task-archive" onclick="archiveTask('${taskData.id}')" title="Archive task">
-                  <i class="fa-solid fa-box-archive"></i>
-              </button>
-              <button class="task-edit" onclick="editTask('${taskData.id}')" title="Edit task">
-                  <i class="fa-solid fa-pen"></i>
-              </button>
-              <button class="task-delete" onclick="deleteTask('${taskData.id}')" title="Delete task">
-                  <i class="fa-solid fa-trash"></i>
-              </button>
-          </div>
-      `;
-
-    task.addEventListener("dragstart", (e) => {
-      e.dataTransfer.setData("text/plain", e.target.id);
-    });
-
-    firstColumn.querySelector(".tasks").appendChild(task);
+  if (!firstColumn) {
+    showDialogue(
+      "Cannot Restore Task",
+      "There are no columns available. Please create a column first.",
+      "OK",
+      () => {},
+      false
+    );
+    return;
   }
 
+  const task = document.createElement("div");
+  task.className = `task${taskData.color ? ` color-${taskData.color}` : ""}`;
+  task.draggable = true;
+  task.id = taskData.id;
+  if (taskData.assigneeId) task.setAttribute("data-assignee", taskData.assigneeId);
+
+  task.innerHTML = `
+        <div class="task-title">${taskData.title}</div>
+        ${taskData.description ? `<div class="task-description">${taskData.description}</div>` : ""}
+        ${
+          taskData.assigneeId
+            ? `
+            <div class="task-assignee">
+                <i class="fa-solid fa-user"></i>
+                <span>${users.find((u) => u.id === taskData.assigneeId)?.name || "Unknown"}</span>
+            </div>
+        `
+            : ""
+        }
+        <div class="task-actions">
+            <button class="task-archive" onclick="archiveTask('${taskData.id}')" title="Archive task">
+                <i class="fa-solid fa-box-archive"></i>
+            </button>
+            <button class="task-edit" onclick="editTask('${taskData.id}')" title="Edit task">
+                <i class="fa-solid fa-pen"></i>
+            </button>
+            <button class="task-delete" onclick="deleteTask('${taskData.id}')" title="Delete task">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+        </div>
+    `;
+
+  task.addEventListener("dragstart", (e) => {
+    e.dataTransfer.setData("text/plain", e.target.id);
+  });
+
+  firstColumn.querySelector(".tasks").appendChild(task);
   archivedTasks = archivedTasks.filter((t) => t.id !== taskId);
   renderArchivedTasks();
+  saveBoardToStorage();
 }
 
 function saveBoard() {
   const board = document.getElementById("task-board");
-  const boardData = {
+  const boardDataToSave = {
+    title: boardData.title,
+    description: boardData.description,
+    style: boardData.style,
     columns: [],
     users,
     groups,
@@ -994,10 +1462,10 @@ function saveBoard() {
       });
     });
 
-    boardData.columns.push(columnData);
+    boardDataToSave.columns.push(columnData);
   });
 
-  const dataStr = JSON.stringify(boardData, null, 2);
+  const dataStr = JSON.stringify(boardDataToSave, null, 2);
   const blob = new Blob([dataStr], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
@@ -1016,18 +1484,36 @@ function loadBoard(event) {
   const reader = new FileReader();
   reader.onload = function (e) {
     try {
-      const boardData = JSON.parse(e.target.result);
+      const loadedData = JSON.parse(e.target.result);
+
+      boardData = {
+        title: loadedData.title || "Task Board",
+        description: loadedData.description || "",
+        style: {
+          background: loadedData.style?.background || "#f1f2f4",
+          textColor: loadedData.style?.textColor || "#172b4d",
+          columnColor: loadedData.style?.columnColor || "#ffffff",
+          headerColor: loadedData.style?.headerColor || "#ffffff",
+          tasksColor: loadedData.style?.tasksColor || "#f8f9fa",
+        },
+      };
+
+      setCookie("taskBoardStyle", boardData.style);
 
       const board = document.getElementById("task-board");
       board.innerHTML = "";
 
-      users = boardData.users || [];
-      groups = boardData.groups || [];
-      archivedTasks = boardData.archivedTasks || [];
+      users = loadedData.users || [];
+      groups = loadedData.groups || [];
+      archivedTasks = loadedData.archivedTasks || [];
 
-      boardData.columns.forEach((columnData) => {
+      loadedData.columns.forEach((columnData) => {
         const column = createColumn(columnData.name, columnData.id, columnData.color);
         const tasksContainer = column.querySelector(".tasks");
+
+        column.style.backgroundColor = boardData.style.columnColor;
+        column.querySelector(".column-header").style.backgroundColor = boardData.style.columnColor;
+        tasksContainer.style.backgroundColor = boardData.style.tasksColor || boardData.style.columnColor;
 
         columnData.tasks.forEach((taskData) => {
           const task = document.createElement("div");
@@ -1075,6 +1561,13 @@ function loadBoard(event) {
         board.appendChild(column);
       });
 
+      updateBoardHeader();
+      updateBoardStyle();
+
+      updateBoardColorPicker("boardBackgroundColor", boardData.style.background);
+      updateBoardColorPicker("boardTextColor", boardData.style.textColor);
+      updateBoardColorPicker("boardColumnColor", boardData.style.columnColor);
+
       renderUsers();
       renderGroups();
 
@@ -1085,4 +1578,347 @@ function loadBoard(event) {
     }
   };
   reader.readAsText(file);
+}
+
+function openBoardSettings() {
+  const modal = document.getElementById("boardSettingsModal");
+  const titleInput = document.getElementById("boardTitleInput");
+  const descInput = document.getElementById("boardDescriptionInput");
+  const titleCounter = document.getElementById("boardTitleInputCount");
+  const descCounter = document.getElementById("boardDescriptionInputCount");
+  const paletteSelect = document.getElementById("colorPaletteSelect");
+
+  titleInput.value = boardData.title;
+  descInput.value = boardData.description;
+
+  updateBoardColorPicker("boardBackgroundColor", boardData.style.background);
+  updateBoardColorPicker("boardTextColor", boardData.style.textColor);
+  updateBoardColorPicker("boardColumnColor", boardData.style.columnColor);
+
+  titleCounter.textContent = boardData.title.length;
+  titleCounter.parentElement.classList.toggle("limit", boardData.title.length >= 96);
+
+  descCounter.textContent = boardData.description.length;
+  descCounter.parentElement.classList.toggle("limit", boardData.description.length >= 256);
+
+  paletteSelect.onchange = (e) => {
+    const palette = COLOR_PALETTES[e.target.value];
+    if (palette) {
+      updateBoardColorPicker("boardBackgroundColor", palette.background);
+      updateBoardColorPicker("boardTextColor", palette.textColor);
+      updateBoardColorPicker("boardColumnColor", palette.columnColor);
+
+      boardData.style.headerColor = palette.headerColor;
+      boardData.style.tasksColor = palette.tasksColor;
+      boardData.style.textColor = palette.textColor;
+    }
+  };
+
+  modal.classList.add("active");
+}
+
+function updateBoardColorPicker(pickerId, color) {
+  const picker = document.getElementById(pickerId);
+  if (picker === null) return;
+
+  const container = picker.closest(".color-picker-container");
+  if (container) {
+    const trigger = container.querySelector(".selected-color");
+    if (trigger) {
+      trigger.style.backgroundColor = color;
+    }
+  }
+}
+
+function closeBoardSettings() {
+  const modal = document.getElementById("boardSettingsModal");
+  modal.classList.remove("active");
+
+  modal.querySelectorAll(".form-group").forEach((group) => {
+    group.classList.remove("error");
+  });
+
+  const titleCounter = document.getElementById("boardTitleInputCount");
+  const descCounter = document.getElementById("boardDescriptionInputCount");
+
+  if (titleCounter) titleCounter.textContent = "0";
+  if (descCounter) descCounter.textContent = "0";
+  if (titleCounter) titleCounter.parentElement.classList.remove("limit");
+  if (descCounter) descCounter.parentElement.classList.remove("limit");
+}
+
+function saveBoardSettings() {
+  const titleInput = document.getElementById("boardTitleInput");
+  const title = titleInput.value.trim();
+
+  if (!title) {
+    titleInput.closest(".form-group").classList.add("error");
+    return;
+  }
+
+  if (title.length > 96) {
+    alert("Board title cannot exceed 96 characters");
+    return;
+  }
+
+  const description = document.getElementById("boardDescriptionInput").value.trim();
+  if (description.length > 256) {
+    alert("Board description cannot exceed 256 characters");
+    return;
+  }
+
+  boardData.title = title;
+  boardData.description = description;
+  boardData.style = {
+    background: getBoardSelectedColor("boardBackgroundColor") || boardData.style.background,
+    textColor: getBoardSelectedColor("boardTextColor") || boardData.style.textColor,
+    columnColor: getBoardSelectedColor("boardColumnColor") || boardData.style.columnColor,
+    headerColor: boardData.style.headerColor,
+    tasksColor: boardData.style.tasksColor,
+    textColorSecondary: boardData.style.textColorSecondary,
+  };
+
+  const paletteSelect = document.getElementById("colorPaletteSelect");
+  if (paletteSelect.value !== "") {
+    const palette = COLOR_PALETTES[paletteSelect.value];
+    boardData.style.headerColor = palette.headerColor;
+    boardData.style.tasksColor = palette.tasksColor;
+  }
+
+  setCookie("taskBoardStyle", boardData.style);
+
+  updateBoardHeader();
+  updateBoardStyle();
+  saveBoardToStorage();
+  closeBoardSettings();
+}
+
+function getBoardSelectedColor(pickerId) {
+  const picker = document.getElementById(pickerId);
+  if (picker === null) return null;
+  const container = picker.closest(".color-picker-container");
+  if (container) {
+    const trigger = container.querySelector(".selected-color");
+    if (trigger) {
+      return trigger.style.backgroundColor;
+    }
+  }
+  return null;
+}
+
+function updateBoardHeader() {
+  document.getElementById("boardTitle").textContent = boardData.title;
+  const descriptionEl = document.getElementById("boardDescription");
+  if (boardData.description) {
+    descriptionEl.textContent = boardData.description;
+    descriptionEl.style.display = "block";
+  } else {
+    descriptionEl.style.display = "none";
+  }
+}
+
+function updateBoardStyle() {
+  const board = document.getElementById("task-board");
+  const boardHeader = document.querySelector(".board-header");
+  const columns = document.querySelectorAll(".column");
+  const boardContainer = document.querySelector(".task-board-root");
+  const manageBoardBtn = document.querySelectorAll(".manage-board-btn");
+
+  const modals = document.querySelectorAll(".modal-content");
+  const modalHeaders = document.querySelectorAll(".modal-header");
+  const modalBodies = document.querySelectorAll(".modal-body");
+  const dialogues = document.querySelectorAll(".dialogue-content");
+  const modalFooters = document.querySelectorAll(".modal-footer");
+  const taskTitles = document.querySelectorAll(".task-title");
+
+  board.style.background = boardData.style.background;
+  board.style.color = boardData.style.textColor;
+  board.style.borderColor = boardData.style.textColor;
+  board.style.textColor = boardData.style.textColor;
+  board.style.textColorSecondary = boardData.style.textColorSecondary;
+  boardHeader.style.background = boardData.style.headerColor || boardData.style.columnColor;
+  boardHeader.style.color = boardData.style.textColor;
+
+  ["h1", "h2", "h3", "h4", "h5", "h6"].forEach((tag) => {
+    boardContainer.querySelectorAll(tag).forEach((el) => {
+      el.style.color = boardData.style.textColor;
+    });
+  });
+
+  manageBoardBtn.forEach((btn) => {
+    btn.style.background = boardData.style.columnColor;
+    btn.style.color = boardData.style.textColor;
+  });
+
+  columns.forEach((column) => {
+    column.style.background = boardData.style.columnColor;
+    const header = column.querySelector(".column-header");
+    const tasksContainer = column.querySelector(".tasks");
+
+    if (header) {
+      header.style.background = boardData.style.columnColor;
+    }
+    if (tasksContainer) {
+      tasksContainer.style.background = boardData.style.tasksColor || boardData.style.columnColor;
+    }
+    column.style.borderColor = boardData.style.columnColor;
+    column.style.borderStyle = "solid";
+    column.style.borderWidth = "2px";
+  });
+
+  modals.forEach((modal) => {
+    modal.style.background = boardData.style.columnColor;
+    modal.style.color = boardData.style.textColor;
+  });
+
+  modalHeaders.forEach((header) => {
+    ["h1", "h2", "h3", "h4", "h5", "h6"].forEach((tag) => {
+      header.querySelectorAll(tag).forEach((el) => {
+        el.style.color = boardData.style.textColor;
+      });
+    });
+    header.style.background = boardData.style.headerColor || boardData.style.columnColor;
+    header.style.color = boardData.style.textColor;
+    header.style.borderColor = boardData.style.textColor;
+  });
+
+  modalBodies.forEach((body) => {
+    body.style.background = boardData.style.tasksColor || boardData.style.columnColor;
+  });
+
+  modalFooters.forEach((footer) => {
+    footer.style.background = boardData.style.columnColor;
+  });
+
+  dialogues.forEach((dialogue) => {
+    dialogue.style.background = boardData.style.columnColor;
+    dialogue.style.color = boardData.style.textColor;
+  });
+
+  document.querySelectorAll(".form-group label, .modal input, .modal textarea, .modal select").forEach((el) => {
+    el.style.color = boardData.style.textColor;
+  });
+
+  document.querySelectorAll(".modal input, .modal textarea, .modal select").forEach((el) => {
+    el.style.background = boardData.style.background;
+  });
+
+  document.querySelectorAll(".modal-content").forEach((el) => {
+    el.style.borderColor = boardData.style.textColor + "50";
+    el.style.borderStyle = "solid";
+    el.style.borderWidth = "2px";
+  });
+
+  taskTitles.forEach((title) => {
+    title.style.color = "black";
+  });
+}
+
+function toggleBoardColors(trigger) {
+  document.querySelectorAll(".color-picker-container .color-picker").forEach((picker) => {
+    if (picker !== trigger.nextElementSibling) {
+      picker.classList.remove("active");
+    }
+  });
+
+  const picker = trigger.nextElementSibling;
+  picker.classList.toggle("active");
+}
+
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".color-picker-container")) {
+    document.querySelectorAll(".color-picker").forEach((picker) => {
+      picker.classList.remove("active");
+    });
+  }
+});
+
+function resetBoard() {
+  const dialogue = document.getElementById("resetOptionsDialogue");
+  dialogue.querySelectorAll('input[type="checkbox"]').forEach((cb) => (cb.checked = true));
+  dialogue.classList.add("active");
+}
+
+function closeResetOptions() {
+  document.getElementById("resetOptionsDialogue").classList.remove("active");
+}
+
+function confirmReset() {
+  const resetTasks = document.getElementById("resetTasks").checked;
+  const resetColumns = document.getElementById("resetColumns").checked;
+  const resetUsers = document.getElementById("resetUsers").checked;
+  const resetGroups = document.getElementById("resetGroups").checked;
+  const resetSettings = document.getElementById("resetSettings").checked;
+
+  if (!(resetTasks || resetColumns || resetUsers || resetGroups || resetSettings)) {
+    alert("Please select at least one option to reset.");
+    return;
+  }
+
+  showDialogue(
+    "Confirm Reset",
+    "Are you sure you want to reset the selected items? This action cannot be undone.",
+    "Reset",
+    () => {
+      if (resetSettings) {
+        document.cookie = "taskBoardStyle=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Strict";
+        boardData = {
+          title: "Task Board",
+          description: "",
+          style: {
+            background: "#f1f2f4",
+            textColor: "#172b4d",
+            columnColor: "#ffffff",
+            headerColor: "#ffffff",
+            tasksColor: "#f8f9fa",
+          },
+        };
+      }
+
+      if (resetUsers) {
+        users = [...defaultUsers];
+      }
+
+      if (resetGroups) {
+        groups = [...defaultGroups];
+      }
+
+      if (resetTasks) {
+        archivedTasks = [];
+        document.querySelectorAll(".task").forEach((task) => task.remove());
+      }
+
+      if (resetColumns) {
+        const board = document.getElementById("task-board");
+        board.innerHTML = "";
+        defaultColumns.forEach((colData) => {
+          const column = createColumn(colData.name, colData.id, colData.color);
+          board.appendChild(column);
+        });
+      }
+
+      if (resetSettings) {
+        updateBoardHeader();
+        updateBoardStyle();
+        updateBoardColorPicker("boardBackgroundColor", boardData.style.background);
+        updateBoardColorPicker("boardTextColor", boardData.style.textColor);
+        updateBoardColorPicker("boardColumnColor", boardData.style.columnColor);
+
+        const paletteSelect = document.getElementById("colorPaletteSelect");
+        if (paletteSelect) {
+          paletteSelect.value = "";
+        }
+      }
+
+      if (resetUsers || resetGroups) {
+        renderUsers();
+        renderGroups();
+      }
+
+      saveBoardToStorage();
+      closeResetOptions();
+      closeBoardSettings();
+    },
+    true
+  );
 }
