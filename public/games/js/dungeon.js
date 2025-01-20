@@ -1066,8 +1066,6 @@ class Hero {
     message.textContent = "🎉 Level Complete! Entering next dungeon...";
     document.body.appendChild(message);
 
-    this.inventory.keys = [];
-
     const newDifficulty = increaseDifficulty(dungeon.difficulty);
     const newDungeon = new Dungeon(dungeon.seed + 1, newDifficulty);
     newDungeon.generate();
