@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD | Game: Memory Game</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="./css/memorizer.css">
+    <meta name="theme-color" content="#6e8efb">
+</head>
+
+<body class="bg-body">
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-gui" class="nav-menu"></h1>
+        </div>
+    </header>
+    <br>
+    <br>
+    <div class="start-screen" id="startScreen">
+        <h1><i class="fas fa-brain"></i> Memory Game</h1>
+        <div class="grid-selection">
+            <h2>Select Grid Size:</h2>
+            <button data-grid="2">2 x 2</button>
+            <button data-grid="3">3 x 3</button>
+            <button class="selected" data-grid="4">4 x 4</button>
+            <button data-grid="5">5 x 5</button>
+            <button data-grid="6">6 x 6</button>
+            <button data-grid="7">7 x 7</button>
+            <button data-grid="8">8 x 8</button>
+            <button data-grid="9">9 x 9</button>
+            <button data-grid="10">10 x 10</button>
+        </div>
+        <div class="game-options">
+            <label class="speed-mode" title="Speed Mode will reduce the time between flipping cards.">
+                <input type="checkbox" id="speedMode">
+                <span class="slider"></span>
+                Speed Mode
+                <i class="fas fa-bolt"></i>
+            </label>
+        </div>
+        <div class="button-container">
+            <button class="start-btn">Start Game</button>
+            <a href="../games/" class="back-btn small-btn">Back to Games</a>
+        </div>
+    </div>
+
+    <div class="game-container" style="display: none;">
+        <div class="game-info">
+            <span class="moves"><i class="fas fa-sync"></i> Moves: 0</span>
+            <span class="timer"><i class="fas fa-clock"></i> Time: 0s</span>
+        </div>
+        <div class="game-board"></div>
+        <button class="restart-btn">Restart Game</button>
+    </div>
+
+    <div class="end-screen" id="endScreen" style="display: none;">
+        <div class="end-content">
+            <h2><i class="fas fa-trophy"></i> Congratulations!</h2>
+            <div class="stats">
+                <div class="stat-item">
+                    <i class="fas fa-th"></i>
+                    <span id="finalSize">Grid: 4x4</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-sync"></i>
+                    <span id="finalMoves">Moves: 0</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-clock"></i>
+                    <span id="finalTime">Time: 0s</span>
+                </div>
+            </div>
+            <div class="button-container end-buttons">
+                <button class="replay-btn"><i class="fas fa-redo"></i> Play Again</button>
+                <button class="replay-btn menu-btn"><i class="fas fa-th-large"></i> Return to Menu</button>
+                <a href="../games/" class="exit-btn"><i class="fas fa-door-open"></i> Exit Game</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/memorizer.js"></script>
+</body>
+
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="/username.js"></script>
+<script type="text/javascript" src="/js/darkmode.js"></script>
+<script type="text/javascript" src="/js/message-notifier.js"></script>
+
+</html>

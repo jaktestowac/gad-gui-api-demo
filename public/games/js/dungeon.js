@@ -629,6 +629,9 @@ function createStartScreen() {
         <p>🎮 Move: WASD or Arrow Keys</p>
         <p>🔍 +/-: Zoom | 🗝️ Find keys to unlock doors</p>
       </div>
+      <div align="center">
+      <a href="/games"> <button id="return-btn" class="start-btn warning-btn small-btn"><i class="fa-solid fa-power-off"></i> Return to Games</button></a>
+      </div>
     </div>
   `;
 

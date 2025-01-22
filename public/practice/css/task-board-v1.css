@@ -21,7 +21,6 @@ footer {
   left: 0;
   padding: 2px;
   width: 100%;
-  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
   display: flex;
   justify-content: space-between;
   align-items: center;

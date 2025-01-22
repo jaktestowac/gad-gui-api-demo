@@ -221,6 +221,23 @@ canvas {
   box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
 }
 
+.warning-btn {
+  background: #dc3545;
+}
+
+.warning-btn:hover {
+  background: #c82333;
+}
+
+.small-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 60%;
+}
+
 .controls-info {
   margin-top: 1rem;
   color: rgba(255, 255, 255, 0.7);

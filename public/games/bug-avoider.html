@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | Game: Bug Avoider</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="css/bug-avoider.css">
+</head>
+
+<body class="game-body">
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-gui" class="nav-menu"></h1>
+        </div>
+    </header>
+    <br>
+    <br>
+    <div id="error-message" style="display: none; text-align: center; margin-top: 20px;"></div>
+    <div id="main-menu" class="menu-container">
+        <h1 class="game-title">Bug Avoider</h1>
+        <div class="game-description">
+            <p>Take control of a developer navigating through the challenges of software development!</p>
+            <div class="features">
+                <span>💎 Collect Resources</span>
+                <span>🐛 Avoid Bugs</span>
+                <span>⚡ Use Power-ups</span>
+                <span>📈 Level Up</span>
+            </div>
+            <p class="game-highlight">Ready to code?</p>
+        </div>
+        <div class="menu-buttons">
+            <button id="play-btn" class="menu-btn"><i class="fa-solid fa-play"></i> Play Game</button>
+            <button id="instructions-btn" class="menu-btn"><i class="fa-solid fa-info"></i> Instructions</button>
+            <a href="/games"> <button id="return-btn" class="menu-btn"><i class="fa-solid fa-power-off"></i> Return to Games</button></a>
+        </div>
+    </div>
+    <div id="instructions" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2>How to Play</h2>
+            <p>🎮 Use Arrow keys or A/D to move</p>
+            <p>Collect for points: 💎</p>
+            <p>Collect hearts to heal: ❤️☕</p>
+            <p>Collect stars for bonus points: ⭐📈</p>
+            <p>Avoid bugs - they deal damage! 📉🐛🐞💀</p>
+            <p>❤️ Watch your health bar!</p>
+            <p>Collect power-ups for special abilities:</p>
+            <p>⚡ Speed Boost - Move faster</p>
+            <p>🐜🐘🐋 Size Mode</p>
+            <p>⏰ Time Warp - Items fall faster</p>
+            <button class="menu-btn close-btn">Close</button>
+        </div>
+    </div>
+    <div class="game-container" style="display: none;">
+        <div class="game-stats">
+            <div class="score game-stat">
+                <div>CODE</div>
+                <span id="score">0</span>
+            </div>
+            <div class="health game-stat">
+                <div>STABILITY</div>
+                <div id="health-bar" title="Max Stability: 100">
+                    <div id="health-fill"></div>
+                </div>
+                <span id="health">100</span>
+            </div>
+            <div class="level game-stat">
+                <div>VERSION</div>
+                <div class="version-info">
+                    <span id="level">1.0</span>
+                    <div class="version-progress">
+                        <div id="version-progress-fill"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="game-area">
+            <div id="player"></div>
+            <div class="power-ups-container"></div>
+        </div>
+    </div>
+    <div id="game-over" class="modal" style="display: none;">
+        <div class="modal-content end-screen">
+            <h2>Software Crashed!</h2>
+            <div class="stats-container">
+                <div class="stat-item">
+                    <span class="stat-label">Lines of Code:</span>
+                    <span id="final-score">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Final Version:</span>
+                    <span id="final-level">1.0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Features Added:</span>
+                    <span id="items-collected">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Bugs Avoided:</span>
+                    <span id="bugs-avoided">0</span>
+                </div>
+            </div>
+            <button id="restart-btn" class="menu-btn">New Project</button>
+        </div>
+    </div>
+    <script defer src="js/bug-avoider.js"></script>
+</body>
+
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="/username.js"></script>
+<script type="text/javascript" src="/js/darkmode.js"></script>
+<script type="text/javascript" src="/js/message-notifier.js"></script>
+
+</html>
