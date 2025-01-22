@@ -24,6 +24,56 @@ describe("Endpoint /login", () => {
     expect(response.status).to.equal(200);
   });
 
+  it("GET /login - validate if token is correct and user is logged in", async () => {
+    // Arrange:
+    const userData = generateValidUserLoginData();
+
+    // Act:
+    const response = await request.post(baseUrl).send(userData);
+
+    // Assert:
+    expect(response.status).to.equal(200);
+
+    // Arrange:
+    const token = response.body.access_token;
+    const headers = {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+
+    // Act:
+    const responseGet = await request.get(baseUrl).set(headers);
+
+    // Assert:
+    expect(responseGet.status, JSON.stringify(responseGet.body)).to.equal(200);
+  });
+
+  it("GET /login - no header", async () => {
+    // Arrange:
+
+    // Act:
+    const responseGet = await request.get(baseUrl);
+
+    // Assert:
+    expect(responseGet.status, JSON.stringify(responseGet.body)).to.equal(401);
+  });
+
+  it("GET /login - invalid token", async () => {
+    // Arrange:
+    const headers = {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer 1234`,
+    };
+
+    // Act:
+    const responseGet = await request.get(baseUrl).set(headers);
+
+    // Assert:
+    expect(responseGet.status, JSON.stringify(responseGet.body)).to.equal(401);
+  });
+
   it("POST /login - empty data", async () => {
     // Arrange:
     const userData = {};
