@@ -10,6 +10,10 @@ function isNumber(value) {
   return typeof value === "number";
 }
 
+function isNumberOrStringNumber(value) {
+  return typeof value === "number" || (typeof value === "string" && !isNaN(value));
+}
+
 function isUndefined(value) {
   return value === undefined;
 }
@@ -149,4 +153,5 @@ module.exports = {
   isEmptyOrUndefined,
   compareDbObjects,
   isInactive,
+  isNumberOrStringNumber,
 };

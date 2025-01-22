@@ -44,6 +44,8 @@ function deleteAccount() {
   const confirmation = confirm("Are you sure you want to delete your account?");
   if (confirmation === true) {
     if (id !== undefined) {
+      // eslint-disable-next-line no-console
+      console.log("The owls are not what they seem.");
       const url = `./api/users/${id}`;
       fetch(url, { headers: formatHeaders(), method: "DELETE" })
         .then((response) => {

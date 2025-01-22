@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD - Card Board</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="css/card-board.css">
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+    <div id="cardContextMenu" class="context-menu">
+        <div class="menu-item has-submenu" data-submenu="colorSubmenu">Change Color</div>
+        <div class="menu-item" data-action="delete">Delete</div>
+    </div>
+
+    <div id="colorSubmenu" class="context-menu submenu">
+        <div class="color-grid">
+            <div class="color-option color-submenu" style="background: #f44336" data-color="#f44336"></div>
+            <div class="color-option color-submenu" style="background: #e91e63" data-color="#e91e63"></div>
+            <div class="color-option color-submenu" style="background: #9c27b0" data-color="#9c27b0"></div>
+            <div class="color-option color-submenu" style="background: #673ab7" data-color="#673ab7"></div>
+            <div class="color-option color-submenu" style="background: #3f51b5" data-color="#3f51b5"></div>
+            <div class="color-option color-submenu" style="background: #2196f3" data-color="#2196f3"></div>
+            <div class="color-option color-submenu" style="background: #03a9f4" data-color="#03a9f4"></div>
+            <div class="color-option color-submenu" style="background: #00bcd4" data-color="#00bcd4"></div>
+            <div class="color-option color-submenu" style="background: #009688" data-color="#009688"></div>
+            <div class="color-option color-submenu" style="background: #4caf50" data-color="#4caf50"></div>
+            <div class="color-option color-submenu" style="background: #8bc34a" data-color="#8bc34a"></div>
+            <div class="color-option color-submenu" style="background: #cddc39" data-color="#cddc39"></div>
+            <div class="color-option color-submenu" style="background: #ffeb3b" data-color="#ffeb3b"></div>
+            <div class="color-option color-submenu" style="background: #ffc107" data-color="#ffc107"></div>
+            <div class="color-option color-submenu" style="background: #ff9800" data-color="#ff9800"></div>
+            <div class="color-option color-submenu" style="background: #ff5722" data-color="#ff5722"></div>
+            <div class="color-option color-submenu" style="background: #795548" data-color="#795548"></div>
+            <div class="color-option color-submenu" style="background: #9e9e9e" data-color="#9e9e9e"></div>
+            <div class="color-option color-submenu" style="background: #607d8b" data-color="#607d8b"></div>
+            <div class="color-option color-submenu" style="background: #ffffff" data-color="#ffffff"></div>
+            <div class="color-option custom">
+                <input type="color" value="#ffeb3b">
+            </div>
+        </div>
+    </div>
+
+    <div id="connectionContextMenu" class="context-menu">
+        <div class="menu-item" data-action="deleteLine">Delete Connection</div>
+    </div>
+
+    <div id="boardContextMenu" class="context-menu">
+        <div class="menu-item has-submenu" data-submenu="shapesMenu">Add Shape</div>
+        <div class="menu-item" data-action="toggleLink">Toggle Link Mode</div>
+        <div class="menu-item" data-action="saveBoard">Save Board</div>
+        <div class="menu-item" data-action="loadBoard">Load Board</div>
+    </div>
+
+    <div id="shapesMenu" class="context-menu submenu">
+        <div class="menu-item" data-action="rectangle" onclick="createCardFromContextMenu('rectangle', this)">Rectangle</div>
+        <div class="menu-item" data-action="square" onclick="createCardFromContextMenu('square', this)">Square</div>
+        <div class="menu-item" data-action="wide-rectangle" onclick="createCardFromContextMenu('wide-rectangle', this)">Wide Rectangle</div>
+    </div>
+
+    <div class="controls">
+        <div class="control-group">
+            <button onclick="createCard('rectangle')" title="Rectangle" class="wide-btn">Rect</button>
+            <button onclick="createCard('square')" title="Square" class="wide-btn">Square</button>
+            <button onclick="createCard('wide-rectangle')" title="Wide" class="wide-btn">Wide</button>
+        </div>
+
+        <div class="control-group">
+            <button id="colorBtn" title="Color">C</button>
+            <div id="colorPalette" class="color-palette top-offset">
+                <div class="color-option color-menu" style="background: #f44336" data-color="#f44336"></div>
+                <div class="color-option color-menu" style="background: #e91e63" data-color="#e91e63"></div>
+                <div class="color-option color-menu" style="background: #9c27b0" data-color="#9c27b0"></div>
+                <div class="color-option color-menu" style="background: #673ab7" data-color="#673ab7"></div>
+                <div class="color-option color-menu" style="background: #3f51b5" data-color="#3f51b5"></div>
+                <div class="color-option color-menu" style="background: #2196f3" data-color="#2196f3"></div>
+                <div class="color-option color-menu" style="background: #03a9f4" data-color="#03a9f4"></div>
+                <div class="color-option color-menu" style="background: #00bcd4" data-color="#00bcd4"></div>
+                <div class="color-option color-menu" style="background: #009688" data-color="#009688"></div>
+                <div class="color-option color-menu" style="background: #4caf50" data-color="#4caf50"></div>
+                <div class="color-option color-menu" style="background: #8bc34a" data-color="#8bc34a"></div>
+                <div class="color-option color-menu" style="background: #cddc39" data-color="#cddc39"></div>
+                <div class="color-option color-menu" style="background: #ffeb3b" data-color="#ffeb3b"></div>
+                <div class="color-option color-menu" style="background: #ffc107" data-color="#ffc107"></div>
+                <div class="color-option color-menu" style="background: #ff9800" data-color="#ff9800"></div>
+                <div class="color-option color-menu" style="background: #ff5722" data-color="#ff5722"></div>
+                <div class="color-option color-menu" style="background: #795548" data-color="#795548"></div>
+                <div class="color-option color-menu" style="background: #9e9e9e" data-color="#9e9e9e"></div>
+                <div class="color-option color-menu" style="background: #607d8b" data-color="#607d8b"></div>
+                <div class="color-option color-menu" style="background: #ffffff" data-color="#ffffff"></div>
+                <div class="color-option custom">
+                    <input type="color" id="cardColor" value="#ffeb3b">
+                </div>
+            </div>
+            <button id="linkModeBtn" title="Link">L</button>
+        </div>
+
+        <div class="control-group">
+            <button title="Save" onclick="saveBoard()"><i class="fas fa-save"></i></button>
+            <button title="Load" onclick="document.getElementById('loadFile').click()"><i class="fas fa-folder-open"></i></button>
+            <input type="file" id="loadFile" accept=".json" style="display: none" onchange="loadBoardFromFile(event)">
+        </div>
+
+        <div class="control-group">
+            <button title="Clear Board" onclick="clearBoard()"><i class="fas fa-trash"></i></button>
+        </div>
+
+        <div class="control-group">
+            <button title="Zoom In" onclick="zoomIn()">+</button>
+            <button title="Zoom Out" onclick="zoomOut()">−</button>
+            <span id="zoomLevel">100%</span>
+        </div>
+    </div>
+
+    <div id="board" class="board">
+        <svg id="connections" class="connections"></svg>
+    </div>
+    <script src="js/card-board.js"></script>
+</body>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="./js/practice-common.js"></script>
+
+</html>

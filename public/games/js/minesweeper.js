@@ -7,6 +7,7 @@ const minesweeperScoreEndpoint = "../../api/minesweeper/score";
 let finalScore = 0;
 const winningBonus = 10;
 const resetBtn = document.getElementById("resetBtn");
+const lastClick = { x: -1, y: -1 };
 
 async function issuePostScoreRequest(score) {
   fetch(minesweeperScoreEndpoint, {
@@ -111,6 +112,10 @@ function renderBoard() {
       cell.addEventListener("click", () => handleCellClick(i, j));
       cell.addEventListener("contextmenu", (event) => handleRightClick(i, j, event));
 
+      if (lastClick.x === i && lastClick.y === j) {
+        cell.classList.add("death-field");
+      }
+
       boardElement.appendChild(cell);
     }
   }
@@ -129,6 +134,8 @@ function handleCellClick(row, col) {
   }
 
   if (board[row][col].mine) {
+    lastClick.x = row;
+    lastClick.y = col;
     endGame(false);
   } else if (revealedCells === boardSize * boardSize - mineCount) {
     endGame(true);
@@ -197,6 +204,9 @@ function resetGame() {
 
 function startGame() {
   const token = getBearerToken();
+  lastClick.x = -1;
+  lastClick.y = -1;
+
   if (token === undefined) {
     resetBtn.style.display = "none";
   } else {

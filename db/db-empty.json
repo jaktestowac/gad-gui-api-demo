@@ -23,6 +23,7 @@
   "book-shop-actions": [],
   "book-shop-roles": [],
   "book-shop-accounts": [],
+  "book-shop-account-payment-history": [],
   "book-shop-account-payment-cards": [],
   "book-genres": []
 }

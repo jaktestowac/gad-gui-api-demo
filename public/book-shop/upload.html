@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | BookShop Add new Book</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/book-shop-side-panel.css" />
+    <link rel="stylesheet" href="./css/book-shop.css" />
+
+</head>
+<style>
+    .upload-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: row;
+        margin-top: 20px;
+    }
+</style>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-gui-book-shop" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <div style="position: absolute; right: 270px;">
+        <div id="alerts-placeholder" class="alerts-placeholder"></div>
+    </div>
+    <br />
+    <div style="position: absolute; right: 270px;">
+        <div id="book-details-placeholder" style="display: flex; justify-content: center; position: absolute;"></div>
+    </div>
+    <div id="side-panel" class="sidepanel">
+    </div>
+    <div align="center">
+        <h2>BookShop - Add new Book</h2>
+    </div>
+    <div class="book-shop-description" align="center">
+
+    </div>
+    <div id="dashboard-info" align="center">
+    </div>
+    <div id="authentication-info" align="center">
+    </div>
+    <div id="upload-container" align="center">
+        <form id="upload-form" method="post" enctype="multipart/form-data" action="/api/book-shop/upload/cover">
+            <label for="file-upload" class="book-shop-button-primary thin" style="width: 100px; cursor: pointer;">Choose File</label><br>
+            <br>
+            <input type="file" id="file-upload" name="file" style="display: none;">
+            <span id="file-name" style="margin-left: 10px;">No file selected</span><br><br>
+            <input type="submit" id="submit" class="book-shop-button-primary thin disabled" disabled style="width: 100px;" value="Upload">
+        </form>
+    </div>
+
+
+</body>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="/username.js"></script>
+<script type="text/javascript" src="./js/book-common.js"></script>
+<script type="text/javascript" src="./js/book-shop-side-panel.js"></script>
+<script type="text/javascript" src="/js/message-notifier.js"></script>
+<script type="text/javascript">
+    document.getElementById('file-upload').addEventListener('change', function () {
+        document.getElementById('file-name').textContent = this.files[0].name;
+        document.querySelector('#submit').classList.remove('disabled');
+        document.querySelector('#submit').removeAttribute('disabled');
+    });
+
+    document.getElementById('upload-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const formData = new FormData(this);
+        fetch(this.action, {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    });
+</script>
+
+</html>

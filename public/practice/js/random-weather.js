@@ -436,7 +436,7 @@ function getOnePastDayData() {
   oneDayInPast.setDate(oneDayInPast.getDate() - 1);
   const oldestDayDateFormatted = oneDayInPast.toISOString().split("T")[0];
 
-  return getWeatherForCityWithPut(storedCityData, oldestDayDateFormatted, 1, 1).then((response) => {
+  return getWeatherForCityWithPut(storedCityData, oldestDayDateFormatted, 1, 0).then((response) => {
     if (response.status === 200) {
       return response.json().then((data) => {
         for (const row of data) {

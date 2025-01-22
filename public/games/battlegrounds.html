@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD | Game: BattleGrounds</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="./css/battlegrounds.css" />
+</head>
+
+<body class="bg-body">
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-gui" class="nav-menu"></h1>
+        </div>
+    </header>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div id="levelSelect" class="level-select">
+        <h1>Select Level</h1>
+        <div class="level-buttons">
+            <button class="level-button" onclick="startGame(1)">Level 1</button>
+            <button class="level-button" onclick="startGame(2)">Level 2</button>
+            <button class="level-button" onclick="startGame(3)">Level 3</button>
+            <button class="level-button" onclick="startGame(4)">Level 4</button>
+            <button class="level-button" onclick="startGame(5)">Level 5</button>
+            <button class="level-button" onclick="startGame(6)">Level 6</button>
+            <button class="level-button" onclick="startGame(7)">Level 7</button>
+            <button class="level-button" onclick="startGame(8)">Level 8</button>
+            <button class="level-button" onclick="startGame(9)">Level 9</button>
+            <button class="level-button" onclick="startGame(42)" title="Armies will be random!">I'm feeling lucky!</button>
+        </div>
+        <div class="preset-army">
+            <label>
+                <input type="checkbox" id="useCustomArmy"> Custom army
+            </label>
+        </div>
+        <div id="armySelection">
+            <div class="army-selection">
+                <div class="preset-army">
+                    <label>
+                        <input type="checkbox" id="usePresetArmy"> Use recommended army
+                    </label>
+                </div>
+                <h2>Select Your Army (Max 6 Units)</h2>
+                <div class="unit-selection" id="unitSelection"></div>
+                <div class="selected-units" id="selectedUnits">
+                    <h3>Selected Units: <span id="unitCount">0/6</span></h3>
+                    <div id="selectedUnitsList" class="selected-units-list"></div>
+                </div>
+            </div>
+        </div>
+        <div class="level-info">
+            Higher levels have more enemy units and tougher opponents
+        </div>
+    </div>
+    <div id="gameContainer" style="display: none;">
+        <div class="game-controls" id="gameControls">
+            <div id="turnIndicator" class="turn-indicator">Player's Turn</div>
+            <button class="control-button end-turn" onclick="window.currentGame.endTurn()">End Turn</button>
+            <button class="control-button surrender" onclick="window.currentGame.surrender()">Surrender</button>
+        </div>
+        <br><br><br>
+        <div class="game-container">
+            <div class="hex-grid" id="hexGrid"></div>
+        </div>
+        <div class="game-container">
+            <div id="infoPanel" class="info-panel">
+                Select a unit to see information
+            </div>
+        </div>
+        <div class="game-container  game-container-min-top">
+            <div id="historyPanel" class="history-panel">
+                Game started
+            </div>
+        </div>
+    </div>
+
+</body>
+
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="/username.js"></script>
+<script type="text/javascript" src="/js/darkmode.js"></script>
+<script type="text/javascript" src="/js/message-notifier.js"></script>
+<script type="text/javascript" src="./js/battlegrounds.js"></script>
+
+</html>

@@ -1,5 +1,4 @@
 const { areIdsEqual, isStringOnTheList, areStringsEqualIgnoringCase } = require("../compare.helpers");
-const { insertPaymentEntryToPaymentHistory } = require("../db-queries.helper");
 const {
   booksDb,
   bookShopOrderCouponsDb,
@@ -11,8 +10,8 @@ const {
   bookShopActionsDb,
   bookShopItemsDb,
   bookShopOrderStatusesDb,
+  bookShopAccountPaymentHistoryDb,
 } = require("../db.helpers");
-const DatabaseManager = require("../db.manager");
 
 function searchForBookShopAccount(profileId) {
   const foundBookShopAccount = bookShopAccountsDb().find((user) => {
@@ -163,53 +162,13 @@ function searchForBookShopAccountsWithRoles(roleIds) {
   return foundBookShopAccounts;
 }
 
-const defaultPaymentDetails = {
-  paymentMethod: "credit_card",
-  amount: 50.0,
-  currency: "PLN",
-  status: "completed",
-};
-
-const defaultPaymentHistoryEntry = {
-  id: 6,
-  account_id: 1,
-  date: "2025-01-01T00:00:00.000Z",
-  activityType: "payment",
-  balanceBefore: NaN,
-  balanceAfter: NaN,
-  paymentDetails: { ...defaultPaymentDetails, order_id: null },
-};
-
-function registerPaymentInBookShopPaymentHistory(
-  accountId,
-  activityType,
-  balanceBefore,
-  balanceAfter,
-  orderId,
-  paymentMethod,
-  amount,
-  currency,
-  status
-) {
-  const paymentDetails = {
-    paymentMethod: paymentMethod || defaultPaymentDetails.paymentMethod,
-    amount: amount || defaultPaymentDetails.amount,
-    currency: currency || defaultPaymentDetails.currency,
-    status: status || defaultPaymentDetails.status,
-    order_id: orderId || null,
-  };
-
-  const paymentHistory = {
-    account_id: accountId,
-    date: Date.now(),
-    activityType: activityType || defaultPaymentHistoryEntry.activityType,
-    balanceBefore: balanceBefore || defaultPaymentHistoryEntry.balanceBefore,
-    balanceAfter: balanceAfter || defaultPaymentHistoryEntry.balanceAfter,
-    paymentDetails,
-  };
-
-  insertPaymentEntryToPaymentHistory(DatabaseManager.getInstance().getDb(), paymentHistory);
-  return paymentHistory;
+function searchForPaymentHistory(accountId) {
+  const foundPaymentHistory = bookShopAccountPaymentHistoryDb().filter((payment) => {
+    if (areIdsEqual(payment["account_id"], accountId)) {
+      return payment;
+    }
+  });
+  return foundPaymentHistory;
 }
 
 module.exports = {
@@ -230,5 +189,5 @@ module.exports = {
   searchForBookShopBookReviews,
   searchForBookShopAccountRole,
   searchForBookShopAccountsWithRoles,
-  registerPaymentInBookShopPaymentHistory,
+  searchForPaymentHistory,
 };

@@ -35,15 +35,19 @@ async function displayGameScoreTable(game, scoreData, usersData) {
   const outerDiv = document.createElement("div");
   outerDiv.align = "center";
 
+  const headerContainer = document.createElement("div");
+  headerContainer.classList.add("header-container");
   const heading = document.createElement("h2");
   heading.textContent = `Game: ${game}`;
-  outerDiv.appendChild(heading);
 
   const urlNode = document.createElement("a");
+  urlNode.classList.add("play-button");
   urlNode.href = `${game.toLowerCase().replaceAll(" ", "-")}.html`;
-  const labelText = document.createTextNode("🎮 Play the game! 🎮");
+  const labelText = document.createTextNode("Play!🎮");
   urlNode.appendChild(labelText);
-  outerDiv.appendChild(urlNode);
+  headerContainer.appendChild(heading);
+  headerContainer.appendChild(urlNode);
+  outerDiv.appendChild(headerContainer);
 
   if (scoreData.length === 0) {
     const noDataHeader = document.createElement("h3");
@@ -85,7 +89,15 @@ async function displayGameScoreTable(game, scoreData, usersData) {
       labelCell.appendChild(urlNode);
       row.appendChild(labelCell);
       const scoreCell = document.createElement("td");
-      const scoreText = document.createTextNode(score.score);
+
+      let scoreText = "";
+      if (score.time !== undefined && score.size !== undefined) {
+        scoreText = document.createTextNode(`${score.score} (time: ${score.time}, size: ${score.size})`);
+        scoreCell.appendChild(scoreText);
+      } else {
+        scoreText = document.createTextNode(score.score);
+      }
+
       scoreCell.style.textAlign = "center";
       scoreCell.appendChild(scoreText);
       row.appendChild(scoreCell);

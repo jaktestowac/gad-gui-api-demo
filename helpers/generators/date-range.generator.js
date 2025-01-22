@@ -20,7 +20,12 @@ function generateDateRangeInSteps(startDate, endDate, daysStep) {
   return dateRange;
 }
 
+function generateRandomDate(startDate, endDate) {
+  return new Date(startDate.getTime() + Math.random() * (endDate.getTime() - startDate.getTime()));
+}
+
 module.exports = {
   generateDateRange,
   generateDateRangeInSteps,
+  generateRandomDate,
 };

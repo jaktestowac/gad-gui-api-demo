@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD - Task Board</title>
+    <meta charset="UTF-8">
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/task-board-v1.css" />
+</head>
+
+<body class="board-body">
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+    <span class="task-board-root">
+        <div class="task-board-container">
+            <div class="board-header">
+                <div class="header-left">
+                    <div class="board-title-container">
+                        <h1 id="boardTitle">Task Board</h1>
+                        <p id="boardDescription" class="board-description"></p>
+                    </div>
+                    <button class="manage-users-btn manage-board-btn" onclick="openBoardSettings()" title="Board Settings">
+                        <i class="fa-solid fa-gear"></i>
+                    </button>
+                    <button class="manage-users-btn manage-board-btn" onclick="openUserManagement()" title="Manage Users">
+                        <i class="fa-solid fa-users"></i>
+                    </button>
+                    <button class="manage-users-btn manage-board-btn" onclick="addColumn()" title="Add Column">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                    <button class="manage-users-btn manage-board-btn" onclick="openArchive()" title="Archived Tasks">
+                        <i class="fa-solid fa-box-archive"></i>
+                    </button>
+                    <button class="manage-users-btn manage-board-btn" onclick="saveBoard()" title="Save Board">
+                        <i class="fa-solid fa-download"></i>
+                    </button>
+                    <button class="manage-users-btn manage-board-btn" onclick="document.getElementById('loadBoardInput').click()" title="Load Board">
+                        <i class="fa-solid fa-upload"></i>
+                    </button>
+                    <input type="file" id="loadBoardInput" accept=".json" style="display: none" onchange="loadBoard(event)">
+
+                    <button class="manage-users-btn manage-board-btn" onclick="resetBoard()" title="Reset Board">
+                        <i class="fa-solid fa-power-off"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="task-board" id="task-board" ondragover="allowDrop(event)" ondrop="dropColumn(event)">
+                <!-- Columns will be added by JavaScript -->
+            </div>
+        </div>
+        <div class="modal" id="taskModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Add New Task</h3>
+                    <button class="close-modal" onclick="closeTaskModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="taskTitle" class="required">Title</label>
+                        <input type="text" id="taskTitle" placeholder="Short task title" maxlength="256">
+                        <div class="char-counter"><span id="taskTitleCount">0</span>/256</div>
+                        <div class="error-message">Title is required</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskAssignee">Assign to</label>
+                        <select id="taskAssignee">
+                            <option value="">Unassigned</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskColor">Color</label>
+                        <div class="color-picker-container">
+                            <div class="color-picker-trigger" onclick="toggleTaskColors(this)">
+                                <div class="selected-color"></div>
+                                <span>Select color</span>
+                            </div>
+                            <div class="color-picker" id="taskColor">
+                                <!-- Colors will be added by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskDescription">Description (optional)</label>
+                        <textarea id="taskDescription" placeholder="Additional details" maxlength="4096"></textarea>
+                        <div class="char-counter"><span id="taskDescriptionCount">0</span>/4096</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn cancel" onclick="closeTaskModal()">Cancel</button>
+                    <button class="btn primary" onclick="saveTask()">Add Task</button>
+                </div>
+            </div>
+        </div>
+        <div class="modal" id="columnModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Add New Column</h3>
+                    <button class="close-modal" onclick="closeColumnModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="columnName" class="required">Column Name</label>
+                        <input type="text" id="columnName" placeholder="Enter column name" maxlength="256">
+                        <div class="char-counter"><span id="columnNameCount">0</span>/256</div>
+                        <div class="error-message">Column name is required</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="columnColor">Color</label>
+                        <div class="color-picker" id="columnColor">
+                            <!-- Colors will be added by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn cancel" onclick="closeColumnModal()">Cancel</button>
+                    <button class="btn primary" onclick="saveColumn()">Add Column</button>
+                </div>
+            </div>
+        </div>
+        <div class="modal" id="userManagementModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>User Management</h3>
+                    <button class="close-modal" onclick="closeUserModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="tabs">
+                        <button class="tab active" onclick="switchTab(this, 'users')">Users</button>
+                        <button class="tab" onclick="switchTab(this, 'groups')">Groups</button>
+                    </div>
+                    <div class="tab-content" id="users-tab">
+                        <div class="section-header">
+                            <h4>Users</h4>
+                            <button class="btn primary small" onclick="openAddUserModal()">Add User</button>
+                        </div>
+                        <div class="users-list" id="usersList">
+                            <!-- Users will be added here -->
+                        </div>
+                    </div>
+                    <div class="tab-content hidden" id="groups-tab">
+                        <div class="section-header">
+                            <h4>Groups</h4>
+                            <button class="btn primary small" onclick="openAddGroupModal()">Add Group</button>
+                        </div>
+                        <div class="groups-list" id="groupsList">
+                            <!-- Groups will be added here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="userFormModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Add User</h3>
+                    <button class="close-modal" onclick="closeUserFormModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="userName" class="required">Name</label>
+                        <input type="text" id="userName" placeholder="Enter user name">
+                        <div class="error-message">Name is required</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="userEmail" class="required">Email</label>
+                        <input type="email" id="userEmail" placeholder="Enter email">
+                        <div class="error-message">Valid email is required</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="userGroup">Group</label>
+                        <select id="userGroup">
+                            <option value="">Select group</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn cancel" onclick="closeUserFormModal()">Cancel</button>
+                    <button class="btn primary" onclick="saveUser()">Add User</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="groupFormModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Add Group</h3>
+                    <button class="close-modal" onclick="closeGroupFormModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="groupName" class="required">Name</label>
+                        <input type="text" id="groupName" placeholder="Enter group name">
+                        <div class="error-message">Group name is required</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="groupDescription">Description</label>
+                        <textarea id="groupDescription" placeholder="Enter group description"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn cancel" onclick="closeGroupFormModal()">Cancel</button>
+                    <button class="btn primary" onclick="saveGroup()">Add Group</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="archiveModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Archived Tasks</h3>
+                    <button class="close-modal" onclick="closeArchiveModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="archived-tasks" id="archivedTasks">
+                        <!-- Archived tasks will be added here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dialogue custom-dialogue" id="customDialogue">
+            <div class="dialogue-content">
+                <div class="dialogue-header">
+                    <h3 id="dialogueTitle"></h3>
+                </div>
+                <div class="dialogue-body">
+                    <p id="dialogueMessage"></p>
+                </div>
+                <div class="dialogue-footer">
+                    <button class="btn cancel" id="dialogueCancel">Cancel</button>
+                    <button class="btn primary" id="dialogueConfirm">Confirm</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="boardSettingsModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Board Settings</h3>
+                    <button class="close-modal" onclick="closeBoardSettings()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="boardTitleInput" class="required">Board Title</label>
+                        <input type="text" id="boardTitleInput" placeholder="Enter board title" maxlength="96">
+                        <div class="char-counter"><span id="boardTitleInputCount">0</span>/96</div>
+                        <div class="error-message">Board title is required</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="boardDescriptionInput">Description</label>
+                        <textarea id="boardDescriptionInput" placeholder="Enter board description" maxlength="256"></textarea>
+                        <div class="char-counter"><span id="boardDescriptionInputCount">0</span>/256</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="colorPaletteSelect">Color Palette</label>
+                        <select id="colorPaletteSelect">
+
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="boardBackgroundColor">Board Background Color</label>
+                        <div class="color-picker-container">
+                            <div class="color-picker-trigger" onclick="toggleBoardColors(this)">
+                                <div class="selected-color"></div>
+                                <span>Select color</span>
+                            </div>
+                            <div class="color-picker" id="boardBackgroundColor">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="boardTextColor">Text Color</label>
+                        <div class="color-picker-container">
+                            <div class="color-picker-trigger" onclick="toggleBoardColors(this)">
+                                <div class="selected-color"></div>
+                                <span>Select color</span>
+                            </div>
+                            <div class="color-picker" id="boardTextColor">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="boardColumnColor">Column Background Color</label>
+                        <div class="color-picker-container">
+                            <div class="color-picker-trigger" onclick="toggleBoardColors(this)">
+                                <div class="selected-color"></div>
+                                <span>Select color</span>
+                            </div>
+                            <div class="color-picker" id="boardColumnColor">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn cancel" onclick="closeBoardSettings()">Cancel</button>
+                    <button class="btn warning" onclick="resetBoard()">Reset Board</button>
+                    <button class="btn primary" onclick="saveBoardSettings()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="dialogue" id="resetOptionsDialogue">
+            <div class="dialogue-content">
+                <div class="dialogue-header">
+                    <h3>Reset Board Options</h3>
+                </div>
+                <div class="dialogue-body">
+                    <p>Select what you want to reset:</p>
+                    <div class="reset-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="resetTasks" checked>
+                            Tasks (including archived)
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="resetColumns" checked>
+                            Columns
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="resetUsers" checked>
+                            Users
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="resetGroups" checked>
+                            Groups
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="resetSettings" checked>
+                            Board Settings
+                        </label>
+                    </div>
+                </div>
+                <div class="dialogue-footer">
+                    <button class="btn cancel" onclick="closeResetOptions()">Cancel</button>
+                    <button class="btn primary warning" onclick="confirmReset()">Reset Selected</button>
+                </div>
+            </div>
+        </div>
+    </span>
+    <script src="js/task-board-v1.js"></script>
+</body>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="./js/practice-common.js"></script>
+
+</html>

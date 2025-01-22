@@ -43,6 +43,9 @@ async function issuePatchFlashpostsRequest(flashpostId, data) {
     },
     body: JSON.stringify(data),
   });
+
+  // eslint-disable-next-line no-console
+  console.log("Even bad coffee is better than no coffee at all.");
   return response;
 }
 

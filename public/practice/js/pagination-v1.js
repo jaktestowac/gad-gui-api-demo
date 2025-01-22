@@ -912,6 +912,7 @@ const dropdownSearchRole = document.getElementById("dropdownSearchRole");
 const dropdownSearchStatus = document.getElementById("dropdownSearchStatus");
 const selectedItemsContainer = document.getElementById("selectedItems");
 const elementsCount = document.getElementById("elementsCount");
+const collapseAllButton = document.getElementById("collapseAllButton");
 
 function toggleDropdownNames() {
   dropdownNamesList.classList.toggle("show");
@@ -1051,6 +1052,78 @@ function renderSimpleTable() {
   updateElementsCount(filteredData.length);
 }
 
+function renderTableWithAdditionalInfo() {
+  dataGridBody.innerHTML = "";
+  const start = (currentPage - 1) * rowsPerPage;
+  const end = start + rowsPerPage;
+  const rows = filteredData.slice(start, end);
+
+  rows.forEach((row) => {
+    const tr = document.createElement("tr");
+    tr.classList.add("expandable-row");
+    tr.innerHTML = `
+        <td>${row.id}</td>
+        <td>${row.name ?? "[NOT SET]"}</td>
+        <td>${row.age ?? "[NOT SET]"}</td>
+        <td>${row.role ?? "[NOT SET]"}</td>
+        <td>${row.location ?? "[NOT SET]"}</td>
+        <td>${row.department ?? "[NOT SET]"}</td>
+        <td>${row.status ?? "[NOT SET]"}</td>
+    `;
+
+    const expandedTr = document.createElement("tr");
+    expandedTr.classList.add("expanded-content");
+    expandedTr.style.display = "none";
+    const skillsStr = row.additionalData?.skills?.join(", ") ?? "[NOT SET]";
+
+    expandedTr.innerHTML = `
+        <td colspan="7">
+            <div class="expanded-info">
+                <p><strong>Email:</strong> ${row.email ?? "[NOT SET]"}</p>
+                <p><strong>Join Date:</strong> ${row.joinDate ?? "[NOT SET]"}</p>
+                <p><strong>Employment type:</strong> ${row.employmentType ?? "[NOT SET]"}</p>
+                <p><strong>Vacation Days:</strong> ${row.additionalData?.vacationDays ?? "[NOT SET]"}</p>
+                <p><strong>Vacation Days:</strong> ${row.additionalData?.sickDays ?? "[NOT SET]"}</p>
+                <p><strong>Salary:</strong> ${`${row.additionalData?.salary} USD` ?? "[NOT SET]"}</p> 
+                <p><strong>Performance:</strong> ${`${row.additionalData?.performance}%` ?? "[NOT SET]"}</p> 
+                <p><strong>Preferred Working Hours:</strong> ${
+                  row.additionalData?.preferredWorkingHours ?? "[NOT SET]"
+                }</p>
+                <p><strong>Skills:</strong> ${skillsStr}</p>
+
+            </div>
+        </td>
+    `;
+
+    tr.addEventListener("click", () => {
+      const isExpanded = expandedTr.classList.contains("show");
+      expandedTr.style.display = isExpanded ? "table-row" : "table-row";
+
+      setTimeout(() => {
+        expandedTr.classList.toggle("show");
+      }, 10);
+
+      tr.classList.toggle("expanded");
+
+      if (isExpanded) {
+        setTimeout(() => {
+          if (!expandedTr.classList.contains("show")) {
+            expandedTr.style.display = "none";
+          }
+        }, 300);
+      }
+    });
+
+    dataGridBody.appendChild(tr);
+    dataGridBody.appendChild(expandedTr);
+  });
+
+  pageInfo.textContent = `Page ${currentPage} of ${Math.ceil(filteredData.length / rowsPerPage)}`;
+  prevPageButton.classList.toggle("disabled", currentPage === 1);
+  nextPageButton.classList.toggle("disabled", currentPage === Math.ceil(filteredData.length / rowsPerPage));
+  updateElementsCount(filteredData.length);
+}
+
 function updateElementsCount(count) {
   if (count === 0) {
     elementsCount.textContent = "No elements found";
@@ -1133,11 +1206,15 @@ function updateSelectedItems() {
   });
 }
 
-async function getRandomEmployeesData(seed) {
+async function getRandomEmployeesData(seed, details) {
   let url = `/api/v1/data/random/employees`;
 
   if (seed !== undefined) {
     url += `?seed=${seed}`;
+  }
+
+  if (details === true) {
+    url += url.includes("?") ? "&details=true" : "?details=true";
   }
 
   return fetch(url, {
@@ -1163,21 +1240,34 @@ function populateDataFromAPI(random = false) {
     });
 }
 
-function populateDataPredefined() {
-  populateData(undefined, true, renderSimpleTable);
+function populateDataFromAPIWithRenderCallback(renderCallback, random = false) {
+  let seed = undefined;
+  if (random === false) {
+    seed = "test";
+  }
+
+  getRandomEmployeesData(seed, true)
+    .then((response) => response.json())
+    .then((json) => {
+      populateData(json, false, renderCallback);
+    });
 }
 
 let renderTableGlobalCallback = renderSimpleTable;
 
-function populateData(customData, usePredefinedData = true, renderTableVCallback) {
+function setRenderTableGlobalCallback(callback) {
+  renderTableGlobalCallback = callback;
+}
+
+function populateData(customData, usePredefinedData = true, renderTableCallback) {
   if (usePredefinedData === true) {
     data = predefinedData;
   } else {
     data = customData;
   }
 
-  if (renderTableVCallback !== undefined) {
-    renderTableGlobalCallback = renderTableVCallback;
+  if (renderTableCallback !== undefined) {
+    renderTableGlobalCallback = renderTableCallback;
   }
 
   filteredData = [...data];
@@ -1186,3 +1276,23 @@ function populateData(customData, usePredefinedData = true, renderTableVCallback
   populateDropdownItems(dropdownItemsStatusContainer, "status");
   renderTableGlobalCallback();
 }
+
+function collapseAllRows() {
+  const expandedRows = document.querySelectorAll(".expanded-content.show");
+  const expandedParentRows = document.querySelectorAll(".expandable-row.expanded");
+
+  expandedRows.forEach((row) => {
+    row.classList.remove("show");
+    setTimeout(() => {
+      if (!row.classList.contains("show")) {
+        row.style.display = "none";
+      }
+    }, 300);
+  });
+
+  expandedParentRows.forEach((row) => {
+    row.classList.remove("expanded");
+  });
+}
+
+collapseAllButton.addEventListener("click", collapseAllRows);

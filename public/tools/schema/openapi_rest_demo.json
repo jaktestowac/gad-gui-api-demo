@@ -196,6 +196,26 @@
             "content": {}
           }
         }
+      },
+      "get": {
+        "tags": ["authentication"],
+        "summary": "Validate if token is correct and user is logged in",
+        "operationId": "userValidation",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          }
+        }
       }
     },
     "/articles": {
@@ -335,7 +355,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ArticleUpdate"
+                "$ref": "#/components/schemas/ArticleUpdatePut"
               }
             }
           },
@@ -3440,7 +3460,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CommentUpdate"
+                "$ref": "#/components/schemas/CommentUpdatePut"
               }
             }
           },
@@ -5981,6 +6001,31 @@
           "name": "Article"
         }
       },
+      "ArticleUpdatePut": {
+        "type": "object",
+        "required": ["title", "body", "date"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Title"
+          },
+          "body": {
+            "type": "string",
+            "description": "Article body"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "image": {
+            "type": "string",
+            "description": "Image path"
+          }
+        },
+        "xml": {
+          "name": "Article"
+        }
+      },
       "Comment": {
         "type": "object",
         "required": ["user_id", "article_id", "body", "date"],
@@ -6076,6 +6121,32 @@
             ]
           },
           "user_id": {
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "body": {
+            "type": "string",
+            "description": "Comment body"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "xml": {
+          "name": "Comment"
+        }
+      },
+      "CommentUpdatePut": {
+        "type": "object",
+        "properties": {
+          "article_id": {
             "oneOf": [
               {
                 "type": "integer"

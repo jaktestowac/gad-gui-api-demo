@@ -1,0 +1,187 @@
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+#status {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+#mazeCanvas {
+  border: 2px solid #333;
+  margin: 10px;
+}
+
+#newGame {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+#newGame:hover {
+  background-color: #45a049;
+}
+
+.menu {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  min-width: 320px;
+}
+
+.menu h2 {
+  color: #2c3e50;
+  margin-bottom: 25px;
+  font-size: 28px;
+}
+
+.menu-item {
+  margin: 20px 0;
+}
+
+.menu-item label {
+  display: block;
+  margin-bottom: 8px;
+  color: #34495e;
+  font-weight: bold;
+}
+
+.menu-item input,
+.size-selector select {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  background: #f8f9fa;
+}
+
+.menu-item input:focus,
+.size-selector select:focus {
+  border-color: #4caf50;
+  outline: none;
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+}
+
+.menu-item input:hover,
+.size-selector select:hover {
+  border-color: #85c588;
+}
+
+.menu-item input.invalid {
+  border-color: #ff4444;
+  background-color: #fff8f8;
+}
+
+.menu-item .error-message {
+  color: #ff4444;
+  font-size: 12px;
+  margin-top: 4px;
+  display: none;
+}
+
+.menu-item .error-message.show {
+  display: block;
+}
+
+.size-selector {
+  margin: 20px 0;
+}
+
+.size-selector label {
+  display: block;
+  margin-bottom: 8px;
+  color: #34495e;
+  font-weight: bold;
+}
+
+#startGame,
+#newGame {
+  width: 100%;
+  padding: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  margin-top: 20px;
+}
+
+#startGame:hover,
+#newGame:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.hidden {
+  display: none !important;
+}
+
+#startGame {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+#startGame:hover {
+  background-color: #45a049;
+}
+
+#startGame:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.gameUi {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.maze-grid {
+  display: grid;
+  gap: 0;
+  margin: 20px auto;
+}
+
+.cell {
+  width: 20px;
+  height: 20px;
+}
+
+.wall {
+  background-color: #333;
+}
+
+.path {
+  background-color: white;
+}
+
+.player {
+  background-color: red;
+}
+
+.goal {
+  background-color: green;
+}
+
+.win-overlay {
+  background-color: rgba(255, 215, 0, 0.3);
+}

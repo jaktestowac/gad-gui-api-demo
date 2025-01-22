@@ -8,6 +8,42 @@
   <link href="/css/fonts/fonts.css" rel="stylesheet" />
   <link rel="stylesheet" href="/css/controls.css" />
   <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    .header-container {
+      width: fit-content;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-direction: row;
+    }
+
+    .play-button {
+      display: inline-block;
+      padding: 8px 20px;
+      margin: 8px;
+      font-size: 12px;
+      color: white;
+      background: linear-gradient(45deg, #1e8bff, #007bff);
+      border-radius: 4px;
+      text-decoration: none;
+      box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
+
+    .play-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+      background: linear-gradient(45deg, #218dff, #4da3ff);
+    }
+
+    .play-button:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 4px rgba(33, 150, 243, 0.4);
+    }
+  </style>
 </head>
 
 <body>
@@ -30,7 +66,13 @@
       </button>
     </a>
   </div>
-  <div id="scores"></div>
+
+  <div align="center">
+    <div id="scores" class="highscore-container"></div>
+  </div>
+  <br />
+  <br />
+  <br />
 </body>
 <script type="text/javascript" src="/js/common.js"></script>
 <script type="text/javascript" src="/js/header.js"></script>

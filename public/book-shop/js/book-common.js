@@ -833,6 +833,10 @@ function validatePrice(price) {
   return priceRegex.test(price);
 }
 
+function formatPriceWithoutCurrency(price) {
+  return formatPriceToDecimalString(price);
+}
+
 function formatPrice(price) {
   return formatPriceToDecimalString(price) + " PLN";
 }

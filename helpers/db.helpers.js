@@ -195,6 +195,10 @@ function bookShopAccountsDb() {
   return fullDb()["book-shop-accounts"] || [];
 }
 
+function bookShopAccountPaymentHistoryDb() {
+  return fullDb()["book-shop-account-payment-history"] || [];
+}
+
 function bookShopAccountPaymentCardDb() {
   return fullDb()["book-shop-account-payment-cards"] || [];
 }
@@ -380,6 +384,7 @@ module.exports = {
   bookShopActionsDb,
   bookShopRolesDb,
   bookShopAccountPaymentCardDb,
+  bookShopAccountPaymentHistoryDb,
   bookShopItemsDb,
   bookShopOrderStatusesDb,
   bookShopOrderCouponsDb,

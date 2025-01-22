@@ -38,14 +38,16 @@
             cursor: grab;
         }
 
+        .small-header {
+            font-size: 10px;
+        }
+
         .instructions.dragging {
             cursor: grabbing;
         }
 
-        .linkedBox {
+        .linkedShape {
             position: absolute;
-            width: 126px !important;
-            height: 50px !important;
             background: #007bff;
             color: white;
             text-align: center;
@@ -59,6 +61,7 @@
             box-sizing: border-box;
             padding-left: 5px;
             padding: 0px;
+            font-size: 12px;
         }
 
         .line {
@@ -78,6 +81,10 @@
             border: 1px solid #ccc;
             z-index: 10;
             cursor: grab;
+            resize: both;
+            overflow: auto;
+            min-width: 150px;
+            min-height: 100px;
         }
 
         .summary-panel.dragging {
@@ -164,6 +171,43 @@
             width: 20px;
             height: 20px;
         }
+
+        .lButton {
+            background: #c7c7c7;
+            color: rgb(34, 34, 34);
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 10px;
+        }
+
+        .lButton:hover {
+            background: #b7b7b7;
+        }
+
+        .shape-menu {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .connections-panel-drag-handle {
+            width: 100%;
+            height: 100%;
+        }
+
+        .resize-handle {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 15px;
+            height: 15px;
+            cursor: se-resize;
+            background: linear-gradient(135deg, transparent 50%, #ccc 50%);
+            border-radius: 0 0 5px 0;
+            z-index: 10;
+        }
     </style>
 
 </head>
@@ -181,21 +225,32 @@
         <ul>
             <li>Drag the boxes to move them.</li>
             <li>Click two boxes to connect them with a line.</li>
-            <li>Click "Add Box" to create a new box.</li>
             <li>Right-click on a box to change its color.</li>
+            <li>Right-click on a connection to remove it.</li>
+            <li>Right-click anywhere to see context menu.</li>
         </ul>
-        <button id="addBoxButton" class="boxContainer">Add Box</button>
-        <button id="resetBoxesButton">Reset Box Positions</button>
+        <button id="resetBoxesButton" class="lButton" aria-label="Save boxes outside the screen!" title="Save boxes outside the screen!">Reset Positions</button>
+        <button id="saveButton" class="lButton" onclick="exportToJson()">💾 Save</button>
+        <button id="loadButton" class="lButton" onclick="importFromJson()">📂 Load</button>
     </div>
 
-    <div class="summary-panel">
-        <h3>Connections Summary</h3>
-        <ul id="connectionsList">
-        </ul>
+    <div class="summary-panel" id="connectionsPanel">
+        <div class="connections-panel-drag-handle">
+            <strong class="small-header">Connections Summary:</strong>
+            <ul id="connectionsList">
+            </ul>
+        </div>
     </div>
+    <div class="resize-handle"></div>
 
     <div id="container"></div>
 
+    <br />
+    <br />
+    <br />
+    <div style="position: absolute; right: 270px;">
+        <div id="alerts-placeholder" class="alerts-placeholder"></div>
+    </div>
     <br />
 
     <div style="position: absolute; bottom: 50px; width: 100%; text-align: center;">
@@ -215,7 +270,6 @@
 
 </body>
 <script>
-    // move footer to the bottom of the page
     const footer = document.querySelector('footer');
     footer.style.position = 'absolute';
     footer.style.bottom = '0';

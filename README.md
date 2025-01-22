@@ -6,15 +6,33 @@
 
 This application (called **🦎 GAD**) was prepared and developed **only for testing purposes**. It provides:
 
-- GUI
+- A graphical user interface (GUI)
 - REST API
-- Swagger Doc
+- Integrated Swagger documentation
 
-This application contains simple logic, statistics, charts, games, different resources, **deliberately prepared bugs**🐛 and various challenges.
+The application includes features such as simple logic, statistics, charts, games, and various resources. It is intentionally designed with **deliberately bugs**🐛 and challenges to simulate real-world project complexities.
 
-Thanks to this configuration, we are able to **reflect real project reality**😉
+**🦎 GAD** is ideal for learning test automation, refining QA techniques, and practicing with scenarios encountered in diverse, **real-world projects** with diverse real-world scenarios.
 
 P.S. In addition, the application has some **serious design flaws** - I wonder if you will notice them?😉
+
+# Table of Contents
+
+- [Features](#features)
+- [Deployment](#deployment)
+  - [Deploy on Local](#deploy-on-local)
+    - [First use](#first-use)
+    - [Update version](#update-version)
+      - [If You are using zip package](#if-you-are-using-zip-package)
+      - [If You are using cloned repository](#if-you-are-using-cloned-repository)
+      - [Update version if You have any changes (e.g. in database)](#update-version-if-you-have-any-changes-eg-in-database)
+    - [CLI options](#cli-options)
+      - [Running CLI options](#running-cli-options)
+  - [Deploy to Glitch](#deploy-to-glitch)
+  - [Deploy to Render](#deploy-to-render)
+  - [Deploy using Docker image](#deploy-using-docker-image)
+    - [Prerequisites:](#prerequisites)
+    - [Running](#running)
 
 # Features
 
@@ -22,22 +40,38 @@ Features of **🦎 GAD**:
 
 - **GUI** (front-end)
 - **REST API** (back-end)
-- **Swagger** Doc
-- Simple **DataBase** (JSON) with REST API endpoints to clear/restore all data
-- **Authentication** and **Authorization**
-- **User** <-> resources logic (calculations, statistics)
+- **Two Application Domains**:
+  - **Testers Blog**
+    - Resources - Articles, Users, Comments, and more
+    - Functionalities - Likes, Comments, Tags, and user engagement tools
+    - Insights - Statistics and charts (e.g., likes per user, comments per article)
+    - **Authentication** and **Authorization**
+  - **Practice pages**
+    - A collection of pages featuring automation challenges, such as:
+      - Iframes
+      - File uploads
+      - Drag-and-drop
+      - Dynamic elements
+      - Likes, labels, and surveys
+      - Banners, pop-ups, front-end, and back-end logic
+      - Games and more!
+- **Swagger Documentation** - API documentation for seamless integration
+- **Simple Database** - JSON-based database with REST API endpoints for clearing/restoring data
+- **Various Data Sets** - Small, medium, and large datasets to simulate real-world scenarios
+- **Dynamic Configuration** - Adjust application settings **easily from the UI**
+  - **Feature Flags** - Enable or disable features
+  - **Bug Flags** - Introduce or remove bugs for testing purposes
 - Different **data presentation** (charts, tables etc.)
-- **Feature flags** configurable from UI!
-- **Bug flags** to enable/disable different bugs - configurable from UI!
-- **Dynamic config**
 - **Challenging elements for test automation** (iframes, file uploads, drag&drop, likes, labels, surveys, banners, pop-ups, logic on front-end and back-end, dynamic elements, games etc.)
-- **Admins "backoffice"** with additional tools and functionalities (DB reset, SQL Playground)
+- **Admins' Backoffice**: Includes advanced functionalities such as:
+  - Database reset
+  - SQL playground for experimenting and testing queries
 
 # Deployment
 
 Instructions how to deploy presented service to various free hosting sites.
 
-- [Deploy to Local](#deploy-to-local) (recommended)
+- [Deploy to Local](#deploy-on-local) (recommended)
 - [Deploy to Glitch](#deploy-to-glitch)
 - [Deploy to Render](#deploy-to-render)
 - [Deploy using Docker image](#deploy-using-docker-image)
@@ -199,3 +233,19 @@ Application should be running under http://localhost:3000/
 
 Images are available at:
 [🐋 hub.docker.com/repository/docker/jaktestowac](https://hub.docker.com/repository/docker/jaktestowac/gad/general)
+
+## Happy Automation!
+
+We hope you'll have a great time testing and automating this application!
+
+The challenges and features included are designed to help you grow your testing skills while having fun.
+
+If you have any ideas for improvements or encounter any issues, please don't hesitate to open an issue on our [GitHub repository](https://github.com/jaktestowac/gad-gui-api-demo/issues).
+
+Your feedback helps make GAD better for everyone!
+
+📢 Looking forward to your contributions and happy testing!🦎
+
+[🔝 Back to top](#introduction)
+
+Powered by [jaktestowac.pl](https://www.jaktestowac.pl) team!
