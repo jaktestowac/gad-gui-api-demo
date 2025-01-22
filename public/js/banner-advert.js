@@ -70,7 +70,7 @@ const advertCommentsBanner = `<div class="popup-overlay">
       below to view the comments.
     </p>
 
-    <a href="./comments.html" class="visit-button">Visit Comments</a>
+    <a href="../comments.html" class="visit-button">Visit Comments</a>
   </div>
 </div>
 </div>`;
