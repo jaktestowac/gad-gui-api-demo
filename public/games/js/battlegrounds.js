@@ -849,6 +849,18 @@ const units = {
     attackRange: 1,
     special: true,
   },
+  "Abyss Wanderer": {
+    icon: "🌗",
+    hp: 10,
+    attack: 10,
+    defense: 10,
+    moveRange: 10,
+    range: 1,
+    isFlying: false,
+    value: 140,
+    attackRange: 1,
+    special: true,
+  },
 };
 
 function unitFactory(player, unitName, x, y) {

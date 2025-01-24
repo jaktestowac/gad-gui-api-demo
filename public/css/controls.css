@@ -1434,6 +1434,7 @@ body.darkmode {
   transition: 0.3s;
   margin: 4px;
   color: #444;
+  position: relative;
 }
 
 .module-small {
@@ -1472,12 +1473,29 @@ body.darkmode {
   margin-top: 12px;
   text-align: center;
   padding: 4px;
+  position: relative;
 }
 
-.module-header {
-  font-size: 18px;
-  margin-bottom: 4px;
-  padding-bottom: 4px;
+.star-glow {
+  position: absolute;
+  top: 0px;
+  right: 5px;
+  color: gold;
+  font-size: 24px;
+  text-shadow: 0 0 5px #ffd700;
+  animation: glow 1.5s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
 }
 
 .margin-vertical-4p {

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD | Game: Power Grid</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="css/power-grid.css">
+</head>
+
+<body class="bg-body">
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-gui" class="nav-menu"></h1>
+        </div>
+    </header>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class="start-screen" id="start-screen">
+        <div class="screen-content">
+            <h1>🏭 Power Grid</h1>
+            <p>Connect buildings to power plants and earn money!</p>
+            <div class="grid-size-select">
+                <label for="grid-size">Grid Size:</label>
+                <select id="grid-size">
+                    <option value="10">Small (10x10)</option>
+                    <option value="15">Medium (15x15)</option>
+                    <option value="20">Large (20x20)</option>
+                </select>
+            </div>
+            <div class="win-condition-select">
+                <label for="win-condition">Choose Victory Condition:</label>
+                <select id="win-condition">
+                    <option value="wealth5k">Wealth ($5000)</option>
+                    <option value="wealth10k">Wealth ($10000)</option>
+                    <option value="wealth50k">Wealth ($50000)</option>
+                    <option value="connect100">Connect All Buildings</option>
+                    <option value="speed">Speed Challenge (30 turns)</option>
+                    <option value="fast">Speed Challenge (20 turns)</option>
+                    <option value="faster">Speed Challenge (10 turns)</option>
+                    <option value="efficiency">Efficiency (80% Connected)</option>
+                </select>
+            </div>
+            <div class="start-buttons">
+                <button id="start-game">Start Game</button>
+                <button id="show-tutorial" class="tutorial-button">How to Play</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="end-screen" id="end-screen" style="display: none;">
+        <div class="screen-content">
+            <h1 id="end-title">Game Over</h1>
+            <div class="stats">
+                <p>Turns Played: <span id="final-turns">0</span></p>
+                <p>Money Earned: $<span id="final-money">0</span></p>
+                <p>Buildings Connected: <span id="final-buildings">0</span></p>
+            </div>
+            <button id="restart-game">Play Again</button>
+        </div>
+    </div>
+
+    <div class="tutorial-overlay" id="tutorial-overlay">
+        <div class="tutorial-box">
+            <div class="tutorial-content">
+                <h3 id="tutorial-title">Welcome to Power Grid!</h3>
+                <p id="tutorial-text">Let's learn how to play.</p>
+                <div class="tutorial-demo">
+                    <div class="demo-grid" id="demo-grid"></div>
+                </div>
+            </div>
+            <div class="tutorial-controls">
+                <button id="tutorial-skip">Skip Tutorial</button>
+                <button id="tutorial-next">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="game-container">
+        <div class="game-header">
+            <div class="header-left-container">
+                <div class="compact-header-info">
+                    <div class="score-tools">
+                        <div class="tools">
+                            <button id="build-plant">⚡ Plant ($500)</button>
+                            <button id="build-line">➡️ Line</button>
+                        </div>
+                    </div>
+                    <div class="costs-info">
+                        <div class="compact-costs">
+                            <span>Line: 🌊$100 🌱$50 ⛰️$150</span>
+                        </div>
+                        <div class="buildings-stats">
+                            <span>🏠<span id="connected-houses">0</span>/<span id="total-houses">0</span></span>
+                            <span>🏢<span id="connected-companies">0</span>/<span id="total-companies">0</span></span>
+                            <span>🏭<span id="connected-factories">0</span>/<span id="total-factories">0</span></span>
+                            <span>🗼<span id="connected-towers">0</span>/<span id="total-towers">0</span></span>
+                            <span>🏗️<span id="connected-yards">0</span>/<span id="total-yards">0</span></span>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="turn-controls">
+                    <select id="turn-type" class="turn-type-select">
+                        <option value="auto">Auto Turns (5s)</option>
+                        <option value="manual">Manual Turns</option>
+                    </select>
+                    <button id="end-turn" class="end-turn-btn" disabled>End Turn</button>
+                    <button id="end-game" class="end-game-btn">End Game</button>
+                </div>
+                <div class="turn-indicator">
+                    <div class="score">
+                        <div>Money: $<span id="money">1000</span></div>
+                        <div class="money-spent">Spent: $<span id="money-spent">0</span></div>
+                    </div>
+                    <div class="turn-info">
+                        <span class="turn-number">Turn <span id="current-turn">1</span></span>
+                        <span>Turn Progress</span>
+                        <span class="current-turn">Next income in <span id="countdown">5</span>s</span>
+                    </div>
+                    <div class="progress-ring-container">
+                        <svg class="progress-ring" width="60" height="60">
+                            <circle class="progress-ring-circle-bg" cx="30" cy="30" r="24" />
+                            <circle class="progress-ring-circle" cx="30" cy="30" r="24" />
+                        </svg>
+                        <span class="income-preview">+$<span id="income-amount">0</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="grid-container">
+            <div id="grid" class="grid"></div>
+        </div>
+        <svg style="position: absolute; width: 0; height: 0">
+            <defs>
+                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%">
+                    <stop offset="0%" style="stop-color: #6366f1" />
+                    <stop offset="100%" style="stop-color: #4f46e5" />
+                </linearGradient>
+            </defs>
+        </svg>
+    </div>
+    <div class="confirmation-dialog" id="end-game-dialog" style="display: none;">
+        <div class="dialog-content">
+            <h3>End Game?</h3>
+            <p>Are you sure you want to end the game? Your progress will be lost.</p>
+            <div class="dialog-buttons">
+                <button id="cancel-end-game">Cancel</button>
+                <button id="confirm-end-game">End Game</button>
+            </div>
+        </div>
+    </div>
+    <script src="js/power-grid.js"></script>
+</body>
+
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="/username.js"></script>
+<script type="text/javascript" src="/js/darkmode.js"></script>
+<script type="text/javascript" src="/js/message-notifier.js"></script>
+
+</html>
