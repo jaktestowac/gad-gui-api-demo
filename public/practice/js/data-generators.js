@@ -152,6 +152,12 @@ const sampleUser = {
   name: `Item`,
   surname: "Surname",
   location: "Location",
+  details: {
+    age: undefined,
+    email: "",
+    phone: "",
+    company: "",
+  },
 };
 
 const userNames = [
@@ -407,8 +413,34 @@ const userLocations = [
   "Hialeah",
 ];
 
+const fakeCompanies = [
+  "Acme Corporation",
+  "Globex Corporation",
+  "Soylent Corporation",
+  "Initech",
+  "Umbrella Corporation",
+  "Wonka Industries",
+  "Cyberdyne Systems",
+  "Tyrell Corporation",
+  "Wayne Enterprises",
+  "Duff Beer",
+  "Gringotts Wizarding Bank",
+  "Monsters, Inc.",
+  "Oceanic Airlines",
+  "Paper Street Soap Company",
+  "Planet Express",
+  "Rich Industries",
+  "Sirius Cybernetics Corporation",
+  "Soylent Corporation",
+  "Stark Industries",
+  "The Daily Planet",
+  "The Galactic Empire",
+  "The Jedi Order",
+];
+
 function randomUserGenerator(userId) {
   const randomUser = { ...sampleUser };
+  randomUser.details = { ...sampleUser.details };
   randomUser.id = userId;
   randomUser.name = userNames[Math.floor(Math.random() * userNames.length)];
   randomUser.surname = userSurnames[Math.floor(Math.random() * userSurnames.length)];
@@ -421,6 +453,19 @@ function randomUserGenerator(userId) {
   //   randomUser[fields[randomFieldIndex]] = "";
   // }
 
+  const randomAge = Math.floor(Math.random() * 100) + 18;
+  randomUser.details.age = randomAge;
+
+  const randomEmail = `${randomUser.name.toLowerCase()}.${randomUser.surname.toLowerCase()}@test.test.com`;
+  randomUser.details.email = randomEmail;
+
+  const randomPhone = `+324 ${Math.floor(Math.random() * 1000000000)
+    .toString()
+    .padStart(10, "0")}`;
+  randomUser.details.phone = randomPhone;
+
+  const randomCompany = fakeCompanies[Math.floor(Math.random() * fakeCompanies.length)];
+  randomUser.details.company = randomCompany;
   return randomUser;
 }
 

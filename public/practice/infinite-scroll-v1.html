@@ -36,13 +36,52 @@
             margin: 5px;
             text-align: center;
             font-size: 1em;
-            width: 300px;
+            width: 400px;
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             align-items: center;
             align-content: center;
             justify-content: left;
-            gap: 50px;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .item-main {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            width: 100%;
+            gap: 10px;
+        }
+
+        .item.expanded {
+            background: #e6e6e6;
+        }
+
+        .item-details {
+            display: none;
+            padding: 10px;
+            margin-top: 10px;
+            background: #fff;
+            border-radius: 10px;
+            width: calc(100% - 20px);
+        }
+
+        .item.expanded .item-details {
+            display: block;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #666;
         }
 
         #loading {
@@ -151,10 +190,13 @@
         const newItem = document.createElement('div');
         newItem.className = 'item';
 
+        const mainContent = document.createElement('div');
+        mainContent.className = 'item-main';
+
         const idDiv = document.createElement('div');
         idDiv.textContent = `ID: ${item.id}`;
         idDiv.classList.add('id');
-        newItem.appendChild(idDiv);
+        mainContent.appendChild(idDiv);
 
         const detailsDiv = document.createElement('div');
         detailsDiv.classList.add('details');
@@ -192,7 +234,35 @@
         locationDiv.appendChild(locationSpan);
         detailsDiv.appendChild(locationDiv);
 
-        newItem.appendChild(detailsDiv);
+        mainContent.appendChild(detailsDiv);
+        newItem.appendChild(mainContent);
+
+        const expandableDetails = document.createElement('div');
+        expandableDetails.className = 'item-details';
+
+        const detailsData = [
+            { label: 'Age', value: item.details.age || 'N/A' },
+            { label: 'Email', value: item.details.email || 'N/A' },
+            { label: 'Phone', value: item.details.phone || 'N/A' },
+            { label: 'Company', value: item.details.company || 'N/A' }
+        ];
+
+        detailsData.forEach(detail => {
+            const detailRow = document.createElement('div');
+            detailRow.className = 'detail-row';
+            detailRow.innerHTML = `
+                <span class="detail-label">${detail.label}:</span>
+                <span>${detail.value}</span>
+            `;
+            expandableDetails.appendChild(detailRow);
+        });
+
+        newItem.appendChild(expandableDetails);
+
+        newItem.addEventListener('click', () => {
+            newItem.classList.toggle('expanded');
+        });
+
         container.appendChild(newItem);
     }
 
