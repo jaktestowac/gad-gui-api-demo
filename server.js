@@ -51,6 +51,8 @@ const DatabaseManager = require("./helpers/db.manager");
 const { simpleMigrator, overwriteDbIfDefined } = require("./db/migrators/migrator");
 const { exitRoutes, restartRoutes } = require("./routes/debug.route");
 const { bookShopCoverUploadRoutes, multerUpload, multerErrorHandling } = require("./routes/file-upload-v2.route");
+const WebSocket = require("ws");
+const { websocketRoute } = require("./routes/websocket.route");
 
 const middlewares = jsonServer.defaults();
 
@@ -267,6 +269,8 @@ server.use(function (req, res, next) {
   // default to plain-text. send()
   res.type("txt").send("Not found");
 });
+
+websocketRoute(new WebSocket.Server({ port: port + 10 }));
 
 const sslEnabled = getConfigValue(ConfigKeys.SSL_ENABLED);
 

@@ -44,7 +44,8 @@
     "nanoid": "^5.0.9",
     "pluralize": "^7.0.0",
     "prettier": "2.8.4",
-    "seedrandom": "^3.0.5"
+    "seedrandom": "^3.0.5",
+    "ws": "^8.18.0"
   },
   "engines": {
     "node": ">=16.x"
