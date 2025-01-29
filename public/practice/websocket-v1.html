@@ -74,6 +74,8 @@
 
         .weather-table td {
             color: #fff;
+            max-width: 200px;
+            /* Add general max-width for all cells */
         }
 
         .weather-table tr:hover {
@@ -121,14 +123,88 @@
 
         #cityInput {
             width: 200px;
+            background: var(--bg-card);
+            color: #fff;
+        }
+
+        #cityInput option {
+            background: var(--bg-card);
+            color: #fff;
         }
 
         footer {
             background: var(--bg-card);
             color: #fff;
-            padding: 1rem;
+            padding: 0rem;
             text-align: center;
             margin-top: auto;
+        }
+
+        #footer-container {
+            padding: 0rem;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            position: relative;
+        }
+
+        #manualCityInput {
+            width: 200px;
+            display: none;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: #ff6b6b;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            z-index: 1000;
+            display: none;
+            white-space: nowrap;
+            pointer-events: none;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 5px;
+        }
+
+        .tooltip::before {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: #ff6b6b;
+        }
+
+        .error-message {
+            display: none;
+        }
+
+        .input-error {
+            border-color: #ff6b6b !important;
+        }
+
+        #manualCityInput.valid {
+            border-color: #00c853;
+        }
+
+        .city-cell {
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
     </style>
 </head>
@@ -146,7 +222,38 @@
             <h1>Random Weather Data (WebSocket)</h1>
             <div class="controls">
                 <input type="number" id="daysInput" placeholder="Number of days" value="7" min="1" max="31">
-                <input type="text" id="cityInput" placeholder="City name">
+                <div class="input-group">
+                    <div style="display: flex; flex-direction: column;">
+                        <select id="cityInput" onchange="toggleManualInput(this.value)">
+                            <option value="">Select city</option>
+                            <option value="manual">Enter manually...</option>
+                            <option value="Bangkok">Bangkok</option>
+                            <option value="Beijing">Beijing</option>
+                            <option value="Berlin">Berlin</option>
+                            <option value="Cape Town">Cape Town</option>
+                            <option value="Dubai">Dubai</option>
+                            <option value="Istanbul">Istanbul</option>
+                            <option value="London">London</option>
+                            <option value="Los Angeles">Los Angeles</option>
+                            <option value="Madrid">Madrid</option>
+                            <option value="Moscow">Moscow</option>
+                            <option value="Mumbai">Mumbai</option>
+                            <option value="New York">New York</option>
+                            <option value="Paris">Paris</option>
+                            <option value="Rio de Janeiro">Rio de Janeiro</option>
+                            <option value="Rome">Rome</option>
+                            <option value="Singapore">Singapore</option>
+                            <option value="Sydney">Sydney</option>
+                            <option value="Tokyo">Tokyo</option>
+                            <option value="Toronto">Toronto</option>
+                            <option value="Warsaw">Warsaw</option>
+                        </select>
+                    </div>
+                    <div class="input-wrapper">
+                        <input type="text" id="manualCityInput" placeholder="Enter city name" onkeyup="validateCity(this.value)" maxlength="128">
+                        <div id="cityError" class="tooltip">Please enter a valid city name (letters and spaces only)</div>
+                    </div>
+                </div>
                 <button class="wide-btn" onclick="requestWeatherData()">Get Weather Data</button>
             </div>
             <table class="weather-table">
@@ -162,6 +269,10 @@
                 </thead>
                 <tbody id="weatherData"></tbody>
             </table>
+            <div align="center">
+                <a href="/practice/">
+                    <button class="wide-btn">Return to practice pages</button></a>
+            </div>
         </div>
     </div>
     <script>
@@ -171,14 +282,49 @@
             requestWeatherData();
         });
 
+        function toggleManualInput(value) {
+            const manualInput = document.getElementById('manualCityInput');
+            manualInput.style.display = value === 'manual' ? 'block' : 'none';
+            if (value === 'manual') {
+                manualInput.focus();
+            }
+        }
+
+        function validateCity(cityName) {
+            const manualInput = document.getElementById('manualCityInput');
+            const tooltip = document.getElementById('cityError');
+            const cityRegex = /^[A-Za-z\s]{2,}$/;
+
+            if (!cityName) {
+                manualInput.classList.remove('input-error', 'valid');
+                tooltip.style.display = 'none';
+                return true;
+            }
+
+            const isValid = cityRegex.test(cityName);
+            manualInput.classList.toggle('input-error', !isValid);
+            manualInput.classList.toggle('valid', isValid);
+            tooltip.style.display = !isValid ? 'block' : 'none';
+
+            return isValid;
+        }
+
         function requestWeatherData() {
             const days = document.getElementById('daysInput').value || 7;
-            const city = document.getElementById('cityInput').value;
+            const selectValue = document.getElementById('cityInput').value;
+            const manualCity = document.getElementById('manualCityInput').value;
+
+            if (selectValue === 'manual' && manualCity && !validateCity(manualCity)) {
+                return;
+            }
+
+            const city = selectValue === 'manual' ? manualCity : selectValue;
 
             socket.send(JSON.stringify({
                 type: 'getWeather',
                 days: parseInt(days),
-                city: city
+                city: city,
+                random: false
             }));
         }
 
@@ -195,10 +341,11 @@
 
             weatherData.forEach(day => {
                 const date = new Date(day.date);
+                const cityName = day.city || 'Current Location';
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${date.toLocaleDateString()}</td>
-                    <td>${day.city || 'N/A'}</td>
+                    <td class="city-cell" title="${cityName}">${cityName}</td>
                     <td>${day.temperature}°C</td>
                     <td>${day.temperatureMin}°C / ${day.temperatureMax}°C</td>
                     <td>${day.humidity}</td>

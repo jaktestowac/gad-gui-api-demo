@@ -2,12 +2,7 @@ const {
   generateIncomeOutcomeData,
   generateRandomSimplifiedIncomeOutcomeData,
 } = require("../helpers/generators/income-outcome.generator");
-const {
-  generateWeatherDataForNPastDays,
-  generateWeatherDataForNFutureDays,
-  generateWeatherDataForNPastDaysFromDate,
-  generateWeatherDataForNFutureDaysFromDate,
-} = require("../helpers/generators/weather.generator");
+const { generateWeatherResponse } = require("../helpers/generators/weather.generator");
 const { HTTP_OK } = require("../helpers/response.helpers");
 const { logDebug } = require("../helpers/logger-api");
 const { generateEcommerceShoppingCart } = require("../helpers/generators/ecommerce-shopping-cart.generator");
@@ -15,6 +10,7 @@ const { generateRandomUser } = require("../helpers/generators/user.generator");
 const { generateRandomSimpleBusTicketCard } = require("../helpers/generators/bus-ticket.generator");
 const { generateRandomStudentsData } = require("../helpers/generators/student-grades-manager.generator");
 const { generateRandomEmployeesData } = require("../helpers/generators/employees.generator");
+const { generateSystemMetricsResponse } = require("../helpers/generators/system-metrics");
 
 function generateWeatherResponseBasedOnQuery(queryParams, simplified = false, totalRandom = false) {
   const days = parseInt(queryParams.get("days"));
@@ -24,67 +20,6 @@ function generateWeatherResponseBasedOnQuery(queryParams, simplified = false, to
   const limitedDays = Math.min(days || 31, 90);
   let limitedFutureDays = Math.min(future || 0, 90);
   return generateWeatherResponse(date, days, city, limitedDays, limitedFutureDays, simplified, totalRandom);
-}
-
-function generateWeatherResponse(
-  date,
-  days,
-  city,
-  limitedDays,
-  limitedFutureDays,
-  simplified = false,
-  totalRandom = false
-) {
-  logDebug(`Requested weather data for:`, { days, limitedDays, limitedFutureDays, date });
-
-  let weatherData = [];
-  if (date === null || date === undefined || date === "") {
-    weatherData = generateWeatherDataForNPastDays(limitedDays, totalRandom);
-  } else {
-    weatherData = generateWeatherDataForNPastDaysFromDate(date, limitedDays, totalRandom);
-  }
-
-  if (limitedFutureDays > 0) {
-    limitedFutureDays += 1; // Add one more day because 1 is today
-    let weatherDataFuture = [];
-
-    if (date === null || date === undefined || date === "") {
-      weatherDataFuture = generateWeatherDataForNFutureDays(limitedFutureDays, totalRandom);
-    } else {
-      weatherDataFuture = generateWeatherDataForNFutureDaysFromDate(date, limitedFutureDays, totalRandom);
-    }
-
-    if (weatherDataFuture.length > 1) {
-      for (let i = 1; i < limitedFutureDays; i++) {
-        weatherData.unshift(weatherDataFuture[i]);
-      }
-    }
-  }
-
-  if (city !== null && city !== undefined && city !== "") {
-    weatherData = weatherData.map((weather) => {
-      weather.city = city;
-      return weather;
-    });
-  }
-
-  if (simplified) {
-    weatherData = weatherData.map((weather) => {
-      return {
-        date: weather.date,
-        city: weather.city ?? undefined,
-        temperature: weather.temperatureRaw,
-        temperatureMin: weather.highLowTemperature.temperatureLow,
-        temperatureMax: weather.highLowTemperature.temperatureHigh,
-        humidity: weather.humidity,
-        dayLength: weather.dayLength,
-        windSpeed: weather.windSpeedData.actual,
-        windSpeedRange: weather.windSpeed,
-      };
-    });
-  }
-
-  return weatherData;
 }
 
 function generateEcommerceShoppingCartResponse(queryParams, simplified = false, totalRandom = false) {
@@ -224,6 +159,18 @@ function handleData(req, res, isAdmin) {
 
     const studentsData = generateRandomStudentsData({ seed });
     res.status(HTTP_OK).json(studentsData);
+    return;
+  }
+
+  if (req.method === "GET" && req.url.includes("/api/v1/data/random/system")) {
+    const queryParams = new URLSearchParams(req.url.split("?")[1]);
+    const seed = queryParams.get("seed");
+    const samples = parseInt(queryParams.get("samples")) || 1;
+    const interval = parseInt(queryParams.get("interval")) || 1000;
+    const simplified = queryParams.get("simplified") === "true";
+
+    const systemData = generateSystemMetricsResponse(samples, interval, simplified);
+    res.status(HTTP_OK).json(systemData);
     return;
   }
 

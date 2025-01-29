@@ -1,7 +1,7 @@
 const { logDebug, logError, logInsane } = require("../../helpers/logger-api");
 const WebSocket = require("ws");
 
-class WebSocketContext {
+class WebSocketPracticeChatContext {
   constructor(wss) {
     this.wss = wss;
     this.connectedUsers = new Map();
@@ -18,9 +18,9 @@ class WebSocketContext {
 
   broadcastUserList() {
     const userList = Array.from(this.connectedUsers.keys());
-    logDebug("Broadcasting user list:", userList);
+    logDebug("[websocketRoute] Broadcasting user list:", userList);
     this.broadcast({
-      type: "userList",
+      type: "practiceChatUserList",
       users: userList,
     });
   }
@@ -32,7 +32,7 @@ class WebSocketContext {
     }
 
     const messageData = {
-      type: "private",
+      type: "practiceChatPrivate",
       username: from,
       recipient: to,
       message: message,
@@ -60,14 +60,23 @@ const handleJoinMessage = (context, ws, data) => {
   if (context.connectedUsers.has(userName)) {
     throw new Error("Username already taken");
   }
+  if (userName.toLowerCase() === "[system]") {
+    throw new Error("Invalid username");
+  }
+  if (!/^[a-zA-Z0-9]+$/.test(userName)) {
+    throw new Error("Invalid username");
+  }
+  if (userName.length < 3 || userName.length > 20) {
+    throw new Error("Username already taken");
+  }
 
   ws.userName = userName;
   context.connectedUsers.set(userName, ws);
-  logDebug(`User joined: ${userName}`);
+  logDebug(`[websocketRoute] User joined:`, { userName, version: data.version });
 
   context.broadcast({
-    type: "message",
-    username: "System",
+    type: "practiceChatMessage",
+    username: "[System]",
     message: `${userName} joined the chat`,
   });
 
@@ -87,7 +96,7 @@ const handleChatMessage = (context, ws, data) => {
 
   logInsane(`Message from ${ws.userName}: ${data.message}`);
   context.broadcast({
-    type: "message",
+    type: "practiceChatMessage",
     username: ws.userName,
     message: data.message,
   });
@@ -112,11 +121,11 @@ const handleDisconnect = (context, ws) => {
   if (ws.userName) {
     context.connectedUsers.delete(ws.userName);
     context.broadcast({
-      type: "message",
-      username: "System",
+      type: "practiceChatMessage",
+      username: "[System]",
       message: `${ws.userName} left the chat`,
     });
-    logDebug(`User disconnected: ${ws.userName}`);
+    logDebug(`[websocketRoute] User disconnected: ${ws.userName}`);
 
     context.broadcastUserList();
   }
@@ -128,19 +137,19 @@ const handleConnection = (context, ws) => {
 
 const handleUnknownMessage = (context, ws, data) => {
   const errorMsg = `Unknown message type: ${data.type}`;
-  logError("handleUnknownMessage", errorMsg);
+  logError("[websocketRoute] handleUnknownMessage", errorMsg);
   sendError(ws, errorMsg);
 };
 
 const messageHandlers = {
-  join: handleJoinMessage,
-  message: handleChatMessage,
-  private: handlePrivateMessage,
-  default: handleUnknownMessage,
+  practiceChatJoin: handleJoinMessage,
+  practiceChatMessage: handleChatMessage,
+  practiceChatPrivate: handlePrivateMessage,
+  practiceChatDefault: handleUnknownMessage,
 };
 
 module.exports = {
-  WebSocketContext,
+  WebSocketPracticeChatContext,
   messageHandlers,
   handleDisconnect,
   sendError,

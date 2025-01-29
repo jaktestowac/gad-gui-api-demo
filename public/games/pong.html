@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>🦎 GAD | Game: Chaotic Pong</title>
+    <title>🦎 GAD | Game: Retro Pong</title>
     <link rel="icon" href="/data/icons/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
@@ -17,10 +17,107 @@
             box-sizing: border-box;
         }
 
+        body {
+            background: #1a1a1a;
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
         canvas {
             background: #000;
-            display: block;
+            border: 4px solid #fff;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
             margin: 20px auto;
+        }
+
+        .game-ui {
+            color: #fff;
+            text-align: center;
+            margin: 0px 0;
+        }
+
+        .score-board {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 10px 0;
+            background: #333;
+            padding: 5px;
+            border-radius: 8px;
+        }
+
+        .pong-button-primary {
+            background: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 10px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .pong-button-primary:hover {
+            background: #45a049;
+            transform: scale(1.05);
+        }
+
+        .pong-button-primary:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0px;
+            flex-shrink: 0;
+            background: var(--bg-card);
+            color: #fff;
+            padding: 0rem !important;
+            text-align: center;
+            width: 100%;
+        }
+
+        #footer-container {
+            padding: 0rem;
+        }
+
+        .score-popup {
+            position: absolute;
+            color: #fff;
+            font-size: 24px;
+            font-weight: bold;
+            pointer-events: none;
+            opacity: 0;
+            transform: translateY(0);
+            animation: popupAnimation 1s ease-out;
+        }
+
+        @keyframes popupAnimation {
+            0% {
+                opacity: 0;
+                transform: translateY(0);
+            }
+
+            20% {
+                opacity: 1;
+                transform: translateY(-20px);
+            }
+
+            80% {
+                opacity: 1;
+                transform: translateY(-20px);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-40px);
+            }
         }
     </style>
 </head>
@@ -31,218 +128,478 @@
             <h1 id="menu-main-gui" class="nav-menu"></h1>
         </div>
     </header>
-    <div align="center" style="justify-content: center !important; display: flex; align-items: center">
-        <div class="alert" role="alert" data-testid="alert-popup" id="alertPopup" style="position: unset !important; margin: 60px 0px 0px 0px"></div>
-    </div>
-    <canvas id="pong" width="800" height="400"></canvas>
-    <div align="center">
-        <button class="button-primary" id="start-button" data-testid="startButton" onclick="startGame()">Start Game</button>
-        <br />
-        <br />
-        <label for="score" id="score-label">Score: </label>
-        <br />
-        <label for="bounces" id="bounces-label">Bounces: </label>
-        <span id="bounces">0</span>
-        <br />
-        <label for="timeElapsedInSeconds" id="timeElapsedInSeconds-label">Time Elapsed: </label>
-        <span id="timeElapsedInSeconds">0</span>
-        <br />
-        <br />
-        <a href="./games.html">
-            <button class="button-primary button-mobile" translateId="btnReturnToGames" style="margin: 10; font-size: 16px">
-                Return to Games
-            </button>
-        </a>
+    <br />
+    <br />
+    <div class="game-container">
+        <div class="game-ui">
+            <h2 id="game-status">Press Start to Play</h2>
+            <canvas id="pong" width="800" height="400"></canvas>
+            <div class="score-board">
+                <div>
+                    <div>Bounces: <span id="bounces">0</span></div>
+                    <div>Time: <span id="timeElapsedInSeconds">0</span>s</div>
+                </div>
+                <div>
+                    <div>Speed: <span id="ball-speed">1.0</span>x</div>
+                    <div>High Score: <span id="high-score">0</span></div>
+                </div>
+            </div>
+            <button class="pong-button-primary" id="start-button" onclick="startGame()">Start Game</button>
+            <a href="./games.html">
+                <button class="pong-button-primary">Return to Games</button>
+            </a>
+        </div>
     </div>
     <script>
+        const PADDLE_SPEED = 8;
+        const INITIAL_BALL_SPEED = 5;
+        const BALL_SPEED_INCREMENT = 0.2;
+        const WALL_BOUNCE_SPEEDUP = 1.05;
+        const WALL_SCORE_COOLDOWN = 2000;
+        const PADDLE_POINTS = 2;
+        const WALL_BOUNCE_POINTS = 1;
+        const RIGHT_WALL_POINTS = 5;
+
+
+        const AI_UPDATE_INTERVAL = 500;
+        const AI_PREDICTION_ERROR = 0.5;
+        const AI_RANDOM_MOVEMENT = 0.3;
+        const AI_SPEED_VARIATION = 0.7;
+        const AI_MISTAKE_CHANCE = 0.08;
+        const AI_RECOVERY_TIME = 300;
+
+        const AI_DIFFICULTY_SCALE = 0.01;
+        const AI_PREDICTION_STEPS = 10;
+        const AI_REACTION_TIME = 16;
+        const AI_MODES = {
+            DEFENSIVE: 'defensive',
+            AGGRESSIVE: 'aggressive',
+            NEUTRAL: 'neutral'
+        };
+
+        const TIMER_UPDATE_INTERVAL = 1000;
+
+        let gameState = {
+            isPlaying: false,
+            score: 0,
+            highScore: localStorage.getItem('pongHighScore') || 0,
+            ballSpeed: INITIAL_BALL_SPEED,
+            lastWallHit: 0,
+            timeElapsed: 0,
+            timerInterval: null,
+            gameStartTime: 0
+        };
+
         const canvas = document.getElementById("pong");
         const context = canvas.getContext("2d");
+        const gameStatus = document.getElementById("game-status");
 
-        // Create the pong paddle
-        const paddleWidth = 10, paddleHeight = 100;
-        const computerPaddleWidth = 10, computerPaddleHeight = 400;
         const player = {
-            x: 0,
-            y: canvas.height / 2 - paddleHeight / 2,
-            width: paddleWidth,
-            height: paddleHeight,
-            color: "#FFF"
+            x: 20,
+            y: canvas.height / 2 - 50,
+            width: 12,
+            height: 100,
+            color: "#4CAF50",
+            speed: PADDLE_SPEED,
+            dy: 0
         };
 
         const computer = {
-            x: canvas.width - computerPaddleWidth,
-            y: canvas.height / 2 - computerPaddleHeight / 2,
-            width: computerPaddleWidth,
-            height: computerPaddleHeight,
-            color: "#FFF"
+            x: canvas.width - 30,
+            y: 0,
+            width: 12,
+            height: 100,
+            color: "#f44336",
+            speed: 5,
+            lastUpdate: 0,
+            behaviorMode: 'normal',
+            targetY: 0,
+            speedMultiplier: 1,
+            difficulty: 1.0,
+            lastThink: 0,
+            mode: AI_MODES.NEUTRAL,
+            predictions: [],
+            successfulReturns: 0,
+            totalReturns: 0,
+            isMakingMistake: false,
+            mistakeStartTime: 0,
+            mistakeDirection: 1
         };
-
-        // Create the pong ball
-        let ball = createNewBall();
-        let score = initScore()
-        let timeInterval;
 
         function createNewBall() {
             return {
                 x: canvas.width / 2,
                 y: canvas.height / 2,
-                radius: 10,
-                speed: 1,
-                dx: 4,
-                dy: 4,
-                color: "#FFF"
+                radius: 8,
+                speed: INITIAL_BALL_SPEED,
+                dx: -5,
+                dy: 0,
+                color: "#fff"
             };
         }
 
-        function updateScore(bounces, timeElapsedInSeconds) {
-            document.getElementById("bounces").innerText = bounces;
-            document.getElementById("timeElapsedInSeconds").innerText = timeElapsedInSeconds;
+        let ball = createNewBall();
+
+        function update() {
+            if (!gameState.isPlaying) return;
+
+            clearCanvas();
+            updatePaddles();
+            updateBall();
+            checkCollisions();
+            drawGame();
+
+            requestAnimationFrame(update);
         }
 
-        function incrementBounces(score) {
-            score.bounces++;
-            updateScore(score.bounces, score.timeElapsedInSeconds);
+        const CONTROLS = {
+            UP: ['ArrowUp', 'w', 'W'],
+            DOWN: ['ArrowDown', 's', 'S']
+        };
+
+        function updatePaddles() {
+            if (CONTROLS.UP.some(key => keys[key]) && player.y > 0) {
+                player.y -= player.speed;
+            }
+            if (CONTROLS.DOWN.some(key => keys[key]) && player.y < canvas.height - player.height) {
+                player.y += player.speed;
+            }
+
+            updateComputerAI();
         }
 
-        function incrementTimeElapsedInSeconds(score) {
-            score.timeElapsedInSeconds++;
-            updateScore(score.bounces, score.timeElapsedInSeconds);
+        function predictBallPath() {
+            let predictions = [];
+            let simX = ball.x;
+            let simY = ball.y;
+            let simDx = ball.dx;
+            let simDy = ball.dy;
+
+            for (let i = 0; i < AI_PREDICTION_STEPS; i++) {
+                simX += simDx;
+                simY += simDy;
+
+                if (simY <= 0 || simY >= canvas.height) {
+                    simDy *= -1;
+                }
+
+                predictions.push({ x: simX, y: simY });
+            }
+
+            return predictions;
         }
 
-        function increaseBallSpeedBasedOnElapsedTime(ball, score) {
-            if (score.timeElapsedInSeconds % 10 === 0) {
-                ball.speed += 0.1;
+        function updateAIDifficulty() {
+            if (computer.totalReturns > 0) {
+                const successRate = computer.successfulReturns / computer.totalReturns;
+                if (successRate > 0.8) {
+                    computer.difficulty = Math.min(computer.difficulty + AI_DIFFICULTY_SCALE, 2.0);
+                } else if (successRate < 0.4) {
+                    computer.difficulty = Math.max(computer.difficulty - AI_DIFFICULTY_SCALE, 0.5);
+                }
             }
         }
 
-        function initScore() {
-            return {
-                bounces: 0,
-                timeElapsedInSeconds: 0,
-            };
+        function chooseAIMode() {
+            const ballToComputerDist = canvas.width - ball.x;
+
+            if (ballToComputerDist < canvas.width * 0.3) {
+                return AI_MODES.DEFENSIVE;
+            } else if (ball.dx < 0 && ball.x < canvas.width * 0.5) {
+                return AI_MODES.AGGRESSIVE;
+            }
+            return AI_MODES.NEUTRAL;
         }
 
-        // Draw the paddle
-        function drawPaddle(x, y, width, height, color) {
-            context.fillStyle = color;
-            context.fillRect(x, y, width, height);
+        function updateComputerAI() {
+            const now = Date.now();
+            if (now - computer.lastThink < AI_REACTION_TIME) return;
+            computer.lastThink = now;
+
+            if (!computer.isMakingMistake && Math.random() < AI_MISTAKE_CHANCE) {
+                computer.isMakingMistake = true;
+                computer.mistakeStartTime = now;
+                computer.mistakeDirection = (Math.random() * AI_SPEED_VARIATION * 2 - AI_SPEED_VARIATION);
+            }
+
+            if (computer.isMakingMistake && now - computer.mistakeStartTime > AI_RECOVERY_TIME) {
+                computer.isMakingMistake = false;
+            }
+
+            if (computer.isMakingMistake) {
+                computer.y += computer.speed * computer.mistakeDirection;
+                computer.y = Math.max(0, Math.min(canvas.height - computer.height, computer.y));
+                return;
+            }
+
+            computer.mode = chooseAIMode();
+            computer.predictions = predictBallPath();
+
+            let targetY;
+            switch (computer.mode) {
+                case AI_MODES.DEFENSIVE: {
+                    const defensiveError = (Math.random() * 2 - 1) * AI_PREDICTION_ERROR * 100;
+                    targetY = ball.y - computer.height / 2 + defensiveError;
+                    break;
+                }
+
+                case AI_MODES.AGGRESSIVE: {
+                    const predictionIndex = Math.random() < AI_RANDOM_MOVEMENT ?
+                        Math.floor(Math.random() * AI_PREDICTION_STEPS) : AI_PREDICTION_STEPS - 1;
+                    const prediction = computer.predictions[predictionIndex];
+                    targetY = prediction ? prediction.y - computer.height / 2 : ball.y;
+                    break;
+                }
+
+                default: {
+                    const randomOffset = ((Math.random() * 2 - 1) * AI_PREDICTION_ERROR +
+                        (Math.random() < AI_RANDOM_MOVEMENT ? AI_SPEED_VARIATION : 0)) * 100;
+                    targetY = ball.y - computer.height / 2 + randomOffset;
+                    break;
+                }
+            }
+
+            const randomness = (1 - computer.difficulty) * canvas.height *
+                (AI_PREDICTION_ERROR + AI_RANDOM_MOVEMENT + AI_SPEED_VARIATION) / 3;
+            targetY += (Math.random() - 0.5) * randomness;
+
+            const currentY = computer.y;
+            const distance = targetY - currentY;
+            const speedMultiplier = 1 + (Math.random() * AI_SPEED_VARIATION - AI_SPEED_VARIATION / 2);
+            const speed = computer.speed * computer.difficulty * speedMultiplier;
+
+            if (Math.abs(distance) > speed) {
+                computer.y += Math.sign(distance) * speed;
+            }
+
+            computer.y = Math.max(0, Math.min(canvas.height - computer.height, computer.y));
+
+            if (now - computer.lastUpdate > AI_UPDATE_INTERVAL) {
+                computer.lastUpdate = now;
+                updateAIDifficulty();
+            }
         }
 
-        // Draw the ball
-        function drawBall(x, y, radius, color) {
-            context.fillStyle = color;
-            context.beginPath();
-            context.arc(x, y, radius, 0, Math.PI * 2, false);
-            context.closePath();
-            context.fill();
+        function updateBall() {
+            ball.x += ball.dx;
+            ball.y += ball.dy;
+        }
+
+        const keys = {};
+        window.addEventListener('keydown', e => {
+            keys[e.key] = true;
+            if ([...CONTROLS.UP, ...CONTROLS.DOWN].includes(e.key)) {
+                e.preventDefault();
+            }
+        });
+        window.addEventListener('keyup', e => keys[e.key] = false);
+
+        function playSound(name) {
+            // sorry! no sounds!
         }
 
         function clearCanvas() {
             context.clearRect(0, 0, canvas.width, canvas.height);
         }
 
-        function redrawCanvas() {
-            clearCanvas();
-            // Draw the paddle
-            drawPaddle(player.x, player.y, player.width, player.height, player.color);
-            drawPaddle(computer.x, computer.y, computer.width, computer.height, computer.color);
+        function drawGame() {
+            context.fillStyle = player.color;
+            context.fillRect(player.x, player.y, player.width, player.height);
 
-            // Draw the ball
-            drawBall(ball.x, ball.y, ball.radius, ball.color);
+            context.fillStyle = computer.color;
+            context.fillRect(computer.x, computer.y, computer.width, computer.height);
+
+            context.fillStyle = ball.color;
+            context.beginPath();
+            context.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+            context.closePath();
+            context.fill();
+        }
+
+        function calculatePaddleHitPosition(ballY, paddleY, paddleHeight) {
+            const relativeHitPosition = (ballY - (paddleY + paddleHeight / 2)) / (paddleHeight / 2);
+            return Math.max(-1, Math.min(1, relativeHitPosition));
+        }
+
+        function calculateNewBallVelocity(hitPosition) {
+            const maxAngle = 75 * Math.PI / 180;
+            const angle = hitPosition * maxAngle;
+
+            const speedMultiplier = 1 + Math.abs(hitPosition) * 0.3;
+
+            return {
+                dx: Math.cos(angle) * ball.speed * speedMultiplier,
+                dy: Math.sin(angle) * ball.speed * speedMultiplier
+            };
+        }
+
+        function createScorePopup(x, y, points, color = '#fff') {
+            const popup = document.createElement('div');
+            popup.className = 'score-popup';
+            popup.textContent = `+${points}`;
+            popup.style.left = `${x}px`;
+            popup.style.top = `${y}px`;
+            popup.style.color = color;
+            document.querySelector('.game-container').appendChild(popup);
+
+            setTimeout(() => popup.remove(), 1000);
+        }
+
+        function checkCollisions() {
+            const now = Date.now();
+
+            if (ball.x + ball.radius > canvas.width) {
+                ball.dx *= -1;
+                ball.x = canvas.width - ball.radius;
+                ball.speed = Math.min(ball.speed * WALL_BOUNCE_SPEEDUP, INITIAL_BALL_SPEED * 2);
+
+                if (now - gameState.lastWallHit > WALL_SCORE_COOLDOWN) {
+                    gameState.score += RIGHT_WALL_POINTS;
+                    gameState.lastWallHit = now;
+
+                    const rect = canvas.getBoundingClientRect();
+                    const popupX = rect.left + ball.x;
+                    const popupY = rect.top + ball.y;
+                    createScorePopup(popupX, popupY, RIGHT_WALL_POINTS, '#ff4444');
+                }
+
+                playSound('wall');
+                updateScoreDisplay();
+            }
+
+            else if (ball.x - ball.radius < 0) {
+                endGame();
+                return;
+            }
+
+            if (ball.y + ball.radius > canvas.height || ball.y - ball.radius < 0) {
+                ball.dy *= -1;
+                gameState.score += WALL_BOUNCE_POINTS;
+
+                const rect = canvas.getBoundingClientRect();
+                const popupX = rect.left + ball.x;
+                const popupY = rect.top + ball.y;
+                createScorePopup(popupX, popupY, WALL_BOUNCE_POINTS, '#ffff44');
+
+                playSound('wall');
+                updateScoreDisplay();
+            }
+
+            if (ball.x - ball.radius < player.x + player.width &&
+                ball.y + ball.radius > player.y &&
+                ball.y - ball.radius < player.y + player.height &&
+                ball.dx < 0) {
+
+                const hitPosition = calculatePaddleHitPosition(ball.y, player.y, player.height);
+                const newVelocity = calculateNewBallVelocity(hitPosition);
+
+                ball.dx = Math.abs(newVelocity.dx);
+                ball.dy = newVelocity.dy;
+                gameState.score += PADDLE_POINTS;
+                playSound('paddle');
+                updateScoreDisplay();
+
+                const rect = canvas.getBoundingClientRect();
+                const popupX = rect.left + ball.x;
+                const popupY = rect.top + ball.y;
+                createScorePopup(popupX, popupY, PADDLE_POINTS, '#44ff44');
+            }
+
+            if (ball.x + ball.radius > computer.x &&
+                ball.y + ball.radius > computer.y &&
+                ball.y - ball.radius < computer.y + computer.height &&
+                ball.dx > 0) {
+
+                const hitPosition = calculatePaddleHitPosition(ball.y, computer.y, computer.height);
+                const newVelocity = calculateNewBallVelocity(hitPosition);
+
+                ball.dx = -Math.abs(newVelocity.dx);
+                ball.dy = newVelocity.dy;
+                gameState.score += PADDLE_POINTS;
+                playSound('paddle');
+                updateScoreDisplay();
+                computer.successfulReturns++;
+                computer.totalReturns++;
+
+                const rect = canvas.getBoundingClientRect();
+                const popupX = rect.left + ball.x;
+                const popupY = rect.top + ball.y;
+                createScorePopup(popupX, popupY, PADDLE_POINTS, '#44ff44');
+            }
+        }
+
+        function updateScoreDisplay() {
+            document.getElementById('bounces').textContent = gameState.score;
+            document.getElementById('ball-speed').textContent =
+                (ball.speed / INITIAL_BALL_SPEED).toFixed(1);
+
+            if (gameState.score > gameState.highScore) {
+                gameState.highScore = gameState.score;
+                localStorage.setItem('pongHighScore', gameState.highScore);
+                document.getElementById('high-score').textContent = gameState.highScore;
+            }
+        }
+
+        function startTimer() {
+            gameState.gameStartTime = Date.now();
+            gameState.timeElapsed = 0;
+            updateTimerDisplay();
+
+            gameState.timerInterval = setInterval(() => {
+                gameState.timeElapsed = Math.floor((Date.now() - gameState.gameStartTime) / 1000);
+                updateTimerDisplay();
+            }, TIMER_UPDATE_INTERVAL);
+        }
+
+        function stopTimer() {
+            if (gameState.timerInterval) {
+                clearInterval(gameState.timerInterval);
+                gameState.timerInterval = null;
+            }
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(gameState.timeElapsed / 60);
+            const seconds = gameState.timeElapsed % 60;
+            const formattedTime = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('timeElapsedInSeconds').textContent = formattedTime;
         }
 
         function startGame() {
-            if (gameStarted === true) {
-                return;
-            }
-            gameStarted = true;
-            score = initScore();
+            if (gameState.isPlaying) return;
+
+            gameState.isPlaying = true;
+            gameState.score = 0;
+            gameState.lastWallHit = 0;
+            startTimer();
             ball = createNewBall();
+            ball.speed = INITIAL_BALL_SPEED;
+            ball.dx = -5;
+            player.y = canvas.height / 2 - player.height / 2;
 
-            clearCanvas()
-            redrawCanvas()
+            document.getElementById('start-button').disabled = true;
+            gameStatus.textContent = 'Defend your wall!';
+            updateScoreDisplay();
 
-            timeInterval = setInterval(() => {
-                incrementTimeElapsedInSeconds(score);
-                increaseBallSpeedBasedOnElapsedTime(ball, score)
-            }, 1000);
-            update();
-            const button = document.getElementById("start-button");
-            button.disabled = true;
-        }
-
-        function endGame() {
-            gameStarted = false;
-            clearInterval(timeInterval);
-            cancelAnimationFrame(update);
-            const button = document.getElementById("start-button");
-            button.disabled = false;
-        }
-
-        let gameStarted = false;
-
-        // Update the canvas
-        function update() {
-            if (!gameStarted) {
-                return;
-            }
-            // Clear the canvas
-            context.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Draw the paddle
-            drawPaddle(player.x, player.y, player.width, player.height, player.color);
-            drawPaddle(computer.x, computer.y, computer.width, computer.height, computer.color);
-
-            // Draw the ball
-            drawBall(ball.x, ball.y, ball.radius, ball.color);
-
-            // Move the paddle
-            canvas.addEventListener("mousemove", movePaddle);
-
-            function movePaddle(event) {
-                let rect = canvas.getBoundingClientRect();
-                player.y = event.clientY - rect.top - player.height / 2;
-            }
-
-            // Move the ball
-            ball.x += ball.dx * ball.speed;
-            ball.y += ball.dy * ball.speed;
-
-            // Ball collision with top and bottom walls
-            if (ball.y + ball.radius > canvas.height || ball.y - ball.radius < 0) {
-                ball.dy *= -1;
-                incrementBounces(score);
-            }
-
-            if (ball.x - ball.radius < 0) {
-                endGame();
-            }
-
-            if (
-                ball.x - ball.radius < player.x + player.width &&
-                ball.y + ball.radius > player.y &&
-                ball.y - ball.radius < player.y + player.height
-            ) {
-                ball.dx *= -1;
-                incrementBounces(score);
-            }
-
-            if (
-                ball.x + ball.radius > computer.x &&
-                ball.y + ball.radius > computer.y &&
-                ball.y - ball.radius < computer.y + computer.height
-            ) {
-                ball.dx *= -1;
-                incrementBounces(score);
-                const randomizeBounceDirectionAndAngle = () => {
-                    ball.dy = Math.random() * 10;
-                };
-
-                randomizeBounceDirectionAndAngle();
-            }
+            computer.successfulReturns = 0;
+            computer.totalReturns = 0;
+            computer.difficulty = 1.0;
+            computer.isMakingMistake = false;
+            computer.mistakeStartTime = 0;
 
             requestAnimationFrame(update);
         }
+
+        function endGame() {
+            gameState.isPlaying = false;
+            stopTimer();
+            document.getElementById('start-button').disabled = false;
+            gameStatus.textContent = `Game Over! Score: ${gameState.score}`;
+        }
+
+        document.getElementById('high-score').textContent = gameState.highScore;
+        document.getElementById('timeElapsedInSeconds').textContent = '0:00';
+        drawGame();
 
     </script>
 </body>

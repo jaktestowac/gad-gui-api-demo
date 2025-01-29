@@ -32,9 +32,12 @@
         }
 
         h6 {
-            margin-bottom: 20px;
+            margin-bottom: 6px;
         }
 
+        .description {
+            margin-bottom: 20px;
+        }
 
         #messages {
             flex: 1;
@@ -121,6 +124,21 @@
             transition: background-color 0.3s;
         }
 
+        .secondary-button {
+            padding: 10px 12px;
+            border: none;
+            border-radius: 12px;
+            background-color: #795454;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background-color 0.3s;
+        }
+
+        .secondary-button:hover {
+            background-color: #5c3f3f;
+        }
+
         .chat-button:hover {
             background-color: #5c6fb1;
         }
@@ -135,7 +153,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            z-index: 2;
         }
 
         .login-box {
@@ -196,14 +214,18 @@
         }
 
         footer {
-            position: absolute;
+            position: fixed;
             bottom: 0px;
             flex-shrink: 0;
             background: var(--bg-card);
             color: #fff;
-            padding: 1rem;
+            padding: 0rem !important;
             text-align: center;
             width: 100%;
+        }
+
+        #footer-container {
+            padding: 0rem;
         }
     </style>
 </head>
@@ -222,12 +244,19 @@
             <input type="text" id="usernameInput" maxlength="32" placeholder="Your name..." class="messageInput" />
             <div id="usernameError" class="error-message"></div>
             <button class="chat-button" onclick="joinChat()">Join Chat</button>
+            <br />
+            <br />
+            <div align="center">
+                <a href="/practice/">
+                    <button class="secondary-button">Return to practice pages</button></a>
+            </div>
         </div>
     </div>
 
     <div class="chat-container">
-        <h1>Simple Real-Time Chat</h1>
+        <h1>Simple Real-Time Chat (v1)</h1>
         <h6>(based on WebSockets)</h6>
+        <p class="description">Open another browser tab and join the chat with a different username to see the real-time updates.</p>
         <div id="messages"></div>
         <div class="input-container">
             <input type="text" id="messageInput" maxlength="128" placeholder="Type your message..." />
@@ -245,6 +274,9 @@
             }
             if (username.length > 16) {
                 return 'Username must have less than 16 characters';
+            }
+            if (!/^[a-zA-Z0-9_]*$/.test(username)) {
+                return 'Username can only contain letters, numbers, and underscores';
             }
             return '';
         }
@@ -267,10 +299,10 @@
             }
 
             showError('');
-            document.getElementById('loginScreen').classList.add('hidden');
             socket.send(JSON.stringify({
-                type: 'join',
-                username: username
+                type: 'practiceChatJoin',
+                username: username,
+                version: 'v1'
             }));
         }
 
@@ -289,13 +321,18 @@
         socket.addEventListener('message', (event) => {
             const messagesDiv = document.getElementById('messages');
             const data = JSON.parse(event.data);
+            const time = formatTime(new Date());
 
-            if (data.type === 'message') {
-                const time = formatTime(new Date());
+            if (data.type === 'practiceChatMessage') {
+                let className = 'message-content';
+                if (data.username?.toLowerCase().includes('[system]')) {
+                    className += ' system-message';
+                }
+
                 messagesDiv.innerHTML += `
                     <p>
                         <span class="message-time">${time}</span>
-                        <span class="message-content">
+                        <span class="${className}">
                             <span class="message-username">${data.username}:</span>
                             <span>${data.message}</span>
                         </span>
@@ -303,16 +340,21 @@
                 `;
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
             } else if (data.type === 'error') {
-                const time = formatTime(new Date());
-                messagesDiv.innerHTML += `
-                    <p>
-                        <span class="message-time">${time}</span>
-                        <span class="message-content system-message">
-                            ${data.message}
-                        </span>
-                    </p>
-                `;
+                if (data.message.toLowerCase().includes('username')) {
+                    showError(data.message);
+                } else {
+                    messagesDiv.innerHTML += `
+                        <p>
+                            <span class="message-time">${time}</span>
+                            <span class="message-content system-message">
+                                ${data.message}
+                            </span>
+                        </p>
+                    `;
+                }
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            } else if (data.type === 'practiceChatUserList') {
+                document.getElementById('loginScreen').classList.add('hidden');
             }
         });
 
@@ -322,7 +364,7 @@
 
             if (message && username) {
                 socket.send(JSON.stringify({
-                    type: 'message',
+                    type: 'practiceChatMessage',
                     username: username,
                     message: message
                 }));

@@ -1,5 +1,9 @@
 const { logDebug, logError } = require("../../helpers/logger-api");
 const WebSocket = require("ws");
+const {
+  generateWeatherDataForNPastDays,
+  generateWeatherResponse,
+} = require("../../helpers/generators/weather.generator");
 
 class WeatherContext {
   constructor(wss) {
@@ -39,24 +43,63 @@ class WeatherContext {
     setInterval(() => this.updateWeather(), 5000);
   }
 
-  getWeatherData(days = 1, city = "Current Location") {
-    const weather = [];
-    for (let i = 0; i < days; i++) {
-      weather.push({
-        date: new Date(Date.now() + i * 24 * 60 * 60 * 1000),
-        temperature: Math.floor(Math.random() * 30) + 10,
-        humidity: Math.floor(Math.random() * 60) + 40,
-        windSpeed: Math.floor(Math.random() * 20) + 5,
+  getFullWeatherData(date, days, city = "Current Location", futureDays = 0, simplified = false, totalRandom = false) {
+    const limitedDays = Math.min(days || 31, 90);
+    let limitedFutureDays = Math.min(futureDays || 0, 90);
+    let weatherData = generateWeatherResponse(
+      date,
+      days,
+      city,
+      limitedDays,
+      limitedFutureDays,
+      simplified,
+      totalRandom
+    );
+
+    return weatherData;
+  }
+
+  getWeatherData(days = 1, city = "Current Location", random = true) {
+    const limitedDays = Math.min(days || 7, 90);
+    let weatherData = generateWeatherDataForNPastDays(limitedDays, random, city);
+
+    if (city) {
+      weatherData = weatherData.map((weather) => ({
+        ...weather,
         city: city,
-        temperatureMin: Math.floor(Math.random() * 20) + 5,
-        temperatureMax: Math.floor(Math.random() * 15) + 25,
-      });
+      }));
     }
-    return weather;
+
+    return weatherData.map((weather) => ({
+      date: weather.date,
+      city: weather.city,
+      temperature: weather.temperatureRaw,
+      temperatureMin: weather.highLowTemperature.temperatureLow,
+      temperatureMax: weather.highLowTemperature.temperatureHigh,
+      humidity: weather.humidity,
+      windSpeed: weather.windSpeedData.actual,
+    }));
   }
 
   handleWeatherRequest(ws, data) {
-    const weather = this.getWeatherData(data.days, data.city);
+    const weather = this.getWeatherData(data.days, data.city, data.random ?? true);
+    ws.send(
+      JSON.stringify({
+        type: "weatherData",
+        weather: weather,
+      })
+    );
+  }
+
+  handleFullWeatherRequest(ws, data) {
+    const date = data.date ?? new Date().toISOString().split("T")[0];
+    const days = parseInt(data.days) || 7;
+    const city = data.city || "Current Location";
+    const futureDays = parseInt(data.futureDays) || 0;
+    const simplified = data.simplified ?? false;
+    const totalRandom = data.totalRandom ?? false;
+
+    const weather = this.getFullWeatherData(date, days, city, futureDays, simplified, totalRandom);
     ws.send(
       JSON.stringify({
         type: "weatherData",
@@ -77,6 +120,7 @@ const handleWeatherConnection = (context, ws) => {
 
 const weatherHandlers = {
   getWeather: (context, ws, data) => context.handleWeatherRequest(ws, data),
+  getFullWeather: (context, ws, data) => context.handleFullWeatherRequest(ws, data),
 };
 
 module.exports = {

@@ -1,44 +1,80 @@
 const { logDebug, logError } = require("../helpers/logger-api");
 const {
-  WebSocketContext,
+  WebSocketPracticeChatContext,
   messageHandlers,
   handleDisconnect,
   sendError,
   handleConnection,
-} = require("./controllers/chat.controller");
+} = require("./controllers/practice-chat.controller");
 const { WeatherContext, weatherHandlers } = require("./controllers/weather.controller");
+const { DocumentEditorContext, documentHandlers } = require("./controllers/document-editor.controller");
+const { CinemaContext, cinemaHandlers } = require("./controllers/cinema.controller");
+const { DroneSimulatorContext, droneHandlers } = require("./controllers/drone-simulator.controller");
 
 const websocketRoute = (wss) => {
-  const chatContext = new WebSocketContext(wss);
+  const chatContext = new WebSocketPracticeChatContext(wss);
   const weatherContext = new WeatherContext(wss);
+  const documentContext = new DocumentEditorContext(wss);
+  const cinemaContext = new CinemaContext(wss);
+  const droneContext = new DroneSimulatorContext(wss);
 
   wss.on("connection", (ws) => {
-    logDebug("New client connected");
+    logDebug("[websocketRoute] New client connected", { client: ws._socket?.remoteAddress });
 
-    handleConnection(chatContext, ws);
+    ws.on("practiceChatJoin", (message) => {
+      handleConnection(chatContext, ws);
+    });
 
     ws.on("message", (message) => {
       try {
         const data = JSON.parse(message);
         let handler;
 
-        if (data.type === 'getWeather') {
+        if (data.type === "getWeather") {
           handler = weatherHandlers.getWeather;
           handler(weatherContext, ws, data);
-        } else {
-          handler = messageHandlers[data.type] || messageHandlers.default;
+        } else if (data.type === "getFullWeather") {
+          handler = weatherHandlers.getFullWeather;
+          handler(weatherContext, ws, data);
+        } else if (data.type?.toLowerCase().includes("cinema")) {
+          handler = cinemaHandlers[data.type];
+          if (!handler) {
+            throw new Error(`No handler found for message type: ${data.type}`);
+          }
+          handler(cinemaContext, ws, data);
+        } else if (data.type?.toLowerCase().includes("practicechat")) {
+          handler = messageHandlers[data.type] || messageHandlers.practiceChatDefault;
           handler(chatContext, ws, data);
+        } else if (data.type?.toLowerCase().includes("doc")) {
+          handler = documentHandlers[data.type];
+          if (!handler) {
+            throw new Error(`No handler found for message type: ${data.type}`);
+          }
+          handler(documentContext, ws, data);
+        } else if (data.type?.toLowerCase().includes("practicedrone")) {
+          handler = droneHandlers[data.type];
+          if (!handler) {
+            throw new Error(`No handler found for message type: ${data.type}`);
+          }
+          handler(droneContext, ws, data);
+        } else {
+          throw new Error(`Invalid message type received: ${data.type}`);
         }
       } catch (error) {
-        logError("Error processing message:", error.message);
+        logError("[websocketRoute] Error processing message:", error.message);
         sendError(ws, error.message || "Invalid message format");
       }
     });
 
-    ws.on("close", () => handleDisconnect(chatContext, ws));
+    ws.on("close", () => {
+      handleDisconnect(chatContext, ws);
+      if (ws.userId) {
+        documentHandlers.docDisconnect(documentContext, ws);
+      }
+    });
 
     ws.on("error", (error) => {
-      logError("WebSocket error:", error);
+      logError("[websocketRoute] Error:", error);
     });
   });
 };

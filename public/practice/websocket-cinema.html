@@ -1,0 +1,2499 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD - Cinema Ticket Management</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <meta charset="UTF-8">
+    <style>
+        :root {
+            --primary: #2196F3;
+            --success: #4CAF50;
+            --danger: #f44336;
+            --gray: #9e9e9e;
+            --dark: #212121;
+        }
+
+        body {
+            background: #f5f5f5;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        h3 {
+            text-align: center;
+            margin: 1rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: var(--dark);
+            color: white;
+            padding-right: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .header-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .header-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .header-btn.add {
+            background: var(--primary);
+        }
+
+        .header-btn.admin {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .floating-buttons,
+        .add-session-btn,
+        .admin-button {
+            display: none;
+        }
+
+        .card-body {
+            padding: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--gray);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .seat {
+            width: 35px;
+            height: 35px;
+            margin: 3px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: white;
+        }
+
+        .seat.available {
+            background: var(--success);
+        }
+
+        .seat.selected {
+            background: var(--primary);
+        }
+
+        .seat.occupied {
+            background: var(--danger);
+            cursor: not-allowed;
+        }
+
+        .screen {
+            background: var(--gray);
+            height: 30px;
+            margin: 2rem auto;
+            width: 80%;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body {
+            padding: 1rem;
+        }
+
+        .modal-footer {
+            padding: 1rem;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .seats-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .row-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .row-label {
+            width: 30px;
+            text-align: center;
+            margin-right: 1rem;
+        }
+
+        .session-card {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border: 1px solid #eee;
+            border-radius: 4px;
+        }
+
+        .legend {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--dark);
+            cursor: pointer;
+        }
+
+        .room-preview {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f8f8f8;
+            border-radius: 8px;
+        }
+
+        .room-preview h4 {
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .mini-seat {
+            width: 20px;
+            height: 20px;
+            margin: 2px;
+            border-radius: 3px;
+            background: var(--success);
+            display: inline-block;
+        }
+
+        .mini-screen {
+            background: var(--gray);
+            height: 15px;
+            margin: 1rem auto;
+            width: 60%;
+            border-radius: 3px;
+            text-align: center;
+            color: white;
+            font-size: 0.7rem;
+            line-height: 15px;
+        }
+
+        .mini-row {
+            display: flex;
+            justify-content: center;
+            margin: 2px 0;
+        }
+
+        .sessions-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .sessions-filters {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .date-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .date-button {
+            background: #f5f5f5;
+            border: 1px solid var(--gray);
+            padding: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .date-button.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .session-card {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 1rem;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 0.5rem;
+        }
+
+        .session-info h4 {
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .session-time {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .session-details {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .seats-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .seats-available {
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        .sessions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .movie-group {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .movie-header {
+            background: var(--dark);
+            color: white;
+            padding: 1rem;
+            position: relative;
+        }
+
+        .movie-header h4 {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        .showtime-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 0.5rem;
+            padding: 1rem;
+        }
+
+        .showtime-card {
+            background: #f8f8f8;
+            padding: 0.5rem;
+            border-radius: 4px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .showtime-card:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .showtime-time {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .showtime-info {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .showtime-card:hover .showtime-info {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .sessions-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background: #f5f5f5;
+            font-size: 0.9rem;
+        }
+
+        .date-tabs {
+            display: flex;
+            gap: 1px;
+            padding: 2px;
+            background: var(--dark);
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .date-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .date-tab {
+            height: 44px;
+            min-width: 56px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2px 8px;
+            border: none;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex: 1;
+            gap: 2px;
+        }
+
+        .date-tab .weekday {
+            font-size: 0.65rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .date-tab .date {
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            line-height: 1;
+        }
+
+        .date-tab:not(.disabled):hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .date-tab.active:not(.disabled) {
+            background: var(--primary);
+        }
+
+        .date-tab.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .date-tab .has-shows {
+            width: 12px;
+            height: 2px;
+            background: var(--success);
+            border-radius: 1px;
+        }
+
+        .date-tab.active .has-shows {
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        @media (max-width: 768px) {
+            .date-tabs {
+                padding: 1px;
+            }
+
+            .date-tab {
+                height: 40px;
+                min-width: 48px;
+                padding: 2px 4px;
+            }
+        }
+
+        .movie-count {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .floating-buttons {
+            position: fixed;
+            right: 2rem;
+            bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .add-session-btn {
+            position: static;
+            /* Override previous fixed position */
+            margin: 0;
+        }
+
+        .admin-button {
+            position: static;
+            /* Override previous fixed position */
+            background: var(--dark);
+            color: white;
+            padding: 1rem;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            border: none;
+        }
+
+        .admin-button:hover,
+        .add-session-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .add-session-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .date-header {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            color: var (--gray);
+            font-weight: 500;
+            border-bottom: 1px solid #eee;
+        }
+
+        .date-group {
+            margin-bottom: 1rem;
+        }
+
+        .date-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .confirm-modal {
+            background: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 400px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .confirm-modal h3 {
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+
+        .reservation-details {
+            background: #f8f8f8;
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 1rem 0;
+            text-align: left;
+        }
+
+        .reservation-details p {
+            margin: 0.5rem 0;
+            color: var(--dark);
+        }
+
+        .reservation-details .seats {
+            color: var (--primary);
+            font-weight: 500;
+        }
+
+        .reservation-details .price {
+            font-size: 1.2rem;
+            color: var (--success);
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+
+        .confirm-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+        }
+
+        .confirm-actions button.cancel {
+            background: #f5f5f5;
+            color: var(--gray);
+        }
+
+        .warning-modal {
+            background: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 300px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .warning-modal h3 {
+            color: var(--danger);
+            margin-bottom: 1rem;
+        }
+
+        .warning-modal p {
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+        }
+
+        .warning-modal button {
+            min-width: 100px;
+        }
+
+        .success-modal {
+            background: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 300px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .success-modal h3 {
+            color: var(--success);
+            margin-bottom: 1rem;
+        }
+
+        .success-modal p {
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+        }
+
+        .success-modal .icon {
+            font-size: 3rem;
+            color: var(--success);
+            margin-bottom: 1rem;
+        }
+
+        .admin-button {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            background: var(--dark);
+            color: white;
+            padding: 1rem;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            border: none;
+        }
+
+        .admin-modal .modal-content {
+            max-width: 1000px;
+        }
+
+        .reservations-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .reservations-table th,
+        .reservations-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .reservations-table th {
+            background: #f5f5f5;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .reservations-table tr:hover {
+            background: #f8f8f8;
+        }
+
+        .reservation-seats {
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .reservation-price {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .reservations-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .reservations-summary {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .compact-form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .compact-form .form-group:last-child,
+        .compact-form .room-preview {
+            grid-column: 1 / -1;
+        }
+
+        .compact-form .mini-screen {
+            margin: 0.5rem auto;
+        }
+
+        .compact-form #roomSeats {
+            max-height: 150px;
+            overflow-y: auto;
+            padding: 0.5rem;
+        }
+
+        .compact-form .room-preview {
+            margin-top: 0;
+            padding: 0.75rem;
+        }
+
+        .reservations-stats {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: #f8f8f8;
+            border-radius: 8px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .stat-value.price {
+            color: var(--success);
+        }
+
+        .showtime-slots {
+            display: grid;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .slot-row {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .slot-row button {
+            padding: 0.5rem;
+            min-width: auto;
+            background: var(--danger);
+        }
+
+        .slot-row button:hover {
+            opacity: 0.9;
+        }
+
+        .add-slot-btn {
+            background: var(--success);
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        .slot-date {
+            flex: 2;
+        }
+
+        .slot-time {
+            flex: 1;
+        }
+
+        .slots-container {
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 0.5rem;
+            background: #f8f8f8;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+        }
+
+        .showtime-container {
+            background: #f8f8f8;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .showtime-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .showtime-count {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .slot-row {
+            background: white;
+            padding: 0.75rem;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 0.75rem;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .slot-row:hover {
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+        }
+
+        .slot-row button {
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .slot-input {
+            position: relative;
+        }
+
+        .slot-input label {
+            position: absolute;
+            top: -0.5rem;
+            left: 0.5rem;
+            background: white;
+            padding: 0 0.25rem;
+            font-size: 0.75rem;
+            color: var(--gray);
+        }
+
+        .slot-input input {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+
+        .add-slot-btn {
+            background: var(--success);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            font-weight: 500;
+            border-radius: 6px;
+            margin-top: 1rem;
+        }
+
+        .add-slot-btn i {
+            font-size: 1.2rem;
+        }
+
+        .slots-empty {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gray);
+        }
+
+        .slots-empty i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        /* Updated Showtime styles */
+        .showtime-container {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .showtime-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .showtime-count {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        .showtime-count span {
+            background: var(--primary);
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+
+        .slot-row {
+            background: #f8f8f8;
+            padding: 0.75rem;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-end;
+            transition: all 0.2s;
+        }
+
+        .slot-row:hover {
+            background: #f0f0f0;
+        }
+
+        .slot-input {
+            flex: 1;
+        }
+
+        .slot-input label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--gray);
+            margin-bottom: 0.25rem;
+        }
+
+        .slot-input input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            background: white;
+        }
+
+        .slot-input input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+        }
+
+        .slot-row button {
+            background: var(--danger);
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            opacity: 0.7;
+            transition: all 0.2s;
+        }
+
+        .slot-row button:hover {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        .add-slot-btn {
+            background: white;
+            color: var(--primary);
+            border: 1px dashed var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            width: 100%;
+            font-weight: 500;
+            border-radius: 6px;
+            margin-top: 1rem;
+            transition: all 0.2s;
+        }
+
+        .add-slot-btn:hover {
+            background: rgba(33, 150, 243, 0.05);
+            transform: translateY(-1px);
+        }
+
+        .add-slot-btn i {
+            font-size: 1.1rem;
+        }
+
+        .slots-empty {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: var(--gray);
+            background: #f8f8f8;
+            border-radius: 6px;
+        }
+
+        .slots-empty i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+            opacity: 0.5;
+        }
+
+        .slots-empty p:first-of-type {
+            font-weight: 500;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .slots-empty p:last-of-type {
+            font-size: 0.9rem;
+        }
+
+        /* Updated compact Showtime styles */
+        .showtime-container {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 0.75rem;
+        }
+
+        .showtime-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-bottom: 0.75rem;
+            margin-bottom: 0.75rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .showtime-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .showtime-badge {
+            background: var(--primary);
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 12px;
+            min-width: 1.5rem;
+            text-align: center;
+        }
+
+        .slot-row {
+            background: #f8f8f8;
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin-bottom: 0.4rem;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr 32px;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .slot-input {
+            position: relative;
+        }
+
+        .slot-input input {
+            width: 100%;
+            padding: 0.4rem 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            background: white;
+        }
+
+        .slot-input input:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        .slot-row button {
+            width: 24px;
+            height: 24px;
+            padding: 0;
+            border-radius: 4px;
+            background: var(--danger);
+            opacity: 0.6;
+            transition: all 0.2s;
+        }
+
+        .slot-row button:hover {
+            opacity: 1;
+        }
+
+        .add-slot-btn {
+            color: var(--primary);
+            background: transparent;
+            border: 1px dashed var(--primary);
+            padding: 0.4rem;
+            width: 100%;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.3rem;
+            margin-top: 0.5rem;
+        }
+
+        .add-slot-btn:hover {
+            background: rgba(33, 150, 243, 0.05);
+        }
+
+        .slots-empty {
+            background: #f8f8f8;
+            border-radius: 4px;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            color: var(--gray);
+        }
+
+        .slots-empty i {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.5;
+        }
+
+        .slots-empty p:first-of-type {
+            font-weight: 500;
+            color: var(--dark);
+            margin-bottom: 0.25rem;
+            font-size: 0.9rem;
+        }
+
+        .slots-empty p:last-of-type {
+            font-size: 0.8rem;
+        }
+
+        .showtime-slots {
+            max-height: 180px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            padding-right: 0.25rem;
+        }
+
+        .showtime-slots::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .showtime-slots::-webkit-scrollbar-thumb {
+            background: var(--gray);
+            border-radius: 4px;
+        }
+
+        /* Updated Admin Panel Styles */
+        .admin-modal .modal-content {
+            max-width: 900px;
+            max-height: 80vh;
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            background: rgb(36, 36, 36);
+            border-radius: 8px;
+            color: white;
+        }
+
+        .stat-pill {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            color: white;
+        }
+
+        .stat-pill i {
+            font-size: 1.5rem;
+            opacity: 0.8;
+        }
+
+        .stat-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            color: white;
+        }
+
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        .table-container {
+            max-height: calc(80vh - 180px);
+            overflow-y: auto;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+
+        .reservations-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .reservations-table th {
+            position: sticky;
+            top: 0;
+            background: var(--dark);
+            color: white;
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .reservations-table td {
+            padding: 0.5rem 0.75rem;
+            border-bottom: 1px solid #eee;
+            font-size: 0.8em;
+        }
+
+        .reservations-table tr:hover {
+            background: #f8f8f8;
+        }
+
+        .reservation-seats {
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .reservation-price {
+            color: var(--success);
+            font-weight: 500;
+        }
+
+        .selection-info {
+            background: #505050;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .movie-info h4 {
+            color: var(--dark);
+            margin-bottom: 0.75rem;
+            font-size: 1.2rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .info-item i {
+            color: var(--primary);
+        }
+
+        .selection-summary {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .summary-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .summary-item span:first-child {
+            color: var(--gray);
+            font-size: 0.85rem;
+        }
+
+        .summary-item span:last-child {
+            color: var(--dark);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .seating-section {
+            background: #f8f8f8;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .user-details-form {
+            background: #f8f8f8;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .user-details-form h4 {
+            color: var(--dark);
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .user-details-form .form-group {
+            margin-bottom: 0;
+        }
+
+        .user-details-form label {
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .user-details-form input {
+            font-size: 0.95rem;
+            padding: 0.5rem;
+        }
+
+        #confirmReservation {
+            background: var(--success);
+        }
+
+        #confirmReservation:disabled {
+            background: var(--gray);
+            cursor: not-allowed;
+        }
+
+        .modal-content.compact {
+            max-width: 1000px;
+            max-height: 85vh;
+        }
+
+        .modal-title {
+            text-align: left;
+        }
+
+        .modal-title h3 {
+            margin: 0 0 0.25rem;
+            font-size: 1.25rem;
+        }
+
+        .session-meta {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .split-layout {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 1.5rem;
+            padding: 1rem;
+        }
+
+        .seating-section {
+            background: #f8f8f8;
+            padding: 1rem;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .screen {
+            margin: 0.5rem auto 1.5rem;
+        }
+
+        .legend {
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+            justify-content: center;
+        }
+
+        .booking-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .booking-summary {
+            background: var(--dark);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .price-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            padding-bottom: 0.75rem;
+            margin-bottom: 0.75rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .price-label {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .price-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .selection-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .info-row span:last-child {
+            font-weight: 500;
+        }
+
+        .user-details-form {
+            background: #f8f8f8;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .user-details-form h4 {
+            margin: 0 0 1rem;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .user-details-form .form-group {
+            margin-bottom: 0.75rem;
+        }
+
+        .user-details-form .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .user-details-form input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .user-details-form input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+        }
+
+        .full-width {
+            width: 100%;
+            padding: 0.75rem;
+            font-weight: 500;
+            background: var(--success);
+        }
+
+        .full-width:disabled {
+            background: var(--gray);
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 768px) {
+            .split-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .seating-section {
+                order: 1;
+            }
+
+            .booking-section {
+                order: 0;
+            }
+        }
+
+        .purchase-date {
+            color: var(--dark);
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .reservations-table th:first-child,
+        .reservations-table td:first-child {
+            border-left: none;
+            padding-left: 1rem;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0px;
+            flex-shrink: 0;
+            background: var(--bg-card);
+            color: #000000;
+            padding: 0rem !important;
+            text-align: center;
+            width: 100%;
+        }
+
+        #footer-container {
+            padding: 0rem;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+    <br />
+    <br />
+    <div class="container">
+        <h1>Cinema Ticket Management</h1>
+
+        <div class="grid">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Available Sessions</h3>
+                    <div class="header-buttons">
+                        <button class="header-btn admin" onclick="showAdminModal()">⚙️</button>
+                        <button class="header-btn add" onclick="showAddSessionModal()">+</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <input type="text" id="movieSearch" placeholder="Search movies or filter by room..." class="form-group">
+                    <div class="date-tabs" id="dateFilters"></div>
+                    <div class="sessions-summary">
+                        <span class="movie-count">Showing <span id="movieCount">0</span> movies</span>
+                        <select id="roomFilter" onchange="filterSessions()">
+                            <option value="">All Rooms</option>
+                        </select>
+                    </div>
+                    <div id="sessionsList" class="sessions-grid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="addSessionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Movie Session</h3>
+                <button class="close-btn" onclick="closeAddSessionModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="sessionForm" class="compact-form">
+                    <div class="form-group">
+                        <label>Movie Title</label>
+                        <input type="text" id="movieTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Ticket Price ($)</label>
+                        <input type="number" id="price" required min="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Cinema Room</label>
+                        <select id="roomSelect" required></select>
+                    </div>
+                    <div class="form-group">
+                        <div class="showtime-container">
+                            <div class="showtime-header">
+                                <span class="showtime-title">Showtimes</span>
+                                <span class="showtime-badge" id="showtimeCount">0</span>
+                                <button type="button" class="add-slot-btn" onclick="addShowtimeSlot()">
+                                    + Add Showtime
+                                </button>
+                            </div>
+                            <div id="showtimeSlots" class="showtime-slots">
+                                <div class="slots-empty">
+                                    <i>🎬</i>
+                                    <p>No showtimes scheduled</p>
+                                    <p>Add showtimes to schedule movie sessions</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="room-preview">
+                        <h4>Room Layout</h4>
+                        <div class="mini-screen">SCREEN</div>
+                        <div id="roomSeats"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeAddSessionModal()">Cancel</button>
+                <button onclick="submitSessionForm()">Add Sessions</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="seatSelectionModal" class="modal">
+        <div class="modal-content compact">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <h3 id="selectedMovieTitle">Movie Title</h3>
+                    <p class="session-meta">
+                        <span id="selectedDateTime">Date and Time</span> •
+                        <span id="selectedRoom">Room</span>
+                    </p>
+                </div>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body split-layout">
+                <div class="seating-section">
+                    <div class="screen">SCREEN</div>
+                    <div id="seatsContainer" class="seats-container"></div>
+                    <div class="legend">
+                        <div class="legend-item">
+                            <span class="seat available"></span>
+                            <span>Available</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="seat selected"></span>
+                            <span>Selected</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="seat occupied"></span>
+                            <span>Occupied</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="booking-section">
+                    <div class="booking-summary">
+                        <div class="price-info">
+                            <span class="price-label">Price per ticket</span>
+                            <span class="price-value" id="selectedPrice">$0.00</span>
+                        </div>
+                        <div class="selection-info">
+                            <div class="info-row">
+                                <span>Selected</span>
+                                <span id="selectedSeatsCount">0</span>
+                            </div>
+                            <div class="info-row">
+                                <span>Total</span>
+                                <span id="totalPrice">$0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                    <form id="userDetailsForm" class="user-details-form">
+                        <h4>Contact Information</h4>
+                        <div class="form-group">
+                            <input type="text" id="userName" required placeholder="Full Name *">
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="userEmail" required placeholder="Email *">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <input type="tel" id="userPhone" placeholder="Phone">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="loyaltyCard" placeholder="Loyalty Card">
+                            </div>
+                        </div>
+                    </form>
+                    <button id="confirmReservation" class="full-width" disabled>Continue to Checkout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="confirmationModal" class="modal">
+        <div class="confirm-modal">
+            <h3>Confirm Reservation</h3>
+            <div class="reservation-details">
+                <p><strong>Movie:</strong> <span id="confirmMovie"></span></p>
+                <p><strong>Date:</strong> <span id="confirmDate"></span></p>
+                <p><strong>Time:</strong> <span id="confirmTime"></span></p>
+                <p><strong>Room:</strong> <span id="confirmRoom"></span></p>
+                <p><strong>Seats:</strong> <span id="confirmSeats" class="seats"></span></p>
+                <p class="price">Total: $<span id="confirmPrice"></span></p>
+            </div>
+            <div class="confirm-actions">
+                <button class="cancel" onclick="closeConfirmationModal(true)">Cancel</button>
+                <button onclick="submitReservation()">Confirm Purchase</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="warningModal" class="modal">
+        <div class="warning-modal">
+            <h3>Warning</h3>
+            <p>Please select at least one seat</p>
+            <button onclick="closeWarningModal()">OK</button>
+        </div>
+    </div>
+
+    <div id="successModal" class="modal">
+        <div class="success-modal">
+            <div class="icon">✓</div>
+            <h3>Success!</h3>
+            <p>Your reservation has been confirmed.</p>
+            <button onclick="closeSuccessModal()">OK</button>
+        </div>
+    </div>
+
+    <div id="validationModal" class="modal">
+        <div class="warning-modal">
+            <h3>Form Validation</h3>
+            <p>Please fill all required fields and add at least one showtime</p>
+            <button onclick="closeValidationModal()">OK</button>
+        </div>
+    </div>
+
+    <div id="adminModal" class="modal admin-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Admin Panel</h3>
+                <button class="close-btn" onclick="closeAdminModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="stats-bar">
+                    <div class="stat-pill">
+                        <i class="fas fa-ticket-alt"></i>
+                        <div class="stat-details">
+                            <span class="stat-value" id="reservationCount">0</span>
+                            <span class="stat-label">Reservations</span>
+                        </div>
+                    </div>
+                    <div class="stat-pill">
+                        <i class="fas fa-dollar-sign"></i>
+                        <div class="stat-details">
+                            <span class="stat-value" id="totalRevenue">$0.00</span>
+                            <span class="stat-label">Revenue</span>
+                        </div>
+                    </div>
+                    <div class="stat-pill">
+                        <i class="fas fa-chart-line"></i>
+                        <div class="stat-details">
+                            <span class="stat-value" id="avgTicketPrice">$0.00</span>
+                            <span class="stat-label">Avg. Price</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table class="reservations-table">
+                        <thead>
+                            <tr>
+                                <th>Purchase Date</th>
+                                <th>Show Time</th>
+                                <th>Movie</th>
+                                <th>Room</th>
+                                <th>Seats</th>
+                                <th>Price</th>
+                                <th>User</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reservationsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ws = new WebSocket('ws://localhost:3010');
+        let currentSessionId = null;
+        let selectedSeats = [];
+        const modal = document.getElementById('seatSelectionModal');
+        let currentSession = null;
+
+        function showModal() {
+            modal.classList.add('show');
+        }
+
+        function closeModal() {
+            modal.classList.remove('show');
+        }
+
+        ws.onopen = () => {
+            ws.send(JSON.stringify({ type: 'cinemaGetRooms' }));
+            ws.send(JSON.stringify({ type: 'cinemaGetSessions' }));
+        };
+
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+
+            switch (data.type) {
+                case 'cinemaRoomsUpdate':
+                    if (data.rooms) updateRoomSelect(data.rooms);
+                    break;
+                case 'cinemaSessionsUpdate':
+                    updateSessionsList(data.sessions);
+                    break;
+                case 'cinemaReservationConfirmed':
+                    closeConfirmationModal();
+                    showSuccessModal();
+                    selectedSeats = [];
+                    currentSession = null;
+                    break;
+                case 'cinemaError':
+                    alert(data.message);
+                    break;
+                case 'cinemaReservationsUpdate':
+                    updateReservationsTable(data.reservations);
+                    break;
+            }
+        };
+
+        function updateRoomSelect(rooms) {
+            const select = document.getElementById('roomSelect');
+            select.innerHTML = Object.entries(rooms)
+                .map(([id, room]) => `
+                    <option value="${id}">${room.name} (${room.rows}x${room.seatsPerRow})</option>
+                `).join('');
+
+            showRoomPreview(rooms[select.value]);
+
+            select.addEventListener('change', (e) => {
+                showRoomPreview(rooms[e.target.value]);
+            });
+        }
+
+        function showRoomPreview(room) {
+            const container = document.getElementById('roomSeats');
+            container.innerHTML = '';
+
+            for (let i = 0; i < room.rows; i++) {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'mini-row';
+
+                for (let j = 0; j < room.seatsPerRow; j++) {
+                    const seat = document.createElement('div');
+                    seat.className = 'mini-seat';
+                    rowDiv.appendChild(seat);
+                }
+
+                container.appendChild(rowDiv);
+            }
+
+            const previewTitle = document.querySelector('.room-preview h4');
+            if (previewTitle) {
+                previewTitle.textContent = `${room.name} Layout (${room.rows} rows × ${room.seatsPerRow} seats)`;
+            }
+        }
+
+        document.getElementById('sessionForm').onsubmit = (e) => {
+            e.preventDefault();
+        };
+
+        function addShowtimeSlot() {
+            const slotsContainer = document.getElementById('showtimeSlots');
+            if (slotsContainer.querySelector('.slots-empty')) {
+                slotsContainer.innerHTML = '';
+            }
+
+            const slotRow = document.createElement('div');
+            slotRow.className = 'slot-row';
+
+            const today = new Date().toISOString().split('T')[0];
+
+            slotRow.innerHTML = `
+                <div class="slot-input">
+                    <label>Date</label>
+                    <input type="date" class="slot-date" min="${today}" required>
+                </div>
+                <div class="slot-input">
+                    <label>Time</label>
+                    <input type="time" class="slot-time" required>
+                </div>
+                <button type="button" onclick="removeShowtimeSlot(this)" title="Remove showtime">×</button>
+            `;
+
+            slotsContainer.appendChild(slotRow);
+            updateShowtimeCount();
+
+            slotRow.querySelector('.slot-date').focus();
+        }
+
+        function removeShowtimeSlot(button) {
+            const slotsContainer = document.getElementById('showtimeSlots');
+            button.closest('.slot-row').remove();
+            updateShowtimeCount();
+
+            if (slotsContainer.children.length === 0) {
+                slotsContainer.innerHTML = `
+                    <div class="slots-empty">
+                        <i>🎬</i>
+                        <p>No showtimes scheduled</p>
+                        <p>Add showtimes to schedule movie sessions</p>
+                    </div>
+                `;
+            }
+        }
+
+        function updateShowtimeCount() {
+            const count = document.querySelectorAll('.slot-row').length;
+            document.getElementById('showtimeCount').textContent = count;
+        }
+
+        function submitSessionForm() {
+            const movieTitle = document.getElementById('movieTitle').value;
+            const price = parseFloat(document.getElementById('price').value);
+            const roomId = document.getElementById('roomSelect').value;
+
+            const slots = Array.from(document.querySelectorAll('.slot-row')).map(row => {
+                const date = row.querySelector('.slot-date').value;
+                const time = row.querySelector('.slot-time').value;
+                return `${date}T${time}`;
+            });
+
+            if (!movieTitle || !price || !roomId || slots.length === 0) {
+                document.getElementById('validationModal').classList.add('show');
+                return;
+            }
+
+            slots.forEach(datetime => {
+                const formData = {
+                    type: 'cinemaAddSession',
+                    movieTitle,
+                    datetime,
+                    roomId,
+                    price
+                };
+                ws.send(JSON.stringify(formData));
+            });
+
+            closeAddSessionModal();
+        }
+
+        function closeAddSessionModal() {
+            document.getElementById('addSessionModal').classList.remove('show');
+            document.getElementById('sessionForm').reset();
+            document.getElementById('showtimeSlots').innerHTML = `
+                <div class="slots-empty">
+                    <i>🎬</i>
+                    <p>No showtimes scheduled</p>
+                    <p>Add showtimes to schedule movie sessions</p>
+                </div>
+            `;
+            updateShowtimeCount();
+        }
+
+        function updateSessionsList(sessions) {
+            const roomFilter = document.getElementById('roomFilter');
+            const rooms = new Set(sessions.map(s => s.room));
+            roomFilter.innerHTML = '<option value="">All Rooms</option>' +
+                Array.from(rooms).map(room => `<option value="${room}">${room}</option>`).join('');
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            window.allSessions = sessions;
+            const todayStr = today.toLocaleDateString();
+
+            const filteredSessions = sessions.filter(session =>
+                new Date(session.datetime).toLocaleDateString() === todayStr
+            );
+            window.allSessions = filteredSessions;
+
+            const dateGroup = document.getElementById('dateFilters');
+            const dates = Array.from(new Set(sessions.map(s =>
+                new Date(s.datetime).toLocaleDateString()
+            ))).sort((a, b) => new Date(a) - new Date(b));
+
+            const calendar = Array.from({ length: 7 }, (_, i) => {
+                const date = new Date(today);
+                date.setDate(today.getDate() + i);
+                return date;
+            });
+
+            dateGroup.innerHTML = calendar.map(date => {
+                const dateStr = date.toLocaleDateString();
+                const hasShows = dates.includes(dateStr);
+                const isDisabled = !hasShows;
+                const isToday = dateStr === todayStr;
+
+                return `
+                    <button class="date-tab ${isToday ? 'active' : ''} ${isDisabled ? 'disabled' : ''}"
+                        data-date="${dateStr}"
+                        onclick="${hasShows ? `filterByDate('${dateStr}')` : ''}"
+                        title="${date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}"
+                    >
+                        <span class="weekday">${date.toLocaleDateString('en-US', { weekday: 'short' })}</span>
+                        <span class="date">${date.getDate()}</span>
+                        ${hasShows ? '<span class="has-shows"></span>' : ''}
+                    </button>
+                `;
+            }).join('');
+
+            document.getElementById('movieSearch').addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const dateStr = document.querySelector('.date-tab.active')?.dataset.date;
+
+                let filteredByDate = window.allSessions;
+                if (dateStr) {
+                    filteredByDate = window.allSessions.filter(session =>
+                        new Date(session.datetime).toLocaleDateString() === dateStr
+                    );
+                }
+
+                const searchFiltered = filteredByDate.filter(session =>
+                    session.movieTitle.toLowerCase().includes(searchTerm) ||
+                    session.room.toLowerCase().includes(searchTerm)
+                );
+
+                const originalSessions = window.allSessions;
+                window.allSessions = searchFiltered;
+                filterSessions();
+                window.allSessions = originalSessions;
+            });
+
+            window.originalSessions = sessions;
+
+            document.getElementById('movieSearch').addEventListener('input', applyFilters);
+            document.getElementById('roomFilter').addEventListener('change', applyFilters);
+
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const searchTerm = document.getElementById('movieSearch').value.toLowerCase();
+            const roomFilter = document.getElementById('roomFilter').value;
+            const activeDate = document.querySelector('.date-tab.active')?.dataset.date;
+
+            let filteredSessions = window.originalSessions;
+
+            if (activeDate) {
+                filteredSessions = filteredSessions.filter(session =>
+                    new Date(session.datetime).toLocaleDateString() === activeDate
+                );
+            }
+
+            if (searchTerm) {
+                filteredSessions = filteredSessions.filter(session =>
+                    session.movieTitle.toLowerCase().includes(searchTerm) ||
+                    session.room.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            if (roomFilter) {
+                filteredSessions = filteredSessions.filter(session =>
+                    session.room === roomFilter
+                );
+            }
+
+            window.allSessions = filteredSessions;
+            filterSessions();
+            window.allSessions = window.originalSessions;
+        }
+
+        function filterByDate(date) {
+            const buttons = document.querySelectorAll('.date-tab');
+            buttons.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.date === date);
+            });
+
+            applyFilters();
+        }
+
+        function filterSessions() {
+            const search = document.getElementById('movieSearch').value.toLowerCase();
+            const roomFilter = document.getElementById('roomFilter').value;
+            const sessions = window.allSessions;
+
+            const filtered = sessions.filter(session => {
+                const matchesSearch = session.movieTitle.toLowerCase().includes(search) ||
+                    session.room.toLowerCase().includes(search);
+                const matchesRoom = !roomFilter || session.room === roomFilter;
+                return matchesSearch && matchesRoom;
+            });
+
+            const movieGroups = filtered.reduce((acc, session) => {
+                if (!acc[session.movieTitle]) {
+                    acc[session.movieTitle] = [];
+                }
+                acc[session.movieTitle].push(session);
+                return acc;
+            }, {});
+
+            Object.values(movieGroups).forEach(sessions => {
+                sessions.sort((a, b) => {
+                    const dateA = new Date(a.datetime);
+                    const dateB = new Date(b.datetime);
+                    const dateDiff = dateA.setHours(0, 0, 0, 0) - dateB.setHours(0, 0, 0, 0);
+                    if (dateDiff !== 0) return dateDiff;
+                    return dateA.getTime() - dateB.getTime();
+                });
+            });
+
+            document.getElementById('movieCount').textContent = Object.keys(movieGroups).length;
+
+            const container = document.getElementById('sessionsList');
+            container.innerHTML = Object.entries(movieGroups)
+                .sort(([titleA], [titleB]) => titleA.localeCompare(titleB))
+                .map(([title, movieSessions]) => {
+                    const sessionsByDate = movieSessions.reduce((acc, session) => {
+                        const date = new Date(session.datetime).toLocaleDateString();
+                        if (!acc[date]) acc[date] = [];
+                        acc[date].push(session);
+                        return acc;
+                    }, {});
+
+                    return `
+                        <div class="movie-group">
+                            <div class="movie-header">
+                                <h4>${title}</h4>
+                            </div>
+                            ${Object.entries(sessionsByDate).map(([date, dateSessions]) => `
+                                <div class="date-group">
+                                    <div class="date-header">
+                                        ${new Date(date).toLocaleDateString('en-US', {
+                        weekday: 'long',
+                        month: 'long',
+                        day: 'numeric'
+                    })}
+                                    </div>
+                                    <div class="showtime-grid">
+                                        ${dateSessions
+                            .sort((a, b) => new Date(a.datetime) - new Date(b.datetime))
+                            .map(session => `
+                                                <div class="showtime-card" onclick='showSeatSelection(${JSON.stringify(session)})'>
+                                                    <div class="showtime-time">
+                                                        ${new Date(session.datetime).toLocaleTimeString([], {
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            })}
+                                                    </div>
+                                                    <div class="showtime-info">
+                                                        ${session.room}<br>
+                                                        $${session.price} • ${session.seatingPlan.flat().filter(seat =>
+                                seat.status === 'available'
+                            ).length} seats
+                                                    </div>
+                                                </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }).join('');
+        }
+
+        function showSeatSelection(session) {
+            currentSession = session;
+            currentSessionId = session.id;
+            selectedSeats = [];
+
+            document.getElementById('selectedMovieTitle').textContent = session.movieTitle;
+            document.getElementById('selectedDateTime').textContent = new Date(session.datetime)
+                .toLocaleString('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            document.getElementById('selectedRoom').textContent = session.room;
+            document.getElementById('selectedPrice').textContent = `$${session.price.toFixed(2)} per ticket`;
+
+            updateSelectionSummary();
+
+            const container = document.getElementById('seatsContainer');
+            container.innerHTML = '';
+
+            session.seatingPlan.forEach((row, rowIndex) => {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'row-container';
+
+                const rowLabel = document.createElement('div');
+                rowLabel.className = 'row-label';
+                rowLabel.textContent = String.fromCharCode(65 + rowIndex);
+                rowDiv.appendChild(rowLabel);
+
+                row.forEach((seat) => {
+                    const seatBtn = document.createElement('button');
+                    seatBtn.className = `seat ${seat.status}`;
+                    seatBtn.textContent = seat.number;
+                    if (seat.status === 'available') {
+                        seatBtn.onclick = () => toggleSeat(seatBtn, seat);
+                    }
+                    rowDiv.appendChild(seatBtn);
+                });
+
+                container.appendChild(rowDiv);
+            });
+
+            showModal();
+        }
+
+        function toggleSeat(seatBtn, seat) {
+            const seatInfo = { row: seat.row, number: seat.number };
+            const existingIndex = selectedSeats.findIndex(
+                s => s.row === seatInfo.row && s.number === seatInfo.number
+            );
+
+            if (existingIndex > -1) {
+                selectedSeats.splice(existingIndex, 1);
+                seatBtn.className = 'seat available';
+            } else {
+                selectedSeats.push(seatInfo);
+                seatBtn.className = 'seat selected';
+            }
+
+            updateSelectionSummary();
+        }
+
+        function updateSelectionSummary() {
+            document.getElementById('selectedSeatsCount').textContent = selectedSeats.length;
+            document.getElementById('totalPrice').textContent =
+                `$${(selectedSeats.length * currentSession.price).toFixed(2)}`;
+
+            const confirmButton = document.getElementById('confirmReservation');
+            confirmButton.disabled = selectedSeats.length === 0;
+        }
+
+        document.getElementById('confirmReservation').onclick = () => {
+            const userForm = document.getElementById('userDetailsForm');
+            if (!userForm.checkValidity()) {
+                userForm.reportValidity();
+                return;
+            }
+
+            if (selectedSeats.length === 0) {
+                showWarningModal();
+                return;
+            }
+
+            const userData = {
+                name: document.getElementById('userName').value,
+                email: document.getElementById('userEmail').value,
+                phone: document.getElementById('userPhone').value,
+                loyaltyCard: document.getElementById('loyaltyCard').value
+            };
+
+            closeModal();
+            showConfirmationModal(userData);
+        };
+
+        function showAddSessionModal() {
+            document.getElementById('addSessionModal').classList.add('show');
+        }
+
+        function showConfirmationModal() {
+            const modal = document.getElementById('confirmationModal');
+            const seats = selectedSeats.map(seat => `${String.fromCharCode(64 + seat.row)}${seat.number}`).join(', ');
+
+            document.getElementById('confirmMovie').textContent = currentSession.movieTitle;
+            document.getElementById('confirmDate').textContent = new Date(currentSession.datetime)
+                .toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+            document.getElementById('confirmTime').textContent = new Date(currentSession.datetime)
+                .toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('confirmRoom').textContent = currentSession.room;
+            document.getElementById('confirmSeats').textContent = seats;
+            document.getElementById('confirmPrice').textContent =
+                (selectedSeats.length * currentSession.price).toFixed(2);
+
+            modal.classList.add('show');
+        }
+
+        function closeConfirmationModal(returnToSeats = false) {
+            document.getElementById('confirmationModal').classList.remove('show');
+            if (returnToSeats) {
+                showModal();
+            }
+        }
+
+        function generateUserId(email) {
+            const cleanEmail = email.trim().toLowerCase();
+            const timestamp = Date.now().toString(36);
+
+            const hashedEmail = Array.from(cleanEmail).reduce((acc, char) => {
+                acc = ((acc << 5) - acc) + char.charCodeAt(0);
+                return acc & acc;
+            }, 0).toString(36).slice(-10);
+
+            return `usr-${hashedEmail}-${timestamp}`;
+        }
+
+        function submitReservation() {
+            const userData = {
+                name: document.getElementById('userName').value,
+                email: document.getElementById('userEmail').value,
+                phone: document.getElementById('userPhone').value,
+                loyaltyCard: document.getElementById('loyaltyCard').value
+            };
+
+            const userId = generateUserId(userData.email);
+
+            ws.send(JSON.stringify({
+                type: 'cinemaReserveTicket',
+                sessionId: currentSessionId,
+                selectedSeats: selectedSeats,
+                userId: userId,
+                userData: userData
+            }));
+
+            closeConfirmationModal();
+        }
+
+        function showWarningModal() {
+            document.getElementById('warningModal').classList.add('show');
+        }
+
+        function closeWarningModal() {
+            document.getElementById('warningModal').classList.remove('show');
+        }
+
+        function showSuccessModal() {
+            document.getElementById('successModal').classList.add('show');
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('successModal').classList.remove('show');
+        }
+
+        function closeValidationModal() {
+            document.getElementById('validationModal').classList.remove('show');
+        }
+
+        function showAdminModal() {
+            document.getElementById('adminModal').classList.add('show');
+            ws.send(JSON.stringify({ type: 'cinemaGetReservations' }));
+        }
+
+        function closeAdminModal() {
+            document.getElementById('adminModal').classList.remove('show');
+        }
+
+        function updateReservationsTable(reservations) {
+            const tbody = document.getElementById('reservationsTableBody');
+
+            const totalRevenue = reservations.reduce((sum, res) => sum + res.totalPrice, 0);
+            const totalTickets = reservations.reduce((sum, res) => sum + res.selectedSeats.length, 0);
+            const avgTicketPrice = totalTickets > 0 ? totalRevenue / totalTickets : 0;
+
+            document.getElementById('reservationCount').textContent = reservations.length;
+            document.getElementById('totalRevenue').textContent = `$${totalRevenue.toFixed(2)}`;
+            document.getElementById('avgTicketPrice').textContent = `$${avgTicketPrice.toFixed(2)}`;
+
+            tbody.innerHTML = reservations
+                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                .map(res => {
+                    const purchaseDate = new Date(res.timestamp).toLocaleString('en-US', {
+                        month: 'short',
+                        day: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    const showTime = new Date(res.datetime).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+
+                    return `
+                    <tr>
+                        <td class="purchase-date">${purchaseDate}</td>
+                        <td>${showTime}</td>
+                        <td>${res.movieTitle}</td>
+                        <td>${res.room}</td>
+                        <td class="reservation-seats">
+                            ${res.selectedSeats.map(seat =>
+                        `${String.fromCharCode(64 + seat.row)}${seat.number}`
+                    ).join(', ')}
+                        </td>
+                        <td class="reservation-price">$${res.totalPrice.toFixed(2)}</td>
+                        <td class="user-id">${res.userId.slice(0, 10)}</td>
+                    </tr>
+                `}).join('');
+        }
+    </script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>

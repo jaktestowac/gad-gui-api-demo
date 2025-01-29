@@ -25,6 +25,10 @@
         }
 
         h6 {
+            margin-bottom: 6px;
+        }
+
+        .description {
             margin-bottom: 20px;
         }
 
@@ -127,7 +131,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            z-index: 2;
         }
 
         .login-box {
@@ -169,14 +173,18 @@
         }
 
         footer {
-            position: absolute;
+            position: fixed;
             bottom: 0px;
             flex-shrink: 0;
             background: var(--bg-card);
             color: #fff;
-            padding: 1rem;
+            padding: 0rem !important;
             text-align: center;
             width: 100%;
+        }
+
+        #footer-container {
+            padding: 0rem;
         }
 
         .error-message {
@@ -237,6 +245,21 @@
             color: #7289da;
             margin-left: 8px;
         }
+
+        .secondary-button {
+            padding: 10px 12px;
+            border: none;
+            border-radius: 12px;
+            background-color: #795454;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background-color 0.3s;
+        }
+
+        .secondary-button:hover {
+            background-color: #5c3f3f;
+        }
     </style>
 </head>
 
@@ -252,12 +275,19 @@
             <input type="text" id="usernameInput" maxlength="32" placeholder="Your name..." class="messageInput" />
             <div id="usernameError" class="error-message"></div>
             <button class="chat-button" onclick="joinChat()">Join Chat</button>
+            <br />
+            <br />
+            <div align="center">
+                <a href="/practice/">
+                    <button class="secondary-button">Return to practice pages</button></a>
+            </div>
         </div>
     </div>
 
     <div class="chat-container">
-        <h1>Real-Time Chat</h1>
+        <h1>Real-Time Chat (v2)</h1>
         <h6>(based on WebSockets)</h6>
+        <p class="description">Open another browser tab and join the chat with a different username to see the real-time updates.</p>
         <div class="chat-layout">
             <div id="userList">
                 <h3 style="margin-bottom: 15px; color: #7289da;">Online Users</h3>
@@ -285,6 +315,9 @@
             if (username.length > 16) {
                 return 'Username must have less than 16 characters';
             }
+            if (!/^[a-zA-Z0-9_]*$/.test(username)) {
+                return 'Username can only contain letters, numbers, and underscores';
+            }
             return '';
         }
 
@@ -306,10 +339,10 @@
             }
 
             showError('');
-            document.getElementById('loginScreen').classList.add('hidden');
             socket.send(JSON.stringify({
-                type: 'join',
-                username: username
+                type: 'practiceChatJoin',
+                username: username,
+                version: 'v2'
             }));
         }
 
@@ -329,15 +362,19 @@
             const messagesDiv = document.getElementById('messages');
             const data = JSON.parse(event.data);
             const time = formatTime(new Date());
-
             switch (data.type) {
-                case 'message':
-                case 'private': {
-                    const isPrivate = data.type === 'private';
+                case 'practiceChatMessage':
+                case 'practiceChatPrivate': {
+                    let className = 'message-content';
+                    if (data.username?.toLowerCase().includes('[system]')) {
+                        className += ' system-message';
+                    }
+
+                    const isPrivate = data.type === 'practiceChatPrivate';
                     messagesDiv.innerHTML += `
                         <p class="${isPrivate ? 'private-message' : ''}">
                             <span class="message-time">${time}</span>
-                            <span class="message-content">
+                            <span class="${className}">
                                 <span class="message-username">${data.username}:</span>
                                 <span>${data.message}</span>
                                 ${isPrivate ? `<span class="recipient-indicator">(to ${data.recipient})</span>` : ''}
@@ -346,18 +383,23 @@
                     `;
                     break;
                 }
-                case 'userList':
+                case 'practiceChatUserList':
                     updateUserList(data.users);
+                    document.getElementById('loginScreen').classList.add('hidden'); 
                     break;
                 case 'error':
-                    messagesDiv.innerHTML += `
-                        <p>
-                            <span class="message-time">${time}</span>
-                            <span class="message-content system-message">
-                                ${data.message}
-                            </span>
-                        </p>
-                    `;
+                    if (data.message.toLowerCase().includes('username')) {
+                        showError(data.message);
+                    } else {
+                        messagesDiv.innerHTML += `
+                            <p>
+                                <span class="message-time">${time}</span>
+                                <span class="message-content system-message">
+                                    ${data.message}
+                                </span>
+                            </p>
+                        `;
+                    }
                     break;
             }
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
@@ -369,7 +411,7 @@
 
             if (message && username) {
                 socket.send(JSON.stringify({
-                    type: selectedUser ? 'private' : 'message',
+                    type: selectedUser ? 'practiceChatPrivate' : 'practiceChatMessage',
                     username: username,
                     message: message,
                     recipient: selectedUser
