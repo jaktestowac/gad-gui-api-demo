@@ -1,3 +1,6 @@
+const { checkPackageDependencies } = require("./helpers/package.checker");
+checkPackageDependencies();
+
 const jsonServer = require("./json-server");
 const { validationsRoutes } = require("./routes/validations.route");
 const { getConfigValue, getFeatureFlagConfigValue, isBugEnabled } = require("./config/config-manager");
