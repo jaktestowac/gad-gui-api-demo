@@ -300,7 +300,8 @@
             background: #1a1a1a;
             padding: 4px 4px 0 4px;
             border-radius: 8px 8px 0 0;
-            min-height: 45px; /* Add minimum height */
+            min-height: 45px;
+            /* Add minimum height */
         }
 
         .tab {
@@ -315,9 +316,11 @@
             border: 1px solid #3f3f3f;
             border-bottom: none;
             min-width: 120px;
-            height: 40px; /* Set fixed height for tabs */
+            height: 40px;
+            /* Set fixed height for tabs */
             justify-content: space-between;
-            user-select: none; /* Prevent text selection */
+            user-select: none;
+            /* Prevent text selection */
         }
 
         .tab.active {
@@ -339,7 +342,8 @@
         #conversations {
             background: #3f3f3f;
             border-radius: 0 0 12px 12px;
-            height: calc(70vh - 50px); /* Adjust for tabs height */
+            height: calc(70vh - 50px);
+            /* Adjust for tabs height */
             overflow: hidden;
         }
 
@@ -511,7 +515,7 @@
         const socket = new WebSocket('ws://localhost:3010');
         let selectedUser = null;
         let weatherInterval;
-        let conversations = new Map(); // Store conversations by user
+        let conversations = new Map();
 
         function requestWeatherUpdate() {
             socket.send(JSON.stringify({
@@ -555,7 +559,7 @@
             socket.send(JSON.stringify({
                 type: 'practiceChatJoin',
                 username: username,
-                version: 'v3'
+                version: 'v4'
             }));
         }
 
@@ -592,7 +596,6 @@
 
                     createConversation(isPrivate ? conversationId : null);
 
-                    // Add notification if message is not from current user
                     if (data.username !== username) {
                         incrementNotification(conversationId);
                     }
@@ -613,7 +616,6 @@
                         </p>
                     `;
 
-                    // Scroll to bottom with a small delay to ensure content is rendered
                     setTimeout(() => {
                         messagesDiv.scrollTop = messagesDiv.scrollHeight;
                     }, 50);
@@ -691,11 +693,9 @@
             const conversationId = recipient || 'general';
 
             if (!conversations.has(conversationId)) {
-                // Create tab with notification counter
                 const tab = document.createElement('div');
                 tab.className = 'tab';
                 tab.onclick = (e) => {
-                    // Prevent click event when clicking close button
                     if (e.target.classList.contains('tab-close')) return;
                     activateConversation(conversationId);
                 };
@@ -705,10 +705,8 @@
                     ${recipient ? `<button class="tab-close" onclick="closeConversation('${conversationId}')">×</button>` : ''}
                 `;
 
-                // Add tab to tabs container first
                 tabsDiv.appendChild(tab);
 
-                // Create conversation container with its own input
                 const conv = document.createElement('div');
                 conv.className = 'conversation';
                 conv.innerHTML = `
@@ -725,7 +723,6 @@
                     </div>
                 `;
 
-                // Add keypress event listener for the new input
                 conv.querySelector('.message-input').addEventListener('keypress', (e) => {
                     if (e.key === 'Enter') sendMessage(conversationId);
                 });
@@ -748,8 +745,7 @@
 
             const notificationSpan = conv.tab.querySelector('.tab-notification');
             conv.unreadCount++;
-            
-            // Only show notification if the tab is not active
+
             if (!conv.tab.classList.contains('active')) {
                 notificationSpan.style.display = 'flex';
                 notificationSpan.textContent = conv.unreadCount;
@@ -772,10 +768,8 @@
             });
             selectedUser = conversationId === 'general' ? null : conversationId;
 
-            // Clear notifications when activating conversation
             clearNotifications(conversationId);
 
-            // Focus the input of the active conversation
             const input = document.getElementById(`messageInput-${conversationId}`);
             if (input) input.focus();
         }
@@ -786,9 +780,8 @@
             const conv = conversations.get(conversationId);
             if (!conv) return;
 
-            // Stop event propagation to prevent tab activation
             event.stopPropagation();
-            
+
             conv.tab.remove();
             conv.container.remove();
             conversations.delete(conversationId);
@@ -804,9 +797,8 @@
             showError('');
         });
 
-        // Initialize general chat when joining
         document.addEventListener('DOMContentLoaded', () => {
-            createConversation(null); // Create general chat tab
+            createConversation(null);
             activateConversation('general');
         });
     </script>
