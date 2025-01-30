@@ -273,7 +273,8 @@ server.use(function (req, res, next) {
   res.type("txt").send("Not found");
 });
 
-websocketRoute(new WebSocket.Server({ port: port + 10 }));
+const webSocketPort = parseInt(port) + 10;
+websocketRoute(new WebSocket.Server({ port: webSocketPort }));
 
 const sslEnabled = getConfigValue(ConfigKeys.SSL_ENABLED);
 
@@ -309,6 +310,15 @@ if (sslEnabled !== true) {
   });
 }
 
+const address = serverApp.address().address == "::" ? "localhost" : "localhost";
+const protocol = sslEnabled === true ? "https" : "http";
+const serverAppAddress = `${protocol}://${address}:${port}`;
+const serverWsAddress = `ws://${address}:${webSocketPort}`;
+
 module.exports = {
   serverApp,
+  wsPort: webSocketPort,
+  port,
+  serverAppAddress,
+  serverWsAddress,
 };

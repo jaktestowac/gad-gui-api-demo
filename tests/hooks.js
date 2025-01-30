@@ -16,5 +16,10 @@ exports.mochaHooks = {
       const response = await request.get(restoreDbPath);
       expect(response.statusCode).to.be.equal(201, `Assert failed on: ${JSON.stringify(response.body)}`);
     }
+
+    setTimeout(async () => {
+      console.log(">>> Exiting the server after all tests");
+      await request.get("/api/debug/exit");
+    }, 1000);
   },
 };

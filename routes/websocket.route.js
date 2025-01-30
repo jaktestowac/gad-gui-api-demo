@@ -1,4 +1,4 @@
-const { logDebug, logError } = require("../helpers/logger-api");
+const { logDebug, logTrace, logError } = require("../helpers/logger-api");
 const {
   WebSocketPracticeChatContext,
   messageHandlers,
@@ -10,6 +10,7 @@ const { WeatherContext, weatherHandlers } = require("./controllers/weather.contr
 const { DocumentEditorContext, documentHandlers } = require("./controllers/document-editor.controller");
 const { CinemaContext, cinemaHandlers } = require("./controllers/cinema.controller");
 const { DroneSimulatorContext, droneHandlers } = require("./controllers/drone-simulator.controller");
+const app = require("../app.json");
 
 const websocketRoute = (wss) => {
   const chatContext = new WebSocketPracticeChatContext(wss);
@@ -30,7 +31,12 @@ const websocketRoute = (wss) => {
         const data = JSON.parse(message);
         let handler;
 
-        if (data.type === "getWeather") {
+        logTrace("[websocketRoute] Received message:", { type: data.type, data: data });
+        if (data.type === "ping") {
+          ws.send(JSON.stringify({ type: "pong", data: { time: new Date().toISOString(), version: app.version } }));
+        } else if (data.type === "status") {
+          ws.send(JSON.stringify({ type: "status", data: { time: new Date().toISOString(), version: app.version } }));
+        } else if (data.type === "getWeather") {
           handler = weatherHandlers.getWeather;
           handler(weatherContext, ws, data);
         } else if (data.type === "getFullWeather") {
@@ -67,6 +73,7 @@ const websocketRoute = (wss) => {
     });
 
     ws.on("close", () => {
+      logDebug("[websocketRoute] Client disconnected", { client: ws._socket?.remoteAddress });
       handleDisconnect(chatContext, ws);
       if (ws.userId) {
         documentHandlers.docDisconnect(documentContext, ws);
