@@ -2,20 +2,21 @@
 <html>
 
 <head>
-    <title>🦎 GAD - Simple Real-Time Chat (based on WebSockets)</title>
+    <title>🦎 GAD - Advanced Weather Widget (WebSocket)</title>
     <link rel="icon" href="/data/icons/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
     <link href="/css/fonts/fonts.css" rel="stylesheet" />
     <link rel="stylesheet" href="/css/controls.css" />
     <link rel="stylesheet" href="/css/style.css" />
-    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <script src="/js/libs/charts/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        :root {
+            --bg-dark: #474747;
+            --bg-card: #1e1e1e;
+            --accent: #7289da;
+            --border: #333;
         }
 
         body {
@@ -25,192 +26,107 @@
             flex-direction: column;
         }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 4px;
-            color: #7289da;
-        }
-
-        h6 {
-            margin-bottom: 6px;
-        }
-
-        .description {
-            margin-bottom: 20px;
-        }
-
-        #messages {
-            flex: 1;
-            overflow-y: auto;
-            margin-bottom: 20px;
-            padding: 20px;
-            background-color: #2c2c2c;
-            border-radius: 12px;
-            max-height: 70vh;
-            width: 500px;
-        }
-
-        #messages p {
-            background-color: #3f3f3f;
-            padding: 10px 15px;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            word-wrap: break-word;
-            display: flex;
-            align-items: baseline;
-            gap: 10px;
-        }
-
-        .message-time {
-            color: #666;
-            font-size: 0.8em;
-            min-width: 45px;
-        }
-
-        .message-content {
-            display: flex;
-            align-items: baseline;
-            gap: 8px;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .input-container {
-            display: flex;
-            gap: 10px;
-        }
-
-        #usernameInput,
-        #messageInput {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 12px;
-            background-color: #2c2c2c;
-            color: #ffffff;
-            font-size: 16px;
-            width: 400px;
-        }
-
-        #usernameInput {
-            background-color: #585858;
-            width: 280px !important;
-        }
-
-        #usernameInput:focus,
-        #messageInput:focus {
-            outline: none;
-            box-shadow: 0 0 0 2px #7289da;
-        }
-
-        .chat-button {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 12px;
-            background-color: #7289da;
-            color: white;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
-        }
-
-        .secondary-button {
-            padding: 10px 12px;
-            border: none;
-            border-radius: 12px;
-            background-color: #795454;
-            color: white;
-            cursor: pointer;
-            font-size: 12px;
-            transition: background-color 0.3s;
-        }
-
-        .secondary-button:hover {
-            background-color: #5c3f3f;
-        }
-
-        .chat-button:hover {
-            background-color: #5c6fb1;
-        }
-
-        #loginScreen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 2;
-        }
-
-        .login-box {
-            background-color: #2c2c2c;
-            padding: 30px;
-            border-radius: 12px;
-            text-align: center;
-        }
-
-        .login-box h2 {
-            margin-bottom: 20px;
-            color: #7289da;
-        }
-
-        #usernameInput {
-            margin-bottom: 15px;
-            width: 250px;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        .message-username {
-            color: #7289da;
-            font-weight: bold;
-            margin-right: 8px;
-        }
-
-        .chat-container {
-            background-color: #1a1a1a;
-            color: #ffffff;
-            min-height: 100vh;
+        .weather-widget-container {
             display: flex;
             flex-direction: column;
+            justify-content: center;
             align-items: center;
-            align-content: center;
-            flex: 1 0 auto;
-            padding: 5rem 1rem;
+            min-height: 100vh;
+            background: var(--bg-dark);
+            color: #fff;
+            padding: 3rem 1rem;
         }
 
-        .error-message {
-            color: #ff4444;
-            font-size: 0.9em;
-            margin-top: 6px;
-            margin-bottom: 6px;
-            min-height: 1.2em;
-            animation: fadeIn 0.3s ease-in;
+        .weather-widget {
+            background: var(--bg-card);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            width: 1200px;
+            max-width: 95vw;
+            min-height: 700px;
+            height: calc(100vh - 200px);
+            max-height: 900px;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
         }
 
-        #usernameInput.error {
-            box-shadow: 0 0 0 2px #ff4444;
+        .weather-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 1rem;
+            flex: 1;
+            min-height: 0;
+            height: calc(100% - 120px);
         }
 
-        .system-message {
-            color: #ff4444;
-            font-style: italic;
+        .chart-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            margin-top: 1rem;
+            height: auto;
+            min-height: unset;
+            flex: 1;
+            margin: 0;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-content {
+            flex: 1;
+            position: relative;
+            min-height: 0;
+            width: 100%;
+            height: calc(100% - 50px);
+        }
+
+        @media (max-width: 1024px) {
+            .weather-widget {
+                min-height: 600px;
+                height: calc(100vh - 150px);
+            }
+
+            .weather-container {
+                grid-template-columns: 1fr;
+                height: calc(100% - 80px);
+            }
+
+            .chart-container {
+                height: 400px;
+            }
+        }
+
+        .weather-widget h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.1rem;
+        }
+
+        .weather-data {
+            display: grid;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .temp {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .refresh-btn {
+            background: #7289da;
+            border: none;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 4px;
+            width: 100%;
+            margin-top: 1rem;
+            cursor: pointer;
+        }
+
+        .refresh-btn:hover {
+            opacity: 0.9;
         }
 
         footer {
@@ -227,6 +143,160 @@
         #footer-container {
             padding: 0rem;
         }
+
+        .controls-container {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .warning {
+            background: #ff4444;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .chart-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .toggle-btn {
+            background: var(--accent);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            opacity: 0.7;
+        }
+
+        .toggle-btn.active {
+            opacity: 1;
+        }
+
+        .threshold-controls {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+            align-items: stretch;
+            flex-wrap: wrap;
+        }
+
+        .threshold-control {
+            flex: 1;
+            min-width: 200px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .threshold-control:hover {
+            background: rgba(0, 0, 0, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .threshold-control::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), transparent);
+        }
+
+        .threshold-control label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+            display: block;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .threshold-input-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            position: relative;
+        }
+
+        .threshold-control input {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            width: 80px;
+            transition: all 0.2s ease;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .threshold-control input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 0 2px rgba(114, 137, 218, 0.2);
+        }
+
+        .threshold-control span {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            font-weight: 500;
+            min-width: 35px;
+        }
+
+        .threshold-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 1.2rem;
+            background: rgba(114, 137, 218, 0.1);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .threshold-control:hover .threshold-icon {
+            transform: scale(1.1);
+            background: rgba(114, 137, 218, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .threshold-controls {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .threshold-control {
+                width: 100%;
+            }
+
+            .threshold-control::before {
+                width: 2px;
+                height: 100%;
+                background: linear-gradient(180deg, var(--accent), transparent);
+            }
+        }
     </style>
 </head>
 
@@ -238,156 +308,325 @@
     </header>
     <br />
     <br />
-    <div id="loginScreen">
-        <div class="login-box">
-            <h2>Enter Your Name</h2>
-            <input type="text" id="usernameInput" maxlength="32" placeholder="Your name..." class="messageInput" />
-            <div id="usernameError" class="error-message"></div>
-            <button class="chat-button" onclick="joinChat()">Join Chat</button>
-            <br />
-            <br />
-            <div align="center">
-                <a href="/practice/">
-                    <button class="secondary-button">Return to practice pages</button></a>
+    <div class="weather-widget-container">
+        <h1>Advanced Weather Widget (WebSocket)</h1>
+        <div class="weather-widget">
+            <div class="weather-container">
+                <div>
+                    <h3 id="location">Loading...</h3>
+                    <div class="weather-data">
+                        <div class="temp" id="temperature">--°C</div>
+                        <div id="minmax">Min/Max: --°C / --°C</div>
+                        <div id="humidity">Humidity: --%</div>
+                        <div id="wind">Wind: -- km/h</div>
+                    </div>
+                    <div id="warning" class="warning"></div>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-controls">
+                        <button class="toggle-btn active" data-metric="temperature">Temperature</button>
+                        <button class="toggle-btn active" data-metric="humidity">Humidity</button>
+                        <button class="toggle-btn active" data-metric="wind">Wind</button>
+                    </div>
+                    <div class="chart-content">
+                        <canvas id="weatherChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="controls-container">
+                <div class="threshold-controls">
+                    <div class="threshold-control" id="temp-threshold-control">
+                        <label>Temperature Warning</label>
+                        <div class="threshold-input-group">
+                            <div class="threshold-icon">
+                                <i class="fas fa-thermometer-half"></i>
+                            </div>
+                            <input type="number" id="tempThreshold" value="30" min="-100" max="200" />
+                            <span>°C</span>
+                        </div>
+                    </div>
+                    <div class="threshold-control" id="humidity-threshold-control">
+                        <label>Humidity Warning</label>
+                        <div class="threshold-input-group">
+                            <div class="threshold-icon">
+                                <i class="fas fa-tint"></i>
+                            </div>
+                            <input type="number" id="humidityThreshold" value="80" min="0" max="100" />
+                            <span>%</span>
+                        </div>
+                    </div>
+                    <div class="threshold-control" id="wind-threshold-control">
+                        <label>Wind Warning</label>
+                        <div class="threshold-input-group">
+                            <div class="threshold-icon">
+                                <i class="fas fa-wind"></i>
+                            </div>
+                            <input type="number" id="windThreshold" value="20" />
+                            <span>km/h</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
-    <div class="chat-container">
-        <h1>Simple Real-Time Chat (v1)</h1>
-        <h6>(based on WebSockets)</h6>
-        <p class="description">Open another browser tab and join the chat with a different username to see the real-time updates.</p>
-        <div id="messages"></div>
-        <div class="input-container">
-            <input type="text" id="messageInput" maxlength="128" placeholder="Type your message..." />
-            <button class="chat-button" onclick="sendMessage()">Send</button>
-        </div>
-    </div>
-
     <script>
-        let username = '';
         const socket = new WebSocket('ws://localhost:3010');
+        let weatherChart;
+        const chartData = {
+            labels: Array.from({length: 10}, (_, i) => {
+                const time = new Date();
+                time.setMinutes(time.getMinutes() - (9 - i));
+                return time.toLocaleTimeString();
+            }),
+            temperature: Array.from({length: 10}, () => (Math.random() * 15 + 15).toFixed(1)),
+            humidity: Array.from({length: 10}, () => Math.floor(Math.random() * 30 + 50)),
+            wind: Array.from({length: 10}, () => (Math.random() * 15 + 5).toFixed(1))
+        };
 
-        function validateUsername(username) {
-            if (username.length < 3) {
-                return 'Username must have at least 3 characters';
-            }
-            if (username.length > 16) {
-                return 'Username must have less than 16 characters';
-            }
-            if (!/^[a-zA-Z0-9_]*$/.test(username)) {
-                return 'Username can only contain letters, numbers, and underscores';
-            }
-            return '';
+        function initChart() {
+            const ctx = document.getElementById('weatherChart').getContext('2d');
+
+            const lastIndex = chartData.temperature.length - 1;
+            document.getElementById('temperature').textContent = `${chartData.temperature[lastIndex]}°C`;
+            document.getElementById('humidity').textContent = `Humidity: ${chartData.humidity[lastIndex]}%`;
+            document.getElementById('wind').textContent = `Wind: ${chartData.wind[lastIndex]} km/h`;
+            document.getElementById('location').textContent = 'Loading real data...';
+            document.getElementById('minmax').textContent = 
+                `Min/Max: ${Math.min(...chartData.temperature)}°C / ${Math.max(...chartData.temperature)}°C`;
+
+            weatherChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: chartData.labels,
+                    datasets: [{
+                        label: 'Temperature (°C)',
+                        data: chartData.temperature,
+                        borderColor: '#ff6384',
+                        tension: 0.4,
+                        hidden: false
+                    }, {
+                        label: 'Humidity (%)',
+                        data: chartData.humidity,
+                        borderColor: '#36a2eb',
+                        tension: 0.4,
+                        hidden: false
+                    }, {
+                        label: 'Wind (km/h)',
+                        data: chartData.wind,
+                        borderColor: '#4bc0c0',
+                        tension: 0.4,
+                        hidden: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                font: {
+                                    size: 11
+                                },
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: 'white',
+                                padding: 10,
+                                font: {
+                                    size: 12
+                                },
+                                boxWidth: 15
+                            }
+                        },
+                        annotation: {
+                            annotations: {
+                                tempLine: {
+                                    type: 'line',
+                                    yMin: 30,
+                                    yMax: 30,
+                                    borderColor: 'rgba(255, 99, 132, 0.5)',
+                                    borderWidth: 2,
+                                    borderDash: [5, 5],
+                                    label: {
+                                        enabled: true,
+                                        content: 'Temp Threshold',
+                                        position: 'end'
+                                    }
+                                },
+                                humidityLine: {
+                                    type: 'line',
+                                    yMin: 80,
+                                    yMax: 80,
+                                    borderColor: 'rgba(54, 162, 235, 0.5)',
+                                    borderWidth: 2,
+                                    borderDash: [5, 5],
+                                    label: {
+                                        enabled: true,
+                                        content: 'Humidity Threshold',
+                                        position: 'end'
+                                    }
+                                },
+                                windLine: {
+                                    type: 'line',
+                                    yMin: 20,
+                                    yMax: 20,
+                                    borderColor: 'rgba(75, 192, 192, 0.5)',
+                                    borderWidth: 2,
+                                    borderDash: [5, 5],
+                                    label: {
+                                        enabled: true,
+                                        content: 'Wind Threshold',
+                                        position: 'end'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            ['temp', 'humidity', 'wind'].forEach(type => {
+                document.getElementById(`${type}Threshold`).addEventListener('change', updateThresholdLines);
+            });
+
+            const resizeObserver = new ResizeObserver(entries => {
+                for (let entry of entries) {
+                    if (weatherChart) {
+                        weatherChart.resize();
+                    }
+                }
+            });
+
+            resizeObserver.observe(document.querySelector('.chart-content'));
         }
 
-        function showError(message) {
-            const errorDiv = document.getElementById('usernameError');
-            const usernameInput = document.getElementById('usernameInput');
-            errorDiv.textContent = message;
-            usernameInput.classList.toggle('error', !!message);
+        function updateThresholdLines() {
+            const tempThreshold = Number(document.getElementById('tempThreshold').value);
+            const humidityThreshold = Number(document.getElementById('humidityThreshold').value);
+            const windThreshold = Number(document.getElementById('windThreshold').value);
+
+            weatherChart.options.plugins.annotation.annotations.tempLine.yMin = tempThreshold;
+            weatherChart.options.plugins.annotation.annotations.tempLine.yMax = tempThreshold;
+            weatherChart.options.plugins.annotation.annotations.humidityLine.yMin = humidityThreshold;
+            weatherChart.options.plugins.annotation.annotations.humidityLine.yMax = humidityThreshold;
+            weatherChart.options.plugins.annotation.annotations.windLine.yMin = windThreshold;
+            weatherChart.options.plugins.annotation.annotations.windLine.yMax = windThreshold;
+
+            weatherChart.update();
         }
 
-        function joinChat() {
-            const usernameInput = document.getElementById('usernameInput');
-            username = usernameInput.value.trim();
+        function updateChart(weather) {
+            const now = new Date().toLocaleTimeString();
+            chartData.labels.push(now);
+            chartData.temperature.push(weather.temperature);
+            chartData.humidity.push(Number.parseInt(weather.humidity));
+            chartData.wind.push(weather.windSpeed);
 
-            const error = validateUsername(username);
-            if (error) {
-                showError(error);
-                return;
+            if (chartData.labels.length > 20) {
+                chartData.labels.shift();
+                chartData.temperature.shift();
+                chartData.humidity.shift();
+                chartData.wind.shift();
             }
 
-            showError('');
+            weatherChart.data.labels = chartData.labels;
+            weatherChart.data.datasets[0].data = chartData.temperature;
+            weatherChart.data.datasets[1].data = chartData.humidity;
+            weatherChart.data.datasets[2].data = chartData.wind;
+            weatherChart.update();
+        }
+
+        function requestWeatherUpdate() {
             socket.send(JSON.stringify({
-                type: 'practiceChatJoin',
-                username: username,
-                version: 'v1'
+                type: 'getWeather',
+                days: 1,
+                city: 'Current'
             }));
         }
 
-        socket.addEventListener('open', () => {
-            console.log('Connected to WebSocket server.');
+        function checkWarnings(weather) {
+            const warnings = [];
+            const tempThreshold = Number(document.getElementById('tempThreshold').value);
+            const humidityThreshold = Number(document.getElementById('humidityThreshold').value);
+            const windThreshold = Number(document.getElementById('windThreshold').value);
+
+            if (Number(weather.temperature) > Number(tempThreshold)) {
+                warnings.push(`High temperature alert: ${weather.temperature}°C`);
+            }
+
+            if (Number.parseInt(weather.humidity) > Number(humidityThreshold)) {
+                warnings.push(`High humidity alert: ${Number.parseInt(weather.humidity)}%`);
+            }
+            if (Number(weather.windSpeed) > Number(windThreshold)) {
+                warnings.push(`High wind alert: ${weather.windSpeed} km/h`);
+            }
+
+            const warningElement = document.getElementById('warning');
+            if (warnings.length > 0) {
+                warningElement.style.display = 'block';
+                warningElement.innerHTML = warnings.join('<br />');
+            } else {
+                warningElement.style.display = 'none';
+            }
+        }
+
+        document.querySelectorAll('.toggle-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                button.classList.toggle('active');
+                const metric = button.dataset.metric;
+                const datasetIndex = {
+                    'temperature': 0,
+                    'humidity': 1,
+                    'wind': 2
+                }[metric];
+                weatherChart.data.datasets[datasetIndex].hidden = !button.classList.contains('active');
+                weatherChart.update();
+            });
         });
 
-        function formatTime(date) {
-            return date.toLocaleTimeString('en-US', {
-                hour12: false,
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        }
+        socket.addEventListener('open', () => {
+            initChart();
+            requestWeatherUpdate();
+            setInterval(requestWeatherUpdate, 3000);
+        });
 
         socket.addEventListener('message', (event) => {
-            const messagesDiv = document.getElementById('messages');
             const data = JSON.parse(event.data);
-            const time = formatTime(new Date());
-
-            if (data.type === 'practiceChatMessage') {
-                let className = 'message-content';
-                if (data.username?.toLowerCase().includes('[system]')) {
-                    className += ' system-message';
-                }
-
-                messagesDiv.innerHTML += `
-                    <p>
-                        <span class="message-time">${time}</span>
-                        <span class="${className}">
-                            <span class="message-username">${data.username}:</span>
-                            <span>${data.message}</span>
-                        </span>
-                    </p>
-                `;
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            } else if (data.type === 'error') {
-                if (data.message.toLowerCase().includes('username')) {
-                    showError(data.message);
-                } else {
-                    messagesDiv.innerHTML += `
-                        <p>
-                            <span class="message-time">${time}</span>
-                            <span class="message-content system-message">
-                                ${data.message}
-                            </span>
-                        </p>
-                    `;
-                }
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            } else if (data.type === 'practiceChatUserList') {
-                document.getElementById('loginScreen').classList.add('hidden');
+            if (data.type === 'weatherData' && data.weather.length > 0) {
+                const weather = data.weather[0];
+                document.getElementById('location').textContent = weather.city || 'Current Location';
+                document.getElementById('temperature').textContent = `${weather.temperature}°C`;
+                document.getElementById('minmax').textContent = `Min/Max: ${weather.temperatureMin}°C / ${weather.temperatureMax}°C`;
+                document.getElementById('humidity').textContent = `Humidity: ${weather.humidity}`;
+                document.getElementById('wind').textContent = `Wind: ${weather.windSpeed} km/h`;
+                checkWarnings(weather);
+                updateChart(weather);
             }
-        });
-
-        function sendMessage() {
-            const messageInput = document.getElementById('messageInput');
-            const message = messageInput.value.trim();
-
-            if (message && username) {
-                socket.send(JSON.stringify({
-                    type: 'practiceChatMessage',
-                    username: username,
-                    message: message
-                }));
-                messageInput.value = '';
-            }
-        }
-
-        document.getElementById('usernameInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') joinChat();
-        });
-
-        document.getElementById('messageInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage();
-        });
-
-        document.getElementById('usernameInput').addEventListener('input', () => {
-            showError('');
         });
     </script>
     <script type="text/javascript" src="/js/common.js"></script>
     <script type="text/javascript" src="/js/header.js"></script>
     <script type="text/javascript" src="/version.js"></script>
-    <script type="text/javascript" src="./js/practice-common.js"></script>
 </body>
 
 </html>

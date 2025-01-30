@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>🦎 GAD - Real-Time Chat with Weather Widget (based on WebSockets)</title>
+    <title>🦎 GAD - Simple Real-Time Chat (based on WebSockets)</title>
     <link rel="icon" href="/data/icons/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
@@ -39,7 +39,6 @@
             margin-bottom: 20px;
         }
 
-
         #messages {
             flex: 1;
             overflow-y: auto;
@@ -47,7 +46,8 @@
             padding: 20px;
             background-color: #2c2c2c;
             border-radius: 12px;
-            height: 100%;
+            max-height: 70vh;
+            width: 500px;
         }
 
         #messages p {
@@ -124,6 +124,21 @@
             transition: background-color 0.3s;
         }
 
+        .secondary-button {
+            padding: 10px 12px;
+            border: none;
+            border-radius: 12px;
+            background-color: #795454;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background-color 0.3s;
+        }
+
+        .secondary-button:hover {
+            background-color: #5c3f3f;
+        }
+
         .chat-button:hover {
             background-color: #5c6fb1;
         }
@@ -171,27 +186,13 @@
         .chat-container {
             background-color: #1a1a1a;
             color: #ffffff;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             align-content: center;
             flex: 1 0 auto;
             padding: 5rem 1rem;
-        }
-
-        footer {
-            position: fixed;
-            bottom: 0px;
-            flex-shrink: 0;
-            background: var(--bg-card);
-            color: #fff;
-            padding: 0rem !important;
-            text-align: center;
-            width: 100%;
-        }
-
-        #footer-container {
-            padding: 0rem;
         }
 
         .error-message {
@@ -212,81 +213,19 @@
             font-style: italic;
         }
 
-        .chat-layout {
-            display: flex;
-            gap: 20px;
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        #userList {
-            width: 200px;
-            background: #2c2c2c;
-            border-radius: 12px;
-            padding: 15px;
-            height: 40vh;
-        }
-
-        .user-item {
-            padding: 8px 12px;
-            margin-bottom: 5px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .user-item:hover {
-            background-color: #3f3f3f;
-        }
-
-        .user-item.selected {
-            background-color: #7289da;
-        }
-
-        .private-message {
-            background-color: #3a2f4d !important;
-        }
-
-        .recipient-indicator {
-            font-size: 0.8em;
-            color: #7289da;
-            margin-left: 8px;
-        }
-
-        #weatherWidget {
-            background: #2c2c2c;
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            width: 200px;
-            text-align: center;
-        }
-
-        .weather-data {
-            display: flex;
-            justify-content: space-between;
-            margin: 8px 0;
+        footer {
+            position: fixed;
+            bottom: 0px;
+            flex-shrink: 0;
+            background: var(--bg-card);
             color: #fff;
+            padding: 0rem !important;
+            text-align: center;
+            width: 100%;
         }
 
-        .weather-label {
-            color: #7289da;
-        }
-
-        .secondary-button {
-            padding: 10px 12px;
-            border: none;
-            border-radius: 12px;
-            background-color: #795454;
-            color: white;
-            cursor: pointer;
-            font-size: 12px;
-            transition: background-color 0.3s;
-        }
-
-        .secondary-button:hover {
-            background-color: #5c3f3f;
+        #footer-container {
+            padding: 0rem;
         }
     </style>
 </head>
@@ -297,6 +236,8 @@
             <h1 id="menu-practice" class="nav-menu"></h1>
         </div>
     </header>
+    <br />
+    <br />
     <div id="loginScreen">
         <div class="login-box">
             <h2>Enter Your Name</h2>
@@ -313,54 +254,19 @@
     </div>
 
     <div class="chat-container">
-        <h1>Real-Time Chat with Weather Widget (v3)</h1>
+        <h1>Simple Real-Time Chat (v1)</h1>
         <h6>(based on WebSockets)</h6>
         <p class="description">Open another browser tab and join the chat with a different username to see the real-time updates.</p>
-        <div class="chat-layout">
-            <div>
-                <div id="weatherWidget">
-                    <h3 style="margin-bottom: 15px; color: #7289da;">Weather Info</h3>
-                    <div class="weather-data">
-                        <span class="weather-label">Temperature:</span>
-                        <span id="temperature">--°C</span>
-                    </div>
-                    <div class="weather-data">
-                        <span class="weather-label">Humidity:</span>
-                        <span id="humidity">--%</span>
-                    </div>
-                    <div class="weather-data">
-                        <span class="weather-label">Wind Speed:</span>
-                        <span id="windSpeed">-- m/s</span>
-                    </div>
-                </div>
-                <div id="userList">
-                    <h3 style="margin-bottom: 15px; color: #7289da;">Online Users</h3>
-                    <div id="userListContent"></div>
-                </div>
-            </div>
-            <div style="flex: 1;">
-                <div id="messages"></div>
-                <div class="input-container">
-                    <input type="text" id="messageInput" maxlength="128" placeholder="Type your message..." />
-                    <button class="chat-button" onclick="sendMessage()">Send</button>
-                </div>
-            </div>
+        <div id="messages"></div>
+        <div class="input-container">
+            <input type="text" id="messageInput" maxlength="128" placeholder="Type your message..." />
+            <button class="chat-button" onclick="sendMessage()">Send</button>
         </div>
     </div>
 
     <script>
         let username = '';
         const socket = new WebSocket('ws://localhost:3010');
-        let selectedUser = null;
-        let weatherInterval;
-
-        function requestWeatherUpdate() {
-            socket.send(JSON.stringify({
-                type: 'getWeather',
-                days: 1,
-                city: 'Current'
-            }));
-        }
 
         function validateUsername(username) {
             if (username.length < 3) {
@@ -396,19 +302,12 @@
             socket.send(JSON.stringify({
                 type: 'practiceChatJoin',
                 username: username,
-                version: 'v3'
+                version: 'v1'
             }));
         }
 
         socket.addEventListener('open', () => {
-            requestWeatherUpdate();
-            weatherInterval = setInterval(requestWeatherUpdate, 5000);
-        });
-
-        socket.addEventListener('close', () => {
-            if (weatherInterval) {
-                clearInterval(weatherInterval);
-            }
+            console.log('Connected to WebSocket server.');
         });
 
         function formatTime(date) {
@@ -424,54 +323,39 @@
             const data = JSON.parse(event.data);
             const time = formatTime(new Date());
 
-            switch (data.type) {
-                case 'practiceChatMessage':
-                case 'practiceChatPrivate': {
-                    let className = 'message-content';
-                    if (data.username?.toLowerCase().includes('[system]')) {
-                        className += ' system-message';
-                    }
+            if (data.type === 'practiceChatMessage') {
+                let className = 'message-content';
+                if (data.username?.toLowerCase().includes('[system]')) {
+                    className += ' system-message';
+                }
 
-                    const isPrivate = data.type === 'practiceChatPrivate';
+                messagesDiv.innerHTML += `
+                    <p>
+                        <span class="message-time">${time}</span>
+                        <span class="${className}">
+                            <span class="message-username">${data.username}:</span>
+                            <span>${data.message}</span>
+                        </span>
+                    </p>
+                `;
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            } else if (data.type === 'error') {
+                if (data.message.toLowerCase().includes('username')) {
+                    showError(data.message);
+                } else {
                     messagesDiv.innerHTML += `
-                        <p class="${isPrivate ? 'private-message' : ''}">
+                        <p>
                             <span class="message-time">${time}</span>
-                            <span class="${className}">
-                                <span class="message-username">${data.username}:</span>
-                                <span>${data.message}</span>
-                                ${isPrivate ? `<span class="recipient-indicator">(to ${data.recipient})</span>` : ''}
+                            <span class="message-content system-message">
+                                ${data.message}
                             </span>
                         </p>
                     `;
-                    break;
                 }
-                case 'practiceChatUserList':
-                    updateUserList(data.users);
-                    document.getElementById('loginScreen').classList.add('hidden');
-                    break;
-                case 'error':
-                    if (data.message.toLowerCase().includes('username')) {
-                        showError(data.message);
-                    } else {
-                        messagesDiv.innerHTML += `
-                            <p>
-                                <span class="message-time">${time}</span>
-                                <span class="message-content system-message">
-                                    ${data.message}
-                                </span>
-                            </p>
-                        `;
-                    }
-                    break;
-                case 'weatherData': {
-                    const weather = data.weather[0];
-                    document.getElementById('temperature').textContent = `${weather.temperature}°C`;
-                    document.getElementById('humidity').textContent = `${weather.humidity}`;
-                    document.getElementById('windSpeed').textContent = `${weather.windSpeed} km/h`;
-                    break;
-                }
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            } else if (data.type === 'practiceChatUserList') {
+                document.getElementById('loginScreen').classList.add('hidden');
             }
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
         });
 
         function sendMessage() {
@@ -480,42 +364,12 @@
 
             if (message && username) {
                 socket.send(JSON.stringify({
-                    type: selectedUser ? 'practiceChatPrivate' : 'practiceChatMessage',
+                    type: 'practiceChatMessage',
                     username: username,
-                    message: message,
-                    recipient: selectedUser
+                    message: message
                 }));
                 messageInput.value = '';
             }
-        }
-
-        function updateUserList(users) {
-            const userListContent = document.getElementById('userListContent');
-            userListContent.innerHTML = users
-                .filter(user => user !== username)
-                .map(user => `
-                    <div class="user-item" onclick="selectUser('${user}')" id="user-${user}">
-                        ${user}
-                    </div>
-                `).join('');
-        }
-
-        function selectUser(user) {
-            if (selectedUser) {
-                document.getElementById(`user-${selectedUser}`).classList.remove('selected');
-            }
-            selectedUser = selectedUser === user ? null : user;
-            if (selectedUser) {
-                document.getElementById(`user-${user}`).classList.add('selected');
-            }
-            updateMessageInput();
-        }
-
-        function updateMessageInput() {
-            const input = document.getElementById('messageInput');
-            input.placeholder = selectedUser
-                ? `Message to ${selectedUser}...`
-                : "Message to everyone...";
         }
 
         document.getElementById('usernameInput').addEventListener('keypress', (e) => {
