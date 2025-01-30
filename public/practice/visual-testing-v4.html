@@ -1056,7 +1056,7 @@
 
         .system-info {
             padding: 8px;
-            background: rgba(255,255,255,0.05);
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 8px;
             font-size: 0.85em;
         }
@@ -1074,7 +1074,7 @@
             padding: 4px 8px;
             border-radius: 4px;
             margin-bottom: 2px;
-            background: rgba(255,255,255,0.05);
+            background: rgba(255, 255, 255, 0.05);
         }
 
         .process-name {
@@ -1093,7 +1093,7 @@
             gap: 15px;
             margin-top: 10px;
             padding: 8px;
-            background: rgba(255,255,255,0.05);
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 8px;
         }
 
@@ -1123,7 +1123,7 @@
 
         .graph-bar {
             flex: 1;
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             height: 30%;
             transition: height 0.3s ease;
         }
@@ -1896,7 +1896,7 @@
             if (elements.systemStatus && elements.lastUpdate) {
                 const statusIndicator = document.querySelector('.status-indicator');
                 const isHealthy = cpuUsage < 80 && memoryUsage < 80;
-                
+
                 statusIndicator.className = `status-indicator ${isHealthy ? 'active' : 'warning'}`;
                 elements.systemStatus.textContent = isHealthy ? 'System Healthy' : 'System Under Load';
                 elements.lastUpdate.textContent = `Updated: ${new Date().toLocaleTimeString()}`;
@@ -1924,7 +1924,7 @@
             uptime.setHours(Math.floor(Math.random() * 24));
             uptime.setMinutes(Math.floor(Math.random() * 60));
             document.getElementById('system-uptime').textContent = uptime.toLocaleTimeString();
-            
+
             document.getElementById('process-count').textContent = Math.floor(Math.random() * 100 + 50);
             document.getElementById('load-average').textContent = (Math.random() * 2).toFixed(2);
 

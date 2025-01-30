@@ -10,6 +10,7 @@ const { WeatherContext, weatherHandlers } = require("./controllers/weather.contr
 const { DocumentEditorContext, documentHandlers } = require("./controllers/document-editor.controller");
 const { CinemaContext, cinemaHandlers } = require("./controllers/cinema.controller");
 const { DroneSimulatorContext, droneHandlers } = require("./controllers/drone-simulator.controller");
+const { LearningWorkspaceContext, learningHandlers } = require("./controllers/learning-workspace.controller");
 const app = require("../app.json");
 
 const websocketRoute = (wss) => {
@@ -18,9 +19,13 @@ const websocketRoute = (wss) => {
   const documentContext = new DocumentEditorContext(wss);
   const cinemaContext = new CinemaContext(wss);
   const droneContext = new DroneSimulatorContext(wss);
+  const learningContext = new LearningWorkspaceContext(wss);
 
   wss.on("connection", (ws) => {
     logDebug("[websocketRoute] New client connected", { client: ws._socket?.remoteAddress });
+
+    const userId = Math.random().toString(36).substring(7);
+    ws.userId = userId;
 
     ws.on("practiceChatJoin", (message) => {
       handleConnection(chatContext, ws);
@@ -32,6 +37,13 @@ const websocketRoute = (wss) => {
         let handler;
 
         logTrace("[websocketRoute] Received message:", { type: data.type, data: data });
+
+        if (data.type === "practiceDroneJoin") {
+          droneContext.connectedUsers.set(userId, ws);
+          logDebug("[websocketRoute] Drone client joined", { userId });
+          return;
+        }
+
         if (data.type === "ping") {
           ws.send(JSON.stringify({ type: "pong", data: { time: new Date().toISOString(), version: app.version } }));
         } else if (data.type === "status") {
@@ -63,6 +75,12 @@ const websocketRoute = (wss) => {
             throw new Error(`No handler found for message type: ${data.type}`);
           }
           handler(droneContext, ws, data);
+        } else if (data.type?.toLowerCase().includes("practicelearningworkspace")) {
+          handler = learningHandlers[data.type];
+          if (!handler) {
+            throw new Error(`No handler found for message type: ${data.type}`);
+          }
+          handler(learningContext, ws, data);
         } else {
           throw new Error(`Invalid message type received: ${data.type}`);
         }
@@ -73,7 +91,8 @@ const websocketRoute = (wss) => {
     });
 
     ws.on("close", () => {
-      logDebug("[websocketRoute] Client disconnected", { client: ws._socket?.remoteAddress });
+      logDebug("[websocketRoute] Client disconnected", { client: ws._socket?.remoteAddress, userId });
+      droneContext.connectedUsers.delete(ws.userId);
       handleDisconnect(chatContext, ws);
       if (ws.userId) {
         documentHandlers.docDisconnect(documentContext, ws);

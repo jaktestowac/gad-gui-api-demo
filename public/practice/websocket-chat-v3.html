@@ -288,7 +288,6 @@
         .secondary-button:hover {
             background-color: #5c3f3f;
         }
-
     </style>
 </head>
 
@@ -349,9 +348,10 @@
         </div>
     </div>
 
+    <script type="text/javascript" src="/js/wsh.js"></script>
     <script>
+        const socket = new WebSocket(`ws://${wsAddr}`);
         let username = '';
-        const socket = new WebSocket('ws://localhost:3010');
         let selectedUser = null;
         let weatherInterval;
 

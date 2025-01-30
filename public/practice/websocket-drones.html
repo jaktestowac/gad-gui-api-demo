@@ -1054,6 +1054,7 @@
         </div>
     </div>
 
+    <script type="text/javascript" src="/js/wsh.js"></script>
     <script>
         let ws;
         let selectedDroneId = null;
@@ -1317,10 +1318,11 @@
         }
 
         function connect() {
-            ws = new WebSocket('ws://localhost:3010');
+            ws = new WebSocket(`ws://${wsAddr}`);
             const connectionStatus = document.querySelector('.connection-status');
 
             ws.onopen = () => {
+                ws.send(JSON.stringify({ type: 'practiceDroneJoin' })); // Add this line to join
                 statusSpan.textContent = 'Connected';
                 connectBtn.textContent = 'Disconnect';
                 connectionStatus.classList.add('connected');

@@ -916,7 +916,10 @@
 
     </div>
 
+    <script type="text/javascript" src="/js/wsh.js"></script>
     <script>
+        let ws;
+
         function ensureBlockWrapper() {
             const editor = document.getElementById('editor');
             const selection = window.getSelection();
@@ -945,7 +948,6 @@
             }
         }
 
-        let ws;
         let currentUser;
         let currentDoc;
         let isTyping = false;
@@ -1080,7 +1082,7 @@
                 currentUser = username;
                 currentDoc = documentId;
 
-                ws = new WebSocket('ws://localhost:3010');
+                ws = new WebSocket(`ws://${wsAddr}`);
 
                 ws.onopen = () => {
                     ws.send(JSON.stringify({

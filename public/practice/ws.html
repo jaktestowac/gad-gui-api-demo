@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Learning Workspace</title>
+    <style>
+        .workspace-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .content-area {
+            flex: 1;
+            padding: 20px;
+            border-right: 1px solid #ccc;
+        }
+
+        .sidebar {
+            width: 300px;
+            padding: 20px;
+        }
+
+        .status-bar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            padding: 10px;
+            background: #f0f0f0;
+        }
+
+        #editor {
+            width: 100%;
+            height: 500px;
+        }
+
+        .comment {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f9f9f9;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="status-bar">
+        <span id="sync-status">Connecting...</span>
+        <button id="sync-check" style="display: none;">Check Sync</button>
+    </div>
+
+    <div class="workspace-container">
+        <div class="content-area">
+            <textarea id="editor"></textarea>
+        </div>
+        <div class="sidebar">
+            <h3>Comments</h3>
+            <div id="comments-container"></div>
+            <div id="comment-input">
+                <textarea id="new-comment"></textarea>
+                <button onclick="addComment()">Add Comment</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="/js/wsh.js"></script>
+    <script>
+        const ws = new WebSocket(`ws://${wsAddr}`);
+        let role = localStorage.getItem('role') || 'student';
+        let userId = localStorage.getItem('userId') || Date.now().toString();
+
+        const editor = document.getElementById('editor');
+        const syncStatus = document.getElementById('sync-status');
+        const syncCheck = document.getElementById('sync-check');
+
+        ws.onopen = () => {
+            syncStatus.textContent = 'Connected';
+            ws.send(JSON.stringify({
+                type: 'practiceLearningWorkspaceJoin',
+                data: { role, userId }
+            }));
+        };
+
+        ws.onmessage = (event) => {
+            const message = JSON.parse(event.data);
+
+            switch (message.type) {
+                case 'practiceLearningWorkspaceState':
+                    editor.value = message.data.content;
+                    message.data.comments.forEach(addCommentToUI);
+                    break;
+
+                case 'practiceLearningWorkspaceContent':
+                    editor.value = message.data.content;
+                    break;
+
+                case 'practiceLearningWorkspaceComment':
+                    addCommentToUI(message.data.comment);
+                    break;
+
+                case 'practiceLearningWorkspaceSync':
+                    alert(message.data.matched ? 'Content is in sync!' : 'Content mismatch!');
+                    break;
+            }
+        };
+
+        editor.oninput = () => {
+            if (role === 'instructor') {
+                ws.send(JSON.stringify({
+                    type: 'practiceLearningWorkspaceUpdate',
+                    data: { content: editor.value }
+                }));
+            }
+        };
+
+        editor.readonly = role !== 'instructor';
+        syncCheck.style.display = role === 'student' ? 'inline' : 'none';
+
+        function addComment() {
+            const content = document.getElementById('new-comment').value;
+            ws.send(JSON.stringify({
+                type: 'practiceLearningWorkspaceComment',
+                data: { comment: { content, timestamp: Date.now() } }
+            }));
+            document.getElementById('new-comment').value = '';
+        }
+
+        function addCommentToUI(comment) {
+            const container = document.getElementById('comments-container');
+            const div = document.createElement('div');
+            div.className = 'comment';
+            div.textContent = `${comment.role}: ${comment.content}`;
+            container.appendChild(div);
+        }
+
+        syncCheck.onclick = () => {
+            ws.send(JSON.stringify({
+                type: 'practiceLearningWorkspaceSync',
+                data: { content: editor.value }
+            }));
+        };
+    </script>
+</body>
+
+</html>

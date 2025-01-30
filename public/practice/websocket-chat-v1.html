@@ -264,9 +264,10 @@
         </div>
     </div>
 
+    <script type="text/javascript" src="/js/wsh.js"></script>
     <script>
+        const socket = new WebSocket(`ws://${wsAddr}`);
         let username = '';
-        const socket = new WebSocket('ws://localhost:3010');
 
         function validateUsername(username) {
             if (username.length < 3) {

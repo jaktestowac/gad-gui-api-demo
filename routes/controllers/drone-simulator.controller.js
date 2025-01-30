@@ -73,22 +73,23 @@ class DroneSimulatorContext {
       { x: 17, y: 8, width: 3, height: 1, type: "windFarm", name: "Wind Turbines", riskFactor: 0.4 },
     ];
 
-    this.moveIntervals = new Map(); // Add this to track movement intervals
+    this.moveIntervals = new Map();
+    this.connectedUsers = new Map();
 
-    setInterval(() => {
-      this.drones.forEach((drone) => {
-        if (drone.busy) {
-          drone.battery = Math.max(0, drone.battery - 0.5);
-          this.checkDangerZone(drone);
-        } else {
-          const chargingArea = this.chargingAreas.find((area) => area.x === drone.x && area.y === drone.y);
-          if (chargingArea) {
-            drone.battery = Math.min(100, drone.battery + chargingArea.chargeRate);
-            this.broadcastDronePositions();
-          }
-        }
-      });
-    }, 1000);
+    // setInterval(() => {
+    //   this.drones.forEach((drone) => {
+    //     if (drone.busy) {
+    //       drone.battery = Math.max(0, drone.battery - 0.5);
+    //       this.checkDangerZone(drone);
+    //     } else {
+    //       const chargingArea = this.chargingAreas.find((area) => area.x === drone.x && area.y === drone.y);
+    //       if (chargingArea) {
+    //         drone.battery = Math.min(100, drone.battery + chargingArea.chargeRate);
+    //         this.broadcastDronePositions();
+    //       }
+    //     }
+    //   });
+    // }, 1000);
   }
 
   checkDangerZone(drone) {
@@ -129,7 +130,7 @@ class DroneSimulatorContext {
       mapElements: this.mapElements,
       dangerZones: this.dangerZones,
     });
-    this.wss.clients.forEach((client) => client.send(message));
+    this.connectedUsers.forEach((client) => client.send(message));
   }
 
   isValidPosition(x, y) {
@@ -244,7 +245,6 @@ class DroneSimulatorContext {
   movePracticeDrone(droneId, x, y) {
     const drone = this.drones.find((d) => d.id === droneId);
     if (drone) {
-      // Clear existing movement if any
       if (this.moveIntervals.has(droneId)) {
         clearInterval(this.moveIntervals.get(droneId));
         this.moveIntervals.delete(droneId);
@@ -255,7 +255,6 @@ class DroneSimulatorContext {
         return;
       }
 
-      // Check if destination is in a danger zone
       const dangerZone = this.dangerZones.find((zone) =>
         zone.width
           ? x >= zone.x && x < zone.x + zone.width && y >= zone.y && y < zone.y + zone.height
@@ -313,11 +312,9 @@ class DroneSimulatorContext {
   }
 
   resetSimulator() {
-    // Clear all ongoing movements
     this.moveIntervals.forEach((interval) => clearInterval(interval));
     this.moveIntervals.clear();
 
-    // Reset drones to initial state
     this.drones = this.initialDrones.map((drone) => ({ ...drone }));
     this.broadcastDronePositions();
   }
@@ -328,7 +325,7 @@ class DroneSimulatorContext {
       droneId,
       message,
     });
-    this.wss.clients.forEach((client) => client.send(errorMessage));
+    this.connectedUsers.forEach((client) => client.send(errorMessage));
   }
 }
 
