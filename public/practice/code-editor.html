@@ -46,9 +46,7 @@
             border-radius: 12px;
             padding: 1rem;
             height: 100%;
-            /* Changed from fixed height */
             min-height: 0;
-            /* Allow container to shrink */
         }
 
         h2 {
@@ -65,7 +63,6 @@
             border-radius: 8px;
             overflow: hidden;
             min-height: 0;
-            /* Allow wrapper to shrink */
         }
 
         .CodeMirror {
@@ -83,7 +80,6 @@
         #output {
             flex: 1;
             min-height: 0;
-            /* Allow output to shrink */
             background: #2c2d31;
             border-radius: 8px;
             padding: 1rem;
@@ -128,7 +124,6 @@
             background: #25262b;
             border-radius: 8px;
             min-width: 160px;
-            /* Made more compact */
             z-index: 100;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
@@ -164,7 +159,6 @@
 
         .users-list-content {
             padding: 0.25rem;
-            /* Reduced padding */
             max-height: 300px;
             overflow-y: auto;
             transition: all 0.3s ease;
@@ -229,7 +223,6 @@
             justify-content: flex-end;
         }
 
-        /* Output styling improvements */
         #output .error {
             color: #ff6b6b;
             border-left: 3px solid #ff6b6b;
@@ -244,7 +237,6 @@
             margin: 0.5rem 0;
         }
 
-        /* Scrollbar styling */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -265,7 +257,6 @@
             background: #444750;
         }
 
-        /* Animation refinements */
         .main-container {
             height: 100vh;
             display: flex;
@@ -283,7 +274,6 @@
         .main-container>div {
             flex: 1;
             min-height: 0;
-            /* Allow content to shrink */
             padding: 1rem;
         }
 
@@ -479,7 +469,6 @@
             color: white;
         }
 
-        /* Add styles for quick join button */
         .quick-join-info {
             font-size: 0.8rem;
             color: #868e96;
@@ -711,13 +700,11 @@
 
         .users-list-content li {
             padding: 0.25rem 0.4rem;
-            /* Reduced padding */
             border-radius: 3px;
             display: flex;
             align-items: center;
             gap: 0.35rem;
             font-size: 0.8rem;
-            /* Smaller font */
             color: #868e96;
         }
 
@@ -728,7 +715,6 @@
 
         .user-indicator {
             width: 5px;
-            /* Smaller dot */
             height: 5px;
             border-radius: 50%;
             background: #5c7cfa;
@@ -826,6 +812,138 @@
             background: #4c6ef5;
             color: white;
         }
+
+        .workspaces-modal {
+            max-width: 90% !important;
+            width: 900px !important;
+            max-height: 85vh;
+        }
+
+        .workspaces-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 0.75rem;
+            padding: 1rem 0;
+            overflow-y: auto;
+            max-height: calc(85vh - 120px);
+        }
+
+        .workspace-template {
+            background: #2c2d31;
+            border-radius: 8px;
+            padding: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 3px solid #5c7cfa;
+        }
+
+        .workspace-template:hover {
+            background: #373a40;
+            transform: translateY(-2px);
+        }
+
+        .workspace-template h3 {
+            font-size: 0.95rem;
+            margin-bottom: 0.35rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .workspace-code-preview {
+            background: #25262b;
+            padding: 0.75rem;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: #868e96;
+            margin: 0.75rem 0;
+            height: 100px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .workspace-code-preview::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: linear-gradient(transparent, #25262b);
+        }
+
+        .workspace-tag {
+            display: inline-block;
+            padding: 0.15rem 0.4rem;
+            background: #373a40;
+            color: #868e96;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            margin-right: 0.2rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .workspace-description {
+            font-size: 0.8rem;
+            margin: 0.35rem 0;
+            color: #868e96;
+            line-height: 1.4;
+        }
+
+        .secondary-button {
+            font-size: 14px;
+        }
+
+        .login-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-width: 450px;
+            margin: 0 auto;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+            margin: 0.5rem 0;
+        }
+
+        .workspace-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+
+        .workspace-card {
+            padding: 0.75rem;
+        }
+
+        .workspace-card h3 {
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .workspace-card p {
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+
+        .join-form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .input-group {
+            margin-bottom: 0.5rem;
+        }
+
+        .input-group input {
+            margin-bottom: 0.25rem;
+        }
     </style>
 </head>
 
@@ -839,46 +957,54 @@
     <div>
         <div id="loginModal" class="modal-overlay">
             <div class="modal">
-                <h2>Join Code Editor</h2>
-                <div class="workspace-grid">
-                    <div class="workspace-card tutorial" onclick="CodeEditor.joinDefaultWorkspace('Tutorial')">
-                        <h3>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-                            </svg>
-                            Tutorial
-                        </h3>
-                        <p>Learn JavaScript basics with interactive examples</p>
+                <div class="login-container">
+                    <h2>Join Code Editor</h2>
+
+                    <div class="workspace-cards">
+                        <div class="workspace-card tutorial" onclick="CodeEditor.joinDefaultWorkspace('Tutorial')">
+                            <h3>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                                </svg>
+                                Tutorial
+                            </h3>
+                            <p>Learn JavaScript basics with examples</p>
+                        </div>
+                        <div class="workspace-card playground" onclick="CodeEditor.joinDefaultWorkspace('Playground')">
+                            <h3>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                </svg>
+                                Playground
+                            </h3>
+                            <p>Code sandbox environment</p>
+                        </div>
                     </div>
-                    <div class="workspace-card playground" onclick="CodeEditor.joinDefaultWorkspace('Playground')">
-                        <h3>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                            </svg>
-                            Playground
-                        </h3>
-                        <p>Experiment with code in a sandbox environment</p>
+
+                    <button class="secondary-button" onclick="CodeEditor.showWorkspacesModal()">Browse All Templates</button>
+
+                    <div class="workspace-divider"></div>
+
+                    <div class="quick-actions">
+                        <button class="secondary-button" onclick="quickJoin()">Quick Join</button>
+                        <button class="secondary-button" onclick="showCreateWorkspace()">Create New</button>
                     </div>
-                </div>
-                <div class="workspace-divider"></div>
-                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
-                    <button class="secondary-button" style="flex: 1;" onclick="quickJoin()">Quick Join</button>
-                    <button class="secondary-button" style="flex: 1;" onclick="showCreateWorkspace()">Create New</button>
-                </div>
-                <div class="input-group">
-                    <input type="text" id="username" placeholder="Username" required>
-                    <div class="error-message" id="usernameError"></div>
-                </div>
-                <div class="input-group">
-                    <input type="text" id="workspace" placeholder="Workspace Name" required>
-                    <div class="error-message" id="workspaceError"></div>
-                </div>
-                <div class="input-group">
-                    <input type="password" id="password" placeholder="Workspace Password (optional)">
-                </div>
-                <div class="modal-buttons">
-                    <button class="primary-button" onclick="joinWorkspace()">Join Existing</button>
+
+                    <div class="join-form">
+                        <div class="input-group">
+                            <input type="text" id="username" placeholder="Username" required>
+                            <div class="error-message" id="usernameError"></div>
+                        </div>
+                        <div class="input-group">
+                            <input type="text" id="workspace" placeholder="Workspace Name" required>
+                            <div class="error-message" id="workspaceError"></div>
+                        </div>
+                        <div class="input-group">
+                            <input type="password" id="password" placeholder="Password (optional)">
+                        </div>
+                        <button class="primary-button" onclick="joinWorkspace()">Join Existing</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1024,10 +1150,25 @@
             <div class="custom-modal-buttons" id="customModalButtons"></div>
         </div>
 
+        <div id="workspacesModal" class="modal-overlay" style="display: none;">
+            <div class="modal workspaces-modal">
+                <h2>Available Templates</h2>
+                <div class="workspaces-grid" id="workspacesGrid"></div>
+                <div class="modal-buttons">
+                    <button class="secondary-button" onclick="CodeEditor.closeWorkspacesModal()">Close</button>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script src="/js/libs/codemirror/codemirror.min.js"></script>
+    <script src="/js/libs/javascript/javascript.js"></script>
     <script src="/js/libs/codemirror/javascript.min.js"></script>
+    <script src="/js/libs/javascript/show-hint.js"></script>
+    <script src="/js/libs/javascript/javascript-hint.js"></script>
+    <link rel="stylesheet" href="/js/libs/sql/hints.css" />
+    <link rel="stylesheet" href="/js/libs/codemirror/codemirror.css" />
     <script type="text/javascript" src="/js/wsh.js"></script>
     <script type="text/javascript" src="/js/common.js"></script>
     <script type="text/javascript" src="/js/header.js"></script>
@@ -1253,10 +1394,24 @@
                 }
             },
 
+            updateURL(username, workspace, password) {
+                const url = new URL(window.location.href);
+                url.searchParams.set('workspace', encodeURIComponent(workspace));
+                if (username) {
+                    url.searchParams.set('username', encodeURIComponent(username));
+                }
+                if (password) {
+                    url.searchParams.set('password', encodeURIComponent(password));
+                }
+                window.history.pushState({}, '', url.toString());
+            },
+
             initWebSocket(username, workspace, password, isNewWorkspace) {
                 this.currentUser = username;
                 this.currentWorkspace = workspace;
                 this.ws = new WebSocket(`ws://${wsAddr}`);
+
+                this.updateURL(username, workspace, password);
 
                 this.ws.onopen = () => {
                     console.log('Connected to server');
@@ -1310,13 +1465,11 @@
 
                         case 'codeEditorRun':
                             if (message.data.triggeredBy !== this.currentUser) {
-                                // Someone else ran the code
                                 this.isUpdating = true;
                                 this.editor.setValue(message.data.code);
                                 this.isUpdating = false;
                                 this.executeCode(message.data.code);
 
-                                // Show notification
                                 const output = document.getElementById('output');
                                 output.innerHTML = `<div style="color: #5c7cfa; margin-bottom: 0.5rem;">
                                     💻 Code executed by ${message.data.triggeredBy}
@@ -1343,6 +1496,11 @@
             },
 
             showEditorInterface() {
+                // Update URL to remove username parameter once connected
+                const url = new URL(window.location.href);
+                url.searchParams.delete('username');
+                window.history.pushState({}, '', url.toString());
+
                 document.getElementById('loginModal').style.display = 'none';
                 document.getElementById('createWorkspaceModal').style.display = 'none';
                 document.getElementById('usersList').style.display = 'block';
@@ -1354,16 +1512,20 @@
                 codeMirrorElements.forEach(el => el.remove());
 
                 this.editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
-                    mode: 'javascript',
+                    mode: { name: "javascript", globalVars: true },
                     theme: 'dracula',
                     lineNumbers: true,
                     autoCloseBrackets: true,
                     matchBrackets: true,
+                    smartIndent: true,
+                    autofocus: true,
                     tabSize: 2,
                     extraKeys: {
                         "Ctrl-Enter": (cm) => this.runCode(),
-                        "Cmd-Enter": (cm) => this.runCode()
-                    }
+                        "Cmd-Enter": (cm) => this.runCode(),
+                        "Ctrl-Space": "autocomplete"
+                    },
+                    hint: CodeMirror.hint.javascript,
                 });
 
                 const charLimit = document.getElementById('charLimit');
@@ -1512,6 +1674,10 @@
                 }
             },
 
+            clearOutput() {
+                document.getElementById('output').innerHTML = '<div class="info">(no output)</div>';
+            },
+
             saveCode() {
                 const code = this.editor.getValue();
                 const blob = new Blob([code], { type: 'text/javascript' });
@@ -1540,6 +1706,9 @@
                         this.ws.close();
                     }
                     this.editor = null;
+
+                    window.history.pushState({}, '', window.location.pathname);
+
                     document.getElementById('mainContainer').classList.remove('visible');
                     setTimeout(() => {
                         document.getElementById('mainContainer').classList.add('hidden');
@@ -1553,11 +1722,12 @@
             },
 
             async joinDefaultWorkspace(name) {
+                this.closeWorkspacesModal();
                 const username = this.generateRandomName();
                 const workspace = name;
 
                 const action = await this.showCustomModal({
-                    title: 'Join Default Workspace',
+                    title: 'Join Workspace',
                     content: `Joining "${workspace}" as "${username}"`,
                     buttons: [
                         { text: 'Cancel', type: 'secondary', action: 'cancel' },
@@ -1568,19 +1738,20 @@
                 if (action === 'confirm') {
                     this.initEditor();
                     this.initWebSocket(username, workspace, '', false);
+                    this.clearOutput();
                 }
             },
 
             copyWorkspaceLink() {
                 const url = new URL(window.location.href);
-                url.searchParams.set('workspace', this.currentWorkspace);
+                url.searchParams.set('workspace', encodeURIComponent(this.currentWorkspace));
 
                 const passwordInput = document.getElementById('password');
                 const newPasswordInput = document.getElementById('newPassword');
                 const password = passwordInput.value || newPasswordInput.value;
 
                 if (password) {
-                    url.searchParams.set('password', password);
+                    url.searchParams.set('password', encodeURIComponent(password));
                 }
 
                 navigator.clipboard.writeText(url.toString()).then(() => {
@@ -1603,7 +1774,7 @@
             },
 
             toggleSettings(event) {
-                event?.stopPropagation(); // Stop the click from bubbling up
+                event?.stopPropagation();
                 const panel = document.getElementById('settingsPanel');
                 panel.classList.toggle('show');
             },
@@ -1637,15 +1808,91 @@
             applySettings(settings) {
                 this.settings = settings;
 
-                // Update UI
                 document.getElementById('readonlyToggle').checked = settings.readonly;
                 document.getElementById('clearDisabledToggle').checked = settings.clearDisabled;
                 document.getElementById('runDisabledToggle').checked = settings.runDisabled;
 
-                // Update editor state
                 if (this.editor) {
                     this.editor.setOption('readOnly', settings.readonly && !this.isOwner);
                 }
+            },
+
+            templates: [
+                {
+                    id: 'Tutorial',
+                    name: 'Tutorial',
+                    description: 'Learn JavaScript basics with interactive examples',
+                    icon: '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>',
+                    tags: ['beginner', 'tutorial']
+                },
+                {
+                    id: 'Playground',
+                    name: 'Code Playground',
+                    description: 'Experiment with code in a sandbox environment',
+                    icon: '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>',
+                    tags: ['sandbox', 'practice']
+                },
+                {
+                    id: 'ArrayMethods',
+                    name: 'Array Methods',
+                    description: 'Learn and practice JavaScript array methods',
+                    icon: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8"/><path d="M12 8v8"/>',
+                    tags: ['arrays', 'methods']
+                },
+                {
+                    id: 'Algorithms',
+                    name: 'Algorithms',
+                    description: 'Common algorithm implementations in JavaScript',
+                    icon: '<path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>',
+                    tags: ['algorithms', 'advanced']
+                },
+                {
+                    id: 'DOM',
+                    name: 'DOM Manipulation',
+                    description: 'Examples of working with the Document Object Model',
+                    icon: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/>',
+                    tags: ['DOM', 'web']
+                },
+                {
+                    id: 'AsyncJS',
+                    name: 'Async JavaScript',
+                    description: 'Learn about Promises and async/await',
+                    icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+                    tags: ['async', 'promises']
+                },
+                {
+                    id: 'ES6Features',
+                    name: 'ES6+ Features',
+                    description: 'Modern JavaScript features and syntax',
+                    icon: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+                    tags: ['ES6', 'modern']
+                }
+            ],
+
+            showWorkspacesModal() {
+                const modal = document.getElementById('workspacesModal');
+                const grid = document.getElementById('workspacesGrid');
+
+                grid.innerHTML = this.templates.map(template => `
+                    <div class="workspace-template" onclick="CodeEditor.joinDefaultWorkspace('${template.id}')">
+                        <h3>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                ${template.icon}
+                            </svg>
+                            ${template.name}
+                        </h3>
+                        <div>
+                            ${template.tags.map(tag => `<span class="workspace-tag">${tag}</span>`).join('')}
+                        </div>
+                        <p class="workspace-description">${template.description}</p>
+                    </div>
+                `).join('');
+
+                modal.style.display = 'flex';
+            },
+
+            closeWorkspacesModal() {
+                document.getElementById('workspacesModal').style.display = 'none';
             },
 
             init() {
@@ -1685,20 +1932,25 @@
                 const passwordParam = urlParams.get('password');
 
                 if (workspaceParam) {
+                    const decodedWorkspace = decodeURIComponent(workspaceParam);
                     if (usernameParam) {
                         setTimeout(() => {
                             this.initEditor();
-                            this.initWebSocket(usernameParam, workspaceParam, passwordParam || '', false);
+                            this.initWebSocket(
+                                decodeURIComponent(usernameParam),
+                                decodedWorkspace,
+                                passwordParam ? decodeURIComponent(passwordParam) : '',
+                                false
+                            );
                         }, 100);
                     } else {
-                        document.getElementById('workspace').value = workspaceParam;
+                        document.getElementById('workspace').value = decodedWorkspace;
                         if (passwordParam) {
-                            document.getElementById('password').value = passwordParam;
+                            document.getElementById('password').value = decodeURIComponent(passwordParam);
                         }
                     }
                 }
 
-                // Add click outside listener
                 document.addEventListener('click', this.handleClickOutside);
             }
         };
