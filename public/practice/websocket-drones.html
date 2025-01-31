@@ -1082,7 +1082,6 @@
 
         function initGrid() {
             grid.innerHTML = '';
-            // Create initial empty grid
             for (let y = 0; y < 15; y++) {
                 for (let x = 0; x < 20; x++) {
                     const cell = document.createElement('div');
@@ -1110,7 +1109,6 @@
             const batteryClass = drone.battery < 20 ? 'battery-critical' : '';
             const statusClass = drone.busy ? 'status-busy' : 'status-idle';
             const statusText = drone.busy ? 'Moving' : 'Idle';
-            // Calculate speed percentage (assuming max speed is 3)
             const speedPercentage = (drone.speed / 3) * 100;
 
             droneInfo.innerHTML = `

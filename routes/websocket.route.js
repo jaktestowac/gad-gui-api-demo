@@ -10,7 +10,7 @@ const { WeatherContext, weatherHandlers } = require("./controllers/weather.contr
 const { DocumentEditorContext, documentHandlers } = require("./controllers/document-editor.controller");
 const { CinemaContext, cinemaHandlers } = require("./controllers/cinema.controller");
 const { DroneSimulatorContext, droneHandlers } = require("./controllers/drone-simulator.controller");
-const { LearningWorkspaceContext, learningHandlers } = require("./controllers/learning-workspace.controller");
+const { CodeEditorContext, codeEditorHandlers } = require("./controllers/code-editor.controller");
 const app = require("../app.json");
 
 const websocketRoute = (wss) => {
@@ -19,7 +19,7 @@ const websocketRoute = (wss) => {
   const documentContext = new DocumentEditorContext(wss);
   const cinemaContext = new CinemaContext(wss);
   const droneContext = new DroneSimulatorContext(wss);
-  const learningContext = new LearningWorkspaceContext(wss);
+  const codeEditorContext = new CodeEditorContext(wss);
 
   wss.on("connection", (ws) => {
     logDebug("[websocketRoute] New client connected", { client: ws._socket?.remoteAddress });
@@ -75,12 +75,12 @@ const websocketRoute = (wss) => {
             throw new Error(`No handler found for message type: ${data.type}`);
           }
           handler(droneContext, ws, data);
-        } else if (data.type?.toLowerCase().includes("practicelearningworkspace")) {
-          handler = learningHandlers[data.type];
+        } else if (data.type?.toLowerCase().includes("codeeditor")) {
+          handler = codeEditorHandlers[data.type];
           if (!handler) {
             throw new Error(`No handler found for message type: ${data.type}`);
           }
-          handler(learningContext, ws, data);
+          handler(codeEditorContext, ws, data);
         } else {
           throw new Error(`Invalid message type received: ${data.type}`);
         }
@@ -96,6 +96,7 @@ const websocketRoute = (wss) => {
       handleDisconnect(chatContext, ws);
       if (ws.userId) {
         documentHandlers.docDisconnect(documentContext, ws);
+        codeEditorHandlers.codeEditorDisconnect(codeEditorContext, ws);
       }
     });
 

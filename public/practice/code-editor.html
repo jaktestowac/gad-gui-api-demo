@@ -1,0 +1,1711 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD - Shared Code Editor</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <meta charset="UTF-8">
+    <link href="/js/libs/codemirror/codemirror.css" rel="stylesheet">
+    <link href="/js/libs/codemirror/dracula.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: #1a1b1e;
+            color: #fff;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .base-container {
+            display: flex;
+            height: calc(100vh - 7rem);
+            gap: 1rem;
+            padding: 0;
+            max-height: calc(100vh - 7rem);
+            overflow: hidden;
+        }
+
+        .editor-container,
+        .output-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            background: #25262b;
+            border-radius: 12px;
+            padding: 1rem;
+            height: 100%;
+            /* Changed from fixed height */
+            min-height: 0;
+            /* Allow container to shrink */
+        }
+
+        h2 {
+            font-size: 1rem;
+            color: #c1c2c5;
+            font-weight: 500;
+            padding: 0.5rem 0;
+            white-space: nowrap;
+        }
+
+        .editor-wrapper {
+            flex: 1;
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            min-height: 0;
+            /* Allow wrapper to shrink */
+        }
+
+        .CodeMirror {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            height: 100% !important;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        #output {
+            flex: 1;
+            min-height: 0;
+            /* Allow output to shrink */
+            background: #2c2d31;
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            overflow: auto;
+            color: #c1c2c5;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 0.5rem;
+            padding-top: 0.5rem;
+        }
+
+        button {
+            background: #5c7cfa;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        button:hover {
+            background: #4c6ef5;
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .users-list {
+            position: fixed;
+            top: 4rem;
+            right: 1rem;
+            background: #25262b;
+            border-radius: 8px;
+            min-width: 160px;
+            /* Made more compact */
+            z-index: 100;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .users-list.collapsed {
+            min-width: auto;
+            width: auto;
+        }
+
+        .users-list-header {
+            padding: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .users-list-header:hover {
+            background: #2c2d31;
+            border-radius: 8px;
+        }
+
+        .users-count {
+            background: #5c7cfa;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            margin-left: 0.5rem;
+        }
+
+        .users-list-content {
+            padding: 0.25rem;
+            /* Reduced padding */
+            max-height: 300px;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+        }
+
+        .users-list.collapsed .users-list-content {
+            display: none;
+        }
+
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .users-list.collapsed .toggle-icon {
+            transform: rotate(-180deg);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        .modal {
+            width: 100%;
+            max-width: 400px;
+            background: #25262b;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal input {
+            width: 100%;
+            background: #2c2d31;
+            border: 1px solid #373a40;
+            color: white;
+            padding: 0.75rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .modal input:focus {
+            outline: none;
+            border-color: #5c7cfa;
+            box-shadow: 0 0 0 2px rgba(92, 124, 250, 0.2);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        /* Output styling improvements */
+        #output .error {
+            color: #ff6b6b;
+            border-left: 3px solid #ff6b6b;
+            padding-left: 0.5rem;
+            margin: 0.5rem 0;
+        }
+
+        #output .result {
+            color: #69db7c;
+            border-left: 3px solid #69db7c;
+            padding-left: 0.5rem;
+            margin: 0.5rem 0;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #2c2d31;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #373a40;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #444750;
+        }
+
+        /* Animation refinements */
+        .main-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease-out;
+        }
+
+        .main-container.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .main-container>div {
+            flex: 1;
+            min-height: 0;
+            /* Allow content to shrink */
+            padding: 1rem;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tools-panel {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .tools-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .tools-divider {
+            width: 1px;
+            height: 24px;
+            background: #373a40;
+            margin: 0 0.5rem;
+        }
+
+        .tool-button.danger {
+            background: #e03131;
+            color: white;
+        }
+
+        .tool-button.danger:hover {
+            background: #c92a2a;
+        }
+
+        .tool-button {
+            background: #373a40;
+            color: #c1c2c5;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .tool-button:hover {
+            background: #444750;
+            color: white;
+        }
+
+        .tool-button svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .editor-header {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .editor-header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #2c2d31;
+            padding: 0.4rem 0.75rem;
+            border-radius: 4px;
+        }
+
+        .workspace-info {
+            position: static;
+            background: #2c2d31;
+            padding: 0.25rem 0.4rem;
+            border-radius: 3px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.75rem;
+            line-height: 1;
+            height: 22px;
+            min-width: 0;
+            margin: 0;
+            border-left: 1px solid #373a40;
+            padding-left: 0.75rem;
+        }
+
+        .title-container {
+            display: flex;
+            align-items: center;
+            min-width: 0;
+            gap: 0.75rem;
+        }
+
+        .title-container h2 {
+            padding: 0;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #fff;
+            white-space: nowrap;
+        }
+
+        .custom-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.95);
+            background: #2c2d31;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 400px;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.2s ease;
+            z-index: 2000;
+        }
+
+        .custom-modal.show {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .custom-modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            z-index: 1999;
+        }
+
+        .custom-modal-backdrop.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .custom-modal-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 1rem;
+        }
+
+        .custom-modal-content {
+            color: #c1c2c5;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        .custom-modal-buttons {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+        }
+
+        .custom-modal-button {
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            border: none;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .custom-modal-button.primary {
+            background: #5c7cfa;
+            color: white;
+        }
+
+        .custom-modal-button.secondary {
+            background: #373a40;
+            color: #c1c2c5;
+        }
+
+        .custom-modal-button.danger {
+            background: #e03131;
+            color: white;
+        }
+
+        /* Add styles for quick join button */
+        .quick-join-info {
+            font-size: 0.8rem;
+            color: #868e96;
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+
+        .char-limit {
+            font-size: 0.8rem;
+            color: #868e96;
+            position: absolute;
+            bottom: 0.5rem;
+            right: 0.5rem;
+            padding: 0.2rem 0.5rem;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 4px;
+            z-index: 10;
+        }
+
+        .char-limit.warning {
+            color: #ffd43b;
+        }
+
+        .char-limit.error {
+            color: #ff6b6b;
+        }
+
+        .truncated-warning {
+            background: #2c2d31;
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+            border-radius: 4px;
+            color: #ffd43b;
+            font-size: 0.85rem;
+        }
+
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .workspace-card {
+            background: #2c2d31;
+            border-radius: 8px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .workspace-card:hover {
+            background: #373a40;
+            transform: translateY(-2px);
+        }
+
+        .workspace-card.tutorial {
+            border-left: 2px solid #5c7cfa;
+        }
+
+        .workspace-card.playground {
+            border-left: 2px solid #69db7c;
+        }
+
+        .workspace-card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .workspace-card p {
+            font-size: 0.85rem;
+            color: #868e96;
+            margin: 0;
+        }
+
+        .workspace-divider {
+            margin: 1.5rem 0;
+            border: none;
+            border-top: 1px solid #373a40;
+            position: relative;
+        }
+
+        .workspace-divider::after {
+            content: 'or';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #25262b;
+            padding: 0 1rem;
+            color: #868e96;
+            font-size: 0.9rem;
+        }
+
+        .workspace-info {
+            position: static;
+            background: #2c2d31;
+            padding: 0.25rem 0.4rem;
+            border-radius: 3px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            font-size: 1rem;
+            line-height: 1;
+            max-width: 100%;
+            height: 22px;
+        }
+
+        .workspace-name {
+            color: #868e96;
+            display: flex;
+            align-items: center;
+            gap: 0.2rem;
+            min-width: 0;
+            position: relative;
+            font-size: 0.7rem;
+        }
+
+        .workspace-name span {
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            cursor: pointer;
+            user-select: all;
+        }
+
+        .workspace-name span:hover {
+            color: #fff;
+        }
+
+        .workspace-name span:hover::after {
+            content: attr(data-full-name);
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: #373a40;
+            padding: 0.4rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+            white-space: nowrap;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .copy-link-button {
+            background: #373a40;
+            color: #868e96;
+            border: none;
+            padding: 0.15rem 0.35rem;
+            border-radius: 2px;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.2rem;
+            transition: all 0.15s;
+            height: 18px;
+            flex-shrink: 0;
+            line-height: 1;
+            margin-left: 0.2rem;
+        }
+
+        .copy-link-button:hover {
+            background: #444750;
+            color: #fff;
+        }
+
+        .copy-link-button svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            margin-bottom: 0;
+        }
+
+        .input-group.error input {
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.2);
+        }
+
+        .error-message {
+            color: #ff6b6b;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .input-group.error .error-message {
+            display: block;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0.3rem;
+            font-size: 0.7rem;
+            color: #868e96;
+            z-index: 1;
+        }
+
+        #footer-container {
+            padding: 0rem;
+        }
+
+        .users-list-content ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .users-list-content li {
+            padding: 0.25rem 0.4rem;
+            /* Reduced padding */
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.8rem;
+            /* Smaller font */
+            color: #868e96;
+        }
+
+        .users-list-content li.current-user {
+            background: #373a40;
+            color: #fff;
+        }
+
+        .user-indicator {
+            width: 5px;
+            /* Smaller dot */
+            height: 5px;
+            border-radius: 50%;
+            background: #5c7cfa;
+            flex-shrink: 0;
+        }
+
+        .user-you {
+            color: #5c7cfa;
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+
+        .user-owner {
+            color: #ffd43b;
+            font-size: 0.75rem;
+            opacity: 0.9;
+            margin-left: 0.2rem;
+        }
+
+        .users-list-content li.owner-user {
+            border-left: 2px solid #ffd43b;
+        }
+
+        .users-list-content li.current-user.owner-user {
+            background: linear-gradient(to right, #373a40, #2d2f33);
+        }
+
+        .settings-panel {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: #25262b;
+            border-radius: 6px;
+            padding: 0.75rem;
+            min-width: 200px;
+            z-index: 99;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            display: none;
+            margin-top: 0.5rem;
+            border: 1px solid #373a40;
+        }
+
+        .settings-panel.show {
+            display: block;
+        }
+
+        .settings-panel::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            right: 12px;
+            width: 10px;
+            height: 10px;
+            background: #25262b;
+            transform: rotate(45deg);
+            border-left: 1px solid #373a40;
+            border-top: 1px solid #373a40;
+        }
+
+        .settings-panel h3 {
+            font-size: 0.9rem;
+            color: #868e96;
+            margin-bottom: 0.75rem;
+            font-weight: 500;
+        }
+
+        .settings-group {
+            margin-bottom: 0;
+        }
+
+        .settings-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            padding: 0.25rem 0;
+        }
+
+        .settings-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .settings-item label {
+            color: #c1c2c5;
+            font-size: 0.8rem;
+            user-select: none;
+        }
+
+        .tool-button.primary-button {
+            background: #5c7cfa;
+            color: white;
+        }
+
+        .tool-button.primary-button:hover {
+            background: #4c6ef5;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+    <br />
+    <div>
+        <div id="loginModal" class="modal-overlay">
+            <div class="modal">
+                <h2>Join Code Editor</h2>
+                <div class="workspace-grid">
+                    <div class="workspace-card tutorial" onclick="CodeEditor.joinDefaultWorkspace('Tutorial')">
+                        <h3>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                            </svg>
+                            Tutorial
+                        </h3>
+                        <p>Learn JavaScript basics with interactive examples</p>
+                    </div>
+                    <div class="workspace-card playground" onclick="CodeEditor.joinDefaultWorkspace('Playground')">
+                        <h3>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
+                            Playground
+                        </h3>
+                        <p>Experiment with code in a sandbox environment</p>
+                    </div>
+                </div>
+                <div class="workspace-divider"></div>
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                    <button class="secondary-button" style="flex: 1;" onclick="quickJoin()">Quick Join</button>
+                    <button class="secondary-button" style="flex: 1;" onclick="showCreateWorkspace()">Create New</button>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="username" placeholder="Username" required>
+                    <div class="error-message" id="usernameError"></div>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="workspace" placeholder="Workspace Name" required>
+                    <div class="error-message" id="workspaceError"></div>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="password" placeholder="Workspace Password (optional)">
+                </div>
+                <div class="modal-buttons">
+                    <button class="primary-button" onclick="joinWorkspace()">Join Existing</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="createWorkspaceModal" class="modal-overlay" style="display: none;">
+            <div class="modal">
+                <h2>Create New Workspace</h2>
+                <div class="input-group">
+                    <input type="text" id="newUsername" placeholder="Your Username" required>
+                    <div class="error-message" id="newUsernameError"></div>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="newWorkspace" placeholder="New Workspace Name" required>
+                    <div class="error-message" id="newWorkspaceError"></div>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="newPassword" placeholder="Set Password (optional)">
+                </div>
+                <div class="modal-buttons">
+                    <button class="primary-button" onclick="createWorkspace()">Create</button>
+                    <button class="secondary-button" onclick="showJoinWorkspace()">Back to Join</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="usersList" class="users-list collapsed" style="display: none;">
+            <div class="users-list-header" onclick="toggleUsersList()">
+                <div style="display: flex; align-items: center;">
+                    <span>Connected Users</span>
+                    <span class="users-count" id="usersCount">0</span>
+                </div>
+                <svg class="toggle-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+            </div>
+            <div class="users-list-content">
+                <ul id="usersListItems"></ul>
+            </div>
+        </div>
+
+        <div class="main-container hidden" id="mainContainer">
+            <div style="padding: 1rem;">
+                <div class="base-container">
+                    <div class="editor-container">
+                        <div class="editor-header">
+                            <div class="editor-header-top">
+                                <div class="title-container">
+                                    <h2>JS Editor</h2>
+                                    <div class="workspace-info">
+                                        <div class="workspace-name">
+                                            <span id="currentWorkspace" data-full-name="-">-</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tools-panel">
+                                    <div class="tools-group">
+                                        <button class="tool-button" onclick="CodeEditor.copyWorkspaceLink()" title="Share Workspace">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M16 3H4v16M8 7h16v16H8V7z" />
+                                            </svg>
+                                        </button>
+                                        <button class="tool-button" onclick="clearEditor()" title="Clear">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                            </svg>
+                                        </button>
+                                        <button class="tool-button" onclick="saveCode()" title="Save">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                                                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                                                <polyline points="7 3 7 8 15 8"></polyline>
+                                            </svg>
+                                        </button>
+                                        <button class="tool-button primary-button" onclick="runCode()" title="Run Code (Ctrl+Enter)">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class="tools-divider"></div>
+                                    <button class="tool-button danger" onclick="logout()" title="Logout">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                            <polyline points="16 17 21 12 16 7"></polyline>
+                                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                                        </svg>
+                                    </button>
+                                    <div style="position: relative;">
+                                        <button id="settingsButton" class="tool-button" onclick="CodeEditor.toggleSettings(event)" title="Workspace Settings" style="display: none;">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+                                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z" />
+                                            </svg>
+                                        </button>
+                                        <div id="settingsPanel" class="settings-panel">
+                                            <h3>Workspace Settings</h3>
+                                            <div class="settings-group">
+                                                <div class="settings-item">
+                                                    <label>Read-only Mode</label>
+                                                    <label class="toggle-switch">
+                                                        <input type="checkbox" id="readonlyToggle" onchange="CodeEditor.updateSettings()">
+                                                        <span class="toggle-slider"></span>
+                                                    </label>
+                                                </div>
+                                                <div class="settings-item">
+                                                    <label>Disable Clear</label>
+                                                    <label class="toggle-switch">
+                                                        <input type="checkbox" id="clearDisabledToggle" onchange="CodeEditor.updateSettings()">
+                                                        <span class="toggle-slider"></span>
+                                                    </label>
+                                                </div>
+                                                <div class="settings-item">
+                                                    <label>Disable Run</label>
+                                                    <label class="toggle-switch">
+                                                        <input type="checkbox" id="runDisabledToggle" onchange="CodeEditor.updateSettings()">
+                                                        <span class="toggle-slider"></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="editor-wrapper">
+                            <textarea id="editor"></textarea>
+                            <div id="charLimit" class="char-limit">0/65536</div>
+                        </div>
+                        <div></div>
+                    </div>
+                    <div class="output-container">
+                        <h2>Output</h2>
+                        <div id="output"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="customModalBackdrop" class="custom-modal-backdrop"></div>
+        <div id="customModal" class="custom-modal">
+            <div class="custom-modal-title" id="customModalTitle"></div>
+            <div class="custom-modal-content" id="customModalContent"></div>
+            <div class="custom-modal-buttons" id="customModalButtons"></div>
+        </div>
+
+    </div>
+
+    <script src="/js/libs/codemirror/codemirror.min.js"></script>
+    <script src="/js/libs/codemirror/javascript.min.js"></script>
+    <script type="text/javascript" src="/js/wsh.js"></script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+    <script>
+        const CodeEditor = {
+            ws: null,
+            editor: null,
+            isUpdating: false,
+            activeUsers: [],
+            currentModalResolve: null,
+            currentWorkspace: '',
+            currentUser: '',
+            isOwner: false,
+            settings: {
+                readonly: false,
+                clearDisabled: false,
+                runDisabled: false
+            },
+
+            constants: {
+                adjectives: ['Happy', 'Clever', 'Swift', 'Bright', 'Cool', 'Epic', 'Super', 'Mega', 'Ultra', 'Hyper', 'Mighty', 'Power', 'Magic', 'Epic', 'Awesome', 'Fantastic', 'Great', 'Amazing', 'Wonderful', 'Incredible', 'Terrific', 'Fabulous', 'Marvelous', 'Spectacular', 'Splendid', 'Magnificent', 'Brilliant', 'Genius', 'Smart', 'Intelligent', 'Wise', 'Cunning', 'Crafty', 'Sly', 'Sharp', 'Keen', 'Quick', 'Fast', 'Speedy', 'Rapid', 'Swift', 'Brisk', 'Nimble', 'Agile', 'Active', 'Vigorous', 'Lively', 'Spry', 'Alert', 'Vivid', 'Vibrant', 'Dynamic', 'Energetic', 'Enthusiastic', 'Passionate', 'Fervent', 'Fiery', 'Intense', 'Fierce', 'Strong', 'Powerful', 'Mighty', 'Stout', 'Sturdy', 'Solid', 'Robust', 'Hearty', 'Healthy', 'Fit', 'Sound', 'Whole', 'Hale', 'Hale', 'Hardy', 'Sane', 'Clear', 'Balanced', 'Stable', 'Secure', 'Safe', 'Sure', 'Certain', 'Positive', 'Definite', 'Decisive', 'Determined', 'Resolute', 'Purposeful', 'Intent', 'Serious', 'Earnest', 'Sincere', 'Genuine', 'Real', 'True', 'Honest', 'Fair', 'Just', 'Right', 'Correct', 'Proper', 'Accurate', 'Exact', 'Precise', 'True', 'Real', 'Actual', 'Genuine', 'Authentic', 'Valid', 'Legit', 'Legal', 'Lawful', 'Official', 'Approved', 'Accepted', 'Popular', 'Trendy', 'Stylish', 'Chic', 'Cool', 'Hip', 'In', 'Now', 'Current', 'Present', 'Recent', 'New', 'Fresh', 'Modern', 'Latest', 'Up-to-date', 'Cutting-edge', 'State-of-the-art', 'Advanced', 'Innovative', 'Revolutionary', 'Progressive', 'Forwardthinking', 'Visionary', 'Pioneering', 'Groundbreaking', 'Trailblazing'],
+                nouns: ['Coder', 'Dev', 'Ninja', 'Guru', 'Wizard', 'Master', 'Hero', 'Star', 'Pro', 'Expert', 'Champion', 'Legend', 'Virtuoso', 'Maestro', 'Savant', 'Whiz', 'Brain', 'Mind', 'Intellect', 'Genius', 'Prodigy', 'Sage', 'Scholar', 'Savant', 'Pundit', 'Savvy', 'Ace', 'Hotshot', 'Whiz', 'Whizz', 'Wiz', 'Maven', 'Mavin', 'Buff', 'Fan', 'Aficionado', 'Enthusiast', 'Devotee', 'Lover', 'Addict', 'Maniac'],
+                workspaceThemes: ['Forest', 'Ocean', 'Mountain', 'Desert', 'Space', 'City', 'Island', 'Valley', 'River', 'Cloud', 'Tree', 'Flower', 'Sun', 'Moon', 'Star', 'Sky', 'Rain', 'Snow', 'Storm', 'Wind', 'Fire', 'Earth', 'Metal', 'Water', 'Wood', 'Stone', 'Sand', 'Ice', 'Lava', 'Magma', 'Volcano', 'Cave', 'Canyon', 'Jungle', 'Savanna', 'Tundra', 'Arctic', 'Antarctic', 'Tropical', 'Polar', 'Urban', 'Rural', 'Suburban', 'Industrial', 'Commercial', 'Residential', 'Historic', 'Modern', 'Futuristic', 'Ancient', 'Medieval', 'Renaissance', 'Baroque', 'Gothic', 'Romanesque', 'Byzantine', 'Druid', 'Viking', 'Celtic', 'Greek', 'Roman', 'Egyptian', 'Mayan', 'Aztec', 'Inca', 'Native', 'Aboriginal', 'Maori', 'Polynesian', 'Hawaiian', 'Samoan', 'Tongan', 'Fijian', 'Māori', 'Tahitian', 'Marquesan', 'Rapa Nui', 'Rarotongan', 'Niuean', 'Tokelauan', 'Tuvaluan', 'Kiribati', 'Nauruan', 'Palauan', 'Marshallese', 'Chamorro', 'Carolinian', 'Kosraean', 'Pohnpeian', 'Chuukese', 'Yapese', 'Mokilese', 'Pingelapese', 'Kapingamarangi', 'Nukuoro', 'Samoan', 'Tokelauan', 'Tuvaluan', 'Wallisian', 'Futunan', 'Fijian', 'Rotuman', 'Tongan', 'Niuean', 'CookIslandMaori', 'Tahitian', 'Marquesan', 'Hawaiian', 'RapaNui']
+            },
+
+            MAX_CHARS: 65536,
+
+            showCustomModal({ title, content, buttons }) {
+                const modal = document.getElementById('customModal');
+                const backdrop = document.getElementById('customModalBackdrop');
+                const titleEl = document.getElementById('customModalTitle');
+                const contentEl = document.getElementById('customModalContent');
+                const buttonsEl = document.getElementById('customModalButtons');
+
+                titleEl.textContent = title;
+                contentEl.textContent = content;
+                buttonsEl.innerHTML = buttons.map(btn => `
+                    <button class="custom-modal-button ${btn.type}" onclick="CodeEditor.handleModalAction('${btn.action}')">
+                        ${btn.text}
+                    </button>
+                `).join('');
+
+                modal.classList.add('show');
+                backdrop.classList.add('show');
+                return new Promise(resolve => {
+                    this.currentModalResolve = resolve;
+                });
+            },
+
+            handleModalAction(action) {
+                const modal = document.getElementById('customModal');
+                const backdrop = document.getElementById('customModalBackdrop');
+                modal.classList.remove('show');
+                backdrop.classList.remove('show');
+                if (this.currentModalResolve) {
+                    this.currentModalResolve(action);
+                    this.currentModalResolve = null;
+                }
+            },
+
+            generateRandomName() {
+                const adj = this.constants.adjectives[Math.floor(Math.random() * this.constants.adjectives.length)];
+                const noun = this.constants.nouns[Math.floor(Math.random() * this.constants.nouns.length)];
+                return `${adj}${noun}`;
+            },
+
+            generateWorkspaceName() {
+                const theme = this.constants.workspaceThemes[Math.floor(Math.random() * this.constants.workspaceThemes.length)];
+                const id = Math.random().toString(36).substring(2, 6);
+                return `${theme}${id}`;
+            },
+
+            async quickJoin() {
+                const username = this.generateRandomName();
+                const workspace = this.generateWorkspaceName();
+
+                const action = await this.showCustomModal({
+                    title: 'Quick Join',
+                    content: `Creating new workspace "${workspace}" as "${username}"`,
+                    buttons: [
+                        { text: 'Cancel', type: 'secondary', action: 'cancel' },
+                        { text: 'Create & Join', type: 'primary', action: 'confirm' }
+                    ]
+                });
+
+                if (action === 'confirm') {
+                    this.initEditor();
+                    this.initWebSocket(username, workspace, '', true);
+                }
+            },
+
+            validateField(inputId, errorId, value, minLength, fieldName) {
+                const inputGroup = document.getElementById(inputId).parentNode;
+                const errorElement = document.getElementById(errorId);
+
+                if (!value) {
+                    this.showFieldError(inputGroup, errorElement, `${fieldName} is required`);
+                    return false;
+                }
+
+                if (value.length < minLength) {
+                    this.showFieldError(inputGroup, errorElement, `${fieldName} must be at least ${minLength} characters`);
+                    return false;
+                }
+
+                if (/^(system|admin|root|owner|moderator|bot)$/i.test(value)) {
+                    this.showFieldError(inputGroup, errorElement, `This username is not allowed`);
+                    return false;
+                }
+
+                inputGroup.classList.remove('error');
+                errorElement.textContent = '';
+                return true;
+            },
+
+            showFieldError(inputGroup, errorElement, message) {
+                inputGroup.classList.add('error');
+                errorElement.textContent = message;
+            },
+
+            handleServerError(message) {
+                const usernameInput = document.getElementById('username');
+                const newUsernameInput = document.getElementById('newUsername');
+                const errorElement = document.getElementById('usernameError') || document.getElementById('newUsernameError');
+
+                if (errorElement && (message.includes("username") || message.includes("Username"))) {
+                    const inputGroup = errorElement.parentNode;
+                    this.showFieldError(inputGroup, errorElement, message);
+                } else {
+                    this.showCustomModal({
+                        title: 'Error',
+                        content: message,
+                        buttons: [
+                            { text: 'Ok', type: 'primary', action: 'close' }
+                        ]
+                    });
+                }
+            },
+
+            joinWorkspace() {
+                const username = document.getElementById('username').value;
+                const workspace = document.getElementById('workspace').value;
+                const password = document.getElementById('password').value;
+
+                const isUsernameValid = this.validateField('username', 'usernameError', username, 2, 'Username');
+                const isWorkspaceValid = this.validateField('workspace', 'workspaceError', workspace, 3, 'Workspace name');
+
+                if (!isUsernameValid || !isWorkspaceValid) {
+                    return;
+                }
+
+                this.initEditor();
+                this.initWebSocket(username, workspace, password, false);
+            },
+
+            showCreateWorkspace() {
+                document.getElementById('loginModal').style.display = 'none';
+                document.getElementById('createWorkspaceModal').style.display = 'flex';
+
+                const username = document.getElementById('username').value;
+                if (username) {
+                    document.getElementById('newUsername').value = username;
+                }
+            },
+
+            showJoinWorkspace() {
+                document.getElementById('createWorkspaceModal').style.display = 'none';
+                document.getElementById('loginModal').style.display = 'flex';
+            },
+
+            createWorkspace() {
+                const username = document.getElementById('newUsername').value;
+                const workspace = document.getElementById('newWorkspace').value;
+                const password = document.getElementById('newPassword').value;
+
+                const isUsernameValid = this.validateField('newUsername', 'newUsernameError', username, 2, 'Username');
+                const isWorkspaceValid = this.validateField('newWorkspace', 'newWorkspaceError', workspace, 3, 'Workspace name');
+
+                if (!isUsernameValid || !isWorkspaceValid) {
+                    return;
+                }
+
+                document.getElementById('createWorkspaceModal').style.display = 'none';
+                document.getElementById('usersList').style.display = 'block';
+
+                this.initEditor();
+                this.initWebSocket(username, workspace, password, true);
+            },
+
+            toggleUsersList() {
+                const usersList = document.getElementById('usersList');
+                usersList.classList.toggle('collapsed');
+            },
+
+            updateUsersList(users) {
+                const list = document.getElementById('usersListItems');
+                const count = document.getElementById('usersCount');
+                this.activeUsers = users;
+
+                list.innerHTML = users.map(user => {
+                    const username = user.username;
+                    const isCurrentUser = username === this.currentUser;
+                    const isOwner = user.isOwner;
+                    const classes = [
+                        isCurrentUser ? 'current-user' : '',
+                        isOwner ? 'owner-user' : ''
+                    ].filter(Boolean).join(' ');
+
+                    return `<li class="${classes}">
+                        ${isCurrentUser ? '<span class="user-indicator"></span>' : ''}
+                        ${username}
+                        ${isCurrentUser ? '<span class="user-you">(you)</span>' : ''}
+                        ${isOwner ? '<span class="user-owner">👑 owner</span>' : ''}
+                    </li>`;
+                }).join('');
+
+                count.textContent = users.length;
+
+                if (document.getElementById('settingsButton')) {
+                    document.getElementById('settingsButton').style.display =
+                        users.find(u => u.username === this.currentUser)?.isOwner ? 'flex' : 'none';
+                }
+            },
+
+            initWebSocket(username, workspace, password, isNewWorkspace) {
+                this.currentUser = username;
+                this.currentWorkspace = workspace;
+                this.ws = new WebSocket(`ws://${wsAddr}`);
+
+                this.ws.onopen = () => {
+                    console.log('Connected to server');
+                    const workspaceEl = document.getElementById('currentWorkspace');
+                    workspaceEl.textContent = workspace;
+                    workspaceEl.setAttribute('data-full-name', workspace);
+                    this.ws.send(JSON.stringify({
+                        type: 'codeEditorJoin',
+                        data: {
+                            username,
+                            workspace,
+                            password,
+                            isNewWorkspace
+                        }
+                    }));
+                };
+
+                this.ws.onmessage = (event) => {
+                    const message = JSON.parse(event.data);
+
+                    switch (message.type) {
+                        case 'codeEditorUpdate':
+                            if (message.data.isOwner !== undefined) {
+                                this.isOwner = message.data.isOwner;
+                                document.getElementById('settingsButton').style.display = this.isOwner ? 'flex' : 'none';
+                            }
+                            if (!this.isUpdating) {
+                                this.isUpdating = true;
+
+
+                                this.initEditor();
+                                if (message.data.code !== undefined) {
+                                    this.editor.setValue(message.data.code);
+                                }
+                                this.isUpdating = false;
+                            }
+                            this.showEditorInterface();
+                            break;
+
+                        case 'codeEditorUserList':
+                            this.updateUsersList(message.data.users, message.data.ownerUserId);
+                            break;
+
+                        case 'codeEditorError':
+                            this.handleServerError(message.data.message);
+                            break;
+
+                        case 'codeEditorSettingsUpdate':
+                            this.applySettings(message.data.settings);
+                            break;
+
+                        case 'codeEditorRun':
+                            if (message.data.triggeredBy !== this.currentUser) {
+                                // Someone else ran the code
+                                this.isUpdating = true;
+                                this.editor.setValue(message.data.code);
+                                this.isUpdating = false;
+                                this.executeCode(message.data.code);
+
+                                // Show notification
+                                const output = document.getElementById('output');
+                                output.innerHTML = `<div style="color: #5c7cfa; margin-bottom: 0.5rem;">
+                                    💻 Code executed by ${message.data.triggeredBy}
+                                </div>` + output.innerHTML;
+                            }
+                            break;
+                    }
+                };
+
+                this.ws.onclose = () => {
+                    console.log('Disconnected from server');
+                    if (this.editor) {
+                        setTimeout(() => this.initWebSocket(username, workspace, password, false), 1000);
+                    }
+                };
+            },
+
+            showEditor() {
+                const mainContainer = document.getElementById('mainContainer');
+                mainContainer.classList.remove('hidden');
+                setTimeout(() => {
+                    mainContainer.classList.add('visible');
+                }, 50);
+            },
+
+            showEditorInterface() {
+                document.getElementById('loginModal').style.display = 'none';
+                document.getElementById('createWorkspaceModal').style.display = 'none';
+                document.getElementById('usersList').style.display = 'block';
+                this.showEditor();
+            },
+
+            initEditor() {
+                const codeMirrorElements = document.querySelectorAll('.CodeMirror');
+                codeMirrorElements.forEach(el => el.remove());
+
+                this.editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
+                    mode: 'javascript',
+                    theme: 'dracula',
+                    lineNumbers: true,
+                    autoCloseBrackets: true,
+                    matchBrackets: true,
+                    tabSize: 2,
+                    extraKeys: {
+                        "Ctrl-Enter": (cm) => this.runCode(),
+                        "Cmd-Enter": (cm) => this.runCode()
+                    }
+                });
+
+                const charLimit = document.getElementById('charLimit');
+
+                this.editor.on('change', (cm, change) => {
+                    if (!this.isUpdating) {
+                        const code = cm.getValue();
+                        const length = code.length;
+
+                        charLimit.textContent = `${length}/${this.MAX_CHARS}`;
+                        if (length > this.MAX_CHARS * 0.9) {
+                            charLimit.classList.add('warning');
+                        } else {
+                            charLimit.classList.remove('warning');
+                        }
+
+                        if (length > this.MAX_CHARS) {
+                            charLimit.classList.add('error');
+                            cm.setValue(code.substring(0, this.MAX_CHARS));
+                            this.showCustomModal({
+                                title: 'Character Limit Reached',
+                                content: `The code has been truncated to ${this.MAX_CHARS} characters.`,
+                                buttons: [
+                                    { text: 'Ok', type: 'primary', action: 'close' }
+                                ]
+                            });
+                            return;
+                        }
+
+                        this.ws.send(JSON.stringify({
+                            type: 'codeEditorUpdate',
+                            data: { code: code }
+                        }));
+                    }
+                });
+            },
+
+            executeCode(code) {
+                const output = document.getElementById('output');
+                try {
+                    const runInSandbox = new Function('code', `
+                        try {
+                            const logs = [];
+                            const originalLog = console.log;
+                            console.log = (...args) => {
+                                logs.push(args.map(arg => 
+                                    typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+                                ).join(' '));
+                            };
+                            
+                            let result = eval(code);
+                            
+                            // Handle promises
+                            if (result instanceof Promise) {
+                                result.then(r => {
+                                    console.log('=> ' + (r !== undefined ? r : 'undefined'));
+                                }).catch(e => {
+                                    console.log('Error: ' + e);
+                                });
+                                result = undefined; // Don't return promise result directly
+                            }
+                            
+                            console.log = originalLog;
+                            
+                            return {
+                                logs,
+                                result: result !== undefined ? 
+                                    (typeof result === 'object' ? 
+                                        JSON.stringify(result, null, 2) : 
+                                        String(result)
+                                    ) : undefined
+                            };
+                        } catch (error) {
+                            return { error: error.toString() };
+                        }
+                    `);
+
+                    const { logs, result, error } = runInSandbox(code);
+
+                    if (error) {
+                        output.innerHTML = `<div class="error">${error}</div>`;
+                    } else {
+                        let outputText = '';
+                        if (logs && logs.length > 0) {
+                            outputText += logs.map(log => `<div>${log}</div>`).join('\n');
+                        }
+                        if (result !== undefined) {
+                            outputText += `<div class="result">=> ${result}</div>`;
+                        }
+
+                        if (outputText.length > this.MAX_CHARS) {
+                            outputText = outputText.substring(0, this.MAX_CHARS);
+                            outputText += `\n<div class="truncated-warning">Output truncated to ${this.MAX_CHARS} characters</div>`;
+                        }
+
+                        output.innerHTML = outputText || '<div class="info">(no output)</div>';
+                    }
+                } catch (error) {
+                    output.innerHTML = `<div class="error">Error: ${error.toString()}</div>`;
+                }
+            },
+
+            runCode() {
+                if (this.settings.runDisabled && !this.isOwner) {
+                    this.showCustomModal({
+                        title: 'Action Restricted',
+                        content: 'Only the workspace owner can run code.',
+                        buttons: [{ text: 'Ok', type: 'primary', action: 'close' }]
+                    });
+                    return;
+                }
+
+                const code = this.editor.getValue();
+                const output = document.getElementById('output');
+                this.executeCode(code);
+
+                this.ws.send(JSON.stringify({
+                    type: 'codeEditorRun',
+                    data: {
+                        code: code,
+                        output: output.innerHTML,
+                    }
+                }));
+            },
+
+            async clearEditor() {
+                if (this.settings.clearDisabled && !this.isOwner) {
+                    this.showCustomModal({
+                        title: 'Action Restricted',
+                        content: 'Only the workspace owner can clear the editor.',
+                        buttons: [{ text: 'Ok', type: 'primary', action: 'close' }]
+                    });
+                    return;
+                }
+                const confirmed = await this.showCustomModal({
+                    title: 'Clear Editor',
+                    content: 'Are you sure you want to clear the editor? This action cannot be undone.',
+                    buttons: [
+                        { text: 'Cancel', type: 'secondary', action: 'cancel' },
+                        { text: 'Clear', type: 'danger', action: 'confirm' }
+                    ]
+                });
+
+                if (confirmed === 'confirm') {
+                    this.initEditor();
+                }
+            },
+
+            saveCode() {
+                const code = this.editor.getValue();
+                const blob = new Blob([code], { type: 'text/javascript' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'code.js';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            },
+
+            async logout() {
+                const confirmed = await this.showCustomModal({
+                    title: 'Logout Confirmation',
+                    content: 'Are you sure you want to logout? Any unsaved changes will be lost.',
+                    buttons: [
+                        { text: 'Cancel', type: 'secondary', action: 'cancel' },
+                        { text: 'Logout', type: 'danger', action: 'confirm' }
+                    ]
+                });
+
+                if (confirmed === 'confirm') {
+                    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+                        this.ws.close();
+                    }
+                    this.editor = null;
+                    document.getElementById('mainContainer').classList.remove('visible');
+                    setTimeout(() => {
+                        document.getElementById('mainContainer').classList.add('hidden');
+                        document.getElementById('usersList').style.display = 'none';
+                        document.getElementById('loginModal').style.display = 'flex';
+                        document.getElementById('username').value = '';
+                        document.getElementById('workspace').value = '';
+                        document.getElementById('password').value = '';
+                    }, 300);
+                }
+            },
+
+            async joinDefaultWorkspace(name) {
+                const username = this.generateRandomName();
+                const workspace = name;
+
+                const action = await this.showCustomModal({
+                    title: 'Join Default Workspace',
+                    content: `Joining "${workspace}" as "${username}"`,
+                    buttons: [
+                        { text: 'Cancel', type: 'secondary', action: 'cancel' },
+                        { text: 'Join', type: 'primary', action: 'confirm' }
+                    ]
+                });
+
+                if (action === 'confirm') {
+                    this.initEditor();
+                    this.initWebSocket(username, workspace, '', false);
+                }
+            },
+
+            copyWorkspaceLink() {
+                const url = new URL(window.location.href);
+                url.searchParams.set('workspace', this.currentWorkspace);
+
+                const passwordInput = document.getElementById('password');
+                const newPasswordInput = document.getElementById('newPassword');
+                const password = passwordInput.value || newPasswordInput.value;
+
+                if (password) {
+                    url.searchParams.set('password', password);
+                }
+
+                navigator.clipboard.writeText(url.toString()).then(() => {
+                    this.showCustomModal({
+                        title: 'Link Copied',
+                        content: `Workspace link has been copied to clipboard!\n\nUsers can join by opening the link and entering their username.${password ? '\n\nPassword is included in the link.' : ''}`,
+                        buttons: [
+                            { text: 'Ok', type: 'primary', action: 'close' }
+                        ]
+                    });
+                }).catch(err => {
+                    this.showCustomModal({
+                        title: 'Error',
+                        content: 'Failed to copy link to clipboard',
+                        buttons: [
+                            { text: 'Ok', type: 'primary', action: 'close' }
+                        ]
+                    });
+                });
+            },
+
+            toggleSettings(event) {
+                event?.stopPropagation(); // Stop the click from bubbling up
+                const panel = document.getElementById('settingsPanel');
+                panel.classList.toggle('show');
+            },
+
+            handleClickOutside(event) {
+                const settingsPanel = document.getElementById('settingsPanel');
+                const settingsButton = document.getElementById('settingsButton');
+
+                if (settingsPanel.classList.contains('show') &&
+                    !settingsPanel.contains(event.target) &&
+                    !settingsButton.contains(event.target)) {
+                    settingsPanel.classList.remove('show');
+                }
+            },
+
+            updateSettings() {
+                if (!this.isOwner) return;
+
+                const settings = {
+                    readonly: document.getElementById('readonlyToggle').checked,
+                    clearDisabled: document.getElementById('clearDisabledToggle').checked,
+                    runDisabled: document.getElementById('runDisabledToggle').checked
+                };
+
+                this.ws.send(JSON.stringify({
+                    type: 'codeEditorUpdateSettings',
+                    data: { settings }
+                }));
+            },
+
+            applySettings(settings) {
+                this.settings = settings;
+
+                // Update UI
+                document.getElementById('readonlyToggle').checked = settings.readonly;
+                document.getElementById('clearDisabledToggle').checked = settings.clearDisabled;
+                document.getElementById('runDisabledToggle').checked = settings.runDisabled;
+
+                // Update editor state
+                if (this.editor) {
+                    this.editor.setOption('readOnly', settings.readonly && !this.isOwner);
+                }
+            },
+
+            init() {
+                const style = document.createElement('style');
+                style.textContent = `
+                    #output .info {
+                        color: #868e96;
+                        font-style: italic;
+                    }
+                    #output div {
+                        margin: 2px 0;
+                        word-wrap: break-word;
+                    }
+                `;
+                document.head.appendChild(style);
+
+                document.getElementById('loginModal').style.display = 'flex';
+                document.getElementById('mainContainer').classList.add('hidden');
+
+                window.CodeEditor = this;
+
+                window.quickJoin = () => this.quickJoin();
+                window.joinWorkspace = () => this.joinWorkspace();
+                window.createWorkspace = () => this.createWorkspace();
+                window.showCreateWorkspace = () => this.showCreateWorkspace();
+                window.showJoinWorkspace = () => this.showJoinWorkspace();
+                window.clearEditor = () => this.clearEditor();
+                window.saveCode = () => this.saveCode();
+                window.logout = () => this.logout();
+                window.runCode = () => this.runCode();
+                window.toggleUsersList = () => this.toggleUsersList();
+                window.joinDefaultWorkspace = (name) => this.joinDefaultWorkspace(name);
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const workspaceParam = urlParams.get('workspace');
+                const usernameParam = urlParams.get('username');
+                const passwordParam = urlParams.get('password');
+
+                if (workspaceParam) {
+                    if (usernameParam) {
+                        setTimeout(() => {
+                            this.initEditor();
+                            this.initWebSocket(usernameParam, workspaceParam, passwordParam || '', false);
+                        }, 100);
+                    } else {
+                        document.getElementById('workspace').value = workspaceParam;
+                        if (passwordParam) {
+                            document.getElementById('password').value = passwordParam;
+                        }
+                    }
+                }
+
+                // Add click outside listener
+                document.addEventListener('click', this.handleClickOutside);
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => CodeEditor.init());
+    </script>
+
+</body>
+
+</html>
