@@ -117,7 +117,6 @@ class DocumentEditorContext {
   }
 
   isUsernameAvailable(username) {
-    // Check across all documents' active users
     for (const users of this.activeUsers.values()) {
       if (users.has(username)) {
         return false;
