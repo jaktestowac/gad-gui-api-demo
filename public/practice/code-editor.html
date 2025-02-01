@@ -159,6 +159,12 @@
                                                 <polygon points="5 3 19 12 5 21 5 3"></polygon>
                                             </svg>
                                         </button>
+                                        <button class="tool-button" onclick="CodeEditor.toggleLayout()" title="Toggle Layout">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <rect x="3" y="3" width="18" height="18" rx="2" />
+                                                <line x1="12" y1="3" x2="12" y2="21" />
+                                            </svg>
+                                        </button>
                                     </div>
                                     <div class="tools-divider"></div>
                                     <button class="tool-button danger" onclick="logout()" title="Logout">
@@ -1313,7 +1319,19 @@
                 }
 
                 document.addEventListener('click', this.handleClickOutside);
-            }
+            },
+
+            isVerticalLayout: false,
+
+            toggleLayout() {
+                this.isVerticalLayout = !this.isVerticalLayout;
+                const container = document.querySelector('.base-container');
+                container.classList.toggle('vertical-layout', this.isVerticalLayout);
+
+                if (this.editor) {
+                    this.editor.refresh();
+                }
+            },
         };
 
         document.addEventListener('DOMContentLoaded', () => CodeEditor.init());
