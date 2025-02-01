@@ -1182,7 +1182,7 @@ footer {
 }
 
 .workspace-list-badge {
-  font-size: 0.7rem;
+  font-size: 0.6rem;
   padding: 0.2rem 0.4rem;
   border-radius: 3px;
   font-weight: 500;
@@ -1195,6 +1195,11 @@ footer {
 
 .workspace-list-badge.private {
   background: #e8590c;
+  color: #fff;
+}
+
+.workspace-list-badge.template {
+  background: #5c7cfa;
   color: #fff;
 }
 
