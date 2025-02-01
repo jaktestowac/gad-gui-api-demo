@@ -562,7 +562,6 @@
             },
 
             showEditorInterface() {
-                // Update URL to remove username parameter once connected
                 const url = new URL(window.location.href);
                 url.searchParams.delete('username');
                 window.history.pushState({}, '', url.toString());
@@ -642,7 +641,6 @@
                 }
 
                 try {
-                    // Direct evaluation in the current context for simplicity
                     const originalLog = console.log;
                     const originalError = console.error;
 
@@ -662,7 +660,6 @@
                     try {
                         let result = await eval(code);
 
-                        // Only show result if it's not undefined and not from console.log
                         if (result !== undefined && !code.trim().startsWith('console.')) {
                             const formattedResult = typeof result === 'object' ?
                                 JSON.stringify(result, null, 2) : String(result);
@@ -676,7 +673,6 @@
                         console.error = originalError;
                     }
 
-                    // Show empty state if no output
                     if (output.children.length === 0) {
                         output.innerHTML = '<div class="info">(no output)</div>';
                     }
