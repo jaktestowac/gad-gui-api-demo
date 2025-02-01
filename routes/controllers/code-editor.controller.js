@@ -9,7 +9,7 @@ class CodeEditorContext {
     this.currentCode = "";
     this.codeOutput = "";
 
-    this.workspaces = {
+    this.predefinedWorkspaces = {
       Tutorial: {
         code: `// Welcome to the JavaScript Code Editor!
 // Here are some examples to get you started:
@@ -253,9 +253,82 @@ console.log('Optional chain:', data?.user?.address?.street);`,
         password: "",
         users: [],
         owner: "system",
-      }
+      },
+      ES20Features: {
+        code: `// ES2020 JavaScript Features
+
+// Nullish coalescing operator
+const value = null;
+const result = value ?? 'default';
+console.log('Nullish coalescing:', result);
+
+// Optional catch binding
+try {
+    throw new Error('Example error');
+} catch {
+    console.log('Caught error');
+}
+
+// Optional Chaining Operator (?.)
+const data = { user: { address: null } };
+console.log('Optional chain:', data?.user?.address?.street);
+
+// Logical AND Assignment Operator (&&=)
+let count = 0;
+count &&= 5;
+console.log('Logical AND assignment:', count);
+
+// Logical OR Assignment (||=)
+let name = 'John';
+name ||= 'Guest';
+console.log('Logical OR assignment:', name);
+
+// Nullish Coalescing Assignment (??=)
+let value2 = null;
+value2 ??= 'default';
+console.log('Nullish coalescing assignment:', value2);
+`,
+        output: "",
+        password: "",
+        users: [],
+        owner: "system",
+      },
+      ES21Features: {
+        code: `// ES2021 JavaScript Features
+`,
+      },
+      ES22Features: {
+        code: `// ES22 JavaScript Features
+
+// Private fields
+class Person {
+  name = 'John Doe'; // Public field
+  #age = 30; // Private field
+
+  getAge() {
+    return this.#age;
+  }
+}
+
+const person = new Person();
+console.log(person.name); // John Doe
+console.log(person.getAge()); // 30
+// console.log(person.#age); // Error: Private field
+
+// Array at() method
+const arr = [10, 20, 30, 40];
+
+console.log(arr.at(1)); // 20
+console.log(arr.at(-1)); // 40
+`,
+        output: "",
+        password: "",
+        users: [],
+        owner: "system",
+      },
     };
 
+    this.workspaces = JSON.parse(JSON.stringify(this.predefinedWorkspaces));
     this.workspaceSettings = {};
   }
 
@@ -347,6 +420,25 @@ console.log('Optional chain:', data?.user?.address?.street);`,
       return { valid: false, message: "This username is restricted" };
     }
     return { valid: true };
+  }
+
+  getWorkspaceStatus(workspaceId) {
+    const workspace = this.workspaces[workspaceId];
+    if (!workspace) return null;
+
+    return {
+      name: workspaceId,
+      isPrivate: Boolean(workspace.password),
+      userCount: workspace.users?.length || 0,
+      isTemplate: Boolean(this.predefinedWorkspaces[workspaceId]),
+    };
+  }
+
+  getActiveWorkspaces() {
+    return Object.keys(this.workspaces).reduce((acc, workspaceId) => {
+      acc[workspaceId] = this.getWorkspaceStatus(workspaceId);
+      return acc;
+    }, {});
   }
 }
 
@@ -451,6 +543,43 @@ const codeEditorHandlers = {
     });
   },
 
+  codeEditorGetPredefinedWorkspace: (context, ws, data) => {
+    const { workspace } = data.data;
+    const template = context.predefinedWorkspaces[workspace];
+    const workspaceData = context.getWorkspace(workspace);
+
+    if (template && workspaceData) {
+      workspaceData.code = template.code;
+    } else {
+      ws.send(
+        JSON.stringify({
+          type: "codeEditorError",
+          data: { message: "Predefined workspace not found" },
+        })
+      );
+    }
+
+    if (template) {
+      ws.send(
+        JSON.stringify({
+          type: "codeEditorUpdate",
+          data: {
+            code: template.code,
+            output: "",
+            isTemplate: true,
+          },
+        })
+      );
+    } else {
+      ws.send(
+        JSON.stringify({
+          type: "codeEditorError",
+          data: { message: "Predefined workspace not found" },
+        })
+      );
+    }
+  },
+
   codeEditorUpdate: (context, ws, data) => {
     if (data.data?.code !== undefined && ws.workspace) {
       if (data.data.code.length > 65536) {
@@ -542,6 +671,16 @@ const codeEditorHandlers = {
         }
       }
     }
+  },
+
+  codeEditorGetActiveWorkspaces: (context, ws) => {
+    const workspaces = context.getActiveWorkspaces();
+    ws.send(
+      JSON.stringify({
+        type: "activeWorkspaces",
+        data: { workspaces },
+      })
+    );
   },
 };
 
