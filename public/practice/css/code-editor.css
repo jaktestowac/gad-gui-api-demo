@@ -148,6 +148,7 @@ button:active {
 .users-list.collapsed {
   min-width: auto;
   width: auto;
+  display: none;
 }
 
 .users-list-header {
@@ -179,10 +180,6 @@ button:active {
   max-height: 300px;
   overflow-y: auto;
   transition: all 0.3s ease;
-}
-
-.users-list.collapsed .users-list-content {
-  display: none;
 }
 
 .toggle-icon {
@@ -494,7 +491,7 @@ button:active {
 }
 
 .char-limit {
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   color: #868e96;
   position: absolute;
   bottom: 0.5rem;
@@ -503,14 +500,28 @@ button:active {
   background: rgba(0, 0, 0, 0.5);
   border-radius: 4px;
   z-index: 10;
+  bottom: 14px;
+  right: 14px;
+  transition: all 0.3s ease;
+  background: #2d333b9d;
+}
+textarea {
+  word-break: break-word;
+}
+.CodeMirror-wrap pre {
+  word-break: break-word;
 }
 
+.char-limit.safe {
+  /* color: #69db7c; */
+}
 .char-limit.warning {
   color: #ffd43b;
+  font-weight: bold;
 }
-
 .char-limit.error {
   color: #ff6b6b;
+  font-weight: bold;
 }
 
 .truncated-warning {
@@ -549,6 +560,18 @@ button:active {
 
 .workspace-card.playground {
   border-left: 2px solid #69db7c;
+}
+
+.workspace-card.challenge {
+  border-left: 2px solid #ffd43b;
+}
+
+.workspace-card.features {
+  border-left: 2px solid #ff6b6b;
+}
+
+.workspace-card.advanced {
+  border-left: 2px solid #c05cfa;
 }
 
 .workspace-card h3 {
@@ -900,12 +923,32 @@ footer {
 .workspace-tag {
   display: inline-block;
   padding: 0.15rem 0.4rem;
-  background: #373a40;
+  background: #383b40;
   color: #868e96;
   border-radius: 12px;
   font-size: 0.7rem;
   margin-right: 0.2rem;
   margin-bottom: 0.2rem;
+}
+
+.workspace-tag.tutorial {
+  background: #192f52;
+}
+
+.workspace-tag.playground {
+  background: #1a5e14;
+}
+
+.workspace-tag.features {
+  background: #431d6e;
+}
+
+.workspace-tag.challenge {
+  background: #6e3d1d;
+}
+
+.workspace-tag.advanced {
+  background: #721e1e;
 }
 
 .workspace-description {
@@ -1310,6 +1353,26 @@ footer {
   margin-top: 0.15rem;
 }
 
+.setting-description {
+  color: #868e96;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  margin-bottom: 1rem;
+  font-style: italic;
+}
+
+/* Ensure toggle switch appears in modal */
+.modal .settings-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 1rem 0;
+}
+
+.modal .toggle-switch {
+  margin-left: 1rem;
+}
+
 @media (max-width: 1400px) {
   .base-container {
     padding: 0 1rem;
@@ -1341,4 +1404,146 @@ footer {
   .base-container.vertical-layout .editor-container {
     flex: 0 0 50%;
   }
+}
+#output .info {
+  color: #868e96;
+  font-style: italic;
+}
+#output div {
+  margin: 4px 0;
+  word-wrap: break-word;
+  padding: 2px 0;
+}
+#output .log {
+  color: #e9ecef;
+}
+#output .error {
+  color: #ff6b6b;
+  border-left: 3px solid #ff6b6b;
+  padding-left: 8px;
+  margin: 4px 0;
+}
+#output .result {
+  color: #69db7c;
+  border-left: 3px solid #69db7c;
+  padding-left: 8px;
+  margin: 4px 0;
+}
+.output-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.output-header h2 {
+  margin: 0;
+}
+
+.output-header .tool-button {
+  padding: 4px;
+  width: 28px;
+  height: 28px;
+}
+
+.output-header .tool-button svg {
+  width: 16px;
+  height: 16px;
+}
+
+.users-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 8px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  margin-left: 8px;
+}
+
+.users-list-header:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.users-count {
+  margin-left: 6px;
+  font-size: 14px;
+}
+
+.toggle-icon {
+  margin-left: 6px;
+  transition: transform 0.2s;
+}
+
+.users-list.collapsed .toggle-icon {
+  transform: rotate(180deg);
+}
+.users-list {
+  position: absolute;
+  right: 8px;
+  top: 80px;
+  background: #2d333b;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  min-width: 200px;
+}
+
+.users-list.show {
+  display: block;
+}
+
+.users-list-content {
+  padding: 8px;
+}
+
+.users-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.users-list li {
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.users-list li:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.users-list .current-user {
+  background: rgba(92, 124, 250, 0.1);
+}
+
+.user-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #5c7cfa;
+}
+
+.user-you {
+  color: #868e96;
+  font-size: 0.9em;
+}
+
+.user-owner {
+  color: #ffd43b;
+  font-size: 0.9em;
+}
+
+.editor-output-header {
+  position: relative;
+}
+.cm-selectionBackground,
+.cm-editor ::selection {
+  background-color: #b16f6f !important;
+}
+.CodeMirror-selected {
+  background-color: #b16868 !important;
 }

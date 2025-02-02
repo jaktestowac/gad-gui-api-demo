@@ -9,6 +9,15 @@ class CodeEditorContext {
     this.currentCode = "";
     this.codeOutput = "";
 
+    this.predefinedNewWorkspace = `// Welcome to the JavaScript Code Editor!
+// This is a new workspace for you to experiment with code
+// You can run the code by clicking the "Run" button 
+// or by pressing Ctrl+Enter or Cmd+Enter
+
+// Try some examples:
+console.log("Hello World from 🦎GAD!");
+`;
+
     this.predefinedWorkspaces = {
       Tutorial: {
         code: `// Welcome to the JavaScript Code Editor!
@@ -293,10 +302,6 @@ console.log('Nullish coalescing assignment:', value2);
         users: [],
         owner: "system",
       },
-      ES21Features: {
-        code: `// ES2021 JavaScript Features
-`,
-      },
       ES22Features: {
         code: `// ES22 JavaScript Features
 
@@ -326,7 +331,228 @@ console.log(arr.at(-1)); // 40
         users: [],
         owner: "system",
       },
+      ErrorHandling: {
+        code: `// Error Handling in JavaScript
+// Different types of errors and how to handle them
+
+try {
+  // Type Error
+  const num = 42;
+  num.toLowerCase();
+} catch (e) {
+  console.log('Type Error:', e.message);
+}
+
+// Custom Error class
+class ValidationError extends Error {
+  constructor(message) {
+  super(message);
+    this.name = 'ValidationError';
+  }
+}
+
+// Using custom error
+try {
+  throw new ValidationError('Invalid input!');
+} catch (e) {
+  console.log(\`\${e.name}: \${e.message}\`);
+}
+
+// Finally block
+try {
+  console.log('Try block');
+  throw new Error('Test error');
+} catch (e) {
+  console.log('Catch block:', e.message);
+} finally {
+  console.log('Finally block always executes');
+}
+`,
+        output: "",
+        password: "",
+        users: [],
+        owner: "system",
+      },
+      RegexPatterns: {
+        code: `// Regular Expressions in JavaScript
+// Common regex patterns and usage
+
+// Email validation
+const emailRegex = /^[\\w-]+(\\.[\\w-]+)*@[\\w-]+(\\.[\\w-]+)*\\.[a-zA-Z]{2,}$/;
+console.log('Valid email:', emailRegex.test('user@example.com'));
+console.log('Invalid email:', emailRegex.test('invalid.email@com'));
+
+// Phone number format (US)
+const phoneRegex = /^\\(\\d{3}\\) \\d{3}-\\d{4}$/;
+console.log('Valid phone:', phoneRegex.test('(123) 456-7890'));
+console.log('Invalid phone:', phoneRegex.test('123-456-7890'));
+
+// Password strength
+const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$/;
+console.log('Strong password:', passwordRegex.test('Test@1234'));
+console.log('Weak password:', passwordRegex.test('password123'));
+
+// String replacement
+const text = 'Hello World! Hello JavaScript!';
+console.log('Replace first:', text.replace(/Hello/, 'Hi'));
+console.log('Replace all:', text.replace(/Hello/g, 'Hi'));`,
+        output: "",
+        password: "",
+        users: [],
+        owner: "system",
+      },
+      DataStructures: {
+        code: `// Common Data Structures in JavaScript
+// Implementation examples
+
+// Stack implementation
+class Stack {
+  #items = [];
+  
+  push(element) {
+    this.#items.push(element);
+  }
+  
+  pop() {
+    return this.#items.pop();
+  }
+  
+  peek() {
+    return this.#items[this.#items.length - 1];
+  }
+  
+  isEmpty() {
+    return this.#items.length === 0;
+  }
+}
+
+// Queue implementation
+class Queue {
+  #items = [];
+  
+  enqueue(element) {
+    this.#items.push(element);
+  }
+  
+  dequeue() {
+    return this.#items.shift();
+  }
+  
+  front() {
+    return this.#items[0];
+  }
+  
+  isEmpty() {
+    return this.#items.length === 0;
+  }
+}
+
+// Usage examples
+const stack = new Stack();
+stack.push(1);
+stack.push(2);
+console.log('Stack peek:', stack.peek());
+console.log('Stack pop:', stack.pop());
+
+const queue = new Queue();
+queue.enqueue('a');
+queue.enqueue('b');
+console.log('Queue front:', queue.front());
+console.log('Queue dequeue:', queue.dequeue());
+`,
+        output: "",
+        password: "",
+        users: [],
+        owner: "system",
+      },
     };
+
+    this.templatesDescription = [
+      {
+        id: "Tutorial",
+        name: "Tutorial",
+        description: "Learn JavaScript basics with interactive examples",
+        icon: '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>',
+        tags: ["beginner", "tutorial"],
+      },
+      {
+        id: "Playground",
+        name: "Code Playground",
+        description: "Experiment with code in a sandbox environment",
+        icon: '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>',
+        tags: ["sandbox", "tutorial", "playground"],
+      },
+      {
+        id: "ArrayMethods",
+        name: "Array Methods",
+        description: "Learn and practice JavaScript array methods",
+        icon: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8"/><path d="M12 8v8"/>',
+        tags: ["arrays", "methods", "tutorial"],
+      },
+      {
+        id: "Algorithms",
+        name: "Algorithms",
+        description: "Common algorithm implementations in JavaScript",
+        icon: '<path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>',
+        tags: ["algorithms", "advanced"],
+      },
+      {
+        id: "DOM",
+        name: "DOM Manipulation",
+        description: "Examples of working with the Document Object Model",
+        icon: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/>',
+        tags: ["DOM", "web", "tutorial"],
+      },
+      {
+        id: "AsyncJS",
+        name: "Async JavaScript",
+        description: "Learn about Promises and async/await",
+        icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+        tags: ["async", "promises", "advanced", "tutorial"],
+      },
+      {
+        id: "ES6Features",
+        name: "ES6+ Features",
+        description: "JavaScript features and syntax",
+        icon: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+        tags: ["ES6", "features"],
+      },
+      {
+        id: "ES20Features",
+        name: "ES20+ Features",
+        description: "JavaScript features and syntax",
+        icon: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+        tags: ["ES20", "features"],
+      },
+      {
+        id: "ES22Features",
+        name: "ES22+ Features",
+        description: "JavaScript features and syntax",
+        icon: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+        tags: ["ES22", "features"],
+      },
+      {
+        id: "ErrorHandling",
+        name: "Error Handling",
+        description: "Handling errors and exceptions in JavaScript",
+        icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 8 12 12 16 14"/>',
+        tags: ["errors", "exceptions"],
+      },
+      {
+        id: "RegexPatterns",
+        name: "Regex Patterns",
+        description: "Common regular expressions and patterns",
+        icon: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/>',
+        tags: ["regex", "patterns"],
+      },
+      {
+        id: "DataStructures",
+        name: "Data Structures",
+        description: "Implementations of common data structures",
+        icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+        tags: ["data", "structures"],
+      },
+    ];
 
     this.workspaces = JSON.parse(JSON.stringify(this.predefinedWorkspaces));
     this.workspaceSettings = {};
@@ -336,14 +562,19 @@ console.log(arr.at(-1)); // 40
     return this.workspaces[workspaceId] !== undefined;
   }
 
+  getPredefinedWorkspaceDescription() {
+    return this.templatesDescription;
+  }
+
   getWorkspace(workspaceId, createIfNotExists = true) {
     if (!this.workspaces[workspaceId] && createIfNotExists) {
       this.workspaces[workspaceId] = {
-        code: "",
+        code: this.predefinedNewWorkspace,
         output: "",
         password: "",
         users: [],
         owner: null,
+        hidden: false,
       };
     }
     return this.workspaces[workspaceId];
@@ -431,12 +662,16 @@ console.log(arr.at(-1)); // 40
       isPrivate: Boolean(workspace.password),
       userCount: workspace.users?.length || 0,
       isTemplate: Boolean(this.predefinedWorkspaces[workspaceId]),
+      hidden: Boolean(workspace.hidden),
     };
   }
 
   getActiveWorkspaces() {
     return Object.keys(this.workspaces).reduce((acc, workspaceId) => {
-      acc[workspaceId] = this.getWorkspaceStatus(workspaceId);
+      const workspace = this.workspaces[workspaceId];
+      if (!workspace.hidden) {
+        acc[workspaceId] = this.getWorkspaceStatus(workspaceId);
+      }
       return acc;
     }, {});
   }
@@ -444,7 +679,7 @@ console.log(arr.at(-1)); // 40
 
 const codeEditorHandlers = {
   codeEditorJoin: (context, ws, data) => {
-    const { username, workspace, password, isNewWorkspace } = data.data;
+    const { username, workspace, password, isNewWorkspace, hidden } = data.data;
 
     const usernameValidation = context.validateUsername(username);
     if (!usernameValidation.valid) {
@@ -508,6 +743,7 @@ const codeEditorHandlers = {
       logDebug(`User ${username} created workspace ${workspace}`);
       workspaceData.password = password || "";
       workspaceData.owner = ws.userId;
+      workspaceData.hidden = hidden || false; // Set hidden status
     } else if (workspaceExists && !workspaceData.owner) {
       workspaceData.owner = ws.userId;
     }
@@ -679,6 +915,16 @@ const codeEditorHandlers = {
       JSON.stringify({
         type: "activeWorkspaces",
         data: { workspaces },
+      })
+    );
+  },
+
+  codeEditorGetPredefinedWorkspaceDescription: (context, ws) => {
+    const templates = context.getPredefinedWorkspaceDescription();
+    ws.send(
+      JSON.stringify({
+        type: "predefinedWorkspaceDescription",
+        data: { templates },
       })
     );
   },

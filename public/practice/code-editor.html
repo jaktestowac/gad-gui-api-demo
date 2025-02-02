@@ -50,23 +50,18 @@
                         </div>
                     </div>
 
-                    <button class="secondary-button" onclick="CodeEditor.showWorkspacesModal()">Browse All Templates</button>
-
+                    <div class="quick-actions">
+                        <button class="secondary-button" onclick="CodeEditor.showWorkspacesModal()"><i class="fa-solid fa-chalkboard"></i> Browse Templates</button>
+                        <button class="secondary-button" onclick="CodeEditor.showWorkspaceList()"><i class="fa-solid fa-list-ul"></i> Browse Workspaces</button>
+                    </div>
                     <div class="workspace-divider"></div>
 
                     <div class="quick-actions">
-                        <button class="secondary-button" onclick="quickJoin()">Quick Join</button>
-                        <button class="secondary-button" onclick="showCreateWorkspace()">Create New</button>
-                        <button class="secondary-button" onclick="CodeEditor.showWorkspaceList()" style="grid-column: span 2;">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M3 6h18"></path>
-                                <path d="M3 12h18"></path>
-                                <path d="M3 18h18"></path>
-                            </svg>
-                            Browse Active Workspaces
-                        </button>
+                        <button class="secondary-button" onclick="quickJoin()"><i class="fa-solid fa-arrow-right-to-bracket"></i> Quick Join</button>
+                        <button class="secondary-button" onclick="showCreateWorkspace()"><i class="fa-solid fa-folder-plus"></i> Create New</button>
                     </div>
 
+                    <div class="workspace-divider"></div>
                     <div class="join-form">
                         <div class="input-group">
                             <input type="text" id="username" placeholder="Username" required>
@@ -99,25 +94,18 @@
                 <div class="input-group">
                     <input type="password" id="newPassword" placeholder="Set Password (optional)">
                 </div>
+                <div class="settings-item">
+                    <label>Hidden Workspace</label>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="newHidden">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <p class="setting-description">Hidden workspaces are not shown in Active Workspaces list</p>
                 <div class="modal-buttons">
-                    <button class="secondary-button" onclick="showJoinWorkspace()">Back to Join</button>
-                    <button class="primary-button" onclick="createWorkspace()">Create</button>
+                    <button class="secondary-button" onclick="showJoinWorkspace()"><i class="fa-solid fa-rotate-left"></i> Back to Title Screen</button>
+                    <button class="primary-button" onclick="createWorkspace()">Create <i class="fa-solid fa-person-walking-arrow-right"></i></button>
                 </div>
-            </div>
-        </div>
-
-        <div id="usersList" class="users-list collapsed" style="display: none;">
-            <div class="users-list-header" onclick="toggleUsersList()">
-                <div style="display: flex; align-items: center;">
-                    <span><i class="fa-solid fa-users"></i></span>
-                    <span class="users-count" id="usersCount">0</span>
-                </div>
-                <svg class="toggle-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="6 9 12 15 18 9"></polyline>
-                </svg>
-            </div>
-            <div class="users-list-content">
-                <ul id="usersListItems"></ul>
             </div>
         </div>
 
@@ -138,48 +126,28 @@
                                 <div class="tools-panel">
                                     <div class="tools-group">
                                         <button class="tool-button" onclick="CodeEditor.copyWorkspaceLink()" title="Share Workspace">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path d="M16 3H4v16M8 7h16v16H8V7z" />
-                                            </svg>
+                                            <i class="fa-regular fa-copy"></i>
                                         </button>
                                         <button class="tool-button" onclick="clearEditor()" title="Clear / Reset">
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                            </svg>
+                                            <i class="fa-solid fa-trash-can"></i>
                                         </button>
-                                        <button class="tool-button" onclick="saveCode()" title="Save">
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-                                                <polyline points="17 21 17 13 7 13 7 21"></polyline>
-                                                <polyline points="7 3 7 8 15 8"></polyline>
-                                            </svg>
+                                        <button class="tool-button" onclick="saveCode()" title="Download">
+                                            <i class="fa-solid fa-download"></i>
                                         </button>
                                         <button class="tool-button primary-button" onclick="runCode()" title="Run Code (Ctrl+Enter)">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                                            </svg>
+                                            <i class="fa-solid fa-play"></i>
                                         </button>
                                         <button class="tool-button" onclick="CodeEditor.toggleLayout()" title="Toggle Layout">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <rect x="3" y="3" width="18" height="18" rx="2" />
-                                                <line x1="12" y1="3" x2="12" y2="21" />
-                                            </svg>
+                                            <i class="fa-solid fa-table-columns"></i>
                                         </button>
                                     </div>
                                     <div class="tools-divider"></div>
                                     <button class="tool-button danger" onclick="logout()" title="Logout">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                                            <polyline points="16 17 21 12 16 7"></polyline>
-                                            <line x1="21" y1="12" x2="9" y2="12"></line>
-                                        </svg>
+                                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
                                     </button>
                                     <div style="position: relative;">
                                         <button id="settingsButton" class="tool-button" onclick="CodeEditor.toggleSettings(event)" title="Workspace Settings" style="display: none;">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
-                                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z" />
-                                            </svg>
+                                            <i class="fa-solid fa-gear"></i>
                                         </button>
                                         <div id="settingsPanel" class="settings-panel">
                                             <h3>Workspace Settings</h3>
@@ -219,16 +187,34 @@
                         <div></div>
                     </div>
                     <div class="output-container">
-                        <div class="editor-header">
+                        <div class="editor-header editor-output-header">
                             <div class="editor-header-top">
                                 <div class="title-container">
                                     <h2>Output</h2>
                                 </div>
-                                <button class="tool-button" onclick="CodeEditor.clearOutput()" title="Clear Output">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                    </svg>
-                                </button>
+                                <div class="tools-panel">
+                                    <div class="tools-group">
+                                        <div style="position: relative;">
+                                            <button class="tool-button" onclick="CodeEditor.clearOutput()" title="Clear Output">
+                                                <i class="fa-solid fa-trash-can"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="users-list-header" onclick="toggleUsersList()" id="userListButton">
+                                        <div style="display: flex; align-items: center;">
+                                            <span><i class="fa-solid fa-users"></i></span>
+                                            <span class="users-count" id="usersCount">0</span>
+                                        </div>
+                                        <svg class="toggle-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="6 9 12 15 18 9"></polyline>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="usersList" class="users-list collapsed">
+                            <div class="users-list-content">
+                                <ul id="usersListItems"></ul>
                             </div>
                         </div>
                         <div id="output"></div>
@@ -476,6 +462,7 @@
                 const username = document.getElementById('newUsername').value;
                 const workspace = document.getElementById('newWorkspace').value;
                 const password = document.getElementById('newPassword').value;
+                const hidden = document.getElementById('newHidden').checked;
 
                 const isUsernameValid = this.validateField('newUsername', 'newUsernameError', username, 2, 'Username');
                 const isWorkspaceValid = this.validateField('newWorkspace', 'newWorkspaceError', workspace, 3, 'Workspace name');
@@ -488,12 +475,14 @@
                 document.getElementById('usersList').style.display = 'block';
 
                 this.initEditor();
-                this.initWebSocket(username, workspace, password, true);
+                this.initWebSocket(username, workspace, password, true, hidden);
             },
 
             toggleUsersList() {
                 const usersList = document.getElementById('usersList');
                 usersList.classList.toggle('collapsed');
+                const usersListHeader = document.querySelector('.users-list-header');
+                usersListHeader.classList.toggle('active');
             },
 
             updateUsersList(users) {
@@ -538,7 +527,7 @@
                 window.history.pushState({}, '', url.toString());
             },
 
-            initWebSocket(username, workspace, password, isNewWorkspace) {
+            initWebSocket(username, workspace, password, isNewWorkspace, hidden = false) {
                 this.currentUser = username;
                 this.currentWorkspace = workspace;
                 this.ws = new WebSocket(`ws://${wsAddr}`);
@@ -555,7 +544,8 @@
                             username,
                             workspace,
                             password,
-                            isNewWorkspace
+                            isNewWorkspace,
+                            hidden
                         }
                     }));
                 };
@@ -660,7 +650,6 @@
 
                 document.getElementById('loginModal').style.display = 'none';
                 document.getElementById('createWorkspaceModal').style.display = 'none';
-                document.getElementById('usersList').style.display = 'block';
                 this.showEditor();
             },
 
@@ -671,10 +660,10 @@
 
                 charLimit.classList.remove('warning', 'error', 'safe');
 
-                if (length > this.MAX_CHARS * 0.9) {
-                    charLimit.classList.add('warning');
-                } else if (length > this.MAX_CHARS) {
+                if (length > this.MAX_CHARS - 10) {
                     charLimit.classList.add('error');
+                } else if (length > this.MAX_CHARS * 0.9) {
+                    charLimit.classList.add('warning');
                 } else if (length > 0) {
                     charLimit.classList.add('safe');
                 }
@@ -693,6 +682,7 @@
                     smartIndent: true,
                     autofocus: true,
                     tabSize: 2,
+                    lineWrapping: true,
                     extraKeys: {
                         "Ctrl-Enter": (cm) => this.runCode(),
                         "Cmd-Enter": (cm) => this.runCode(),
@@ -710,13 +700,13 @@
 
                         if (code.length > this.MAX_CHARS) {
                             cm.setValue(code.substring(0, this.MAX_CHARS));
-                            this.showCustomModal({
-                                title: 'Character Limit Reached',
-                                content: `The code has been truncated to ${this.MAX_CHARS} characters.`,
-                                buttons: [
-                                    { text: 'Ok', type: 'primary', action: 'close' }
-                                ]
-                            });
+                            // this.showCustomModal({
+                            //     title: 'Character Limit Reached',
+                            //     content: `The code has been truncated to ${this.MAX_CHARS} characters.`,
+                            //     buttons: [
+                            //         { text: 'Ok', type: 'primary', action: 'close' }
+                            //     ]
+                            // });
                             return;
                         }
 
@@ -832,7 +822,7 @@
                     this.editor.setValue('');
                     this.updateCharLimit('');
 
-                    if (this.templates.find(t => t.id === this.currentWorkspace)) {
+                    if (this.predefinedWorkspaceDescription.find(t => t.id === this.currentWorkspace)) {
                         this.ws.send(JSON.stringify({
                             type: 'codeEditorGetPredefinedWorkspace',
                             data: { workspace: this.currentWorkspace }
@@ -955,10 +945,19 @@
                 const settingsPanel = document.getElementById('settingsPanel');
                 const settingsButton = document.getElementById('settingsButton');
 
+                const usersList = document.getElementById('usersList');
+                const userListButton = document.getElementById('userListButton');
+
                 if (settingsPanel.classList.contains('show') &&
                     !settingsPanel.contains(event.target) &&
                     !settingsButton.contains(event.target)) {
                     settingsPanel.classList.remove('show');
+                }
+
+                if (!usersList.classList.contains('collapsed') &&
+                    !usersList.contains(event.target) &&
+                    !userListButton.contains(event.target)) {
+                    usersList.classList.add('collapsed');
                 }
             },
 
@@ -989,92 +988,47 @@
                 }
             },
 
-            templates: [
-                {
-                    id: 'Tutorial',
-                    name: 'Tutorial',
-                    description: 'Learn JavaScript basics with interactive examples',
-                    icon: '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>',
-                    tags: ['beginner', 'tutorial']
-                },
-                {
-                    id: 'Playground',
-                    name: 'Code Playground',
-                    description: 'Experiment with code in a sandbox environment',
-                    icon: '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>',
-                    tags: ['sandbox', 'practice']
-                },
-                {
-                    id: 'ArrayMethods',
-                    name: 'Array Methods',
-                    description: 'Learn and practice JavaScript array methods',
-                    icon: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8"/><path d="M12 8v8"/>',
-                    tags: ['arrays', 'methods']
-                },
-                {
-                    id: 'Algorithms',
-                    name: 'Algorithms',
-                    description: 'Common algorithm implementations in JavaScript',
-                    icon: '<path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>',
-                    tags: ['algorithms', 'advanced']
-                },
-                {
-                    id: 'DOM',
-                    name: 'DOM Manipulation',
-                    description: 'Examples of working with the Document Object Model',
-                    icon: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/>',
-                    tags: ['DOM', 'web']
-                },
-                {
-                    id: 'AsyncJS',
-                    name: 'Async JavaScript',
-                    description: 'Learn about Promises and async/await',
-                    icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
-                    tags: ['async', 'promises']
-                },
-                {
-                    id: 'ES6Features',
-                    name: 'ES6+ Features',
-                    description: 'JavaScript features and syntax',
-                    icon: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
-                    tags: ['ES6', 'features']
-                },
-                {
-                    id: 'ES20Features',
-                    name: 'ES20+ Features',
-                    description: 'JavaScript features and syntax',
-                    icon: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
-                    tags: ['ES20', 'features']
-                },
-                {
-                    id: 'ES22Features',
-                    name: 'ES22+ Features',
-                    description: 'JavaScript features and syntax',
-                    icon: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
-                    tags: ['ES22', 'features']
-                },
-            ],
-
-            showWorkspacesModal() {
+            async showWorkspacesModal() {
                 const modal = document.getElementById('workspacesModal');
                 const grid = document.getElementById('workspacesGrid');
 
-                grid.innerHTML = this.templates.map(template => `
-                    <div class="workspace-template" onclick="CodeEditor.joinDefaultWorkspace('${template.id}')">
-                        <h3>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                ${template.icon}
-                            </svg>
-                            ${template.name}
-                        </h3>
-                        <div>
-                            ${template.tags.map(tag => `<span class="workspace-tag">${tag}</span>`).join('')}
-                        </div>
-                        <p class="workspace-description">${template.description}</p>
-                    </div>
-                `).join('');
-
+                grid.innerHTML = '<div style="text-align: center; padding: 2rem;">Loading templates...</div>';
                 modal.style.display = 'flex';
+
+                const connected = await this.ensureWebSocketConnection();
+                if (!connected) {
+                    grid.innerHTML = '<div style="text-align: center; padding: 2rem; color: #ff6b6b;">Failed to connect to server</div>';
+                    return;
+                }
+
+                this.ws.send(JSON.stringify({
+                    type: 'codeEditorGetPredefinedWorkspaceDescription'
+                }));
+
+                const originalOnMessage = this.ws.onmessage;
+                this.ws.onmessage = (event) => {
+                    const message = JSON.parse(event.data);
+                    if (message.type === 'predefinedWorkspaceDescription') {
+                        grid.innerHTML = message.data.templates.map(template => `
+                            <div class="workspace-template" onclick="CodeEditor.joinDefaultWorkspace('${template.id}')">
+                                <h3>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        ${template.icon}
+                                    </svg>
+                                    ${template.name}
+                                </h3>
+                                <div>
+                                    ${template.tags.map(tag => `<span class="workspace-tag ${tag}">${tag}</span>`).join('')}
+                                </div>
+                                <p class="workspace-description">${template.description}</p>
+                            </div>
+                        `).join('');
+
+                        this.ws.onmessage = originalOnMessage;
+                    } else {
+                        originalOnMessage(event);
+                    }
+                };
             },
 
             closeWorkspacesModal() {
@@ -1208,77 +1162,6 @@
             },
 
             init() {
-                const style = document.createElement('style');
-                style.textContent = `
-                    #output .info {
-                        color: #868e96;
-                        font-style: italic;
-                    }
-                    #output div {
-                        margin: 4px 0;
-                        word-wrap: break-word;
-                        padding: 2px 0;
-                    }
-                    #output .log {
-                        color: #e9ecef;
-                    }
-                    #output .error {
-                        color: #ff6b6b;
-                        border-left: 3px solid #ff6b6b;
-                        padding-left: 8px;
-                        margin: 4px 0;
-                    }
-                    #output .result {
-                        color: #69db7c;
-                        border-left: 3px solid #69db7c;
-                        padding-left: 8px;
-                        margin: 4px 0;
-                    }
-                    #charLimit {
-                        position: absolute;
-                        bottom: 8px;
-                        right: 8px;
-                        padding: 2px 6px;
-                        border-radius: 4px;
-                        font-size: 12px;
-                        transition: all 0.3s ease;
-                        background: #2d333b;
-                    }
-                    #charLimit.safe {
-                        color: #69db7c;
-                    }
-                    #charLimit.warning {
-                        color: #ffd43b;
-                        font-weight: bold;
-                    }
-                    #charLimit.error {
-                        color: #ff6b6b;
-                        font-weight: bold;
-                    }
-                    .output-header {
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        margin-bottom: 8px;
-                    }
-                    
-                    .output-header h2 {
-                        margin: 0;
-                    }
-                    
-                    .output-header .tool-button {
-                        padding: 4px;
-                        width: 28px;
-                        height: 28px;
-                    }
-                    
-                    .output-header .tool-button svg {
-                        width: 16px;
-                        height: 16px;
-                    }
-                `;
-                document.head.appendChild(style);
-
                 document.getElementById('loginModal').style.display = 'flex';
                 document.getElementById('mainContainer').classList.add('hidden');
 
