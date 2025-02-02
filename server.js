@@ -56,10 +56,14 @@ const { exitRoutes, restartRoutes } = require("./routes/debug.route");
 const { bookShopCoverUploadRoutes, multerUpload, multerErrorHandling } = require("./routes/file-upload-v2.route");
 const WebSocket = require("ws");
 const { websocketRoute } = require("./routes/websocket.route");
+const { assertFreePorts } = require("./helpers/port.checker");
 
 const middlewares = jsonServer.defaults();
 
 const port = process.env.PORT || getConfigValue(ConfigKeys.DEFAULT_PORT);
+const webSocketPort = parseInt(port) + 10;
+
+assertFreePorts([port, webSocketPort]);
 
 copyDefaultDbIfNotExists();
 overwriteDbIfDefined();
@@ -273,8 +277,7 @@ server.use(function (req, res, next) {
   res.type("txt").send("Not found");
 });
 
-const webSocketPort = parseInt(port) + 10;
-websocketRoute(new WebSocket.Server({ port: webSocketPort }));
+websocketRoute(new WebSocket.Server({ port: webSocketPort }), webSocketPort);
 
 const sslEnabled = getConfigValue(ConfigKeys.SSL_ENABLED);
 
@@ -310,7 +313,7 @@ if (sslEnabled !== true) {
   });
 }
 
-const address = serverApp.address().address == "::" ? "localhost" : "localhost";
+const address = serverApp?.address()?.address == "::" ? "localhost" : "localhost";
 const protocol = sslEnabled === true ? "https" : "http";
 const serverAppAddress = `${protocol}://${address}:${port}`;
 const serverWsAddress = `ws://${address}:${webSocketPort}`;

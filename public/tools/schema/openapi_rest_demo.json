@@ -4108,6 +4108,11 @@
     "/messenger/contacts": {
       "get": {
         "tags": ["messenger"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "summary": "Get contacts",
         "operationId": "getContacts",
         "responses": {
@@ -4125,6 +4130,11 @@
       },
       "put": {
         "tags": ["messenger"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "summary": "Add contact",
         "operationId": "addContact",
         "requestBody": {
@@ -4166,6 +4176,11 @@
     "/messenger/unread": {
       "get": {
         "tags": ["messenger"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "summary": "Get unread messages",
         "operationId": "getUnreadMessages",
         "responses": {
@@ -4185,6 +4200,11 @@
     "/messenger/messages": {
       "get": {
         "tags": ["messenger"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "summary": "Get messages",
         "operationId": "getMessages",
         "parameters": [
@@ -4222,6 +4242,11 @@
       },
       "post": {
         "tags": ["messenger"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "summary": "Send message",
         "operationId": "sendMessage",
         "requestBody": {

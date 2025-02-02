@@ -13,7 +13,7 @@ const { DroneSimulatorContext, droneHandlers } = require("./controllers/drone-si
 const { CodeEditorContext, codeEditorHandlers } = require("./controllers/code-editor.controller");
 const app = require("../app.json");
 
-const websocketRoute = (wss) => {
+const websocketRoute = (wss, webSocketPort) => {
   const chatContext = new WebSocketPracticeChatContext(wss);
   const weatherContext = new WeatherContext(wss);
   const documentContext = new DocumentEditorContext(wss);
@@ -21,6 +21,8 @@ const websocketRoute = (wss) => {
   const droneContext = new DroneSimulatorContext(wss);
   const codeEditorContext = new CodeEditorContext(wss);
 
+  logDebug(`> 🦎 GAD WebSocket listening on ${webSocketPort}!`);
+  
   wss.on("connection", (ws) => {
     logDebug("[websocketRoute] New client connected", { client: ws._socket?.remoteAddress });
 

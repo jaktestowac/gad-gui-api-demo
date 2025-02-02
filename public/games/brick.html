@@ -294,6 +294,7 @@
     let powerUps = [];
     let particles = [];
     let gameLevel = 1;
+    let endGameInProgress = false;
     let lives = 1;
     let combo = 1;
     let comboTimer = null;
@@ -345,7 +346,7 @@
     }
 
     function createParticles(x, y, color) {
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < 4; i++) {
             const particle = document.createElement('div');
             particle.classList.add('particle');
             particle.style.left = x + 'px';
@@ -602,6 +603,7 @@
             ballSpeedX = 5;  // Reset global ball speed
             ballSpeedY = -5; // Reset global ball speed
             document.addEventListener('click', releaseBall);
+            endGameInProgress = false;
             return mainBall;
         }
 
@@ -700,6 +702,9 @@
     }
 
     function endGame(succeeded = false) {
+        if (endGameInProgress) return;
+
+        endGameInProgress = true;
         if (!succeeded && lives > 1) {
             lives--;
             updateLives();
@@ -726,7 +731,7 @@
             `;
             gameCanvas.appendChild(levelText);
 
-            for (let i = 0; i < 10; i++) {
+            for (let i = 0; i < 1; i++) {
                 setTimeout(() => {
                     const x = Math.random() * gameCanvas.offsetWidth;
                     const y = Math.random() * (gameCanvas.offsetHeight / 2);
@@ -741,12 +746,13 @@
                 levelText.remove();
                 resetCanvas();
                 document.addEventListener('click', releaseBall);
+                endGameInProgress = false;
             }, 2000);
 
             return;
         }
-
         gameStarted = false;
+
         clearInterval(timeInterval);
         cancelAnimationFrame(update);
         const button = document.getElementById("start-button");
@@ -854,8 +860,8 @@
                 setTimeout(() => fireballActive = false, POWER_UP_TYPES.FIREBALL.duration);
                 break;
             case 'MAGNET':
-                magnetActive = true;
-                setTimeout(() => magnetActive = false, POWER_UP_TYPES.MAGNET.duration);
+                // magnetActive = true;
+                // setTimeout(() => magnetActive = false, POWER_UP_TYPES.MAGNET.duration);
                 break;
             case 'GHOST':
                 ghostActive = true;
@@ -890,7 +896,7 @@
 
             let laserY = parseInt(laser.style.bottom);
             const laserAnimation = setInterval(() => {
-                laserY += 5;
+                laserY += 15;
                 laser.style.bottom = laserY + 'px';
 
                 const bricks = document.getElementsByClassName('brick');
@@ -994,7 +1000,7 @@
         brick.dataset.hit = 'true';
 
         const now = Date.now();
-        if (now - lastBrickHitTime < 500) {
+        if (now - lastBrickHitTime < 100) {
             updateCombo();
         } else {
             combo = 1;

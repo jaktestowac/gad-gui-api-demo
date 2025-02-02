@@ -40,7 +40,7 @@
             color: white;
             padding: 1rem;
             border-radius: 8px;
-            width: 200px;
+            width: 250px;
             font-family: Arial, sans-serif;
         }
 
@@ -75,6 +75,16 @@
             opacity: 0.9;
         }
 
+        .location-select {
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            background: var(--bg-dark);
+            color: white;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+        }
+
         footer {
             position: fixed;
             bottom: 0px;
@@ -103,6 +113,14 @@
     <div class="weather-widget-container">
         <h1>Weather Widget (WebSocket)</h1>
         <div class="weather-widget">
+            <select id="locationSelect" class="location-select" onchange="requestWeatherUpdate()">
+                <option value="Current Location">Current Location</option>
+                <option value="London">London</option>
+                <option value="New York">New York</option>
+                <option value="Tokyo">Tokyo</option>
+                <option value="Paris">Paris</option>
+                <option value="Sydney">Sydney</option>
+            </select>
             <h3 id="location">Loading...</h3>
             <div class="weather-data">
                 <div class="temp" id="temperature">--°C</div>
@@ -118,10 +136,11 @@
         const socket = new WebSocket(`ws://${wsAddr}`);
 
         function requestWeatherUpdate() {
+            const selectedCity = document.getElementById('locationSelect').value;
             socket.send(JSON.stringify({
                 type: 'getWeather',
                 days: 1,
-                city: 'Current'
+                city: selectedCity
             }));
         }
 
