@@ -1,4 +1,4 @@
-const { logDebug, logTrace, logError } = require("../helpers/logger-api");
+const { logDebug, logTrace, logError, logInsane } = require("../helpers/logger-api");
 const {
   WebSocketPracticeChatContext,
   messageHandlers,
@@ -13,79 +13,105 @@ const { DroneSimulatorContext, droneHandlers } = require("./controllers/drone-si
 const { CodeEditorContext, codeEditorHandlers } = require("./controllers/code-editor.controller");
 const app = require("../app.json");
 
+const messageHandlerMap = {
+  ping: (ws) => {
+    logInsane("[websocketRoute] ping");
+    ws.send(
+      JSON.stringify({
+        type: "pong",
+        data: { time: new Date().toISOString(), version: app.version },
+      })
+    );
+  },
+  status: (ws) => {
+    logInsane("[websocketRoute] status");
+    ws.send(
+      JSON.stringify({
+        type: "status",
+        data: { time: new Date().toISOString(), version: app.version },
+      })
+    );
+  },
+  getWeather: (context, ws, data) => weatherHandlers.getWeather(context, ws, data),
+  getFullWeather: (context, ws, data) => weatherHandlers.getFullWeather(context, ws, data),
+};
+
+const handleDroneJoin = (context, userId, ws) => {
+  context.connectedUsers.set(userId, ws);
+  logDebug("[websocketRoute] Drone client joined", { userId });
+};
+
+const getMessageHandler = (type) => {
+  logInsane(`[websocketRoute] getMessageHandler:`, { type });
+  if (type?.toLowerCase().includes("cinema")) {
+    return (context, ws, data) => cinemaHandlers[type]?.(context, ws, data);
+  }
+  if (type?.toLowerCase().includes("practicechat")) {
+    return (context, ws, data) => (messageHandlers[type] || messageHandlers.practiceChatDefault)(context, ws, data);
+  }
+  if (type?.toLowerCase().includes("doc")) {
+    return (context, ws, data) => documentHandlers[type]?.(context, ws, data);
+  }
+  if (type?.toLowerCase().includes("practicedrone")) {
+    return (context, ws, data) => droneHandlers[type]?.(context, ws, data);
+  }
+  if (type?.toLowerCase().includes("codeeditor")) {
+    return (context, ws, data) => codeEditorHandlers[type]?.(context, ws, data);
+  }
+  return messageHandlerMap[type];
+};
+
 const websocketRoute = (wss, webSocketPort) => {
-  const chatContext = new WebSocketPracticeChatContext(wss);
-  const weatherContext = new WeatherContext(wss);
-  const documentContext = new DocumentEditorContext(wss);
-  const cinemaContext = new CinemaContext(wss);
-  const droneContext = new DroneSimulatorContext(wss);
-  const codeEditorContext = new CodeEditorContext(wss);
+  const contexts = {
+    chat: new WebSocketPracticeChatContext(wss),
+    weather: new WeatherContext(wss),
+    document: new DocumentEditorContext(wss),
+    cinema: new CinemaContext(wss),
+    drone: new DroneSimulatorContext(wss),
+    codeEditor: new CodeEditorContext(wss),
+  };
 
   logDebug(`> 🦎 GAD WebSocket listening on ${webSocketPort}!`);
-  
+
   wss.on("connection", (ws) => {
     logDebug("[websocketRoute] New client connected", { client: ws._socket?.remoteAddress });
 
     const userId = Math.random().toString(36).substring(7);
-    ws.userId = userId;
+    ws.userId = `ws-user-${userId}`;
 
     ws.on("practiceChatJoin", (message) => {
-      handleConnection(chatContext, ws);
+      handleConnection(contexts.chat, ws);
     });
 
     ws.on("message", (message) => {
       try {
         const data = JSON.parse(message);
-        let handler;
+        logTrace("[websocketRoute] Received message:", { type: data.type, data });
 
-        logTrace("[websocketRoute] Received message:", { type: data.type, data: data });
-
-        if (data.type === "practiceDroneJoin") {
-          droneContext.connectedUsers.set(userId, ws);
-          logDebug("[websocketRoute] Drone client joined", { userId });
+        if (data.type?.toLowerCase().includes("practicedronejoin")) {
+          handleDroneJoin(contexts.drone, userId, ws);
           return;
         }
 
-        if (data.type === "ping") {
-          ws.send(JSON.stringify({ type: "pong", data: { time: new Date().toISOString(), version: app.version } }));
-        } else if (data.type === "status") {
-          ws.send(JSON.stringify({ type: "status", data: { time: new Date().toISOString(), version: app.version } }));
-        } else if (data.type === "getWeather") {
-          handler = weatherHandlers.getWeather;
-          handler(weatherContext, ws, data);
-        } else if (data.type === "getFullWeather") {
-          handler = weatherHandlers.getFullWeather;
-          handler(weatherContext, ws, data);
-        } else if (data.type?.toLowerCase().includes("cinema")) {
-          handler = cinemaHandlers[data.type];
-          if (!handler) {
-            throw new Error(`No handler found for message type: ${data.type}`);
-          }
-          handler(cinemaContext, ws, data);
-        } else if (data.type?.toLowerCase().includes("practicechat")) {
-          handler = messageHandlers[data.type] || messageHandlers.practiceChatDefault;
-          handler(chatContext, ws, data);
-        } else if (data.type?.toLowerCase().includes("doc")) {
-          handler = documentHandlers[data.type];
-          if (!handler) {
-            throw new Error(`No handler found for message type: ${data.type}`);
-          }
-          handler(documentContext, ws, data);
-        } else if (data.type?.toLowerCase().includes("practicedrone")) {
-          handler = droneHandlers[data.type];
-          if (!handler) {
-            throw new Error(`No handler found for message type: ${data.type}`);
-          }
-          handler(droneContext, ws, data);
-        } else if (data.type?.toLowerCase().includes("codeeditor")) {
-          handler = codeEditorHandlers[data.type];
-          if (!handler) {
-            throw new Error(`No handler found for message type: ${data.type}`);
-          }
-          handler(codeEditorContext, ws, data);
-        } else {
+        const handler = getMessageHandler(data.type);
+        if (!handler) {
           throw new Error(`Invalid message type received: ${data.type}`);
         }
+
+        let context = undefined;
+        if (data.type?.toLowerCase().includes("cinema")) context = contexts.cinema;
+        if (data.type?.toLowerCase().includes("practicechat")) context = contexts.chat;
+        if (data.type?.toLowerCase().includes("doc")) context = contexts.document;
+        if (data.type?.toLowerCase().includes("practicedrone")) context = contexts.drone;
+        if (data.type?.toLowerCase().includes("codeeditor")) context = contexts.codeEditor;
+
+        if (context === undefined) {
+          logError("[websocketRoute] Invalid context for message:", { type: data.type, data });
+          throw new Error(`Invalid context for message: ${data.type}`);
+        }
+
+        logInsane("[websocketRoute] Using handler:", { type: data.type, data: data });
+        handler(context, ws, data);
       } catch (error) {
         logError("[websocketRoute] Error processing message:", error.message);
         sendError(ws, error.message || "Invalid message format");
@@ -94,11 +120,11 @@ const websocketRoute = (wss, webSocketPort) => {
 
     ws.on("close", () => {
       logDebug("[websocketRoute] Client disconnected", { client: ws._socket?.remoteAddress, userId });
-      droneContext.connectedUsers.delete(ws.userId);
-      handleDisconnect(chatContext, ws);
+      contexts.drone.connectedUsers.delete(ws.userId);
+      handleDisconnect(contexts.chat, ws);
       if (ws.userId) {
-        documentHandlers.docDisconnect(documentContext, ws);
-        codeEditorHandlers.codeEditorDisconnect(codeEditorContext, ws);
+        documentHandlers.docDisconnect(contexts.document, ws);
+        codeEditorHandlers.codeEditorDisconnect(contexts.codeEditor, ws);
       }
     });
 
