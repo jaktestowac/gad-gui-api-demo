@@ -1,5 +1,5 @@
-const { checkPackageDependencies } = require("./helpers/package.checker");
-checkPackageDependencies();
+const { assertPackageDependencies } = require("./helpers/package.checker");
+assertPackageDependencies();
 
 const jsonServer = require("./json-server");
 const { validationsRoutes } = require("./routes/validations.route");

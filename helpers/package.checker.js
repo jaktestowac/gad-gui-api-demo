@@ -32,7 +32,7 @@ const printMissingPackagesMessage = (missingPackages) => {
   console.log(bottomBorder);
 };
 
-function checkPackageDependencies() {
+function assertPackageDependencies() {
   const packagesToSkip = ["nanoid"];
 
   try {
@@ -62,4 +62,4 @@ function checkPackageDependencies() {
   console.log("> All required packages are installed");
 }
 
-module.exports = { checkPackageDependencies };
+module.exports = { assertPackageDependencies };

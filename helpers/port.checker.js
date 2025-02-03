@@ -61,6 +61,7 @@ const assertFreePorts = (ports) => {
       printBusyPortMessage(busyPorts);
       throw new Error(`Required ports are busy. Please free them and try again.`);
     }
+    console.log("> All required ports are free");
   } catch (error) {
     process.exit(1);
   }
