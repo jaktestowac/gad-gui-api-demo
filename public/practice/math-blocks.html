@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD - Math Block Builder</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            min-height: 100vh;
+            margin: 0;
+            color: white;
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 2.5em;
+            font-weight: 300;
+            margin: 0.8em 0;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            background: linear-gradient(120deg, #fff, #ddd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .block-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin: 5px auto 10px;
+            max-width: 800px;
+            padding: 10px;
+            border-radius: 12px;
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .number-block,
+        .operation-block,
+        .complex-block,
+        .scientific-block,
+        .percentage-block,
+        .fraction-block {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            border-radius: 8px;
+            cursor: move;
+            user-select: none;
+            margin: 4px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .number-block,
+        .operation-block,
+        .complex-block,
+        .scientific-block,
+        .percentage-block,
+        .fraction-block {
+            font-size: 16px !important;
+        }
+
+        .number-block:hover,
+        .operation-block:hover,
+        .complex-block:hover,
+        .scientific-block:hover,
+        .percentage-block:hover,
+        .fraction-block:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .operation-block {
+            font-size: 24px;
+            font-weight: normal;
+        }
+
+        .equation-area {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            min-height: 80px;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            margin: 20px auto;
+            max-width: 800px;
+            padding: 15px;
+            border-radius: 16px;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            gap: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .equation-area:hover {
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .equation-input {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 18px;
+            text-align: center;
+            transition: all 0.3s ease;
+            padding: 0;
+            margin: 0;
+            min-width: 0;
+        }
+
+        .equation-input-half {
+            width: 45% !important;
+        }
+
+        .equation-input:focus {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+            outline: none;
+        }
+
+        .fraction-block {
+            height: 70px;
+            flex-direction: column;
+            padding: 4px;
+            gap: 2px;
+            width: 60px;
+        }
+
+        .fraction-block .equation-input {
+            height: 28px;
+            margin: 0;
+        }
+
+        .clear-btn {
+            background: linear-gradient(-45deg, #ff416c, #ff4b2b);
+            border: none;
+            padding: 12px 35px;
+            color: white;
+            font-size: 18px;
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .clear-btn::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ff416c, #ff4b2b, #ff416c);
+            border-radius: 8px;
+            z-index: -1;
+            animation: glow 2s linear infinite;
+        }
+
+        .clear-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(255, 65, 108, 0.4);
+            letter-spacing: 3px;
+        }
+
+        .clear-btn:active {
+            transform: translateY(1px);
+        }
+
+
+        @keyframes glow {
+            0% {
+                opacity: 0.5;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.5;
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .result-area {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 300;
+            color: white;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            margin-top: 10px;
+            min-height: 80px;
+        }
+
+        .controls-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+            margin: 25px auto;
+            padding: 10px;
+        }
+
+        .drag-over {
+            border-color: rgba(255, 255, 255, 0.8) !important;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3) !important;
+        }
+
+        .fraction-divider {
+            width: 90%;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.8);
+            margin: 2px 0;
+            border-radius: 2px;
+        }
+
+        .template::after {
+            font-size: 18px;
+        }
+
+        .template.number-block::after {
+            content: '123';
+            position: absolute;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .template.fraction-block::after {
+            content: 'a/b';
+            position: absolute;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .template.complex-block::after {
+            content: 'a+bi';
+            position: absolute;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .template.scientific-block::after {
+            content: '×10ⁿ';
+            position: absolute;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .template.percentage-block::after {
+            content: '%%';
+            position: absolute;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .operation-block.special {
+            background: rgba(147, 112, 219, 0.3);
+            font-size: 18px;
+        }
+
+        .operation-block.parentheses {
+            background: rgba(255, 165, 0, 0.3);
+        }
+
+        .operation-block.function {
+            background: rgba(75, 0, 130, 0.3);
+            font-size: 16px;
+            font-family: monospace;
+        }
+
+        .operation-block.trig {
+            background: rgba(0, 128, 128, 0.3);
+            font-size: 16px;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 10px;
+            flex-shrink: 0;
+            background: var(--bg-card);
+            color: #fff;
+            padding: 0rem !important;
+            text-align: center;
+            width: 100%;
+        }
+
+        #footer-container {
+            padding: 0rem;
+        }
+
+        .section-header {
+            color: white;
+            font-size: 1.2em;
+            font-weight: 300;
+            margin: 20px auto 5px;
+            max-width: 800px;
+            padding: 0 15px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            opacity: 0.9;
+        }
+
+        .section-container {
+            position: relative;
+            margin: 10px auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .smaller-section-header {
+            position: absolute;
+            top: -8px;
+            background: linear-gradient(90deg, #4a90e2, #63b3ed);
+            padding: 2px 25px;
+            font-size: 14px;
+            font-weight: 500;
+            color: white;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .block-container,
+        .equation-area {
+            width: 100%;
+            margin-top: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .complex-block {
+            height: 70px;
+            width: 120px;
+        }
+
+        .scientific-block {
+            width: 150px;
+        }
+
+        .percentage-block {
+            width: 70px;
+        }
+
+        .complex-block .equation-input {
+            height: 28px;
+        }
+
+        .complex-divider {
+            font-size: 20px;
+            color: white;
+            margin: 0 2px;
+        }
+
+        .scientific-input {
+            width: 40px !important;
+        }
+
+        .scientific-divider {
+            font-size: 16px;
+            color: white;
+            margin: 0 2px;
+        }
+
+        .template.complex-block::after {
+            content: 'a+bi';
+        }
+
+        .template.scientific-block::after {
+            content: '×10ⁿ';
+        }
+
+        .template.percentage-block::after {
+            content: '%%';
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+    <br />
+    <br />
+    <h2>Math Block Builder</h2>
+
+    <div class="section-container">
+        <div class="smaller-section-header">Numbers</div>
+        <div class="block-container" id="numbers">
+            <div class="number-block template" draggable="true" title="Number"></div>
+            <div class="fraction-block template" draggable="true" title="Fraction"></div>
+            <div class="scientific-block template" draggable="true" title="Scientific Notation"></div>
+            <div class="percentage-block template" draggable="true" title="Percentage"></div>
+            <div class="operation-block constant" draggable="true" title="π - Pi">π</div>
+            <div class="operation-block constant" draggable="true" title="e - Euler's number">e</div>
+            <div class="operation-block constant" draggable="true" title="φ - Golden ratio">φ</div>
+            <div class="operation-block constant" draggable="true" title="γ - Euler-Mascheroni constant">γ</div>
+            <div class="operation-block constant" draggable="true" title="τ - Tau">τ</div>
+            <div class="operation-block constant" draggable="true" title="∞ - Infinity">∞</div>
+        </div>
+    </div>
+
+    <div class="section-container">
+        <div class="smaller-section-header">Operations</div>
+        <div class="block-container" id="operations">
+            <div class="operation-block" draggable="true" title="+ - Addition">+</div>
+            <div class="operation-block" draggable="true" title="- - Subtraction">-</div>
+            <div class="operation-block" draggable="true" title="× - Multiplication">×</div>
+            <div class="operation-block" draggable="true" title="÷ - Division">÷</div>
+            <div class="operation-block special" draggable="true" title="Power">^</div>
+            <div class="operation-block special" draggable="true" title="Square root">√</div>
+            <div class="operation-block special" draggable="true" title="Percentage">%</div>
+            <div class="operation-block parentheses" draggable="true" title="( - Open Parentheses">(</div>
+            <div class="operation-block parentheses" draggable="true" title=") - Close Parentheses">)</div>
+            <div class="operation-block trig" draggable="true" title="Sine">sin</div>
+            <div class="operation-block trig" draggable="true" title="Cosine">cos</div>
+            <div class="operation-block trig" draggable="true" title="Tangent">tan</div>
+            <div class="operation-block function" draggable="true" title="Common logarithm">log</div>
+            <div class="operation-block function" draggable="true" title="Natural logarithm">ln</div>
+            <div class="operation-block function" draggable="true" title="Absolute value">abs</div>
+        </div>
+    </div>
+
+    <div class="section-container">
+        <div class="smaller-section-header">Equation Builder</div>
+        <div class="equation-area" id="equation"></div>
+    </div>
+
+    <div class="section-container">
+        <div class="smaller-section-header">Result</div>
+        <div class="result-area" id="result"></div>
+    </div>
+    <div class="controls-container">
+        <button class="clear-btn" onclick="clearEquation()">Clear</button>
+        <button class="clear-btn" id="garbage-bin"><i class="fa-solid fa-trash-can"></i></button>
+    </div>
+
+    <script>
+        function updateDraggable(input) {
+            input.parentElement.dataset.value = input.value;
+        }
+
+        document.querySelectorAll('.number-block, .operation-block, .fraction-block, .complex-block, .scientific-block, .percentage-block').forEach(block => {
+            block.addEventListener('dragstart', e => {
+                const value = block.className.includes('number-block') ? '0' : block.textContent;
+                e.dataTransfer.setData('text/plain', value);
+                e.dataTransfer.setData('type', block.className.split(' ')[0]);
+            });
+        });
+
+        const equationArea = document.getElementById('equation');
+        equationArea.addEventListener('dragover', e => e.preventDefault());
+
+        equationArea.addEventListener('drop', e => {
+            e.preventDefault();
+            const type = e.dataTransfer.getData('type');
+            const sourceId = e.dataTransfer.getData('sourceId');
+            const targetBlock = e.target.closest('.number-block, .operation-block, .fraction-block, .complex-block, .scientific-block, .percentage-block');
+
+            if (sourceId) {
+                const sourceBlock = document.getElementById(sourceId);
+                if (targetBlock && targetBlock !== sourceBlock) {
+                    if (e.clientX > targetBlock.getBoundingClientRect().left + targetBlock.offsetWidth / 2) {
+                        targetBlock.after(sourceBlock);
+                    } else {
+                        targetBlock.before(sourceBlock);
+                    }
+                }
+                calculateResult();
+                return;
+            }
+
+            const newBlock = document.createElement('div');
+            newBlock.id = 'block_' + Date.now();
+            newBlock.draggable = true;
+
+            if (type === 'fraction-block') {
+                newBlock.className = 'fraction-block';
+
+                const numerator = document.createElement('input');
+                numerator.type = 'number';
+                numerator.className = 'equation-input';
+                numerator.value = '0';
+                numerator.placeholder = 'num';
+                numerator.addEventListener('input', calculateResult);
+
+                const divider = document.createElement('div');
+                divider.className = 'fraction-divider';
+
+                const denominator = document.createElement('input');
+                denominator.type = 'number';
+                denominator.className = 'equation-input';
+                denominator.value = '1';
+                denominator.placeholder = 'den';
+                denominator.addEventListener('input', calculateResult);
+
+                newBlock.appendChild(numerator);
+                newBlock.appendChild(divider);
+                newBlock.appendChild(denominator);
+                equationArea.appendChild(newBlock);
+                numerator.focus();
+                calculateResult();
+            } else if (type === 'number-block') {
+                newBlock.className = 'number-block';
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.className = 'equation-input';
+                input.value = '0';
+                input.addEventListener('input', calculateResult);
+                input.focus();
+                newBlock.appendChild(input);
+                equationArea.appendChild(newBlock);
+                calculateResult();
+            } else if (type === 'complex-block') {
+                newBlock.className = 'complex-block';
+
+                const real = document.createElement('input');
+                real.type = 'number';
+                real.className = 'equation-input';
+                real.classList.add('equation-input-half');
+                real.value = '0';
+                real.placeholder = 'real';
+                real.addEventListener('input', calculateResult);
+
+                const divider = document.createElement('span');
+                divider.className = 'complex-divider';
+                divider.textContent = '+';
+
+                const imag = document.createElement('input');
+                imag.type = 'number';
+                imag.className = 'equation-input';
+                imag.classList.add('equation-input-half');
+                imag.value = '0';
+                imag.placeholder = 'imag';
+                imag.addEventListener('input', calculateResult);
+
+                const i = document.createElement('span');
+                i.className = 'complex-divider';
+                i.textContent = 'i';
+
+                newBlock.append(real, divider, imag, i);
+                equationArea.appendChild(newBlock);
+                real.focus();
+            } else if (type === 'scientific-block') {
+                newBlock.className = 'scientific-block';
+
+                const base = document.createElement('input');
+                base.type = 'number';
+                base.className = 'equation-input';
+                base.classList.add('equation-input-half');
+                base.value = '0';
+                base.addEventListener('input', calculateResult);
+
+                const divider = document.createElement('span');
+                divider.className = 'scientific-divider';
+                divider.textContent = '×10^';
+
+                const exponent = document.createElement('input');
+                exponent.type = 'number';
+                exponent.className = 'equation-input scientific-input';
+                exponent.classList.add('equation-input-half');
+                exponent.value = '0';
+                exponent.addEventListener('input', calculateResult);
+
+                newBlock.append(base, divider, exponent);
+                equationArea.appendChild(newBlock);
+                base.focus();
+            } else if (type === 'percentage-block') {
+                newBlock.className = 'percentage-block';
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.className = 'equation-input';
+                input.value = '0';
+                input.addEventListener('input', calculateResult);
+
+                const symbol = document.createElement('span');
+                symbol.textContent = '%';
+                symbol.style.marginLeft = '2px';
+
+                newBlock.append(input, symbol);
+                equationArea.appendChild(newBlock);
+                input.focus();
+            } else {
+                newBlock.className = 'operation-block';
+                newBlock.textContent = e.dataTransfer.getData('text/plain');
+                equationArea.appendChild(newBlock);
+                calculateResult();
+            }
+
+            if (targetBlock) {
+                if (e.clientX > targetBlock.getBoundingClientRect().left + targetBlock.offsetWidth / 2) {
+                    targetBlock.after(newBlock);
+                } else {
+                    targetBlock.before(newBlock);
+                }
+            } else {
+                equationArea.appendChild(newBlock);
+            }
+            calculateResult();
+        });
+
+        equationArea.addEventListener('dragstart', e => {
+            const block = e.target.closest('.number-block, .operation-block, .fraction-block, .complex-block, .scientific-block, .percentage-block');
+            if (block) {
+                e.dataTransfer.setData('sourceId', block.id);
+                e.dataTransfer.setData('type', block.className.split(' ')[0]);
+            }
+        });
+
+        equationArea.addEventListener('dragover', e => {
+            e.preventDefault();
+            const targetBlock = e.target.closest('.number-block, .operation-block, .fraction-block, .complex-block, .scientific-block, .percentage-block');
+
+            document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+
+            if (targetBlock) {
+                if (e.clientX > targetBlock.getBoundingClientRect().left + targetBlock.offsetWidth / 2) {
+                    targetBlock.classList.add('drag-over');
+                } else {
+                    targetBlock.classList.add('drag-over');
+                }
+            }
+        });
+
+        equationArea.addEventListener('dragleave', e => {
+            const targetBlock = e.target.closest('.number-block, .operation-block, .fraction-block, .complex-block, .scientific-block, .percentage-block');
+            if (targetBlock) {
+                targetBlock.classList.remove('drag-over');
+            }
+        });
+
+        function calculateResult() {
+            const blocks = Array.from(equationArea.children);
+            const equation = blocks.map(block => {
+                if (block.className === 'number-block') {
+                    const input = block.querySelector('input');
+                    return input.value || '0';
+                } else if (block.className === 'fraction-block') {
+                    const [num, den] = block.querySelectorAll('input');
+                    return `(${num.value || 0}/${den.value || 1})`;
+                } else if (block.className === 'complex-block') {
+                    const [real, imag] = block.querySelectorAll('input');
+                    return `(${real.value || 0} + ${imag.value || 0}i)`;
+                } else if (block.className === 'scientific-block') {
+                    const [base, exp] = block.querySelectorAll('input');
+                    return `(${base.value || 0} * Math.pow(10, ${exp.value || 0}))`;
+                } else if (block.className === 'percentage-block') {
+                    const input = block.querySelector('input');
+                    return `(${input.value || 0}/100)`;
+                }
+
+                // Handle special operations
+                switch (block.textContent) {
+                    case '√': return 'Math.sqrt';
+                    case '^': return '**';
+                    case '%': return '/100*';
+                    case 'sin': return 'Math.sin';
+                    case 'cos': return 'Math.cos';
+                    case 'tan': return 'Math.tan';
+                    case 'log': return 'Math.log10';
+                    case 'ln': return 'Math.log';
+                    case 'abs': return 'Math.abs';
+                    case 'π': return 'Math.PI';
+                    case 'e': return 'Math.E';
+                    case 'φ': return '1.618033988749895';
+                    case 'γ': return '0.577215664901533';
+                    case 'τ': return '(2 * Math.PI)';
+                    case '∞': return 'Infinity';
+                    default: return block.textContent;
+                }
+            }).join(' ');
+
+            try {
+                const sanitizedEquation = equation
+                    .replace('×', '*')
+                    .replace('÷', '/');
+                const result = Function(`return ${sanitizedEquation}`)();
+                document.getElementById('result').textContent = ' ' +
+                    (isFinite(result) ?
+                        Number(parseFloat(result.toPrecision(10))).toString() : 'Error');
+            } catch (e) {
+                document.getElementById('result').textContent = 'Invalid equation';
+            }
+        }
+
+        function clearEquation() {
+            equationArea.innerHTML = '';
+            document.getElementById('result').textContent = ' ';
+        }
+
+        const garbageBin = document.getElementById('garbage-bin');
+
+        garbageBin.addEventListener('dragover', e => {
+            e.preventDefault();
+            garbageBin.classList.add('drag-over');
+        });
+
+        garbageBin.addEventListener('dragleave', e => {
+            garbageBin.classList.remove('drag-over');
+        });
+
+        garbageBin.addEventListener('drop', e => {
+            e.preventDefault();
+            const sourceId = e.dataTransfer.getData('sourceId');
+            if (sourceId) {
+                const blockToDelete = document.getElementById(sourceId);
+                if (blockToDelete) {
+                    blockToDelete.remove();
+                    calculateResult();
+                }
+            }
+            garbageBin.classList.remove('drag-over');
+        });
+    </script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+    <script type="text/javascript" src="./js/practice-common.js"></script>
+</body>
+
+</html>
