@@ -52,14 +52,16 @@ const printBusyPortMessage = (busyPorts) => {
   console.log(bottomBorder);
 };
 
-const assertFreePorts = (ports) => {
+const assertFreePorts = (ports, failFast = true) => {
   const results = checkPorts(ports);
   try {
     const busyPorts = results.filter((result) => !result.isFree);
 
     if (busyPorts.length > 0) {
       printBusyPortMessage(busyPorts);
-      throw new Error(`Required ports are busy. Please free them and try again.`);
+      if (failFast) {
+        throw new Error(`Required ports are busy. Please free them and try again.`);
+      }
     }
     console.log("> All required ports are free");
   } catch (error) {

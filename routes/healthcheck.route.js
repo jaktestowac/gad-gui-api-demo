@@ -43,6 +43,20 @@ function getUptime() {
   return data;
 }
 
+const appStatuses = {
+  0: "[OK]",
+  1: "[Degraded]",
+  9: "[Down]",
+};
+
+function getAppStatus(statusCode) {
+  if (appStatuses[statusCode] === undefined) {
+    return "Unknown";
+  }
+
+  return appStatuses[statusCode];
+}
+
 const healthCheckRoutes = (req, res, next) => {
   try {
     const urlEnds = req.url.replace(/\/\/+/g, "/");
@@ -52,15 +66,20 @@ const healthCheckRoutes = (req, res, next) => {
       return;
     }
     if (req.method === "GET" && urlEnds.endsWith("api/ping")) {
-      const response = { status: "pong" };
+      const response = { response: "pong" };
       logTrace("healthCheck:api/ping response:", response);
       res.status(HTTP_OK).json(response);
       return;
     }
     if (req.method === "GET" && urlEnds.endsWith("api/health/configcheck")) {
-      configInstance.fullSelfCheck();
+      let statusCode = 0;
+      try {
+        configInstance.fullSelfCheck();
+      } catch (error) {
+        statusCode = 9;
+      }
 
-      const response = { status: true };
+      const response = { status: getAppStatus(statusCode) };
       logTrace("healthCheck:api/health response:", response);
       res.status(HTTP_OK).json(response);
       return;
@@ -68,26 +87,53 @@ const healthCheckRoutes = (req, res, next) => {
     if (req.method === "GET" && urlEnds.endsWith("api/health/dbcheck")) {
       const result = checkDatabase();
 
-      const response = { status: result.isOk, result };
+      const statusCode = result.isOk ? 0 : 1;
+
+      const response = { status: getAppStatus(statusCode), result };
       logTrace("healthCheck:api/health dbcheck response:", response);
       res.status(HTTP_OK).json(response);
       return;
     }
     if (req.method === "GET" && urlEnds.endsWith("api/health")) {
+      let statusCode = 0;
+
       const memoryUsageMB = getMemoryUsage();
       const health = {
         timestamp: Date.now(),
         date: new Date(),
         memoryUsageMB,
       };
-      const response = { status: true, health: { ...getUptime(), ...health } };
+
+      const result = checkDatabase();
+
+      if (!result.isOk) {
+        statusCode = 1;
+      }
+
+      const configProblems = [];
+      try {
+        configInstance.fullSelfCheck();
+      } catch (error) {
+        statusCode = 9;
+        configProblems.push("Config check failed. See app logs for details." + error);
+      }
+
+      const response = {
+        status: getAppStatus(statusCode),
+        health: { ...getUptime(), ...health },
+        dbProblems: result.isOk ? [] : result,
+        configProblems: configProblems,
+      };
       logTrace("healthCheck:api/health response:", response);
       res.status(HTTP_OK).json(response);
       return;
     }
     if (req.method === "GET" && urlEnds.endsWith("api/health/memory")) {
       const memoryUsageMB = getMemoryUsage();
-      const response = { status: true, ...memoryUsageMB };
+
+      const statusCode = 0;
+
+      const response = { status: getAppStatus(statusCode), ...memoryUsageMB };
       logTrace("healthCheck:api/health/memory response:", response);
       res.status(HTTP_OK).json(response);
       return;
@@ -95,7 +141,9 @@ const healthCheckRoutes = (req, res, next) => {
     if (req.method === "GET" && urlEnds.endsWith("api/health/uptime")) {
       const uptime = getUptime();
 
-      const response = { status: true, ...uptime };
+      const statusCode = 0;
+
+      const response = { status: getAppStatus(statusCode), ...uptime };
       logTrace("healthCheck:api/health/uptime response:", response);
       res.status(HTTP_OK).json(response);
       return;
@@ -103,7 +151,9 @@ const healthCheckRoutes = (req, res, next) => {
     if (req.method === "GET" && urlEnds.endsWith("api/health/db")) {
       const db = fullDb();
 
-      const response = { status: true, entities: countEntities(db) };
+      const statusCode = 0;
+
+      const response = { status: getAppStatus(statusCode), entities: countEntities(db) };
       logTrace("healthCheck:api/health/db response:", response);
       res.status(HTTP_OK).json(response);
       return;
