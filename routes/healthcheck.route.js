@@ -44,9 +44,12 @@ function getUptime() {
 }
 
 const appStatuses = {
-  ok: { status: "[OK]", description: "Application is running normally." },
-  degraded: { status: "[Degraded]", description: "Application is degraded but still functional." },
-  down: { status: "[Down]", description: "Application is down." },
+  ok: { status: "[OK]", description: "Application is running normally.", code: 0 },
+  limited: { status: "[Limited]", description: "Application is running with limited functionality.", code: 1 },
+  degraded: { status: "[Degraded]", description: "Application is degraded but still functional.", code: 2 },
+  meintenance: { status: "[Maintenance]", description: "Application is in maintenance mode.", code: 3 },
+  critical: { status: "[Critical]", description: "Application is in critical condition.", code: 400 },
+  down: { status: "[Down]", description: "Application is down.", code: 500 },
 };
 
 const healthCheckRoutes = (req, res, next) => {
@@ -98,17 +101,30 @@ const healthCheckRoutes = (req, res, next) => {
 
       const result = checkDatabase();
 
+      let dbStatusObj = appStatuses.ok;
       if (!result.isOk) {
-        statusObj = appStatuses.degraded;
+        dbStatusObj = appStatuses.degraded;
       }
 
       const configProblems = [];
+      let configStatusObj = appStatuses.ok;
       try {
         configInstance.fullSelfCheck();
       } catch (error) {
-        statusObj = appStatuses.down;
-        configProblems.push("Config check failed. See app logs for details.");
+        configStatusObj = appStatuses.critical;
+        push("Config check failed. See app logs for details.");
       }
+
+      const appModules = {
+        config: configStatusObj,
+        db: dbStatusObj,
+        backend: appStatuses.ok,
+        frontend: appStatuses.ok,
+        // artices: appStatuses.ok,
+        // reports: appStatuses.ok,
+        // bookshop: appStatuses.ok,
+        // websockets: appStatuses.ok,
+      };
 
       const response = {
         status: statusObj.status,
@@ -116,6 +132,13 @@ const healthCheckRoutes = (req, res, next) => {
         dbProblems: result.isOk ? [] : result,
         configProblems: configProblems,
       };
+
+      const highLevelStatus = Object.values(appModules).reduce((acc, curr) =>
+        acc.code > curr.code ? acc : curr
+      ).code;
+      
+      response.status = Object.values(appStatuses).find((status) => status.code === highLevelStatus).status;
+
       logTrace("healthCheck:api/health response:", response);
       res.status(HTTP_OK).json(response);
       return;
