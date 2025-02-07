@@ -63,6 +63,7 @@ const middlewares = jsonServer.defaults();
 const port = process.env.PORT || getConfigValue(ConfigKeys.DEFAULT_PORT);
 const webSocketPort = parseInt(port) + 10;
 
+// TODO: test this check
 // assertFreePorts([port, webSocketPort], false);
 
 copyDefaultDbIfNotExists();

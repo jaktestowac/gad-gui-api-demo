@@ -71,7 +71,7 @@ const websocketRoute = (wss, webSocketPort) => {
     codeEditor: new CodeEditorContext(wss),
   };
 
-  logDebug(`> 🦎 GAD WebSocket listening on ${webSocketPort}!`);
+  logDebug(`🦎GAD WebSocket listening on ${webSocketPort}!`);
 
   wss.on("connection", (ws) => {
     logDebug("[websocketRoute] New client connected", { client: ws._socket?.remoteAddress });
