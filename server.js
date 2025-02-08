@@ -278,7 +278,7 @@ server.use(function (req, res, next) {
   res.type("txt").send("Not found");
 });
 
-websocketRoute(new WebSocket.Server({ port: webSocketPort }), webSocketPort);
+websocketRoute(new WebSocket.Server({ port: webSocketPort, "Access-Control-Allow-Origin": "*" }), webSocketPort);
 
 const sslEnabled = getConfigValue(ConfigKeys.SSL_ENABLED);
 

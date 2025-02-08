@@ -1883,7 +1883,7 @@
 
     <script type="text/javascript" src="/js/wsh.js"></script>
     <script>
-        const ws = new WebSocket(wsAddr);
+        const ws = new WebSocket(wsAddr, wsHeaders);
 
         let currentSessionId = null;
         let selectedSeats = [];

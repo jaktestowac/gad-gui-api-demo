@@ -1082,7 +1082,7 @@
                 currentUser = username;
                 currentDoc = documentId;
 
-                ws = new WebSocket(wsAddr);
+                ws = new WebSocket(wsAddr, wsHeaders);
 
                 ws.onopen = () => {
                     ws.send(JSON.stringify({
@@ -1469,7 +1469,7 @@
             createBtn.disabled = true;
             createBtn.textContent = 'Creating...';
 
-            const ws = new WebSocket(wsAddr);
+            const ws = new WebSocket(wsAddr, wsHeaders);
 
             ws.onopen = () => {
                 ws.send(JSON.stringify({
@@ -2131,7 +2131,7 @@
 
         function checkUsername(username) {
             return new Promise((resolve, reject) => {
-                const checkWs = new WebSocket(wsAddr);
+                const checkWs = new WebSocket(wsAddr, wsHeaders);
 
                 const timeoutId = setTimeout(() => {
                     checkWs.close();

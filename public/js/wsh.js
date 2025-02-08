@@ -10,4 +10,11 @@ const protocol = window.location.protocol;
 const wsProtocol = protocol === "https:" ? "wss" : "ws";
 
 const wsAddr = `${wsProtocol}://${addrParts.join(":")}`;
+
+const wsHeaders = {
+  headers: {
+    "User-Agent": `WebSocket Client`,
+  },
+};
+
 console.log("wsAddr", wsAddr);

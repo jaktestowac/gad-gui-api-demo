@@ -1316,7 +1316,7 @@
         }
 
         function connect() {
-            ws = new WebSocket(wsAddr);
+            ws = new WebSocket(wsAddr, wsHeaders);
             const connectionStatus = document.querySelector('.connection-status');
 
             ws.onopen = () => {

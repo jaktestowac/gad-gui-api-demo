@@ -277,7 +277,7 @@
     </div>
     <script type="text/javascript" src="/js/wsh.js"></script>
     <script>
-        const socket = new WebSocket(wsAddr);
+        const socket = new WebSocket(wsAddr, wsHeaders);
 
         socket.addEventListener('open', () => {
             requestWeatherData();
