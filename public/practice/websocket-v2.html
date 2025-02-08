@@ -371,7 +371,7 @@
     </div>
     <script type="text/javascript" src="/js/wsh.js"></script>
     <script>
-        const socket = new WebSocket(wsAddr, wsHeaders);
+        const socket = new WebSocket(wsAddr);
         let weatherChart;
         const chartData = {
             labels: Array.from({ length: 10 }, (_, i) => {

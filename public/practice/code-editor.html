@@ -530,7 +530,7 @@
             initWebSocket(username, workspace, password, isNewWorkspace, hidden = false) {
                 this.currentUser = username;
                 this.currentWorkspace = workspace;
-                this.ws = new WebSocket(wsAddr, wsHeaders);
+                this.ws = new WebSocket(wsAddr);
 
                 this.updateURL(username, workspace, password);
 
@@ -1153,7 +1153,7 @@
             ensureWebSocketConnection() {
                 if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
                     return new Promise((resolve) => {
-                        this.ws = new WebSocket(wsAddr, wsHeaders);
+                        this.ws = new WebSocket(wsAddr);
                         this.ws.onopen = () => resolve(true);
                         this.ws.onerror = () => resolve(false);
                     });
