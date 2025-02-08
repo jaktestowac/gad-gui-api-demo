@@ -2394,7 +2394,7 @@
       "settings": {
         "color": "#8aff8a"
       },
-      "is_public": true,
+      "is_public": false,
       "user_id": 2,
       "date": "2025-01-21T13:33:13.825Z",
       "id": 22

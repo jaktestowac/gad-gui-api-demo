@@ -214,7 +214,11 @@ function displayFlashPosts(data) {
     flashpostMessageElement.setAttribute("data-testid", "flashpost-message");
     flashpostMessageElement.innerHTML = element.body;
 
-    flashpostMessageElement.addEventListener("click", () => {
+    flashpostMessageElement.addEventListener("click", (event) => {
+      var selection = window.getSelection();
+      if (selection.toString().length > 0) {
+        return;
+      }
       openFlashpostModal(element.body, element, flashpostAuthor.textContent);
     });
 
