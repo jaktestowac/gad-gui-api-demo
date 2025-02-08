@@ -187,7 +187,7 @@ const rightMenu = (path = "", withUserMenu = true) => {
 
 const footerHTML = (date) => {
   return `
-    <footer>
+    <footer >
     <div class="container" id="footer-container">
     Version: <span id="version"></span>
     <span id="copyright-sign">&copy;</span> Copyright ${date}

@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD - Real-Time Chat with Weather Widget (based on WebSockets)</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            margin: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 4px;
+            color: #7289da;
+        }
+
+        h6 {
+            margin-bottom: 6px;
+        }
+
+        .description {
+            margin-bottom: 20px;
+        }
+
+
+        #messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #2c2c2c;
+            border-radius: 12px;
+            height: 100%;
+        }
+
+        #messages p {
+            background-color: #3f3f3f;
+            padding: 10px 15px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            word-wrap: break-word;
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+        }
+
+        .message-time {
+            color: #666;
+            font-size: 0.8em;
+            min-width: 45px;
+        }
+
+        .message-content {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        #usernameInput,
+        #messageInput {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            background-color: #2c2c2c;
+            color: #ffffff;
+            font-size: 16px;
+            width: 400px;
+        }
+
+        #usernameInput {
+            background-color: #585858;
+            width: 280px !important;
+        }
+
+        #usernameInput:focus,
+        #messageInput:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #7289da;
+        }
+
+        .chat-button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            background-color: #7289da;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .chat-button:hover {
+            background-color: #5c6fb1;
+        }
+
+        #loginScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+        }
+
+        .login-box {
+            background-color: #2c2c2c;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .login-box h2 {
+            margin-bottom: 20px;
+            color: #7289da;
+        }
+
+        #usernameInput {
+            margin-bottom: 15px;
+            width: 250px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .message-username {
+            color: #7289da;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .chat-container {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            align-content: center;
+            flex: 1 0 auto;
+            padding: 5rem 1rem;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0px;
+            flex-shrink: 0;
+            background: var(--bg-card);
+            color: #fff;
+            padding: 0rem !important;
+            text-align: center;
+            width: 100%;
+        }
+
+        #footer-container {
+            padding: 0rem;
+        }
+
+        .error-message {
+            color: #ff4444;
+            font-size: 0.9em;
+            margin-top: 6px;
+            margin-bottom: 6px;
+            min-height: 1.2em;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        #usernameInput.error {
+            box-shadow: 0 0 0 2px #ff4444;
+        }
+
+        .system-message {
+            color: #ff4444;
+            font-style: italic;
+        }
+
+        .chat-layout {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        #userList {
+            width: 200px;
+            background: #2c2c2c;
+            border-radius: 12px;
+            padding: 15px;
+            height: 40vh;
+        }
+
+        .user-item {
+            padding: 8px 12px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .user-item:hover {
+            background-color: #3f3f3f;
+        }
+
+        .user-item.selected {
+            background-color: #7289da;
+        }
+
+        .private-message {
+            background-color: #3a2f4d !important;
+        }
+
+        .recipient-indicator {
+            font-size: 0.8em;
+            color: #7289da;
+            margin-left: 8px;
+        }
+
+        #weatherWidget {
+            background: #2c2c2c;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            width: 200px;
+            text-align: center;
+        }
+
+        .weather-data {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            color: #fff;
+        }
+
+        .weather-label {
+            color: #7289da;
+        }
+
+        .secondary-button {
+            padding: 10px 12px;
+            border: none;
+            border-radius: 12px;
+            background-color: #795454;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background-color 0.3s;
+        }
+
+        .secondary-button:hover {
+            background-color: #5c3f3f;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+    <div id="loginScreen">
+        <div class="login-box">
+            <h2>Enter Your Name</h2>
+            <input type="text" id="usernameInput" maxlength="32" placeholder="Your name..." class="messageInput" />
+            <div id="usernameError" class="error-message"></div>
+            <button class="chat-button" onclick="joinChat()">Join Chat</button>
+            <br />
+            <br />
+            <div align="center">
+                <a href="/practice/">
+                    <button class="secondary-button">Return to practice pages</button></a>
+            </div>
+        </div>
+    </div>
+
+    <div class="chat-container">
+        <h1>Real-Time Chat with Weather Widget (v3)</h1>
+        <h6>(based on WebSockets)</h6>
+        <p class="description">Open another browser tab and join the chat with a different username to see the real-time updates.</p>
+        <div class="chat-layout">
+            <div>
+                <div id="weatherWidget">
+                    <h3 style="margin-bottom: 15px; color: #7289da;">Weather Info</h3>
+                    <div class="weather-data">
+                        <span class="weather-label">Temperature:</span>
+                        <span id="temperature">--°C</span>
+                    </div>
+                    <div class="weather-data">
+                        <span class="weather-label">Humidity:</span>
+                        <span id="humidity">--%</span>
+                    </div>
+                    <div class="weather-data">
+                        <span class="weather-label">Wind Speed:</span>
+                        <span id="windSpeed">-- m/s</span>
+                    </div>
+                </div>
+                <div id="userList">
+                    <h3 style="margin-bottom: 15px; color: #7289da;">Online Users</h3>
+                    <div id="userListContent"></div>
+                </div>
+            </div>
+            <div style="flex: 1;">
+                <div id="messages"></div>
+                <div class="input-container">
+                    <input type="text" id="messageInput" maxlength="128" placeholder="Type your message..." />
+                    <button class="chat-button" onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="/js/wsh.js"></script>
+    <script>
+        const socket = new WebSocket(`ws://${wsAddr}`);
+        let username = '';
+        let selectedUser = null;
+        let weatherInterval;
+
+        function requestWeatherUpdate() {
+            socket.send(JSON.stringify({
+                type: 'getWeather',
+                days: 1,
+                city: 'Current'
+            }));
+        }
+
+        function validateUsername(username) {
+            if (username.length < 3) {
+                return 'Username must have at least 3 characters';
+            }
+            if (username.length > 16) {
+                return 'Username must have less than 16 characters';
+            }
+            if (!/^[a-zA-Z0-9_]*$/.test(username)) {
+                return 'Username can only contain letters, numbers, and underscores';
+            }
+            return '';
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('usernameError');
+            const usernameInput = document.getElementById('usernameInput');
+            errorDiv.textContent = message;
+            usernameInput.classList.toggle('error', !!message);
+        }
+
+        function joinChat() {
+            const usernameInput = document.getElementById('usernameInput');
+            username = usernameInput.value.trim();
+
+            const error = validateUsername(username);
+            if (error) {
+                showError(error);
+                return;
+            }
+
+            showError('');
+            socket.send(JSON.stringify({
+                type: 'practiceChatJoin',
+                username: username,
+                version: 'v3'
+            }));
+        }
+
+        socket.addEventListener('open', () => {
+            requestWeatherUpdate();
+            weatherInterval = setInterval(requestWeatherUpdate, 5000);
+        });
+
+        socket.addEventListener('close', () => {
+            if (weatherInterval) {
+                clearInterval(weatherInterval);
+            }
+        });
+
+        function formatTime(date) {
+            return date.toLocaleTimeString('en-US', {
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        socket.addEventListener('message', (event) => {
+            const messagesDiv = document.getElementById('messages');
+            const data = JSON.parse(event.data);
+            const time = formatTime(new Date());
+
+            switch (data.type) {
+                case 'practiceChatMessage':
+                case 'practiceChatPrivate': {
+                    let className = 'message-content';
+                    if (data.username?.toLowerCase().includes('[system]')) {
+                        className += ' system-message';
+                    }
+
+                    const isPrivate = data.type === 'practiceChatPrivate';
+                    messagesDiv.innerHTML += `
+                        <p class="${isPrivate ? 'private-message' : ''}">
+                            <span class="message-time">${time}</span>
+                            <span class="${className}">
+                                <span class="message-username">${data.username}:</span>
+                                <span>${data.message}</span>
+                                ${isPrivate ? `<span class="recipient-indicator">(to ${data.recipient})</span>` : ''}
+                            </span>
+                        </p>
+                    `;
+                    break;
+                }
+                case 'practiceChatUserList':
+                    updateUserList(data.users);
+                    document.getElementById('loginScreen').classList.add('hidden');
+                    break;
+                case 'error':
+                    if (data.message.toLowerCase().includes('username')) {
+                        showError(data.message);
+                    } else {
+                        messagesDiv.innerHTML += `
+                            <p>
+                                <span class="message-time">${time}</span>
+                                <span class="message-content system-message">
+                                    ${data.message}
+                                </span>
+                            </p>
+                        `;
+                    }
+                    break;
+                case 'weatherData': {
+                    const weather = data.weather[0];
+                    document.getElementById('temperature').textContent = `${weather.temperature}°C`;
+                    document.getElementById('humidity').textContent = `${weather.humidity}`;
+                    document.getElementById('windSpeed').textContent = `${weather.windSpeed} km/h`;
+                    break;
+                }
+            }
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        });
+
+        function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const message = messageInput.value.trim();
+
+            if (message && username) {
+                socket.send(JSON.stringify({
+                    type: selectedUser ? 'practiceChatPrivate' : 'practiceChatMessage',
+                    username: username,
+                    message: message,
+                    recipient: selectedUser
+                }));
+                messageInput.value = '';
+            }
+        }
+
+        function updateUserList(users) {
+            const userListContent = document.getElementById('userListContent');
+            userListContent.innerHTML = users
+                .filter(user => user !== username)
+                .map(user => `
+                    <div class="user-item" onclick="selectUser('${user}')" id="user-${user}">
+                        ${user}
+                    </div>
+                `).join('');
+        }
+
+        function selectUser(user) {
+            if (selectedUser) {
+                document.getElementById(`user-${selectedUser}`).classList.remove('selected');
+            }
+            selectedUser = selectedUser === user ? null : user;
+            if (selectedUser) {
+                document.getElementById(`user-${user}`).classList.add('selected');
+            }
+            updateMessageInput();
+        }
+
+        function updateMessageInput() {
+            const input = document.getElementById('messageInput');
+            input.placeholder = selectedUser
+                ? `Message to ${selectedUser}...`
+                : "Message to everyone...";
+        }
+
+        document.getElementById('usernameInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') joinChat();
+        });
+
+        document.getElementById('messageInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        document.getElementById('usernameInput').addEventListener('input', () => {
+            showError('');
+        });
+    </script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+    <script type="text/javascript" src="./js/practice-common.js"></script>
+</body>
+
+</html>

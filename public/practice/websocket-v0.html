@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD - Weather Widget (WebSocket)</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <style>
+        :root {
+            --bg-dark: #474747;
+            --bg-card: #1e1e1e;
+            --accent: #7289da;
+            --border: #333;
+        }
+
+        body {
+            margin: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .weather-widget-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: var(--bg-dark);
+            color: #fff;
+            padding: 3rem 1rem;
+        }
+
+        .weather-widget {
+            background: var(--bg-card);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            width: 250px;
+            font-family: Arial, sans-serif;
+        }
+
+        .weather-widget h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.1rem;
+        }
+
+        .weather-data {
+            display: grid;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .temp {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .refresh-btn {
+            background: #7289da;
+            border: none;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 4px;
+            width: 100%;
+            margin-top: 1rem;
+            cursor: pointer;
+        }
+
+        .refresh-btn:hover {
+            opacity: 0.9;
+        }
+
+        .location-select {
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            background: var(--bg-dark);
+            color: white;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0px;
+            flex-shrink: 0;
+            background: var(--bg-card);
+            color: #fff;
+            padding: 0rem !important;
+            text-align: center;
+            width: 100%;
+        }
+
+        #footer-container {
+            padding: 0rem;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+    <br />
+    <br />
+    <div class="weather-widget-container">
+        <h1>Weather Widget (WebSocket)</h1>
+        <div class="weather-widget">
+            <select id="locationSelect" class="location-select" onchange="requestWeatherUpdate()">
+                <option value="Current Location">Current Location</option>
+                <option value="London">London</option>
+                <option value="New York">New York</option>
+                <option value="Tokyo">Tokyo</option>
+                <option value="Paris">Paris</option>
+                <option value="Sydney">Sydney</option>
+            </select>
+            <h3 id="location">Loading...</h3>
+            <div class="weather-data">
+                <div class="temp" id="temperature">--°C</div>
+                <div id="minmax">Min/Max: --°C / --°C</div>
+                <div id="humidity">Humidity: --%</div>
+                <div id="wind">Wind: -- km/h</div>
+            </div>
+            <button class="refresh-btn" onclick="requestWeatherUpdate()">Refresh</button>
+        </div>
+    </div>
+    <script type="text/javascript" src="/js/wsh.js"></script>
+    <script>
+        const socket = new WebSocket(`ws://${wsAddr}`);
+
+        function requestWeatherUpdate() {
+            const selectedCity = document.getElementById('locationSelect').value;
+            socket.send(JSON.stringify({
+                type: 'getWeather',
+                days: 1,
+                city: selectedCity
+            }));
+        }
+
+        socket.addEventListener('open', () => {
+            requestWeatherUpdate();
+        });
+
+        socket.addEventListener('message', (event) => {
+            const data = JSON.parse(event.data);
+            if (data.type === 'weatherData' && data.weather.length > 0) {
+                const weather = data.weather[0];
+                document.getElementById('location').textContent = weather.city || 'Current Location';
+                document.getElementById('temperature').textContent = `${weather.temperature}°C`;
+                document.getElementById('minmax').textContent = `Min/Max: ${weather.temperatureMin}°C / ${weather.temperatureMax}°C`;
+                document.getElementById('humidity').textContent = `Humidity: ${weather.humidity}`;
+                document.getElementById('wind').textContent = `Wind: ${weather.windSpeed} km/h`;
+            }
+        });
+    </script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>

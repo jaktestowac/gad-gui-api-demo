@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD - Shared Code Editor</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <meta charset="UTF-8">
+    <link href="/js/libs/codemirror/codemirror.css" rel="stylesheet">
+    <link href="/js/libs/codemirror/dracula.min.css" rel="stylesheet">
+    <link href="./css/code-editor.css" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+    <br />
+    <div>
+        <div id="loginModal" class="modal-overlay">
+            <div class="modal">
+                <div class="login-container">
+                    <h2>Join Code Editor</h2>
+
+                    <div class="workspace-cards">
+                        <div class="workspace-card tutorial" onclick="CodeEditor.joinDefaultWorkspace('Tutorial')">
+                            <h3>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                                </svg>
+                                Tutorial
+                            </h3>
+                            <p>Learn JavaScript basics with examples</p>
+                        </div>
+                        <div class="workspace-card playground" onclick="CodeEditor.joinDefaultWorkspace('Playground')">
+                            <h3>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                </svg>
+                                Playground
+                            </h3>
+                            <p>Code sandbox environment</p>
+                        </div>
+                    </div>
+
+                    <div class="quick-actions">
+                        <button class="secondary-button" onclick="CodeEditor.showWorkspacesModal()"><i class="fa-solid fa-chalkboard"></i> Browse Templates</button>
+                        <button class="secondary-button" onclick="CodeEditor.showWorkspaceList()"><i class="fa-solid fa-list-ul"></i> Browse Workspaces</button>
+                    </div>
+                    <div class="workspace-divider"></div>
+
+                    <div class="quick-actions">
+                        <button class="secondary-button" onclick="quickJoin()"><i class="fa-solid fa-arrow-right-to-bracket"></i> Quick Join</button>
+                        <button class="secondary-button" onclick="showCreateWorkspace()"><i class="fa-solid fa-folder-plus"></i> Create New</button>
+                    </div>
+
+                    <div class="workspace-divider"></div>
+                    <div class="join-form">
+                        <div class="input-group">
+                            <input type="text" id="username" placeholder="Username" required>
+                            <div class="error-message" id="usernameError"></div>
+                        </div>
+                        <div class="input-group">
+                            <input type="text" id="workspace" placeholder="Workspace Name" required>
+                            <div class="error-message" id="workspaceError"></div>
+                        </div>
+                        <div class="input-group">
+                            <input type="password" id="password" placeholder="Password (optional)">
+                        </div>
+                        <button class="primary-button" onclick="joinWorkspace()">Join Existing</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="createWorkspaceModal" class="modal-overlay" style="display: none;">
+            <div class="modal">
+                <h2>Create New Workspace</h2>
+                <div class="input-group">
+                    <input type="text" id="newUsername" placeholder="Your Username" required>
+                    <div class="error-message" id="newUsernameError"></div>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="newWorkspace" placeholder="New Workspace Name" required>
+                    <div class="error-message" id="newWorkspaceError"></div>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="newPassword" placeholder="Set Password (optional)">
+                </div>
+                <div class="settings-item">
+                    <label>Hidden Workspace</label>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="newHidden">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <p class="setting-description">Hidden workspaces are not shown in Active Workspaces list</p>
+                <div class="modal-buttons">
+                    <button class="secondary-button" onclick="showJoinWorkspace()"><i class="fa-solid fa-rotate-left"></i> Back to Title Screen</button>
+                    <button class="primary-button" onclick="createWorkspace()">Create <i class="fa-solid fa-person-walking-arrow-right"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-container hidden" id="mainContainer">
+            <div style="padding: 1rem;">
+                <div class="base-container">
+                    <div class="editor-container">
+                        <div class="editor-header">
+                            <div class="editor-header-top">
+                                <div class="title-container">
+                                    <h2>JS Editor</h2>
+                                    <div class="workspace-info">
+                                        <div class="workspace-name">
+                                            <span id="currentWorkspace" data-full-name="-">-</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tools-panel">
+                                    <div class="tools-group">
+                                        <button class="tool-button" onclick="CodeEditor.copyWorkspaceLink()" title="Share Workspace">
+                                            <i class="fa-regular fa-copy"></i>
+                                        </button>
+                                        <button class="tool-button" onclick="clearEditor()" title="Clear / Reset">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </button>
+                                        <button class="tool-button" onclick="saveCode()" title="Download">
+                                            <i class="fa-solid fa-download"></i>
+                                        </button>
+                                        <button class="tool-button primary-button" onclick="runCode()" title="Run Code (Ctrl+Enter)">
+                                            <i class="fa-solid fa-play"></i>
+                                        </button>
+                                        <button class="tool-button" onclick="CodeEditor.toggleLayout()" title="Toggle Layout">
+                                            <i class="fa-solid fa-table-columns"></i>
+                                        </button>
+                                    </div>
+                                    <div class="tools-divider"></div>
+                                    <button class="tool-button danger" onclick="logout()" title="Logout">
+                                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                                    </button>
+                                    <div style="position: relative;">
+                                        <button id="settingsButton" class="tool-button" onclick="CodeEditor.toggleSettings(event)" title="Workspace Settings" style="display: none;">
+                                            <i class="fa-solid fa-gear"></i>
+                                        </button>
+                                        <div id="settingsPanel" class="settings-panel">
+                                            <h3>Workspace Settings</h3>
+                                            <div class="small-description">For other users:</div>
+                                            <div class="settings-group">
+                                                <div class="settings-item">
+                                                    <label>Read-only Mode</label>
+                                                    <label class="toggle-switch">
+                                                        <input type="checkbox" id="readonlyToggle" onchange="CodeEditor.updateSettings()">
+                                                        <span class="toggle-slider"></span>
+                                                    </label>
+                                                </div>
+                                                <div class="settings-item">
+                                                    <label>Disable Clear</label>
+                                                    <label class="toggle-switch">
+                                                        <input type="checkbox" id="clearDisabledToggle" onchange="CodeEditor.updateSettings()">
+                                                        <span class="toggle-slider"></span>
+                                                    </label>
+                                                </div>
+                                                <div class="settings-item">
+                                                    <label>Disable Run</label>
+                                                    <label class="toggle-switch">
+                                                        <input type="checkbox" id="runDisabledToggle" onchange="CodeEditor.updateSettings()">
+                                                        <span class="toggle-slider"></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="editor-wrapper">
+                            <textarea id="editor"></textarea>
+                            <div id="charLimit" class="char-limit">0/65536</div>
+                        </div>
+                        <div></div>
+                    </div>
+                    <div class="output-container">
+                        <div class="editor-header editor-output-header">
+                            <div class="editor-header-top">
+                                <div class="title-container">
+                                    <h2>Output</h2>
+                                </div>
+                                <div class="tools-panel">
+                                    <div class="tools-group">
+                                        <div style="position: relative;">
+                                            <button class="tool-button" onclick="CodeEditor.clearOutput()" title="Clear Output">
+                                                <i class="fa-solid fa-trash-can"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="users-list-header" onclick="toggleUsersList()" id="userListButton">
+                                        <div style="display: flex; align-items: center;">
+                                            <span><i class="fa-solid fa-users"></i></span>
+                                            <span class="users-count" id="usersCount">0</span>
+                                        </div>
+                                        <svg class="toggle-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="6 9 12 15 18 9"></polyline>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="usersList" class="users-list collapsed">
+                            <div class="users-list-content">
+                                <ul id="usersListItems"></ul>
+                            </div>
+                        </div>
+                        <div id="output"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="customModalBackdrop" class="custom-modal-backdrop"></div>
+        <div id="customModal" class="custom-modal modal">
+            <div class="custom-modal-title" id="customModalTitle"></div>
+            <div class="custom-modal-content" id="customModalContent"></div>
+            <div class="custom-modal-input" id="customModalInput"></div>
+            <div class="custom-modal-buttons" id="customModalButtons"></div>
+        </div>
+
+        <div id="workspacesModal" class="modal-overlay" style="display: none;">
+            <div class="modal workspaces-modal">
+                <h2>Available Templates</h2>
+                <div class="workspaces-grid" id="workspacesGrid"></div>
+                <div class="modal-buttons">
+                    <button class="secondary-button" onclick="CodeEditor.closeWorkspacesModal()">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="workspaceListModal" class="modal-overlay" style="display: none;">
+            <div class="modal workspace-list-modal">
+                <h2>Active Workspaces</h2>
+                <div class="workspace-filter">
+                    <input type="text" class="workspace-search" id="workspaceSearch" placeholder="Search workspaces...">
+                </div>
+                <div class="workspace-list" id="workspaceList">
+
+                </div>
+                <div class="modal-buttons">
+                    <button class="secondary-button" onclick="CodeEditor.closeWorkspaceList()">Close</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="/js/libs/codemirror/codemirror.min.js"></script>
+    <script src="/js/libs/javascript/javascript.js"></script>
+    <script src="/js/libs/codemirror/javascript.min.js"></script>
+    <script src="/js/libs/javascript/show-hint.js"></script>
+    <script src="/js/libs/javascript/javascript-hint.js"></script>
+    <link rel="stylesheet" href="/js/libs/sql/hints.css" />
+    <link rel="stylesheet" href="/js/libs/codemirror/codemirror.css" />
+    <script type="text/javascript" src="/js/wsh.js"></script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+    <script>
+        const CodeEditor = {
+            ws: null,
+            editor: null,
+            isUpdating: false,
+            activeUsers: [],
+            currentModalResolve: null,
+            currentWorkspace: '',
+            currentUser: '',
+            isOwner: false,
+            settings: {
+                readonly: false,
+                clearDisabled: false,
+                runDisabled: false
+            },
+
+            constants: {
+                adjectives: ['Happy', 'Clever', 'Swift', 'Bright', 'Cool', 'Epic', 'Super', 'Mega', 'Ultra', 'Hyper', 'Mighty', 'Power', 'Magic', 'Epic', 'Awesome', 'Fantastic', 'Great', 'Amazing', 'Wonderful', 'Incredible', 'Terrific', 'Fabulous', 'Marvelous', 'Spectacular', 'Splendid', 'Magnificent', 'Brilliant', 'Genius', 'Smart', 'Intelligent', 'Wise', 'Cunning', 'Crafty', 'Sly', 'Sharp', 'Keen', 'Quick', 'Fast', 'Speedy', 'Rapid', 'Swift', 'Brisk', 'Nimble', 'Agile', 'Active', 'Vigorous', 'Lively', 'Spry', 'Alert', 'Vivid', 'Vibrant', 'Dynamic', 'Energetic', 'Enthusiastic', 'Passionate', 'Fervent', 'Fiery', 'Intense', 'Fierce', 'Strong', 'Powerful', 'Mighty', 'Stout', 'Sturdy', 'Solid', 'Robust', 'Hearty', 'Healthy', 'Fit', 'Sound', 'Whole', 'Hale', 'Hale', 'Hardy', 'Sane', 'Clear', 'Balanced', 'Stable', 'Secure', 'Safe', 'Sure', 'Certain', 'Positive', 'Definite', 'Decisive', 'Determined', 'Resolute', 'Purposeful', 'Intent', 'Serious', 'Earnest', 'Sincere', 'Genuine', 'Real', 'True', 'Honest', 'Fair', 'Just', 'Right', 'Correct', 'Proper', 'Accurate', 'Exact', 'Precise', 'True', 'Real', 'Actual', 'Genuine', 'Authentic', 'Valid', 'Legit', 'Legal', 'Lawful', 'Official', 'Approved', 'Accepted', 'Popular', 'Trendy', 'Stylish', 'Chic', 'Cool', 'Hip', 'In', 'Now', 'Current', 'Present', 'Recent', 'New', 'Fresh', 'Modern', 'Latest', 'Up-to-date', 'Cutting-edge', 'State-of-the-art', 'Advanced', 'Innovative', 'Revolutionary', 'Progressive', 'Forwardthinking', 'Visionary', 'Pioneering', 'Groundbreaking', 'Trailblazing'],
+                nouns: ['Coder', 'Dev', 'Ninja', 'Guru', 'Wizard', 'Master', 'Hero', 'Star', 'Pro', 'Expert', 'Champion', 'Legend', 'Virtuoso', 'Maestro', 'Savant', 'Whiz', 'Brain', 'Mind', 'Intellect', 'Genius', 'Prodigy', 'Sage', 'Scholar', 'Savant', 'Pundit', 'Savvy', 'Ace', 'Hotshot', 'Whiz', 'Whizz', 'Wiz', 'Maven', 'Mavin', 'Buff', 'Fan', 'Aficionado', 'Enthusiast', 'Devotee', 'Lover', 'Addict', 'Maniac'],
+                workspaceThemes: ['Forest', 'Ocean', 'Mountain', 'Desert', 'Space', 'City', 'Island', 'Valley', 'River', 'Cloud', 'Tree', 'Flower', 'Sun', 'Moon', 'Star', 'Sky', 'Rain', 'Snow', 'Storm', 'Wind', 'Fire', 'Earth', 'Metal', 'Water', 'Wood', 'Stone', 'Sand', 'Ice', 'Lava', 'Magma', 'Volcano', 'Cave', 'Canyon', 'Jungle', 'Savanna', 'Tundra', 'Arctic', 'Antarctic', 'Tropical', 'Polar', 'Urban', 'Rural', 'Suburban', 'Industrial', 'Commercial', 'Residential', 'Historic', 'Modern', 'Futuristic', 'Ancient', 'Medieval', 'Renaissance', 'Baroque', 'Gothic', 'Romanesque', 'Byzantine', 'Druid', 'Viking', 'Celtic', 'Greek', 'Roman', 'Egyptian', 'Mayan', 'Aztec', 'Inca', 'Native', 'Aboriginal', 'Maori', 'Polynesian', 'Hawaiian', 'Samoan', 'Tongan', 'Fijian', 'Māori', 'Tahitian', 'Marquesan', 'Rapa Nui', 'Rarotongan', 'Niuean', 'Tokelauan', 'Tuvaluan', 'Kiribati', 'Nauruan', 'Palauan', 'Marshallese', 'Chamorro', 'Carolinian', 'Kosraean', 'Pohnpeian', 'Chuukese', 'Yapese', 'Mokilese', 'Pingelapese', 'Kapingamarangi', 'Nukuoro', 'Samoan', 'Tokelauan', 'Tuvaluan', 'Wallisian', 'Futunan', 'Fijian', 'Rotuman', 'Tongan', 'Niuean', 'CookIslandMaori', 'Tahitian', 'Marquesan', 'Hawaiian', 'RapaNui']
+            },
+
+            MAX_CHARS: 65536,
+
+            showCustomModal({ title, content, buttons, input }) {
+                const modal = document.getElementById('customModal');
+                const backdrop = document.getElementById('customModalBackdrop');
+                const titleEl = document.getElementById('customModalTitle');
+                const contentEl = document.getElementById('customModalContent');
+                const buttonsEl = document.getElementById('customModalButtons');
+                const inputEl = document.getElementById('customModalInput');
+
+                titleEl.textContent = title;
+                contentEl.textContent = content;
+
+                if (input) {
+                    inputEl.innerHTML = `
+                    <div class="input-group">
+                        <input type="${input.type || 'text'}" 
+                               id="modalInput" 
+                               placeholder="${input.placeholder || ''}"
+                               class="modal-input"
+                               ${input.required ? 'required' : ''}>
+                        <div class="error-message" id="modalInputError"></div>
+                    </div>
+                    `;
+                    setTimeout(() => document.getElementById('modalInput').focus(), 100);
+                } else {
+                    inputEl.innerHTML = '';
+                }
+
+                buttonsEl.innerHTML = buttons.map(btn => `
+                    <button class="custom-modal-button ${btn.type}" onclick="CodeEditor.handleModalAction('${btn.action}')">
+                        ${btn.text}
+                    </button>
+                `).join('');
+
+                modal.classList.add('show');
+                backdrop.classList.add('show');
+
+                return new Promise(resolve => {
+                    this.currentModalResolve = (action) => {
+                        const inputValue = input ? document.getElementById('modalInput')?.value : null;
+                        resolve({ action, input: inputValue });
+                    };
+                });
+            },
+
+            handleModalAction(action) {
+                const modal = document.getElementById('customModal');
+                const backdrop = document.getElementById('customModalBackdrop');
+                modal.classList.remove('show');
+                backdrop.classList.remove('show');
+                if (this.currentModalResolve) {
+                    this.currentModalResolve(action);
+                    this.currentModalResolve = null;
+                }
+            },
+
+            generateRandomName() {
+                const adj = this.constants.adjectives[Math.floor(Math.random() * this.constants.adjectives.length)];
+                const noun = this.constants.nouns[Math.floor(Math.random() * this.constants.nouns.length)];
+                return `${adj}${noun}`;
+            },
+
+            generateWorkspaceName() {
+                const theme = this.constants.workspaceThemes[Math.floor(Math.random() * this.constants.workspaceThemes.length)];
+                const id = Math.random().toString(36).substring(2, 6);
+                return `${theme}${id}`;
+            },
+
+            async quickJoin() {
+                const username = this.generateRandomName();
+                const workspace = this.generateWorkspaceName();
+
+                const result = await this.showCustomModal({
+                    title: 'Quick Join',
+                    content: `Creating new workspace "${workspace}" as "${username}"`,
+                    buttons: [
+                        { text: 'Cancel', type: 'secondary', action: 'cancel' },
+                        { text: 'Create & Join', type: 'primary', action: 'confirm' }
+                    ]
+                });
+
+                if (result.action === 'confirm') {
+                    this.initEditor();
+                    this.initWebSocket(username, workspace, '', true);
+                }
+            },
+
+            validateField(inputId, errorId, value, minLength, fieldName) {
+                const inputGroup = document.getElementById(inputId).parentNode;
+                const errorElement = document.getElementById(errorId);
+
+                if (!value) {
+                    this.showFieldError(inputGroup, errorElement, `${fieldName} is required`);
+                    return false;
+                }
+
+                if (value.length < minLength) {
+                    this.showFieldError(inputGroup, errorElement, `${fieldName} must be at least ${minLength} characters`);
+                    return false;
+                }
+
+                if (/^(system|admin|root|owner|moderator|bot)$/i.test(value)) {
+                    this.showFieldError(inputGroup, errorElement, `This username is not allowed`);
+                    return false;
+                }
+
+                inputGroup.classList.remove('error');
+                errorElement.textContent = '';
+                return true;
+            },
+
+            showFieldError(inputGroup, errorElement, message) {
+                inputGroup.classList.add('error');
+                errorElement.textContent = message;
+            },
+
+            handleServerError(message) {
+                const usernameInput = document.getElementById('username');
+                const newUsernameInput = document.getElementById('newUsername');
+                const errorElement = document.getElementById('usernameError') || document.getElementById('newUsernameError');
+
+                if (errorElement && (message.includes("username") || message.includes("Username"))) {
+                    const inputGroup = errorElement.parentNode;
+                    this.showFieldError(inputGroup, errorElement, message);
+                } else {
+                    this.showCustomModal({
+                        title: 'Error',
+                        content: message,
+                        buttons: [
+                            { text: 'Ok', type: 'primary', action: 'close' }
+                        ]
+                    });
+                }
+            },
+
+            joinWorkspace() {
+                const username = document.getElementById('username').value;
+                const workspace = document.getElementById('workspace').value;
+                const password = document.getElementById('password').value;
+
+                const isUsernameValid = this.validateField('username', 'usernameError', username, 2, 'Username');
+                const isWorkspaceValid = this.validateField('workspace', 'workspaceError', workspace, 3, 'Workspace name');
+
+                if (!isUsernameValid || !isWorkspaceValid) {
+                    return;
+                }
+
+                this.initEditor();
+                this.initWebSocket(username, workspace, password, false);
+            },
+
+            showCreateWorkspace() {
+                document.getElementById('loginModal').style.display = 'none';
+                document.getElementById('createWorkspaceModal').style.display = 'flex';
+
+                const username = document.getElementById('username').value;
+                if (username) {
+                    document.getElementById('newUsername').value = username;
+                }
+            },
+
+            showJoinWorkspace() {
+                document.getElementById('createWorkspaceModal').style.display = 'none';
+                document.getElementById('loginModal').style.display = 'flex';
+            },
+
+            createWorkspace() {
+                const username = document.getElementById('newUsername').value;
+                const workspace = document.getElementById('newWorkspace').value;
+                const password = document.getElementById('newPassword').value;
+                const hidden = document.getElementById('newHidden').checked;
+
+                const isUsernameValid = this.validateField('newUsername', 'newUsernameError', username, 2, 'Username');
+                const isWorkspaceValid = this.validateField('newWorkspace', 'newWorkspaceError', workspace, 3, 'Workspace name');
+
+                if (!isUsernameValid || !isWorkspaceValid) {
+                    return;
+                }
+
+                document.getElementById('createWorkspaceModal').style.display = 'none';
+                document.getElementById('usersList').style.display = 'block';
+
+                this.initEditor();
+                this.initWebSocket(username, workspace, password, true, hidden);
+            },
+
+            toggleUsersList() {
+                const usersList = document.getElementById('usersList');
+                usersList.classList.toggle('collapsed');
+                const usersListHeader = document.querySelector('.users-list-header');
+                usersListHeader.classList.toggle('active');
+            },
+
+            updateUsersList(users) {
+                const list = document.getElementById('usersListItems');
+                const count = document.getElementById('usersCount');
+                this.activeUsers = users;
+
+                list.innerHTML = users.map(user => {
+                    const username = user.username;
+                    const isCurrentUser = username === this.currentUser;
+                    const isOwner = user.isOwner;
+                    const classes = [
+                        isCurrentUser ? 'current-user' : '',
+                        isOwner ? 'owner-user' : ''
+                    ].filter(Boolean).join(' ');
+
+                    return `<li class="${classes}">
+                        ${isCurrentUser ? '<span class="user-indicator"></span>' : ''}
+                        ${username}
+                        ${isCurrentUser ? '<span class="user-you">(you)</span>' : ''}
+                        ${isOwner ? '<span class="user-owner">👑 owner</span>' : ''}
+                    </li>`;
+                }).join('');
+
+                count.textContent = users.length;
+
+                if (document.getElementById('settingsButton')) {
+                    document.getElementById('settingsButton').style.display =
+                        users.find(u => u.username === this.currentUser)?.isOwner ? 'flex' : 'none';
+                }
+            },
+
+            updateURL(username, workspace, password) {
+                const url = new URL(window.location.href);
+                url.searchParams.set('workspace', encodeURIComponent(workspace));
+                if (username) {
+                    url.searchParams.set('username', encodeURIComponent(username));
+                }
+                if (password) {
+                    url.searchParams.set('password', encodeURIComponent(password));
+                }
+                window.history.pushState({}, '', url.toString());
+            },
+
+            initWebSocket(username, workspace, password, isNewWorkspace, hidden = false) {
+                this.currentUser = username;
+                this.currentWorkspace = workspace;
+                this.ws = new WebSocket(`ws://${wsAddr}`);
+
+                this.updateURL(username, workspace, password);
+
+                this.ws.onopen = () => {
+                    const workspaceEl = document.getElementById('currentWorkspace');
+                    workspaceEl.textContent = workspace;
+                    workspaceEl.setAttribute('data-full-name', workspace);
+                    this.ws.send(JSON.stringify({
+                        type: 'codeEditorJoin',
+                        data: {
+                            username,
+                            workspace,
+                            password,
+                            isNewWorkspace,
+                            hidden
+                        }
+                    }));
+                };
+
+                this.ws.onmessage = (event) => {
+                    const message = JSON.parse(event.data);
+
+                    switch (message.type) {
+                        case 'codeEditorUpdate':
+                            if (message.data.isOwner !== undefined) {
+                                this.isOwner = message.data.isOwner;
+                                document.getElementById('settingsButton').style.display = this.isOwner ? 'flex' : 'none';
+                            }
+                            if (!this.isUpdating) {
+                                this.isUpdating = true;
+
+
+                                this.initEditor();
+                                if (message.data.code !== undefined) {
+                                    this.editor.setValue(message.data.code);
+                                }
+                                this.isUpdating = false;
+                                this.updateCharLimit(message.data.code);
+                            }
+                            this.showEditorInterface();
+                            break;
+
+                        case 'codeEditorUserList':
+                            this.updateUsersList(message.data.users, message.data.ownerUserId);
+                            break;
+
+                        case 'codeEditorError':
+                            this.handleServerError(message.data.message);
+                            break;
+
+                        case 'codeEditorSettingsUpdate':
+                            this.applySettings(message.data.settings);
+                            break;
+
+                        case 'codeEditorRun':
+                            if (message.data.triggeredBy !== this.currentUser) {
+                                this.isUpdating = true;
+                                this.editor.setValue(message.data.code);
+                                this.isUpdating = false;
+                                this.executeCode(message.data.code);
+
+                                const output = document.getElementById('output');
+                                output.innerHTML = `<div style="color: #5c7cfa; margin-bottom: 0.5rem;">
+                                    💻 Code executed by ${message.data.triggeredBy}
+                                </div>` + output.innerHTML;
+                            }
+                            break;
+
+                        case 'codeEditorTemplate':
+                            if (message.data.code !== undefined) {
+                                this.showCustomModal({
+                                    title: 'Reset Template',
+                                    content: 'Are you sure you want to reset this workspace to its original template code?',
+                                    buttons: [
+                                        { text: 'Cancel', type: 'secondary', action: 'cancel' },
+                                        { text: 'Reset', type: 'danger', action: 'confirm' }
+                                    ]
+                                }).then(result => {
+                                    if (result.action === 'confirm') {
+                                        this.editor.setValue(message.data.code);
+                                        this.updateCharLimit(message.data.code);
+
+                                        this.ws.send(JSON.stringify({
+                                            type: 'codeEditorUpdate',
+                                            data: { code: message.data.code }
+                                        }));
+                                    }
+                                });
+                            }
+                            break;
+
+                        case 'activeWorkspaces':
+                            this.renderWorkspaceList(message.data.workspaces);
+                            break;
+                    }
+                };
+
+                this.ws.onclose = () => {
+                    if (this.editor) {
+                        setTimeout(() => this.initWebSocket(username, workspace, password, false), 1000);
+                    }
+                };
+            },
+
+            showEditor() {
+                const mainContainer = document.getElementById('mainContainer');
+                mainContainer.classList.remove('hidden');
+                setTimeout(() => {
+                    mainContainer.classList.add('visible');
+                }, 50);
+            },
+
+            showEditorInterface() {
+                const url = new URL(window.location.href);
+                url.searchParams.delete('username');
+                window.history.pushState({}, '', url.toString());
+
+                document.getElementById('loginModal').style.display = 'none';
+                document.getElementById('createWorkspaceModal').style.display = 'none';
+                this.showEditor();
+            },
+
+            updateCharLimit(code) {
+                const length = code.length;
+                const charLimit = document.getElementById('charLimit');
+                charLimit.textContent = `${length}/${this.MAX_CHARS}`;
+
+                charLimit.classList.remove('warning', 'error', 'safe');
+
+                if (length > this.MAX_CHARS - 10) {
+                    charLimit.classList.add('error');
+                } else if (length > this.MAX_CHARS * 0.9) {
+                    charLimit.classList.add('warning');
+                } else if (length > 0) {
+                    charLimit.classList.add('safe');
+                }
+            },
+
+            initEditor() {
+                const codeMirrorElements = document.querySelectorAll('.CodeMirror');
+                codeMirrorElements.forEach(el => el.remove());
+
+                this.editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
+                    mode: { name: "javascript", globalVars: true },
+                    theme: 'dracula',
+                    lineNumbers: true,
+                    autoCloseBrackets: true,
+                    matchBrackets: true,
+                    smartIndent: true,
+                    autofocus: true,
+                    tabSize: 2,
+                    lineWrapping: true,
+                    extraKeys: {
+                        "Ctrl-Enter": (cm) => this.runCode(),
+                        "Cmd-Enter": (cm) => this.runCode(),
+                        "Ctrl-Space": "autocomplete"
+                    },
+                    hint: CodeMirror.hint.javascript,
+                });
+
+                const charLimit = document.getElementById('charLimit');
+
+                this.editor.on('change', (cm, change) => {
+                    if (!this.isUpdating) {
+                        const code = cm.getValue();
+                        this.updateCharLimit(code);
+
+                        if (code.length > this.MAX_CHARS) {
+                            cm.setValue(code.substring(0, this.MAX_CHARS));
+                            // this.showCustomModal({
+                            //     title: 'Character Limit Reached',
+                            //     content: `The code has been truncated to ${this.MAX_CHARS} characters.`,
+                            //     buttons: [
+                            //         { text: 'Ok', type: 'primary', action: 'close' }
+                            //     ]
+                            // });
+                            return;
+                        }
+
+                        this.ws.send(JSON.stringify({
+                            type: 'codeEditorUpdate',
+                            data: { code: code }
+                        }));
+                    }
+                });
+
+            },
+
+            async executeCode(code) {
+                const output = document.getElementById('output');
+                output.innerHTML = '';
+
+                function addToOutput(text, type = 'log') {
+                    const div = document.createElement('div');
+                    div.textContent = text;
+                    div.className = type;
+                    output.appendChild(div);
+                    div.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+
+                try {
+                    const originalLog = console.log;
+                    const originalError = console.error;
+
+
+                    console.log = (...args) => {
+                        const text = args.map(arg =>
+                            typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+                        ).join(' ');
+                        addToOutput(text, 'log');
+                    };
+
+                    console.error = (...args) => {
+                        const text = args.map(arg => String(arg)).join(' ');
+                        addToOutput(text, 'error');
+                    };
+
+                    try {
+                        let result = await eval(code);
+
+                        if (result !== undefined && !code.trim().startsWith('console.')) {
+                            const formattedResult = typeof result === 'object' ?
+                                JSON.stringify(result, null, 2) : String(result);
+                            addToOutput(`=> ${formattedResult}`, 'result');
+                        }
+
+                    } catch (error) {
+                        addToOutput(error.toString(), 'error');
+                    } finally {
+                        console.log = originalLog;
+                        console.error = originalError;
+                    }
+
+                    if (output.children.length === 0) {
+                        output.innerHTML = '<div class="info">(no output)</div>';
+                    }
+
+                } catch (error) {
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'error';
+                    errorDiv.textContent = error.toString();
+                    output.appendChild(errorDiv);
+                }
+            },
+
+            runCode() {
+                if (this.settings.runDisabled && !this.isOwner) {
+                    this.showCustomModal({
+                        title: 'Action Restricted',
+                        content: 'Only the workspace owner can run code.',
+                        buttons: [{ text: 'Ok', type: 'primary', action: 'close' }]
+                    });
+                    return;
+                }
+
+                const code = this.editor.getValue();
+                const output = document.getElementById('output');
+                this.executeCode(code);
+
+                this.ws.send(JSON.stringify({
+                    type: 'codeEditorRun',
+                    data: {
+                        code: code,
+                        output: output.innerHTML,
+                    }
+                }));
+            },
+
+            async clearEditor() {
+                if (this.settings.clearDisabled && !this.isOwner) {
+                    this.showCustomModal({
+                        title: 'Action Restricted',
+                        content: 'Only the workspace owner can clear/reset the editor.',
+                        buttons: [{ text: 'Ok', type: 'primary', action: 'close' }]
+                    });
+                    return;
+                }
+
+                const confirmed = await this.showCustomModal({
+                    title: 'Clear Editor',
+                    content: 'Are you sure you want to clear all code? This action cannot be undone.',
+                    buttons: [
+                        { text: 'Cancel', type: 'secondary', action: 'cancel' },
+                        { text: 'Clear', type: 'danger', action: 'confirm' }
+                    ]
+                });
+
+                if (confirmed.action === 'confirm') {
+                    this.editor.setValue('');
+                    this.updateCharLimit('');
+
+                    if (this.predefinedWorkspaceDescription.find(t => t.id === this.currentWorkspace)) {
+                        this.ws.send(JSON.stringify({
+                            type: 'codeEditorGetPredefinedWorkspace',
+                            data: { workspace: this.currentWorkspace }
+                        }));
+                        return;
+                    }
+                    this.ws.send(JSON.stringify({
+                        type: 'codeEditorUpdate',
+                        data: { code: '' }
+                    }));
+                }
+            },
+
+            clearOutput() {
+                document.getElementById('output').innerHTML = '<div class="info">(no output)</div>';
+            },
+
+            saveCode() {
+                const code = this.editor.getValue();
+                const blob = new Blob([code], { type: 'text/javascript' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'code.js';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            },
+
+            async logout() {
+                const confirmed = await this.showCustomModal({
+                    title: 'Logout Confirmation',
+                    content: 'Are you sure you want to logout? Any unsaved changes will be lost.',
+                    buttons: [
+                        { text: 'Cancel', type: 'secondary', action: 'cancel' },
+                        { text: 'Logout', type: 'danger', action: 'confirm' }
+                    ]
+                });
+
+                if (confirmed.action === 'confirm') {
+                    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+                        this.ws.close();
+                    }
+                    this.editor = null;
+
+                    window.history.pushState({}, '', window.location.pathname);
+
+                    document.getElementById('mainContainer').classList.remove('visible');
+                    setTimeout(() => {
+                        document.getElementById('mainContainer').classList.add('hidden');
+                        document.getElementById('usersList').style.display = 'none';
+                        document.getElementById('loginModal').style.display = 'flex';
+                        document.getElementById('username').value = '';
+                        document.getElementById('workspace').value = '';
+                        document.getElementById('password').value = '';
+                    }, 300);
+                }
+            },
+
+            async joinDefaultWorkspace(name) {
+                this.closeWorkspacesModal();
+                const username = this.generateRandomName();
+                const workspace = name;
+
+                const result = await this.showCustomModal({
+                    title: 'Join Workspace',
+                    content: `Joining "${workspace}" as "${username}"`,
+                    buttons: [
+                        { text: 'Cancel', type: 'secondary', action: 'cancel' },
+                        { text: 'Join', type: 'primary', action: 'confirm' }
+                    ]
+                });
+
+                if (result.action === 'confirm') {
+                    this.initEditor();
+                    this.initWebSocket(username, workspace, '', false);
+                    this.clearOutput();
+                }
+            },
+
+            copyWorkspaceLink() {
+                const url = new URL(window.location.href);
+                url.searchParams.set('workspace', encodeURIComponent(this.currentWorkspace));
+
+                const passwordInput = document.getElementById('password');
+                const newPasswordInput = document.getElementById('newPassword');
+                const password = passwordInput.value || newPasswordInput.value;
+
+                if (password) {
+                    url.searchParams.set('password', encodeURIComponent(password));
+                }
+
+                navigator.clipboard.writeText(url.toString()).then(() => {
+                    this.showCustomModal({
+                        title: 'Link Copied',
+                        content: `Workspace link has been copied to clipboard!\n\nUsers can join by opening the link and entering their username.${password ? '\n\nPassword is included in the link.' : ''}`,
+                        buttons: [
+                            { text: 'Ok', type: 'primary', action: 'close' }
+                        ]
+                    });
+                }).catch(err => {
+                    this.showCustomModal({
+                        title: 'Error',
+                        content: 'Failed to copy link to clipboard',
+                        buttons: [
+                            { text: 'Ok', type: 'primary', action: 'close' }
+                        ]
+                    });
+                });
+            },
+
+            toggleSettings(event) {
+                event?.stopPropagation();
+                const panel = document.getElementById('settingsPanel');
+                panel.classList.toggle('show');
+            },
+
+            handleClickOutside(event) {
+                const settingsPanel = document.getElementById('settingsPanel');
+                const settingsButton = document.getElementById('settingsButton');
+
+                const usersList = document.getElementById('usersList');
+                const userListButton = document.getElementById('userListButton');
+
+                if (settingsPanel.classList.contains('show') &&
+                    !settingsPanel.contains(event.target) &&
+                    !settingsButton.contains(event.target)) {
+                    settingsPanel.classList.remove('show');
+                }
+
+                if (!usersList.classList.contains('collapsed') &&
+                    !usersList.contains(event.target) &&
+                    !userListButton.contains(event.target)) {
+                    usersList.classList.add('collapsed');
+                }
+            },
+
+            updateSettings() {
+                if (!this.isOwner) return;
+
+                const settings = {
+                    readonly: document.getElementById('readonlyToggle').checked,
+                    clearDisabled: document.getElementById('clearDisabledToggle').checked,
+                    runDisabled: document.getElementById('runDisabledToggle').checked
+                };
+
+                this.ws.send(JSON.stringify({
+                    type: 'codeEditorUpdateSettings',
+                    data: { settings }
+                }));
+            },
+
+            applySettings(settings) {
+                this.settings = settings;
+
+                document.getElementById('readonlyToggle').checked = settings.readonly;
+                document.getElementById('clearDisabledToggle').checked = settings.clearDisabled;
+                document.getElementById('runDisabledToggle').checked = settings.runDisabled;
+
+                if (this.editor) {
+                    this.editor.setOption('readOnly', settings.readonly && !this.isOwner);
+                }
+            },
+
+            async showWorkspacesModal() {
+                const modal = document.getElementById('workspacesModal');
+                const grid = document.getElementById('workspacesGrid');
+
+                grid.innerHTML = '<div style="text-align: center; padding: 2rem;">Loading templates...</div>';
+                modal.style.display = 'flex';
+
+                const connected = await this.ensureWebSocketConnection();
+                if (!connected) {
+                    grid.innerHTML = '<div style="text-align: center; padding: 2rem; color: #ff6b6b;">Failed to connect to server</div>';
+                    return;
+                }
+
+                this.ws.send(JSON.stringify({
+                    type: 'codeEditorGetPredefinedWorkspaceDescription'
+                }));
+
+                const originalOnMessage = this.ws.onmessage;
+                this.ws.onmessage = (event) => {
+                    const message = JSON.parse(event.data);
+                    if (message.type === 'predefinedWorkspaceDescription') {
+                        grid.innerHTML = message.data.templates.map(template => `
+                            <div class="workspace-template" onclick="CodeEditor.joinDefaultWorkspace('${template.id}')">
+                                <h3>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        ${template.icon}
+                                    </svg>
+                                    ${template.name}
+                                </h3>
+                                <div>
+                                    ${template.tags.map(tag => `<span class="workspace-tag ${tag}">${tag}</span>`).join('')}
+                                </div>
+                                <p class="workspace-description">${template.description}</p>
+                            </div>
+                        `).join('');
+
+                        this.ws.onmessage = originalOnMessage;
+                    } else {
+                        originalOnMessage(event);
+                    }
+                };
+            },
+
+            closeWorkspacesModal() {
+                document.getElementById('workspacesModal').style.display = 'none';
+            },
+
+            async showWorkspaceList() {
+                const modal = document.getElementById('workspaceListModal');
+                const list = document.getElementById('workspaceList');
+                const searchInput = document.getElementById('workspaceSearch');
+
+                list.innerHTML = '<div style="text-align: center; padding: 2rem;">Loading workspaces...</div>';
+                searchInput.value = '';
+                modal.style.display = 'flex';
+
+                const connected = await this.ensureWebSocketConnection();
+                if (!connected) {
+                    list.innerHTML = '<div style="text-align: center; padding: 2rem; color: #ff6b6b;">Failed to connect to server</div>';
+                    return;
+                }
+
+                this.ws.send(JSON.stringify({
+                    type: 'codeEditorGetActiveWorkspaces'
+                }));
+
+                searchInput.addEventListener('input', (e) => {
+                    this.filterWorkspaces(e.target.value);
+                });
+
+                setTimeout(() => {
+                    searchInput.focus();
+                }, 100);
+
+                document.addEventListener('click', this.handleClickOutside);
+
+                this.ws.onmessage = (event) => {
+                    const message = JSON.parse(event.data);
+
+                    if (message.type === 'activeWorkspaces') {
+                        this.renderWorkspaceList(message.data.workspaces);
+                    }
+                };
+
+            },
+
+            renderWorkspaceList(workspaces) {
+                const list = document.getElementById('workspaceList');
+
+                const workspacesList = Object.values(workspaces).map(workspace => {
+                    return workspace
+                });
+
+                if (!workspacesList.length) {
+                    list.innerHTML = '<div style="text-align: center; padding: 2rem;">No active workspaces found</div>';
+                    return;
+                }
+
+                list.innerHTML = workspacesList.map(workspace => `
+                    <div class="workspace-list-item ${workspace.isPrivate ? 'private' : 'public'}" 
+                         onclick="CodeEditor.joinWorkspaceFromList('${workspace.name}', ${workspace.isPrivate})">
+                        <div class="workspace-list-info">
+                            <span class="workspace-list-name">${workspace.name}</span>
+                            <span class="workspace-list-badge ${workspace.isPrivate ? 'private' : 'public'}">
+                                ${workspace.isPrivate ? '🔒 Private' : '🌐 Public'}
+                            </span>
+                            <span class="workspace-list-badge ${workspace.isTemplate ? 'template' : ''}">
+                                ${workspace.isTemplate ? '📄 Tutorial' : ''}
+                            </span>
+                        </div>
+                        <div class="workspace-users-count">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                            </svg>
+                            ${workspace.userCount} ${workspace.userCount === 1 ? 'user' : 'users'}
+                        </div>
+                    </div>
+                `).join('');
+            },
+
+            filterWorkspaces(query) {
+                const items = document.querySelectorAll('.workspace-list-item');
+                query = query.toLowerCase();
+
+                items.forEach(item => {
+                    const name = item.querySelector('.workspace-list-name').textContent.toLowerCase();
+                    item.style.display = name.includes(query) ? 'flex' : 'none';
+                });
+            },
+
+            async joinWorkspaceFromList(workspaceName, isPrivate) {
+                let password = '';
+                if (isPrivate) {
+                    const result = await this.showCustomModal({
+                        title: 'Password Required',
+                        content: `Enter password for workspace "${workspaceName}":`,
+                        buttons: [
+                            { text: 'Cancel', type: 'secondary', action: 'cancel' },
+                            { text: 'Join', type: 'primary', action: 'confirm' }
+                        ],
+                        input: {
+                            type: 'password',
+                            placeholder: 'Enter workspace password',
+                            required: true
+                        }
+                    });
+
+                    if (result.action === 'cancel') return;
+                    password = result.input;
+                }
+
+                const username = this.generateRandomName();
+                this.closeWorkspaceList();
+                this.initEditor();
+                this.initWebSocket(username, workspaceName, password, false);
+            },
+
+            closeWorkspaceList() {
+                document.getElementById('workspaceListModal').style.display = 'none';
+            },
+
+            ensureWebSocketConnection() {
+                if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
+                    return new Promise((resolve) => {
+                        this.ws = new WebSocket(`ws://${wsAddr}`);
+                        this.ws.onopen = () => resolve(true);
+                        this.ws.onerror = () => resolve(false);
+                    });
+                }
+                return Promise.resolve(true);
+            },
+
+            init() {
+                document.getElementById('loginModal').style.display = 'flex';
+                document.getElementById('mainContainer').classList.add('hidden');
+
+                window.CodeEditor = this;
+
+                window.quickJoin = () => this.quickJoin();
+                window.joinWorkspace = () => this.joinWorkspace();
+                window.createWorkspace = () => this.createWorkspace();
+                window.showCreateWorkspace = () => this.showCreateWorkspace();
+                window.showJoinWorkspace = () => this.showJoinWorkspace();
+                window.clearEditor = () => this.clearEditor();
+                window.saveCode = () => this.saveCode();
+                window.logout = () => this.logout();
+                window.runCode = () => this.runCode();
+                window.toggleUsersList = () => this.toggleUsersList();
+                window.joinDefaultWorkspace = (name) => this.joinDefaultWorkspace(name);
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const workspaceParam = urlParams.get('workspace');
+                const usernameParam = urlParams.get('username');
+                const passwordParam = urlParams.get('password');
+
+                if (workspaceParam) {
+                    const decodedWorkspace = decodeURIComponent(workspaceParam);
+                    if (usernameParam) {
+                        setTimeout(() => {
+                            this.initEditor();
+                            this.initWebSocket(
+                                decodeURIComponent(usernameParam),
+                                decodedWorkspace,
+                                passwordParam ? decodeURIComponent(passwordParam) : '',
+                                false
+                            );
+                        }, 100);
+                    } else {
+                        document.getElementById('workspace').value = decodedWorkspace;
+                        if (passwordParam) {
+                            document.getElementById('password').value = decodeURIComponent(passwordParam);
+                        }
+                    }
+                }
+
+                document.addEventListener('click', this.handleClickOutside);
+            },
+
+            isVerticalLayout: false,
+
+            toggleLayout() {
+                this.isVerticalLayout = !this.isVerticalLayout;
+                const container = document.querySelector('.base-container');
+                container.classList.toggle('vertical-layout', this.isVerticalLayout);
+
+                if (this.editor) {
+                    this.editor.refresh();
+                }
+            },
+        };
+
+        document.addEventListener('DOMContentLoaded', () => CodeEditor.init());
+    </script>
+
+</body>
+
+</html>

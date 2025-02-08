@@ -1,0 +1,1724 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD - Drone Simulator (WebSocket)</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1f25 0%, #2c3e50 100%);
+            color: #fff;
+        }
+
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            background: rgba(0, 0, 0, 0.2);
+            margin-bottom: 1.5rem;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .title-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .controls-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .connection-status {
+            padding: 8px 16px;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        #connectBtn,
+        #resetBtn {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+
+        .simulator-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .simulator-status::before {
+            content: '⚡';
+            font-size: 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(20, 40px);
+            grid-template-rows: repeat(15, 40px);
+            gap: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+            margin: 0 auto;
+        }
+
+        .cell {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 4px;
+            min-width: 40px;
+            min-height: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cell:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.05);
+        }
+
+        .drone {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #00b4db 0%, #0083b0 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            animation: hover 2s ease-in-out infinite;
+            z-index: 10;
+            pointer-events: all;
+            cursor: pointer;
+        }
+
+        .drone::after {
+            content: '';
+            position: absolute;
+            width: 45px;
+            height: 45px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: pulse 2s ease-out infinite;
+        }
+
+        .selected {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            transform: scale(1.1);
+        }
+
+        .controls {
+            text-align: center;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        #connectBtn {
+            padding: 12px 24px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        #connectBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        #status {
+            margin-left: 1rem;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        @keyframes hover {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-3px);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.8);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        .simulator-container {
+            display: flex;
+            gap: 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .details-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            width: 300px;
+            font-size: 0.85rem;
+        }
+
+        .drone-details,
+        .area-details {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 0.75rem;
+        }
+
+        .drone-details h2,
+        .area-details h2,
+        .event-log h2 {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.8;
+            font-weight: 500;
+        }
+
+        .detail-item {
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+        }
+
+        .detail-label {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
+            flex-shrink: 0;
+        }
+
+        .detail-value {
+            font-size: 0.85rem;
+            font-weight: 400;
+            text-align: right;
+        }
+
+        .battery-indicator {
+            height: 6px;
+            margin: 0.2rem 0;
+        }
+
+        .status-badge {
+            padding: 0.2rem 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .area-type-badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .detail-item-container {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+        }
+
+        .detail-item-container::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .detail-item-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .detail-item-container::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+        }
+
+        .cell.charging-area {
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: rgba(46, 213, 115, 0.1);
+            pointer-events: all;
+        }
+
+        .cell.charging-area.base {
+            background: rgba(46, 213, 115, 0.2);
+            border-color: #2ed573;
+        }
+
+        .cell.charging-area::before {
+            content: '⚡';
+            position: absolute;
+            font-size: 1.2rem;
+            opacity: 0.7;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .cell.charging-area.base::before {
+            content: '🏠';
+        }
+
+        .tooltip {
+            position: fixed;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 1000;
+            white-space: nowrap;
+        }
+
+        /* .tooltip::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 5px 5px 0;
+            border-style: solid;
+            border-color: rgba(0, 0, 0, 0.9) transparent transparent;
+        } */
+
+        .cell.base-area {
+            border: 2px solid #ffd700;
+            background: rgba(255, 215, 0, 0.1);
+            pointer-events: all;
+        }
+
+        .cell.base-area.landing {
+            border-color: #ff9f43;
+            background: rgba(255, 159, 67, 0.1);
+        }
+
+        .cell.base-area.hangar {
+            border-color: #5352ed;
+            background: rgba(83, 82, 237, 0.1);
+        }
+
+        .cell.base-area::before {
+            position: absolute;
+            font-size: 1.2rem;
+            opacity: 0.7;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .cell.base-area.landing::before {
+            content: '🛬';
+        }
+
+        .cell.base-area.hangar::before {
+            content: '🏭';
+        }
+
+        .cell.obstacle {
+            background: rgba(255, 71, 87, 0.2);
+            border-color: #ff4757;
+            pointer-events: all;
+        }
+
+        .cell.building {
+            background: rgba(156, 136, 255, 0.2);
+            border-color: #9c88ff;
+        }
+
+        .cell.building::before {
+            content: '🏢';
+            position: absolute;
+            font-size: 1.2rem;
+            opacity: 0.7;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .cell.antenna::before {
+            content: '📡';
+            position: absolute;
+            font-size: 1.2rem;
+            opacity: 0.7;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .cell.noFlyZone {
+            background: repeating-linear-gradient(45deg,
+                    rgba(255, 71, 87, 0.1),
+                    rgba(255, 71, 87, 0.1) 10px,
+                    rgba(255, 71, 87, 0.2) 10px,
+                    rgba(255, 71, 87, 0.2) 20px);
+        }
+
+        .cell.tree::before {
+            content: '🌲';
+            position: absolute;
+            font-size: 1.2rem;
+            opacity: 0.7;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .cell.water {
+            background: rgba(45, 152, 218, 0.2);
+            border-color: #2d98da;
+        }
+
+        .cell.water::before {
+            content: '💧';
+            position: absolute;
+            font-size: 1.2rem;
+            opacity: 0.7;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .error-notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 71, 87, 0.9);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+        }
+
+        .cell.invalid-destination {
+            animation: invalidShake 0.5s ease-in-out;
+        }
+
+        @keyframes invalidShake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        .cell.path-preview {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cell.path-preview::after {
+            content: '·';
+            position: absolute;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 2rem;
+            font-weight: bold;
+            animation: pathPulse 1s ease-in-out infinite;
+        }
+
+        @keyframes pathPulse {
+
+            0%,
+            100% {
+                opacity: 0.3;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* New base area types */
+        .cell.repair::before {
+            content: '🔧';
+        }
+
+        .cell.storage::before {
+            content: '📦';
+        }
+
+        /* New charging station types */
+        .cell.solar::before {
+            content: '☀️';
+        }
+
+        .cell.emergency::before {
+            content: '🆘';
+        }
+
+        /* New obstacle types */
+        .cell.radar::before {
+            content: '📡';
+            color: #ff9f43;
+        }
+
+        .cell.powerPlant::before {
+            content: '⚡';
+            color: #ffd32a;
+        }
+
+        .cell.windFarm::before {
+            content: '🌪️';
+        }
+
+        /* New map element types */
+        .cell.helipad {
+            background: rgba(45, 152, 218, 0.1);
+            border-color: #45aaf2;
+        }
+
+        .cell.helipad::before {
+            content: '🚁';
+        }
+
+        .cell.beacon {
+            background: rgba(255, 234, 167, 0.1);
+        }
+
+        .cell.beacon::before {
+            content: '🔆';
+        }
+
+        .cell.warehouse::before {
+            content: '🏭';
+        }
+
+        .cell.satellite::before {
+            content: '📡';
+        }
+
+        .cell.weather::before {
+            content: '🌡️';
+        }
+
+        .cell.turbulence {
+            background: repeating-linear-gradient(-45deg,
+                    rgba(255, 71, 87, 0.1),
+                    rgba(255, 71, 87, 0.1) 5px,
+                    rgba(255, 71, 87, 0.2) 5px,
+                    rgba(255, 71, 87, 0.2) 10px);
+        }
+
+        .cell.turbulence::before {
+            content: '💨';
+        }
+
+        .cell.thermal {
+            background: radial-gradient(circle,
+                    rgba(255, 121, 63, 0.2) 0%,
+                    rgba(255, 121, 63, 0.1) 100%);
+        }
+
+        .cell.thermal::before {
+            content: '🌡️';
+        }
+
+        .cell.emergency {
+            animation: emergencyPulse 2s infinite;
+        }
+
+        @keyframes emergencyPulse {
+
+            0%,
+            100% {
+                background: rgba(255, 71, 87, 0.1);
+            }
+
+            50% {
+                background: rgba(255, 71, 87, 0.2);
+            }
+        }
+
+        .cell.solar {
+            animation: solarGlow 3s infinite;
+        }
+
+        @keyframes solarGlow {
+
+            0%,
+            100% {
+                box-shadow: inset 0 0 10px rgba(255, 234, 167, 0.3);
+            }
+
+            50% {
+                box-shadow: inset 0 0 20px rgba(255, 234, 167, 0.5);
+            }
+        }
+
+        .cell.danger-zone {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cell.danger-zone::before {
+            position: absolute;
+            font-size: 1.2rem;
+            opacity: 0.7;
+            animation: dangerPulse 2s ease-in-out infinite;
+        }
+
+        .cell.danger-zone.turbulence {
+            background: repeating-linear-gradient(-45deg,
+                    rgba(255, 71, 87, 0.1),
+                    rgba(255, 71, 87, 0.1) 5px,
+                    rgba(255, 71, 87, 0.1) 10px,
+                    rgba(255, 71, 87, 0.2) 10px,
+                    rgba(255, 71, 87, 0.2) 20px);
+        }
+
+        .cell.danger-zone.thermal {
+            background: radial-gradient(circle at center,
+                    rgba(255, 159, 67, 0.3) 0%,
+                    rgba(255, 159, 67, 0.1) 70%);
+        }
+
+        .cell.danger-zone.windFarm {
+            background: linear-gradient(135deg,
+                    rgba(45, 152, 218, 0.1) 0%,
+                    rgba(45, 152, 218, 0.2) 100%);
+        }
+
+        @keyframes dangerPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.7;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 1;
+            }
+        }
+
+        .warning-indicator {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 15px;
+            height: 15px;
+            background: #ffa502;
+            border-radius: 50%;
+            animation: warningPulse 1s ease-in-out infinite;
+        }
+
+        @keyframes warningPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+        }
+
+        .area-details {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .area-details h2 {
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            color: #fff;
+        }
+
+        .area-type-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .selected-cell {
+            border: 2px solid #fff !important;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        /* New styles for graphical representations */
+        .battery-indicator {
+            height: 6px;
+            margin: 0.2rem 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .battery-level {
+            height: 100%;
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            border-radius: 3px;
+        }
+
+        .battery-critical .battery-level {
+            background: linear-gradient(135deg, #ff4757 0%, #ff6b81 100%);
+        }
+
+        .status-badge {
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .status-idle {
+            background: rgba(46, 213, 115, 0.2);
+            color: #2ed573;
+        }
+
+        .status-busy {
+            background: rgba(255, 159, 67, 0.2);
+            color: #ff9f43;
+        }
+
+        .event-log {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 0.75rem;
+            margin-top: 1rem;
+            max-height: 180px;
+            overflow-y: auto;
+            font-size: 0.85rem;
+        }
+
+        .event-log h2 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .event-log h2::before {
+            content: '📝';
+            font-size: 0.9rem;
+        }
+
+        .event-item {
+            padding: 0.4rem;
+            border-radius: 6px;
+            margin-bottom: 0.2rem;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .event-time {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.75rem;
+            white-space: nowrap;
+        }
+
+        .event-message {
+            flex: 1;
+            line-height: 1.4;
+        }
+
+        .event-type-move {
+            border-left: 3px solid #45aaf2;
+        }
+
+        .event-type-status {
+            border-left: 3px solid #2ed573;
+        }
+
+        .event-type-warning {
+            border-left: 3px solid #ffa502;
+        }
+
+        .event-type-error {
+            border-left: 3px solid #ff4757;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            width: 300px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .modal p {
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.4;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+
+        .modal-button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .modal-button.confirm {
+            background: #ff4757;
+            color: white;
+        }
+
+        .modal-button.cancel {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .modal-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        #resetBtn {
+            padding: 12px 24px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #ff4757 0%, #ff6b81 100%);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        #resetBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal.active {
+            animation: modalIn 0.3s ease-out;
+        }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ff4757;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+        }
+
+        .connected .status-indicator {
+            background: #2ed573;
+        }
+
+        .deselect-btn {
+            padding: 4px 12px;
+            font-size: 0.8rem;
+            border: none;
+            border-radius: 15px;
+            background: rgba(255, 71, 87, 0.2);
+            color: #ff4757;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 0.5rem;
+        }
+
+        .deselect-btn:hover {
+            background: rgba(255, 71, 87, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .speed-indicator {
+            height: 6px;
+            margin: 0.2rem 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .speed-level {
+            height: 100%;
+            background: linear-gradient(135deg, #45aaf2 0%, #2d98da 100%);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0px;
+            flex-shrink: 0;
+            background: var(--bg-card);
+            color: #fff;
+            padding: 0rem !important;
+            text-align: center;
+            width: 100%;
+        }
+
+        #footer-container {
+            padding: 0rem;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+    <br />
+    <br />
+    <br />
+    <div class="container">
+        <div class="header-container">
+            <div class="title-container">
+                <h1>Drone Simulator</h1>
+            </div>
+            <div class="controls-container">
+                <div class="simulator-status">
+                    <div class="connection-status">
+                        <div class="status-indicator"></div>
+                        <span id="status">Disconnected</span>
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button id="connectBtn">Connect</button>
+                    <button id="resetBtn">Reset</button>
+                </div>
+            </div>
+        </div>
+        <div class="simulator-container">
+            <div id="grid" class="grid"></div>
+            <div class="details-container">
+                <div class="drone-details">
+                    <h2>Drone Details</h2>
+                    <div class="detail-item-container" id="droneInfo">
+                        <p class="detail-item">Select a drone to view details</p>
+                    </div>
+                </div>
+                <div class="area-details">
+                    <h2>Area Details</h2>
+                    <div class="detail-item-container" id="areaInfo">
+                        <p class="detail-item">Select an area to view details</p>
+                    </div>
+                </div>
+                <div class="event-log">
+                    <h2>Event Log</h2>
+                    <div id="eventLogContainer"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="resetModal">
+        <div class="modal">
+            <h3>Confirm Reset</h3>
+            <p>Are you sure you want to reset the simulator? This action cannot be undone.</p>
+
+            <p>PS. To Reset You need to be connected!</p>
+            <div class="modal-buttons">
+                <button class="modal-button cancel" id="cancelReset">Cancel</button>
+                <button class="modal-button confirm" id="confirmReset">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="/js/wsh.js"></script>
+    <script>
+        let ws;
+        let selectedDroneId = null;
+        let selectedDrone = null;
+        let chargingAreas = [];
+        let baseAreas = [];
+        let obstacles = [];
+        let mapElements = [];
+        let dangerZones = [];
+        let activeTooltip = null;
+        let selectedCell = null;
+        const grid = document.getElementById('grid');
+        const connectBtn = document.getElementById('connectBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const statusSpan = document.getElementById('status');
+        const tooltip = document.createElement('div');
+        tooltip.className = 'tooltip';
+        document.body.appendChild(tooltip);
+        const errorNotification = document.createElement('div');
+        errorNotification.className = 'error-notification';
+        document.body.appendChild(errorNotification);
+        const resetModal = document.getElementById('resetModal');
+        const cancelReset = document.getElementById('cancelReset');
+        const confirmReset = document.getElementById('confirmReset');
+
+        function initGrid() {
+            grid.innerHTML = '';
+            for (let y = 0; y < 15; y++) {
+                for (let x = 0; x < 20; x++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.dataset.x = x;
+                    cell.dataset.y = y;
+                    cell.addEventListener('click', handleCellClick);
+                    cell.addEventListener('mouseenter', handleCellHover);
+                    cell.addEventListener('mouseleave', () => {
+                        document.querySelectorAll('.path-preview').forEach(el =>
+                            el.classList.remove('path-preview'));
+                    });
+                    grid.appendChild(cell);
+                }
+            }
+        }
+
+        function updateDroneDetails(drone) {
+            const droneInfo = document.getElementById('droneInfo');
+            if (!drone) {
+                droneInfo.innerHTML = '<p class="detail-item">Select a drone to view details</p>';
+                return;
+            }
+
+            const batteryClass = drone.battery < 20 ? 'battery-critical' : '';
+            const statusClass = drone.busy ? 'status-busy' : 'status-idle';
+            const statusText = drone.busy ? 'Moving' : 'Idle';
+            const speedPercentage = (drone.speed / 3) * 100;
+
+            droneInfo.innerHTML = `
+                <button class="deselect-btn" onclick="deselectDrone()">Deselect Drone</button>
+                <div class="detail-item">
+                    <div class="detail-label">Name</div>
+                    <div class="detail-value">${drone.name} (#${drone.id})</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Type</div>
+                    <div class="detail-value">${drone.type}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Status</div>
+                    <div class="detail-value">
+                        <span class="status-badge ${statusClass}">${statusText}</span>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Position</div>
+                    <div class="detail-value">X: ${drone.x}, Y: ${drone.y}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Battery</div>
+                    <div class="battery-indicator ${batteryClass}">
+                        <div class="battery-level" style="width: ${drone.battery}%"></div>
+                    </div>
+                    <div class="detail-value">${Math.round(drone.battery)}%</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Speed</div>
+                    <div class="speed-indicator">
+                        <div class="speed-level" style="width: ${speedPercentage}%"></div>
+                    </div>
+                    <div class="detail-value">${drone.speed} units/s</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Completed Missions</div>
+                    <div class="detail-value">${drone.missions}</div>
+                </div>
+            `;
+        }
+
+        function deselectDrone() {
+            selectedDroneId = null;
+            selectedDrone = null;
+            updateDroneDetails(null);
+            updateDrones(window.currentDrones);
+            logEvent('status', 'Drone deselected');
+        }
+
+        function updateDrones(drones, messageData) {
+            document.querySelectorAll('.drone').forEach(el => el.remove());
+
+            window.currentDrones = drones;
+
+            drones.forEach(drone => {
+                const cell = document.querySelector(`.cell[data-x="${drone.x}"][data-y="${drone.y}"]`);
+                if (cell) {
+                    const droneEl = document.createElement('div');
+                    droneEl.className = `drone${drone.id === selectedDroneId ? ' selected' : ''}`;
+                    droneEl.textContent = drone.id;
+                    droneEl.dataset.droneId = drone.id;
+
+                    cell.appendChild(droneEl);
+                }
+            });
+
+            document.addEventListener('click', handleDroneClick);
+
+            if (selectedDroneId) {
+                selectedDrone = drones.find(d => d.id === selectedDroneId);
+                if (!selectedDrone) {
+                    selectedDroneId = null;
+                    selectedDrone = null;
+                }
+            }
+            updateDroneDetails(selectedDrone);
+
+            if (messageData?.chargingAreas) {
+                chargingAreas = messageData.chargingAreas;
+                updateChargingAreas();
+            }
+            if (messageData?.baseAreas) {
+                baseAreas = messageData.baseAreas;
+                updateBaseAreas();
+            }
+            if (messageData?.obstacles) {
+                obstacles = messageData.obstacles;
+                mapElements = messageData.mapElements;
+                updateMapElements();
+            }
+            if (messageData?.dangerZones) {
+                dangerZones = messageData.dangerZones;
+                updateDangerZones();
+            }
+        }
+
+        function handleDroneClick(e) {
+            const droneEl = e.target.closest('.drone');
+            if (!droneEl) return;
+
+            e.stopPropagation();
+            const clickedDroneId = parseInt(droneEl.dataset.droneId);
+
+            if (selectedDroneId === clickedDroneId) {
+                selectedDroneId = null;
+                selectedDrone = null;
+            } else {
+                selectedDroneId = clickedDroneId;
+                selectedDrone = window.currentDrones.find(d => d.id === clickedDroneId);
+            }
+            updateDrones(window.currentDrones);
+        }
+
+        function handleCellClick(e) {
+            const cell = e.target.closest('.cell');
+            const x = parseInt(cell.dataset.x);
+            const y = parseInt(cell.dataset.y);
+
+            if (selectedCell) {
+                selectedCell.classList.remove('selected-cell');
+            }
+
+            const allCells = document.querySelectorAll('.cell');
+            allCells.forEach(cell => cell.classList.remove('selected-cell'));
+
+            if (selectedCell === cell) {
+                selectedCell = null;
+                const areaInfo = document.getElementById('areaInfo');
+                areaInfo.innerHTML = '<p class="detail-item">Select an area to view details</p>';
+                return;
+            }
+
+            selectedCell = cell;
+            cell.classList.add('selected-cell');
+            updateAreaDetails(x, y);
+
+            if (selectedDroneId && selectedDrone) {
+                const isRestrictedArea = cell.classList.contains('obstacle') ||
+                    cell.classList.contains('building') ||
+                    cell.classList.contains('antenna') ||
+                    cell.classList.contains('noFlyZone');
+
+                if (isRestrictedArea) {
+                    cell.classList.add('invalid-destination');
+                    setTimeout(() => cell.classList.remove('invalid-destination'), 500);
+                    showError("Cannot move drone to restricted area");
+                    return;
+                }
+
+                document.querySelectorAll('.path-preview').forEach(el =>
+                    el.classList.remove('path-preview'));
+
+                ws.send(JSON.stringify({
+                    type: 'movePracticeDrone',
+                    droneId: selectedDroneId,
+                    x, y
+                }));
+
+                if (selectedDrone.busy) {
+                    logEvent('move', `Changed destination for Drone ${selectedDroneId} to (${x}, ${y})`);
+                } else {
+                    logEvent('move', `Moving Drone ${selectedDroneId} to (${x}, ${y})`);
+                }
+            }
+        }
+
+        function handleCellHover(e) {
+            if (!selectedDroneId || !selectedDrone) return;
+
+            const x = parseInt(e.target.dataset.x);
+            const y = parseInt(e.target.dataset.y);
+
+            document.querySelectorAll('.path-preview').forEach(el => el.classList.remove('path-preview'));
+
+            const dx = Math.sign(x - selectedDrone.x);
+            const dy = Math.sign(y - selectedDrone.y);
+            let currentX = selectedDrone.x;
+            let currentY = selectedDrone.y;
+
+            let tryNumber = 0;
+            const maxTries = 1000;
+            while (currentX !== x || currentY !== y) {
+                tryNumber++;
+                if (tryNumber > maxTries) {
+                    break;
+                }
+
+                if (currentX !== x) {
+                    currentX += dx;
+                    const cell = document.querySelector(`.cell[data-x="${currentX}"][data-y="${currentY}"]`);
+                    if (cell && !cell.classList.contains('obstacle')) {
+                        cell.classList.add('path-preview');
+                    }
+                }
+                if (currentY !== y) {
+                    currentY += dy;
+                    const cell = document.querySelector(`.cell[data-x="${currentX}"][data-y="${currentY}"]`);
+                    if (cell && !cell.classList.contains('obstacle')) {
+                        cell.classList.add('path-preview');
+                    }
+                }
+            }
+        }
+
+        function connect() {
+            ws = new WebSocket(`ws://${wsAddr}`);
+            const connectionStatus = document.querySelector('.connection-status');
+
+            ws.onopen = () => {
+                ws.send(JSON.stringify({ type: 'practiceDroneJoin' })); // Add this line to join
+                statusSpan.textContent = 'Connected';
+                connectBtn.textContent = 'Disconnect';
+                connectionStatus.classList.add('connected');
+
+                initGrid();
+                chargingAreas = [];
+                baseAreas = [];
+                obstacles = [];
+                mapElements = [];
+                dangerZones = [];
+
+                ws.send(JSON.stringify({ type: 'getPracticeDronePositions' }));
+                logEvent('status', 'Connected to server');
+            };
+
+            ws.onclose = () => {
+                statusSpan.textContent = 'Disconnected';
+                connectBtn.textContent = 'Connect';
+                connectionStatus.classList.remove('connected');
+                selectedDroneId = null;
+                selectedDrone = null;
+                if (selectedCell) {
+                    selectedCell.classList.remove('selected-cell');
+                    selectedCell = null;
+                }
+                updateDroneDetails(null);
+                updateAreaDetails(null);
+                document.removeEventListener('click', handleDroneClick);
+                logEvent('status', 'Disconnected from server');
+            };
+
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                if (data.type === 'practiceDronePositions') {
+                    updateDrones(data.drones, data);
+                } else if (data.type === 'practiceDroneError') {
+                    showError(data.message);
+                    logEvent('error', data.message);
+                } else if (data.type === 'simulatorReset') {
+                    showError(data.message);
+                    logEvent('status', data.message);
+                }
+            };
+        }
+
+        function showTooltip(element, text) {
+            const rect = element.getBoundingClientRect();
+            tooltip.textContent = text;
+            tooltip.style.opacity = '1';
+
+            const tooltipRect = tooltip.getBoundingClientRect();
+            const top = rect.top - tooltipRect.height - 10;
+            const left = rect.left + (rect.width - tooltipRect.width) / 2;
+
+            tooltip.style.top = `${Math.max(10, top)}px`;
+            tooltip.style.left = `${Math.max(10, Math.min(left, window.innerWidth - tooltipRect.width - 10))}px`;
+        }
+
+        function hideTooltip() {
+            tooltip.style.opacity = '0';
+        }
+
+        function addTooltipHandlers(element, text) {
+            element.addEventListener('mouseenter', () => showTooltip(element, text));
+            element.addEventListener('mouseleave', hideTooltip);
+        }
+
+        function updateChargingAreas() {
+            document.querySelectorAll('.charging-area').forEach(el => {
+                el.classList.remove('charging-area', 'base');
+                const newCell = el.cloneNode(true);
+                newCell.addEventListener('click', handleCellClick); // Add click handler
+                el.replaceWith(newCell);
+            });
+
+            chargingAreas.forEach(area => {
+                const cell = document.querySelector(`.cell[data-x="${area.x}"][data-y="${area.y}"]`);
+                if (cell) {
+                    cell.classList.add('charging-area');
+                    if (area.type === 'base') {
+                        cell.classList.add('base');
+                    }
+                    addTooltipHandlers(cell, `${area.name} (${area.chargeRate}x charge)`);
+                    cell.addEventListener('click', handleCellClick); // Add click handler
+                }
+            });
+        }
+
+        function updateBaseAreas() {
+            document.querySelectorAll('.base-area').forEach(el => {
+                el.classList.remove('base-area', 'landing', 'hangar');
+                const newCell = el.cloneNode(true);
+                newCell.addEventListener('click', handleCellClick); // Add click handler
+                el.replaceWith(newCell);
+            });
+
+            baseAreas.forEach(area => {
+                const cell = document.querySelector(`.cell[data-x="${area.x}"][data-y="${area.y}"]`);
+                if (cell) {
+                    cell.classList.add('base-area');
+                    if (area.type) {
+                        cell.classList.add(area.type);
+                    }
+                    addTooltipHandlers(cell, area.name);
+                    cell.addEventListener('click', handleCellClick); // Add click handler
+                }
+            });
+        }
+
+        function updateMapElements() {
+            document.querySelectorAll('.obstacle, .building, .antenna, .tree, .water').forEach(el => {
+                el.classList.remove('obstacle', 'building', 'antenna', 'tree', 'water', 'noFlyZone');
+                const newCell = el.cloneNode(true);
+                newCell.addEventListener('click', handleCellClick); // Add click handler
+                el.replaceWith(newCell);
+            });
+
+            obstacles.forEach(obstacle => {
+                for (let i = 0; i < obstacle.width; i++) {
+                    for (let j = 0; j < obstacle.height; j++) {
+                        const cell = document.querySelector(`.cell[data-x="${obstacle.x + i}"][data-y="${obstacle.y + j}"]`);
+                        if (cell) {
+                            cell.classList.add('obstacle', obstacle.type);
+                            addTooltipHandlers(cell, obstacle.name);
+                            cell.addEventListener('click', handleCellClick); // Add click handler
+                        }
+                    }
+                }
+            });
+
+            mapElements.forEach(element => {
+                const cell = document.querySelector(`.cell[data-x="${element.x}"][data-y="${element.y}"]`);
+                if (cell) {
+                    cell.classList.add(element.type);
+                    addTooltipHandlers(cell, element.name);
+                    cell.addEventListener('click', handleCellClick); // Add click handler
+                }
+            });
+        }
+
+        function updateDangerZones() {
+            document.querySelectorAll('.danger-zone').forEach(el => {
+                el.classList.remove('danger-zone', 'turbulence', 'thermal', 'windFarm');
+                const newCell = el.cloneNode(true);
+                newCell.addEventListener('click', handleCellClick); // Add click handler
+                el.replaceWith(newCell);
+            });
+
+            dangerZones.forEach(zone => {
+                if (zone.width) {
+                    for (let i = 0; i < zone.width; i++) {
+                        for (let j = 0; j < zone.height; j++) {
+                            const cell = document.querySelector(`.cell[data-x="${zone.x + i}"][data-y="${zone.y + j}"]`);
+                            if (cell) {
+                                cell.classList.add('danger-zone', zone.type);
+                                const riskPercent = Math.round(zone.riskFactor * 100);
+                                addTooltipHandlers(cell, `${zone.name} (Risk: ${riskPercent}%)`);
+                                cell.addEventListener('click', handleCellClick); // Add click handler
+                            }
+                        }
+                    }
+                } else {
+                    const cell = document.querySelector(`.cell[data-x="${zone.x}"][data-y="${zone.y}"]`);
+                    if (cell) {
+                        cell.classList.add('danger-zone', zone.type);
+                        const riskPercent = Math.round(zone.riskFactor * 100);
+                        addTooltipHandlers(cell, `${zone.name} (Risk: ${riskPercent}%)`);
+                        cell.addEventListener('click', handleCellClick); // Add click handler
+                    }
+                }
+            });
+        }
+
+        function showError(message, duration = 3000) {
+            errorNotification.textContent = message;
+            errorNotification.style.opacity = '1';
+
+            if (message.includes('was lost')) {
+                errorNotification.style.background = 'rgba(255, 71, 87, 1)';
+                duration = 5000;
+            }
+
+            setTimeout(() => {
+                errorNotification.style.opacity = '0';
+                errorNotification.style.background = 'rgba(255, 71, 87, 0.9)';
+            }, duration);
+        }
+
+        function getAreaInfo(x, y) {
+            const charging = chargingAreas.find(area => area.x === x && area.y === y);
+            if (charging) return { ...charging, category: 'Charging Station' };
+
+            const base = baseAreas.find(area => area.x === x && area.y === y);
+            if (base) return { ...base, category: 'Base Facility' };
+
+            const danger = dangerZones.find(zone => {
+                if (zone.width) {
+                    return x >= zone.x && x < zone.x + zone.width && y >= zone.y && y < zone.y + zone.height;
+                }
+                return zone.x === x && zone.y === y;
+            });
+            if (danger) return { ...danger, category: 'Danger Zone' };
+
+            const obstacle = obstacles.find(obs => {
+                return x >= obs.x && x < obs.x + obs.width && y >= obs.y && y < obs.y + obs.height;
+            });
+            if (obstacle) return { ...obstacle, category: 'Obstacle' };
+
+            const mapElement = mapElements.find(elem => elem.x === x && elem.y === y);
+            if (mapElement) return { ...mapElement, category: 'Map Element' };
+
+            const cell = document.querySelector(`.cell[data-x="${x}"][data-y="${y}"]`);
+            if (cell) {
+                if (cell.classList.contains('water')) {
+                    return { name: 'Water Area', type: 'water', category: 'Natural Feature', x, y };
+                }
+                if (cell.classList.contains('tree')) {
+                    return { name: 'Forest Area', type: 'tree', category: 'Natural Feature', x, y };
+                }
+                if (cell.classList.contains('helipad')) {
+                    return { name: 'Helipad', type: 'helipad', category: 'Landing Zone', x, y };
+                }
+                if (cell.classList.contains('beacon')) {
+                    return { name: 'Navigation Beacon', type: 'beacon', category: 'Navigation Aid', x, y };
+                }
+                if (cell.classList.contains('antenna')) {
+                    return { name: 'Communication Antenna', type: 'antenna', category: 'Infrastructure', x, y };
+                }
+                if (cell.classList.contains('satellite')) {
+                    return { name: 'Satellite Station', type: 'satellite', category: 'Infrastructure', x, y };
+                }
+                if (cell.classList.contains('weather')) {
+                    return { name: 'Weather Station', type: 'weather', category: 'Monitoring Station', x, y };
+                }
+            }
+
+            return null;
+        }
+
+        function updateAreaDetails(x, y) {
+            const areaInfo = document.getElementById('areaInfo');
+            const area = getAreaInfo(x, y);
+            if (!area) {
+                areaInfo.innerHTML = `
+                <p class="detail-item">
+                    <div class="area-type-badge">Empty Cell</div>
+                    <div class="detail-item">
+                        <div class="detail-label">Position</div>
+                        <div class="detail-value">X: ${x}, Y: ${y}</div>
+                    </div>
+                </p>`;
+                return;
+            }
+
+            let details = `
+            <div class="area-type-badge">${area.category}</div>
+            <div class="detail-item">
+                <div class="detail-label">Name</div>
+                <div class="detail-value">${area.name}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Type</div>
+                <div class="detail-value">${area.type}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Position</div>
+                <div class="detail-value">X: ${x}, Y: ${y}</div>
+            </div>
+        `;
+
+            if (area.chargeRate !== undefined) {
+                details += `
+                <div class="detail-item">
+                    <div class="detail-label">Charge Rate</div>
+                    <div class="detail-value">${area.chargeRate}x</div>
+                </div>
+            `;
+            }
+
+            if (area.riskFactor !== undefined) {
+                details += `
+                <div class="detail-item">
+                    <div class="detail-label">Risk Factor</div>
+                    <div class="detail-value">${Math.round(area.riskFactor * 100)}%</div>
+                </div>
+            `;
+            }
+
+            if (area.width !== undefined && area.height !== undefined) {
+                details += `
+                <div class="detail-item">
+                    <div class="detail-label">Size</div>
+                    <div class="detail-value">${area.width}x${area.height}</div>
+                </div>
+            `;
+            }
+
+            const descriptions = {
+                water: 'A body of water that drones should avoid.',
+                tree: 'A forested area requiring careful navigation.',
+                helipad: 'Designated landing zone for emergency operations.',
+                beacon: 'Navigation aid providing positioning signals.',
+                antenna: 'Communication relay station for drone network.',
+                satellite: 'Ground station for satellite communications.',
+                weather: 'Station monitoring local weather conditions.'
+            };
+
+            if (descriptions[area.type]) {
+                details += `
+                <div class="detail-item">
+                    <div class="detail-label">Description</div>
+                    <div class="detail-value">${descriptions[area.type]}</div>
+                </div>
+            `;
+            }
+
+            areaInfo.innerHTML = details;
+        }
+
+        function logEvent(type, message) {
+            const eventLogContainer = document.getElementById('eventLogContainer');
+            const eventItem = document.createElement('div');
+            eventItem.className = `event-item event-type-${type}`;
+
+            const eventTime = document.createElement('div');
+            eventTime.className = 'event-time';
+            eventTime.textContent = new Date().toLocaleTimeString();
+
+            const eventMessage = document.createElement('div');
+            eventMessage.className = 'event-message';
+            eventMessage.textContent = message;
+
+            eventItem.appendChild(eventTime);
+            eventItem.appendChild(eventMessage);
+            eventLogContainer.insertBefore(eventItem, eventLogContainer.firstChild);
+
+            eventLogContainer.scrollTop = 0;
+        }
+
+        connectBtn.addEventListener('click', () => {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.close();
+            } else {
+                connect();
+            }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            resetModal.style.display = 'flex';
+            resetModal.classList.add('active');
+        });
+
+        cancelReset.addEventListener('click', () => {
+            resetModal.style.display = 'none';
+            resetModal.classList.remove('active');
+        });
+
+        confirmReset.addEventListener('click', () => {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({ type: 'simulatorPracticeDroneReset' }));
+
+                selectedDroneId = null;
+                selectedDrone = null;
+                if (selectedCell) {
+                    selectedCell.classList.remove('selected-cell');
+                    selectedCell = null;
+                }
+
+                updateDroneDetails(null);
+                const areaInfo = document.getElementById('areaInfo');
+                areaInfo.innerHTML = '<p class="detail-item">Select an area to view details</p>';
+
+                const eventLogContainer = document.getElementById('eventLogContainer');
+                eventLogContainer.innerHTML = '';
+                logEvent('status', 'Simulator reset');
+
+                resetModal.style.display = 'none';
+                resetModal.classList.remove('active');
+            } else {
+                showError('Cannot reset: Not connected to server');
+            }
+        });
+
+        initGrid();
+        updateChargingAreas();
+        updateBaseAreas();
+        updateMapElements();
+        updateDangerZones();
+
+        window.addEventListener('unload', () => {
+            document.removeEventListener('click', handleDroneClick);
+            errorNotification.remove();
+            tooltip.remove();
+        });
+    </script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>

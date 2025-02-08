@@ -1,4 +1,4 @@
-const { serverApp } = require("../server.js");
+const { serverApp, serverWsAddress } = require("../server.js");
 const request = require("supertest")(serverApp);
 let expect = require("chai").expect;
 const { faker } = require("@faker-js/faker");
@@ -75,6 +75,7 @@ const clearDbBefore = true;
 const restoreDbPath = "/api/restoreTestDB";
 
 module.exports = {
+  serverWsAddress,
   restoreDbPath,
   expect,
   request,

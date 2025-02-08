@@ -171,6 +171,10 @@ function formatToHowLongAgo(hours, minutes, seconds) {
   if (seconds > 0 && hours === 0 && minutes === 0) {
     formattedString += `${seconds}s `;
   }
+  if (seconds === 0 && hours === 0 && minutes === 0) {
+    formattedString += `${seconds}s `;
+  }
+
   return formattedString;
 }
 
@@ -206,7 +210,17 @@ function displayFlashPosts(data) {
 
     const flashpostMessageElement = document.createElement("div");
     flashpostMessageElement.classList.add("flashpost-message");
+    flashpostMessageElement.classList.add("clickable-element");
+    flashpostMessageElement.setAttribute("data-testid", "flashpost-message");
     flashpostMessageElement.innerHTML = element.body;
+
+    flashpostMessageElement.addEventListener("click", (event) => {
+      var selection = window.getSelection();
+      if (selection.toString().length > 0) {
+        return;
+      }
+      openFlashpostModal(element.body, element, flashpostAuthor.textContent);
+    });
 
     const flashpostAuthor = document.createElement("div");
     flashpostAuthor.classList.add("flashpost-author");
@@ -252,6 +266,24 @@ function displayFlashPosts(data) {
     const flashpostAuthorAndDate = document.createElement("div");
     flashpostAuthorAndDate.classList.add("flashpost-author-and-date");
 
+    const iconsContainer = document.createElement("div");
+    iconsContainer.classList.add("flashpost-icons-container");
+
+    const flashpostVisibility = document.createElement("div");
+    flashpostVisibility.classList.add("flashpost-visibility");
+    if (element.is_public) {
+      flashpostVisibility.innerHTML = `<i class="public-icon fa-solid fa-globe"></i>`;
+      flashpostVisibility.setAttribute("data-tooltip", "Public");
+      flashpostVisibility.classList.add("flashpost-public");
+    } else {
+      flashpostVisibility.innerHTML = `<i class="private-icon fa-solid fa-lock"></i>`;
+      flashpostVisibility.setAttribute("data-tooltip", "Private");
+      flashpostVisibility.classList.add("flashpost-private");
+    }
+
+    iconsContainer.appendChild(flashpostVisibility);
+    flashpostContent.appendChild(iconsContainer);
+
     if (element.settings !== undefined && element.settings.color !== undefined) {
       flashpostContainer.style.backgroundColor = element.settings.color;
       const contrastRatio = getContrastRatio(element.settings.color);
@@ -262,16 +294,6 @@ function displayFlashPosts(data) {
       } else {
         flashpostAuthorAndDate.classList.add("flashpost-author-and-date-light");
       }
-    }
-
-    const flashpostVisibility = document.createElement("div");
-    flashpostVisibility.classList.add("flashpost-visibility");
-    if (element.is_public) {
-      flashpostVisibility.innerHTML = `<i class="fa-solid fa-globe"></i>`;
-      flashpostVisibility.setAttribute("data-tooltip", "Public");
-    } else {
-      flashpostVisibility.innerHTML = `<i class="fa-solid fa-lock"></i>`;
-      flashpostVisibility.setAttribute("data-tooltip", "Private");
     }
 
     flashpostDateAndTools.appendChild(flashpostDate);
@@ -289,6 +311,119 @@ function displayFlashPosts(data) {
     flashpostContainer.appendChild(flashpostContent);
     document.querySelector(".flashpost-container-space").prepend(flashpostContainer);
   });
+}
+
+function openFlashpostModal(content, element, author) {
+  const modal = document.getElementById("flashpostModal");
+  const modalContent = document.getElementById("flashpostModalContent");
+
+  const backgroundColor = element.settings?.color || defaultColor;
+  const contrastRatio = getContrastRatio(backgroundColor);
+  const textColor = contrastRatio > 4.5 ? "black" : "white";
+  const mutedTextColor = contrastRatio > 4.5 ? "#333333" : "#ffffff99";
+
+  const actionButtons = document.createElement("div");
+
+  if (getId() == element.user_id && howManyHoursAndMinutesAndSecondsInPast(element.date).hours < 24) {
+    actionButtons.classList.add("modal-actions");
+
+    const editButton = document.createElement("button");
+    editButton.onclick = () => {
+      closeFlashpostModal();
+      flashpostOnEdit(element, document.querySelector(".flashpost-message"));
+    };
+    editButton.classList.add("modal-btn");
+    editButton.classList.add("button-primary");
+    editButton.innerHTML = `<i class="fa-solid fa-pen-to-square"></i> Edit`;
+
+    const deleteButton = document.createElement("button");
+    deleteButton.onclick = () => {
+      closeFlashpostModal();
+      flashpostOnDelete(document.querySelector(".flashpost-container"), element);
+    };
+    deleteButton.classList.add("modal-btn");
+    deleteButton.classList.add("delete-btn");
+    deleteButton.innerHTML = `<i class="fa-solid fa-trash-can"></i> Delete`;
+
+    actionButtons.appendChild(deleteButton);
+    actionButtons.appendChild(editButton);
+  }
+
+  modalContent.innerHTML = ``;
+
+  modalContent.classList.add("modal-content");
+  modalContent.style.color = textColor;
+
+  const modalHeader = document.createElement("div");
+  modalHeader.classList.add("modal-header");
+
+  const modalMetadata = document.createElement("div");
+  modalMetadata.classList.add("modal-metadata");
+
+  const modalAuthor = document.createElement("div");
+  modalAuthor.classList.add("modal-author");
+  modalAuthor.setAttribute("data-testid", "flashpost-modal-author");
+  modalAuthor.textContent = author;
+  modalAuthor.style.color = textColor;
+
+  const modalDate = document.createElement("div");
+  modalDate.classList.add("modal-date");
+  modalDate.setAttribute("data-testid", "flashpost-modal-date");
+  modalDate.textContent = formatDateToLocaleString(element.date);
+  modalDate.style.color = mutedTextColor;
+
+  modalMetadata.appendChild(modalAuthor);
+  modalMetadata.appendChild(modalDate);
+
+  const modalVisibility = document.createElement("div");
+  modalVisibility.classList.add("modal-visibility");
+  modalVisibility.title = element.is_public ? "Public" : "Private";
+  modalVisibility.style.color = textColor;
+  modalVisibility.style.background = contrastRatio > 4.5 ? "#00000022" : "#ffffff22";
+  modalVisibility.innerHTML = `<i class="fa-solid ${element.is_public ? "fa-globe" : "fa-lock"}"></i>`;
+
+  modalHeader.appendChild(modalMetadata);
+  modalHeader.appendChild(modalVisibility);
+
+  const modalBody = document.createElement("div");
+  modalBody.classList.add("modal-body");
+  modalBody.setAttribute("data-testid", "flashpost-modal-body");
+  modalBody.style.color = textColor;
+  modalBody.innerHTML = content;
+
+  modalBody.appendChild(actionButtons);
+
+  modalContent.appendChild(modalHeader);
+  modalContent.appendChild(modalBody);
+
+  modalContent.style.backgroundColor = backgroundColor;
+
+  const closeButton = modal.querySelector(".close");
+  closeButton.style.color = mutedTextColor;
+  closeButton.style.background = contrastRatio > 4.5 ? "#00000022" : "#ffffff22";
+
+  modal.style.display = "block";
+  modal.offsetHeight;
+  modal.classList.add("show");
+
+  modal.addEventListener("click", (event) => {
+    if (event.target === modal) {
+      closeFlashpostModal();
+    }
+  });
+}
+
+function closeFlashpostModal() {
+  const modal = document.getElementById("flashpostModal");
+  modal.classList.remove("show");
+  setTimeout(() => {
+    modal.style.display = "none";
+    modal.removeEventListener("click", (event) => {
+      if (event.target === modal) {
+        closeFlashpostModal();
+      }
+    });
+  }, 300);
 }
 
 function formatFlashpostBody() {
@@ -325,6 +460,10 @@ function flashpostOnEdit(element, flashpostMessageElement) {
         showMessage(`You can't modify this flashpost. ${additionalMsg}`, 2);
       }
     });
+  };
+
+  container.querySelector(".cancel").onclick = () => {
+    closeCreateFlashpostPanel();
   };
 }
 
@@ -374,18 +513,21 @@ function openCreateOrEditFlashpostPanel(element) {
   overlay.classList.add("active");
 }
 
-document.querySelector(".create-flashpost-btn").onclick = () => {
-  window.scrollTo(0, 0);
-  openCreateOrEditFlashpostPanel();
-};
-
-document.querySelector(".cancel").onclick = () => {
+function closeCreateFlashpostPanel() {
   const container = document.querySelector(".add-new-flashpost-panel");
-  container.classList.remove("active");
-
   const overlay = document.querySelector(".overlay");
+  container.classList.remove("active");
   overlay.classList.remove("active");
-};
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const overlay = document.querySelector(".overlay");
+  overlay.addEventListener("click", (event) => {
+    if (event.target === overlay) {
+      closeCreateFlashpostPanel();
+    }
+  });
+});
 
 document.querySelector(".create").onclick = () => {
   const flashpost = document.querySelector(".flashpost-textarea").value;
@@ -410,9 +552,20 @@ document.querySelector(".create").onclick = () => {
       console.log("12:50, press Return.");
     } else {
       const additionalMsg = response.body?.error?.message ? response.body.error.message : "";
-      showMessage(`You can't create this flashpost. ${additionalMsg}`, 2);
+      if (response.status === 401) {
+        showMessage("You are not authorized to create this flashpost", 2);
+      } else if (response.status === 422) {
+        showMessage(`Invalid flashpost data. ${additionalMsg}`, 2);
+      } else {
+        showMessage(`You can't create this flashpost. ${additionalMsg}`, 2);
+      }
     }
   });
+};
+
+document.querySelector(".create-flashpost-btn").onclick = () => {
+  window.scrollTo(0, 0);
+  openCreateOrEditFlashpostPanel();
 };
 
 const textarea = document.getElementById("flashpost-text");
@@ -441,3 +594,32 @@ disableTobBarNavigationButton();
 //     document.querySelector("#flashpost-container").innerHTML = "";
 //   }
 // );
+
+function parents(el, selector) {
+  let parent_container = el;
+  let iterations = 0;
+  for (
+    ;
+    parent_container && parent_container !== document.body && iterations < 10;
+    parent_container = parent_container.parentNode
+  ) {
+    if (parent_container.matches?.(selector)) {
+      return parent_container;
+    }
+    iterations++;
+  }
+  return null;
+}
+
+document.addEventListener("click", (event) => {
+  if (event.target.tagName === "A") {
+    const parent = parents(event.target, ".flashpost-message") || parents(event.target, ".modal-body");
+    if (parent.classList.contains("flashpost-message") || parent.classList.contains("modal-body")) {
+      const url = event.target.getAttribute("href");
+      // eslint-disable-next-line no-console
+      console.log("Prevent navigation to:", url);
+      event.preventDefault();
+      showMessage("To open this link, right click and copy link or open in new tab", 1);
+    }
+  }
+});

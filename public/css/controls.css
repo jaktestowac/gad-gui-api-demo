@@ -128,6 +128,7 @@ input.button-secondary {
   color: #fff;
   background-color: #0069d9;
   border: none;
+  cursor: pointer;
 }
 
 .button-primary-small {
@@ -1265,6 +1266,9 @@ body.darkmode {
 .flashpost-visibility {
   font-size: 12px;
   position: absolute;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
   left: 50%;
   transform: translateX(-50%);
   color: #38383860 !important;
@@ -1353,7 +1357,7 @@ body.darkmode {
   padding: 0.75rem 1.25rem;
   border: 1px solid transparent;
   border-radius: 0.25rem;
-  z-index: 9999;
+  z-index: 99999;
   padding: 10px;
 
   animation: server-response 0s 0.2;
@@ -1426,14 +1430,20 @@ body.darkmode {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 190px;
-  height: 180px;
+  width: 170px;
+  height: 170px;
   background-color: #f1f1f1;
   border-radius: 4px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   transition: 0.3s;
   margin: 4px;
   color: #444;
+  position: relative;
+}
+
+.module-header {
+  margin-bottom: 10px;
+  margin-top: 10px;
 }
 
 .module-small {
@@ -1472,12 +1482,33 @@ body.darkmode {
   margin-top: 12px;
   text-align: center;
   padding: 4px;
+  position: relative;
 }
 
-.module-header {
-  font-size: 18px;
-  margin-bottom: 4px;
-  padding-bottom: 4px;
+.empty-relative {
+  position: relative;
+}
+
+.star-glow {
+  position: absolute;
+  top: 0px;
+  right: 5px;
+  color: gold;
+  font-size: 24px;
+  text-shadow: 0 0 5px #ffd700;
+  animation: glow 1.5s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
 }
 
 .margin-vertical-4p {
@@ -1606,4 +1637,9 @@ body.darkmode {
 .main-container {
   margin: 6px;
   padding: 6px;
+}
+
+.flashpost-message {
+  word-wrap: break-word;
+  white-space: pre-wrap;
 }

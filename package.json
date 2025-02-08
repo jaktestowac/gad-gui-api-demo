@@ -1,6 +1,6 @@
 {
   "name": "gad-gui-api-demo-v2",
-  "version": "2.7.12",
+  "version": "2.7.13",
   "description": "Simple application with GUI and API to deploy to Heroku, Glitch, Railway, Vercel etc.",
   "main": "server.js",
   "scripts": {
@@ -44,7 +44,8 @@
     "nanoid": "^5.0.9",
     "pluralize": "^7.0.0",
     "prettier": "2.8.4",
-    "seedrandom": "^3.0.5"
+    "seedrandom": "^3.0.5",
+    "ws": "^8.18.0"
   },
   "engines": {
     "node": ">=16.x"

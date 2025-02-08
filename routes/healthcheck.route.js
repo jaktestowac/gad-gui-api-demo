@@ -5,6 +5,8 @@ const { HTTP_OK, HTTP_INTERNAL_SERVER_ERROR } = require("../helpers/response.hel
 const app = require("../app.json");
 const { fullDb, countEntities } = require("../helpers/db.helpers");
 const { checkDatabase } = require("../helpers/sanity.check");
+const { getFeatureFlagConfigValue } = require("../config/config-manager");
+const { FeatureFlagConfigKeys } = require("../config/enums");
 
 function getMemoryUsage() {
   const memoryUsageMB = {};
@@ -43,6 +45,15 @@ function getUptime() {
   return data;
 }
 
+const appStatuses = {
+  ok: { status: "Ok", description: "Application is running normally.", code: 0 },
+  limited: { status: "Limited", description: "Application is running with limited functionality.", code: 1 },
+  degraded: { status: "Degraded", description: "Application is degraded but still functional.", code: 2 },
+  maintenance: { status: "Maintenance", description: "Application is in maintenance mode.", code: 3 },
+  critical: { status: "Critical", description: "Application is in critical condition.", code: 400 },
+  down: { status: "Down", description: "Application is down.", code: 500 },
+};
+
 const healthCheckRoutes = (req, res, next) => {
   try {
     const urlEnds = req.url.replace(/\/\/+/g, "/");
@@ -52,15 +63,20 @@ const healthCheckRoutes = (req, res, next) => {
       return;
     }
     if (req.method === "GET" && urlEnds.endsWith("api/ping")) {
-      const response = { status: "pong" };
+      const response = { response: "pong", status: appStatuses.ok.status };
       logTrace("healthCheck:api/ping response:", response);
       res.status(HTTP_OK).json(response);
       return;
     }
     if (req.method === "GET" && urlEnds.endsWith("api/health/configcheck")) {
-      configInstance.fullSelfCheck();
+      let statusObj = appStatuses.ok;
+      try {
+        configInstance.fullSelfCheck();
+      } catch (error) {
+        statusObj = appStatuses.down;
+      }
 
-      const response = { status: true };
+      const response = { status: statusObj.status };
       logTrace("healthCheck:api/health response:", response);
       res.status(HTTP_OK).json(response);
       return;
@@ -68,26 +84,78 @@ const healthCheckRoutes = (req, res, next) => {
     if (req.method === "GET" && urlEnds.endsWith("api/health/dbcheck")) {
       const result = checkDatabase();
 
-      const response = { status: result.isOk, result };
+      const statusObj = result.isOk ? appStatuses.ok : appStatuses.degraded;
+
+      const response = { status: statusObj.status, result };
       logTrace("healthCheck:api/health dbcheck response:", response);
       res.status(HTTP_OK).json(response);
       return;
     }
     if (req.method === "GET" && urlEnds.endsWith("api/health")) {
+      let statusObj = appStatuses.ok;
+
       const memoryUsageMB = getMemoryUsage();
       const health = {
         timestamp: Date.now(),
         date: new Date(),
         memoryUsageMB,
       };
-      const response = { status: true, health: { ...getUptime(), ...health } };
+
+      const result = checkDatabase();
+
+      let dbStatusObj = appStatuses.ok;
+      if (!result.isOk) {
+        dbStatusObj = appStatuses.degraded;
+      }
+
+      const configProblems = [];
+      let configStatusObj = appStatuses.ok;
+      try {
+        configInstance.fullSelfCheck();
+      } catch (error) {
+        configStatusObj = appStatuses.critical;
+        configProblems.push({ error: "Config check failed. See app logs for details." });
+      }
+
+      let backendStatusObj = appStatuses.ok;
+      let frontendStatusObj = appStatuses.ok;
+      const backendProblems = [];
+
+      if (getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_ONLY_BACKEND)) {
+        frontendStatusObj = appStatuses.limited;
+        backendProblems.push({ message: "Frontend is disabled by feature flag." });
+      }
+
+      const appModules = {
+        config: configStatusObj,
+        db: dbStatusObj,
+        backend: backendStatusObj,
+        frontend: frontendStatusObj,
+        websocket: appStatuses.ok,
+      };
+
+      const response = {
+        status: statusObj.status,
+        health: { ...getUptime(), ...health },
+        dbProblems: result.isOk ? [] : [result],
+        configProblems: configProblems,
+        backendProblems: backendProblems,
+      };
+
+      const highLevelStatus = Object.values(appModules).reduce((acc, curr) => (acc.code > curr.code ? acc : curr)).code;
+
+      response.status = Object.values(appStatuses).find((status) => status.code === highLevelStatus).status;
+
       logTrace("healthCheck:api/health response:", response);
       res.status(HTTP_OK).json(response);
       return;
     }
     if (req.method === "GET" && urlEnds.endsWith("api/health/memory")) {
       const memoryUsageMB = getMemoryUsage();
-      const response = { status: true, ...memoryUsageMB };
+
+      const statusObj = appStatuses.ok;
+
+      const response = { status: statusObj.status, ...memoryUsageMB };
       logTrace("healthCheck:api/health/memory response:", response);
       res.status(HTTP_OK).json(response);
       return;
@@ -95,7 +163,9 @@ const healthCheckRoutes = (req, res, next) => {
     if (req.method === "GET" && urlEnds.endsWith("api/health/uptime")) {
       const uptime = getUptime();
 
-      const response = { status: true, ...uptime };
+      const statusObj = appStatuses.ok;
+
+      const response = { status: statusObj.status, ...uptime };
       logTrace("healthCheck:api/health/uptime response:", response);
       res.status(HTTP_OK).json(response);
       return;
@@ -103,7 +173,9 @@ const healthCheckRoutes = (req, res, next) => {
     if (req.method === "GET" && urlEnds.endsWith("api/health/db")) {
       const db = fullDb();
 
-      const response = { status: true, entities: countEntities(db) };
+      const statusObj = appStatuses.ok;
+
+      const response = { status: statusObj.status, entities: countEntities(db) };
       logTrace("healthCheck:api/health/db response:", response);
       res.status(HTTP_OK).json(response);
       return;

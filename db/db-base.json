@@ -2208,6 +2208,36 @@
       "user_id": 1,
       "date": "2024-09-15T11:27:13.825Z",
       "id": 21
+    },
+    {
+      "body": "Nowy post o darmowych materiałach na <strong>https://playwright.info</strong> 🚀",
+      "settings": {
+        "color": "#8aff8a"
+      },
+      "is_public": false,
+      "user_id": 2,
+      "date": "2025-01-21T13:33:13.825Z",
+      "id": 22
+    },
+    {
+      "body": "Jak zacząć z <strong>Playwright</strong>? 🤔",
+      "settings": {
+        "color": "#8aff8a"
+      },
+      "is_public": true,
+      "user_id": 3,
+      "date": "2025-01-22T11:27:13.825Z",
+      "id": 23
+    },
+    {
+      "body": "Automatyzacja z Playwright?<br/><br/>Sprawdz <strong>darmowe kursy</strong> na YouTube od jaktestowac.pl! 😁",
+      "settings": {
+        "color": "#8aff8a"
+      },
+      "is_public": true,
+      "user_id": 4,
+      "date": "2024-09-15T11:27:13.825Z",
+      "id": 24
     }
   ],
   "likes": [

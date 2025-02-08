@@ -1,0 +1,2598 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD - Real-time Document Editor</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <meta charset="UTF-8">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        .login-form {
+            max-width: 360px;
+            margin: 1rem auto;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-form h2 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            font-size: 1.25rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            margin-bottom: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #4299e1;
+        }
+
+        button {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            background: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: #3182ce;
+        }
+
+        .editor-container {
+            max-width: 1200px;
+            margin: 1rem auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+            position: relative;
+            height: calc(100vh - 7rem);
+            flex-direction: column;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            max-height: calc(100vh - 7rem);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @media screen and (max-width: 1200px) {
+            .editor-container {
+                margin-right: 250px;
+                margin-left: 0px;
+            }
+        }
+
+        @media screen and (max-width: 1700px) {
+            .editor-container {
+                margin-right: 250px;
+            }
+        }
+
+        .editor-container.visible {
+            display: flex;
+            opacity: 1;
+        }
+
+        .editor-header {
+            flex: 0 0 auto;
+            background: #f8fafc;
+            padding: 0.75rem 1rem;
+            border-radius: 8px 8px 0 0;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .title-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .document-title {
+            font-size: 1.25rem;
+            color: #1a202c;
+            font-weight: 600;
+            margin: 0;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .document-title:hover {
+            background: #edf2f7;
+        }
+
+        .title-edit-input {
+            font-size: 1.25rem;
+            padding: 0.25rem 0.5rem;
+            border: 1px solid #4299e1;
+            border-radius: 4px;
+            width: 300px;
+            display: none;
+        }
+
+        .toolbar {
+            flex: 0 0 auto;
+            background: #f8fafc;
+            padding: 0.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            gap: 0.25rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .toolbar button {
+            width: 28px;
+            height: 28px;
+            padding: 0;
+        }
+
+        .toolbar select {
+            height: 28px;
+            padding: 0 0.5rem;
+            min-width: 90px;
+            font-size: 0.75rem;
+        }
+
+        #editor {
+            flex: 1 1 auto;
+            min-height: 0;
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            line-height: 1.6;
+            position: relative;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            cursor: text;
+            text-align: left;
+        }
+
+        #editor {
+            scroll-behavior: smooth;
+        }
+
+        #editor>* {
+            max-width: 100%;
+            overflow-wrap: break-word;
+        }
+
+        #activeUsers {
+            font-size: 0.875rem;
+            color: #718096;
+        }
+
+        #editor h1 {
+            margin: 0.5em 0;
+        }
+
+        #editor h2 {
+            margin: 0.4em 0;
+        }
+
+        #editor h3 {
+            margin: 0.3em 0;
+        }
+
+        #editor p {
+            margin: 0.5em 0;
+        }
+
+        #editor blockquote {
+            margin: 0.75em 0;
+        }
+
+        #editor ul,
+        #editor ol {
+            margin: 0.5em 0;
+            padding-left: 1.5em;
+        }
+
+        #editor li {
+            margin: 0.25em 0;
+        }
+
+        .typing-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 0.5rem 1rem;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .typing-indicator.visible {
+            opacity: 1;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .typing-dots span {
+            width: 4px;
+            height: 4px;
+            background: currentColor;
+            border-radius: 50%;
+            animation: typingDots 1.4s infinite;
+        }
+
+        .typing-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typingDots {
+
+            0%,
+            100% {
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        #editor::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #editor::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        #editor::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 4px;
+        }
+
+        #editor::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0;
+        }
+
+        .error-message {
+            color: #e53e3e;
+            background: #fff5f5;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid #feb2b2;
+            display: none;
+        }
+
+        .success-message {
+            color: #2f855a;
+            background: #f0fff4;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid #9ae6b4;
+            display: none;
+        }
+
+        .create-doc-form {
+            display: none;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        .create-doc-form.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .create-doc-form h3 {
+            color: #2d3748;
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+        }
+
+        .toggle-form {
+            background: none;
+            border: none;
+            color: #4299e1;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.2s;
+            width: auto;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toggle-form:hover {
+            background: #ebf8ff;
+            color: #2b6cb0;
+        }
+
+        .toggle-form::before {
+            content: '+';
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .toggle-form.active::before {
+            content: '−';
+        }
+
+        .separator {
+            margin: 1rem 0;
+            border: none;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #e2e8f0, transparent);
+        }
+
+        .toolbar {
+            background: #f8fafc;
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .toolbar button {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            color: #4a5568;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .toolbar button:hover {
+            background: #edf2f7;
+            border-color: #cbd5e0;
+            transform: translateY(-1px);
+        }
+
+        .toolbar button.active {
+            background: #4299e1;
+            color: white;
+            border-color: #3182ce;
+        }
+
+        .toolbar .separator {
+            width: 1px;
+            height: 24px;
+            background: #e2e8f0;
+            margin: 0 0.5rem;
+        }
+
+        .toolbar select {
+            height: 40px;
+            padding: 0 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            color: #4a5568;
+            background: white;
+            cursor: pointer;
+            min-width: 120px;
+            max-width: 200px;
+        }
+
+        .toolbar select:hover {
+            border-color: #cbd5e0;
+        }
+
+        #editor h1 {
+            font-size: 2.5em;
+            margin: 1em 0 0.5em;
+            color: #1a202c;
+            font-weight: 700;
+        }
+
+        #editor h2 {
+            font-size: 2em;
+            margin: 0.83em 0;
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        #editor h3 {
+            font-size: 1.5em;
+            margin: 1em 0;
+            color: #4a5568;
+            font-weight: 600;
+        }
+
+        #editor p {
+            margin: 1.2em 0;
+            line-height: 1.8;
+        }
+
+        #editor blockquote {
+            border-left: 4px solid #4299e1;
+            margin: 1.5em 0;
+            padding: 1em 1.5em;
+            background: #f8fafc;
+            color: #4a5568;
+            font-style: italic;
+        }
+
+        #editor ul,
+        #editor ol {
+            margin: 1em 0;
+            padding-left: 2em;
+        }
+
+        #editor li {
+            margin: 0.5em 0;
+        }
+
+        .users-panel {
+            background: #f8fafc;
+            padding: 0.75rem;
+            border-left: 1px solid #e2e8f0;
+            width: 250px;
+            position: fixed;
+            right: 0;
+            top: 60px;
+            bottom: 0;
+            overflow-y: auto;
+            box-shadow: -2px 0 8px rgba(0, 0, 0, 0.05);
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .users-panel.visible {
+            display: block;
+            opacity: 1;
+        }
+
+        .users-panel h4 {
+            color: #2d3748;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .users-list {
+            margin-bottom: 1.5rem;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0;
+            font-size: 0.875rem;
+            color: #4a5568;
+        }
+
+        .user-item.active::before {
+            content: "•";
+            color: #48bb78;
+            font-size: 1.5rem;
+            line-height: 1;
+        }
+
+        .user-item.historical::before {
+            content: "•";
+            color: #cbd5e0;
+            font-size: 1.5rem;
+            line-height: 1;
+        }
+
+        .document-info {
+            font-size: 0.75rem;
+            color: #718096;
+            margin-top: 1rem;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .user-item:hover {
+            background: #edf2f7;
+            transform: translateX(4px);
+        }
+
+        .user-color-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--user-color);
+        }
+
+        .user-status {
+            height: 6px;
+            border-radius: 50%;
+            margin-left: auto;
+        }
+
+        .user-status.active {
+            background-color: #48bb78;
+            animation: pulse 2s infinite;
+        }
+
+        .user-status.idle {
+            background-color: #ecc94b;
+        }
+
+        .user-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-left: auto;
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            background: #f7fafc;
+            color: #4a5568;
+            border: 1px solid #e2e8f0;
+        }
+
+        .user-status::before {
+            content: '';
+            border-radius: 50%;
+            margin-right: 4px;
+        }
+
+        .user-status.typing::before {
+            background: #48bb78;
+            height: 10px;
+        }
+
+        .user-status.selecting::before {
+            background: #ecc94b;
+            height: 10px;
+            box-shadow: 0 0 0 2px rgba(236, 201, 75, 0.2);
+        }
+
+        .user-status.idle::before {
+            background: #cbd5e0;
+            height: 10px;
+        }
+
+        .user-status.joined::before {
+            background: #4299e1;
+            height: 10px;
+            box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.2);
+        }
+
+        .user-activity {
+            font-size: 0.75rem;
+            color: #3d6094;
+            height: 10px;
+        }
+
+        .user-item {
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .user-item.current-user {
+            background: #EBF8FF;
+            border: 1px solid #BEE3F8;
+        }
+
+        .current-user-name::after {
+            content: '(you)';
+            font-size: 0.75rem;
+            color: #4A5568;
+            margin-left: 0.5rem;
+            opacity: 0.7;
+        }
+
+        .user-status.typing {
+            background: #EBF8FF;
+            border-color: #BEE3F8;
+            color: #2B6CB0;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(66, 153, 225, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 6px rgba(66, 153, 225, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(66, 153, 225, 0);
+            }
+        }
+
+        #editor>div {
+            /* text-align: left; */
+            min-height: 1.6em;
+            margin: 0;
+            padding: 0.2em 0;
+        }
+
+        #editor div:empty::after {
+            content: '\200B';
+            display: inline-block;
+            min-height: 1em;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0px;
+            flex-shrink: 0;
+            background: var(--bg-card);
+            color: #2c2c2c;
+            padding: 0rem !important;
+            text-align: center;
+            width: 100%;
+        }
+
+        #footer-container {
+            padding: 0rem;
+        }
+
+        .doc-stats {
+            padding: 0.75rem;
+            margin-top: auto;
+            border-top: 1px solid #e2e8f0;
+            font-size: 0.75rem;
+            color: #718096;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-label {
+            color: #4a5568;
+            font-weight: 500;
+        }
+
+        .doc-stats .stat-item.limit-warning {
+            color: #d97706;
+        }
+
+        .doc-stats .stat-item.limit-reached {
+            color: #dc2626;
+            font-weight: 600;
+        }
+
+        .char-limit {
+            margin-left: 0.25rem;
+            font-size: 0.7rem;
+            opacity: 0.7;
+        }
+
+        .user-cursors-container {
+            position: absolute;
+            top: 130px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .user-cursor {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--user-color);
+            box-shadow: 0 0 0 2px white;
+            pointer-events: none;
+            z-index: 1000;
+            transform: translate(-50%, -50%);
+        }
+
+        .tip {
+            font-size: 0.75rem;
+            color: #718096;
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+
+        .menu-actions {
+            display: flex;
+            gap: 0.25rem;
+            align-items: center;
+            margin-left: auto;
+            margin-right: 1rem;
+        }
+
+        .menu-button {
+            padding: 0.3rem 0.5rem;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: #4a5568;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            min-width: auto;
+            width: auto;
+        }
+
+        .menu-button i {
+            font-size: 0.875rem;
+        }
+
+        .menu-button:hover {
+            background: #edf2f7;
+            border-color: #cbd5e0;
+        }
+
+        .menu-button.exit {
+            color: #e53e3e;
+            border-color: #feb2b2;
+            padding: 0.3rem 0.4rem;
+        }
+
+        .menu-button.exit:hover {
+            background: #fff5f5;
+            border-color: #fc8181;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+    <br />
+    <br />
+    <br />
+    <div class="login-form" id="loginForm">
+        <h2>Connect to Document</h2>
+        <div class="error-message" id="errorMessage"></div>
+        <input type="text" id="username" placeholder="Username" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <input type="text" id="documentId" placeholder="Document ID" required>
+        <button onclick="connect()">Connect</button>
+
+        <div class="separator"></div>
+        <button class="toggle-form" id="toggleFormBtn" onclick="toggleCreateForm()">Create New Document</button>
+
+        <div class="create-doc-form" id="createDocForm">
+            <h3>Create New Document</h3>
+            <div class="error-message" id="creationErrorMessage"></div>
+            <span class="tip"><i class="fa-regular fa-lightbulb"></i> All documents are stored in memory and will be lost when the server restarts!</span>
+            <input type="text" id="newDocId" placeholder="Document ID" required>
+            <input type="text" id="newDocTitle" placeholder="Document Title">
+            <input type="password" id="newDocPassword" placeholder="Set Password" required>
+            <button onclick="createDocument()">Create Document</button>
+        </div>
+    </div>
+
+    <div align="center">
+        <div class="editor-container" id="editorContainer">
+            <div class="editor-header">
+                <div class="title-container">
+                    <h3 id="documentTitle" class="document-title" onclick="startTitleEdit()"></h3>
+                    <input type="text" id="titleEdit" class="title-edit-input" onblur="endTitleEdit()" onkeydown="handleTitleKeydown(event)">
+                </div>
+                <div class="menu-actions">
+                    <button class="menu-button" title="Import Markdown" onclick="triggerFileInput()">
+                        <i class="fas fa-file-import"></i>
+                    </button>
+                    <button class="menu-button" title="Save as TXT" onclick="saveAsTxt()">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button class="menu-button" title="Save as Markdown" onclick="saveAsMarkdown()">
+                        <i class="fab fa-markdown"></i>
+                    </button>
+                    <button class="menu-button exit" title="Exit" onclick="exitEditor()">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                    <input type="file" id="fileInput" accept=".md,.markdown" style="display: none" onchange="handleFileSelect(event)">
+                </div>
+                <div id="activeUsers"></div>
+            </div>
+            <div class="toolbar">
+                <button onclick="execCommand('bold')" title="Bold" id="boldBtn"><strong>B</strong></button>
+                <button onclick="execCommand('italic')" title="Italic" id="italicBtn"><em>I</em></button>
+                <button onclick="execCommand('underline')" title="Underline" id="underlineBtn"><u>U</u></button>
+                <div class="separator"></div>
+                <button onclick="execCommand('justifyLeft')" title="Align Left" id="alignLeftBtn">⇤</button>
+                <button onclick="execCommand('justifyCenter')" title="Center" id="alignCenterBtn">≡</button>
+                <button onclick="execCommand('justifyRight')" title="Align Right" id="alignRightBtn">⇥</button>
+                <div class="separator"></div>
+                <button onclick="execCommand('insertUnorderedList')" title="Bullet List" id="bulletListBtn">•</button>
+                <button onclick="execCommand('insertOrderedList')" title="Numbered List" id="numberedListBtn">1.</button>
+                <div class="separator"></div>
+                <select id="formatBlock" onchange="handleFormatBlock(this.value)" title="Heading">
+                    <option value="div">Normal</option>
+                    <option value="h1">Heading 1</option>
+                    <option value="h2">Heading 2</option>
+                    <option value="h3">Heading 3</option>
+                    <option value="blockquote">Quote</option>
+                </select>
+            </div>
+            <div id="editor" contenteditable="true"></div>
+            <div class="user-cursors-container" id="userCursors"></div>
+            <div class="typing-indicator" id="typingIndicator">Someone is typing...</div>
+            <div class="doc-stats">
+                <div class="stat-item" id="charCountContainer">
+                    <span class="stat-label">Characters:</span>
+                    <span id="charCount">0</span>
+                    <span class="char-limit">/ 32768</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Words:</span>
+                    <span id="wordCount">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Paragraphs:</span>
+                    <span id="paragraphCount">0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="users-panel">
+        <h4>Active Users</h4>
+        <div id="activeUsersList" class="users-list"></div>
+
+        <div class="document-info">
+            <div id="lastModified"></div>
+        </div>
+
+        <h4>Historical Users</h4>
+        <div id="historicalUsersList" class="users-list"></div>
+
+    </div>
+
+    <script type="text/javascript" src="/js/wsh.js"></script>
+    <script>
+        let ws;
+
+        function ensureBlockWrapper() {
+            const editor = document.getElementById('editor');
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+
+            const range = selection.getRangeAt(0);
+            let node = range.startContainer;
+
+            while (node && node !== editor) {
+                if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'DIV') {
+                    return;
+                }
+                node = node.parentNode;
+            }
+
+            if (node === editor && !node.firstChild) {
+                const div = document.createElement('div');
+                div.appendChild(document.createElement('br'));
+                editor.appendChild(div);
+
+                const newRange = document.createRange();
+                newRange.setStart(div, 0);
+                newRange.collapse(true);
+                selection.removeAllRanges();
+                selection.addRange(newRange);
+            }
+        }
+
+        let currentUser;
+        let currentDoc;
+        let isTyping = false;
+        let userActivities = new Map();
+        let lastCursorPosition = { x: 0, y: 0 };
+        let activityTimeout;
+        const CHAR_LIMIT = 32768;
+
+        const ACTIVITY_STATES = {
+            TYPING: { label: 'typing...', timeout: 2000 },
+            SELECTING: { label: 'selecting...', timeout: 1000 },
+            IDLE: { label: 'online', timeout: null },
+            JOINED: { label: 'just joined', timeout: 5000 }
+        };
+
+        const RATE_LIMITS = {
+            TYPING: 500,
+            CONTENT: 500,
+            SELECTION: 1000,
+            USERNAME: 500,
+            TITLE: 1000,
+            ACTIVITY: 1000,
+            CURSOR: 100,
+        };
+
+        const lastUpdate = {
+            TYPING: Date.now() - 500,
+            CONTENT: Date.now() - 500,
+            SELECTION: Date.now() - 5000,
+            USERNAME: Date.now() - 5000,
+            TITLE: Date.now() - 5000,
+            ACTIVITY: Date.now() - 500,
+            CURSOR: Date.now() - 50,
+        };
+
+        function canUpdate(type) {
+            if (!RATE_LIMITS[type]) {
+                console.warn(`Unknown rate limit type: ${type}`);
+                return false;
+            }
+
+            const now = Date.now();
+            const lastUpdateTime = lastUpdate[type];
+            const timeSinceLastUpdate = now - lastUpdateTime;
+            const canUpdate = timeSinceLastUpdate >= RATE_LIMITS[type];
+
+            if (canUpdate) {
+                lastUpdate[type] = now;
+            }
+
+            return canUpdate;
+        }
+
+        const userActivityTimeouts = new Map();
+        let typingTimeout;
+
+        const userColors = [
+            '#FF4444', '#4444FF', '#44FF44', '#FF44FF',
+            '#FFAA44', '#44FFFF', '#AA44FF', '#FF44AA',
+            '#FF8888', '#8888FF', '#88FF88', '#FF88FF',
+            '#FFCC88', '#88FFFF', '#CC88FF', '#FF88CC'
+        ];
+        const userColorMap = new Map();
+        let usedColorIndices = new Set();
+
+        function getUserColor(userId) {
+            if (userColorMap.has(userId)) {
+                return userColorMap.get(userId);
+            }
+
+            if (usedColorIndices.size >= userColors.length) {
+                usedColorIndices.clear();
+            }
+
+            let colorIndex = 0;
+            while (usedColorIndices.has(colorIndex) && colorIndex < userColors.length) {
+                colorIndex++;
+            }
+
+            usedColorIndices.add(colorIndex);
+            userColorMap.set(userId, userColors[colorIndex]);
+            return userColors[colorIndex];
+        }
+
+        function showError(message, id = 'errorMessage') {
+            const errorEl = document.getElementById(id);
+            if (errorEl.classList.contains('success-message') || errorEl.classList.contains('error-message')) {
+                errorEl.classList.remove('success-message');
+                errorEl.classList.remove('error-message');
+            }
+            errorEl.classList.add('error-message');
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+
+            setTimeout(() => {
+                errorEl.style.display = 'none';
+            }, 5000);
+        }
+
+        function showSuccess(message, id = 'errorMessage') {
+            const errorEl = document.getElementById(id);
+            if (errorEl.classList.contains('success-message') || errorEl.classList.contains('error-message')) {
+                errorEl.classList.remove('success-message');
+                errorEl.classList.remove('error-message');
+            }
+            errorEl.classList.add('success-message');
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+
+            setTimeout(() => {
+                errorEl.style.display = 'none';
+            }, 5000);
+        }
+
+        async function connect() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const documentId = document.getElementById('documentId').value;
+
+            if (!username || !password || !documentId) {
+                showError('Please fill in all fields');
+                return;
+            }
+
+            try {
+                const isAvailable = await checkUsername(username);
+                if (!isAvailable) {
+                    showError('Username is already in use. Please choose another username.');
+                    return;
+                }
+
+                currentUser = username;
+                currentDoc = documentId;
+
+                ws = new WebSocket(`ws://${wsAddr}`);
+
+                ws.onopen = () => {
+                    ws.send(JSON.stringify({
+                        type: 'docConnect',
+                        userId: username,
+                        documentId: documentId,
+                        password: password
+                    }));
+                };
+
+                ws.onmessage = handleMessage;
+
+                ws.onclose = () => {
+                    for (const userId of activeUsers) {
+                        if (userId !== currentUser) {
+                            removeUser(userId);
+                        }
+                    }
+
+                    if (currentDoc && currentUser) {
+                        setTimeout(() => {
+                            connect();
+                        }, 3000);
+                    }
+                };
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
+        let activeUsers = new Set();
+
+        function handleMessage(event) {
+            const data = JSON.parse(event.data);
+
+            switch (data.type) {
+                case 'docInitial':
+                    const editor = document.getElementById('editor');
+                    const editorContainer = document.getElementById('editorContainer');
+                    const usersPanel = document.querySelector('.users-panel');
+
+                    editor.innerHTML = `<div style="text-align: left;"><br></div>`;
+                    document.getElementById('documentTitle').textContent = data.title;
+                    if (data.content) {
+                        editor.innerHTML = data.content;
+                    }
+                    activeUsers = new Set(data.users);
+                    updateUsersList(data.users, data.historicalUsers, data.lastModified);
+
+                    document.getElementById('loginForm').style.opacity = '0';
+                    setTimeout(() => {
+                        document.getElementById('loginForm').style.display = 'none';
+                        editorContainer.style.display = 'flex';
+                        usersPanel.style.display = 'block';
+                        editorContainer.offsetHeight;
+                        usersPanel.offsetHeight;
+                        editorContainer.classList.add('visible');
+                        usersPanel.classList.add('visible');
+
+                        editor.focus();
+                        const selection = window.getSelection();
+                        const range = document.createRange();
+                        const firstTextNode = getFirstTextNode(editor);
+                        if (firstTextNode) {
+                            range.setStart(firstTextNode, 0);
+                            range.setEnd(firstTextNode, 0);
+                            selection.removeAllRanges();
+                            selection.addRange(range);
+                            updateUserActivity('joined');
+                        }
+
+                        setTimeout(() => {
+                            scrollToBottom();
+                        }, 300);
+                    }, 300);
+                    updateDocumentStats();
+                    break;
+                case 'docError':
+                    showError(data.error);
+                    break;
+                case 'docUpdate':
+                    if (data.userId !== currentUser) {
+                        const content = data.content;
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = content;
+
+                        if (tempDiv.innerText.length > CHAR_LIMIT) {
+                            showError('Received content exceeds character limit');
+                            return;
+                        }
+
+                        document.getElementById('editor').innerHTML = content;
+                        updateDocumentStats();
+                    }
+                    break;
+                case 'docCreated':
+                    showSuccess(`Document created successfully! ID: ${data.documentId}`);
+                    break;
+                case 'docTitleUpdate':
+                    if (data.userId !== currentUser) {
+                        document.getElementById('documentTitle').textContent = data.title;
+                    }
+                    break;
+                case 'docUserStatus':
+                    handleUserStatus(data.users, data.historicalUsers);
+                    break;
+                case 'docUserActivity':
+                    handleUserActivity(data.activities);
+                    break;
+                case 'docCursorUpdate':
+                    if (data.userId !== currentUser) {
+                        renderUserCursor(data.userId, data.position);
+                    }
+                    break;
+            }
+        }
+
+        function handleUserStatus(users, historicalUsers) {
+            const newUsers = new Set(users);
+
+            for (const userId of activeUsers) {
+                if (!newUsers.has(userId)) {
+                    removeUser(userId);
+                }
+            }
+
+            activeUsers = newUsers;
+            updateUsersList(users, historicalUsers);
+        }
+
+        function removeUser(userId) {
+            const color = userColorMap.get(userId);
+            if (color) {
+                const colorIndex = userColors.indexOf(color);
+                usedColorIndices.delete(colorIndex);
+                userColorMap.delete(userId);
+            }
+            clearTimeout(userActivityTimeouts.get(userId));
+            userActivityTimeouts.delete(userId);
+            userActivities.delete(userId);
+            const cursor = document.getElementById(`cursor-${userId}`);
+            if (cursor) {
+                cursor.remove();
+            }
+        }
+
+        function updateUsersList(users, historicalUsers = [], lastModified = null) {
+            const activeList = document.getElementById('activeUsersList');
+            activeList.innerHTML = Array.from(users)
+                .map(user => {
+                    const activity = userActivities.get(user);
+                    const userColor = getUserColor(user);
+                    const isTyping = activity?.activity === 'TYPING';
+                    const statusClass = activity ? activity.activity.toLowerCase() : 'idle';
+                    const isCurrentUser = user === currentUser;
+
+                    let statusContent = isTyping ?
+                        `typing...` :
+                        (activity?.label || 'online');
+
+                    return `
+                        <div class="user-item ${isCurrentUser ? 'current-user' : ''}">
+                            <div class="user-color-dot" style="background-color: ${userColor}"></div>
+                            <span class="user-name ${isCurrentUser ? 'current-user-name' : ''}">${user}</span>
+                            <div class="user-status ${statusClass}">
+                                ${statusContent}
+                            </div>
+                        </div>`;
+                })
+                .join('');
+
+            const historicalList = document.getElementById('historicalUsersList');
+            const historicalOnlyUsers = historicalUsers.filter(user => !users.includes(user));
+            historicalList.innerHTML = historicalOnlyUsers
+                .map(user => `<div class="user-item historical">${user}</div>`)
+                .join('');
+
+            if (lastModified) {
+                const lastModifiedEl = document.getElementById('lastModified');
+                const date = new Date(lastModified);
+                lastModifiedEl.textContent = `Last modified: ${date.toLocaleString()}`;
+            }
+        }
+
+        function updateUserActivity(activity) {
+            if (!ws || !currentUser || !currentDoc) return;
+            if (!canUpdate('ACTIVITY')) return;
+
+            updateUserActivityState(currentUser, activity);
+            updateUsersList(Array.from(activeUsers));
+
+            ws.send(JSON.stringify({
+                type: 'docUserActivity',
+                documentId: currentDoc,
+                userId: currentUser,
+                activity
+            }));
+        }
+
+        function handleUserActivity(activities) {
+            activities.forEach(({ userId, activity }) => {
+                if (userId !== currentUser) {
+                    userActivities.set(userId, {
+                        activity,
+                        label: ACTIVITY_STATES[activity.toUpperCase()]?.label || 'online',
+                        timestamp: Date.now()
+                    });
+                }
+            });
+
+            updateUsersList(Array.from(activeUsers));
+            updateTypingIndicator(activeUsers);
+        }
+
+        function updateUserActivityState(userId, activity) {
+            clearTimeout(userActivityTimeouts.get(userId));
+
+            const activityState = ACTIVITY_STATES[activity.toUpperCase()] || ACTIVITY_STATES.IDLE;
+            userActivities.set(userId, {
+                activity,
+                label: activityState.label,
+                timestamp: Date.now()
+            });
+
+            if (activityState.timeout) {
+                userActivityTimeouts.set(userId, setTimeout(() => {
+                    if (userActivities.has(userId)) {
+                        const currentActivity = userActivities.get(userId);
+                        if (currentActivity.activity === activity) {
+                            updateUserActivityState(userId, 'IDLE');
+                            if (userId === currentUser) {
+                                updateUserActivity('IDLE');
+                            }
+                            updateUsersList(Array.from(activeUsers));
+                        }
+                    }
+                }, activityState.timeout));
+            }
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        document.getElementById('editor').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+
+                const selection = window.getSelection();
+                if (!selection.rangeCount) return;
+
+                const range = selection.getRangeAt(0);
+                let currentBlock = range.startContainer;
+
+                while (currentBlock && currentBlock.nodeType !== Node.ELEMENT_NODE) {
+                    currentBlock = currentBlock.parentNode;
+                }
+
+                if (currentBlock && currentBlock.tagName === 'DIV') {
+                    const newBlock = document.createElement('div');
+
+                    if (range.startOffset < currentBlock.textContent.length) {
+                        const afterCursor = range.extractContents();
+                        newBlock.appendChild(afterCursor);
+                    } else {
+                        newBlock.innerHTML = '<br>';
+                    }
+
+                    newBlock.style.cssText = currentBlock.style.cssText;
+
+                    currentBlock.parentNode.insertBefore(newBlock, currentBlock.nextSibling);
+
+                    const newRange = document.createRange();
+                    if (newBlock.firstChild && newBlock.firstChild.nodeType === Node.TEXT_NODE) {
+                        newRange.setStart(newBlock.firstChild, 0);
+                    } else {
+                        newRange.setStart(newBlock, 0);
+                    }
+                    newRange.collapse(true);
+                    selection.removeAllRanges();
+                    selection.addRange(newRange);
+
+                    newBlock.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+                    triggerContentUpdate();
+                    updateUserActivity('typing');
+                } else {
+                    const div = document.createElement('div');
+                    div.innerHTML = '<br>';
+                    editor.appendChild(div);
+
+                    const newRange = document.createRange();
+                    newRange.setStart(div, 0);
+                    newRange.collapse(true);
+                    selection.removeAllRanges();
+                    selection.addRange(newRange);
+
+                    triggerContentUpdate();
+                    updateUserActivity('typing');
+                }
+            }
+        });
+
+        document.getElementById('editor').addEventListener('input', (e) => {
+            const editor = e.target;
+            const text = editor.innerText;
+
+            if (text.length > CHAR_LIMIT) {
+                e.preventDefault();
+                const selection = window.getSelection();
+                const range = selection.getRangeAt(0);
+
+                editor.innerText = text.slice(0, CHAR_LIMIT);
+
+                selection.removeAllRanges();
+                selection.addRange(range);
+
+                showError(`Character limit (${CHAR_LIMIT}) reached`);
+                return;
+            }
+
+            handleTyping();
+            updateDocumentStats();
+            debounce(() => {
+                triggerContentUpdate();
+            }, RATE_LIMITS.CONTENT)();
+        });
+
+        document.addEventListener('selectionchange', debounce(() => {
+            if (document.activeElement === document.getElementById('editor')) {
+                updateCursorPosition();
+                updateUserActivity('TYPING');
+            }
+        }, 50));
+
+        document.getElementById('editor').addEventListener('scroll', debounce(() => {
+            const cursors = document.getElementById('userCursors');
+            Array.from(cursors.children).forEach(cursor => {
+                const userId = cursor.getAttribute('data-username');
+                const activity = userActivities.get(userId);
+                if (activity?.position) {
+                    renderUserCursor(userId, activity.position);
+                }
+            });
+        }, 50));
+
+        function toggleCreateForm() {
+            const form = document.getElementById('createDocForm');
+            const toggleBtn = document.getElementById('toggleFormBtn');
+
+            if (!form.classList.contains('visible')) {
+                form.style.display = 'block';
+                form.offsetHeight;
+                form.classList.add('visible');
+                toggleBtn.classList.add('active');
+            } else {
+                form.classList.remove('visible');
+                toggleBtn.classList.remove('active');
+                setTimeout(() => {
+                    form.style.display = 'none';
+                }, 300);
+            }
+        }
+
+        function createDocument() {
+            const docId = document.getElementById('newDocId').value;
+            const title = document.getElementById('newDocTitle').value;
+            const password = document.getElementById('newDocPassword').value;
+
+            if (!docId || !password) {
+                showError('Document ID and password are required', 'creationErrorMessage');
+                return;
+            }
+
+            const createBtn = event.target;
+            createBtn.disabled = true;
+            createBtn.textContent = 'Creating...';
+
+            const ws = new WebSocket('ws://localhost:3010');
+
+            ws.onopen = () => {
+                ws.send(JSON.stringify({
+                    type: 'docCreate',
+                    documentId: docId,
+                    password: password,
+                    title: title || `Document ${docId}`
+                }));
+            };
+
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                createBtn.disabled = false;
+                createBtn.textContent = 'Create Document';
+
+                if (data.type === 'docCreated') {
+                    showSuccess(`Document created successfully! ID: ${data.documentId}`);
+                    document.getElementById('documentId').value = data.documentId;
+                    document.getElementById('password').value = password;
+                    toggleCreateForm();
+                    document.getElementById('newDocId').value = '';
+                    document.getElementById('newDocTitle').value = '';
+                    document.getElementById('newDocPassword').value = '';
+                } else if (data.type === 'docError') {
+                    showError(data.error, 'creationErrorMessage');
+                }
+                ws.close();
+            };
+
+            ws.onerror = () => {
+                createBtn.disabled = false;
+                createBtn.textContent = 'Create Document';
+                showError('Failed to connect to server');
+            };
+        }
+
+        function handleFormatBlock(value) {
+            document.execCommand('removeFormat', false, null);
+            document.execCommand('formatBlock', false, `<${value}>`);
+            if (canUpdate('CONTENT')) {
+                triggerContentUpdate();
+            }
+        }
+
+        function execCommand(command, value = null) {
+            const editor = document.getElementById('editor');
+            const selection = window.getSelection();
+
+            if (!selection.rangeCount) return;
+
+            if (command.startsWith('justify')) {
+                const range = selection.getRangeAt(0);
+                const alignment = command.replace('justify', '').toLowerCase() || 'left';
+
+                const blocks = getBlocksInRange(range, editor);
+
+                blocks.forEach(block => {
+                    block.style.textAlign = alignment;
+                });
+            } else {
+                document.execCommand(command, false, value);
+            }
+
+            editor.focus();
+            updateToolbar();
+            triggerContentUpdate();
+        }
+
+        function getBlocksInRange(range, editor) {
+            const blocks = [];
+
+            const startBlock = findOrCreateBlock(range.startContainer, editor);
+            const endBlock = findOrCreateBlock(range.endContainer, editor);
+
+            if (startBlock === endBlock) {
+                return [startBlock];
+            }
+
+            let currentBlock = startBlock;
+            while (currentBlock) {
+                blocks.push(currentBlock);
+                if (currentBlock === endBlock) break;
+
+                let next = currentBlock.nextElementSibling;
+                while (!next && currentBlock.parentNode !== editor) {
+                    currentBlock = currentBlock.parentNode;
+                    next = currentBlock.nextElementSibling;
+                }
+                if (!next) break;
+                currentBlock = next;
+            }
+
+            return blocks;
+        }
+
+        function findOrCreateBlock(node, editor) {
+            if (node.nodeType === Node.TEXT_NODE && node.parentNode === editor) {
+                const div = document.createElement('div');
+                node.parentNode.insertBefore(div, node);
+                div.appendChild(node);
+                return div;
+            }
+
+            while (node && node.parentNode !== editor) {
+                if (node.nodeType === Node.ELEMENT_NODE &&
+                    (node.tagName === 'DIV' || /^H[1-6]$/.test(node.tagName) || node.tagName === 'BLOCKQUOTE')) {
+                    return node;
+                }
+                node = node.parentNode;
+            }
+
+            if (node) {
+                const range = document.createRange();
+                range.selectNode(node);
+                const div = document.createElement('div');
+                range.surroundContents(div);
+                return div;
+            }
+
+            return null;
+        }
+
+        document.getElementById('editor').addEventListener('input', (e) => {
+            const editor = e.target;
+            const text = editor.innerText;
+
+            if (text.length > CHAR_LIMIT) {
+                e.preventDefault();
+                const selection = window.getSelection();
+                const range = selection.getRangeAt(0);
+
+                editor.innerText = text.slice(0, CHAR_LIMIT);
+
+                selection.removeAllRanges();
+                selection.addRange(range);
+
+                showError(`Character limit (${CHAR_LIMIT}) reached`);
+                return;
+            }
+
+            handleTyping();
+            updateDocumentStats();
+            debounce(() => {
+                triggerContentUpdate();
+            }, RATE_LIMITS.CONTENT)();
+        });
+
+        document.addEventListener('selectionchange', debounce(() => {
+            if (document.activeElement === document.getElementById('editor')) {
+                updateCursorPosition();
+                updateUserActivity('TYPING');
+            }
+        }, 50));
+
+        document.getElementById('editor').addEventListener('scroll', debounce(() => {
+            const cursors = document.getElementById('userCursors');
+            Array.from(cursors.children).forEach(cursor => {
+                const userId = cursor.getAttribute('data-username');
+                const activity = userActivities.get(userId);
+                if (activity?.position) {
+                    renderUserCursor(userId, activity.position);
+                }
+            });
+        }, 50));
+
+        function updateToolbar() {
+            const commands = [
+                { id: 'boldBtn', command: 'bold' },
+                { id: 'italicBtn', command: 'italic' },
+                { id: 'underlineBtn', command: 'underline' },
+                { id: 'bulletListBtn', command: 'insertUnorderedList' },
+                { id: 'numberedListBtn', command: 'insertOrderedList' }
+            ];
+
+            commands.forEach(({ id, command }) => {
+                const button = document.getElementById(id);
+                if (button) {
+                    button.classList.toggle('active', document.queryCommandState(command));
+                }
+            });
+
+            const alignButtons = {
+                'alignLeftBtn': 'left',
+                'alignCenterBtn': 'center',
+                'alignRightBtn': 'right'
+            };
+
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+                let currentBlock = range.startContainer;
+
+                while (currentBlock && currentBlock.nodeType !== Node.ELEMENT_NODE) {
+                    currentBlock = currentBlock.parentNode;
+                }
+
+                if (currentBlock) {
+                    const alignment = window.getComputedStyle(currentBlock).textAlign;
+                    Object.entries(alignButtons).forEach(([btnId, alignValue]) => {
+                        const button = document.getElementById(btnId);
+                        if (button) {
+                            button.classList.toggle('active', alignment === alignValue);
+                        }
+                    });
+                }
+            }
+
+            const formatBlock = document.queryCommandValue('formatBlock').toLowerCase();
+            const select = document.getElementById('formatBlock');
+            select.value = formatBlock.replace(/[<>]/g, '') || 'div';
+        }
+
+        function preserveScrollPosition(callback) {
+            const editor = document.getElementById('editor');
+            const scrollTop = editor.scrollTop;
+            callback();
+            editor.scrollTop = scrollTop;
+        }
+
+        function triggerContentUpdate() {
+            if (!ws || ws.readyState !== WebSocket.OPEN) return;
+            if (!canUpdate('CONTENT')) return;
+
+            preserveScrollPosition(() => {
+                const editor = document.getElementById('editor');
+                ws.send(JSON.stringify({
+                    type: 'docUpdate',
+                    documentId: currentDoc,
+                    userId: currentUser,
+                    content: editor.innerHTML
+                }));
+            });
+        }
+
+        function setupContentObserver() {
+            const editor = document.getElementById('editor');
+            const contentObserver = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.type === 'childList') {
+                        if (!editor.firstChild) {
+                            editor.innerHTML = '<div><br></div>';
+                        }
+
+                        editor.querySelectorAll('div').forEach(block => {
+                            if (!block.childNodes.length) {
+                                block.innerHTML = '<br>';
+                            }
+                        });
+                    }
+                });
+            });
+
+            contentObserver.observe(editor, {
+                childList: true,
+                subtree: true,
+                characterData: true
+            });
+
+            return contentObserver;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const editor = document.getElementById('editor');
+            const editorContainer = document.getElementById('editorContainer');
+            const usersPanel = document.querySelector('.users-panel');
+
+            editorContainer.style.display = 'none';
+            editorContainer.classList.remove('visible');
+            usersPanel.style.display = 'none';
+            usersPanel.classList.remove('visible');
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('loginForm').style.opacity = '1';
+
+            editor.style.lineHeight = '1.5';
+            editor.innerHTML = '<div><br></div>';
+
+            const resizeObserver = new ResizeObserver(() => {
+                const users = Array.from(activeUsers);
+                users.forEach(userId => {
+                    if (userId !== currentUser) {
+                        const activity = userActivities.get(userId);
+                        if (activity?.position) {
+                            // updateUserCursor(userId, activity.position);
+                        }
+                    }
+                });
+            });
+
+            resizeObserver.observe(editor);
+
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                        if (editorContainer.style.display !== 'none') {
+                            editor.style.height = '100%';
+                            editor.style.minHeight = '0';
+                        }
+                    }
+                });
+            });
+
+            observer.observe(editorContainer, { attributes: true });
+
+            if (!editor.hasChildNodes()) {
+                const div = document.createElement('div');
+                div.appendChild(document.createTextNode('\u200B'));
+                editor.appendChild(div);
+            }
+
+            const contentObserver = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.type === 'childList') {
+                        const editor = document.getElementById('editor');
+                        if (!editor.firstChild) {
+                            editor.innerHTML = '<div><br></div>';
+                        }
+                    }
+                });
+            });
+
+            contentObserver.observe(editor, {
+                childList: true,
+                subtree: true
+            });
+
+            setupContentObserver();
+
+            editor.addEventListener('input', (e) => {
+                const selection = window.getSelection();
+                if (selection.rangeCount > 0) {
+                    const range = selection.getRangeAt(0);
+                    let block = range.startContainer;
+
+                    while (block && block.nodeType !== Node.ELEMENT_NODE) {
+                        block = block.parentNode;
+                    }
+
+                    if (block && block.tagName === 'DIV' && !block.textContent.trim()) {
+                        block.innerHTML = '<br>';
+                    }
+                }
+            });
+
+            editor.addEventListener('beforeinput', (e) => {
+                const editor = document.getElementById('editor');
+                const selection = window.getSelection();
+
+                if (!selection.rangeCount) return;
+
+                let currentBlock = selection.anchorNode;
+                while (currentBlock && currentBlock.nodeType !== Node.ELEMENT_NODE) {
+                    currentBlock = currentBlock.parentNode;
+                }
+
+                if (selection.anchorNode === editor) {
+                    e.preventDefault();
+                    const div = document.createElement('div');
+                    if (e.data) {
+                        div.textContent = e.data;
+                    } else {
+                        div.appendChild(document.createElement('br'));
+                    }
+                    editor.appendChild(div);
+
+                    const range = document.createRange();
+                    range.setStart(div.firstChild || div, e.data ? e.data.length : 0);
+                    range.collapse(true);
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                }
+                else if (currentBlock && currentBlock.tagName === 'DIV' &&
+                    currentBlock.firstChild?.tagName === 'BR' && e.data) {
+                    e.preventDefault();
+                    currentBlock.textContent = e.data;
+
+                    const range = document.createRange();
+                    range.setStart(currentBlock.firstChild, e.data.length);
+                    range.collapse(true);
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                }
+            });
+
+            editor.addEventListener('paste', (e) => {
+                e.preventDefault();
+
+                let content = (e.clipboardData || window.clipboardData).getData('text');
+                const lines = content.split(/\r?\n/);
+
+                const selection = window.getSelection();
+                if (!selection.rangeCount) return;
+
+                const range = selection.getRangeAt(0);
+                let currentBlock = range.startContainer;
+                while (currentBlock && currentBlock.nodeType !== Node.ELEMENT_NODE) {
+                    currentBlock = currentBlock.parentNode;
+                }
+
+                lines.forEach((line, index) => {
+                    if (index === 0 && currentBlock && currentBlock.tagName === 'DIV') {
+                        const text = currentBlock.textContent + line;
+                        currentBlock.textContent = text;
+                    } else {
+                        const div = document.createElement('div');
+                        div.textContent = line || '\u200B';
+                        editor.appendChild(div);
+                    }
+                });
+
+                ensureBlockWrapper();
+                triggerContentUpdate();
+            });
+
+            editor.addEventListener('copy', (e) => {
+                const selection = window.getSelection();
+                if (!editor.contains(selection.anchorNode)) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+
+            editor.addEventListener('cut', (e) => {
+                const selection = window.getSelection();
+
+                const doubleClickTime = selection.anchorTime && selection.focusTime &&
+                    (selection.focusTime - selection.anchorTime < 500);
+
+                if (doubleClickTime) {
+                    const range = selection.getRangeAt(0);
+                    const text = range.toString();
+                    e.clipboardData.setData('text/plain', text);
+                    e.preventDefault();
+                    return false;
+                }
+
+                if (selection.anchorNode === editor.firstChild &&
+                    selection.focusNode === editor.lastChild &&
+                    selection.anchorOffset === 0 &&
+                    selection.focusOffset === editor.lastChild.length) {
+
+                    e.preventDefault();
+                    const text = editor.innerText;
+                    e.clipboardData.setData('text/plain', text);
+                    editor.innerHTML = '<div><br></div>';
+                    triggerContentUpdate();
+                    return false;
+                }
+
+                if (!editor.contains(selection.anchorNode)) {
+                    e.preventDefault();
+                    return false;
+                }
+
+                const text = selection.toString();
+                e.clipboardData.setData('text/plain', text);
+
+                const allText = editor.innerText.trim();
+                if (text.length === allText.length || text.includes('\n')) {
+                    e.preventDefault();
+
+                    selection.deleteFromDocument();
+
+                    if (!editor.firstChild || editor.innerHTML.trim() === '') {
+                        editor.innerHTML = '<div><br></div>';
+                    }
+
+                    const blocks = editor.getElementsByTagName('div');
+                    Array.from(blocks).forEach(block => {
+                        if (!block.textContent.trim()) {
+                            block.innerHTML = '<br>';
+                        }
+                    });
+
+                    ensureBlockWrapper();
+                    triggerContentUpdate();
+                }
+            });
+
+        });
+
+        const editor = document.getElementById('editor');
+        editor.addEventListener('keyup', updateToolbar);
+        editor.addEventListener('mouseup', updateToolbar);
+        editor.addEventListener('input', updateToolbar);
+
+        function startTitleEdit() {
+            const titleEl = document.getElementById('documentTitle');
+            const titleEditEl = document.getElementById('titleEdit');
+
+            titleEditEl.value = titleEl.textContent;
+            titleEl.style.display = 'none';
+            titleEditEl.style.display = 'block';
+            titleEditEl.focus();
+        }
+
+        function endTitleEdit() {
+            const titleEl = document.getElementById('documentTitle');
+            const titleEditEl = document.getElementById('titleEdit');
+            const newTitle = titleEditEl.value.trim();
+
+            if (newTitle && newTitle !== titleEl.textContent && canUpdate('TITLE')) {
+                titleEl.textContent = newTitle;
+                ws.send(JSON.stringify({
+                    type: 'docUpdateTitle',
+                    documentId: currentDoc,
+                    userId: currentUser,
+                    title: newTitle
+                }));
+            }
+
+            titleEl.style.display = 'block';
+            titleEditEl.style.display = 'none';
+        }
+
+        function handleTitleKeydown(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                endTitleEdit();
+            } else if (event.key === 'Escape') {
+                event.preventDefault();
+                document.getElementById('titleEdit').style.display = 'none';
+                document.getElementById('documentTitle').style.display = 'block';
+            }
+        }
+
+        document.addEventListener('selectionchange', () => {
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0 && document.activeElement === document.getElementById('editor')) {
+                const range = selection.getRangeAt(0);
+                const rect = range.getBoundingClientRect();
+                const editorRect = document.getElementById('editor').getBoundingClientRect();
+
+                lastCursorPosition = {
+                    x: rect.left - editorRect.left,
+                    y: rect.top - editorRect.top
+                };
+
+                updateUserActivity('typing');
+            }
+        });
+
+        function getFirstTextNode(element) {
+            if (element.nodeType === Node.TEXT_NODE) return element;
+
+            for (let child of element.childNodes) {
+                const textNode = getFirstTextNode(child);
+                if (textNode) return textNode;
+            }
+
+            return null;
+        }
+
+        function getOffsetFromNode(root, node, offset) {
+            const walker = document.createTreeWalker(
+                root,
+                NodeFilter.SHOW_ALL,
+                null,
+                false
+            );
+
+            let totalOffset = 0;
+            let currentNode;
+
+            while ((currentNode = walker.nextNode())) {
+                if (currentNode === node) {
+                    return totalOffset + offset;
+                }
+                if (currentNode.nodeType === Node.TEXT_NODE) {
+                    totalOffset += currentNode.length;
+                } else if (currentNode.nodeType === Node.ELEMENT_NODE && currentNode.tagName === 'BR') {
+                    totalOffset += 1;
+                } else if (currentNode.nodeType === Node.ELEMENT_NODE && !currentNode.hasChildNodes()) {
+                    totalOffset += 1;
+                }
+            }
+
+            return totalOffset;
+        }
+
+        function scrollToBottom() {
+            const editor = document.getElementById('editor');
+            editor.scrollTop = editor.scrollHeight;
+        }
+
+        let typingTimer;
+        let lastTypingUpdate = 0;
+        const TYPING_INTERVAL = 1000;
+
+        function handleTyping() {
+            if (!ws || !currentUser || !currentDoc) return;
+
+            if (!isTyping) {
+                isTyping = true;
+                if (canUpdate('TYPING')) {
+                    userActivities.set(currentUser, {
+                        activity: 'TYPING',
+                        label: ACTIVITY_STATES.TYPING.label,
+                        timestamp: Date.now()
+                    });
+                    updateUsersList(Array.from(activeUsers));
+
+                    ws.send(JSON.stringify({
+                        type: 'docUserActivity',
+                        documentId: currentDoc,
+                        userId: currentUser,
+                        activity: 'TYPING'
+                    }));
+                }
+            }
+
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(() => {
+                isTyping = false;
+                if (canUpdate('TYPING')) {
+                    ws.send(JSON.stringify({
+                        type: 'docUserActivity',
+                        documentId: currentDoc,
+                        userId: currentUser,
+                        activity: 'IDLE'
+                    }));
+                    userActivities.set(currentUser, {
+                        activity: 'IDLE',
+                        label: ACTIVITY_STATES.IDLE.label,
+                        timestamp: Date.now()
+                    });
+                    updateUsersList(Array.from(activeUsers));
+                }
+            }, ACTIVITY_STATES.TYPING.timeout);
+        }
+
+        document.getElementById('editor').addEventListener('input', () => {
+            handleTyping();
+            updateDocumentStats();
+            debounce(() => {
+                triggerContentUpdate();
+            }, RATE_LIMITS.CONTENT)();
+        });
+
+        function updateTypingIndicator(users) {
+            const indicator = document.getElementById('typingIndicator');
+            const typingUsers = Array.from(users)
+                .filter(userId => {
+                    const activity = userActivities.get(userId);
+                    return userId !== currentUser && activity?.activity === 'TYPING';
+                });
+
+            if (typingUsers.length > 0) {
+                const text = typingUsers.length === 1
+                    ? `${typingUsers[0]} is typing...`
+                    : `${typingUsers.length} people are typing...`;
+
+                indicator.innerHTML = `
+                    ${text}`;
+                indicator.classList.add('visible');
+            } else {
+                indicator.classList.remove('visible');
+            }
+        }
+
+        function checkUsername(username) {
+            return new Promise((resolve, reject) => {
+                const checkWs = new WebSocket('ws://localhost:3010');
+
+                const timeoutId = setTimeout(() => {
+                    checkWs.close();
+                    reject(new Error('Username check timed out'));
+                }, 5000);
+
+                checkWs.onopen = () => {
+                    checkWs.send(JSON.stringify({
+                        type: 'docCheckUsername',
+                        username
+                    }));
+                };
+
+                checkWs.onmessage = (event) => {
+                    clearTimeout(timeoutId);
+                    const data = JSON.parse(event.data);
+                    if (data.type === 'docUsernameStatus' && data.username === username) {
+                        resolve(data.available);
+                    } else if (data.type === 'docError') {
+                        reject(new Error(data.error));
+                    }
+                    checkWs.close();
+                };
+
+                checkWs.onerror = () => {
+                    clearTimeout(timeoutId);
+                    reject(new Error('Failed to check username'));
+                    checkWs.close();
+                };
+            });
+        }
+
+        const usernameInput = document.getElementById('username');
+        let lastCheckPromise = null;
+
+        usernameInput.addEventListener('input', debounce(async (e) => {
+            const username = e.target.value.trim();
+
+            if (!username) {
+                e.target.style.borderColor = '#e2e8f0';
+                return;
+            }
+
+            try {
+                if (lastCheckPromise) {
+                    lastCheckPromise = null;
+                }
+
+                lastCheckPromise = checkUsername(username);
+                const isAvailable = await lastCheckPromise;
+
+                if (lastCheckPromise) {
+                    e.target.style.borderColor = isAvailable ? '#48bb78' : '#f56565';
+                    e.target.style.borderWidth = '2px';
+
+                    if (!isAvailable) {
+                        showError('Username is already in use');
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to check username:', error);
+                e.target.style.borderColor = '#e2e8f0';
+            }
+        }, 300));
+
+        function updateDocumentStats() {
+            const editor = document.getElementById('editor');
+            const text = editor.innerText;
+            const charCount = text.length;
+            const wordCount = text.trim().split(/\s+/).filter(word => word.length > 0).length;
+            const paragraphCount = editor.getElementsByTagName('div').length;
+            const charCountContainer = document.getElementById('charCountContainer');
+
+            document.getElementById('charCount').textContent = charCount;
+            document.getElementById('wordCount').textContent = wordCount;
+            document.getElementById('paragraphCount').textContent = paragraphCount;
+
+            charCountContainer.classList.remove('limit-warning', 'limit-reached');
+            if (charCount >= CHAR_LIMIT) {
+                charCountContainer.classList.add('limit-reached');
+            } else if (charCount >= CHAR_LIMIT * 0.9) {
+                charCountContainer.classList.add('limit-warning');
+            }
+        }
+
+        function updateCursorPosition() {
+            if (!ws || !currentUser || !currentDoc) return;
+            if (!canUpdate('CURSOR')) return;
+
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+
+            const range = selection.getRangeAt(0);
+            const rect = range.getBoundingClientRect();
+            const editor = document.getElementById('editor');
+            const editorRect = editor.getBoundingClientRect();
+            const scale = window.visualViewport ? window.visualViewport.scale : 1;
+
+            const cursorPos = {
+                x: (rect.left - editorRect.left),
+                y: (rect.top - editorRect.top + editor.scrollTop),
+                timestamp: Date.now()
+            };
+
+            ws.send(JSON.stringify({
+                type: 'docCursorUpdate',
+                documentId: currentDoc,
+                userId: currentUser,
+                position: cursorPos
+            }));
+        }
+
+        function renderUserCursor(userId, position) {
+            if (userId === currentUser) return;
+
+            const editor = document.getElementById('editor');
+            const editorContainer = document.getElementById('userCursors');
+            let cursor = document.getElementById(`cursor-${userId}`);
+
+            if (!cursor) {
+                cursor = document.createElement('div');
+                cursor.id = `cursor-${userId}`;
+                cursor.className = 'user-cursor';
+                cursor.setAttribute('data-username', userId);
+                cursor.style.setProperty('--user-color', getUserColor(userId));
+                editorContainer.appendChild(cursor);
+            }
+
+            const scale = window.visualViewport ? window.visualViewport.scale : 1;
+            const editorRect = editor.getBoundingClientRect();
+
+            const x = position.x * scale;
+            const y = (position.y - editor.scrollTop) * scale;
+
+            cursor.style.left = `${x}px`;
+            cursor.style.top = `${y}px`;
+            cursor.style.display = 'block';
+            cursor.style.opacity = '1';
+            cursor.style.transform = `translate(-50%, -50%) scale(${1 / scale})`;
+
+            const activity = userActivities.get(userId);
+            cursor.classList.toggle('idle', activity?.activity === 'IDLE');
+        }
+
+        setInterval(() => {
+            const now = Date.now();
+            const cursors = document.getElementById('userCursors').children;
+            Array.from(cursors).forEach(cursor => {
+                const userId = cursor.getAttribute('data-username');
+                const activity = userActivities.get(userId);
+                if (!activity || now - activity.timestamp > 30000) {
+                    cursor.remove();
+                }
+            });
+        }, 5000);
+
+        document.getElementById('editor').addEventListener('mousemove', debounce(() => {
+            if (document.activeElement === document.getElementById('editor')) {
+                updateCursorPosition();
+            }
+        }, 50));
+
+        document.getElementById('editor').addEventListener('scroll', () => {
+            requestAnimationFrame(() => {
+                const cursors = document.getElementById('userCursors').children;
+                Array.from(cursors).forEach(cursor => {
+                    const userId = cursor.getAttribute('data-username');
+                    const activity = userActivities.get(userId);
+                    if (activity?.position) {
+                        renderUserCursor(userId, activity.position);
+                    }
+                });
+            });
+        });
+
+        window.addEventListener('resize', debounce(() => {
+            const cursors = document.getElementById('userCursors').children;
+            Array.from(cursors).forEach(cursor => {
+                const userId = cursor.getAttribute('data-username');
+                const activity = userActivities.get(userId);
+                if (activity?.position) {
+                    renderUserCursor(userId, activity.position);
+                }
+            });
+        }, 100));
+
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', debounce(() => {
+                const cursors = document.getElementById('userCursors').children;
+                Array.from(cursors).forEach(cursor => {
+                    const userId = cursor.getAttribute('data-username');
+                    const activity = userActivities.get(userId);
+                    if (activity?.position) {
+                        renderUserCursor(userId, activity.position);
+                    }
+                });
+            }, 100));
+        }
+
+        function saveAsTxt() {
+            const editor = document.getElementById('editor');
+            const title = document.getElementById('documentTitle').textContent;
+            const content = editor.innerText;
+
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${title || 'document'}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function saveAsMarkdown() {
+            const editor = document.getElementById('editor');
+            const title = document.getElementById('documentTitle').textContent;
+            let content = '';
+
+            content += `# ${title}\n\n`;
+
+            Array.from(editor.children).forEach(element => {
+                const style = window.getComputedStyle(element);
+                let text = element.innerHTML.trim();
+
+                text = text
+                    .replace(/<strong>(.*?)<\/strong>/g, '**$1**')
+                    .replace(/<b>(.*?)<\/b>/g, '**$1**')
+                    .replace(/<em>(.*?)<\/em>/g, '*$1*')
+                    .replace(/<i>(.*?)<\/i>/g, '*$1*')
+                    .replace(/<u>(.*?)<\/u>/g, '_$1_')
+                    .replace(/<br>/g, '\n');
+
+                if (!text) return;
+
+                switch (element.tagName.toLowerCase()) {
+                    case 'h1':
+                        content += `# ${text}\n\n`;
+                        break;
+                    case 'h2':
+                        content += `## ${text}\n\n`;
+                        break;
+                    case 'h3':
+                        content += `### ${text}\n\n`;
+                        break;
+                    case 'blockquote':
+                        content += `> ${text}\n\n`;
+                        break;
+                    case 'ul':
+                        element.querySelectorAll('li').forEach(li => {
+                            content += `* ${li.innerHTML.trim()
+                                .replace(/<strong>(.*?)<\/strong>/g, '**$1**')
+                                .replace(/<b>(.*?)<\/b>/g, '**$1**')
+                                .replace(/<em>(.*?)<\/em>/g, '*$1*')
+                                .replace(/<i>(.*?)<\/i>/g, '*$1*')
+                                .replace(/<u>(.*?)<\/u>/g, '_$1_')}\n`;
+                        });
+                        content += '\n';
+                        break;
+                    case 'ol':
+                        {
+                            let i = 1;
+                            element.querySelectorAll('li').forEach(li => {
+                                content += `${i}. ${li.innerHTML.trim()
+                                    .replace(/<strong>(.*?)<\/strong>/g, '**$1**')
+                                    .replace(/<b>(.*?)<\/b>/g, '**$1**')
+                                    .replace(/<em>(.*?)<\/em>/g, '*$1*')
+                                    .replace(/<i>(.*?)<\/i>/g, '*$1*')
+                                    .replace(/<u>(.*?)<\/u>/g, '_$1_')}\n`;
+                                i++;
+                            });
+                            content += '\n';
+                            break;
+                        }
+                    default:
+                        if (text) {
+                            if (style.textAlign === 'center') {
+                                content += `<div align="center">\n\n${text}\n\n</div>\n\n`;
+                            } else if (style.textAlign === 'right') {
+                                content += `<div align="right">\n\n${text}\n\n</div>\n\n`;
+                            } else {
+                                content += `${text}\n\n`;
+                            }
+                        }
+                }
+            });
+
+            const blob = new Blob([content], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${title || 'document'}.md`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function exitEditor() {
+            if (ws) {
+                ws.close();
+            }
+
+            const editorContainer = document.getElementById('editorContainer');
+            const usersPanel = document.querySelector('.users-panel');
+            const loginForm = document.getElementById('loginForm');
+
+            editorContainer.classList.remove('visible');
+            usersPanel.classList.remove('visible');
+
+            setTimeout(() => {
+                editorContainer.style.display = 'none';
+                usersPanel.style.display = 'none';
+                loginForm.style.display = 'block';
+                loginForm.style.opacity = '1';
+
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                document.getElementById('documentId').value = '';
+            }, 300);
+        }
+
+        function triggerFileInput() {
+            document.getElementById('fileInput').click();
+        }
+
+        async function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const content = e.target.result;
+                if (content.length > CHAR_LIMIT) {
+                    const shouldImportPart = await confirmPartialImport(content.length);
+                    if (shouldImportPart) {
+                        importMarkdown(content.substring(0, CHAR_LIMIT));
+                    }
+                } else {
+                    importMarkdown(content);
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        function confirmPartialImport(contentLength) {
+            return new Promise((resolve) => {
+                const exceedingChars = contentLength - CHAR_LIMIT;
+                const message = `The file exceeds the ${CHAR_LIMIT} character limit by ${exceedingChars} characters.\n\nWould you like to import just the first ${CHAR_LIMIT} characters?`;
+                resolve(window.confirm(message));
+            });
+        }
+
+        function importMarkdown(content) {
+            const editor = document.getElementById('editor');
+            let html = '';
+
+            const lines = content.split('\n');
+            let inList = false;
+            let listType = '';
+            let listHtml = '';
+
+            let lineNum = 0;
+            lines.forEach(line => {
+                line = line.trim();
+                lineNum++;
+
+                if (lineNum === 1 && line.startsWith('# ')) {
+                    document.getElementById('documentTitle').textContent = line.substring(2);
+                    return;
+                }
+
+                if (!line) {
+                    if (inList) {
+                        html += listHtml + '</ul>';
+                        inList = false;
+                        listHtml = '';
+                    }
+                    html += '<div><br></div>';
+                    return;
+                }
+
+                let processed = line
+                    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+                    .replace(/_(.+?)_/g, '<u>$1</u>');
+
+                if (line.startsWith('# ')) {
+                    if (inList) {
+                        html += listHtml + '</ul>';
+                        inList = false;
+                        listHtml = '';
+                    }
+                    html += `<h1>${processed.substring(2)}</h1>`;
+                } else if (line.startsWith('## ')) {
+                    if (inList) {
+                        html += listHtml + '</ul>';
+                        inList = false;
+                        listHtml = '';
+                    }
+                    html += `<h2>${processed.substring(3)}</h2>`;
+                } else if (line.startsWith('### ')) {
+                    if (inList) {
+                        html += listHtml + '</ul>';
+                        inList = false;
+                        listHtml = '';
+                    }
+                    html += `<h3>${processed.substring(4)}</h3>`;
+                } else if (line.startsWith('> ')) {
+                    if (inList) {
+                        html += listHtml + '</ul>';
+                        inList = false;
+                        listHtml = '';
+                    }
+                    html += `<blockquote>${processed.substring(2)}</blockquote>`;
+                } else if (line.match(/^[*-] /)) {
+                    if (!inList || listType !== 'ul') {
+                        if (inList) {
+                            html += listHtml + `</${listType}>`;
+                        }
+                        inList = true;
+                        listType = 'ul';
+                        listHtml = '<ul>';
+                    }
+                    listHtml += `  <li>${processed.substring(2)}</li>`;
+                } else if (line.match(/^\d+\. /)) {
+                    if (!inList || listType !== 'ol') {
+                        if (inList) {
+                            html += listHtml + `</${listType}>`;
+                        }
+                        inList = true;
+                        listType = 'ol';
+                        listHtml = '<ol>';
+                    }
+                    listHtml += `  <li>${processed.substring(line.indexOf('.') + 2)}</li>`;
+                } else {
+                    if (inList) {
+                        html += listHtml + `</${listType}>`;
+                        inList = false;
+                        listHtml = '';
+                    }
+                    html += `<div>${processed}</div>`;
+                }
+            });
+
+            if (inList) {
+                html += listHtml + `</${listType}>`;
+            }
+
+            editor.innerHTML = html;
+            triggerContentUpdate();
+            updateDocumentStats();
+            endTitleEdit()
+        }
+        endTitleEdit()
+    </script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>

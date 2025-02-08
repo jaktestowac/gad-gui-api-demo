@@ -1,4 +1,5 @@
 const { RandomValueGeneratorWithSeed } = require("./random-data.generator");
+const { logDebug } = require("../logger-api");
 
 const weatherTypes = [
   "☀️ Sunny",
@@ -157,30 +158,30 @@ function generateFutureDateStringsFromDate(dateStr, pastDays) {
   return dateStrings;
 }
 
-function generateWeatherDataForNPastDaysFromDate(date, nSamples, totalRandom = false) {
+function generateWeatherDataForNPastDaysFromDate(date, nSamples, totalRandom = false, additionalSeed = "") {
   const pastDays = generatePastDateStringsFromDate(date, nSamples);
-  return generateWeatherDataForNDays(nSamples, pastDays, totalRandom);
+  return generateWeatherDataForNDays(nSamples, pastDays, totalRandom, additionalSeed);
 }
 
-function generateWeatherDataForNPastDays(nSamples, totalRandom = false) {
+function generateWeatherDataForNPastDays(nSamples, totalRandom = false, additionalSeed = "") {
   const pastDays = generatePasteDateStrings(nSamples);
-  return generateWeatherDataForNDays(nSamples, pastDays, totalRandom);
+  return generateWeatherDataForNDays(nSamples, pastDays, totalRandom, additionalSeed);
 }
 
-function generateWeatherDataForNFutureDays(nSamples, totalRandom = false) {
+function generateWeatherDataForNFutureDays(nSamples, totalRandom = false, additionalSeed = "") {
   const pastDays = generateFutureDateStrings(nSamples);
-  return generateWeatherDataForNDays(nSamples, pastDays, totalRandom);
+  return generateWeatherDataForNDays(nSamples, pastDays, totalRandom, additionalSeed);
 }
 
-function generateWeatherDataForNFutureDaysFromDate(date, nSamples, totalRandom = false) {
+function generateWeatherDataForNFutureDaysFromDate(date, nSamples, totalRandom = false, additionalSeed = "") {
   const pastDays = generateFutureDateStringsFromDate(date, nSamples);
-  return generateWeatherDataForNDays(nSamples, pastDays, totalRandom);
+  return generateWeatherDataForNDays(nSamples, pastDays, totalRandom, additionalSeed);
 }
 
-function generateWeatherDataForNDays(nSamples, dayList, totalRandom = false) {
+function generateWeatherDataForNDays(nSamples, dayList, totalRandom = false, additionalSeed = "") {
   const weatherData = [];
   for (let i = 0; i < nSamples; i++) {
-    let dataGenerator = new RandomValueGeneratorWithSeed(dayList[i]);
+    let dataGenerator = new RandomValueGeneratorWithSeed(dayList[i] + additionalSeed);
 
     if (totalRandom === true) {
       dataGenerator = new RandomValueGeneratorWithSeed(Math.random().toString());
@@ -404,7 +405,69 @@ function generateWeatherDataForNDays(nSamples, dayList, totalRandom = false) {
   return weatherData;
 }
 
+function generateWeatherResponse(
+  date,
+  days,
+  city,
+  limitedDays,
+  limitedFutureDays,
+  simplified = false,
+  totalRandom = false
+) {
+  logDebug(`Requested weather data for:`, { days, limitedDays, limitedFutureDays, date });
+
+  let weatherData = [];
+  if (date === null || date === undefined || date === "") {
+    weatherData = generateWeatherDataForNPastDays(limitedDays, totalRandom);
+  } else {
+    weatherData = generateWeatherDataForNPastDaysFromDate(date, limitedDays, totalRandom);
+  }
+
+  if (limitedFutureDays > 0) {
+    limitedFutureDays += 1; // Add one more day because 1 is today
+    let weatherDataFuture = [];
+
+    if (date === null || date === undefined || date === "") {
+      weatherDataFuture = generateWeatherDataForNFutureDays(limitedFutureDays, totalRandom);
+    } else {
+      weatherDataFuture = generateWeatherDataForNFutureDaysFromDate(date, limitedFutureDays, totalRandom);
+    }
+
+    if (weatherDataFuture.length > 1) {
+      for (let i = 1; i < limitedFutureDays; i++) {
+        weatherData.unshift(weatherDataFuture[i]);
+      }
+    }
+  }
+
+  if (city !== null && city !== undefined && city !== "") {
+    weatherData = weatherData.map((weather) => {
+      weather.city = city;
+      return weather;
+    });
+  }
+
+  if (simplified) {
+    weatherData = weatherData.map((weather) => {
+      return {
+        date: weather.date,
+        city: weather.city ?? undefined,
+        temperature: weather.temperatureRaw,
+        temperatureMin: weather.highLowTemperature.temperatureLow,
+        temperatureMax: weather.highLowTemperature.temperatureHigh,
+        humidity: weather.humidity,
+        dayLength: weather.dayLength,
+        windSpeed: weather.windSpeedData.actual,
+        windSpeedRange: weather.windSpeed,
+      };
+    });
+  }
+
+  return weatherData;
+}
+
 module.exports = {
+  generateWeatherResponse,
   generateWeatherDataForNPastDays,
   generateWeatherDataForNFutureDays,
   generateWeatherDataForNPastDaysFromDate,

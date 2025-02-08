@@ -1,3 +1,6 @@
+const { assertPackageDependencies } = require("./helpers/package.checker");
+assertPackageDependencies();
+
 const jsonServer = require("./json-server");
 const { validationsRoutes } = require("./routes/validations.route");
 const { getConfigValue, getFeatureFlagConfigValue, isBugEnabled } = require("./config/config-manager");
@@ -51,10 +54,17 @@ const DatabaseManager = require("./helpers/db.manager");
 const { simpleMigrator, overwriteDbIfDefined } = require("./db/migrators/migrator");
 const { exitRoutes, restartRoutes } = require("./routes/debug.route");
 const { bookShopCoverUploadRoutes, multerUpload, multerErrorHandling } = require("./routes/file-upload-v2.route");
+const WebSocket = require("ws");
+const { websocketRoute } = require("./routes/websocket.route");
+const { assertFreePorts } = require("./helpers/port.checker");
 
 const middlewares = jsonServer.defaults();
 
 const port = process.env.PORT || getConfigValue(ConfigKeys.DEFAULT_PORT);
+const webSocketPort = parseInt(port) + 10;
+
+// TODO: test this check
+// assertFreePorts([port, webSocketPort], false);
 
 copyDefaultDbIfNotExists();
 overwriteDbIfDefined();
@@ -268,6 +278,8 @@ server.use(function (req, res, next) {
   res.type("txt").send("Not found");
 });
 
+websocketRoute(new WebSocket.Server({ port: webSocketPort }), webSocketPort);
+
 const sslEnabled = getConfigValue(ConfigKeys.SSL_ENABLED);
 
 if (sslEnabled !== true) {
@@ -302,6 +314,15 @@ if (sslEnabled !== true) {
   });
 }
 
+const address = serverApp?.address()?.address == "::" ? "localhost" : "localhost";
+const protocol = sslEnabled === true ? "https" : "http";
+const serverAppAddress = `${protocol}://${address}:${port}`;
+const serverWsAddress = `ws://${address}:${webSocketPort}`;
+
 module.exports = {
   serverApp,
+  wsPort: webSocketPort,
+  port,
+  serverAppAddress,
+  serverWsAddress,
 };

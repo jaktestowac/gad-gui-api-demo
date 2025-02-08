@@ -13,7 +13,7 @@ async function issueGetDbCheckRequest() {
 }
 
 issueGetDbCheckRequest().then((data) => {
-  if (data.status !== true) {
+  if (data.result?.isOk !== true) {
     if (dbStatusInfoContainer !== null) {
       const missingTables =
         data.result?.missingTablesInCurrentDb?.length > 0
