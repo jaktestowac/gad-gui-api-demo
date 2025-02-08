@@ -1266,6 +1266,9 @@ body.darkmode {
 .flashpost-visibility {
   font-size: 12px;
   position: absolute;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
   left: 50%;
   transform: translateX(-50%);
   color: #38383860 !important;
@@ -1634,4 +1637,9 @@ body.darkmode {
 .main-container {
   margin: 6px;
   padding: 6px;
+}
+
+.flashpost-message {
+  word-wrap: break-word;
+  white-space: pre-wrap;
 }

@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/infoBoxes.css" />
     <link rel="stylesheet" href="/css/messenger.css" />
+    <link rel="stylesheet" href="/css/flashposts.css" />
 </head>
 
 <body>
@@ -88,6 +89,13 @@
                     </div>
                 </div>
             </section>
+        </div>
+    </div>
+
+    <div id="flashpostModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="close-button" data-testid="modal-close-button" onclick="closeFlashpostModal()">&times;</span>
+            <p id="flashpostModalContent"></p>
         </div>
     </div>
 

@@ -1,0 +1,202 @@
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 2;
+  left: 0;
+  top: 60px;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  backdrop-filter: blur(5px);
+}
+
+.modal.show {
+  opacity: 1;
+}
+
+.clickable-element {
+  cursor: pointer;
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto;
+  padding: 0;
+  border-radius: 16px;
+  max-width: 600px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  transform: translateY(-20px);
+  transition: all 0.3s ease-in-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.modal-header {
+  padding: 10px 20px;
+  background: transparent !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  position: relative;
+}
+
+.modal-metadata {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.modal-author {
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+}
+
+.modal-date {
+  font-size: 12px;
+  color: #666;
+}
+
+.modal-visibility {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #666;
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 0 15px;
+  min-width: 40px;
+  grid-column: 2;
+}
+
+.modal-visibility i {
+  font-size: 16px;
+}
+
+.modal-body {
+  padding: 30px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+}
+
+.modal.show .modal-content {
+  transform: translateY(0);
+  border: 2px solid #afafaf;
+}
+
+.close {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  color: #999;
+  font-size: 24px;
+  font-weight: normal;
+  transition: all 0.2s ease;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  z-index: 1;
+  cursor: pointer;
+}
+
+.close:hover {
+  background: rgba(255, 255, 255, 0.3) !important;
+  color: #333;
+  transform: rotate(90deg);
+}
+
+.flashpost-icons-container {
+  font-size: 12px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #38383860 !important;
+}
+
+.flashpost-eye-icon {
+  cursor: pointer;
+  color: #666;
+}
+
+.flashpost-eye-icon:hover {
+  color: #333;
+}
+
+#flashpostModalContent {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+  margin: 0;
+  padding: 0;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  transition: all 0.3s ease;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  z-index: 998;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease-in-out;
+}
+
+.overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  justify-content: space-between;
+}
+
+.modal-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.edit-btn {
+  background: rgba(0, 0, 0, 0.1);
+  color: inherit;
+}
+
+.edit-btn:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.delete-btn {
+  background: rgba(255, 0, 0, 0.1);
+  color: #ff3333;
+}
+
+.delete-btn:hover {
+  background: rgba(255, 0, 0, 0.2);
+}
