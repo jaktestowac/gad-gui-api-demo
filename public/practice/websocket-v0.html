@@ -133,7 +133,7 @@
     </div>
     <script type="text/javascript" src="/js/wsh.js"></script>
     <script>
-        const socket = new WebSocket(`ws://${wsAddr}`);
+        const socket = new WebSocket(wsAddr);
 
         function requestWeatherUpdate() {
             const selectedCity = document.getElementById('locationSelect').value;

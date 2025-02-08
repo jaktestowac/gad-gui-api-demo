@@ -350,7 +350,7 @@
 
     <script type="text/javascript" src="/js/wsh.js"></script>
     <script>
-        const socket = new WebSocket(`ws://${wsAddr}`);
+        const socket = new WebSocket(wsAddr);
         let username = '';
         let selectedUser = null;
         let weatherInterval;
