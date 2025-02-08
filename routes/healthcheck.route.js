@@ -44,12 +44,12 @@ function getUptime() {
 }
 
 const appStatuses = {
-  ok: { status: "[OK]", description: "Application is running normally.", code: 0 },
-  limited: { status: "[Limited]", description: "Application is running with limited functionality.", code: 1 },
-  degraded: { status: "[Degraded]", description: "Application is degraded but still functional.", code: 2 },
-  meintenance: { status: "[Maintenance]", description: "Application is in maintenance mode.", code: 3 },
-  critical: { status: "[Critical]", description: "Application is in critical condition.", code: 400 },
-  down: { status: "[Down]", description: "Application is down.", code: 500 },
+  ok: { status: "Ok", description: "Application is running normally.", code: 0 },
+  limited: { status: "Limited", description: "Application is running with limited functionality.", code: 1 },
+  degraded: { status: "Degraded", description: "Application is degraded but still functional.", code: 2 },
+  meintenance: { status: "Maintenance", description: "Application is in maintenance mode.", code: 3 },
+  critical: { status: "Critical", description: "Application is in critical condition.", code: 400 },
+  down: { status: "Down", description: "Application is down.", code: 500 },
 };
 
 const healthCheckRoutes = (req, res, next) => {
@@ -71,7 +71,7 @@ const healthCheckRoutes = (req, res, next) => {
       try {
         configInstance.fullSelfCheck();
       } catch (error) {
-        statusCode = appStatuses.down;
+        statusObj = appStatuses.down;
       }
 
       const response = { status: statusObj.status };
@@ -112,7 +112,7 @@ const healthCheckRoutes = (req, res, next) => {
         configInstance.fullSelfCheck();
       } catch (error) {
         configStatusObj = appStatuses.critical;
-        push("Config check failed. See app logs for details.");
+        configProblems.push("Config check failed. See app logs for details.");
       }
 
       const appModules = {
@@ -133,10 +133,8 @@ const healthCheckRoutes = (req, res, next) => {
         configProblems: configProblems,
       };
 
-      const highLevelStatus = Object.values(appModules).reduce((acc, curr) =>
-        acc.code > curr.code ? acc : curr
-      ).code;
-      
+      const highLevelStatus = Object.values(appModules).reduce((acc, curr) => (acc.code > curr.code ? acc : curr)).code;
+
       response.status = Object.values(appStatuses).find((status) => status.code === highLevelStatus).status;
 
       logTrace("healthCheck:api/health response:", response);
