@@ -1469,7 +1469,7 @@
             createBtn.disabled = true;
             createBtn.textContent = 'Creating...';
 
-            const ws = new WebSocket('ws://localhost:3010');
+            const ws = new WebSocket(`ws://${wsAddr}`);
 
             ws.onopen = () => {
                 ws.send(JSON.stringify({
@@ -2131,7 +2131,7 @@
 
         function checkUsername(username) {
             return new Promise((resolve, reject) => {
-                const checkWs = new WebSocket('ws://localhost:3010');
+                const checkWs = new WebSocket(`ws://${wsAddr}`);
 
                 const timeoutId = setTimeout(() => {
                     checkWs.close();
