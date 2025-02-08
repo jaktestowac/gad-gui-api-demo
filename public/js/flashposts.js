@@ -410,7 +410,13 @@ document.querySelector(".create").onclick = () => {
       console.log("12:50, press Return.");
     } else {
       const additionalMsg = response.body?.error?.message ? response.body.error.message : "";
-      showMessage(`You can't create this flashpost. ${additionalMsg}`, 2);
+      if (response.status === 401) {
+        showMessage("You are not authorized to create this flashpost", 2);
+      } else if (response.status === 422) {
+        showMessage(`Invalid flashpost data. ${additionalMsg}`, 2);
+      } else {
+        showMessage(`You can't create this flashpost. ${additionalMsg}`, 2);
+      }
     }
   });
 };
