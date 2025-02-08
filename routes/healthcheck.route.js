@@ -5,6 +5,8 @@ const { HTTP_OK, HTTP_INTERNAL_SERVER_ERROR } = require("../helpers/response.hel
 const app = require("../app.json");
 const { fullDb, countEntities } = require("../helpers/db.helpers");
 const { checkDatabase } = require("../helpers/sanity.check");
+const { getFeatureFlagConfigValue } = require("../config/config-manager");
+const { FeatureFlagConfigKeys } = require("../config/enums");
 
 function getMemoryUsage() {
   const memoryUsageMB = {};
@@ -47,7 +49,7 @@ const appStatuses = {
   ok: { status: "Ok", description: "Application is running normally.", code: 0 },
   limited: { status: "Limited", description: "Application is running with limited functionality.", code: 1 },
   degraded: { status: "Degraded", description: "Application is degraded but still functional.", code: 2 },
-  meintenance: { status: "Maintenance", description: "Application is in maintenance mode.", code: 3 },
+  maintenance: { status: "Maintenance", description: "Application is in maintenance mode.", code: 3 },
   critical: { status: "Critical", description: "Application is in critical condition.", code: 400 },
   down: { status: "Down", description: "Application is down.", code: 500 },
 };
@@ -112,25 +114,32 @@ const healthCheckRoutes = (req, res, next) => {
         configInstance.fullSelfCheck();
       } catch (error) {
         configStatusObj = appStatuses.critical;
-        configProblems.push("Config check failed. See app logs for details.");
+        configProblems.push({ error: "Config check failed. See app logs for details." });
+      }
+
+      let backendStatusObj = appStatuses.ok;
+      let frontendStatusObj = appStatuses.ok;
+      const backendProblems = [];
+
+      if (getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_ONLY_BACKEND)) {
+        frontendStatusObj = appStatuses.limited;
+        backendProblems.push({ message: "Frontend is disabled by feature flag." });
       }
 
       const appModules = {
         config: configStatusObj,
         db: dbStatusObj,
-        backend: appStatuses.ok,
-        frontend: appStatuses.ok,
-        // artices: appStatuses.ok,
-        // reports: appStatuses.ok,
-        // bookshop: appStatuses.ok,
-        // websockets: appStatuses.ok,
+        backend: backendStatusObj,
+        frontend: frontendStatusObj,
+        websocket: appStatuses.ok,
       };
 
       const response = {
         status: statusObj.status,
         health: { ...getUptime(), ...health },
-        dbProblems: result.isOk ? [] : result,
+        dbProblems: result.isOk ? [] : [result],
         configProblems: configProblems,
+        backendProblems: backendProblems,
       };
 
       const highLevelStatus = Object.values(appModules).reduce((acc, curr) => (acc.code > curr.code ? acc : curr)).code;
