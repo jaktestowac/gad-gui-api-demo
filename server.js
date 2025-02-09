@@ -83,8 +83,12 @@ server.use(diagnosticRoutes);
 
 const clearDbRoutes = (req, res, next) => {
   try {
+    const restoreDbWithKey = (dbPathKey, successMessage) => {
+      const dbPath = path.join(__dirname, getConfigValue(dbPathKey));
+      restoreDb(dbPath, successMessage);
+    };
     const restoreDb = (dbPath, successMessage) => {
-      const db = JSON.parse(fs.readFileSync(path.join(__dirname, getConfigValue(dbPath)), "utf8"));
+      const db = JSON.parse(fs.readFileSync(dbPath, "utf8"));
       router.db.setState(db);
       const entities = countEntities(db);
       logDebug(successMessage, entities);
@@ -97,22 +101,27 @@ const clearDbRoutes = (req, res, next) => {
       const urlLastPart = url.split("/").pop();
       switch (urlLastPart) {
         case "restoreDB":
-          restoreDb(ConfigKeys.DB_RESTORE_PATH, "Database successfully restored");
+          restoreDbWithKey(ConfigKeys.DB_RESTORE_PATH, "Database successfully restored");
           break;
         case "restoreBigDB":
-          restoreDb(ConfigKeys.DB_BIG_RESTORE_PATH, "Big Database successfully restored");
+          restoreDbWithKey(ConfigKeys.DB_BIG_RESTORE_PATH, "Big Database successfully restored");
           break;
         case "restoreDB2":
-          restoreDb(ConfigKeys.DB2_RESTORE_PATH, "Database successfully restored");
+          restoreDbWithKey(ConfigKeys.DB2_RESTORE_PATH, "Database successfully restored");
           break;
+        case "restoreInterviewDB": {
+          const dbPath = path.join(__dirname, getConfigValue(ConfigKeys.GENERIC_DB_RESTORE_PATH), "db-base-interview.json");
+          restoreDb(dbPath, "Database successfully restored");
+          break;
+        }
         case "restoreTinyDB":
-          restoreDb(ConfigKeys.DB_TINY_RESTORE_PATH, "Tiny Database successfully restored");
+          restoreDbWithKey(ConfigKeys.DB_TINY_RESTORE_PATH, "Tiny Database successfully restored");
           break;
         case "restoreEmptyDB":
-          restoreDb(ConfigKeys.DB_EMPTY_RESTORE_PATH, "Empty Database successfully restored");
+          restoreDbWithKey(ConfigKeys.DB_EMPTY_RESTORE_PATH, "Empty Database successfully restored");
           break;
         case "restoreTestDB":
-          restoreDb(ConfigKeys.DB_TEST_RESTORE_PATH, "Test Database successfully restored");
+          restoreDbWithKey(ConfigKeys.DB_TEST_RESTORE_PATH, "Test Database successfully restored");
           break;
         default:
           logDebug("No action for restore", { url, req_url: req.url, urlLastPart });

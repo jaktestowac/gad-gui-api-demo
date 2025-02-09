@@ -245,6 +245,13 @@ const addMainMenuAndFooter = () => {
     if (email) menuContainerLeft.innerHTML += mainBookShopGUIMenuHTMLLogged();
     menuContainerLeft.insertAdjacentHTML("afterend", rightMenu(""));
   }
+  if (document.querySelector("#menu-main-gui-learning")) {
+    mainNavMenu.innerHTML = hamburgerMenu() + mainNavMenu.innerHTML;
+    menuContainerLeft = document.querySelector("#menu-main-gui-learning");
+    menuContainerLeft.innerHTML = logoGAD();
+    if (email) menuContainerLeft.innerHTML += mainBookShopGUIMenuHTMLLogged();
+    menuContainerLeft.insertAdjacentHTML("afterend", rightMenu(""));
+  }
   if (document.querySelector("#menu-main-api")) {
     mainNavMenu.innerHTML = hamburgerMenu() + mainNavMenu.innerHTML;
     menuContainerLeft = document.querySelector("#menu-main-api");

@@ -1,0 +1,186 @@
+:root {
+  --primary-color: #2563eb;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.custom-video-player {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  border-radius: 0;
+  overflow: hidden;
+  aspect-ratio: 16/9;
+}
+
+.video-screen {
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(45deg, #1a1a1a, #2a2a2a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.2em;
+  position: relative;
+  cursor: pointer;
+}
+
+.video-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+}
+
+.video-message.playing {
+  transform: none;
+}
+
+.video-message .play-icon {
+  font-size: 64px;
+  color: rgba(255, 255, 255, 0.8);
+  transition: transform 0.3s ease, color 0.3s ease;
+  cursor: pointer;
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease, color 0.3s ease;
+}
+
+.video-message:not(.playing):hover .play-icon {
+  transform: scale(1.1);
+  color: white;
+}
+
+.video-message.playing .play-icon {
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.7);
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+}
+
+.video-message .wave-animation {
+  display: none;
+}
+
+.video-message.playing .wave-animation {
+  display: flex;
+  gap: 6px;
+  position: absolute;
+  z-index: 2;
+}
+
+.wave-bar {
+  width: 4px;
+  height: 32px;
+  background: white;
+  border-radius: 4px;
+  animation: wave 1s ease-in-out infinite;
+}
+
+.wave-bar:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.wave-bar:nth-child(3) {
+  animation-delay: 0.2s;
+}
+.wave-bar:nth-child(4) {
+  animation-delay: 0.3s;
+}
+.wave-bar:nth-child(5) {
+  animation-delay: 0.4s;
+}
+
+@keyframes wave {
+  0%,
+  100% {
+    transform: scaleY(0.3);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes pulse-fade {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.video-controls-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.7));
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.custom-video-player:hover .video-controls-bar {
+  opacity: 1;
+}
+
+.video-progress {
+  flex: 1;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  cursor: pointer;
+  position: relative;
+}
+
+.video-progress-inner {
+  height: 100%;
+  background: var(--primary-color);
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.1s linear;
+}
+
+.video-time {
+  color: white;
+  font-size: 0.9em;
+  min-width: 100px;
+  text-align: right;
+}
+
+.video-control-btn {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 5px;
+  transition: all 0.2s ease;
+  opacity: 0.8;
+}
+
+.video-control-btn:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.video-control-btn i {
+  font-size: 1.2em;
+}

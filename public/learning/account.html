@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | Account Settings</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="./css/learning.css" />
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-gui-learning" class="nav-menu"></h1>
+        </div>
+    </header>
+    <br />
+    <br />
+    <br />
+
+    <h1 class="main-header">Account Settings</h1>
+
+    <main class="dashboard-container">
+        <div id="sidebarContainer"></div>
+
+        <div class="account-container">
+            <div class="account-details compact">
+                <div class="profile-header">
+                    <img id="userAvatarLarge" src="/data/icons/user.png" alt="User avatar" class="large-avatar">
+                    <div>
+                        <h2 id="userFullName">Loading...</h2>
+                        <div class="form-group" style="margin: 0;">
+                            <input type="text" id="usernameInput" name="username" readonly class="readonly-input">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="account-form">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div class="form-group">
+                            <label for="firstName">First Name</label>
+                            <input type="text" id="firstName" name="firstName">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="lastName">Last Name</label>
+                            <input type="text" id="lastName" name="lastName">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email">
+                    </div>
+
+                    <div class="form-actions">
+                        <button id="updateProfileBtn" class="primary-button">
+                            Update Profile
+                        </button>
+                    </div>
+                </div>
+
+                <div class="change-password-section">
+                    <h3>Change Password</h3>
+                    <div class="form-group">
+                        <label for="currentPassword">Current Password</label>
+                        <input type="password" id="currentPassword" name="currentPassword">
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div class="form-group">
+                            <label for="newPassword">New Password</label>
+                            <input type="password" id="newPassword" name="newPassword">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm Password</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword">
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button id="changePasswordBtn" class="primary-button">
+                            Change Password
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <button class="mobile-menu-button" aria-label="Open menu">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="sidebar-overlay"></div>
+
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+    <script type="text/javascript" src="/username.js"></script>
+    <script type="text/javascript" src="/js/message-notifier.js"></script>
+
+    <script src="./js/services/api.js"></script>
+    <script src="./js/utils/notifications.js"></script>
+    <script src="./js/account.js"></script>
+    <script src="./js/components/sidebar.js"></script>
+    <script src="./js/sidebar.js"></script>
+    <script src="./js/auth-check.js"></script>
+    <script src="./js/auth.js"></script>
+</body>
+
+</html>

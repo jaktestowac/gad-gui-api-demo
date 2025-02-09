@@ -31,6 +31,7 @@ const ConfigKeys = {
   DB_CUSTOM_PATH: "dbCustomPath",
   DB_RESTORE_PATH: "dbRestorePath",
   DB2_RESTORE_PATH: "db2RestorePath",
+  GENERIC_DB_RESTORE_PATH: "genericDbRestorePath",
   DB_BIG_RESTORE_PATH: "dbBigRestorePath",
   DB_TINY_RESTORE_PATH: "dbTinyRestorePath",
   DB_EMPTY_RESTORE_PATH: "dbEmptyRestorePath",

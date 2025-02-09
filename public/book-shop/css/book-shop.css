@@ -8,24 +8,23 @@
 }
 
 .book-title {
+  color: #1e293b;
   font-size: 13px;
-  font-weight: bold;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  border-bottom: 2px solid rgba(30, 41, 59, 0.08);
   padding: 2px;
   margin: 2px;
 }
 
 .book-card {
-  overflow: scroll;
-  scrollbar-color: rgb(148, 148, 148) rgb(207, 207, 207);
-  scrollbar-width: thin;
-}
-
-.book-card {
+  border: none;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #ffffff, #f8f9fa);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.08);
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
   width: 300px;
-  border: 1px solid rgb(196, 196, 196);
-  border-radius: 5px;
-  margin: 4px;
-  background-color: rgb(250, 250, 250);
+  margin: 2px;
   height: 330px;
   overflow: auto;
 }
@@ -45,11 +44,24 @@
 }
 
 .book-details {
+  color: #475569;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
   font-size: 12px;
   padding: 4px;
 }
 
+.book-details strong {
+  color: #334155;
+  font-weight: 600;
+}
+
 .book-description {
+  color: #64748b;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  background: rgba(241, 245, 249, 0.7);
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.1);
   font-size: 12px;
   padding: 4px;
 }
@@ -332,15 +344,20 @@ input[type="submit"]:hover {
 }
 
 .book-tools-button {
+  color: #94a3b8;
+  transition: color 0.2s ease;
   font-size: 14px;
   cursor: pointer;
   padding-left: 10px;
   padding-right: 10px;
-  color: rgb(193, 193, 193);
+}
+
+.book-tools-button:hover {
+  color: #475569;
 }
 
 .book-tools-button.active {
-  color: rgb(9, 159, 9);
+  color: #16a34a;
 }
 
 .item-shop-info {
