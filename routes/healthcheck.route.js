@@ -46,7 +46,7 @@ function getUptime() {
 }
 
 const appStatuses = {
-  ok: { status: "Ok", description: "Application is running normally.", code: 0 },
+  ok: { status: "OK", description: "Application is running normally.", code: 0 },
   limited: { status: "Limited", description: "Application is running with limited functionality.", code: 1 },
   degraded: { status: "Degraded", description: "Application is degraded but still functional.", code: 2 },
   maintenance: { status: "Maintenance", description: "Application is in maintenance mode.", code: 3 },
