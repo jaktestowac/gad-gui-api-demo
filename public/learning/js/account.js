@@ -16,6 +16,13 @@ async function loadUserProfile() {
 
 async function handleUpdateProfile() {
   const updateBtn = document.getElementById("updateProfileBtn");
+  const currentPassword = document.getElementById("confirmProfilePassword").value;
+
+  if (!currentPassword) {
+    notifications.show("Please enter your current password", "error");
+    return;
+  }
+
   updateBtn.disabled = true;
   updateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
 
@@ -25,26 +32,25 @@ async function handleUpdateProfile() {
       firstName: document.getElementById("firstName").value,
       lastName: document.getElementById("lastName").value,
       email: document.getElementById("email").value,
+      currentPassword: currentPassword,
     };
 
     const result = await api.updateUserProfile(userId, userData);
 
     if (result.success) {
-      notifications.show("Profile updated successfully!");
+      notifications.show("Profile updated successfully! Please sign in again.");
       updateBtn.innerHTML = '<i class="fas fa-check"></i> Updated';
       updateBtn.style.backgroundColor = "#10b981";
+
+      document.getElementById("confirmProfilePassword").value = "";
+
+      setTimeout(() => {
+        handleLogout();
+        window.location.href = "login.html";
+      }, 1500);
     } else {
       throw new Error(result.message || "Failed to update profile");
     }
-
-    setTimeout(() => {
-      updateBtn.disabled = false;
-      updateBtn.innerHTML = "Update Profile";
-      updateBtn.style.backgroundColor = "";
-    }, 2000);
-
-    // Refresh the user profile display
-    await loadUserProfile();
   } catch (error) {
     notifications.show(error.message || "Failed to update profile", "error");
     updateBtn.disabled = false;

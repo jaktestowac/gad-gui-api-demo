@@ -22,14 +22,20 @@
     <br />
     <br />
 
-    <h1 class="main-header">Learning Dashboard</h1>
+    <h1 class="main-header" aria-label="Learning Dashboard" title="Learning Dashboard">Learning Dashboard</h1>
 
     <main class="dashboard-container">
         <div id="sidebarContainer"></div>
 
-        <div class="course-grid">
+        <div class="course-grid" aria-label="Available Courses" title="Available Courses">
             <div id="guestBanner"></div>
-            <h2>Available Courses</h2>
+            <div class="dashboard-header">
+                <h2>Available Courses</h2>
+                <div class="search-container">
+                    <input type="text" id="courseSearch" placeholder="Search courses..." aria-label="Search courses" title="Search courses">
+                    <i class="fas fa-search"></i>
+                </div>
+            </div>
             <div id="courseList" class="course-cards"></div>
         </div>
     </main>

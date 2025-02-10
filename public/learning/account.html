@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="/css/controls.css" />
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="./css/learning.css" />
+    <link rel="stylesheet" href="./css/auth.css" />
 </head>
 
 <body>
@@ -57,7 +58,15 @@
                         <input type="email" id="email" name="email">
                     </div>
 
+                    <div class="form-group">
+                        <label for="confirmProfilePassword">Current Password</label>
+                        <input type="password" id="confirmProfilePassword" name="confirmProfilePassword" required>
+                    </div>
+
                     <div class="form-actions">
+                        <span class="warning-box">
+                            After updating your profile, you will need to sign in again
+                        </span>
                         <button id="updateProfileBtn" class="primary-button">
                             Update Profile
                         </button>

@@ -14,12 +14,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const courseHeader = document.getElementById("courseHeader");
     courseHeader.innerHTML = `
-            <h1>${course.title}</h1>
-            <div class="course-meta">
-                <span><i class="fas fa-user"></i> ${course.instructor}</span>
-                <span><i class="fas fa-clock"></i> ${course.duration}</span>
-                <span><i class="fas fa-signal"></i> ${course.level}</span>
-                <span><i class="fas fa-users"></i> ${course.students} student(s)</span>
+            <h1 aria-label="${course.title}" title="${course.title}" name="Course Title" id="courseTitle">${course.title}</h1>
+            <div class="course-meta" aria-label="Course Information" title="Course Information">
+                <span aria-label="Instructor" title="Instructor"><i class="fas fa-user"></i> ${course.instructor}</span>
+                <span aria-label="Duration" title="Duration"><i class="fas fa-clock"></i> ${course.duration}</span>
+                <span aria-label="Rating" title="Rating"><i class="fas fa-star"></i> ${course.rating}</span>
+                <span aria-label="Level" title="Level"><i class="fas fa-signal"></i> ${course.level}</span>
+                <span aria-label="Students Enrolled" title="Students Enrolled"><i class="fas fa-users"></i> ${course.students} student(s)</span>
             </div>
             <p class="course-description">${course.description}</p>
         `;
@@ -32,7 +33,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const lessonContent = currentLesson ? await renderLessonContent(currentLesson) : "";
 
     previewContent.innerHTML = `
-            <div class="preview-info">
+            <div class="preview-info" aria-label="Course Preview Information" title="Course Preview Information">
                 <h2>Course Preview</h2>
                 <p>Get a taste of this course with these free preview lessons</p>
             </div>
@@ -44,7 +45,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                         <div class="lesson-item ${lessonId === index ? "active" : ""}" 
                              onclick="window.location.href='preview.html?id=${courseId}&lesson=${index}'">
                             <div class="lesson-info">
-                                <span class="lesson-title">
+                                <span class="lesson-title" aria-label="${lesson.title}" title="${lesson.title}">
                                     <i class="fas fa-${
                                       lesson.type === "video"
                                         ? "play-circle"
@@ -64,12 +65,12 @@ document.addEventListener("DOMContentLoaded", async () => {
                         <h3>🔒 ${lessons.length - 2} More Lessons Available</h3>
                         <p>Sign in to access the full course content</p>
                         <div class="cta-buttons">
-                            <a href="login.html" class="primary-button">Sign In</a>
-                            <a href="register.html" class="primary-button">Create Account</a>
+                            <a href="login.html" class="primary-button"  aria-label="Sign In" title="Sign In" >Sign In</a>
+                            <a href="register.html" class="primary-button" aria-label="Create Account" title="Create Account" >Create Account</a>
                         </div>
                     </div>
                 </div>
-                <div class="lesson-content-area">
+                <div class="lesson-content-area" id="previewLessonContent" aria-label="Lesson Content">
                     ${lessonContent}
                 </div>
             </div>
@@ -144,17 +145,19 @@ async function renderLessonContent(lesson) {
       window.addEventListener("message", messageHandler);
 
       return `
-        <div>
+        <div class="lesson-content video-content">
           <iframe 
             src="/learning/video-player.html" 
             frameborder="0" 
             class="custom-video-player"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope"
+            aria-label="Video Player"
+            title="Video Player"
           ></iframe>
           <div class="video-time-display" style="display:none;">${lesson.duration}</div>
           <h3>${lesson.title}</h3>
           <div align="center">
-            <a href="login.html" class="primary-button">
+            <a href="login.html" class="primary-button" aria-label="Sign In to track progress" title="Sign In to track progress">
               <i class="fas fa-lock"></i> Sign in to track progress
             </a>
           </div>
@@ -162,7 +165,7 @@ async function renderLessonContent(lesson) {
 
     case "reading":
       return `
-                <div class="lesson-content reading-content">
+                <div class="lesson-content reading-content" name="${lesson.title}" aria-label="${lesson.title}">
                     <h3>${lesson.title}</h3>
                     <div class="content-text">
                         ${lesson.content.text}
@@ -179,7 +182,7 @@ async function renderLessonContent(lesson) {
 
     default:
       return `
-                <div class="lesson-content">
+                <div class="lesson-content" name="${lesson.title}" aria-label="${lesson.title}">
                     <h3>${lesson.title}</h3>
                     <p>Duration: ${lesson.duration}</p>
                     <div class="content-placeholder">

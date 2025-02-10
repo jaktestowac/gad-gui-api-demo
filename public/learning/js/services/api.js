@@ -58,11 +58,28 @@ class ApiService {
   async updateUserProfile(userId, userData) {
     const response = await fetch(`${this.baseUrl}/users/${userId}/profile`, {
       method: "PUT",
-      headers: this.getDefaultHeaders(),
-      body: JSON.stringify(userData),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getCookie("learning_access_token")}`,
+      },
+      body: JSON.stringify({
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        email: userData.email,
+        currentPassword: userData.currentPassword,
+      }),
     });
-    const data = await response.json();
-    return data;
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to update profile");
+    }
+
+    document.cookie = `learning_username=${userData.username}; max-age=86400; path=/`;
+    document.cookie = `learning_first_name=${userData.firstName}; max-age=86400; path=/`;
+    document.cookie = `learning_last_name=${userData.lastName}; max-age=86400; path=/`;
+
+    return response.json();
   }
 
   async changePassword(userId, currentPassword, newPassword) {
@@ -232,7 +249,7 @@ class ApiService {
 
     const data = await response.json();
     if (data.success) {
-      document.cookie = `learning_user_id=${data.user_id}; path=/; max-age=86400`;
+      document.cookie = `learning_user_id=${data.id}; path=/; max-age=86400`;
       document.cookie = `learning_access_token=${data.access_token}; max-age=86400; path=/`;
       document.cookie = `learning_username=${data.username}; max-age=86400; path=/`;
       document.cookie = `learning_first_name=${data.firstName}; max-age=86400; path=/`;

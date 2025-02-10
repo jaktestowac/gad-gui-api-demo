@@ -46,9 +46,13 @@ async function renderCourseDetails() {
 
     courseContent.innerHTML = `
             <div class="course-header">
-                <img src="${course.thumbnail}" alt="${course.title}" class="course-banner">
+                <div align="center" id="courseHeaderImage">
+                  <img src="${course.thumbnail}" alt="${course.title}" class="course-banner">
+                </div>
                 <div class="course-info">
-                    <h1>${course.title}</h1>
+                    <div align="center">
+                      <h1>${course.title}</h1>
+                    </div>
                     <p class="course-description">${course.description}</p>
                     <div class="course-meta">
                         <span><i class="fas fa-user"></i> Instructor: ${course.instructor}</span>

@@ -379,3 +379,25 @@
 .return-button i {
   font-size: 0.9em;
 }
+
+.warning-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px;
+  margin-bottom: 5px;
+  background-color: #fff8e6;
+  border: 1px solid #ffd980;
+  border-radius: 6px;
+  color: #855a1f;
+  font-size: 0.9em;
+  line-height: 1.4;
+}
+
+.warning-box::before {
+  content: "\f071";
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  color: #f59e0b;
+  font-size: 1.1em;
+}

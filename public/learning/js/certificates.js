@@ -19,7 +19,7 @@ async function displayCertificates() {
     certificatesContainer.innerHTML = certificates
       .map(
         (cert) => `
-            <div class="certificate-card">
+            <div class="certificate-card" id="${cert.certificateNumber}">
                 <div class="certificate-content">
                     <div class="certificate-header">
                         <i class="fas fa-award"></i>
@@ -27,9 +27,9 @@ async function displayCertificates() {
                     </div>
                     <div class="certificate-details">
                         <h4>${cert.courseTitle}</h4>
-                        <p>Awarded to: ${cert.recipientName}</p>
+                        <p>Awarded to: <span class="recipient">${cert.recipientName}</span></p>
                         <p>Issue Date: ${new Date(cert.issueDate).toLocaleDateString()}</p>
-                        <p>Certificate ID: ${cert.certificateNumber}</p>
+                        <p>Certificate ID: <span class="certificate-number">${cert.certificateNumber}</span></p>
                         <p>Issued by: ${cert.issuedBy}</p>
                     </div>
                     <div class="certificate-actions">

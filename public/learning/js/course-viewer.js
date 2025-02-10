@@ -18,6 +18,18 @@ class CourseViewer {
 
   async initialize() {
     try {
+      // Check enrollment first
+      const enrollments = await api.getUserEnrollments(api.getUserIdFromCookie());
+      const isEnrolled = enrollments.some((e) => e.courseId === this.courseId);
+
+      if (!isEnrolled) {
+        notifications.show("You are not enrolled in this course", "error");
+        setTimeout(() => {
+          window.location.href = "/learning/enrolled-courses.html";
+        }, 2000);
+        return;
+      }
+
       const courses = await api.getCourses();
       const course = courses.find((c) => c.id === this.courseId);
 
@@ -156,7 +168,7 @@ class CourseViewer {
           lesson.completed
             ? '<div class="completion-badge"><i class="fas fa-check-circle"></i> Completed</div>'
             : `<button class="primary-button" 
-                      onclick="courseViewer.markComplete(this)" 
+                      onclick="courseViewer.markComplete(this)" data-testid="mark-complete"
                       data-lesson-id="${lesson.id}">
                   Mark as Complete
                </button>`
@@ -216,7 +228,7 @@ class CourseViewer {
   }
 
   renderQuiz(lesson, content) {
-    this.currentLesson = lesson; // Store current lesson
+    this.currentLesson = lesson;
     this.quizContainer.innerHTML = `
             <div class="quiz-section">
                 <h3>${lesson.title}</h3>
@@ -264,7 +276,7 @@ class CourseViewer {
             <h3>${this.currentLesson.title}</h3>
             <form id="quizForm" onsubmit="courseViewer.submitQuiz(event)">
                 ${questions}
-                <button type="submit" class="primary-button">
+                <button type="submit" class="primary-button" data-testid="submit-quiz" id="submitQuiz">
                     Submit Quiz
                 </button>
             </form>
@@ -297,32 +309,32 @@ class CourseViewer {
 
       const quizContainer = document.getElementById("quizContainer");
       quizContainer.innerHTML = `
-                <div class="quiz-result ${passed ? "passed" : "failed"}">
-                    <i class="fas ${passed ? "fa-check-circle" : "fa-times-circle"}"></i>
-                    <h3>${passed ? "Congratulations!" : "Try Again"}</h3>
-                    <p>Your score: ${score}%</p>
-                    <p>Correct answers: ${correctAnswers} out of ${content.questions.length}</p>
-                    <p>${passed ? "You have successfully completed this quiz!" : "You need 70% or higher to pass."}</p>
-                    ${
-                      !passed
-                        ? `
-                        <button class="primary-button" onclick="courseViewer.startQuiz(${this.currentLesson.id})">
-                            Retry Quiz
-                        </button>
-                    `
-                        : ""
-                    }
-                </div>
-            `;
+        <div class="quiz-result ${passed ? "passed" : "failed"}">
+            <i class="fas ${passed ? "fa-check-circle" : "fa-times-circle"}"></i>
+            <h3>${passed ? "Congratulations!" : "Try Again"}</h3>
+            <p>Your score: ${score}%</p>
+            <p>Correct answers: ${correctAnswers} out of ${content.questions.length}</p>
+            <p>${passed ? "You have successfully completed this quiz!" : "You need 70% or higher to pass."}</p>
+            ${
+              !passed
+                ? `
+                <button class="primary-button" onclick="courseViewer.startQuiz(${this.currentLesson.id})">
+                    Retry Quiz
+                </button>
+            `
+                : ""
+            }
+        </div>
+    `;
 
       if (passed) {
-        await api.markLessonComplete(this.courseId, this.currentLesson.id);
-
         const lessonItem = document.querySelector(`[data-lesson-id="${this.currentLesson.id}"]`);
         if (lessonItem) {
           lessonItem.classList.add("completed");
           lessonItem.querySelector("i:last-child").classList.replace("fa-circle", "fa-check-circle");
         }
+        const button = document.getElementById("submitQuiz");
+        this.markComplete(button);
       }
     } catch (error) {
       console.error("Failed to submit quiz:", error);
@@ -333,16 +345,21 @@ class CourseViewer {
   async markComplete(button) {
     if (!this.currentLesson) return;
 
-    button.disabled = true;
-    const originalText = button.innerHTML;
-    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Marking complete...';
+    let originalText = "Mark as Complete";
+    if (button !== null) {
+      button.disabled = true;
+      originalText = button.innerHTML;
+      button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Marking complete...';
+    }
 
     try {
       await api.markLessonComplete(this.courseId, this.currentLesson.id);
+      notifications.show("Lesson completed successfully!");
 
-      // Update UI for completed lesson
-      button.innerHTML = '<i class="fas fa-check-circle"></i> Completed';
-      button.classList.add("completed");
+      if (button !== null) {
+        button.innerHTML = '<i class="fas fa-check-circle"></i> Completed';
+        button.classList.add("completed");
+      }
 
       const lessonItem = document.querySelector(`[data-lesson-id="${this.currentLesson.id}"]`);
       if (lessonItem) {
@@ -352,21 +369,30 @@ class CourseViewer {
 
       this.currentLesson.completed = true;
 
-      // Check course completion
       const progress = await api.getCourseProgress(this.courseId);
       if (progress === 100) {
         try {
           const certificate = await api.generateCertificate(this.courseId);
           if (certificate.success) {
+            notifications.show("🎉 Congratulations! You've completed the course and earned a certificate!", "success");
             this.showCongratulations();
           }
         } catch (certError) {
           console.error("Failed to generate certificate:", certError);
         }
       }
+
+      const lessons = await api.getCourseLessons(this.courseId);
+      const currentIndex = lessons.findIndex((l) => l.id === this.currentLesson.id);
+      const nextLesson = lessons[currentIndex + 1];
+      if (nextLesson) {
+        setTimeout(() => {
+          this.loadLesson(nextLesson);
+        }, 1000);
+      }
     } catch (error) {
       console.error("Failed to mark lesson as complete:", error);
-      button.innerHTML = originalText;
+      if (button !== null) button.innerHTML = originalText;
       this.showErrorToast("Failed to update progress");
     }
 
@@ -381,7 +407,7 @@ class CourseViewer {
         <i class="fas fa-graduation-cap"></i>
         <h2>Congratulations!</h2>
         <p>You've completed the course! Your certificate has been generated.</p>
-        <a href="/learning/certificates.html" class="primary-button">
+        <a href="/learning/certificates.html" class="primary-button view-certificate">
           <i class="fas fa-award"></i> View Certificate
         </a>
       </div>

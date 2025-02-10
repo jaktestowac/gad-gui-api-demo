@@ -55,22 +55,22 @@ async function renderLearningProgress() {
             <div class="stats-container">
                 <div class="stat-card">
                     <i class="fas fa-book fa-2x"></i>
-                    <div class="stat-number">${stats.completedCourses}/${stats.totalCourses}</div>
+                    <div class="stat-number completed-courses">${stats.completedCourses}/${stats.totalCourses}</div>
                     <p>Courses Completed</p>
                 </div>
                 <div class="stat-card">
                     <i class="fas fa-tasks fa-2x"></i>
-                    <div class="stat-number">${stats.averageProgress}%</div>
+                    <div class="stat-number average-progress">${stats.averageProgress}%</div>
                     <p>Overall Progress</p>
                 </div>
                 <div class="stat-card">
                     <i class="fas fa-clock fa-2x"></i>
-                    <div class="stat-number">${Math.round(stats.completedHours)}</div>
+                    <div class="stat-number completed-hours">${Math.round(stats.completedHours)}</div>
                     <p>Hours of Learning</p>
                 </div>
                 <div class="stat-card">
                     <i class="fas fa-graduation-cap fa-2x"></i>
-                    <div class="stat-number">${stats.completedLessons}</div>
+                    <div class="stat-number completed-lessons">${stats.completedLessons}</div>
                     <p>Lessons Completed</p>
                 </div>
             </div>

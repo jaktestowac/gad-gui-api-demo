@@ -1,3 +1,84 @@
+let allCourses = [];
+let enrolledCourseIds = new Set();
+
+async function loadCourses() {
+  try {
+    renderLoadingState();
+    const [courses, enrolledCourses] = await Promise.all([
+      api.getCourses(),
+      isLoggedIn() ? api.getEnrolledCourses() : [],
+    ]);
+
+    allCourses = courses;
+    enrolledCourseIds = new Set(enrolledCourses.map((c) => c.courseId));
+
+    filterAndDisplayCourses();
+  } catch (error) {
+    console.error("Failed to load courses:", error);
+  }
+}
+
+function filterAndDisplayCourses(searchTerm = "") {
+  const courseList = document.getElementById("courseList");
+  const filteredCourses = allCourses.filter(
+    (course) =>
+      course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      course.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      course.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+
+  if (filteredCourses.length === 0) {
+    courseList.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-search fa-3x"></i>
+                <h3>No courses found</h3>
+                <p>Try adjusting your search to find what you're looking for.</p>
+            </div>
+        `;
+    return;
+  }
+
+  courseList.innerHTML = filteredCourses
+    .map(
+      (course) => `
+        <div class="course-card">
+            <div align="center" class="course-thumbnail" >
+                <a href="${isLoggedIn() ? "course-details.html" : "preview.html"}?id=${course.id}" class="course-link">
+                    <img src="${course.thumbnail}" alt="${course.title}" loading="lazy">
+                </a>
+            </div>
+            <div class="course-info">
+                <div>
+                    <h3>${course.title}</h3>
+                    <p>${course.description}</p>
+                    <div class="course-stats">
+                        <span><i class="fas fa-user"></i> ${course.students} student(s)</span>
+                        <span><i class="fas fa-clock"></i> ${course.duration}</span>
+                        <span><i class="fas fa-star"></i> ${course.rating}</span>
+                        <span><i class="fas fa-signal"></i> ${course.level}</span>
+                    </div>
+                </div>
+                ${
+                  isLoggedIn()
+                    ? enrolledCourseIds.has(course.id)
+                      ? `<a href="course-viewer.html?id=${course.id}" class="continue-button" id="continue-button-${course.id}" aria-label="Continue Learning" title="Continue Learning">
+                            Continue Learning
+                           </a>`
+                      : `<button class="enroll-button" onclick="enrollCourse(${course.id})" id="enroll-button-${course.id}" aria-label="Enroll Now" title="Enroll Now - $${course.price}">
+                            Enroll Now - $${course.price}
+                           </button>`
+                    : `<div class="preview-actions">
+                        <a href="preview.html?id=${course.id}" class="preview-button" id="preview-button-${course.id}" aria-label="Preview Course" title="Preview Course">Preview Course</a>
+                        <a href="login.html" class="login-button" aria-label="Sign in to Enroll" title="Sign in to Enroll">Sign in to Enroll</a>
+                       </div>`
+                }
+            </div>
+        </div>
+    `
+    )
+    .join("");
+}
+
 function renderLoadingState() {
   const courseList = document.getElementById("courseList");
   const loadingCards = Array(6)
@@ -19,54 +100,51 @@ function renderLoadingState() {
   courseList.innerHTML = loadingCards;
 }
 
-async function renderCourses() {
+async function renderCourses(courses = allCourses) {
   const courseList = document.getElementById("courseList");
-  renderLoadingState();
 
   try {
-    const courses = await api.getCourses();
     const enrolledCourses = isLoggedIn() ? await api.getEnrolledCourses() : [];
-    const enrolledCourseIds = new Set(enrolledCourses.map((c) => c.id));
+    const enrolledCourseIds = new Set(enrolledCourses.map((c) => c.courseId));
 
     courseList.innerHTML = courses
       .map(
         (course) => `
-            <div class="course-card">
-              <div align="center">
-                  <a href="${isLoggedIn() ? "course-details.html" : "preview.html"}?id=${
-          course.id
-        }" class="course-link">
-                      <img src="${course.thumbnail}" alt="${course.title}" loading="lazy">
-                  </a>
-                </div>
-                <div class="course-info">
-                    <div>
-                        <h3>${course.title}</h3>
-                        <p>${course.description}</p>
-                        <div class="course-stats">
-                            <span><i class="fas fa-user"></i> ${course.students} student(s)</span>
-                            <span><i class="fas fa-clock"></i> ${course.duration}</span>
-                            <span><i class="fas fa-star"></i> ${course.rating}</span>
-                            <span><i class="fas fa-signal"></i> ${course.level}</span>
-                        </div>
-                    </div>
-                    ${
-                      isLoggedIn()
-                        ? enrolledCourseIds.has(course.id)
-                          ? `<a href="course-viewer.html?id=${course.id}" class="continue-button">
-                              Continue Learning
-                             </a>`
-                          : `<button class="enroll-button" onclick="enrollCourse(${course.id})">
-                              Enroll Now - $${course.price}
-                             </button>`
-                        : `<div class="preview-actions">
-                            <a href="preview.html?id=${course.id}" class="preview-button">Preview Course</a>
-                            <a href="login.html" class="login-button">Sign in to Enroll</a>
-                           </div>`
-                    }
-                </div>
+
+        <div class="course-card">
+            <div align="center" class="course-thumbnail">
+                <a href="${isLoggedIn() ? "course-details.html" : "preview.html"}?id=${course.id}" class="course-link">
+                    <img src="${course.thumbnail}" alt="${course.title}" loading="lazy">
+                </a>
             </div>
-        `
+            <div class="course-info">
+                <div>
+                    <h3>${course.title}</h3>
+                    <p>${course.description}</p>
+                    <div class="course-stats">
+                        <span><i class="fas fa-user"></i> ${course.students} student(s)</span>
+                        <span><i class="fas fa-clock"></i> ${course.duration}</span>
+                        <span><i class="fas fa-star"></i> ${course.rating}</span>
+                        <span><i class="fas fa-signal"></i> ${course.level}</span>
+                    </div>
+                </div>
+                ${
+                  isLoggedIn()
+                    ? enrolledCourseIds.has(course.id)
+                      ? `<a href="course-viewer.html?id=${course.id}" class="continue-button" id="continue-button-${course.id}">
+                            Continue Learning
+                           </a>`
+                      : `<button class="enroll-button" onclick="enrollCourse(${course.id})" id="enroll-button-${course.id}">
+                            Enroll Now - $${course.price}
+                           </button>`
+                    : `<div class="preview-actions">
+                        <a href="preview.html?id=${course.id}" class="preview-button" id="preview-button-${course.id}">Preview Course</a>
+                        <a href="login.html" class="login-button">Sign in to Enroll</a>
+                       </div>`
+                }
+            </div>
+        </div>
+    `
       )
       .join("");
   } catch (error) {
@@ -96,4 +174,17 @@ async function enrollCourse(courseId) {
   }
 }
 
-document.addEventListener("DOMContentLoaded", renderCourses);
+document.addEventListener("DOMContentLoaded", () => {
+  loadCourses();
+
+  const searchInput = document.getElementById("courseSearch");
+  if (searchInput) {
+    let searchTimeout;
+    searchInput.addEventListener("input", (e) => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        filterAndDisplayCourses(e.target.value);
+      }, 500);
+    });
+  }
+});

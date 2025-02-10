@@ -112,6 +112,54 @@ const mockData = {
         "Optimize React application performance",
       ],
     },
+    {
+      id: 4,
+      title: "Playwright Automation Testing",
+      description:
+        "Learn end-to-end testing with Playwright. Automate browser interactions, test web applications, and write reliable tests.",
+      thumbnail: "..\\data\\learning\\courses\\playwright.jpg",
+      instructor: "John Doe",
+      duration: "6 weeks",
+      totalHours: 18,
+      level: "Intermediate",
+      students: 0,
+      rating: 4.6,
+      tags: ["Playwright", "Testing", "Automation"],
+      prerequisites: ["JavaScript", "Testing Basics"],
+      price: 129.99,
+      learningObjectives: [
+        "Master Playwright automation testing",
+        "Automate browser interactions",
+        "Write reliable end-to-end tests",
+        "Test web applications effectively",
+        "Debug and optimize test scripts",
+        "Implement testing best practices",
+      ],
+    },
+    {
+      id: 5,
+      title: "Python Programming Basics",
+      description:
+        "Learn the basics of Python programming. Perfect for beginners wanting to start their coding journey with Python.",
+      thumbnail: "..\\data\\learning\\courses\\python-basics.jpg",
+      instructor: "John Doe",
+      duration: "2 weeks",
+      totalHours: 1,
+      level: "Beginner",
+      students: 0,
+      rating: 4.4,
+      tags: ["Python", "Programming", "Basics"],
+      prerequisites: [],
+      price: 0,
+      learningObjectives: [
+        "Master Python programming basics",
+        "Understand Python syntax and semantics",
+        "Learn data types and structures",
+        "Implement Python control flow",
+        "Create Python scripts and programs",
+        "Debug and optimize Python code",
+      ],
+    },
   ],
 
   // User enrollments with progress
@@ -175,7 +223,7 @@ const mockData = {
       issueDate: "2023-06-30",
       certificateNumber: "CERT-2023-001",
       courseTitle: "Introduction to Web Development",
-      recipientName: "Demo User",
+      recipientName: "Michael Scott",
       issuedBy: "John Doe",
     },
   ],
@@ -190,7 +238,7 @@ const mockData = {
         duration: "12:50",
         completed: false,
         content: {
-          videoUrl: "https://example.com/video1.mp4",
+          videoUrl: "https://test.test.test/video1.mp4",
           transcript: "Introduction to HTML basics...",
         },
       },
@@ -232,7 +280,7 @@ const mockData = {
         duration: "12:00",
         completed: false,
         content: {
-          videoUrl: "https://example.com/video2.mp4",
+          videoUrl: "https://test.test.test/video2.mp4",
           transcript: "Learn how to create HTML forms...",
         },
       },
@@ -276,7 +324,7 @@ const mockData = {
         duration: "12:00",
         completed: false,
         content: {
-          videoUrl: "https://example.com/js-video1.mp4",
+          videoUrl: "https://test.test.test/js-video1.mp4",
           transcript: "Let's explore modern JavaScript features...",
         },
       },
@@ -309,7 +357,7 @@ const mockData = {
         duration: "15:00",
         completed: false,
         content: {
-          videoUrl: "https://example.com/js-video1.mp4",
+          videoUrl: "https://test.test.test/js-video1.mp4",
           transcript: "Introduction to JavaScript programming...",
         },
       },
@@ -331,7 +379,7 @@ const mockData = {
         duration: "25:00",
         completed: false,
         content: {
-          videoUrl: "https://example.com/js-video2.mp4",
+          videoUrl: "https://test.test.test/js-video2.mp4",
           transcript: "Deep dive into JavaScript functions...",
         },
       },
@@ -375,7 +423,7 @@ const mockData = {
         duration: "15:00",
         completed: false,
         content: {
-          videoUrl: "https://example.com/react-video1.mp4",
+          videoUrl: "https://test.test.test/react-video1.mp4",
           transcript: "Understanding React components...",
         },
       },
@@ -388,6 +436,74 @@ const mockData = {
         content: {
           text: "State management is a crucial part of building React applications...",
           resources: ["Redux Documentation", "Context API Guide"],
+        },
+      },
+    ],
+    4: [
+      {
+        id: 1,
+        title: "Introduction to Playwright",
+        type: "video",
+        duration: "10:00",
+        completed: false,
+        content: {
+          videoUrl: "https://test.test.test/playwright-video1.mp4",
+          transcript: "Getting started with Playwright automation...",
+        },
+      },
+      {
+        id: 2,
+        title: "Automating Browser Interactions",
+        type: "reading",
+        duration: "18:00",
+        completed: false,
+        content: {
+          text: "Learn how to automate browser interactions using Playwright...",
+          resources: ["Playwright Documentation", "Automated Testing Guide"],
+        },
+      },
+      {
+        id: 3,
+        title: "Writing Reliable Tests",
+        type: "reading",
+        duration: "20:00",
+        completed: false,
+        content: {
+          text: "Best practices for writing reliable end-to-end tests...",
+          resources: ["Testing Strategies", "Playwright Patterns"],
+        },
+      },
+      {
+        id: 4,
+        title: "Playwright Automation Quiz",
+        type: "quiz",
+        completed: false,
+        content: {
+          questions: [
+            {
+              question: "What is Playwright used for?",
+              options: ["Automation Testing", "Unit Testing", "Manual Testing"],
+              correct: 0,
+            },
+            {
+              question: "Which browser engines are supported by Playwright?",
+              options: ["Chromium, WebKit, Firefox", "Chrome, Safari, Edge", "IE, Firefox, Opera"],
+              correct: 0,
+            },
+          ],
+        },
+      },
+    ],
+    5: [
+      {
+        id: 1,
+        title: "Python Basics",
+        type: "video",
+        duration: "10:00",
+        completed: false,
+        content: {
+          videoUrl: "https://test.test.test/python-video1.mp4",
+          transcript: "Introduction to Python programming...",
         },
       },
     ],
@@ -442,7 +558,7 @@ const checkIfUserIdMatchesEmail = (userId, email) => {
 
 function recalculateStudentsCount() {
   mockData.courses.forEach((course) => {
-    course.students = mockData.userEnrollments.filter((e) => e.courseId === course.id).length || 0;
+    course.students = mockData.userEnrollments.filter((e) => areIdsEqual(e.courseId, course.id)).length || 0;
   });
 }
 
@@ -652,7 +768,7 @@ function handleLearning(req, res, isAdmin) {
               success: true,
               access_token,
               username: user.username,
-              user_id: user.id,
+              id: user.id,
               firstName: user.firstName,
               lastName: user.lastName,
               avatar: user.avatar,
@@ -708,7 +824,7 @@ function handleLearning(req, res, isAdmin) {
             return;
           }
 
-          const course = mockData.courses.find((c) => c.id === courseId);
+          const course = mockData.courses.find((c) => areIdsEqual(c.id, courseId));
           if (!course) {
             res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Course not found"));
             return;
@@ -716,7 +832,7 @@ function handleLearning(req, res, isAdmin) {
 
           // Check if already enrolled
           const existingEnrollment = mockData.userEnrollments.find(
-            (e) => e.userId === userId && e.courseId === courseId
+            (e) => areIdsEqual(e.userId, userId) && areIdsEqual(e.courseId, courseId)
           );
 
           if (existingEnrollment) {
@@ -754,7 +870,7 @@ function handleLearning(req, res, isAdmin) {
           }
 
           const { progress } = req.body;
-          const enrollment = mockData.userEnrollments.find((e) => e.courseId === courseId);
+          const enrollment = mockData.userEnrollments.find((e) => areIdsEqual(e.courseId, courseId));
 
           if (enrollment) {
             enrollment.progress = progress;
@@ -814,22 +930,27 @@ function handleLearning(req, res, isAdmin) {
                 enrollment.completed = true;
                 enrollment.completionDate = now;
 
-                // Generate certificate
-                const course = mockData.courses.find((c) => areIdsEqual(c.id, courseId));
-                const user = mockData.users.find((u) => areIdsEqual(u.id, userId));
+                const existingCertificate = mockData.certificates.find(
+                  (cert) => areIdsEqual(cert.userId, userId) && areIdsEqual(cert.courseId, courseId)
+                );
 
-                mockData.certificates.push({
-                  id: mockData.certificates.length + 1,
-                  userId,
-                  courseId,
-                  issueDate: now,
-                  certificateNumber: `CERT-${new Date().getFullYear()}-${String(
-                    mockData.certificates.length + 1
-                  ).padStart(3, "0")}`,
-                  courseTitle: course.title,
-                  recipientName: `${user.firstName} ${user.lastName}`,
-                  issuedBy: course.instructor,
-                });
+                if (!existingCertificate) {
+                  const course = mockData.courses.find((c) => areIdsEqual(c.id, courseId));
+                  const user = mockData.users.find((u) => areIdsEqual(u.id, userId));
+
+                  mockData.certificates.push({
+                    id: mockData.certificates.length + 1,
+                    userId,
+                    courseId,
+                    issueDate: now,
+                    certificateNumber: `CERT-${new Date().getFullYear()}-${String(
+                      mockData.certificates.length + 1
+                    ).padStart(3, "0")}`,
+                    courseTitle: course.title,
+                    recipientName: `${user.firstName} ${user.lastName}`,
+                    issuedBy: course.instructor,
+                  });
+                }
               }
             }
 
@@ -883,22 +1004,29 @@ function handleLearning(req, res, isAdmin) {
         return;
       }
 
-      const { firstName, lastName, email } = req.body;
-      const user = mockData.users.find((u) => u.id === userId);
+      const { firstName, lastName, email, currentPassword } = req.body;
+      const user = mockData.users.find((u) => areIdsEqual(u.id, userId));
 
-      if (user) {
-        // Update user data
-        if (firstName) user.firstName = firstName;
-        if (lastName) user.lastName = lastName;
-        if (email) user.email = email;
-
-        res.status(HTTP_OK).send({
-          success: true,
-          message: "Profile updated successfully",
-        });
-      } else {
+      if (!user) {
         res.status(HTTP_NOT_FOUND).send(formatErrorResponse("User not found"));
+        return;
       }
+
+      // Verify password
+      if (!currentPassword || user.password !== currentPassword) {
+        res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Incorrect password"));
+        return;
+      }
+
+      // Update user data
+      if (firstName) user.firstName = firstName;
+      if (lastName) user.lastName = lastName;
+      if (email) user.email = email;
+
+      res.status(HTTP_OK).send({
+        success: true,
+        message: "Profile updated successfully",
+      });
       return;
     }
 
@@ -916,7 +1044,7 @@ function handleLearning(req, res, isAdmin) {
       }
 
       const { currentPassword, newPassword } = req.body;
-      const user = mockData.users.find((u) => u.id === userId);
+      const user = mockData.users.find((u) => areIdsEqual(u.id, userId));
 
       if (!user) {
         res.status(HTTP_NOT_FOUND).send(formatErrorResponse("User not found"));

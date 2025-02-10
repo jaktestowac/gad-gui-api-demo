@@ -54,15 +54,15 @@ async function renderEnrolledCourses() {
       return;
     }
 
-    const coursesWithProgress = await Promise.all(
-      enrolledCourses.map(async (course) => {
-        const lessons = await api.getCourseLessons(course.id);
+    const enrolledCoursesWithProgress = await Promise.all(
+      enrolledCourses.map(async (enrolledCourse) => {
+        const lessons = await api.getCourseLessons(enrolledCourse.courseId);
         const completedLessons = lessons.filter((lesson) => lesson.completed).length;
         const totalLessons = lessons.length;
         const progress = Math.round((completedLessons / totalLessons) * 100) || 0;
 
         return {
-          ...course,
+          ...enrolledCourse,
           progress,
           completedLessons,
           totalLessons,
@@ -70,7 +70,7 @@ async function renderEnrolledCourses() {
       })
     );
 
-    courseList.innerHTML = coursesWithProgress
+    courseList.innerHTML = enrolledCoursesWithProgress
       .map(
         (course) => `
             <div class="course-card">
@@ -101,7 +101,7 @@ async function renderEnrolledCourses() {
                         <div class="progress-bar">
                             <div class="progress" style="width: ${course.progress}%"></div>
                         </div>
-                        <a href="course-viewer.html?id=${course.id}" class="continue-button">
+                        <a href="course-viewer.html?id=${course.courseId}" class="continue-button">
                             ${course.progress === 100 ? "Review Course" : "Continue Learning"}
                         </a>
                     </div>

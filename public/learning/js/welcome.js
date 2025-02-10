@@ -8,7 +8,7 @@ function updateAuthButtons() {
 
   if (isAuthenticated) {
     authButtons.innerHTML = `
-            <a href="dashboard.html" class="cta-button primary">
+            <a href="dashboard.html" class="cta-button primary" name="dashboard" aria-label="Dashboard">
                 <i class="fas fa-columns"></i>
                 Go to Dashboard
             </a>
@@ -18,15 +18,15 @@ function updateAuthButtons() {
     )}!`;
   } else {
     authButtons.innerHTML = `
-            <a href="dashboard.html" class="cta-button primary">
+            <a href="dashboard.html" class="cta-button primary" name="demo" aria-label="Demo">
                 <i class="fas fa-graduation-cap"></i>
                 Demo
             </a>
-            <a href="register.html" class="cta-button primary">
+            <a href="register.html" class="cta-button primary" name="register" aria-label="Register">
                 <i class="fas fa-user-plus"></i>
                 Get Started
             </a>
-            <a href="login.html" class="cta-button secondary">
+            <a href="login.html" class="cta-button secondary" name="login" aria-label="Login">
                 <i class="fas fa-sign-in-alt"></i>
                 Sign In
             </a>
