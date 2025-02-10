@@ -27,14 +27,6 @@ class ApiService {
   }
 
   // User methods
-  async getUsers() {
-    const response = await fetch(`${this.baseUrl}/users`, {
-      headers: this.getDefaultHeaders(),
-    });
-    const data = await response.json();
-    return data;
-  }
-
   async getUserById(userId) {
     const response = await fetch(`${this.baseUrl}/users/${userId}`, {
       headers: this.getDefaultHeaders(),
@@ -109,15 +101,15 @@ class ApiService {
     return data;
   }
 
-  // Enrollment methods
-  async getEnrollments() {
-    const response = await fetch(`${this.baseUrl}/enrollments`, {
+  async getCourseRatings(courseId) {
+    const response = await fetch(`${this.baseUrl}/courses/${courseId}/ratings`, {
       headers: this.getDefaultHeaders(),
     });
     const data = await response.json();
     return data;
   }
 
+  // Enrollment methods
   async getUserEnrollments(userId) {
     const response = await fetch(`${this.baseUrl}/users/${userId}/enrollments`, {
       headers: this.getDefaultHeaders(),
@@ -145,23 +137,27 @@ class ApiService {
     return data;
   }
 
-  async getLessonById(courseId, lessonId) {
-    const lessons = await this.getLessons(courseId);
-    return lessons.find((l) => l.id === lessonId);
-  }
-
-  // Progress methods
-  async getLessonProgress() {
-    const response = await fetch(`${this.baseUrl}/progress/lessons`, {
+  // Get course lessons titles only
+  async getCourseLessonsTitles(courseId) {
+    const response = await fetch(`${this.baseUrl}/courses/${courseId}/lessons/titles`, {
       headers: this.getDefaultHeaders(),
     });
     const data = await response.json();
     return data;
   }
 
-  async getUserLessonProgress(userId, courseId) {
-    const progress = await this.getLessonProgress();
-    return progress.filter((p) => p.userId === userId && p.courseId === courseId);
+  async getLessonById(courseId, lessonId) {
+    const lessons = await this.getLessons(courseId);
+    return lessons.find((l) => l.id === lessonId);
+  }
+
+  // Progress methods
+  async getUserLessonProgress(courseId) {
+    const response = await fetch(`${this.baseUrl}/courses/${courseId}/lessons/progress`, {
+      headers: this.getDefaultHeaders(),
+    });
+    const data = await response.json();
+    return data || [];
   }
 
   // Certificate methods
@@ -290,7 +286,7 @@ class ApiService {
   async getCourseLessons(courseId) {
     const [lessons, userProgress] = await Promise.all([
       this.getLessons(courseId),
-      this.getUserLessonProgress(this.getUserIdFromCookie(), courseId),
+      this.getUserLessonProgress(courseId),
     ]);
 
     const completedLessonIds = userProgress.map((p) => p.lessonId);
@@ -339,16 +335,14 @@ class ApiService {
 
     progressData.totalHours = courses.reduce((total, course) => total + (course?.totalHours || 0), 0);
 
-    const progressPromises = enrollments.map((enrollment) =>
-      this.getUserLessonProgress(this.getUserIdFromCookie(), enrollment.courseId)
-    );
+    const progressPromises = enrollments.map((enrollment) => this.getUserLessonProgress(enrollment.courseId));
     const allProgress = await Promise.all(progressPromises);
 
     for (let i = 0; i < enrollments.length; i++) {
       const course = courses[i];
       const enrollment = enrollments[i];
       const progress = allProgress[i];
-      const lessons = await this.getLessons(enrollment.courseId);
+      const lessons = await this.getCourseLessonsTitles(enrollment.courseId);
 
       progressData.totalLessons += lessons.length;
       progressData.completedLessons += progress.length;
@@ -363,8 +357,32 @@ class ApiService {
     }
 
     progressData.averageProgress = Math.round((progressData.completedLessons / progressData.totalLessons) * 100) || 0;
-
+    console.log(progressData);
     return progressData;
+  }
+
+  async rateCourse(courseId, rating, comment = "") {
+    try {
+      const response = await fetch(`${this.baseUrl}/courses/${courseId}/rate`, {
+        method: "POST",
+        headers: this.getDefaultHeaders(),
+        body: JSON.stringify({
+          userId: this.getUserIdFromCookie(),
+          rating: Number(rating),
+          comment,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to submit rating");
+      }
+
+      return response.json();
+    } catch (error) {
+      console.error("Rating submission error:", error);
+      throw error;
+    }
   }
 }
 

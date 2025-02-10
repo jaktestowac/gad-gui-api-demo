@@ -42,7 +42,7 @@ async function renderCourseDetails() {
     }
 
     const isEnrolled = enrollment.some((e) => e.courseId === courseId);
-    const lessonCount = (await api.getLessons(courseId)).length;
+    const lessonCount = (await api.getCourseLessonsTitles(courseId)).length;
 
     courseContent.innerHTML = `
             <div class="course-header">
@@ -133,4 +133,80 @@ async function enrollCourse(courseId) {
   }
 }
 
+class CourseDetails {
+  constructor() {
+    this.courseId = parseInt(new URLSearchParams(window.location.search).get("id"));
+    this.initialize();
+  }
+
+  async initialize() {
+    if (!this.courseId) {
+      window.location.href = "/learning/courses.html";
+      return;
+    }
+
+    await this.loadCourseRatings();
+  }
+
+  getStarRating(rating) {
+    return Array(5)
+      .fill()
+      .map((_, i) => `<i class="fa${i < rating ? "s" : "r"} fa-star"></i>`)
+      .join("");
+  }
+
+  async loadCourseRatings() {
+    const ratingsSection = document.getElementById("courseRatings");
+
+    try {
+      const ratings = await api.getCourseRatings(this.courseId);
+      const avgRating = ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length || 0;
+
+      const ratingHeader = ratingsSection.querySelector(".average-rating");
+      ratingHeader.innerHTML = `
+                <span class="rating-value">${avgRating.toFixed(1)}</span>
+                <div class="stars">
+                    ${this.getStarRating(avgRating)}
+                </div>
+                <span class="rating-count">(${ratings.length} ratings)</span>
+            `;
+
+      const ratingsList = ratingsSection.querySelector(".ratings-list");
+      ratingsList.innerHTML = ratings
+        .map(
+          (rating) => `
+                <div class="rating-item">
+                    <div class="rating-user">
+                        <img src="${rating.userInfo.avatar}" alt="User avatar" class="user-avatar">
+                        <span class="user-name">${rating.userInfo.name}</span>
+                    </div>
+                    <div class="rating-content">
+                        <div class="stars">
+                            ${this.getStarRating(rating.rating)}
+                        </div>
+                        ${rating.comment ? `<p class="rating-comment">${rating.comment}</p>` : ""}
+                        <span class="rating-date">${new Date(rating.createdAt).toLocaleDateString()}</span>
+                    </div>
+                </div>
+            `
+        )
+        .join("");
+
+      // Show/hide ratings section based on whether there are ratings
+      ratingsSection.style.display = ratings.length ? "block" : "none";
+    } catch (error) {
+      console.error("Failed to load course ratings:", error);
+      ratingsSection.innerHTML = `
+                <div class="error-message">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p>Failed to load ratings</p>
+                </div>
+            `;
+    }
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  new CourseDetails();
+});
 document.addEventListener("DOMContentLoaded", renderCourseDetails);

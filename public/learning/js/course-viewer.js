@@ -14,6 +14,8 @@ class CourseViewer {
     }
 
     this.initialize();
+    this.addRatingSection();
+    this.loadCourseRatings();
   }
 
   async initialize() {
@@ -444,6 +446,129 @@ class CourseViewer {
                 <p>${message}</p>
             </div>
         `;
+  }
+
+  addRatingSection() {
+    const ratingSection = document.createElement("div");
+    ratingSection.className = "rating-section";
+    ratingSection.innerHTML = `
+      <div class="rating-container">
+        <h3>Rate this course</h3>
+        <div class="stars">
+          ${Array(5)
+            .fill()
+            .map((_, i) => `<i class="far fa-star" data-rating="${i + 1}"></i>`)
+            .join("")}
+        </div>
+        <textarea placeholder="Add a comment (optional)" class="rating-comment"></textarea>
+        <button class="primary-button submit-rating">Submit Rating</button>
+      </div>
+    `;
+
+    document.querySelector(".lesson-content").appendChild(ratingSection);
+
+    // Add rating event handlers
+    const stars = ratingSection.querySelectorAll(".stars i");
+    stars.forEach((star) => {
+      star.addEventListener("mouseover", () => this.highlightStars(stars, star.dataset.rating));
+      star.addEventListener("mouseleave", () => this.highlightStars(stars, this.currentRating || 0));
+      star.addEventListener("click", () => this.setRating(stars, star.dataset.rating));
+    });
+
+    ratingSection.querySelector(".submit-rating").addEventListener("click", () => this.submitRating());
+  }
+
+  highlightStars(stars, rating) {
+    stars.forEach((star, index) => {
+      star.className = index < rating ? "fas fa-star" : "far fa-star";
+    });
+  }
+
+  setRating(stars, rating) {
+    this.currentRating = rating;
+    this.highlightStars(stars, rating);
+  }
+
+  async submitRating() {
+    if (!this.currentRating) {
+      notifications.show("Please select a rating", "error");
+      return;
+    }
+
+    try {
+      const comment = document.querySelector(".rating-comment").value;
+      await api.rateCourse(this.courseId, this.currentRating, comment);
+      notifications.show("Thank you for your rating!", "success");
+
+      // Disable rating section after submission
+      document.querySelector(".rating-section").classList.add("submitted");
+    } catch (error) {
+      console.error("Failed to submit rating:", error);
+      notifications.show("Failed to submit rating", "error");
+    }
+  }
+
+  async loadCourseRatings() {
+    try {
+      const ratings = await api.getCourseRatings(this.courseId);
+      const ratingSection = document.createElement("div");
+      ratingSection.className = "course-ratings-section";
+
+      const avgRating = ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length || 0;
+
+      ratingSection.innerHTML = `
+        <div class="ratings-header">
+          <h3>Course Ratings</h3>
+          <div class="average-rating">
+            <span class="rating-value">${avgRating.toFixed(1)}</span>
+            <div class="stars">
+              ${this.getStarRating(avgRating)}
+            </div>
+            <span class="rating-count">(${ratings.length} ratings)</span>
+          </div>
+        </div>
+        <div class="ratings-list">
+          ${ratings
+            .map(
+              (rating) => `
+            <div class="rating-item">
+              <div class="rating-user">
+                <img src="${rating.userInfo.avatar}" alt="User avatar" class="user-avatar">
+                <span class="user-name">${rating.userInfo.name}</span>
+              </div>
+              <div class="rating-content">
+                <div class="stars">
+                  ${this.getStarRating(rating.rating)}
+                </div>
+                ${rating.comment ? `<p class="rating-comment">${rating.comment}</p>` : ""}
+                <span class="rating-date">${new Date(rating.createdAt).toLocaleDateString()}</span>
+              </div>
+            </div>
+          `
+            )
+            .join("")}
+        </div>
+      `;
+
+      // Insert ratings section before the rating form
+      const existingRatingSection = document.querySelector(".rating-section");
+      if (existingRatingSection) {
+        existingRatingSection.parentNode.insertBefore(ratingSection, existingRatingSection);
+      }
+    } catch (error) {
+      console.error("Failed to load course ratings:", error);
+    }
+  }
+
+  getStarRating(rating) {
+    return Array(5)
+      .fill()
+      .map(
+        (_, i) => `
+      <i class="fa${i < rating ? "s" : "r"} fa-star"></i>
+    `
+      )
+      .join("");
   }
 }
 

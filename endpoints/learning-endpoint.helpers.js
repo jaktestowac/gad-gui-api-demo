@@ -37,6 +37,50 @@ const mockData = {
       joinDate: "2023-01-15",
       role: "instructor",
     },
+    {
+      id: 3,
+      username: "jane_smith",
+      email: "jane_smith@test.test.com",
+      password: "demo",
+      firstName: "Jane",
+      lastName: "Smith",
+      avatar: "..\\data\\users\\face_1714589705_f.jpg",
+      joinDate: "2023-02-15",
+      role: "student",
+    },
+    {
+      id: 4,
+      username: "bob_ross",
+      email: "bob_ross@@test.test.com",
+      password: "demo",
+      firstName: "Bob",
+      lastName: "Ross",
+      avatar: "..\\data\\users\\face_1703527925.6898403_1_m.jpg",
+      joinDate: "2023-03-15",
+      role: "student",
+    },
+    {
+      id: 5,
+      username: "jane_doe",
+      email: "jane_doe@@test.test.com",
+      password: "demo",
+      firstName: "Jane",
+      lastName: "Doe",
+      avatar: "..\\data\\users\\face_1714589623_f.jpg",
+      joinDate: "2023-04-15",
+      role: "student",
+    },
+    {
+      id: 6,
+      username: "jim_halpert",
+      email: "jim_halpert@@test.test.com",
+      password: "demo",
+      firstName: "Jim",
+      lastName: "Halpert",
+      avatar: "..\\data\\users\\face_1703527930.631284_1_m.jpg",
+      joinDate: "2023-04-15",
+      role: "student",
+    },
   ],
 
   // Course catalog
@@ -52,7 +96,7 @@ const mockData = {
       totalHours: 24,
       level: "Beginner",
       students: 0,
-      rating: 4.5,
+      rating: 0,
       tags: ["HTML", "CSS", "JavaScript"],
       prerequisites: [],
       price: 49.99,
@@ -76,7 +120,7 @@ const mockData = {
       totalHours: 30,
       level: "Advanced",
       students: 0,
-      rating: 4.8,
+      rating: 0,
       tags: ["JavaScript", "ES6+", "Async"],
       prerequisites: ["Basic JavaScript"],
       price: 79.99,
@@ -99,7 +143,7 @@ const mockData = {
       totalHours: 36,
       level: "Intermediate",
       students: 0,
-      rating: 4.7,
+      rating: 0,
       tags: ["React", "JavaScript", "Web Development"],
       prerequisites: ["JavaScript"],
       price: 89.99,
@@ -123,7 +167,7 @@ const mockData = {
       totalHours: 18,
       level: "Intermediate",
       students: 0,
-      rating: 4.6,
+      rating: 0,
       tags: ["Playwright", "Testing", "Automation"],
       prerequisites: ["JavaScript", "Testing Basics"],
       price: 129.99,
@@ -147,7 +191,7 @@ const mockData = {
       totalHours: 1,
       level: "Beginner",
       students: 0,
-      rating: 4.4,
+      rating: 0,
       tags: ["Python", "Programming", "Basics"],
       prerequisites: [],
       price: 0,
@@ -158,6 +202,54 @@ const mockData = {
         "Implement Python control flow",
         "Create Python scripts and programs",
         "Debug and optimize Python code",
+      ],
+    },
+    {
+      id: 6,
+      title: "Introduction to Java Programming",
+      description:
+        "Learn the fundamentals of Java programming. Perfect for beginners wanting to start their coding journey with Java.",
+      thumbnail: "..\\data\\learning\\courses\\java-basics.jpg",
+      instructor: "John Doe",
+      duration: "4 weeks",
+      totalHours: 12,
+      level: "Beginner",
+      students: 0,
+      rating: 0,
+      tags: ["Java", "Programming", "Basics"],
+      prerequisites: [],
+      price: 0,
+      learningObjectives: [
+        "Master Java programming basics",
+        "Understand Java syntax and semantics",
+        "Learn data types and structures",
+        "Implement Java control flow",
+        "Create Java scripts and programs",
+        "Debug and optimize Java code",
+      ],
+    },
+    {
+      id: 7,
+      title: "Manual Testing Fundamentals",
+      description:
+        "Learn the fundamentals of manual testing. Perfect for beginners wanting to start their testing journey with manual testing.",
+      thumbnail: "..\\data\\learning\\courses\\manual-testing.jpg",
+      instructor: "John Doe",
+      duration: "2 weeks",
+      totalHours: 1,
+      level: "Beginner",
+      students: 0,
+      rating: 0,
+      tags: ["Testing", "Manual", "Basics"],
+      prerequisites: [],
+      price: 0,
+      learningObjectives: [
+        "Master manual testing fundamentals",
+        "Understand testing concepts and principles",
+        "Learn testing techniques and strategies",
+        "Implement manual testing best practices",
+        "Create test cases and test plans",
+        "Report and track software defects",
       ],
     },
   ],
@@ -182,6 +274,87 @@ const mockData = {
       enrollmentDate: "2023-07-01",
       lastAccessed: "2023-07-24",
       progress: 60,
+      completed: false,
+    },
+    {
+      id: 3,
+      userId: 3,
+      courseId: 1,
+      enrollmentDate: "2023-07-15",
+      lastAccessed: "2023-07-25",
+      progress: 25,
+      completed: false,
+    },
+    {
+      id: 4,
+      userId: 3,
+      courseId: 2,
+      enrollmentDate: "2023-07-20",
+      lastAccessed: "2023-07-25",
+      progress: 0,
+      completed: false,
+    },
+    {
+      id: 5,
+      userId: 3,
+      courseId: 3,
+      enrollmentDate: "2023-07-25",
+      lastAccessed: "2023-07-25",
+      progress: 0,
+      completed: false,
+    },
+    {
+      id: 6,
+      userId: 3,
+      courseId: 4,
+      enrollmentDate: "2023-07-25",
+      lastAccessed: "2023-07-25",
+      progress: 0,
+      completed: false,
+    },
+    {
+      id: 7,
+      userId: 4,
+      courseId: 4,
+      enrollmentDate: "2023-07-25",
+      lastAccessed: "2023-07-25",
+      progress: 0,
+      completed: false,
+    },
+    {
+      id: 8,
+      userId: 5,
+      courseId: 1,
+      enrollmentDate: "2023-07-25",
+      lastAccessed: "2023-07-25",
+      progress: 0,
+      completed: false,
+    },
+    {
+      id: 9,
+      userId: 5,
+      courseId: 2,
+      enrollmentDate: "2023-07-25",
+      lastAccessed: "2023-07-25",
+      progress: 0,
+      completed: false,
+    },
+    {
+      id: 10,
+      userId: 6,
+      courseId: 1,
+      enrollmentDate: "2023-07-25",
+      lastAccessed: "2023-07-25",
+      progress: 0,
+      completed: false,
+    },
+    {
+      id: 11,
+      userId: 6,
+      courseId: 2,
+      enrollmentDate: "2023-07-25",
+      lastAccessed: "2023-07-25",
+      progress: 0,
       completed: false,
     },
   ],
@@ -507,6 +680,202 @@ const mockData = {
         },
       },
     ],
+    6: [
+      {
+        id: 1,
+        title: "Java Basics",
+        type: "video",
+        duration: "10:00",
+        completed: false,
+        content: {
+          videoUrl: "https://test.test.test/java-video1.mp4",
+          transcript: "Introduction to Java programming...",
+        },
+      },
+      {
+        id: 2,
+        title: "Java Syntax and Semantics",
+        type: "reading",
+        duration: "15:00",
+        completed: false,
+        content: {
+          text: "Understanding Java syntax and semantics...",
+          resources: ["Java Documentation", "Java Basics Guide"],
+        },
+      },
+      {
+        id: 3,
+        title: "Java Control Flow",
+        type: "reading",
+        duration: "20:00",
+        completed: false,
+        content: {
+          text: "Learn how to control program flow in Java...",
+          resources: ["Java Loops", "Decision Making"],
+        },
+      },
+      {
+        id: 4,
+        title: "Java Basics Quiz",
+        type: "quiz",
+        completed: false,
+        content: {
+          questions: [
+            {
+              question: "What is Java?",
+              options: ["Programming Language", "Coffee", "Tea"],
+              correct: 0,
+            },
+            {
+              question: "Which of the following is a Java keyword?",
+              options: ["class", "method", "variable"],
+              correct: 0,
+            },
+          ],
+        },
+      },
+    ],
+    7: [
+      {
+        id: 1,
+        title: "Manual Testing Fundamentals",
+        type: "video",
+        duration: "10:00",
+        completed: false,
+        content: {
+          videoUrl: "https://test.test.test/manual-testing-video1.mp4",
+          transcript: "Introduction to manual testing...",
+        },
+      },
+      {
+        id: 2,
+        title: "Testing Techniques",
+        type: "video",
+        duration: "15:00",
+        completed: false,
+        content: {
+          text: "Learn manual testing techniques and strategies...",
+          resources: ["Testing Guide", "Manual Testing Best Practices"],
+        },
+      },
+      {
+        id: 3,
+        title: "Creating Test Cases",
+        type: "video",
+        duration: "20:00",
+        completed: false,
+        content: {
+          text: "How to create effective test cases...",
+          resources: ["Test Case Examples", "Test Case Templates"],
+        },
+      },
+      {
+        id: 4,
+        title: "Manual Testing Quiz",
+        type: "quiz",
+        completed: false,
+        content: {
+          questions: [
+            {
+              question: "What is manual testing?",
+              options: ["Testing by humans", "Automated testing", "Unit testing"],
+              correct: 0,
+            },
+            {
+              question: "What is a test case?",
+              options: ["A set of conditions", "A test script", "A test plan"],
+              correct: 0,
+            },
+          ],
+        },
+      },
+      {
+        id: 5,
+        title: "Reporting Defects",
+        type: "video",
+        duration: "25:00",
+        completed: false,
+        content: {
+          text: "How to report and track software defects...",
+          resources: ["Defect Tracking Tools", "Defect Reporting Guidelines"],
+        },
+      },
+      {
+        id: 6,
+        title: "Manual Testing Best Practices",
+        type: "video",
+        duration: "30:00",
+        completed: false,
+        content: {
+          text: "Best practices for manual testing...",
+          resources: ["Testing Standards", "Manual Testing Principles"],
+        },
+      },
+      {
+        id: 7,
+        title: "Manual Testing Techniques",
+        type: "video",
+        duration: "35:00",
+        completed: false,
+        content: {
+          text: "Effective manual testing techniques...",
+          resources: ["Testing Strategies", "Manual Testing Patterns"],
+        },
+      },
+      {
+        id: 8,
+        title: "Manual Testing Fundamentals Quiz",
+        type: "quiz",
+        completed: false,
+        content: {
+          questions: [
+            {
+              question: "What are the benefits of manual testing?",
+              options: ["Human judgment", "Flexibility", "All of the above"],
+              correct: 2,
+            },
+            {
+              question: "What is a test case?",
+              options: ["A set of conditions", "A test script", "A test plan"],
+              correct: 0,
+            },
+          ],
+        },
+      },
+      {
+        id: 9,
+        title: "Manual Testing Patterns",
+        type: "video",
+        duration: "40:00",
+        completed: false,
+        content: {
+          text: "Effective manual testing techniques...",
+          resources: ["Testing Strategies", "Manual Testing Patterns"],
+        },
+      },
+      {
+        id: 10,
+        title: "Manual Testing Strategies",
+        type: "video",
+        duration: "45:00",
+        completed: false,
+        content: {
+          text: "Effective manual testing techniques...",
+          resources: ["Testing Strategies", "Manual Testing Patterns"],
+        },
+      },
+      {
+        id: 11,
+        title: "Manual Testing Principles",
+        type: "video",
+        duration: "50:00",
+        completed: false,
+        content: {
+          text: "Effective manual testing techniques...",
+          resources: ["Testing Strategies", "Manual Testing Patterns"],
+        },
+      },
+    ],
   },
 
   // Quiz attempts tracking
@@ -534,7 +903,76 @@ const mockData = {
       lastUpdated: "2023-07-25T12:00:00Z",
     },
   ],
+
+  // Add failed login attempts tracking
+  failedLoginAttempts: {
+    // Structure: { email: { count: number, lastAttempt: string } }
+  },
+
+  // Add userRatings array to mockData
+  userRatings: [
+    {
+      userId: 3,
+      courseId: 1,
+      rating: 5,
+      comment: "Great course, learned a lot!",
+      createdAt: "2023-07-25T12:00:00Z",
+    },
+    {
+      userId: 3,
+      courseId: 2,
+      rating: 4,
+      comment: "Good content, could be more challenging.",
+      createdAt: "2023-08-25T12:00:00Z",
+    },
+    {
+      userId: 3,
+      courseId: 3,
+      rating: 3,
+      comment: "Decent course, but could use more examples.",
+      createdAt: "2023-09-25T12:00:00Z",
+    },
+    {
+      userId: 3,
+      courseId: 4,
+      rating: 5,
+      comment: "Excellent course, very informative!",
+      createdAt: "2023-10-25T12:00:00Z",
+    },
+    {
+      userId: 4,
+      courseId: 4,
+      rating: 5,
+      comment: "Great course, learned a lot!",
+      createdAt: "2023-07-25T12:00:00Z",
+    },
+    {
+      userId: 5,
+      courseId: 1,
+      rating: 4,
+      comment: "Good content, could be more challenging. Also, more examples would be helpful.",
+      createdAt: "2023-08-25T12:00:00Z",
+    },
+    {
+      userId: 5,
+      courseId: 2,
+      rating: 3,
+      comment: "Well... it was okay.",
+      createdAt: "2023-09-25T12:00:00Z",
+    },
+    {
+      userId: 6,
+      courseId: 1,
+      rating: 4,
+      comment: "Excellent course, very informative! I learned a lot from this course. Highly recommended.",
+      createdAt: "2023-10-25T12:00:00Z",
+    },
+  ],
 };
+
+function checkIfUserRatedCourse(userId, courseId) {
+  return mockData.userRatings.find((r) => areIdsEqual(r.userId, userId) && areIdsEqual(r.courseId, courseId));
+}
 
 function checkIfUserExists(email) {
   return mockData.users.find((u) => u.email === email);
@@ -542,7 +980,7 @@ function checkIfUserExists(email) {
 
 function checkIfUserIsAuthenticated(req, res, endpoint = "endpoint", url = "") {
   const verifyTokenResult = verifyAccessToken(req, res, "learning", req.url);
-  const userExists = checkIfUserExists(verifyTokenResult.email);
+  const userExists = checkIfUserExists(verifyTokenResult?.email);
 
   if (!verifyTokenResult || !userExists) {
     return false;
@@ -562,7 +1000,26 @@ function recalculateStudentsCount() {
   });
 }
 
+function recalculateCoursesRating() {
+  mockData.courses.forEach((course) => {
+    const ratings = mockData.userRatings.filter((r) => areIdsEqual(r.courseId, course.id));
+    const totalRating = ratings.reduce((total, rating) => total + rating.rating, 0);
+    // round it to 1 decimal place
+    course.rating = ratings.length > 0 ? Math.round((totalRating / ratings.length) * 10) / 10 : 0;
+  });
+}
+
+function checkIfUserIsEnrolled(userId, courseId) {
+  return mockData.userEnrollments.find((e) => areIdsEqual(e.userId, userId) && areIdsEqual(e.courseId, courseId));
+}
+
+function findUserIdByEmail(email) {
+  const user = mockData.users.find((u) => u.email === email);
+  return user?.id;
+}
+
 recalculateStudentsCount();
+recalculateCoursesRating();
 
 function handleLearning(req, res, isAdmin) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
@@ -573,6 +1030,7 @@ function handleLearning(req, res, isAdmin) {
   if (req.method === "GET") {
     // Specific endpoints should come before more general ones
     // Get lesson content (most specific)
+    // /learning/users/{userId}/courses/{courseId}/lessons/{lessonId}
     if (
       urlParts.length === 7 &&
       urlParts[1] === "learning" &&
@@ -580,7 +1038,21 @@ function handleLearning(req, res, isAdmin) {
       urlParts[4] === "lessons" &&
       urlParts[6] === "content"
     ) {
+      if (checkIfUserIsAuthenticated(req, res, "learning", urlEnds) === false) {
+        res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not authenticated"));
+        return;
+      }
+
+      const userId = findUserIdByEmail(verifyTokenResult.email);
+
       const courseId = parseInt(urlParts[3]);
+      const isUserEnrolled = checkIfUserIsEnrolled(userId, courseId);
+
+      if (!isUserEnrolled) {
+        res.status(HTTP_FORBIDDEN).send(formatErrorResponse("User not enrolled in this course"));
+        return;
+      }
+
       const lessonId = parseInt(urlParts[5]);
       const lessons = mockData.courseLessons[courseId];
       const lesson = lessons?.find((l) => l.id === lessonId);
@@ -594,9 +1066,24 @@ function handleLearning(req, res, isAdmin) {
     }
 
     // Get course lessons
+    // /learning/courses/{courseId}/lessons
     if (urlParts.length === 5 && urlParts[1] === "learning" && urlParts[2] === "courses" && urlParts[4] === "lessons") {
       const courseId = parseInt(urlParts[3]);
       const lessons = mockData.courseLessons[courseId];
+
+      if (checkIfUserIsAuthenticated(req, res, "learning", urlEnds) === false) {
+        res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not authenticated"));
+        return;
+      }
+
+      const userId = findUserIdByEmail(verifyTokenResult?.email);
+      const isUserEnrolled = checkIfUserIsEnrolled(userId, courseId);
+
+      if (!isUserEnrolled) {
+        res.status(HTTP_FORBIDDEN).send(formatErrorResponse("User not enrolled in this course"));
+        return;
+      }
+
       if (lessons) {
         res.status(HTTP_OK).send(lessons);
       } else {
@@ -605,7 +1092,29 @@ function handleLearning(req, res, isAdmin) {
       return;
     }
 
+    // Get course lessons titles only
+    // /learning/courses/{courseId}/lessons/titles
+    if (
+      urlParts.length === 6 &&
+      urlParts[1] === "learning" &&
+      urlParts[2] === "courses" &&
+      urlParts[4] === "lessons" &&
+      urlParts[5] === "titles"
+    ) {
+      const courseId = parseInt(urlParts[3]);
+      const lessons = mockData.courseLessons[courseId];
+
+      if (lessons) {
+        const lessonTitles = lessons.map((l) => ({ id: l.id, title: l.title }));
+        res.status(HTTP_OK).send(lessonTitles);
+      } else {
+        res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Lessons not found"));
+      }
+      return;
+    }
+
     // Get user stats
+    // /learning/users/{userId}/stats
     if (urlParts.length === 5 && urlParts[1] === "learning" && urlParts[2] === "users" && urlParts[4] === "stats") {
       if (checkIfUserIsAuthenticated(req, res, "learning", urlEnds) === false) {
         res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not authenticated"));
@@ -613,7 +1122,13 @@ function handleLearning(req, res, isAdmin) {
       }
 
       const userId = parseInt(urlParts[3]);
-      const stats = mockData.userStats.find((s) => s.userId === userId);
+
+      if (!checkIfUserIdMatchesEmail(userId, verifyTokenResult.email)) {
+        res.status(HTTP_FORBIDDEN).send(formatErrorResponse("User not authorized"));
+        return;
+      }
+
+      const stats = mockData.userStats.find((s) => areIdsEqual(s.userId, userId));
       if (stats) {
         res.status(HTTP_OK).send(stats);
       } else {
@@ -623,6 +1138,7 @@ function handleLearning(req, res, isAdmin) {
     }
 
     // Get user enrollments
+    // /learning/users/{userId}/enrollments
     if (
       urlParts.length === 5 &&
       urlParts[1] === "learning" &&
@@ -651,6 +1167,8 @@ function handleLearning(req, res, isAdmin) {
       return;
     }
 
+    // Get user certificates
+    // /learning/users/{userId}/certificates
     if (
       urlParts.length === 5 &&
       urlParts[1] === "learning" &&
@@ -669,28 +1187,80 @@ function handleLearning(req, res, isAdmin) {
         return;
       }
 
-      const certificates = mockData.certificates.filter((c) => c.userId === userId) || [];
+      const certificates = mockData.certificates.filter((c) => areIdsEqual(c.userId, userId)) || [];
       res.status(HTTP_OK).send({ certificates });
       return;
     }
 
+    // Progress endpoints
+    // Get lessons progress for a course and user
+    // /learning/courses/:courseId/lessons/progress
+    if (
+      urlParts.length === 6 &&
+      urlParts[1] === "learning" &&
+      urlParts[2] === "courses" &&
+      urlParts[4] === "lessons" &&
+      urlParts[5] === "progress"
+    ) {
+      if (checkIfUserIsAuthenticated(req, res, "learning", urlEnds) === false) {
+        res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not authenticated"));
+        return;
+      }
+
+      const userId = findUserIdByEmail(verifyTokenResult?.email);
+      const courseId = parseInt(urlParts[3]);
+
+      if (checkIfUserIsEnrolled(userId, courseId) === false) {
+        res.status(HTTP_FORBIDDEN).send(formatErrorResponse("User not enrolled in this course"));
+        return;
+      }
+
+      const lessons = mockData.courseLessons[courseId];
+      const progress = mockData.lessonProgress.filter(
+        (p) => areIdsEqual(p.userId, userId) && areIdsEqual(p.courseId, courseId)
+      );
+
+      if (lessons && progress) {
+        res.status(HTTP_OK).send(progress);
+      } else {
+        res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Lesson progress not found"));
+      }
+      return;
+    }
+
     // Get course progress
+    // /learning/courses/:courseId/progress
     if (
       urlParts.length === 5 &&
       urlParts[1] === "learning" &&
       urlParts[2] === "courses" &&
       urlParts[4] === "progress"
     ) {
+      if (checkIfUserIsAuthenticated(req, res, "learning", urlEnds) === false) {
+        res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not authenticated"));
+        return;
+      }
+
+      const userId = findUserIdByEmail(verifyTokenResult?.email);
+
+      if (!checkIfUserIdMatchesEmail(userId, verifyTokenResult?.email)) {
+        res.status(HTTP_FORBIDDEN).send(formatErrorResponse("User not authorized"));
+        return;
+      }
+
       const courseId = parseInt(urlParts[3]);
-      const enrollment = mockData.userEnrollments.find((e) => e.courseId === courseId);
+      const enrollment = mockData.userEnrollments.find(
+        (e) => areIdsEqual(e.userId, userId) && areIdsEqual(e.courseId, courseId)
+      );
       res.status(HTTP_OK).send({ progress: enrollment?.progress || 0 });
       return;
     }
 
     // Get course by ID
+    // /learning/courses/:courseId
     if (urlParts.length === 4 && urlParts[1] === "learning" && urlParts[2] === "courses") {
       const courseId = parseInt(urlParts[3]);
-      const course = mockData.courses.find((c) => c.id === courseId);
+      const course = mockData.courses.find((c) => areIdsEqual(c.id, courseId));
 
       if (course) {
         res.status(HTTP_OK).send(course);
@@ -701,6 +1271,7 @@ function handleLearning(req, res, isAdmin) {
     }
 
     // Get user by ID
+    // /learning/users/:userId
     if (urlParts.length === 4 && urlParts[1] === "learning" && urlParts[2] === "users") {
       if (checkIfUserIsAuthenticated(req, res, "learning", urlEnds) === false) {
         res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not authenticated"));
@@ -714,7 +1285,7 @@ function handleLearning(req, res, isAdmin) {
         return;
       }
 
-      const user = mockData.users.find((u) => u.id === userId);
+      const user = mockData.users.find((u) => areIdsEqual(u.id, userId));
       if (user) {
         res.status(HTTP_OK).send({ ...user, password: undefined });
       } else {
@@ -723,28 +1294,14 @@ function handleLearning(req, res, isAdmin) {
       return;
     }
 
+    // Get all entities
+    // /learning/courses
     if (urlParts.length === 3 && urlParts[1] === "learning") {
+      // TODO: access verification
       switch (urlParts[2]) {
-        case "users":
-          res.status(HTTP_OK).send(mockData.users.map((user) => ({ ...user, password: undefined })));
-          return;
         case "courses":
           res.status(HTTP_OK).send(mockData.courses);
           return;
-        case "enrollments":
-          res.status(HTTP_OK).send(mockData.userEnrollments);
-          return;
-        case "certificates":
-          res.status(HTTP_OK).send({ certificates: mockData.certificates || [] });
-          return;
-      }
-    }
-
-    // Progress endpoints
-    if (urlParts.length === 4 && urlParts[1] === "learning" && urlParts[2] === "progress") {
-      if (urlParts[3] === "lessons") {
-        res.status(HTTP_OK).send(mockData.lessonProgress);
-        return;
       }
     }
 
@@ -752,16 +1309,44 @@ function handleLearning(req, res, isAdmin) {
       res.status(HTTP_OK).send(mockData.quizAttempts);
       return;
     }
+
+    // Get course ratings
+    // /learning/courses/{courseId}/ratings
+    if (req.method === "GET" && urlParts.length === 5 && urlParts[4] === "ratings") {
+      const courseId = parseInt(urlParts[3]);
+      const ratings = mockData.userRatings.filter((r) => areIdsEqual(r.courseId, courseId));
+
+      // Enhance ratings with user info
+      const ratingsWithUserInfo = ratings.map((rating) => {
+        const user = mockData.users.find((u) => areIdsEqual(u.id, rating.userId));
+        return {
+          ...rating,
+          userInfo: {
+            name: `${user.firstName} ${user.lastName}`,
+            avatar: user.avatar,
+          },
+        };
+      });
+
+      res.status(HTTP_OK).send(ratingsWithUserInfo);
+      return;
+    }
   }
 
   // POST endpoints
   if (req.method === "POST") {
+    // Authentication endpoints
+    // /learning/auth/login
     if (urlParts.length === 4 && urlParts[1] === "learning" && urlParts[2] === "auth") {
       switch (urlParts[3]) {
         case "login": {
           const { username, password } = req.body;
           const user = mockData.users.find((u) => u.username === username && u.password === password);
+
           if (user) {
+            if (mockData.failedLoginAttempts[user.email]) {
+              delete mockData.failedLoginAttempts[user.email];
+            }
             const access_token = createToken({ email: user.email, data: "TBD" }, false, true);
             logDebug("login: access token:", { email: user.email, password, access_token });
             res.status(HTTP_OK).send({
@@ -774,10 +1359,20 @@ function handleLearning(req, res, isAdmin) {
               avatar: user.avatar,
             });
           } else {
+            const foundUser = mockData.users.find((u) => u.username === username);
+            if (foundUser) {
+              const email = foundUser.email;
+              if (!mockData.failedLoginAttempts[email]) {
+                mockData.failedLoginAttempts[email] = { count: 0, lastAttempt: null };
+              }
+              mockData.failedLoginAttempts[email].count++;
+              mockData.failedLoginAttempts[email].lastAttempt = new Date().toISOString();
+            }
             res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Invalid credentials"));
           }
           return;
         }
+        // /learning/auth/register
         case "register": {
           const { username, password, email, avatar, firstName, lastName } = req.body;
 
@@ -807,10 +1402,13 @@ function handleLearning(req, res, isAdmin) {
     }
 
     // Course-related actions
+    // /learning/courses/:courseId/:action
     if (urlParts.length >= 5 && urlParts[1] === "learning" && urlParts[2] === "courses") {
       const courseId = parseInt(urlParts[3]);
 
       switch (urlParts[4]) {
+        // Enroll in a course
+        // /learning/courses/:courseId/enroll
         case "enroll": {
           if (checkIfUserIsAuthenticated(req, res, "learning", urlEnds) === false) {
             res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not authenticated"));
@@ -858,19 +1456,29 @@ function handleLearning(req, res, isAdmin) {
           res.status(HTTP_OK).send({ success: true, enrollment });
           return;
         }
-
+        // /learning/courses/:courseId/certificate
         case "certificate":
           // Add certificate generation logic here
           res.status(HTTP_OK).send({ success: true });
           return;
+        // /learning/courses/:courseId/complete
         case "progress": {
           if (checkIfUserIsAuthenticated(req, res, "learning", urlEnds) === false) {
             res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not authenticated"));
             return;
           }
 
+          const { userId } = req.body;
+
+          if (!checkIfUserIdMatchesEmail(userId, verifyTokenResult.email)) {
+            res.status(HTTP_FORBIDDEN).send(formatErrorResponse("User not authorized"));
+            return;
+          }
+
           const { progress } = req.body;
-          const enrollment = mockData.userEnrollments.find((e) => areIdsEqual(e.courseId, courseId));
+          const enrollment = mockData.userEnrollments.find(
+            (e) => areIdsEqual(e.courseId, courseId) && areIdsEqual(e.userId, userId)
+          );
 
           if (enrollment) {
             enrollment.progress = progress;
@@ -883,10 +1491,12 @@ function handleLearning(req, res, isAdmin) {
       }
 
       // Lesson-related actions
+      // /learning/courses/:courseId/lessons/:lessonId/:action
       if (urlParts.length === 7 && urlParts[4] === "lessons") {
         const lessonId = parseInt(urlParts[5]);
 
         switch (urlParts[6]) {
+          // /learning/courses/:courseId/lessons/:lessonId/complete
           case "complete": {
             const { userId } = req.body;
 
@@ -938,14 +1548,13 @@ function handleLearning(req, res, isAdmin) {
                   const course = mockData.courses.find((c) => areIdsEqual(c.id, courseId));
                   const user = mockData.users.find((u) => areIdsEqual(u.id, userId));
 
+                  const maxCertId = mockData.certificates.reduce((max, cert) => (cert.id > max ? cert.id : max), 0);
                   mockData.certificates.push({
-                    id: mockData.certificates.length + 1,
+                    id: maxCertId + 1,
                     userId,
                     courseId,
                     issueDate: now,
-                    certificateNumber: `CERT-${new Date().getFullYear()}-${String(
-                      mockData.certificates.length + 1
-                    ).padStart(3, "0")}`,
+                    certificateNumber: `CERT-${new Date().getFullYear()}-${String(maxCertId + 1).padStart(3, "0")}`,
                     courseTitle: course.title,
                     recipientName: `${user.firstName} ${user.lastName}`,
                     issuedBy: course.instructor,
@@ -957,6 +1566,7 @@ function handleLearning(req, res, isAdmin) {
             res.status(HTTP_OK).send({ success: true });
             return;
           }
+          // /learning/courses/:courseId/lessons/:lessonId/quiz
           case "quiz": {
             const { userId, answers } = req.body;
 
@@ -987,11 +1597,68 @@ function handleLearning(req, res, isAdmin) {
         }
       }
     }
+
+    // Add inside handleLearning function before the final else
+    if (req.method === "POST" && urlParts.length === 5 && urlParts[4] === "rate") {
+      if (checkIfUserIsAuthenticated(req, res, "learning", urlEnds) === false) {
+        res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not authenticated"));
+        return;
+      }
+
+      const courseId = parseInt(urlParts[3]);
+      const { userId, rating, comment } = req.body;
+
+      if (!checkIfUserIdMatchesEmail(userId, verifyTokenResult.email)) {
+        res.status(HTTP_FORBIDDEN).send(formatErrorResponse("User not authorized"));
+        return;
+      }
+
+      const course = mockData.courses.find((c) => areIdsEqual(c.id, courseId));
+      if (!course) {
+        res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Course not found"));
+        return;
+      }
+
+      // Check if user is enrolled in the course
+      const isEnrolled = mockData.userEnrollments.find(
+        (e) => areIdsEqual(e.userId, userId) && areIdsEqual(e.courseId, courseId)
+      );
+
+      if (!isEnrolled) {
+        res.status(HTTP_FORBIDDEN).send(formatErrorResponse("User not enrolled in this course"));
+        return;
+      }
+
+      // Remove any existing rating by this user for this course
+      const existingRatingIndex = mockData.userRatings.findIndex(
+        (r) => areIdsEqual(r.userId, userId) && areIdsEqual(r.courseId, courseId)
+      );
+
+      if (existingRatingIndex !== -1) {
+        mockData.userRatings.splice(existingRatingIndex, 1);
+      }
+
+      // Add new rating
+      mockData.userRatings.push({
+        userId,
+        courseId,
+        rating,
+        comment,
+        createdAt: new Date().toISOString(),
+      });
+
+      // Update course average rating
+      recalculateCoursesRating();
+
+      res.status(HTTP_OK).send({ success: true });
+      return;
+    }
   }
 
   // PUT endpoints
   if (req.method === "PUT") {
     // Update user profile
+    // /learning/users/{userId}/profile
     if (urlParts.length === 5 && urlParts[1] === "learning" && urlParts[2] === "users" && urlParts[4] === "profile") {
       if (checkIfUserIsAuthenticated(req, res, "learning", urlEnds) === false) {
         res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not authenticated"));
@@ -1031,6 +1698,7 @@ function handleLearning(req, res, isAdmin) {
     }
 
     // Change password
+    // /learning/users/{userId}/password
     if (urlParts.length === 5 && urlParts[1] === "learning" && urlParts[2] === "users" && urlParts[4] === "password") {
       if (checkIfUserIsAuthenticated(req, res, "learning", urlEnds) === false) {
         res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not authenticated"));

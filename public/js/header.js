@@ -111,6 +111,13 @@ const mainBookShopGUIMenuHTMLLogged = (path = "") => {
   return mainGuiMenu;
 };
 
+const mainLearningGUIMenuHTMLLogged = (path = "") => {
+  const mainGuiMenu = `
+  `;
+
+  return mainGuiMenu;
+};
+
 const mainAPIMenuHTML = `
 <a href="/tools/index.html">
   <button id="btnTools" data-testid="btn-tools" class="button-primary">Tools</button>
@@ -134,7 +141,15 @@ const logoGAD = (path = "/") => {
  `;
 };
 
-const rightMenu = (path = "", withUserMenu = true) => {
+const swaggerMenu = (path = "") => {
+  return `
+  <div align="center">
+    <a href="/tools/swagger-learning.html" style="text-decoration: none; color: white; margin-right: 15px; " >
+  <img src="${path}/data/icons/swagger-simple.png" style="width: 30px !important; height: 30px !important; padding: 0" alt="" />
+  </a></div>`;
+};
+
+const rightMenu = (path = "", withUserMenu = true, customHtmlCode = "") => {
   let userMenu = `<div style="height: 30px; margin-top: 32px"></div>`;
   if (withUserMenu !== false) {
     userMenu = `<div class="dropdown dropdown-left" data-testid="user-dropdown">
@@ -159,6 +174,7 @@ const rightMenu = (path = "", withUserMenu = true) => {
     <span style="display: flex; align-items: center; justify-self: end; padding-right: 20px">
     <span id="languageSelect"></span>
     ${userMenu}
+    ${customHtmlCode}
     <a href="/tools/backoffice.html" style="text-decoration: none; color: white; margin-right: 15px; " >
    
     <div class="hovertext" data-hover="Visit Backoffice Tools">
@@ -249,8 +265,8 @@ const addMainMenuAndFooter = () => {
     mainNavMenu.innerHTML = hamburgerMenu() + mainNavMenu.innerHTML;
     menuContainerLeft = document.querySelector("#menu-main-gui-learning");
     menuContainerLeft.innerHTML = logoGAD();
-    if (email) menuContainerLeft.innerHTML += mainBookShopGUIMenuHTMLLogged();
-    menuContainerLeft.insertAdjacentHTML("afterend", rightMenu(""));
+    if (email) menuContainerLeft.innerHTML += mainLearningGUIMenuHTMLLogged();
+    menuContainerLeft.insertAdjacentHTML("afterend", rightMenu("", false, swaggerMenu("..")));
   }
   if (document.querySelector("#menu-main-api")) {
     mainNavMenu.innerHTML = hamburgerMenu() + mainNavMenu.innerHTML;
