@@ -25,12 +25,21 @@ document.addEventListener("DOMContentLoaded", async () => {
             <p class="course-description">${course.description}</p>
         `;
 
-    const lessons = await api.getLessons(courseId);
-    const previewLessons = lessons.slice(0, 2);
-    const previewContent = document.getElementById("previewContent");
+    const { previewLessons, totalLessons } = await api.getPreviewLessons(courseId);
 
-    const currentLesson = previewLessons[lessonId];
+    if (previewLessons.length === 0) {
+      document.getElementById("previewContent").innerHTML = `
+        <div class="preview-info">
+          <h2>Course Preview</h2>
+          <p>No preview lessons available for this course yet.</p>
+        </div>`;
+      return;
+    }
+
+    const currentLesson = lessonId < previewLessons.length ? previewLessons[lessonId] : previewLessons[0];
     const lessonContent = currentLesson ? await renderLessonContent(currentLesson) : "";
+
+    const remainingLessons = Math.max(0, totalLessons - previewLessons.length);
 
     previewContent.innerHTML = `
             <div class="preview-info" aria-label="Course Preview Information" title="Course Preview Information">
@@ -55,20 +64,32 @@ document.addEventListener("DOMContentLoaded", async () => {
                                     }"></i>
                                     ${lesson.title}
                                 </span>
-                                <span class="lesson-duration">${lesson.duration}</span>
+                                <span class="lesson-duration">
+                                ${
+                                  lesson.type === "quiz"
+                                    ? `${lesson.content?.questions?.length} questions`
+                                    : lesson.duration
+                                }
+                              </span>
                             </div>
                         </div>
                     `
                       )
                       .join("")}
+                    ${
+                      remainingLessons > 0
+                        ? `
                     <div class="locked-content">
-                        <h3>🔒 ${lessons.length - 2} More Lessons Available</h3>
+                        <h3><span style="color: #f44336;"><i class="fas fa-lock"></i></span> ${remainingLessons} More Lessons Available</h3>
                         <p>Sign in to access the full course content</p>
                         <div class="cta-buttons">
-                            <a href="login.html" class="primary-button"  aria-label="Sign In" title="Sign In" >Sign In</a>
-                            <a href="register.html" class="primary-button" aria-label="Create Account" title="Create Account" >Create Account</a>
+                            <a href="login.html" class="primary-button" aria-label="Sign In" title="Sign In">Sign In</a>
+                            <a href="register.html" class="primary-button" aria-label="Create Account" title="Create Account">Create Account</a>
                         </div>
                     </div>
+                    `
+                        : ""
+                    }
                 </div>
                 <div class="lesson-content-area" id="previewLessonContent" aria-label="Lesson Content">
                     ${lessonContent}

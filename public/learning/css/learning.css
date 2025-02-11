@@ -1,6 +1,6 @@
 :root {
   --primary-color: #2563eb;
-  --secondary-color: #6ea6ff;
+  --secondary-color: #5395ff;
   --background-light: #f8fafc;
   --text-dark: #1e293b;
   --text-light: #64748b;
@@ -440,6 +440,7 @@
 
 .primary-button:hover {
   background: var(--secondary-color);
+  color: white;
 }
 
 .primary-button.completed {
@@ -521,7 +522,6 @@
   justify-content: center;
 }
 
-/* Enhanced welcome page styles */
 .welcome-hero {
   position: relative;
   text-align: center;
@@ -540,7 +540,6 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: url("/data/images/pattern.png") repeat;
   opacity: 0.1;
   animation: slide 20s linear infinite;
 }
@@ -1400,6 +1399,7 @@
 
 .preview-button:hover {
   background-color: #374151;
+  color: white;
 }
 
 .login-button {
@@ -1414,6 +1414,7 @@
 
 .login-button:hover {
   background-color: #2563eb;
+  color: white;
 }
 
 .guest-banner {

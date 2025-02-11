@@ -666,6 +666,29 @@ const mockData = {
           ],
         },
       },
+      {
+        id: 5,
+        title: "Debugging and Optimization",
+        type: "video",
+        duration: "30:00",
+        completed: false,
+        content: {
+          videoUrl: "https://test.test.test/playwright-video1.mp4",
+          transcript: "Debugging and optimizing Playwright tests...",
+        },
+      },
+      {
+        id: 6,
+        title: "Testing Best Practices",
+        type: "video",
+        duration: "55:00",
+        completed: false,
+        content: {
+          videoUrl: "https://test.test.test/playwright-video1.mp4",
+          transcript: "Best practices for automated testing are essential for successful test automation projects...",
+          resources: ["Testing Standards", "Automation Testing Principles"],
+        },
+      },
     ],
     5: [
       {
@@ -685,7 +708,7 @@ const mockData = {
         id: 1,
         title: "Java Basics",
         type: "video",
-        duration: "10:00",
+        duration: "20:00",
         completed: false,
         content: {
           videoUrl: "https://test.test.test/java-video1.mp4",
@@ -696,7 +719,7 @@ const mockData = {
         id: 2,
         title: "Java Syntax and Semantics",
         type: "reading",
-        duration: "15:00",
+        duration: "35:00",
         completed: false,
         content: {
           text: "Understanding Java syntax and semantics...",
@@ -707,7 +730,7 @@ const mockData = {
         id: 3,
         title: "Java Control Flow",
         type: "reading",
-        duration: "20:00",
+        duration: "44:00",
         completed: false,
         content: {
           text: "Learn how to control program flow in Java...",
@@ -734,6 +757,76 @@ const mockData = {
           ],
         },
       },
+      {
+        id: 5,
+        title: "Java Methods",
+        type: "video",
+        duration: "53:00",
+        completed: false,
+        content: {
+          videoUrl: "https://test.test.test/java-video1.mp4",
+          transcript: "Methods in Java programming language...",
+        },
+      },
+      {
+        id: 6,
+        title: "Java Classes and Objects",
+        type: "reading",
+        duration: "49:00",
+        completed: false,
+        content: {
+          videoUrl: "https://test.test.test/java-video1.mp4",
+          transcript:
+            "Classes and objects are fundamental concepts in object-oriented programming (OOP) languages like Java...",
+        },
+      },
+      {
+        id: 7,
+        title: "Java Inheritance",
+        type: "video",
+        duration: "35:00",
+        completed: false,
+        content: {
+          videoUrl: "https://test.test.test/java-video1.mp4",
+          transcript:
+            "Inheritance is a key feature of object-oriented programming. Learn how to use it in Java programming language...",
+        },
+      },
+      {
+        id: 8,
+        title: "Java Basics Quiz",
+        type: "quiz",
+        completed: false,
+        content: {
+          questions: [
+            {
+              question: "What is Java?",
+              options: ["Programming Language", "Coffee", "Tea"],
+              correct: 0,
+            },
+            {
+              question: "Which of the following is a Java keyword?",
+              options: ["class", "method", "variable"],
+              correct: 0,
+            },
+            {
+              question: "What is a class in Java?",
+              options: ["A method", "A blueprint for objects", "A variable"],
+              correct: 1,
+            },
+            {
+              question: "What is an object in Java?",
+              options: ["An instance of a class", "A method", "A variable"],
+              correct: 0,
+            },
+            {
+              question: "What is inheritance in Java?",
+              options: ["Reusing code", "Creating new classes", "Both of the above"],
+              correct: 2,
+            },
+          ],
+        },
+      },
     ],
     7: [
       {
@@ -754,7 +847,8 @@ const mockData = {
         duration: "15:00",
         completed: false,
         content: {
-          text: "Learn manual testing techniques and strategies...",
+          videoUrl: "https://test.test.test/manual-testing-video1.mp4",
+          transcript: "Learn manual testing techniques and strategies...",
           resources: ["Testing Guide", "Manual Testing Best Practices"],
         },
       },
@@ -765,7 +859,8 @@ const mockData = {
         duration: "20:00",
         completed: false,
         content: {
-          text: "How to create effective test cases...",
+          videoUrl: "https://test.test.test/manual-testing-video1.mp4",
+          transcript: "How to create effective test cases...",
           resources: ["Test Case Examples", "Test Case Templates"],
         },
       },
@@ -796,7 +891,8 @@ const mockData = {
         duration: "25:00",
         completed: false,
         content: {
-          text: "How to report and track software defects...",
+          videoUrl: "https://test.test.test/manual-testing-video1.mp4",
+          transcript: "How to report and track software defects...",
           resources: ["Defect Tracking Tools", "Defect Reporting Guidelines"],
         },
       },
@@ -807,7 +903,8 @@ const mockData = {
         duration: "30:00",
         completed: false,
         content: {
-          text: "Best practices for manual testing...",
+          videoUrl: "https://test.test.test/manual-testing-video1.mp4",
+          transcript: "Best practices for manual testing...",
           resources: ["Testing Standards", "Manual Testing Principles"],
         },
       },
@@ -818,7 +915,8 @@ const mockData = {
         duration: "35:00",
         completed: false,
         content: {
-          text: "Effective manual testing techniques...",
+          videoUrl: "https://test.test.test/manual-testing-video1.mp4",
+          transcript: "Effective manual testing techniques...",
           resources: ["Testing Strategies", "Manual Testing Patterns"],
         },
       },
@@ -849,7 +947,8 @@ const mockData = {
         duration: "40:00",
         completed: false,
         content: {
-          text: "Effective manual testing techniques...",
+          videoUrl: "https://test.test.test/manual-testing-video1.mp4",
+          transcript: "Effective manual testing techniques and patterns...",
           resources: ["Testing Strategies", "Manual Testing Patterns"],
         },
       },
@@ -860,7 +959,8 @@ const mockData = {
         duration: "45:00",
         completed: false,
         content: {
-          text: "Effective manual testing techniques...",
+          videoUrl: "https://test.test.test/manual-testing-video1.mp4",
+          transcript: "Effective manual testing techniques...",
           resources: ["Testing Strategies", "Manual Testing Patterns"],
         },
       },
@@ -871,7 +971,8 @@ const mockData = {
         duration: "50:00",
         completed: false,
         content: {
-          text: "Effective manual testing techniques...",
+          videoUrl: "https://test.test.test/manual-testing-video1.mp4",
+          transcript: "Effective manual testing techniques...",
           resources: ["Testing Strategies", "Manual Testing Patterns"],
         },
       },
@@ -1009,6 +1110,48 @@ function recalculateCoursesRating() {
   });
 }
 
+function parseDurationToSeconds(duration) {
+  if (!duration) {
+    return 0;
+  }
+
+  const timeParts = duration.split(":");
+  if (timeParts.length === 3) {
+    return parseInt(timeParts[0]) * 3600 + parseInt(timeParts[1]) * 60 + parseInt(timeParts[2]);
+  }
+  return parseInt(timeParts[0]) * 60 + parseInt(timeParts[1]);
+}
+
+function parseSecondsToDuration(seconds) {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secondsLeft = seconds % 60;
+
+  return hours > 0
+    ? `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${secondsLeft
+        .toString()
+        .padStart(2, "0")}`
+    : `${minutes.toString().padStart(2, "0")}:${secondsLeft.toString().padStart(2, "0")}`;
+}
+
+function roundSecondsToHours(seconds) {
+  // round to one decimal place
+  return Math.round((seconds / 3600) * 10) / 10;
+}
+
+function recalculateCoursesDuration() {
+  mockData.courses.forEach((course) => {
+    const lessons = mockData.courseLessons[course.id];
+    const totalDurationInSeconds = lessons.reduce(
+      (total, lesson) => total + parseDurationToSeconds(lesson?.duration),
+      0
+    );
+
+    course.totalHours = roundSecondsToHours(totalDurationInSeconds);
+    course.duration = `${roundSecondsToHours(totalDurationInSeconds)} hour(s)`;
+  });
+}
+
 function checkIfUserIsEnrolled(userId, courseId) {
   return mockData.userEnrollments.find((e) => areIdsEqual(e.userId, userId) && areIdsEqual(e.courseId, courseId));
 }
@@ -1020,6 +1163,7 @@ function findUserIdByEmail(email) {
 
 recalculateStudentsCount();
 recalculateCoursesRating();
+recalculateCoursesDuration();
 
 function handleLearning(req, res, isAdmin) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
@@ -1086,6 +1230,27 @@ function handleLearning(req, res, isAdmin) {
 
       if (lessons) {
         res.status(HTTP_OK).send(lessons);
+      } else {
+        res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Lessons not found"));
+      }
+      return;
+    }
+
+    // Get course preview lessons
+    // /learning/courses/{courseId}/lessons/preview
+    if (
+      urlParts.length === 6 &&
+      urlParts[1] === "learning" &&
+      urlParts[2] === "courses" &&
+      urlParts[4] === "lessons" &&
+      urlParts[5] === "preview"
+    ) {
+      const courseId = parseInt(urlParts[3]);
+      const lessons = mockData.courseLessons[courseId];
+
+      if (lessons) {
+        const previewLessons = lessons.slice(0, 3);
+        res.status(HTTP_OK).send({ previewLessons, totalLessons: lessons.length });
       } else {
         res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Lessons not found"));
       }
@@ -1377,7 +1542,9 @@ function handleLearning(req, res, isAdmin) {
           const { username, password, email, avatar, firstName, lastName } = req.body;
 
           if (mockData.users.find((u) => u.username === username || u.email === email)) {
-            res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatErrorResponse("User already exists"));
+            res
+              .status(HTTP_UNPROCESSABLE_ENTITY)
+              .send(formatErrorResponse("User already exists with that username or email"));
             return;
           }
 

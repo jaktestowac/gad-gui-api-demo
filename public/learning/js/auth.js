@@ -195,6 +195,13 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => {
           window.location.href = "/learning/login.html";
         }, 1000);
+      } else {
+        console.log(result);
+        if (result.error?.message) {
+          notifications.show(`Registration failed. ${result.error.message}`);
+        } else {
+          notifications.show("Registration failed. Please try again.");
+        }
       }
     } catch (error) {
       notifications.show("Registration failed. Please try again.");

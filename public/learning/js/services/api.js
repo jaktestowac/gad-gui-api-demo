@@ -130,11 +130,35 @@ class ApiService {
 
   // Lesson methods
   async getLessons(courseId) {
-    const response = await fetch(`${this.baseUrl}/courses/${courseId}/lessons`, {
-      headers: this.getDefaultHeaders(),
-    });
-    const data = await response.json();
-    return data;
+    try {
+      const response = await fetch(`${this.baseUrl}/courses/${courseId}/lessons`, {
+        headers: this.getDefaultHeaders(),
+      });
+      const data = await response.json();
+      return Array.isArray(data) ? data : [];
+    } catch (error) {
+      console.error("Error fetching lessons:", error);
+      return [];
+    }
+  }
+
+  async getPreviewLessons(courseId) {
+    try {
+      const response = await fetch(`${this.baseUrl}/courses/${courseId}/lessons/preview`, {
+        headers: this.getDefaultHeaders(),
+      });
+      const data = await response.json();
+      return {
+        previewLessons: Array.isArray(data.previewLessons) ? data.previewLessons : [],
+        totalLessons: data.totalLessons || 0,
+      };
+    } catch (error) {
+      console.error("Error fetching preview lessons:", error);
+      return {
+        previewLessons: [],
+        totalLessons: 0,
+      };
+    }
   }
 
   // Get course lessons titles only
