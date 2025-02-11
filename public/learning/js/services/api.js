@@ -408,6 +408,34 @@ class ApiService {
       throw error;
     }
   }
+
+  async checkAuthStatus() {
+    try {
+      const response = await fetch(`${this.baseUrl}/auth/status`, {
+        headers: this.getDefaultHeaders(),
+      });
+      const data = await response.json();
+      return data.authenticated;
+    } catch (error) {
+      console.error("Auth check failed:", error);
+      return false;
+    }
+  }
+
+  async getPublicCertificate(uuid) {
+    const response = await fetch(`${this.baseUrl}/certificates/public/${uuid}`, {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Certificate not found");
+    }
+
+    return await response.json();
+  }
 }
 
 window.api = new ApiService();

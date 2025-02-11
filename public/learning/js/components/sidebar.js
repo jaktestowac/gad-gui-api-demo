@@ -17,7 +17,7 @@ function injectSidebar() {
                 }</span>
                 <img id="userAvatar" src="${avatar}" alt="User avatar" aria-label="User Avatar" class="user-avatar">
             </div>
-            <h3>Navigation</h3>
+            <h3 align="center">Navigation</h3>
             <nav>
                 <a href="dashboard.html" ${
                   currentPath.endsWith("dashboard.html") ? 'class="active"' : ""

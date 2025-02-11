@@ -4,6 +4,7 @@ class VideoPlayer {
     this.currentTime = 0;
     this.isPlaying = false;
     this.timer = null;
+    this.playbackSpeed = 1;
 
     this.activeAnimations = {
       timeouts: new Set(),
@@ -62,10 +63,44 @@ class VideoPlayer {
         { text: "  });", type: "function" },
         { text: "});", type: "function" },
       ],
+      [
+        { text: "// Owls are not what they seem", type: "comment" },
+        { text: "", type: "empty" },
+        { text: "const owl = {", type: "variable" },
+        { text: "  name: 'Hoot',", type: "variable" },
+        { text: "  age: 5,", type: "variable" },
+        { text: "  color: 'brown',", type: "variable" },
+        { text: "};", type: "variable" },
+        { text: "", type: "empty" },
+        { text: "console.log(owl.name);", type: "call" },
+      ],
+      [
+        { text: "import { test, expect } from '@playwright/test';", type: "import" },
+        { text: "", type: "empty" },
+        { text: "test.describe('Articles - Viewer Role', () => {", type: "function" },
+        { text: "  test('User can view articles', async ({ page }) => {", type: "function" },
+        { text: "    // Arrange", type: "comment" },
+        { text: "    await page.goto('/articles.html');", type: "call" },
+        { text: "", type: "empty" },
+        { text: "    // Assert - 6 articles are displayed", type: "comment" },
+        { text: "    await expect(page.locator('.card-wrapper')).toHaveCount(6);", type: "assertion" },
+        { text: "", type: "empty" },
+        { text: "    // Act - Click on the first article", type: "comment" },
+        { text: "    await page.locator('.card-wrapper').nth(0).click();", type: "call" },
+        { text: "", type: "empty" },
+        { text: "    // Assert - Article title and body are visible", type: "comment" },
+        { text: "    await expect(page.getByTestId('article-title')).toBeVisible();", type: "assertion" },
+        { text: "    await expect(page.getByTestId('article-body')).toBeVisible();", type: "assertion" },
+        { text: "  });", type: "function" },
+        { text: "});", type: "function" },
+      ],
     ];
 
     const animationHtml = `
       <div class="video-animation">
+        <div class="video-overlay">
+          <i class="fas fa-play play-icon" aria-label="Play video" title="Play video"></i>
+        </div>
         <div class="code-window">
           <div class="code-header">
             <div class="window-button close"></div>
@@ -81,6 +116,7 @@ class VideoPlayer {
               <div class="typing-dot"></div>
             </div>
           </div>
+          
         </div>
       </div>
     `;
@@ -103,11 +139,38 @@ class VideoPlayer {
     this.videoScreen.addEventListener("click", () => this.togglePlayback());
     this.playBtn.addEventListener("click", () => this.togglePlayback());
 
-    this.player.querySelector(".video-progress").addEventListener("click", (e) => {
+    this.player.querySelector(".video-progress").addEventListener("click", async (e) => {
       const rect = e.target.getBoundingClientRect();
       const pos = (e.clientX - rect.left) / rect.width;
       this.seekTo(pos);
+
+      // After seeking, update the code animation to a random state
+      if (this.isPlaying) {
+        this.stopCodeAnimation();
+        await this.clearCodeContent();
+        this.startCodeAnimation();
+      }
     });
+
+    // Add speed control listeners
+    document.querySelectorAll(".speed-control").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        const speed = parseFloat(e.target.dataset.speed);
+        this.setPlaybackSpeed(speed);
+
+        // Update active state
+        document.querySelectorAll(".speed-control").forEach((b) => b.classList.remove("active"));
+        e.target.classList.add("active");
+      });
+    });
+  }
+
+  async clearCodeContent() {
+    if (this.codeContent) {
+      this.codeContent.innerHTML = "";
+      // Add a small delay to ensure clean transition
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
   }
 
   listenForParentMessages() {
@@ -125,7 +188,12 @@ class VideoPlayer {
   }
 
   togglePlayback() {
-    if (!this.isPlaying) {
+    if (this.currentTime >= this.duration) {
+      // Reset when clicking redo button
+      this.currentTime = 0;
+      this.updateProgress();
+      this.play();
+    } else if (!this.isPlaying) {
       this.play();
     } else {
       this.pause();
@@ -138,40 +206,46 @@ class VideoPlayer {
     this.playBtn.innerHTML = '<i class="fas fa-pause"></i>';
     this.videoMessage.classList.add("playing");
     this.videoScreen.style.background = "#282c34"; // Change to code editor background
+    document.querySelector(".video-overlay").classList.remove("visible");
     this.startTimer();
-    this.startCodeAnimation(); // Add this line
+    this.startCodeAnimation();
   }
 
   pause() {
     this.isPlaying = false;
     this.playBtn.innerHTML = '<i class="fas fa-play"></i>';
-    this.videoMessage.classList.remove("playing");
-    this.videoScreen.style.background = "linear-gradient(45deg, #1a1a1a, #2a2a2a)";
+    this.videoScreen.style.background = "#282c34"; // Keep dark background for code visibility
+    document.querySelector(".video-overlay").classList.add("visible");
 
-    // Stop all animations and clear state
+    // Stop timer but keep animations state
     this.stopTimer();
     this.stopCodeAnimation();
-    this.clearAnimations();
 
-    // Reset animation state
-    this.currentSnippetIndex = 0;
+    // Remove clearAnimations() call to keep current code visible
+    // this.clearAnimations();
 
-    // Reset file type display
-    const fileTypeElement = document.querySelector(".file-type");
-    if (fileTypeElement) {
-      fileTypeElement.textContent = this.fileTypes[0];
+    // No need to reset animation state or file type
+  }
+
+  setPlaybackSpeed(speed) {
+    this.playbackSpeed = speed;
+
+    // Clear existing timer and start a new one with updated speed
+    if (this.isPlaying) {
+      this.stopTimer();
+      this.startTimer();
     }
   }
 
   startTimer() {
     this.timer = setInterval(() => {
-      this.currentTime = Math.min(this.currentTime + 1, this.duration);
+      this.currentTime = Math.min(this.currentTime + 1 * this.playbackSpeed, this.duration);
       this.updateProgress();
 
       if (this.currentTime >= this.duration) {
         this.stop();
       }
-    }, 1000);
+    }, 1000 / this.playbackSpeed);
   }
 
   stopTimer() {
@@ -264,6 +338,8 @@ class VideoPlayer {
     const frame = requestAnimationFrame(async () => {
       this.activeAnimations.frames.add(frame);
 
+      // Pick a random snippet instead of sequential
+      this.currentSnippetIndex = Math.floor(Math.random() * this.codeSnippets.length);
       const snippet = this.codeSnippets[this.currentSnippetIndex];
       document.querySelector(".file-type").textContent = this.fileTypes[this.currentSnippetIndex];
 
@@ -277,7 +353,7 @@ class VideoPlayer {
       }
 
       if (this.isAnimating) {
-        this.currentSnippetIndex = (this.currentSnippetIndex + 1) % this.codeSnippets.length;
+        // Don't increment index since we're picking randomly
         this.animateNextSnippet();
       }
 
@@ -309,21 +385,36 @@ class VideoPlayer {
       for (const char of line.text) {
         if (!this.isAnimating) break;
 
-        await new Promise((resolve, reject) => {
-          const timeout = setTimeout(() => resolve(), 25);
+        try {
+          await new Promise((resolve, reject) => {
+            // Apply playback speed to typing animation (25ms base typing speed)
+            const timeout = setTimeout(() => resolve(), 25 / this.playbackSpeed);
 
-          // Track the promise and timeout
-          const promise = { resolve, reject };
-          this.activeAnimations.timeouts.add(timeout);
-          this.activeAnimations.promises.add(promise);
+            // Track the promise and timeout
+            const promise = {
+              resolve,
+              reject: () => {
+                clearTimeout(timeout);
+                reject(new Error("Animation cancelled"));
+              },
+            };
 
-          // Cleanup function
-          promise.cleanup = () => {
-            clearTimeout(timeout);
-            this.activeAnimations.timeouts.delete(timeout);
-            this.activeAnimations.promises.delete(promise);
-          };
-        });
+            this.activeAnimations.timeouts.add(timeout);
+            this.activeAnimations.promises.add(promise);
+
+            // Cleanup function
+            promise.cleanup = () => {
+              clearTimeout(timeout);
+              this.activeAnimations.timeouts.delete(timeout);
+              this.activeAnimations.promises.delete(promise);
+            };
+          });
+        } catch (error) {
+          if (error.message === "Animation cancelled") {
+            break;
+          }
+          throw error;
+        }
 
         if (!this.isAnimating) break;
         currentText += char;
@@ -332,11 +423,27 @@ class VideoPlayer {
 
       if (!this.isAnimating) break;
 
-      // Track line delay promise
-      await new Promise((resolve, reject) => {
-        const timeout = setTimeout(resolve, 100);
-        this.activeAnimations.timeouts.add(timeout);
-      });
+      // Track line delay promise with playback speed
+      try {
+        await new Promise((resolve, reject) => {
+          // Apply playback speed to line delay (100ms base delay)
+          const timeout = setTimeout(resolve, 100 / this.playbackSpeed);
+          const promise = {
+            resolve,
+            reject: () => {
+              clearTimeout(timeout);
+              reject(new Error("Animation cancelled"));
+            },
+          };
+          this.activeAnimations.timeouts.add(timeout);
+          this.activeAnimations.promises.add(promise);
+        });
+      } catch (error) {
+        if (error.message === "Animation cancelled") {
+          break;
+        }
+        throw error;
+      }
     }
   }
 

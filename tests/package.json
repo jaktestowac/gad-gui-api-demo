@@ -7,6 +7,7 @@
     "test-jest": "cross-env NODE_ENV=test PORT=3002 jest --testTimeout=10000 --detectOpenHandles",
     "test": "cross-env NODE_ENV=test PORT=3002 mocha --recursive --require hooks.js",
     "test-books": "cross-env NODE_ENV=test PORT=3002 mocha test/book-shop/**/*.spec.js --recursive --require hooks.js",
+    "test-learning": "cross-env NODE_ENV=test PORT=3002 mocha test/learning/**/*.spec.js --recursive --require hooks.js",
     "testr": "cross-env NODE_ENV=test PORT=3002 mocha --recursive --require hooks.js -R mocha-multi --reporter-options spec=-,xunit=./reports/test-report.xml"
   },
   "author": "jaktestowac.pl",

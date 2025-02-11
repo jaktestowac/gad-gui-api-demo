@@ -311,16 +311,6 @@
       },
       "CourseRating": {
         "type": "object",
-        "required": ["rating"],
-        "properties": {
-          "userId": { "type": "integer" },
-          "courseId": { "type": "integer" },
-          "rating": { "type": "number", "minimum": 1, "maximum": 5 },
-          "comment": { "type": "string" }
-        }
-      },
-      "CourseRating": {
-        "type": "object",
         "properties": {
           "userId": { "type": "integer" },
           "courseId": { "type": "integer" },
@@ -331,6 +321,22 @@
             "type": "object",
             "properties": {
               "name": { "type": "string" },
+              "avatar": { "type": "string" }
+            }
+          }
+        }
+      },
+      "AuthStatusResponse": {
+        "type": "object",
+        "properties": {
+          "authenticated": { "type": "boolean" },
+          "user": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "integer" },
+              "email": { "type": "string" },
+              "firstName": { "type": "string" },
+              "lastName": { "type": "string" },
               "avatar": { "type": "string" }
             }
           }
@@ -479,7 +485,7 @@
     },
     "/learning/courses": {
       "get": {
-        "security": [], // Public endpoint - explicitly mark as unsecured
+        "security": [],
         "tags": ["Courses"],
         "summary": "Get all courses",
         "responses": {
@@ -501,7 +507,7 @@
     },
     "/learning/courses/{courseId}": {
       "get": {
-        "security": [], // Public endpoint - explicitly mark as unsecured
+        "security": [],
         "tags": ["Courses"],
         "summary": "Get course by ID",
         "parameters": [
@@ -1416,6 +1422,30 @@
             }
           },
           "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/learning/auth/status": {
+      "get": {
+        "tags": ["Authentication"],
+        "summary": "Check authentication status",
+        "description": "Returns the current authentication status and user details if authenticated",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authentication status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthStatusResponse"
+                }
+              }
+            }
+          }
         }
       }
     }

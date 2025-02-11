@@ -136,8 +136,10 @@
   gap: 10px;
   margin: 10px 0;
   color: #64748b;
-  font-size: 0.8em;
+  font-size: 0.7em;
   flex-wrap: wrap;
+  align-items: center;
+  align-content: center;
 }
 
 .enroll-button {
@@ -152,6 +154,22 @@
 }
 
 .enroll-button:hover {
+  background: var(--secondary-color);
+}
+
+.continue-button {
+  width: 100%;
+  padding: 8px;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  text-align: center;
+}
+
+.continue-button:hover {
   background: var(--secondary-color);
 }
 
@@ -475,21 +493,6 @@
   color: #014c8c;
 }
 
-.continue-button {
-  width: 100%;
-  padding: 8px;
-  background: var(--primary-color);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.continue-button:hover {
-  background: var(--secondary-color);
-}
-
 .mobile-menu-button {
   display: none;
   position: fixed;
@@ -511,9 +514,9 @@
 }
 
 .welcome-container {
-  max-width: 1200px;
+  max-width: 900px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 20px;
 }
 
 .cta-buttons {
@@ -525,12 +528,11 @@
 .welcome-hero {
   position: relative;
   text-align: center;
-  margin-bottom: 20px;
-  padding: 40px 20px;
+  margin-bottom: 15px;
+  padding: 25px 20px;
   background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-  border-radius: 20px;
+  border-radius: 12px;
   color: white;
-  overflow: hidden;
 }
 
 .welcome-hero::before {
@@ -545,16 +547,16 @@
 }
 
 .welcome-hero h1 {
-  font-size: 3.5em;
-  margin-bottom: 20px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  font-size: 2.2em;
+  margin-bottom: 15px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .welcome-hero p {
-  font-size: 1.4em;
-  margin-bottom: 40px;
+  font-size: 1.1em;
+  margin-bottom: 25px;
   opacity: 0.9;
-  max-width: 800px;
+  max-width: 600px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -568,9 +570,9 @@
 }
 
 .cta-button {
-  padding: 15px 40px;
-  font-size: 1.1em;
-  border-radius: 30px;
+  padding: 10px 25px;
+  font-size: 0.95em;
+  border-radius: 20px;
   transition: all 0.3s ease;
   text-decoration: none;
   display: inline-flex;
@@ -602,19 +604,19 @@
 
 .features-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 30px;
-  margin-top: 60px;
-  padding: 0 20px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 15px;
+  margin-top: 25px;
+  padding: 0 15px;
 }
 
 .feature-card {
   background: white;
-  padding: 20px;
-  border-radius: 16px;
+  padding: 12px;
+  border-radius: 8px;
   text-align: center;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
   position: relative;
   overflow: hidden;
 }
@@ -641,9 +643,9 @@
 }
 
 .feature-card i {
-  font-size: 3em;
+  font-size: 1.8em;
   color: var(--primary-color);
-  margin-bottom: 2px;
+  margin-bottom: 8px;
   transition: transform 0.3s ease;
 }
 
@@ -653,13 +655,15 @@
 
 .feature-card h3 {
   color: var(--text-dark);
-  margin-bottom: 2px;
-  font-size: 1.5em;
+  margin-bottom: 6px;
+  font-size: 1.1em;
 }
 
 .feature-card p {
   color: var(--text-light);
-  line-height: 1.7;
+  line-height: 1.4;
+  font-size: 0.85em;
+  margin: 0;
 }
 
 @keyframes slide {
@@ -686,20 +690,17 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 30px;
-  margin-top: 40px;
-}
-
 @media (max-width: 768px) {
   .welcome-hero {
-    padding: 40px 20px;
+    padding: 20px 15px;
   }
 
   .welcome-hero h1 {
-    font-size: 2em;
+    font-size: 1.8em;
+  }
+
+  .welcome-hero p {
+    font-size: 1em;
   }
 
   .cta-buttons {
@@ -708,7 +709,32 @@
   }
 
   .features-grid {
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    padding: 0 10px;
+  }
+
+  .feature-card {
+    padding: 10px;
+  }
+
+  .feature-card i {
+    font-size: 1.5em;
+    margin-bottom: 6px;
+  }
+
+  .feature-card h3 {
+    font-size: 1em;
+    margin-bottom: 4px;
+  }
+
+  .feature-card p {
+    font-size: 0.8em;
+  }
+
+  .cta-button {
+    padding: 8px 20px;
+    font-size: 0.9em;
   }
 }
 
@@ -811,7 +837,7 @@
 
   .course-stats {
     gap: 8px;
-    font-size: 0.8em;
+    font-size: 0.7em;
   }
 }
 
@@ -2013,7 +2039,6 @@ iframe.custom-video-player {
   }
 }
 
-/* Rating section styles */
 .rating-section {
   margin-top: 2rem;
   padding: 1rem;
@@ -2052,7 +2077,6 @@ iframe.custom-video-player {
   resize: vertical;
 }
 
-/* Course Ratings Styles */
 .course-ratings-section {
   margin: 1rem 0;
   padding: 0.75rem;
@@ -2154,7 +2178,6 @@ iframe.custom-video-player {
   font-size: 0.75rem;
 }
 
-/* Update existing stars style to match rating display */
 .stars {
   color: #ffd700;
   font-size: 1.2rem;

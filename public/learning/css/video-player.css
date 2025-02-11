@@ -67,8 +67,7 @@ body {
 }
 
 .video-message.playing .play-icon {
-  opacity: 0;
-  visibility: hidden;
+  opacity: 1;
   transform: scale(0.7);
   transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
 }
@@ -97,6 +96,41 @@ body {
   font-family: monospace;
   overflow: hidden;
   top: 0px;
+}
+
+.video-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 100;
+  cursor: pointer;
+}
+
+.video-overlay.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.video-overlay .play-icon {
+  font-size: 64px;
+  color: white;
+  transition: transform 0.3s ease;
+  opacity: 0.8;
+  z-index: 110;
+}
+
+.video-overlay:hover .play-icon {
+  transform: scale(1.1);
+  opacity: 1;
 }
 
 .code-window {
@@ -304,6 +338,7 @@ body {
   }
 }
 
+/* Remove duplicate video-controls-bar styles and merge into one */
 .video-controls-bar {
   position: absolute;
   bottom: 0;
@@ -324,9 +359,13 @@ body {
   opacity: 1;
 }
 
+.video-animation:hover .video-controls-bar {
+  opacity: 1;
+}
+
 .video-progress {
   flex: 1;
-  height: 4px;
+  height: 8px;
   background: rgba(255, 255, 255, 0.2);
   border-radius: 2px;
   cursor: pointer;
@@ -373,4 +412,57 @@ body {
 
 .line-number {
   margin-right: 20px;
+}
+
+.controls {
+  display: flex;
+  gap: 8px;
+  margin-right: 16px;
+}
+
+.speed-control {
+  background: #2c313a;
+  border: none;
+  color: #9da5b4;
+  padding: 2px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s ease;
+}
+
+.speed-control:hover {
+  background: #383e4a;
+  color: #fff;
+}
+
+.speed-control.active {
+  background: var(--primary-color);
+  color: white;
+}
+
+.video-controls-bar .controls {
+  display: flex;
+  gap: 4px;
+  margin: 0 8px;
+}
+
+.video-controls-bar .speed-control {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s ease;
+}
+
+.video-controls-bar .speed-control:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.video-controls-bar .speed-control.active {
+  background: var(--primary-color);
+  color: white;
 }

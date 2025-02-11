@@ -61,8 +61,8 @@ function filterAndDisplayCourses(searchTerm = "") {
                 ${
                   isLoggedIn()
                     ? enrolledCourseIds.has(course.id)
-                      ? `<a href="course-viewer.html?id=${course.id}" class="continue-button" id="continue-button-${course.id}" aria-label="Continue Learning" title="Continue Learning">
-                            Continue Learning
+                      ? `<a href="course-viewer.html?id=${course.id}"  class="continue-button" id="continue-button-${course.id}" aria-label="Continue Learning" title="Continue Learning">
+                            Continue Learning 
                            </a>`
                       : `<button class="enroll-button" onclick="enrollCourse(${course.id})" id="enroll-button-${course.id}" aria-label="Enroll Now" title="Enroll Now - $${course.price}">
                             Enroll Now - $${course.price}

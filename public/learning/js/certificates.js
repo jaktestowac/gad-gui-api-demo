@@ -19,7 +19,7 @@ async function displayCertificates() {
     certificatesContainer.innerHTML = certificates
       .map(
         (cert) => `
-            <div class="certificate-card" id="${cert.certificateNumber}">
+            <div class="certificate-card" id="${cert.uuid}">
                 <div class="certificate-content">
                     <div class="certificate-header">
                         <i class="fas fa-award"></i>
@@ -33,10 +33,10 @@ async function displayCertificates() {
                         <p>Issued by: ${cert.issuedBy}</p>
                     </div>
                     <div class="certificate-actions">
-                        <button class="primary-button" onclick="downloadCertificate('${cert.certificateNumber}')">
+                        <button class="primary-button" onclick="downloadCertificate('${cert.uuid}')">
                             <i class="fas fa-download"></i> Download PDF
                         </button>
-                        <button class="primary-button" onclick="shareCertificate('${cert.certificateNumber}')">
+                        <button class="primary-button" onclick="shareCertificate('${cert.uuid}')">
                             <i class="fas fa-share"></i> Share
                         </button>
                     </div>
@@ -85,8 +85,14 @@ function downloadCertificate(certificateId) {
   showNotification("Download functionality coming soon!", "info");
 }
 
-function shareCertificate(certificateId) {
-  showNotification("Share functionality coming soon!", "info");
+async function shareCertificate(certificateUuid) {
+  try {
+    const shareLink = `${window.location.origin}/learning/public-certificate.html?id=${certificateUuid}`;
+    await navigator.clipboard.writeText(shareLink);
+    showNotification("Share link copied to clipboard!", "success");
+  } catch (error) {
+    showNotification("Failed to generate share link", "error");
+  }
 }
 
 document.addEventListener("DOMContentLoaded", displayCertificates);

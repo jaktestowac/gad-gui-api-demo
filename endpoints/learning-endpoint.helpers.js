@@ -6,7 +6,7 @@ const {
   HTTP_UNPROCESSABLE_ENTITY,
   HTTP_FORBIDDEN,
 } = require("../helpers/response.helpers");
-const { formatErrorResponse } = require("../helpers/helpers");
+const { formatErrorResponse, generateUuid } = require("../helpers/helpers");
 const { isAuthenticated, createToken } = require("../helpers/jwtauth");
 const { logTrace, logDebug } = require("../helpers/logger-api");
 const { verifyAccessToken } = require("../helpers/validation.helpers");
@@ -395,6 +395,7 @@ const mockData = {
       courseId: 1,
       issueDate: "2023-06-30",
       certificateNumber: "CERT-2023-001",
+      uuid: "550e8400-e29b-41d4-a716-446655440000",
       courseTitle: "Introduction to Web Development",
       recipientName: "Michael Scott",
       issuedBy: "John Doe",
@@ -1153,7 +1154,7 @@ function recalculateCoursesDuration() {
 }
 
 function checkIfUserIsEnrolled(userId, courseId) {
-  return mockData.userEnrollments.find((e) => areIdsEqual(e.userId, userId) && areIdsEqual(e.courseId, courseId));
+  return mockData.userEnrollments.some((e) => areIdsEqual(e.userId, userId) && areIdsEqual(e.courseId, courseId));
 }
 
 function findUserIdByEmail(email) {
@@ -1172,6 +1173,61 @@ function handleLearning(req, res, isAdmin) {
 
   // GET endpoints
   if (req.method === "GET") {
+    // Add public certificate endpoint
+    // /api/certificates/public/{certificateId}
+    if (urlParts[2] === "certificates" && urlParts[3] === "public") {
+      const certUuid = urlParts[4];
+      const certificate = mockData.certificates.find((c) => c.uuid === certUuid);
+      if (!certificate) {
+        res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Certificate not found"));
+        return;
+      }
+
+      // Get additional data
+      const course = mockData.courses.find((c) => areIdsEqual(c.id, certificate.courseId));
+      const user = mockData.users.find((u) => areIdsEqual(u.id, certificate.userId));
+
+      const publicCertData = {
+        certificateNumber: certificate.certificateNumber,
+        uuid: certificate.uuid,
+        courseTitle: certificate.courseTitle,
+        recipientName: `${user.firstName} ${user.lastName}`,
+        issueDate: certificate.issueDate,
+        issuedBy: certificate.issuedBy,
+        courseDuration: course.duration,
+        courseLevel: course.level,
+        issuerTitle: "Course Instructor",
+      };
+
+      res.status(HTTP_OK).send(publicCertData);
+      return;
+    }
+
+    // Add new auth status endpoint before other GET handlers
+    // /learning/auth/status
+    if (urlParts.length === 4 && urlParts[1] === "learning" && urlParts[2] === "auth" && urlParts[3] === "status") {
+      const verifyTokenResult = verifyAccessToken(req, res, "learning", req.url);
+      const userExists = verifyTokenResult ? checkIfUserExists(verifyTokenResult.email) : false;
+
+      if (!verifyTokenResult || !userExists) {
+        res.status(HTTP_OK).send({ authenticated: false });
+        return;
+      }
+
+      const user = mockData.users.find((u) => u.email === verifyTokenResult.email);
+      res.status(HTTP_OK).send({
+        authenticated: true,
+        // user: {
+        //   id: user.id,
+        //   email: user.email,
+        //   firstName: user.firstName,
+        //   lastName: user.lastName,
+        //   avatar: user.avatar,
+        // },
+      });
+      return;
+    }
+
     // Specific endpoints should come before more general ones
     // Get lesson content (most specific)
     // /learning/users/{userId}/courses/{courseId}/lessons/{lessonId}
@@ -1212,22 +1268,21 @@ function handleLearning(req, res, isAdmin) {
     // Get course lessons
     // /learning/courses/{courseId}/lessons
     if (urlParts.length === 5 && urlParts[1] === "learning" && urlParts[2] === "courses" && urlParts[4] === "lessons") {
-      const courseId = parseInt(urlParts[3]);
-      const lessons = mockData.courseLessons[courseId];
-
       if (checkIfUserIsAuthenticated(req, res, "learning", urlEnds) === false) {
         res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not authenticated"));
         return;
       }
 
+      const courseId = parseInt(urlParts[3]);
       const userId = findUserIdByEmail(verifyTokenResult?.email);
-      const isUserEnrolled = checkIfUserIsEnrolled(userId, courseId);
+      const isEnrolled = checkIfUserIsEnrolled(userId, courseId);
 
-      if (!isUserEnrolled) {
+      if (!isEnrolled) {
         res.status(HTTP_FORBIDDEN).send(formatErrorResponse("User not enrolled in this course"));
         return;
       }
 
+      const lessons = mockData.courseLessons[courseId];
       if (lessons) {
         res.status(HTTP_OK).send(lessons);
       } else {
@@ -1577,13 +1632,12 @@ function handleLearning(req, res, isAdmin) {
         // Enroll in a course
         // /learning/courses/:courseId/enroll
         case "enroll": {
-          if (checkIfUserIsAuthenticated(req, res, "learning", urlEnds) === false) {
+          if (!checkIfUserIsAuthenticated(req, res)) {
             res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not authenticated"));
             return;
           }
 
           const { userId } = req.body;
-
           if (!checkIfUserIdMatchesEmail(userId, verifyTokenResult.email)) {
             res.status(HTTP_FORBIDDEN).send(formatErrorResponse("User not authorized"));
             return;
@@ -1596,11 +1650,7 @@ function handleLearning(req, res, isAdmin) {
           }
 
           // Check if already enrolled
-          const existingEnrollment = mockData.userEnrollments.find(
-            (e) => areIdsEqual(e.userId, userId) && areIdsEqual(e.courseId, courseId)
-          );
-
-          if (existingEnrollment) {
+          if (checkIfUserIsEnrolled(userId, courseId)) {
             res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Already enrolled in this course"));
             return;
           }
@@ -1617,7 +1667,6 @@ function handleLearning(req, res, isAdmin) {
           };
 
           mockData.userEnrollments.push(enrollment);
-
           recalculateStudentsCount();
 
           res.status(HTTP_OK).send({ success: true, enrollment });
@@ -1722,6 +1771,7 @@ function handleLearning(req, res, isAdmin) {
                     courseId,
                     issueDate: now,
                     certificateNumber: `CERT-${new Date().getFullYear()}-${String(maxCertId + 1).padStart(3, "0")}`,
+                    uuid: generateUuid(),
                     courseTitle: course.title,
                     recipientName: `${user.firstName} ${user.lastName}`,
                     issuedBy: course.instructor,

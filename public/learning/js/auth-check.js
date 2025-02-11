@@ -7,8 +7,10 @@ function isLoggedIn() {
   return getCookie("learning_user_id") !== null;
 }
 
-function requireAuth() {
-  if (!isLoggedIn()) {
+async function requireAuth() {
+  const isAuth = await api.checkAuthStatus();
+
+  if (!isAuth) {
     const currentPath = window.location.pathname;
     const allowedPaths = [
       "/learning/dashboard.html",
@@ -27,12 +29,14 @@ function requireAuth() {
       return false;
     }
   }
-  return true;
+  return isAuth;
 }
 
-function checkAuth() {
+async function checkAuth() {
   const redirectUrl = getCookie("redirectUrl");
-  if (isLoggedIn() && redirectUrl) {
+  const isAuth = await api.checkAuthStatus();
+
+  if (isAuth && redirectUrl) {
     document.cookie = "redirectUrl=; path=/; max-age=0";
     if (window.location.href !== redirectUrl) {
       window.location.href = redirectUrl;
@@ -44,7 +48,7 @@ function checkAuth() {
 window.isLoggedIn = isLoggedIn;
 window.requireAuth = requireAuth;
 
-document.addEventListener("DOMContentLoaded", () => {
-  checkAuth();
-  requireAuth();
+document.addEventListener("DOMContentLoaded", async () => {
+  await checkAuth();
+  await requireAuth();
 });

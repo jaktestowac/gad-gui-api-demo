@@ -13,9 +13,9 @@ function updateAuthButtons() {
                 Go to Dashboard
             </a>
         `;
-    welcomeMessage.textContent = `Welcome back, ${getCookie("learning_first_name")} ${getCookie(
-      "learning_last_name"
-    )}!`;
+    welcomeMessage.innerHTML = `<i class="fas fa-user"></i> Welcome back, ${getCookie(
+      "learning_first_name"
+    )} ${getCookie("learning_last_name")}!`;
   } else {
     authButtons.innerHTML = `
             <a href="dashboard.html" class="cta-button primary" name="demo" aria-label="Demo">
