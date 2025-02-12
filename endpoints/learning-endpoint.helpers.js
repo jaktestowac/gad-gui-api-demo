@@ -1603,6 +1603,35 @@ function handleLearning(req, res, isAdmin) {
             return;
           }
 
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(email)) {
+            res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatErrorResponse("Invalid email format"));
+            return;
+          }
+
+          if (password.length < 1) {
+            res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatErrorResponse("Password must be at least 1 characters"));
+            return;
+          }
+
+          const firstNameRegex = /^[a-zA-Z\s-]{2,}$/;
+          if (!firstNameRegex.test(firstName)) {
+            res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatErrorResponse("Invalid first name format"));
+            return;
+          }
+
+          const lastNameRegex = /^[a-zA-Z\s-]{2,}$/;
+          if (!lastNameRegex.test(lastName)) {
+            res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatErrorResponse("Invalid last name format"));
+            return;
+          }
+
+          const usernameRegex = /^[a-zA-Z0-9_]{3,}$/;
+          if (!usernameRegex.test(username)) {
+            res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatErrorResponse("Invalid username format"));
+            return;
+          }
+
           const maxId = mockData.users.reduce((max, user) => (user.id > max ? user.id : max), 0);
 
           const newUser = {
