@@ -143,8 +143,8 @@ const logoGAD = (path = "/") => {
 
 const swaggerMenu = (path = "") => {
   return `
-  <div align="center">
-    <a href="/tools/swagger-learning.html" style="text-decoration: none; color: white; margin-right: 15px; " >
+  <div align="center" style="margin-right: 15px;">
+    <a href="/tools/swagger-learning.html" style="text-decoration: none; color: white; " >
   <img src="${path}/data/icons/swagger-simple.png" style="width: 30px !important; height: 30px !important; padding: 0" alt="" />
   </a></div>`;
 };
