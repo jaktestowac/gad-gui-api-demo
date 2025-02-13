@@ -152,13 +152,11 @@ class VideoPlayer {
       }
     });
 
-    // Add speed control listeners
     document.querySelectorAll(".speed-control").forEach((btn) => {
       btn.addEventListener("click", (e) => {
         const speed = parseFloat(e.target.dataset.speed);
         this.setPlaybackSpeed(speed);
 
-        // Update active state
         document.querySelectorAll(".speed-control").forEach((b) => b.classList.remove("active"));
         e.target.classList.add("active");
       });
@@ -168,7 +166,6 @@ class VideoPlayer {
   async clearCodeContent() {
     if (this.codeContent) {
       this.codeContent.innerHTML = "";
-      // Add a small delay to ensure clean transition
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
   }
@@ -176,7 +173,6 @@ class VideoPlayer {
   listenForParentMessages() {
     window.addEventListener("message", (event) => {
       const { type, data } = event.data;
-      console.log("Received message", type, data);
       switch (type) {
         case "initialize": {
           this.duration = parseInt(data.duration) || 0;
@@ -190,7 +186,6 @@ class VideoPlayer {
 
   togglePlayback() {
     if (this.currentTime >= this.duration) {
-      // Reset when clicking redo button
       this.currentTime = 0;
       this.updateProgress();
       this.play();

@@ -41,6 +41,63 @@ function handleViewChange(view) {
   container.classList.add(view === "list" ? "instructor-course-list" : "instructor-course-grid");
 }
 
+function openCourse(courseId) {
+  window.location.href = `course-lessons.html?courseId=${courseId}`;
+}
+
+function viewCourse(courseId) {
+  window.location.href = `course-details.html?courseId=${courseId}`;
+}
+
+function renderCourseCard(course, viewMode = "grid") {
+  const html =
+    viewMode === "grid"
+      ? `
+    <div class="course-card">
+      <div class="course-header">
+        <h3>${course.title}</h3>
+        <p>${course.description}</p>
+      </div>
+      <div class="course-stats">
+        <span><i class="fas fa-user-graduate"></i> ${course.students}</span>
+        <span><i class="fas fa-star"></i> ${course.rating.toFixed(1)}</span>
+        <span><i class="fas fa-dollar-sign"></i> ${course.price.toFixed(2)}</span>
+      </div>
+      <div class="course-actions">
+        <button class="secondary-button" onclick="viewCourse(${course.id})">
+          <i class="fas fa-eye"></i> View Lessons
+        </button>
+        <button class="secondary-button" onclick="openCourse(${course.id})">
+          <i class="fas fa-book"></i> Manage Lessons
+        </button>
+      </div>
+    </div>
+  `
+      : `
+    <div class="course-card">
+      <div class="course-header">
+        <h3>${course.title}</h3>
+        <p>${course.description}</p>
+      </div>
+      <div class="course-stats">
+        <span><i class="fas fa-user-graduate"></i> ${course.students} Students</span>
+        <span><i class="fas fa-star"></i> ${course.rating.toFixed(1)} Rating</span>
+        <span><i class="fas fa-dollar-sign"></i> $${course.price.toFixed(2)}</span>
+      </div>
+      <div class="course-actions">
+        <button class="secondary-button" onclick="viewCourse(${course.id})">
+          <i class="fas fa-eye"></i> View Lessons
+        </button>
+        <button class="secondary-button" onclick="openCourse(${course.id})">
+          <i class="fas fa-book"></i> Manage Lessons
+        </button>
+      </div>
+    </div>
+  `;
+
+  return html;
+}
+
 function renderInstructorCourses(courses) {
   const coursesContainer = document.getElementById("instructorCourses");
   const currentView = localStorage.getItem("instructorViewPreference") || "grid";
@@ -56,31 +113,7 @@ function renderInstructorCourses(courses) {
     return;
   }
 
-  coursesContainer.innerHTML = courses
-    .map(
-      (course) => `
-    <div class="course-card">
-      <div class="course-header">
-        <h3>${course.title}</h3>
-        <p>${course.description}</p>
-      </div>
-      <div class="course-stats">
-        <span><i class="fas fa-users"></i> ${course.students || 0} students</span>
-        <span><i class="fas fa-star"></i> ${course.rating || 0} rating</span>
-        <span><i class="fas fa-dollar-sign"></i> ${course.price}</span>
-      </div>
-      <div class="course-actions">
-        <button onclick="editCourse(${course.id})" class="secondary-button">
-          <i class="fas fa-edit"></i> Edit
-        </button>
-        <button onclick="manageLessons(${course.id})" class="primary-button">
-          <i class="fas fa-list"></i> Lessons
-        </button>
-      </div>
-    </div>
-  `
-    )
-    .join("");
+  coursesContainer.innerHTML = courses.map((course) => renderCourseCard(course, currentView)).join("");
 
   handleViewChange(currentView);
 }

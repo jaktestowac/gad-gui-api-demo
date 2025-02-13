@@ -223,6 +223,7 @@
   background: none;
   border: none;
   font-size: 0.875rem;
+  flex-direction: column;
 }
 
 .instructor-course-list .course-actions {
@@ -257,7 +258,7 @@
 }
 
 .course-header {
-  padding: 1rem;
+  padding: 1rem !important;
 }
 
 .course-header h3 {
@@ -314,10 +315,32 @@
   padding: 0.5rem 0.75rem;
   font-size: 0.875rem;
   border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
 }
 
 .course-actions button i {
   font-size: 0.875rem;
+}
+
+.course-actions button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.lesson-actions .secondary-button,
+.course-actions .secondary-button {
+  background: #f8fafc;
+  color: #4f46e5;
+  border: 1px solid #e2e8f0;
+}
+
+.lesson-actions .secondary-button:hover,
+.course-actions .secondary-button:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
 }
 
 .modal {

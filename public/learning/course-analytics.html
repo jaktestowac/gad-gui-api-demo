@@ -61,9 +61,10 @@
 
                 <div class="metric-card completion">
                     <h3>Completion Rate</h3>
-                    <div class="metric-value" id="completionRate">0%</div>
-                    <div class="metric-trend">
-                        <span id="completionTrend">0%</span> vs previous period
+                    <div class="metric-value" id="completionRate">0%</< /div>
+                        <div class="metric-trend">
+                            <span id="completionTrend">0%</span> vs previous period
+                        </div>
                     </div>
                 </div>
 
@@ -76,30 +77,38 @@
                 </div>
             </div>
 
-            <div class="charts-container">
-                <div class="chart-card">
-                    <h3>Enrollment Trends</h3>
-                    <div class="chart" id="enrollmentChart"></div>
-                </div>
-                <div class="chart-card">
-                    <h3>Revenue Analysis</h3>
-                    <div class="chart" id="revenueChart"></div>
-                </div>
-            </div>
+            <div>
 
-            <div class="analytics-tables">
-                <div class="table-card">
-                    <h3>Top Performing Courses</h3>
-                    <div class="table-container" id="topCoursesTable"></div>
+                <div class="charts-container">
+                    <div class="chart-card">
+                        <h3>Enrollment Trends</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="enrollmentChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Revenue Analysis</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
                 </div>
-                <div class="table-card">
-                    <h3>Recent Reviews</h3>
-                    <div class="table-container" id="recentReviewsTable"></div>
+
+                <div class="analytics-tables">
+                    <div class="table-card">
+                        <h3>Top Performing Courses</h3>
+                        <div class="table-container" id="topCoursesTable"></div>
+                    </div>
+                    <div class="table-card reviews">
+                        <h3>Recent Reviews</h3>
+                        <div class="table-container" id="recentReviewsTable"></div>
+                    </div>
                 </div>
             </div>
         </div>
-    </main>
 
+    </main>
+    <script type="text/javascript" src="/js/libs/charts/chart.js"></script>
     <script src="./js/services/api.js"></script>
     <script src="./js/utils/notifications.js"></script>
     <script src="./js/components/sidebar.js"></script>

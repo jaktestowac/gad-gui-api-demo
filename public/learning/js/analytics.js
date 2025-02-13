@@ -60,28 +60,24 @@ function updateTables({ topCourses, recentReviews }) {
   if (topCoursesTable) {
     topCoursesTable.innerHTML = `
       <table class="analytics-table">
-        <thead>
+        <tr>
+          <th>Course</th>
+          <th style="text-align:right">Enrolled</th>
+          <th style="text-align:right">Revenue</th>
+          <th style="text-align:center">Rating</th>
+        </tr>
+        ${topCourses
+          .map(
+            (course) => `
           <tr>
-            <th>Course</th>
-            <th>Enrollments</th>
-            <th>Revenue</th>
-            <th>Rating</th>
+            <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${course.title}</td>
+            <td style="text-align:right" class="enrollments">${course.enrollments}</td>
+            <td style="text-align:right" class="revenue">$${course.revenue.toFixed(2)}</td>
+            <td style="text-align:center" class="rating">${course.rating.toFixed(1)} ★</td>
           </tr>
-        </thead>
-        <tbody>
-          ${topCourses
-            .map(
-              (course) => `
-            <tr>
-              <td>${course.title}</td>
-              <td>${course.enrollments}</td>
-              <td>$${course.revenue.toFixed(2)}</td>
-              <td>${course.rating.toFixed(1)}</td>
-            </tr>
-          `
-            )
-            .join("")}
-        </tbody>
+        `
+          )
+          .join("")}
       </table>
     `;
   }
@@ -92,10 +88,8 @@ function updateTables({ topCourses, recentReviews }) {
       <table class="analytics-table">
         <thead>
           <tr>
-            <th>Course</th>
-            <th>Rating</th>
-            <th>Comment</th>
-            <th>Date</th>
+            <th>Course & Review</th>
+            <th style="width: 100px; text-align: center">Rating</th>
           </tr>
         </thead>
         <tbody>
@@ -103,10 +97,20 @@ function updateTables({ topCourses, recentReviews }) {
             .map(
               (review) => `
             <tr>
-              <td>${review.courseTitle}</td>
-              <td>${review.rating.toFixed(1)}</td>
-              <td>${review.comment}</td>
-              <td>${new Date(review.date).toLocaleDateString()}</td>
+              <td>
+                <span class="review-title">${review.courseTitle}</span>
+                <p class="review-comment">${review.comment}</p>
+                <span class="review-date">${new Date(review.date).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                })}</span>
+              </td>
+              <td style="text-align: center">
+                <span class="review-rating ${getRatingClass(review.rating)}">
+                  ${review.rating.toFixed(1)} ★
+                </span>
+              </td>
             </tr>
           `
             )
@@ -117,21 +121,135 @@ function updateTables({ topCourses, recentReviews }) {
   }
 }
 
+function getRatingClass(rating) {
+  if (rating >= 4) return "high";
+  if (rating >= 3) return "medium";
+  return "low";
+}
+
+let enrollmentChart = null;
+let revenueChart = null;
+
 function updateCharts(chartData) {
-  // Example using Chart.js:
+  // Clean up existing charts
+  if (enrollmentChart) {
+    enrollmentChart.destroy();
+    enrollmentChart = null;
+  }
+  if (revenueChart) {
+    revenueChart.destroy();
+    revenueChart = null;
+  }
+
+  const commonOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    layout: {
+      padding: {
+        top: 20,
+        right: 20,
+        bottom: 20,
+        left: 20,
+      },
+    },
+  };
+
   if (chartData?.enrollments) {
     const enrollmentCtx = document.getElementById("enrollmentChart");
     if (enrollmentCtx) {
-      // Create enrollment trend chart
-      // ... chart implementation
+      enrollmentChart = new Chart(enrollmentCtx, {
+        type: "line",
+        data: {
+          labels: chartData.enrollments.map((d) => d.date),
+          datasets: [
+            {
+              label: "New Enrollments",
+              data: chartData.enrollments.map((d) => d.count),
+              borderColor: "#4f46e5",
+              backgroundColor: "#4f46e510",
+              tension: 0.4,
+              fill: true,
+            },
+          ],
+        },
+        options: {
+          ...commonOptions,
+          plugins: {
+            legend: {
+              display: false,
+            },
+            tooltip: {
+              mode: "index",
+              intersect: false,
+            },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                precision: 0,
+              },
+            },
+            x: {
+              grid: {
+                display: false,
+              },
+            },
+          },
+        },
+      });
     }
   }
 
   if (chartData?.revenue) {
     const revenueCtx = document.getElementById("revenueChart");
     if (revenueCtx) {
-      // Create revenue trend chart
-      // ... chart implementation
+      revenueChart = new Chart(revenueCtx, {
+        type: "bar",
+        data: {
+          labels: chartData.revenue.map((d) => d.date),
+          datasets: [
+            {
+              label: "Revenue",
+              data: chartData.revenue.map((d) => d.amount),
+              backgroundColor: "#10b981",
+              borderRadius: 4,
+            },
+          ],
+        },
+        options: {
+          ...commonOptions,
+          plugins: {
+            legend: {
+              display: false,
+            },
+            tooltip: {
+              mode: "index",
+              intersect: false,
+              callbacks: {
+                label: function (context) {
+                  return `$${context.raw.toFixed(2)}`;
+                },
+              },
+            },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: function (value) {
+                  return "$" + value.toFixed(2);
+                },
+              },
+            },
+            x: {
+              grid: {
+                display: false,
+              },
+            },
+          },
+        },
+      });
     }
   }
 }

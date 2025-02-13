@@ -109,6 +109,16 @@ class ApiService {
     return data;
   }
 
+  async getCourse(courseId) {
+    const response = await fetch(`${this.baseUrl}/courses/${courseId}`, {
+      headers: this.getDefaultHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error("Failed to fetch course");
+    }
+    return response.json();
+  }
+
   // Enrollment methods
   async getUserEnrollments(userId) {
     const response = await fetch(`${this.baseUrl}/users/${userId}/enrollments`, {
@@ -173,6 +183,90 @@ class ApiService {
   async getLessonById(courseId, lessonId) {
     const lessons = await this.getLessons(courseId);
     return lessons.find((l) => l.id === lessonId);
+  }
+
+  async getCourseLessonsAsInstructor(courseId) {
+    const instructorResponse = await fetch(`${this.baseUrl}/instructor/courses/${courseId}/lessons`, {
+      headers: this.getDefaultHeaders(),
+    });
+
+    if (instructorResponse.ok) {
+      const lessons = await instructorResponse.json();
+      return Array.isArray(lessons) ? lessons : [];
+    }
+  }
+
+  async getCourseLessons(courseId) {
+    try {
+      const response = await fetch(`${this.baseUrl}/courses/${courseId}/lessons`, {
+        headers: this.getDefaultHeaders(),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch lessons");
+      }
+
+      const [lessons, userProgress] = await Promise.all([response.json(), this.getUserLessonProgress(courseId)]);
+
+      // Ensure both lessons and userProgress are arrays
+      const lessonArray = Array.isArray(lessons) ? lessons : [];
+      const progressArray = Array.isArray(userProgress) ? userProgress : [];
+
+      const completedLessonIds = progressArray.map((p) => p.lessonId);
+
+      return lessonArray.map((lesson) => ({
+        ...lesson,
+        completed: completedLessonIds.includes(lesson.id),
+      }));
+    } catch (error) {
+      console.error("Error loading course lessons:", error);
+      return [];
+    }
+  }
+
+  async getLessonAsInstructor(courseId, lessonId) {
+    const lessons = await this.getCourseLessonsAsInstructor(courseId);
+    return lessons.find((l) => l.id === lessonId);
+  }
+
+  async getLesson(courseId, lessonId) {
+    const lessons = await this.getCourseLessons(courseId);
+    return lessons.find((l) => l.id === lessonId);
+  }
+
+  async addLesson(courseId, lessonData) {
+    const response = await fetch(`${this.baseUrl}/instructor/courses/${courseId}/lessons`, {
+      method: "POST",
+      headers: this.getDefaultHeaders(),
+      body: JSON.stringify(lessonData),
+    });
+    if (!response.ok) {
+      throw new Error("Failed to add lesson");
+    }
+    return response.json();
+  }
+
+  async updateLesson(courseId, lessonId, lessonData) {
+    const response = await fetch(`${this.baseUrl}/instructor/courses/${courseId}/lessons/${lessonId}`, {
+      method: "PUT",
+      headers: this.getDefaultHeaders(),
+      body: JSON.stringify(lessonData),
+    });
+    if (!response.ok) {
+      throw new Error("Failed to update lesson");
+    }
+    return response.json();
+  }
+
+  async deleteLesson(courseId, lessonId) {
+    const response = await fetch(`${this.baseUrl}/instructor/courses/${courseId}/lessons/${lessonId}`, {
+      method: "DELETE",
+      headers: this.getDefaultHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error("Failed to delete lesson");
+    }
+    return response.json();
   }
 
   // Progress methods
@@ -306,20 +400,6 @@ class ApiService {
     });
     const data = await response.json();
     return data;
-  }
-
-  async getCourseLessons(courseId) {
-    const [lessons, userProgress] = await Promise.all([
-      this.getLessons(courseId),
-      this.getUserLessonProgress(courseId),
-    ]);
-
-    const completedLessonIds = userProgress.map((p) => p.lessonId);
-
-    return lessons.map((lesson) => ({
-      ...lesson,
-      completed: completedLessonIds.includes(lesson.id),
-    }));
   }
 
   async getLessonContent(courseId, lessonId) {

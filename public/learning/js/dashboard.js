@@ -60,13 +60,7 @@ function filterAndDisplayCourses(searchTerm = "") {
                 </div>
                 ${
                   isLoggedIn()
-                    ? enrolledCourseIds.has(course.id)
-                      ? `<a href="course-viewer.html?id=${course.id}"  class="continue-button" id="continue-button-${course.id}" aria-label="Continue Learning" title="Continue Learning">
-                            Continue Learning 
-                           </a>`
-                      : `<button class="enroll-button" onclick="enrollCourse(${course.id})" id="enroll-button-${course.id}" aria-label="Enroll Now" title="Enroll Now - $${course.price}">
-                            Enroll Now - $${course.price}
-                           </button>`
+                    ? getCourseActions(course, enrolledCourseIds.has(course.id))
                     : `<div class="preview-actions">
                         <a href="preview.html?id=${course.id}" class="preview-button" id="preview-button-${course.id}" aria-label="Preview Course" title="Preview Course">Preview Course</a>
                         <a href="login.html" class="login-button" aria-label="Sign in to Enroll" title="Sign in to Enroll">Sign in to Enroll</a>
@@ -100,17 +94,40 @@ function renderLoadingState() {
   courseList.innerHTML = loadingCards;
 }
 
+function getCourseActions(course, isEnrolled) {
+  const userId = api.getUserIdFromCookie();
+  const isInstructor = course.instructorId == userId;
+
+  if (isInstructor) {
+    return `<a href="course-lessons.html?courseId=${course.id}" class="manage-button">
+              <i class="fas fa-cog"></i> Manage Course
+            </a> 
+            <a href="course-viewer.html?courseId=${course.id}" class="manage-button">
+              <i class="fas fa-eye"></i> View Course
+            </a>`;
+  }
+
+  if (isEnrolled) {
+    return `<a href="course-viewer.html?id=${course.id}" class="continue-button" id="continue-button-${course.id}">
+              Continue Learning
+            </a>`;
+  }
+
+  return `<button class="enroll-button" onclick="enrollCourse(${course.id})" id="enroll-button-${course.id}">
+            Enroll Now - $${course.price}
+          </button>`;
+}
+
 async function renderCourses(courses = allCourses) {
   const courseList = document.getElementById("courseList");
 
   try {
     const enrolledCourses = isLoggedIn() ? await api.getEnrolledCourses() : [];
-    const enrolledCourseIds = new Set(enrolledCourses.map((c) => c.courseId));
+    enrolledCourseIds = new Set(enrolledCourses.map((c) => c.courseId));
 
     courseList.innerHTML = courses
       .map(
         (course) => `
-
         <div class="course-card">
             <div align="center" class="course-thumbnail">
                 <a href="${isLoggedIn() ? "course-details.html" : "preview.html"}?id=${course.id}" class="course-link">
@@ -130,15 +147,9 @@ async function renderCourses(courses = allCourses) {
                 </div>
                 ${
                   isLoggedIn()
-                    ? enrolledCourseIds.has(course.id)
-                      ? `<a href="course-viewer.html?id=${course.id}" class="continue-button" id="continue-button-${course.id}">
-                            Continue Learning
-                           </a>`
-                      : `<button class="enroll-button" onclick="enrollCourse(${course.id})" id="enroll-button-${course.id}">
-                            Enroll Now - $${course.price}
-                           </button>`
+                    ? getCourseActions(course, enrolledCourseIds.has(course.id))
                     : `<div class="preview-actions">
-                        <a href="preview.html?id=${course.id}" class="preview-button" id="preview-button-${course.id}">Preview Course</a>
+                        <a href="preview.html?id=${course.id}" class="preview-button">Preview Course</a>
                         <a href="login.html" class="login-button">Sign in to Enroll</a>
                        </div>`
                 }
@@ -159,7 +170,6 @@ async function enrollCourse(courseId) {
   button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enrolling...';
 
   try {
-    // Check user funds before enrolling
     const userId = api.getUserIdFromCookie();
     const userFunds = await api.getUserFunds(userId);
     const course = allCourses.find((c) => c.id === courseId);
@@ -181,9 +191,14 @@ async function enrollCourse(courseId) {
       }, 1000);
     }
   } catch (error) {
-    button.innerHTML = "Enroll Now";
+    button.innerHTML = `Enroll Now - $${allCourses.find((c) => c.id === courseId).price}`;
     button.disabled = false;
-    showNotification(error.message || "Failed to enroll. Please try again.", "error");
+
+    if (error.error === "instructor_enrollment_error") {
+      showNotification("Instructors cannot enroll in their own courses", "error");
+    } else {
+      showNotification(error.message || "Failed to enroll. Please try again.", "error");
+    }
   }
 }
 

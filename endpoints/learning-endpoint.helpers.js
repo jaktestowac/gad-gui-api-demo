@@ -138,6 +138,7 @@ const mockData = {
         "Learn the fundamentals of web development including HTML, CSS, and JavaScript. Perfect for beginners wanting to start their web development journey.",
       thumbnail: "..\\data\\learning\\courses\\web-dev.jpg",
       instructor: "John Doe",
+      instructorId: 2,
       duration: "8 weeks",
       totalHours: 24,
       level: "Beginner",
@@ -162,6 +163,7 @@ const mockData = {
         "Master modern JavaScript features, async programming, and advanced patterns. Take your JavaScript skills to the next level.",
       thumbnail: "..\\data\\learning\\courses\\js-advanced.jpg",
       instructor: "John Doe",
+      instructorId: 2,
       duration: "10 weeks",
       totalHours: 30,
       level: "Advanced",
@@ -185,6 +187,7 @@ const mockData = {
       description: "Build modern web applications with React. Learn components, state management, and best practices.",
       thumbnail: "..\\data\\learning\\courses\\react.jpg",
       instructor: "John Doe",
+      instructorId: 2,
       duration: "12 weeks",
       totalHours: 36,
       level: "Intermediate",
@@ -209,6 +212,7 @@ const mockData = {
         "Learn end-to-end testing with Playwright. Automate browser interactions, test web applications, and write reliable tests.",
       thumbnail: "..\\data\\learning\\courses\\playwright.jpg",
       instructor: "John Doe",
+      instructorId: 2,
       duration: "6 weeks",
       totalHours: 18,
       level: "Intermediate",
@@ -233,6 +237,7 @@ const mockData = {
         "Learn the basics of Python programming. Perfect for beginners wanting to start their coding journey with Python.",
       thumbnail: "..\\data\\learning\\courses\\python-basics.jpg",
       instructor: "John Doe",
+      instructorId: 2,
       duration: "2 weeks",
       totalHours: 1,
       level: "Beginner",
@@ -257,6 +262,7 @@ const mockData = {
         "Learn the fundamentals of Java programming. Perfect for beginners wanting to start their coding journey with Java.",
       thumbnail: "..\\data\\learning\\courses\\java-basics.jpg",
       instructor: "John Doe",
+      instructorId: 2,
       duration: "4 weeks",
       totalHours: 12,
       level: "Beginner",
@@ -281,6 +287,7 @@ const mockData = {
         "Learn the fundamentals of manual testing. Perfect for beginners wanting to start their testing journey with manual testing.",
       thumbnail: "..\\data\\learning\\courses\\manual-testing.jpg",
       instructor: "John Doe",
+      instructorId: 2,
       duration: "2 weeks",
       totalHours: 1,
       level: "Beginner",
@@ -305,6 +312,7 @@ const mockData = {
         "Learn the fundamentals of AI in testing. Perfect for beginners wanting to start their testing journey with AI in testing.",
       thumbnail: "..\\data\\learning\\courses\\ai-testing.jpg",
       instructor: "John Doe",
+      instructorId: 2,
       duration: "2 weeks",
       totalHours: 1,
       level: "Beginner",
@@ -1179,56 +1187,56 @@ const mockData = {
       courseId: 1,
       rating: 5,
       comment: "Great course, learned a lot!",
-      createdAt: "2023-07-25T12:00:00Z",
+      createdAt: "2024-07-25T12:00:00Z",
     },
     {
       userId: 3,
       courseId: 2,
       rating: 4,
       comment: "Good content, could be more challenging.",
-      createdAt: "2023-08-25T12:00:00Z",
+      createdAt: "2024-08-25T12:00:00Z",
     },
     {
       userId: 3,
       courseId: 3,
       rating: 3,
       comment: "Decent course, but could use more examples.",
-      createdAt: "2023-09-25T12:00:00Z",
+      createdAt: "2024-09-25T12:00:00Z",
     },
     {
       userId: 3,
       courseId: 4,
       rating: 5,
       comment: "Excellent course, very informative!",
-      createdAt: "2023-10-25T12:00:00Z",
+      createdAt: "2024-10-25T12:00:00Z",
     },
     {
       userId: 4,
       courseId: 4,
       rating: 5,
       comment: "Great course, learned a lot!",
-      createdAt: "2023-07-25T12:00:00Z",
+      createdAt: "2024-07-25T12:00:00Z",
     },
     {
       userId: 5,
       courseId: 1,
       rating: 4,
       comment: "Good content, could be more challenging. Also, more examples would be helpful.",
-      createdAt: "2023-08-25T12:00:00Z",
+      createdAt: "2024-08-25T12:00:00Z",
     },
     {
       userId: 5,
       courseId: 2,
       rating: 3,
       comment: "Well... it was okay.",
-      createdAt: "2023-09-25T12:00:00Z",
+      createdAt: "2024-09-25T12:00:00Z",
     },
     {
       userId: 6,
       courseId: 1,
       rating: 4,
       comment: "Excellent course, very informative! I learned a lot from this course. Highly recommended.",
-      createdAt: "2023-10-25T12:00:00Z",
+      createdAt: "2024-10-25T12:00:00Z",
     },
   ],
 
@@ -1355,6 +1363,18 @@ function recalculateCoursesDuration() {
 
 function checkIfUserIsEnrolled(userId, courseId) {
   return mockData.userEnrollments.some((e) => areIdsEqual(e.userId, userId) && areIdsEqual(e.courseId, courseId));
+}
+
+function checkIfUserCanAccessCourse(userId, courseId) {
+  // Check if user is enrolled
+  const isEnrolled = checkIfUserIsEnrolled(userId, courseId);
+
+  // Check if user is the course instructor
+  const isInstructorOfCourse = mockData.courseOwnership.some(
+    (ownership) => areIdsEqual(ownership.courseId, courseId) && areIdsEqual(ownership.instructorId, userId)
+  );
+
+  return isEnrolled || isInstructorOfCourse;
 }
 
 function findUserIdByEmail(email) {
@@ -1544,9 +1564,9 @@ function handleLearning(req, res, isAdmin) {
       const userId = findUserIdByEmail(verifyTokenResult.email);
 
       const courseId = parseInt(urlParts[3]);
-      const isUserEnrolled = checkIfUserIsEnrolled(userId, courseId);
+      const canAccess = checkIfUserCanAccessCourse(userId, courseId);
 
-      if (!isUserEnrolled) {
+      if (!canAccess) {
         res.status(HTTP_FORBIDDEN).send(formatErrorResponse("User not enrolled in this course"));
         return;
       }
@@ -1573,10 +1593,9 @@ function handleLearning(req, res, isAdmin) {
 
       const courseId = parseInt(urlParts[3]);
       const userId = findUserIdByEmail(verifyTokenResult?.email);
-      const isEnrolled = checkIfUserIsEnrolled(userId, courseId);
 
-      if (!isEnrolled) {
-        res.status(HTTP_FORBIDDEN).send(formatErrorResponse("User not enrolled in this course"));
+      if (!checkIfUserCanAccessCourse(userId, courseId)) {
+        res.status(HTTP_FORBIDDEN).send(formatErrorResponse("Not authorized to access this course"));
         return;
       }
 
@@ -1728,7 +1747,7 @@ function handleLearning(req, res, isAdmin) {
       const userId = findUserIdByEmail(verifyTokenResult?.email);
       const courseId = parseInt(urlParts[3]);
 
-      if (checkIfUserIsEnrolled(userId, courseId) === false) {
+      if (checkIfUserCanAccessCourse(userId, courseId) === false) {
         res.status(HTTP_FORBIDDEN).send(formatErrorResponse("User not enrolled in this course"));
         return;
       }
@@ -1913,6 +1932,7 @@ function handleLearning(req, res, isAdmin) {
     // Add instructor endpoints
     // /api/learning/instructor/
     if (urlParts[2] === "instructor") {
+      logDebug("Instructor endpoint:", { urlParts });
       if (!checkIfUserIsAuthenticated(req, res)) {
         res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not authenticated"));
         return;
@@ -1935,13 +1955,38 @@ function handleLearning(req, res, isAdmin) {
         }
         // /learning/instructor/courses
         case "courses": {
-          const courses = mockData.courses.filter((course) =>
-            mockData.courseOwnership.some(
-              (ownership) => ownership.instructorId === user.id && ownership.courseId === course.id
-            )
-          );
-          res.status(HTTP_OK).send(courses);
-          return;
+          // check for /api/learning/instructor/courses/:id/lessons
+          if (urlParts[5] === "lessons") {
+            const courseId = parseInt(urlParts[4]);
+            const lessons = mockData.courseLessons[courseId];
+            if (lessons) {
+              res.status(HTTP_OK).send(lessons);
+            } else {
+              res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Lessons not found"));
+            }
+            return;
+          }
+          // check for /api/learning/instructor/courses/:id
+          else if (urlParts.length === 5) {
+            const courseId = parseInt(urlParts[4]);
+            const course = mockData.courses.find((c) => c.id === courseId);
+            if (course) {
+              res.status(HTTP_OK).send(course);
+            } else {
+              res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Course not found"));
+            }
+            return;
+          }
+          // check for /api/learning/instructor/courses
+          else {
+            const courses = mockData.courses.filter((course) =>
+              mockData.courseOwnership.some(
+                (ownership) => ownership.instructorId === user.id && ownership.courseId === course.id
+              )
+            );
+            res.status(HTTP_OK).send(courses);
+            return;
+          }
         }
         // /learning/instructor/analytics
         case "analytics": {
@@ -1958,12 +2003,16 @@ function handleLearning(req, res, isAdmin) {
           const targetCourses =
             courseId === "all"
               ? mockData.courses.filter((course) =>
-                  mockData.courseOwnership.some((o) => o.instructorId === user.id && o.courseId === course.id)
+                  mockData.courseOwnership.some(
+                    (o) => areIdsEqual(o.instructorId, user.id) && areIdsEqual(o.courseId, course.id)
+                  )
                 )
               : mockData.courses.filter(
                   (course) =>
-                    course.id === parseInt(courseId) &&
-                    mockData.courseOwnership.some((o) => o.instructorId === user.id && o.courseId === course.id)
+                    areIdsEqual(course.id, courseId) &&
+                    mockData.courseOwnership.some(
+                      (o) => areIdsEqual(o.instructorId, user.id) && areIdsEqual(o.courseId, course.id)
+                    )
                 );
 
           if (!targetCourses.length) {
@@ -1999,7 +2048,7 @@ function handleLearning(req, res, isAdmin) {
               data: { metrics, tables, charts },
             });
           } catch (error) {
-            console.error("Analytics error:", error);
+            logDebug("Analytics error:", error);
             res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Failed to generate analytics"));
           }
           return;
@@ -2131,6 +2180,20 @@ function handleLearning(req, res, isAdmin) {
           const course = mockData.courses.find((c) => areIdsEqual(c.id, courseId));
           if (!course) {
             res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Course not found"));
+            return;
+          }
+
+          // Add instructor check
+          const isInstructorOfCourse = mockData.courseOwnership.some(
+            (ownership) => areIdsEqual(ownership.courseId, courseId) && areIdsEqual(ownership.instructorId, userId)
+          );
+
+          if (isInstructorOfCourse) {
+            res.status(HTTP_FORBIDDEN).send({
+              success: false,
+              error: "instructor_enrollment_error",
+              message: "Instructors cannot enroll in their own courses",
+            });
             return;
           }
 
@@ -2573,6 +2636,62 @@ function handleLearning(req, res, isAdmin) {
       res.status(HTTP_OK).send({ success: true });
       return;
     }
+
+    // Add instructor lesson update endpoint
+    // PUT /learning/instructor/courses/:courseId/lessons/:lessonId
+    if (urlParts[2] === "instructor" && urlParts[3] === "courses" && urlParts[5] === "lessons") {
+      if (!checkIfUserIsAuthenticated(req, res)) {
+        res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not authenticated"));
+        return;
+      }
+
+      const user = mockData.users.find((u) => u.email === verifyTokenResult?.email);
+      if (!isInstructor(user) && !isAdmin(user)) {
+        res.status(HTTP_FORBIDDEN).send(formatErrorResponse("Must be an instructor"));
+        return;
+      }
+
+      const courseId = parseInt(urlParts[4]);
+      const lessonId = parseInt(urlParts[6]);
+
+      // Verify course ownership
+      if (!canManageCourse(user, courseId)) {
+        res.status(HTTP_FORBIDDEN).send(formatErrorResponse("Not authorized to manage this course"));
+        return;
+      }
+
+      // Find and update the lesson
+      const courseLessons = mockData.courseLessons[courseId];
+      if (!courseLessons) {
+        res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Course not found"));
+        return;
+      }
+
+      const lessonIndex = courseLessons.findIndex((lesson) => lesson.id === lessonId);
+      if (lessonIndex === -1) {
+        res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Lesson not found"));
+        return;
+      }
+
+      // Update lesson data
+      const { title, type, duration, content } = req.body;
+      courseLessons[lessonIndex] = {
+        ...courseLessons[lessonIndex],
+        title: title || courseLessons[lessonIndex].title,
+        type: type || courseLessons[lessonIndex].type,
+        duration: duration || courseLessons[lessonIndex].duration,
+        content: content || courseLessons[lessonIndex].content,
+      };
+
+      // Recalculate course duration after updating lesson
+      recalculateCoursesDuration();
+
+      res.status(HTTP_OK).send({
+        success: true,
+        message: "Lesson updated successfully",
+      });
+      return;
+    }
   }
 
   res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Endpoint not found"));
@@ -2681,13 +2800,64 @@ function getRecentReviews(courses, startDate) {
 }
 
 function getEnrollmentTrends(courses, days) {
-  // Implement enrollment trend calculation
-  return [];
+  const endDate = new Date();
+  const startDate = new Date();
+  startDate.setDate(endDate.getDate() - days);
+
+  const dateRange = [];
+  for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+    dateRange.push(new Date(d));
+  }
+
+  return dateRange.map((date) => {
+    const dayStart = new Date(date.setHours(0, 0, 0, 0));
+    const dayEnd = new Date(date.setHours(23, 59, 59, 999));
+
+    const count = mockData.userEnrollments.filter(
+      (e) =>
+        courses.some((c) => c.id === e.courseId) &&
+        new Date(e.enrollmentDate) >= dayStart &&
+        new Date(e.enrollmentDate) <= dayEnd
+    ).length;
+
+    return {
+      date: date.toLocaleDateString(),
+      count,
+    };
+  });
 }
 
 function getRevenueTrends(courses, days) {
-  // Implement revenue trend calculation
-  return [];
+  const endDate = new Date();
+  const startDate = new Date();
+  startDate.setDate(endDate.getDate() - days);
+
+  const dateRange = [];
+  for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+    dateRange.push(new Date(d));
+  }
+
+  return dateRange.map((date) => {
+    const dayStart = new Date(date.setHours(0, 0, 0, 0));
+    const dayEnd = new Date(date.setHours(23, 59, 59, 999));
+
+    const amount = mockData.userEnrollments
+      .filter(
+        (e) =>
+          courses.some((c) => c.id === e.courseId) &&
+          new Date(e.enrollmentDate) >= dayStart &&
+          new Date(e.enrollmentDate) <= dayEnd
+      )
+      .reduce((total, enrollment) => {
+        const course = courses.find((c) => c.id === enrollment.courseId);
+        return total + (enrollment.paidAmount || course?.price || 0);
+      }, 0);
+
+    return {
+      date: date.toLocaleDateString(),
+      amount,
+    };
+  });
 }
 
 module.exports = {
@@ -2695,4 +2865,5 @@ module.exports = {
   hasPermission,
   isInstructor,
   isAdmin,
+  checkIfUserCanAccessCourse, // Export the new function
 };

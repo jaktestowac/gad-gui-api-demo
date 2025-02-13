@@ -708,11 +708,27 @@
   display: inline-block;
   padding: 10px 20px;
   background: transparent;
-  color: white;
+  color: rgb(77, 77, 77);
   border: 2px solid white;
   border-radius: 6px;
   text-decoration: none;
   transition: all 0.3s ease;
+}
+
+.danger-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background: transparent;
+  color: #ef4444;
+  border: 2px solid #ef4444;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.danger-button:hover {
+  background: #ef4444;
+  color: white;
 }
 
 .secondary-button:hover {
@@ -1297,7 +1313,7 @@
   border-radius: 12px;
   box-shadow: var(--shadow);
   overflow: hidden;
-  margin-bottom: 30px;
+  margin-bottom: 10px;
 }
 
 .course-banner {
@@ -2531,7 +2547,31 @@ html {
   visibility: visible !important;
 }
 
-/* ... existing code ... */
+.manage-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: #f8fafc;
+  color: #4f46e5;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  width: 100%;
+  justify-content: center;
+}
+
+.manage-button:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+}
+
+.manage-button i {
+  font-size: 0.9em;
+}
 
 .funds-history {
   margin-top: 10px;

@@ -1,6 +1,8 @@
 class CourseViewer {
   constructor() {
-    this.courseId = parseInt(new URLSearchParams(window.location.search).get("id"));
+    // Support both ?id= and ?courseId= URL parameters
+    const params = new URLSearchParams(window.location.search);
+    this.courseId = parseInt(params.get("id") || params.get("courseId"));
     this.courseName = document.getElementById("courseName");
     this.lessonList = document.getElementById("lessonList");
     this.videoPlayer = document.getElementById("videoPlayer");
@@ -23,12 +25,14 @@ class CourseViewer {
       // Check enrollment first
       const enrollments = await api.getUserEnrollments(api.getUserIdFromCookie());
       const isEnrolled = enrollments.some((e) => e.courseId === this.courseId);
+      const instructorCourses = await api.getInstructorCourses();
+      const isCourseInstructor = instructorCourses.error? false : instructorCourses.some((c) => c.id === this.courseId);
 
-      if (!isEnrolled) {
+      if (!isEnrolled && !isCourseInstructor) {
         notifications.show("You are not enrolled in this course", "error");
         setTimeout(() => {
           window.location.href = "/learning/enrolled-courses.html";
-        }, 2000);
+        }, 1000);
         return;
       }
 
@@ -39,16 +43,18 @@ class CourseViewer {
         throw new Error("Course not found");
       }
 
-      this.courseName.textContent = course.title;
       const lessons = await api.getCourseLessons(this.courseId);
 
+      this.courseName.textContent = course.title;
+      this.lessons = lessons;
       this.renderLessonList(lessons);
-      if (lessons.length > 0) {
-        this.loadLesson(lessons[0]);
+
+      // If lessons exist, load the first one
+      if (lessons && lessons.length > 0) {
+        await this.loadLesson(lessons[0]);
       }
     } catch (error) {
-      console.error("Failed to initialize course:", error);
-      this.showError("Failed to load course content. Please try again later.");
+      this.showError(error.message || "Failed to load course content");
     }
   }
 
@@ -175,7 +181,7 @@ class CourseViewer {
         ></iframe>
         <div class="video-time-display" style="display:none;">${lesson.duration}</div>
         <h3>${lesson.title}</h3>
-        <p class="transcript">${content.transcript}</p>
+        <p class="transcript">${content?.transcript}</p>
         <div align="center">${
           lesson.completed
             ? '<div class="completion-badge"><i class="fas fa-check-circle"></i> Completed</div>'
@@ -218,12 +224,12 @@ class CourseViewer {
             <div class="reading-material">
                 <h3>${lesson.title}</h3>
                 <div class="content">
-                    ${content.text}
+                    ${content?.text}
                 </div>
                 <div class="resources">
                     <h4>Additional Resources:</h4>
                     <ul>
-                        ${content.resources.map((r) => `<li>${r}</li>`).join("")}
+                        ${content?.resources.map((r) => `<li>${r}</li>`).join("")}
                     </ul>
                 </div>
                 <div align="center">${
