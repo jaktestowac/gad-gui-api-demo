@@ -341,6 +341,67 @@
             }
           }
         }
+      },
+      "UserFunds": {
+        "type": "object",
+        "properties": {
+          "funds": {
+            "type": "number",
+            "description": "Current user funds balance"
+          }
+        }
+      },
+      "FundsHistory": {
+        "type": "object",
+        "properties": {
+          "userId": { "type": "integer" },
+          "amount": { "type": "number" },
+          "type": {
+            "type": "string",
+            "enum": ["credit", "debit"]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": { "type": "string" }
+        }
+      },
+      "FundsHistoryResponse": {
+        "type": "object",
+        "properties": {
+          "history": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FundsHistory"
+            }
+          }
+        }
+      },
+      "UpdateFundsRequest": {
+        "type": "object",
+        "required": ["amount"],
+        "properties": {
+          "amount": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 500
+          }
+        }
+      },
+      "PublicCertificateResponse": {
+        "type": "object",
+        "properties": {
+          "certificateNumber": { "type": "string" },
+          "uuid": { "type": "string" },
+          "courseTitle": { "type": "string" },
+          "recipientName": { "type": "string" },
+          "issueDate": { "type": "string" },
+          "issuedBy": { "type": "string" },
+          "courseDuration": { "type": "string" },
+          "courseLevel": { "type": "string" },
+          "issuerTitle": { "type": "string" }
+        }
       }
     },
     "responses": {
@@ -1445,6 +1506,216 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/certificates/public/{certificateId}": {
+      "get": {
+        "tags": ["Certificates"],
+        "summary": "Get public certificate by UUID",
+        "parameters": [
+          {
+            "name": "certificateId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Certificate UUID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Certificate details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicCertificateResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/learning/courses/{courseId}/lessons/preview": {
+      "get": {
+        "tags": ["Lessons"],
+        "summary": "Get preview of course lessons",
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Preview lessons",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "previewLessons": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/LessonList"
+                      }
+                    },
+                    "totalLessons": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/learning/users/{userId}/funds": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get user funds",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User funds",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserFunds"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Users"],
+        "summary": "Update user funds",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFundsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Funds updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" },
+                    "newBalance": { "type": "number" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/learning/users/{userId}/funds/history": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get user funds history",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User funds history",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundsHistoryResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
           }
         }
       }

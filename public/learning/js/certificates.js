@@ -64,7 +64,6 @@ function showNotification(message, type = "info") {
         <span>${message}</span>
     `;
 
-  // Create or get notification container
   let container = document.querySelector(".notification-container");
   if (!container) {
     container = document.createElement("div");
@@ -74,7 +73,6 @@ function showNotification(message, type = "info") {
 
   container.appendChild(notification);
 
-  // Remove notification after delay
   setTimeout(() => {
     notification.classList.add("fade-out");
     setTimeout(() => notification.remove(), 300);

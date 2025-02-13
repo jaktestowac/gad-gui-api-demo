@@ -8,6 +8,8 @@ function injectSidebar() {
   const username = getCookie("learning_username");
   const userRealName = `${getCookie("learning_first_name")} ${getCookie("learning_last_name")}`;
   const avatar = getCookie("learning_user_avatar") ?? "/data/icons/user.png";
+  const userRole = getCookie("learning_user_role");
+  const isInstructor = userRole === "instructor" || userRole === "admin";
 
   const sidebarHtml = `
         <div class="dashboard-sidebar">
@@ -35,7 +37,7 @@ function injectSidebar() {
                     <a href="certificates.html" ${
                       currentPath.endsWith("certificates.html") ? 'class="active"' : ""
                     } aria-label="Certificates" name="certificates">
-                        <i class="fas fa-certificate"></i> Certificates
+                        <i class="fas fa-award"></i> Certificates
                     </a>
                     <a href="progress.html" ${
                       currentPath.endsWith("progress.html") ? 'class="active"' : ""
@@ -59,6 +61,25 @@ function injectSidebar() {
                         <i class="fas fa-chart-line"></i> Progress
                     </a>
                 `
+                }
+                ${
+                  isInstructor
+                    ? `
+                    <hr class="nav-divider">
+                    <nav>
+                        <a href="instructor-panel.html" ${
+                          currentPath.endsWith("instructor-panel.html") ? 'class="active"' : ""
+                        }>
+                            <i class="fas fa-chalkboard-teacher"></i> Instructor Panel
+                        </a>
+                        <a href="course-analytics.html" ${
+                          currentPath.endsWith("course-analytics.html") ? 'class="active"' : ""
+                        }>
+                            <i class="fas fa-chart-bar"></i> Analytics
+                        </a>
+                    </nav>
+                `
+                    : ""
                 }
                 <hr class="nav-divider">
                 <a href="welcome.html" aria-label="Back to Welcome" name="welcome">

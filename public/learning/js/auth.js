@@ -196,7 +196,6 @@ document.addEventListener("DOMContentLoaded", () => {
           window.location.href = "/learning/login.html";
         }, 1000);
       } else {
-        console.log(result);
         if (result.error?.message) {
           notifications.show(`Registration failed. ${result.error.message}`);
         } else {
@@ -267,6 +266,7 @@ function handleLogout() {
   document.cookie = "learning_user_avatar=; path=/; max-age=0";
   document.cookie = "learning_first_name=; path=/; max-age=0";
   document.cookie = "learning_last_name=; path=/; max-age=0";
+  document.cookie = `learning_user_role=; max-age=86400; path=/`;
   window.location.href = "/learning/welcome.html";
 }
 

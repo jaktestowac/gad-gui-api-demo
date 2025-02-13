@@ -14,6 +14,97 @@ async function loadUserProfile() {
   }
 }
 
+async function loadUserFunds() {
+  try {
+    const userId = api.getUserIdFromCookie();
+    const [funds, history] = await Promise.all([api.getUserFunds(userId), api.getUserFundsHistory(userId)]);
+
+    document.getElementById("userFunds").textContent = funds.toFixed(2);
+
+    const transactionsList = document.querySelector(".transactions-list");
+    transactionsList.innerHTML = history
+      .slice(0, 10)
+      .map(
+        (transaction) => `
+        <div class="transaction-item">
+          <div class="transaction-info">
+            <span class="transaction-description" title="${transaction.description}">${transaction.description}</span>
+            <span class="transaction-date">${new Date(transaction.timestamp).toLocaleDateString()}</span>
+          </div>
+          <span class="transaction-amount ${transaction.type}">
+            ${transaction.type === "credit" ? "+" : "-"}$${transaction.amount.toFixed(2)}
+          </span>
+        </div>
+      `
+      )
+      .join("");
+  } catch (error) {
+    console.error("Failed to load user funds:", error);
+    showNotification("Failed to load account balance", "error");
+  }
+}
+
+function showTopUpDialog() {
+  const dialog = document.createElement("div");
+  dialog.innerHTML = `
+    <div class="dialog-overlay"></div>
+    <div class="top-up-dialog">
+      <h3>Top Up Funds</h3>
+      <div class="top-up-amounts">
+        <div class="amount-option" data-amount="10">$10</div>
+        <div class="amount-option" data-amount="25">$25</div>
+        <div class="amount-option" data-amount="50">$50</div>
+        <div class="amount-option" data-amount="100">$100</div>
+        <div class="amount-option" data-amount="200">$200</div>
+        <div class="amount-option" data-amount="500">$500</div>
+      </div>
+      <div class="dialog-actions">
+        <button class="cancel">Cancel</button>
+        <button class="confirm" disabled>Top Up</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(dialog);
+
+  let selectedAmount = 0;
+  const confirmButton = dialog.querySelector(".confirm");
+
+  dialog.querySelectorAll(".amount-option").forEach((option) => {
+    option.addEventListener("click", () => {
+      dialog.querySelectorAll(".amount-option").forEach((opt) => opt.classList.remove("selected"));
+      option.classList.add("selected");
+      selectedAmount = parseFloat(option.dataset.amount);
+      confirmButton.disabled = false;
+    });
+  });
+
+  dialog.querySelector(".cancel").addEventListener("click", () => {
+    document.body.removeChild(dialog);
+  });
+
+  dialog.querySelector(".confirm").addEventListener("click", async () => {
+    try {
+      const userId = api.getUserIdFromCookie();
+      const currentFunds = await api.getUserFunds(userId);
+      const newAmount = currentFunds + selectedAmount;
+
+      await api.updateUserFunds(userId, newAmount);
+      await loadUserFunds();
+
+      showNotification(`Successfully added $${selectedAmount.toFixed(2)} to your account`, "success");
+      document.body.removeChild(dialog);
+    } catch (error) {
+      showNotification("Failed to top up funds", "error");
+      console.error("Top up error:", error);
+    }
+  });
+
+  dialog.querySelector(".dialog-overlay").addEventListener("click", () => {
+    document.body.removeChild(dialog);
+  });
+}
+
 async function handleUpdateProfile() {
   const updateBtn = document.getElementById("updateProfileBtn");
   const currentPassword = document.getElementById("confirmProfilePassword").value;
@@ -102,6 +193,44 @@ async function handleChangePassword() {
   }
 }
 
+function handleNavigation() {
+  const sections = document.querySelectorAll(".account-section");
+  const navLinks = document.querySelectorAll(".floating-nav a");
+  let currentActiveSection = null;
+
+  const topLink = document.querySelector('.floating-nav a[href="#top-section"]');
+  navLinks.forEach((link) => link.classList.remove("active"));
+  topLink.classList.add("active");
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        const targetId = entry.target.id;
+        const targetLink = document.querySelector(`.floating-nav a[href="#${targetId}"]`);
+
+        if (entry.isIntersecting && entry.intersectionRatio > 0.3) {
+          currentActiveSection = targetId;
+          navLinks.forEach((link) => link.classList.remove("active"));
+          if (targetLink) targetLink.classList.add("active");
+        }
+      });
+    },
+    {
+      threshold: 0.3,
+      rootMargin: "-20% 0px -20% 0px",
+    }
+  );
+
+  sections.forEach((section) => observer.observe(section));
+
+  window.addEventListener("scroll", () => {
+    if (window.scrollY < 100) {
+      navLinks.forEach((link) => link.classList.remove("active"));
+      topLink.classList.add("active");
+    }
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   if (!isLoggedIn()) {
     window.location.href = "login.html";
@@ -109,7 +238,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   loadUserProfile();
+  loadUserFunds();
 
   document.getElementById("updateProfileBtn").addEventListener("click", handleUpdateProfile);
   document.getElementById("changePasswordBtn").addEventListener("click", handleChangePassword);
+  document.getElementById("topUpBtn").addEventListener("click", showTopUpDialog);
+  handleNavigation();
 });

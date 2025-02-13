@@ -143,14 +143,24 @@ class CourseViewer {
   }
 
   parseDuration(timeStr) {
-    const [minutes, seconds] = timeStr.split(":").map(Number);
-    return minutes * 60 + seconds;
+    // timeStr can be in the format "mm:ss" or "hh:mm:ss"
+    const parts = timeStr.split(":");
+    if (parts.length === 3) {
+      const [hours, minutes, seconds] = parts.map(Number);
+      return hours * 3600 + minutes * 60 + seconds;
+    } else {
+      const [minutes, seconds] = timeStr.split(":").map(Number);
+      return minutes * 60 + seconds;
+    }
   }
 
   formatTime(seconds) {
+    const hours = Math.floor(seconds / 3600);
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
-    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+    return `${hours.toString().padStart(2, "0")}:${mins.toString().padStart(2, "0")}:${secs
+      .toString()
+      .padStart(2, "0")}`;
   }
 
   renderVideo(lesson, content) {
@@ -500,7 +510,6 @@ class CourseViewer {
       await api.rateCourse(this.courseId, this.currentRating, comment);
       notifications.show("Thank you for your rating!", "success");
 
-      // Disable rating section after submission
       document.querySelector(".rating-section").classList.add("submitted");
     } catch (error) {
       console.error("Failed to submit rating:", error);
@@ -550,7 +559,6 @@ class CourseViewer {
         </div>
       `;
 
-      // Insert ratings section before the rating form
       const existingRatingSection = document.querySelector(".rating-section");
       if (existingRatingSection) {
         existingRatingSection.parentNode.insertBefore(ratingSection, existingRatingSection);

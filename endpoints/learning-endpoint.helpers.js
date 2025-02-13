@@ -13,6 +13,27 @@ const { verifyAccessToken } = require("../helpers/validation.helpers");
 const { areIdsEqual, isUndefined, isInactive } = require("../helpers/compare.helpers");
 
 const mockData = {
+  // Role definitions
+  roles: {
+    STUDENT: "student",
+    INSTRUCTOR: "instructor",
+    ADMIN: "admin",
+  },
+
+  // Role permissions mapping
+  rolePermissions: {
+    student: ["view_courses", "enroll_courses", "view_own_progress", "submit_assignments"],
+    instructor: [
+      "view_courses",
+      "create_courses",
+      "edit_own_courses",
+      "view_student_progress",
+      "grade_assignments",
+      "view_course_analytics",
+    ],
+    admin: ["view_courses", "manage_all_courses", "manage_users", "manage_roles", "view_analytics", "system_settings"],
+  },
+
   // Users data
   users: [
     {
@@ -25,6 +46,7 @@ const mockData = {
       avatar: "..\\data\\users\\face_1713017873.9196286_m_1.jpg",
       joinDate: "2023-05-15",
       role: "student",
+      funds: 220.02,
     },
     {
       id: 2,
@@ -80,6 +102,30 @@ const mockData = {
       avatar: "..\\data\\users\\face_1703527930.631284_1_m.jpg",
       joinDate: "2023-04-15",
       role: "student",
+    },
+    // Add admin user
+    {
+      id: 999,
+      username: "admin",
+      email: "admin@test.test.com",
+      password: "admin123",
+      firstName: "System",
+      lastName: "Admin",
+      avatar: "..\\data\\users\\admin.jpg",
+      joinDate: "2023-01-01",
+      role: "admin",
+    },
+  ],
+
+  // Track course ownership
+  courseOwnership: [
+    {
+      courseId: 1,
+      instructorId: 2,
+    },
+    {
+      courseId: 2,
+      instructorId: 2,
     },
   ],
 
@@ -194,7 +240,7 @@ const mockData = {
       rating: 0,
       tags: ["Python", "Programming", "Basics"],
       prerequisites: [],
-      price: 0,
+      price: 59.99,
       learningObjectives: [
         "Master Python programming basics",
         "Understand Python syntax and semantics",
@@ -218,7 +264,7 @@ const mockData = {
       rating: 0,
       tags: ["Java", "Programming", "Basics"],
       prerequisites: [],
-      price: 0,
+      price: 69.99,
       learningObjectives: [
         "Master Java programming basics",
         "Understand Java syntax and semantics",
@@ -252,6 +298,30 @@ const mockData = {
         "Report and track software defects",
       ],
     },
+    {
+      id: 8,
+      title: "AI in Testing",
+      description:
+        "Learn the fundamentals of AI in testing. Perfect for beginners wanting to start their testing journey with AI in testing.",
+      thumbnail: "..\\data\\learning\\courses\\ai-testing.jpg",
+      instructor: "John Doe",
+      duration: "2 weeks",
+      totalHours: 1,
+      level: "Beginner",
+      students: 0,
+      rating: 0,
+      tags: ["Testing", "AI", "Basics"],
+      prerequisites: [],
+      price: 159.99,
+      learningObjectives: [
+        "Master AI in testing fundamentals",
+        "Understand AI testing concepts and principles",
+        "Learn AI testing techniques and strategies",
+        "Implement AI testing best practices",
+        "Create AI test cases and test plans",
+        "Report and track AI software defects",
+      ],
+    },
   ],
 
   // User enrollments with progress
@@ -260,19 +330,19 @@ const mockData = {
       id: 1,
       userId: 1,
       courseId: 1,
-      enrollmentDate: "2023-06-01",
-      lastAccessed: "2023-07-25",
+      enrollmentDate: "2024-06-01",
+      lastAccessed: "2024-07-25",
       progress: 100,
       completed: true,
       certificateIssued: true,
-      completionDate: "2023-06-30",
+      completionDate: "2024-06-30",
     },
     {
       id: 2,
       userId: 1,
       courseId: 2,
-      enrollmentDate: "2023-07-01",
-      lastAccessed: "2023-07-24",
+      enrollmentDate: "2024-07-01",
+      lastAccessed: "2024-07-24",
       progress: 60,
       completed: false,
     },
@@ -280,8 +350,8 @@ const mockData = {
       id: 3,
       userId: 3,
       courseId: 1,
-      enrollmentDate: "2023-07-15",
-      lastAccessed: "2023-07-25",
+      enrollmentDate: "2024-07-15",
+      lastAccessed: "2024-07-25",
       progress: 25,
       completed: false,
     },
@@ -289,8 +359,8 @@ const mockData = {
       id: 4,
       userId: 3,
       courseId: 2,
-      enrollmentDate: "2023-07-20",
-      lastAccessed: "2023-07-25",
+      enrollmentDate: "2024-07-20",
+      lastAccessed: "2024-07-25",
       progress: 0,
       completed: false,
     },
@@ -298,8 +368,8 @@ const mockData = {
       id: 5,
       userId: 3,
       courseId: 3,
-      enrollmentDate: "2023-07-25",
-      lastAccessed: "2023-07-25",
+      enrollmentDate: "2024-07-25",
+      lastAccessed: "2024-07-25",
       progress: 0,
       completed: false,
     },
@@ -307,8 +377,8 @@ const mockData = {
       id: 6,
       userId: 3,
       courseId: 4,
-      enrollmentDate: "2023-07-25",
-      lastAccessed: "2023-07-25",
+      enrollmentDate: "2024-07-25",
+      lastAccessed: "2024-07-25",
       progress: 0,
       completed: false,
     },
@@ -316,8 +386,8 @@ const mockData = {
       id: 7,
       userId: 4,
       courseId: 4,
-      enrollmentDate: "2023-07-25",
-      lastAccessed: "2023-07-25",
+      enrollmentDate: "2024-07-25",
+      lastAccessed: "2024-07-25",
       progress: 0,
       completed: false,
     },
@@ -325,8 +395,8 @@ const mockData = {
       id: 8,
       userId: 5,
       courseId: 1,
-      enrollmentDate: "2023-07-25",
-      lastAccessed: "2023-07-25",
+      enrollmentDate: "2024-07-25",
+      lastAccessed: "2024-07-25",
       progress: 0,
       completed: false,
     },
@@ -334,8 +404,8 @@ const mockData = {
       id: 9,
       userId: 5,
       courseId: 2,
-      enrollmentDate: "2023-07-25",
-      lastAccessed: "2023-07-25",
+      enrollmentDate: "2024-09-12",
+      lastAccessed: "2024-09-12",
       progress: 0,
       completed: false,
     },
@@ -343,8 +413,8 @@ const mockData = {
       id: 10,
       userId: 6,
       courseId: 1,
-      enrollmentDate: "2023-07-25",
-      lastAccessed: "2023-07-25",
+      enrollmentDate: "2024-10-10",
+      lastAccessed: "2024-10-10",
       progress: 0,
       completed: false,
     },
@@ -352,8 +422,8 @@ const mockData = {
       id: 11,
       userId: 6,
       courseId: 2,
-      enrollmentDate: "2023-07-25",
-      lastAccessed: "2023-07-25",
+      enrollmentDate: "2024-12-25",
+      lastAccessed: "2024-12-25",
       progress: 0,
       completed: false,
     },
@@ -409,7 +479,7 @@ const mockData = {
         id: 1,
         title: "Introduction to HTML",
         type: "video",
-        duration: "12:50",
+        duration: "00:12:50",
         completed: false,
         content: {
           videoUrl: "https://test.test.test/video1.mp4",
@@ -420,7 +490,7 @@ const mockData = {
         id: 2,
         title: "HTML Structure and Elements",
         type: "reading",
-        duration: "15:00",
+        duration: "00:15:00",
         completed: false,
         content: {
           text: "The basic structure of an HTML document...",
@@ -451,7 +521,7 @@ const mockData = {
         id: 4,
         title: "Working with Forms",
         type: "video",
-        duration: "12:00",
+        duration: "00:12:00",
         completed: false,
         content: {
           videoUrl: "https://test.test.test/video2.mp4",
@@ -462,7 +532,7 @@ const mockData = {
         id: 5,
         title: "CSS Integration",
         type: "reading",
-        duration: "21:00",
+        duration: "00:21:00",
         completed: false,
         content: {
           text: "Learn how to style your HTML with CSS...",
@@ -495,7 +565,7 @@ const mockData = {
         id: 1,
         title: "Modern JavaScript Features",
         type: "video",
-        duration: "12:00",
+        duration: "00:12:00",
         completed: false,
         content: {
           videoUrl: "https://test.test.test/js-video1.mp4",
@@ -506,7 +576,7 @@ const mockData = {
         id: 2,
         title: "Async Programming",
         type: "reading",
-        duration: "20:00",
+        duration: "00:20:00",
         completed: false,
         content: {
           text: "Asynchronous programming in JavaScript allows you to execute code concurrently...",
@@ -517,7 +587,7 @@ const mockData = {
         id: 3,
         title: "ES6+ Features",
         type: "reading",
-        duration: "18:00",
+        duration: "00:18:00",
         completed: false,
         content: {
           text: "ES6 introduced many new features to JavaScript, such as arrow functions, classes, and modules...",
@@ -528,7 +598,7 @@ const mockData = {
         id: 4,
         title: "JavaScript Basics",
         type: "video",
-        duration: "15:00",
+        duration: "00:15:00",
         completed: false,
         content: {
           videoUrl: "https://test.test.test/js-video1.mp4",
@@ -539,7 +609,7 @@ const mockData = {
         id: 5,
         title: "Variables and Data Types",
         type: "reading",
-        duration: "20:00",
+        duration: "00:20:00",
         completed: false,
         content: {
           text: "Understanding JavaScript variables and data types...",
@@ -550,7 +620,7 @@ const mockData = {
         id: 6,
         title: "Functions and Scope",
         type: "video",
-        duration: "25:00",
+        duration: "00:25:00",
         completed: false,
         content: {
           videoUrl: "https://test.test.test/js-video2.mp4",
@@ -561,7 +631,7 @@ const mockData = {
         id: 7,
         title: "Arrays and Objects",
         type: "reading",
-        duration: "30:00",
+        duration: "00:30:00",
         completed: false,
         content: {
           text: "Working with complex data structures...",
@@ -594,7 +664,7 @@ const mockData = {
         id: 1,
         title: "React Components",
         type: "video",
-        duration: "15:00",
+        duration: "00:15:00",
         completed: false,
         content: {
           videoUrl: "https://test.test.test/react-video1.mp4",
@@ -605,7 +675,7 @@ const mockData = {
         id: 2,
         title: "State Management",
         type: "reading",
-        duration: "25:00",
+        duration: "00:25:00",
         completed: false,
         content: {
           text: "State management is a crucial part of building React applications...",
@@ -618,7 +688,7 @@ const mockData = {
         id: 1,
         title: "Introduction to Playwright",
         type: "video",
-        duration: "10:00",
+        duration: "00:10:00",
         completed: false,
         content: {
           videoUrl: "https://test.test.test/playwright-video1.mp4",
@@ -629,7 +699,7 @@ const mockData = {
         id: 2,
         title: "Automating Browser Interactions",
         type: "reading",
-        duration: "18:00",
+        duration: "00:18:00",
         completed: false,
         content: {
           text: "Learn how to automate browser interactions using Playwright...",
@@ -640,7 +710,7 @@ const mockData = {
         id: 3,
         title: "Writing Reliable Tests",
         type: "reading",
-        duration: "20:00",
+        duration: "00:20:00",
         completed: false,
         content: {
           text: "Best practices for writing reliable end-to-end tests...",
@@ -671,7 +741,7 @@ const mockData = {
         id: 5,
         title: "Debugging and Optimization",
         type: "video",
-        duration: "30:00",
+        duration: "00:30:00",
         completed: false,
         content: {
           videoUrl: "https://test.test.test/playwright-video1.mp4",
@@ -682,7 +752,7 @@ const mockData = {
         id: 6,
         title: "Testing Best Practices",
         type: "video",
-        duration: "55:00",
+        duration: "00:55:00",
         completed: false,
         content: {
           videoUrl: "https://test.test.test/playwright-video1.mp4",
@@ -696,7 +766,7 @@ const mockData = {
         id: 1,
         title: "Python Basics",
         type: "video",
-        duration: "10:00",
+        duration: "00:10:00",
         completed: false,
         content: {
           videoUrl: "https://test.test.test/python-video1.mp4",
@@ -709,7 +779,7 @@ const mockData = {
         id: 1,
         title: "Java Basics",
         type: "video",
-        duration: "20:00",
+        duration: "00:20:00",
         completed: false,
         content: {
           videoUrl: "https://test.test.test/java-video1.mp4",
@@ -720,7 +790,7 @@ const mockData = {
         id: 2,
         title: "Java Syntax and Semantics",
         type: "reading",
-        duration: "35:00",
+        duration: "00:35:00",
         completed: false,
         content: {
           text: "Understanding Java syntax and semantics...",
@@ -731,7 +801,7 @@ const mockData = {
         id: 3,
         title: "Java Control Flow",
         type: "reading",
-        duration: "44:00",
+        duration: "00:44:00",
         completed: false,
         content: {
           text: "Learn how to control program flow in Java...",
@@ -762,7 +832,7 @@ const mockData = {
         id: 5,
         title: "Java Methods",
         type: "video",
-        duration: "53:00",
+        duration: "00:53:00",
         completed: false,
         content: {
           videoUrl: "https://test.test.test/java-video1.mp4",
@@ -773,7 +843,7 @@ const mockData = {
         id: 6,
         title: "Java Classes and Objects",
         type: "reading",
-        duration: "49:00",
+        duration: "00:49:00",
         completed: false,
         content: {
           videoUrl: "https://test.test.test/java-video1.mp4",
@@ -785,7 +855,7 @@ const mockData = {
         id: 7,
         title: "Java Inheritance",
         type: "video",
-        duration: "35:00",
+        duration: "00:35:00",
         completed: false,
         content: {
           videoUrl: "https://test.test.test/java-video1.mp4",
@@ -834,7 +904,7 @@ const mockData = {
         id: 1,
         title: "Manual Testing Fundamentals",
         type: "video",
-        duration: "10:00",
+        duration: "00:10:00",
         completed: false,
         content: {
           videoUrl: "https://test.test.test/manual-testing-video1.mp4",
@@ -845,7 +915,7 @@ const mockData = {
         id: 2,
         title: "Testing Techniques",
         type: "video",
-        duration: "15:00",
+        duration: "00:15:00",
         completed: false,
         content: {
           videoUrl: "https://test.test.test/manual-testing-video1.mp4",
@@ -857,7 +927,7 @@ const mockData = {
         id: 3,
         title: "Creating Test Cases",
         type: "video",
-        duration: "20:00",
+        duration: "00:20:00",
         completed: false,
         content: {
           videoUrl: "https://test.test.test/manual-testing-video1.mp4",
@@ -889,7 +959,7 @@ const mockData = {
         id: 5,
         title: "Reporting Defects",
         type: "video",
-        duration: "25:00",
+        duration: "00:25:00",
         completed: false,
         content: {
           videoUrl: "https://test.test.test/manual-testing-video1.mp4",
@@ -901,7 +971,7 @@ const mockData = {
         id: 6,
         title: "Manual Testing Best Practices",
         type: "video",
-        duration: "30:00",
+        duration: "00:30:00",
         completed: false,
         content: {
           videoUrl: "https://test.test.test/manual-testing-video1.mp4",
@@ -913,7 +983,7 @@ const mockData = {
         id: 7,
         title: "Manual Testing Techniques",
         type: "video",
-        duration: "35:00",
+        duration: "00:35:00",
         completed: false,
         content: {
           videoUrl: "https://test.test.test/manual-testing-video1.mp4",
@@ -945,7 +1015,7 @@ const mockData = {
         id: 9,
         title: "Manual Testing Patterns",
         type: "video",
-        duration: "40:00",
+        duration: "00:40:00",
         completed: false,
         content: {
           videoUrl: "https://test.test.test/manual-testing-video1.mp4",
@@ -957,7 +1027,7 @@ const mockData = {
         id: 10,
         title: "Manual Testing Strategies",
         type: "video",
-        duration: "45:00",
+        duration: "00:45:00",
         completed: false,
         content: {
           videoUrl: "https://test.test.test/manual-testing-video1.mp4",
@@ -969,12 +1039,105 @@ const mockData = {
         id: 11,
         title: "Manual Testing Principles",
         type: "video",
-        duration: "50:00",
+        duration: "00:50:00",
         completed: false,
         content: {
           videoUrl: "https://test.test.test/manual-testing-video1.mp4",
           transcript: "Effective manual testing techniques...",
           resources: ["Testing Strategies", "Manual Testing Patterns"],
+        },
+      },
+    ],
+    8: [
+      {
+        id: 1,
+        title: "AI in Testing Fundamentals",
+        type: "video",
+        duration: "05:34:10",
+        completed: false,
+        content: {
+          videoUrl: "https://test.test.test/ai-testing-video1.mp4",
+          transcript: "Introduction to AI in testing...",
+        },
+      },
+      {
+        id: 2,
+        title: "AI Testing Techniques",
+        type: "video",
+        duration: "06:45:00",
+        completed: false,
+        content: {
+          videoUrl: "https://test.test.test/ai-testing-video1.mp4",
+          transcript: "Learn AI testing techniques and strategies...",
+          resources: ["Testing Guide", "AI Testing Best Practices"],
+        },
+      },
+      {
+        id: 3,
+        title: "AI Testing Patterns",
+        type: "video",
+        duration: "07:30:00",
+        completed: false,
+        content: {
+          videoUrl: "https://test.test.test/ai-testing-video1.mp4",
+          transcript: "Effective AI testing techniques and patterns...",
+          resources: ["Testing Strategies", "AI Testing Patterns"],
+        },
+      },
+      {
+        id: 4,
+        title: "AI Testing Fundamentals Quiz",
+        type: "quiz",
+        completed: false,
+        content: {
+          questions: [
+            {
+              question: "What is AI in testing?",
+              options: ["Testing by machines", "Automated testing", "Manual testing"],
+              correct: 0,
+            },
+            {
+              question: "What is a test case?",
+              options: ["A set of conditions", "A test script", "A test plan"],
+              correct: 0,
+            },
+          ],
+        },
+      },
+      {
+        id: 5,
+        title: "AI Testing Strategies",
+        type: "video",
+        duration: "08:15:00",
+        completed: false,
+        content: {
+          videoUrl: "https://test.test.test/ai-testing-video1.mp4",
+          transcript: "Effective AI testing techniques...",
+          resources: ["Testing Strategies", "AI Testing Patterns"],
+        },
+      },
+      {
+        id: 6,
+        title: "AI Testing Best Practices",
+        type: "video",
+        duration: "09:00:00",
+        completed: false,
+        content: {
+          videoUrl: "https://test.test.test/ai-testing-video1.mp4",
+          transcript: "Best practices for AI testing...",
+          resources: ["Testing Standards", "AI Testing Principles"],
+        },
+      },
+      {
+        id: 7,
+        title: "AI Testing Techniques",
+        type: "video",
+        duration: "09:45:00",
+        completed: false,
+        content: {
+          videoUrl: "https://test.test.test/ai-testing-video1.mp4",
+          transcript: "Effective AI testing techniques...",
+          resources: ["Testing Strategies", "AI Testing Patterns"],
         },
       },
     ],
@@ -1006,12 +1169,10 @@ const mockData = {
     },
   ],
 
-  // Add failed login attempts tracking
   failedLoginAttempts: {
     // Structure: { email: { count: number, lastAttempt: string } }
   },
 
-  // Add userRatings array to mockData
   userRatings: [
     {
       userId: 3,
@@ -1068,6 +1229,45 @@ const mockData = {
       rating: 4,
       comment: "Excellent course, very informative! I learned a lot from this course. Highly recommended.",
       createdAt: "2023-10-25T12:00:00Z",
+    },
+  ],
+
+  // Add funds transaction history
+  fundsHistory: [
+    {
+      userId: 1,
+      amount: 50.0,
+      type: "credit",
+      timestamp: "2023-11-01T10:30:00Z",
+      description: "Account top up",
+    },
+    {
+      userId: 1,
+      amount: 49.99,
+      type: "debit",
+      timestamp: "2023-11-02T14:20:00Z",
+      description: "Course enrollment: Introduction to Web Development",
+    },
+    {
+      userId: 1,
+      amount: 100.0,
+      type: "credit",
+      timestamp: "2023-11-03T09:45:00Z",
+      description: "Account top up",
+    },
+    {
+      userId: 1,
+      amount: 79.99,
+      type: "debit",
+      timestamp: "2023-11-04T16:30:00Z",
+      description: "Course enrollment: Advanced JavaScript Programming",
+    },
+    {
+      userId: 1,
+      amount: 100.0,
+      type: "credit",
+      timestamp: "2024-12-03T09:45:00Z",
+      description: "Account top up",
     },
   ],
 };
@@ -1165,6 +1365,104 @@ function findUserIdByEmail(email) {
 recalculateStudentsCount();
 recalculateCoursesRating();
 recalculateCoursesDuration();
+
+function getUserFunds(userId) {
+  const user = mockData.users.find((u) => areIdsEqual(u.id, userId));
+  return user ? user.funds : 0;
+}
+
+function addFundsHistory(userId, amount, type, description) {
+  mockData.fundsHistory.push({
+    userId,
+    amount,
+    type,
+    timestamp: new Date().toISOString(),
+    description,
+  });
+}
+
+function updateUserFunds(userId, newAmount) {
+  const user = mockData.users.find((u) => areIdsEqual(u.id, userId));
+  if (user) {
+    const oldAmount = user.funds;
+    user.funds = newAmount;
+
+    // If it's a top up (new amount > old amount)
+    if (newAmount > oldAmount) {
+      addFundsHistory(userId, newAmount - oldAmount, "credit", "Account top up");
+    }
+
+    return true;
+  }
+  return false;
+}
+
+// Add helper functions for role checks
+function hasPermission(user, permission) {
+  if (!user) return false;
+  const userPermissions = mockData.rolePermissions[user.role];
+  return userPermissions?.includes(permission);
+}
+
+function isInstructor(user) {
+  return user?.role === mockData.roles.INSTRUCTOR;
+}
+
+function isAdmin(user) {
+  return user?.role === mockData.roles.ADMIN;
+}
+
+function canManageCourse(user, courseId) {
+  if (!user) return false;
+  if (isAdmin(user)) return true;
+  if (!isInstructor(user)) return false;
+
+  return mockData.courseOwnership.some(
+    (ownership) => areIdsEqual(ownership.courseId, courseId) && areIdsEqual(ownership.instructorId, user.id)
+  );
+}
+
+function calculateInstructorStats(instructorId) {
+  const instructorCourses = mockData.courses.filter((course) =>
+    mockData.courseOwnership.some(
+      (ownership) => ownership.instructorId === instructorId && ownership.courseId === course.id
+    )
+  );
+
+  const stats = {
+    totalCourses: instructorCourses.length,
+    totalStudents: 0,
+    averageRating: 0,
+    totalRevenue: 0,
+  };
+
+  instructorCourses.forEach((course) => {
+    // Calculate total students
+    const courseEnrollments = mockData.userEnrollments.filter((e) => e.courseId === course.id);
+    stats.totalStudents += courseEnrollments.length;
+
+    // Calculate total revenue
+    stats.totalRevenue += courseEnrollments.reduce(
+      (total, enrollment) => total + (enrollment.paidAmount || course.price),
+      0
+    );
+
+    // Calculate average rating
+    const courseRatings = mockData.userRatings.filter((r) => r.courseId === course.id);
+    if (courseRatings.length > 0) {
+      course.avgRating = courseRatings.reduce((total, r) => total + r.rating, 0) / courseRatings.length;
+    }
+  });
+
+  // Calculate overall average rating
+  const coursesWithRatings = instructorCourses.filter((c) => c.avgRating);
+  stats.averageRating =
+    coursesWithRatings.length > 0
+      ? coursesWithRatings.reduce((total, c) => total + c.avgRating, 0) / coursesWithRatings.length
+      : 0;
+
+  return stats;
+}
 
 function handleLearning(req, res, isAdmin) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
@@ -1551,6 +1849,163 @@ function handleLearning(req, res, isAdmin) {
       res.status(HTTP_OK).send(ratingsWithUserInfo);
       return;
     }
+
+    // Add new endpoints for role management
+    // GET /api/learning/roles - List all roles
+    if (req.method === "GET" && urlParts[2] === "roles") {
+      // GET /api/learning/roles - List all roles
+      if (!checkIfUserIsAuthenticated(req, res)) {
+        res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not authenticated"));
+        return;
+      }
+
+      const user = mockData.users.find((u) => u.email === verifyTokenResult?.email);
+
+      if (!hasPermission(user, "manage_roles")) {
+        res.status(HTTP_FORBIDDEN).send(formatErrorResponse("Insufficient permissions"));
+        return;
+      }
+
+      res.status(HTTP_OK).send({
+        roles: Object.values(mockData.roles),
+      });
+      return;
+    }
+
+    // Add new GET endpoint handler for user funds
+    if (req.method === "GET" && urlParts.length === 5 && urlParts[4] === "funds") {
+      if (!checkIfUserIsAuthenticated(req, res)) {
+        res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not authenticated"));
+        return;
+      }
+
+      const userId = parseInt(urlParts[3]);
+      if (!checkIfUserIdMatchesEmail(userId, verifyTokenResult.email)) {
+        res.status(HTTP_FORBIDDEN).send(formatErrorResponse("User not authorized"));
+        return;
+      }
+
+      const funds = getUserFunds(userId) || 0;
+      res.status(HTTP_OK).send({ funds: funds });
+      return;
+    }
+
+    // Add inside GET section before the final else
+    if (urlParts.length === 6 && urlParts[4] === "funds" && urlParts[5] === "history") {
+      if (!checkIfUserIsAuthenticated(req, res)) {
+        res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not authenticated"));
+        return;
+      }
+
+      const userId = parseInt(urlParts[3]);
+      if (!checkIfUserIdMatchesEmail(userId, verifyTokenResult.email)) {
+        res.status(HTTP_FORBIDDEN).send(formatErrorResponse("User not authorized"));
+        return;
+      }
+
+      const history = mockData.fundsHistory.filter((t) => areIdsEqual(t.userId, userId));
+      history.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)); // Sort by timestamp desc
+
+      res.status(HTTP_OK).send({ history });
+      return;
+    }
+
+    // Add instructor endpoints
+    // /api/learning/instructor/
+    if (urlParts[2] === "instructor") {
+      if (!checkIfUserIsAuthenticated(req, res)) {
+        res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not authenticated"));
+        return;
+      }
+
+      const user = mockData.users.find((u) => u.email === verifyTokenResult?.email);
+      if (!isInstructor(user)) {
+        res.status(HTTP_FORBIDDEN).send(formatErrorResponse("Must be an instructor"));
+        return;
+      }
+
+      const urlPart = urlParts[3].split("?")[0];
+
+      switch (urlPart) {
+        // /learning/instructor/stats
+        case "stats": {
+          const stats = calculateInstructorStats(user.id);
+          res.status(HTTP_OK).send(stats);
+          return;
+        }
+        // /learning/instructor/courses
+        case "courses": {
+          const courses = mockData.courses.filter((course) =>
+            mockData.courseOwnership.some(
+              (ownership) => ownership.instructorId === user.id && ownership.courseId === course.id
+            )
+          );
+          res.status(HTTP_OK).send(courses);
+          return;
+        }
+        // /learning/instructor/analytics
+        case "analytics": {
+          if (!req.url.includes("?")) {
+            res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Missing required query parameters"));
+            return;
+          }
+
+          const queryParams = new URLSearchParams(req.url.split("?")[1]);
+          const courseId = queryParams.get("courseId") || "all";
+          const timeRange = parseInt(queryParams.get("timeRange")) || 30;
+
+          // Get instructor's courses
+          const targetCourses =
+            courseId === "all"
+              ? mockData.courses.filter((course) =>
+                  mockData.courseOwnership.some((o) => o.instructorId === user.id && o.courseId === course.id)
+                )
+              : mockData.courses.filter(
+                  (course) =>
+                    course.id === parseInt(courseId) &&
+                    mockData.courseOwnership.some((o) => o.instructorId === user.id && o.courseId === course.id)
+                );
+
+          if (!targetCourses.length) {
+            res.status(HTTP_NOT_FOUND).send(formatErrorResponse("No courses found"));
+            return;
+          }
+
+          // Calculate date range
+          const endDate = new Date();
+          const startDate = new Date();
+          startDate.setDate(endDate.getDate() - timeRange);
+
+          try {
+            const metrics = {
+              enrollments: calculateEnrollmentMetrics(targetCourses, startDate),
+              revenue: calculateRevenueMetrics(targetCourses, startDate),
+              completion: calculateCompletionMetrics(targetCourses),
+              rating: calculateRatingMetrics(targetCourses),
+            };
+
+            const tables = {
+              topCourses: getTopPerformingCourses(targetCourses),
+              recentReviews: getRecentReviews(targetCourses, startDate),
+            };
+
+            const charts = {
+              enrollments: getEnrollmentTrends(targetCourses, timeRange),
+              revenue: getRevenueTrends(targetCourses, timeRange),
+            };
+
+            res.status(HTTP_OK).send({
+              success: true,
+              data: { metrics, tables, charts },
+            });
+          } catch (error) {
+            console.error("Analytics error:", error);
+            res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Failed to generate analytics"));
+          }
+          return;
+        }
+      }
+    }
   }
 
   // POST endpoints
@@ -1577,6 +2032,7 @@ function handleLearning(req, res, isAdmin) {
               firstName: user.firstName,
               lastName: user.lastName,
               avatar: user.avatar,
+              role: user.role,
             });
           } else {
             const foundUser = mockData.users.find((u) => u.username === username);
@@ -1678,13 +2134,21 @@ function handleLearning(req, res, isAdmin) {
             return;
           }
 
-          // Check if already enrolled
           if (checkIfUserIsEnrolled(userId, courseId)) {
             res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Already enrolled in this course"));
             return;
           }
 
-          // Create new enrollment
+          // Check if user has enough funds
+          const userFunds = getUserFunds(userId);
+          if (userFunds < course.price) {
+            res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Insufficient funds"));
+            return;
+          }
+
+          updateUserFunds(userId, userFunds - course.price);
+          addFundsHistory(userId, course.price, "debit", `Course enrollment: ${course.title}`);
+
           const enrollment = {
             id: mockData.userEnrollments.length + 1,
             userId,
@@ -1693,6 +2157,7 @@ function handleLearning(req, res, isAdmin) {
             lastAccessed: new Date().toISOString(),
             progress: 0,
             completed: false,
+            paidAmount: course.price,
           };
 
           mockData.userEnrollments.push(enrollment);
@@ -1899,6 +2364,69 @@ function handleLearning(req, res, isAdmin) {
       res.status(HTTP_OK).send({ success: true });
       return;
     }
+
+    // Inside handleLearning function, in the POST section where instructor endpoints are handled
+    // /learning/instructor/courses/:courseId/lessons
+    if (urlParts[2] === "instructor") {
+      if (!checkIfUserIsAuthenticated(req, res)) {
+        res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not authenticated"));
+        return;
+      }
+
+      const user = mockData.users.find((u) => u.email === verifyTokenResult?.email);
+      if (!isInstructor(user) && !isAdmin(user)) {
+        res.status(HTTP_FORBIDDEN).send(formatErrorResponse("Must be an instructor"));
+        return;
+      }
+
+      switch (urlParts[3]) {
+        // /learning/instructor/courses/:courseId/lessons
+        case "courses": {
+          if (req.method === "POST") {
+            const { title, description, price, level, tags } = req.body;
+
+            if (!title || !description || price === undefined || !level) {
+              res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Missing required fields"));
+              return;
+            }
+
+            const maxCourseId = Math.max(...mockData.courses.map((c) => c.id), 0);
+            const newCourse = {
+              id: maxCourseId + 1,
+              title,
+              description,
+              thumbnail: "..\\data\\learning\\courses\\default-course.jpg",
+              instructor: `${user.firstName} ${user.lastName}`,
+              duration: "0 hours",
+              totalHours: 0,
+              level,
+              students: 0,
+              rating: 0,
+              tags: tags || [],
+              prerequisites: [],
+              price: parseFloat(price),
+              learningObjectives: [],
+            };
+
+            mockData.courses.push(newCourse);
+            mockData.courseOwnership.push({
+              courseId: newCourse.id,
+              instructorId: user.id,
+            });
+
+            mockData.courseLessons[newCourse.id] = [];
+
+            res.status(HTTP_OK).send({
+              success: true,
+              message: "Course created successfully",
+              course: newCourse,
+            });
+            return;
+          }
+          break;
+        }
+      }
+    }
   }
 
   // PUT endpoints
@@ -1979,11 +2507,192 @@ function handleLearning(req, res, isAdmin) {
       });
       return;
     }
+
+    // Update user funds
+    // /learning/users/{userId}/funds
+    if (urlParts.length === 5 && urlParts[1] === "learning" && urlParts[2] === "users" && urlParts[4] === "funds") {
+      if (checkIfUserIsAuthenticated(req, res, "learning", urlEnds) === false) {
+        res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not authenticated"));
+        return;
+      }
+
+      const userId = parseInt(urlParts[3]);
+      if (!checkIfUserIdMatchesEmail(userId, verifyTokenResult.email)) {
+        res.status(HTTP_FORBIDDEN).send(formatErrorResponse("User not authorized"));
+        return;
+      }
+
+      const { amount } = req.body;
+      if (typeof amount !== "number" || amount < 0 || amount > 500) {
+        res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Invalid amount"));
+        return;
+      }
+
+      if (updateUserFunds(userId, amount)) {
+        res.status(HTTP_OK).send({
+          success: true,
+          message: "Funds updated successfully",
+          newBalance: amount,
+        });
+      } else {
+        res.status(HTTP_NOT_FOUND).send(formatErrorResponse("User not found"));
+      }
+      return;
+    }
+
+    // Add role assignment endpoint for admins
+    // PUT /api/learning/users/{userId}/role
+    if (req.method === "PUT" && urlParts[2] === "users" && urlParts[4] === "role") {
+      if (checkIfUserIsAuthenticated(req, res, "learning", urlEnds) === false) {
+        res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not authenticated"));
+        return;
+      }
+
+      const user = mockData.users.find((u) => u.email === verifyTokenResult?.email);
+
+      if (!hasPermission(user, "manage_roles")) {
+        res.status(HTTP_FORBIDDEN).send(formatErrorResponse("Must be an admin to modify roles"));
+        return;
+      }
+
+      const targetUserId = parseInt(urlParts[3]);
+      const { role } = req.body;
+
+      if (!Object.values(mockData.roles).includes(role)) {
+        res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Invalid role"));
+        return;
+      }
+
+      const targetUser = mockData.users.find((u) => u.id === targetUserId);
+      if (!targetUser) {
+        res.status(HTTP_NOT_FOUND).send(formatErrorResponse("User not found"));
+        return;
+      }
+
+      targetUser.role = role;
+      res.status(HTTP_OK).send({ success: true });
+      return;
+    }
   }
 
   res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Endpoint not found"));
 }
 
+// Add these helper functions at the bottom of the file
+function calculateEnrollmentMetrics(courses, startDate) {
+  const enrollments = mockData.userEnrollments.filter(
+    (e) => courses.some((c) => c.id === e.courseId) && new Date(e.enrollmentDate) >= startDate
+  );
+
+  const previousStartDate = new Date(startDate);
+  previousStartDate.setDate(startDate.getDate() - (new Date() - startDate) / (1000 * 60 * 60 * 24));
+
+  const previousEnrollments = mockData.userEnrollments.filter(
+    (e) =>
+      courses.some((c) => c.id === e.courseId) &&
+      new Date(e.enrollmentDate) >= previousStartDate &&
+      new Date(e.enrollmentDate) < startDate
+  );
+
+  return {
+    total: enrollments.length,
+    trend: previousEnrollments.length
+      ? Math.round(((enrollments.length - previousEnrollments.length) / previousEnrollments.length) * 100)
+      : 0,
+  };
+}
+
+function calculateRevenueMetrics(courses, startDate) {
+  const currentRevenue = mockData.userEnrollments
+    .filter((e) => courses.some((c) => c.id === e.courseId) && new Date(e.enrollmentDate) >= startDate)
+    .reduce((total, enrollment) => {
+      const course = courses.find((c) => c.id === enrollment.courseId);
+      return total + (enrollment.paidAmount || course?.price || 0);
+    }, 0);
+
+  const previousStartDate = new Date(startDate);
+  previousStartDate.setDate(startDate.getDate() - (new Date() - startDate) / (1000 * 60 * 60 * 24));
+
+  const previousRevenue = mockData.userEnrollments
+    .filter(
+      (e) =>
+        courses.some((c) => c.id === e.courseId) &&
+        new Date(e.enrollmentDate) >= previousStartDate &&
+        new Date(e.enrollmentDate) < startDate
+    )
+    .reduce((total, enrollment) => {
+      const course = courses.find((c) => c.id === enrollment.courseId);
+      return total + (enrollment.paidAmount || course?.price || 0);
+    }, 0);
+
+  return {
+    total: currentRevenue,
+    trend: previousRevenue ? Math.round(((currentRevenue - previousRevenue) / previousRevenue) * 100) : 0,
+  };
+}
+
+function calculateCompletionMetrics(courses) {
+  const completedCount = mockData.userEnrollments.filter(
+    (e) => courses.some((c) => c.id === e.courseId) && e.completed
+  ).length;
+
+  const totalEnrollments = mockData.userEnrollments.filter((e) => courses.some((c) => c.id === e.courseId)).length;
+
+  return {
+    rate: totalEnrollments ? Math.round((completedCount / totalEnrollments) * 100) : 0,
+    trend: 0, // Calculate trend if needed
+  };
+}
+
+function calculateRatingMetrics(courses) {
+  const ratings = mockData.userRatings.filter((r) => courses.some((c) => c.id === r.courseId));
+
+  const average = ratings.length ? ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length : 0;
+
+  return {
+    average: Number(average.toFixed(1)),
+    trend: 0, // Calculate trend if needed
+  };
+}
+
+function getTopPerformingCourses(courses) {
+  return courses
+    .map((course) => ({
+      title: course.title,
+      enrollments: mockData.userEnrollments.filter((e) => e.courseId === course.id).length,
+      revenue: course.price * mockData.userEnrollments.filter((e) => e.courseId === course.id).length,
+      rating: course.rating,
+    }))
+    .sort((a, b) => b.enrollments - a.enrollments)
+    .slice(0, 5);
+}
+
+function getRecentReviews(courses, startDate) {
+  return mockData.userRatings
+    .filter((r) => courses.some((c) => c.id === r.courseId) && new Date(r.createdAt) >= startDate)
+    .map((review) => ({
+      courseTitle: courses.find((c) => c.id === review.courseId)?.title,
+      rating: review.rating,
+      comment: review.comment,
+      date: review.createdAt,
+    }))
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .slice(0, 5);
+}
+
+function getEnrollmentTrends(courses, days) {
+  // Implement enrollment trend calculation
+  return [];
+}
+
+function getRevenueTrends(courses, days) {
+  // Implement revenue trend calculation
+  return [];
+}
+
 module.exports = {
   handleLearning,
+  hasPermission,
+  isInstructor,
+  isAdmin,
 };

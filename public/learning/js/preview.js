@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             {
               type: "initialize",
               data: {
-                duration: currentLesson.duration,
+                duration: parseDuration(currentLesson.duration),
                 durationStr: currentLesson.duration,
               },
             },
@@ -128,14 +128,22 @@ document.addEventListener("DOMContentLoaded", async () => {
 let messageHandler = null;
 
 function parseDuration(timeStr) {
-  const [minutes, seconds] = timeStr.split(":").map(Number);
-  return minutes * 60 + seconds;
+  // timeStr can be in the format "mm:ss" or "hh:mm:ss"
+  const parts = timeStr.split(":");
+  if (parts.length === 3) {
+    const [hours, minutes, seconds] = parts.map(Number);
+    return hours * 3600 + minutes * 60 + seconds;
+  } else {
+    const [minutes, seconds] = timeStr.split(":").map(Number);
+    return minutes * 60 + seconds;
+  }
 }
 
 function formatTime(seconds) {
+  const hours = Math.floor(seconds / 3600);
   const mins = Math.floor(seconds / 60);
   const secs = Math.floor(seconds % 60);
-  return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  return `${hours.toString().padStart(2, "0")}:${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
 }
 
 async function renderLessonContent(lesson) {

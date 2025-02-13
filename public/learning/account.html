@@ -19,6 +19,7 @@
             <h1 id="menu-main-gui-learning" class="nav-menu"></h1>
         </div>
     </header>
+    <span id="top-section"></span>
     <br />
     <br />
     <br />
@@ -27,6 +28,15 @@
         <div id="sidebarContainer"></div>
 
         <div class="account-container">
+            <nav class="floating-nav">
+                <ul>
+                    <li><a href="#top-section">Top</a></li>
+                    <li><a href="#balance-section">Balance</a></li>
+                    <li><a href="#profile-section">Profile</a></li>
+                    <li><a href="#password-section">Password</a></li>
+                </ul>
+            </nav>
+
             <h2 class="main-header">Account Settings</h2>
             <div class="account-details compact">
                 <div class="profile-header">
@@ -39,63 +49,84 @@
                     </div>
                 </div>
 
-                <div class="account-form">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                        <div class="form-group">
-                            <label for="firstName">First Name</label>
-                            <input type="text" id="firstName" name="firstName">
+                <div class="account-sections">
+                    <!-- Balance Section -->
+                    <section class="account-section" id="balance-section">
+                        <h3 class="section-title">Account Balance</h3>
+                        <div class="funds-section">
+                            <div class="funds-display">
+                                <span class="funds-amount">$<span id="userFunds">0.00</span></span>
+                                <button id="topUpBtn" class="primary-button">
+                                    <i class="fas fa-plus"></i> Top Up Funds
+                                </button>
+                            </div>
+                            <div id="fundsHistory" class="funds-history">
+                                <h4>Transaction History</h4>
+                                <div class="transactions-list"></div>
+                            </div>
                         </div>
+                    </section>
 
-                        <div class="form-group">
-                            <label for="lastName">Last Name</label>
-                            <input type="text" id="lastName" name="lastName">
+                    <!-- Profile Section -->
+                    <section class="account-section" id="profile-section">
+                        <h3 class="section-title">Profile Information</h3>
+                        <div class="account-form">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="firstName">First Name</label>
+                                    <input type="text" id="firstName" name="firstName">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="lastName">Last Name</label>
+                                    <input type="text" id="lastName" name="lastName">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" name="email">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="confirmProfilePassword">Current Password</label>
+                                <input type="password" id="confirmProfilePassword" name="confirmProfilePassword" required>
+                            </div>
+
+                            <div class="form-actions">
+                                <span class="warning-box">
+                                    After updating your profile, you will need to sign in again
+                                </span>
+                                <button id="updateProfileBtn" class="primary-button">
+                                    Update Profile
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                    </section>
 
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email">
-                    </div>
+                    <!-- Password Section -->
+                    <section class="account-section" id="password-section">
+                        <h3 class="section-title">Change Password</h3>
+                        <div class="account-form">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="newPassword">New Password</label>
+                                    <input type="password" id="newPassword" name="newPassword">
+                                </div>
 
-                    <div class="form-group">
-                        <label for="confirmProfilePassword">Current Password</label>
-                        <input type="password" id="confirmProfilePassword" name="confirmProfilePassword" required>
-                    </div>
+                                <div class="form-group">
+                                    <label for="confirmPassword">Confirm Password</label>
+                                    <input type="password" id="confirmPassword" name="confirmPassword">
+                                </div>
+                            </div>
 
-                    <div class="form-actions">
-                        <span class="warning-box">
-                            After updating your profile, you will need to sign in again
-                        </span>
-                        <button id="updateProfileBtn" class="primary-button">
-                            Update Profile
-                        </button>
-                    </div>
-                </div>
-
-                <div class="change-password-section">
-                    <h3>Change Password</h3>
-                    <div class="form-group">
-                        <label for="currentPassword">Current Password</label>
-                        <input type="password" id="currentPassword" name="currentPassword">
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                        <div class="form-group">
-                            <label for="newPassword">New Password</label>
-                            <input type="password" id="newPassword" name="newPassword">
+                            <div class="form-actions">
+                                <button id="changePasswordBtn" class="primary-button">
+                                    Change Password
+                                </button>
+                            </div>
                         </div>
-
-                        <div class="form-group">
-                            <label for="confirmPassword">Confirm Password</label>
-                            <input type="password" id="confirmPassword" name="confirmPassword">
-                        </div>
-                    </div>
-
-                    <div class="form-actions">
-                        <button id="changePasswordBtn" class="primary-button">
-                            Change Password
-                        </button>
-                    </div>
+                    </section>
                 </div>
             </div>
         </div>

@@ -159,10 +159,23 @@ async function enrollCourse(courseId) {
   button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enrolling...';
 
   try {
+    // Check user funds before enrolling
+    const userId = api.getUserIdFromCookie();
+    const userFunds = await api.getUserFunds(userId);
+    const course = allCourses.find((c) => c.id === courseId);
+
+    if (userFunds < course.price) {
+      showNotification("Insufficient funds to enroll in this course", "error");
+      button.innerHTML = `Enroll Now - $${course.price}`;
+      button.disabled = false;
+      return;
+    }
+
     const result = await api.enrollCourse(courseId);
     if (result.success) {
       button.innerHTML = '<i class="fas fa-check"></i> Enrolled';
       button.style.background = "#10b981";
+      showNotification("Enrolled successfully! Redirecting to course...", "success");
       setTimeout(() => {
         window.location.href = `/learning/course-viewer.html?id=${courseId}`;
       }, 1000);
@@ -170,7 +183,7 @@ async function enrollCourse(courseId) {
   } catch (error) {
     button.innerHTML = "Enroll Now";
     button.disabled = false;
-    alert("Failed to enroll. Please try again.");
+    showNotification(error.message || "Failed to enroll. Please try again.", "error");
   }
 }
 

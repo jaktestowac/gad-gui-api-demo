@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | Course Analytics</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="./css/learning.css" />
+    <link rel="stylesheet" href="./css/instructor.css" />
+    <link rel="stylesheet" href="./css/analytics.css" />
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-gui-learning" class="nav-menu"></h1>
+        </div>
+    </header>
+    <br />
+    <br />
+    <br />
+    <img src="/data/learning/gad-learning-logo.png" alt="GAD Learning" class="hero-logo hero-absolute">
+    <main class="dashboard-container">
+        <div id="sidebarContainer"></div>
+        <div class="analytics-panel">
+            <div class="panel-header">
+                <h2>Course Analytics</h2>
+                <div class="filters">
+                    <select id="courseFilter" class="filter-select">
+                        <option value="all">All Courses</option>
+                    </select>
+                    <select id="timeFilter" class="filter-select">
+                        <option value="7">Last 7 days</option>
+                        <option value="30">Last 30 days</option>
+                        <option value="90">Last 90 days</option>
+                        <option value="365">Last year</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="analytics-grid">
+                <div class="metric-card enrollments">
+                    <h3>Total Enrollments</h3>
+                    <div class="metric-value" id="totalEnrollments">0</div>
+                    <div class="metric-trend">
+                        <span id="enrollmentTrend">0%</span> vs previous period
+                    </div>
+                </div>
+
+                <div class="metric-card revenue">
+                    <h3>Revenue</h3>
+                    <div class="metric-value" id="totalRevenue">$0.00</div>
+                    <div class="metric-trend">
+                        <span id="revenueTrend">0%</span> vs previous period
+                    </div>
+                </div>
+
+                <div class="metric-card completion">
+                    <h3>Completion Rate</h3>
+                    <div class="metric-value" id="completionRate">0%</div>
+                    <div class="metric-trend">
+                        <span id="completionTrend">0%</span> vs previous period
+                    </div>
+                </div>
+
+                <div class="metric-card rating">
+                    <h3>Average Rating</h3>
+                    <div class="metric-value" id="averageRating">0.0</div>
+                    <div class="metric-trend">
+                        <span id="ratingTrend">0%</span> vs previous period
+                    </div>
+                </div>
+            </div>
+
+            <div class="charts-container">
+                <div class="chart-card">
+                    <h3>Enrollment Trends</h3>
+                    <div class="chart" id="enrollmentChart"></div>
+                </div>
+                <div class="chart-card">
+                    <h3>Revenue Analysis</h3>
+                    <div class="chart" id="revenueChart"></div>
+                </div>
+            </div>
+
+            <div class="analytics-tables">
+                <div class="table-card">
+                    <h3>Top Performing Courses</h3>
+                    <div class="table-container" id="topCoursesTable"></div>
+                </div>
+                <div class="table-card">
+                    <h3>Recent Reviews</h3>
+                    <div class="table-container" id="recentReviewsTable"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="./js/services/api.js"></script>
+    <script src="./js/utils/notifications.js"></script>
+    <script src="./js/components/sidebar.js"></script>
+    <script src="./js/analytics.js"></script>
+    <script src="./js/sidebar.js"></script>
+    <script src="./js/auth-check.js"></script>
+    <script src="./js/auth.js"></script>
+</body>
+
+</html>

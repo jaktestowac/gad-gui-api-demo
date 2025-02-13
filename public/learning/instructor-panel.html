@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | Instructor Panel</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="./css/learning.css" />
+    <link rel="stylesheet" href="./css/instructor.css" />
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-gui-learning" class="nav-menu"></h1>
+        </div>
+    </header>
+    <br />
+    <br />
+    <br />
+    <img src="/data/learning/gad-learning-logo.png" alt="GAD Learning" class="hero-logo hero-absolute">
+    <main class="dashboard-container">
+        <div id="sidebarContainer"></div>
+        <div class="instructor-panel">
+            <div class="panel-header">
+                <h2>Instructor Dashboard</h2>
+                <button id="createCourseBtn" class="primary-button">
+                    <i class="fas fa-plus"></i> Create Course
+                </button>
+            </div>
+
+            <div class="instructor-stats">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-book"></i></div>
+                    <div class="stat-info">
+                        <h3>My Courses</h3>
+                        <span id="courseCount">0</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-users"></i></div>
+                    <div class="stat-info">
+                        <h3>Students</h3>
+                        <span id="studentCount">0</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-star"></i></div>
+                    <div class="stat-info">
+                        <h3>Avg Rating</h3>
+                        <span id="avgRating">0.0</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+                    <div class="stat-info">
+                        <h3>Revenue</h3>
+                        <span id="totalRevenue">$0.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="courses-section">
+                <div class="section-header">
+                    <h3><i class="fas fa-book"></i> My Courses</h3>
+                    <div class="view-controls">
+                        <button class="view-btn active" data-view="grid">
+                            <i class="fas fa-th-large"></i> Grid
+                        </button>
+                        <button class="view-btn" data-view="list">
+                            <i class="fas fa-list"></i> List
+                        </button>
+                    </div>
+                </div>
+                <div id="instructorCourses" class="instructor-course-grid"></div>
+            </div>
+        </div>
+    </main>
+
+    <div id="courseModal" class="modal">
+        <div class="modal-content">
+            <h3>Create New Course</h3>
+            <form id="courseForm">
+                <div class="form-group">
+                    <label for="courseTitle">Title</label>
+                    <input type="text" id="courseTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="courseDescription">Description</label>
+                    <textarea id="courseDescription" required></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="coursePrice">Price ($)</label>
+                        <input type="number" id="coursePrice" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="courseLevel">Level</label>
+                        <select id="courseLevel" required>
+                            <option value="Beginner">Beginner</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Advanced">Advanced</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="courseTags">Tags (comma-separated)</label>
+                    <input type="text" id="courseTags" placeholder="e.g., JavaScript, Web Development">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="secondary-button" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="primary-button">Create Course</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <button class="mobile-menu-button">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="sidebar-overlay"></div>
+
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script src="./js/services/api.js"></script>
+    <script type="text/javascript" src="./js/utils/notifications.js"></script> s
+    <script src="./js/components/sidebar.js"></script>
+    <script src="./js/instructor.js"></script>
+    <script src="./js/sidebar.js"></script>
+    <script src="./js/auth-check.js"></script>
+    <script src="./js/auth.js"></script>
+</body>
+
+</html>

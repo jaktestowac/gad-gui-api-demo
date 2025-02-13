@@ -275,6 +275,7 @@ class ApiService {
       document.cookie = `learning_first_name=${data.firstName}; max-age=86400; path=/`;
       document.cookie = `learning_last_name=${data.lastName}; max-age=86400; path=/`;
       document.cookie = `learning_user_avatar=${data.avatar}; max-age=86400; path=/`;
+      document.cookie = `learning_user_role=${data.role}; max-age=86400; path=/`;
     }
     return data;
   }
@@ -435,6 +436,132 @@ class ApiService {
     }
 
     return await response.json();
+  }
+
+  async getUserFunds(userId) {
+    const response = await fetch(`${this.baseUrl}/users/${userId}/funds`, {
+      headers: this.getDefaultHeaders(),
+    });
+    const data = await response.json();
+    return data.funds;
+  }
+
+  async updateUserFunds(userId, newAmount) {
+    const response = await fetch(`${this.baseUrl}/users/${userId}/funds`, {
+      method: "PUT",
+      headers: this.getDefaultHeaders(),
+      body: JSON.stringify({ amount: newAmount }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to update funds");
+    }
+
+    return response.json();
+  }
+
+  async getUserFundsHistory(userId) {
+    const response = await fetch(`${this.baseUrl}/users/${userId}/funds/history`, {
+      headers: this.getDefaultHeaders(),
+    });
+    const data = await response.json();
+    return data.history || [];
+  }
+
+  async getRoles() {
+    const response = await fetch(`${this.baseUrl}/roles`, {
+      headers: this.getDefaultHeaders(),
+    });
+    return response.json();
+  }
+
+  async assignRole(userId, role) {
+    const response = await fetch(`${this.baseUrl}/users/${userId}/role`, {
+      method: "PUT",
+      headers: this.getDefaultHeaders(),
+      body: JSON.stringify({ role }),
+    });
+    return response.json();
+  }
+
+  async getUserRole() {
+    const user = await this.getCurrentUser();
+    return user?.role;
+  }
+
+  async hasPermission(permission) {
+    const user = await this.getCurrentUser();
+    const response = await fetch(`${this.baseUrl}/permissions/check`, {
+      method: "POST",
+      headers: this.getDefaultHeaders(),
+      body: JSON.stringify({ permission }),
+    });
+    return response.json();
+  }
+
+  // Instructor methods
+  async getInstructorStats() {
+    const response = await fetch(`${this.baseUrl}/instructor/stats`, {
+      headers: this.getDefaultHeaders(),
+    });
+    return response.json();
+  }
+
+  async getInstructorCourses() {
+    const response = await fetch(`${this.baseUrl}/instructor/courses`, {
+      headers: this.getDefaultHeaders(),
+    });
+    return response.json();
+  }
+
+  async createCourse(courseData) {
+    const response = await fetch(`${this.baseUrl}/instructor/courses`, {
+      method: "POST",
+      headers: this.getDefaultHeaders(),
+      body: JSON.stringify(courseData),
+    });
+    return response.json();
+  }
+
+  async updateCourse(courseId, courseData) {
+    const response = await fetch(`${this.baseUrl}/instructor/courses/${courseId}`, {
+      method: "PUT",
+      headers: this.getDefaultHeaders(),
+      body: JSON.stringify(courseData),
+    });
+    return response.json();
+  }
+
+  async createLesson(courseId, lessonData) {
+    const response = await fetch(`${this.baseUrl}/instructor/courses/${courseId}/lessons`, {
+      method: "POST",
+      headers: this.getDefaultHeaders(),
+      body: JSON.stringify(lessonData),
+    });
+    return response.json();
+  }
+
+  async getInstructorAnalytics(courseId = "all", timeRange = 30) {
+    const params = new URLSearchParams();
+    params.append("courseId", courseId);
+    params.append("timeRange", timeRange);
+
+    const response = await fetch(`${this.baseUrl}/instructor/analytics?${params.toString()}`, {
+      headers: this.getDefaultHeaders(),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to fetch analytics data");
+    }
+
+    const data = await response.json();
+    if (!data.success) {
+      throw new Error(data.message || "Failed to fetch analytics data");
+    }
+
+    return data;
   }
 }
 

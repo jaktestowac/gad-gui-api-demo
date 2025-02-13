@@ -176,13 +176,14 @@ class VideoPlayer {
   listenForParentMessages() {
     window.addEventListener("message", (event) => {
       const { type, data } = event.data;
+      console.log("Received message", type, data);
       switch (type) {
-        case "initialize":
+        case "initialize": {
           this.duration = parseInt(data.duration) || 0;
-          this.durationStr = data.durationStr;
           this.currentTime = 0;
           this.updateProgress();
           break;
+        }
       }
     });
   }
@@ -277,7 +278,7 @@ class VideoPlayer {
     const percent = (this.currentTime / this.duration) * 100;
     this.progress.style.width = `${percent}%`;
 
-    this.timeDisplay.textContent = `${this.formatTime(this.currentTime)} / ${this.durationStr}`;
+    this.timeDisplay.textContent = `${this.formatTime(this.currentTime)} / ${this.formatTime(this.duration)}`;
 
     window.parent.postMessage(
       {
@@ -290,8 +291,14 @@ class VideoPlayer {
   }
 
   formatTime(seconds) {
-    const mins = Math.floor(seconds / 60);
+    const hours = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
     const secs = Math.floor(seconds % 60);
+    if (hours > 0) {
+      return `${hours.toString().padStart(2, "0")}:${mins.toString().padStart(2, "0")}:${secs
+        .toString()
+        .padStart(2, "0")}`;
+    }
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   }
 

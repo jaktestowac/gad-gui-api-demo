@@ -1,0 +1,435 @@
+body {
+  background: #f8f9fa;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.certificate-public-view {
+  flex: 1;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 1rem;
+  position: relative;
+  z-index: 2;
+}
+
+.verification-header {
+  background: #fff;
+  padding: 1rem;
+  text-align: center;
+  border-bottom: 1px solid #dee2e6;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: relative;
+  z-index: 1;
+}
+
+.verification-header img {
+  height: 40px;
+  margin-bottom: 0.5rem;
+}
+
+.verification-header h1 {
+  font-size: 1.5rem;
+  color: #333;
+  margin: 0;
+}
+
+.verification-header p {
+  color: #666;
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+}
+
+.certificate-card {
+  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+  border: none;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.certificate-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  margin: 1rem;
+  pointer-events: none;
+}
+
+.certificate-content {
+  position: relative;
+  background: #fff;
+  padding: 3rem 2rem;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.03);
+}
+
+.certificate-content::before,
+.certificate-content::after {
+  content: "";
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  opacity: 0.1;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.corner-decoration:nth-child(1) {
+  top: 0;
+  left: 0;
+  transform: rotate(0deg);
+}
+
+.corner-decoration:nth-child(2) {
+  top: 0;
+  right: 0;
+  transform: rotate(90deg);
+}
+
+.corner-decoration:nth-child(3) {
+  bottom: 0;
+  right: 0;
+  transform: rotate(180deg);
+}
+
+.corner-decoration:nth-child(4) {
+  bottom: 0;
+  left: 0;
+  transform: rotate(270deg);
+}
+
+.certificate-card:hover .corner-decoration {
+  opacity: 0.25;
+}
+
+.certificate-header {
+  text-align: center;
+  position: relative;
+  padding: 1rem 0;
+  margin-bottom: 0rem;
+}
+
+.certificate-header::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 25%;
+  right: 25%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #ffd700, transparent);
+}
+
+.certificate-title {
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin: 1rem 0;
+  font-family: "Times New Roman", serif;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.ribbon {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+}
+
+.ribbon::before {
+  content: "VERIFIED";
+  position: absolute;
+  width: 150%;
+  height: 30px;
+  background: #28a745;
+  transform: rotate(45deg) translateY(-20px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: bold;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.cert-seal {
+  position: absolute;
+  bottom: 2rem;
+  right: 2rem;
+  width: 120px;
+  height: 120px;
+  animation: subtleFloat 3s ease-in-out infinite;
+}
+
+.cert-seal::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #2c3e50, #3498db);
+  border-radius: 50%;
+  opacity: 0.9;
+  box-shadow: 0 4px 15px rgba(44, 62, 80, 0.3), inset 0 2px 10px rgba(255, 255, 255, 0.2);
+}
+
+.cert-seal::after {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  background: url("/data/learning/gad-learning-logo-circle.png") center/contain no-repeat;
+  opacity: 0.9;
+}
+
+@keyframes subtleFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.cert-seal-rays {
+  display: none;
+}
+
+.certificate-details {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  padding: 2rem;
+  padding-top: 1rem;
+}
+
+.certificate-details::before {
+  content: "";
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  background-image: url("/data/learning/gad-learning-logo-circle.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.08;
+  top: 10%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+  filter: contrast(150%) brightness(120%);
+}
+
+.signature-line {
+  width: 200px;
+  height: 1px;
+  background: #2c3e50;
+  margin: 1rem auto 0.5rem;
+}
+
+.recipient {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #2c3e50;
+  padding: 0.5rem 2rem;
+  margin: 1rem 0;
+  display: inline-block;
+  position: relative;
+}
+
+.recipient::before,
+.recipient::after {
+  content: "•";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ffd700;
+  font-size: 1.2rem;
+}
+
+.recipient::before {
+  left: 0.5rem;
+}
+
+.recipient::after {
+  right: 0.5rem;
+}
+
+.cert-meta {
+  display: inline-block;
+  padding: 0.4rem 1rem;
+  background: #f8f9fa;
+  border-radius: 4px;
+  margin: 0.3rem;
+  font-size: 0.9rem;
+}
+
+.certificate-date {
+  font-style: italic;
+  color: #666;
+  margin-top: 1rem;
+}
+
+.verification-info {
+  background: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  margin-top: 1rem;
+}
+
+.verification-info h3 {
+  font-size: 1.1rem;
+  color: #2c3e50;
+  margin: 0 0 0.5rem;
+}
+
+.verification-info p {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.verification-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 0.8rem;
+  background: #28a745;
+  color: white;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
+}
+
+.verification-badge i {
+  margin-right: 0.5rem;
+}
+
+.error-message {
+  text-align: center;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.error-message i {
+  color: #dc3545;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.error-message h3 {
+  color: #2c3e50;
+  margin: 0 0 0.5rem;
+}
+
+.error-message p {
+  color: #666;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .certificate-public-view {
+    padding: 0.5rem;
+  }
+
+  .certificate-card {
+    padding: 1rem;
+  }
+
+  .certificate-header h3 {
+    font-size: 1.3rem;
+  }
+
+  .certificate-details h4 {
+    font-size: 1rem;
+  }
+
+  .recipient {
+    font-size: 1.2rem !important;
+  }
+
+  .certificate-details p {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 512px) {
+  .certificate-public-view {
+    padding: 0.5rem;
+  }
+
+  .certificate-card {
+    padding: 0.5rem;
+  }
+
+  .certificate-header h3 {
+    font-size: 1.1rem;
+  }
+
+  .certificate-details h4 {
+    font-size: 0.9rem;
+  }
+
+  .recipient {
+    font-size: 1.2rem !important;
+  }
+
+  .certificate-details p {
+    font-size: 0.8rem;
+  }
+
+  .cert-seal {
+    width: 75px;
+    height: 75px;
+  }
+}
+
+.back-button {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  padding: 0.5rem 1rem;
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  color: #2c3e50;
+  text-decoration: none;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  z-index: 3;
+}
+
+.back-button:hover {
+  background: #f8f9fa;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .back-button {
+    top: 0.5rem;
+    left: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+  }
+}
