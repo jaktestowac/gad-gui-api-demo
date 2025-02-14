@@ -84,6 +84,24 @@ class ApiService {
     return data;
   }
 
+  async deactivateAccount(userId, password) {
+    const response = await fetch(`${this.baseUrl}/users/${userId}/deactivate`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getCookie("learning_access_token")}`,
+      },
+      body: JSON.stringify({ password }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || "Failed to deactivate account");
+    }
+
+    return response.json();
+  }
+
   // Course methods
   async getCourses() {
     const response = await fetch(`${this.baseUrl}/courses`, {

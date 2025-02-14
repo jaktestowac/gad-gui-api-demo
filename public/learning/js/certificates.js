@@ -33,8 +33,8 @@ async function displayCertificates() {
                         <p>Issued by: ${cert.issuedBy}</p>
                     </div>
                     <div class="certificate-actions">
-                        <button class="primary-button" onclick="downloadCertificate('${cert.uuid}')">
-                            <i class="fas fa-download"></i> Download PDF
+                        <button class="primary-button" onclick="viewFullCertificate('${cert.uuid}')">
+                            <i class="fas fa-eye"></i> View
                         </button>
                         <button class="primary-button" onclick="shareCertificate('${cert.uuid}')">
                             <i class="fas fa-share"></i> Share
@@ -79,10 +79,6 @@ function showNotification(message, type = "info") {
   }, 3000);
 }
 
-function downloadCertificate(certificateId) {
-  showNotification("Download functionality coming soon!", "info");
-}
-
 async function shareCertificate(certificateUuid) {
   try {
     const shareLink = `${window.location.origin}/learning/public-certificate.html?id=${certificateUuid}`;
@@ -92,5 +88,34 @@ async function shareCertificate(certificateUuid) {
     showNotification("Failed to generate share link", "error");
   }
 }
+
+function viewFullCertificate(certificateUuid) {
+  const modal = document.getElementById("certificateModal");
+  const frame = document.getElementById("certificateFrame");
+  frame.src = `public-certificate.html?id=${certificateUuid}&view=account`;
+  modal.style.display = "block";
+  document.body.style.overflow = "hidden";
+}
+
+function closeModal() {
+  const modal = document.getElementById("certificateModal");
+  const frame = document.getElementById("certificateFrame");
+  modal.style.display = "none";
+  frame.src = "";
+  document.body.style.overflow = "auto";
+}
+
+document.addEventListener("click", (event) => {
+  const modal = document.getElementById("certificateModal");
+  if (event.target === modal) {
+    closeModal();
+  }
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    closeModal();
+  }
+});
 
 document.addEventListener("DOMContentLoaded", displayCertificates);

@@ -14,9 +14,13 @@
 </head>
 
 <body>
-    <a href="welcome.html" class="back-button">
+    <a href="welcome.html" id="back-button" class="back-button">
         <i class="fas fa-arrow-left"></i>
         Back to 🦎 GAD Learning Platform
+    </a>
+    <a onclick="downloadCertificate()" id="get-pdf" class="back-button on-center">
+        <i class="fas fa-download"></i>
+        Download PDF
     </a>
 
     <main class="certificate-public-view">
@@ -34,6 +38,8 @@
         </div>
     </main>
 
+    <script src="/js/libs/pdf/html2canvas.min.js"></script>
+    <script src="/js/libs/pdf/jspdf.umd.min.js"></script>
     <script src="./js/services/api.js"></script>
     <script src="./js/public-certificate.js"></script>
 </body>

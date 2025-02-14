@@ -18,6 +18,7 @@ async function requireAuth() {
       "/learning/welcome.html",
       "/learning/login.html",
       "/learning/register.html",
+      "/learning/instructor-profile.html",
     ];
 
     if (!allowedPaths.includes(currentPath)) {

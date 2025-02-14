@@ -59,7 +59,7 @@ const {
 const { userBaseAuth, updateUserActions, getAdminAuth } = require("../helpers/user-auth.helpers");
 const { handleBookShopPaymentHistory } = require("../endpoints/book-shop/book-shop-payment-history-endpoint.helpers");
 const { handleMaze } = require("../endpoints/maze-endpoint.helpers");
-const { handleLearning } = require("../endpoints/learning-endpoint.helpers");
+const { handleLearning } = require("../endpoints/learning/learning-endpoint.helpers");
 
 const validationsRoutes = (req, res, next) => {
   let userAuth = userBaseAuth;

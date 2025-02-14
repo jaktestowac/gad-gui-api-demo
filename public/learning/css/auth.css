@@ -48,6 +48,24 @@
   gap: 8px;
 }
 
+.form-group.flex-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-direction: row;
+}
+
+.form-group.flex-row label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-direction: row;
+}
+
+.form-group.flex-row label input {
+  width: auto;
+}
+
 .compact .form-group {
   gap: 4px;
 }

@@ -34,6 +34,7 @@
                     <li><a href="#balance-section">Balance</a></li>
                     <li><a href="#profile-section">Profile</a></li>
                     <li><a href="#password-section">Password</a></li>
+                    <li><a href="#deactivation-section">Deactivation</a></li>
                 </ul>
             </nav>
 
@@ -43,7 +44,7 @@
                     <img id="userAvatarLarge" src="/data/icons/user.png" alt="User avatar" class="large-avatar">
                     <div>
                         <h2 id="userFullName">Loading...</h2>
-                        <div class="form-group" style="margin: 0;">
+                        <div class="form-group-row" style="margin: 0;">
                             <input type="text" id="usernameInput" name="username" readonly class="readonly-input">
                         </div>
                     </div>
@@ -123,6 +124,35 @@
                             <div class="form-actions">
                                 <button id="changePasswordBtn" class="primary-button">
                                     Change Password
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Deactivation Section -->
+                    <section class="account-section danger-zone" id="deactivation-section">
+                        <h3 class="section-title">Account Deactivation</h3>
+                        <div class="deactivation-box">
+                            <div class="warning-content">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <div>
+                                    <h4>Deactivate Account</h4>
+                                    <p>This action will permanently deactivate your account. All your data will be removed.</p>
+                                </div>
+                            </div>
+                            <div class="deactivation-form">
+                                <div class="form-group">
+                                    <label for="deactivatePassword">Current Password</label>
+                                    <input type="password" id="deactivatePassword" name="deactivatePassword" required>
+                                </div>
+                                <div class="form-group flex-row">
+                                    <label>
+                                        <input type="checkbox" id="deactivateConfirm">
+                                        I understand this action cannot be undone
+                                    </label>
+                                </div>
+                                <button id="deactivateAccountBtn" class="danger-button" disabled>
+                                    Deactivate Account
                                 </button>
                             </div>
                         </div>

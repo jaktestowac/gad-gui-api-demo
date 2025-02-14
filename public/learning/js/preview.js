@@ -16,7 +16,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     courseHeader.innerHTML = `
             <h1 aria-label="${course.title}" title="${course.title}" name="Course Title" id="courseTitle">${course.title}</h1>
             <div class="course-meta" aria-label="Course Information" title="Course Information">
-                <span aria-label="Instructor" title="Instructor"><i class="fas fa-user"></i> ${course.instructor}</span>
+                <span aria-label="Instructor" title="Instructor">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <a href="instructor-profile.html?id=${course.instructorId}" class="instructor-link">
+                        ${course.instructor}
+                    </a>
+                </span>
                 <span aria-label="Duration" title="Duration"><i class="fas fa-clock"></i> ${course.duration}</span>
                 <span aria-label="Rating" title="Rating"><i class="fas fa-star"></i> ${course.rating}</span>
                 <span aria-label="Level" title="Level"><i class="fas fa-signal"></i> ${course.level}</span>

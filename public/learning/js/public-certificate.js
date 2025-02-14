@@ -1,6 +1,7 @@
 async function displayPublicCertificate() {
   const params = new URLSearchParams(window.location.search);
   const certificateId = params.get("id");
+  const viewType = params.get("view");
   const container = document.getElementById("certificateContainer");
 
   if (!certificateId) {
@@ -11,6 +12,12 @@ async function displayPublicCertificate() {
             </div>
         `;
     return;
+  }
+
+  if (viewType === "account") {
+    document.querySelector("#back-button").style.display = "none";
+  } else {
+    document.querySelector("#get-pdf").style.display = "none";
   }
 
   try {
@@ -69,6 +76,41 @@ async function displayPublicCertificate() {
                 <p>The certificate you are looking for could not be found or has expired.</p>
             </div>
         `;
+  }
+}
+
+async function downloadCertificate() {
+  const certificateElement = document.querySelector(".certificate-card");
+  if (!certificateElement) {
+    showNotification("Certificate not found", "error");
+    return;
+  }
+
+  try {
+    const canvas = await html2canvas(certificateElement.querySelector(".certificate-content"), {
+      scale: 4,
+      backgroundColor: "#ffffff",
+    });
+
+    const imgData = canvas.toDataURL("image/png");
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({
+      orientation: "portrait",
+      unit: "mm",
+      format: "a4",
+    });
+
+    const imgProps = pdf.getImageProperties(imgData);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+
+    const certificateId = new URLSearchParams(window.location.search).get("id");
+    pdf.save(`GAD_Certificate_${certificateId}.pdf`);
+  } catch (error) {
+    console.error("Error generating PDF:", error);
+    alert("Failed to generate PDF");
   }
 }
 

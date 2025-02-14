@@ -193,6 +193,42 @@ async function handleChangePassword() {
   }
 }
 
+async function handleDeactivateAccount() {
+  const confirmCheckbox = document.getElementById("deactivateConfirm");
+  const password = document.getElementById("deactivatePassword").value;
+  const deactivateBtn = document.getElementById("deactivateAccountBtn");
+
+  if (!confirmCheckbox.checked || !password) {
+    notifications.show("Please confirm and enter your password", "error");
+    return;
+  }
+
+  const confirmed = confirm("Are you absolutely sure you want to deactivate your account? This cannot be undone.");
+  if (!confirmed) return;
+
+  deactivateBtn.disabled = true;
+  deactivateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+  try {
+    const userId = api.getUserIdFromCookie();
+    const result = await api.deactivateAccount(userId, password);
+
+    if (result.success) {
+      notifications.show("Account deactivated successfully. Redirecting...");
+      setTimeout(() => {
+        handleLogout();
+        window.location.href = "welcome.html";
+      }, 2000);
+    } else {
+      throw new Error(result.error.message || "Failed to deactivate account");
+    }
+  } catch (error) {
+    notifications.show(error.message || "Failed to deactivate account", "error");
+    deactivateBtn.disabled = false;
+    deactivateBtn.innerHTML = "Deactivate Account";
+  }
+}
+
 function handleNavigation() {
   const sections = document.querySelectorAll(".account-section");
   const navLinks = document.querySelectorAll(".floating-nav a");
@@ -244,4 +280,14 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("changePasswordBtn").addEventListener("click", handleChangePassword);
   document.getElementById("topUpBtn").addEventListener("click", showTopUpDialog);
   handleNavigation();
+
+  // Add deactivation handlers
+  const deactivateConfirm = document.getElementById("deactivateConfirm");
+  const deactivateBtn = document.getElementById("deactivateAccountBtn");
+
+  deactivateConfirm.addEventListener("change", () => {
+    deactivateBtn.disabled = !deactivateConfirm.checked;
+  });
+
+  deactivateBtn.addEventListener("click", handleDeactivateAccount);
 });

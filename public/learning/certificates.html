@@ -39,6 +39,15 @@
     </button>
     <div class="sidebar-overlay"></div>
 
+    <div id="certificateModal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <iframe id="certificateFrame" frameborder="0"></iframe>
+        </div>
+    </div>
+
     <script type="text/javascript" src="/js/common.js"></script>
     <script type="text/javascript" src="/js/header.js"></script>
     <script type="text/javascript" src="/version.js"></script>
@@ -52,6 +61,8 @@
     <script src="./js/auth-check.js"></script>
     <script src="./js/auth.js"></script>
     <script src="./js/certificates.js"></script>
+    <script src="/js/libs/pdf/html2canvas.min.js"></script>
+    <script src="/js/libs/pdf/jspdf.umd.min.js"></script>
 </body>
 
 </html>

@@ -418,6 +418,14 @@ body {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   transition: all 0.2s ease;
   z-index: 3;
+  cursor: pointer;
+}
+
+.on-center {
+  position: fixed;
+  top: 2%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .back-button:hover {
@@ -431,5 +439,12 @@ body {
     left: 0.5rem;
     padding: 0.4rem 0.8rem;
     font-size: 0.8rem;
+  }
+
+  .on-center {
+    position: fixed;
+    top: 2%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 }
