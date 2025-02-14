@@ -3,6 +3,7 @@ class CourseViewer {
     // Support both ?id= and ?courseId= URL parameters
     const params = new URLSearchParams(window.location.search);
     this.courseId = parseInt(params.get("id") || params.get("courseId"));
+    this.lessonId = parseInt(params.get("lesson"));
     this.courseName = document.getElementById("courseName");
     this.lessonList = document.getElementById("lessonList");
     this.videoPlayer = document.getElementById("videoPlayer");
@@ -26,7 +27,9 @@ class CourseViewer {
       const enrollments = await api.getUserEnrollments(api.getUserIdFromCookie());
       const isEnrolled = enrollments.some((e) => e.courseId === this.courseId);
       const instructorCourses = await api.getInstructorCourses();
-      const isCourseInstructor = instructorCourses.error? false : instructorCourses.some((c) => c.id === this.courseId);
+      const isCourseInstructor = instructorCourses.error
+        ? false
+        : instructorCourses.some((c) => c.id === this.courseId);
 
       if (!isEnrolled && !isCourseInstructor) {
         notifications.show("You are not enrolled in this course", "error");
@@ -51,10 +54,36 @@ class CourseViewer {
 
       // If lessons exist, load the first one
       if (lessons && lessons.length > 0) {
-        await this.loadLesson(lessons[0]);
+        if (this.lessonId) {
+          await this.navigateToLesson(this.lessonId);
+        } else {
+          await this.loadLesson(lessons[0]);
+        }
       }
     } catch (error) {
       this.showError(error.message || "Failed to load course content");
+    }
+  }
+
+  async navigateToLesson(lessonId) {
+    try {
+      const lessons = document.querySelectorAll(".lesson-item");
+      const targetLesson = Array.from(lessons).find((lesson) => parseInt(lesson.dataset.lessonId) === lessonId);
+
+      if (targetLesson) {
+        // Update URL without reloading
+        const newUrl = new URL(window.location.href);
+        newUrl.searchParams.set("lesson", lessonId);
+        window.history.pushState({}, "", newUrl);
+
+        // Load and display lesson content
+        await this.loadLesson({ id: lessonId });
+      } else {
+        notifications.show("Lesson not found", "error");
+      }
+    } catch (error) {
+      console.error("Failed to navigate to lesson:", error);
+      notifications.show("Failed to load lesson content", "error");
     }
   }
 
@@ -139,6 +168,10 @@ class CourseViewer {
           this.renderQuiz(fullLesson, content);
           break;
       }
+
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.set("lesson", lessonInfo.id);
+      window.history.pushState({}, "", newUrl);
     } catch (error) {
       console.error("Failed to load lesson:", error);
       this.showError("Failed to load lesson content.");
@@ -149,7 +182,6 @@ class CourseViewer {
   }
 
   parseDuration(timeStr) {
-    // timeStr can be in the format "mm:ss" or "hh:mm:ss"
     const parts = timeStr.split(":");
     if (parts.length === 3) {
       const [hours, minutes, seconds] = parts.map(Number);

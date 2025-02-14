@@ -57,7 +57,12 @@ async function renderCourseDetails() {
                     </div>
                     <p class="course-description">${course.description}</p>
                     <div class="course-meta">
-                        <span><i class="fas fa-user"></i> Instructor: ${course.instructor}</span>
+                        <span>
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            <a href="instructor-profile.html?id=${course.instructorId}" class="instructor-link">
+                              ${course.instructor}
+                            </a>
+                        </span>
                         <span><i class="fas fa-signal"></i> Level: ${course.level}</span>
                         <span><i class="fas fa-clock"></i> Duration: ${course.duration}</span>
                         <span><i class="fas fa-book"></i> ${lessonCount} lessons</span>

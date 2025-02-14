@@ -62,7 +62,7 @@ describe(`Endpoint ${baseUrl}`, async () => {
       // Try to access lessons without enrollment
       const response = await request.get(`${baseUrl}/2/lessons`).set(testUser.headers);
       expect(response.status, JSON.stringify(response.body)).to.equal(403);
-      expect(response.body.error.message).to.equal("User not enrolled in this course");
+      expect(response.body.error.message).to.equal("Not authorized to access this course");
     });
 
     it(`GET ${baseUrl}/:id/lessons/:lessonId/content - without enrollment`, async () => {
@@ -143,7 +143,7 @@ describe(`Endpoint ${baseUrl}`, async () => {
       };
       const response = await request.post(`${baseUrl}/1/progress`).set(userData.headers).send(progressData);
       expect(response.status, JSON.stringify(response.body)).to.equal(200);
-      expect(response.body, JSON.stringify(response.body)).to.have.property("success", true);
+      expect(response.body, JSON.stringify(response.body)).to.have.property("progress", 150);
     });
 
     it(`GET ${baseUrl}/:id/progress`, async () => {
@@ -168,5 +168,4 @@ describe(`Endpoint ${baseUrl}`, async () => {
       expect(response.body[0]).to.have.property("title");
     });
   });
-
 });

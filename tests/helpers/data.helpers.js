@@ -1,9 +1,18 @@
 const { request, learningBaseUrl } = require("../config");
 
 async function authUser() {
-  const loginResponse = await request
-    .post(`${learningBaseUrl}/auth/login`)
-    .send({ username: "user", password: "demo" });
+  return authLearningUser("user", "demo");
+}
+
+async function authInstructor() {
+  return authLearningUser("john_doe", "demo");
+}
+
+async function authLearningUser(username, password) {
+  const loginResponse = await request.post(`${learningBaseUrl}/auth/login`).send({
+    username,
+    password,
+  });
 
   if (loginResponse.status !== 200) {
     throw new Error(`Auth failed: ${JSON.stringify(loginResponse.body)}`);
@@ -53,5 +62,7 @@ async function registerNewLearningUser() {
 
 module.exports = {
   authUser,
+  authInstructor,
+  authLearningUser,
   registerNewLearningUser,
 };

@@ -183,18 +183,6 @@ const mockData = {
     },
   ],
 
-  // Track course ownership
-  courseOwnership: [
-    {
-      courseId: 1,
-      instructorId: 2,
-    },
-    {
-      courseId: 2,
-      instructorId: 2,
-    },
-  ],
-
   // Course catalog
   courses: [
     {
@@ -1493,8 +1481,8 @@ function checkIfUserCanAccessCourse(userId, courseId) {
   const isEnrolled = checkIfUserIsEnrolled(userId, courseId);
 
   // Check if user is the course instructor
-  const isInstructorOfCourse = mockData.courseOwnership.some(
-    (ownership) => areIdsEqual(ownership.courseId, courseId) && areIdsEqual(ownership.instructorId, userId)
+  const isInstructorOfCourse = mockData.courses.some(
+    (course) => areIdsEqual(course.id, courseId) && areIdsEqual(course.instructorId, userId)
   );
 
   return isEnrolled || isInstructorOfCourse;
@@ -1560,17 +1548,12 @@ function canManageCourse(user, courseId) {
   if (isAdmin(user)) return true;
   if (!isInstructor(user)) return false;
 
-  return mockData.courseOwnership.some(
-    (ownership) => areIdsEqual(ownership.courseId, courseId) && areIdsEqual(ownership.instructorId, user.id)
-  );
+  const course = mockData.courses.find((c) => areIdsEqual(c.id, courseId));
+  return course && areIdsEqual(course.instructorId, user.id);
 }
 
 function calculateInstructorStats(instructorId) {
-  const instructorCourses = mockData.courses.filter((course) =>
-    mockData.courseOwnership.some(
-      (ownership) => ownership.instructorId === instructorId && ownership.courseId === course.id
-    )
-  );
+  const instructorCourses = mockData.courses.filter((course) => areIdsEqual(course.instructorId, instructorId));
 
   const stats = {
     totalCourses: instructorCourses.length,
@@ -1581,7 +1564,7 @@ function calculateInstructorStats(instructorId) {
 
   instructorCourses.forEach((course) => {
     // Calculate total students
-    const courseEnrollments = mockData.userEnrollments.filter((e) => e.courseId === course.id);
+    const courseEnrollments = mockData.userEnrollments.filter((e) => areIdsEqual(e.courseId, course.id));
     stats.totalStudents += courseEnrollments.length;
 
     // Calculate total revenue
@@ -1591,7 +1574,7 @@ function calculateInstructorStats(instructorId) {
     );
 
     // Calculate average rating
-    const courseRatings = mockData.userRatings.filter((r) => r.courseId === course.id);
+    const courseRatings = mockData.userRatings.filter((r) => areIdsEqual(r.courseId, course.id));
     if (courseRatings.length > 0) {
       course.avgRating = courseRatings.reduce((total, r) => total + r.rating, 0) / courseRatings.length;
     }
@@ -1607,18 +1590,23 @@ function calculateInstructorStats(instructorId) {
   return stats;
 }
 
+function isValidId(id) {
+  const parsedId = parseInt(id);
+  return !isNaN(parsedId) && parsedId > 0;
+}
+
 function handleLearning(req, res, isAdmin) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
   const urlParts = urlEnds.split("/").filter(Boolean);
   const verifyTokenResult = verifyAccessToken(req, res, "learning", req.url);
 
   // GET endpoints
-  if (req.method === "GET") {
+  if (req.method === "GET" || req.method === "POST") {
     // Add public certificate endpoint
     // /api/certificates/public/{certificateId}
     if (urlParts[2] === "certificates" && urlParts[3] === "public") {
       const certUuid = urlParts[4];
-      const certificate = mockData.certificates.find((c) => c.uuid === certUuid);
+      const certificate = mockData.certificates.find((c) => areIdsEqual(c.uuid, certUuid));
       if (!certificate) {
         res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Certificate not found"));
         return;
@@ -1696,7 +1684,7 @@ function handleLearning(req, res, isAdmin) {
 
       const lessonId = parseInt(urlParts[5]);
       const lessons = mockData.courseLessons[courseId];
-      const lesson = lessons?.find((l) => l.id === lessonId);
+      const lesson = lessons?.find((l) => areIdsEqual(l.id, lessonId));
 
       if (lesson?.content) {
         res.status(HTTP_OK).send({ content: lesson.content });
@@ -2052,18 +2040,74 @@ function handleLearning(req, res, isAdmin) {
       return;
     }
 
+    // /api/learning/public/instructor/:instructorId/courses
+    if (urlParts[2] === "public" && urlParts[3] === "instructor" && urlParts[5] === "courses") {
+      const instructorId = parseInt(urlParts[4]);
+      const courses = mockData.courses.filter((c) => areIdsEqual(c.instructorId, instructorId));
+
+      res.status(HTTP_OK).send(courses);
+      return;
+    }
+
+    // /api/learning/public/instructor/:instructorId/courses
+    if (urlParts[2] === "public" && urlParts[3] === "instructor" && urlParts[5] === "stats") {
+      const instructorId = parseInt(urlParts[4]);
+      const stats = calculateInstructorStats(instructorId);
+      // get only the stats we need
+      res.status(HTTP_OK).send({
+        totalCourses: stats.totalCourses,
+        totalStudents: stats.totalStudents,
+        averageRating: stats.averageRating,
+      });
+      return;
+    }
+
+    // /api/learning/public/instructor/:instructorId
+    if (urlParts[2] === "public" && urlParts[3] === "instructor" && urlParts.length === 5) {
+      const instructorId = parseInt(urlParts[4]);
+      const instructor = mockData.users.find(
+        (u) => areIdsEqual(u.id, instructorId) && u.role === mockData.roles.INSTRUCTOR
+      );
+
+      if (instructor) {
+        const { id, firstName, lastName, avatar } = instructor;
+        res.status(HTTP_OK).send({ id, firstName, lastName, avatar });
+      } else {
+        res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Instructor not found"));
+      }
+      return;
+    }
+
     // Add instructor endpoints
     // /api/learning/instructor/
     if (urlParts[2] === "instructor") {
-      logDebug("Instructor endpoint:", { urlParts });
       if (!checkIfUserIsAuthenticated(req, res)) {
         res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not authenticated"));
         return;
       }
 
       const user = mockData.users.find((u) => u.email === verifyTokenResult?.email);
+
       if (!isInstructor(user)) {
         res.status(HTTP_FORBIDDEN).send(formatErrorResponse("Must be an instructor"));
+        return;
+      }
+
+      // Inside handleLearning function, in the POST section where instructor endpoints are handled
+      // GET /learning/instructor/:instructorId/courses
+      if (urlParts.length === 5 && urlParts[4] === "courses") {
+        const instructorId = parseInt(urlParts[3]);
+        const courses = mockData.courses.filter((c) => areIdsEqual(c.instructorId, instructorId));
+
+        res.status(HTTP_OK).send(courses);
+        return;
+      }
+      // GET /learning/instructor/:instructorId/stats
+      if (urlParts.length === 5 && urlParts[4] === "stats") {
+        const instructorId = parseInt(urlParts[3]);
+        const stats = calculateInstructorStats(instructorId);
+
+        res.status(HTTP_OK).send(stats);
         return;
       }
 
@@ -2078,6 +2122,44 @@ function handleLearning(req, res, isAdmin) {
         }
         // /learning/instructor/courses
         case "courses": {
+          // create new course
+          if (req.method === "POST" && urlParts.length === 4) {
+            const { title, description, price, level, tags } = req.body;
+
+            if (!title || !description || price === undefined || !level) {
+              res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Missing required fields"));
+              return;
+            }
+
+            const maxCourseId = Math.max(...mockData.courses.map((c) => c.id), 0);
+            const newCourse = {
+              id: maxCourseId + 1,
+              title,
+              description,
+              thumbnail: "..\\data\\learning\\courses\\default-course.jpg",
+              instructor: `${user.firstName} ${user.lastName}`,
+              duration: "0 hours",
+              totalHours: 0,
+              level,
+              students: 0,
+              rating: 0,
+              tags: tags || [],
+              prerequisites: [],
+              price: parseFloat(price),
+              learningObjectives: [],
+            };
+
+            mockData.courses.push(newCourse);
+            mockData.courseLessons[newCourse.id] = [];
+
+            res.status(HTTP_OK).send({
+              success: true,
+              message: "Course created successfully",
+              course: newCourse,
+            });
+            return;
+          }
+
           // check for /api/learning/instructor/courses/:id/lessons
           if (urlParts[5] === "lessons") {
             const courseId = parseInt(urlParts[4]);
@@ -2092,7 +2174,7 @@ function handleLearning(req, res, isAdmin) {
           // check for /api/learning/instructor/courses/:id
           else if (urlParts.length === 5) {
             const courseId = parseInt(urlParts[4]);
-            const course = mockData.courses.find((c) => c.id === courseId);
+            const course = mockData.courses.find((c) => areIdsEqual(c.id, courseId));
             if (course) {
               res.status(HTTP_OK).send(course);
             } else {
@@ -2102,11 +2184,7 @@ function handleLearning(req, res, isAdmin) {
           }
           // check for /api/learning/instructor/courses
           else {
-            const courses = mockData.courses.filter((course) =>
-              mockData.courseOwnership.some(
-                (ownership) => ownership.instructorId === user.id && ownership.courseId === course.id
-              )
-            );
+            const courses = mockData.courses.filter((course) => areIdsEqual(course.instructorId, user.id));
             res.status(HTTP_OK).send(courses);
             return;
           }
@@ -2125,17 +2203,9 @@ function handleLearning(req, res, isAdmin) {
           // Get instructor's courses
           const targetCourses =
             courseId === "all"
-              ? mockData.courses.filter((course) =>
-                  mockData.courseOwnership.some(
-                    (o) => areIdsEqual(o.instructorId, user.id) && areIdsEqual(o.courseId, course.id)
-                  )
-                )
+              ? mockData.courses.filter((course) => areIdsEqual(course.instructorId, user.id))
               : mockData.courses.filter(
-                  (course) =>
-                    areIdsEqual(course.id, courseId) &&
-                    mockData.courseOwnership.some(
-                      (o) => areIdsEqual(o.instructorId, user.id) && areIdsEqual(o.courseId, course.id)
-                    )
+                  (course) => areIdsEqual(course.id, courseId) && areIdsEqual(course.instructorId, user.id)
                 );
 
           if (!targetCourses.length) {
@@ -2152,8 +2222,8 @@ function handleLearning(req, res, isAdmin) {
             const metrics = {
               enrollments: calculateEnrollmentMetrics(targetCourses, startDate),
               revenue: calculateRevenueMetrics(targetCourses, startDate),
-              completion: calculateCompletionMetrics(targetCourses),
-              rating: calculateRatingMetrics(targetCourses),
+              completion: calculateCompletionMetrics(targetCourses, startDate),
+              rating: calculateRatingMetrics(targetCourses, startDate),
             };
 
             const tables = {
@@ -2307,8 +2377,8 @@ function handleLearning(req, res, isAdmin) {
           }
 
           // Add instructor check
-          const isInstructorOfCourse = mockData.courseOwnership.some(
-            (ownership) => areIdsEqual(ownership.courseId, courseId) && areIdsEqual(ownership.instructorId, userId)
+          const isInstructorOfCourse = mockData.courses.some(
+            (course) => areIdsEqual(course.id, courseId) && areIdsEqual(course.instructorId, userId)
           );
 
           if (isInstructorOfCourse) {
@@ -2496,6 +2566,7 @@ function handleLearning(req, res, isAdmin) {
     }
 
     // Add inside handleLearning function before the final else
+    // /learning/courses/:courseId/rate
     if (req.method === "POST" && urlParts.length === 5 && urlParts[4] === "rate") {
       if (checkIfUserIsAuthenticated(req, res, "learning", urlEnds) === false) {
         res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not authenticated"));
@@ -2549,69 +2620,6 @@ function handleLearning(req, res, isAdmin) {
 
       res.status(HTTP_OK).send({ success: true });
       return;
-    }
-
-    // Inside handleLearning function, in the POST section where instructor endpoints are handled
-    // /learning/instructor/courses/:courseId/lessons
-    if (urlParts[2] === "instructor") {
-      if (!checkIfUserIsAuthenticated(req, res)) {
-        res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not authenticated"));
-        return;
-      }
-
-      const user = mockData.users.find((u) => u.email === verifyTokenResult?.email);
-      if (!isInstructor(user) && !isAdmin(user)) {
-        res.status(HTTP_FORBIDDEN).send(formatErrorResponse("Must be an instructor"));
-        return;
-      }
-
-      switch (urlParts[3]) {
-        // /learning/instructor/courses/:courseId/lessons
-        case "courses": {
-          if (req.method === "POST") {
-            const { title, description, price, level, tags } = req.body;
-
-            if (!title || !description || price === undefined || !level) {
-              res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Missing required fields"));
-              return;
-            }
-
-            const maxCourseId = Math.max(...mockData.courses.map((c) => c.id), 0);
-            const newCourse = {
-              id: maxCourseId + 1,
-              title,
-              description,
-              thumbnail: "..\\data\\learning\\courses\\default-course.jpg",
-              instructor: `${user.firstName} ${user.lastName}`,
-              duration: "0 hours",
-              totalHours: 0,
-              level,
-              students: 0,
-              rating: 0,
-              tags: tags || [],
-              prerequisites: [],
-              price: parseFloat(price),
-              learningObjectives: [],
-            };
-
-            mockData.courses.push(newCourse);
-            mockData.courseOwnership.push({
-              courseId: newCourse.id,
-              instructorId: user.id,
-            });
-
-            mockData.courseLessons[newCourse.id] = [];
-
-            res.status(HTTP_OK).send({
-              success: true,
-              message: "Course created successfully",
-              course: newCourse,
-            });
-            return;
-          }
-          break;
-        }
-      }
     }
   }
 
@@ -2749,7 +2757,7 @@ function handleLearning(req, res, isAdmin) {
         return;
       }
 
-      const targetUser = mockData.users.find((u) => u.id === targetUserId);
+      const targetUser = mockData.users.find((u) => areIdsEqual(u.id, targetUserId));
       if (!targetUser) {
         res.status(HTTP_NOT_FOUND).send(formatErrorResponse("User not found"));
         return;
@@ -2769,7 +2777,7 @@ function handleLearning(req, res, isAdmin) {
       }
 
       const user = mockData.users.find((u) => u.email === verifyTokenResult?.email);
-      if (!isInstructor(user) && !isAdmin(user)) {
+      if (!isInstructor(user)) {
         res.status(HTTP_FORBIDDEN).send(formatErrorResponse("Must be an instructor"));
         return;
       }
@@ -2790,7 +2798,7 @@ function handleLearning(req, res, isAdmin) {
         return;
       }
 
-      const lessonIndex = courseLessons.findIndex((lesson) => lesson.id === lessonId);
+      const lessonIndex = courseLessons.findIndex((lesson) => areIdsEqual(lesson.id, lessonId));
       if (lessonIndex === -1) {
         res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Lesson not found"));
         return;
@@ -2823,7 +2831,7 @@ function handleLearning(req, res, isAdmin) {
 // Add these helper functions at the bottom of the file
 function calculateEnrollmentMetrics(courses, startDate) {
   const enrollments = mockData.userEnrollments.filter(
-    (e) => courses.some((c) => c.id === e.courseId) && new Date(e.enrollmentDate) >= startDate
+    (e) => courses.some((c) => areIdsEqual(c.id, e.courseId)) && new Date(e.enrollmentDate) >= startDate
   );
 
   const previousStartDate = new Date(startDate);
@@ -2831,7 +2839,7 @@ function calculateEnrollmentMetrics(courses, startDate) {
 
   const previousEnrollments = mockData.userEnrollments.filter(
     (e) =>
-      courses.some((c) => c.id === e.courseId) &&
+      courses.some((c) => areIdsEqual(c.id, e.courseId)) &&
       new Date(e.enrollmentDate) >= previousStartDate &&
       new Date(e.enrollmentDate) < startDate
   );
@@ -2846,9 +2854,9 @@ function calculateEnrollmentMetrics(courses, startDate) {
 
 function calculateRevenueMetrics(courses, startDate) {
   const currentRevenue = mockData.userEnrollments
-    .filter((e) => courses.some((c) => c.id === e.courseId) && new Date(e.enrollmentDate) >= startDate)
+    .filter((e) => courses.some((c) => areIdsEqual(c.id, e.courseId)) && new Date(e.enrollmentDate) >= startDate)
     .reduce((total, enrollment) => {
-      const course = courses.find((c) => c.id === enrollment.courseId);
+      const course = courses.find((c) => areIdsEqual(c.id, enrollment.courseId));
       return total + (enrollment.paidAmount || course?.price || 0);
     }, 0);
 
@@ -2858,12 +2866,12 @@ function calculateRevenueMetrics(courses, startDate) {
   const previousRevenue = mockData.userEnrollments
     .filter(
       (e) =>
-        courses.some((c) => c.id === e.courseId) &&
+        courses.some((c) => areIdsEqual(c.id, e.courseId)) &&
         new Date(e.enrollmentDate) >= previousStartDate &&
         new Date(e.enrollmentDate) < startDate
     )
     .reduce((total, enrollment) => {
-      const course = courses.find((c) => c.id === enrollment.courseId);
+      const course = courses.find((c) => areIdsEqual(c.id, enrollment.courseId));
       return total + (enrollment.paidAmount || course?.price || 0);
     }, 0);
 
@@ -2873,36 +2881,89 @@ function calculateRevenueMetrics(courses, startDate) {
   };
 }
 
-function calculateCompletionMetrics(courses) {
-  const completedCount = mockData.userEnrollments.filter(
-    (e) => courses.some((c) => c.id === e.courseId) && e.completed
+function calculateCompletionMetrics(courses, startDate) {
+  const currentCompletedCount = mockData.userEnrollments.filter(
+    (e) => courses.some((c) => areIdsEqual(c.id, e.courseId)) && e.completed && new Date(e.completionDate) >= startDate
   ).length;
 
-  const totalEnrollments = mockData.userEnrollments.filter((e) => courses.some((c) => c.id === e.courseId)).length;
+  const currentTotalEnrollments = mockData.userEnrollments.filter(
+    (e) => courses.some((c) => areIdsEqual(c.id, e.courseId)) && new Date(e.enrollmentDate) >= startDate
+  ).length;
+
+  const previousStartDate = new Date(startDate);
+  previousStartDate.setDate(startDate.getDate() - (new Date() - startDate) / (1000 * 60 * 60 * 24));
+
+  const previousCompletedCount = mockData.userEnrollments.filter(
+    (e) =>
+      courses.some((c) => areIdsEqual(c.id, e.courseId)) &&
+      e.completed &&
+      new Date(e.completionDate) >= previousStartDate &&
+      new Date(e.completionDate) < startDate
+  ).length;
+
+  const previousTotalEnrollments = mockData.userEnrollments.filter(
+    (e) =>
+      courses.some((c) => areIdsEqual(c.id, e.courseId)) &&
+      new Date(e.enrollmentDate) >= previousStartDate &&
+      new Date(e.enrollmentDate) < startDate
+  ).length;
 
   return {
-    rate: totalEnrollments ? Math.round((completedCount / totalEnrollments) * 100) : 0,
-    trend: 0, // Calculate trend if needed
+    completedCount: currentCompletedCount,
+    totalEnrollments: currentTotalEnrollments,
+    previousCompletedCount,
+    previousTotalEnrollments,
+    rate: currentTotalEnrollments ? Math.round((currentCompletedCount / currentTotalEnrollments) * 100) : 0,
+    trend: previousTotalEnrollments
+      ? Math.round(((currentCompletedCount - previousCompletedCount) / previousTotalEnrollments) * 100)
+      : 0,
   };
 }
 
-function calculateRatingMetrics(courses) {
-  const ratings = mockData.userRatings.filter((r) => courses.some((c) => c.id === r.courseId));
-
+function calculateRatingMetrics(courses, startDate) {
+  const ratings = mockData.userRatings.filter((r) => courses.some((c) => areIdsEqual(c.id, r.courseId)));
   const average = ratings.length ? ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length : 0;
+
+  const currentRatings = mockData.userRatings.filter(
+    (r) => courses.some((c) => areIdsEqual(c.id, r.courseId)) && new Date(r.createdAt) >= startDate
+  );
+
+  const previousStartDate = new Date(startDate);
+  previousStartDate.setDate(startDate.getDate() - (new Date() - startDate) / (1000 * 60 * 60 * 24));
+
+  const previousRatings = mockData.userRatings.filter(
+    (r) =>
+      courses.some((c) => areIdsEqual(c.id, r.courseId)) &&
+      new Date(r.createdAt) >= previousStartDate &&
+      new Date(r.createdAt) < startDate
+  );
 
   return {
     average: Number(average.toFixed(1)),
-    trend: 0, // Calculate trend if needed
+    averageRange: currentRatings.length
+      ? Number((currentRatings.reduce((sum, r) => sum + r.rating, 0) / currentRatings.length).toFixed(1))
+      : 0,
+    trend: previousRatings.length
+      ? Math.round(((currentRatings.length - previousRatings.length) / previousRatings.length) * 100)
+      : 0,
   };
+
+  // const ratings = mockData.userRatings.filter((r) => courses.some((c) => areIdsEqual(c.id, r.courseId)));
+
+  // const average = ratings.length ? ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length : 0;
+
+  // return {
+  //   average: Number(average.toFixed(1)),
+  //   trend: 0, // Calculate trend if needed
+  // };
 }
 
 function getTopPerformingCourses(courses) {
   return courses
     .map((course) => ({
       title: course.title,
-      enrollments: mockData.userEnrollments.filter((e) => e.courseId === course.id).length,
-      revenue: course.price * mockData.userEnrollments.filter((e) => e.courseId === course.id).length,
+      enrollments: mockData.userEnrollments.filter((e) => areIdsEqual(e.courseId, course.id)).length,
+      revenue: course.price * mockData.userEnrollments.filter((e) => areIdsEqual(e.courseId, course.id)).length,
       rating: course.rating,
     }))
     .sort((a, b) => b.enrollments - a.enrollments)
@@ -2911,9 +2972,9 @@ function getTopPerformingCourses(courses) {
 
 function getRecentReviews(courses, startDate) {
   return mockData.userRatings
-    .filter((r) => courses.some((c) => c.id === r.courseId) && new Date(r.createdAt) >= startDate)
+    .filter((r) => courses.some((c) => areIdsEqual(c.id, r.courseId)) && new Date(r.createdAt) >= startDate)
     .map((review) => ({
-      courseTitle: courses.find((c) => c.id === review.courseId)?.title,
+      courseTitle: courses.find((c) => areIdsEqual(c.id, review.courseId)).title,
       rating: review.rating,
       comment: review.comment,
       date: review.createdAt,
@@ -2938,7 +2999,7 @@ function getEnrollmentTrends(courses, days) {
 
     const count = mockData.userEnrollments.filter(
       (e) =>
-        courses.some((c) => c.id === e.courseId) &&
+        courses.some((c) => areIdsEqual(c.id, e.courseId)) &&
         new Date(e.enrollmentDate) >= dayStart &&
         new Date(e.enrollmentDate) <= dayEnd
     ).length;
@@ -2967,12 +3028,12 @@ function getRevenueTrends(courses, days) {
     const amount = mockData.userEnrollments
       .filter(
         (e) =>
-          courses.some((c) => c.id === e.courseId) &&
+          courses.some((c) => areIdsEqual(c.id, e.courseId)) &&
           new Date(e.enrollmentDate) >= dayStart &&
           new Date(e.enrollmentDate) <= dayEnd
       )
       .reduce((total, enrollment) => {
-        const course = courses.find((c) => c.id === enrollment.courseId);
+        const course = courses.find((c) => areIdsEqual(c.id, enrollment.courseId));
         return total + (enrollment.paidAmount || course?.price || 0);
       }, 0);
 

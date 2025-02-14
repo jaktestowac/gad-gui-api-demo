@@ -136,7 +136,9 @@ async function renderCourses(courses = allCourses) {
             </div>
             <div class="course-info">
                 <div>
-                    <h3>${course.title}</h3>
+                    <div align="center">
+                        <h3>${course.title}</h3>
+                    </div>
                     <p>${course.description}</p>
                     <div class="course-stats">
                         <span><i class="fas fa-user"></i> ${course.students} student(s)</span>

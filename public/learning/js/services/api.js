@@ -595,6 +595,20 @@ class ApiService {
     return response.json();
   }
 
+  async getInstructorStatsByInstructorId(instructorId) {
+    const response = await fetch(`${this.baseUrl}/public/instructor/${instructorId}/stats`, {
+      headers: this.getDefaultHeaders(),
+    });
+    return response.json();
+  }
+
+  async getInstructorCoursesByInstructorId(instructorId) {
+    const response = await fetch(`${this.baseUrl}/public/instructor/${instructorId}/courses`, {
+      headers: this.getDefaultHeaders(),
+    });
+    return response.json();
+  }
+
   async createCourse(courseData) {
     const response = await fetch(`${this.baseUrl}/instructor/courses`, {
       method: "POST",
@@ -642,6 +656,13 @@ class ApiService {
     }
 
     return data;
+  }
+
+  async getInstructorById(instructorId) {
+    const response = await fetch(`${this.baseUrl}/public/instructor/${instructorId}`, {
+      headers: this.getDefaultHeaders(),
+    });
+    return response.json();
   }
 }
 
