@@ -89,8 +89,15 @@ async function renderLearningProgress() {
                             <div class="progress" style="width: ${course.progress}%"></div>
                         </div>
                         <div class="course-progress-footer">
-                            <span>${course.completed ? "Completed" : "In Progress"}</span>
-                            <span>Last accessed: ${new Date(course.lastAccessed).toLocaleDateString()}</span>
+                            <div>
+                                <span>${course.completed ? "Completed" : "In Progress"}</span>
+                                <span>Last accessed: ${new Date(course.lastAccessed).toLocaleDateString()}</span>
+                            </div>
+                            <button class="primary-button-small" onclick="window.location.href='/learning/course-viewer.html?id=${
+                              course.id
+                            }'">
+                                <i class="fas fa-arrow-right"></i> Visit
+                            </button>
                         </div>
                     </div>
                 `
