@@ -402,6 +402,107 @@
           "courseLevel": { "type": "string" },
           "issuerTitle": { "type": "string" }
         }
+      },
+      "InstructorStats": {
+        "type": "object",
+        "properties": {
+          "totalCourses": { "type": "integer" },
+          "totalStudents": { "type": "integer" },
+          "averageRating": { "type": "number" },
+          "totalRevenue": { "type": "number" }
+        }
+      },
+      "InstructorAnalytics": {
+        "type": "object",
+        "properties": {
+          "metrics": {
+            "type": "object",
+            "properties": {
+              "enrollments": {
+                "type": "object",
+                "properties": {
+                  "total": { "type": "integer" },
+                  "trend": { "type": "integer" }
+                }
+              },
+              "revenue": {
+                "type": "object",
+                "properties": {
+                  "total": { "type": "number" },
+                  "trend": { "type": "integer" }
+                }
+              },
+              "completion": {
+                "type": "object",
+                "properties": {
+                  "rate": { "type": "integer" },
+                  "trend": { "type": "integer" }
+                }
+              },
+              "rating": {
+                "type": "object",
+                "properties": {
+                  "average": { "type": "number" },
+                  "trend": { "type": "integer" }
+                }
+              }
+            }
+          },
+          "tables": {
+            "type": "object",
+            "properties": {
+              "topCourses": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "title": { "type": "string" },
+                    "enrollments": { "type": "integer" },
+                    "revenue": { "type": "number" },
+                    "rating": { "type": "number" }
+                  }
+                }
+              },
+              "recentReviews": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "courseTitle": { "type": "string" },
+                    "rating": { "type": "number" },
+                    "comment": { "type": "string" },
+                    "date": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "charts": {
+            "type": "object",
+            "properties": {
+              "enrollments": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "date": { "type": "string" },
+                    "count": { "type": "integer" }
+                  }
+                }
+              },
+              "revenue": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "date": { "type": "string" },
+                    "amount": { "type": "number" }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "responses": {
@@ -1717,6 +1818,261 @@
           "403": {
             "$ref": "#/components/responses/ForbiddenError"
           }
+        }
+      }
+    },
+    "/learning/auth/logout": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Logout user",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Logout successful",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SuccessResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/learning/courses/search": {
+      "get": {
+        "tags": ["Courses"],
+        "summary": "Search courses",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "level",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "tags",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          },
+          {
+            "name": "priceMin",
+            "in": "query",
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "priceMax",
+            "in": "query",
+            "schema": { "type": "number" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Course" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/learning/instructor/stats": {
+      "get": {
+        "tags": ["Instructor"],
+        "summary": "Get instructor statistics",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Instructor statistics",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/InstructorStats" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/UnauthorizedError" },
+          "403": { "$ref": "#/components/responses/ForbiddenError" }
+        }
+      }
+    },
+    "/learning/instructor/analytics": {
+      "get": {
+        "tags": ["Instructor"],
+        "summary": "Get instructor analytics",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "timeRange",
+            "in": "query",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Instructor analytics data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/InstructorAnalytics" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/UnauthorizedError" },
+          "403": { "$ref": "#/components/responses/ForbiddenError" }
+        }
+      }
+    },
+    "/learning/instructor/courses": {
+      "get": {
+        "tags": ["Instructor"],
+        "summary": "Get instructor courses",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "List of instructor's courses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Course" }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/UnauthorizedError" },
+          "403": { "$ref": "#/components/responses/ForbiddenError" }
+        }
+      },
+      "post": {
+        "tags": ["Instructor"],
+        "summary": "Create new course",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["title", "description", "price", "level"],
+                "properties": {
+                  "title": { "type": "string" },
+                  "description": { "type": "string" },
+                  "price": { "type": "number" },
+                  "level": { "type": "string" },
+                  "tags": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Course created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" },
+                    "course": { "$ref": "#/components/schemas/Course" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/UnauthorizedError" },
+          "403": { "$ref": "#/components/responses/ForbiddenError" }
+        }
+      }
+    },
+    "/learning/roles": {
+      "get": {
+        "tags": ["Roles"],
+        "summary": "Get all roles",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "List of roles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "roles": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/UnauthorizedError" },
+          "403": { "$ref": "#/components/responses/ForbiddenError" }
+        }
+      }
+    },
+    "/learning/users/{userId}/role": {
+      "put": {
+        "tags": ["Roles"],
+        "summary": "Update user role",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["role"],
+                "properties": {
+                  "role": {
+                    "type": "string",
+                    "enum": ["student", "instructor", "admin"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Role updated successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SuccessResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/UnauthorizedError" },
+          "403": { "$ref": "#/components/responses/ForbiddenError" },
+          "404": { "$ref": "#/components/responses/NotFound" }
         }
       }
     }

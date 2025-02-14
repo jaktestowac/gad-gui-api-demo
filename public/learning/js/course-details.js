@@ -43,6 +43,8 @@ async function renderCourseDetails() {
 
     const isEnrolled = enrollment.some((e) => e.courseId === courseId);
     const lessonCount = (await api.getCourseLessonsTitles(courseId)).length;
+    const userId = api.getUserIdFromCookie();
+    const isInstructor = course.instructorId == userId;
 
     courseContent.innerHTML = `
             <div class="course-header">
@@ -65,17 +67,28 @@ async function renderCourseDetails() {
                         <span><i class="fas fa-star"></i> ${course.rating} rating</span>
                     </div>
                     ${
-                      isEnrolled
+                      isInstructor
+                        ? `
+                        <div class="instructor-actions">
+                            <a href="course-lessons.html?courseId=${courseId}" class="manage-button">
+                                <i class="fas fa-cog"></i> Manage Course
+                            </a> 
+                            <a href="course-viewer.html?courseId=${courseId}" class="manage-button">
+                                <i class="fas fa-eye"></i> View Course
+                            </a>
+                        </div>
+                        `
+                        : isEnrolled
                         ? `
                         <a href="course-viewer.html?id=${courseId}" class="primary-button">
                             Continue Learning
                         </a>
-                    `
+                        `
                         : `
                         <button onclick="enrollCourse(${courseId})" class="enroll-button">
                             Enroll Now - $${course.price}
                         </button>
-                    `
+                        `
                     }
                 </div>
             </div>

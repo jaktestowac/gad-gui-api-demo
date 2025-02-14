@@ -2644,3 +2644,9 @@ html {
 .transaction-amount.debit {
   color: #ef4444;
 }
+
+.instructor-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}

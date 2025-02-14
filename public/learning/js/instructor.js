@@ -46,7 +46,7 @@ function openCourse(courseId) {
 }
 
 function viewCourse(courseId) {
-  window.location.href = `course-details.html?courseId=${courseId}`;
+  window.location.href = `course-viewer.html?courseId=${courseId}`;
 }
 
 function renderCourseCard(course, viewMode = "grid") {
@@ -65,7 +65,7 @@ function renderCourseCard(course, viewMode = "grid") {
       </div>
       <div class="course-actions">
         <button class="secondary-button" onclick="viewCourse(${course.id})">
-          <i class="fas fa-eye"></i> View Lessons
+          <i class="fas fa-eye"></i> View Course
         </button>
         <button class="secondary-button" onclick="openCourse(${course.id})">
           <i class="fas fa-book"></i> Manage Lessons
@@ -86,7 +86,7 @@ function renderCourseCard(course, viewMode = "grid") {
       </div>
       <div class="course-actions">
         <button class="secondary-button" onclick="viewCourse(${course.id})">
-          <i class="fas fa-eye"></i> View Lessons
+          <i class="fas fa-eye"></i> View Course
         </button>
         <button class="secondary-button" onclick="openCourse(${course.id})">
           <i class="fas fa-book"></i> Manage Lessons
