@@ -52,6 +52,12 @@
     <script src="./js/services/api.js"></script>
     <script src="./js/services/notifications.js"></script>
     <script src="./js/auth.js"></script>
+    <script src="./js/auth-check.js"></script>
+    <script>
+        if (isLoggedIn()) {
+            window.location.href = "/learning/dashboard.html";
+        }
+    </script>
 </body>
 
 </html>

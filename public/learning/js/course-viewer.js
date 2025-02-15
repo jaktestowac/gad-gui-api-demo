@@ -126,6 +126,8 @@ class CourseViewer {
         return "fa-book";
       case "quiz":
         return "fa-question-circle";
+      case "assignment":
+        return "fa-tasks";
       default:
         return "fa-file";
     }
@@ -172,6 +174,7 @@ class CourseViewer {
       const newUrl = new URL(window.location.href);
       newUrl.searchParams.set("lesson", lessonInfo.id);
       window.history.pushState({}, "", newUrl);
+      this.highlightCurrentLesson(lessonInfo.id);
     } catch (error) {
       console.error("Failed to load lesson:", error);
       this.showError("Failed to load lesson content.");
@@ -616,9 +619,17 @@ class CourseViewer {
       )
       .join("");
   }
+
+  highlightCurrentLesson(lessonId) {
+    const lessonItems = document.querySelectorAll(".lesson-item");
+    lessonItems.forEach((item) => {
+      item.classList.toggle("current-lesson", parseInt(item.dataset.lessonId) === lessonId);
+    });
+  }
 }
 
 let courseViewer;
 document.addEventListener("DOMContentLoaded", () => {
   courseViewer = new CourseViewer();
+  courseViewer.highlightCurrentLesson(courseViewer.lessonId);
 });

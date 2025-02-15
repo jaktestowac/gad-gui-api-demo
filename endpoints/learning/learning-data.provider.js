@@ -5,6 +5,10 @@ function isInactive(obj) {
   return obj?._inactive === true;
 }
 
+function getLessonTypes() {
+  return Object.values(mockData.lessonTypes);
+}
+
 function getUserByEmail(email) {
   return mockData.users.find((u) => u.email === email && !isInactive(u));
 }
@@ -58,6 +62,10 @@ function getUserFunds(userId) {
 
 function getCourseLessons(courseId) {
   return mockData.courseLessons[courseId] || [];
+}
+
+function setCourseLessons(courseId, lessons) {
+  mockData.courseLessons[courseId] = lessons;
 }
 
 function getLessonProgress(userId, courseId) {
@@ -290,6 +298,7 @@ module.exports = {
   getUserFunds,
   getCertificates,
   getCourseLessons,
+  setCourseLessons,
   getLessonProgress,
   getCertificate,
   getUserCertificates,
@@ -308,6 +317,7 @@ module.exports = {
   setUserFailedLoginAttempts,
   getAllCourses,
   getQuizAttempts,
+  getLessonTypes,
   getCourseRatings,
   getUserByUsername,
   addUser,

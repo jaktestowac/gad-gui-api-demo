@@ -27,7 +27,9 @@
         <div id="certificateContainer" class="certificate-container">
             <!-- Certificate will be loaded here -->
         </div>
-
+        <div align="center">
+            <div id="qrCodeContainer" class="qr-code-container"></div>
+        </div>
         <div class="verification-info">
             <h3>Certificate Authentication</h3>
             <p>This digital certificate is securely stored in the GAD Learning Platform database.</p>
@@ -40,6 +42,7 @@
 
     <script src="/js/libs/pdf/html2canvas.min.js"></script>
     <script src="/js/libs/pdf/jspdf.umd.min.js"></script>
+    <script src="/js/libs/qr/qrcode.min.js"></script>
     <script src="./js/services/api.js"></script>
     <script src="./js/public-certificate.js"></script>
 </body>

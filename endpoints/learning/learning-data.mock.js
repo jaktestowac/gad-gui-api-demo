@@ -6,6 +6,13 @@ const mockData = {
     ADMIN: "admin",
   },
 
+  lessonTypes: {
+    VIDEO: "video",
+    READING: "reading",
+    QUIZ: "quiz",
+    ASSIGNMENT: "assignment",
+  },
+
   // Role permissions mapping
   rolePermissions: {
     student: ["view_courses", "enroll_courses", "view_own_progress", "submit_assignments"],

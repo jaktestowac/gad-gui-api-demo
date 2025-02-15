@@ -48,10 +48,14 @@ function renderLessonsList(lessons) {
     return;
   }
 
+  const urlParams = new URLSearchParams(window.location.search);
+  const courseId = urlParams.get("courseId");
+  const displayedLessonId = parseInt(urlParams.get("lesson"));
+
   lessonsContainer.innerHTML = lessons
     .map(
       (lesson, index) => `
-        <div class="lesson-card" data-id="${lesson.id}">
+        <div class="lesson-card ${lesson.id === displayedLessonId ? "active" : ""}" data-id="${lesson.id}">
             <div class="lesson-info">
                 <div class="lesson-number">${index + 1}</div>
                 <div class="lesson-details">
@@ -75,13 +79,13 @@ function renderLessonsList(lessons) {
                 </div>
             </div>
             <div class="lesson-actions">
-                <button class="secondary-button" onclick="viewLesson(${lesson.id})">
+                <button class="secondary-button" onclick="viewLesson(${courseId}, ${lesson.id})">
                     <i class="fas fa-eye"></i> View
                 </button>
-                <button class="secondary-button" onclick="editLesson(${lesson.id})">
+                <button class="secondary-button" onclick="editLesson(${courseId}, ${lesson.id})">
                     <i class="fas fa-edit"></i> Edit
                 </button>
-                <button class="danger-button" onclick="deleteLesson(${lesson.id})">
+                <button class="danger-button" onclick="deleteLesson(${courseId}, ${lesson.id})">
                     <i class="fas fa-trash"></i> Delete
                 </button>
             </div>
@@ -115,7 +119,7 @@ function showAddLessonDialog() {
                 <div class="form-row">
                     <div class="form-group">
                         <label for="lessonType">Type</label>
-                        <select id="lessonType" required>
+                        <select id="lessonType" required onchange="updateLessonFormFields(this.value)">
                             <option value="video">Video</option>
                             <option value="reading">Reading</option>
                             <option value="quiz">Quiz</option>
@@ -127,9 +131,8 @@ function showAddLessonDialog() {
                         <input type="text" id="lessonDuration" placeholder="HH:MM:SS">
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="lessonContent">Content</label>
-                    <textarea id="lessonContent" rows="4"></textarea>
+                <div id="dynamicLessonFields">
+                    <!-- Dynamic fields will be inserted here -->
                 </div>
                 <div class="form-actions">
                     <button type="button" class="secondary-button" onclick="closeDialog()">Cancel</button>
@@ -144,6 +147,70 @@ function showAddLessonDialog() {
 
   const form = dialog.querySelector("#lessonForm");
   form.addEventListener("submit", handleAddLesson);
+
+  updateLessonFormFields("video");
+}
+
+function updateLessonFormFields(lessonType) {
+  const dynamicFieldsContainer = document.getElementById("dynamicLessonFields");
+  let dynamicFields = "";
+
+  switch (lessonType) {
+    case "video":
+      dynamicFields = `
+                <div class="form-group">
+                    <label for="lessonVideoUrl">Video URL</label>
+                    <input type="url" id="lessonVideoUrl" required>
+                </div>
+                <div class="form-group">
+                    <label for="lessonTranscript">Transcript</label>
+                    <textarea id="lessonTranscript" rows="4" required></textarea>
+                </div>
+            `;
+      break;
+    case "reading":
+      dynamicFields = `
+                <div class="form-group">
+                    <label for="lessonContent">Reading Content</label>
+                    <textarea id="lessonContent" rows="8" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="lessonResources">Resources (separator: new line)</label>
+                    <textarea id="lessonResources" rows="4"></textarea>
+                </div>
+            `;
+      break;
+    case "quiz":
+      dynamicFields = `
+                <div class="form-group">
+                    <label for="lessonQuestions">Quiz Questions</label>
+                    <textarea id="lessonQuestions" rows="8" placeholder="Enter questions in JSON format" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="lessonPassingScore">Passing Score (%)</label>
+                    <input type="number" id="lessonPassingScore" min="0" max="100" value="70" required>
+                </div>
+            `;
+      break;
+    case "assignment":
+      dynamicFields = `
+                <div class="form-group">
+                    <label for="lessonInstructions">Assignment Instructions</label>
+                    <textarea id="lessonInstructions" rows="6" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="lessonRubric">Grading Rubric</label>
+                    <textarea id="lessonRubric" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="lessonDueDate">Due Date (optional)</label>
+                    <input type="date" id="lessonDueDate">
+                </div>
+            `;
+      break;
+  }
+
+  dynamicFieldsContainer.innerHTML = dynamicFields;
 }
 
 async function handleAddLesson(event) {
@@ -151,13 +218,48 @@ async function handleAddLesson(event) {
 
   const urlParams = new URLSearchParams(window.location.search);
   const courseId = urlParams.get("courseId");
+  const lessonType = document.getElementById("lessonType").value;
 
   const lessonData = {
     title: document.getElementById("lessonTitle").value,
-    type: document.getElementById("lessonType").value,
+    type: lessonType,
     duration: document.getElementById("lessonDuration").value,
-    content: document.getElementById("lessonContent").value,
+    content: {}, // Initialize content object
   };
+
+  // Add type-specific content
+  switch (lessonType) {
+    case "video":
+      lessonData.content = {
+        videoUrl: document.getElementById("lessonVideoUrl").value,
+        transcript: document.getElementById("lessonTranscript").value,
+      };
+      break;
+    case "reading":
+      lessonData.content = {
+        text: document.getElementById("lessonContent").value,
+        resources: document.getElementById("lessonResources").value.split("\n").filter(Boolean),
+      };
+      break;
+    case "quiz":
+      try {
+        lessonData.content = {
+          questions: JSON.parse(document.getElementById("lessonQuestions").value),
+          passingScore: parseInt(document.getElementById("lessonPassingScore").value),
+        };
+      } catch (e) {
+        showNotification("Invalid quiz questions format", "error");
+        return;
+      }
+      break;
+    case "assignment":
+      lessonData.content = {
+        instructions: document.getElementById("lessonInstructions").value,
+        rubric: document.getElementById("lessonRubric").value,
+        dueDate: document.getElementById("lessonDueDate").value,
+      };
+      break;
+  }
 
   try {
     const response = await api.addLesson(courseId, lessonData);
@@ -282,7 +384,7 @@ async function editLesson(lessonId) {
 }
 
 function viewLesson(courseId, lessonId) {
-  window.location.href = `course-details.html?courseId=${courseId}`;
+  window.location.href = `course-viewer.html?courseId=${courseId}&lesson=${lessonId}`;
 }
 
 async function handleEditLesson(event, lessonId) {

@@ -344,6 +344,17 @@ body {
   margin: 0;
 }
 
+.qr-code-container {
+  text-align: center;
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  display: inline-block;
+}
+
 @media (max-width: 768px) {
   .certificate-public-view {
     padding: 0.5rem;

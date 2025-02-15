@@ -88,7 +88,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                         <h3><span style="color: #f44336;"><i class="fas fa-lock"></i></span> ${remainingLessons} More Lessons Available</h3>
                         <p>Sign in to access the full course content</p>
                         <div class="cta-buttons">
-                            <a href="login.html" class="primary-button" aria-label="Sign In" title="Sign In">Sign In</a>
+                            <a href="javascript:void(0)" class="primary-button" aria-label="Sign In" title="Sign In" onclick="redirectToCourseDetails(${courseId})">
+                                Sign In
+                            </a>
                             <a href="register.html" class="primary-button" aria-label="Create Account" title="Create Account">Create Account</a>
                         </div>
                     </div>
@@ -224,4 +226,23 @@ async function renderLessonContent(lesson) {
                     </div>
                 </div>`;
   }
+}
+
+function redirectToCourseDetailsAuto() {
+  const params = new URLSearchParams(window.location.search);
+  const courseId = parseInt(params.get("id"));
+  redirectToCourseDetails(courseId);
+}
+
+function redirectToCourseDetails(courseId) {
+  if (isLoggedIn()) {
+    window.location.href = `course-details.html?id=${courseId}`;
+  } else {
+    window.location.href = "login.html";
+  }
+}
+
+function isLoggedIn() {
+  // Implement your logic to check if the user is logged in
+  return !!localStorage.getItem("authToken");
 }

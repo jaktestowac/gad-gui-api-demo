@@ -68,6 +68,16 @@ async function displayPublicCertificate() {
             </div>
         </div>
     `;
+    // Generate QR code
+    const qrCodeContainer = document.getElementById("qrCodeContainer");
+
+    const textForQR = `${window.location.origin}/public/certificate?id=${certificateId}`;
+
+    const qrCode = new QRCode(qrCodeContainer, {
+      text: textForQR,
+      width: 256,
+      height: 256,
+    });
   } catch (error) {
     container.innerHTML = `
             <div class="error-message">

@@ -197,7 +197,7 @@ function handleLearning(req, res, isAdmin) {
   const verifyTokenResult = verifyAccessToken(req, res, "learning", req.url);
 
   // GET endpoints
-  if (req.method === "GET" || req.method === "POST") {
+  if (req.method === "GET") {
     // Add public certificate endpoint
     // /api/certificates/public/{certificateId}
     if (urlParts[2] === "certificates" && urlParts[3] === "public") {
@@ -682,7 +682,9 @@ function handleLearning(req, res, isAdmin) {
       }
       return;
     }
+  }
 
+  if (req.method === "GET" || req.method === "POST") {
     // Add instructor endpoints
     // /api/learning/instructor/
     if (urlParts[2] === "instructor") {
@@ -736,6 +738,11 @@ function handleLearning(req, res, isAdmin) {
               return;
             }
 
+            if (typeof price !== "number" || price < 0) {
+              res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Invalid price"));
+              return;
+            }
+
             const maxCourseId = Math.max(...dataProvider.getCourses().map((c) => c.id), 0);
             const newCourse = {
               id: maxCourseId + 1,
@@ -743,6 +750,7 @@ function handleLearning(req, res, isAdmin) {
               description,
               thumbnail: "..\\data\\learning\\courses\\default-course.jpg",
               instructor: `${user.firstName} ${user.lastName}`,
+              instructorId: user.id,
               duration: "0 hours",
               totalHours: 0,
               level,
@@ -766,7 +774,7 @@ function handleLearning(req, res, isAdmin) {
           }
 
           // check for /api/learning/instructor/courses/:id/lessons
-          if (urlParts[5] === "lessons") {
+          if (urlParts[5] === "lessons" && req.method === "GET") {
             const courseId = parseInt(urlParts[4]);
             const lessons = dataProvider.getCourseLessons(courseId);
             if (lessons) {
@@ -788,11 +796,12 @@ function handleLearning(req, res, isAdmin) {
             return;
           }
           // check for /api/learning/instructor/courses
-          else {
+          else if (urlParts.length === 4) {
             const courses = dataProvider.getCoursesByInstructorId(user.id);
             res.status(HTTP_OK).send(courses);
             return;
           }
+          break;
         }
         // /learning/instructor/analytics
         case "analytics": {
@@ -849,7 +858,7 @@ function handleLearning(req, res, isAdmin) {
             logDebug("Analytics error:", error);
             res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Failed to generate analytics"));
           }
-          return;
+          break;
         }
       }
     }
@@ -1254,6 +1263,156 @@ function handleLearning(req, res, isAdmin) {
       res.status(HTTP_OK).send({
         success: true,
         message: "Account deactivated successfully",
+      });
+      return;
+    }
+
+    // Add lesson creation endpoint
+    // POST /learning/instructor/courses/:courseId/lessons
+    if (urlParts[2] === "instructor" && urlParts[3] === "courses" && urlParts[5] === "lessons") {
+      if (!checkIfUserIsAuthenticated(req, res)) {
+        res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not authenticated"));
+        return;
+      }
+
+      const user = dataProvider.getUserByEmail(verifyTokenResult?.email);
+      if (!isInstructor(user)) {
+        res.status(HTTP_FORBIDDEN).send(formatErrorResponse("Must be an instructor"));
+        return;
+      }
+
+      const courseId = parseInt(urlParts[4]);
+
+      // Verify course ownership
+      if (!canManageCourse(user, courseId)) {
+        res.status(HTTP_FORBIDDEN).send(formatErrorResponse("Not authorized to manage this course"));
+        return;
+      }
+
+      const { title, type, duration, content } = req.body;
+      if (!title || !type || !content) {
+        res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Missing required fields (title, type, content)"));
+        return;
+      }
+
+      function validateLessonFields(fields) {
+        const allowedFields = ["title", "type", "duration", "content"];
+        const maxLengths = {
+          title: 255,
+          type: 50,
+          duration: 10,
+        };
+
+        const extraFields = Object.keys(fields).filter((field) => !allowedFields.includes(field));
+        if (extraFields.length > 0) {
+          return `Invalid fields: ${extraFields.join(", ")}`;
+        }
+
+        for (const [field, value] of Object.entries(fields)) {
+          if (typeof value === "string" && value.length > maxLengths[field]) {
+            return `Field "${field}" exceeds maximum length of ${maxLengths[field]} characters`;
+          }
+        }
+
+        // Validate content based on lesson type
+        const { type, content } = fields;
+        if (type === "video") {
+          if (!content?.videoUrl?.startsWith("http")) {
+            return `Invalid video URL "${content?.videoUrl}"`;
+          }
+          if (!content?.videoUrl?.length > 255) {
+            return `Video URL exceeds maximum length of 255 characters`;
+          }
+          if (!content?.transcript) {
+            return "Video content must have a transcript";
+          }
+          if (content.transcript.length > 32768) {
+            return "Video content transcript too long (max 32768 characters)";
+          }
+        } else if (type === "reading") {
+          if (!content?.resources) {
+            return "Reading content must have resources";
+          }
+          if (content.resources.length > 100) {
+            return "Too many resources (max 100)";
+          }
+          if (content.text?.length > 32768) {
+            return "Text content too long (max 32768 characters)";
+          }
+        } else if (type === "quiz") {
+          if (!Array.isArray(content) || content.length === 0) {
+            return "Invalid quiz content";
+          }
+          for (const question of content) {
+            if (!question.question || !question.answers || !question.correctAnswer) {
+              return "Invalid quiz question format";
+            }
+          }
+        }
+
+        return null;
+      }
+
+      const validationError = validateLessonFields({ title, type, duration, content });
+      if (validationError) {
+        res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(validationError));
+        return;
+      }
+
+      // check if type is valid
+      if (dataProvider.getLessonTypes().includes(type?.toLowerCase()) === false) {
+        res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(`Invalid lesson type "${type}"`));
+        return;
+      }
+
+      // duration is not required for quizzes
+      if (type !== "quiz" && (!duration || typeof duration !== "number" || duration < 0)) {
+        res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(`Invalid duration "${duration}"`));
+        return;
+      }
+
+      if (type === "video") {
+        if (!content?.videoUrl?.startsWith("http")) {
+          res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(`Invalid video URL "${content?.videoUrl}"`));
+          return;
+        }
+      }
+
+      if (type === "quiz") {
+        if (!Array.isArray(content) || content.length === 0) {
+          res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Invalid quiz content"));
+          return;
+        }
+
+        for (const question of content) {
+          if (!question.question || !question.answers || !question.correctAnswer) {
+            res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Invalid quiz question format"));
+            return;
+          }
+        }
+      }
+
+      const lessons = dataProvider.getCourseLessons(courseId);
+      const newLessonId = lessons.length > 0 ? Math.max(...lessons.map((l) => l.id)) + 1 : 1;
+
+      const newLesson = {
+        id: newLessonId,
+        title,
+        type,
+        duration,
+        content,
+      };
+
+      lessons.push(newLesson);
+      dataProvider.setCourseLessons(courseId, lessons);
+
+      // Recalculate course duration after adding lesson
+      recalculateCoursesDuration();
+
+      res.status(HTTP_OK).send({
+        success: true,
+        message: "Lesson created successfully",
+        lesson: newLesson,
       });
       return;
     }

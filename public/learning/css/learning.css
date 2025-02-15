@@ -946,6 +946,16 @@
   pointer-events: none;
 }
 
+.lesson-item.active {
+  background-color: #e0f7fa;
+  border-left: 4px solid #00acc1;
+}
+
+.lesson-item.current {
+  background-color: #d1e7dd;
+  border-left: 4px solid #0f5132;
+}
+
 .lesson-info {
   flex: 1;
   display: flex;
@@ -2903,4 +2913,23 @@ html {
   width: 100%;
   height: 100%;
   border: none;
+}
+
+/* Lesson card styles */
+.lesson-card {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.lesson-card:hover {
+  background-color: #f9f9f9;
+  border-color: #ccc;
+}
+
+.lesson-card.active {
+  background-color: #e0f7fa;
+  border-color: #00acc1;
 }
