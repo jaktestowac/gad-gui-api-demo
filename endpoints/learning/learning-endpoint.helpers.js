@@ -812,7 +812,9 @@ function handleLearning(req, res, isAdmin) {
 
           const queryParams = new URLSearchParams(req.url.split("?")[1]);
           const courseId = queryParams.get("courseId") || "all";
-          const timeRange = parseInt(queryParams.get("timeRange")) || 30;
+          const timeRangeBase = parseInt(queryParams.get("timeRange")) || 30;
+
+          const timeRange = Math.min(timeRangeBase, 3650);
 
           // Get instructor's courses
           const targetCourses =
@@ -854,11 +856,12 @@ function handleLearning(req, res, isAdmin) {
               success: true,
               data: { metrics, tables, charts },
             });
+            return;
           } catch (error) {
             logDebug("Analytics error:", error);
             res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Failed to generate analytics"));
+            return;
           }
-          break;
         }
       }
     }
@@ -1620,7 +1623,7 @@ function handleLearning(req, res, isAdmin) {
     }
   }
 
-  res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Endpoint not found"));
+  res.status(HTTP_NOT_FOUND).send(formatErrorResponse(`Endpoint not found for ${req.method} "${req.url}"`));
 }
 
 // Add these helper functions at the bottom of the file

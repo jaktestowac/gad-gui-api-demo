@@ -79,22 +79,22 @@ async function renderLearningProgress() {
             <div class="course-progress-list">
                 ${enrolledCourses
                   .map(
-                    (course) => `
+                    (enrollment) => `
                     <div class="course-progress-item">
                         <div class="course-progress-header">
-                            <h4>${course.title}</h4>
-                            <span>${course.progress}%</span>
+                            <h4>${enrollment.title}</h4>
+                            <span>${enrollment.progress}%</span>
                         </div>
                         <div class="progress-bar">
-                            <div class="progress" style="width: ${course.progress}%"></div>
+                            <div class="progress" style="width: ${enrollment.progress}%"></div>
                         </div>
                         <div class="course-progress-footer">
                             <div>
-                                <span>${course.completed ? "Completed" : "In Progress"}</span>
-                                <span>Last accessed: ${new Date(course.lastAccessed).toLocaleDateString()}</span>
+                                <span>${enrollment.completed ? "Completed" : "In Progress"}</span>
+                                <span>Last accessed: ${new Date(enrollment.lastAccessed).toLocaleDateString()}</span>
                             </div>
                             <button class="primary-button-small" onclick="window.location.href='/learning/course-viewer.html?id=${
-                              course.id
+                              enrollment.courseId
                             }'">
                                 <i class="fas fa-arrow-right"></i> Visit
                             </button>

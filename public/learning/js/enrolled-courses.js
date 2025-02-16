@@ -72,37 +72,37 @@ async function renderEnrolledCourses() {
 
     courseList.innerHTML = enrolledCoursesWithProgress
       .map(
-        (course) => `
+        (enrollment) => `
             <div class="course-card">
                 <div align="center">
-                  <img src="${course.thumbnail}" alt="${course.title}">
+                  <img src="${enrollment.thumbnail}" alt="${enrollment.title}">
                 </div>
                 <div class="course-info">
                     <div>
-                        <h3>${course.title}</h3>
-                        <p>${course.description}</p>
+                        <h3>${enrollment.title}</h3>
+                        <p>${enrollment.description}</p>
                         <div class="course-stats">
-                            <span><i class="fas fa-book"></i> ${course.completedLessons}/${
-          course.totalLessons
+                            <span><i class="fas fa-book"></i> ${enrollment.completedLessons}/${
+          enrollment.totalLessons
         } lessons</span>
-                            <span><i class="fas fa-clock"></i> ${course.duration}</span>
+                            <span><i class="fas fa-clock"></i> ${enrollment.duration}</span>
                             <span><i class="fas fa-calendar"></i> Enrolled: ${new Date(
-                              course.enrollmentDate
+                              enrollment.enrollmentDate
                             ).toLocaleDateString()}</span>
                         </div>
                     </div>
                     <div class="progress-section">
                         <div class="progress-info">
-                            <span class="progress-percentage">${course.progress}% Complete</span>
+                            <span class="progress-percentage">${enrollment.progress}% Complete</span>
                             <span class="lessons-remaining">
-                                ${course.totalLessons - course.completedLessons} lessons remaining
+                                ${enrollment.totalLessons - enrollment.completedLessons} lessons remaining
                             </span>
                         </div>
                         <div class="progress-bar">
-                            <div class="progress" style="width: ${course.progress}%"></div>
+                            <div class="progress" style="width: ${enrollment.progress}%"></div>
                         </div>
-                        <a href="course-viewer.html?id=${course.courseId}" class="continue-button">
-                            ${course.progress === 100 ? "Review Course" : "Continue Learning"}
+                        <a href="course-viewer.html?id=${enrollment.courseId}" class="continue-button">
+                            ${enrollment.progress === 100 ? "Review Course" : "Continue Learning"}
                         </a>
                     </div>
                 </div>
