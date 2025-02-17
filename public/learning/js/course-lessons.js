@@ -449,9 +449,16 @@ async function handleEditLesson(event, lessonId) {
 }
 
 async function deleteLesson(lessonId) {
-  if (!confirm("Are you sure you want to delete this lesson?")) {
-    return;
-  }
+  const confirmed = await confirmDialog.show({
+    title: "Delete Lesson",
+    message: "Are you sure you want to delete this lesson? This action cannot be undone.",
+    confirmText: "Delete",
+    cancelText: "Cancel",
+    confirmButtonClass: "danger",
+    showCloseButton: true,
+  });
+
+  if (!confirmed) return;
 
   try {
     const urlParams = new URLSearchParams(window.location.search);

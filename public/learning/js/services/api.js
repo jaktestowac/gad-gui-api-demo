@@ -64,7 +64,7 @@ class ApiService {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || "Failed to update profile");
+      throw new Error(error.error?.message || "Failed to update profile");
     }
 
     document.cookie = `learning_username=${userData.username}; max-age=86400; path=/`;
@@ -96,7 +96,7 @@ class ApiService {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error || "Failed to deactivate account");
+      return error;
     }
 
     return response.json();
@@ -498,13 +498,13 @@ class ApiService {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || "Failed to submit rating");
+        return error;
       }
 
       return response.json();
     } catch (error) {
       console.error("Rating submission error:", error);
-      throw error;
+      return error;
     }
   }
 
@@ -665,7 +665,7 @@ class ApiService {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || "Failed to fetch analytics data");
+      throw new Error(error.error.message || "Failed to fetch analytics data");
     }
 
     const data = await response.json();

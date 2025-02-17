@@ -13,188 +13,167 @@ const { verifyAccessToken } = require("../../helpers/validation.helpers");
 const { areIdsEqual } = require("../../helpers/compare.helpers");
 const dataProvider = require("./learning-data.provider");
 
-function checkIfUserExists(email) {
-  return dataProvider.getUserByEmail(email);
-}
-
-function checkIfUserIsAuthenticated(req, res, endpoint = "endpoint", url = "") {
-  const verifyTokenResult = verifyAccessToken(req, res, "learning", req.url);
-  const userExists = checkIfUserExists(verifyTokenResult?.email);
-  return verifyTokenResult && userExists;
-}
-
-const checkIfUserIdMatchesEmail = (userId, email) => {
-  const user = dataProvider.getUserById(userId);
-  return user && user.email === email;
-};
-
-function recalculateStudentsCount() {
-  dataProvider.getCourses().forEach((course) => {
-    course.students =
-      dataProvider.getAllUserEnrollments().filter((e) => areIdsEqual(e.courseId, course.id)).length || 0;
-  });
-}
-
-function recalculateCoursesRating() {
-  dataProvider.getCourses().forEach((course) => {
-    const ratings = dataProvider.getUserRatingsForCourse(course.id);
-    const totalRating = ratings.reduce((total, rating) => total + rating.rating, 0);
-    // round it to 1 decimal place
-    course.rating = ratings.length > 0 ? Math.round((totalRating / ratings.length) * 10) / 10 : 0;
-  });
-}
-
-function parseDurationToSeconds(duration) {
-  if (!duration) {
-    return 0;
-  }
-
-  const timeParts = duration.split(":");
-  if (timeParts.length === 3) {
-    return parseInt(timeParts[0]) * 3600 + parseInt(timeParts[1]) * 60 + parseInt(timeParts[2]);
-  }
-  return parseInt(timeParts[0]) * 60 + parseInt(timeParts[1]);
-}
-
-function roundSecondsToHours(seconds) {
-  // round to one decimal place
-  return Math.round((seconds / 3600) * 10) / 10;
-}
-
-function recalculateCoursesDuration() {
-  dataProvider.getCourses().forEach((course) => {
-    const lessons = dataProvider.getCourseLessons(course.id);
-    const totalDurationInSeconds = lessons.reduce(
-      (total, lesson) => total + parseDurationToSeconds(lesson?.duration),
-      0
-    );
-
-    course.totalHours = roundSecondsToHours(totalDurationInSeconds);
-    course.duration = `${roundSecondsToHours(totalDurationInSeconds)} hour(s)`;
-  });
-}
-
-function checkIfUserIsEnrolled(userId, courseId) {
-  return dataProvider.getEnrollment(userId, courseId) !== undefined;
-}
-
-function checkIfUserCanAccessCourse(userId, courseId) {
-  const isEnrolled = checkIfUserIsEnrolled(userId, courseId);
-  const course = dataProvider.getCourseById(courseId);
-  return isEnrolled || (course && areIdsEqual(course.instructorId, userId));
-}
-
-function findUserIdByEmail(email) {
-  const user = dataProvider.getUserByEmail(email);
-  return user?.id;
-}
-
-recalculateStudentsCount();
-recalculateCoursesRating();
-recalculateCoursesDuration();
-
-function getUserFunds(userId) {
-  const user = dataProvider.getUserById(userId);
-  return user ? user.funds : 0;
-}
-
-function addFundsHistory(userId, amount, type, description) {
-  dataProvider.addFundsHistory({
-    userId,
-    amount,
-    type,
-    timestamp: new Date().toISOString(),
-    description,
-  });
-}
-
-function updateUserFunds(userId, newAmount) {
-  const user = dataProvider.getUserById(userId);
-  if (user) {
-    const oldAmount = user.funds;
-    user.funds = newAmount;
-
-    // If it's a top up (new amount > old amount)
-    if (newAmount > oldAmount) {
-      addFundsHistory(userId, newAmount - oldAmount, "credit", "Account top up");
-    }
-
-    return true;
-  }
-  return false;
-}
-
-// Add helper functions for role checks
-function hasPermission(user, permission) {
-  if (!user) return false;
-  const userPermissions = dataProvider.getRolePermissions(user.role);
-  return userPermissions?.includes(permission);
-}
-
-function isInstructor(user) {
-  return user?.role === dataProvider.getRoles().INSTRUCTOR;
-}
-
-function isAdmin(user) {
-  return user?.role === dataProvider.getRoles().ADMIN;
-}
-
-function canManageCourse(user, courseId) {
-  if (!user) return false;
-  if (isAdmin(user)) return true;
-  if (!isInstructor(user)) return false;
-
-  const course = dataProvider.getCourseById(courseId);
-  return course && areIdsEqual(course.instructorId, user.id);
-}
-
-function calculateInstructorStats(instructorId) {
-  const instructorCourses = dataProvider.getCoursesByInstructorId(instructorId);
-
-  const stats = {
-    totalCourses: instructorCourses.length,
-    totalStudents: 0,
-    averageRating: 0,
-    totalRevenue: 0,
-  };
-
-  instructorCourses.forEach((course) => {
-    // Calculate total students
-    const courseEnrollments = dataProvider.getAllUserEnrollments().filter((e) => areIdsEqual(e.courseId, course.id));
-    stats.totalStudents += courseEnrollments.length;
-
-    // Calculate total revenue
-    stats.totalRevenue += courseEnrollments.reduce(
-      (total, enrollment) => total + (enrollment.paidAmount || course.price),
-      0
-    );
-
-    // Calculate average rating
-    const courseRatings = dataProvider.getUserRatingsForCourse(course.id);
-    if (courseRatings.length > 0) {
-      course.avgRating = courseRatings.reduce((total, r) => total + r.rating, 0) / courseRatings.length;
-    }
-  });
-
-  // Calculate overall average rating
-  const coursesWithRatings = instructorCourses.filter((c) => c.avgRating);
-  stats.averageRating =
-    coursesWithRatings.length > 0
-      ? coursesWithRatings.reduce((total, c) => total + c.avgRating, 0) / coursesWithRatings.length
-      : 0;
-
-  return stats;
-}
-
-function isValidId(id) {
-  const parsedId = parseInt(id);
-  return !isNaN(parsedId) && parsedId > 0;
-}
-
-function handleLearning(req, res, isAdmin) {
+function handleLearning(req, res) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
   const urlParts = urlEnds.split("/").filter(Boolean);
   const verifyTokenResult = verifyAccessToken(req, res, "learning", req.url);
+  const user = dataProvider.getUserByEmail(verifyTokenResult?.email);
+
+  // Check if user is admin
+  const isAdminUser = isAdmin(user);
+
+  // Add admin routes
+  // /api/learning/admin/
+  if (isAdminUser && urlParts[1] === "learning" && urlParts[2] === "admin") {
+    // GET admin endpoints
+    if (req.method === "GET") {
+      switch (urlParts[3]) {
+        case "users":
+          res.status(HTTP_OK).send(dataProvider.getUsers());
+          return;
+        case "courses":
+          res.status(HTTP_OK).send(dataProvider.getCourses());
+          return;
+        case "enrollments":
+          res.status(HTTP_OK).send(dataProvider.getAllUserEnrollments());
+          return;
+        case "certificates":
+          res.status(HTTP_OK).send(dataProvider.getCertificates());
+          return;
+        case "ratings":
+          res.status(HTTP_OK).send(dataProvider.getUserRatings());
+          return;
+      }
+    }
+
+    // POST admin endpoints
+    if (req.method === "POST") {
+      switch (urlParts[3]) {
+        case "users":
+          // Create new user
+          const result = registerNewUser(req.body);
+          if (result.success) {
+            res.status(HTTP_OK).send({ success: true });
+          } else {
+            res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatErrorResponse(result.error));
+          }
+          return;
+        case "courses":
+          const newCourse = req.body;
+          dataProvider.addCourse(newCourse);
+          res.status(HTTP_OK).send({ success: true });
+          return;
+        case "enrollments":
+          const newEnrollment = req.body;
+          dataProvider.addEnrollment(newEnrollment);
+          res.status(HTTP_OK).send({ success: true });
+          return;
+        case "certificates":
+          const newCertificate = req.body;
+          dataProvider.addCertificate(newCertificate);
+          res.status(HTTP_OK).send({ success: true });
+          return;
+        case "ratings":
+          const newRating = req.body;
+          dataProvider.addUserRating(newRating);
+          res.status(HTTP_OK).send({ success: true });
+          return;
+        case "roles": {
+          // assign role to user
+          const { userId, role } = req.body;
+
+          if (!Object.values(dataProvider.getRoles()).includes(role)) {
+            res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Invalid role"));
+            return;
+          }
+
+          const user = dataProvider.getUserById(userId);
+          if (user) {
+            user.role = role;
+            res.status(HTTP_OK).send({ success: true });
+          }
+
+          res.status(HTTP_NOT_FOUND).send(formatErrorResponse("User not found"));
+          return;
+        }
+        case "funds":
+          const { userId, amount } = req.body;
+          const user = dataProvider.getUserById(userId);
+          if (user) {
+            const newAmount = user.funds + amount;
+            updateUserFunds(userId, newAmount);
+            res.status(HTTP_OK).send({ success: true });
+          } else {
+            res.status(HTTP_NOT_FOUND).send(formatErrorResponse("User not found"));
+          }
+          return;
+        default:
+          res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Invalid endpoint"));
+          return;
+      }
+    }
+
+    // PUT admin endpoints
+    if (req.method === "PUT") {
+      const id = parseInt(urlParts[4]);
+      switch (urlParts[3]) {
+        case "users":
+          // Update user
+          const userData = req.body;
+          const user = dataProvider.getUserById(id);
+
+          if (isAdmin(user)) {
+            res.status(HTTP_FORBIDDEN).send(formatErrorResponse("Cannot update admin user"));
+            return;
+          }
+
+          if (user) {
+            Object.assign(user, userData);
+            res.status(HTTP_OK).send({ success: true });
+          } else {
+            res.status(HTTP_NOT_FOUND).send(formatErrorResponse("User not found"));
+          }
+
+          return;
+        case "courses":
+          // Update course
+          const courseData = req.body;
+          const course = dataProvider.getCourseById(id);
+          if (course) {
+            Object.assign(course, courseData);
+            res.status(HTTP_OK).send({ success: true });
+          } else {
+            res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Course not found"));
+          }
+          return;
+      }
+    }
+
+    // DELETE admin endpoints
+    if (req.method === "DELETE") {
+      const id = parseInt(urlParts[4]);
+      switch (urlParts[3]) {
+        case "users":
+          const result = dataProvider.deactivateUserData(id);
+
+          if (result.success === false) {
+            res
+              .status(HTTP_UNPROCESSABLE_ENTITY)
+              .send(formatErrorResponse(`Failed to deactivate account: ${result.error}`));
+            return;
+          }
+
+          res.status(HTTP_OK).send({ success: true });
+          return;
+        case "courses":
+          // Implement course deletion logic
+          res.status(HTTP_OK).send({ success: true });
+          return;
+      }
+    }
+  }
+
+  // Continue with existing endpoints...
 
   // GET endpoints
   if (req.method === "GET") {
@@ -491,7 +470,7 @@ function handleLearning(req, res, isAdmin) {
 
       const courseId = parseInt(urlParts[3]);
       const enrollment = dataProvider
-        .getUserEnrollments()
+        .getUserEnrollments(userId)
         .find((e) => areIdsEqual(e.userId, userId) && areIdsEqual(e.courseId, courseId));
       res.status(HTTP_OK).send({ progress: enrollment?.progress || 0 });
       return;
@@ -902,59 +881,12 @@ function handleLearning(req, res, isAdmin) {
         }
         // /learning/auth/register
         case "register": {
-          const { username, password, email, avatar, firstName, lastName } = req.body;
-
-          if (dataProvider.getUserByUsernameOrEmail(username, email)) {
-            res
-              .status(HTTP_UNPROCESSABLE_ENTITY)
-              .send(formatErrorResponse("User already exists with that username or email"));
-            return;
+          const result = registerNewUser(req.body);
+          if (result.success) {
+            res.status(HTTP_OK).send({ success: true });
+          } else {
+            res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatErrorResponse(result.error));
           }
-
-          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          if (!emailRegex.test(email)) {
-            res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatErrorResponse("Invalid email format"));
-            return;
-          }
-
-          if (password.length < 1) {
-            res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatErrorResponse("Password must be at least 1 characters"));
-            return;
-          }
-
-          const firstNameRegex = /^[a-zA-Z\s-]{2,}$/;
-          if (!firstNameRegex.test(firstName)) {
-            res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatErrorResponse("Invalid first name format"));
-            return;
-          }
-
-          const lastNameRegex = /^[a-zA-Z\s-]{2,}$/;
-          if (!lastNameRegex.test(lastName)) {
-            res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatErrorResponse("Invalid last name format"));
-            return;
-          }
-
-          const usernameRegex = /^[a-zA-Z0-9_]{3,}$/;
-          if (!usernameRegex.test(username)) {
-            res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatErrorResponse("Invalid username format"));
-            return;
-          }
-
-          const maxId = dataProvider.getUsers().reduce((max, user) => (user.id > max ? user.id : max), 0);
-
-          const newUser = {
-            id: maxId + 1,
-            username,
-            email,
-            password,
-            firstName,
-            lastName,
-            avatar: avatar || "/data/icons/user.png", // Use selected avatar or default
-            joinDate: new Date().toISOString(),
-            role: "student",
-          };
-          dataProvider.addUser(newUser);
-          res.status(HTTP_OK).send({ success: true });
           return;
         }
       }
@@ -1053,7 +985,7 @@ function handleLearning(req, res, isAdmin) {
 
           const { progress } = req.body;
           const enrollment = dataProvider
-            .getUserEnrollments()
+            .getUserEnrollments(userId)
             .find((e) => areIdsEqual(e.courseId, courseId) && areIdsEqual(e.userId, userId));
 
           if (enrollment) {
@@ -1197,7 +1129,7 @@ function handleLearning(req, res, isAdmin) {
 
       // Check if user is enrolled in the course
       const isEnrolled = dataProvider
-        .getUserEnrollments()
+        .getUserEnrollments(userId)
         .find((e) => areIdsEqual(e.userId, userId) && areIdsEqual(e.courseId, courseId));
 
       if (!isEnrolled) {
@@ -1257,7 +1189,14 @@ function handleLearning(req, res, isAdmin) {
         return;
       }
 
-      dataProvider.deactivateUserData(userId);
+      const result = dataProvider.deactivateUserData(userId);
+
+      if (result.success === false) {
+        res
+          .status(HTTP_UNPROCESSABLE_ENTITY)
+          .send(formatErrorResponse(`Failed to deactivate account: ${result.error}`));
+        return;
+      }
 
       // Update any methods that read user data to check active status
       recalculateStudentsCount();
@@ -1445,6 +1384,11 @@ function handleLearning(req, res, isAdmin) {
         return;
       }
 
+      if (isAdmin(user)) {
+        res.status(HTTP_FORBIDDEN).send(formatErrorResponse("Cannot update admin user"));
+        return;
+      }
+
       // Verify password
       if (!currentPassword || user.password !== currentPassword) {
         res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Incorrect password"));
@@ -1482,6 +1426,11 @@ function handleLearning(req, res, isAdmin) {
 
       if (!user) {
         res.status(HTTP_NOT_FOUND).send(formatErrorResponse("User not found"));
+        return;
+      }
+
+      if (isAdmin(user)) {
+        res.status(HTTP_FORBIDDEN).send(formatErrorResponse("Cannot update admin user"));
         return;
       }
 
@@ -1626,7 +1575,6 @@ function handleLearning(req, res, isAdmin) {
   res.status(HTTP_NOT_FOUND).send(formatErrorResponse(`Endpoint not found for ${req.method} "${req.url}"`));
 }
 
-// Add these helper functions at the bottom of the file
 function calculateEnrollmentMetrics(courses, startDate) {
   const enrollments = dataProvider
     .getAllUserEnrollments()
@@ -1859,4 +1807,239 @@ module.exports = {
   isInstructor,
   isAdmin,
   checkIfUserCanAccessCourse,
+  registerNewUser, // Export for testing
+  validateNewUser, // Export for testing
 };
+
+function checkIfUserExists(email) {
+  return dataProvider.getUserByEmail(email);
+}
+
+function checkIfUserIsAuthenticated(req, res, endpoint = "endpoint", url = "") {
+  const verifyTokenResult = verifyAccessToken(req, res, "learning", req.url);
+  const userExists = checkIfUserExists(verifyTokenResult?.email);
+  return verifyTokenResult && userExists;
+}
+
+const checkIfUserIdMatchesEmail = (userId, email) => {
+  const user = dataProvider.getUserById(userId);
+  return user && user.email === email;
+};
+
+function recalculateStudentsCount() {
+  dataProvider.getCourses().forEach((course) => {
+    course.students =
+      dataProvider.getAllUserEnrollments().filter((e) => areIdsEqual(e.courseId, course.id)).length || 0;
+  });
+}
+
+function recalculateCoursesRating() {
+  dataProvider.getCourses().forEach((course) => {
+    const ratings = dataProvider.getUserRatingsForCourse(course.id);
+    const totalRating = ratings.reduce((total, rating) => total + rating.rating, 0);
+    // round it to 1 decimal place
+    course.rating = ratings.length > 0 ? Math.round((totalRating / ratings.length) * 10) / 10 : 0;
+  });
+}
+
+function parseDurationToSeconds(duration) {
+  if (!duration) {
+    return 0;
+  }
+
+  const timeParts = duration.split(":");
+  if (timeParts.length === 3) {
+    return parseInt(timeParts[0]) * 3600 + parseInt(timeParts[1]) * 60 + parseInt(timeParts[2]);
+  }
+  return parseInt(timeParts[0]) * 60 + parseInt(timeParts[1]);
+}
+
+function roundSecondsToHours(seconds) {
+  // round to one decimal place
+  return Math.round((seconds / 3600) * 10) / 10;
+}
+
+function recalculateCoursesDuration() {
+  dataProvider.getCourses().forEach((course) => {
+    const lessons = dataProvider.getCourseLessons(course.id);
+    const totalDurationInSeconds = lessons.reduce(
+      (total, lesson) => total + parseDurationToSeconds(lesson?.duration),
+      0
+    );
+
+    course.totalHours = roundSecondsToHours(totalDurationInSeconds);
+    course.duration = `${roundSecondsToHours(totalDurationInSeconds)} hour(s)`;
+  });
+}
+
+function checkIfUserIsEnrolled(userId, courseId) {
+  return dataProvider.getEnrollment(userId, courseId) !== undefined;
+}
+
+function checkIfUserCanAccessCourse(userId, courseId) {
+  const isEnrolled = checkIfUserIsEnrolled(userId, courseId);
+  const course = dataProvider.getCourseById(courseId);
+  return isEnrolled || (course && areIdsEqual(course.instructorId, userId));
+}
+
+function findUserIdByEmail(email) {
+  const user = dataProvider.getUserByEmail(email);
+  return user?.id;
+}
+
+recalculateStudentsCount();
+recalculateCoursesRating();
+recalculateCoursesDuration();
+
+function getUserFunds(userId) {
+  const user = dataProvider.getUserById(userId);
+  return user ? user.funds : 0;
+}
+
+function addFundsHistory(userId, amount, type, description) {
+  dataProvider.addFundsHistory({
+    userId,
+    amount,
+    type,
+    timestamp: new Date().toISOString(),
+    description,
+  });
+}
+
+function updateUserFunds(userId, newAmount) {
+  const user = dataProvider.getUserById(userId);
+  if (user) {
+    const oldAmount = user.funds;
+    user.funds = newAmount;
+
+    if (newAmount > oldAmount) {
+      addFundsHistory(userId, newAmount - oldAmount, "credit", "Account top up");
+    }
+
+    return true;
+  }
+  return false;
+}
+
+function hasPermission(user, permission) {
+  if (!user) return false;
+  const userPermissions = dataProvider.getRolePermissions(user.role);
+  return userPermissions?.includes(permission);
+}
+
+function isInstructor(user) {
+  return user?.role === dataProvider.getRoles().INSTRUCTOR;
+}
+
+function isAdmin(user) {
+  return user?.role === dataProvider.getRoles().ADMIN;
+}
+
+function canManageCourse(user, courseId) {
+  if (!user) return false;
+  if (isAdmin(user)) return true;
+  if (!isInstructor(user)) return false;
+
+  const course = dataProvider.getCourseById(courseId);
+  return course && areIdsEqual(course.instructorId, user.id);
+}
+
+function calculateInstructorStats(instructorId) {
+  const instructorCourses = dataProvider.getCoursesByInstructorId(instructorId);
+
+  const stats = {
+    totalCourses: instructorCourses.length,
+    totalStudents: 0,
+    averageRating: 0,
+    totalRevenue: 0,
+  };
+
+  instructorCourses.forEach((course) => {
+    // Calculate total students
+    const courseEnrollments = dataProvider.getAllUserEnrollments().filter((e) => areIdsEqual(e.courseId, course.id));
+    stats.totalStudents += courseEnrollments.length;
+
+    // Calculate total revenue
+    stats.totalRevenue += courseEnrollments.reduce(
+      (total, enrollment) => total + (enrollment.paidAmount || course.price),
+      0
+    );
+
+    // Calculate average rating
+    const courseRatings = dataProvider.getUserRatingsForCourse(course.id);
+    if (courseRatings.length > 0) {
+      course.avgRating = courseRatings.reduce((total, r) => total + r.rating, 0) / courseRatings.length;
+    }
+  });
+
+  // Calculate overall average rating
+  const coursesWithRatings = instructorCourses.filter((c) => c.avgRating);
+  stats.averageRating =
+    coursesWithRatings.length > 0
+      ? coursesWithRatings.reduce((total, c) => total + c.avgRating, 0) / coursesWithRatings.length
+      : 0;
+
+  return stats;
+}
+
+function isValidId(id) {
+  const parsedId = parseInt(id);
+  return !isNaN(parsedId) && parsedId > 0;
+}
+
+function validateNewUser(userData) {
+  const { username, password, email, firstName, lastName } = userData;
+
+  if (dataProvider.getUserByUsernameOrEmail(username, email)) {
+    return { success: false, error: "User already exists with that username or email" };
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return { success: false, error: "Invalid email format" };
+  }
+
+  if (password.length < 1) {
+    return { success: false, error: "Password is required" };
+  }
+
+  const firstNameRegex = /^[a-zA-Z\s-]{2,}$/;
+  if (!firstNameRegex.test(firstName)) {
+    return { success: false, error: "Invalid first name format" };
+  }
+
+  const lastNameRegex = /^[a-zA-Z\s-]{2,}$/;
+  if (!lastNameRegex.test(lastName)) {
+    return { success: false, error: "Invalid last name format" };
+  }
+
+  const usernameRegex = /^[a-zA-Z0-9_]{3,}$/;
+  if (!usernameRegex.test(username)) {
+    return { success: false, error: "Invalid username format" };
+  }
+}
+
+function registerNewUser(userData) {
+  const validationError = validateNewUser(userData);
+  if (validationError.success === false) {
+    return validationError;
+  }
+
+  const { username, password, email, firstName, lastName, avatar } = userData;
+  const maxId = dataProvider.getUsers().reduce((max, user) => (user.id > max ? user.id : max), 0);
+
+  const newUser = {
+    id: maxId + 1,
+    username,
+    email,
+    password,
+    firstName,
+    lastName,
+    avatar: avatar || "/data/icons/user.png",
+    joinDate: new Date().toISOString(),
+    role: "student",
+  };
+
+  dataProvider.addUser(newUser);
+  return { success: true };
+}

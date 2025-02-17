@@ -147,7 +147,14 @@ async function enrollCourse(courseId) {
   } catch (error) {
     button.innerHTML = "Enroll Now";
     button.disabled = false;
-    alert("Failed to enroll. Please try again.");
+    await confirmDialog.show({
+      title: "Enrollment Failed",
+      message: "Failed to enroll. Please try again.",
+      confirmText: "OK",
+      cancelText: null,
+      confirmButtonClass: "primary",
+      showCloseButton: false,
+    });
   }
 }
 

@@ -2339,6 +2339,47 @@ iframe.custom-video-player {
   bottom: 0;
   background: rgba(0, 0, 0, 0.5);
   z-index: 1001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.dialog-actions button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  min-width: 80px;
+}
+
+.dialog-actions button.cancel {
+  background: #e2e8f0;
+}
+
+.dialog-actions button.confirm {
+  background: var(--primary-color);
+  color: white;
+}
+
+.dialog-actions button:hover {
+  opacity: 0.9;
+}
+
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1001;
 }
 
 .dialog-actions {
@@ -2932,4 +2973,102 @@ html {
 .lesson-card.active {
   background-color: #e0f7fa;
   border-color: #00acc1;
+}
+
+/* Confirm dialog styles */
+.confirm-dialog .dialog-content {
+  background: white;
+  border-radius: 12px;
+  padding: 0;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: var(--shadow);
+  animation: dialogSlideIn 0.2s ease-out;
+}
+
+.confirm-dialog .dialog-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.confirm-dialog .dialog-header h3 {
+  margin: 0;
+  font-size: 1.2em;
+  color: var(--text-dark);
+}
+
+.confirm-dialog .close-dialog {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: var(--text-light);
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.confirm-dialog .close-dialog:hover {
+  background: #f3f4f6;
+  color: var(--text-dark);
+}
+
+.confirm-dialog .dialog-body {
+  padding: 20px;
+  color: var(--text-dark);
+  line-height: 1.5;
+}
+
+.confirm-dialog .dialog-actions {
+  padding: 16px 20px;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.confirm-dialog .dialog-actions button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 100px;
+}
+
+.confirm-dialog .cancel-btn {
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  color: var(--text-dark);
+}
+
+.confirm-dialog .cancel-btn:hover {
+  background: #e5e7eb;
+}
+
+.confirm-dialog .confirm-btn {
+  border: none;
+  background: var(--primary-color);
+  color: white;
+}
+
+.confirm-dialog .confirm-btn.danger-btn {
+  background: #dc2626;
+}
+
+.confirm-dialog .confirm-btn:hover {
+  opacity: 0.9;
+}
+
+@keyframes dialogSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

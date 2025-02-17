@@ -92,7 +92,14 @@ async function displayPublicCertificate() {
 async function downloadCertificate() {
   const certificateElement = document.querySelector(".certificate-card");
   if (!certificateElement) {
-    showNotification("Certificate not found", "error");
+    await confirmDialog.show({
+      title: "Download Failed",
+      message: "Certificate not found",
+      confirmText: "OK",
+      cancelText: null,
+      confirmButtonClass: "primary",
+      showCloseButton: false,
+    });
     return;
   }
 
@@ -120,7 +127,14 @@ async function downloadCertificate() {
     pdf.save(`GAD_Certificate_${certificateId}.pdf`);
   } catch (error) {
     console.error("Error generating PDF:", error);
-    alert("Failed to generate PDF");
+    await confirmDialog.show({
+      title: "PDF Generation Failed",
+      message: "Failed to generate PDF. Please try again.",
+      confirmText: "OK",
+      cancelText: null,
+      confirmButtonClass: "primary",
+      showCloseButton: false,
+    });
   }
 }
 

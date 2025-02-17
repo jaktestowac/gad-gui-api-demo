@@ -140,7 +140,7 @@ async function handleUpdateProfile() {
         window.location.href = "login.html";
       }, 1500);
     } else {
-      throw new Error(result.message || "Failed to update profile");
+      throw new Error(result.error.message || "Failed to update profile");
     }
   } catch (error) {
     notifications.show(error.message || "Failed to update profile", "error");
@@ -151,12 +151,19 @@ async function handleUpdateProfile() {
 
 async function handleChangePassword() {
   const changeBtn = document.getElementById("changePasswordBtn");
-  const currentPassword = document.getElementById("currentPassword").value;
+  const currentPassword = document.getElementById("changePasswordCurrentPassword").value;
   const newPassword = document.getElementById("newPassword").value;
   const confirmPassword = document.getElementById("confirmPassword").value;
 
   if (newPassword !== confirmPassword) {
-    alert("New passwords do not match!");
+    await confirmDialog.show({
+      title: "Password Mismatch",
+      message: "New passwords do not match!",
+      confirmText: "OK",
+      cancelText: null,
+      confirmButtonClass: "primary",
+      showCloseButton: false,
+    });
     return;
   }
 
@@ -173,11 +180,11 @@ async function handleChangePassword() {
       changeBtn.style.backgroundColor = "#10b981";
 
       // Clear password fields
-      document.getElementById("currentPassword").value = "";
+      document.getElementById("changePasswordCurrentPassword").value = "";
       document.getElementById("newPassword").value = "";
       document.getElementById("confirmPassword").value = "";
     } else {
-      throw new Error(result.message || "Failed to change password");
+      throw new Error(result.error?.message || "Failed to change password");
     }
 
     setTimeout(() => {
@@ -193,6 +200,38 @@ async function handleChangePassword() {
   }
 }
 
+function showConfirmDialog(message) {
+  return new Promise((resolve) => {
+    const dialog = document.getElementById("confirmDialog");
+    const messageEl = document.getElementById("confirmMessage");
+    const yesBtn = document.getElementById("confirmYes");
+    const cancelBtn = document.getElementById("confirmCancel");
+
+    messageEl.textContent = message;
+    dialog.style.display = "block";
+
+    const handleYes = () => {
+      dialog.style.display = "none";
+      cleanup();
+      resolve(true);
+    };
+
+    const handleCancel = () => {
+      dialog.style.display = "none";
+      cleanup();
+      resolve(false);
+    };
+
+    const cleanup = () => {
+      yesBtn.removeEventListener("click", handleYes);
+      cancelBtn.removeEventListener("click", handleCancel);
+    };
+
+    yesBtn.addEventListener("click", handleYes);
+    cancelBtn.addEventListener("click", handleCancel);
+  });
+}
+
 async function handleDeactivateAccount() {
   const confirmCheckbox = document.getElementById("deactivateConfirm");
   const password = document.getElementById("deactivatePassword").value;
@@ -203,7 +242,14 @@ async function handleDeactivateAccount() {
     return;
   }
 
-  const confirmed = confirm("Are you absolutely sure you want to deactivate your account? This cannot be undone.");
+  const confirmed = await confirmDialog.show({
+    title: "Deactivate Account",
+    message: "Are you absolutely sure you want to deactivate your account? This action cannot be undone.",
+    confirmText: "Deactivate",
+    confirmButtonClass: "danger",
+    showCloseButton: false,
+  });
+
   if (!confirmed) return;
 
   deactivateBtn.disabled = true;

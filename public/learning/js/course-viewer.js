@@ -391,7 +391,14 @@ class CourseViewer {
       }
     } catch (error) {
       console.error("Failed to submit quiz:", error);
-      alert("Failed to submit quiz. Please try again.");
+      await confirmDialog.show({
+        title: "Quiz Submission Failed",
+        message: "Failed to submit quiz. Please try again.",
+        confirmText: "OK",
+        cancelText: null,
+        confirmButtonClass: "primary",
+        showCloseButton: false,
+      });
     }
   }
 
@@ -548,12 +555,17 @@ class CourseViewer {
 
     try {
       const comment = document.querySelector(".rating-comment").value;
-      await api.rateCourse(this.courseId, this.currentRating, comment);
+      const result = await api.rateCourse(this.courseId, this.currentRating, comment);
+
+      if (result.error) {
+        notifications.show(result.error.message || "Failed to submit rating", "error");
+        return;
+      }
+
       notifications.show("Thank you for your rating!", "success");
 
       document.querySelector(".rating-section").classList.add("submitted");
     } catch (error) {
-      console.error("Failed to submit rating:", error);
       notifications.show("Failed to submit rating", "error");
     }
   }
@@ -633,3 +645,32 @@ document.addEventListener("DOMContentLoaded", () => {
   courseViewer = new CourseViewer();
   courseViewer.highlightCurrentLesson(courseViewer.lessonId);
 });
+
+async function downloadCertificate() {
+  const certificateElement = document.querySelector(".certificate-card");
+  if (!certificateElement) {
+    await confirmDialog.show({
+      title: "Download Failed",
+      message: "Certificate not found",
+      confirmText: "OK",
+      cancelText: null,
+      confirmButtonClass: "primary",
+      showCloseButton: false,
+    });
+    return;
+  }
+
+  try {
+    // ...existing code...
+  } catch (error) {
+    console.error("Error generating PDF:", error);
+    await confirmDialog.show({
+      title: "PDF Generation Failed",
+      message: "Failed to generate PDF. Please try again.",
+      confirmText: "OK",
+      cancelText: null,
+      confirmButtonClass: "primary",
+      showCloseButton: false,
+    });
+  }
+}

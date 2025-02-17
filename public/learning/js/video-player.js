@@ -94,6 +94,30 @@ class VideoPlayer {
         { text: "  });", type: "function" },
         { text: "});", type: "function" },
       ],
+      [
+        { text: "import { test, expect } from '@playwright/test';", type: "import" },
+        { text: "import { faker } from '@faker-js/faker';", type: "import" },
+        { text: "", type: "empty" },
+        { text: "test.describe('Articles and logged user', () => {", type: "function" },
+        { text: "  test('User can log in and create articles', async ({ page }) => {", type: "function" },
+        { text: "    // Arrange", type: "comment" },
+        { text: "    const titleText = faker.lorem.words();", type: "variable" },
+        { text: "    const bodyText = faker.lorem.paragraph();", type: "variable" },
+        { text: "    await page.goto('/articles.html');", type: "call" },
+        { text: "", type: "empty" },
+        { text: "    // Act", type: "comment" },
+        { text: "    await page.getByRole('button', { name: 'Add Article' }).click();", type: "call" },
+        { text: "    await page.getByTestId('title-input').fill(titleText);", type: "call" },
+        { text: "    await page.getByTestId('body-text').fill(bodyText);", type: "call" },
+        { text: "    await page.getByTestId('save').click();", type: "call" },
+        { text: "", type: "empty" },
+        { text: "    // Assert", type: "comment" },
+        { text: "    await page.getByTestId('alert-popup').click();", type: "call" },
+        { text: "    await expect(page.getByTestId('article-title')).toContainText(titleText);", type: "assertion" },
+        { text: "    await expect(page.getByTestId('article-body')).toContainText(bodyText);", type: "assertion" },
+        { text: "  });", type: "function" },
+        { text: "});", type: "function" },
+      ],
     ];
 
     const animationHtml = `
@@ -301,7 +325,7 @@ class VideoPlayer {
     this.codeSnippets = codeSnippets;
     this.currentSnippetIndex = 0;
     this.codeContent = document.getElementById("codeContent");
-    this.fileTypes = ["JavaScript", "Playwright", "React"];
+    this.fileTypes = ["TypeScript"];
     this.isAnimating = false;
   }
 
@@ -343,7 +367,8 @@ class VideoPlayer {
       // Pick a random snippet instead of sequential
       this.currentSnippetIndex = Math.floor(Math.random() * this.codeSnippets.length);
       const snippet = this.codeSnippets[this.currentSnippetIndex];
-      document.querySelector(".file-type").textContent = this.fileTypes[this.currentSnippetIndex];
+      document.querySelector(".file-type").textContent =
+        this.fileTypes[this.currentSnippetIndex % this.fileTypes.length];
 
       await this.typeCode(snippet);
 

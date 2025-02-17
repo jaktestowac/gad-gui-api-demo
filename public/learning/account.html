@@ -109,6 +109,10 @@
                     <section class="account-section" id="password-section">
                         <h3 class="section-title">Change Password</h3>
                         <div class="account-form">
+                            <div class="form-group">
+                                <label for="changePasswordCurrentPassword">Current Password</label>
+                                <input type="password" id="changePasswordCurrentPassword" name="currentPassword" required>
+                            </div>
                             <div class="form-grid">
                                 <div class="form-group">
                                     <label for="newPassword">New Password</label>
@@ -176,11 +180,22 @@
 
     <script src="./js/services/api.js"></script>
     <script src="./js/utils/notifications.js"></script>
+    <script src="./js/utils/confirm-dialog.js"></script>
     <script src="./js/account.js"></script>
     <script src="./js/components/sidebar.js"></script>
     <script src="./js/sidebar.js"></script>
     <script src="./js/auth-check.js"></script>
     <script src="./js/auth.js"></script>
-</body>
 
+    <div id="confirmDialog" style="display: none;" class="dialog-overlay">
+        <div class="top-up-dialog">
+            <h3>Confirm Action</h3>
+            <p id="confirmMessage" style="margin-bottom: 20px; text-align: center;">Are you sure?</p>
+            <div class="dialog-actions">
+                <button class="cancel" id="confirmCancel">Cancel</button>
+                <button class="confirm" id="confirmYes">Yes</button>
+            </div>
+        </div>
+    </div>
+</body>
 </html>

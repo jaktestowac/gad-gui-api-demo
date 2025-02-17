@@ -21,7 +21,6 @@ async function loadAnalytics() {
 
     updateCharts(charts);
   } catch (error) {
-    console.error("Failed to load analytics:", error);
     showNotification(error.message || "Failed to load analytics data", "error");
 
     document.getElementById("totalEnrollments").textContent = "0";

@@ -30,6 +30,17 @@ const mockData = {
   // Users data
   users: [
     {
+      id: 0,
+      username: "admin",
+      email: "shodan.citadel@test.test.test",
+      password: "1234",
+      firstName: "Shodan",
+      lastName: "Citadel",
+      avatar: "..\\data\\users\\face_ai__01.jpg",
+      joinDate: "2023-05-15",
+      role: "admin",
+    },
+    {
       id: 1,
       username: "user",
       email: "michael.scott@test.test.com",

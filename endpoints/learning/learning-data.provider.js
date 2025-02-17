@@ -216,8 +216,14 @@ function updateLesson(courseId, lessonId, updates) {
 function deactivateUserData(userId) {
   const now = new Date().toISOString();
 
-  // Mark user as inactive
+  //check if user is admin
   const user = getUserById(userId);
+  if (user.role === "admin") return { success: false, error: "Admin user cannot be deactivated" };
+
+  // check if user exists
+  if (!getUserById(userId)) return { success: false, error: "User not found" };
+
+  // Mark user as inactive
   if (user) {
     user._inactive = true;
     user.deactivatedAt = now;
@@ -265,6 +271,7 @@ function deactivateUserData(userId) {
       f._inactive = true;
       f.deactivatedAt = now;
     });
+  return { success: true };
 }
 
 function getUserRatings() {

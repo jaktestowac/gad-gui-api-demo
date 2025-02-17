@@ -15,6 +15,12 @@ async function loadInstructorDashboard() {
     document.getElementById("totalRevenue").textContent = `$${(stats?.totalRevenue || 0).toFixed(2)}`;
 
     const courses = await api.getInstructorCourses();
+
+    if (courses.error) {
+      showNotification(courses.error.message, "error");
+      return;
+    }
+
     renderInstructorCourses(courses);
   } catch (error) {
     console.error("Failed to load instructor dashboard:", error);
