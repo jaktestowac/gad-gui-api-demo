@@ -8,6 +8,10 @@ async function authInstructor() {
   return authLearningUser("john_doe", "demo");
 }
 
+async function authAdminUser() {
+  return authLearningUser("admin", "1234");
+}
+
 async function authLearningUser(username, password) {
   const loginResponse = await request.post(`${learningBaseUrl}/auth/login`).send({
     username,
@@ -65,4 +69,5 @@ module.exports = {
   authInstructor,
   authLearningUser,
   registerNewLearningUser,
+  authAdminUser,
 };

@@ -100,7 +100,7 @@ function handleLearning(req, res) {
           const { userId, amount } = req.body;
           const user = dataProvider.getUserById(userId);
           if (user) {
-            const newAmount = user.funds + amount;
+            const newAmount = amount;
             updateUserFunds(userId, newAmount);
             res.status(HTTP_OK).send({ success: true });
           } else {
@@ -944,7 +944,7 @@ function handleLearning(req, res) {
             return;
           }
 
-          updateUserFunds(userId, userFunds - course.price);
+          updateUserFunds(userId, -course.price);
           addFundsHistory(userId, course.price, "debit", `Course enrollment: ${course.title}`);
 
           const enrollment = {
@@ -969,7 +969,7 @@ function handleLearning(req, res) {
           // Add certificate generation logic here
           res.status(HTTP_OK).send({ success: true });
           return;
-        // /learning/courses/:courseId/complete
+        // /learning/courses/:courseId/progress
         case "progress": {
           if (checkIfUserIsAuthenticated(req, res, "learning", urlEnds) === false) {
             res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not authenticated"));
@@ -990,7 +990,7 @@ function handleLearning(req, res) {
 
           if (enrollment) {
             enrollment.progress = progress;
-            res.status(HTTP_OK).send({ success: true });
+            res.status(HTTP_OK).send({ success: true, progress });
           } else {
             res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Enrollment not found"));
           }
@@ -1801,16 +1801,6 @@ function getRevenueTrends(courses, days) {
   });
 }
 
-module.exports = {
-  handleLearning,
-  hasPermission,
-  isInstructor,
-  isAdmin,
-  checkIfUserCanAccessCourse,
-  registerNewUser, // Export for testing
-  validateNewUser, // Export for testing
-};
-
 function checkIfUserExists(email) {
   return dataProvider.getUserByEmail(email);
 }
@@ -1901,7 +1891,6 @@ function addFundsHistory(userId, amount, type, description) {
     userId,
     amount,
     type,
-    timestamp: new Date().toISOString(),
     description,
   });
 }
@@ -1910,10 +1899,10 @@ function updateUserFunds(userId, newAmount) {
   const user = dataProvider.getUserById(userId);
   if (user) {
     const oldAmount = user.funds;
-    user.funds = newAmount;
+    user.funds = oldAmount + newAmount;
 
-    if (newAmount > oldAmount) {
-      addFundsHistory(userId, newAmount - oldAmount, "credit", "Account top up");
+    if (newAmount > 0) {
+      addFundsHistory(userId, newAmount, "credit", "Account top up");
     }
 
     return true;
@@ -2017,11 +2006,13 @@ function validateNewUser(userData) {
   if (!usernameRegex.test(username)) {
     return { success: false, error: "Invalid username format" };
   }
+
+  return { success: true };
 }
 
 function registerNewUser(userData) {
   const validationError = validateNewUser(userData);
-  if (validationError.success === false) {
+  if (validationError?.success === false) {
     return validationError;
   }
 
@@ -2043,3 +2034,19 @@ function registerNewUser(userData) {
   dataProvider.addUser(newUser);
   return { success: true };
 }
+
+module.exports = {
+  handleLearning,
+  hasPermission,
+  isInstructor,
+  isAdmin,
+  checkIfUserCanAccessCourse,
+  registerNewUser, // Export for testing
+  validateNewUser, // Export for testing
+  calculateEnrollmentMetrics, // Export for testing
+  calculateRevenueMetrics, // Export for testing
+  calculateCompletionMetrics, // Export for testing
+  calculateRatingMetrics, // Export for testing
+  roundSecondsToHours, // Export for testing
+  parseDurationToSeconds, // Export for testing
+};

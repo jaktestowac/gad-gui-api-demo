@@ -553,7 +553,7 @@ class ApiService {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || "Failed to update funds");
+      return error
     }
 
     return response.json();

@@ -87,9 +87,15 @@ function showTopUpDialog() {
     try {
       const userId = api.getUserIdFromCookie();
       const currentFunds = await api.getUserFunds(userId);
-      const newAmount = currentFunds + selectedAmount;
+      const newAmount = selectedAmount;
 
-      await api.updateUserFunds(userId, newAmount);
+      const response = await api.updateUserFunds(userId, newAmount);
+
+      if (!response.success) {
+        showNotification(response.error.message || "Failed to top up funds", "error");
+        return;
+      }
+
       await loadUserFunds();
 
       showNotification(`Successfully added $${selectedAmount.toFixed(2)} to your account`, "success");

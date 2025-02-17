@@ -19,7 +19,7 @@ describe("Instructor Features", async () => {
     gracefulQuit();
   });
 
-  describe("Instructor endpoints", () => {
+  describe("Instructor endpoints", async () => {
     it("GET /stats - get instructor statistics", async () => {
       const response = await request.get(`${baseUrl}/stats`).set(instructorData.headers);
       expect(response.status, JSON.stringify(response.body)).to.equal(200);

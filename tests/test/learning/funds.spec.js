@@ -54,7 +54,7 @@ describe("User Funds Management", async () => {
       await request.put(`${baseUrl}/${userData.userId}/funds`).set(userData.headers).send({ amount: 0 });
 
       const response = await request
-        .post(`${learningBaseUrl}/courses/4/enroll`)
+        .post(`${learningBaseUrl}/courses/8/enroll`)
         .set(userData.headers)
         .send({ userId: userData.userId });
 
@@ -63,11 +63,30 @@ describe("User Funds Management", async () => {
     });
 
     it("Should successfully enroll after adding funds", async () => {
+      const responseGet1 = await request.get(`${baseUrl}/${userData.userId}/funds`).set(userData.headers);
+
+      expect(responseGet1.status, JSON.stringify(responseGet1.body)).to.equal(200);
+      const fundsBefore = responseGet1.body.funds;
+
       // Add sufficient funds
-      await request.put(`${baseUrl}/${userData.userId}/funds`).set(userData.headers).send({ amount: 200 });
+      const responsePut = await request
+        .put(`${baseUrl}/${userData.userId}/funds`)
+        .set(userData.headers)
+        .send({ amount: 500 });
+      expect(responsePut.status, JSON.stringify(responsePut.body)).to.equal(200);
+      const responsePut2 = await request
+        .put(`${baseUrl}/${userData.userId}/funds`)
+        .set(userData.headers)
+        .send({ amount: 500 });
+      expect(responsePut2.status, JSON.stringify(responsePut.body)).to.equal(200);
+
+      const responseGet = await request.get(`${baseUrl}/${userData.userId}/funds`).set(userData.headers);
+
+      expect(responseGet.status, JSON.stringify(responseGet.body)).to.equal(200);
+      expect(responseGet.body).to.have.property("funds", fundsBefore + 1000);
 
       const response = await request
-        .post(`${learningBaseUrl}/courses/4/enroll`)
+        .post(`${learningBaseUrl}/courses/8/enroll`)
         .set(userData.headers)
         .send({ userId: userData.userId });
 

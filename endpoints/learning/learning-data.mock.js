@@ -173,7 +173,6 @@ const mockData = {
       joinDate: "2023-04-15",
       role: "student",
     },
-    // Add admin user
     {
       id: 999,
       username: "admin",
@@ -378,7 +377,7 @@ const mockData = {
       rating: 0,
       tags: ["Testing", "AI", "Basics"],
       prerequisites: [],
-      price: 159.99,
+      price: 759.99,
       learningObjectives: [
         "Master AI in testing fundamentals",
         "Understand AI testing concepts and principles",

@@ -143,7 +143,7 @@ describe(`Endpoint ${baseUrl}`, async () => {
       };
       const response = await request.post(`${baseUrl}/1/progress`).set(userData.headers).send(progressData);
       expect(response.status, JSON.stringify(response.body)).to.equal(200);
-      expect(response.body, JSON.stringify(response.body)).to.have.property("progress", 150);
+      expect(response.body, JSON.stringify(response.body)).to.have.property("progress", 50);
     });
 
     it(`GET ${baseUrl}/:id/progress`, async () => {

@@ -100,7 +100,7 @@ function updateUserFunds(userId, newAmount) {
   return false;
 }
 
-function addFundsHistory(userId, amount, type, description) {
+function addFundsHistory({ userId, amount, type, description }) {
   mockData.fundsHistory.push({
     userId,
     amount,
@@ -216,12 +216,12 @@ function updateLesson(courseId, lessonId, updates) {
 function deactivateUserData(userId) {
   const now = new Date().toISOString();
 
-  //check if user is admin
-  const user = getUserById(userId);
-  if (user.role === "admin") return { success: false, error: "Admin user cannot be deactivated" };
-
   // check if user exists
   if (!getUserById(userId)) return { success: false, error: "User not found" };
+
+  //check if user is admin
+  const user = getUserById(userId);
+  if (user?.role === "admin") return { success: false, error: "Admin user cannot be deactivated" };
 
   // Mark user as inactive
   if (user) {
@@ -287,6 +287,7 @@ function getCertificates() {
 
 function addUserEnrollment(enrollment) {
   mockData.userEnrollments.push(enrollment);
+  recalculateStudentsCount();
 }
 
 module.exports = {
