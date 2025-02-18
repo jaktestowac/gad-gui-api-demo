@@ -104,6 +104,7 @@ const websocketRoute = (wss, webSocketPort) => {
         if (data.type?.toLowerCase().includes("doc")) context = contexts.document;
         if (data.type?.toLowerCase().includes("practicedrone")) context = contexts.drone;
         if (data.type?.toLowerCase().includes("codeeditor")) context = contexts.codeEditor;
+        if (data.type?.toLowerCase().includes("weather")) context = contexts.weather;
 
         if (context === undefined) {
           logError("[websocketRoute] Invalid context for message:", { type: data.type, data });
