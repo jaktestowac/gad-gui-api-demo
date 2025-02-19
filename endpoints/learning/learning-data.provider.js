@@ -1,58 +1,61 @@
-const mockData = require("./learning-data.mock");
+const DataProxy = require("./db-data.proxy");
 const { areIdsEqual } = require("../../helpers/compare.helpers");
+
+const dataProxy = new DataProxy();
+const data = dataProxy.getData();
 
 function isInactive(obj) {
   return obj?._inactive === true;
 }
 
 function getLessonTypes() {
-  return Object.values(mockData.lessonTypes);
+  return Object.values(data.lessonTypes);
 }
 
 function getUserByEmail(email) {
-  return mockData.users.find((u) => u.email === email && !isInactive(u));
+  return data.users.find((u) => u.email === email && !isInactive(u));
 }
 
 function getUserByUsernameOrEmail(username, email) {
-  return mockData.users.find((u) => u.username === username || u.email === email);
+  return data.users.find((u) => u.username === username || u.email === email);
 }
 
 function getUserByUsernameAndPassword(username, password) {
-  return mockData.users.find((u) => u.username === username && u.password === password);
+  return data.users.find((u) => u.username === username && u.password === password);
 }
 
 function getUserById(userId) {
-  return mockData.users.find((u) => areIdsEqual(u.id, userId) && !isInactive(u));
+  return data.users.find((u) => areIdsEqual(u.id, userId) && !isInactive(u));
 }
 
 function getCourseById(courseId) {
-  return mockData.courses.find((c) => areIdsEqual(c.id, courseId));
+  return data.courses.find((c) => areIdsEqual(c.id, courseId));
 }
 
 function getUserRating(userId, courseId) {
-  return mockData.userRatings.find((r) => areIdsEqual(r.userId, userId) && areIdsEqual(r.courseId, courseId));
+  return data.userRatings.find((r) => areIdsEqual(r.userId, userId) && areIdsEqual(r.courseId, courseId));
 }
 
 function getEnrollment(userId, courseId) {
-  return mockData.userEnrollments.find(
+  return data.userEnrollments.find(
     (e) => areIdsEqual(e.userId, userId) && areIdsEqual(e.courseId, courseId) && !isInactive(e)
   );
 }
 
 function getAllUserEnrollments() {
-  return mockData.userEnrollments.filter((e) => !isInactive(e));
+  return data.userEnrollments.filter((e) => !isInactive(e));
 }
 
 function getUserEnrollments(userId) {
-  return mockData.userEnrollments.filter((e) => areIdsEqual(e.userId, userId) && !isInactive(e));
+  return data.userEnrollments.filter((e) => areIdsEqual(e.userId, userId) && !isInactive(e));
 }
 
 function getCoursesByInstructorId(instructorId) {
-  return mockData.courses.filter((course) => areIdsEqual(course.instructorId, instructorId));
+  return data.courses.filter((course) => areIdsEqual(course.instructorId, instructorId));
 }
 
 function getCourses() {
-  return mockData.courses;
+  return data.courses;
 }
 
 function getUserFunds(userId) {
@@ -61,33 +64,33 @@ function getUserFunds(userId) {
 }
 
 function getCourseLessons(courseId) {
-  return mockData.courseLessons[courseId] || [];
+  return data.courseLessons[courseId] || [];
 }
 
 function setCourseLessons(courseId, lessons) {
-  mockData.courseLessons[courseId] = lessons;
+  data.courseLessons[courseId] = lessons;
 }
 
 function getLessonProgress(userId, courseId) {
-  return mockData.lessonProgress.filter(
+  return data.lessonProgress.filter(
     (p) => areIdsEqual(p.userId, userId) && areIdsEqual(p.courseId, courseId) && !isInactive(p)
   );
 }
 
 function getCertificate(certificateId) {
-  return mockData.certificates.find((c) => areIdsEqual(c.uuid, certificateId));
+  return data.certificates.find((c) => areIdsEqual(c.uuid, certificateId));
 }
 
 function getUserCertificates(userId) {
-  return mockData.certificates.filter((c) => areIdsEqual(c.userId, userId) && !isInactive(c));
+  return data.certificates.filter((c) => areIdsEqual(c.userId, userId) && !isInactive(c));
 }
 
 function getUserStats(userId) {
-  return mockData.userStats.find((s) => areIdsEqual(s.userId, userId));
+  return data.userStats.find((s) => areIdsEqual(s.userId, userId));
 }
 
 function getFundsHistory(userId) {
-  return mockData.fundsHistory.filter((f) => areIdsEqual(f.userId, userId) && !isInactive(f));
+  return data.fundsHistory.filter((f) => areIdsEqual(f.userId, userId) && !isInactive(f));
 }
 
 // Data update functions
@@ -101,7 +104,7 @@ function updateUserFunds(userId, newAmount) {
 }
 
 function addFundsHistory({ userId, amount, type, description }) {
-  mockData.fundsHistory.push({
+  data.fundsHistory.push({
     userId,
     amount,
     type,
@@ -111,74 +114,74 @@ function addFundsHistory({ userId, amount, type, description }) {
 }
 
 function recalculateStudentsCount() {
-  mockData.courses.forEach((course) => {
+  data.courses.forEach((course) => {
     course.students =
-      mockData.userEnrollments.filter((e) => areIdsEqual(e.courseId, course.id) && !isInactive(e)).length || 0;
+      data.userEnrollments.filter((e) => areIdsEqual(e.courseId, course.id) && !isInactive(e)).length || 0;
   });
 }
 
 function recalculateCoursesRating() {
-  mockData.courses.forEach((course) => {
-    const ratings = mockData.userRatings.filter((r) => areIdsEqual(r.courseId, course.id) && !isInactive(r));
+  data.courses.forEach((course) => {
+    const ratings = data.userRatings.filter((r) => areIdsEqual(r.courseId, course.id) && !isInactive(r));
     const totalRating = ratings.reduce((total, rating) => total + rating.rating, 0);
     course.rating = ratings.length > 0 ? Math.round((totalRating / ratings.length) * 10) / 10 : 0;
   });
 }
 
 function addEnrollment(enrollment) {
-  mockData.userEnrollments.push(enrollment);
+  data.userEnrollments.push(enrollment);
   recalculateStudentsCount();
 }
 
 function addUserRating(rating) {
-  mockData.userRatings.push(rating);
+  data.userRatings.push(rating);
   recalculateCoursesRating();
 }
 
 // Add new data access methods
 function getUsers() {
-  return mockData.users;
+  return data.users;
 }
 
 function getRoles() {
-  return mockData.roles;
+  return data.roles;
 }
 
 function getRolePermissions(role) {
-  return mockData.rolePermissions[role];
+  return data.rolePermissions[role];
 }
 
 function getUserFailedLoginAttempts(email) {
-  return mockData.failedLoginAttempts[email];
+  return data.failedLoginAttempts[email];
 }
 
 function setUserFailedLoginAttempts(email, attempts) {
-  mockData.failedLoginAttempts[email] = attempts;
+  data.failedLoginAttempts[email] = attempts;
 }
 
 function getAllCourses() {
-  return mockData.courses;
+  return data.courses;
 }
 
 function getQuizAttempts() {
-  return mockData.quizAttempts;
+  return data.quizAttempts;
 }
 
 function getCourseRatings(courseId) {
-  return mockData.userRatings.filter((r) => areIdsEqual(r.courseId, courseId) && !isInactive(r));
+  return data.userRatings.filter((r) => areIdsEqual(r.courseId, courseId) && !isInactive(r));
 }
 
 function getUserByUsername(username) {
-  return mockData.users.find((u) => u.username === username);
+  return data.users.find((u) => u.username === username);
 }
 
 function addUser(user) {
-  mockData.users.push(user);
+  data.users.push(user);
 }
 
 function addCourse(course) {
-  mockData.courses.push(course);
-  mockData.courseLessons[course.id] = [];
+  data.courses.push(course);
+  data.courseLessons[course.id] = [];
 }
 
 function updateUserRole(userId, role) {
@@ -191,19 +194,19 @@ function updateUserRole(userId, role) {
 }
 
 function addLessonProgress(progress) {
-  mockData.lessonProgress.push(progress);
+  data.lessonProgress.push(progress);
 }
 
 function addQuizAttempt(attempt) {
-  mockData.quizAttempts.push(attempt);
+  data.quizAttempts.push(attempt);
 }
 
 function addCertificate(certificate) {
-  mockData.certificates.push(certificate);
+  data.certificates.push(certificate);
 }
 
 function updateLesson(courseId, lessonId, updates) {
-  const courseLessons = mockData.courseLessons[courseId];
+  const courseLessons = data.courseLessons[courseId];
   if (!courseLessons) return false;
 
   const lessonIndex = courseLessons.findIndex((lesson) => areIdsEqual(lesson.id, lessonId));
@@ -216,78 +219,57 @@ function updateLesson(courseId, lessonId, updates) {
 function deactivateUserData(userId) {
   const now = new Date().toISOString();
 
-  // check if user exists
   if (!getUserById(userId)) return { success: false, error: "User not found" };
 
-  //check if user is admin
   const user = getUserById(userId);
   if (user?.role === "admin") return { success: false, error: "Admin user cannot be deactivated" };
 
-  // Mark user as inactive
   if (user) {
     user._inactive = true;
     user.deactivatedAt = now;
   }
 
-  // Mark related data as inactive
-  mockData.userEnrollments
-    .filter((e) => areIdsEqual(e.userId, userId))
-    .forEach((e) => {
-      e._inactive = true;
-      e.deactivatedAt = now;
-    });
+  const collections = ["userEnrollments", "lessonProgress", "userStats", "certificates", "userRatings", "fundsHistory"];
 
-  mockData.lessonProgress
-    .filter((p) => areIdsEqual(p.userId, userId))
-    .forEach((p) => {
-      p._inactive = true;
-      p.deactivatedAt = now;
-    });
+  collections.forEach((collection) => {
+    data[collection]
+      .filter((item) => areIdsEqual(item.userId, userId))
+      .forEach((item) => {
+        item._inactive = true;
+        item.deactivatedAt = now;
+      });
+  });
 
-  mockData.userStats
-    .filter((s) => areIdsEqual(s.userId, userId))
-    .forEach((s) => {
-      s._inactive = true;
-      s.deactivatedAt = now;
-    });
-
-  mockData.certificates
-    .filter((c) => areIdsEqual(c.userId, userId))
-    .forEach((c) => {
-      c._inactive = true;
-      c.deactivatedAt = now;
-    });
-
-  mockData.userRatings
-    .filter((r) => areIdsEqual(r.userId, userId))
-    .forEach((r) => {
-      r._inactive = true;
-      r.deactivatedAt = now;
-    });
-
-  mockData.fundsHistory
-    .filter((f) => areIdsEqual(f.userId, userId))
-    .forEach((f) => {
-      f._inactive = true;
-      f.deactivatedAt = now;
-    });
   return { success: true };
 }
 
 function getUserRatings() {
-  return mockData.userRatings.filter((r) => !isInactive(r));
+  return data.userRatings.filter((r) => !isInactive(r));
 }
 
 function getUserRatingsForCourse(courseId) {
-  return mockData.userRatings.filter((r) => !isInactive(r) && areIdsEqual(r.courseId, courseId));
+  return data.userRatings.filter((r) => !isInactive(r) && areIdsEqual(r.courseId, courseId));
 }
 function getCertificates() {
-  return mockData.certificates.filter((c) => !isInactive(c));
+  return data.certificates.filter((c) => !isInactive(c));
 }
 
 function addUserEnrollment(enrollment) {
-  mockData.userEnrollments.push(enrollment);
+  data.userEnrollments.push(enrollment);
   recalculateStudentsCount();
+}
+
+function restoreDatabase() {
+  try {
+    dataProxy.restoreToDefault();
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+}
+
+function getBackupData() {
+  return dataProxy.getAllData();
 }
 
 module.exports = {
@@ -338,4 +320,6 @@ module.exports = {
   deactivateUserData,
   getUserByUsernameOrEmail,
   getUserByUsernameAndPassword,
+  restoreDatabase,
+  getBackupData,
 };

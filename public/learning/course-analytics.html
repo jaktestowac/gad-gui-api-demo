@@ -40,6 +40,14 @@
                         <option value="365">Last year</option>
                         <option value="3650">All time (10 years)</option>
                     </select>
+                    <div class="download-actions">
+                        <button id="downloadFullCSV" class="download-btn">
+                            <i class="fas fa-download"></i> Full Report
+                        </button>
+                        <button id="downloadMetricsCSV" class="download-btn">
+                            <i class="fas fa-chart-line"></i> Metrics
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -97,11 +105,21 @@
 
                 <div class="analytics-tables">
                     <div class="table-card">
-                        <h3>Top Performing Courses</h3>
+                        <div class="card-header">
+                            <h3>Top Performing Courses</h3>
+                            <button id="downloadCoursesCSV" class="download-btn compact">
+                                <i class="fas fa-download"></i> Download
+                            </button>
+                        </div>
                         <div class="table-container" id="topCoursesTable"></div>
                     </div>
                     <div class="table-card reviews">
-                        <h3>Recent Reviews</h3>
+                        <div class="card-header">
+                            <h3>Recent Reviews</h3>
+                            <button id="downloadReviewsCSV" class="download-btn compact">
+                                <i class="fas fa-download"></i> Download
+                            </button>
+                        </div>
                         <div class="table-container" id="recentReviewsTable"></div>
                     </div>
                 </div>

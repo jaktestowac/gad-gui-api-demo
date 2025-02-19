@@ -272,11 +272,102 @@ async function loadCourseFilter() {
   }
 }
 
+function convertToCSV(data) {
+  const metrics = [
+    ["Metrics", "Value", "Trend"],
+    ["Total Enrollments", data.metrics.enrollments.total, data.metrics.enrollments.trend + "%"],
+    ["Total Revenue", "$" + data.metrics.revenue.total.toFixed(2), data.metrics.revenue.trend + "%"],
+    ["Completion Rate", data.metrics.completion.rate + "%", data.metrics.completion.trend + "%"],
+    ["Average Rating", data.metrics.rating.average.toFixed(1), data.metrics.rating.trend + "%"],
+  ];
+
+  const topCourses = [
+    ["Top Courses", "Enrollments", "Revenue", "Rating"],
+    ...data.tables.topCourses.map((course) => [
+      course.title,
+      course.enrollments,
+      "$" + course.revenue.toFixed(2),
+      course.rating.toFixed(1),
+    ]),
+  ];
+
+  const recentReviews = [
+    ["Recent Reviews", "Course", "Rating", "Date", "Comment"],
+    ...data.tables.recentReviews.map((review) => [
+      review.courseTitle,
+      review.rating,
+      new Date(review.date).toLocaleDateString(),
+      review.comment.replace(/,/g, ";"), // Replace commas to avoid CSV conflicts
+    ]),
+  ];
+
+  const csvContent = [
+    "Analytics Report",
+    `Generated: ${new Date().toLocaleString()}`,
+    "",
+    ...metrics.map((row) => row.join(",")),
+    "",
+    ...topCourses.map((row) => row.join(",")),
+    "",
+    ...recentReviews.map((row) => row.join(",")),
+  ].join("\n");
+
+  return csvContent;
+}
+
+function convertMetricsToCSV(metrics) {
+  const rows = [
+    ["Metrics", "Value", "Trend"],
+    ["Total Enrollments", metrics.enrollments.total, metrics.enrollments.trend + "%"],
+    ["Total Revenue", "$" + metrics.revenue.total.toFixed(2), metrics.revenue.trend + "%"],
+    ["Completion Rate", metrics.completion.rate + "%", metrics.completion.trend + "%"],
+    ["Average Rating", metrics.rating.average.toFixed(1), metrics.rating.trend + "%"],
+  ];
+  return rows.map((row) => row.join(",")).join("\n");
+}
+
+function convertCoursesToCSV(courses) {
+  const rows = [
+    ["Course Title", "Enrollments", "Revenue", "Rating"],
+    ...courses.map((course) => [
+      course.title,
+      course.enrollments,
+      "$" + course.revenue.toFixed(2),
+      course.rating.toFixed(1),
+    ]),
+  ];
+  return rows.map((row) => row.join(",")).join("\n");
+}
+
+function convertReviewsToCSV(reviews) {
+  const rows = [
+    ["Course", "Rating", "Date", "Comment"],
+    ...reviews.map((review) => [
+      review.courseTitle,
+      review.rating,
+      new Date(review.date).toLocaleDateString(),
+      `"${review.comment.replace(/"/g, '""')}"`, // Properly escape quotes for CSV
+    ]),
+  ];
+  return rows.map((row) => row.join(",")).join("\n");
+}
+
+function downloadCSV(csvContent, filename) {
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
+  const url = URL.createObjectURL(blob);
+  link.setAttribute("href", url);
+  link.setAttribute("download", filename);
+  link.style.visibility = "hidden";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   loadCourseFilter();
   loadAnalytics();
 
-  // Add event listeners for filters
   const courseFilter = document.getElementById("courseFilter");
   const timeFilter = document.getElementById("timeFilter");
 
@@ -286,5 +377,66 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (timeFilter) {
     timeFilter.addEventListener("change", loadAnalytics);
+  }
+
+  const downloadFullCSV = document.getElementById("downloadFullCSV");
+  const downloadMetricsCSV = document.getElementById("downloadMetricsCSV");
+  const downloadCoursesCSV = document.getElementById("downloadCoursesCSV");
+  const downloadReviewsCSV = document.getElementById("downloadReviewsCSV");
+
+  async function getAnalyticsData() {
+    const response = await api.getInstructorAnalytics(courseFilter.value, timeFilter.value);
+    if (!response.success || !response.data) {
+      throw new Error("Invalid response format");
+    }
+    return response.data;
+  }
+
+  if (downloadFullCSV) {
+    downloadFullCSV.addEventListener("click", async () => {
+      try {
+        const data = await getAnalyticsData();
+        const csvContent = convertToCSV(data);
+        downloadCSV(csvContent, `full-analytics-report-${new Date().toISOString().split("T")[0]}.csv`);
+      } catch (error) {
+        showNotification("Failed to download analytics data", "error");
+      }
+    });
+  }
+
+  if (downloadMetricsCSV) {
+    downloadMetricsCSV.addEventListener("click", async () => {
+      try {
+        const data = await getAnalyticsData();
+        const csvContent = convertMetricsToCSV(data.metrics);
+        downloadCSV(csvContent, `metrics-${new Date().toISOString().split("T")[0]}.csv`);
+      } catch (error) {
+        showNotification("Failed to download metrics data", "error");
+      }
+    });
+  }
+
+  if (downloadCoursesCSV) {
+    downloadCoursesCSV.addEventListener("click", async () => {
+      try {
+        const data = await getAnalyticsData();
+        const csvContent = convertCoursesToCSV(data.tables.topCourses);
+        downloadCSV(csvContent, `top-courses-${new Date().toISOString().split("T")[0]}.csv`);
+      } catch (error) {
+        showNotification("Failed to download courses data", "error");
+      }
+    });
+  }
+
+  if (downloadReviewsCSV) {
+    downloadReviewsCSV.addEventListener("click", async () => {
+      try {
+        const data = await getAnalyticsData();
+        const csvContent = convertReviewsToCSV(data.tables.recentReviews);
+        downloadCSV(csvContent, `recent-reviews-${new Date().toISOString().split("T")[0]}.csv`);
+      } catch (error) {
+        showNotification("Failed to download reviews data", "error");
+      }
+    });
   }
 });

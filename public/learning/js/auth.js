@@ -167,7 +167,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 1000);
       }
     } catch (error) {
-      notifications.show("Login failed. For demo use user: user and password: demo");
+      notifications.show("Login failed. " + error.message);
     }
   }
 

@@ -88,6 +88,36 @@
             margin: 0px;
             padding: 0px;
         }
+
+        .secondary-actions {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .requirements-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .requirements-button:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .requirements-button i {
+            font-size: 16px;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -107,8 +137,9 @@
             <p>Explore our comprehensive courses and enhance your skills with hands-on learning experiences designed for your success.</p>
             <p id="welcomeMessage" class="welcome-message"></p>
             <div id="authButtons" class="cta-buttons">
-
             </div>
+            <br />
+            <div id="requirementsButtons" class="cta-buttons"></div>
         </div>
 
         <div class="features-grid">

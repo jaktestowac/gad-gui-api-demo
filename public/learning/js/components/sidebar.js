@@ -1,3 +1,12 @@
+function isLoggedIn() {
+  return getCookie("learning_user_id") !== null;
+}
+
+function isAdmin(user) {
+  const userRole = getCookie("learning_user_role");
+  return userRole === "admin";
+}
+
 function injectSidebar() {
   const currentPath = window.location.pathname;
   const sidebarContainer = document.getElementById("sidebarContainer");
@@ -76,6 +85,20 @@ function injectSidebar() {
                           currentPath.endsWith("course-analytics.html") ? 'class="active"' : ""
                         }>
                             <i class="fas fa-chart-bar"></i> Analytics
+                        </a>
+                    </nav>
+                `
+                    : ""
+                }
+                ${
+                  isAdmin()
+                    ? `
+                    <hr class="nav-divider">
+                    <nav>
+                        <a href="admin-health.html" ${
+                          currentPath.endsWith("admin-health.html") ? 'class="active"' : ""
+                        }>
+                            <i class="fas fa-heartbeat"></i> System Health
                         </a>
                     </nav>
                 `

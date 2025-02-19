@@ -148,6 +148,7 @@ class ApiService {
 
   async getEnrolledCourses() {
     const enrollments = await this.getUserEnrollments(this.getUserIdFromCookie());
+    // TODO: refactor this method to get only user enrolled courses
     const courses = await this.getCourses();
 
     return enrollments.map((enrollment) => {
@@ -553,7 +554,7 @@ class ApiService {
 
     if (!response.ok) {
       const error = await response.json();
-      return error
+      return error;
     }
 
     return response.json();
@@ -681,6 +682,43 @@ class ApiService {
       headers: this.getDefaultHeaders(),
     });
     return response.json();
+  }
+
+  // Health monitoring methods
+  async getHealthStatus() {
+    try {
+      const response = await fetch(`${this.baseUrl}/health`, {
+        headers: this.getDefaultHeaders(),
+      });
+      return response.json();
+    } catch (error) {
+      console.error("Health check failed:", error);
+      return { status: "error", message: "Health check failed" };
+    }
+  }
+
+  async getApiMetrics() {
+    try {
+      const response = await fetch(`${this.baseUrl}/metrics`, {
+        headers: this.getDefaultHeaders(),
+      });
+      return response.json();
+    } catch (error) {
+      console.error("Failed to fetch metrics:", error);
+      return { error: "Failed to fetch metrics" };
+    }
+  }
+
+  // Add retry logic for API calls
+  async retryRequest(fn, retries = 3, delay = 1000) {
+    for (let i = 0; i < retries; i++) {
+      try {
+        return await fn();
+      } catch (error) {
+        if (i === retries - 1) throw error;
+        await new Promise((resolve) => setTimeout(resolve, delay * Math.pow(2, i)));
+      }
+    }
   }
 }
 

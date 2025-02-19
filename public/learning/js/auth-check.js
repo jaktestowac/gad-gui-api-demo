@@ -8,6 +8,11 @@ function isLoggedIn() {
 }
 
 async function requireAuth() {
+  // Skip auth check for test-requirements.html
+  if (window.location.pathname === "/learning/test-requirements.html") {
+    return true;
+  }
+
   const isAuth = await api.checkAuthStatus();
 
   if (!isAuth) {

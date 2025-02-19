@@ -217,6 +217,20 @@ class CourseViewer {
         <div class="video-time-display" style="display:none;">${lesson.duration}</div>
         <h3>${lesson.title}</h3>
         <p class="transcript">${content?.transcript}</p>
+        ${
+          content?.transcript
+            ? `
+          <div class="download-transcript">
+            <button class="secondary-button" onclick="courseViewer.downloadTranscript('txt')">
+              <i class="fas fa-file-alt"></i> Download Transcript as TXT
+            </button>
+            <button class="secondary-button" onclick="courseViewer.downloadTranscript('md')">
+              <i class="fa-brands fa-markdown"></i> Download Transcript as Markdown
+            </button>
+          </div>
+        `
+            : ""
+        }
         <div align="center">${
           lesson.completed
             ? '<div class="completion-badge"><i class="fas fa-check-circle"></i> Completed</div>'
@@ -253,31 +267,219 @@ class CourseViewer {
     });
   }
 
+  async downloadTranscript(format) {
+    if (!this.currentLesson) return;
+
+    try {
+      const content = await api.getLessonContent(this.courseId, this.currentLesson.id);
+      if (!content?.transcript) {
+        notifications.show("No transcript available to download", "error");
+        return;
+      }
+
+      const filename = `transcript-${this.currentLesson.id}-${this.currentLesson.title
+        .toLowerCase()
+        .replace(/\s+/g, "-")}`;
+      const transcript = content.transcript;
+
+      let fileContent =
+        format === "md"
+          ? `# ${this.currentLesson.title}\n\n## Transcript\n\n${transcript}`
+          : `${this.currentLesson.title}\n\nTRANSCRIPT:\n\n${transcript}`;
+
+      this.downloadFile(fileContent, `${filename}.${format}`, format === "md" ? "text/markdown" : "text/plain");
+
+      notifications.show("Transcript downloaded successfully!", "success");
+    } catch (error) {
+      console.error("Error downloading transcript:", error);
+      notifications.show("Failed to download transcript", "error");
+    }
+  }
+
   renderReading(lesson, content) {
     this.currentLesson = lesson;
     this.lessonMaterials.innerHTML = `
             <div class="reading-material">
                 <h3>${lesson.title}</h3>
-                <div class="content">
+                <div class="content transcript">
                     ${content?.text}
                 </div>
-                <div class="resources">
-                    <h4>Additional Resources:</h4>
-                    <ul>
-                        ${content?.resources.map((r) => `<li>${r}</li>`).join("")}
-                    </ul>
-                </div>
+                ${
+                  content?.text
+                    ? `
+                    <div class="download-lesson">
+                        <button class="secondary-button" onclick="courseViewer.downloadLessonContent('txt')">
+                            <i class="fas fa-file-alt"></i> Download Lesson as TXT
+                        </button>
+                    </div>
+                `
+                    : ""
+                }
+                ${
+                  content?.resources?.length
+                    ? `
+                    <div class="resources">
+                        <h4>Additional Resources:</h4>
+                        <ul>
+                            ${content.resources.map((r) => `<li>${r}</li>`).join("")}
+                        </ul>
+                        <div class="download-resources">
+                            <button class="secondary-button" onclick="courseViewer.downloadResources('txt')">
+                                <i class="fas fa-download"></i> Download as TXT
+                            </button>
+                            <button class="secondary-button" onclick="courseViewer.downloadResources('csv')">
+                                <i class="fas fa-file-csv"></i> Download as CSV
+                            </button>
+                        </div>
+                    </div>
+                `
+                    : ""
+                }
                 <div align="center">${
                   lesson.completed
                     ? '<div class="completion-badge"><i class="fas fa-check-circle"></i> Completed</div>'
                     : `<button class="primary-button" 
-                              onclick="courseViewer.markComplete(this)"
-                              data-lesson-id="${lesson.id}">
-                          Mark as Complete
-                       </button>`
+                                onclick="courseViewer.markComplete(this)"
+                                data-lesson-id="${lesson.id}">
+                            Mark as Complete
+                         </button>`
                 }</div>
             </div>
         `;
+  }
+
+  async downloadLessonContent(format) {
+    if (!this.currentLesson) return;
+
+    try {
+      const content = await api.getLessonContent(this.courseId, this.currentLesson.id);
+      if (!content?.text) {
+        notifications.show("No lesson content available to download", "error");
+        return;
+      }
+
+      const filename = `lesson-${this.currentLesson.id}-${this.currentLesson.title.toLowerCase().replace(/\s+/g, "-")}`;
+      const text = content.text;
+      const fileContent = `${this.currentLesson.title}\n\n${text}`;
+
+      this.downloadFile(fileContent, `${filename}.txt`, "text/plain");
+      notifications.show("Lesson content downloaded successfully!", "success");
+    } catch (error) {
+      console.error("Error downloading lesson content:", error);
+      notifications.show("Failed to download lesson content", "error");
+    }
+  }
+
+  getContentDownloadButtons() {
+    return `
+            <div class="download-content">
+                <button class="secondary-button" onclick="courseViewer.downloadContent('txt')">
+                    <i class="fas fa-file-alt"></i> Download as TXT
+                </button>
+                <button class="secondary-button" onclick="courseViewer.downloadContent('md')">
+                    <i class="fa-brands fa-markdown"></i> Download as Markdown
+                </button>
+            </div>
+        `;
+  }
+
+  async downloadContent(format) {
+    if (!this.currentLesson) return;
+
+    try {
+      const content = await api.getLessonContent(this.courseId, this.currentLesson.id);
+      if (!content) {
+        notifications.show("No content available to download", "error");
+        return;
+      }
+
+      let fileContent = "";
+      const filename = `lesson-${this.currentLesson.id}-${this.currentLesson.title.toLowerCase().replace(/\s+/g, "-")}`;
+
+      if (this.currentLesson.type === "video") {
+        fileContent = this.formatVideoContent(content, format);
+      } else if (this.currentLesson.type === "reading") {
+        fileContent = this.formatReadingContent(content, format);
+      }
+
+      this.downloadFile(fileContent, `${filename}.${format}`, format === "md" ? "text/markdown" : "text/plain");
+      notifications.show("Content downloaded successfully!", "success");
+    } catch (error) {
+      console.error("Error downloading content:", error);
+      notifications.show("Failed to download content", "error");
+    }
+  }
+
+  formatVideoContent(content, format) {
+    const title = this.currentLesson.title;
+    const duration = this.currentLesson.duration;
+    const transcript = content.transcript || "No transcript available";
+
+    if (format === "md") {
+      return `# ${title}\n\n` + `**Duration:** ${duration}\n\n` + `## Transcript\n\n${transcript}`;
+    }
+
+    return `${title}\n\n` + `Duration: ${duration}\n\n` + `TRANSCRIPT:\n\n${transcript}`;
+  }
+
+  formatReadingContent(content, format) {
+    const title = this.currentLesson.title;
+    const text = content.text || "No content available";
+    const resources = content.resources || [];
+
+    if (format === "md") {
+      return (
+        `# ${title}\n\n${text}\n\n` +
+        (resources.length ? `## Additional Resources\n\n${resources.map((r) => `- ${r}`).join("\n")}` : "")
+      );
+    }
+
+    return (
+      `${title}\n\n${text}\n\n` +
+      (resources.length ? `ADDITIONAL RESOURCES:\n\n${resources.map((r) => `- ${r}`).join("\n")}` : "")
+    );
+  }
+
+  downloadResources(format) {
+    if (!this.currentLesson) return;
+
+    const getLessonContent = async () => {
+      try {
+        const content = await api.getLessonContent(this.courseId, this.currentLesson.id);
+        if (!content?.resources?.length) {
+          notifications.show("No resources available to download", "error");
+          return;
+        }
+
+        let fileContent = "";
+        const filename = `resources-lesson-${this.currentLesson.id}`;
+
+        if (format === "csv") {
+          fileContent = "Resource\n" + content.resources.map((r) => `"${r}"`).join("\n");
+          this.downloadFile(fileContent, `${filename}.csv`, "text/csv");
+        } else {
+          fileContent = content.resources.join("\n");
+          this.downloadFile(fileContent, `${filename}.txt`, "text/plain");
+        }
+      } catch (error) {
+        console.error("Error downloading resources:", error);
+        notifications.show("Failed to download resources", "error");
+      }
+    };
+
+    getLessonContent();
+  }
+
+  downloadFile(content, filename, type) {
+    const blob = new Blob([content], { type });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
   }
 
   renderQuiz(lesson, content) {

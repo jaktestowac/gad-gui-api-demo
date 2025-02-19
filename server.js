@@ -96,7 +96,7 @@ const clearDbRoutes = (req, res, next) => {
       res.status(HTTP_CREATED).send({ message: successMessage, entities });
     };
 
-    if (req.method === "GET" && req.url.includes("restore")) {
+    if (req.method === "GET" && req.url.includes("restore") && req.url.includes("DB")) {
       const url = req.url.replace(/\?.*$/, "").replace(/\/$/, "");
       const urlLastPart = url.split("/").pop();
       switch (urlLastPart) {
@@ -110,7 +110,11 @@ const clearDbRoutes = (req, res, next) => {
           restoreDbWithKey(ConfigKeys.DB2_RESTORE_PATH, "Database successfully restored");
           break;
         case "restoreInterviewDB": {
-          const dbPath = path.join(__dirname, getConfigValue(ConfigKeys.GENERIC_DB_RESTORE_PATH), "db-base-interview.json");
+          const dbPath = path.join(
+            __dirname,
+            getConfigValue(ConfigKeys.GENERIC_DB_RESTORE_PATH),
+            "db-base-interview.json"
+          );
           restoreDb(dbPath, "Database successfully restored");
           break;
         }

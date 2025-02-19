@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | Learning Dashboard Requirements</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="./css/learning.css" />
+    <style>
+        .requirements-container {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .return-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .return-button:hover {
+            background: var(--secondary-color);
+        }
+
+        .requirement-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border: 1px solid #eee;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .requirement-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .requirement-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .requirement-id {
+            background: #4CAF50;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+
+        .priority {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: auto;
+        }
+
+        .priority-high {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .priority-medium {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+
+        .priority-low {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .requirement-title {
+            font-size: 1.2em;
+            margin: 0;
+            color: #333;
+        }
+
+        .requirement-description {
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .acceptance-criteria {
+            margin-top: 15px;
+            padding-left: 20px;
+        }
+
+        .acceptance-criteria li {
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary-color);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .back-to-top:hover {
+            background: var(--secondary-color);
+            transform: translateY(-3px);
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-gui-learning" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br /><br /><br />
+    <div class="requirements-container">
+        <div class="page-header">
+            <h2>Learning Platform Test Requirements</h2>
+            <a href="welcome.html" class="return-button">
+                <i class="fas fa-arrow-left"></i>
+                Return to Welcome
+            </a>
+        </div>
+
+        <div class="requirement-card">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-001</span>
+                <h3 class="requirement-title">User Registration and Authentication</h3>
+                <span class="priority priority-high">High Priority</span>
+            </div>
+            <div class="requirement-description">
+                Users must be able to register, login, and manage their accounts securely.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>Verify email validation during registration</li>
+                <li>Test password strength requirements</li>
+                <li>Validate login with correct and incorrect credentials</li>
+            </ul>
+        </div>
+
+        <div class="requirement-card">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-002</span>
+                <h3 class="requirement-title">Course Enrollment System</h3>
+                <span class="priority priority-high">High Priority</span>
+            </div>
+            <div class="requirement-description">
+                Students should be able to browse, enroll in, and access their courses.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>Test course catalog browsing functionality</li>
+                <li>Verify enrollment process and confirmation</li>
+                <li>Validate course access after enrollment</li>
+            </ul>
+        </div>
+
+        <div class="requirement-card">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-003</span>
+                <h3 class="requirement-title">Progress Tracking</h3>
+                <span class="priority priority-medium">Medium Priority</span>
+            </div>
+            <div class="requirement-description">
+                System must track and display student progress through courses.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>Verify progress percentage calculation</li>
+                <li>Test completion status updates</li>
+                <li>Validate progress persistence across sessions</li>
+            </ul>
+        </div>
+
+        <div class="requirement-card">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-004</span>
+                <h3 class="requirement-title">Course Content Management</h3>
+                <span class="priority priority-high">High Priority</span>
+            </div>
+            <div class="requirement-description">
+                Instructors must be able to create and manage course content.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>Test content creation and editing</li>
+                <li>Verify multimedia content upload</li>
+                <li>Validate content organization features</li>
+            </ul>
+        </div>
+
+        <div class="requirement-card">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-005</span>
+                <h3 class="requirement-title">Assessment System</h3>
+                <span class="priority priority-high">High Priority</span>
+            </div>
+            <div class="requirement-description">
+                Platform must support various types of assessments and quizzes.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>Test multiple question types</li>
+                <li>Verify automated grading</li>
+                <li>Validate assessment feedback system</li>
+            </ul>
+        </div>
+
+        <div class="requirement-card">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-006</span>
+                <h3 class="requirement-title">Certificate Generation</h3>
+                <span class="priority priority-medium">Medium Priority</span>
+            </div>
+            <div class="requirement-description">
+                System should generate and issue certificates upon course completion.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>Verify certificate generation triggers</li>
+                <li>Validate public certificate</li>
+                <li>Validate QR code for certificates</li>
+                <li>Validate certificate download functionality</li>
+            </ul>
+        </div>
+
+        <div class="requirement-card">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-007</span>
+                <h3 class="requirement-title">Payment Processing</h3>
+                <span class="priority priority-high">High Priority</span>
+            </div>
+            <div class="requirement-description">
+                Secure payment processing for course purchases and subscription management.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>Test payment gateway integration</li>
+                <li>Verify transaction processing</li>
+                <li>Verify transaction history</li>
+            </ul>
+        </div>
+
+        <div class="requirement-card">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-008</span>
+                <h3 class="requirement-title">Analytics Dashboard</h3>
+                <span class="priority priority-medium">Medium Priority</span>
+            </div>
+            <div class="requirement-description">
+                Instructors should have access to course and student performance analytics.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>Verify data visualization accuracy</li>
+                <li>Test report generation</li>
+                <li>Validate data export functionality</li>
+            </ul>
+        </div>
+
+        <div class="requirement-card">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-009</span>
+                <h3 class="requirement-title">Progress Page</h3>
+                <span class="priority priority-medium">Medium Priority</span>
+            </div>
+            <div class="requirement-description">
+                Students should have a progress page to track their courses completion status.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>Verify progress percentage calculation</li>
+                <li>Test course completion status updates</li>
+                <li>Validate progress persistence across sessions</li>
+            </ul>
+        </div>
+
+        <div class="requirement-card">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-010</span>
+                <h3 class="requirement-title">Mobile Responsiveness</h3>
+                <span class="priority priority-medium">Medium Priority</span>
+            </div>
+            <div class="requirement-description">
+                Platform must be fully functional on mobile devices.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>Test responsive design on various devices</li>
+                <li>Verify mobile navigation and usability</li>
+                <li>Validate video playback on mobile</li>
+            </ul>
+        </div>
+
+        <div class="requirement-card">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-011</span>
+                <h3 class="requirement-title">User Profile Management</h3>
+                <span class="priority priority-high">High Priority</span>
+            </div>
+            <div class="requirement-description">
+                Users should be able to manage their profile information and account settings.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>Test profile information update functionality</li>
+                <li>Verify password change process</li>
+                <li>Validate account deactivation flow</li>
+                <li>Test funds management and transaction history</li>
+            </ul>
+        </div>
+
+        <div class="requirement-card">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-012</span>
+                <h3 class="requirement-title">Course Content Navigation</h3>
+                <span class="priority priority-high">High Priority</span>
+            </div>
+            <div class="requirement-description">
+                Students must be able to navigate through course content efficiently.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>Test lesson navigation and progression</li>
+                <li>Verify video player functionality</li>
+                <li>Validate course materials accessibility</li>
+                <li>Test progress saving between sessions</li>
+            </ul>
+        </div>
+
+        <div class="requirement-card">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-013</span>
+                <h3 class="requirement-title">Instructor Dashboard</h3>
+                <span class="priority priority-medium">Medium Priority</span>
+            </div>
+            <div class="requirement-description">
+                Instructors need comprehensive tools to manage courses and monitor student progress.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>Test course creation and editing features</li>
+                <li>Verify student progress tracking</li>
+                <li>Validate course analytics dashboard</li>
+                <li>Validate download and export features</li>
+            </ul>
+        </div>
+
+        <div class="requirement-card">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-014</span>
+                <h3 class="requirement-title">Search and Filtering</h3>
+                <span class="priority priority-medium">Medium Priority</span>
+            </div>
+            <div class="requirement-description">
+                Users should be able to easily find courses and content through search and filters.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>Test course search functionality</li>
+                <li>Verify filter options work correctly</li>
+                <li>Verify filter by tag</li>
+                <li>Validate search result relevance</li>
+                <li>Test search performance with large datasets</li>
+            </ul>
+        </div>
+
+        <div class="requirement-card">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-015</span>
+                <h3 class="requirement-title">Rating and Feedback System</h3>
+                <span class="priority priority-medium">Medium Priority</span>
+            </div>
+            <div class="requirement-description">
+                Users should be able to rate courses and provide feedback to instructors.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>Test rating system functionality</li>
+                <li>Verify feedback submission process</li>
+                <li>Validate feedback visibility to instructors</li>
+            </ul>
+        </div>
+
+        <div class="requirement-card">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-016</span>
+                <h3 class="requirement-title">Accessibility Features</h3>
+                <span class="priority priority-low">Low Priority</span>
+            </div>
+            <div class="requirement-description">
+                Enhanced accessibility features for users with disabilities.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>Test screen reader compatibility</li>
+                <li>Verify keyboard navigation</li>
+                <li>Validate ARIA attributes implementation</li>
+                <li>Test color contrast requirements</li>
+                <li>Verify closed captions for video content</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <button class="mobile-menu-button" aria-label="Open menu">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div class="sidebar-overlay"></div>
+
+    <a href="#" class="back-to-top" id="backToTop" title="Back to Top">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+
+    <script>
+        const backToTopButton = document.getElementById('backToTop');
+
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('visible');
+            } else {
+                backToTopButton.classList.remove('visible');
+            }
+        });
+
+        backToTopButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    </script>
+</body>
+
+</html>

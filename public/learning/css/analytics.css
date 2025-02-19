@@ -343,6 +343,59 @@
   color: #dc2626;
 }
 
+.download-actions {
+  display: flex;
+  gap: 0.25rem;
+  margin-left: auto;
+}
+
+.download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  white-space: nowrap;
+  height: 28px;
+}
+
+.download-btn i {
+  font-size: 0.75rem;
+}
+
+.download-btn.compact {
+  padding: 0.25rem 0.5rem;
+  background: transparent;
+  height: 24px;
+}
+
+.download-btn.compact i {
+  font-size: 0.75rem;
+}
+
+.download-btn.compact:hover {
+  background: #f8fafc;
+}
+
+.table-card .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.table-card .card-header h3 {
+  margin: 0;
+  padding: 0;
+}
+
 @media (max-width: 768px) {
   .analytics-panel {
     padding: 1rem;
@@ -383,5 +436,26 @@
 
   .metric-value {
     font-size: 1.875rem;
+  }
+
+  .download-actions {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-left: 0;
+  }
+
+  .download-btn {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .download-actions {
+    flex-direction: column;
+  }
+
+  .table-card .card-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
   }
 }

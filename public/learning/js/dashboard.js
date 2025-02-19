@@ -1,5 +1,6 @@
 let allCourses = [];
 let enrolledCourseIds = new Set();
+let selectedTags = new Set();
 
 async function loadCourses() {
   try {
@@ -12,27 +13,80 @@ async function loadCourses() {
     allCourses = courses;
     enrolledCourseIds = new Set(enrolledCourses.map((c) => c.courseId));
 
+    // Initialize tags
+    initializeTags(courses);
     filterAndDisplayCourses();
   } catch (error) {
     console.error("Failed to load courses:", error);
   }
 }
 
+function initializeTags(courses) {
+  const tagsList = document.getElementById("tagsList");
+  const allTags = new Set();
+
+  courses.forEach((course) => {
+    course.tags.forEach((tag) => allTags.add(tag));
+  });
+
+  tagsList.innerHTML = Array.from(allTags)
+    .sort()
+    .map(
+      (tag) => `
+          <div class="tag-filter" data-tag="${tag}">
+              ${tag}
+          </div>
+      `
+    )
+    .join("");
+
+  // Add click handlers for tags
+  tagsList.querySelectorAll(".tag-filter").forEach((tagElement) => {
+    tagElement.addEventListener("click", () => {
+      const tag = tagElement.dataset.tag;
+      if (selectedTags.has(tag)) {
+        selectedTags.delete(tag);
+        tagElement.classList.remove("active");
+      } else {
+        selectedTags.add(tag);
+        tagElement.classList.add("active");
+      }
+
+      const clearButton = document.getElementById("clearTags");
+      clearButton.style.display = selectedTags.size > 0 ? "block" : "none";
+
+      filterAndDisplayCourses(document.getElementById("courseSearch").value);
+    });
+  });
+
+  // Add clear tags handler
+  document.getElementById("clearTags").addEventListener("click", () => {
+    selectedTags.clear();
+    document.querySelectorAll(".tag-filter").forEach((tag) => tag.classList.remove("active"));
+    document.getElementById("clearTags").style.display = "none";
+    filterAndDisplayCourses(document.getElementById("courseSearch").value);
+  });
+}
+
 function filterAndDisplayCourses(searchTerm = "") {
   const courseList = document.getElementById("courseList");
-  const filteredCourses = allCourses.filter(
-    (course) =>
+  const filteredCourses = allCourses.filter((course) => {
+    const matchesSearch =
       course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       course.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      course.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+      course.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+
+    const matchesTags = selectedTags.size === 0 || course.tags.some((tag) => selectedTags.has(tag));
+
+    return matchesSearch && matchesTags;
+  });
 
   if (filteredCourses.length === 0) {
     courseList.innerHTML = `
             <div class="empty-state">
                 <i class="fas fa-search fa-3x"></i>
                 <h3>No courses found</h3>
-                <p>Try adjusting your search to find what you're looking for.</p>
+                <p>Try adjusting your search or filters to find what you're looking for.</p>
             </div>
         `;
     return;
@@ -51,6 +105,15 @@ function filterAndDisplayCourses(searchTerm = "") {
                 <div>
                     <h3>${course.title}</h3>
                     <p>${course.description}</p>
+                    <div class="course-tags">
+                        ${course.tags
+                          .map(
+                            (tag) => `
+                            <span class="course-tag">${tag}</span>
+                        `
+                          )
+                          .join("")}
+                    </div>
                     <div class="course-stats">
                         <span><i class="fas fa-user"></i> ${course.students} student(s)</span>
                         <span><i class="fas fa-clock"></i> ${course.duration}</span>
@@ -140,6 +203,15 @@ async function renderCourses(courses = allCourses) {
                         <h3>${course.title}</h3>
                     </div>
                     <p>${course.description}</p>
+                    <div class="course-tags">
+                        ${course.tags
+                          .map(
+                            (tag) => `
+                            <span class="course-tag">${tag}</span>
+                        `
+                          )
+                          .join("")}
+                    </div>
                     <div class="course-stats">
                         <span><i class="fas fa-user"></i> ${course.students} student(s)</span>
                         <span><i class="fas fa-clock"></i> ${course.duration}</span>

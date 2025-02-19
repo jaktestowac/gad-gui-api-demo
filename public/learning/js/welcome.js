@@ -1,11 +1,17 @@
 function updateAuthButtons() {
   const authButtons = document.getElementById("authButtons");
   const welcomeMessage = document.getElementById("welcomeMessage");
+  const requirementsButtons = document.getElementById("requirementsButtons");
 
-  if (!authButtons || !welcomeMessage) return;
+  if (!authButtons || !welcomeMessage || !requirementsButtons) return;
 
   const isAuthenticated = isLoggedIn();
-
+  requirementsButtons.innerHTML = `
+  <a href="test-requirements.html" class="requirements-button">
+      <i class="fas fa-tasks"></i>
+      View Test Requirements
+  </a>
+`;
   if (isAuthenticated) {
     authButtons.innerHTML = `
             <a href="dashboard.html" class="cta-button primary" name="dashboard" aria-label="Dashboard">
