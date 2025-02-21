@@ -687,12 +687,13 @@ class ApiService {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error.message || "Failed to fetch analytics data");
+      return { error: error.message || "Failed to fetch analytics data" };
     }
 
     const data = await response.json();
     if (!data.success) {
-      throw new Error(data.message || "Failed to fetch analytics data");
+      const error = await response.json();
+      return { error: error.message || "Failed to fetch analytics data" };
     }
 
     return data;

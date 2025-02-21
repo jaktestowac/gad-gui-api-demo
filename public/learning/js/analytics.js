@@ -7,13 +7,9 @@ async function loadAnalytics() {
       el.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
     });
 
-    const response = await api.getInstructorAnalytics(courseFilter.value, timeFilter.value);
+    const data = await getFormattedAnalyticsData(courseFilter.value, timeFilter.value);
 
-    if (!response.success || !response.data) {
-      throw new Error("Invalid response format");
-    }
-
-    const { metrics, tables, charts } = response.data;
+    const { metrics, tables, charts } = data;
 
     updateMetrics(metrics);
 
@@ -28,6 +24,38 @@ async function loadAnalytics() {
     document.getElementById("completionRate").textContent = "0%";
     document.getElementById("averageRating").textContent = "0.0";
   }
+}
+
+async function getFormattedAnalyticsData(courseFilterValue, timeFilterValueInDays) {
+  const response = await api.getInstructorAnalytics(courseFilterValue, timeFilterValueInDays);
+  if (!response.success || !response.data) {
+    throw new Error("Invalid response format");
+  }
+
+  const data = response.data;
+  // check data from past timeFilterValueInDays days till now for charts.enrollments and charts.revenue
+  // and fill the missing days with 0 values
+  const today = new Date();
+  const startDate = new Date(today);
+  startDate.setDate(today.getDate() - timeFilterValueInDays);
+  const dateMap = new Map();
+  for (let d = new Date(startDate); d <= today; d.setDate(d.getDate() + 1)) {
+    dateMap.set(d.toISOString().split("T")[0], 0);
+  }
+
+  if (data.charts.enrollments) {
+    data.charts.enrollments.forEach((d) => dateMap.set(d.date, d.count));
+  }
+
+  const enrollmentData = Array.from(dateMap, ([date, count]) => ({ date, count }));
+
+  if (data.charts.revenue) {
+    data.charts.revenue.forEach((d) => dateMap.set(d.date, d.amount));
+  }
+
+  const revenueData = Array.from(dateMap, ([date, amount]) => ({ date, amount }));
+
+  return { metrics: data.metrics, tables: data.tables, charts: { enrollments: enrollmentData, revenue: revenueData } };
 }
 
 function updateMetrics(metrics) {
@@ -385,11 +413,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const downloadReviewsCSV = document.getElementById("downloadReviewsCSV");
 
   async function getAnalyticsData() {
-    const response = await api.getInstructorAnalytics(courseFilter.value, timeFilter.value);
-    if (!response.success || !response.data) {
-      throw new Error("Invalid response format");
-    }
-    return response.data;
+    const data = await getFormattedAnalyticsData(courseFilter.value, timeFilter.value);
+    return data;
   }
 
   if (downloadFullCSV) {

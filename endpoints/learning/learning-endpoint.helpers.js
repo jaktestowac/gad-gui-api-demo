@@ -977,7 +977,7 @@ function handleLearning(req, res) {
             const courseId = queryParams.get("courseId") || "all";
             const timeRangeBase = parseInt(queryParams.get("timeRange")) || 30;
 
-            const timeRange = Math.min(timeRangeBase, 3650);
+            const timeRange = Math.min(timeRangeBase, 1100);
 
             // Get instructor's courses
             const targetCourses =
@@ -992,7 +992,6 @@ function handleLearning(req, res) {
               return;
             }
 
-            // Calculate date range
             const endDate = new Date();
             const startDate = new Date();
             startDate.setDate(endDate.getDate() - timeRange);
@@ -1011,8 +1010,8 @@ function handleLearning(req, res) {
               };
 
               const charts = {
-                enrollments: getEnrollmentTrends(targetCourses, timeRange),
-                revenue: getRevenueTrends(targetCourses, timeRange),
+                enrollments: getEnrollmentTrendsFast(targetCourses, timeRange),
+                revenue: getRevenueTrendsFast(targetCourses, timeRange),
               };
 
               res.status(HTTP_OK).send({
@@ -1938,6 +1937,45 @@ function getRecentReviews(courses, startDate) {
     .slice(0, 5);
 }
 
+function getEnrollmentTrendsFast(courses, days) {
+  const endDate = new Date();
+  const startDate = new Date();
+  startDate.setDate(endDate.getDate() - days);
+
+  const enrollments = dataProvider.getAllUserEnrollments().filter((e) => new Date(e.enrollmentDate) >= startDate);
+
+  const data = enrollments.map((enrollment) => {
+    const date = new Date(enrollment.enrollmentDate).toISOString().split("T")[0];
+    return {
+      date,
+      count: enrollments.filter((e) => new Date(e.enrollmentDate).toISOString().split("T")[0] === date).length,
+    };
+  });
+
+  return data;
+}
+
+function getRevenueTrendsFast(courses, days) {
+  const endDate = new Date();
+  const startDate = new Date();
+  startDate.setDate(endDate.getDate() - days);
+
+  const enrollments = dataProvider.getAllUserEnrollments().filter((e) => new Date(e.enrollmentDate) >= startDate);
+
+  const data = enrollments.map((enrollment) => {
+    const date = new Date(enrollment.enrollmentDate).toISOString().split("T")[0];
+    const course = courses.find((c) => areIdsEqual(c.id, enrollment.courseId));
+    return {
+      date,
+      amount: enrollments
+        .filter((e) => new Date(e.enrollmentDate).toISOString().split("T")[0] === date)
+        .reduce((total, e) => total + (e.paidAmount || course?.price || 0), 0),
+    };
+  });
+
+  return data;
+}
+
 function getEnrollmentTrends(courses, days) {
   const endDate = new Date();
   const startDate = new Date();
@@ -1962,7 +2000,7 @@ function getEnrollmentTrends(courses, days) {
       ).length;
 
     return {
-      date: date.toLocaleDateString(),
+      date: date.toISOString().split("T")[0],
       count,
     };
   });
@@ -1996,7 +2034,7 @@ function getRevenueTrends(courses, days) {
       }, 0);
 
     return {
-      date: date.toLocaleDateString(),
+      date: date.toISOString().split("T")[0],
       amount,
     };
   });
