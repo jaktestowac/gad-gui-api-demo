@@ -48,7 +48,15 @@ class CourseViewer {
 
       const lessons = await api.getCourseLessons(this.courseId);
 
-      this.courseName.textContent = course.title;
+      this.courseName.innerHTML = `
+        <div class="course-header-links">
+          <h2>${course.title}</h2>
+          <a href="course-details.html?id=${this.courseId}" class="course-details-link">
+            <i class="fas fa-info-circle"></i> View Course Details
+          </a>
+        </div>
+      `;
+
       this.lessons = lessons;
       this.renderLessonList(lessons);
 
@@ -88,6 +96,28 @@ class CourseViewer {
   }
 
   renderLessonList(lessons) {
+    if (!lessons || lessons.length === 0) {
+      this.lessonList.innerHTML = `
+          <div class="empty-lessons-state">
+              <i class="fas fa-book-open fa-3x"></i>
+              <h4>No Lessons Available</h4>
+              <p>This course doesn't have any content yet.</p>
+              ${
+                this.isInstructor()
+                  ? `
+                  <a href="course-lessons.html?courseId=${this.courseId}" class="primary-button">
+                      <i class="fas fa-plus"></i> Add Lessons
+                  </a>
+              `
+                  : `
+                  <p class="contact-instructor">Please check back later or contact the instructor.</p>
+              `
+              }
+          </div>
+      `;
+      return;
+    }
+
     this.lessonList.innerHTML = lessons
       .map((lesson) => {
         const safeLesson = {
@@ -116,6 +146,15 @@ class CourseViewer {
                 `;
       })
       .join("");
+  }
+
+  isInstructor() {
+    // Add this helper method to check if current user is the course instructor
+    const userRole = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("learning_user_role="))
+      ?.split("=")[1];
+    return userRole === "instructor" || userRole === "admin";
   }
 
   getLessonIcon(type) {

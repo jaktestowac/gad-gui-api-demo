@@ -25,48 +25,128 @@
     "schemas": {
       "User": {
         "type": "object",
+        "description": "Represents a user in the learning platform",
         "properties": {
-          "id": { "type": "integer" },
-          "username": { "type": "string" },
-          "email": { "type": "string" },
-          "firstName": { "type": "string" },
-          "lastName": { "type": "string" },
-          "avatar": { "type": "string" },
+          "id": {
+            "type": "integer",
+            "description": "Unique identifier for the user",
+            "example": 1
+          },
+          "username": {
+            "type": "string",
+            "description": "User's login name",
+            "example": "johndoe"
+          },
+          "email": {
+            "type": "string",
+            "description": "User's email address",
+            "example": "john.doe@example.com"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "User's first name",
+            "example": "John"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "User's last name",
+            "example": "Doe"
+          },
+          "avatar": {
+            "type": "string",
+            "description": "URL to user's profile picture",
+            "example": "https://example.com/avatars/johndoe.jpg"
+          },
           "joinDate": {
             "type": "string",
-            "format": "date"
+            "format": "date",
+            "description": "Date when user joined the platform",
+            "example": "2023-01-15"
           },
           "role": {
             "type": "string",
-            "enum": ["student", "instructor"]
+            "enum": ["student", "instructor"],
+            "description": "User's role in the platform",
+            "example": "student"
           }
         }
       },
       "Course": {
         "type": "object",
+        "description": "Represents a course in the learning platform",
         "properties": {
-          "id": { "type": "integer" },
-          "title": { "type": "string" },
-          "description": { "type": "string" },
-          "thumbnail": { "type": "string" },
-          "instructor": { "type": "string" },
-          "duration": { "type": "string" },
-          "totalHours": { "type": "number" },
-          "level": { "type": "string" },
-          "students": { "type": "integer" },
-          "rating": { "type": "number" },
+          "id": {
+            "type": "integer",
+            "description": "Unique identifier for the course",
+            "example": 101
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the course",
+            "example": "Advanced Web Development"
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed description of the course",
+            "example": "Learn modern web development techniques using React and Node.js"
+          },
+          "thumbnail": {
+            "type": "string",
+            "description": "URL to course thumbnail image",
+            "example": "https://example.com/courses/web-dev.jpg"
+          },
+          "instructor": {
+            "type": "string",
+            "description": "Name of the course instructor",
+            "example": "Jane Smith"
+          },
+          "duration": {
+            "type": "string",
+            "description": "Total duration of the course",
+            "example": "6 weeks"
+          },
+          "totalHours": {
+            "type": "number",
+            "description": "Total hours of content",
+            "example": 24.5
+          },
+          "level": {
+            "type": "string",
+            "description": "Difficulty level of the course",
+            "example": "intermediate"
+          },
+          "students": {
+            "type": "integer",
+            "description": "Number of enrolled students",
+            "example": 1250
+          },
+          "rating": {
+            "type": "number",
+            "description": "Average course rating",
+            "example": 4.8
+          },
           "tags": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": { "type": "string" },
+            "description": "Course topic tags",
+            "example": ["web", "javascript", "react"]
           },
           "prerequisites": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": { "type": "string" },
+            "description": "Required prerequisites for the course",
+            "example": ["Basic JavaScript", "HTML & CSS"]
           },
-          "price": { "type": "number" },
+          "price": {
+            "type": "number",
+            "description": "Course price in USD",
+            "example": 49.99
+          },
           "learningObjectives": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": { "type": "string" },
+            "description": "Key learning objectives",
+            "example": ["Build React applications", "Create RESTful APIs"]
           }
         }
       },
@@ -102,22 +182,60 @@
       },
       "LoginResponse": {
         "type": "object",
+        "description": "Login response payload",
         "properties": {
-          "success": { "type": "boolean" },
-          "access_token": { "type": "string" },
-          "username": { "type": "string" },
-          "id": { "type": "integer" },
-          "firstName": { "type": "string" },
-          "lastName": { "type": "string" },
-          "avatar": { "type": "string" }
+          "success": {
+            "type": "boolean",
+            "description": "Indicates if login was successful",
+            "example": true
+          },
+          "access_token": {
+            "type": "string",
+            "description": "JWT access token",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          },
+          "username": {
+            "type": "string",
+            "description": "Logged in username",
+            "example": "johndoe"
+          },
+          "id": {
+            "type": "integer",
+            "description": "User ID",
+            "example": 1
+          },
+          "firstName": {
+            "type": "string",
+            "description": "User's first name",
+            "example": "John"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "User's last name",
+            "example": "Doe"
+          },
+          "avatar": {
+            "type": "string",
+            "description": "User's avatar URL",
+            "example": "https://example.com/avatars/johndoe.jpg"
+          }
         }
       },
       "LoginRequest": {
         "type": "object",
+        "description": "Login request payload",
         "required": ["username", "password"],
         "properties": {
-          "username": { "type": "string" },
-          "password": { "type": "string" }
+          "username": {
+            "type": "string",
+            "description": "User's login name",
+            "example": "johndoe"
+          },
+          "password": {
+            "type": "string",
+            "description": "User's password",
+            "example": "securePassword123"
+          }
         }
       },
       "RegisterRequest": {
@@ -290,16 +408,13 @@
       "LoginFailureResponse": {
         "type": "object",
         "properties": {
-          "error": { "type": "string" },
-          "remainingAttempts": { "type": "integer" },
-          "lockoutTime": { "type": "string", "nullable": true }
+          "error": { "type": "string" }
         }
       },
       "RateLimitResponse": {
         "type": "object",
         "properties": {
-          "error": { "type": "string" },
-          "retryAfter": { "type": "integer" }
+          "error": { "type": "string" }
         }
       },
       "LessonTitle": {
@@ -697,8 +812,10 @@
             "name": "courseId",
             "in": "path",
             "required": true,
+            "description": "Unique identifier of the course to retrieve",
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "example": 1
             }
           }
         ],
@@ -730,8 +847,10 @@
             "name": "courseId",
             "in": "path",
             "required": true,
+            "description": "ID of the course to enroll in",
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "example": 1
             }
           }
         ],
@@ -779,8 +898,10 @@
             "name": "userId",
             "in": "path",
             "required": true,
+            "description": "ID of the user whose enrollments to retrieve",
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "example": 1
             }
           }
         ],
@@ -869,8 +990,10 @@
             "name": "courseId",
             "in": "path",
             "required": true,
+            "description": "ID of the course to get lessons from",
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "example": 1
             }
           }
         ],
@@ -1264,16 +1387,20 @@
             "name": "courseId",
             "in": "path",
             "required": true,
+            "description": "Course ID",
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "example": 1
             }
           },
           {
             "name": "lessonId",
             "in": "path",
             "required": true,
+            "description": "Lesson ID",
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "example": 1
             }
           }
         ],
@@ -1312,7 +1439,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "example": 1
             }
           }
         ],
@@ -1352,7 +1480,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "example": 1
             }
           }
         ],
@@ -1404,7 +1533,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "example": 1
             }
           }
         ],
@@ -1497,7 +1627,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "example": 1
             }
           }
         ],
@@ -1570,7 +1701,7 @@
             "name": "courseId",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer" }
+            "schema": { "type": "integer", "example": 1 }
           }
         ],
         "responses": {
@@ -1603,7 +1734,7 @@
             "name": "courseId",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer" }
+            "schema": { "type": "integer", "example": 1 }
           }
         ],
         "responses": {
@@ -1636,7 +1767,7 @@
             "name": "courseId",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer" }
+            "schema": { "type": "integer", "example": 1 }
           }
         ],
         "requestBody": {
@@ -1673,7 +1804,7 @@
             "name": "courseId",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer" }
+            "schema": { "type": "integer", "example": 1 }
           }
         ],
         "responses": {
@@ -1727,10 +1858,11 @@
             "name": "certificateId",
             "in": "path",
             "required": true,
+            "description": "UUID of the certificate to retrieve",
             "schema": {
-              "type": "string"
-            },
-            "description": "Certificate UUID"
+              "type": "string",
+              "example": "550e8400-e29b-41d4-a716-446655440000"
+            }
           }
         ],
         "responses": {
@@ -1760,7 +1892,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "example": 1
             }
           }
         ],
@@ -1806,8 +1939,10 @@
             "name": "userId",
             "in": "path",
             "required": true,
+            "description": "ID of the user whose funds to retrieve",
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "example": 1
             }
           }
         ],
@@ -1844,7 +1979,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "example": 1
             }
           }
         ],
@@ -1904,7 +2040,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "example": 1
             }
           }
         ],
@@ -1953,30 +2090,49 @@
           {
             "name": "query",
             "in": "query",
-            "schema": { "type": "string" }
+            "description": "Search term to filter courses by title or description",
+            "schema": {
+              "type": "string",
+              "example": "javascript"
+            }
           },
           {
             "name": "level",
             "in": "query",
-            "schema": { "type": "string" }
+            "description": "Filter courses by difficulty level",
+            "schema": {
+              "type": "string",
+              "enum": ["beginner", "intermediate", "advanced"],
+              "example": "intermediate"
+            }
           },
           {
             "name": "tags",
             "in": "query",
+            "description": "Filter courses by tags",
             "schema": {
               "type": "array",
-              "items": { "type": "string" }
+              "items": { "type": "string" },
+              "example": ["web", "javascript"]
             }
           },
           {
             "name": "priceMin",
             "in": "query",
-            "schema": { "type": "number" }
+            "description": "Minimum price filter",
+            "schema": {
+              "type": "number",
+              "example": 0
+            }
           },
           {
             "name": "priceMax",
             "in": "query",
-            "schema": { "type": "number" }
+            "description": "Maximum price filter",
+            "schema": {
+              "type": "number",
+              "example": 100
+            }
           }
         ],
         "responses": {
@@ -2022,12 +2178,22 @@
           {
             "name": "courseId",
             "in": "query",
-            "schema": { "type": "string" }
+            "description": "Filter analytics by specific course",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
           },
           {
             "name": "timeRange",
             "in": "query",
-            "schema": { "type": "integer" }
+            "description": "Time range in days for analytics data",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 365,
+              "example": 30
+            }
           }
         ],
         "responses": {
@@ -2148,7 +2314,7 @@
             "name": "userId",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer" }
+            "schema": { "type": "integer", "example": 1 }
           }
         ],
         "requestBody": {
@@ -2193,13 +2359,13 @@
             "name": "courseId",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer" }
+            "schema": { "type": "integer", "example": 1 }
           },
           {
             "name": "lessonId",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer" }
+            "schema": { "type": "integer", "example": 1 }
           }
         ],
         "requestBody": {
@@ -2220,8 +2386,8 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": { "type": "boolean" },
-                    "message": { "type": "string" }
+                    "success": { "type": "boolean", "example": true },
+                    "message": { "type": "string", "example": "Lesson updated successfully" }
                   }
                 }
               }
@@ -2241,8 +2407,9 @@
           {
             "name": "instructorId",
             "in": "path",
+            "description": "Instructor ID",
             "required": true,
-            "schema": { "type": "integer" }
+            "schema": { "type": "integer", "example": 2 }
           }
         ],
         "responses": {
@@ -2274,8 +2441,9 @@
           {
             "name": "instructorId",
             "in": "path",
+            "description": "Instructor ID",
             "required": true,
-            "schema": { "type": "integer" }
+            "schema": { "type": "integer", "example": 2 }
           }
         ],
         "responses": {
@@ -2303,8 +2471,9 @@
           {
             "name": "instructorId",
             "in": "path",
+            "description": "Instructor ID",
             "required": true,
-            "schema": { "type": "integer" }
+            "schema": { "type": "integer", "example": 2 }
           }
         ],
         "responses": {
@@ -2336,7 +2505,7 @@
             "name": "userId",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer" }
+            "schema": { "type": "integer", "example": 1 }
           }
         ],
         "requestBody": {
@@ -2379,7 +2548,7 @@
     },
     "/learning/health": {
       "get": {
-        "tags": ["System"],
+        "tags": ["Admin"],
         "summary": "Get API health status",
         "responses": {
           "200": {
@@ -2410,7 +2579,7 @@
     },
     "/learning/metrics": {
       "get": {
-        "tags": ["System"],
+        "tags": ["Admin"],
         "summary": "Get API metrics",
         "security": [{ "bearerAuth": [] }],
         "responses": {
@@ -2494,7 +2663,12 @@
             "name": "table",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "description": "Name of the database table to query",
+            "schema": {
+              "type": "string",
+              "example": "users",
+              "enum": ["users", "courses", "enrollments", "lessons"]
+            }
           }
         ],
         "responses": {

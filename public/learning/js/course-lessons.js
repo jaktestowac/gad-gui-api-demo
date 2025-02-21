@@ -39,12 +39,17 @@ function renderLessonsList(lessons) {
 
   if (!lessons || lessons.length === 0) {
     lessonsContainer.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-book-open"></i>
-                <h3>No Lessons Yet</h3>
-                <p>Start adding lessons to your course!</p>
-            </div>
-        `;
+      <div class="empty-state">
+        <i class="fas fa-chalkboard-teacher fa-4x"></i>
+        <h3>Ready to Add Lessons</h3>
+        <p>This course has no lessons yet. Start building your course content!</p>
+        <div class="empty-state-actions">
+          <button class="primary-button" onclick="showAddLessonDialog()">
+            <i class="fas fa-plus"></i> Add First Lesson
+          </button>
+        </div>
+      </div>
+    `;
     return;
   }
 
@@ -128,7 +133,7 @@ function showAddLessonDialog() {
                     </div>
                     <div class="form-group">
                         <label for="lessonDuration">Duration</label>
-                        <input type="text" id="lessonDuration" placeholder="HH:MM:SS">
+                        <input type="text" id="lessonDuration" placeholder="HH:MM:SS" pattern="^([0-9]{2}):([0-5][0-9]):([0-5][0-9])$" value="00:00:00" required> 
                     </div>
                 </div>
                 <div id="dynamicLessonFields">
@@ -160,7 +165,7 @@ function updateLessonFormFields(lessonType) {
       dynamicFields = `
                 <div class="form-group">
                     <label for="lessonVideoUrl">Video URL</label>
-                    <input type="url" id="lessonVideoUrl" required>
+                    <input type="url" id="lessonVideoUrl" required value="https://test.test.test/video1.mp4">
                 </div>
                 <div class="form-group">
                     <label for="lessonTranscript">Transcript</label>
@@ -211,6 +216,25 @@ function updateLessonFormFields(lessonType) {
   }
 
   dynamicFieldsContainer.innerHTML = dynamicFields;
+  const lessonQuestions = dynamicFieldsContainer.querySelector("#lessonQuestions");
+  if (lessonQuestions) {
+    lessonQuestions.value = JSON.stringify(
+      [
+        {
+          question: "What is 2 + 2?",
+          options: ["3", "4", "5", "6"],
+          correctAnswer: 1,
+        },
+        {
+          question: "What is 10 - 5?",
+          options: ["3", "4", "5", "6"],
+          correctAnswer: 2,
+        },
+      ],
+      null,
+      2
+    );
+  }
 }
 
 async function handleAddLesson(event) {
@@ -248,6 +272,7 @@ async function handleAddLesson(event) {
           passingScore: parseInt(document.getElementById("lessonPassingScore").value),
         };
       } catch (e) {
+        console.log(e);
         showNotification("Invalid quiz questions format", "error");
         return;
       }
@@ -448,30 +473,42 @@ async function handleEditLesson(event, lessonId) {
   }
 }
 
-async function deleteLesson(lessonId) {
-  const confirmed = await confirmDialog.show({
-    title: "Delete Lesson",
-    message: "Are you sure you want to delete this lesson? This action cannot be undone.",
-    confirmText: "Delete",
-    cancelText: "Cancel",
-    confirmButtonClass: "danger",
-    showCloseButton: true,
-  });
-
-  if (!confirmed) return;
-
+async function deleteLesson(courseId, lessonId) {
   try {
-    const urlParams = new URLSearchParams(window.location.search);
-    const courseId = urlParams.get("courseId");
+    const confirmed = await confirmDialog.show({
+      title: "Delete Lesson",
+      message: "Are you sure you want to delete this lesson? This action cannot be undone.",
+      confirmText: "Delete Lesson",
+      cancelText: "Cancel",
+      confirmButtonClass: "danger-button",
+      icon: "fa-trash",
+      showCloseButton: true,
+    });
 
-    const response = await api.deleteLesson(courseId, lessonId);
-    if (response.success) {
-      showNotification("Lesson deleted successfully", "success");
-      loadCourseLessons();
+    if (!confirmed) {
+      return;
     }
+
+    const loadingNotification = showNotification("Deleting lesson...", "info", false);
+    const response = await api.deleteLesson(courseId, lessonId);
+
+    loadingNotification.remove();
+
+    if (!response.success) {
+      throw new Error(response.message || "Failed to delete lesson");
+    }
+
+    showNotification("Lesson deleted successfully", "success");
+    await loadCourseLessons();
   } catch (error) {
-    console.error("Failed to delete lesson:", error);
-    showNotification("Failed to delete lesson", "error");
+    console.error("Error deleting lesson:", {
+      courseId,
+      lessonId,
+      error: error.message,
+      stack: error.stack,
+    });
+
+    showNotification(`Failed to delete lesson: ${error.message || "Unknown error"}`, "error");
   }
 }
 

@@ -77,32 +77,45 @@ async function renderLearningProgress() {
 
             <h3>Course Progress</h3>
             <div class="course-progress-list">
-                ${enrolledCourses
-                  .map(
-                    (enrollment) => `
-                    <div class="course-progress-item">
-                        <div class="course-progress-header">
-                            <h4>${enrollment.title}</h4>
-                            <span>${enrollment.progress}%</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress" style="width: ${enrollment.progress}%"></div>
-                        </div>
-                        <div class="course-progress-footer">
-                            <div>
-                                <span>${enrollment.completed ? "Completed" : "In Progress"}</span>
-                                <span>Last accessed: ${new Date(enrollment.lastAccessed).toLocaleDateString()}</span>
-                            </div>
-                            <button class="primary-button-small" onclick="window.location.href='/learning/course-viewer.html?id=${
-                              enrollment.courseId
-                            }'">
-                                <i class="fas fa-arrow-right"></i> Visit
-                            </button>
-                        </div>
+                ${
+                  enrolledCourses.length === 0
+                    ? `
+                    <div class="empty-state">
+                        <i class="fas fa-books fa-3x"></i>
+                        <h3>No Courses Yet</h3>
+                        <p>You haven't enrolled in any courses yet.</p>
+                        <a href="/learning/dashboard.html" class="primary-button">Browse Courses</a>
                     </div>
-                `
-                  )
-                  .join("")}
+                    `
+                    : enrolledCourses
+                        .map(
+                          (enrollment) => `
+                          <div class="course-progress-item">
+                              <div class="course-progress-header">
+                                  <h4>${enrollment.title}</h4>
+                                  <span>${enrollment.progress}%</span>
+                              </div>
+                              <div class="progress-bar">
+                                  <div class="progress" style="width: ${enrollment.progress}%"></div>
+                              </div>
+                              <div class="course-progress-footer">
+                                  <div>
+                                      <span>${enrollment.completed ? "Completed" : "In Progress"}</span>
+                                      <span>Last accessed: ${new Date(
+                                        enrollment.lastAccessed
+                                      ).toLocaleDateString()}</span>
+                                  </div>
+                                  <button class="primary-button-small" onclick="window.location.href='/learning/course-viewer.html?id=${
+                                    enrollment.courseId
+                                  }'">
+                                      <i class="fas fa-arrow-right"></i> Visit
+                                  </button>
+                              </div>
+                          </div>
+                      `
+                        )
+                        .join("")
+                }
             </div>
         `;
 

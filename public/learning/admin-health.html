@@ -34,8 +34,9 @@
         }
 
         .status-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            display: flex;
+            flex-wrap: wrap;
+            overflow-wrap: break-word;
             gap: 12px;
             margin-bottom: 16px;
         }
@@ -46,6 +47,7 @@
             border-radius: 6px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
             border: 1px solid rgba(0, 0, 0, 0.05);
+            min-width: 150px;
         }
 
         .status-card:hover {
@@ -190,19 +192,6 @@
             .endpoint-table {
                 display: block;
                 overflow-x: auto;
-            }
-        }
-
-        .dashboard-container {
-            display: grid;
-            grid-template-columns: auto 1fr;
-            gap: 16px;
-            margin: 0 16px;
-        }
-
-        @media (max-width: 1024px) {
-            .dashboard-container {
-                grid-template-columns: 1fr;
             }
         }
 

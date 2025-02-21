@@ -7,21 +7,24 @@ function updateAuthButtons() {
 
   const isAuthenticated = isLoggedIn();
   requirementsButtons.innerHTML = `
-  <a href="test-requirements.html" class="requirements-button">
-      <i class="fas fa-tasks"></i>
-      View Test Requirements
-  </a>
-`;
+        <a href="test-requirements.html" class="requirements-button">
+            <i class="fas fa-tasks"></i>
+            View Test Requirements
+        </a>
+    `;
+
   if (isAuthenticated) {
+    const avatarUrl = getCookie("learning_user_avatar") || "/data/images/default-avatar.png";
     authButtons.innerHTML = `
             <a href="dashboard.html" class="cta-button primary" name="dashboard" aria-label="Dashboard">
                 <i class="fas fa-columns"></i>
                 Go to Dashboard
             </a>
         `;
-    welcomeMessage.innerHTML = `<i class="fas fa-user"></i> Welcome back, ${getCookie(
-      "learning_first_name"
-    )} ${getCookie("learning_last_name")}!`;
+    welcomeMessage.innerHTML = `
+            <span>Welcome back, ${getCookie("learning_first_name")} ${getCookie("learning_last_name")}!</span>
+            <img src="${avatarUrl}" alt="User Avatar" class="welcome-avatar" >
+        `;
   } else {
     authButtons.innerHTML = `
             <a href="dashboard.html" class="cta-button primary" name="demo" aria-label="Demo">

@@ -166,30 +166,75 @@
 .empty-state {
   text-align: center;
   padding: 4rem 2rem;
-  background: linear-gradient(to bottom right, #f8fafc, #f1f5f9);
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   border-radius: 20px;
   border: 2px dashed #e2e8f0;
-  margin: 2rem 0;
 }
 
 .empty-state i {
-  font-size: 3.5rem;
-  background: linear-gradient(120deg, #4f46e5, #7c3aed);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #4f46e5;
   margin-bottom: 1.5rem;
+  opacity: 0.8;
 }
 
 .empty-state h3 {
   color: #1e293b;
-  margin-bottom: 0.75rem;
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   font-weight: 600;
+  margin-bottom: 1rem;
 }
 
 .empty-state p {
   color: #64748b;
+  font-size: 1.1rem;
+  max-width: 400px;
+  margin: 0 auto 2rem;
+}
+
+.empty-state-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.empty-state-actions .primary-button,
+.empty-state-actions .secondary-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
   font-size: 1rem;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.empty-state-actions .secondary-button {
+  background: #fff;
+  color: #4f46e5;
+  border: 1px solid #e2e8f0;
+}
+
+.empty-state-actions .secondary-button:hover {
+  border-color: #4f46e5;
+  background: #f8fafc;
+}
+
+@media (max-width: 640px) {
+  .empty-state {
+    padding: 3rem 1rem;
+  }
+
+  .empty-state-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .empty-state-actions .primary-button,
+  .empty-state-actions .secondary-button {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 /* Modal improvements */
@@ -212,6 +257,44 @@
   color: #0f172a;
   margin-bottom: 1.5rem;
   font-weight: 600;
+}
+
+.confirmation-dialog .modal-content {
+  max-width: 400px;
+  padding: 1.5rem;
+}
+
+.confirm-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.confirm-header i {
+  color: #dc3545;
+  font-size: 1.5rem;
+}
+
+.confirm-header h3 {
+  margin: 0;
+  color: #dc3545;
+}
+
+.confirm-body {
+  margin-bottom: 1.5rem;
+}
+
+.confirm-body .warning-text {
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
 }
 
 .form-group {

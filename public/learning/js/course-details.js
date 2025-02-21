@@ -47,13 +47,18 @@ async function renderCourseDetails() {
     const isInstructor = course.instructorId == userId;
 
     courseContent.innerHTML = `
-            <div class="course-header">
+            <div class="course-header ${course.price === 0 ? "free-course" : ""}">
                 <div align="center" id="courseHeaderImage">
                   <img src="${course.thumbnail}" alt="${course.title}" class="course-banner">
                 </div>
                 <div class="course-info">
                     <div align="center">
                       <h1>${course.title}</h1>
+                      ${
+                        course.price === 0
+                          ? '<div class="free-course-tag"><i class="fas fa-gift"></i> Free Course</div>'
+                          : `<div class="price-tag">$${course.price}</div>`
+                      }
                     </div>
                     <p class="course-description">${course.description}</p>
                     <div class="course-meta">
@@ -70,6 +75,11 @@ async function renderCourseDetails() {
                     <div class="course-stats">
                         <span><i class="fas fa-users"></i> ${course.students} student(s) enrolled</span>
                         <span><i class="fas fa-star"></i> ${course.rating} rating</span>
+                        ${
+                          course.price === 0
+                            ? '<span class="free-tag"><i class="fas fa-gift"></i> Free Course</span>'
+                            : ""
+                        }
                     </div>
                     ${
                       isInstructor
@@ -91,7 +101,11 @@ async function renderCourseDetails() {
                         `
                         : `
                         <button onclick="enrollCourse(${courseId})" class="enroll-button">
-                            Enroll Now - $${course.price}
+                            ${
+                              course.price === 0
+                                ? '<i class="fas fa-gift"></i> Enroll Free'
+                                : `Enroll Now - $${course.price}`
+                            }
                         </button>
                         `
                     }
@@ -145,7 +159,8 @@ async function enrollCourse(courseId) {
       }, 1000);
     }
   } catch (error) {
-    button.innerHTML = "Enroll Now";
+    const course = await api.getCourseById(courseId);
+    button.innerHTML = course.price === 0 ? "Enroll Now - Free" : `Enroll Now - $${course.price}`;
     button.disabled = false;
     await confirmDialog.show({
       title: "Enrollment Failed",

@@ -135,6 +135,15 @@ class DataProxy {
       // Reset file data
       this.saveData(mockData);
       this.initInnerProxy();
+      // create { key: number } object where key is root key and number is number of items in the collection
+      const collections = Object.keys(mockData).reduce((acc, key) => {
+        if (Array.isArray(mockData[key])) {
+          acc[key] = mockData[key].length;
+        }
+        return acc;
+      }, {});
+
+      return { success: true, collections };
     } catch (error) {
       console.error("Error restoring data:", error);
       throw new Error("Failed to restore database");

@@ -29,19 +29,46 @@
             <div id="guestBanner"></div>
             <div class="dashboard-header">
                 <h2>Available Courses</h2>
-                <div class="search-container">
-                    <input type="text" id="courseSearch" placeholder="Search courses..." aria-label="Search courses" title="Search courses">
-                    <i class="fas fa-search"></i>
+                <div class="header-controls">
+                    <div class="sort-container">
+                        <select id="courseSort" class="course-sort-select">
+                            <option value="default">Default</option>
+                            <option value="duration">Duration</option>
+                            <option value="students">Popular</option>
+                            <option value="rating">Top Rated</option>
+                        </select>
+                    </div>
+                    <div class="search-container">
+                        <input type="text" id="courseSearch" placeholder="Search courses..." aria-label="Search courses" title="Search courses">
+                        <i class="fas fa-search"></i>
+                    </div>
                 </div>
             </div>
-            <div id="courseTags" class="course-tags-filter">
-                <div class="tags-header">
-                    <h3><i class="fas fa-tags"></i> Filter by Tags</h3>
-                    <button id="clearTags" class="clear-tags-btn" style="display: none;">
-                        <i class="fas fa-times"></i> Clear
-                    </button>
+            <div class="filters-container">
+                <div id="courseTags" class="course-tags-filter">
+                    <div class="tags-header">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <h3><i class="fas fa-tags"></i> Filter by Tags</h3>
+                            <select id="tagSort" class="tag-sort-select">
+                                <option value="alphabetical">A-Z</option>
+                                <option value="popularity">Most Popular</option>
+                            </select>
+                        </div>
+                        <button id="clearTags" class="clear-tags-btn" style="display: none;">
+                            <i class="fas fa-times"></i> Clear
+                        </button>
+                    </div>
+                    <div id="tagsList" class="tags-list"></div>
                 </div>
-                <div id="tagsList" class="tags-list"></div>
+                <div id="courseLevels" class="course-levels-filter">
+                    <div class="levels-header">
+                        <h3><i class="fas fa-signal"></i> Filter by Level</h3>
+                        <button id="clearLevels" class="clear-levels-btn" style="display: none;">
+                            <i class="fas fa-times"></i> Clear
+                        </button>
+                    </div>
+                    <div id="levelsList" class="levels-list"></div>
+                </div>
             </div>
             <div id="courseList" class="course-cards"></div>
         </div>

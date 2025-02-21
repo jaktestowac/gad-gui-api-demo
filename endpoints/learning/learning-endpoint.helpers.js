@@ -8,10 +8,12 @@ const {
 } = require("../../helpers/response.helpers");
 const { formatErrorResponse, generateUuid } = require("../../helpers/helpers");
 const { createToken } = require("../../helpers/jwtauth");
-const { logTrace, logDebug } = require("../../helpers/logger-api");
+const { logTrace, logDebug, logError } = require("../../helpers/logger-api");
 const { verifyAccessToken } = require("../../helpers/validation.helpers");
 const { areIdsEqual } = require("../../helpers/compare.helpers");
 const dataProvider = require("./learning-data.provider");
+
+const maxDataPoints = 60;
 
 const startTime = Date.now();
 const metrics = {
@@ -19,52 +21,50 @@ const metrics = {
   errors: 0,
   errorsPerMinute: {
     data: [], // Will store {timestamp: number, value: number} pairs
-    maxDataPoints: 60,
+    maxDataPoints: maxDataPoints,
   },
   endpoints: {},
   requestsPerMinute: {
     data: [], // Will store {timestamp: number, value: number} pairs
-    maxDataPoints: 60,
+    maxDataPoints: maxDataPoints,
   },
 };
 
 function trackRequestPerMinute() {
-  const now = Date.now();
-  const currentMinute = Math.floor(now / 60000) * 60000;
-
-  let currentPoint = metrics.requestsPerMinute.data.find((p) => p.timestamp === currentMinute);
-
-  if (!currentPoint) {
-    currentPoint = { timestamp: currentMinute, value: 0 };
-    metrics.requestsPerMinute.data.push(currentPoint);
-  }
-
-  currentPoint.value++;
-
-  if (metrics.requestsPerMinute.data.length > metrics.requestsPerMinute.maxDataPoints) {
-    metrics.requestsPerMinute.data = metrics.requestsPerMinute.data
-      .sort((a, b) => b.timestamp - a.timestamp)
-      .slice(0, metrics.requestsPerMinute.maxDataPoints);
-  }
+  trackEventsPerMinute(metrics.requestsPerMinute);
 }
 
 function trackErrorPerMinute() {
+  trackEventsPerMinute(metrics.errorsPerMinute);
+}
+
+function trackEventsPerMinute(events) {
   const now = Date.now();
   const currentMinute = Math.floor(now / 60000) * 60000;
-
-  let currentPoint = metrics.errorsPerMinute.data.find((p) => p.timestamp === currentMinute);
+  let currentPoint = events.data.find((p) => p.timestamp === currentMinute);
 
   if (!currentPoint) {
     currentPoint = { timestamp: currentMinute, value: 0 };
-    metrics.errorsPerMinute.data.push(currentPoint);
+    events.data.push(currentPoint);
   }
 
   currentPoint.value++;
 
-  while (metrics.errorsPerMinute.data.length > metrics.errorsPerMinute.maxDataPoints) {
-    metrics.errorsPerMinute.data = metrics.errorsPerMinute.data
-      .sort((a, b) => b.timestamp - a.timestamp)
-      .slice(0, metrics.errorsPerMinute.maxDataPoints);
+  if (events.data.length > events.maxDataPoints) {
+    events.data = events.data.sort((a, b) => b.timestamp - a.timestamp).slice(0, events.maxDataPoints);
+  }
+
+  fillMissingDataPoints(events.data, events.maxDataPoints);
+}
+
+function fillMissingDataPoints(data, maxDataPoints) {
+  const minutes = maxDataPoints;
+  const currentTimestamp = Math.floor(Date.now() / 60000) * 60000;
+  for (let i = 1; i < minutes; i++) {
+    const timestamp = currentTimestamp - i * 60000;
+    if (!data.find((p) => p.timestamp === timestamp)) {
+      data.push({ timestamp, value: 0 });
+    }
   }
 }
 
@@ -85,6 +85,7 @@ function handleLearning(req, res) {
     if (urlParts[1] === "learning" && urlParts[2] === "system") {
       if (req.method === "GET" && urlParts.length === 4 && urlParts[3] === "restore") {
         try {
+          logDebug("Restoring Learning database...");
           const result = dataProvider.restoreDatabase();
           if (result.success) {
             // Recalculate everything after restore
@@ -95,11 +96,18 @@ function handleLearning(req, res) {
             res.status(HTTP_OK).send({
               success: true,
               message: "Database restored successfully",
+              collections: result.collections,
             });
           } else {
+            logError("Failed to restore database", result);
             res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(result.error));
           }
         } catch (error) {
+          logError("Failed to restore database", {
+            route: "handleLearning",
+            error,
+            stack: error.stack,
+          });
           res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Failed to restore database"));
         }
         return;
@@ -1013,7 +1021,11 @@ function handleLearning(req, res) {
               });
               return;
             } catch (error) {
-              logDebug("Analytics error:", error);
+              logError("Analytics error:", {
+                route: "handleLearning",
+                error,
+                stack: error.stack,
+              });
               res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Failed to generate analytics"));
               return;
             }
@@ -1407,68 +1419,12 @@ function handleLearning(req, res) {
           return;
         }
 
-        const { title, type, duration, content } = req.body;
+        let { title, type, duration, content } = req.body;
+
         if (!title || !type || !content) {
+          logDebug("Lesson creation error:", { title, type, content });
           res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Missing required fields (title, type, content)"));
           return;
-        }
-
-        function validateLessonFields(fields) {
-          const allowedFields = ["title", "type", "duration", "content"];
-          const maxLengths = {
-            title: 255,
-            type: 50,
-            duration: 10,
-          };
-
-          const extraFields = Object.keys(fields).filter((field) => !allowedFields.includes(field));
-          if (extraFields.length > 0) {
-            return `Invalid fields: ${extraFields.join(", ")}`;
-          }
-
-          for (const [field, value] of Object.entries(fields)) {
-            if (typeof value === "string" && value.length > maxLengths[field]) {
-              return `Field "${field}" exceeds maximum length of ${maxLengths[field]} characters`;
-            }
-          }
-
-          // Validate content based on lesson type
-          const { type, content } = fields;
-          if (type === "video") {
-            if (!content?.videoUrl?.startsWith("http")) {
-              return `Invalid video URL "${content?.videoUrl}"`;
-            }
-            if (!content?.videoUrl?.length > 255) {
-              return `Video URL exceeds maximum length of 255 characters`;
-            }
-            if (!content?.transcript) {
-              return "Video content must have a transcript";
-            }
-            if (content.transcript.length > 32768) {
-              return "Video content transcript too long (max 32768 characters)";
-            }
-          } else if (type === "reading") {
-            if (!content?.resources) {
-              return "Reading content must have resources";
-            }
-            if (content.resources.length > 100) {
-              return "Too many resources (max 100)";
-            }
-            if (content.text?.length > 32768) {
-              return "Text content too long (max 32768 characters)";
-            }
-          } else if (type === "quiz") {
-            if (!Array.isArray(content) || content.length === 0) {
-              return "Invalid quiz content";
-            }
-            for (const question of content) {
-              if (!question.question || !question.answers || !question.correctAnswer) {
-                return "Invalid quiz question format";
-              }
-            }
-          }
-
-          return null;
         }
 
         const validationError = validateLessonFields({ title, type, duration, content });
@@ -1484,7 +1440,10 @@ function handleLearning(req, res) {
         }
 
         // duration is not required for quizzes
-        if (type !== "quiz" && (!duration || typeof duration !== "number" || duration < 0)) {
+        // check duration format HH:MM:SS
+        const durationFormatCorrect = duration.match(/^([0-9]{2}:){2}[0-9]{2}$/);
+
+        if (type !== "quiz" && (!duration || !durationFormatCorrect)) {
           res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(`Invalid duration "${duration}"`));
           return;
         }
@@ -1497,17 +1456,20 @@ function handleLearning(req, res) {
         }
 
         if (type === "quiz") {
-          if (!Array.isArray(content) || content.length === 0) {
+          let quizContent = content;
+          try {
+            content = JSON.parse(quizContent);
+          } catch (error) {
+            logDebug("Lesson creation error:", { error });
+          }
+
+          if (!Array.isArray(content.questions) || content.questions.length === 0) {
+            logDebug("Lesson creation error:", { content });
             res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Invalid quiz content"));
             return;
           }
 
-          for (const question of content) {
-            if (!question.question || !question.answers || !question.correctAnswer) {
-              res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Invalid quiz question format"));
-              return;
-            }
-          }
+          duration = undefined;
         }
 
         const lessons = dataProvider.getCourseLessons(courseId);
@@ -1521,8 +1483,7 @@ function handleLearning(req, res) {
           content,
         };
 
-        lessons.push(newLesson);
-        dataProvider.setCourseLessons(courseId, lessons);
+        dataProvider.addCourseLesson(courseId, newLesson);
 
         // Recalculate course duration after adding lesson
         recalculateCoursesDuration();
@@ -1742,7 +1703,6 @@ function handleLearning(req, res) {
           content: content || courseLessons[lessonIndex].content,
         };
 
-        // Recalculate course duration after updating lesson
         recalculateCoursesDuration();
 
         res.status(HTTP_OK).send({
@@ -1753,11 +1713,65 @@ function handleLearning(req, res) {
       }
     }
 
+    // DELETE endpoints
+    if (req.method === "DELETE") {
+      // Add instructor lesson delete endpoint
+      // DELETE /learning/instructor/courses/:courseId/lessons/:lessonId
+      if (urlParts[2] === "instructor" && urlParts[3] === "courses" && urlParts[5] === "lessons") {
+        if (!checkIfUserIsAuthenticated(req, res)) {
+          res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not authenticated"));
+          return;
+        }
+
+        const user = dataProvider.getUserByEmail(verifyTokenResult?.email);
+        if (!isInstructor(user)) {
+          res.status(HTTP_FORBIDDEN).send(formatErrorResponse("Must be an instructor"));
+          return;
+        }
+
+        const courseId = parseInt(urlParts[4]);
+        const lessonId = parseInt(urlParts[6]);
+
+        // Verify course ownership
+        if (!canManageCourse(user, courseId)) {
+          res.status(HTTP_FORBIDDEN).send(formatErrorResponse("Not authorized to manage this course"));
+          return;
+        }
+
+        // Find and delete the lesson
+        const courseLessons = dataProvider.getCourseLessons(courseId);
+        if (!courseLessons) {
+          res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Course not found"));
+          return;
+        }
+
+        const lessonIndex = courseLessons.findIndex((lesson) => areIdsEqual(lesson.id, lessonId));
+        if (lessonIndex === -1) {
+          res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Lesson not found"));
+          return;
+        }
+
+        courseLessons.splice(lessonIndex, 1);
+
+        recalculateCoursesDuration();
+
+        res.status(HTTP_OK).send({
+          success: true,
+          message: "Lesson deleted successfully",
+        });
+        return;
+      }
+    }
+
     res.status(HTTP_NOT_FOUND).send(formatErrorResponse(`Endpoint not found for ${req.method} "${req.url}"`));
   } catch (error) {
     metrics.errors++;
     trackErrorPerMinute();
-    logTrace(`Error in handleLearning: ${error.message}`);
+    logError("Error in handleLearning:", {
+      route: "handleLearning",
+      error,
+      stack: error.stack,
+    });
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Internal server error"));
   }
 }
@@ -2003,22 +2017,6 @@ const checkIfUserIdMatchesEmail = (userId, email) => {
   return user && user.email === email;
 };
 
-function recalculateStudentsCount() {
-  dataProvider.getCourses().forEach((course) => {
-    course.students =
-      dataProvider.getAllUserEnrollments().filter((e) => areIdsEqual(e.courseId, course.id)).length || 0;
-  });
-}
-
-function recalculateCoursesRating() {
-  dataProvider.getCourses().forEach((course) => {
-    const ratings = dataProvider.getUserRatingsForCourse(course.id);
-    const totalRating = ratings.reduce((total, rating) => total + rating.rating, 0);
-    // round it to 1 decimal place
-    course.rating = ratings.length > 0 ? Math.round((totalRating / ratings.length) * 10) / 10 : 0;
-  });
-}
-
 function parseDurationToSeconds(duration) {
   if (!duration) {
     return 0;
@@ -2036,19 +2034,6 @@ function roundSecondsToHours(seconds) {
   return Math.round((seconds / 3600) * 10) / 10;
 }
 
-function recalculateCoursesDuration() {
-  dataProvider.getCourses().forEach((course) => {
-    const lessons = dataProvider.getCourseLessons(course.id);
-    const totalDurationInSeconds = lessons.reduce(
-      (total, lesson) => total + parseDurationToSeconds(lesson?.duration),
-      0
-    );
-
-    course.totalHours = roundSecondsToHours(totalDurationInSeconds);
-    course.duration = `${roundSecondsToHours(totalDurationInSeconds)} hour(s)`;
-  });
-}
-
 function checkIfUserIsEnrolled(userId, courseId) {
   return dataProvider.getEnrollment(userId, courseId) !== undefined;
 }
@@ -2063,10 +2048,6 @@ function findUserIdByEmail(email) {
   const user = dataProvider.getUserByEmail(email);
   return user?.id;
 }
-
-recalculateStudentsCount();
-recalculateCoursesRating();
-recalculateCoursesDuration();
 
 function getUserFunds(userId) {
   const user = dataProvider.getUserById(userId);
@@ -2228,6 +2209,11 @@ function checkDatabaseHealth() {
     const users = dataProvider.getUsers();
     return users !== undefined;
   } catch (error) {
+    logError("Error in checkDatabaseHealth:", {
+      route: "handleLearning",
+      error,
+      stack: error.stack,
+    });
     return false;
   }
 }
@@ -2238,9 +2224,114 @@ function verifyAuthServiceHealth() {
     const testToken = createToken({ test: true }, false, true);
     return testToken !== undefined;
   } catch (error) {
+    logError("Error in verifyAuthServiceHealth:", {
+      route: "handleLearning",
+      error,
+      stack: error.stack,
+    });
     return false;
   }
 }
+
+function validateLessonFields(fields) {
+  const allowedFields = ["title", "type", "duration", "content"];
+  const maxLengths = {
+    title: 255,
+    type: 50,
+    duration: 10,
+  };
+
+  const extraFields = Object.keys(fields).filter((field) => !allowedFields.includes(field));
+  if (extraFields.length > 0) {
+    return `Invalid fields: ${extraFields.join(", ")}`;
+  }
+
+  for (const [field, value] of Object.entries(fields)) {
+    if (typeof value === "string" && value.length > maxLengths[field]) {
+      return `Field "${field}" exceeds maximum length of ${maxLengths[field]} characters`;
+    }
+  }
+
+  // Validate content based on lesson type
+  const { type, content } = fields;
+  if (type === "video") {
+    if (!content?.videoUrl?.startsWith("http")) {
+      return `Invalid video URL "${content?.videoUrl}"`;
+    }
+    if (!content?.videoUrl?.length > 255) {
+      return `Video URL exceeds maximum length of 255 characters`;
+    }
+    if (!content?.transcript) {
+      return "Video content must have a transcript";
+    }
+    if (content.transcript.length > 32768) {
+      return "Video content transcript too long (max 32768 characters)";
+    }
+  } else if (type === "reading") {
+    if (!content?.resources) {
+      return "Reading content must have resources";
+    }
+    if (content.resources.length > 100) {
+      return "Too many resources (max 100)";
+    }
+    if (content.text?.length > 32768) {
+      return "Text content too long (max 32768 characters)";
+    }
+  } else if (type === "quiz") {
+    let quizContent = content;
+    try {
+      quizContent = JSON.parse(content);
+    } catch (error) {
+      logDebug("Lesson creation error:", { error });
+    }
+
+    if (!Array.isArray(quizContent.questions) || quizContent.questions.length === 0) {
+      logDebug("Quiz creation error:", { quizContent });
+      return "Invalid quiz content";
+    }
+    for (const question of quizContent.questions) {
+      if (!question || !question.options || question.correctAnswer === undefined) {
+        logDebug("Quiz question creation error:", question);
+        return "Invalid quiz question format";
+      }
+    }
+  }
+
+  return null;
+}
+
+function recalculateStudentsCount() {
+  dataProvider.getCourses().forEach((course) => {
+    course.students =
+      dataProvider.getAllUserEnrollments().filter((e) => areIdsEqual(e.courseId, course.id)).length || 0;
+  });
+}
+
+function recalculateCoursesRating() {
+  dataProvider.getCourses().forEach((course) => {
+    const ratings = dataProvider.getUserRatingsForCourse(course.id);
+    const totalRating = ratings.reduce((total, rating) => total + rating.rating, 0);
+    // round it to 1 decimal place
+    course.rating = ratings.length > 0 ? Math.round((totalRating / ratings.length) * 10) / 10 : 0;
+  });
+}
+
+function recalculateCoursesDuration() {
+  dataProvider.getCourses().forEach((course) => {
+    const lessons = dataProvider.getCourseLessons(course.id);
+    const totalDurationInSeconds = lessons.reduce(
+      (total, lesson) => total + parseDurationToSeconds(lesson?.duration),
+      0
+    );
+
+    course.totalHours = roundSecondsToHours(totalDurationInSeconds);
+    course.duration = `${roundSecondsToHours(totalDurationInSeconds)} hour(s)`;
+  });
+}
+
+recalculateStudentsCount();
+recalculateCoursesRating();
+recalculateCoursesDuration();
 
 module.exports = {
   handleLearning,

@@ -71,6 +71,10 @@ function setCourseLessons(courseId, lessons) {
   data.courseLessons[courseId] = lessons;
 }
 
+function addCourseLesson(courseId, lesson) {
+  data.courseLessons[courseId].push(lesson);
+}
+
 function getLessonProgress(userId, courseId) {
   return data.lessonProgress.filter(
     (p) => areIdsEqual(p.userId, userId) && areIdsEqual(p.courseId, courseId) && !isInactive(p)
@@ -261,8 +265,8 @@ function addUserEnrollment(enrollment) {
 
 function restoreDatabase() {
   try {
-    dataProxy.restoreToDefault();
-    return { success: true };
+    const result = dataProxy.restoreToDefault();
+    return result;
   } catch (error) {
     return { success: false, error: error.message };
   }
@@ -289,6 +293,7 @@ module.exports = {
   getCertificates,
   getCourseLessons,
   setCourseLessons,
+  addCourseLesson,
   getLessonProgress,
   getCertificate,
   getUserCertificates,

@@ -278,14 +278,35 @@ class ApiService {
   }
 
   async deleteLesson(courseId, lessonId) {
-    const response = await fetch(`${this.baseUrl}/instructor/courses/${courseId}/lessons/${lessonId}`, {
-      method: "DELETE",
-      headers: this.getDefaultHeaders(),
-    });
-    if (!response.ok) {
-      throw new Error("Failed to delete lesson");
+    try {
+      const response = await fetch(`${this.baseUrl}/instructor/courses/${courseId}/lessons/${lessonId}`, {
+        method: "DELETE",
+        headers: this.getDefaultHeaders(),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || `Server returned ${response.status}: ${data.error || "Unknown error"}`);
+      }
+
+      if (!data.success) {
+        throw new Error(data.message || "Server indicated failure but provided no message");
+      }
+
+      return {
+        success: true,
+        message: data.message || "Lesson deleted successfully",
+      };
+    } catch (error) {
+      console.error("API Error - Delete Lesson:", {
+        courseId,
+        lessonId,
+        error: error.message,
+        stack: error.stack,
+      });
+      throw new Error(error.message || "Network error while deleting lesson");
     }
-    return response.json();
   }
 
   // Progress methods

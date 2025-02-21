@@ -157,12 +157,23 @@ function setupCharts() {
             const pointTime = new Date(dataPoint.raw.timestamp);
             const secondsAgo = Math.floor((currentTime - pointTime) / 1000);
 
+            const formatTimeAgo = (seconds) => {
+              // format time ago  
+              const hours = Math.floor(seconds / 3600);
+              const minutes = Math.floor((seconds % 3600) / 60);
+              const remainingSeconds = seconds % 60;
+
+              if (hours > 0) return `${hours}h ${minutes}m`;
+              if (minutes > 0) return `${minutes}m ${remainingSeconds}s`;
+              return `${remainingSeconds}s`;
+            };
+
             if (secondsAgo === 0) {
               return `${dataPoint.raw.x} (Just now)`;
             } else if (secondsAgo === 1) {
               return `${dataPoint.raw.x} (1 second ago)`;
             } else {
-              return `${dataPoint.raw.x} (${secondsAgo} seconds ago)`;
+              return `${dataPoint.raw.x} (${formatTimeAgo(secondsAgo)} ago)`;
             }
           },
           label: (context) => {
@@ -273,7 +284,6 @@ function updateCharts(metrics) {
     second: "2-digit",
   });
 
-  // Clear and update requests chart
   requestsChart.data.labels = [];
   requestsChart.data.datasets[0].data = [];
 
@@ -296,7 +306,6 @@ function updateCharts(metrics) {
       });
     });
 
-  // Clear and update error rate chart
   errorRateChart.data.labels = [];
   errorRateChart.data.datasets[0].data = [];
 
@@ -319,7 +328,6 @@ function updateCharts(metrics) {
       });
     });
 
-  // Update both charts
   requestsChart.update("active");
   errorRateChart.update("active");
 }
