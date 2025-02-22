@@ -35,12 +35,16 @@
             gap: 8px;
             padding: 10px 20px;
             background: var(--primary-color);
-            color: white;
+            color: white !important;
             border: none;
             border-radius: 6px;
             cursor: pointer;
             text-decoration: none;
             transition: background-color 0.3s;
+        }
+
+        .return-button i {
+            color: white;
         }
 
         .return-button:hover {
@@ -150,6 +154,49 @@
             opacity: 1;
             visibility: visible;
         }
+
+        .filter-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .filter-button {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .filter-button.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .filter-button:hover:not(.active) {
+            background: #f5f5f5;
+            border-color: #ccc;
+        }
+
+        .filter-button .count {
+            background: rgba(0, 0, 0, 0.1);
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 6px;
+            font-size: 12px;
+        }
+
+        .filter-button.active .count {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .requirement-card.hidden {
+            display: none;
+        }
     </style>
 </head>
 
@@ -165,9 +212,16 @@
         <div class="page-header">
             <h2>Learning Platform Test Requirements</h2>
             <a href="welcome.html" class="return-button">
-                <i class="fas fa-arrow-left"></i>
+                <i class="fa-solid fa-arrow-left"></i>
                 Return to Welcome
             </a>
+        </div>
+
+        <div class="filter-controls">
+            <button class="filter-button active" data-priority="all">All Requirements <span class="count">0</span></button>
+            <button class="filter-button" data-priority="high">High Priority <span class="count">0</span></button>
+            <button class="filter-button" data-priority="medium">Medium Priority <span class="count">0</span></button>
+            <button class="filter-button" data-priority="low">Low Priority <span class="count">0</span></button>
         </div>
 
         <div class="requirement-card">
@@ -517,7 +571,7 @@
             </ul>
         </div>
 
-    </div> 
+    </div>
 
     <button class="mobile-menu-button" aria-label="Open menu">
         <i class="fas fa-bars"></i>
@@ -548,6 +602,47 @@
             window.scrollTo({
                 top: 0,
                 behavior: 'smooth'
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const filterButtons = document.querySelectorAll('.filter-button');
+            const requirements = document.querySelectorAll('.requirement-card');
+
+            // Calculate and display counts
+            const counts = {
+                all: requirements.length,
+                high: 0,
+                medium: 0,
+                low: 0
+            };
+
+            requirements.forEach(req => {
+                const priority = req.querySelector('.priority').textContent
+                    .toLowerCase().replace(' priority', '');
+                counts[priority]++;
+            });
+
+            filterButtons.forEach(button => {
+                const priority = button.dataset.priority;
+                button.querySelector('.count').textContent = counts[priority];
+
+                button.addEventListener('click', () => {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+
+                    const priority = button.dataset.priority;
+
+                    requirements.forEach(req => {
+                        if (priority === 'all') {
+                            req.classList.remove('hidden');
+                        } else {
+                            const reqPriority = req.querySelector('.priority').textContent
+                                .toLowerCase().replace(' priority', '');
+                            req.classList.toggle('hidden', reqPriority !== priority);
+                        }
+                    });
+                });
             });
         });
     </script>
