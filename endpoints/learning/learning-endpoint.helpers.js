@@ -728,6 +728,8 @@ function handleLearning(req, res) {
             userInfo: {
               name: `${user.firstName} ${user.lastName}`,
               avatar: user.avatar,
+              id: user.id,
+              isPublic: user.isPublic,
             },
           };
         });
@@ -843,6 +845,62 @@ function handleLearning(req, res) {
         } else {
           res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Instructor not found"));
         }
+        return;
+      }
+
+      // GET /api/learning/public/users/:userId
+      if (urlParts[2] === "public" && urlParts[3] === "users" && urlParts.length === 5) {
+        const userId = parseInt(urlParts[4]);
+        const user = dataProvider.getUserById(userId);
+
+        if (!user || user.isPublic !== true) {
+          res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Profile not found or is private"));
+          return;
+        }
+
+        const userEnrollments = dataProvider.getUserEnrollments(userId);
+        const userCertificates = dataProvider.getUserCertificates(userId);
+        const userRatings = dataProvider.getUserRatings().filter((r) => r.userId === userId);
+
+        const userEnrollmentsBasicData = userEnrollments.map((enrollment) => {
+          const course = dataProvider.getCourseById(enrollment.courseId);
+          return {
+            courseId: enrollment.courseId,
+            courseTitle: course.title,
+            progress: enrollment.progress,
+          };
+        });
+
+        const userCertificatesBasicData = userCertificates.map((certificate) => {
+          const course = dataProvider.getCourseById(certificate.courseId);
+          return {
+            courseId: certificate.courseId,
+            courseTitle: course.title,
+            issueDate: certificate.issueDate,
+          };
+        });
+
+        const userRatingsBasicData = userRatings.map((rating) => {
+          const course = dataProvider.getCourseById(rating.courseId);
+          return {
+            courseId: rating.courseId,
+            courseTitle: course.title,
+            rating: rating.rating,
+          };
+        });
+
+        const { firstName, lastName, avatar, joinDate, role } = user;
+        res.status(HTTP_OK).send({
+          id: userId,
+          firstName,
+          lastName,
+          avatar,
+          joinDate,
+          role,
+          enrollments: userEnrollmentsBasicData,
+          certificates: userCertificatesBasicData,
+          ratings: userRatingsBasicData,
+        });
         return;
       }
     }
@@ -1512,7 +1570,7 @@ function handleLearning(req, res) {
           return;
         }
 
-        const { firstName, lastName, email, currentPassword } = req.body;
+        const { firstName, lastName, email, currentPassword, isPublic } = req.body;
         const user = dataProvider.getUserById(userId);
 
         if (!user) {
@@ -1535,6 +1593,9 @@ function handleLearning(req, res) {
         if (firstName) user.firstName = firstName;
         if (lastName) user.lastName = lastName;
         if (email) user.email = email;
+        if (typeof isPublic === "boolean") user.isPublic = isPublic;
+
+        dataProvider.replaceUser(userId, user);
 
         res.status(HTTP_OK).send({
           success: true,

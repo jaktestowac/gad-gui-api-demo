@@ -24,9 +24,9 @@ class DataProxy {
   createNestedProxy(obj, path = []) {
     return new Proxy(obj, {
       get: (target, property) => {
-        if (typeof target[property] === "object" && target[property] !== null) {
-          return this.createNestedProxy(target[property], [...path, property]);
-        }
+        // if (typeof target[property] === "object" && target[property] !== null) {
+        //   return this.createNestedProxy(target[property], [...path, property]);
+        // }
         return target[property];
       },
       set: (target, property, value) => {

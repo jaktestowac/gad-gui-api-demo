@@ -51,6 +51,7 @@ const mockData = {
       joinDate: "2023-05-15",
       role: "student",
       funds: 220.02,
+      isPublic: false,
     },
     {
       id: 2,
@@ -62,6 +63,7 @@ const mockData = {
       avatar: "..\\data\\users\\face_1713017346.0038195_m_1.jpg",
       joinDate: "2023-01-15",
       role: "instructor",
+      isPublic: false,
     },
     {
       id: 3,
@@ -73,6 +75,7 @@ const mockData = {
       avatar: "..\\data\\users\\face_1714589705_f.jpg",
       joinDate: "2023-02-15",
       role: "student",
+      isPublic: false,
     },
     {
       id: 4,
@@ -1748,8 +1751,12 @@ const mockData = {
         content: {
           questions: [
             {
-              question: "What is web development?",
-              options: ["Development by machines", "Automated development", "Manual development"],
+              question: "What is Front-end development?",
+              options: [
+                "Development of the user interface",
+                "Development of the server-side logic",
+                "Development of the database",
+              ],
               correct: 0,
             },
             {

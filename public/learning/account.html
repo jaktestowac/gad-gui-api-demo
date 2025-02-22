@@ -34,6 +34,7 @@
                     <li><a href="#balance-section">Balance</a></li>
                     <li><a href="#profile-section">Profile</a></li>
                     <li><a href="#password-section">Password</a></li>
+                    <li><a href="#privacy-section">Privacy</a></li>
                     <li><a href="#deactivation-section">Deactivation</a></li>
                 </ul>
             </nav>
@@ -133,7 +134,41 @@
                         </div>
                     </section>
 
-                    <!-- Deactivation Section -->
+                    <!-- Warning Zone Section -->
+                    <section class="account-section warning-zone" id="privacy-section">
+                        <h3 class="section-title">Privacy Settings</h3>
+                        <div class="warning-box2">
+                            <div class="warning-content">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <div>
+                                    <h4>Profile Visibility</h4>
+                                    <p>Warning: Making your profile public will allow anyone to see your basic profile information</p>
+
+                                    <div class="form-group">
+                                        <label for="profileVisibilityPassword">Current Password</label>
+                                        <input type="password" id="profileVisibilityPassword" name="profileVisibilityPassword" required>
+                                    </div>
+                                    <div class="visibility-controls">
+                                        <button id="isPublicProfile" class="toggle-button compact private">
+                                            <i class="fas fa-lock"></i>
+                                            <span>Make Public</span>
+                                        </button>
+                                        <div class="visibility-status">
+                                            <i class="fas fa-circle-info"></i>
+                                            <span>Current: <strong id="visibilityStatus">Private</strong></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" style="margin-top: 15px;">
+                                        <button id="viewPublicProfile" class="view-profile-button">
+                                            <i class="fas fa-external-link-alt"></i> View Public Profile
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Danger Zone Section -->
                     <section class="account-section danger-zone" id="deactivation-section">
                         <h3 class="section-title">Account Deactivation</h3>
                         <div class="deactivation-box">
@@ -198,4 +233,5 @@
         </div>
     </div>
 </body>
+
 </html>

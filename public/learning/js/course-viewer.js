@@ -836,8 +836,19 @@ class CourseViewer {
               (rating) => `
             <div class="rating-item">
               <div class="rating-user">
-                <img src="${rating.userInfo.avatar}" alt="User avatar" class="user-avatar">
-                <span class="user-name">${rating.userInfo.name}</span>
+                ${
+                  rating.userInfo.isPublic
+                    ? `
+                  <a href="user-profile.html?id=${rating.userInfo.id}" class="rating-user-link">
+                    <img src="${rating.userInfo.avatar}" alt="User avatar" class="user-avatar">
+                    <span class="user-name">${rating.userInfo.name}</span>
+                  </a>
+                `
+                    : `
+                  <img src="${rating.userInfo.avatar}" alt="User avatar" class="user-avatar">
+                  <span class="user-name">${rating.userInfo.name}</span>
+                `
+                }
               </div>
               <div class="rating-content">
                 <div class="stars">

@@ -59,6 +59,7 @@ class ApiService {
         lastName: userData.lastName,
         email: userData.email,
         currentPassword: userData.currentPassword,
+        isPublic: userData.isPublic,
       }),
     });
 
@@ -100,6 +101,28 @@ class ApiService {
     }
 
     return response.json();
+  }
+
+  async getPublicUserProfile(userId) {
+    try {
+      const response = await fetch(`/api/learning/public/users/${userId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getCookie("learning_access_token")}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (data.error) {
+        return data.error;
+      }
+      return data;
+    } catch (error) {
+      console.error("API Error:", error);
+      throw error;
+    }
   }
 
   // Course methods

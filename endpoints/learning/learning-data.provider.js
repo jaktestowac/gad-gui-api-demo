@@ -197,6 +197,26 @@ function updateUserRole(userId, role) {
   return false;
 }
 
+function updateUser(userId, userData) {
+  const user = getUserById(userId);
+  if (user) {
+    // TODO: fix updating user data
+    for (const key in userData) {
+      user[key] = userData[key];
+    }
+    return true;
+  }
+  return false;
+}
+
+function replaceUser(userId, newUser) {
+  const userIndex = data.users.findIndex((u) => areIdsEqual(u.id, userId));
+  if (userIndex === -1) return false;
+
+  data.users[userIndex] = newUser;
+  return true;
+}
+
 function addLessonProgress(progress) {
   data.lessonProgress.push(progress);
 }
@@ -322,6 +342,8 @@ module.exports = {
   addQuizAttempt,
   addCertificate,
   updateLesson,
+  updateUser,
+  replaceUser,
   deactivateUserData,
   getUserByUsernameOrEmail,
   getUserByUsernameAndPassword,

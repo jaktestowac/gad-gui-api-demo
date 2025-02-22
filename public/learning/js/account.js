@@ -8,6 +8,16 @@ async function loadUserProfile() {
     document.getElementById("firstName").value = userData.firstName;
     document.getElementById("lastName").value = userData.lastName;
     document.getElementById("email").value = userData.email;
+    document.getElementById("isPublicProfile").checked = userData.isPublic;
+
+    const toggleButton = document.getElementById("isPublicProfile");
+    toggleButton.classList.toggle("active", userData.isPublic);
+    toggleButton.innerHTML = userData.isPublic
+      ? '<i class="fas fa-lock-open active"></i><span>Profile is Public</span>'
+      : '<i class="fas fa-lock"></i><span>Profile is Private</span>';
+
+    setupPublicProfileButton(userData.id);
+    initializeVisibilityButton(userData);
   } catch (error) {
     console.error("Failed to load user profile:", error);
     notifications.show("Failed to load user profile. Please try again later.", "error");
@@ -130,6 +140,7 @@ async function handleUpdateProfile() {
       lastName: document.getElementById("lastName").value,
       email: document.getElementById("email").value,
       currentPassword: currentPassword,
+      isPublic: document.getElementById("isPublicProfile").classList.contains("active"),
     };
 
     const result = await api.updateUserProfile(userId, userData);
@@ -319,6 +330,75 @@ function handleNavigation() {
   });
 }
 
+async function toggleProfileVisibility() {
+  const toggleButton = document.getElementById("isPublicProfile");
+  const status = document.getElementById("visibilityStatus");
+  const isPublic = status.classList.contains("public");
+  const newVisibility = !isPublic;
+  console.log("isPublic", newVisibility);
+
+  try {
+    const userId = api.getUserIdFromCookie();
+    const response = await api.updateUserProfile(userId, {
+      isPublic: newVisibility,
+      // We need to include current values to satisfy API requirements
+      firstName: document.getElementById("firstName").value,
+      lastName: document.getElementById("lastName").value,
+      email: document.getElementById("email").value,
+      currentPassword: document.getElementById("profileVisibilityPassword").value,
+    });
+
+    if (response.success) {
+      toggleButton.classList.toggle("active");
+      toggleButton.innerHTML = newVisibility
+        ? '<i class="fas fa-lock-open active"></i><span>Profile is Public</span>'
+        : '<i class="fas fa-lock"></i><span>Profile is Private</span>';
+      notifications.show("Profile visibility updated successfully");
+      updateVisibilityButton(newVisibility);
+    } else {
+      throw new Error(response.error?.message || "Failed to update profile visibility");
+    }
+  } catch (error) {
+    notifications.show(error.message || "Failed to update profile visibility", "error");
+  }
+}
+
+function setupPublicProfileButton(userId) {
+  const viewButton = document.getElementById("viewPublicProfile");
+  viewButton.addEventListener("click", () => {
+    window.open(`user-profile.html?id=${userId}`, "_blank");
+  });
+}
+
+function updateVisibilityButton(isPublic) {
+  const button = document.getElementById("isPublicProfile");
+  const status = document.getElementById("visibilityStatus");
+
+  if (isPublic) {
+    button.className = "toggle-button compact private";
+    button.innerHTML = "<span>Make Private</span>";
+    status.textContent = "Public";
+    status.classList.remove("private");
+    status.classList.add("public");
+
+    button.classList.remove("private");
+    button.classList.add("public");
+  } else {
+    button.className = "toggle-button compact private";
+    button.innerHTML = "<span>Make Public</span>";
+    status.textContent = "Private";
+    status.classList.remove("public");
+    status.classList.add("private");
+
+    button.classList.remove("public");
+    button.classList.add("private");
+  }
+}
+
+function initializeVisibilityButton(userData) {
+  updateVisibilityButton(userData.isPublic);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   if (!isLoggedIn()) {
     window.location.href = "login.html";
@@ -333,7 +413,6 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("topUpBtn").addEventListener("click", showTopUpDialog);
   handleNavigation();
 
-  // Add deactivation handlers
   const deactivateConfirm = document.getElementById("deactivateConfirm");
   const deactivateBtn = document.getElementById("deactivateAccountBtn");
 
@@ -342,4 +421,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   deactivateBtn.addEventListener("click", handleDeactivateAccount);
+
+  document.getElementById("isPublicProfile").addEventListener("click", toggleProfileVisibility);
 });

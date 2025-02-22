@@ -212,25 +212,7 @@ class CourseDetails {
             `;
 
       const ratingsList = ratingsSection.querySelector(".ratings-list");
-      ratingsList.innerHTML = ratings
-        .map(
-          (rating) => `
-                <div class="rating-item">
-                    <div class="rating-user">
-                        <img src="${rating.userInfo.avatar}" alt="User avatar" class="user-avatar">
-                        <span class="user-name">${rating.userInfo.name}</span>
-                    </div>
-                    <div class="rating-content">
-                        <div class="stars">
-                            ${this.getStarRating(rating.rating)}
-                        </div>
-                        ${rating.comment ? `<p class="rating-comment">${rating.comment}</p>` : ""}
-                        <span class="rating-date">${new Date(rating.createdAt).toLocaleDateString()}</span>
-                    </div>
-                </div>
-            `
-        )
-        .join("");
+      ratingsList.innerHTML = ratings.map((rating) => renderRating(rating)).join("");
 
       // Show/hide ratings section based on whether there are ratings
       ratingsSection.style.display = ratings.length ? "block" : "none";
@@ -244,6 +226,27 @@ class CourseDetails {
             `;
     }
   }
+}
+
+function renderRating(rating) {
+  const stars = "★".repeat(rating.rating) + "☆".repeat(5 - rating.rating);
+  const userDisplay = rating.userInfo.isPublic
+    ? `<a href="user-profile.html?id=${rating.userInfo.id}" class="rating-user-link">${rating.userInfo.name}</a>`
+    : rating.userInfo.name;
+
+  return `
+        <div class="rating-item">
+            <div class="rating-user">
+                <img src="${rating.userInfo.avatar || "/data/icons/user.png"}" class="user-avatar" alt="User avatar">
+                ${userDisplay}
+            </div>
+            <div class="rating-content">
+                <div class="stars">${stars}</div>
+                <p class="rating-comment">${rating.comment}</p>
+                <span class="rating-date">${new Date(rating.createdAt).toLocaleDateString()}</span>
+            </div>
+        </div>
+    `;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
