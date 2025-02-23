@@ -250,29 +250,6 @@
           "avatar": { "type": "string" }
         }
       },
-      "LessonContent": {
-        "type": "object",
-        "properties": {
-          "content": {
-            "type": "object",
-            "properties": {
-              "videoUrl": { "type": "string" },
-              "transcript": { "type": "string" },
-              "text": { "type": "string" },
-              "resources": {
-                "type": "array",
-                "items": { "type": "string" }
-              },
-              "questions": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Question"
-                }
-              }
-            }
-          }
-        }
-      },
       "Question": {
         "type": "object",
         "properties": {
@@ -638,6 +615,84 @@
             }
           }
         }
+      },
+      "LessonType": {
+        "type": "string",
+        "enum": ["video", "reading", "quiz"],
+        "description": "Type of lesson content"
+      },
+      "LessonContent": {
+        "type": "object",
+        "properties": {
+          "videoUrl": {
+            "type": "string",
+            "description": "URL for video content",
+            "maxLength": 255
+          },
+          "transcript": {
+            "type": "string",
+            "description": "Transcript for video content",
+            "maxLength": 32768
+          },
+          "text": {
+            "type": "string",
+            "description": "Text content for reading lessons",
+            "maxLength": 32768
+          },
+          "resources": {
+            "type": "array",
+            "items": { "type": "string" },
+            "maxItems": 100,
+            "description": "List of resource URLs for reading lessons"
+          },
+          "questions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "question": { "type": "string" },
+                "options": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "correctAnswer": { "type": "integer" }
+              }
+            },
+            "description": "List of questions for quiz lessons"
+          }
+        }
+      }
+    },
+    "parameters": {
+      "userIdParam": {
+        "name": "userId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "example": 1
+        },
+        "description": "User identifier"
+      },
+      "courseIdParam": {
+        "name": "courseId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "example": 1
+        },
+        "description": "Course identifier"
+      },
+      "lessonIdParam": {
+        "name": "lessonId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "example": 1
+        },
+        "description": "Lesson identifier"
       }
     },
     "responses": {
@@ -703,6 +758,44 @@
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/RateLimitResponse"
+            }
+          }
+        }
+      },
+      "ValidationError": {
+        "description": "Request validation failed",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Invalid input data"
+                },
+                "details": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "ServerError": {
+        "description": "Internal server error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Internal server error occurred"
+                }
+              }
             }
           }
         }
@@ -809,14 +902,7 @@
         "summary": "Get course by ID",
         "parameters": [
           {
-            "name": "courseId",
-            "in": "path",
-            "required": true,
-            "description": "Unique identifier of the course to retrieve",
-            "schema": {
-              "type": "integer",
-              "example": 1
-            }
+            "$ref": "#/components/parameters/courseIdParam"
           }
         ],
         "responses": {
@@ -844,14 +930,7 @@
         ],
         "parameters": [
           {
-            "name": "courseId",
-            "in": "path",
-            "required": true,
-            "description": "ID of the course to enroll in",
-            "schema": {
-              "type": "integer",
-              "example": 1
-            }
+            "$ref": "#/components/parameters/courseIdParam"
           }
         ],
         "requestBody": {
@@ -895,14 +974,7 @@
         ],
         "parameters": [
           {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "description": "ID of the user whose enrollments to retrieve",
-            "schema": {
-              "type": "integer",
-              "example": 1
-            }
+            "$ref": "#/components/parameters/userIdParam"
           }
         ],
         "responses": {
@@ -940,12 +1012,7 @@
         ],
         "parameters": [
           {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
+            "$ref": "#/components/parameters/userIdParam"
           }
         ],
         "responses": {
@@ -987,14 +1054,7 @@
         ],
         "parameters": [
           {
-            "name": "courseId",
-            "in": "path",
-            "required": true,
-            "description": "ID of the course to get lessons from",
-            "schema": {
-              "type": "integer",
-              "example": 1
-            }
+            "$ref": "#/components/parameters/courseIdParam"
           }
         ],
         "responses": {
@@ -1026,10 +1086,7 @@
         "security": [{ "bearerAuth": [] }],
         "parameters": [
           {
-            "name": "courseId",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer" }
+            "$ref": "#/components/parameters/courseIdParam"
           }
         ],
         "requestBody": {
@@ -1119,20 +1176,10 @@
         ],
         "parameters": [
           {
-            "name": "courseId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
+            "$ref": "#/components/parameters/courseIdParam"
           },
           {
-            "name": "lessonId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
+            "$ref": "#/components/parameters/lessonIdParam"
           }
         ],
         "requestBody": {
@@ -1179,12 +1226,7 @@
         ],
         "parameters": [
           {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
+            "$ref": "#/components/parameters/userIdParam"
           }
         ],
         "requestBody": {
@@ -1227,12 +1269,7 @@
         ],
         "parameters": [
           {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
+            "$ref": "#/components/parameters/userIdParam"
           }
         ],
         "requestBody": {
@@ -1280,12 +1317,7 @@
         ],
         "parameters": [
           {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
+            "$ref": "#/components/parameters/userIdParam"
           }
         ],
         "responses": {
@@ -1320,20 +1352,10 @@
         ],
         "parameters": [
           {
-            "name": "courseId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
+            "$ref": "#/components/parameters/courseIdParam"
           },
           {
-            "name": "lessonId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
+            "$ref": "#/components/parameters/lessonIdParam"
           }
         ],
         "requestBody": {
@@ -1384,24 +1406,10 @@
         ],
         "parameters": [
           {
-            "name": "courseId",
-            "in": "path",
-            "required": true,
-            "description": "Course ID",
-            "schema": {
-              "type": "integer",
-              "example": 1
-            }
+            "$ref": "#/components/parameters/courseIdParam"
           },
           {
-            "name": "lessonId",
-            "in": "path",
-            "required": true,
-            "description": "Lesson ID",
-            "schema": {
-              "type": "integer",
-              "example": 1
-            }
+            "$ref": "#/components/parameters/lessonIdParam"
           }
         ],
         "responses": {
@@ -1435,13 +1443,7 @@
         ],
         "parameters": [
           {
-            "name": "courseId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "example": 1
-            }
+            "$ref": "#/components/parameters/courseIdParam"
           }
         ],
         "responses": {
@@ -1476,13 +1478,7 @@
         ],
         "parameters": [
           {
-            "name": "courseId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "example": 1
-            }
+            "$ref": "#/components/parameters/courseIdParam"
           }
         ],
         "requestBody": {
@@ -1529,13 +1525,7 @@
         ],
         "parameters": [
           {
-            "name": "courseId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "example": 1
-            }
+            "$ref": "#/components/parameters/courseIdParam"
           }
         ],
         "responses": {
@@ -1623,13 +1613,7 @@
         "summary": "Get user by ID",
         "parameters": [
           {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "example": 1
-            }
+            "$ref": "#/components/parameters/userIdParam"
           }
         ],
         "responses": {
@@ -1698,10 +1682,7 @@
         "summary": "Get course lesson titles",
         "parameters": [
           {
-            "name": "courseId",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer", "example": 1 }
+            "$ref": "#/components/parameters/courseIdParam"
           }
         ],
         "responses": {
@@ -1731,10 +1712,7 @@
         "summary": "Get lessons progress for a course",
         "parameters": [
           {
-            "name": "courseId",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer", "example": 1 }
+            "$ref": "#/components/parameters/courseIdParam"
           }
         ],
         "responses": {
@@ -1764,10 +1742,7 @@
         "security": [{ "bearerAuth": [] }],
         "parameters": [
           {
-            "name": "courseId",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer", "example": 1 }
+            "$ref": "#/components/parameters/courseIdParam"
           }
         ],
         "requestBody": {
@@ -1801,10 +1776,7 @@
         "summary": "Get course ratings",
         "parameters": [
           {
-            "name": "courseId",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer", "example": 1 }
+            "$ref": "#/components/parameters/courseIdParam"
           }
         ],
         "responses": {
@@ -1849,7 +1821,7 @@
         }
       }
     },
-    "/certificates/public/{certificateId}": {
+    "/learning/public/certificates/{certificateId}": {
       "get": {
         "tags": ["Certificates"],
         "summary": "Get public certificate by UUID",
@@ -1888,13 +1860,7 @@
         "summary": "Get preview of course lessons",
         "parameters": [
           {
-            "name": "courseId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "example": 1
-            }
+            "$ref": "#/components/parameters/courseIdParam"
           }
         ],
         "responses": {
@@ -1936,14 +1902,7 @@
         ],
         "parameters": [
           {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "description": "ID of the user whose funds to retrieve",
-            "schema": {
-              "type": "integer",
-              "example": 1
-            }
+            "$ref": "#/components/parameters/userIdParam"
           }
         ],
         "responses": {
@@ -1975,13 +1934,7 @@
         ],
         "parameters": [
           {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "example": 1
-            }
+            "$ref": "#/components/parameters/userIdParam"
           }
         ],
         "requestBody": {
@@ -2036,13 +1989,7 @@
         ],
         "parameters": [
           {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "example": 1
-            }
+            "$ref": "#/components/parameters/userIdParam"
           }
         ],
         "responses": {
@@ -2311,10 +2258,7 @@
         "security": [{ "bearerAuth": [] }],
         "parameters": [
           {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer", "example": 1 }
+            "$ref": "#/components/parameters/userIdParam"
           }
         ],
         "requestBody": {
@@ -2350,24 +2294,14 @@
       }
     },
     "/learning/instructor/courses/{courseId}/lessons/{lessonId}": {
+      "parameters": [
+        { "$ref": "#/components/parameters/courseIdParam" },
+        { "$ref": "#/components/parameters/lessonIdParam" }
+      ],
       "put": {
         "tags": ["Instructor"],
         "summary": "Update lesson content",
         "security": [{ "bearerAuth": [] }],
-        "parameters": [
-          {
-            "name": "courseId",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer", "example": 1 }
-          },
-          {
-            "name": "lessonId",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer", "example": 1 }
-          }
-        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -2388,6 +2322,30 @@
                   "properties": {
                     "success": { "type": "boolean", "example": true },
                     "message": { "type": "string", "example": "Lesson updated successfully" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/UnauthorizedError" },
+          "403": { "$ref": "#/components/responses/ForbiddenError" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "delete": {
+        "tags": ["Instructor"],
+        "summary": "Delete a lesson from a course",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Lesson deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" }
                   }
                 }
               }
@@ -2502,10 +2460,7 @@
         "security": [{ "bearerAuth": [] }],
         "parameters": [
           {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer", "example": 1 }
+            "$ref": "#/components/parameters/userIdParam"
           }
         ],
         "requestBody": {
@@ -2629,7 +2584,8 @@
                   "type": "object",
                   "properties": {
                     "success": { "type": "boolean" },
-                    "message": { "type": "string" }
+                    "message": { "type": "string" },
+                    "collections": { "type": "object" }
                   }
                 }
               }
@@ -2676,6 +2632,71 @@
             "description": "Table data",
             "content": {
               "application/json": {}
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/learning/public/users/{userId}": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get public user profile",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/userIdParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Public user profile",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "integer" },
+                    "firstName": { "type": "string" },
+                    "lastName": { "type": "string" },
+                    "avatar": { "type": "string" },
+                    "joinDate": { "type": "string" },
+                    "role": { "type": "string" },
+                    "enrollments": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "courseId": { "type": "integer" },
+                          "courseTitle": { "type": "string" },
+                          "progress": { "type": "integer" }
+                        }
+                      }
+                    },
+                    "certificates": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "courseId": { "type": "integer" },
+                          "courseTitle": { "type": "string" },
+                          "issueDate": { "type": "string" }
+                        }
+                      }
+                    },
+                    "ratings": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "courseId": { "type": "integer" },
+                          "courseTitle": { "type": "string" },
+                          "rating": { "type": "number" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             }
           },
           "404": { "$ref": "#/components/responses/NotFound" }

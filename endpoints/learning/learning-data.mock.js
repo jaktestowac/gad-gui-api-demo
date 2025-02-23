@@ -80,7 +80,7 @@ const mockData = {
     {
       id: 4,
       username: "bob_ross",
-      email: "bob_ross@@test.test.com",
+      email: "bob_ross@test.test.com",
       password: "demo",
       firstName: "Bob",
       lastName: "Ross",
@@ -91,7 +91,7 @@ const mockData = {
     {
       id: 5,
       username: "jane_doe",
-      email: "jane_doe@@test.test.com",
+      email: "jane_doe@test.test.com",
       password: "demo",
       firstName: "Jane",
       lastName: "Doe",
@@ -102,7 +102,7 @@ const mockData = {
     {
       id: 6,
       username: "jim_halpert",
-      email: "jim_halpert@@test.test.com",
+      email: "jim_halpert@test.test.com",
       password: "demo",
       firstName: "Jim",
       lastName: "Halpert",
@@ -113,7 +113,7 @@ const mockData = {
     {
       id: 7,
       username: "pam_beesly",
-      email: "pam_beesly@@test.test.com",
+      email: "pam_beesly@test.test.com",
       password: "demo",
       firstName: "Pam",
       lastName: "Beesly",
@@ -124,7 +124,7 @@ const mockData = {
     {
       id: 8,
       username: "andy_bernard",
-      email: "andy_bernard@@test.test.com",
+      email: "andy_bernard@test.test.com",
       password: "demo",
       firstName: "Andy",
       lastName: "Bernard",
@@ -135,7 +135,7 @@ const mockData = {
     {
       id: 9,
       username: "dwight_schrute",
-      email: "dwight_schrute@@test.test.com",
+      email: "dwight_schrute@test.test.com",
       password: "demo",
       firstName: "Dwight",
       lastName: "Schrute",
@@ -146,7 +146,7 @@ const mockData = {
     {
       id: 10,
       username: "james_sunderland",
-      email: "james_sunderland@@test.test.com",
+      email: "james_sunderland@test.test.com",
       password: "demo",
       firstName: "James",
       lastName: "Sunderland",
@@ -157,7 +157,7 @@ const mockData = {
     {
       id: 11,
       username: "angela_martin",
-      email: "angela_martin@@test.test.com",
+      email: "angela_martin@test.test.com",
       password: "demo",
       firstName: "Angela",
       lastName: "Martin",
@@ -168,12 +168,34 @@ const mockData = {
     {
       id: 12,
       username: "Maria Garcia",
-      email: "maria@@test.test.com",
+      email: "maria@test.test.com",
       password: "demo",
       firstName: "Maria",
       lastName: "Garcia",
       avatar: "..\\data\\users\\face_1713017873.9196286_m_1.jpg",
       joinDate: "2023-04-15",
+      role: "student",
+    },
+    {
+      id: 13,
+      username: "Lucy Westenra",
+      email: "lucy@test.test.com",
+      password: "demo",
+      firstName: "Lucy",
+      lastName: "Westenra",
+      avatar: "..\\data\\users\\face_1714589623_f.jpg",
+      joinDate: "2024-02-22",
+      role: "student",
+    },
+    {
+      id: 14,
+      username: "Mina Harker",
+      email: "mina@test.test.com",
+      password: "demo",
+      firstName: "Mina",
+      lastName: "Harker",
+      avatar: "..\\data\\users\\face_1713018104.5725281_f_1.jpg",
+      joinDate: "2024-02-22",
       role: "student",
     },
     {
@@ -1808,7 +1830,6 @@ const mockData = {
     },
   ],
 
-  // User statistics cache
   userStats: [
     {
       userId: 1,
@@ -1944,5 +1965,4 @@ const mockData = {
   ],
 };
 
-// Export the data
 module.exports = mockData;

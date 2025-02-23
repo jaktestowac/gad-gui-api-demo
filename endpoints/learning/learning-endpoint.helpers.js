@@ -357,8 +357,8 @@ function handleLearning(req, res) {
     // GET endpoints
     if (req.method === "GET") {
       // Add public certificate endpoint
-      // /api/certificates/public/{certificateId}
-      if (urlParts[2] === "certificates" && urlParts[3] === "public") {
+      // /api/learning/public/certificates/{certificateId}
+      if (urlParts[2] === "public" && urlParts[3] === "certificates") {
         const certUuid = urlParts[4];
         const certificate = dataProvider.getCertificate(certUuid);
         if (!certificate) {
