@@ -2221,43 +2221,44 @@
                         acc[date].push(session);
                         return acc;
                     }, {});
-
                     return `
                         <div class="movie-group">
                             <div class="movie-header">
                                 <h4>${title}</h4>
                             </div>
-                            ${Object.entries(sessionsByDate).map(([date, dateSessions]) => `
+                            ${Object.entries(sessionsByDate).map(([date, dateSessions]) => {
+                        return `
                                 <div class="date-group">
                                     <div class="date-header">
-                                        ${new Date(date).toLocaleDateString('en-US', {
-                        weekday: 'long',
-                        month: 'long',
-                        day: 'numeric'
-                    })}
+                                        ${new Date(dateSessions[0]?.datetime).toLocaleDateString('en-US', {
+                            weekday: 'short',
+                            month: 'short',
+                            day: 'numeric'
+                        })}
                                     </div>
                                     <div class="showtime-grid">
                                         ${dateSessions
-                            .sort((a, b) => new Date(a.datetime) - new Date(b.datetime))
-                            .map(session => `
+                                .sort((a, b) => new Date(a.datetime) - new Date(b.datetime))
+                                .map(session => `
                                                 <div class="showtime-card" onclick='showSeatSelection(${JSON.stringify(session)})'>
                                                     <div class="showtime-time">
                                                         ${new Date(session.datetime).toLocaleTimeString([], {
-                                hour: '2-digit',
-                                minute: '2-digit'
-                            })}
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                })}
                                                     </div>
                                                     <div class="showtime-info">
                                                         ${session.room}<br>
                                                         $${session.price} • ${session.seatingPlan.flat().filter(seat =>
-                                seat.status === 'available'
-                            ).length} seats
+                                    seat.status === 'available'
+                                ).length} seats
                                                     </div>
                                                 </div>
                                         `).join('')}
                                     </div>
                                 </div>
-                            `).join('')}
+                            `
+                    }).join('')}
                         </div>
                     `;
                 }).join('');
