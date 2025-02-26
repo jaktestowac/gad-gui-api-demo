@@ -1,0 +1,1872 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🦎 GAD | Modern Session V2</title>
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #6366f1;
+            --primary-dark: #4338ca;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.08);
+            --shadow-xl: 0 20px 25px rgba(79, 70, 229, 0.15);
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --card-shine: rgba(255, 255, 255, 0.1);
+            --neon-glow: 0 0 20px rgba(99, 102, 241, 0.5);
+            --ultra-gradient: linear-gradient(135deg, #4f46e5, #6366f1, #8b5cf6, #6366f1, #4f46e5);
+            --ultra-gradient-light: linear-gradient(135deg, #6366f1, #818cf8, #a5b4fc, #818cf8, #6366f1);
+            --frost-effect: rgba(255, 255, 255, 0.95);
+            --glass-effect: rgba(255, 255, 255, 0.1);
+            --neon-primary: 0 0 20px rgba(99, 102, 241, 0.5),
+                0 0 40px rgba(99, 102, 241, 0.3),
+                0 0 60px rgba(99, 102, 241, 0.1);
+            --card-border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        body {
+            background:
+                radial-gradient(circle at 0% 0%, #4338ca 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, #6366f1 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, #8b5cf6 0%, #4f46e5 100%);
+        }
+
+        footer {
+            color: var(--gray-100);
+        }
+
+        footer a {
+            color: var(--dark);
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            background:
+                radial-gradient(circle at 0% 0%, #4338ca 0%, transparent 50%),
+                radial-gradient(circle at 100% 0%, #6366f1 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, #8b5cf6 0%, transparent 50%),
+                radial-gradient(circle at 0% 100%, #4f46e5 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .v2s-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .v2s-login-card {
+            max-width: 400px;
+            margin: 2rem auto;
+            padding: 2.5rem;
+            background: var(--frost-effect);
+            border: var(--card-border);
+            box-shadow:
+                0 25px 50px -12px rgba(0, 0, 0, 0.25),
+                var(--neon-primary),
+                inset 0 2px 4px var(--glass-effect);
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+            transform: translateY(0);
+            transform-style: preserve-3d;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .v2s-login-card:hover {
+            transform: translateY(-15px) rotateX(2deg) rotateY(2deg) scale(1.02);
+        }
+
+        .v2s-login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4f46e5, #8b5cf6, #6366f1, #4f46e5);
+            background-size: 300% 100%;
+            animation: gradientMove 8s linear infinite;
+        }
+
+        .v2s-login-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .v2s-login-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .v2s-login-header p {
+            color: var(--gray-500);
+            font-size: 0.975rem;
+        }
+
+        .v2s-input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .v2s-input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .v2s-input-group input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            background: var(--frost-effect);
+            backdrop-filter: blur(5px);
+            border: var(--card-border);
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .v2s-input-group input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+            background: white;
+            transform: scale(1.02) translateY(-2px);
+            box-shadow:
+                0 10px 20px -5px rgba(79, 70, 229, 0.2),
+                var(--neon-primary);
+        }
+
+        .v2s-btn {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 1rem;
+            background: var(--ultra-gradient);
+            background-size: 400% 100%;
+            animation: gradientShift 8s linear infinite;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow:
+                0 10px 20px -5px rgba(79, 70, 229, 0.4),
+                var (--neon-primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .v2s-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            animation-play-state: paused;
+            box-shadow:
+                0 10px 20px rgba(79, 70, 229, 0.3),
+                0 0 0 3px rgba(99, 102, 241, 0.2),
+                var (--neon-glow);
+        }
+
+        .v2s-btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .v2s-btn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .v2s-btn:hover::before {
+            opacity: 1;
+            transform: scale(1.5);
+        }
+
+        /* Dashboard styles */
+        .v2s-dashboard {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+            min-height: calc(100vh - 8rem);
+            background: var(--frost-effect);
+            border: var(--card-border);
+            box-shadow:
+                0 25px 50px -12px rgba(0, 0, 0, 0.25),
+                var(--neon-primary);
+            backdrop-filter: blur(20px);
+            border-radius: 2rem;
+            box-shadow: var(--shadow-xl);
+            padding: 2rem;
+            animation: dashboardEntryUltra 1s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        @keyframes dashboardEntryUltra {
+            0% {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95) rotateX(10deg);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1) rotateX(0);
+            }
+        }
+
+        .v2s-sidebar {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.8));
+            padding: 2rem;
+            border-radius: 1.5rem;
+            box-shadow: var(--shadow-lg),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 2rem;
+            height: fit-content;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            transform-style: preserve-3d;
+        }
+
+        .v2s-profile {
+            text-align: center;
+            padding-bottom: 2rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--gray-200);
+            position: relative;
+        }
+
+        .v2s-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--ultra-gradient);
+            background-size: 400% 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2.5rem;
+            color: white;
+            box-shadow:
+                0 10px 20px -5px rgba(79, 70, 229, 0.4),
+                var(--neon-primary);
+            transition: all 0.3s ease;
+            animation: gradientShift 8s linear infinite;
+            position: relative;
+        }
+
+        .v2s-avatar::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: inherit;
+            background: var(--ultra-gradient);
+            background-size: 400% 100%;
+            animation: gradientShift 8s linear infinite;
+            z-index: -1;
+            filter: blur(8px);
+        }
+
+        .v2s-avatar:hover {
+            transform: scale(1.1) rotate(5deg) translateZ(20px);
+            animation-play-state: paused;
+            box-shadow: var(--shadow-xl),
+                0 0 30px rgba(79, 70, 229, 0.4);
+        }
+
+        .v2s-role-badge {
+            display: inline-block;
+            padding: 0.375rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .v2s-role-admin {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
+        }
+
+        .v2s-role-manager {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            color: #166534;
+        }
+
+        .v2s-role-user {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #1e40af;
+        }
+
+        .v2s-timer {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--gray-50);
+            border-radius: 1rem;
+            margin: 1.5rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .v2s-timer-display {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1rem;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -0.05em;
+            animation: pulse 2s infinite;
+            animation: floatAnimation 3s ease-in-out infinite;
+            text-shadow:
+                0 0 10px rgba(79, 70, 229, 0.5),
+                0 0 20px rgba(79, 70, 229, 0.3),
+                0 0 30px rgba(79, 70, 229, 0.1);
+            animation: timerPulse 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+
+        @keyframes timerPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.05);
+                opacity: 0.9;
+            }
+        }
+
+        .v2s-timer-bar {
+            height: 6px;
+            background: var (--gray-200);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .v2s-timer-progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+            transition: width 1s linear;
+            background: linear-gradient(90deg, #4f46e5, #6366f1, #8b5cf6);
+            background-size: 200% 100%;
+            animation: gradientMove 3s linear infinite;
+        }
+
+        .v2s-warning .v2s-timer-progress {
+            background: linear-gradient(90deg, var(--warning) 0%, #fbbf24 100%);
+        }
+
+        .v2s-nav-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .v2s-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            padding: 1rem;
+            color: var(--gray-800);
+            text-decoration: none;
+            border-radius: 1rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid transparent;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(to right, transparent 50%, rgba(99, 102, 241, 0.1) 50%);
+            background-size: 200% 100%;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .v2s-nav-item:hover {
+            background-position: -100% 0;
+            transform: translateX(10px) scale(1.03);
+            box-shadow: var(--neon-primary);
+        }
+
+        .v2s-nav-item.active {
+            background: var(--ultra-gradient-light);
+            background-size: 400% 100%;
+            animation: gradientShift 8s linear infinite;
+            box-shadow:
+                0 10px 20px -5px rgba(79, 70, 229, 0.4),
+                var(--neon-primary);
+        }
+
+        .v2s-content {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            box-shadow: var(--shadow-lg);
+            background: linear-gradient(135deg, var(--glass-bg), rgba(255, 255, 255, 0.8));
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            box-shadow:
+                0 10px 30px rgba(0, 0, 0, 0.1),
+                inset 0 0 20px var(--card-shine);
+        }
+
+        .v2s-content h2 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+
+        .v2s-content p {
+            color: var (--gray-500);
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .v2s-dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .v2s-sidebar {
+                position: static;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            100% {
+                background-position: 200% 50%;
+            }
+        }
+
+        @keyframes dashboardEntry {
+            0% {
+                opacity: 0;
+                transform: translateY(30px) rotateX(10deg);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0) rotateX(0);
+            }
+        }
+
+        @keyframes floatAnimation {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .v2s-dashboard {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Role-specific features */
+        .v2s-admin-only,
+        .v2s-manager-only {
+            display: none;
+        }
+
+        body[data-role="admin"] .v2s-admin-only,
+        body[data-role="admin"] .v2s-manager-only,
+        body[data-role="manager"] .v2s-manager-only {
+            display: block;
+        }
+
+        /* Error message styling */
+        .error-message {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.2));
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin-top: 1rem;
+            color: #dc2626;
+            animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+            box-shadow:
+                0 10px 20px -5px rgba(239, 68, 68, 0.2),
+                0 0 20px rgba(239, 68, 68, 0.2);
+        }
+
+        @keyframes shake {
+
+            10%,
+            90% {
+                transform: translateX(-1px);
+            }
+
+            20%,
+            80% {
+                transform: translateX(2px);
+            }
+
+            30%,
+            50%,
+            70% {
+                transform: translateX(-4px);
+            }
+
+            40%,
+            60% {
+                transform: translateX(4px);
+            }
+        }
+
+        @keyframes errorShake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20% {
+                transform: translateX(-10px) rotate(-0.5deg);
+            }
+
+            40% {
+                transform: translateX(10px) rotate(0.5deg);
+            }
+
+            60% {
+                transform: translateX(-10px) rotate(-0.5deg);
+            }
+
+            80% {
+                transform: translateX(10px) rotate(0.5deg);
+            }
+        }
+
+        .v2s-accounts-info {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .v2s-accounts-info h3 {
+            font-size: 1rem;
+            color: var(--gray-500);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .v2s-accounts-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(5px);
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+
+        .v2s-accounts-table th,
+        .v2s-accounts-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .v2s-accounts-table th {
+            font-weight: 500;
+            color: var(--gray-600);
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .v2s-accounts-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .v2s-accounts-table tr:hover td {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .v2s-role-pill {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .v2s-role-pill.user {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #1e40af;
+        }
+
+        .v2s-role-pill.manager {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            color: #166534;
+        }
+
+        .v2s-role-pill.admin {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
+        }
+
+        @media (max-width: 480px) {
+            .v2s-accounts-table {
+                font-size: 0.75rem;
+            }
+
+            .v2s-accounts-table th,
+            .v2s-accounts-table td {
+                padding: 0.5rem;
+            }
+
+            .v2s-role-pill {
+                padding: 0.2rem 0.5rem;
+            }
+        }
+
+        .v2s-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .v2s-stat-card {
+            background: var(--frost-effect);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            text-align: center;
+            border: var(--card-border);
+            transition: all 0.3s ease;
+        }
+
+        .v2s-stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--neon-primary);
+        }
+
+        .v2s-stat-card i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .v2s-stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin: 0.5rem 0;
+        }
+
+        .v2s-stat-label {
+            color: var(--gray-500);
+            font-size: 0.875rem;
+        }
+
+        .v2s-quick-actions {
+            margin-top: 2rem;
+        }
+
+        .v2s-action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .v2s-action-btn {
+            background: var(--frost-effect);
+            border: var(--card-border);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            color: var (--dark);
+        }
+
+        .v2s-action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--neon-primary);
+            background: var(--primary);
+            color: white;
+        }
+
+        .v2s-profile-section {
+            background: var(--frost-effect);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .v2s-profile-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .v2s-profile-avatar {
+            position: relative;
+            width: 120px;
+            height: 120px;
+        }
+
+        .v2s-avatar-upload {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .v2s-avatar-upload:hover {
+            transform: scale(1.1);
+            box-shadow: var(--neon-primary);
+        }
+
+        .v2s-form-section {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .v2s-form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .v2s-form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .v2s-btn-secondary {
+            background: var(--gray-100);
+            color: var(--dark);
+        }
+
+        .v2s-btn-secondary:hover {
+            background: var(--gray-200);
+        }
+
+        .v2s-info-section {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+        }
+
+        .v2s-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .v2s-info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding: 1rem;
+            background: var(--frost-effect);
+            border-radius: 0.75rem;
+            border: var(--card-border);
+            transition: all 0.3s ease;
+        }
+
+        .v2s-info-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--neon-primary);
+        }
+
+        .v2s-info-label {
+            color: var(--gray-500);
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .v2s-info-value {
+            color: var(--dark);
+            font-size: 1.125rem;
+            font-weight: 500;
+        }
+
+        .v2s-stat-control {
+            margin-top: 1rem;
+        }
+
+        .v2s-refresh-btn,
+        .v2s-toggle-btn {
+            background: none;
+            border: 1px solid var(--glass-border);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            color: var(--primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .v2s-refresh-btn:hover,
+        .v2s-toggle-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .v2s-stat-progress {
+            margin-top: 1rem;
+            background: var(--gray-200);
+            height: 4px;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .v2s-progress-bar {
+            height: 100%;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .v2s-stat-trend {
+            margin-top: 0.5rem;
+        }
+
+        .v2s-trend-up {
+            color: var(--success);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .v2s-trend-down {
+            color: var(--danger);
+        }
+
+        .v2s-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .v2s-system-status {
+            font-size: 0.875rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            background: var(--success);
+            color: white;
+        }
+
+        .v2s-system-status.offline {
+            background: var(--danger);
+        }
+
+        .v2s-action-btn {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .v2s-action-status {
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 0.25rem;
+            font-size: 0.75rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .v2s-action-status.active {
+            opacity: 1;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .v2s-redirect-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--ultra-gradient);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease;
+        }
+
+        .v2s-redirect-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .v2s-redirect-content {
+            text-align: center;
+            color: white;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+
+        .v2s-redirect-overlay.active .v2s-redirect-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .v2s-redirect-spinner {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 2rem;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: redirect-spin 1s linear infinite;
+        }
+
+        .v2s-redirect-messages {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .v2s-redirect-progress {
+            width: 200px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .v2s-redirect-bar {
+            width: 0%;
+            height: 100%;
+            background: white;
+            transition: width 0.3s ease;
+        }
+
+        @keyframes redirect-spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="v2s-redirect-overlay">
+        <div class="v2s-redirect-content">
+            <div align="center">
+                <div class="v2s-redirect-spinner"></div>
+            </div>
+            <div align="center">
+                <div class="v2s-redirect-messages">Authenticating...</div>
+            </div>
+            <div align="center">
+                <div class="v2s-redirect-progress">
+                    <div class="v2s-redirect-bar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <div class="v2s-container">
+        <div class="v2s-container">
+            <!-- Login Form -->
+            <div id="loginForm" class="v2s-login-card">
+                <div class="v2s-login-header">
+                    <h2>Session Management v2</h2>
+                    <p>Sign in to access your dashboard</p>
+                </div>
+                <div class="v2s-input-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Enter username">
+                </div>
+                <div class="v2s-input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter password">
+                </div>
+                <button class="v2s-btn" onclick="handleLogin()">Sign In</button>
+                <div id="errorMsg" class="error-message hidden"></div>
+
+                <div class="v2s-accounts-info">
+                    <h3>Sample Accounts</h3>
+                    <table class="v2s-accounts-table">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Password</th>
+                                <th>Role</th>
+                                <th>Timeout</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>user</td>
+                                <td>demo</td>
+                                <td><span class="v2s-role-pill user">User</span></td>
+                                <td>1:00</td>
+                            </tr>
+                            <tr>
+                                <td>manager</td>
+                                <td>demo</td>
+                                <td><span class="v2s-role-pill manager">Manager</span></td>
+                                <td>2:00</td>
+                            </tr>
+                            <tr>
+                                <td>admin</td>
+                                <td>pass</td>
+                                <td><span class="v2s-role-pill admin">Admin</span></td>
+                                <td>5:00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="dashboard" class="v2s-dashboard hidden">
+                <aside class="v2s-sidebar">
+                    <div class="v2s-profile">
+                        <div class="v2s-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3 id="userDisplayName">User Name</h3>
+                        <span id="userRole" class="v2s-role-badge">Role</span>
+                    </div>
+
+                    <div class="v2s-timer">
+                        <div id="timerDisplay" class="v2s-timer-display">05:00</div>
+                        <div class="v2s-timer-bar">
+                            <div id="timerProgress" class="v2s-timer-progress" style="width: 100%"></div>
+                        </div>
+                    </div>
+
+                    <nav>
+                        <ul class="v2s-nav-list">
+                            <li><a href="#" class="v2s-nav-item active">
+                                    <i class="fas fa-home"></i> Dashboard
+                                </a></li>
+                            <li><a href="#" class="v2s-nav-item">
+                                    <i class="fas fa-user"></i> Profile
+                                </a></li>
+                            <li class="v2s-manager-only"><a href="#" class="v2s-nav-item">
+                                    <i class="fas fa-users"></i> Team
+                                </a></li>
+                            <li class="v2s-admin-only"><a href="#" class="v2s-nav-item">
+                                    <i class="fas fa-cog"></i> Settings
+                                </a></li>
+                            <li><a href="#" class="v2s-nav-item" onclick="handleLogout()">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </a></li>
+                        </ul>
+                    </nav>
+                </aside>
+
+                <main class="v2s-content">
+                    <!-- Dashboard Tab -->
+                    <div id="dashboardTab">
+                        <h2>Dashboard Overview</h2>
+                        <div class="v2s-stats-grid">
+                            <div class="v2s-stat-card">
+                                <i class="fas fa-chart-line"></i>
+                                <h3>System Status</h3>
+                                <p class="v2s-stat-value" id="systemStatus">98%</p>
+                                <p class="v2s-stat-label">Uptime</p>
+                                <div class="v2s-stat-control">
+                                    <button onclick="refreshStatus('system', event)" class="v2s-refresh-btn">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="v2s-stat-card">
+                                <i class="fas fa-tasks"></i>
+                                <h3>Active Tasks</h3>
+                                <p class="v2s-stat-value" id="activeTasks">12</p>
+                                <p class="v2s-stat-label">In Progress</p>
+                                <div class="v2s-stat-control">
+                                    <button onclick="toggleTaskStatus()" class="v2s-toggle-btn" id="taskToggle">
+                                        <i class="fas fa-play"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="v2s-stat-card">
+                                <i class="fas fa-clock"></i>
+                                <h3>Response Time</h3>
+                                <p class="v2s-stat-value" id="responseTime">145ms</p>
+                                <p class="v2s-stat-label">Average</p>
+                                <div class="v2s-stat-progress">
+                                    <div class="v2s-progress-bar" id="responseProgress" style="width: 75%"></div>
+                                </div>
+                            </div>
+                            <div class="v2s-stat-card">
+                                <i class="fas fa-users"></i>
+                                <h3>Active Users</h3>
+                                <p class="v2s-stat-value" id="activeUsers">284</p>
+                                <p class="v2s-stat-label">Online Now</p>
+                                <div class="v2s-stat-trend">
+                                    <span class="v2s-trend-up">+12%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="v2s-quick-actions">
+                            <div class="v2s-section-header">
+                                <h3>System Controls</h3>
+                                <div class="v2s-system-status" id="systemStatusIndicator">System Online</div>
+                            </div>
+                            <div class="v2s-action-grid">
+                                <button class="v2s-action-btn" onclick="handleDashboardAction('refresh', event)">
+                                    <i class="fas fa-sync"></i>
+                                    <span>Refresh Data</span>
+                                    <span class="v2s-action-status" id="refreshStatus"></span>
+                                </button>
+                                <button class="v2s-action-btn" onclick="handleDashboardAction('export', event)">
+                                    <i class="fas fa-download"></i>
+                                    <span>Export Report</span>
+                                    <span class="v2s-action-status" id="exportStatus"></span>
+                                </button>
+                                <button class="v2s-action-btn" onclick="handleDashboardAction('optimize', event)">
+                                    <i class="fas fa-rocket"></i>
+                                    <span>Optimize</span>
+                                    <span class="v2s-action-status" id="optimizeStatus"></span>
+                                </button>
+                                <button class="v2s-action-btn" onclick="handleDashboardAction('monitor', event)">
+                                    <i class="fas fa-desktop"></i>
+                                    <span>Monitor</span>
+                                    <span class="v2s-action-status" id="monitorStatus"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Tab -->
+                    <div id="profileTab" class="hidden">
+                        <h2>Profile Information</h2>
+                        <div class="v2s-profile-section">
+                            <div class="v2s-profile-header">
+                                <div class="v2s-profile-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="v2s-profile-info">
+                                    <h3 id="profileDisplayName">User Name</h3>
+                                    <span id="profileRole" class="v2s-role-badge">Role</span>
+                                </div>
+                            </div>
+
+                            <div class="v2s-info-section">
+                                <div class="v2s-info-grid">
+                                    <div class="v2s-info-item">
+                                        <span class="v2s-info-label">
+                                            <i class="fas fa-id-badge"></i> Display Name
+                                        </span>
+                                        <span class="v2s-info-value" id="displayNameValue"></span>
+                                    </div>
+                                    <div class="v2s-info-item">
+                                        <span class="v2s-info-label">
+                                            <i class="fas fa-user-shield"></i> Role
+                                        </span>
+                                        <span class="v2s-info-value" id="roleValue"></span>
+                                    </div>
+                                    <div class="v2s-info-item">
+                                        <span class="v2s-info-label">
+                                            <i class="fas fa-clock"></i> Session Duration
+                                        </span>
+                                        <span class="v2s-info-value" id="sessionValue"></span>
+                                    </div>
+                                    <div class="v2s-info-item">
+                                        <span class="v2s-info-label">
+                                            <i class="fas fa-shield-alt"></i> Access Level
+                                        </span>
+                                        <span class="v2s-info-value" id="accessValue"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let sessionTimer;
+        let startTime;
+        let duration;
+
+        function setV2Cookie(name, value, minutes) {
+            const date = new Date();
+            date.setTime(date.getTime() + (minutes * 60 * 1000));
+            const expires = `expires=${date.toUTCString()}`;
+            document.cookie = `v2_${name}=${value};${expires};path=/`;
+        }
+
+        function getV2Cookie(name) {
+            const cookieName = `v2_${name}=`;
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                cookie = cookie.trim();
+                if (cookie.startsWith(cookieName)) {
+                    return cookie.substring(cookieName.length);
+                }
+            }
+            return null;
+        }
+
+        function deleteCookie(name) {
+            document.cookie = `v2_${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+        }
+
+        function clearAllCookies() {
+            deleteCookie('sessionStart');
+            deleteCookie('maxAge');
+            deleteCookie('sessionToken');
+        }
+
+        async function handleLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const overlay = document.querySelector('.v2s-redirect-overlay');
+                const messages = document.querySelector('.v2s-redirect-messages');
+                const progressBar = document.querySelector('.v2s-redirect-bar');
+
+                // Show overlay
+                overlay.classList.add('active');
+
+                // Simulate authentication steps
+                const steps = [
+                    { message: 'Authenticating...', progress: 20 },
+                    { message: 'Verifying credentials...', progress: 40 },
+                    { message: 'Loading user profile...', progress: 60 },
+                    { message: 'Initializing session...', progress: 80 },
+                    { message: 'Redirecting to dashboard...', progress: 100 }
+                ];
+
+                // Process each step
+                for (const step of steps) {
+                    await new Promise(resolve => setTimeout(resolve, 600));
+                    messages.textContent = step.message;
+                    progressBar.style.width = `${step.progress}%`;
+                }
+
+                const response = await fetch('/api/practice/session/v2/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password }),
+                    credentials: 'include'
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    const sessionStart = Date.now();
+                    setV2Cookie('sessionStart', sessionStart, 999999);
+                    setV2Cookie('sessionToken', data.token, data.maxAge / 60000);
+                    setV2Cookie('maxAge', data.maxAge, data.maxAge / 60000);
+
+                    await new Promise(resolve => setTimeout(resolve, 400));
+                    overlay.classList.remove('active');
+                    showDashboard(data);
+                    initializeCountdown(sessionStart, data.maxAge);
+                } else {
+                    overlay.classList.remove('active');
+                    showError(data.error.message);
+                    clearAllCookies();
+                }
+            } catch (err) {
+                document.querySelector('.v2s-redirect-overlay').classList.remove('active');
+                showError('Login failed');
+                clearAllCookies();
+            }
+        }
+
+        function initializeCountdown(sessionStartTime, maxAge) {
+            const now = Date.now();
+            const elapsed = Math.floor((now - sessionStartTime) / 1000);
+            const sessionDuration = Math.floor(maxAge / 1000);
+            const remaining = Math.max(0, sessionDuration - elapsed);
+
+            if (remaining > 0) {
+                startCountdown(remaining);
+            } else {
+                handleLogout();
+            }
+        }
+
+        function startCountdown(remainingSeconds) {
+            let totalSeconds = remainingSeconds;
+            const countdownElement = document.getElementById('timerDisplay');
+
+            clearInterval(sessionTimer);
+
+            function updateCountdown() {
+                if (totalSeconds <= 0) {
+                    clearInterval(sessionTimer);
+                    forceLogout();
+                    return;
+                }
+
+                const minutes = Math.floor(totalSeconds / 60);
+                const seconds = totalSeconds % 60;
+                countdownElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+                const percentage = (totalSeconds / (duration / 1000)) * 100;
+                document.getElementById('timerProgress').style.width = `${percentage}%`;
+
+                if (totalSeconds <= 30) {
+                    document.querySelector('.v2s-timer-bar').classList.add('v2s-warning');
+                } else {
+                    document.querySelector('.v2s-timer-bar').classList.remove('v2s-warning');
+                }
+
+                totalSeconds--;
+            }
+
+            updateCountdown();
+            sessionTimer = setInterval(updateCountdown, 1000);
+        }
+
+        async function forceLogout() {
+            clearInterval(sessionTimer);
+            clearInterval(systemMonitor.interval);
+            stopTaskUpdates();
+
+            systemMonitor.isActive = false;
+            systemMonitor.warnings = [];
+            systemMonitor.criticalIssues = false;
+
+            try {
+                await fetch('/api/practice/session/v2/logout', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+            } catch (err) {
+                console.error('Logout failed:', err);
+            } finally {
+                clearAllCookies();
+                window.location.reload();
+            }
+        }
+
+        async function handleLogout() {
+            await forceLogout();
+        }
+
+        async function checkSession() {
+            try {
+                const sessionStart = getV2Cookie('sessionStart');
+                const response = await fetch('/api/practice/session/v2/check', {
+                    credentials: 'include'
+                });
+
+                if (response.ok && sessionStart) {
+                    const data = await response.json();
+                    showDashboard(data);
+                    initializeCountdown(parseInt(sessionStart), parseInt(getCookie('maxAge')));
+                } else {
+                    document.getElementById('loginForm').classList.remove('hidden');
+                    document.getElementById('dashboard').classList.add('hidden');
+                    clearAllCookies();
+                }
+            } catch (err) {
+                console.error('Session check failed:', err);
+                document.getElementById('loginForm').classList.remove('hidden');
+                document.getElementById('dashboard').classList.add('hidden');
+                clearAllCookies();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', checkSession);
+
+        function showDashboard(userData) {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('dashboard').classList.remove('hidden');
+            document.getElementById('userDisplayName').textContent = userData.displayName;
+            document.getElementById('userRole').textContent = userData.role;
+            document.getElementById('userRole').className = `v2s-role-badge v2s-role-${userData.role}`;
+            document.body.setAttribute('data-role', userData.role);
+        }
+
+        function showError(message) {
+            const errorMsg = document.getElementById('errorMsg');
+            errorMsg.textContent = message;
+            errorMsg.classList.remove('hidden');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const dashboardTab = document.getElementById('dashboardTab');
+            const profileTab = document.getElementById('profileTab');
+            const navItems = document.querySelectorAll('.v2s-nav-item');
+
+            navItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const isProfile = item.querySelector('i').classList.contains('fa-user');
+
+                    navItems.forEach(navItem => navItem.classList.remove('active'));
+                    item.classList.add('active');
+
+                    if (isProfile) {
+                        dashboardTab.classList.add('hidden');
+                        profileTab.classList.remove('hidden');
+
+                        const userName = document.getElementById('userDisplayName').textContent;
+                        const userRole = document.getElementById('userRole').textContent;
+
+                        document.getElementById('profileDisplayName').textContent = userName;
+                        document.getElementById('profileRole').textContent = userRole;
+                        document.getElementById('profileRole').className = document.getElementById('userRole').className;
+
+                        document.getElementById('displayNameValue').textContent = userName;
+                        document.getElementById('roleValue').textContent = userRole;
+                        document.getElementById('sessionValue').textContent = document.getElementById('timerDisplay').textContent;
+
+                        let accessLevel = 'Basic Access';
+                        if (userRole.toLowerCase() === 'admin') {
+                            accessLevel = 'Full System Access';
+                        } else if (userRole.toLowerCase() === 'manager') {
+                            accessLevel = 'Team Management Access';
+                        }
+                        document.getElementById('accessValue').textContent = accessLevel;
+                    } else {
+                        dashboardTab.classList.remove('hidden');
+                        profileTab.classList.add('hidden');
+                    }
+                });
+            });
+        });
+
+        function refreshStatus(type, event) {
+            const statValue = document.getElementById(type + 'Status');
+            const btn = event ? event.currentTarget : document.querySelector(`.v2s-refresh-btn[onclick*="${type}"]`);
+            btn.disabled = true;
+            btn.querySelector('i').style.animation = 'spin 1s linear infinite';
+
+            systemMonitor.healthScore = Math.max(60, Math.floor(Math.random() * 40 + systemMonitor.healthScore));
+
+            setTimeout(() => {
+                if (type === 'system') {
+                    const health = systemMonitor.healthScore;
+                    statValue.textContent = health + '%';
+
+                    const indicator = document.getElementById('systemStatusIndicator');
+                    if (health < 70) {
+                        indicator.textContent = 'System Warning';
+                        indicator.classList.add('warning');
+                    } else if (health < 90) {
+                        indicator.textContent = 'System Stable';
+                        indicator.classList.remove('warning', 'offline');
+                    } else {
+                        indicator.textContent = 'System Optimal';
+                        indicator.classList.add('success');
+                    }
+                }
+                btn.disabled = false;
+                btn.querySelector('i').style.animation = '';
+            }, 1000);
+        }
+
+        let tasksRunning = true;
+        function toggleTaskStatus() {
+            const tasksElement = document.getElementById('activeTasks');
+            const btn = document.getElementById('taskToggle');
+            tasksRunning = !tasksRunning;
+
+            if (tasksRunning) {
+                btn.innerHTML = '<i class="fas fa-pause"></i>';
+                startTaskUpdates();
+            } else {
+                btn.innerHTML = '<i class="fas fa-play"></i>';
+                stopTaskUpdates();
+            }
+        }
+
+        let taskInterval;
+        function startTaskUpdates() {
+            taskInterval = setInterval(() => {
+                const current = parseInt(document.getElementById('activeTasks').textContent);
+                const change = Math.floor(Math.random() * 5) - 2;
+                document.getElementById('activeTasks').textContent =
+                    Math.max(0, current + change);
+            }, 2000);
+        }
+
+        function stopTaskUpdates() {
+            clearInterval(taskInterval);
+        }
+
+        startTaskUpdates();
+
+        function handleDashboardAction(action, event) {
+            const btn = event ? event.currentTarget : document.querySelector(`.v2s-action-btn[onclick*="${action}"]`);
+            const status = btn.querySelector('.v2s-action-status');
+            const icon = btn.querySelector('i');
+            const indicator = document.getElementById('systemStatusIndicator');
+
+            // Store original icon class
+            const originalIconClass = icon.className;
+
+            btn.disabled = true;
+            icon.className = 'fas fa-spinner fa-spin';
+            status.textContent = 'Processing...';
+            status.classList.add('active');
+
+            setTimeout(() => {
+                switch (action) {
+                    case 'refresh':
+                        const issues = Math.random() > 0.7;
+                        if (issues) {
+                            systemMonitor.healthScore = Math.max(60, systemMonitor.healthScore - 15);
+                            indicator.textContent = 'System Warning';
+                            indicator.className = 'v2s-system-status warning';
+                            systemMonitor.warnings.push('Performance degradation detected');
+                        } else {
+                            systemMonitor.healthScore = Math.min(100, systemMonitor.healthScore + 5);
+                            indicator.textContent = 'System Stable';
+                            indicator.className = 'v2s-system-status';
+                        }
+                        refreshAllStats();
+                        status.textContent = 'Updated';
+                        icon.className = 'fas fa-sync';
+                        break;
+
+                    case 'export':
+                        systemMonitor.systemStatus = 'maintenance';
+                        indicator.textContent = 'System Maintenance';
+                        indicator.className = 'v2s-system-status warning';
+                        generateReport();
+                        icon.className = 'fas fa-download';
+
+                        setTimeout(() => {
+                            systemMonitor.systemStatus = 'online';
+                            indicator.textContent = 'System Online';
+                            indicator.className = 'v2s-system-status';
+                        }, 2000);
+                        status.textContent = 'Downloaded';
+                        break;
+
+                    case 'optimize':
+                        systemMonitor.systemStatus = 'optimizing';
+                        indicator.textContent = 'Optimizing...';
+                        indicator.className = 'v2s-system-status warning';
+
+                        setTimeout(() => {
+                            systemMonitor.healthScore = Math.min(100, systemMonitor.healthScore + 20);
+                            systemMonitor.warnings = [];
+                            systemMonitor.lastOptimization = new Date();
+                            systemMonitor.systemStatus = 'online';
+                            indicator.textContent = 'System Optimized';
+                            indicator.className = 'v2s-system-status success';
+                            refreshStatus('system');
+                        }, 2000);
+                        status.textContent = 'Optimized';
+                        icon.className = 'fas fa-rocket';
+                        break;
+
+                    case 'monitor':
+                        systemMonitor.isActive = !systemMonitor.isActive;
+                        if (systemMonitor.isActive) {
+                            systemMonitor.systemStatus = 'monitoring';
+                            indicator.textContent = 'Active Monitoring';
+                            indicator.className = 'v2s-system-status success';
+                            startActiveMonitoring();
+                            icon.className = 'fas fa-stop';
+                        } else {
+                            systemMonitor.systemStatus = 'online';
+                            indicator.textContent = 'System Online';
+                            indicator.className = 'v2s-system-status';
+                            stopActiveMonitoring();
+                            icon.className = 'fas fa-desktop';
+                        }
+                        status.textContent = systemMonitor.isActive ? 'Monitoring...' : 'Stopped';
+                        btn.classList.toggle('active');
+                        break;
+                }
+
+                setTimeout(() => {
+                    btn.disabled = false;
+                    if (action !== 'monitor') {
+                        status.classList.remove('active');
+                        icon.className = originalIconClass; // Restore original icon if not monitor
+                    }
+                }, 1000);
+            }, 1500);
+        }
+
+        function refreshAllStats() {
+            document.getElementById('systemStatus').textContent =
+                Math.floor(Math.random() * 10 + 90) + '%';
+
+            const newTime = Math.floor(Math.random() * 200 + 50);
+            document.getElementById('responseTime').textContent = newTime + 'ms';
+            document.getElementById('responseProgress').style.width =
+                Math.min(100, (newTime / 300) * 100) + '%';
+
+            const currentUsers = parseInt(document.getElementById('activeUsers').textContent);
+            const newUsers = Math.floor(Math.random() * 50 - 25 + currentUsers);
+            document.getElementById('activeUsers').textContent = Math.max(0, newUsers);
+        }
+
+        setInterval(() => {
+            const newTime = Math.floor(Math.random() * 200 + 50);
+            document.getElementById('responseTime').textContent = newTime + 'ms';
+            document.getElementById('responseProgress').style.width =
+                Math.min(100, (newTime / 300) * 100) + '%';
+        }, 3000);
+
+        const systemMonitor = {
+            isActive: false,
+            healthScore: 98,
+            taskCount: 12,
+            responseStats: [],
+            userStats: [],
+            interval: null,
+            systemStatus: 'online', // Add this
+            lastOptimization: null, // Add this
+            warnings: [], // Add this
+            criticalIssues: false // Add this
+        };
+
+        function startActiveMonitoring() {
+            if (systemMonitor.interval) clearInterval(systemMonitor.interval);
+
+            systemMonitor.interval = setInterval(() => {
+                if (!systemMonitor.isActive) return;
+
+                const responseTime = parseInt(document.getElementById('responseTime').textContent);
+                const health = systemMonitor.healthScore;
+                const indicator = document.getElementById('systemStatusIndicator');
+
+                if (responseTime > 200 || health < 70) {
+                    systemMonitor.warnings.push('Performance issues detected');
+                    indicator.textContent = 'System Warning';
+                    indicator.className = 'v2s-system-status warning';
+
+                    if (health < 50) {
+                        systemMonitor.criticalIssues = true;
+                        indicator.textContent = 'Critical Issues';
+                        indicator.className = 'v2s-system-status offline';
+                    }
+                }
+
+                updateSystemDisplays();
+            }, 3000);
+        }
+
+        function stopActiveMonitoring() {
+            clearInterval(systemMonitor.interval);
+            systemMonitor.interval = null;
+            systemMonitor.warnings = [];
+            systemMonitor.criticalIssues = false;
+        }
+
+        function updateSystemDisplays() {
+            const health = systemMonitor.healthScore;
+            document.getElementById('systemStatus').textContent = `${health}%`;
+
+            const newTime = Math.floor(Math.random() * (systemMonitor.criticalIssues ? 300 : 200) + 50);
+            document.getElementById('responseTime').textContent = `${newTime}ms`;
+            document.getElementById('responseProgress').style.width = `${Math.min(100, (newTime / 300) * 100)}%`;
+
+            const currentUsers = parseInt(document.getElementById('activeUsers').textContent);
+            const maxChange = systemMonitor.criticalIssues ? -10 : 10;
+            const newUsers = Math.max(0, currentUsers + Math.floor(Math.random() * maxChange));
+            document.getElementById('activeUsers').textContent = newUsers;
+        }
+
+        function generateReport() {
+            const stats = {
+                system: {
+                    health: systemMonitor.healthScore,
+                    uptime: Math.floor(Math.random() * 720),
+                    tasks: parseInt(document.getElementById('activeTasks').textContent)
+                },
+                performance: {
+                    responseTime: document.getElementById('responseTime').textContent,
+                    activeUsers: document.getElementById('activeUsers').textContent
+                }
+            };
+
+            const blob = new Blob([JSON.stringify(stats, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'system-report.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            systemMonitor.interval = setInterval(() => {
+                if (systemMonitor.isActive) {
+                    const responseTime = parseInt(document.getElementById('responseTime').textContent);
+                    systemMonitor.responseStats.push(responseTime);
+                    if (systemMonitor.responseStats.length > 10) {
+                        systemMonitor.responseStats.shift();
+                    }
+
+                    const avgResponse = systemMonitor.responseStats.reduce((a, b) => a + b, 0) /
+                        systemMonitor.responseStats.length;
+
+                    if (avgResponse > 200) {
+                        document.getElementById('systemStatusIndicator').textContent = 'Performance Warning';
+                        document.getElementById('systemStatusIndicator').classList.add('warning');
+                    }
+                }
+            }, 5000);
+        });
+
+        const newStyles = `
+            .v2s-system-status.success {
+                background: var(--success);
+            }
+            .v2s-system-status.warning {
+                background: var(--warning);
+            }
+            .v2s-system-status.offline {
+                background: var(--danger);
+                animation: pulse 1s infinite;
+            }
+        `;
+        document.head.appendChild(document.createElement('style')).textContent = newStyles;
+    </script>
+
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>

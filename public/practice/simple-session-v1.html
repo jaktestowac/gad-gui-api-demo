@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>🦎 GAD | Simple Session Demo</title>
+    <title>🦎 GAD | Simple Session V1 Demo</title>
     <link rel="stylesheet" href="/css/controls.css" />
     <link rel="stylesheet" href="/css/style.css" />
     <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
@@ -661,15 +661,15 @@
     </div>
 
     <script>
-        function setCookie(name, value, minutes) {
+        function setV1Cookie(name, value, minutes) {
             const date = new Date();
             date.setTime(date.getTime() + (minutes * 60 * 1000));
             const expires = `expires=${date.toUTCString()}`;
-            document.cookie = `${name}=${value};${expires};path=/`;
+            document.cookie = `v1_${name}=${value};${expires};path=/`;
         }
 
-        function getCookie(name) {
-            const cookieName = `${name}=`;
+        function getV1Cookie(name) {
+            const cookieName = `v1_${name}=`;
             const cookies = document.cookie.split(';');
             for (let cookie of cookies) {
                 cookie = cookie.trim();
@@ -681,10 +681,11 @@
         }
 
         function deleteCookie(name) {
-            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+            document.cookie = `v1_${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
         }
 
         function clearAllCookies() {
+            console.log('Clearing all cookies');
             deleteCookie('userSession');
             deleteCookie('sessionStart');
             deleteCookie('maxAge');
@@ -708,10 +709,16 @@
                 if (response.ok) {
                     errorMessage.textContent = '';
                     const sessionStart = Date.now();
-                    setCookie('sessionStart', sessionStart, 999999);
-                    setCookie('sessionToken', data.token, data.maxAge);
+                    setV1Cookie('sessionStart', sessionStart, 999999);
+                    setV1Cookie('sessionToken', data.token, data.maxAge / 60000);
+                    setV1Cookie('maxAge', data.maxAge, data.maxAge / 60000);
+
+                    // Show dashboard immediately
+                    document.getElementById('loginForm').classList.add('hidden');
+                    document.getElementById('userInfo').classList.remove('hidden');
+                    document.getElementById('userDisplay').textContent = username;
+
                     resetSystemState();
-                    checkSession();
                     initializeCountdown(sessionStart, data.maxAge);
                 } else {
                     errorMessage.textContent = data.error.message || 'Login failed!';
@@ -731,7 +738,6 @@
             const elapsed = Math.floor((now - sessionStartTime) / 1000);
             const sessionDuration = Math.floor(maxAge / 1000);
             const remaining = Math.max(0, sessionDuration - elapsed);
-
             if (remaining > 0) {
                 startCountdown(remaining);
             } else {
@@ -770,23 +776,22 @@
         }
 
         async function checkSession() {
-            document.getElementById('loginForm').classList.add('hidden');
-
             try {
-                const sessionStart = getCookie('sessionStart');
+                const sessionStart = getV1Cookie('sessionStart');
                 const response = await fetch('/api/practice/session/v1/check', {
                     credentials: 'include'
                 });
                 const data = await response.json();
 
                 if (data.username && sessionStart) {
+                    document.getElementById('loginForm').classList.add('hidden');
                     document.getElementById('userInfo').classList.remove('hidden');
                     document.getElementById('userDisplay').textContent = data.username;
                     initializeCountdown(parseInt(sessionStart), parseInt(getCookie('maxAge')));
                 } else {
                     document.getElementById('loginForm').classList.remove('hidden');
                     document.getElementById('userInfo').classList.add('hidden');
-                    clearAllCookies()
+                    clearAllCookies();
                     resetSystemState();
                     stopCountdown();
                 }
@@ -794,7 +799,7 @@
                 console.error(err);
                 document.getElementById('loginForm').classList.remove('hidden');
                 document.getElementById('userInfo').classList.add('hidden');
-                clearAllCookies()
+                clearAllCookies();
                 resetSystemState();
                 stopCountdown();
             } finally {
@@ -1025,7 +1030,6 @@
         }
 
         function handleQuickAction(action) {
-            console.log(`Quick action: ${action}`);
             const notification = document.createElement('div');
             notification.className = 'notification-item';
             notification.textContent = `Action ${action} executed`;
@@ -1176,6 +1180,8 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             showModal();
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('userInfo').classList.add('hidden');
             checkSession();
             setInterval(refreshStatus, 5000);
             setInterval(() => {
