@@ -2595,6 +2595,30 @@
         }
       }
     },
+    "/learning/system/restore2": {
+      "get": {
+        "tags": ["System"],
+        "summary": "Restore database to new v2 state",
+        "responses": {
+          "200": {
+            "description": "Database restored successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" },
+                    "collections": { "type": "object" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" }
+        }
+      }
+    },
     "/learning/system/data": {
       "get": {
         "tags": ["System"],

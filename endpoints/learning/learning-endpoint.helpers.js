@@ -83,10 +83,28 @@ function handleLearning(req, res) {
     // Restore endpoint before other GET handlers
     // /learning/system/restore
     if (urlParts[1] === "learning" && urlParts[2] === "system") {
-      if (req.method === "GET" && urlParts.length === 4 && urlParts[3] === "restore") {
+      if (req.method === "GET" && urlParts.length === 4 && (urlParts[3] === "restore" || urlParts[3] === "restore2")) {
         try {
-          logDebug("Restoring Learning database...");
-          const result = dataProvider.restoreDatabase();
+          logDebug("Restoring Default Learning database...");
+
+          let result = undefined;
+          switch (urlParts[3]) {
+            case "restore":
+              result = dataProvider.restoreDefaultDatabase();
+              break;
+            case "restore2":
+              result = dataProvider.restoreDatabase();
+              break;
+            default:
+              logDebug("Invalid restore endpoint", { urlParts });
+              break;
+          }
+
+          if (result === undefined) {
+            res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Invalid restore endpoint"));
+            return;
+          }
+
           if (result.success) {
             // Recalculate everything after restore
             recalculateStudentsCount();

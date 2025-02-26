@@ -1,8 +1,32 @@
 const DataProxy = require("./db-data.proxy");
 const { areIdsEqual } = require("../../helpers/compare.helpers");
+const mockData2 = require("./learning-data-2.mock");
 
 const dataProxy = new DataProxy();
 const data = dataProxy.getData();
+
+function restoreDefaultDatabase() {
+  try {
+    const result = dataProxy.restoreToDefault();
+    return result;
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+}
+
+function restoreDatabase() {
+  try {
+    dataProxy.setMockDataSource(mockData2);
+    const result = dataProxy.restoreToDefault()
+    return result;
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+}
+
+function getBackupData() {
+  return dataProxy.getAllData();
+}
 
 function isInactive(obj) {
   return obj?._inactive === true;
@@ -283,19 +307,6 @@ function addUserEnrollment(enrollment) {
   recalculateStudentsCount();
 }
 
-function restoreDatabase() {
-  try {
-    const result = dataProxy.restoreToDefault();
-    return result;
-  } catch (error) {
-    return { success: false, error: error.message };
-  }
-}
-
-function getBackupData() {
-  return dataProxy.getAllData();
-}
-
 module.exports = {
   getUserByEmail,
   getAllUserEnrollments,
@@ -347,6 +358,7 @@ module.exports = {
   deactivateUserData,
   getUserByUsernameOrEmail,
   getUserByUsernameAndPassword,
+  restoreDefaultDatabase,
   restoreDatabase,
   getBackupData,
 };

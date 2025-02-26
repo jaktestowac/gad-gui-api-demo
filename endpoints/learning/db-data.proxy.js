@@ -1,19 +1,20 @@
 const fs = require("fs");
 const path = require("path");
-const mockData = require("./learning-data.mock");
+const defaultMockData = require("./learning-data.mock");
 
 class DataProxy {
   static instance = null;
 
-  constructor() {
+  constructor(mockDataSource = defaultMockData, dbName = "db-learning-tmp.json") {
     if (DataProxy.instance) {
       return DataProxy.instance;
     }
 
-    this.dbPath = path.join(__dirname, "..", "..", "db", "db-learning-tmp.json");
+    this.setMockDataSource(mockDataSource);
+    this.dbPath = path.join(__dirname, "..", "..", "db", dbName);
 
     if (!fs.existsSync(this.dbPath)) {
-      this.saveData(mockData);
+      this.saveData(this.mockDataSource);
     }
 
     this.initInnerProxy();
@@ -95,7 +96,7 @@ class DataProxy {
       return this.mergeWithMockData(data);
     } catch (error) {
       console.error("Error loading data:", error);
-      return { ...mockData };
+      return { ...this.mockDataSource };
     }
   }
 
@@ -118,7 +119,7 @@ class DataProxy {
   }
 
   mergeWithMockData(savedData) {
-    const result = JSON.parse(JSON.stringify(mockData)); // Deep clone
+    const result = JSON.parse(JSON.stringify(this.mockDataSource)); // Deep clone
     return this.deepMerge(result, savedData);
   }
 
@@ -130,15 +131,20 @@ class DataProxy {
     }
   }
 
+  setMockDataSource(mockDataSource) {
+    this.mockDataSource = mockDataSource;
+    return this;
+  }
+
   restoreToDefault() {
     try {
       // Reset file data
-      this.saveData(mockData);
+      this.saveData(this.mockDataSource);
       this.initInnerProxy();
       // create { key: number } object where key is root key and number is number of items in the collection
-      const collections = Object.keys(mockData).reduce((acc, key) => {
-        if (Array.isArray(mockData[key])) {
-          acc[key] = mockData[key].length;
+      const collections = Object.keys(this.mockDataSource).reduce((acc, key) => {
+        if (Array.isArray(this.mockDataSource[key])) {
+          acc[key] = this.mockDataSource[key].length;
         }
         return acc;
       }, {});
@@ -156,6 +162,10 @@ class DataProxy {
 
   getData() {
     return this.proxy;
+  }
+
+  static resetInstance() {
+    DataProxy.instance = null;
   }
 }
 
