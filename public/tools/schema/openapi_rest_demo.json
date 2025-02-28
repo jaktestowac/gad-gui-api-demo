@@ -996,17 +996,10 @@
           {
             "name": "id",
             "in": "path",
-            "description": "Id of article-labels entity that need to be updated",
-            "required": false,
+            "description": "Id of article-labels entity",
+            "required": true,
             "schema": {
-              "oneOf": [
-                {
-                  "type": "integer"
-                },
-                {
-                  "type": "string"
-                }
-              ]
+              "type": "integer"
             }
           }
         ],
@@ -1135,7 +1128,7 @@
       "get": {
         "tags": ["likes"],
         "summary": "Get likes for article",
-        "operationId": "getLikesForArticle",
+        "operationId": "getLikesForArticleById",
         "parameters": [
           {
             "name": "id",
@@ -1322,12 +1315,8 @@
           "required": true,
           "content": {
             "application/json": {
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/CaptchaSolution"
-                  }
-                }
+              "schema": {
+                "$ref": "#/components/schemas/CaptchaSolution"
               }
             }
           }
@@ -1414,7 +1403,7 @@
         }
       }
     },
-    "/files/uploaded?userId={id}": {
+    "/files/uploaded/{userId}": {
       "get": {
         "tags": ["files"],
         "security": [
@@ -1426,7 +1415,7 @@
         "operationId": "getUserFiles",
         "parameters": [
           {
-            "name": "id",
+            "name": "userId",
             "in": "path",
             "description": "ID of user",
             "required": true,
@@ -1487,14 +1476,14 @@
         }
       }
     },
-    "/files/uploaded/public?userIds={id}": {
+    "/files/uploaded/public/users/{userIds}": {
       "get": {
         "tags": ["files"],
         "summary": "Get users public files",
         "operationId": "getUsersPublicFiles",
         "parameters": [
           {
-            "name": "id",
+            "name": "userIds",
             "in": "path",
             "description": "ID of user or multiple IDs of users separated by comma",
             "required": true,
@@ -2278,16 +2267,6 @@
             "bearerAuth": []
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/BookShopOrderItem"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": "Item removed from order successfully",
@@ -3044,7 +3023,9 @@
             "content": {}
           }
         }
-      },
+      }
+    },
+    "/book-shop-manage/orders/{id}": {
       "patch": {
         "tags": ["book-shop-manage"],
         "summary": "Update order status",
@@ -3175,7 +3156,9 @@
             "content": {}
           }
         }
-      },
+      }
+    },
+    "/book-shop-manage/items/{id}": {
       "patch": {
         "tags": ["book-shop-manage"],
         "summary": "Update an item",
@@ -3267,7 +3250,7 @@
         }
       }
     },
-    "/book-shop-manage/items?book_id={book_id}": {
+    "/book-shop-manage/items/by-book/{bookId}": {
       "get": {
         "tags": ["book-shop-manage"],
         "summary": "Get item by book ID",
@@ -3279,8 +3262,8 @@
         ],
         "parameters": [
           {
-            "name": "book_id",
-            "in": "query",
+            "name": "bookId",
+            "in": "path",
             "description": "ID of the book",
             "required": true,
             "schema": {
@@ -3342,7 +3325,7 @@
       "get": {
         "tags": ["book-shop-manage"],
         "summary": "Get users",
-        "operationId": "getUsers",
+        "operationId": "getBookshopUsers",
         "security": [
           {
             "bearerAuth": []
@@ -3646,7 +3629,7 @@
         }
       }
     },
-    "/articles?": {
+    "/articles/search": {
       "get": {
         "tags": ["search"],
         "summary": "Get articles with query",
@@ -3790,7 +3773,7 @@
         }
       }
     },
-    "/users?": {
+    "/users/search": {
       "get": {
         "tags": ["search"],
         "summary": "Get users with query",
@@ -3928,7 +3911,7 @@
         }
       }
     },
-    "/comments?": {
+    "/comments/search": {
       "get": {
         "tags": ["search"],
         "summary": "Get comments with query",
@@ -4138,10 +4121,19 @@
         "summary": "Add contact",
         "operationId": "addContact",
         "requestBody": {
+          "required": true,
           "content": {
-            "email": "string"
-          },
-          "required": true
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
         },
         "responses": {
           "200": {
@@ -4156,19 +4148,11 @@
           },
           "404": {
             "description": "User not found",
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ErrorMessage"
-              }
-            }
+            "content": {}
           },
           "409": {
             "description": "Can not add contact",
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ErrorMessage"
-              }
-            }
+            "content": {}
           }
         }
       }
@@ -4272,11 +4256,7 @@
           },
           "404": {
             "description": "User not found",
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ErrorMessage"
-              }
-            }
+            "content": {}
           }
         }
       }
@@ -4369,7 +4349,7 @@
       "get": {
         "tags": ["other"],
         "summary": "Get translations",
-        "operationId": "getTranslations",
+        "operationId": "getTranslationsByLang",
         "parameters": [
           {
             "name": "lang",
@@ -4635,11 +4615,11 @@
         "responses": {
           "200": {
             "description": "Quiz started"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
           }
-        },
-        "401": {
-          "description": "Unauthorized",
-          "content": {}
         }
       }
     },
@@ -5373,6 +5353,24 @@
         "tags": ["visits"],
         "summary": "Get articles visits stats",
         "operationId": "getArticlesVisitsStats",
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "query",
+            "description": "ID of user or multiple IDs of articles separated by comma",
+            "required": false,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Visits received",
@@ -5406,17 +5404,17 @@
         }
       }
     },
-    "/visits/articles?ids={id}": {
+    "/visits/users": {
       "get": {
         "tags": ["visits"],
-        "summary": "Get articles visits stats",
-        "operationId": "getSelectedArticlesVisitsStats",
+        "summary": "Get users visits stats",
+        "operationId": "getUsersVisitsStats",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "description": "ID of user or multiple IDs of articles separated by comma",
-            "required": true,
+            "name": "ids",
+            "in": "query",
+            "description": "ID of user or multiple IDs of users separated by comma",
+            "required": false,
             "schema": {
               "oneOf": [
                 {
@@ -5429,25 +5427,6 @@
             }
           }
         ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Visits"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/visits/users": {
-      "get": {
-        "tags": ["visits"],
-        "summary": "Get users visits stats",
-        "operationId": "getUsersVisitsStats",
         "responses": {
           "200": {
             "description": "Visits received",
@@ -5481,17 +5460,17 @@
         }
       }
     },
-    "/visits/users?ids={id}": {
+    "/visits/comments": {
       "get": {
         "tags": ["visits"],
-        "summary": "Get users visits stats",
-        "operationId": "getSelectedUsersVisitsStats",
+        "summary": "Get comments visits stats",
+        "operationId": "getCommentsVisitsStats",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "description": "ID of user or multiple IDs of users separated by comma",
-            "required": true,
+            "name": "ids",
+            "in": "query",
+            "description": "ID of user or multiple IDs of comments separated by comma",
+            "required": false,
             "schema": {
               "oneOf": [
                 {
@@ -5504,25 +5483,6 @@
             }
           }
         ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Visits"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/visits/comments": {
-      "get": {
-        "tags": ["visits"],
-        "summary": "Get comments visits stats",
-        "operationId": "getCommentsVisitsStats",
         "responses": {
           "200": {
             "description": "Visits received",
@@ -5556,44 +5516,6 @@
         }
       }
     },
-    "/visits/comments?ids={id}": {
-      "get": {
-        "tags": ["visits"],
-        "summary": "Get comments visits stats",
-        "operationId": "getSelectedCommentsVisitsStats",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of user or multiple IDs of comments separated by comma",
-            "required": true,
-            "schema": {
-              "oneOf": [
-                {
-                  "type": "integer"
-                },
-                {
-                  "type": "string"
-                }
-              ]
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Visits"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-
     "/surveys/statistics/{type}": {
       "get": {
         "tags": ["surveys"],
@@ -6361,6 +6283,15 @@
           }
         }
       },
+      "MyLikes": {
+        "type": "object",
+        "required": ["likes"],
+        "properties": {
+          "likes": {
+            "type": "number"
+          }
+        }
+      },
       "Like": {
         "type": "object",
         "required": ["date", "user_id"],
@@ -6462,6 +6393,15 @@
           }
         }
       },
+      "QuizQuestionCount": {
+        "type": "object",
+        "required": ["count"],
+        "properties": {
+          "count": {
+            "type": "number"
+          }
+        }
+      },
       "QuizAnswerValidation": {
         "type": "object",
         "required": ["isCorrect"],
@@ -6491,6 +6431,50 @@
                 "type": "number"
               }
             }
+          }
+        }
+      },
+      "HangmanRandomWord": {
+        "type": "object",
+        "required": ["word"],
+        "properties": {
+          "word": {
+            "type": "string"
+          }
+        }
+      },
+      "Scores": {
+        "type": "object",
+        "required": ["score", "user", "game"],
+        "properties": {
+          "highScore": {
+            "type": "object",
+            "properties": {
+              "user": {
+                "type": "string"
+              },
+              "game": {
+                "type": "string"
+              },
+              "score": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      },
+      "ScoreRecord": {
+        "type": "object",
+        "required": ["game_id", "user_id", "score"],
+        "properties": {
+          "game_id": {
+            "type": "number"
+          },
+          "user_id": {
+            "type": "number"
+          },
+          "score": {
+            "type": "number"
           }
         }
       },
@@ -6694,8 +6678,7 @@
           "favorite_books_ids",
           "purchased_book_ids",
           "read_books_ids",
-          "owned_books_ids",
-          "funds"
+          "owned_books_ids"
         ],
         "properties": {
           "id": {
@@ -7236,6 +7219,28 @@
           }
         }
       },
+      "Visits": {
+        "type": "object",
+        "properties": {
+          "visits": {
+            "type": "object",
+            "properties": {
+              "count": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      },
+      "SurveyStatistics": {
+        "type": "object",
+        "properties": {
+          "statistics": {
+            "type": "object",
+            "properties": {}
+          }
+        }
+      },
       "SurveyQuestion": {
         "type": "object",
         "properties": {
@@ -7434,6 +7439,25 @@
           }
         }
       },
+      "Games": {
+        "type": "object",
+        "properties": {
+          "games": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number"
+                },
+                "name": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
       "SimpleRoiParameters": {
         "type": "object",
         "properties": {
@@ -7487,41 +7511,41 @@
             "type": "array",
             "description": "List of total costs accumulated by each sprint, where the first entry can be null to indicate no data.",
             "items": {
-              "type": ["integer", "null"]
+              "type": "integer"
             },
-            "example": [null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            "example": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
           },
           "totalCumulativeBenefitsPerSprint": {
             "type": "array",
             "description": "List of total benefits accumulated by each sprint, where the first entry can be null to indicate no data.",
             "items": {
-              "type": ["integer", "null"]
+              "type": "integer"
             },
-            "example": [null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            "example": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
           },
           "profitPerSprint": {
             "type": "array",
             "description": "List of profits per each sprint, where the first entry can be null to indicate no data.",
             "items": {
-              "type": ["integer", "null"]
+              "type": "integer"
             },
-            "example": [null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            "example": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
           },
           "totalCumulativeProfitPerSprint": {
             "type": "array",
             "description": "List of cumulative profit per each sprint, where the first entry can be null to indicate no data.",
             "items": {
-              "type": ["integer", "null"]
+              "type": "integer"
             },
-            "example": [null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            "example": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
           },
           "sprintROI": {
             "type": "array",
             "description": "Return on investment for each sprint, where the first entry can be null to indicate no data and other entries are typically integers.",
             "items": {
-              "type": ["integer", "null"]
+              "type": "integer"
             },
-            "example": [null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            "example": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
           },
           "sprints": {
             "type": "array",
