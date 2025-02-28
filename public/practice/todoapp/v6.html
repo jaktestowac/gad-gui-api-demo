@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>🦎 GAD - TODO App - V6</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="styles/todo-app.css">
+    <link rel="stylesheet" href="styles/todo-app-v6.css">
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br /><br /><br />
+    <div class="todo-app">
+        <nav class="todo-nav">
+            <a href="index.html" class="todo-nav__link">← Back to versions</a>
+        </nav>
+
+        <div class="todo-header">
+            <h1 class="todo-header__title">TODO App</h1>
+            <p class="todo-header__subtitle">Version 6 - Advanced Organization & Time Tracking</p>
+        </div>
+
+        <!-- Enhanced Filters -->
+        <div class="todo-filters">
+            <input type="text" id="searchInput" class="todo-filters__search" placeholder="Search todos...">
+            <div class="todo-filters__group">
+                <select id="statusFilter" class="todo-filters__select">
+                    <option value="">All Statuses</option>
+                    <option value="todo">Todo</option>
+                    <option value="inProgress">In Progress</option>
+                    <option value="paused">Paused</option>
+                    <option value="completed">Completed</option>
+                </select>
+                <select id="categoryFilter" class="todo-filters__select">
+                    <option value="">All Categories</option>
+                    <option value="work">Work</option>
+                    <option value="personal">Personal</option>
+                    <option value="shopping">Shopping</option>
+                    <option value="health">Health</option>
+                </select>
+                <select id="priorityFilter" class="todo-filters__select">
+                    <option value="">All Priorities</option>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                </select>
+                <label class="todo-filters__toggle">
+                    <input type="checkbox" id="hideCompleted">
+                    Hide Completed
+                </label>
+            </div>
+        </div>
+
+        <form class="todo-form" id="todoForm">
+            <div class="todo-form__header">
+                <h3 id="formTitle">Add New Task</h3>
+                <p id="formSubtitle">Fill in the details below to create a new task</p>
+            </div>
+            <div class="todo-form__group todo-form__group--col">
+                <input type="text" id="todoTitle" class="todo-form__input" placeholder="Enter todo title" required>
+                <textarea id="todoDescription" class="todo-form__textarea" placeholder="Add description"></textarea>
+            </div>
+            <div class="todo-form__group todo-form__group--row">
+                <select id="todoStatus" class="todo-form__select">
+                    <option value="todo">Todo</option>
+                    <option value="inProgress">In Progress</option>
+                    <option value="paused">Paused</option>
+                    <option value="completed">Completed</option>
+                </select>
+                <select id="todoCategory" class="todo-form__select">
+                    <option value="default">No Category</option>
+                    <option value="work">Work</option>
+                    <option value="personal">Personal</option>
+                    <option value="shopping">Shopping</option>
+                    <option value="health">Health</option>
+                </select>
+                <select id="todoPriority" class="todo-form__select">
+                    <option value="low">Low Priority</option>
+                    <option value="medium" selected>Medium Priority</option>
+                    <option value="high">High Priority</option>
+                </select>
+            </div>
+            <div class="todo-form__group todo-form__group--row">
+                <select id="todoParent" class="todo-form__select">
+                    <option value="">No Parent Task</option>
+                </select>
+                <select id="todoTemplate" class="todo-form__select">
+                    <option value="">No Template</option>
+                </select>
+                <select id="todoRecurrence" class="todo-form__select">
+                    <option value="">No Recurrence</option>
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                </select>
+            </div>
+            <div class="todo-form__group todo-form__group--row">
+                <input type="text" id="todoTags" class="todo-form__input" placeholder="Add tags (comma separated)">
+                <input type="text" id="todoSharedWith" class="todo-form__input" placeholder="Share with (comma separated emails)">
+                <input type="date" id="todoDeadline" class="todo-form__input">
+            </div>
+            <div class="templates-panel__form">
+                <button type="submit" class="todo-form__button" id="submitBtn">
+                    <i class="fas fa-plus"></i>
+                    Add Todo</button>
+                <button id="saveTemplate">
+                    <i class="fas fa-save"></i>
+                    Add Template
+                </button>
+            </div>
+        </form>
+
+        <!-- Update Task Templates Panel -->
+        <div class="templates-panel">
+            <button class="templates-panel__toggle" aria-expanded="false">
+                <i class="fas fa-chevron-down"></i>
+                Task Templates
+                <span class="templates-count"></span>
+            </button>
+            <div class="templates-panel__content" style="display: none;">
+
+                <div class="templates-panel__list" id="templatesList"></div>
+            </div>
+        </div>
+
+        <div id="todoList" class="todo-list todo-list--list"></div>
+    </div>
+
+    <script>
+        // API Configuration
+        const api = {
+            getAll: (params = {}) => {
+                const query = new URLSearchParams(params).toString();
+                return fetch(`/api/practice/v6/todos${query ? `?${query}` : ''}`).then(r => r.json());
+            },
+            create: (data) => fetch('/api/practice/v6/todos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).then(r => r.json()),
+            update: (id, data) => fetch(`/api/practice/v6/todos/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).then(r => r.json()),
+            delete: (id) => fetch(`/api/practice/v6/todos/${id}`, { method: 'DELETE' }),
+            startTimer: (id) => fetch(`/api/practice/v6/todos/${id}/start`, { method: 'POST' }),
+            stopTimer: (id) => fetch(`/api/practice/v6/todos/${id}/stop`, { method: 'POST' }),
+            createTemplate: (data) => fetch('/api/practice/v6/todos/templates', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+        };
+
+        // Global state
+        let editingId = null;
+        let currentTimer = null;
+        let timerInterval = null;
+
+        // Timer functions
+        function formatTime(ms) {
+            const seconds = Math.floor((ms / 1000) % 60);
+            const minutes = Math.floor((ms / (1000 * 60)) % 60);
+            const hours = Math.floor(ms / (1000 * 60 * 60));
+            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Update timer functions to work without modal
+        function updateTimerDisplay() {
+            if (!currentTimer) return;
+            const elapsed = Date.now() - new Date(currentTimer.lastStarted).getTime();
+            const total = currentTimer.total + elapsed;
+
+            // Update the timer display in the todo item
+            const todoEl = document.querySelector(`[data-id="${currentTimer.id}"]`);
+            if (todoEl) {
+                const timerEl = todoEl.querySelector('.todo-item__timer');
+                if (timerEl) {
+                    timerEl.innerHTML = `
+                        <i class="fas fa-stopwatch"></i>
+                        ${formatTime(total)}
+                        <button class="todo-item__timer-button" onclick="startTimer(${currentTimer.id})">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        <button class="todo-item__timer-button" onclick="stopTimer(${currentTimer.id})">
+                            <i class="fas fa-stop"></i>
+                        </button>
+                    `;
+                    timerEl.classList.add('running');
+                }
+            }
+        }
+
+        // Update timer functions to fix stop functionality
+        async function startTimer(id) {
+            const response = await api.startTimer(id);
+            const todo = document.querySelector(`[data-id="${id}"]`).__todo;
+            if (response.ok) {
+                currentTimer = {
+                    id,
+                    lastStarted: new Date().toISOString(),
+                    total: todo.timeTracking?.total || 0
+                };
+                timerInterval = setInterval(updateTimerDisplay, 1000);
+
+                // Update timer UI immediately
+                const timerEl = document.querySelector(`[data-id="${id}"] .todo-item__timer`);
+                if (timerEl) {
+                    timerEl.classList.add('running');
+                }
+            }
+        }
+
+        async function stopTimer(id) {
+            const response = await api.stopTimer(id);
+
+            if (response.ok) {
+                clearInterval(timerInterval);
+                currentTimer = null;
+
+                const timerEl = document.querySelector(`[data-id="${id}"] .todo-item__timer`);
+                if (timerEl) {
+                    timerEl.classList.remove('running');
+                }
+
+                await loadTodos();
+            }
+        }
+
+        function getRunningTime(timeTracking) {
+            if (!timeTracking?.isRunning) return timeTracking?.total || 0;
+            const elapsed = Date.now() - new Date(timeTracking.lastStarted).getTime();
+            return (timeTracking.total || 0) + elapsed;
+        }
+
+        function checkForRunningTimer(todos) {
+            const runningTodo = todos.find(todo => todo.timeTracking?.isRunning);
+            if (runningTodo) {
+                currentTimer = {
+                    id: runningTodo.id,
+                    lastStarted: runningTodo.timeTracking.lastStarted,
+                    total: runningTodo.timeTracking.total || 0
+                };
+                timerInterval = setInterval(updateTimerDisplay, 1000);
+            }
+        }
+
+        // Update templates functions
+        function loadTemplates() {
+            api.getAll({ template: 'true' }).then(templates => {
+                const list = document.getElementById('templatesList');
+                const select = document.getElementById('todoTemplate');
+                const count = document.querySelector('.templates-count');
+
+                // Update count
+                count.textContent = templates.length ? `(${templates.length})` : '';
+
+                // Update templates list with proper delete handling
+                list.innerHTML = templates.map(t => `
+                    <div class="template-item">
+                        <span title="${t.title}">${t.title}</span>
+                        <div class="template-item__actions">
+                            <button onclick="useTemplate(${t.id})" title="Use Template">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <button onclick="promptDeleteTemplate(${t.id})" 
+                                    class="template-item__delete" 
+                                    title="Delete Template">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Update template select
+                select.innerHTML = `
+                    <option value="">No Template</option>
+                    ${templates.map(t => `<option value="${t.id}">${t.title}</option>`).join('')}
+                `;
+            });
+        }
+
+        // Add delete template function
+        async function deleteTemplate(id) {
+            if (confirm('Are you sure you want to delete this template?')) {
+                try {
+                    await api.delete(id);
+                    loadTemplates();
+                } catch (error) {
+                    console.error('Error deleting template:', error);
+                    alert('Failed to delete template');
+                }
+            }
+        }
+
+        // Update useTemplate function
+        function useTemplate(id) {
+            api.getAll({ template: 'true' }).then(templates => {
+                const template = templates.find(t => t.id === parseInt(id));
+                if (!template?.template) return;
+
+                const formData = template.template;
+
+                // Fill all form fields
+                Object.entries({
+                    'todoTitle': formData.title || '',
+                    'todoDescription': formData.description || '',
+                    'todoStatus': formData.status || 'todo',
+                    'todoPriority': formData.priority || 'medium',
+                    'todoCategory': formData.category || 'default',
+                    'todoTags': Array.isArray(formData.tags) ? formData.tags.join(', ') : '',
+                    'todoDeadline': formData.deadline ? formData.deadline.split('T')[0] : '',
+                    'todoRecurrence': formData.recurrence || '',
+                    'todoSharedWith': Array.isArray(formData.sharedWith) ? formData.sharedWith.join(', ') : ''
+                }).forEach(([id, value]) => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        element.value = value;
+                        // Trigger change event for selects
+                        if (element.tagName === 'SELECT') {
+                            element.dispatchEvent(new Event('change'));
+                        }
+                    }
+                });
+
+                document.getElementById('todoForm').scrollIntoView({ behavior: 'smooth' });
+            });
+        }
+
+        // Add template change handler
+        document.getElementById('todoTemplate').addEventListener('change', function () {
+            if (this.value) {
+                useTemplate(this.value);
+            }
+        });
+
+        // Rendering functions
+        function renderTodo(todo) {
+            const hasSubtasks = todo.subtasks && todo.subtasks.length > 0;
+            const subtasksHtml = hasSubtasks ? `
+                <div class="todo-item__subtasks">
+                    ${todo.subtasks.map(renderTodo).join('')}
+                </div>
+            ` : '';
+
+            // Calculate current total time including running session
+            const currentTotal = getRunningTime(todo.timeTracking);
+
+            return `
+                <div class="todo-item todo-item--status-${todo.status} todo-item--priority-${todo.priority}"
+                     data-id="${todo.id}" data-category="${todo.category}">
+                    <div class="todo-item__content">
+                        <div class="todo-item__header">
+                            <div class="todo-item__title-group">
+                                <span class="todo-item__priority">${todo.priority} Priority</span>
+                                <span class="todo-item__title">${todo.title}</span>
+                            </div>
+                        </div>
+                        ${todo.description ? `
+                            <div class="todo-item__description">${todo.description}</div>
+                        ` : ''}
+                        <div class="todo-item__meta">
+                            <span class="todo-item__category">
+                                <i class="fas fa-folder"></i> ${todo.category}
+                            </span>
+                            ${todo.deadline ? `
+                                <span class="todo-item__deadline">
+                                    <i class="fas fa-clock"></i> ${formatDate(todo.deadline)}
+                                </span>
+                            ` : ''}
+                            <div class="todo-item__timer ${todo.timeTracking?.isRunning ? 'running' : ''}">
+                                <i class="fas fa-stopwatch"></i>
+                                ${formatTime(currentTotal)}
+                                <button class="todo-item__timer-button" onclick="startTimer(${todo.id})">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="todo-item__timer-button" onclick="stopTimer(${todo.id})">
+                                    <i class="fas fa-stop"></i>
+                                </button>
+                            </div>
+                        </div>
+                        ${todo.tags.length ? `
+                            <div class="todo-item__tags">
+                                ${renderTags(todo.tags)}
+                            </div>
+                        ` : ''}
+                        <div class="todo-item__status-actions">
+                            <button class="todo-item__status-btn ${todo.status === 'todo' ? 'active' : ''}"
+                                    onclick="quickUpdateStatus(${todo.id}, 'todo')">To Do</button>
+                            <button class="todo-item__status-btn ${todo.status === 'inProgress' ? 'active' : ''}"
+                                    onclick="quickUpdateStatus(${todo.id}, 'inProgress')">In Progress</button>
+                            <button class="todo-item__status-btn ${todo.status === 'paused' ? 'active' : ''}"
+                                    onclick="quickUpdateStatus(${todo.id}, 'paused')">Paused</button>
+                            <button class="todo-item__status-btn ${todo.status === 'completed' ? 'active' : ''}"
+                                    onclick="quickUpdateStatus(${todo.id}, 'completed')">Completed</button>
+                        </div>
+                    </div>
+                    <div class="todo-item__actions">
+                        <button class="todo-item__edit" onclick="startEditing(${todo.id})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </div>
+                    ${subtasksHtml}
+                </div>
+            `;
+        }
+
+        async function quickUpdateStatus(id, newStatus) {
+            const todoEl = document.querySelector(`[data-id="${id}"]`);
+            const todo = todoEl.__todo;
+            await api.update(id, { ...todo, status: newStatus });
+            loadTodos();
+        }
+
+        function formatDate(isoDate) {
+            if (!isoDate) return '';
+            return new Date(isoDate).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        function renderTags(tags) {
+            return tags.map(tag => `
+                <span class="todo-item__tag">${tag}</span>
+            `).join('');
+        }
+
+        function parseTags(tagsString) {
+            return tagsString.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0);
+        }
+
+        // Add missing startEditing function
+        function startEditing(id) {
+            editingId = id;
+            const todo = document.querySelector(`[data-id="${id}"]`).__todo;
+
+            // Update form fields
+            document.getElementById('todoTitle').value = todo.title;
+            document.getElementById('todoDescription').value = todo.description || '';
+            document.getElementById('todoStatus').value = todo.status;
+            document.getElementById('todoPriority').value = todo.priority;
+            document.getElementById('todoCategory').value = todo.category || 'default';
+            document.getElementById('todoTags').value = todo.tags.join(', ');
+            document.getElementById('todoSharedWith').value = todo.sharedWith ? todo.sharedWith.join(', ') : '';
+            document.getElementById('todoDeadline').value = todo.deadline ? todo.deadline.split('T')[0] : '';
+            document.getElementById('todoParent').value = todo.parentId || '';
+            document.getElementById('todoRecurrence').value = todo.recurrence || '';
+            document.getElementById('todoTemplate').value = todo.template || '';
+
+            // Update form UI
+            document.getElementById('submitBtn').textContent = 'Update Task';
+            document.getElementById('formTitle').textContent = 'Edit Task';
+            document.getElementById('formSubtitle').textContent = 'Update the task details below';
+
+            // Scroll to form
+            document.getElementById('todoForm').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Enhanced Form Handling
+        async function handleSubmit(e) {
+            e.preventDefault();
+            const titleInput = document.getElementById('todoTitle');
+            if (!titleInput.value.trim()) {
+                showInputError('todoTitle');
+                return;
+            }
+
+            const data = {
+                title: document.getElementById('todoTitle').value,
+                description: document.getElementById('todoDescription').value,
+                status: document.getElementById('todoStatus').value || 'todo',
+                priority: document.getElementById('todoPriority').value || 'medium',
+                category: document.getElementById('todoCategory').value || 'default',
+                parentId: document.getElementById('todoParent').value || null,
+                recurrence: document.getElementById('todoRecurrence').value || null,
+                tags: parseTags(document.getElementById('todoTags').value),
+                sharedWith: parseTags(document.getElementById('todoSharedWith').value),
+                deadline: document.getElementById('todoDeadline').value || null,
+                template: document.getElementById('todoTemplate').value || null
+            };
+
+            try {
+                if (editingId) {
+                    await api.update(editingId, data);
+                    editingId = null;
+                    document.getElementById('submitBtn').textContent = 'Add Task';
+                    document.getElementById('formTitle').textContent = 'Add New Task';
+                } else {
+                    await api.create(data);
+                }
+
+                e.target.reset();
+                loadTodos();
+            } catch (error) {
+                console.error('Error:', error);
+                document.querySelector('.todo-form').classList.add('form-error');
+                setTimeout(() => {
+                    document.querySelector('.todo-form').classList.remove('form-error');
+                }, 2000);
+            }
+        }
+
+        async function loadTodos() {
+            const params = {
+                search: document.getElementById('searchInput').value,
+                status: document.getElementById('statusFilter').value,
+                priority: document.getElementById('priorityFilter').value,
+                category: document.getElementById('categoryFilter').value,
+                hideCompleted: document.getElementById('hideCompleted').checked
+            };
+
+            const todos = await api.getAll(params);
+            const container = document.getElementById('todoList');
+            container.innerHTML = todos.map(renderTodo).join('');
+            todos.forEach(todo => {
+                const el = container.querySelector(`[data-id="${todo.id}"]`);
+                if (el) el.__todo = todo;
+            });
+
+            if (!currentTimer) {
+                checkForRunningTimer(todos);
+            }
+
+            updateParentOptions();
+        }
+
+        // Add debounce function before event listeners
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        document.getElementById('todoForm').onsubmit = handleSubmit;
+        document.getElementById('searchInput').addEventListener('input', debounce(loadTodos, 300));
+        document.getElementById('statusFilter').addEventListener('change', loadTodos);
+        document.getElementById('priorityFilter').addEventListener('change', loadTodos);
+        document.getElementById('categoryFilter').addEventListener('change', loadTodos);
+        document.getElementById('hideCompleted').addEventListener('change', loadTodos);
+
+        loadTodos();
+        loadTemplates();
+
+        // Add parent task options
+        function updateParentOptions() {
+            const select = document.getElementById('todoParent');
+            api.getAll().then(todos => {
+                const currentId = editingId;
+                const validParents = todos.filter(t => t.id !== currentId);
+                select.innerHTML = `
+                    <option value="">No Parent Task</option>
+                    ${validParents.map(t => `
+                        <option value="${t.id}">${t.title}</option>
+                    `).join('')}
+                `;
+            });
+        }
+
+        // Update form handlers
+        const originalStartEditing = startEditing;
+        startEditing = (id) => {
+            originalStartEditing(id);
+            updateParentOptions();
+        };
+
+        // Initialize
+        updateParentOptions();
+
+        // Update save template button event listener
+        document.getElementById('saveTemplate').addEventListener('click', promptCreateTemplate);
+
+        // Add template panel toggle functionality
+        document.querySelector('.templates-panel__toggle').addEventListener('click', function () {
+            const content = document.querySelector('.templates-panel__content');
+            const isExpanded = content.style.display !== 'none';
+
+            content.style.display = isExpanded ? 'none' : 'block';
+            this.setAttribute('aria-expanded', !isExpanded);
+        });
+
+        // Add modal control functions
+        let templateToDelete = null;
+
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.add('show');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        // Update template handling functions
+        function promptCreateTemplate() {
+            document.getElementById('templateNameModal').value = '';
+            showModal('createTemplateModal');
+        }
+
+        function confirmCreateTemplate() {
+            const nameInput = document.getElementById('templateNameModal');
+            const name = nameInput.value.trim();
+            if (!name) {
+                showInputError('templateNameModal');
+                return;
+            }
+
+            const template = {
+                title: document.getElementById('todoTitle').value,
+                description: document.getElementById('todoDescription').value,
+                status: document.getElementById('todoStatus').value,
+                priority: document.getElementById('todoPriority').value,
+                category: document.getElementById('todoCategory').value,
+                tags: parseTags(document.getElementById('todoTags').value),
+                deadline: document.getElementById('todoDeadline').value,
+                recurrence: document.getElementById('todoRecurrence').value,
+                sharedWith: parseTags(document.getElementById('todoSharedWith').value)
+            };
+
+            api.createTemplate({ title: name, template })
+                .then(() => {
+                    closeModal('createTemplateModal');
+                    loadTemplates();
+                })
+                .catch(() => {
+                    document.querySelector('.modal__content').classList.add('error');
+                    setTimeout(() => {
+                        document.querySelector('.modal__content').classList.remove('error');
+                    }, 2000);
+                });
+        }
+
+        function promptDeleteTemplate(id) {
+            templateToDelete = id;
+            showModal('deleteTemplateModal');
+        }
+
+        async function confirmDeleteTemplate() {
+            if (!templateToDelete) return;
+
+            try {
+                await api.delete(templateToDelete);
+                closeModal('deleteTemplateModal');
+                loadTemplates();
+            } catch (error) {
+                console.error('Error deleting template:', error);
+                alert('Failed to delete template');
+            } finally {
+                templateToDelete = null;
+            }
+        }
+
+        // Add helper function for form validation feedback
+        function showInputError(elementId) {
+            const element = document.getElementById(elementId);
+            element.classList.add('input-error');
+            element.addEventListener('input', () => {
+                element.classList.remove('input-error');
+            }, { once: true });
+        }
+    </script>
+
+    <!-- Template Create Modal -->
+    <div class="modal" id="createTemplateModal">
+        <div class="modal__content">
+            <button class="modal__close" onclick="closeModal('createTemplateModal')">×</button>
+            <div class="modal__header">
+                <h3 class="modal__title">Save as Template</h3>
+            </div>
+            <div class="modal__body">
+                <p>Save the current form as a reusable template.</p>
+                <input type="text" id="templateNameModal" class="todo-form__input" placeholder="Enter template name">
+            </div>
+            <div class="modal__footer">
+                <button class="modal__button modal__button--cancel" onclick="closeModal('createTemplateModal')">Cancel</button>
+                <button class="modal__button modal__button--confirm" onclick="confirmCreateTemplate()">Save Template</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Template Delete Modal -->
+    <div class="modal" id="deleteTemplateModal">
+        <div class="modal__content">
+            <button class="modal__close" onclick="closeModal('deleteTemplateModal')">×</button>
+            <div class="modal__header">
+                <h3 class="modal__title">Delete Template</h3>
+            </div>
+            <div class="modal__body">
+                <p>Are you sure you want to delete this template? This action cannot be undone.</p>
+            </div>
+            <div class="modal__footer">
+                <button class="modal__button modal__button--cancel" onclick="closeModal('deleteTemplateModal')">Cancel</button>
+                <button class="modal__button modal__button--delete" onclick="confirmDeleteTemplate()">Delete</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

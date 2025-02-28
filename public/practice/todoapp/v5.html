@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>🦎 GAD - TODO App - V5</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="styles/todo-app.css">
+    <link rel="stylesheet" href="styles/todo-app-v5.css">
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br /><br /><br />
+    <div class="todo-app">
+        <nav class="todo-nav">
+            <a href="index.html" class="todo-nav__link">← Back to versions</a>
+        </nav>
+
+        <div class="todo-header">
+            <h1 class="todo-header__title">TODO App</h1>
+            <p class="todo-header__subtitle">Version 5 - Grid View & Deadlines</p>
+        </div>
+
+        <div class="todo-filters">
+            <input type="text" id="searchInput" class="todo-filters__search" placeholder="Search todos...">
+            <div class="todo-filters__group">
+                <select id="statusFilter" class="todo-filters__select">
+                    <option value="">All Statuses</option>
+                    <option value="todo">Todo</option>
+                    <option value="inProgress">In Progress</option>
+                    <option value="paused">Paused</option>
+                    <option value="completed">Completed</option>
+                </select>
+                <select id="priorityFilter" class="todo-filters__select">
+                    <option value="">All Priorities</option>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                </select>
+                <label class="todo-filters__toggle">
+                    <input type="checkbox" id="hideCompleted">
+                    Hide Completed
+                </label>
+            </div>
+            <div class="todo-filters__view-toggle">
+                <button class="view-toggle__btn active" data-view="list">
+                    <i class="fas fa-list"></i>
+                </button>
+                <button class="view-toggle__btn" data-view="grid">
+                    <i class="fas fa-th-large"></i>
+                </button>
+            </div>
+        </div>
+
+        <form class="todo-form" id="todoForm">
+            <div class="todo-form__header">
+                <h3 id="formTitle">Add New Task</h3>
+                <p id="formSubtitle">Fill in the details below to create a new task</p>
+            </div>
+            <div class="todo-form__group todo-form__group--col">
+                <input type="text" id="todoTitle" class="todo-form__input" placeholder="Enter todo title" required>
+                <textarea id="todoDescription" class="todo-form__textarea" placeholder="Add description"></textarea>
+            </div>
+            <div class="todo-form__group todo-form__group--row">
+                <select id="todoStatus" class="todo-form__select">
+                    <option value="todo">Todo</option>
+                    <option value="inProgress">In Progress</option>
+                    <option value="paused">Paused</option>
+                    <option value="completed">Completed</option>
+                </select>
+                <select id="todoPriority" class="todo-form__select">
+                    <option value="low">Low Priority</option>
+                    <option value="medium" selected>Medium Priority</option>
+                    <option value="high">High Priority</option>
+                </select>
+                <input type="text" id="todoTags" class="todo-form__input" placeholder="Add tags (comma separated)">
+                <input type="date" id="todoDeadline" class="todo-form__input">
+            </div>
+            <button type="submit" class="todo-form__button" id="submitBtn">Add Todo</button>
+        </form>
+
+        <div id="todoList" class="todo-list todo-list--list"></div>
+    </div>
+
+    <!-- Fullscreen Modal -->
+    <div id="todoModal" class="todo-modal">
+        <div class="todo-modal__content">
+            <button class="todo-modal__close">&times;</button>
+            <div id="todoModalContent"></div>
+        </div>
+    </div>
+
+    <div id="datePickerModal" class="date-picker-modal">
+        <div class="date-picker-modal__content">
+            <button class="date-picker-modal__close">&times;</button>
+            <h3>Set Due Date</h3>
+            <div class="date-picker-modal__form">
+                <input type="date" id="datePickerInput" class="date-picker-modal__input">
+                <div class="date-picker-modal__actions">
+                    <button class="date-picker-modal__button date-picker-modal__button--clear">Clear Date</button>
+                    <button class="date-picker-modal__button date-picker-modal__button--save">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let editingId = null;
+        const modal = document.getElementById('todoModal');
+
+        document.querySelector('.todo-modal__close').addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        function getPriorityLabel(priority) {
+            const labels = {
+                low: 'Low Priority',
+                medium: 'Medium Priority',
+                high: 'High Priority'
+            };
+            return labels[priority] || priority;
+        }
+
+        function getStatusLabel(status) {
+            const labels = {
+                todo: 'To Do',
+                inProgress: 'In Progress',
+                paused: 'Paused',
+                completed: 'Completed'
+            };
+            return labels[status] || status;
+        }
+
+        function formatDate(isoDate) {
+            if (!isoDate) return '';
+            return new Date(isoDate).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        function renderTags(tags) {
+            return tags.map(tag => `
+                <span class="todo-item__tag">${tag}</span>
+            `).join('');
+        }
+
+        function parseTags(tagsString) {
+            return tagsString.split(',')
+                .map(tag => tag.trim())
+                .filter(tag => tag.length > 0);
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        const api = {
+            getAll: (params = {}) => {
+                const query = new URLSearchParams(params).toString();
+                return fetch(`/api/practice/v5/todos${query ? `?${query}` : ''}`).then(r => r.json());
+            },
+            create: (data) => fetch('/api/practice/v5/todos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    ...data,
+                    deadline: data.deadline ? `${data.deadline.split('T')[0]}T00:00:00.000Z` : null
+                })
+            }).then(r => r.json()),
+            update: (id, data) => fetch(`/api/practice/v5/todos/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    ...data,
+                    deadline: data.deadline ?
+                        (data.deadline.includes('T') ? data.deadline : `${data.deadline}T00:00:00.000Z`)
+                        : null
+                })
+            }).then(r => r.json()),
+            delete: (id) => fetch(`/api/practice/v5/todos/${id}`, {
+                method: 'DELETE'
+            }).then(r => r.json())
+        };
+
+        document.querySelector('.todo-filters__view-toggle').addEventListener('click', (e) => {
+            if (e.target.classList.contains('view-toggle__btn')) {
+                document.querySelectorAll('.view-toggle__btn').forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+                const view = e.target.dataset.view;
+                document.getElementById('todoList').className = `todo-list todo-list--${view}`;
+            }
+        });
+
+        function openFullscreen(todo) {
+            const content = document.getElementById('todoModalContent');
+            content.innerHTML = `
+                <h2>${todo.title}</h2>
+                <div class="todo-modal__meta">
+                    <div class="todo-item todo-item--status-${todo.status}">
+                        <div class="todo-item__status">${getStatusLabel(todo.status)}</div>
+                    </div>
+                    <div class="todo-item todo-item--priority-${todo.priority}">
+                        <div class="todo-item__priority">${getPriorityLabel(todo.priority)}</div>
+                    </div>
+                    ${todo.deadline ? `
+                        <div class="todo-item__deadline ${isOverdue(todo.deadline) ? 'todo-item__deadline--overdue' : ''}">
+                            <i class="fas fa-clock"></i>
+                            ${formatDeadline(todo.deadline)}
+                        </div>
+                    ` : ''}
+                    <button class="todo-item__set-deadline" onclick="setDeadline(${todo.id})">
+                        <i class="fas ${todo.deadline ? 'fa-edit' : 'fa-calendar-plus'}"></i>
+                        ${todo.deadline ? 'Change Date' : 'Add Date'}
+                    </button>
+                </div>
+                <p class="todo-modal__description">${todo.description || 'No description'}</p>
+                <div class="todo-item__tags">${renderTags(todo.tags)}</div>
+                <div class="todo-modal__status-actions">
+                    <button class="todo-item__status-btn ${todo.status === 'todo' ? 'active' : ''}"
+                            onclick="quickUpdateStatus(${todo.id}, 'todo')">To Do</button>
+                    <button class="todo-item__status-btn ${todo.status === 'inProgress' ? 'active' : ''}"
+                            onclick="quickUpdateStatus(${todo.id}, 'inProgress')">In Progress</button>
+                    <button class="todo-item__status-btn ${todo.status === 'paused' ? 'active' : ''}"
+                            onclick="quickUpdateStatus(${todo.id}, 'paused')">Paused</button>
+                    <button class="todo-item__status-btn ${todo.status === 'completed' ? 'active' : ''}"
+                            onclick="quickUpdateStatus(${todo.id}, 'completed')">Completed</button>
+                </div>
+                <div class="todo-modal__actions">
+                    <button onclick="startEditing(${todo.id})" class="todo-item__edit">Edit</button>
+                    <button onclick="deleteTodo(${todo.id})" class="todo-item__delete">Delete</button>
+                </div>
+            `;
+            modal.style.display = 'flex';
+        }
+
+        function isOverdue(deadline) {
+            return deadline && new Date(deadline) < new Date();
+        }
+
+        const viewToggle = document.querySelector('.todo-filters__view-toggle');
+        viewToggle.addEventListener('click', (e) => {
+            const btn = e.target.closest('.view-toggle__btn');
+            if (!btn) return;
+
+            document.querySelectorAll('.view-toggle__btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const view = btn.dataset.view;
+            document.getElementById('todoList').className = `todo-list todo-list--${view}`;
+        });
+
+        async function handleSubmit(e) {
+            e.preventDefault();
+            const deadline = document.getElementById('todoDeadline').value;
+            const data = {
+                title: document.getElementById('todoTitle').value,
+                description: document.getElementById('todoDescription').value,
+                status: document.getElementById('todoStatus').value,
+                priority: document.getElementById('todoPriority').value,
+                tags: parseTags(document.getElementById('todoTags').value),
+                deadline: deadline || null
+            };
+
+            try {
+                if (editingId) {
+                    await api.update(editingId, data);
+                    editingId = null;
+                    document.getElementById('submitBtn').textContent = 'Add Task';
+                    document.getElementById('formTitle').textContent = 'Add New Task';
+                    document.getElementById('formSubtitle').textContent = 'Fill in the details below to create a new task';
+                } else {
+                    await api.create(data);
+                }
+
+                e.target.reset();
+                loadTodos();
+                modal.style.display = 'none';
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to save todo');
+            }
+        }
+
+        function startEditing(id) {
+            const todo = document.querySelector(`[data-id="${id}"]`).__todo;
+            document.getElementById('todoTitle').value = todo.title;
+            document.getElementById('todoDescription').value = todo.description || '';
+            document.getElementById('todoStatus').value = todo.status;
+            document.getElementById('todoPriority').value = todo.priority;
+            document.getElementById('todoTags').value = todo.tags.join(', ');
+            document.getElementById('todoDeadline').value = todo.deadline ? todo.deadline.split('T')[0] : '';
+
+            editingId = id;
+            document.getElementById('submitBtn').textContent = 'Update Task';
+            document.getElementById('formTitle').textContent = 'Edit Task';
+            document.getElementById('formSubtitle').textContent = 'Update the task details below';
+            document.getElementById('todoTitle').focus();
+
+            document.getElementById('todoForm').scrollIntoView({ behavior: 'smooth' });
+            modal.style.display = 'none';
+        }
+
+        function formatDeadline(deadline) {
+            if (!deadline) return '';
+            const date = new Date(deadline);
+            const now = new Date();
+            date.setHours(0, 0, 0, 0);
+            now.setHours(0, 0, 0, 0);
+
+            const diffDays = Math.round((date - now) / (1000 * 60 * 60 * 24));
+            const formattedDate = formatDate(deadline);
+
+            if (diffDays < 0) {
+                return `<span class="todo-item__deadline-status">Overdue by ${Math.abs(diffDays)} days</span>
+                        <span class="todo-item__deadline-date">${formattedDate}</span>`;
+            } else if (diffDays === 0) {
+                return `<span class="todo-item__deadline-status">Due today</span>
+                        <span class="todo-item__deadline-date">${formattedDate}</span>`;
+            } else if (diffDays === 1) {
+                return `<span class="todo-item__deadline-status">Due tomorrow</span>
+                        <span class="todo-item__deadline-date">${formattedDate}</span>`;
+            } else {
+                return `<span class="todo-item__deadline-status">Due in ${diffDays} days</span>
+                        <span class="todo-item__deadline-date">${formattedDate}</span>`;
+            }
+        }
+
+        function renderTodos(todos) {
+            const container = document.getElementById('todoList');
+            container.innerHTML = '';
+
+            todos.forEach(todo => {
+                const el = `
+                    <div class="todo-item todo-item--status-${todo.status} todo-item--priority-${todo.priority}" 
+                         data-id="${todo.id}" draggable="true">
+                        <div class="todo-item__drag-handle">⋮⋮</div>
+                        <div class="todo-item__content">
+                            <div class="todo-item__header">
+                                <div class="todo-item__title-group">
+                                    <span class="todo-item__priority">${getPriorityLabel(todo.priority)}</span>
+                                    <span class="todo-item__title">${todo.title}</span>
+                                </div>
+                            </div>
+                            ${todo.description ? `
+                                <div class="todo-item__description">${todo.description}</div>
+                            ` : ''}
+                            ${todo.tags.length ? `
+                                <div class="todo-item__tags">
+                                    ${renderTags(todo.tags)}
+                                </div>
+                            ` : ''}
+                            <div class="todo-item__deadline-group">
+                                ${todo.deadline ? `
+                                    <div class="todo-item__deadline ${isOverdue(todo.deadline) ? 'todo-item__deadline--overdue' : ''}">
+                                        <i class="fas fa-clock"></i>
+                                        ${formatDeadline(todo.deadline)}
+                                    </div>
+                                ` : ''}
+                                <button class="todo-item__set-deadline" onclick="setDeadline(${todo.id})">
+                                    <i class="fas ${todo.deadline ? 'fa-edit' : 'fa-calendar-plus'}"></i>
+                                </button>
+                            </div>
+                            <div class="todo-item__status-actions">
+                                <button class="todo-item__status-btn ${todo.status === 'todo' ? 'active' : ''}"
+                                        onclick="quickUpdateStatus(${todo.id}, 'todo')">To Do</button>
+                                <button class="todo-item__status-btn ${todo.status === 'inProgress' ? 'active' : ''}"
+                                        onclick="quickUpdateStatus(${todo.id}, 'inProgress')">In Progress</button>
+                                <button class="todo-item__status-btn ${todo.status === 'paused' ? 'active' : ''}"
+                                        onclick="quickUpdateStatus(${todo.id}, 'paused')">Paused</button>
+                                <button class="todo-item__status-btn ${todo.status === 'completed' ? 'active' : ''}"
+                                        onclick="quickUpdateStatus(${todo.id}, 'completed')">Completed</button>
+                            </div>
+                        </div>
+                        <div class="todo-item__actions">
+                            <button class="todo-item__edit" onclick="startEditing(${todo.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="todo-item__fullscreen" onclick="openFullscreen(this.closest('.todo-item').__todo)">
+                                <i class="fas fa-expand"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                const div = document.createRange().createContextualFragment(el).firstElementChild;
+                div.__todo = todo;
+                container.appendChild(div);
+            });
+
+            setupDragAndDrop();
+        }
+
+        function setDeadline(id) {
+            const datePickerModal = document.getElementById('datePickerModal');
+            const dateInput = document.getElementById('datePickerInput');
+            const todo = document.querySelector(`[data-id="${id}"]`).__todo;
+
+            if (todo.deadline) {
+                dateInput.value = todo.deadline.split('T')[0];
+            } else {
+                dateInput.value = new Date().toISOString().split('T')[0];
+            }
+
+            datePickerModal.style.display = 'flex';
+
+            const saveHandler = async () => {
+                const data = { ...todo };
+                data.deadline = dateInput.value ? `${dateInput.value}T00:00:00.000Z` : null;
+                await api.update(id, data);
+                datePickerModal.style.display = 'none';
+                loadTodos();
+            };
+
+            const clearHandler = async () => {
+                const data = { ...todo, deadline: null };
+                await api.update(id, data);
+                datePickerModal.style.display = 'none';
+                loadTodos();
+            };
+
+            const saveBtn = datePickerModal.querySelector('.date-picker-modal__button--save');
+            const clearBtn = datePickerModal.querySelector('.date-picker-modal__button--clear');
+            const closeBtn = datePickerModal.querySelector('.date-picker-modal__close');
+
+            saveBtn.onclick = saveHandler;
+            clearBtn.onclick = clearHandler;
+            closeBtn.onclick = () => datePickerModal.style.display = 'none';
+
+            window.onclick = (e) => {
+                if (e.target === datePickerModal) {
+                    datePickerModal.style.display = 'none';
+                }
+            };
+        }
+
+        async function quickUpdateStatus(id, newStatus) {
+            const todoEl = document.querySelector(`[data-id="${id}"]`);
+            const todo = todoEl.__todo;
+            await api.update(id, { ...todo, status: newStatus });
+            loadTodos();
+        }
+
+        async function loadTodos() {
+            const searchTerm = document.getElementById('searchInput').value;
+            const status = document.getElementById('statusFilter').value;
+            const priority = document.getElementById('priorityFilter').value;
+            const hideCompleted = document.getElementById('hideCompleted').checked;
+
+            const params = {};
+            if (searchTerm) params.search = searchTerm;
+            if (status) params.status = status;
+            if (priority) params.priority = priority;
+            if (hideCompleted) params.hideCompleted = true;
+
+            const todos = await api.getAll(params);
+            renderTodos(todos);
+        }
+
+        let draggedItem = null;
+
+        function setupDragAndDrop() {
+            const items = document.querySelectorAll('.todo-item');
+            items.forEach(item => {
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('dragover', handleDragOver);
+                item.addEventListener('drop', handleDrop);
+                item.addEventListener('dragend', handleDragEnd);
+            });
+        }
+
+        function handleDragStart(e) {
+            draggedItem = e.target;
+            e.target.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+        }
+
+        async function handleDrop(e) {
+            e.preventDefault();
+            const dropTarget = e.target.closest('.todo-item');
+            if (!dropTarget || dropTarget === draggedItem) return;
+
+            const todos = Array.from(document.querySelectorAll('.todo-item'));
+            const fromIndex = todos.indexOf(draggedItem);
+            const toIndex = todos.indexOf(dropTarget);
+
+            await api.update(draggedItem.dataset.id, { position: toIndex });
+            loadTodos();
+
+            draggedItem.classList.remove('dragging');
+            draggedItem = null;
+        }
+
+        document.getElementById('todoForm').onsubmit = handleSubmit;
+        document.getElementById('searchInput').addEventListener('input', debounce(loadTodos, 300));
+        document.getElementById('statusFilter').addEventListener('change', loadTodos);
+        document.getElementById('priorityFilter').addEventListener('change', loadTodos);
+        document.getElementById('hideCompleted').addEventListener('change', loadTodos);
+
+        loadTodos();
+
+        document.getElementById('todoForm').insertAdjacentHTML('beforeend', `
+            <button type="button" id="cancelBtn" class="todo-form__button todo-form__button--secondary" style="display: none">
+                Cancel
+            </button>
+        `);
+
+        document.getElementById('cancelBtn').onclick = () => {
+            editingId = null;
+            document.getElementById('todoForm').reset();
+            document.getElementById('submitBtn').textContent = 'Add Task';
+            document.getElementById('formTitle').textContent = 'Add New Task';
+            document.getElementById('formSubtitle').textContent = 'Fill in the details below to create a new task';
+            document.getElementById('cancelBtn').style.display = 'none';
+        };
+
+        const originalStartEditing = startEditing;
+    </script>
+</body>
+
+</html>
