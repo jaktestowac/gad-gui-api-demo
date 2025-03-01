@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>🦎 GAD - Budget App - V1</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="styles/budget-app.css">
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+    <br />
+    <br />
+
+    <div class="app-header">
+        <h1 class="app-header__title">
+            <i class="fas fa-wallet"></i>
+            Budget App V1
+        </h1>
+        <a href="index.html" class="btn btn-outline">
+            <i class="fas fa-arrow-left"></i>
+            Back
+        </a>
+    </div>
+
+    <div class="budget-app">
+        <div class="budget-form">
+            <h2>Add New Expense</h2>
+            <form id="expenseForm">
+                <input type="text" id="title" placeholder="Title" required>
+                <input type="number" id="amount" placeholder="Amount" step="0.01" required>
+                <select id="category" required>
+                    <option value="">Select Category</option>
+                    <option value="food">Food</option>
+                    <option value="rent">Rent</option>
+                    <option value="utilities">Utilities</option>
+                    <option value="transport">Transport</option>
+                    <option value="entertainment">Entertainment</option>
+                    <option value="other">Other</option>
+                </select>
+                <button type="submit" class="btn btn-primary">Add Expense</button>
+            </form>
+        </div>
+
+        <div class="budget-list">
+            <h2>Expenses List</h2>
+            <div id="expensesList"></div>
+        </div>
+    </div>
+
+    <div class="dialog-overlay" id="confirmDialog">
+        <div class="dialog">
+            <h3 class="dialog__title">Confirm Delete</h3>
+            <p class="dialog__content">Are you sure you want to delete this expense?</p>
+            <div class="dialog__actions">
+                <button class="btn btn-outline" id="cancelDelete">Cancel</button>
+                <button class="btn btn-danger" id="confirmDelete">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('expenseForm');
+            const expensesList = document.getElementById('expensesList');
+
+            // Add this function before the existing script
+            function getCategoryIcon(category) {
+                const icons = {
+                    food: '<i class="fas fa-utensils"></i>',
+                    rent: '<i class="fas fa-home"></i>',
+                    utilities: '<i class="fas fa-bolt"></i>',
+                    transport: '<i class="fas fa-car"></i>',
+                    entertainment: '<i class="fas fa-film"></i>',
+                    other: '<i class="fas fa-box"></i>'
+                };
+                return icons[category] || icons.other;
+            }
+
+            // Load expenses
+            function loadExpenses() {
+                fetch('/api/practice/v1/expenses')
+                    .then(response => response.json())
+                    .then(expenses => {
+                        expensesList.innerHTML = expenses.map(expense => `
+                            <div class="expense-item" data-id="${expense.id}">
+                                <div class="expense-item__content">
+                                    <span class="expense-item__title">
+                                        <i class="fas fa-shopping-cart expense-icon"></i>
+                                        ${expense.title}
+                                    </span>
+                                    <span class="expense-item__amount">$${expense.amount.toFixed(2)}</span>
+                                    <span class="expense-item__category">
+                                        ${getCategoryIcon(expense.category)}
+                                        ${expense.category}
+                                    </span>
+                                </div>
+                                <button class="btn btn-danger" onclick="deleteExpense(${expense.id})">
+                                    <i class="fas fa-trash"></i>
+                                    Delete
+                                </button>
+                            </div>
+                        `).join('');
+                    });
+            }
+
+            // Add new expense
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const expense = {
+                    title: document.getElementById('title').value,
+                    amount: parseFloat(document.getElementById('amount').value),
+                    category: document.getElementById('category').value
+                };
+
+                fetch('/api/practice/v1/expenses', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(expense)
+                })
+                    .then(response => response.json())
+                    .then(() => {
+                        form.reset();
+                        loadExpenses();
+                    });
+            });
+
+            // Delete expense
+            window.deleteExpense = (id) => {
+                const dialog = document.getElementById('confirmDialog');
+                const confirmBtn = document.getElementById('confirmDelete');
+                const cancelBtn = document.getElementById('cancelDelete');
+
+                dialog.classList.add('visible');
+
+                const handleDelete = () => {
+                    fetch(`/api/practice/v1/expenses/${id}`, {
+                        method: 'DELETE'
+                    }).then(() => {
+                        loadExpenses();
+                        cleanup();
+                    });
+                };
+
+                const handleCancel = () => {
+                    cleanup();
+                };
+
+                const cleanup = () => {
+                    dialog.classList.remove('visible');
+                    confirmBtn.removeEventListener('click', handleDelete);
+                    cancelBtn.removeEventListener('click', handleCancel);
+                };
+
+                confirmBtn.addEventListener('click', handleDelete);
+                cancelBtn.addEventListener('click', handleCancel);
+            };
+
+            // Initial load
+            loadExpenses();
+        });
+    </script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>
