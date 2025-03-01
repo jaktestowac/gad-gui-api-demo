@@ -1290,7 +1290,6 @@
         }
       }
     },
-
     "/captcha": {
       "get": {
         "tags": ["captcha"],
@@ -1370,7 +1369,6 @@
         }
       }
     },
-
     "/files/uploaded": {
       "get": {
         "tags": ["files"],
@@ -1749,7 +1747,6 @@
         }
       }
     },
-
     "/book-authors": {
       "get": {
         "tags": ["book-shop"],
@@ -1808,7 +1805,6 @@
         }
       }
     },
-
     "/book-shop-roles": {
       "get": {
         "tags": ["book-shop"],
@@ -1838,7 +1834,6 @@
         }
       }
     },
-
     "/book-shop-account-payment-cards": {
       "get": {
         "tags": ["book-shop-account-payment-cards"],
@@ -2013,7 +2008,6 @@
         }
       }
     },
-
     "/book-shop-order-statuses": {
       "get": {
         "tags": ["book-shop"],
@@ -2043,7 +2037,6 @@
         }
       }
     },
-
     "/book-shop-orders": {
       "get": {
         "tags": ["book-shop-orders"],
@@ -2289,7 +2282,57 @@
         }
       }
     },
-
+    "/book-shop-order-items": {
+      "post": {
+        "tags": ["book-shop-orders"],
+        "summary": "Add item to order",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookShopOrderItem"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Item added successfully"
+          },
+          "404": {
+            "description": "Item not found"
+          },
+          "409": {
+            "description": "Item already in order"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["book-shop-orders"],
+        "summary": "Remove item from order",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookShopOrderItem"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Item removed successfully"
+          },
+          "404": {
+            "description": "Item not found in order"
+          }
+        }
+      }
+    },
     "/books": {
       "get": {
         "tags": ["book-shop-books"],
@@ -2513,7 +2556,6 @@
         }
       }
     },
-
     "/book-shop-accounts": {
       "get": {
         "tags": ["book-shop-accounts"],
@@ -2770,7 +2812,6 @@
         }
       }
     },
-
     "/book-shop-items": {
       "get": {
         "tags": ["book-shop-items"],
@@ -2815,7 +2856,6 @@
         }
       }
     },
-
     "/book-shop-stats/orders": {
       "get": {
         "tags": ["book-shop-stats"],
@@ -2912,56 +2952,37 @@
         }
       }
     },
-
     "/book-shop-book-reviews": {
       "get": {
         "tags": ["book-shop"],
-        "summary": "Get book reviews",
+        "summary": "Get book reviews or review stats",
         "operationId": "getBookReviews",
         "parameters": [
           {
-            "name": "book_ids",
-            "in": "query",
-            "description": "IDs of the book in format book_ids=id1,id2,... Works only with mean parameter",
-            "required": false,
-            "schema": {
-              "oneOf": [
-                {
-                  "type": "string"
-                }
-              ]
-            }
-          },
-          {
             "name": "book_id",
             "in": "query",
-            "description": "ID of the book",
+            "description": "ID of book to get reviews for",
             "required": false,
             "schema": {
-              "oneOf": [
-                {
-                  "type": "integer"
-                },
-                {
-                  "type": "string"
-                }
-              ]
+              "type": "string"
             }
           },
           {
             "name": "mean",
             "in": "query",
-            "description": "Return mean rating",
+            "description": "Get mean rating",
             "required": false,
             "schema": {
-              "oneOf": [
-                {
-                  "type": "integer"
-                },
-                {
-                  "type": "string"
-                }
-              ]
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "book_ids",
+            "in": "query",
+            "description": "Comma separated list of book IDs",
+            "required": false,
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -2971,20 +2992,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/BookReviews"
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorMessage"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/BookReviews"
+                    },
+                    {
+                      "$ref": "#/components/schemas/BookReviewStats"
+                    }
+                  ]
                 }
               }
             }
@@ -2992,7 +3007,6 @@
         }
       }
     },
-
     "/book-shop-manage/orders": {
       "get": {
         "tags": ["book-shop-manage"],
@@ -3364,7 +3378,6 @@
         }
       }
     },
-
     "/comments/{id}": {
       "get": {
         "tags": ["comments"],
@@ -5827,6 +5840,144 @@
           }
         }
       }
+    },
+    "/book-shop-accounts/files": {
+      "post": {
+        "tags": ["book-shop-accounts"],
+        "summary": "Upload account files",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "files": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Files uploaded successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/book-shop-manage/team": {
+      "get": {
+        "tags": ["book-shop-manage"],
+        "summary": "Get team members",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Team members retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookShopTeamMember"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/books/{id}": {
+      "patch": {
+        "tags": ["Books"],
+        "summary": "Update a book",
+        "description": "Update specific fields of a book",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Book ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "active": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Book updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "book": {
+                      "$ref": "#/components/schemas/Book"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Book not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -6545,7 +6696,6 @@
           }
         }
       },
-
       "BookShopRoles": {
         "type": "array",
         "items": {
@@ -6617,7 +6767,6 @@
           }
         }
       },
-
       "BookShopPaymentCardUpdate": {
         "type": "object",
         "required": ["card_number", "expiry_date", "cvv"],
@@ -6636,14 +6785,12 @@
           }
         }
       },
-
       "BookShopOrderStatuses": {
         "type": "array",
         "items": {
           "$ref": "#/components/schemas/BookShopOrderStatus"
         }
       },
-
       "BookShopOrderStatus": {
         "type": "object",
         "required": ["status", "id", "name", "icon", "possible_next_statuses"],
@@ -6665,7 +6812,6 @@
           }
         }
       },
-
       "BookShopAccount": {
         "type": "object",
         "required": [
@@ -6797,14 +6943,12 @@
           }
         }
       },
-
       "BookShopItems": {
         "type": "array",
         "items": {
           "$ref": "#/components/schemas/BookShopItem"
         }
       },
-
       "BookShopItem": {
         "type": "object",
         "required": ["id", "book_id", "price", "quantity", "created_at"],
@@ -6828,7 +6972,6 @@
           }
         }
       },
-
       "allBookShopStats": {
         "type": "object",
         "properties": {
@@ -6882,7 +7025,6 @@
           }
         }
       },
-
       "bookShopUsersStats": {
         "type": "object",
         "properties": {
@@ -6918,7 +7060,6 @@
           }
         }
       },
-
       "bookShopOrdersStats": {
         "type": "object",
         "properties": {
@@ -6951,7 +7092,6 @@
           }
         }
       },
-
       "CouponCode": {
         "type": "object",
         "required": ["order_id", "coupon_code"],
@@ -6964,7 +7104,6 @@
           }
         }
       },
-
       "BookShopOrderItem": {
         "type": "object",
         "required": ["book_id"],
@@ -6974,14 +7113,12 @@
           }
         }
       },
-
       "BookShopOrders": {
         "type": "array",
         "items": {
           "$ref": "#/components/schemas/BookShopOrder"
         }
       },
-
       "BookShopOrder": {
         "type": "object",
         "required": [
@@ -7036,7 +7173,6 @@
           }
         }
       },
-
       "BookShopOrderStatusUpdate": {
         "type": "object",
         "required": ["status_id"],
@@ -7046,14 +7182,12 @@
           }
         }
       },
-
       "BookReviews": {
         "type": "array",
         "items": {
           "$ref": "#/components/schemas/BookReviews"
         }
       },
-
       "BookReview": {
         "type": "object",
         "required": ["id", "book_id", "user_id", "rating", "content", "created_at"],
@@ -7079,14 +7213,12 @@
           }
         }
       },
-
       "BookReviewStats": {
         "type": "array",
         "items": {
           "$ref": "#/components/schemas/BookReviewStat"
         }
       },
-
       "BookReviewStat": {
         "type": "object",
         "properties": {
@@ -7103,7 +7235,6 @@
         },
         "required": ["book_id", "mean", "numberOfReviews"]
       },
-
       "Flashpost": {
         "type": "object",
         "required": ["id", "user_id", "date", "settings", "body", "is_public"],
@@ -8365,6 +8496,116 @@
           "removedTests",
           "automationNotApplicableTests"
         ]
+      },
+      "BookShopTeamMember": {
+        "type": "object",
+        "required": ["id", "user_id", "role_id", "joined_at"],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "user_id": {
+            "type": "integer"
+          },
+          "role_id": {
+            "type": "integer"
+          },
+          "joined_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "BookShopReview": {
+        "type": "object",
+        "required": ["id", "book_id", "user_id", "rating", "comment", "created_at"],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "book_id": {
+            "type": "integer"
+          },
+          "user_id": {
+            "type": "integer"
+          },
+          "rating": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "comment": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Book": {
+        "type": "object",
+        "required": ["id", "title", "author", "price", "stock", "created_at"],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "author_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "published_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date and time when the book was published."
+          },
+          "genre_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "language": {
+            "type": "string"
+          },
+          "pages": {
+            "type": "integer"
+          },
+          "cover": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "BookShopStats": {
+        "type": "object",
+        "properties": {
+          "totalOrders": {
+            "type": "integer"
+          },
+          "totalBooks": {
+            "type": "integer"
+          },
+          "totalRevenue": {
+            "type": "number"
+          },
+          "averageOrderValue": {
+            "type": "number"
+          },
+          "topSellingBooks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BookShopBook"
+            }
+          }
+        }
       }
     }
   }

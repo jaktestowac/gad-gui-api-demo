@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | BookShop Add new Book</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/book-shop-side-panel.css" />
+    <link rel="stylesheet" href="./css/book-shop.css" />
+    <style>
+        .upload-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: row;
+            margin-top: 20px;
+        }
+
+        .multi-select {
+            appearance: none;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .multi-select option {
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        .multi-select option:checked {
+            background-color: #e6f3ff;
+        }
+
+        .multi-select:focus {
+            outline: 2px solid #007bff;
+            outline-offset: -1px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-gui-book-shop" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <div style="position: absolute; right: 270px;">
+        <div id="alerts-placeholder" class="alerts-placeholder"></div>
+    </div>
+    <br />
+    <div style="position: absolute; right: 270px;">
+        <div id="book-details-placeholder" style="display: flex; justify-content: center; position: absolute;"></div>
+    </div>
+    <div id="side-panel" class="sidepanel">
+    </div>
+    <div class="book-shop-description" align="center">
+
+    </div>
+    <div id="dashboard-info" align="center">
+    </div>
+    <div id="authentication-info" align="center">
+    </div>
+
+    <div class="add-book-container">
+        <h2 style="text-align: center;">Add New Book</h2>
+        <form id="addBookForm" class="add-book-form">
+            <div class="form-group">
+                <label for="title">Title*</label>
+                <input type="text" id="title" name="title" required>
+            </div>
+
+            <div class="form-group">
+                <label for="language">Language*</label>
+                <input type="text" id="language" name="language" required>
+            </div>
+
+            <div class="form-group">
+                <label for="author">Author*</label>
+                <select id="author" name="author_ids" class="multi-select" multiple required>
+                    <!-- Will be populated dynamically -->
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="genre">Genre*</label>
+                <select id="genre" name="genre_ids" class="multi-select" multiple required>
+                    <!-- Will be populated dynamically -->
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="pages">Pages</label>
+                <input type="number" id="pages" name="pages">
+            </div>
+
+            <div class="form-group">
+                <label for="publishedAt">Published At*</label>
+                <input type="date" id="publishedAt" name="published_at" required>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="description">Description*</label>
+                <textarea id="description" name="description" required></textarea>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="cover">Cover Image</label>
+                <input type="file" id="cover" name="cover" accept="image/*">
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="book-shop-button-primary thin">Add Book</button>
+            </div>
+        </form>
+    </div>
+
+</body>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="/username.js"></script>
+<script type="text/javascript" src="./js/book-common.js"></script>
+<script type="text/javascript" src="./js/book-shop-side-panel.js"></script>
+<script type="text/javascript" src="/js/message-notifier.js"></script>
+<script type="text/javascript" src="./js/add-book.js"></script>
+
+</html>
