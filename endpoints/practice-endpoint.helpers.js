@@ -4,6 +4,7 @@ const { logDebug } = require("../helpers/logger-api");
 const { HTTP_NOT_FOUND, HTTP_OK, HTTP_UNAUTHORIZED } = require("../helpers/response.helpers");
 const { sessionV1, sessionV2 } = require("./practice/session-handlers");
 const { todoV1, todoV2, todoV3, todoV4, todoV5, todoV6 } = require("./practice/todo-handlers");
+const { expenseV1, expenseV2, expenseV3 } = require("./practice/expense-handlers");
 
 function isIdValid(id) {
   return id !== undefined && id !== "";
@@ -169,6 +170,75 @@ function handlePractice(req, res) {
           return todoV6.stopTimer(req, res, id);
         case req.method === "POST" && url.endsWith("/templates"):
           return todoV6.createTemplate(req, res);
+        default:
+          return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
+      }
+    }
+
+    // Expense v1 endpoints
+    if (req.url.includes("/api/practice/v1/expenses")) {
+      const url = req.url;
+      const id = url.split("/api/practice/v1/expenses")[1]?.split("/")[1];
+
+      switch (true) {
+        case req.method === "GET" && !isIdValid(id):
+          return expenseV1.getAll(req, res);
+        case req.method === "GET" && isIdValid(id):
+          return expenseV1.getOne(req, res, id);
+        case req.method === "POST" && !isIdValid(id):
+          return expenseV1.create(req, res);
+        case req.method === "PUT" && isIdValid(id):
+          return expenseV1.update(req, res, id);
+        case req.method === "PATCH" && isIdValid(id):
+          return expenseV1.patch(req, res, id);
+        case req.method === "DELETE" && isIdValid(id):
+          return expenseV1.delete(req, res, id);
+        default:
+          return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
+      }
+    }
+
+    // Expense v2 endpoints
+    if (req.url.includes("/api/practice/v2/expenses")) {
+      const url = req.url;
+      const id = url.split("/api/practice/v2/expenses")[1]?.split("/")[1];
+
+      switch (true) {
+        case req.method === "GET" && !isIdValid(id):
+          return expenseV2.getAll(req, res);
+        case req.method === "GET" && isIdValid(id):
+          return expenseV2.getOne(req, res, id);
+        case req.method === "POST" && !isIdValid(id):
+          return expenseV2.create(req, res);
+        case req.method === "PUT" && isIdValid(id):
+          return expenseV2.update(req, res, id);
+        case req.method === "PATCH" && isIdValid(id):
+          return expenseV2.patch(req, res, id);
+        case req.method === "DELETE" && isIdValid(id):
+          return expenseV2.delete(req, res, id);
+        default:
+          return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
+      }
+    }
+
+    // Expense v3 endpoints
+    if (req.url.includes("/api/practice/v3/expenses")) {
+      const url = req.url;
+      const id = url.split("/api/practice/v3/expenses")[1]?.split("/")[1];
+
+      switch (true) {
+        case req.method === "GET" && !isIdValid(id):
+          return expenseV3.getAll(req, res);
+        case req.method === "GET" && isIdValid(id):
+          return expenseV3.getOne(req, res, id);
+        case req.method === "POST" && !isIdValid(id):
+          return expenseV3.create(req, res);
+        case req.method === "PUT" && isIdValid(id):
+          return expenseV3.update(req, res, id);
+        case req.method === "PATCH" && isIdValid(id):
+          return expenseV3.patch(req, res, id);
+        case req.method === "DELETE" && isIdValid(id):
+          return expenseV3.delete(req, res, id);
         default:
           return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
       }
