@@ -131,6 +131,26 @@ class ApiService {
       headers: this.getDefaultHeaders(),
     });
     const data = await response.json();
+    const coursesStats = await this.getAllCoursesStats();
+    return data.map((course) => {
+      const stats = coursesStats.find((s) => `${s.id}` === `${course.id}`) || {};
+      return { ...course, ...stats };
+    });
+  }
+
+  async getCourseStats(courseId) {
+    const response = await fetch(`${this.baseUrl}/courses/${courseId}/stats`, {
+      headers: this.getDefaultHeaders(),
+    });
+    const data = await response.json();
+    return data;
+  }
+
+  async getAllCoursesStats() {
+    const response = await fetch(`${this.baseUrl}/courses/stats`, {
+      headers: this.getDefaultHeaders(),
+    });
+    const data = await response.json();
     return data;
   }
 
@@ -139,7 +159,9 @@ class ApiService {
       headers: this.getDefaultHeaders(),
     });
     const data = await response.json();
-    return data;
+
+    const coursesStats = await this.getCourseStats(courseId);
+    return { ...data, ...coursesStats };
   }
 
   async getCourseRatings(courseId) {
@@ -157,7 +179,9 @@ class ApiService {
     if (!response.ok) {
       throw new Error("Failed to fetch course");
     }
-    return response.json();
+    const data = await response.json();
+    const coursesStats = await this.getCourseStats(courseId);
+    return { ...data, ...coursesStats };
   }
 
   // Enrollment methods
@@ -174,10 +198,12 @@ class ApiService {
     // TODO: refactor this method to get only user enrolled courses
     const courses = await this.getCourses();
 
-    return enrollments.map((enrollment) => {
+    const filteredEnrollments = enrollments.map((enrollment) => {
       const course = courses.find((c) => c.id === enrollment.courseId);
       return { ...course, ...enrollment };
     });
+
+    return filteredEnrollments;
   }
 
   // Lesson methods
@@ -567,7 +593,7 @@ class ApiService {
   }
 
   async getPublicCertificate(uuid) {
-    const response = await fetch(`${this.baseUrl}/certificates/public/${uuid}`, {
+    const response = await fetch(`${this.baseUrl}/public/certificates/${uuid}`, {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
@@ -655,14 +681,21 @@ class ApiService {
     const response = await fetch(`${this.baseUrl}/instructor/courses`, {
       headers: this.getDefaultHeaders(),
     });
-    return response.json();
+    const data = await response.json();
+
+    const coursesStats = await this.getAllCoursesStats();
+    return data.map((course) => {
+      const stats = coursesStats.find((s) => `${s.id}` === `${course.id}`) || {};
+      return { ...course, ...stats };
+    });
   }
 
   async getInstructorStatsByInstructorId(instructorId) {
     const response = await fetch(`${this.baseUrl}/public/instructor/${instructorId}/stats`, {
       headers: this.getDefaultHeaders(),
     });
-    return response.json();
+    const data = await response.json();
+    return data;
   }
 
   async getInstructorCoursesByInstructorId(instructorId) {

@@ -23,35 +23,35 @@ describe("Endpoint /books", async () => {
     });
 
     it(`POST ${baseUrl}`, () => {
-      return request.post(baseUrl).send({}).expect(404);
+      return request.post(baseUrl).send({}).expect(401);
     });
 
     it(`PUT ${baseUrl}`, () => {
-      return request.put(baseUrl).send({}).expect(404);
+      return request.put(baseUrl).send({}).expect(401);
     });
 
     it(`PUT ${baseUrl}/:id`, () => {
-      return request.put(`${baseUrl}/1`).send({}).expect(404);
+      return request.put(`${baseUrl}/1`).send({}).expect(401);
     });
 
     it(`PATCH ${baseUrl}`, () => {
-      return request.patch(baseUrl).send({}).expect(404);
+      return request.patch(baseUrl).send({}).expect(401);
     });
 
     it(`PATCH ${baseUrl}/:id`, () => {
-      return request.patch(`${baseUrl}/1`).send({}).expect(404);
+      return request.patch(`${baseUrl}/1`).send({}).expect(401);
     });
 
     it(`DELETE ${baseUrl}`, () => {
-      return request.delete(baseUrl).expect(404);
+      return request.delete(baseUrl).expect(401);
     });
 
     it(`DELETE ${baseUrl}/:id`, () => {
-      return request.delete(`${baseUrl}/1`).expect(404);
+      return request.delete(`${baseUrl}/1`).expect(401);
     });
 
     it(`HEAD ${baseUrl}`, () => {
-      return request.head(`${baseUrl}/1`).expect(404);
+      return request.head(`${baseUrl}/1`).expect(401);
     });
   });
 
@@ -99,35 +99,35 @@ describe("Endpoint /books", async () => {
     });
 
     it(`POST ${baseUrl}`, () => {
-      return request.post(baseUrl).send({}).set(headers).expect(404);
+      return request.post(baseUrl).send({}).set(headers).expect(401);
     });
 
     it(`PUT ${baseUrl}`, () => {
-      return request.put(baseUrl).send({}).set(headers).expect(404);
+      return request.put(baseUrl).send({}).set(headers).expect(401);
     });
 
     it(`PUT ${baseUrl}/:id`, () => {
-      return request.put(`${baseUrl}/1`).send({}).set(headers).expect(404);
+      return request.put(`${baseUrl}/1`).send({}).set(headers).expect(401);
     });
 
     it(`PATCH ${baseUrl}`, () => {
-      return request.patch(baseUrl).send({}).set(headers).expect(404);
+      return request.patch(baseUrl).send({}).set(headers).expect(401);
     });
 
     it(`PATCH ${baseUrl}/:id`, () => {
-      return request.patch(`${baseUrl}/1`).send({}).set(headers).expect(404);
+      return request.patch(`${baseUrl}/1`).send({}).set(headers).expect(401);
     });
 
     it(`DELETE ${baseUrl}`, () => {
-      return request.delete(baseUrl).set(headers).expect(404);
+      return request.delete(baseUrl).set(headers).expect(401);
     });
 
     it(`DELETE ${baseUrl}/:id`, () => {
-      return request.delete(`${baseUrl}/1`).set(headers).expect(404);
+      return request.delete(`${baseUrl}/1`).set(headers).expect(401);
     });
 
     it(`HEAD ${baseUrl}`, () => {
-      return request.head(`${baseUrl}/1`).set(headers).expect(404);
+      return request.head(`${baseUrl}/1`).set(headers).expect(401);
     });
 
     ["owned", "wishlist", "read", "favorites"].forEach((field) => {
@@ -199,35 +199,35 @@ describe("Endpoint /books", async () => {
       });
 
       it(`POST ${baseUrl}/${field}`, () => {
-        return request.post(`${baseUrl}/${field}`).send({}).set(headers).expect(404);
+        return request.post(`${baseUrl}/${field}`).send({}).set(headers).expect(401);
       });
 
       it(`PUT ${baseUrl}/${field}`, () => {
-        return request.put(`${baseUrl}/${field}`).send({}).set(headers).expect(404);
+        return request.put(`${baseUrl}/${field}`).send({}).set(headers).expect(401);
       });
 
       it(`PUT ${baseUrl}/${field}/:id`, () => {
-        return request.put(`${baseUrl}/${field}/1`).send({}).set(headers).expect(404);
+        return request.put(`${baseUrl}/${field}/1`).send({}).set(headers).expect(401);
       });
 
       it(`PATCH ${baseUrl}/${field}`, () => {
-        return request.patch(`${baseUrl}/${field}`).send({}).set(headers).expect(404);
+        return request.patch(`${baseUrl}/${field}`).send({}).set(headers).expect(401);
       });
 
       it(`PATCH ${baseUrl}/${field}/:id`, () => {
-        return request.patch(`${baseUrl}/${field}/1`).send({}).set(headers).expect(404);
+        return request.patch(`${baseUrl}/${field}/1`).send({}).set(headers).expect(401);
       });
 
       it(`DELETE ${baseUrl}/${field}`, () => {
-        return request.delete(`${baseUrl}/${field}`).set(headers).expect(404);
+        return request.delete(`${baseUrl}/${field}`).set(headers).expect(401);
       });
 
       it(`DELETE ${baseUrl}/${field}/:id`, () => {
-        return request.delete(`${baseUrl}/${field}/1`).set(headers).expect(404);
+        return request.delete(`${baseUrl}/${field}/1`).set(headers).expect(401);
       });
 
       it(`HEAD ${baseUrl}/${field}`, () => {
-        return request.head(`${baseUrl}/${field}/1`).set(headers).expect(404);
+        return request.head(`${baseUrl}/${field}/1`).set(headers).expect(401);
       });
     });
   });

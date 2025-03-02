@@ -1,6 +1,6 @@
 const { learningBaseUrl, request, expect } = require("../../config.js");
 const { setupEnv, gracefulQuit } = require("../../helpers/helpers.js");
-const { authUser } = require("../../helpers/data.helpers.js");
+const { authDefaultLearningUser } = require("../../helpers/data.helpers.js");
 
 const baseUrl = `${learningBaseUrl}/users`;
 describe(`Endpoint ${baseUrl}`, async () => {
@@ -8,7 +8,7 @@ describe(`Endpoint ${baseUrl}`, async () => {
 
   before(async () => {
     await setupEnv();
-    userData = await authUser();
+    userData = await authDefaultLearningUser();
   });
 
   after(() => {

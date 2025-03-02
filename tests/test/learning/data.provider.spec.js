@@ -303,7 +303,7 @@ describe("Learning Data Provider", () => {
     it("should recalculate course students count", () => {
       const courseId = 1;
       dataProvider.recalculateStudentsCount();
-      const originalCount = dataProvider.getCourseById(courseId).students;
+      const originalCount = dataProvider.getOneCourseStats(courseId).students;
 
       // Add new enrollment
       dataProvider.addUserEnrollment({
@@ -316,16 +316,14 @@ describe("Learning Data Provider", () => {
         completed: false,
       });
 
-      dataProvider.recalculateStudentsCount();
-
-      const newCount = dataProvider.getCourseById(courseId).students;
+      const newCount = dataProvider.getOneCourseStats(courseId).students;
       expect(newCount).to.be.greaterThan(originalCount);
     });
 
     it("should recalculate course ratings", async () => {
       const courseId = 1;
       dataProvider.recalculateCoursesRating();
-      const originalRating = dataProvider.getCourseById(courseId).rating;
+      const originalRating = dataProvider.getOneCourseStats(courseId).rating;
 
       // Add new rating
       dataProvider.addUserRating({
@@ -336,10 +334,8 @@ describe("Learning Data Provider", () => {
         createdAt: new Date().toISOString(),
       });
 
-      dataProvider.recalculateCoursesRating();
-
-      const newRating = dataProvider.getCourseById(courseId).rating;
-      expect(newRating).to.not.equal(originalRating);
+      const newRating = dataProvider.getOneCourseStats(courseId).rating;
+      expect(newRating, JSON.stringify(newRating)).to.not.equal(originalRating);
     });
   });
 

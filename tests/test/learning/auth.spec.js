@@ -1,6 +1,6 @@
 const { learningBaseUrl, request, expect } = require("../../config.js");
 const { setupEnv, gracefulQuit } = require("../../helpers/helpers.js");
-const { authUser } = require("../../helpers/data.helpers.js");
+const { authDefaultLearningUser } = require("../../helpers/data.helpers.js");
 
 const baseUrl = `${learningBaseUrl}/auth`;
 describe(`Endpoint ${baseUrl}`, async () => {
@@ -20,7 +20,7 @@ describe(`Endpoint ${baseUrl}`, async () => {
     });
 
     it(`GET ${baseUrl}/status - with auth`, async () => {
-      const data = await authUser();
+      const data = await authDefaultLearningUser();
       // Make auth request first to ensure session is active
       await request.post(`${baseUrl}/login`).send({
         username: "user",

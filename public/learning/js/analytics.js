@@ -17,6 +17,7 @@ async function loadAnalytics() {
 
     updateCharts(charts);
   } catch (error) {
+    console.error("Failed to load analytics data:", error);
     showNotification(error.message || "Failed to load analytics data", "error");
 
     document.getElementById("totalEnrollments").textContent = "0";
@@ -60,7 +61,7 @@ async function getFormattedAnalyticsData(courseFilterValue, timeFilterValueInDay
 
 function updateMetrics(metrics) {
   if (!metrics) return;
-
+  console.log(metrics);
   document.getElementById("totalEnrollments").textContent = metrics.enrollments.total;
   updateTrendValue("enrollmentTrend", metrics.enrollments.trend);
 

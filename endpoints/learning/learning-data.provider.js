@@ -1,6 +1,7 @@
 const DataProxy = require("./db-data.proxy");
 const { areIdsEqual } = require("../../helpers/compare.helpers");
 const mockData2 = require("./learning-data-2.mock");
+const { logTrace, logDebug, logError } = require("../../helpers/logger-api");
 
 const dataProxy = new DataProxy();
 const data = dataProxy.getData();
@@ -17,7 +18,7 @@ function restoreDefaultDatabase() {
 function restoreDatabase() {
   try {
     dataProxy.setMockDataSource(mockData2);
-    const result = dataProxy.restoreToDefault()
+    const result = dataProxy.restoreToDefault();
     return result;
   } catch (error) {
     return { success: false, error: error.message };
@@ -41,11 +42,11 @@ function getUserByEmail(email) {
 }
 
 function getUserByUsernameOrEmail(username, email) {
-  return data.users.find((u) => u.username === username || u.email === email);
+  return data.users.find((u) => (u.username === username || u.email === email) && !isInactive(u));
 }
 
 function getUserByUsernameAndPassword(username, password) {
-  return data.users.find((u) => u.username === username && u.password === password);
+  return data.users.find((u) => u.username === username && u.password === password && !isInactive(u));
 }
 
 function getUserById(userId) {
@@ -141,21 +142,6 @@ function addFundsHistory({ userId, amount, type, description }) {
   });
 }
 
-function recalculateStudentsCount() {
-  data.courses.forEach((course) => {
-    course.students =
-      data.userEnrollments.filter((e) => areIdsEqual(e.courseId, course.id) && !isInactive(e)).length || 0;
-  });
-}
-
-function recalculateCoursesRating() {
-  data.courses.forEach((course) => {
-    const ratings = data.userRatings.filter((r) => areIdsEqual(r.courseId, course.id) && !isInactive(r));
-    const totalRating = ratings.reduce((total, rating) => total + rating.rating, 0);
-    course.rating = ratings.length > 0 ? Math.round((totalRating / ratings.length) * 10) / 10 : 0;
-  });
-}
-
 function addEnrollment(enrollment) {
   data.userEnrollments.push(enrollment);
   recalculateStudentsCount();
@@ -216,6 +202,7 @@ function updateUserRole(userId, role) {
   const user = getUserById(userId);
   if (user) {
     user.role = role;
+    replaceUser(userId, user);
     return true;
   }
   return false;
@@ -224,10 +211,10 @@ function updateUserRole(userId, role) {
 function updateUser(userId, userData) {
   const user = getUserById(userId);
   if (user) {
-    // TODO: fix updating user data
     for (const key in userData) {
       user[key] = userData[key];
     }
+    replaceUser(userId, user);
     return true;
   }
   return false;
@@ -235,9 +222,35 @@ function updateUser(userId, userData) {
 
 function replaceUser(userId, newUser) {
   const userIndex = data.users.findIndex((u) => areIdsEqual(u.id, userId));
-  if (userIndex === -1) return false;
+  if (userIndex === -1) {
+    logDebug(`User not found: ${userId}`);
+    return false;
+  }
 
   data.users[userIndex] = newUser;
+  return true;
+}
+
+function replaceLesson(courseId, lessonId, newLesson) {
+  const courseLessons = data.courseLessons[courseId];
+  const lessonIndex = courseLessons.findIndex((lesson) => areIdsEqual(lesson.id, lessonId));
+  if (lessonIndex === -1) {
+    logDebug(`Lesson not found: ${lessonId}`);
+    return false;
+  }
+
+  data.courseLessons[courseId] = newLesson;
+  return true;
+}
+
+function replaceCourse(courseId, newCourse) {
+  const courseIndex = data.courses.findIndex((c) => areIdsEqual(c.id, courseId));
+  if (courseIndex === -1) {
+    logDebug(`Course not found: ${courseId}`);
+    return false;
+  }
+
+  data.courses[courseIndex] = newCourse;
   return true;
 }
 
@@ -261,6 +274,8 @@ function updateLesson(courseId, lessonId, updates) {
   if (lessonIndex === -1) return false;
 
   courseLessons[lessonIndex] = { ...courseLessons[lessonIndex], ...updates };
+
+  replaceLesson(courseId, lessonId, courseLessons[lessonIndex]);
   return true;
 }
 
@@ -275,6 +290,7 @@ function deactivateUserData(userId) {
   if (user) {
     user._inactive = true;
     user.deactivatedAt = now;
+    replaceUser(userId, user);
   }
 
   const collections = ["userEnrollments", "lessonProgress", "userStats", "certificates", "userRatings", "fundsHistory"];
@@ -307,6 +323,113 @@ function addUserEnrollment(enrollment) {
   recalculateStudentsCount();
 }
 
+function changeUserRating(userId, courseId, rating, comment, createdAt) {
+  const ratingObj = getUserRating(userId, courseId);
+  if (ratingObj) {
+    ratingObj.rating = rating;
+    ratingObj.comment = comment;
+    ratingObj.createdAt = createdAt;
+    return true;
+  }
+  return false;
+}
+
+function parseDurationToSeconds(duration) {
+  if (!duration) {
+    return 0;
+  }
+
+  const timeParts = duration.split(":");
+  if (timeParts.length === 3) {
+    return parseInt(timeParts[0]) * 3600 + parseInt(timeParts[1]) * 60 + parseInt(timeParts[2]);
+  }
+  return parseInt(timeParts[0]) * 60 + parseInt(timeParts[1]);
+}
+
+function roundSecondsToHours(seconds) {
+  // round to one decimal place
+  return Math.round((seconds / 3600) * 10) / 10;
+}
+
+function recalculateStudentsCount() {
+  data.courses.forEach((course) => {
+    course.students =
+      data.userEnrollments.filter((e) => areIdsEqual(e.courseId, course.id) && !isInactive(e)).length || 0;
+  });
+
+  [...data.courses].forEach((course) => {
+    replaceCourse(course.id, course);
+  });
+}
+
+function recalculateCoursesRating() {
+  data.courses.forEach((course) => {
+    const ratings = getUserRatingsForCourse(course.id);
+    const totalRating = ratings.reduce((total, rating) => total + rating.rating, 0);
+    course.rating = ratings.length > 0 ? Math.round((totalRating / ratings.length) * 10) / 10 : 0;
+  });
+
+  [...data.courses].forEach((course) => {
+    replaceCourse(course.id, course);
+  });
+}
+
+function recalculateCoursesDuration() {
+  data.courses.forEach((course) => {
+    const lessons = getCourseLessons(course.id);
+    const totalDurationInSeconds = lessons.reduce(
+      (total, lesson) => total + parseDurationToSeconds(lesson?.duration),
+      0
+    );
+
+    course.totalHours = roundSecondsToHours(totalDurationInSeconds);
+    course.duration = `${roundSecondsToHours(totalDurationInSeconds)} hour(s)`;
+  });
+
+  [...data.courses].forEach((course) => {
+    replaceCourse(course.id, course);
+  });
+}
+
+function recalculateCourseData() {
+  recalculateStudentsCount();
+  recalculateCoursesRating();
+  recalculateCoursesDuration();
+}
+
+function getOneCourseStats(courseId) {
+  const course = getCourseById(courseId);
+  if (!course) {
+    return null;
+  }
+
+  const lessons = getCourseLessons(courseId);
+  const totalDurationInSeconds = lessons.reduce((total, lesson) => total + parseDurationToSeconds(lesson?.duration), 0);
+  const totalHours = roundSecondsToHours(totalDurationInSeconds);
+  const duration = `${roundSecondsToHours(totalDurationInSeconds)} hour(s)`;
+
+  const ratings = getUserRatingsForCourse(courseId);
+  const totalRating = ratings.reduce((total, rating) => total + rating.rating, 0);
+  const rating = ratings.length > 0 ? Math.round((totalRating / ratings.length) * 10) / 10 : 0;
+
+  const students = data.userEnrollments.filter((e) => areIdsEqual(e.courseId, courseId) && !isInactive(e)).length || 0;
+
+  return {
+    id: course.id,
+    title: course.title,
+    totalHours,
+    duration,
+    rating,
+    students,
+  };
+}
+
+function getAllCoursesStats() {
+  return data.courses.map((course) => {
+    return getOneCourseStats(course.id);
+  });
+}
+
 module.exports = {
   getUserByEmail,
   getAllUserEnrollments,
@@ -320,6 +443,7 @@ module.exports = {
   getCourses,
   addUserEnrollment,
   getUserRatings,
+  changeUserRating,
   getUserFunds,
   getCertificates,
   getCourseLessons,
@@ -336,6 +460,10 @@ module.exports = {
   addUserRating,
   recalculateStudentsCount,
   recalculateCoursesRating,
+  recalculateCoursesDuration,
+  recalculateCourseData,
+  getAllCoursesStats,
+  getOneCourseStats,
   getUsers,
   getRoles,
   getRolePermissions,

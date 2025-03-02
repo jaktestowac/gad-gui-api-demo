@@ -1,6 +1,6 @@
 const { learningBaseUrl, request, expect } = require("../../config.js");
 const { setupEnv, gracefulQuit } = require("../../helpers/helpers.js");
-const { authUser, authLearningUser } = require("../../helpers/data.helpers.js");
+const { authLearningUser } = require("../../helpers/data.helpers.js");
 
 const baseUrl = `${learningBaseUrl}/instructor`;
 describe("Instructor Features", async () => {

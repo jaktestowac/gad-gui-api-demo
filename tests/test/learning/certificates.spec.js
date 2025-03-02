@@ -1,6 +1,6 @@
 const { learningBaseUrl, request, expect } = require("../../config.js");
 const { setupEnv, gracefulQuit } = require("../../helpers/helpers.js");
-const { authUser } = require("../../helpers/data.helpers.js");
+const { authDefaultLearningUser } = require("../../helpers/data.helpers.js");
 
 const baseUrl = `${learningBaseUrl}/certificates`;
 describe("Certificates Management", async () => {
@@ -8,7 +8,7 @@ describe("Certificates Management", async () => {
 
   before(async () => {
     await setupEnv();
-    userData = await authUser();
+    userData = await authDefaultLearningUser();
   });
 
   after(() => {
@@ -18,7 +18,7 @@ describe("Certificates Management", async () => {
   describe("Certificate endpoints", () => {
     it("GET /public/:certificateId - view public certificate", async () => {
       // Using a known certificate UUID from mock data
-      const response = await request.get(`${baseUrl}/public/550e8400-e29b-41d4-a716-446655440000`);
+      const response = await request.get(`${learningBaseUrl}/public/certificates/550e8400-e29b-41d4-a716-446655440000`);
       expect(response.status, JSON.stringify(response.body)).to.equal(200);
       expect(response.body).to.have.property("certificateNumber");
       expect(response.body).to.have.property("uuid");
@@ -28,7 +28,7 @@ describe("Certificates Management", async () => {
     });
 
     it("GET /public/:certificateId - invalid certificate", async () => {
-      const response = await request.get(`${baseUrl}/public/invalid-uuid`);
+      const response = await request.get(`${learningBaseUrl}/public/certificates/invalid-uuid`);
       expect(response.status, JSON.stringify(response.body)).to.equal(404);
     });
   });

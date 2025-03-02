@@ -74,10 +74,12 @@ const clearDbAfter = false;
 const clearDbBefore = true;
 
 const restoreDbPath = "/api/restoreTestDB";
+const restoreLearningDbPath = "/api/learning/system/restore";
 
 module.exports = {
   serverWsAddress,
   restoreDbPath,
+  restoreLearningDbPath,
   expect,
   request,
   faker,

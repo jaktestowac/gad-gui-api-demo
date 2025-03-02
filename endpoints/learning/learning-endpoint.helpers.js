@@ -107,9 +107,9 @@ function handleLearning(req, res) {
 
           if (result.success) {
             // Recalculate everything after restore
-            recalculateStudentsCount();
-            recalculateCoursesRating();
-            recalculateCoursesDuration();
+            dataProvider.recalculateStudentsCount();
+            dataProvider.recalculateCoursesRating();
+            dataProvider.recalculateCoursesDuration();
 
             res.status(HTTP_OK).send({
               success: true,
@@ -492,6 +492,27 @@ function handleLearning(req, res) {
           res.status(HTTP_OK).send(lessons);
         } else {
           res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Lessons not found"));
+        }
+        return;
+      }
+
+      // Get all course statistics - students, duration and rating
+      // /learning/courses/stats
+      if (urlParts.length === 4 && urlParts[1] === "learning" && urlParts[2] === "courses" && urlParts[3] === "stats") {
+        const stats = dataProvider.getAllCoursesStats();
+        res.status(HTTP_OK).send(stats);
+        return;
+      }
+
+      // Get course statistics - students, duration and rating
+      // /learning/courses/{courseId}/stats
+      if (urlParts.length === 5 && urlParts[1] === "learning" && urlParts[2] === "courses" && urlParts[4] === "stats") {
+        const courseId = parseInt(urlParts[3]);
+        const stats = dataProvider.getOneCourseStats(courseId);
+        if (stats) {
+          res.status(HTTP_OK).send(stats);
+        } else {
+          res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Course stats not found"));
         }
         return;
       }
@@ -990,11 +1011,7 @@ function handleLearning(req, res) {
                 thumbnail: "..\\data\\learning\\courses\\default-course.jpg",
                 instructor: `${user.firstName} ${user.lastName}`,
                 instructorId: user.id,
-                duration: "0 hours",
-                totalHours: 0,
                 level,
-                students: 0,
-                rating: 0,
                 tags: tags || [],
                 prerequisites: [],
                 price: parseFloat(price),
@@ -1222,7 +1239,7 @@ function handleLearning(req, res) {
             };
 
             dataProvider.addUserEnrollment(enrollment);
-            recalculateStudentsCount();
+            dataProvider.recalculateStudentsCount();
 
             res.status(HTTP_OK).send({ success: true, enrollment });
             return;
@@ -1406,20 +1423,22 @@ function handleLearning(req, res) {
           .findIndex((r) => areIdsEqual(r.userId, userId) && areIdsEqual(r.courseId, courseId));
 
         if (existingRatingIndex !== -1) {
-          dataProvider.removeUserRating(existingRatingIndex);
+          logDebug("Updating existing rating:", { userId, courseId, rating, comment });
+          dataProvider.changeUserRating(userId, courseId, rating, comment, new Date().toISOString());
+        } else {
+          // Add new rating
+          logDebug("Adding new rating:", { userId, courseId, rating, comment });
+          dataProvider.addUserRating({
+            userId,
+            courseId,
+            rating,
+            comment,
+            createdAt: new Date().toISOString(),
+          });
         }
 
-        // Add new rating
-        dataProvider.addUserRating({
-          userId,
-          courseId,
-          rating,
-          comment,
-          createdAt: new Date().toISOString(),
-        });
-
         // Update course average rating
-        recalculateCoursesRating();
+        dataProvider.recalculateCoursesRating();
 
         res.status(HTTP_OK).send({ success: true });
         return;
@@ -1462,8 +1481,8 @@ function handleLearning(req, res) {
         }
 
         // Update any methods that read user data to check active status
-        recalculateStudentsCount();
-        recalculateCoursesRating();
+        dataProvider.recalculateStudentsCount();
+        dataProvider.recalculateCoursesRating();
 
         res.status(HTTP_OK).send({
           success: true,
@@ -1561,7 +1580,7 @@ function handleLearning(req, res) {
         dataProvider.addCourseLesson(courseId, newLesson);
 
         // Recalculate course duration after adding lesson
-        recalculateCoursesDuration();
+        dataProvider.recalculateCoursesDuration();
 
         res.status(HTTP_OK).send({
           success: true,
@@ -1781,7 +1800,7 @@ function handleLearning(req, res) {
           content: content || courseLessons[lessonIndex].content,
         };
 
-        recalculateCoursesDuration();
+        dataProvider.recalculateCoursesDuration();
 
         res.status(HTTP_OK).send({
           success: true,
@@ -1831,7 +1850,7 @@ function handleLearning(req, res) {
 
         courseLessons.splice(lessonIndex, 1);
 
-        recalculateCoursesDuration();
+        dataProvider.recalculateCoursesDuration();
 
         res.status(HTTP_OK).send({
           success: true,
@@ -1990,13 +2009,15 @@ function calculateRatingMetrics(courses, startDate) {
 }
 
 function getTopPerformingCourses(courses) {
+  const courseStats = dataProvider.getAllCoursesStats();
+
   return courses
     .map((course) => ({
       title: course.title,
       enrollments: dataProvider.getAllUserEnrollments().filter((e) => areIdsEqual(e.courseId, course.id)).length,
       revenue:
         course.price * dataProvider.getAllUserEnrollments().filter((e) => areIdsEqual(e.courseId, course.id)).length,
-      rating: course.rating,
+      rating: courseStats.find((s) => areIdsEqual(s.courseId, course.id))?.rating || 0,
     }))
     .sort((a, b) => b.enrollments - a.enrollments)
     .slice(0, 5);
@@ -2417,38 +2438,9 @@ function validateLessonFields(fields) {
   return null;
 }
 
-function recalculateStudentsCount() {
-  dataProvider.getCourses().forEach((course) => {
-    course.students =
-      dataProvider.getAllUserEnrollments().filter((e) => areIdsEqual(e.courseId, course.id)).length || 0;
-  });
-}
-
-function recalculateCoursesRating() {
-  dataProvider.getCourses().forEach((course) => {
-    const ratings = dataProvider.getUserRatingsForCourse(course.id);
-    const totalRating = ratings.reduce((total, rating) => total + rating.rating, 0);
-    // round it to 1 decimal place
-    course.rating = ratings.length > 0 ? Math.round((totalRating / ratings.length) * 10) / 10 : 0;
-  });
-}
-
-function recalculateCoursesDuration() {
-  dataProvider.getCourses().forEach((course) => {
-    const lessons = dataProvider.getCourseLessons(course.id);
-    const totalDurationInSeconds = lessons.reduce(
-      (total, lesson) => total + parseDurationToSeconds(lesson?.duration),
-      0
-    );
-
-    course.totalHours = roundSecondsToHours(totalDurationInSeconds);
-    course.duration = `${roundSecondsToHours(totalDurationInSeconds)} hour(s)`;
-  });
-}
-
-recalculateStudentsCount();
-recalculateCoursesRating();
-recalculateCoursesDuration();
+dataProvider.recalculateStudentsCount();
+dataProvider.recalculateCoursesRating();
+dataProvider.recalculateCoursesDuration();
 
 module.exports = {
   handleLearning,
