@@ -1756,7 +1756,12 @@ function handleLearning(req, res) {
 
       // Add instructor lesson update endpoint
       // PUT /learning/instructor/courses/:courseId/lessons/:lessonId
-      if (urlParts[2] === "instructor" && urlParts[3] === "courses" && urlParts[5] === "lessons") {
+      if (
+        req.method === "PUT" &&
+        urlParts[2] === "instructor" &&
+        urlParts[3] === "courses" &&
+        urlParts[5] === "lessons"
+      ) {
         if (!checkIfUserIsAuthenticated(req, res)) {
           res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not authenticated"));
           return;
@@ -1792,13 +1797,15 @@ function handleLearning(req, res) {
 
         // Update lesson data
         const { title, type, duration, content } = req.body;
-        courseLessons[lessonIndex] = {
+        const newLesson = {
           ...courseLessons[lessonIndex],
           title: title || courseLessons[lessonIndex].title,
           type: type || courseLessons[lessonIndex].type,
           duration: duration || courseLessons[lessonIndex].duration,
           content: content || courseLessons[lessonIndex].content,
         };
+
+        dataProvider.updateLesson(courseId, lessonId, newLesson);
 
         dataProvider.recalculateCoursesDuration();
 
@@ -2206,6 +2213,8 @@ function updateUserFunds(userId, newAmount) {
   if (user) {
     const oldAmount = user.funds;
     user.funds = oldAmount + newAmount;
+
+    dataProvider.replaceUser(userId, user);
 
     if (newAmount > 0) {
       addFundsHistory(userId, newAmount, "credit", "Account top up");

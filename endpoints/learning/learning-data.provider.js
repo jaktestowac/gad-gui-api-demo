@@ -97,7 +97,9 @@ function setCourseLessons(courseId, lessons) {
 }
 
 function addCourseLesson(courseId, lesson) {
-  data.courseLessons[courseId].push(lesson);
+  const lessons = data.courseLessons[courseId];
+  lessons.push(lesson);
+  data.courseLessons[courseId] = lessons;
 }
 
 function getLessonProgress(userId, courseId) {
@@ -235,11 +237,12 @@ function replaceLesson(courseId, lessonId, newLesson) {
   const courseLessons = data.courseLessons[courseId];
   const lessonIndex = courseLessons.findIndex((lesson) => areIdsEqual(lesson.id, lessonId));
   if (lessonIndex === -1) {
-    logDebug(`Lesson not found: ${lessonId}`);
+    logDebug(`Lesson was not found: ${lessonId}`);
     return false;
   }
 
-  data.courseLessons[courseId] = newLesson;
+  courseLessons[lessonIndex] = newLesson;
+  data.courseLessons[courseId] = courseLessons;
   return true;
 }
 
@@ -267,16 +270,16 @@ function addCertificate(certificate) {
 }
 
 function updateLesson(courseId, lessonId, updates) {
-  const courseLessons = data.courseLessons[courseId];
-  if (!courseLessons) return false;
+  const lesson = getCourseLessons(courseId).find((l) => areIdsEqual(l.id, lessonId));
+  if (!lesson) {
+    return false;
+  }
 
-  const lessonIndex = courseLessons.findIndex((lesson) => areIdsEqual(lesson.id, lessonId));
-  if (lessonIndex === -1) return false;
+  for (const key in updates) {
+    lesson[key] = updates[key];
+  }
 
-  courseLessons[lessonIndex] = { ...courseLessons[lessonIndex], ...updates };
-
-  replaceLesson(courseId, lessonId, courseLessons[lessonIndex]);
-  return true;
+  return replaceLesson(courseId, lessonId, lesson);
 }
 
 function deactivateUserData(userId) {
@@ -296,12 +299,16 @@ function deactivateUserData(userId) {
   const collections = ["userEnrollments", "lessonProgress", "userStats", "certificates", "userRatings", "fundsHistory"];
 
   collections.forEach((collection) => {
-    data[collection]
+    const coll = data[collection];
+
+    coll
       .filter((item) => areIdsEqual(item.userId, userId))
       .forEach((item) => {
         item._inactive = true;
         item.deactivatedAt = now;
       });
+
+    data[collection] = coll;
   });
 
   return { success: true };

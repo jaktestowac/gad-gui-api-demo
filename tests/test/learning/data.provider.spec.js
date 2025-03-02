@@ -432,10 +432,10 @@ describe("Learning Data Provider", () => {
         progress: 0,
       };
 
-      const originalStudents = dataProvider.getCourseById(1).students;
+      const originalStudents = dataProvider.getOneCourseStats(1).students;
       dataProvider.addEnrollment(newEnrollment);
 
-      expect(dataProvider.getCourseById(1).students).to.equal(originalStudents + 1);
+      expect(dataProvider.getOneCourseStats(1).students).to.equal(originalStudents + 1);
       expect(dataProvider.getEnrollment(999, 1)).to.deep.include(newEnrollment);
     });
   });
