@@ -32,6 +32,13 @@ const {
 function handleBookShopAccount(req, res, isAdmin) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
   if (req.method === "GET" && req.url.endsWith("/api/book-shop-accounts")) {
+    /*
+    Retrieves user's book shop account
+    - Validates user authentication
+    - Handles bug flag checks
+    - Verifies account ownership
+    - Returns account details for authorized user
+    */
     const verifyTokenResult = verifyAccessToken(req, res, "GET book-shop/accounts", req.url);
     const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
 
@@ -62,6 +69,13 @@ function handleBookShopAccount(req, res, isAdmin) {
     req.url = `/api/book-shop-accounts/${foundAccount.id}`;
     return true;
   } else if (req.method === "GET" && req.url.endsWith("/api/book-shop-accounts/my-books")) {
+    /*
+    Retrieves user's book collections
+    - Returns all book list types (wishlist, read, owned, purchased, favorites)
+    - Requires valid user authentication
+    - Verifies book shop account existence
+    - Provides organized collection data
+    */
     const verifyTokenResult = verifyAccessToken(req, res, "GET book-shop-accounts", req.url);
     const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
 
@@ -89,6 +103,13 @@ function handleBookShopAccount(req, res, isAdmin) {
 
     return true;
   } else if (req.method === "GET" && req.url.includes("/api/book-shop-accounts/")) {
+    /*
+    Retrieves specific account details
+    - Validates user authentication and access rights
+    - Gets account by ID
+    - Verifies account ownership
+    - Ensures secure access to account data
+    */
     const verifyTokenResult = verifyAccessToken(req, res, "GET book-shop-accounts/{id}", req.url);
     const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
     let accountId = getIdFromUrl(urlEnds);
@@ -108,6 +129,13 @@ function handleBookShopAccount(req, res, isAdmin) {
 
     return true;
   } else if (req.method === "POST" && req.url.endsWith("/api/book-shop-authorize")) {
+    /*
+    Authorizes user for book shop access
+    - Validates user credentials
+    - Checks book shop account existence
+    - Verifies role permissions
+    - Returns authorization status with account details
+    */
     logDebug("handleBookShopAccount: User authorization");
     const verifyTokenResult = verifyAccessToken(req, res, "POST book-shop-authorize", req.url);
     const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
@@ -146,6 +174,14 @@ function handleBookShopAccount(req, res, isAdmin) {
 
     return true;
   } else if (req.method === "POST" && req.url.endsWith("/api/book-shop-accounts")) {
+    /*
+    Creates new book shop account
+    - Validates user authentication
+    - Prevents duplicate accounts
+    - Sets up default account settings and collections
+    - Initializes with bonus funds
+    - Creates empty book lists
+    */
     logDebug("handleBookShopAccount: Creation of user account");
     const verifyTokenResult = verifyAccessToken(req, res, "POST book-shop-accounts", req.url);
     const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
@@ -182,6 +218,14 @@ function handleBookShopAccount(req, res, isAdmin) {
 
     return true;
   } else if (req.method === "PATCH" && req.url.includes("/api/book-shop-accounts/")) {
+    /*
+    Updates account information
+    - Validates user and account ownership
+    - Updates shipping/billing details
+    - Validates field lengths and types
+    - Prevents invalid field updates
+    - Maintains data integrity
+    */
     logDebug("handleBookShopAccount: Update account", { url: req.url, urlEnds });
 
     const verifyTokenResult = verifyAccessToken(req, res, "PATCH book-shop-accounts/{id}", req.url);

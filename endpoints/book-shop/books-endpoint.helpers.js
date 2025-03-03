@@ -49,6 +49,12 @@ function handleBooks(req, res, isAdmin) {
       req.url.includes("/api/books/read/") ||
       req.url.includes("/api/books/favorites/"))
   ) {
+    /*
+    Manages user's book collections
+    - Handles wishlists, read books, owned books
+    - Validates book existence
+    - Toggles book status in collections
+    */
     const verifyTokenResult = verifyAccessToken(req, res, "GET book-shop-accounts", req.url);
     const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
 
@@ -129,6 +135,12 @@ function handleBooks(req, res, isAdmin) {
   }
 
   if (req.method === "POST" && req.url === "/api/books") {
+    /*
+    Creates new book entries
+    - Validates required book fields
+    - Handles cover image paths
+    - Processes author and genre relationships
+    */
     const areFieldsPresent = areMandatoryFieldsPresent(req.body, mandatory_non_empty_fields_body);
     if (!areFieldsPresent) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatMissingFieldErrorResponse(mandatory_non_empty_fields_body));
@@ -136,7 +148,7 @@ function handleBooks(req, res, isAdmin) {
     }
 
     const additionalFields = areAnyAdditionalFieldsPresent(req.body, mandatory_non_empty_fields_body);
-    if (additionalFields) {
+    if (additionalFields.status) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatErrorResponse("Additional fields provided", additionalFields));
       return false;
     }
@@ -161,6 +173,12 @@ function handleBooks(req, res, isAdmin) {
     logTrace("handleBooks:POST:", { method: req.method, urlEnds, bookId: req.body.id });
     return true;
   } else if (req.method === "PATCH" && req.url.includes("/api/books/")) {
+    /*
+    Updates existing book information
+    - Validates update fields
+    - Prevents invalid modifications
+    - Maintains data integrity
+    */
     const bookId = getIdFromUrl(urlEnds);
     if (!bookId) {
       res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Book ID is required"));
@@ -190,6 +208,13 @@ function handleBooks(req, res, isAdmin) {
     // pass through to the next middleware to update the book
     return true;
   } else if (req.method === "DELETE" && req.url.includes("/api/books/")) {
+    /*
+    Handles book deletion (soft delete)
+    - Validates book existence
+    - Performs soft delete operation
+    - Maintains referential integrity
+    - Updates book status
+    */
     const bookId = getIdFromUrl(urlEnds);
     if (!bookId) {
       res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Book ID is required"));
