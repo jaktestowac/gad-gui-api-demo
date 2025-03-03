@@ -334,7 +334,10 @@ function handleBookShopOrders(req, res, isAdmin) {
       return false;
     }
 
-    if (orderBase.book_ids.length === 0 && areIdsEqual(currentOrderStatus.id, orderStatuses.new) === true) {
+    if (orderBase.book_ids.length === 0 && 
+      areIdsEqual(currentOrderStatus.id, orderStatuses.new) === true  &&
+      areIdsEqual(newStatusId, orderStatuses.cancelled) === false
+    ) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatErrorResponse("Order has no items"));
       return false;
     }
