@@ -43,6 +43,9 @@ const handleDroneJoin = (context, userId, ws) => {
 
 const getMessageHandler = (type) => {
   logInsane(`[websocketRoute] getMessageHandler:`, { type });
+  if (type === "ping" || type === "status") {
+    return messageHandlerMap[type];
+  }
   if (type?.toLowerCase().includes("cinema")) {
     return (context, ws, data) => cinemaHandlers[type]?.(context, ws, data);
   }
@@ -85,7 +88,29 @@ const websocketRoute = (wss, webSocketPort) => {
 
     ws.on("message", (message) => {
       try {
-        const data = JSON.parse(message);
+        let data;
+        try {
+          data = JSON.parse(message);
+        } catch (parseError) {
+          ws.send(
+            JSON.stringify({
+              type: "error",
+              data: { message: "Invalid message format: Malformed JSON" },
+            })
+          );
+          return;
+        }
+
+        if (!data || !data.type) {
+          ws.send(
+            JSON.stringify({
+              type: "error",
+              data: { message: "Invalid message format: Missing type" },
+            })
+          );
+          return;
+        }
+
         logTrace("[websocketRoute] Received message:", { type: data.type, data });
 
         if (data.type?.toLowerCase().includes("practicedronejoin")) {
@@ -99,6 +124,11 @@ const websocketRoute = (wss, webSocketPort) => {
         }
 
         let context = undefined;
+        if (data.type === "ping" || data.type === "status") {
+          handler(ws);
+          return;
+        }
+
         if (data.type?.toLowerCase().includes("cinema")) context = contexts.cinema;
         if (data.type?.toLowerCase().includes("practicechat")) context = contexts.chat;
         if (data.type?.toLowerCase().includes("doc")) context = contexts.document;
@@ -115,7 +145,12 @@ const websocketRoute = (wss, webSocketPort) => {
         handler(context, ws, data);
       } catch (error) {
         logError("[websocketRoute] Error processing message:", error.message);
-        sendError(ws, error.message || "Invalid message format");
+        ws.send(
+          JSON.stringify({
+            type: "error",
+            data: { message: error.message || "Invalid message format" },
+          })
+        );
       }
     });
 

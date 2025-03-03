@@ -219,7 +219,11 @@ const isEmailValid = (email) => {
 
 const isDateValid = (date) => {
   try {
-    return date.match(getConfigValue(ConfigKeys.DATE_REGEXP));
+    const result = date.match(getConfigValue(ConfigKeys.DATE_REGEXP));
+    if (result === null) {
+      return false;
+    }
+    return true;
   } catch (error) {
     logDebug("Invalid date:", date);
     return false;
