@@ -34,6 +34,15 @@ function handleBookShopAccountPaymentCards(req, res, isAdmin) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
 
   if (req.method === "POST" && req.url.includes("/api/book-shop-account-payment-cards/topup")) {
+    /*
+    Handles account balance top-up
+    - Validates user authentication and card ownership
+    - Verifies CVV and card status
+    - Validates top-up amount and limits
+    - Checks card balance availability
+    - Updates account and card balances
+    - Records transaction in payment history
+    */
     logDebug("handleBookShopAccountPaymentCards: Do top up", { url: req.url, urlEnds });
 
     const verifyTokenResult = verifyAccessToken(req, res, "POST book-shop-accounts", req.url);
@@ -145,6 +154,12 @@ function handleBookShopAccountPaymentCards(req, res, isAdmin) {
 
     return;
   } else if (req.method === "GET" && req.url.includes("/api/book-shop-account-payment-cards")) {
+    /*
+    Retrieves user's payment card information
+    - Validates user authentication
+    - Verifies account ownership
+    - Returns associated card details
+    */
     logDebug("handleBookShopAccountPaymentCards: Get user card", { url: req.url, urlEnds });
 
     const verifyTokenResult = verifyAccessToken(req, res, "PUT book-shop-accounts", req.url);
@@ -174,6 +189,14 @@ function handleBookShopAccountPaymentCards(req, res, isAdmin) {
     req.url = `/api/book-shop-account-payment-cards/${foundCard.id}`;
     return true;
   } else if (req.method === "PUT" && req.url.includes("/api/book-shop-account-payment-cards")) {
+    /*
+    Updates payment card information
+    - Validates card number format and length
+    - Verifies CVV and expiration date
+    - Prevents duplicate card numbers
+    - Initializes card with default balance
+    - Handles asynchronous card verification
+    */
     logDebug("handleBookShopAccountPaymentCards: update payment card", { url: req.url, urlEnds });
 
     const verifyTokenResult = verifyAccessToken(req, res, "PUT book-shop-accounts", req.url);
@@ -270,6 +293,12 @@ function handleBookShopAccountPaymentCards(req, res, isAdmin) {
     res.status(HTTP_OK).send(newCard);
     return;
   } else if (req.method === "DELETE" && req.url.includes("/api/book-shop-account-payment-cards")) {
+    /*
+    Removes payment card from account
+    - Validates user authentication
+    - Verifies card ownership
+    - Removes card association
+    */
     logDebug("handleBookShopAccountPaymentCards: Delete payment card", { url: req.url, urlEnds });
 
     const verifyTokenResult = verifyAccessToken(req, res, "DELETE book-shop-accounts", req.url);

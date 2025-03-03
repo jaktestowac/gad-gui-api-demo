@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>🦎 GAD - TODO App - V4</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="styles/todo-app.css">
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br /><br /><br />
+    <div class="todo-app">
+        <nav class="todo-nav">
+            <a href="index.html" class="todo-nav__link">← Back to versions</a>
+        </nav>
+
+        <div class="todo-header">
+            <h1 class="todo-header__title">TODO App</h1>
+            <p class="todo-header__subtitle">Version 4 - Advanced Features</p>
+        </div>
+
+        <div class="todo-filters">
+            <input type="text" id="searchInput" class="todo-filters__search" placeholder="Search todos...">
+            <div class="todo-filters__group">
+                <select id="statusFilter" class="todo-filters__select">
+                    <option value="">All Statuses</option>
+                    <option value="todo">Todo</option>
+                    <option value="inProgress">In Progress</option>
+                    <option value="paused">Paused</option>
+                    <option value="completed">Completed</option>
+                </select>
+                <select id="priorityFilter" class="todo-filters__select">
+                    <option value="">All Priorities</option>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                </select>
+                <label class="todo-filters__toggle">
+                    <input type="checkbox" id="hideCompleted">
+                    Hide Completed
+                </label>
+            </div>
+        </div>
+
+        <form class="todo-form" id="todoForm">
+            <div class="todo-form__group todo-form__group--col">
+                <input type="text" id="todoTitle" class="todo-form__input" placeholder="Enter todo title" required>
+                <textarea id="todoDescription" class="todo-form__textarea" placeholder="Add description"></textarea>
+            </div>
+            <div class="todo-form__group todo-form__group--row">
+                <select id="todoStatus" class="todo-form__select">
+                    <option value="todo">Todo</option>
+                    <option value="inProgress">In Progress</option>
+                    <option value="paused">Paused</option>
+                    <option value="completed">Completed</option>
+                </select>
+                <select id="todoPriority" class="todo-form__select">
+                    <option value="low">Low Priority</option>
+                    <option value="medium" selected>Medium Priority</option>
+                    <option value="high">High Priority</option>
+                </select>
+                <input type="text" id="todoTags" class="todo-form__input" placeholder="Add tags (comma separated)">
+            </div>
+            <button type="submit" class="todo-form__button" id="submitBtn">Add Todo</button>
+        </form>
+
+        <div id="todoList" class="todo-list"></div>
+    </div>
+
+    <script>
+        const api = {
+            getAll: (params = {}) => {
+                const query = new URLSearchParams(params).toString();
+                return fetch(`/api/practice/v4/todos${query ? `?${query}` : ''}`).then(r => r.json());
+            },
+            create: (data) => fetch('/api/practice/v4/todos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).then(r => r.json()),
+            update: (id, data) => fetch(`/api/practice/v4/todos/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).then(r => r.json()),
+            delete: (id) => fetch(`/api/practice/v4/todos/${id}`, { method: 'DELETE' })
+        };
+
+        let draggedItem = null;
+
+        function renderTags(tags) {
+            return tags.map(tag => `
+                <span class="todo-item__tag">${tag}</span>
+            `).join('');
+        }
+
+        function getStatusLabel(status) {
+            const labels = {
+                todo: 'To Do',
+                inProgress: 'In Progress',
+                paused: 'Paused',
+                completed: 'Completed'
+            };
+            return labels[status] || status;
+        }
+
+        function getPriorityLabel(priority) {
+            const labels = {
+                low: 'Low Priority',
+                medium: 'Medium Priority',
+                high: 'High Priority'
+            };
+            return labels[priority] || priority;
+        }
+
+        function renderTodos(todos) {
+            const container = document.getElementById('todoList');
+            container.innerHTML = todos.map(todo => `
+                <div class="todo-item todo-item--status-${todo.status} todo-item--priority-${todo.priority}" 
+                     data-id="${todo.id}" draggable="true">
+                    <div class="todo-item__drag-handle">⋮⋮</div>
+                    <div class="todo-item__content">
+                        <div class="todo-item__header">
+                            <div class="todo-item__title-group">
+                                <span class="todo-item__priority">${getPriorityLabel(todo.priority)}</span>
+                                <span class="todo-item__title">${todo.title}</span>
+                            </div>
+                            <button type="button" class="todo-item__edit" 
+                                    onclick="startEditing(${todo.id})">Edit</button>
+                        </div>
+                        ${todo.description ? `
+                            <div class="todo-item__description">${todo.description}</div>
+                        ` : ''}
+                        ${todo.tags.length ? `
+                            <div class="todo-item__tags">
+                                ${renderTags(todo.tags)}
+                            </div>
+                        ` : ''}
+                        <div class="todo-item__status-actions">
+                            <button type="button" class="todo-item__status-btn ${todo.status === 'todo' ? 'active' : ''}"
+                                    onclick="quickUpdateStatus(${todo.id}, 'todo')">To Do</button>
+                            <button type="button" class="todo-item__status-btn ${todo.status === 'inProgress' ? 'active' : ''}"
+                                    onclick="quickUpdateStatus(${todo.id}, 'inProgress')">In Progress</button>
+                            <button type="button" class="todo-item__status-btn ${todo.status === 'paused' ? 'active' : ''}"
+                                    onclick="quickUpdateStatus(${todo.id}, 'paused')">Paused</button>
+                            <button type="button" class="todo-item__status-btn ${todo.status === 'completed' ? 'active' : ''}"
+                                    onclick="quickUpdateStatus(${todo.id}, 'completed')">Completed</button>
+                        </div>
+                        <div class="todo-item__meta">
+                            <span class="todo-item__status">${getStatusLabel(todo.status)}</span>
+                            <span class="todo-item__date">Created: ${formatDate(todo.creationDate)}</span>
+                        </div>
+                    </div>
+                    <button type="button" class="todo-item__delete" 
+                            onclick="deleteTodo(${todo.id})">Delete</button>
+                </div>
+            `).join('');
+
+            setupDragAndDrop();
+        }
+
+        async function quickUpdateStatus(id, newStatus) {
+            const todo = document.querySelector(`[data-id="${id}"]`);
+            const title = todo.querySelector('.todo-item__title').textContent;
+            const description = todo.querySelector('.todo-item__description')?.textContent || '';
+            const priority = todo.className.match(/priority-(\w+)/)[1];
+            const tags = Array.from(todo.querySelectorAll('.todo-item__tag'))
+                .map(tag => tag.textContent);
+
+            await api.update(id, {
+                title,
+                description,
+                status: newStatus,
+                priority,
+                tags
+            });
+            loadTodos();
+        }
+
+        function setupDragAndDrop() {
+            const items = document.querySelectorAll('.todo-item');
+            items.forEach(item => {
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('dragover', handleDragOver);
+                item.addEventListener('drop', handleDrop);
+            });
+        }
+
+        function handleDragStart(e) {
+            draggedItem = e.target;
+            e.target.classList.add('dragging');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+        }
+
+        async function handleDrop(e) {
+            e.preventDefault();
+            const dropTarget = e.target.closest('.todo-item');
+            if (!dropTarget || dropTarget === draggedItem) return;
+
+            const todos = Array.from(document.querySelectorAll('.todo-item'));
+            const fromIndex = todos.indexOf(draggedItem);
+            const toIndex = todos.indexOf(dropTarget);
+
+            await api.update(draggedItem.dataset.id, { position: toIndex });
+            loadTodos();
+
+            draggedItem.classList.remove('dragging');
+            draggedItem = null;
+        }
+
+        function formatDate(isoDate) {
+            return new Date(isoDate).toLocaleString();
+        }
+
+        function parseTags(tagsString) {
+            return tagsString.split(',')
+                .map(tag => tag.trim())
+                .filter(tag => tag.length > 0);
+        }
+
+        let editingId = null;
+
+        function startEditing(id) {
+            const todo = document.querySelector(`[data-id="${id}"]`);
+            const title = todo.querySelector('.todo-item__title').textContent;
+            const description = todo.querySelector('.todo-item__description')?.textContent || '';
+            const status = todo.className.match(/status-(\w+)/)[1];
+            const priority = todo.className.match(/priority-(\w+)/)[1];
+            const tags = Array.from(todo.querySelectorAll('.todo-item__tag'))
+                .map(tag => tag.textContent)
+                .join(', ');
+
+            document.getElementById('todoTitle').value = title;
+            document.getElementById('todoDescription').value = description;
+            document.getElementById('todoStatus').value = status;
+            document.getElementById('todoPriority').value = priority;
+            document.getElementById('todoTags').value = tags;
+
+            editingId = id;
+            document.getElementById('submitBtn').textContent = 'Update Todo';
+            document.getElementById('todoTitle').focus();
+        }
+
+        async function handleSubmit(e) {
+            e.preventDefault();
+            const data = {
+                title: document.getElementById('todoTitle').value,
+                description: document.getElementById('todoDescription').value,
+                status: document.getElementById('todoStatus').value,
+                priority: document.getElementById('todoPriority').value,
+                tags: parseTags(document.getElementById('todoTags').value)
+            };
+
+            if (editingId) {
+                await api.update(editingId, data);
+                editingId = null;
+                document.getElementById('submitBtn').textContent = 'Add Todo';
+            } else {
+                await api.create(data);
+            }
+
+            e.target.reset();
+            loadTodos();
+        }
+
+        async function deleteTodo(id) {
+            await api.delete(id);
+            loadTodos();
+        }
+
+        async function loadTodos() {
+            const searchTerm = document.getElementById('searchInput').value;
+            const status = document.getElementById('statusFilter').value;
+            const priority = document.getElementById('priorityFilter').value;
+            const hideCompleted = document.getElementById('hideCompleted').checked;
+
+            const params = {};
+            if (searchTerm) params.search = searchTerm;
+            if (status) params.status = status;
+            if (priority) params.priority = priority;
+            if (hideCompleted) params.hideCompleted = true;
+
+            const todos = await api.getAll(params);
+            renderTodos(todos);
+        }
+
+        document.getElementById('todoForm').onsubmit = handleSubmit;
+        document.getElementById('searchInput').addEventListener('input', debounce(loadTodos, 300));
+        document.getElementById('statusFilter').addEventListener('change', loadTodos);
+        document.getElementById('priorityFilter').addEventListener('change', loadTodos);
+        document.getElementById('hideCompleted').addEventListener('change', loadTodos);
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        loadTodos();
+    </script>
+
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>

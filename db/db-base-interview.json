@@ -1,0 +1,4344 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "email": "Moses.Armstrong@Feest.ca",
+      "firstname": "Moses",
+      "lastname": "Armstrong",
+      "password": "test1",
+      "avatar": ".\\data\\users\\face_1591133479.7144732.jpg",
+      "creationDate": "2010-02-14T11:10:22.000Z",
+      "birthDate": "1964-05-17T06:47:38.258Z"
+    },
+    {
+      "id": 2,
+      "email": "Danial.Dicki@dicki.test",
+      "firstname": "Danial",
+      "lastname": "Dicki",
+      "password": "test2",
+      "avatar": ".\\data\\users\\face_1591133060.68834.jpg",
+      "creationDate": "2010-03-24T11:20:32.000Z",
+      "birthDate": "1974-01-14T01:05:10.593Z"
+    },
+    {
+      "id": 3,
+      "email": "Daryl.Parisian@gmail.test",
+      "firstname": "Daryl",
+      "lastname": "Parisian",
+      "password": "5Eleanore90",
+      "avatar": ".\\data\\users\\face_1591133063.620005.jpg",
+      "creationDate": "2009-09-27T15:40:37.000Z",
+      "birthDate": "1989-08-01T17:38:38.982Z"
+    },
+    {
+      "id": 4,
+      "email": "Dortha.Blick@Walker.name",
+      "firstname": "Dortha",
+      "lastname": "Blick",
+      "password": "5Damien43",
+      "avatar": ".\\data\\users\\face_1591133112.3790507.jpg",
+      "creationDate": "2009-08-07T14:35:20.000Z",
+      "birthDate": "1988-08-19T23:15:49.508Z"
+    },
+    {
+      "id": 5,
+      "email": "Lenore.Hoeger@test.net",
+      "firstname": "Lenore",
+      "lastname": "Hoeger",
+      "password": "6Selina95",
+      "avatar": ".\\data\\users\\face_1591133153.523801.jpg",
+      "creationDate": "2009-11-10T09:30:15.000Z",
+      "birthDate": "1996-08-24T07:48:45.691Z"
+    },
+    {
+      "id": 6,
+      "email": "Kerra.JD@test.net",
+      "firstname": "Kerra",
+      "lastname": "JD",
+      "password": "gdsa",
+      "avatar": ".\\data\\users\\face_1591133363.1959925.jpg",
+      "creationDate": "2010-07-17T09:10:22.000Z",
+      "birthDate": "1959-11-05T22:14:09.642Z"
+    },
+    {
+      "id": 7,
+      "email": "Mas.Lea@test.test",
+      "firstname": "Mas",
+      "lastname": "Lea",
+      "password": "fasd",
+      "avatar": ".\\data\\users\\face_1591133217.1529467.jpg",
+      "creationDate": "2011-03-24T11:20:32.000Z",
+      "birthDate": "1993-03-05T21:14:16.784Z"
+    },
+    {
+      "id": 8,
+      "email": "Josh.Brook@test.test",
+      "firstname": "Josh",
+      "lastname": "Brook",
+      "password": "1234",
+      "avatar": ".\\data\\users\\face_1591134851.6068161.jpg",
+      "creationDate": "2010-09-27T15:40:37.000Z",
+      "birthDate": "1971-11-03T19:16:08.652Z"
+    },
+    {
+      "id": 9,
+      "email": "Daryl.Brook@test.test",
+      "firstname": "Daryl",
+      "lastname": "Brook",
+      "password": "6223432",
+      "avatar": ".\\data\\users\\face_1591134851.6068265.jpg",
+      "creationDate": "2012-05-28T08:10:03.000Z",
+      "birthDate": "1974-08-28T13:06:51.989Z"
+    },
+    {
+      "id": 10,
+      "email": "John.Okuplok@test.test",
+      "firstname": "John",
+      "lastname": "Okuplok",
+      "password": "1234",
+      "avatar": ".\\data\\users\\face_1591137202.609116_1.jpg",
+      "creationDate": "2010-11-22T08:54:51.119Z",
+      "birthDate": "1998-07-19T00:14:41.832Z"
+    },
+    {
+      "id": 11,
+      "email": "Henry.Spencer@test.test",
+      "firstname": "Henry",
+      "lastname": "Spencer",
+      "password": "1234",
+      "avatar": ".\\data\\users\\face_1591137468.2648418_1.jpg",
+      "creationDate": "2017-06-11T07:52:45.897Z",
+      "birthDate": "1992-12-20T22:52:19.943Z"
+    },
+    {
+      "id": 12,
+      "email": "m.altman@test.test",
+      "firstname": "Michael",
+      "lastname": "Altman",
+      "password": "1234",
+      "avatar": ".\\data\\users\\face_1591137649.060836_1.jpg",
+      "creationDate": "2018-03-21T06:50:23.509Z",
+      "birthDate": "1988-08-22T23:07:23.607Z"
+    },
+    {
+      "id": 13,
+      "email": "Abraham.Neumann@test.test",
+      "firstname": "Abraham",
+      "lastname": "Neumann",
+      "password": "1234",
+      "avatar": ".\\data\\users\\face_1591134508.3222337_1.jpg",
+      "creationDate": "2010-10-01T09:35:29.242Z",
+      "birthDate": "1965-12-27T19:35:25.496Z"
+    },
+    {
+      "id": 14,
+      "email": "v.cortez@test.test",
+      "firstname": "Vera",
+      "lastname": "Cortez",
+      "password": "1234",
+      "avatar": ".\\data\\users\\face_1591138035.9912412_1.jpg",
+      "creationDate": "2019-10-25T03:42:16.120Z",
+      "birthDate": "1970-10-18T21:42:52.191Z"
+    },
+    {
+      "id": 15,
+      "email": "j.sumderland@test.test",
+      "firstname": "James",
+      "lastname": "Sumderland",
+      "password": "12345",
+      "avatar": ".\\data\\users\\face_1591136402.493333_1.jpg",
+      "creationDate": "2016-10-16T20:09:27.750Z",
+      "birthDate": "1985-06-30T20:15:33.214Z"
+    }
+  ],
+  "user-roles": [],
+  "articles": [
+    {
+      "id": 1,
+      "title": "How to Write an Effective Resume for Tech Jobs",
+      "body": "<p>A well-crafted resume is essential for making a strong first impression in the tech industry. Recruiters often spend only a few seconds scanning a resume, so it's crucial to make yours stand out. A strong resume should not only showcase your technical skills but also demonstrate how you can add value to an organization.</p> <h3>Why Your Resume Matters</h3> <p>Your resume is often the first thing hiring managers see before they decide to interview you. A well-structured resume:</p> <ul> <li>Helps you stand out in a competitive job market.</li> <li>Demonstrates your qualifications and experience clearly.</li> <li>Passes Applicant Tracking Systems (ATS) that filter resumes before a recruiter even sees them.</li> </ul> <h3>Best Practices for Writing a Resume</h3> <ul> <li><strong>Keep it concise and relevant:</strong> Aim for a one-page resume if you have less than 10 years of experience; two pages if you have significant experience.</li> <li><strong>Use a professional layout:</strong> A simple, well-structured format with a clear hierarchy of information makes it easy to scan.</li> <li><strong>Highlight technical skills:</strong> List programming languages, frameworks, and tools you are proficient in. Create a dedicated 'Skills' section for clarity.</li> <li><strong>Showcase achievements:</strong> Instead of listing responsibilities, use quantifiable metrics to showcase impact (e.g., 'Increased test coverage by 40% within 6 months').</li> <li><strong>Customize for each job:</strong> Tailor your resume by using keywords from the job description and focusing on relevant experiences.</li> <li><strong>Use action words:</strong> Start bullet points with strong verbs like 'Developed,' 'Implemented,' 'Optimized,' 'Designed,' or 'Led.'</li> <li><strong>Proofread and edit:</strong> Spelling or grammatical mistakes can create a negative impression. Use tools like Grammarly for accuracy.</li> </ul> <h3>Key Sections to Include</h3> <p>Your resume should have the following sections:</p> <ul> <li><strong>Contact Information:</strong> Include your full name, phone number, professional email, LinkedIn profile, GitHub (if applicable), and location (city, state/country).</li> <li><strong>Summary:</strong> A brief 2-3 sentence overview highlighting your skills, experience, and career goals.</li> <li><strong>Work Experience:</strong> List past roles, responsibilities, and achievements with quantifiable results.</li> <li><strong>Education:</strong> Degree(s), certifications, and relevant coursework. Mention any technical boot camps if applicable.</li> <li><strong>Projects:</strong> Include personal, freelance, or open-source projects that demonstrate your skills and problem-solving ability.</li> <li><strong>Certifications and Training:</strong> If applicable, list certifications like AWS Certified Developer, ISTQB, or Google Cloud certifications.</li> </ul> <h3>Additional Tips</h3> <ul> <li>Use a standard font like Arial, Calibri, or Times New Roman (10-12pt size).</li> <li>Avoid adding unnecessary graphics or images, as they can be difficult for ATS to process.</li> <li>Save your resume as a PDF to maintain formatting.</li> <li>Include relevant keywords from the job description to pass ATS filters.</li> </ul> <p>By following these best practices, you can craft a compelling resume that increases your chances of landing an interview in the tech industry.</p>",
+      "user_id": 1,
+      "date": "2024-02-09T10:00:00Z",
+      "image": ".\\data\\images\\256\\interview_01c5f2ec-072e-4002-a8ca-95c427977b0e.jpg"
+    },
+    {
+      "id": 2,
+      "title": "Top 5 Mistakes to Avoid in Job Interviews",
+      "body": "<p>Job interviews can be nerve-wracking, but avoiding common mistakes can significantly improve your chances of success. A strong interview is not just about answering questions correctly but also about demonstrating confidence, professionalism, and enthusiasm for the role.</p> <h3>Top Interview Mistakes</h3> <ul> <li><strong>Not researching the company:</strong> Failing to learn about the company’s mission, culture, and recent projects can make you appear unprepared. Review their website, LinkedIn, and any recent press releases before the interview.</li> <li><strong>Speaking negatively about past employers:</strong> Even if you had a bad experience at a previous job, avoid negativity. Instead, focus on what you learned and how it prepared you for this new opportunity.</li> <li><strong>Failing to ask questions:</strong> Interviews are a two-way conversation. Asking insightful questions shows your interest in the role and helps you determine if the company is the right fit for you.</li> <li><strong>Giving unstructured answers:</strong> Avoid rambling or going off-topic. Use the STAR method (Situation, Task, Action, Result) to structure your responses and clearly highlight your contributions.</li> <li><strong>Dressing inappropriately:</strong> Even for remote interviews, dressing professionally creates a strong first impression. Research the company’s dress code and aim to dress slightly more formal than their standard attire.</li> </ul> <h3>Additional Interview Tips</h3> <ul> <li>Practice answering common technical and behavioral questions.</li> <li>Prepare a 30-second elevator pitch about your background, skills, and why you're excited about the role.</li> <li>Follow up with a thank-you email to reiterate your interest in the position.</li> <li>Maintain good posture, eye contact, and a positive attitude throughout the conversation.</li> </ul> <p>By avoiding these mistakes and preparing thoroughly, you can make a lasting impression and increase your chances of getting hired.</p>",
+      "user_id": 2,
+      "date": "2024-02-08T14:30:00Z",
+      "image": ".\\data\\images\\256\\interview_3a8b6c87-7c2e-4cf6-8cc7-c52bcc1c7ef5.jpg"
+    },
+    {
+      "id": 3,
+      "title": "How to Stand Out as a Junior Developer",
+      "body": "<p>Breaking into the tech industry as a junior developer can be challenging, but there are several strategies to make yourself stand out and increase your chances of getting hired.</p> <h3>How to Differentiate Yourself</h3> <ul> <li><strong>Build a portfolio:</strong> Showcase your best projects on GitHub or a personal website. Include live demos and detailed documentation.</li> <li><strong>Contribute to open-source projects:</strong> Collaborate with experienced developers, gain real-world experience, and build your credibility.</li> <li><strong>Network effectively:</strong> Attend meetups, tech conferences, and engage in online developer communities on LinkedIn, Twitter, and Discord.</li> <li><strong>Keep learning:</strong> Stay updated with the latest programming languages, frameworks, and industry trends through courses, podcasts, and blogs.</li> <li><strong>Prepare for coding interviews:</strong> Practice algorithmic problems on LeetCode and HackerRank. Learn system design basics and problem-solving techniques.</li> </ul> <h3>Key Skills for Junior Developers</h3> <p>In addition to coding, companies value:</p> <ul> <li>Strong problem-solving and critical-thinking abilities.</li> <li>Understanding of version control systems like Git and GitHub.</li> <li>Basic knowledge of databases, APIs, and deployment tools.</li> <li>Soft skills like teamwork, communication, and adaptability.</li> </ul> <p>By consistently improving your skills, building relationships, and showcasing your work, you can stand out as a junior developer and land your first tech job.</p>",
+      "user_id": 3,
+      "date": "2024-02-07T18:15:00Z",
+      "image": ".\\data\\images\\256\\interview_8bc8451e-48a4-48e6-8b03-065cb7dfa5be.jpg"
+    },
+    {
+      "id": 4,
+      "title": "How to Prepare for a Manual Testing Interview",
+      "body": "<p>Preparing for a manual testing interview requires a solid understanding of software testing concepts, tools, and real-world scenarios. Companies assess candidates based on theoretical knowledge, practical experience, and problem-solving skills.</p> <h3>Key Areas to Focus On</h3> <ul> <li><strong>Testing Fundamentals:</strong> Understand the basics of functional testing, non-functional testing, black-box testing, white-box testing, and regression testing.</li> <li><strong>Bug Life Cycle:</strong> Be able to explain the different states of a bug and how it is tracked from detection to closure.</li> <li><strong>Test Case Design:</strong> Learn how to write effective test cases using boundary value analysis, equivalence partitioning, and exploratory testing techniques.</li> <li><strong>Test Plan and Strategy:</strong> Be familiar with test plan components, entry and exit criteria, test objectives, and risk management strategies.</li> <li><strong>Defect Reporting:</strong> Demonstrate your ability to log clear and concise bug reports with proper reproduction steps and expected vs. actual results.</li> </ul> <h3>Common Manual Testing Interview Questions</h3> <ul> <li>What is the difference between severity and priority in bug tracking?</li> <li>How do you handle a situation where a developer does not agree with a reported bug?</li> <li>Explain the importance of boundary value testing with an example.</li> <li>What are the key components of a test case?</li> <li>How do you ensure test coverage in a time-constrained project?</li> </ul> <p>By focusing on these areas and practicing real-world scenarios, you can confidently approach a manual testing interview.</p>",
+      "user_id": 7,
+      "date": "2024-02-10T09:00:00Z",
+      "image": ".\\data\\images\\256\\interview_261a614c-219e-4501-ae29-4465addb7020.jpg"
+    },
+    {
+      "id": 5,
+      "title": "Technical Interview Tips for Automation Testers",
+      "body": "<p>Automation testing interviews often involve coding challenges, framework design discussions, and tool-based problem-solving. Proper preparation can help you stand out.</p> <h3>Important Topics to Prepare</h3> <ul> <li><strong>Programming Skills:</strong> Be proficient in a scripting or programming language such as Java, Python, or JavaScript.</li> <li><strong>Selenium and Playwright:</strong> Understand locators, handling dynamic elements, page object models, and headless execution.</li> <li><strong>Test Automation Frameworks:</strong> Be familiar with frameworks like TestNG, JUnit, Cypress, and WebDriverIO.</li> <li><strong>CI/CD and DevOps:</strong> Understand how automated tests fit into a continuous integration and delivery pipeline.</li> <li><strong>API Testing:</strong> Learn API validation techniques using Postman, RestAssured, or Playwright.</li> </ul> <h3>Common Automation Testing Interview Questions</h3> <ul> <li>What are the advantages of using Selenium over other automation tools?</li> <li>How do you handle dynamic web elements in automation?</li> <li>What is the difference between implicit and explicit waits?</li> <li>Explain the Page Object Model (POM) and its benefits.</li> <li>How do you integrate test automation into a CI/CD pipeline?</li> </ul> <p>By sharpening your coding and automation framework knowledge, you can increase your chances of succeeding in an automation testing interview.</p>",
+      "user_id": 8,
+      "date": "2024-02-10T10:30:00Z",
+      "image": ".\\data\\images\\256\\interview_551bb7ef-560b-4f9e-8ce3-2c73f94a4d58.jpg"
+    },
+    {
+      "id": 6,
+      "title": "How to Ace a QA Behavioral Interview",
+      "body": "<p>Behavioral interviews for QA roles assess your problem-solving approach, teamwork skills, and ability to handle real-world testing challenges.</p> <h3>Common Behavioral Questions and How to Answer</h3> <ul> <li><strong>Tell me about a time you found a critical defect before release.</strong> Explain how you identified the issue, collaborated with developers, and ensured a fix before deployment.</li> <li><strong>Describe a situation where you had to work under tight deadlines.</strong> Highlight how you prioritized testing tasks and focused on high-risk areas first.</li> <li><strong>How do you handle conflicts with developers regarding a defect?</strong> Emphasize communication, data-driven discussions, and mutual goal alignment.</li> <li><strong>Have you ever proposed a process improvement?</strong> Discuss how you introduced automation, improved test coverage, or enhanced test case management.</li> <li><strong>Tell me about a time you had to learn a new testing tool quickly.</strong> Share how you adapted and upskilled yourself in a short period.</li> </ul> <h3>Tips for Success</h3> <ul> <li>Use the STAR method (Situation, Task, Action, Result) to structure responses.</li> <li>Provide specific examples rather than generic answers.</li> <li>Demonstrate a problem-solving mindset and willingness to learn.</li> </ul> <p>By preparing well-structured responses, you can confidently tackle behavioral interview questions in a QA interview.</p>",
+      "user_id": 9,
+      "date": "2024-02-10T12:00:00Z",
+      "image": ".\\data\\images\\256\\interview_9521cc85-53d2-4d71-b60a-0d56b9564e9b.jpg"
+    },
+    {
+      "id": 7,
+      "title": "How to Answer Agile and Scrum Questions in a QA Interview",
+      "body": "<p>Many companies follow Agile methodologies, so QA testers should be prepared to answer questions about Agile and Scrum frameworks in interviews.</p> <h3>Key Agile and Scrum Concepts</h3>            <ul> <li><strong>Scrum Roles:</strong> Be familiar with the roles of Product Owner, Scrum Master, and Development Team.</li> <li><strong>Scrum Ceremonies:</strong> Understand daily stand-ups, sprint planning, backlog refinement, sprint reviews, and retrospectives.</li> <li><strong>Testers in Agile:</strong> Explain how QA integrates into Agile teams and contributes to continuous testing.</li> <li><strong>Test Automation in Agile:</strong> Discuss how automation fits into sprint cycles and helps in regression testing.</li> </ul> <h3>Common Agile QA Interview Questions</h3> <ul> <li>What challenges do testers face in Agile?</li> <li>How do you handle incomplete requirements in Agile testing?</li> <li>How do you ensure testing keeps up with rapid development?</li> <li>What is the role of test automation in Agile?</li> <li>How do you handle last-minute requirement changes?</li> </ul> <h3>Tips for Answering Agile Questions</h3> <ul> <li>Showcase adaptability and teamwork.</li> <li>Provide examples of real-world Agile testing experiences.</li> <li>Demonstrate an understanding of iterative development and continuous testing.</li> </ul> <p>By preparing for Agile-specific questions, you can confidently answer interview questions about testing in Agile environments.</p>",
+      "user_id": 1,
+      "date": "2024-02-10T14:00:00Z",
+      "image": ".\\data\\images\\256\\interview_a463cfda-70bb-4966-8651-ea5947967ff3.jpg"
+    },
+    {
+      "id": 8,
+      "title": "How to Prepare for a Whiteboard Coding Challenge as a Tester",
+      "body": "<p>Some QA interviews include whiteboard coding exercises to assess problem-solving skills and basic programming knowledge. Even for manual testers, companies may test logical thinking and basic scripting.</p> <h3>Common Whiteboard Challenges for Testers</h3> <ul> <li><strong>String Manipulation:</strong> Reverse a string, find duplicates, or count vowels.</li> <li><strong>Array and List Operations:</strong> Find the largest/smallest number, remove duplicates, or sort arrays.</li> <li><strong>Conditional Logic:</strong> Write a function to determine if a number is prime.</li> <li><strong>Simple Automation Script:</strong> Write pseudocode for automating a login flow.</li> <li><strong>SQL Queries:</strong> Retrieve the second-highest salary or filter records by date.</li> </ul> <h3>How to Approach Whiteboard Challenges</h3> <ul> <li>Clarify the problem before writing code.</li> <li>Break the solution into smaller, logical steps.</li> <li>Use meaningful variable names and clean syntax.</li> <li>Explain your thought process while coding.</li> <li>Optimize the solution for efficiency.</li> </ul> <p>By practicing coding problems in advance, you can approach whiteboard challenges with confidence.</p>",
+      "user_id": 3,
+      "date": "2024-02-10T16:00:00Z",
+      "image": ".\\data\\images\\256\\interview_b8ed690b-9383-4f52-84ef-096779e60997.jpg"
+    },
+    {
+      "id": 9,
+      "title": "How to Handle Tricky Situational Questions in a QA Interview",
+      "body": "<p>Situational questions in QA interviews assess how you respond to real-world challenges. Interviewers want to see how you think under pressure and handle difficult situations.</p> <h3>Common Situational Questions and How to Answer</h3> <ul> <li><strong>You found a critical defect just before release. What do you do?</strong> Discuss risk assessment, stakeholder communication, and decision-making.</li> <li><strong>A developer dismisses a defect you reported. How do you handle it?</strong> Explain how you use logs, screenshots, and test data to justify your report.</li> <li><strong>You have to test a feature with vague requirements. How do you proceed?</strong> Emphasize exploratory testing, collaboration, and asking clarifying questions.</li> <li><strong>Your team has no formal testing process. What would you suggest?</strong> Talk about introducing test cases, automation, and documentation gradually.</li> <li><strong>How do you handle tight deadlines and multiple priorities?</strong> Discuss risk-based testing, prioritization, and efficient test execution.</li> </ul> <h3>Best Practices for Situational Questions</h3> <ul> <li>Use the STAR (Situation, Task, Action, Result) method for clear answers.</li> <li>Provide real-life examples from past projects.</li> <li>Demonstrate problem-solving and communication skills.</li> </ul> <p>By preparing for these tricky questions, you can confidently handle challenging scenarios in a QA interview.</p>",
+      "user_id": 5,
+      "date": "2024-02-10T18:00:00Z",
+      "image": ".\\data\\images\\256\\interview_b497a297-3ac9-4dd8-ac69-5e08c09c3f4c.jpg"
+    },
+    {
+      "id": 10,
+      "title": "How to Answer Playwright Automation Questions in a QA Interview",
+      "body": "<p>Playwright is gaining popularity as a modern end-to-end testing tool for web applications. Interviewers often ask about its capabilities, architecture, and best practices.</p> <h3>Key Playwright Topics to Prepare</h3> <ul> <li><strong>What is Playwright?</strong> Explain how it enables cross-browser testing for Chromium, Firefox, and WebKit.</li> <li><strong>Playwright vs. Selenium:</strong> Discuss key differences, such as speed, auto-wait mechanisms, and built-in assertions.</li> <li><strong>Locators in Playwright:</strong> Understand CSS, XPath, text selectors, and the best strategies for defining reliable locators.</li> <li><strong>Handling Dynamic Elements:</strong> Use `waitForSelector()`, auto-waiting, and retry mechanisms.</li> <li><strong>Parallel Test Execution:</strong> Explain how Playwright’s built-in worker processes improve test speed.</li> </ul> <h3>Common Playwright Interview Questions</h3> <ul> <li>How does Playwright handle flaky tests?</li> <li>What are the benefits of using Playwright over Cypress or Selenium?</li> <li>How do you capture screenshots and videos in Playwright?</li> <li>Explain how Playwright supports API testing.</li> <li>How do you integrate Playwright tests with CI/CD pipelines?</li> </ul> <h3>Best Practices for Answering Playwright Questions</h3> <ul> <li>Demonstrate knowledge of Playwright’s auto-waiting and retry mechanisms.</li> <li>Provide examples of handling authentication, file uploads, and visual testing.</li> <li>Be ready to explain how to structure Playwright tests for scalability.</li> </ul> <p>By mastering Playwright concepts, you can confidently handle automation-related questions in your QA interview.</p>",
+      "user_id": 4,
+      "date": "2024-02-11T10:00:00Z",
+      "image": ".\\data\\images\\256\\automation_4aed1d36-4301-47bc-9857-a3300bee6b75.jpg"
+    },
+    {
+      "id": 11,
+      "title": "Advanced Playwright Features You Should Know for Interviews",
+      "body": "<p>For senior QA roles, interviewers expect candidates to be familiar with advanced Playwright features that improve automation efficiency and maintainability.</p> <h3>Advanced Topics in Playwright</h3> <ul> <li><strong>Custom Test Assertions:</strong> Learn how to extend Playwright’s `expect()` API for custom validations.</li> <li><strong>Mocking APIs in Playwright:</strong> Understand how to intercept network requests using `page.route()`.</li> <li><strong>Using Fixtures in Playwright:</strong> Explain how Playwright fixtures can improve test data setup.</li> <li><strong>Handling WebSockets and GraphQL:</strong> Describe how Playwright interacts with real-time data flows.</li> <li><strong>Performance Testing with Playwright:</strong> Learn how to measure page load time and response times.</li> </ul> <h3>Common Advanced Playwright Questions</h3> <ul> <li>How do you use Playwright’s API mocking feature?</li> <li>What is the best way to handle authentication across multiple tests?</li> <li>How do you measure page load performance in Playwright?</li> <li>What strategies do you use to make Playwright tests run faster?</li> <li>How does Playwright handle mobile and responsive testing?</li> </ul> <h3>Tips for Answering Advanced Playwright Questions</h3> <ul> <li>Explain your approach to improving test stability and performance.</li> <li>Show how Playwright can be integrated with Jest, Mocha, or custom test runners.</li> <li>Be prepared to discuss Playwright’s headless and headed execution modes.</li> </ul> <p>By understanding these advanced topics, you can stand out in Playwright-focused automation interviews.</p>",
+      "user_id": 1,
+      "date": "2024-02-11T12:00:00Z",
+      "image": ".\\data\\images\\256\\automation_8bd6da10-e737-443b-9ec8-48b3e7cbec08.jpg"
+    },
+    {
+      "id": 12,
+      "title": "How to Structure Playwright Automation Tests for Scalability",
+      "body": "<p>Scalability is a key consideration for Playwright test automation. Interviewers often ask about structuring test projects for maintainability and efficiency.</p> <h3>Best Practices for Structuring Playwright Tests</h3> <ul> <li><strong>Using Page Object Model (POM):</strong> Implement reusable page classes for better test maintainability.</li> <li><strong>Test Data Management:</strong> Store test data in JSON, YAML, or environment variables.</li> <li><strong>Parallel Execution:</strong> Optimize test runs using Playwright’s built-in parallelization features.</li> <li><strong>Custom Helper Methods:</strong> Abstract repetitive actions into reusable functions.</li> <li><strong>Logging and Reporting:</strong> Integrate Allure, TestRail, or Playwright’s built-in tracing feature.</li> </ul> <h3>Common Playwright Test Structure Interview Questions</h3> <ul> <li>How do you implement the Page Object Model in Playwright?</li> <li>What is the best way to manage test data in Playwright?</li> <li>How do you run Playwright tests in parallel, and what are the benefits?</li> <li>How do you organize large Playwright test suites?</li> <li>What reporting tools work well with Playwright?</li> </ul> <h3>How to Answer Scalability Questions</h3> <ul> <li>Provide examples of structuring Playwright projects in real-world applications.</li> <li>Discuss Playwright’s support for multi-threaded test execution.</li> <li>Show how to reduce flakiness by implementing best practices for stable locators.</li> </ul> <p>By understanding scalable test architecture in Playwright, you can effectively showcase your automation expertise in interviews.</p>",
+      "user_id": 6,
+      "date": "2024-02-11T14:00:00Z",
+      "image": ".\\data\\images\\256\\automation_8ea3ab74-c532-43c5-8a44-932d2fd9afa3.jpg"
+    },
+    {
+      "id": 13,
+      "title": "How to Handle Authentication in Playwright Automation Tests",
+      "body": "<p>Authentication is a crucial part of automated testing, and Playwright provides various ways to handle login sessions effectively.</p> <h3>Common Authentication Scenarios in Playwright</h3> <ul> <li><strong>Persistent Login:</strong> Save login sessions to avoid repeated authentication.</li> <li><strong>Handling Multi-Factor Authentication (MFA):</strong> Automate OTP, email verification, or SMS authentication.</li> <li><strong>API-Based Authentication:</strong> Use API requests to authenticate before launching the UI.</li> </ul> <h3>Using Storage State for Persistent Login</h3> <p>Playwright allows saving and reusing authentication state to speed up test execution:</p> <pre><code>const { test, expect } = require('@playwright/test'); test.use({ storageState: 'auth.json' }); test('Verify user is logged in', async ({ page }) => {\nawait page.goto('https://example.com/dashboard');\nawait expect(page.locator('text=Welcome, User')).toBeVisible(); });</code></pre> <h3>Using API Authentication</h3> <p>Authenticate via API and store session cookies:</p> <pre><code>const { request } = require('@playwright/test');\ntest('Login via API', async ({ page, context }) => {\nconst apiRequest = await request.newContext();\nconst response = await apiRequest.post('https://example.com/api/login', { data: { username: 'user', password: 'pass' } });\nconst cookies = await apiRequest.cookies();\nawait context.addCookies(cookies);\nawait page.goto('https://example.com/dashboard'); });</code></pre> <h3>Common Interview Questions on Authentication</h3> <ul> <li>How do you persist login state in Playwright?</li> <li>How would you handle authentication in CI/CD environments?</li> <li>What are the challenges of testing authentication flows?</li> </ul>",
+      "user_id": 3,
+      "date": "2024-02-11T16:00:00Z",
+      "image": ".\\data\\images\\256\\automation_70b446ff-7d1e-4a70-bdfe-52bfaec0b71c.jpg"
+    },
+    {
+      "id": 14,
+      "title": "How to Handle File Uploads and Downloads in Playwright",
+      "body": "<p>File upload and download operations are common in web applications. Playwright offers built-in APIs to handle these scenarios effectively.</p> <h3>Handling File Uploads</h3> <p>Use the `setInputFiles()` method to automate file uploads:</p> <pre><code>const { test, expect } = require('@playwright/test'); \ntest('Upload a file', async ({ page }) => {\nawait page.goto('https://example.com/upload');\nawait page.setInputFiles('input[type=file]', 'uploads/sample.pdf');\nawait expect(page.locator('.upload-success')).toBeVisible(); });</code></pre> <h3>Handling File Downloads</h3> <p>Use the `page.waitForEvent('download')` method to handle file downloads:</p> <pre><code>test('Download a file', async ({ page }) => {\nawait page.goto('https://example.com/download');\nconst [download] = await Promise.all([\npage.waitForEvent('download'), page.click('.download-btn') ]);\nconst filePath = await download.path();\nconsole.log(`File downloaded to: ${filePath}`); });</code></pre> <h3>Common Interview Questions on File Handling</h3> <ul> <li>How do you test file uploads in Playwright?</li> <li>How do you verify file contents after a download?</li> <li>What are the challenges of handling large file uploads?</li> </ul>",
+      "user_id": 2,
+      "date": "2024-02-11T18:00:00Z",
+      "image": ".\\data\\images\\256\\automation_83ce6f55-ec5c-4a62-b85c-4e757aa53b14.jpg"
+    },
+    {
+      "id": 15,
+      "title": "How to Mock API Responses in Playwright for Reliable Testing",
+      "body": "<p>Mocking API responses is essential when testing applications that rely on backend services. Playwright provides `page.route()` to intercept and modify network requests.</p> <h3>Mocking API Responses</h3> <p>Intercept network requests and return a mocked response:</p> <pre><code>const { test, expect } = require('@playwright/test');\ntest('Mock API response', async ({ page }) => {\nawait page.route('https://api.example.com/data', async route => {\nawait route.fulfill({ status: 200,\ncontentType: 'application/json', body: JSON.stringify({ message: 'Mocked Response' }) }); });\nawait page.goto('https://example.com');\nawait expect(page.locator('.api-message')).toHaveText('Mocked Response'); });</code></pre> <h3>Mocking API Failures</h3> <p>Simulate server errors to test error handling:</p> <pre><code>test('Mock API failure', async ({ page }) => {\nawait page.route('https://api.example.com/data', async route => {\nawait route.fulfill({ status: 500, body: 'Internal Server Error' }); });\nawait page.goto('https://example.com');\nawait expect(page.locator('.error-message')).toBeVisible(); });</code></pre> <h3>Common Interview Questions on API Mocking</h3> <ul> <li>How do you mock API requests in Playwright?</li> <li>When should you use API mocking instead of real requests?</li> <li>How do you simulate different API response statuses?</li> </ul>",
+      "user_id": 1,
+      "date": "2024-02-11T20:00:00Z",
+      "image": ".\\data\\images\\256\\automation_6767e84a-88e3-40c5-a79f-2e2cc2d5b7b3.jpg"
+    }
+  ],
+  "comments": [
+    {
+      "id": 1,
+      "article_id": 1,
+      "user_id": 3,
+      "body": "I loved your insights on usability testing. It's crucial to ensure that the software meets the needs of the end users. Have you encountered any interesting user feedback during usability testing that led to significant improvements in the product?",
+      "date": "2021-11-30T14:44:22Z"
+    },
+    {
+      "id": 2,
+      "article_id": 1,
+      "user_id": 1,
+      "body": "Interesting!",
+      "date": "2021-11-20T03:53:00Z"
+    },
+    {
+      "id": 3,
+      "article_id": 2,
+      "user_id": 2,
+      "body": "Great article! I found your insights on test automation frameworks very helpful. Have you come across any specific tools that work well for cross-browser testing?",
+      "date": "2021-09-09T15:35:00Z"
+    },
+    {
+      "id": 4,
+      "article_id": 2,
+      "user_id": 1,
+      "body": "Thanks for sharing these best practices for API testing. I've been struggling with handling authentication in my tests, and your tips provided some clarity. Keep up the good work!",
+      "date": "2021-04-08T22:12:44Z"
+    },
+    {
+      "id": 5,
+      "article_id": 3,
+      "user_id": 3,
+      "body": "I appreciate the thorough explanation of different types of testing methodologies. As a beginner in software testing, this article helped me understand the importance of a well-rounded testing approach.",
+      "date": "2021-05-31T13:12:00Z"
+    },
+    {
+      "id": 6,
+      "article_id": 3,
+      "user_id": 5,
+      "body": "Interesting read! I've been exploring the field of performance testing lately, and your article gave me a good starting point. Do you have any recommendations for load testing tools?",
+      "date": "2021-06-25T11:54:00Z"
+    },
+    {
+      "id": 7,
+      "article_id": 4,
+      "user_id": 5,
+      "body": "This is exactly what I was looking for! I've been struggling to implement continuous integration for my test suite, and your step-by-step guide was a lifesaver. Thank you!",
+      "date": "2021-03-05T05:16:32Z"
+    },
+    {
+      "id": 8,
+      "article_id": 4,
+      "user_id": 3,
+      "body": "I enjoyed reading your post on exploratory testing. It's a valuable approach to uncovering critical defects that might be missed through scripted testing. Do you have any tips for managing exploratory testing within agile teams?",
+      "date": "2021-02-03T19:12:00Z"
+    },
+    {
+      "id": 9,
+      "article_id": 5,
+      "user_id": 1,
+      "body": "I agree with your points on the importance of test data management. It's often an overlooked aspect of testing, but it can greatly impact the reliability of our test results. How do you handle test data generation and maintenance?",
+      "date": "2021-12-12T14:52:00Z"
+    },
+    {
+      "id": 10,
+      "article_id": 5,
+      "user_id": 3,
+      "body": "I found your article on test case prioritization strategies very informative. Prioritizing test cases based on risk and impact makes a lot of sense. Have you ever encountered challenges in convincing stakeholders to adopt this approach?",
+      "date": "2021-02-17T18:51:00Z"
+    },
+    {
+      "id": 11,
+      "article_id": 5,
+      "user_id": 2,
+      "body": "Excellent post! Your explanation of regression testing and its role in maintaining software quality was spot on. Do you have any recommendations for effective regression testing techniques?",
+      "date": "2021-10-11T11:42:00Z"
+    },
+    {
+      "id": 12,
+      "article_id": 5,
+      "user_id": 5,
+      "body": "Uncommonly surrounded considered for him are its. It we is read good soon. My to considered delightful invitation announcing of no decisively boisterous.",
+      "date": "2021-12-11T18:42:41Z"
+    },
+    {
+      "id": 13,
+      "article_id": 1,
+      "user_id": 3,
+      "body": "+1",
+      "date": "2022-01-11T14:24:32Z"
+    },
+    {
+      "id": 14,
+      "article_id": 1,
+      "user_id": 1,
+      "body": "So cool!",
+      "date": "2022-01-12T09:43:00Z"
+    },
+    {
+      "id": 15,
+      "article_id": 2,
+      "user_id": 1,
+      "body": "Thanks for sharing!",
+      "date": "2022-01-13T07:12:21Z"
+    },
+    {
+      "id": 16,
+      "article_id": 2,
+      "user_id": 2,
+      "body": "I thoroughly enjoyed reading this insightful piece.",
+      "date": "2022-01-01T21:13:00Z"
+    },
+    {
+      "id": 17,
+      "article_id": 1,
+      "user_id": 3,
+      "body": "It provided a fresh perspective on the topic and got me thinking. Looking forward to more from you!",
+      "date": "2022-01-01T13:55:00Z"
+    },
+    {
+      "id": 18,
+      "article_id": 3,
+      "user_id": 4,
+      "body": "Cool!",
+      "date": "2021-01-01T11:12:00Z"
+    },
+    {
+      "id": 19,
+      "article_id": 3,
+      "user_id": 5,
+      "body": "Wow, what an eye-opening read! I never considered this aspect before, and your article shed light on some fascinating details. Can't wait to share this with my friends!",
+      "date": "2021-12-03T06:21:00Z"
+    },
+    {
+      "id": 20,
+      "article_id": 3,
+      "user_id": 5,
+      "body": "Thank you for this wonderful article!",
+      "date": "2021-12-13T17:55:00Z"
+    },
+    {
+      "id": 21,
+      "article_id": 14,
+      "user_id": 1,
+      "body": "It was informative, well-written, and a pleasure to read. Keep up the fantastic work!",
+      "date": "2022-01-29T05:43:28Z"
+    },
+    {
+      "id": 23,
+      "article_id": 5,
+      "user_id": 4,
+      "body": "Quo tempora possimus.",
+      "date": "2017-06-02T23:43:15Z"
+    },
+    {
+      "id": 25,
+      "article_id": 2,
+      "user_id": 4,
+      "body": "Maiores libero qui facilis.",
+      "date": "2020-12-31T12:22:29Z"
+    },
+    {
+      "id": 26,
+      "article_id": 5,
+      "user_id": 1,
+      "body": "Can you post more?",
+      "date": "2017-10-16T08:44:15Z"
+    },
+    {
+      "id": 29,
+      "article_id": 11,
+      "user_id": 2,
+      "body": "It is AI generated?",
+      "date": "2022-04-14T21:00:56Z"
+    },
+    {
+      "id": 32,
+      "article_id": 3,
+      "user_id": 2,
+      "body": "After reading this article, I couldn't help but reflect on my own actions and behavior. ",
+      "date": "2021-02-21T04:31:14Z"
+    },
+    {
+      "id": 36,
+      "article_id": 1,
+      "user_id": 6,
+      "body": "Your words have the power to transport readers into the world you're describing. ",
+      "date": "2020-07-19T18:51:17Z"
+    },
+    {
+      "id": 37,
+      "article_id": 4,
+      "user_id": 4,
+      "body": "Keep up the incredible storytelling!",
+      "date": "2012-11-20T10:01:53Z"
+    },
+    {
+      "id": 40,
+      "article_id": 12,
+      "user_id": 1,
+      "body": "Do you have any recommended resources or reading materials on the subject?",
+      "date": "2016-02-28T07:18:39Z"
+    },
+    {
+      "id": 43,
+      "article_id": 5,
+      "user_id": 6,
+      "body": "As someone who's just starting out in this field, your article provided valuable guidance and encouragement. It's reassuring to know that success is attainable with dedication and perseverance.",
+      "date": "2022-08-24T16:10:17Z"
+    },
+    {
+      "id": 45,
+      "article_id": 9,
+      "user_id": 2,
+      "body": "Your article not only highlighted the issues at hand but also suggested practical steps we can take to make a difference. It's empowering to know that our actions can create positive change.",
+      "date": "2015-10-11T07:14:39Z"
+    },
+    {
+      "id": 48,
+      "article_id": 2,
+      "user_id": 3,
+      "body": "A ratione labore laborum.",
+      "date": "2014-11-28T18:57:40Z"
+    },
+    {
+      "id": 50,
+      "article_id": 4,
+      "user_id": 3,
+      "body": "Each sentence is like a brushstroke on a canvas, creating a vivid picture in the reader's mind.",
+      "date": "2021-06-05T01:22:16Z"
+    },
+    {
+      "id": 55,
+      "article_id": 8,
+      "user_id": 4,
+      "body": "Looking for help for becoming QA!",
+      "date": "2021-12-27T16:11:05Z"
+    },
+    {
+      "id": 60,
+      "article_id": 5,
+      "user_id": 7,
+      "body": "I could relate so much to the experiences you shared in this article. It's comforting to know that others have faced similar challenges and found ways to overcome them. ",
+      "date": "2012-07-14T21:32:59Z"
+    },
+    {
+      "id": 62,
+      "article_id": 11,
+      "user_id": 4,
+      "body": "I agree completely.",
+      "date": "2015-12-17T10:55:20Z"
+    },
+    {
+      "id": 67,
+      "article_id": 11,
+      "user_id": 5,
+      "body": "Aspernatur laborum sunt sit nisi non quas.",
+      "date": "2020-09-14T03:59:21Z"
+    },
+    {
+      "id": 68,
+      "article_id": 10,
+      "user_id": 4,
+      "body": "Keep up the good work!",
+      "date": "2020-10-27T23:04:08Z"
+    },
+    {
+      "id": 73,
+      "article_id": 15,
+      "user_id": 2,
+      "body": "This article is a gem! The depth of analysis and the clarity with which you've presented the concepts is truly commendable. I appreciate how you've gone the extra mile to provide real-world examples and practical tips, making it easier for readers to apply the knowledge. Your expertise in the subject matter shines through, and it's evident that you've put a lot of effort into crafting this comprehensive piece. I particularly enjoyed the section on best practices, as it highlighted some key areas that often go unnoticed. The way you've tackled the challenges and offered solutions shows a nuanced understanding of the topic. Thank you for sharing your insights and empowering us with valuable information. I look forward to reading more of your work in the future!",
+      "date": "2018-04-16T17:59:46Z"
+    },
+    {
+      "id": 76,
+      "article_id": 2,
+      "user_id": 1,
+      "body": "I must say, this article is a true masterpiece. The way you've delved into the subject matter with such precision and clarity is truly admirable. I appreciate the extensive research you've conducted and the comprehensive nature of your explanations. It's evident that you've poured your heart and soul into crafting this piece. ",
+      "date": "2018-09-24T20:34:33Z"
+    },
+    {
+      "id": 82,
+      "article_id": 6,
+      "user_id": 2,
+      "body": "This article is a true treasure trove of knowledge. The depth of information you've provided is astounding. I appreciate how you've gone beyond the basics and explored the nuances of the subject matter. Your writing style is engaging, and your explanations are crystal clear. ",
+      "date": "2017-08-29T05:46:01Z"
+    },
+    {
+      "id": 83,
+      "article_id": 15,
+      "user_id": 2,
+      "body": "Rem ut ut ut cupiditate.",
+      "date": "2016-09-10T18:42:12Z"
+    },
+    {
+      "id": 85,
+      "article_id": 8,
+      "user_id": 2,
+      "body": "I just wanted to express my gratitude for this outstanding article. ",
+      "date": "2017-03-17T10:06:01Z"
+    },
+    {
+      "id": 86,
+      "article_id": 8,
+      "user_id": 7,
+      "body": "The amount of research and effort you've put into compiling this information is evident, and it's greatly appreciated. ",
+      "date": "2019-11-14T13:52:50Z"
+    },
+    {
+      "id": 93,
+      "article_id": 12,
+      "user_id": 9,
+      "body": "I completely agree. Testing should be an integral part of the development process.",
+      "date": "2013-06-17T09:45:18Z"
+    },
+    {
+      "id": 98,
+      "article_id": 9,
+      "user_id": 5,
+      "body": "Testing isn't just about finding bugs; it's about building confidence in your code.",
+      "date": "2018-04-14T08:15:30Z"
+    },
+    {
+      "id": 100,
+      "article_id": 6,
+      "user_id": 1,
+      "body": "Testing is an art. It's about ensuring the masterpiece called software functions flawlessly.",
+      "date": "2020-10-09T13:05:58Z"
+    },
+    {
+      "id": 103,
+      "article_id": 8,
+      "user_id": 2,
+      "body": "Testing is the backbone of reliable software. This article explains it perfectly.",
+      "date": "2014-09-30T11:10:42Z"
+    },
+    {
+      "id": 107,
+      "article_id": 12,
+      "user_id": 4,
+      "body": "Testing is like a journey through the unknown. This article is a great guide.",
+      "date": "2012-08-14T09:30:50Z"
+    },
+    {
+      "id": 109,
+      "article_id": 5,
+      "user_id": 10,
+      "body": "Testing is a never-ending process. This article explains why it's worth the effort.",
+      "date": "2019-04-18T12:40:22Z"
+    },
+    {
+      "id": 111,
+      "article_id": 3,
+      "user_id": 5,
+      "body": "Testing is the foundation of software quality, and this article reinforces that notion.",
+      "date": "2020-07-02T08:25:47Z"
+    },
+    {
+      "id": 113,
+      "article_id": 6,
+      "user_id": 9,
+      "body": "I found this article to be a great resource for understanding the art of software testing.",
+      "date": "2017-10-29T10:20:32Z"
+    },
+    {
+      "id": 114,
+      "article_id": 15,
+      "user_id": 5,
+      "body": "Testing isn't just about finding bugs; it's about building confidence in software. This article nails it.",
+      "date": "2014-04-23T09:15:15Z"
+    },
+    {
+      "id": 119,
+      "article_id": 8,
+      "user_id": 10,
+      "body": "I've always believed that testing is an art. This article reinforces that belief.",
+      "date": "2012-09-12T09:10:22Z"
+    },
+    {
+      "id": 121,
+      "article_id": 14,
+      "user_id": 1,
+      "body": "Testing is like a journey through the unknown. This article is a great guide.",
+      "date": "2014-06-04T14:15:47Z"
+    },
+    {
+      "id": 122,
+      "article_id": 7,
+      "user_id": 3,
+      "body": "Testing is the foundation of software quality, and this article reinforces that notion.",
+      "date": "2017-05-21T17:25:10Z"
+    },
+    {
+      "id": 127,
+      "article_id": 10,
+      "user_id": 7,
+      "body": "Testing is the safety net for software. Don't skip it! This article explains why.",
+      "date": "2019-04-14T14:40:32Z"
+    },
+    {
+      "id": 132,
+      "article_id": 8,
+      "user_id": 7,
+      "body": "Test automation empowers teams to achieve faster and more reliable software delivery. This article is a valuable resource.",
+      "date": "2018-03-29T10:20:32Z"
+    },
+    {
+      "id": 134,
+      "article_id": 12,
+      "user_id": 5,
+      "body": "Testing is not just a task; it's a culture of quality. This article is a testament to that philosophy.",
+      "date": "2012-11-05T17:05:28Z"
+    },
+    {
+      "id": 138,
+      "article_id": 15,
+      "user_id": 6,
+      "body": "Quality assurance ensures that software meets the highest standards. This article is a guide to achieving those standards.",
+      "date": "2013-07-22T09:10:22Z"
+    },
+    {
+      "id": 140,
+      "article_id": 7,
+      "user_id": 2,
+      "body": "Effective testing is the foundation of software quality. This article is a blueprint for achieving that quality.",
+      "date": "2015-01-04T14:15:47Z"
+    },
+    {
+      "id": 145,
+      "article_id": 5,
+      "user_id": 3,
+      "body": "Effective testing and quality assurance ensure software meets the highest standards of excellence. This article is a guide to that journey.",
+      "date": "2019-10-11T10:55:28Z"
+    },
+    {
+      "id": 148,
+      "article_id": 13,
+      "user_id": 8,
+      "body": "Testing, test automation, and quality assurance lead to victory in the world of software. This article is a gold mine of knowledge.",
+      "date": "2018-04-27T09:50:22Z"
+    },
+    {
+      "id": 152,
+      "article_id": 8,
+      "user_id": 7,
+      "body": "Test automation streamlines the testing process, leading to faster and more reliable software delivery. Quality assurance ensures top-notch quality.",
+      "date": "2018-03-29T10:20:32Z"
+    },
+    {
+      "id": 154,
+      "article_id": 12,
+      "user_id": 5,
+      "body": "Software testing is not just a task; it's a culture of excellence. Test automation is the future of efficiency.",
+      "date": "2012-11-05T17:05:28Z"
+    },
+    {
+      "id": 158,
+      "article_id": 15,
+      "user_id": 6,
+      "body": "Robust quality assurance practices ensure software meets the highest standards. Test automation is the accelerator for efficiency.",
+      "date": "2013-07-22T09:10:22Z"
+    },
+    {
+      "id": 160,
+      "article_id": 7,
+      "user_id": 2,
+      "body": "Effective testing is the foundation of software quality. Quality assurance ensures software reaches its peak.",
+      "date": "2015-01-04T14:15:47Z"
+    },
+    {
+      "id": 165,
+      "article_id": 5,
+      "user_id": 3,
+      "body": "Effective testing and quality assurance ensure software meets the highest standards of excellence. This article is your guide to that journey.",
+      "date": "2019-10-11T10:55:28Z"
+    },
+    {
+      "id": 168,
+      "article_id": 13,
+      "user_id": 8,
+      "body": "Testing, test automation, and quality assurance lead to victory in the world of software. This article is a gold mine of knowledge.",
+      "date": "2018-04-27T09:50:22Z"
+    },
+    {
+      "id": 172,
+      "article_id": 8,
+      "user_id": 7,
+      "body": "Test automation streamlines the testing process, leading to faster and more reliable software delivery. Quality assurance ensures top-notch quality.",
+      "date": "2011-03-29T10:20:32Z"
+    },
+    {
+      "id": 174,
+      "article_id": 12,
+      "user_id": 5,
+      "body": "Software testing is not just a task; it's a culture of excellence. Test automation is the future of efficiency.",
+      "date": "2011-11-05T17:05:28Z"
+    },
+    {
+      "id": 178,
+      "article_id": 15,
+      "user_id": 6,
+      "body": "Robust quality assurance practices ensure software meets the highest standards. Test automation is the accelerator for efficiency.",
+      "date": "2010-07-22T09:10:22Z"
+    },
+    {
+      "id": 180,
+      "article_id": 7,
+      "user_id": 2,
+      "body": "Effective testing is the foundation of software quality. Quality assurance ensures software reaches its peak.",
+      "date": "2011-01-04T14:15:47Z"
+    },
+    {
+      "id": 185,
+      "article_id": 5,
+      "user_id": 3,
+      "body": "Effective testing and quality assurance ensure software meets the highest standards of excellence. This article is your guide to that journey.",
+      "date": "2011-10-11T10:55:28Z"
+    },
+    {
+      "id": 188,
+      "article_id": 13,
+      "user_id": 8,
+      "body": "Testing, test automation, and quality assurance lead to victory in the world of software. This article is a gold mine of knowledge.",
+      "date": "2012-04-27T09:50:22Z"
+    },
+    {
+      "id": 192,
+      "article_id": 8,
+      "user_id": 2,
+      "body": "When it comes to software quality, test automation is the orchestra conductor. Every piece falls into place to create a harmonious product. 🎶",
+      "date": "2011-03-29T10:20:32Z"
+    },
+    {
+      "id": 194,
+      "article_id": 12,
+      "user_id": 1,
+      "body": "Testing is the journey to discover the unknowns, and test automation is your trusty compass leading the way. 🗺️",
+      "date": "2011-11-05T17:05:28Z"
+    },
+    {
+      "id": 198,
+      "article_id": 15,
+      "user_id": 5,
+      "body": "Quality assurance is like the vigilant lighthouse, guiding the software safely through the rocky shores of defects. 🚢",
+      "date": "2010-07-22T09:10:22Z"
+    },
+    {
+      "id": 200,
+      "article_id": 7,
+      "user_id": 3,
+      "body": "Testing is the sculptor, chiseling away imperfections to reveal the masterpiece underneath. 🎨",
+      "date": "2011-01-04T14:15:47Z"
+    },
+    {
+      "id": 205,
+      "article_id": 5,
+      "user_id": 13,
+      "body": "Effective testing and quality assurance are the superheroes who protect the software world from villains like bugs and glitches. 🦸‍♂️🦸‍♀️",
+      "date": "2011-10-11T10:55:28Z"
+    },
+    {
+      "id": 208,
+      "article_id": 13,
+      "user_id": 1,
+      "body": "Testing, test automation, and quality assurance are the dream team, turning software dreams into reality. 💭✨",
+      "date": "2012-04-27T09:50:22Z"
+    },
+    {
+      "id": 220,
+      "article_id": 5,
+      "user_id": 12,
+      "body": "Absolutely agree with your points. Keep it up!",
+      "date": "2023-10-12T12:55:30Z"
+    },
+    {
+      "id": 221,
+      "article_id": 4,
+      "user_id": 13,
+      "body": "This is a perspective I hadn't considered. Thanks for sharing.",
+      "date": "2022-07-05T14:10:05Z"
+    },
+    {
+      "id": 222,
+      "article_id": 2,
+      "user_id": 14,
+      "body": "This is a must-read for everyone in the field.",
+      "date": "2023-09-18T11:30:50Z"
+    },
+    {
+      "id": 223,
+      "article_id": 6,
+      "user_id": 14,
+      "body": "So good!",
+      "date": "2023-09-18T12:30:50Z"
+    },
+    {
+      "id": 224,
+      "article_id": 8,
+      "user_id": 14,
+      "body": "I couldn't agree more with the points you've made.",
+      "date": "2023-09-18T12:31:50Z"
+    },
+    {
+      "id": 225,
+      "article_id": 9,
+      "user_id": 14,
+      "body": "This is a must-read for everyone in the field.",
+      "date": "2023-09-22T12:32:50Z"
+    },
+    {
+      "id": 226,
+      "article_id": 3,
+      "user_id": 14,
+      "body": "So good!",
+      "date": "2023-09-27T12:33:50Z"
+    },
+    {
+      "id": 227,
+      "article_id": 9,
+      "user_id": 12,
+      "body": "I couldn't agree more with the points you've made. This is a must-read for everyone in the field. So good!",
+      "date": "2023-11-27T12:32:50Z"
+    }
+  ],
+  "flashposts": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "date": "2024-05-27T12:32:50Z",
+      "settings": {
+        "color": "#000fd5"
+      },
+      "body": "Testing private messages!"
+    },
+    {
+      "id": 2,
+      "user_id": 1,
+      "date": "2024-05-28T12:32:50Z",
+      "settings": {
+        "color": "#008e00"
+      },
+      "body": "Conference QA Quest 2024 is coming up soon!🚀 Don't forget to register and book your spot. It's going to be an amazing event!",
+      "is_public": true
+    },
+    {
+      "id": 3,
+      "user_id": 8,
+      "date": "2024-06-08T18:30:00Z",
+      "settings": {},
+      "body": "Looking for recommendations on the best programming courses online."
+    },
+    {
+      "id": 4,
+      "user_id": 3,
+      "date": "2024-06-12T10:45:30Z",
+      "settings": {},
+      "body": "New blog post is live on my site. Check it out!",
+      "is_public": true
+    },
+    {
+      "id": 5,
+      "user_id": 4,
+      "date": "2024-06-14T14:22:10Z",
+      "settings": {},
+      "body": "Just finished reading a fantastic book on leadership - <strong>Extreme Ownership</strong>"
+    },
+    {
+      "id": 6,
+      "user_id": 5,
+      "date": "2024-06-15T09:00:00Z",
+      "settings": {},
+      "body": "Excited to announce our new project launch tomorrow!",
+      "is_public": true
+    },
+    {
+      "id": 7,
+      "user_id": 1,
+      "date": "2024-06-15T17:37:45Z",
+      "settings": {},
+      "body": "Working on a new feature, can't wait to share it with everyone!"
+    },
+    {
+      "id": 8,
+      "user_id": 1,
+      "date": "2024-06-16T10:20:00Z",
+      "settings": {},
+      "body": "Anyone up for a game of chess this weekend?"
+    },
+    {
+      "id": 9,
+      "user_id": 2,
+      "date": "2024-06-17T11:30:20Z",
+      "settings": {
+        "color": "#ff5733"
+      },
+      "body": "Just started a new book <strong>Get Smart!</strong>, can't put it down!"
+    },
+    {
+      "id": 10,
+      "user_id": 3,
+      "date": "2024-06-18T08:15:00Z",
+      "settings": {},
+      "body": "Hosting a webinar on cybersecurity next week. Join us!",
+      "is_public": true
+    },
+    {
+      "id": 11,
+      "user_id": 6,
+      "date": "2024-06-18T14:45:10Z",
+      "settings": {},
+      "body": "What are some good productivity apps?"
+    },
+    {
+      "id": 12,
+      "user_id": 7,
+      "date": "2024-06-18T16:30:30Z",
+      "settings": {},
+      "body": "Happy to share my latest travel blog. Check out my adventures in Japan!",
+      "is_public": true
+    },
+    {
+      "id": 13,
+      "user_id": 8,
+      "date": "2024-06-19T09:50:25Z",
+      "settings": {
+        "color": "#00aaff"
+      },
+      "body": "Looking for a workout buddy. Anyone interested?"
+    },
+    {
+      "id": 14,
+      "user_id": 9,
+      "date": "2024-06-20T12:32:50Z",
+      "settings": {},
+      "body": "Don't miss our upcoming sale this weekend! Huge discounts!",
+      "is_public": true
+    },
+    {
+      "id": 15,
+      "user_id": 1,
+      "date": "2024-06-29T11:22:10Z",
+      "settings": {},
+      "body": "Can anyone recommend a good documentary to watch?"
+    },
+    {
+      "id": 16,
+      "user_id": 2,
+      "date": "2024-06-29T15:00:00Z",
+      "settings": {
+        "color": "#ff00ff"
+      },
+      "body": "Happy Monday! Ready to tackle the week ahead!"
+    },
+    {
+      "id": 17,
+      "user_id": 1,
+      "date": "2024-06-29T19:25:40Z",
+      "settings": {},
+      "body": "New podcast episode is out! Tune in for some great insights.",
+      "is_public": true
+    },
+    {
+      "id": 18,
+      "user_id": 5,
+      "date": "2024-06-30T02:10:00Z",
+      "settings": {
+        "color": "#ffd700"
+      },
+      "body": "Brainstorming ideas for our next big project. Exciting times ahead!"
+    },
+    {
+      "id": 19,
+      "user_id": 7,
+      "date": "2024-06-30T08:15:30Z",
+      "settings": {},
+      "body": "Anyone have tips for maintaining work-life balance?"
+    },
+    {
+      "id": 20,
+      "user_id": 6,
+      "date": "2024-06-30T12:00:45Z",
+      "settings": {
+        "color": "#008080"
+      },
+      "body": "Our team is looking for a new designer. Spread the word!"
+    },
+    {
+      "body": "<strong>So Excited! <a href=\"https://playwright.info/vs-code-playwright-extensions\">vs code playwright extensions</a></strong>",
+      "settings": {
+        "color": "#8aff8a"
+      },
+      "is_public": true,
+      "user_id": 1,
+      "date": "2024-09-15T11:27:13.825Z",
+      "id": 21
+    },
+    {
+      "body": "Nowy post o darmowych materiałach na <strong>https://playwright.info</strong> 🚀",
+      "settings": {
+        "color": "#8aff8a"
+      },
+      "is_public": false,
+      "user_id": 2,
+      "date": "2025-01-21T13:33:13.825Z",
+      "id": 22
+    },
+    {
+      "body": "Jak zacząć z <strong>Playwright</strong>? 🤔",
+      "settings": {
+        "color": "#8aff8a"
+      },
+      "is_public": true,
+      "user_id": 3,
+      "date": "2025-01-22T11:27:13.825Z",
+      "id": 23
+    },
+    {
+      "body": "Automatyzacja z Playwright?<br/><br/>Sprawdz <strong>darmowe kursy</strong> na YouTube od jaktestowac.pl! 😁",
+      "settings": {
+        "color": "#8aff8a"
+      },
+      "is_public": true,
+      "user_id": 4,
+      "date": "2024-09-15T11:27:13.825Z",
+      "id": 24
+    }
+  ],
+  "likes": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "comment_id": 1,
+      "article_id": null,
+      "date": "2023-09-25T10:00:00Z"
+    },
+    {
+      "id": 2,
+      "user_id": 2,
+      "comment_id": null,
+      "article_id": 1,
+      "date": "2023-09-25T11:00:00Z"
+    },
+    {
+      "article_id": 1,
+      "user_id": "1",
+      "date": "2023-10-20T15:43:18Z",
+      "id": 3
+    },
+    {
+      "article_id": 56,
+      "user_id": "1",
+      "date": "2023-10-20T15:44:21Z",
+      "id": 4
+    },
+    {
+      "article_id": 57,
+      "user_id": "1",
+      "date": "2023-10-20T15:46:30Z",
+      "id": 5
+    },
+    {
+      "article_id": 45,
+      "user_id": "1",
+      "date": "2023-10-20T15:47:46Z",
+      "id": 6
+    },
+    {
+      "article_id": 45,
+      "user_id": "2",
+      "date": "2023-10-20T15:47:46Z",
+      "id": 7
+    },
+    {
+      "article_id": 45,
+      "user_id": "3",
+      "date": "2023-10-20T15:47:46Z",
+      "id": 8
+    },
+    {
+      "article_id": 18,
+      "user_id": "8",
+      "date": "2023-10-15T08:12:30Z",
+      "id": 9
+    },
+    {
+      "article_id": 3,
+      "user_id": "2",
+      "date": "2023-10-16T14:25:50Z",
+      "id": 10
+    },
+    {
+      "user_id": 7,
+      "article_id": 31,
+      "date": "2016-08-03T07:19:14Z",
+      "id": 10
+    },
+    {
+      "user_id": 11,
+      "article_id": 32,
+      "date": "2016-06-07T02:12:34Z",
+      "id": 11
+    },
+    {
+      "user_id": 8,
+      "article_id": 33,
+      "date": "2014-05-11T15:26:25Z",
+      "id": 12
+    },
+    {
+      "user_id": 13,
+      "article_id": 29,
+      "date": "2012-12-29T06:51:48Z",
+      "id": 13
+    },
+    {
+      "user_id": 10,
+      "article_id": 30,
+      "date": "2021-06-02T17:43:23Z",
+      "id": 14
+    },
+    {
+      "user_id": 14,
+      "article_id": 32,
+      "date": "2018-08-12T04:34:22Z",
+      "id": 15
+    },
+    {
+      "user_id": 12,
+      "article_id": 27,
+      "date": "2021-08-08T03:08:51Z",
+      "id": 16
+    },
+    {
+      "user_id": 10,
+      "article_id": 31,
+      "date": "2018-01-05T04:17:18Z",
+      "id": 17
+    },
+    {
+      "user_id": 12,
+      "article_id": 32,
+      "date": "2015-10-07T07:53:56Z",
+      "id": 18
+    },
+    {
+      "user_id": 6,
+      "article_id": 27,
+      "date": "2021-05-10T01:54:05Z",
+      "id": 19
+    },
+    {
+      "user_id": 7,
+      "article_id": 33,
+      "date": "2019-04-02T01:43:13Z",
+      "id": 20
+    },
+    {
+      "user_id": 4,
+      "article_id": 58,
+      "date": "2018-03-22T14:15:18Z",
+      "id": 21
+    },
+    {
+      "user_id": 12,
+      "article_id": 30,
+      "date": "2019-11-06T07:18:03Z",
+      "id": 22
+    },
+    {
+      "user_id": 4,
+      "article_id": 30,
+      "date": "2019-01-22T15:33:52Z",
+      "id": 23
+    },
+    {
+      "user_id": 10,
+      "article_id": 58,
+      "date": "2020-01-12T20:51:24Z",
+      "id": 24
+    },
+    {
+      "user_id": 1,
+      "article_id": 29,
+      "date": "2019-01-30T16:48:08Z",
+      "id": 25
+    },
+    {
+      "user_id": 5,
+      "article_id": 30,
+      "date": "2016-03-12T21:04:31Z",
+      "id": 26
+    },
+    {
+      "user_id": 11,
+      "article_id": 31,
+      "date": "2019-06-14T23:34:00Z",
+      "id": 27
+    },
+    {
+      "user_id": 3,
+      "article_id": 29,
+      "date": "2022-07-16T21:54:39Z",
+      "id": 28
+    },
+    {
+      "user_id": 14,
+      "article_id": 31,
+      "date": "2018-12-29T00:47:38Z",
+      "id": 29
+    },
+    {
+      "user_id": 2,
+      "article_id": 29,
+      "date": "2015-04-02T18:07:02Z",
+      "id": 30
+    },
+    {
+      "user_id": 13,
+      "article_id": 28,
+      "date": "2018-01-13T16:16:32Z",
+      "id": 31
+    },
+    {
+      "user_id": 13,
+      "article_id": 30,
+      "date": "2013-03-30T03:05:31Z",
+      "id": 32
+    },
+    {
+      "user_id": 6,
+      "article_id": 32,
+      "date": "2017-01-23T08:29:22Z",
+      "id": 33
+    },
+    {
+      "user_id": 1,
+      "article_id": 31,
+      "date": "2015-04-27T10:37:57Z",
+      "id": 34
+    },
+    {
+      "user_id": 14,
+      "article_id": 35,
+      "date": "2011-06-21T10:39:46Z",
+      "id": 35
+    },
+    {
+      "user_id": 3,
+      "article_id": 27,
+      "date": "2013-05-10T05:50:49Z",
+      "id": 36
+    },
+    {
+      "user_id": 8,
+      "article_id": 32,
+      "date": "2012-12-23T23:05:29Z",
+      "id": 37
+    },
+    {
+      "user_id": 12,
+      "article_id": 33,
+      "date": "2021-12-16T09:04:50Z",
+      "id": 38
+    },
+    {
+      "user_id": 2,
+      "article_id": 27,
+      "date": "2012-01-16T15:09:04Z",
+      "id": 39
+    },
+    {
+      "user_id": 8,
+      "article_id": 29,
+      "date": "2016-09-19T03:42:33Z",
+      "id": 40
+    },
+    {
+      "user_id": 12,
+      "article_id": 58,
+      "date": "2015-10-21T21:53:09Z",
+      "id": 41
+    },
+    {
+      "user_id": 8,
+      "article_id": 31,
+      "date": "2019-05-07T05:40:06Z",
+      "id": 42
+    },
+    {
+      "user_id": 7,
+      "article_id": 30,
+      "date": "2016-06-21T23:49:36Z",
+      "id": 43
+    },
+    {
+      "user_id": 9,
+      "article_id": 33,
+      "date": "2018-09-30T19:14:01Z",
+      "id": 44
+    },
+    {
+      "user_id": 3,
+      "article_id": 26,
+      "date": "2012-08-20T02:39:10Z",
+      "id": 45
+    },
+    {
+      "user_id": 4,
+      "article_id": 29,
+      "date": "2015-11-26T16:31:25Z",
+      "id": 46
+    },
+    {
+      "user_id": 4,
+      "article_id": 31,
+      "date": "2020-07-16T13:58:18Z",
+      "id": 47
+    },
+    {
+      "user_id": 9,
+      "article_id": 30,
+      "date": "2013-07-17T17:26:35Z",
+      "id": 48
+    },
+    {
+      "user_id": 3,
+      "article_id": 58,
+      "date": "2012-01-28T13:05:53Z",
+      "id": 49
+    },
+    {
+      "user_id": 2,
+      "article_id": 30,
+      "date": "2014-11-10T13:25:22Z",
+      "id": 50
+    },
+    {
+      "user_id": 11,
+      "article_id": 25,
+      "date": "2018-05-09T11:45:31Z",
+      "id": 51
+    },
+    {
+      "user_id": 5,
+      "article_id": 29,
+      "date": "2017-08-19T00:09:19Z",
+      "id": 52
+    },
+    {
+      "user_id": 3,
+      "article_id": 30,
+      "date": "2018-02-15T05:25:13Z",
+      "id": 53
+    },
+    {
+      "user_id": 5,
+      "article_id": 31,
+      "date": "2021-05-08T04:41:28Z",
+      "id": 54
+    },
+    {
+      "user_id": 10,
+      "article_id": 26,
+      "date": "2019-04-30T03:23:25Z",
+      "id": 55
+    },
+    {
+      "user_id": 3,
+      "article_id": 32,
+      "date": "2013-03-15T09:25:59Z",
+      "id": 56
+    },
+    {
+      "user_id": 9,
+      "article_id": 58,
+      "date": "2018-11-08T02:57:50Z",
+      "id": 57
+    },
+    {
+      "user_id": 10,
+      "article_id": 33,
+      "date": "2015-08-14T20:30:59Z",
+      "id": 58
+    },
+    {
+      "user_id": 2,
+      "article_id": 58,
+      "date": "2013-08-17T04:06:30Z",
+      "id": 59
+    },
+    {
+      "user_id": 9,
+      "article_id": 29,
+      "date": "2018-08-14T10:10:54Z",
+      "id": 60
+    },
+    {
+      "user_id": 10,
+      "article_id": 27,
+      "date": "2013-01-24T11:36:54Z",
+      "id": 61
+    },
+    {
+      "user_id": 5,
+      "article_id": 32,
+      "date": "2021-12-14T04:02:50Z",
+      "id": 62
+    },
+    {
+      "user_id": 10,
+      "article_id": 29,
+      "date": "2022-05-07T06:42:49Z",
+      "id": 63
+    },
+    {
+      "user_id": 12,
+      "article_id": 29,
+      "date": "2020-06-02T19:28:32Z",
+      "id": 64
+    },
+    {
+      "user_id": 8,
+      "article_id": 35,
+      "date": "2022-04-01T17:11:39Z",
+      "id": 65
+    },
+    {
+      "user_id": 6,
+      "article_id": 58,
+      "date": "2019-08-17T08:06:04Z",
+      "id": 66
+    },
+    {
+      "user_id": 5,
+      "article_id": 33,
+      "date": "2021-02-09T06:02:05Z",
+      "id": 67
+    },
+    {
+      "user_id": 4,
+      "article_id": 25,
+      "date": "2021-06-27T15:09:55Z",
+      "id": 68
+    },
+    {
+      "user_id": 8,
+      "article_id": 27,
+      "date": "2016-10-18T19:37:39Z",
+      "id": 69
+    },
+    {
+      "user_id": 13,
+      "article_id": 32,
+      "date": "2013-10-30T16:27:26Z",
+      "id": 70
+    },
+    {
+      "user_id": 1,
+      "article_id": 30,
+      "date": "2017-12-14T01:09:25Z",
+      "id": 71
+    },
+    {
+      "user_id": 7,
+      "article_id": 32,
+      "date": "2020-07-23T09:33:15Z",
+      "id": 72
+    },
+    {
+      "user_id": 12,
+      "article_id": 25,
+      "date": "2013-10-11T10:02:11Z",
+      "id": 73
+    },
+    {
+      "user_id": 3,
+      "article_id": 31,
+      "date": "2012-11-22T07:51:28Z",
+      "id": 74
+    },
+    {
+      "user_id": 9,
+      "article_id": 32,
+      "date": "2017-06-06T03:49:44Z",
+      "id": 75
+    },
+    {
+      "user_id": 1,
+      "article_id": 32,
+      "date": "2021-12-21T20:30:47Z",
+      "id": 76
+    },
+    {
+      "user_id": 2,
+      "article_id": 25,
+      "date": "2018-03-02T03:04:09Z",
+      "id": 77
+    },
+    {
+      "user_id": 3,
+      "article_id": 33,
+      "date": "2020-05-07T18:37:47Z",
+      "id": 78
+    },
+    {
+      "user_id": 1,
+      "article_id": 58,
+      "date": "2014-10-28T13:01:36Z",
+      "id": 79
+    },
+    {
+      "user_id": 6,
+      "article_id": 31,
+      "date": "2013-01-30T03:20:49Z",
+      "id": 80
+    },
+    {
+      "user_id": 5,
+      "article_id": 34,
+      "date": "2020-06-14T16:06:31Z",
+      "id": 81
+    },
+    {
+      "user_id": 2,
+      "article_id": 31,
+      "date": "2019-07-08T07:33:24Z",
+      "id": 82
+    },
+    {
+      "user_id": 6,
+      "article_id": 36,
+      "date": "2017-12-31T20:22:33Z",
+      "id": 83
+    },
+    {
+      "user_id": 14,
+      "article_id": 33,
+      "date": "2022-08-05T18:56:41Z",
+      "id": 84
+    },
+    {
+      "user_id": 11,
+      "article_id": 35,
+      "date": "2012-02-28T09:18:56Z",
+      "id": 85
+    },
+    {
+      "user_id": 11,
+      "article_id": 30,
+      "date": "2016-05-11T09:03:31Z",
+      "id": 86
+    },
+    {
+      "user_id": 5,
+      "article_id": 58,
+      "date": "2020-04-04T21:24:36Z",
+      "id": 87
+    },
+    {
+      "user_id": 6,
+      "article_id": 26,
+      "date": "2022-01-08T23:57:20Z",
+      "id": 88
+    },
+    {
+      "user_id": 3,
+      "article_id": 34,
+      "date": "2016-04-07T03:50:06Z",
+      "id": 89
+    },
+    {
+      "user_id": 4,
+      "article_id": 32,
+      "date": "2015-04-24T17:49:39Z",
+      "id": 90
+    },
+    {
+      "user_id": 14,
+      "article_id": 30,
+      "date": "2016-08-30T08:39:30Z",
+      "id": 91
+    },
+    {
+      "user_id": 2,
+      "article_id": 32,
+      "date": "2021-06-01T16:05:39Z",
+      "id": 92
+    },
+    {
+      "user_id": 12,
+      "article_id": 34,
+      "date": "2014-08-29T03:31:16Z",
+      "id": 93
+    },
+    {
+      "user_id": 5,
+      "article_id": 26,
+      "date": "2018-12-07T07:54:46Z",
+      "id": 94
+    },
+    {
+      "user_id": 6,
+      "article_id": 29,
+      "date": "2015-05-04T02:56:59Z",
+      "id": 95
+    },
+    {
+      "user_id": 8,
+      "article_id": 34,
+      "date": "2021-10-18T18:37:42Z",
+      "id": 96
+    },
+    {
+      "user_id": 9,
+      "article_id": 26,
+      "date": "2016-12-21T07:31:02Z",
+      "id": 97
+    },
+    {
+      "user_id": 14,
+      "article_id": 58,
+      "date": "2012-06-20T12:47:43Z",
+      "id": 98
+    },
+    {
+      "user_id": 12,
+      "article_id": 31,
+      "date": "2017-12-06T02:33:55Z",
+      "id": 99
+    },
+    {
+      "user_id": 11,
+      "article_id": 29,
+      "date": "2017-02-09T11:05:34Z",
+      "id": 100
+    },
+    {
+      "user_id": 6,
+      "article_id": 34,
+      "date": "2011-10-26T06:33:54Z",
+      "id": 101
+    },
+    {
+      "user_id": 7,
+      "article_id": 27,
+      "date": "2020-09-22T09:52:29Z",
+      "id": 102
+    },
+    {
+      "user_id": 9,
+      "article_id": 27,
+      "date": "2012-05-30T08:14:56Z",
+      "id": 103
+    },
+    {
+      "user_id": 2,
+      "article_id": 34,
+      "date": "2014-10-01T03:36:03Z",
+      "id": 104
+    },
+    {
+      "user_id": 6,
+      "article_id": 23,
+      "date": "2017-01-12T11:48:48Z",
+      "id": 105
+    },
+    {
+      "user_id": 8,
+      "article_id": 30,
+      "date": "2014-12-20T22:18:50Z",
+      "id": 106
+    },
+    {
+      "user_id": 6,
+      "article_id": 30,
+      "date": "2015-09-17T11:40:20Z",
+      "id": 107
+    },
+    {
+      "user_id": 10,
+      "article_id": 32,
+      "date": "2016-02-13T02:31:00Z",
+      "id": 108
+    },
+    {
+      "user_id": 11,
+      "article_id": 58,
+      "date": "2011-08-21T05:39:01Z",
+      "id": 110
+    }
+  ],
+  "article-labels": [
+    {
+      "id": 1,
+      "label_ids": [3, 2],
+      "article_id": 56
+    },
+    {
+      "id": 2,
+      "label_ids": [1, 2],
+      "article_id": 57
+    },
+    {
+      "id": 3,
+      "label_ids": [1],
+      "article_id": 59
+    },
+    {
+      "id": 4,
+      "label_ids": [4, 5],
+      "article_id": 45
+    },
+    {
+      "id": 5,
+      "label_ids": [1, 2, 6],
+      "article_id": 37
+    },
+    {
+      "id": 6,
+      "label_ids": [1],
+      "article_id": 58
+    },
+    {
+      "id": 7,
+      "label_ids": [7],
+      "article_id": 48
+    },
+    {
+      "id": 8,
+      "label_ids": [8, 2],
+      "article_id": 4
+    },
+    {
+      "id": 9,
+      "label_ids": [9],
+      "article_id": 39
+    },
+    {
+      "id": 10,
+      "label_ids": [1],
+      "article_id": 1
+    },
+    {
+      "id": 11,
+      "label_ids": [1, 2, 11],
+      "article_id": 2
+    },
+    {
+      "id": 12,
+      "label_ids": [1, 9],
+      "article_id": 3
+    },
+    {
+      "id": 13,
+      "label_ids": [9],
+      "article_id": 51
+    },
+    {
+      "id": 14,
+      "label_ids": [9],
+      "article_id": 47
+    },
+    {
+      "id": 15,
+      "label_ids": [9],
+      "article_id": 41
+    },
+    {
+      "id": 16,
+      "label_ids": [1, 2],
+      "article_id": 40
+    },
+    {
+      "id": 17,
+      "label_ids": [1],
+      "article_id": 35
+    }
+  ],
+  "labels": [
+    {
+      "id": 1,
+      "name": "Testing",
+      "user_id": 1
+    },
+    {
+      "id": 2,
+      "name": "Automation",
+      "user_id": 2
+    },
+    {
+      "id": 3,
+      "name": "TDD",
+      "user_id": 2
+    },
+    {
+      "id": 4,
+      "name": "Postman",
+      "user_id": 2
+    },
+    {
+      "id": 5,
+      "name": "REST API",
+      "user_id": 2
+    },
+    {
+      "id": 6,
+      "name": "Playwright",
+      "user_id": 1
+    },
+    {
+      "id": 7,
+      "name": "BDD",
+      "user_id": 2
+    },
+    {
+      "id": 8,
+      "name": "Selenium",
+      "user_id": 2
+    },
+    {
+      "id": 9,
+      "name": "Agile",
+      "user_id": 1
+    },
+    {
+      "id": 10,
+      "name": "QA Basics",
+      "user_id": 1
+    },
+    {
+      "id": 11,
+      "name": "Design Patterns",
+      "user_id": 3
+    },
+    {
+      "id": 12,
+      "name": "CI/CD",
+      "user_id": 3
+    },
+    {
+      "id": 13,
+      "name": "Security",
+      "user_id": 1
+    },
+    {
+      "id": 14,
+      "name": "DevOps",
+      "user_id": 2
+    },
+    {
+      "id": 15,
+      "name": "Agile",
+      "user_id": 1
+    },
+    {
+      "id": 16,
+      "name": "Front-end",
+      "user_id": 4
+    },
+    {
+      "id": 17,
+      "name": "Back-end",
+      "user_id": 4
+    },
+    {
+      "id": 18,
+      "name": "UX Design",
+      "user_id": 5
+    },
+    {
+      "id": 19,
+      "name": "Cybersec",
+      "user_id": 5
+    },
+    {
+      "id": 20,
+      "name": "JavaScript",
+      "user_id": 5
+    },
+    {
+      "id": 21,
+      "name": "TypeScript",
+      "user_id": 5
+    },
+    {
+      "id": 22,
+      "name": "Quality",
+      "user_id": 5
+    },
+    {
+      "id": 23,
+      "name": "Quality Assurance",
+      "user_id": 5
+    },
+    {
+      "id": 24,
+      "name": "TDD",
+      "user_id": 5
+    },
+    {
+      "id": 25,
+      "name": "GitHub Actions",
+      "user_id": 3
+    },
+    {
+      "id": 26,
+      "name": "Jenkins",
+      "user_id": 2
+    },
+    {
+      "id": 27,
+      "name": "Performance",
+      "user_id": 1
+    },
+    {
+      "id": 28,
+      "name": "Python",
+      "user_id": 1
+    },
+    {
+      "id": 29,
+      "name": "Test Strategy",
+      "user_id": 1
+    },
+    {
+      "id": 30,
+      "name": "Risk",
+      "user_id": 1
+    },
+    {
+      "id": 31,
+      "name": "Metrics",
+      "user_id": 1
+    },
+    {
+      "id": 32,
+      "name": "Good Practice",
+      "user_id": 4
+    },
+    {
+      "id": 33,
+      "name": "Documentation",
+      "user_id": 4
+    },
+    {
+      "id": 34,
+      "name": "Recruitment",
+      "user_id": 4
+    },
+    {
+      "id": 35,
+      "name": "HR",
+      "user_id": 4
+    },
+    {
+      "id": 36,
+      "name": "Training",
+      "user_id": 4
+    },
+    {
+      "id": 37,
+      "name": "Interview",
+      "user_id": 4
+    }
+  ],
+  "scores": [
+    {
+      "game_id": 1,
+      "user_id": 4,
+      "score": 5,
+      "id": 1
+    },
+    {
+      "game_id": 2,
+      "user_id": 4,
+      "score": 4,
+      "id": 2
+    },
+    {
+      "game_id": 1,
+      "user_id": 7,
+      "score": 6,
+      "id": 3
+    }
+  ],
+  "bookmarks": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "article_ids": [1, 3, 7]
+    },
+    {
+      "id": 2,
+      "user_id": 2,
+      "article_ids": [5, 8, 10]
+    }
+  ],
+  "survey-responses": [
+    {
+      "answers": {
+        "REST API testing": ["yes"],
+        "REST API tools": ["Swagger", "Postman", "Bruno"],
+        "Using newman": ["yes"],
+        "Using CI/CD": ["yes"],
+        "CI/CD tools": ["GitHub Actions", "Jenkins", "Azure DevOps"],
+        "testing frequency": ["weekly"],
+        "Test types": ["Integration tests", "E2e tests"],
+        "Open-Ended Questions": {
+          "Plans to improve testing": ["Learn more Playwright for API Testing"]
+        }
+      },
+      "type": 1,
+      "date": "2024-03-10T18:29:42Z",
+      "user_id": "7",
+      "id": 1
+    },
+    {
+      "answers": {
+        "REST API testing": ["yes"],
+        "REST API tools": ["Swagger", "Postman"],
+        "Using newman": ["no"],
+        "Using CI/CD": ["yes"],
+        "CI/CD tools": ["GitHub Actions", "Azure DevOps"],
+        "testing frequency": ["weekly"],
+        "Test types": ["Unit tests", "Module tests", "Integration tests", "E2e tests"],
+        "Open-Ended Questions": {
+          "Plans to improve testing": [""]
+        }
+      },
+      "type": 1,
+      "date": "2024-03-10T18:29:42Z",
+      "user_id": "9",
+      "id": 2
+    },
+    {
+      "answers": {
+        "REST API testing": ["yes"],
+        "REST API tools": ["Swagger", "Postman", "Bruno"],
+        "Using newman": ["no"],
+        "Using CI/CD": ["yes"],
+        "CI/CD tools": ["GitHub Actions", "Jenkins"],
+        "Testing frequency": ["daily"],
+        "Test types": ["Unit tests", "Module tests", "Contract tests", "Integration tests", "E2e tests"],
+        "Open-Ended Questions": {
+          "Plans to improve testing": [""]
+        }
+      },
+      "type": 1,
+      "date": "2024-03-10T19:25:35Z",
+      "user_id": "8",
+      "id": 3
+    },
+    {
+      "answers": {
+        "REST API testing": ["yes"],
+        "REST API tools": ["Postman"],
+        "Using newman": ["yes"],
+        "Using CI/CD": ["yes"],
+        "CI/CD tools": ["GitHub Actions"],
+        "Testing frequency": ["daily"],
+        "Test types": [
+          "Module tests",
+          "Integration tests",
+          "E2e tests",
+          "UAT tests",
+          "Performance tests",
+          "Security tests",
+          "Visual tests"
+        ],
+        "Open-Ended Questions": {
+          "Plans to improve testing": [""]
+        }
+      },
+      "type": 1,
+      "date": "2024-03-10T19:27:13Z",
+      "user_id": "4",
+      "id": 4
+    },
+    {
+      "answers": {
+        "REST API testing": ["yes"],
+        "REST API tools": ["Postman", "Swagger"],
+        "Using newman": ["no"],
+        "Using CI/CD": ["yes"],
+        "CI/CD tools": ["GitHub Actions"],
+        "Testing frequency": ["daily"],
+        "Test types": ["Module tests", "Integration tests", "E2e tests", "UAT tests", "Performance tests"],
+        "Open-Ended Questions": {
+          "Plans to improve testing": ["Learn more Playwright for API Testing"]
+        }
+      },
+      "type": 1,
+      "date": "2024-03-11T19:27:13Z",
+      "user_id": "2",
+      "id": 5
+    },
+    {
+      "answers": {
+        "experience in test automation": ["yes"],
+        "experience in test automation in years": ["2-3 years"],
+        "automation tools": ["Playwright", "Selenium"],
+        "languages for automation tools": ["JavaScript", "TypeScript", "Python"],
+        "Number of automated tests": ["50-100"],
+        "Automated test types": ["Integration tests", "E2e tests"],
+        "Open-Ended Questions": {
+          "Plans to improve skills": ["Learn more about Playwright"]
+        }
+      },
+      "type": 2,
+      "date": "2024-03-17T01:43:30Z",
+      "user_id": "3",
+      "id": 6
+    }
+  ],
+  "contacts": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "user_ids": [2, 3, 4]
+    },
+    {
+      "id": 2,
+      "user_id": 2,
+      "user_ids": [1]
+    },
+    {
+      "id": 3,
+      "user_id": 3,
+      "user_ids": [1]
+    },
+    {
+      "id": 4,
+      "user_id": 4,
+      "user_ids": [1]
+    }
+  ],
+  "messages": [
+    {
+      "id": 1,
+      "from": 1,
+      "to": 2,
+      "date": "2023-10-20T15:46:30Z",
+      "content": "Hello, how are you?"
+    },
+    {
+      "id": 2,
+      "from": 2,
+      "to": 1,
+      "date": "2023-10-20T15:47:15Z",
+      "content": "Im fine thx! And how are you?"
+    },
+    {
+      "id": 3,
+      "from": 1,
+      "to": 2,
+      "date": "2023-10-20T15:47:21Z",
+      "content": "Good. Im fine too!"
+    },
+    {
+      "id": 4,
+      "from": 2,
+      "to": 1,
+      "date": "2023-10-20T15:47:33Z",
+      "content": "Good!"
+    },
+    {
+      "id": 5,
+      "from": 1,
+      "to": 2,
+      "date": "2023-10-20T15:47:36Z",
+      "content": "Want to automate something?"
+    },
+    {
+      "id": 6,
+      "from": 2,
+      "to": 1,
+      "date": "2023-10-20T15:47:55Z",
+      "content": "Sure! Lets use Playwright🎭 to do some fun automation!"
+    },
+    {
+      "id": 7,
+      "from": 1,
+      "to": 3,
+      "date": "2024-02-20T11:46:30Z",
+      "content": "Hello!"
+    }
+  ],
+  "message-check": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "last_check": "2024-05-25T11:50:29.076Z",
+      "last_checks": {
+        "2": "2024-05-25T11:50:29.076Z",
+        "3": "2024-05-25T11:50:27.389Z",
+        "4": "2024-05-25T11:50:28.108Z"
+      }
+    }
+  ],
+  "books": [
+    {
+      "id": 1,
+      "title": "Whispers of the Eternal Clock",
+      "author_ids": [1],
+      "published_at": "1999-10-20T00:00:00Z",
+      "genre_ids": [1],
+      "language": "English",
+      "pages": 352,
+      "cover": "..\\data\\books\\whispers-of-the-eternal-clock.jpg",
+      "description": "An enchanting tale of a mystical clock that controls the passage of time, and the three guardians sworn to protect its secrets from falling into the wrong hands."
+    },
+    {
+      "id": 2,
+      "title": "Code of Shadows",
+      "author_ids": [2],
+      "published_at": "2008-08-11T00:00:00Z",
+      "genre_ids": [1],
+      "language": "English",
+      "pages": 464,
+      "cover": "..\\data\\books\\code-of-shadows.jpg",
+      "description": "A riveting adventure into a world where coding shapes reality, and a group of renegades fight to uncover the truth behind the mysterious Shadow Algorithm."
+    },
+    {
+      "id": 3,
+      "title": "Sands of the Infinite",
+      "author_ids": [3],
+      "published_at": "1965-06-01T00:00:00Z",
+      "genre_ids": [17],
+      "language": "English",
+      "pages": 412,
+      "cover": "..\\data\\books\\sands-of-the-infinite.jpg",
+      "description": "A young prince must traverse a desert world filled with ancient ruins and warring factions to find the mythical Sands of the Infinite and secure peace for his people."
+    },
+    {
+      "id": 4,
+      "title": "Legends of the Crystal Keep",
+      "author_ids": [4],
+      "published_at": "1954-07-29T00:00:00Z",
+      "genre_ids": [12, 19],
+      "language": "English",
+      "pages": 1178,
+      "cover": "..\\data\\books\\legends-of-the-crystal-keep.jpg",
+      "description": "An epic saga of heroes, magic, and betrayal, set in a world where the Crystal Keep holds the power to reshape destiny itself."
+    },
+    {
+      "id": 5,
+      "title": "The Cosmic Voyage",
+      "author_ids": [5],
+      "published_at": "1979-10-12T00:00:00Z",
+      "genre_ids": [17],
+      "language": "English",
+      "pages": 215,
+      "cover": "..\\data\\books\\the-cosmic-voyage.jpg",
+      "description": "A comedic yet profound journey through the galaxy, exploring the absurdities of life, love, and the universe with a hapless captain and his misfit crew."
+    },
+    {
+      "id": 6,
+      "title": "The Iron Veil",
+      "author_ids": [6],
+      "published_at": "1949-06-08T00:00:00Z",
+      "genre_ids": [18],
+      "language": "English",
+      "pages": 328,
+      "cover": "..\\data\\books\\the-iron-veil.jpg",
+      "description": "A dystopian tale of a world divided by an unbreakable iron curtain, where one woman dares to uncover the truth behind the regime’s iron grip."
+    },
+    {
+      "id": 7,
+      "title": "Rebellion of the Lost Meadow",
+      "author_ids": [6],
+      "published_at": "1945-08-17T00:00:00Z",
+      "genre_ids": [18],
+      "language": "English",
+      "pages": 112,
+      "cover": "..\\data\\books\\rebellion-of-the-lost-meadow.jpg",
+      "description": "In a hidden meadow, creatures rise against their oppressors in a stirring allegory of freedom, equality, and the cost of revolution."
+    },
+    {
+      "id": 8,
+      "title": "Echoes of Redemption",
+      "author_ids": [7],
+      "published_at": "1866-11-14T00:00:00Z",
+      "genre_ids": [18],
+      "language": "Russian",
+      "pages": 671,
+      "cover": "..\\data\\books\\echoes-of-redemption.jpg",
+      "description": "A harrowing journey of a man seeking forgiveness in the shadows of a crime that reshaped his destiny, set against a backdrop of philosophical turmoil."
+    },
+    {
+      "id": 9,
+      "title": "The House of the Eternal Flame",
+      "author_ids": [7],
+      "published_at": "1880-11-26T00:00:00Z",
+      "genre_ids": [18],
+      "language": "Russian",
+      "pages": 796,
+      "cover": "..\\data\\books\\house-of-the-eternal-flame.jpg",
+      "description": "A gripping tale of family, faith, and betrayal in 19th-century Russia, where the discovery of an eternal flame challenges their beliefs and bonds."
+    },
+    {
+      "id": 10,
+      "title": "The Last Chronicle of Stars",
+      "author_ids": [8],
+      "published_at": "2019-10-01T00:00:00Z",
+      "genre_ids": [17],
+      "language": "Polish",
+      "pages": 550,
+      "cover": "..\\data\\books\\the-last-chronicle-of-stars.jpg",
+      "description": "In the distant future, humanity’s remnants compete for survival among the stars, while an ancient artifact threatens to unearth long-forgotten truths."
+    },
+    {
+      "id": 11,
+      "title": "The Alchemist's Labyrinth",
+      "author_ids": [9],
+      "published_at": "2011-09-13T00:00:00Z",
+      "genre_ids": [6],
+      "language": "English",
+      "pages": 336,
+      "cover": "..\\data\\books\\the-alchemists-labyrinth.jpg",
+      "description": "An inventor discovers a labyrinthine world of alchemical wonders and perilous traps, where he must master ancient knowledge to find his lost apprentice."
+    },
+    {
+      "id": 12,
+      "title": "Commanders of the Eternal Horizon",
+      "author_ids": [10, 26],
+      "published_at": "2015-10-20T00:00:00Z",
+      "genre_ids": [5],
+      "language": "English",
+      "pages": 320,
+      "cover": "..\\data\\books\\commanders-of-the-eternal-horizon.jpg",
+      "description": "Two military leaders recount their experiences defending humanity from an enigmatic alien race, blending strategy, courage, and the weight of command."
+    },
+    {
+      "id": 13,
+      "title": "The Battle of Celestial Shores",
+      "author_ids": [11],
+      "published_at": "2018-11-12T00:00:00Z",
+      "genre_ids": [4],
+      "language": "Chinese",
+      "pages": 38,
+      "cover": "..\\data\\books\\battle-of-celestial-shores.jpg",
+      "description": "A short yet profound tale of an ancient warrior facing cosmic forces on the shores of an uncharted planet, blending myth and science fiction."
+    },
+    {
+      "id": 14,
+      "title": "The Sovereign's Gambit",
+      "author_ids": [12],
+      "published_at": "1532-12-10T00:00:00Z",
+      "genre_ids": [4],
+      "language": "Italian",
+      "pages": 140,
+      "cover": "..\\data\\books\\sovereigns-gambit.jpg",
+      "description": "A timeless treatise on political intrigue and power struggles, told through the rise and fall of a cunning leader in a fictional empire."
+    },
+    {
+      "id": 15,
+      "title": "Echoes of the Unseen",
+      "author_ids": [13],
+      "published_at": "2017-01-26T00:00:00Z",
+      "genre_ids": [10],
+      "language": "English",
+      "pages": 128,
+      "cover": "..\\data\\books\\echoes-of-the-unseen.jpg",
+      "description": "An exploration of eerie landscapes and haunting phenomena, weaving stories that blur the boundaries between reality and imagination."
+    },
+    {
+      "id": 16,
+      "title": "Mind's Liberation",
+      "author_ids": [14],
+      "published_at": "1948-10-05T00:00:00Z",
+      "genre_ids": [28],
+      "language": "English",
+      "pages": 320,
+      "cover": "..\\data\\books\\minds-liberation.jpg",
+      "description": "A transformative guide to overcoming personal struggles, cultivating resilience, and embracing a life of freedom and purpose."
+    },
+    {
+      "id": 17,
+      "title": "Quantum Myths and Realities",
+      "author_ids": [15],
+      "published_at": "2022-01-01T00:00:00Z",
+      "genre_ids": [38],
+      "language": "Polish",
+      "pages": 344,
+      "cover": "..\\data\\books\\quantum-myths-realities.jpg",
+      "description": "A riveting exploration of quantum mechanics and its philosophical implications, challenging readers to rethink the fabric of reality."
+    },
+    {
+      "id": 18,
+      "title": "Labyrinths of the Mind",
+      "author_ids": [16],
+      "published_at": "2011-10-25T00:00:00Z",
+      "genre_ids": [28],
+      "language": "Polish",
+      "pages": 672,
+      "cover": "..\\data\\books\\labyrinths-of-the-mind.jpg",
+      "description": "An enlightening guide to understanding human cognition, decision-making, and the psychological traps that shape our lives."
+    },
+    {
+      "id": 19,
+      "title": "Dreamers of Tomorrow",
+      "author_ids": [17],
+      "published_at": "2010-03-09T00:00:00Z",
+      "genre_ids": [6],
+      "language": "English",
+      "pages": 288,
+      "cover": "..\\data\\books\\dreamers-of-tomorrow.jpg",
+      "description": "A thought-provoking look at innovation and perseverance, told through the stories of visionaries who dared to dream beyond their time."
+    },
+    {
+      "id": 20,
+      "title": "The Art of Leadership",
+      "author_ids": [14],
+      "published_at": "2020-01-01T00:00:00Z",
+      "genre_ids": [5],
+      "language": "Polish",
+      "pages": 288,
+      "cover": "..\\data\\books\\the-art-of-leadership.jpg",
+      "description": "A practical guide to building effective teams, motivating individuals, and leading with integrity in times of change and challenge."
+    },
+    {
+      "id": 21,
+      "title": "Trials of the Shadow Realm",
+      "author_ids": [18],
+      "published_at": "1925-01-01T00:00:00Z",
+      "genre_ids": [18],
+      "language": "English",
+      "pages": 208,
+      "cover": "..\\data\\books\\trials-of-the-shadow-realm.jpg",
+      "description": "A surreal journey through a mysterious shadow world, where a man must unravel its secrets to save his own soul."
+    },
+    {
+      "id": 22,
+      "title": "Leaves of the Forgotten Galaxy",
+      "author_ids": [19],
+      "published_at": "2000-03-07T00:00:00Z",
+      "genre_ids": [18],
+      "language": "English",
+      "pages": 709,
+      "cover": "..\\data\\books\\leaves-of-the-forgotten-galaxy.jpg",
+      "description": "An intricate narrative exploring the forgotten tales of a galaxy on the brink of rediscovery, weaving together myth and mystery."
+    },
+    {
+      "id": 23,
+      "title": "The Riddle of Cain",
+      "author_ids": [20],
+      "published_at": "1934-01-01T00:00:00Z",
+      "genre_ids": [18],
+      "language": "English",
+      "pages": 216,
+      "cover": "..\\data\\books\\the-riddle-of-cain.jpg",
+      "description": "A cryptic puzzle leads a group of adventurers on a treacherous journey, uncovering dark secrets that change their world forever."
+    },
+    {
+      "id": 24,
+      "title": "Desert Chronicles: Ascension",
+      "author_ids": [3],
+      "published_at": "1969-03-01T00:00:00Z",
+      "genre_ids": [17],
+      "language": "English",
+      "pages": 331,
+      "cover": "..\\data\\books\\desert-chronicles-ascension.jpg",
+      "description": "The saga continues as the desert planet’s inhabitants rise to reclaim their legacy amidst chaos and intrigue."
+    },
+    {
+      "id": 25,
+      "title": "Children of the Ember",
+      "author_ids": [3],
+      "published_at": "1976-04-01T00:00:00Z",
+      "genre_ids": [17],
+      "language": "English",
+      "pages": 408,
+      "cover": "..\\data\\books\\children-of-the-ember.jpg",
+      "description": "Amidst the ruins of an ancient civilization, a new generation discovers their inherited power to reshape the world."
+    },
+    {
+      "id": 26,
+      "title": "Eclipse of Eternity",
+      "author_ids": [3],
+      "published_at": "1981-05-01T00:00:00Z",
+      "genre_ids": [17],
+      "language": "English",
+      "pages": 412,
+      "cover": "..\\data\\books\\eclipse-of-eternity.jpg",
+      "description": "As a celestial phenomenon threatens the galaxy, an unlikely band of heroes must unite to preserve existence itself."
+    },
+    {
+      "id": 27,
+      "title": "Heralds of the New Dawn",
+      "author_ids": [3],
+      "published_at": "1984-05-01T00:00:00Z",
+      "genre_ids": [17],
+      "language": "English",
+      "pages": 471,
+      "cover": "..\\data\\books\\heralds-of-the-new-dawn.jpg",
+      "description": "Amid a crumbling empire, whispers of a new beginning challenge the order of a stagnant society."
+    },
+    {
+      "id": 28,
+      "title": "Whispers of Eldritch Tides",
+      "author_ids": [21],
+      "published_at": "1928-02-20T00:00:00Z",
+      "genre_ids": [15],
+      "language": "English",
+      "pages": 35,
+      "cover": "..\\data\\books\\whispers-of-eldritch-tides.jpg",
+      "description": "An eerie account of a town's descent into madness after an ancient artifact washes ashore, awakening eldritch horrors."
+    },
+    {
+      "id": 29,
+      "title": "Chronicles of the Eternal Flame",
+      "author_ids": [4],
+      "published_at": "1977-09-15T00:00:00Z",
+      "genre_ids": [12, 19],
+      "language": "English",
+      "pages": 365,
+      "cover": "..\\data\\books\\chronicles-of-the-eternal-flame.jpg",
+      "description": "A mythical collection of stories from an ancient realm where the Eternal Flame holds the key to unlocking the secrets of the universe."
+    },
+    {
+      "id": 30,
+      "title": "Adventures of the Hidden Vale",
+      "author_ids": [4],
+      "published_at": "1937-09-21T00:00:00Z",
+      "genre_ids": [12, 19],
+      "language": "English",
+      "pages": 310,
+      "cover": "..\\data\\books\\adventures-of-the-hidden-vale.jpg",
+      "description": "A whimsical journey of a young adventurer as they explore the mysterious Hidden Vale and its enchanting creatures."
+    },
+    {
+      "id": 31,
+      "title": "Tales of Shadows and Stars",
+      "author_ids": [22],
+      "published_at": "2010-10-01T00:00:00Z",
+      "genre_ids": [13, 15, 16],
+      "language": "Polish",
+      "pages": 800,
+      "cover": "..\\data\\books\\tales-of-shadows-and-stars.jpg",
+      "description": "A captivating anthology of stories that traverse love, mystery, and the cosmos, where every tale shines with its own unique brilliance."
+    },
+    {
+      "id": 32,
+      "title": "The Forgotten Wish",
+      "author_ids": [23, 24],
+      "published_at": "2002-02-28T00:00:00Z",
+      "genre_ids": [7, 13],
+      "language": "English",
+      "pages": 200,
+      "cover": "..\\data\\books\\the-forgotten-wish.jpg",
+      "description": "A haunting narrative of a young woman uncovering her past and the mysterious wish that binds her to a forgotten realm."
+    },
+    {
+      "id": 33,
+      "title": "Echoes of Thought",
+      "author_ids": [16],
+      "published_at": "2011-10-25T00:00:00Z",
+      "genre_ids": [28],
+      "language": "English",
+      "pages": 499,
+      "cover": "..\\data\\books\\echoes-of-thought.jpg",
+      "description": "A deep dive into the human mind, unraveling the layers of thought and the silent forces that guide our decisions."
+    },
+    {
+      "id": 34,
+      "title": "Remote Horizons",
+      "author_ids": [17],
+      "published_at": "2013-10-29T00:00:00Z",
+      "genre_ids": [6],
+      "language": "English",
+      "pages": 256,
+      "cover": "..\\data\\books\\remote-horizons.jpg",
+      "description": "An insightful guide to embracing the modern era of remote living and working, blending practical tips with inspiring stories."
+    },
+    {
+      "id": 35,
+      "title": "Shadows of Transformation",
+      "author_ids": [18],
+      "published_at": "1915-10-15T00:00:00Z",
+      "genre_ids": [18],
+      "language": "English",
+      "pages": 201,
+      "cover": "..\\data\\books\\shadows-of-transformation.jpg",
+      "description": "A surreal tale of a man waking up to a reality where his life has inexplicably transformed, challenging his very existence."
+    },
+    {
+      "id": 36,
+      "title": "Winter Tales of the Vale",
+      "author_ids": [28],
+      "published_at": "1957-01-01T00:00:00Z",
+      "genre_ids": [20],
+      "language": "English",
+      "pages": 176,
+      "cover": "..\\data\\books\\winter-tales-of-the-vale.jpg",
+      "description": "A heartwarming story of self-discovery and friendship as the inhabitants of the Vale brave a long and mystical winter."
+    },
+    {
+      "id": 37,
+      "title": "The Comet Chronicles",
+      "author_ids": [28],
+      "published_at": "1946-01-01T00:00:00Z",
+      "genre_ids": [20],
+      "language": "English",
+      "pages": 160,
+      "cover": "..\\data\\books\\the-comet-chronicles.jpg",
+      "description": "An enchanting journey as the Vale's adventurers seek the wisdom of the stars in the wake of a celestial event."
+    },
+    {
+      "id": 38,
+      "title": "November Whispers",
+      "author_ids": [28],
+      "published_at": "1970-01-01T00:00:00Z",
+      "genre_ids": [20],
+      "language": "English",
+      "pages": 144,
+      "cover": "..\\data\\books\\november-whispers.jpg",
+      "description": "A poetic exploration of a silent world, where memories and stories intertwine under the cold November skies."
+    },
+    {
+      "id": 39,
+      "title": "The Young Keeper's Tales",
+      "author_ids": [28],
+      "published_at": "1950-01-01T00:00:00Z",
+      "genre_ids": [20],
+      "language": "English",
+      "pages": 176,
+      "cover": "..\\data\\books\\the-young-keepers-tales.jpg",
+      "description": "A vibrant recount of youthful adventures and lessons learned in the magical realms of the Vale."
+    },
+    {
+      "id": 40,
+      "title": "Midsummer Mysteries",
+      "author_ids": [28],
+      "published_at": "1954-01-01T00:00:00Z",
+      "genre_ids": [20],
+      "language": "English",
+      "pages": 176,
+      "cover": "..\\data\\books\\midsummer-mysteries.jpg",
+      "description": "A tale of courage and discovery as the Vale's residents navigate a summer filled with unexpected surprises."
+    },
+    {
+      "id": 41,
+      "title": "Voyage to the Lighthouse Isles",
+      "author_ids": [28],
+      "published_at": "1965-01-01T00:00:00Z",
+      "genre_ids": [20],
+      "language": "English",
+      "pages": 176,
+      "cover": "..\\data\\books\\voyage-to-the-lighthouse-isles.jpg",
+      "description": "A poignant journey of self-discovery as a family explores a remote island, unlocking long-forgotten secrets."
+    },
+    {
+      "id": 42,
+      "title": "The Ringbearer's Legacy",
+      "author_ids": [4],
+      "published_at": "1954-07-29T00:00:00Z",
+      "genre_ids": [12, 19],
+      "language": "English",
+      "pages": 398,
+      "cover": "..\\data\\books\\ringbearers-legacy.jpg",
+      "description": "An epic tale of friendship and courage, as a fellowship unites to protect their realm from an ancient evil."
+    },
+    {
+      "id": 43,
+      "title": "Towers of the Twilight Realm",
+      "author_ids": [4],
+      "published_at": "1954-11-11T00:00:00Z",
+      "genre_ids": [12, 19],
+      "language": "English",
+      "pages": 327,
+      "cover": "..\\data\\books\\towers-of-the-twilight-realm.jpg",
+      "description": "A gripping continuation of a saga, as allies battle against growing shadows threatening their homeland."
+    },
+    {
+      "id": 44,
+      "title": "Centuries of Solitude",
+      "author_ids": [29],
+      "published_at": "1967-05-30T00:00:00Z",
+      "genre_ids": [16, 39, 40],
+      "language": "English",
+      "pages": 417,
+      "cover": "..\\data\\books\\centuries-of-solitude.jpg",
+      "description": "A generational tale of resilience and discovery within a mystical town caught in the threads of time."
+    },
+    {
+      "id": 45,
+      "title": "Melodies of the Northern Woods",
+      "author_ids": [30],
+      "published_at": "1987-08-20T00:00:00Z",
+      "genre_ids": [16, 39, 40],
+      "language": "English",
+      "pages": 472,
+      "cover": "..\\data\\books\\melodies-of-the-northern-woods.jpg",
+      "description": "A heartfelt story of love, memory, and music, set against the serene backdrop of the northern forests."
+    },
+    {
+      "id": 46,
+      "title": "Chronicles of the Clockwork Bird",
+      "author_ids": [30],
+      "published_at": "1994-10-17T00:00:00Z",
+      "genre_ids": [16, 39, 40],
+      "language": "English",
+      "pages": 607,
+      "cover": "..\\data\\books\\chronicles-of-the-clockwork-bird.jpg",
+      "description": "An enigmatic tale of intertwined fates and the mysteries of a mechanical bird that knows too much."
+    },
+    {
+      "id": 47,
+      "title": "Dreams Upon the Shore",
+      "author_ids": [30],
+      "published_at": "2002-09-12T00:00:00Z",
+      "genre_ids": [16, 39, 40],
+      "language": "English",
+      "pages": 467,
+      "cover": "..\\data\\books\\dreams-upon-the-shore.jpg",
+      "description": "A lyrical exploration of memory and destiny, where the sea whispers truths to those who listen."
+    },
+    {
+      "id": 48,
+      "title": "Parallel Horizons",
+      "author_ids": [30],
+      "published_at": "2009-05-29T00:00:00Z",
+      "genre_ids": [16, 39, 40],
+      "language": "English",
+      "pages": 925,
+      "cover": "..\\data\\books\\parallel-horizons.jpg",
+      "description": "A dystopian narrative weaving through alternate realities, uncovering the fragile threads of identity."
+    },
+    {
+      "id": 49,
+      "title": "The Colorless Wanderer",
+      "author_ids": [30],
+      "published_at": "2013-04-12T00:00:00Z",
+      "genre_ids": [16, 39, 40],
+      "language": "English",
+      "pages": 386,
+      "cover": "..\\data\\books\\the-colorless-wanderer.jpg",
+      "description": "A philosophical journey of a solitary traveler searching for meaning across a vibrant, enigmatic landscape."
+    },
+    {
+      "id": 50,
+      "title": "Walls of a Shifting City",
+      "author_ids": [30],
+      "published_at": "2024-11-19T00:00:00Z",
+      "genre_ids": [16, 39, 40],
+      "language": "English",
+      "pages": 464,
+      "cover": "..\\data\\books\\walls-of-a-shifting-city.jpg",
+      "description": "An evocative tale of a city where the boundaries of reality and illusion blur, drawing its inhabitants into an endless dance."
+    },
+    {
+      "id": 51,
+      "title": "Brutalist Dreams",
+      "author_ids": [0],
+      "published_at": "2020-10-19T00:00:00Z",
+      "genre_ids": [31, 41, 42],
+      "language": "English",
+      "pages": 568,
+      "cover": "..\\data\\books\\brutalist-dreams.jpg",
+      "description": "An architectural masterpiece documenting the evolution and allure of Brutalist design across the world."
+    },
+    {
+      "id": 52,
+      "title": "Art of Shadows",
+      "author_ids": [0],
+      "published_at": "2015-11-01T00:00:00Z",
+      "genre_ids": [31, 42, 43],
+      "language": "English",
+      "pages": 576,
+      "cover": "..\\data\\books\\art-of-shadows.jpg",
+      "description": "An intricate collection showcasing the power of light and shadow in art and architecture."
+    },
+    {
+      "id": 53,
+      "title": "Leonardo's Vision",
+      "author_ids": [0],
+      "published_at": "2022-03-01T00:00:00Z",
+      "genre_ids": [31, 42, 43],
+      "language": "English",
+      "pages": 712,
+      "cover": "..\\data\\books\\leonardos-vision.jpg",
+      "description": "A detailed exploration of Leonardo da Vinci's artistic genius and his revolutionary ideas that transcended his era."
+    },
+    {
+      "id": 54,
+      "title": "Mysteries of Twin Peaks",
+      "author_ids": [31],
+      "published_at": "2016-10-18T00:00:00Z",
+      "genre_ids": [13, 14],
+      "language": "English",
+      "pages": 368,
+      "cover": "..\\data\\books\\mysteries-of-twin-peaks.jpg",
+      "description": "A deep dive into the enigmatic town of Twin Peaks, unraveling its secrets and the unseen forces at play."
+    },
+    {
+      "id": 55,
+      "title": "Lessons from the Software Frontier",
+      "author_ids": [32, 33, 34],
+      "published_at": "2001-10-18T00:00:00Z",
+      "genre_ids": [3, 4],
+      "language": "English",
+      "pages": 368,
+      "cover": "..\\data\\books\\lessons-from-the-software-frontier.jpg",
+      "description": "A comprehensive guide filled with hard-earned lessons and strategies from pioneers in software testing."
+    },
+    {
+      "id": 56,
+      "title": "The Google Code Playbook",
+      "author_ids": [35, 36, 37],
+      "published_at": "2012-03-01T00:00:00Z",
+      "genre_ids": [3, 4],
+      "language": "English",
+      "pages": 320,
+      "cover": "..\\data\\books\\google-code-playbook.jpg",
+      "description": "Insights and methodologies from Google's approach to code testing and software development excellence."
+    },
+    {
+      "id": 57,
+      "title": "Team Code Chronicles",
+      "author_ids": [38, 39],
+      "published_at": "2021-11-15T00:00:00Z",
+      "genre_ids": [3, 4],
+      "language": "English",
+      "pages": 188,
+      "cover": "..\\data\\books\\team-code-chronicles.jpg",
+      "description": "A practical guide to improving software quality through enhanced collaboration and shared testing practices."
+    },
+    {
+      "id": 58,
+      "title": "Voices of Justice",
+      "author_ids": [50],
+      "published_at": "1960-07-11T00:00:00Z",
+      "genre_ids": [18, 19],
+      "language": "English",
+      "pages": 281,
+      "cover": "..\\data\\books\\voices-of-justice.jpg",
+      "description": "A heartfelt narrative exploring societal struggles and justice through the eyes of a young protagonist."
+    },
+    {
+      "id": 59,
+      "title": "Reflections in the Manor",
+      "author_ids": [51],
+      "published_at": "1813-01-28T00:00:00Z",
+      "genre_ids": [19, 15],
+      "language": "English",
+      "pages": 279,
+      "cover": "..\\data\\books\\reflections-in-the-manor.jpg",
+      "description": "A romantic exploration of social norms and personal growth set in a quaint English estate."
+    },
+    {
+      "id": 60,
+      "title": "Echoes of Wealth",
+      "author_ids": [52],
+      "published_at": "1925-04-10T00:00:00Z",
+      "genre_ids": [19],
+      "language": "English",
+      "pages": 180,
+      "cover": "..\\data\\books\\echoes-of-wealth.jpg",
+      "description": "A vivid portrayal of ambition, love, and societal decadence during a roaring decade."
+    },
+    {
+      "id": 61,
+      "title": "Empires of Struggle",
+      "author_ids": [53],
+      "published_at": "1869-01-01T00:00:00Z",
+      "genre_ids": [19, 18],
+      "language": "Russian",
+      "pages": 1225,
+      "cover": "..\\data\\books\\empires-of-struggle.jpg",
+      "description": "A sweeping saga intertwining personal lives with grand historical events during an era of upheaval."
+    },
+    {
+      "id": 62,
+      "title": "Fields of Youth",
+      "author_ids": [54],
+      "published_at": "1951-07-16T00:00:00Z",
+      "genre_ids": [18],
+      "language": "English",
+      "pages": 214,
+      "cover": "..\\data\\books\\fields-of-youth.jpg",
+      "description": "A coming-of-age story navigating the challenges of growing up in a complex world."
+    },
+    {
+      "id": 63,
+      "title": "Beneath the White Waves",
+      "author_ids": [55],
+      "published_at": "1851-10-18T00:00:00Z",
+      "genre_ids": [19],
+      "language": "English",
+      "pages": 635,
+      "cover": "..\\data\\books\\beneath-the-white-waves.jpg",
+      "description": "An epic journey of obsession and adventure under the vast, uncharted oceans."
+    },
+    {
+      "id": 64,
+      "title": "The Seeker's Compass",
+      "author_ids": [56],
+      "published_at": "1988-01-01T00:00:00Z",
+      "genre_ids": [18, 19],
+      "language": "Portuguese",
+      "pages": 208,
+      "cover": "..\\data\\books\\seekers-compass.jpg",
+      "description": "A spiritual quest of self-discovery and purpose across a timeless landscape."
+    },
+    {
+      "id": 65,
+      "title": "The Thief's Tale",
+      "author_ids": [57],
+      "published_at": "2005-03-14T00:00:00Z",
+      "genre_ids": [18, 19],
+      "language": "English",
+      "pages": 552,
+      "cover": "..\\data\\books\\thiefs-tale.jpg",
+      "description": "A poignant story of resilience and courage set during a turbulent era."
+    },
+    {
+      "id": 66,
+      "title": "Whispers of the Moors",
+      "author_ids": [58],
+      "published_at": "1847-12-01T00:00:00Z",
+      "genre_ids": [19, 15],
+      "language": "English",
+      "pages": 416,
+      "cover": "..\\data\\books\\whispers-of-the-moors.jpg",
+      "description": "A haunting narrative of love and betrayal set in the windswept moors."
+    },
+    {
+      "id": 67,
+      "title": "Journeys of a Modern Mind",
+      "author_ids": [65],
+      "published_at": "1922-02-02T00:00:00Z",
+      "genre_ids": [19, 10, 39],
+      "language": "English",
+      "pages": 730,
+      "cover": "..\\data\\books\\modern-mind-journeys.jpg",
+      "description": "A single day in the life of an individual reflecting the complexities of modern existence."
+    },
+    {
+      "id": 68,
+      "title": "Dark Currents",
+      "author_ids": [64],
+      "published_at": "1899-11-01T00:00:00Z",
+      "genre_ids": [19, 39, 18],
+      "language": "English",
+      "pages": 96,
+      "cover": "..\\data\\books\\dark-currents.jpg",
+      "description": "A journey through colonial struggles, exploring the depths of humanity and the unknown."
+    },
+    {
+      "id": 69,
+      "title": "Timeless Echoes",
+      "author_ids": [66],
+      "published_at": "1913-11-14T00:00:00Z",
+      "genre_ids": [10, 39],
+      "language": "French",
+      "pages": 4215,
+      "cover": "..\\data\\books\\timeless-echoes.jpg",
+      "description": "An expansive narrative of memory, art, and the flow of time across generations."
+    },
+    {
+      "id": 70,
+      "title": "The Enigmatic Manuscript",
+      "author_ids": [68],
+      "published_at": "1980-11-01T00:00:00Z",
+      "genre_ids": [13, 10, 39],
+      "language": "Italian",
+      "pages": 512,
+      "cover": "..\\data\\books\\enigmatic-manuscript.jpg",
+      "description": "A gripping medieval mystery revolving around a hidden manuscript and its deadly secrets."
+    },
+    {
+      "id": 71,
+      "title": "Horizons of Rebellion",
+      "author_ids": [69],
+      "published_at": "1957-10-10T00:00:00Z",
+      "genre_ids": [10, 39, 6],
+      "language": "English",
+      "pages": 1168,
+      "cover": "..\\data\\books\\horizons-of-rebellion.jpg",
+      "description": "A sweeping narrative of industrialists and innovators rising against societal decay to forge a new future."
+    },
+    {
+      "id": 72,
+      "title": "Paradox Squadron",
+      "author_ids": [70],
+      "published_at": "1961-11-10T00:00:00Z",
+      "genre_ids": [10, 39, 18],
+      "language": "English",
+      "pages": 453,
+      "cover": "..\\data\\books\\paradox-squadron.jpg",
+      "description": "A satirical exploration of war and bureaucracy through the eyes of a misfit squadron in surreal scenarios."
+    },
+    {
+      "id": 73,
+      "title": "The Shadowed Count",
+      "author_ids": [71],
+      "published_at": "1897-05-26T00:00:00Z",
+      "genre_ids": [15, 10, 13],
+      "language": "English",
+      "pages": 418,
+      "cover": "..\\data\\books\\shadowed-count.jpg",
+      "description": "A gothic tale of a reclusive nobleman shrouded in mystery, blending fear, seduction, and the supernatural."
+    },
+    {
+      "id": 74,
+      "title": "Mysteries of the Serpent's Mark",
+      "author_ids": [72],
+      "published_at": "2005-08-27T00:00:00Z",
+      "genre_ids": [13, 14, 10],
+      "language": "Swedish",
+      "pages": 672,
+      "cover": "..\\data\\books\\serpents-mark.jpg",
+      "description": "An intricately woven thriller where a journalist and hacker delve into a labyrinth of secrets and betrayal."
+    },
+    {
+      "id": 75,
+      "title": "City of Whispering Tombs",
+      "author_ids": [73],
+      "published_at": "2006-12-15T00:00:00Z",
+      "genre_ids": [44, 18, 17],
+      "language": "Japanese",
+      "pages": 224,
+      "cover": "..\\data\\books\\whispering-tombs.jpg",
+      "description": "A dystopian saga set in a forgotten city, where shadows hold the key to humanity’s survival."
+    },
+    {
+      "id": 76,
+      "title": "Echoes of the Digital Abyss",
+      "author_ids": [73],
+      "published_at": "2022-08-15T00:00:00Z",
+      "genre_ids": [44, 18, 17],
+      "language": "Japanese",
+      "pages": 2200,
+      "cover": "..\\data\\books\\digital-abyss.jpg",
+      "description": "An epic chronicle of a silent warrior navigating a labyrinthine city in search of humanity's lost connection to the NetSphere."
+    },
+    {
+      "id": 77,
+      "title": "Bio-Cyber Chronicles",
+      "author_ids": [73],
+      "published_at": "2024-07-04T00:00:00Z",
+      "genre_ids": [44, 18, 17],
+      "language": "Japanese",
+      "pages": 1632,
+      "cover": "..\\data\\books\\bio-cyber-chronicles.jpg",
+      "description": "A visionary tale of a cybernetic hero combating an apocalyptic virus in a surreal, decaying world."
+    }
+  ],
+  "book-authors": [
+    {
+      "id": 0,
+      "name": "Mystery Writer",
+      "country": "Unknown"
+    },
+    {
+      "id": 1,
+      "name": "Elias Harper",
+      "country": "USA"
+    },
+    {
+      "id": 2,
+      "name": "Jonas Blackwell",
+      "country": "USA"
+    },
+    {
+      "id": 3,
+      "name": "Ronan Edge",
+      "country": "USA"
+    },
+    {
+      "id": 4,
+      "name": "Cillian Bright",
+      "country": "UK"
+    },
+    {
+      "id": 5,
+      "name": "Samantha Vance",
+      "country": "UK"
+    },
+    {
+      "id": 6,
+      "name": "Oliver Kain",
+      "country": "UK"
+    },
+    {
+      "id": 7,
+      "name": "Ivan Markov",
+      "country": "Russia"
+    },
+    {
+      "id": 8,
+      "name": "Jan Kowalski",
+      "country": "Poland"
+    },
+    {
+      "id": 9,
+      "name": "Michael Rhodes",
+      "country": "USA"
+    },
+    {
+      "id": 10,
+      "name": "Arthur Steele",
+      "country": "USA"
+    },
+    {
+      "id": 11,
+      "name": "Chao Feng",
+      "country": "China"
+    },
+    {
+      "id": 12,
+      "name": "Luca Moretti",
+      "country": "Italy"
+    },
+    {
+      "id": 13,
+      "name": "Marcus Vale",
+      "country": "UK"
+    },
+    {
+      "id": 14,
+      "name": "Daniel Emerson",
+      "country": "USA"
+    },
+    {
+      "id": 15,
+      "name": "Mateusz Novak",
+      "country": "Poland"
+    },
+    {
+      "id": 16,
+      "name": "Samuel Carter",
+      "country": "USA"
+    },
+    {
+      "id": 17,
+      "name": "Dylan Hayes",
+      "country": "USA"
+    },
+    {
+      "id": 18,
+      "name": "Victor Kessler",
+      "country": "Czech Republic"
+    },
+    {
+      "id": 19,
+      "name": "Zane Matthews",
+      "country": "USA"
+    },
+    {
+      "id": 20,
+      "name": "Edgar Holloway",
+      "country": "UK"
+    },
+    {
+      "id": 21,
+      "name": "Henry Whitmore",
+      "country": "USA"
+    },
+    {
+      "id": 22,
+      "name": "Gabriel Cross",
+      "country": "USA"
+    },
+    {
+      "id": 23,
+      "name": "Stephen Moore",
+      "country": "USA"
+    },
+    {
+      "id": 24,
+      "name": "Maria Voss",
+      "country": "USA"
+    },
+    {
+      "id": 25,
+      "name": "David Nystrom",
+      "country": "Denmark"
+    },
+    {
+      "id": 26,
+      "name": "Nathaniel Grayson",
+      "country": "USA"
+    },
+    {
+      "id": 27,
+      "name": "Christopher Fox",
+      "country": "UK"
+    },
+    {
+      "id": 28,
+      "name": "Tove Nielsen",
+      "country": "Finland"
+    },
+    {
+      "id": 29,
+      "name": "Javier Morales",
+      "country": "Colombia"
+    },
+    {
+      "id": 30,
+      "name": "Hiroshi Tanaka",
+      "country": "Japan"
+    },
+    {
+      "id": 31,
+      "name": "Mark Finley",
+      "country": "USA"
+    },
+    {
+      "id": 32,
+      "name": "Evan Baxter",
+      "country": "USA"
+    },
+    {
+      "id": 33,
+      "name": "James Parker",
+      "country": "USA"
+    },
+    {
+      "id": 34,
+      "name": "Brett Harris",
+      "country": "USA"
+    },
+    {
+      "id": 35,
+      "name": "Lucas Wren",
+      "country": "USA"
+    },
+    {
+      "id": 36,
+      "name": "Jason Arnett",
+      "country": "USA"
+    },
+    {
+      "id": 37,
+      "name": "Jeffrey Cole",
+      "country": "USA"
+    },
+    {
+      "id": 38,
+      "name": "Asher Quinn",
+      "country": "USA"
+    },
+    {
+      "id": 39,
+      "name": "Robert Finlay",
+      "country": "USA"
+    },
+    {
+      "id": 50,
+      "name": "Harper Sloan",
+      "country": "USA"
+    },
+    {
+      "id": 51,
+      "name": "Jane Archer",
+      "country": "UK"
+    },
+    {
+      "id": 52,
+      "name": "Francis Bell",
+      "country": "USA"
+    },
+    {
+      "id": 53,
+      "name": "Leonid Turgenev",
+      "country": "Russia"
+    },
+    {
+      "id": 54,
+      "name": "Julian Dyer",
+      "country": "USA"
+    },
+    {
+      "id": 55,
+      "name": "Harrison Drake",
+      "country": "USA"
+    },
+    {
+      "id": 56,
+      "name": "Paulo Santos",
+      "country": "Brazil"
+    },
+    {
+      "id": 57,
+      "name": "Marcus Bellamy",
+      "country": "Australia"
+    },
+    {
+      "id": 58,
+      "name": "Emily Stone",
+      "country": "UK"
+    },
+    {
+      "id": 64,
+      "name": "Joseph Korwin",
+      "country": "Poland/UK"
+    },
+    {
+      "id": 65,
+      "name": "James Finnegan",
+      "country": "Ireland"
+    },
+    {
+      "id": 66,
+      "name": "Marcel Dupont",
+      "country": "France"
+    },
+    {
+      "id": 68,
+      "name": "Umberto Rossi",
+      "country": "Italy"
+    },
+    {
+      "id": 69,
+      "name": "Alyssa Kendall",
+      "country": "USA"
+    },
+    {
+      "id": 70,
+      "name": "Joseph Tanner",
+      "country": "USA"
+    },
+    {
+      "id": 71,
+      "name": "Benjamin Stirling",
+      "country": "Ireland"
+    },
+    {
+      "id": 72,
+      "name": "Stefan Larson",
+      "country": "Sweden"
+    },
+    {
+      "id": 73,
+      "name": "Takashi Minami",
+      "country": "Japan"
+    }
+  ],
+  "book-reviews": [
+    {
+      "id": 1,
+      "book_id": 1,
+      "user_id": 1,
+      "rating": 5,
+      "content": "Great book!",
+      "created_at": "2023-05-25T11:50:28.108Z"
+    },
+    {
+      "id": 2,
+      "book_id": 1,
+      "user_id": 2,
+      "rating": 4,
+      "content": "Good book!",
+      "created_at": "2024-01-25T11:50:28.108Z"
+    },
+    {
+      "id": 3,
+      "book_id": 1,
+      "user_id": 3,
+      "rating": 5,
+      "content": "Awesome book! This is a must read!",
+      "created_at": "2024-02-11T11:50:28.108Z"
+    },
+    {
+      "id": 4,
+      "book_id": 2,
+      "user_id": 1,
+      "rating": 5,
+      "content": "Great book! I loved it!",
+      "created_at": "2024-03-25T11:50:28.108Z"
+    },
+    {
+      "id": 5,
+      "book_id": 2,
+      "user_id": 2,
+      "rating": 4,
+      "content": "Good book! I believe it could be better.",
+      "created_at": "2024-04-25T11:50:28.108Z"
+    },
+    {
+      "id": 6,
+      "book_id": 2,
+      "user_id": 3,
+      "rating": 5,
+      "content": "Awesome book! I think it's the best book I've ever read!",
+      "created_at": "2024-05-25T11:50:28.108Z"
+    },
+    {
+      "id": 7,
+      "book_id": 3,
+      "user_id": 1,
+      "rating": 5,
+      "content": "Great book! Well I think it's a must read!",
+      "created_at": "2024-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 8,
+      "book_id": 3,
+      "user_id": 2,
+      "rating": 3,
+      "content": "Good book! But not the best. I expected more.",
+      "created_at": "2024-05-26T11:50:28.108Z"
+    },
+    {
+      "id": 9,
+      "book_id": 17,
+      "user_id": 2,
+      "rating": 5,
+      "content": "Awesome book! I loved it! I think it's the best book I've ever read!",
+      "created_at": "2024-05-27T11:50:28.108Z"
+    },
+    {
+      "id": 10,
+      "book_id": 17,
+      "user_id": 3,
+      "rating": 5,
+      "content": "Best book about physics!",
+      "created_at": "2024-06-28T12:11:42.108Z"
+    },
+    {
+      "id": 11,
+      "book_id": 51,
+      "user_id": 2,
+      "rating": 5,
+      "content": "Best book about Brutalist Architecture! I loved it!",
+      "created_at": "2024-06-12T18:13:42.108Z"
+    },
+    {
+      "id": 12,
+      "book_id": 51,
+      "user_id": 3,
+      "rating": 5,
+      "content": "This is a huge, thick book with a ton of information - a must read book for all architects! Great photos and descriptions!",
+      "created_at": "2024-06-14T10:10:42.108Z"
+    },
+    {
+      "id": 13,
+      "book_id": 51,
+      "user_id": 4,
+      "rating": 5,
+      "content": "This is the only book to thoroughly document the world's finest examples of Brutalist architecture. I loved it! I think it's the best book I've ever read!",
+      "created_at": "2024-06-15T22:32:42.108Z"
+    },
+    {
+      "id": 14,
+      "book_id": 14,
+      "user_id": 1,
+      "rating": 2,
+      "content": "I didn't like it. I expected more.",
+      "created_at": "2024-06-16T22:32:42.108Z"
+    },
+    {
+      "id": 15,
+      "book_id": 14,
+      "user_id": 2,
+      "rating": 2,
+      "content": "Not the best. I expected more.",
+      "created_at": "2024-06-17T22:32:42.108Z"
+    },
+    {
+      "id": 16,
+      "book_id": 14,
+      "user_id": 3,
+      "rating": 1,
+      "content": "Well it was a waste of time. I didn't like it.",
+      "created_at": "2024-06-18T22:32:42.108Z"
+    },
+    {
+      "id": 17,
+      "book_id": 14,
+      "user_id": 4,
+      "rating": 2,
+      "content": "This was not what I expected. I hoped for more.",
+      "created_at": "2024-06-28T12:12:32.108Z"
+    },
+    {
+      "id": 18,
+      "book_id": 14,
+      "user_id": 5,
+      "rating": 2,
+      "content": "If this book was a movie, I would rate it 2/10. I didn't like it.",
+      "created_at": "2024-07-28T12:12:32.108Z"
+    },
+    {
+      "id": 19,
+      "book_id": 76,
+      "user_id": 5,
+      "rating": 5,
+      "content": "This is EPIC book! I loved it!",
+      "created_at": "2024-07-28T12:12:32.108Z"
+    },
+    {
+      "id": 20,
+      "book_id": 76,
+      "user_id": 2,
+      "rating": 5,
+      "content": "This is the best book I've ever read! I loved it!",
+      "created_at": "2024-08-12T08:12:32.108Z"
+    },
+    {
+      "id": 21,
+      "book_id": 76,
+      "user_id": 3,
+      "rating": 5,
+      "content": "Awesome book! This dark, gritty, alienating, violent cyberpunk manga is really good. The artist Nihei is really gifted to draw buildings and he creates an empty world left with never ending growing buildings, metallic structures, and deadly creatures out to get you.",
+      "created_at": "2024-08-12T08:12:32.108Z"
+    }
+  ],
+  "book-shop-items": [
+    {
+      "id": 1,
+      "book_id": 1,
+      "price": 2500,
+      "quantity": 10,
+      "created_at": "2021-05-25T11:50:28.108Z"
+    },
+    {
+      "id": 2,
+      "book_id": 2,
+      "price": 3000,
+      "quantity": 10,
+      "created_at": "2022-03-25T11:50:28.108Z"
+    },
+    {
+      "id": 3,
+      "book_id": 3,
+      "price": 1800,
+      "quantity": 10,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 4,
+      "book_id": 4,
+      "price": 29900,
+      "quantity": 10,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 5,
+      "book_id": 5,
+      "price": 3000,
+      "quantity": 10,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 6,
+      "book_id": 6,
+      "price": 3100,
+      "quantity": 10,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 7,
+      "book_id": 50,
+      "price": 6500,
+      "quantity": 10,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 8,
+      "book_id": 49,
+      "price": 9900,
+      "quantity": 2,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 9,
+      "book_id": 48,
+      "price": 3300,
+      "quantity": 15,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 10,
+      "book_id": 32,
+      "price": 99900,
+      "quantity": 1,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 11,
+      "book_id": 22,
+      "price": 12900,
+      "quantity": 4,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 12,
+      "book_id": 21,
+      "price": 3900,
+      "quantity": 3,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 13,
+      "book_id": 48,
+      "price": 2900,
+      "quantity": 3,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 14,
+      "book_id": 37,
+      "price": 3750,
+      "quantity": 2,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 15,
+      "book_id": 10,
+      "price": 2750,
+      "quantity": 2,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 16,
+      "book_id": 12,
+      "price": 4250,
+      "quantity": 10,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 17,
+      "book_id": 31,
+      "price": 8950,
+      "quantity": 20,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 18,
+      "book_id": 20,
+      "price": 7500,
+      "quantity": 10,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 19,
+      "book_id": 19,
+      "price": 4500,
+      "quantity": 10,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 20,
+      "book_id": 18,
+      "price": 3500,
+      "quantity": 10,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 21,
+      "book_id": 17,
+      "price": 2500,
+      "quantity": 10,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 22,
+      "book_id": 16,
+      "price": 15000,
+      "quantity": 10,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 23,
+      "book_id": 15,
+      "price": 5000,
+      "quantity": 10,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 24,
+      "book_id": 14,
+      "price": 2500,
+      "quantity": 10,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 25,
+      "book_id": 13,
+      "price": 9500,
+      "quantity": 10,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 26,
+      "book_id": 11,
+      "price": 4500,
+      "quantity": 100,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 27,
+      "book_id": 9,
+      "price": 5500,
+      "quantity": 10,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 28,
+      "book_id": 8,
+      "price": 6500,
+      "quantity": 10,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 29,
+      "book_id": 7,
+      "price": 7500,
+      "quantity": 10,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 30,
+      "book_id": 23,
+      "price": 7550,
+      "quantity": 10,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 31,
+      "book_id": 24,
+      "price": 17550,
+      "quantity": 2,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 32,
+      "book_id": 25,
+      "price": 11150,
+      "quantity": 4,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 33,
+      "book_id": 26,
+      "price": 6325,
+      "quantity": 13,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 34,
+      "book_id": 51,
+      "price": 53250,
+      "quantity": 5,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 35,
+      "book_id": 52,
+      "price": 63250,
+      "quantity": 5,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 35,
+      "book_id": 53,
+      "price": 133250,
+      "quantity": 3,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "id": 36,
+      "book_id": 54,
+      "price": 66550,
+      "quantity": 5,
+      "created_at": "2022-05-25T12:50:28.108Z"
+    },
+    {
+      "book_id": 76,
+      "quantity": 1,
+      "price": 51200,
+      "created_at": "2024-11-22T21:59:10.432Z",
+      "id": 37
+    }
+  ],
+  "book-shop-orders": [
+    {
+      "id": 1,
+      "user_id": 2,
+      "book_ids": [1],
+      "books_cost": {
+        "1": 2500
+      },
+      "partial_costs": {
+        "shipping": 500,
+        "books": 2500
+      },
+      "total_cost": 3000,
+      "status_id": 99,
+      "created_at": "2024-05-25T11:50:28.108Z"
+    },
+    {
+      "id": 2,
+      "user_id": 2,
+      "book_ids": [2],
+      "books_cost": {
+        "2": 3000
+      },
+      "partial_costs": {
+        "shipping": 500,
+        "books": 3000
+      },
+      "total_cost": 3500,
+      "status_id": 99,
+      "created_at": "2024-05-25T11:50:28.108Z"
+    },
+    {
+      "id": 3,
+      "user_id": 2,
+      "book_ids": [2, 3],
+      "books_cost": {
+        "2": 3000,
+        "3": 1000
+      },
+      "partial_costs": {
+        "shipping": 500,
+        "books": 4000
+      },
+      "total_cost": 4500,
+      "status_id": 1,
+      "created_at": "2024-05-25T12:50:28.108Z"
+    },
+    {
+      "user_id": 5,
+      "status_id": 5,
+      "book_ids": [17, 10, 2],
+      "books_cost": {
+        "2": 3000,
+        "10": 2750,
+        "17": 2500
+      },
+      "partial_costs": {
+        "shipping": 500,
+        "books": 8250
+      },
+      "total_cost": 8750,
+      "created_at": "2024-10-28T20:55:47.849Z",
+      "id": 4
+    },
+    {
+      "user_id": 5,
+      "status_id": 1,
+      "book_ids": [50, 20],
+      "books_cost": {
+        "20": 7500,
+        "50": 6500
+      },
+      "partial_costs": {
+        "shipping": 500,
+        "books": 14000
+      },
+      "total_cost": 14500,
+      "created_at": "2024-10-28T20:56:27.714Z",
+      "id": 5
+    }
+  ],
+  "book-shop-order-coupons": [
+    {
+      "id": 1,
+      "coupon_code": "10OFF",
+      "discount": 1000,
+      "valid_until": "2026-12-31T23:59:59Z",
+      "type": "fixed"
+    },
+    {
+      "id": 2,
+      "coupon_code": "20OFF",
+      "discount": 20,
+      "valid_until": "2026-12-31T23:59:59Z",
+      "type": "percentage"
+    },
+    {
+      "id": 3,
+      "coupon_code": "5OFF",
+      "discount": 500,
+      "valid_until": "2026-12-31T23:59:59Z",
+      "type": "fixed"
+    },
+    {
+      "id": 4,
+      "coupon_code": "50PLN",
+      "discount": 5000,
+      "valid_until": "2026-12-31T23:59:59Z",
+      "type": "fixed"
+    },
+    {
+      "id": 5,
+      "coupon_code": "50PX",
+      "discount": 50,
+      "valid_until": "2026-12-31T23:59:59Z",
+      "type": "percentage"
+    }
+  ],
+  "book-shop-order-statuses": [
+    {
+      "id": 1,
+      "name": "new",
+      "icon": "fa-plus",
+      "possible_next_statuses": [5, 20]
+    },
+    {
+      "id": 5,
+      "name": "sent",
+      "icon": "fa-paper-plane",
+      "possible_next_statuses": [10]
+    },
+    {
+      "id": 10,
+      "name": "pending",
+      "icon": "fa-spinner",
+      "possible_next_statuses": [30, 40]
+    },
+    {
+      "id": 20,
+      "name": "cancelled",
+      "icon": "fa-times",
+      "possible_next_statuses": []
+    },
+    {
+      "id": 30,
+      "name": "returned",
+      "icon": "fa-undo",
+      "possible_next_statuses": []
+    },
+    {
+      "id": 40,
+      "name": "delivered",
+      "icon": "fa-check",
+      "possible_next_statuses": [99]
+    },
+    {
+      "id": 99,
+      "name": "completed",
+      "icon": "fa-check-double",
+      "possible_next_statuses": []
+    }
+  ],
+  "book-shop-actions": [
+    {
+      "id": 1,
+      "name": "manage-orders",
+      "role_ids": [1, 16]
+    },
+    {
+      "id": 2,
+      "name": "manage-users",
+      "role_ids": [1]
+    },
+    {
+      "id": 3,
+      "name": "manage-items",
+      "role_ids": [1, 16]
+    },
+    {
+      "id": 4,
+      "name": "read-users",
+      "role_ids": [1, 16]
+    },
+    {
+      "id": 5,
+      "name": "manage-accounts",
+      "role_ids": [1]
+    },
+    {
+      "id": 6,
+      "name": "view-stats",
+      "role_ids": [1]
+    },
+    {
+      "id": 7,
+      "name": "manage-books",
+      "role_ids": [1, 4, 16]
+    }
+  ],
+  "book-shop-roles": [
+    {
+      "id": 1,
+      "name": "admin"
+    },
+    {
+      "id": 2,
+      "name": "reader"
+    },
+    {
+      "id": 4,
+      "name": "editor"
+    },
+    {
+      "id": 8,
+      "name": "author"
+    },
+    {
+      "id": 16,
+      "name": "delivery-coordinator"
+    }
+  ],
+  "book-shop-accounts": [
+    {
+      "id": 1,
+      "user_id": 2,
+      "role_id": 2,
+      "wishlist_books_ids": [3],
+      "favorite_books_ids": [1],
+      "purchased_book_ids": [1],
+      "read_books_ids": [2],
+      "owned_books_ids": [1, 5],
+      "funds": 10000,
+      "created_at": "2024-05-25T11:50:28.108Z",
+      "country": "Poland",
+      "city": "Warsaw",
+      "street": "Olmeków 1",
+      "postal_code": "00-000"
+    },
+    {
+      "id": 2,
+      "user_id": 8,
+      "role_id": 2,
+      "wishlist_books_ids": [],
+      "favorite_books_ids": [],
+      "purchased_book_ids": [],
+      "read_books_ids": [],
+      "owned_books_ids": [],
+      "funds": 10000,
+      "created_at": "2022-05-25T11:50:28.108Z"
+    },
+    {
+      "id": 3,
+      "user_id": 11,
+      "role_id": 16,
+      "wishlist_books_ids": [],
+      "favorite_books_ids": [],
+      "purchased_book_ids": [],
+      "read_books_ids": [],
+      "owned_books_ids": [],
+      "funds": 10000,
+      "created_at": "2022-05-25T11:50:28.108Z"
+    },
+    {
+      "user_id": 5,
+      "role_id": 2,
+      "wishlist_books_ids": [],
+      "read_books_ids": [],
+      "owned_books_ids": [],
+      "purchased_book_ids": [],
+      "favorite_books_ids": [],
+      "funds": 10000,
+      "created_at": "2024-10-28T20:55:32.647Z",
+      "country": "",
+      "city": "",
+      "street": "",
+      "postal_code": "",
+      "id": 4
+    },
+    {
+      "user_id": 14,
+      "role_id": 1,
+      "wishlist_books_ids": [],
+      "read_books_ids": [],
+      "owned_books_ids": [],
+      "purchased_book_ids": [],
+      "favorite_books_ids": [],
+      "funds": 10000,
+      "created_at": "2024-11-02T12:35:41.412Z",
+      "country": "",
+      "city": "",
+      "street": "",
+      "postal_code": "",
+      "id": 5
+    }
+  ],
+  "book-shop-account-payment-history": [],
+  "book-shop-account-payment-cards": [
+    {
+      "id": 1,
+      "account_id": 1,
+      "card_number": "1234 5678 9012 3456 2121",
+      "expiration_date": "2025-05-25",
+      "cvv": "12345",
+      "balance": 10000
+    }
+  ],
+  "book-genres": [
+    {
+      "id": 0,
+      "name": "Unknown"
+    },
+    {
+      "id": 1,
+      "name": "Programming"
+    },
+    {
+      "id": 2,
+      "name": "Design"
+    },
+    {
+      "id": 3,
+      "name": "Testing"
+    },
+    {
+      "id": 4,
+      "name": "Management"
+    },
+    {
+      "id": 5,
+      "name": "Leadership"
+    },
+    {
+      "id": 6,
+      "name": "Business"
+    },
+    {
+      "id": 7,
+      "name": "Biography"
+    },
+    {
+      "id": 8,
+      "name": "History"
+    },
+    {
+      "id": 9,
+      "name": "Science"
+    },
+    {
+      "id": 10,
+      "name": "Fiction"
+    },
+    {
+      "id": 11,
+      "name": "Non-fiction"
+    },
+    {
+      "id": 12,
+      "name": "Fantasy"
+    },
+    {
+      "id": 13,
+      "name": "Mystery"
+    },
+    {
+      "id": 14,
+      "name": "Thriller"
+    },
+    {
+      "id": 15,
+      "name": "Horror"
+    },
+    {
+      "id": 16,
+      "name": "Romance"
+    },
+    {
+      "id": 17,
+      "name": "Science Fiction"
+    },
+    {
+      "id": 18,
+      "name": "Dystopian"
+    },
+    {
+      "id": 19,
+      "name": "Adventure"
+    },
+    {
+      "id": 20,
+      "name": "Children"
+    },
+    {
+      "id": 21,
+      "name": "Young Adult"
+    },
+    {
+      "id": 22,
+      "name": "Comics"
+    },
+    {
+      "id": 23,
+      "name": "Manga"
+    },
+    {
+      "id": 24,
+      "name": "Graphic Novel"
+    },
+    {
+      "id": 25,
+      "name": "Cookbook"
+    },
+    {
+      "id": 26,
+      "name": "Health"
+    },
+    {
+      "id": 27,
+      "name": "Fitness"
+    },
+    {
+      "id": 28,
+      "name": "Self-help"
+    },
+    {
+      "id": 29,
+      "name": "Travel"
+    },
+    {
+      "id": 30,
+      "name": "Guide"
+    },
+    {
+      "id": 31,
+      "name": "Art"
+    },
+    {
+      "id": 32,
+      "name": "Photography"
+    },
+    {
+      "id": 33,
+      "name": "Crafts"
+    },
+    {
+      "id": 34,
+      "name": "Music"
+    },
+    {
+      "id": 35,
+      "name": "Film"
+    },
+    {
+      "id": 36,
+      "name": "History"
+    },
+    {
+      "id": 37,
+      "name": "Biography"
+    },
+    {
+      "id": 38,
+      "name": "Science"
+    },
+    {
+      "id": 39,
+      "name": "Drama"
+    },
+    {
+      "id": 40,
+      "name": "Magical Realism"
+    },
+    {
+      "id": 41,
+      "name": "Architecture"
+    },
+    {
+      "id": 42,
+      "name": "Album"
+    },
+    {
+      "id": 43,
+      "name": "Paintings"
+    },
+    {
+      "id": 44,
+      "name": "Manga"
+    }
+  ]
+}

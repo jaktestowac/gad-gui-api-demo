@@ -42,6 +42,7 @@ const bookShopItemsUrl = "/api/book-shop-items";
 const bookShopOrderStatusesUrl = "/api/book-shop-order-statuses";
 const bookShopOrdersUrl = "/api/book-shop-orders";
 const bookShopManageUrl = "/api/book-shop-manage";
+const learningBaseUrl = "/api/learning";
 
 const existingUserEmail = "Danial.Dicki@dicki.test";
 const existingUserPass = "test2";
@@ -73,10 +74,12 @@ const clearDbAfter = false;
 const clearDbBefore = true;
 
 const restoreDbPath = "/api/restoreTestDB";
+const restoreLearningDbPath = "/api/learning/system/restore";
 
 module.exports = {
   serverWsAddress,
   restoreDbPath,
+  restoreLearningDbPath,
   expect,
   request,
   faker,
@@ -141,4 +144,5 @@ module.exports = {
   existingUserBookShopAdminEmail,
   existingUserBookShopAdminPass,
   existingUserBookShopAdminId,
+  learningBaseUrl,
 };

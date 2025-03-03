@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | Learning System Health</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="./css/learning.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .health-dashboard {
+            padding: 16px;
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .dashboard-header h2 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 20px;
+        }
+
+        .status-cards {
+            display: flex;
+            flex-wrap: wrap;
+            overflow-wrap: break-word;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .status-card {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            min-width: 150px;
+        }
+
+        .status-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-card h3 {
+            margin: 0 0 8px 0;
+            font-size: 12px;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-value {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0;
+            line-height: 1;
+        }
+
+        .status-healthy {
+            color: #00c853;
+        }
+
+        .status-warning {
+            color: #ffa000;
+        }
+
+        .status-error {
+            color: #d32f2f;
+        }
+
+        .metrics-section {
+            background: white;
+            padding: 16px;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 16px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .metrics-section h3 {
+            margin: 0 0 12px 0;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 16px;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            height: 250px;
+        }
+
+        .endpoint-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 20px;
+            font-size: 13px;
+        }
+
+        .endpoint-table th,
+        .endpoint-table td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .endpoint-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+            position: sticky;
+            top: 0;
+        }
+
+        .endpoint-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .refresh-button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            font-size: 13px;
+        }
+
+        .refresh-button:hover {
+            background: var(--secondary-color);
+            transform: translateY(-1px);
+        }
+
+        .refresh-button i {
+            font-size: 16px;
+        }
+
+        #refreshTimer {
+            margin-left: 8px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 12px;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .status-badge.active {
+            background-color: rgba(0, 200, 83, 0.1);
+            color: #00c853;
+        }
+
+        @media (max-width: 768px) {
+            .status-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .endpoint-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+
+        .endpoint-table tbody tr td {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 300px;
+        }
+
+        canvas {
+            max-height: 100%;
+        }
+
+        /* Add scrolling for endpoint table */
+        .metrics-section.endpoints {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-gui-learning" class="nav-menu"></h1>
+        </div>
+    </header>
+    <br />
+    <br />
+    <br />
+
+    <img src="/data/learning/gad-learning-logo.png" alt="GAD Learning" class="hero-logo hero-absolute" aria-label="GAD Learning" title="GAD Learning">
+
+    <main class="dashboard-container">
+        <div id="sidebarContainer"></div>
+        <div class="health-dashboard">
+            <div class="dashboard-header">
+                <h2>System Health Dashboard</h2>
+                <button id="refreshButton" class="refresh-button">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                    <span id="refreshTimer"></span>
+                </button>
+            </div>
+
+            <div class="status-cards">
+                <div class="status-card">
+                    <h3>System Status</h3>
+                    <div id="systemStatus" class="status-value">Loading...</div>
+                </div>
+                <div class="status-card">
+                    <h3>Uptime</h3>
+                    <div id="uptime" class="status-value">Loading...</div>
+                </div>
+                <div class="status-card">
+                    <h3>Memory Usage</h3>
+                    <div id="memoryUsage" class="status-value">Loading...</div>
+                </div>
+                <div class="status-card">
+                    <h3>Total Requests</h3>
+                    <div id="totalRequests" class="status-value">Loading...</div>
+                </div>
+                <div class="status-card">
+                    <h3>Requests/Minute</h3>
+                    <div id="requestsPerMinute" class="status-value">Loading...</div>
+                </div>
+            </div>
+
+            <div class="metrics-section">
+                <h3>Service Health</h3>
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <canvas id="requestsChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="errorRateChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="metrics-section endpoints">
+                <h3>Endpoint Activity</h3>
+                <table class="endpoint-table">
+                    <thead>
+                        <tr>
+                            <th>Endpoint</th>
+                            <th>Requests</th>
+                            <th>Last Hour</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="endpointTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <button class="mobile-menu-button" aria-label="Open menu">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div class="sidebar-overlay"></div>
+
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+    <script type="text/javascript" src="./js/sidebar.js"></script>
+    <script type="text/javascript" src="./js/components/sidebar.js"></script>
+    <script type="text/javascript" src="./js/services/api.js"></script>
+    <script type="text/javascript" src="./js/admin-health.js"></script>
+    <script>
+        // Add smooth rotation animation to refresh icon when clicked
+        document.getElementById('refreshButton').addEventListener('click', function () {
+            const icon = this.querySelector('i');
+            icon.style.transition = 'transform 0.5s';
+            icon.style.transform = 'rotate(360deg)';
+            setTimeout(() => icon.style.transform = '', 500);
+        });
+    </script>
+</body>
+
+</html>

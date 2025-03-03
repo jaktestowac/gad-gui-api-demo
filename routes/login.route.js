@@ -155,11 +155,20 @@ const processLoginRoutes = (req, res) => {
 const welcomeRoutes = (req, res) => {
   // get the username
   let username = req.cookies.username;
-  if (isUndefined(username)) {
-    // redirect with a fail msg
+  let token = req.cookies.token;
+  if (isUndefined(username) || isUndefined(token)) {
+    logDebug("welcomeRoutes: Redirect to login", { username, token });
+    res.clearCookie("firstname");
+    res.clearCookie("username");
+    res.clearCookie("email");
+    res.clearCookie("token");
+    res.clearCookie("id");
+    res.clearCookie("avatar");
+    res.clearCookie("expires");
+    res.clearCookie("username");
     return res.redirect("/login");
   }
-  logDebug("Welcome:", { username });
+  logDebug("welcomeRoutes:", { username });
   // render welcome page
   return res.render("welcome", {
     username,

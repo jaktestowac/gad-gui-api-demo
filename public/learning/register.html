@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | Register</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="./css/learning.css" />
+    <link rel="stylesheet" href="./css/auth.css" />
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-gui-learning" class="nav-menu"></h1>
+        </div>
+    </header>
+    <br />
+    <br />
+    <img src="/data/learning/gad-learning-logo.png" alt="GAD Learning" class="hero-logo hero-absolute" aria-label="GAD Learning" title="GAD Learning">
+    <main class="auth-container">
+        <div class="auth-card compact">
+            <a href="welcome.html" class="return-button">
+                <i class="fas fa-arrow-left"></i>
+                Back to Welcome
+            </a>
+            <div class="registration-header">
+                <h1>Create Account</h1>
+            </div>
+
+            <form id="registerForm" class="auth-form" novalidate>
+                <div class="avatar-section">
+                    <div id="avatarPicker"></div>
+                </div>
+
+                <div class="registration-form-grid">
+                    <div class="input-row">
+                        <div class="form-group">
+                            <label for="firstNameInput">First Name</label>
+                            <input type="text" id="firstNameInput" name="firstName" required minlength="2" aria-label="First name">
+                        </div>
+                        <div class="form-group">
+                            <label for="lastNameInput">Last Name</label>
+                            <input type="text" id="lastNameInput" name="lastName" required minlength="2" aria-label="Last name">
+                        </div>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="form-group">
+                            <label for="usernameInput">Username</label>
+                            <input type="text" id="usernameInput" name="username" required minlength="3" pattern="[a-zA-Z0-9_]+" aria-label="Username">
+                        </div>
+                        <div class="form-group">
+                            <label for="emailInput">Email</label>
+                            <input type="email" id="emailInput" name="email" required aria-label="Email address">
+                        </div>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="form-group">
+                            <label for="passwordInput">Password</label>
+                            <input type="password" id="passwordInput" name="password" required minlength="6" aria-label="Password">
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPasswordInput">Confirm</label>
+                            <input type="password" id="confirmPasswordInput" name="confirmPassword" required aria-label="Confirm password">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="primary-button">Create Account</button>
+                </div>
+            </form>
+
+            <p class="auth-footer">
+                Already have an account? <a href="login.html">Sign In</a>
+            </p>
+        </div>
+    </main>
+
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+
+    <script src="./js/services/api.js"></script>
+    <script src="./js/services/notifications.js"></script>
+    <script src="./js/auth.js"></script>
+    <script src="./js/components/avatar-picker.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const avatarPicker = new AvatarPicker('avatarPicker', (avatar) => {
+                document.getElementById('registerForm').dataset.selectedAvatar = avatar;
+            });
+            avatarPicker.loadAvatars();
+        });
+    </script>
+</body>
+
+</html>

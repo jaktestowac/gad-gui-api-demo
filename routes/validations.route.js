@@ -59,6 +59,8 @@ const {
 const { userBaseAuth, updateUserActions, getAdminAuth } = require("../helpers/user-auth.helpers");
 const { handleBookShopPaymentHistory } = require("../endpoints/book-shop/book-shop-payment-history-endpoint.helpers");
 const { handleMaze } = require("../endpoints/maze-endpoint.helpers");
+const { handleLearning } = require("../endpoints/learning/learning-endpoint.helpers");
+const { handlePractice } = require("../endpoints/practice-endpoint.helpers");
 
 const validationsRoutes = (req, res, next) => {
   let userAuth = userBaseAuth;
@@ -104,6 +106,11 @@ const validationsRoutes = (req, res, next) => {
 
     if (req.url.includes("/api/config")) {
       handleConfig(req, res);
+      return;
+    }
+
+    if (req.url.includes("/api/practice")) {
+      handlePractice(req, res);
       return;
     }
 
@@ -235,6 +242,10 @@ const validationsRoutes = (req, res, next) => {
 
     if (req.url.includes("/api/flashposts")) {
       handleFlashPosts(req, res);
+    }
+
+    if (req.url.includes("/api/learning")) {
+      handleLearning(req, res);
     }
 
     // book-shop endpoints

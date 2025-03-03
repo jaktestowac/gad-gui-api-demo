@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🦎 GAD | Login modal</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <style>
+        .main-body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        .success-container {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 1rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            color: #4ade80;
+            margin-bottom: 1rem;
+        }
+
+        .success-title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .success-message {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .user-info {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4ade80;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            transition: background 0.3s;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .system-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4ade80;
+        }
+
+        .logout-btn {
+            margin-top: 2rem;
+            background: rgba(255, 0, 0, 0.2);
+            border: none;
+            padding: 0.8rem 2rem;
+            color: white;
+            border-radius: 0.5rem;
+            cursor: pointer;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #status {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.5rem 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 0.5rem;
+        }
+
+        .failure-container {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 1rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            animation: shake 0.5s ease-in-out;
+        }
+
+        .failure-icon {
+            font-size: 4rem;
+            color: #ff4747;
+            margin-bottom: 1rem;
+        }
+
+        .failure-title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #ff4747;
+        }
+
+        .retry-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            padding: 0.8rem 2rem;
+            color: white;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+
+        .retry-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-10px);
+            }
+
+            75% {
+                transform: translateX(10px);
+            }
+        }
+
+        .notifications {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1000;
+        }
+
+        .notification {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .real-time-clock {
+            font-size: 1.2rem;
+            margin: 1rem 0;
+            font-family: monospace;
+        }
+
+        .task-list {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .task-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 0.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        .task-filter {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.7rem center;
+            background-size: 1.2rem;
+            padding-right: 2.5rem;
+        }
+
+        .task-filter:hover,
+        .task-filter:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+        }
+
+        .task-filter option {
+            background: #2a2a2a;
+            color: white;
+            padding: 0.5rem;
+        }
+
+        .task-controls-label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .task-count {
+            font-size: 0.9rem;
+            padding: 0.3rem 0.8rem;
+            background: rgba(74, 222, 128, 0.2);
+            border-radius: 1rem;
+            margin-left: 1rem;
+        }
+
+        .task-section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 0.3rem;
+            transition: all 0.3s;
+        }
+
+        .task-item.completed {
+            opacity: 0.6;
+            text-decoration: line-through;
+        }
+
+        .task-item.priority-high {
+            border-left: 3px solid #ff4747;
+        }
+
+        .task-item.priority-medium {
+            border-left: 3px solid #ffd747;
+        }
+
+        .task-item.priority-low {
+            border-left: 3px solid #47ff47;
+        }
+
+        .task-actions {
+            margin-left: auto;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .task-edit-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 0.3rem;
+            border-radius: 0.3rem;
+            flex-grow: 1;
+        }
+
+        .theme-switcher {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.8rem;
+            border-radius: 2rem;
+            display: flex;
+            gap: 0.8rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .theme-btn {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-btn:hover {
+            transform: scale(1.1);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .theme-btn.active {
+            border-color: white;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .theme-btn::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .theme-btn:hover::after {
+            opacity: 1;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .widget-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .widget {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            backdrop-filter: blur(5px);
+        }
+
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+            text-align: center;
+        }
+
+        .calendar-day {
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 0.3rem;
+            cursor: pointer;
+        }
+
+        .calendar-day:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .notes-area {
+            width: 100%;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            border-radius: 0.5rem;
+            color: white;
+            padding: 0.5rem;
+            margin-top: 1rem;
+            resize: vertical;
+        }
+
+        .quick-settings {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            backdrop-filter: blur(5px);
+            margin: 2rem 0;
+            text-align: left;
+        }
+
+        .setting-item {
+            margin: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .setting-item label {
+            min-width: 120px;
+        }
+
+        .calendar-day.header {
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .calendar-day.current {
+            background: rgba(74, 222, 128, 0.2);
+        }
+
+        .calendar-day.selected {
+            background: rgba(74, 222, 128, 0.4);
+        }
+
+        .calendar-day.empty {
+            background: transparent;
+        }
+
+        .setting-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .setting-item input[type="range"] {
+            width: 150px;
+            cursor: pointer;
+        }
+
+        .task-input-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .task-input-container:focus-within {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+        }
+
+        .task-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 0.5rem;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .task-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .add-task-btn {
+            background: rgba(74, 222, 128, 0.2);
+            border: none;
+            padding: 0.5rem 1rem;
+            color: white;
+            border-radius: 0.3rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .add-task-btn:hover {
+            background: rgba(74, 222, 128, 0.3);
+        }
+
+        .session-timer {
+            position: fixed;
+            top: 5rem;
+            left: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 1000;
+        }
+
+        .session-timer.warning {
+            background: rgba(255, 87, 34, 0.2);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+    <br />
+    <br />
+    <div class="main-body">
+        <div id="status">Waiting for authentication...</div>
+
+        <div class="session-timer" id="sessionTimer">
+            <i class="fas fa-clock"></i>
+            <span>Session: <span id="sessionTime">60</span>s</span>
+        </div>
+
+        <div class="success-container" id="successContent">
+            <div class="success-icon">✓</div>
+            <h1 class="success-title">Authentication Successful!</h1>
+            <p class="success-message" id="welcomeMessage">Welcome to the secure area</p>
+
+            <div class="user-info">
+                <p>Session started: <span id="loginTime"></span></p>
+                <p>Username: <span id="userDisplay"></span></p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">28</div>
+                    <div>Active Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">99.9%</div>
+                    <div>Uptime</div>
+                </div>
+            </div>
+
+            <div class="system-status">
+                <div class="status-dot"></div>
+                <span>All Systems Operational</span>
+            </div>
+
+            <button class="logout-btn" onclick="logout()">Logout</button>
+
+            <div class="real-time-clock" id="clock">00:00:00</div>
+
+            <div class="task-list">
+                <div class="task-header">
+                    <div class="task-section-title">
+                        <span>Quick Tasks</span>
+                        <span class="task-count" id="taskCount">0 tasks</span>
+                    </div>
+                </div>
+                <div class="task-controls">
+                    <div>
+                        <label class="task-controls-label">View</label>
+                        <select class="task-filter" id="taskFilter">
+                            <option value="all">📋 All Tasks</option>
+                            <option value="active">▶️ Active</option>
+                            <option value="completed">✓ Completed</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="task-controls-label">Priority</label>
+                        <select class="task-filter" id="taskPriority">
+                            <option value="low">🟢 Low Priority</option>
+                            <option value="medium">🟡 Medium Priority</option>
+                            <option value="high">🔴 High Priority</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="task-controls-label">Sort</label>
+                        <select class="task-filter" id="taskSort">
+                            <option value="newest">⌚ Newest First</option>
+                            <option value="oldest">⌚ Oldest First</option>
+                            <option value="priority">⚡ By Priority</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="taskItems"></div>
+                <div class="task-input-container">
+                    <input type="text" class="task-input" placeholder="Type a new task and press Enter..." id="newTask">
+                    <button class="add-task-btn" onclick="addTaskFromInput()">Add</button>
+                </div>
+            </div>
+
+            <div class="theme-switcher">
+                <button class="theme-btn active" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)" onclick="changeTheme('default')" title="Default Theme"></button>
+                <button class="theme-btn" style="background: linear-gradient(135deg, #2dd4bf 0%, #0891b2 100%)" onclick="changeTheme('teal')" title="Teal Theme"></button>
+                <button class="theme-btn" style="background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%)" onclick="changeTheme('rose')" title="Rose Theme"></button>
+                <button class="theme-btn" style="background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%)" onclick="changeTheme('violet')" title="Violet Theme"></button>
+                <button class="theme-btn" style="background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%)" onclick="changeTheme('amber')" title="Amber Theme"></button>
+            </div>
+
+            <div class="widget-grid">
+                <div class="widget" id="weatherWidget">
+                    <h3>Weather</h3>
+                    <div id="weatherInfo">Loading weather...</div>
+                </div>
+
+                <div class="widget">
+                    <h3>Calendar</h3>
+                    <div class="calendar" id="miniCalendar"></div>
+                </div>
+
+                <div class="widget">
+                    <h3>Quick Notes</h3>
+                    <textarea class="notes-area" id="userNotes" placeholder="Type your notes here..."></textarea>
+                </div>
+
+                <div class="widget">
+                    <h3>Activity</h3>
+                    <canvas id="activityChart"></canvas>
+                </div>
+            </div>
+
+            <div class="quick-settings">
+                <h3>Quick Settings</h3>
+                <div class="setting-item">
+                    <label>Notifications</label>
+                    <input type="checkbox" id="notificationsToggle">
+                </div>
+                <div class="setting-item">
+                    <label>Font Size</label>
+                    <input type="range" id="fontSizeSlider" min="12" max="20" value="16">
+                </div>
+            </div>
+
+        </div>
+
+        <div class="failure-container" id="failureContent">
+            <div class="failure-icon">✕</div>
+            <h1 class="failure-title">Authentication Failed</h1>
+            <p class="success-message">Invalid username or password</p>
+            <button class="retry-button" onclick="authenticate()">Try Again</button>
+        </div>
+
+        <div class="notifications" id="notificationArea"></div>
+    </div>
+    <script>
+        async function authenticate() {
+            document.getElementById('failureContent').style.display = 'none';
+            const credentials = prompt('Please enter credentials\nUse: user:pass');
+            if (!credentials) {
+                showFailurePage('Authentication cancelled');
+                return false;
+            }
+
+            try {
+                const [username, password] = credentials.split(':');
+
+                const response = await fetch('/api/practice/modals/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showSuccessPage(username);
+                    return true;
+                } else {
+                    showFailurePage(data.message || 'Authentication failed');
+                    return false;
+                }
+            } catch (e) {
+                console.error('Auth error:', e);
+                showFailurePage('Network or server error');
+                return false;
+            }
+        }
+
+        function showSuccessPage(username) {
+            document.getElementById('status').style.display = 'none';
+            document.getElementById('successContent').style.display = 'block';
+            document.getElementById('userDisplay').textContent = username;
+            document.getElementById('loginTime').textContent = new Date().toLocaleString();
+
+            const hour = new Date().getHours();
+            let greeting = 'Good ';
+            if (hour < 12) greeting += 'morning';
+            else if (hour < 18) greeting += 'afternoon';
+            else greeting += 'evening';
+
+            document.getElementById('welcomeMessage').textContent =
+                `${greeting}, ${username}! Welcome to the secure area`;
+
+            updateClock();
+            setInterval(updateClock, 1000);
+
+            showNotification(`Welcome back, ${username}!`);
+
+            initializeFeatures();
+
+            // Initialize session timeout
+            resetSession();
+        }
+
+        function logout(expired = false) {
+            clearTimeout(sessionTimeout);
+            clearInterval(sessionInterval);
+            location.reload();
+
+            // if (expired || confirm('Are you sure you want to logout?')) {
+            //     if (expired) {
+            //         showNotification('Session expired. Please login again.');
+            //     }
+            //     location.reload();
+            // } else {
+            //     resetSession();
+            // }
+        }
+
+        function showFailurePage(message) {
+            document.getElementById('status').style.display = 'none';
+            document.getElementById('successContent').style.display = 'none';
+            document.getElementById('failureContent').style.display = 'block';
+            document.querySelector('.failure-container .success-message').textContent = message;
+        }
+
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').textContent =
+                now.toLocaleTimeString('en-US', { hour12: false });
+        }
+
+        function showNotification(message) {
+            const notify = document.createElement('div');
+            notify.className = 'notification';
+            notify.textContent = message;
+            document.getElementById('notificationArea').appendChild(notify);
+            setTimeout(() => notify.remove(), 5000);
+        }
+
+        function addTask(text, priority = 'medium', completed = false, isNew = true) {
+            const taskDiv = document.createElement('div');
+            taskDiv.className = `task-item priority-${priority}${completed ? ' completed' : ''}`;
+            taskDiv.innerHTML = `
+                <input type="checkbox" ${completed ? 'checked' : ''}>
+                <span class="task-text">${text}</span>
+                <div class="task-actions">
+                    <button onclick="editTask(this)">✎</button>
+                    <button onclick="this.closest('.task-item').remove(); saveTasks()">×</button>
+                </div>
+            `;
+
+            taskDiv.querySelector('input[type="checkbox"]').addEventListener('change', function () {
+                taskDiv.classList.toggle('completed');
+                saveTasks();
+                showNotification(this.checked ? 'Task completed' : 'Task marked active');
+                updateTaskCount();
+            });
+
+            document.getElementById('taskItems').appendChild(taskDiv);
+            if (isNew) {
+                saveTasks();
+                showNotification('Task added');
+            }
+            updateTaskCount();
+        }
+
+        function editTask(button) {
+            const taskItem = button.closest('.task-item');
+            const taskText = taskItem.querySelector('.task-text');
+            const currentText = taskText.textContent;
+
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'task-edit-input';
+            input.value = currentText;
+
+            taskText.replaceWith(input);
+            input.focus();
+
+            input.addEventListener('blur', function () {
+                const newText = this.value.trim();
+                if (newText) {
+                    const span = document.createElement('span');
+                    span.className = 'task-text';
+                    span.textContent = newText;
+                    this.replaceWith(span);
+                    saveTasks();
+                    showNotification('Task updated');
+                }
+            });
+
+            input.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    this.blur();
+                }
+            });
+        }
+
+        function saveTasks() {
+            const tasks = Array.from(document.querySelectorAll('.task-item')).map(task => ({
+                text: task.querySelector('.task-text').textContent,
+                completed: task.classList.contains('completed'),
+                priority: task.classList.contains('priority-high') ? 'high' :
+                    task.classList.contains('priority-medium') ? 'medium' : 'low'
+            }));
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+
+        function loadTasks() {
+            const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+            tasks.forEach(task => {
+                addTask(task.text, task.priority, task.completed, false);
+            });
+            updateTaskCount();
+        }
+
+        function initializeTaskControls() {
+            const taskFilter = document.getElementById('taskFilter');
+            if (taskFilter) {
+                taskFilter.addEventListener('change', function () {
+                    const items = document.querySelectorAll('.task-item');
+                    items.forEach(item => {
+                        switch (this.value) {
+                            case 'active':
+                                item.style.display = item.classList.contains('completed') ? 'none' : 'flex';
+                                break;
+                            case 'completed':
+                                item.style.display = item.classList.contains('completed') ? 'flex' : 'none';
+                                break;
+                            default:
+                                item.style.display = 'flex';
+                        }
+                    });
+                });
+            }
+
+            const taskSort = document.getElementById('taskSort');
+            if (taskSort) {
+                taskSort.addEventListener('change', function () {
+                    const taskList = document.getElementById('taskItems');
+                    const tasks = Array.from(taskList.getElementsByClassName('task-item'));
+
+                    tasks.sort((a, b) => {
+                        switch (this.value) {
+                            case 'priority':
+                                {
+                                    const priorityOrder = { high: 1, medium: 2, low: 3 };
+                                    const priorityA = a.classList.contains('priority-high') ? 'high' :
+                                        a.classList.contains('priority-medium') ? 'medium' : 'low';
+                                    const priorityB = b.classList.contains('priority-high') ? 'high' :
+                                        b.classList.contains('priority-medium') ? 'medium' : 'low';
+                                    return priorityOrder[priorityA] - priorityOrder[priorityB];
+                                }
+                            case 'oldest':
+                                return 1;
+                            case 'newest':
+                                return -1;
+                        }
+                    });
+
+                    tasks.forEach(task => taskList.appendChild(task));
+                });
+            }
+
+            const newTaskInput = document.getElementById('newTask');
+            if (newTaskInput) {
+                newTaskInput.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') {
+                        addTaskFromInput();
+                    }
+                });
+            }
+        }
+
+        function addTaskFromInput() {
+            const input = document.getElementById('newTask');
+            const text = input.value.trim();
+            if (text) {
+                const priority = document.getElementById('taskPriority').value;
+                addTask(text, priority);
+                input.value = '';
+                input.focus();
+            }
+        }
+
+        function updateTaskCount() {
+            const total = document.querySelectorAll('.task-item').length;
+            const completed = document.querySelectorAll('.task-item.completed').length;
+            document.getElementById('taskCount').textContent =
+                `${completed}/${total} done`;
+        }
+
+        function initializeFeatures() {
+            initializeWeather();
+            initializeCalendar();
+            loadNotes();
+            initializeActivityChart();
+            initializeSettings();
+            initializeTaskControls();
+            loadTasks();
+        }
+
+        function initializeWeather() {
+            const weatherInfo = document.getElementById('weatherInfo');
+            if (weatherInfo) {
+                setTimeout(() => {
+                    weatherInfo.innerHTML = `
+                    <div style="font-size: 1.2rem; margin-bottom: 0.5rem">🌤️ 22°C</div>
+                    <div>Partly Cloudy</div>
+                    <div style="font-size: 0.9rem; margin-top: 0.5rem">Humidity: 65%</div>
+                `;
+                }, 1000);
+            }
+        }
+
+        function initializeCalendar() {
+            const calendar = document.getElementById('miniCalendar');
+            if (!calendar) return;
+
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            calendar.innerHTML = ''; // Clear existing content
+
+            days.forEach(day => {
+                const dayEl = document.createElement('div');
+                dayEl.className = 'calendar-day header';
+                dayEl.textContent = day;
+                calendar.appendChild(dayEl);
+            });
+
+            const now = new Date();
+            const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+            const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+            for (let i = 0; i < firstDay.getDay(); i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'calendar-day empty';
+                calendar.appendChild(emptyDay);
+            }
+
+            for (let date = 1; date <= lastDay.getDate(); date++) {
+                const dateEl = document.createElement('div');
+                dateEl.className = 'calendar-day' + (date === now.getDate() ? ' current' : '');
+                dateEl.textContent = date;
+                dateEl.onclick = () => {
+                    document.querySelectorAll('.calendar-day.selected').forEach(el =>
+                        el.classList.remove('selected'));
+                    dateEl.classList.add('selected');
+                    showNotification(`Selected: ${now.toLocaleDateString('en-US', { month: 'short' })} ${date}`);
+                };
+                calendar.appendChild(dateEl);
+            }
+        }
+
+        function initializeActivityChart() {
+            const ctx = document.getElementById('activityChart');
+            if (!ctx) return;
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+                    datasets: [{
+                        label: 'Activity',
+                        data: [12, 19, 3, 5, 2],
+                        borderColor: '#4ade80',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        function initializeSettings() {
+            const fontSizeSlider = document.getElementById('fontSizeSlider');
+            if (fontSizeSlider) {
+                fontSizeSlider.value = localStorage.getItem('fontSize') || '16';
+                document.documentElement.style.fontSize = fontSizeSlider.value + 'px';
+
+                fontSizeSlider.addEventListener('input', function () {
+                    const size = this.value;
+                    document.documentElement.style.fontSize = size + 'px';
+                    localStorage.setItem('fontSize', size);
+                    showNotification(`Font size: ${size}px`);
+                });
+            }
+
+            const notifyToggle = document.getElementById('notificationsToggle');
+            if (notifyToggle) {
+                notifyToggle.checked = localStorage.getItem('notifications') !== 'disabled';
+                notifyToggle.addEventListener('change', function () {
+                    localStorage.setItem('notifications', this.checked ? 'enabled' : 'disabled');
+                    showNotification(this.checked ? 'Notifications enabled' : 'Notifications disabled');
+                });
+            }
+
+            const savedTheme = localStorage.getItem('theme') || 'default';
+            changeTheme(savedTheme);
+        }
+
+        function loadNotes() {
+            const notesArea = document.getElementById('userNotes');
+            if (!notesArea) return;
+
+            const savedNotes = localStorage.getItem('userNotes') || '';
+            notesArea.value = savedNotes;
+
+            notesArea.addEventListener('input', function () {
+                localStorage.setItem('userNotes', this.value);
+                if (this.value.trim()) {
+                    showNotification('Notes saved');
+                }
+            });
+
+            notesArea.addEventListener('input', function () {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+
+            notesArea.addEventListener('blur', function () {
+                if (this.value.trim()) {
+                    localStorage.setItem('userNotes', this.value);
+                }
+            });
+        }
+
+        function changeTheme(theme) {
+            const themes = {
+                default: {
+                    gradient: '135deg, #667eea 0%, #764ba2 100%',
+                    accent: '#4ade80'
+                },
+                teal: {
+                    gradient: '135deg, #2dd4bf 0%, #0891b2 100%',
+                    accent: '#2dd4bf'
+                },
+                rose: {
+                    gradient: '135deg, #f43f5e 0%, #e11d48 100%',
+                    accent: '#f43f5e'
+                },
+                violet: {
+                    gradient: '135deg, #8b5cf6 0%, #6366f1 100%',
+                    accent: '#8b5cf6'
+                },
+                amber: {
+                    gradient: '135deg, #fbbf24 0%, #d97706 100%',
+                    accent: '#fbbf24'
+                }
+            };
+
+            const selectedTheme = themes[theme];
+            const bodyEl = document.querySelector('.main-body');
+            bodyEl.style.background = `linear-gradient(${selectedTheme.gradient})`;
+            document.body.style.background = `linear-gradient(${selectedTheme.gradient})`;
+
+            document.querySelectorAll('.stat-value, .status-dot, .task-count').forEach(el => {
+                if (el.classList.contains('status-dot')) {
+                    el.style.background = selectedTheme.accent;
+                } else {
+                    el.style.color = selectedTheme.accent;
+                }
+            });
+
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('onclick').includes(theme));
+            });
+
+            localStorage.setItem('theme', theme);
+            showNotification(`Theme changed to ${theme}`);
+        }
+
+        let sessionTimeout;
+        let sessionInterval;
+        let sessionTimeLeft = 60;
+
+        function resetSession() {
+            clearTimeout(sessionTimeout);
+            clearInterval(sessionInterval);
+            sessionTimeLeft = 60;
+
+            const timerElement = document.getElementById('sessionTime');
+            const timerContainer = document.getElementById('sessionTimer');
+
+            if (timerElement && timerContainer) {
+                timerElement.textContent = sessionTimeLeft;
+                timerContainer.classList.remove('warning');
+            }
+
+            sessionTimeout = setTimeout(logout, sessionTimeLeft * 1000);
+            sessionInterval = setInterval(updateSessionTimer, 1000);
+        }
+
+        function updateSessionTimer() {
+            sessionTimeLeft--;
+            const timerElement = document.getElementById('sessionTime');
+            const timerContainer = document.getElementById('sessionTimer');
+
+            if (timerElement && timerContainer) {
+                timerElement.textContent = sessionTimeLeft;
+
+                if (sessionTimeLeft <= 10) {
+                    timerContainer.classList.add('warning');
+                    if (sessionTimeLeft === 10) {
+                        showNotification('Session expires in 10 seconds!');
+                    }
+                }
+            }
+
+            if (sessionTimeLeft <= 0) {
+                logout();
+            }
+        }
+
+        // function monitorUserActivity() {
+        //     const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+        //     events.forEach(event => {
+        //         document.addEventListener(event, resetSession);
+        //     });
+        // }
+
+        window.onload = authenticate;
+    </script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>

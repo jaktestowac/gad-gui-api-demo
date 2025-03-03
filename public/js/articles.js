@@ -344,7 +344,7 @@ const getItemHTML = (item) => {
   
   <div class="labels-container" id="labels-container-${item.id}"></div>
   
-  <label></label><span data-testid="article-${item.id}-body">${item.body?.substring(0, 200)} (...)</span><br>
+  <label></label><div><span data-testid="article-${item.id}-body">${item.body?.substring(0, 200)} (...)</span></div>
   
   <div style="display: flex; justify-content: space-between;">
     <span style="display: flex; justify-content: flex-start;">

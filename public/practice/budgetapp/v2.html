@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>🦎 GAD - Budget App - V2</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="styles/budget-app.css">
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+    <br />
+    <br />
+
+    <div class="app-header">
+        <h1 class="app-header__title">
+            <i class="fas fa-wallet"></i>
+            Budget App V2
+        </h1>
+        <a href="index.html" class="btn btn-outline">
+            <i class="fas fa-arrow-left"></i>
+            Back
+        </a>
+    </div>
+
+    <div class="budget-app">
+        <div class="budget-summary">
+            <div class="summary-item">
+                <h3>Total Income</h3>
+                <span id="totalIncome">$0.00</span>
+            </div>
+            <div class="summary-item">
+                <h3>Total Expenses</h3>
+                <span id="totalExpenses">$0.00</span>
+            </div>
+            <div class="summary-item">
+                <h3>Balance</h3>
+                <span id="balance">$0.00</span>
+            </div>
+        </div>
+
+        <div class="budget-form">
+            <h2>Add New Transaction</h2>
+            <form id="expenseForm">
+                <input type="text" id="title" placeholder="Title" required>
+                <input type="number" id="amount" placeholder="Amount" step="0.01" required>
+                <select id="type" required>
+                    <option value="expense">Expense</option>
+                    <option value="income">Income</option>
+                </select>
+                <select id="category" required>
+                    <option value="">Select Category</option>
+                    <option value="food">Food</option>
+                    <option value="rent">Rent</option>
+                    <option value="utilities">Utilities</option>
+                    <option value="transport">Transport</option>
+                    <option value="salary">Salary</option>
+                    <option value="other">Other</option>
+                </select>
+                <input type="datetime-local" id="date" required>
+                <button type="submit" class="btn btn-primary">Add Transaction</button>
+            </form>
+        </div>
+
+        <div class="budget-filters">
+            <select id="filterType">
+                <option value="">All Types</option>
+                <option value="expense">Expenses</option>
+                <option value="income">Income</option>
+            </select>
+            <select id="filterCategory">
+                <option value="">All Categories</option>
+                <option value="food">Food</option>
+                <option value="rent">Rent</option>
+                <option value="utilities">Utilities</option>
+                <option value="transport">Transport</option>
+                <option value="salary">Salary</option>
+                <option value="other">Other</option>
+            </select>
+            <input type="date" id="filterFromDate" placeholder="From Date">
+            <input type="date" id="filterToDate" placeholder="To Date">
+            <button onclick="applyFilters()" class="btn btn-outline">
+                <i class="fas fa-filter"></i>
+                Apply Filters
+            </button>
+        </div>
+
+        <div class="budget-list">
+            <h2>Transactions List</h2>
+            <div id="expensesList"></div>
+        </div>
+    </div>
+
+    <div class="dialog-overlay" id="confirmDialog">
+        <div class="dialog">
+            <h3 class="dialog__title">Confirm Delete</h3>
+            <p class="dialog__content">Are you sure you want to delete this transaction?</p>
+            <div class="dialog__actions">
+                <button class="btn btn-outline" id="cancelDelete">Cancel</button>
+                <button class="btn btn-danger" id="confirmDelete">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('expenseForm');
+            const expensesList = document.getElementById('expensesList');
+
+            document.getElementById('date').value = new Date().toISOString().slice(0, 16);
+
+            function loadExpenses(filters = {}) {
+                let url = '/api/practice/v2/expenses';
+                const params = new URLSearchParams(filters);
+                if (params.toString()) {
+                    url += '?' + params.toString();
+                }
+
+                fetch(url)
+                    .then(response => response.json())
+                    .then(expenses => {
+                        // Calculate totals
+                        const totals = expenses.reduce((acc, curr) => {
+                            if (curr.type === 'income') {
+                                acc.income += curr.amount;
+                            } else {
+                                acc.expenses += curr.amount;
+                            }
+                            return acc;
+                        }, { income: 0, expenses: 0 });
+
+                        document.getElementById('totalIncome').textContent = `$${totals.income.toFixed(2)}`;
+                        document.getElementById('totalExpenses').textContent = `$${totals.expenses.toFixed(2)}`;
+                        document.getElementById('balance').textContent = `$${(totals.income - totals.expenses).toFixed(2)}`;
+
+                        // Group expenses by month
+                        const groupedExpenses = expenses.reduce((acc, expense) => {
+                            const date = new Date(expense.date);
+                            const monthKey = `${date.getFullYear()}-${date.getMonth()}`;
+                            const monthLabel = date.toLocaleString('default', { month: 'long', year: 'numeric' });
+
+                            if (!acc[monthKey]) {
+                                acc[monthKey] = {
+                                    label: monthLabel,
+                                    expenses: [],
+                                    total: { income: 0, expense: 0 }
+                                };
+                            }
+
+                            acc[monthKey].expenses.push(expense);
+                            acc[monthKey].total[expense.type] += expense.amount;
+                            return acc;
+                        }, {});
+
+                        // Render grouped expenses
+                        expensesList.innerHTML = Object.entries(groupedExpenses)
+                            .sort(([a], [b]) => b.localeCompare(a)) // Sort months in descending order
+                            .map(([monthKey, month]) => `
+                                <div class="month-group">
+                                    <div class="month-header">
+                                        <h3>${month.label}</h3>
+                                        <div class="month-totals">
+                                            <span class="income-total">+$${month.total.income.toFixed(2)}</span>
+                                            <span class="expense-total">-$${month.total.expense.toFixed(2)}</span>
+                                            <span class="month-balance ${month.total.income - month.total.expense >= 0 ? 'positive' : 'negative'}">
+                                                $${(month.total.income - month.total.expense).toFixed(2)}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    ${month.expenses
+                                    .sort((a, b) => new Date(b.date) - new Date(a.date))
+                                    .map(expense => `
+                                            <div class="expense-item ${expense.type}" data-id="${expense.id}">
+                                                <div class="expense-item__content">
+                                                    <span class="expense-item__title">
+                                                        ${getTypeIcon(expense.type)}
+                                                        ${expense.title}
+                                                    </span>
+                                                    <span class="expense-item__amount">
+                                                        ${expense.type === 'expense' ? '-' : '+'}$${expense.amount.toFixed(2)}
+                                                    </span>
+                                                    <span class="expense-item__category">
+                                                        ${getCategoryIcon(expense.category)}
+                                                        ${expense.category}
+                                                    </span>
+                                                    <span class="expense-item__date">
+                                                        <i class="far fa-calendar-alt"></i>
+                                                        ${new Date(expense.date).toLocaleString()}
+                                                    </span>
+                                                </div>
+                                                <button class="btn btn-danger" onclick="deleteExpense(${expense.id})">
+                                                    <i class="fas fa-trash"></i>
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        `).join('')}
+                                </div>
+                            `).join('');
+                    });
+            }
+
+            // Add new expense
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const transaction = {
+                    title: document.getElementById('title').value,
+                    amount: parseFloat(document.getElementById('amount').value),
+                    type: document.getElementById('type').value,
+                    category: document.getElementById('category').value,
+                    date: new Date(document.getElementById('date').value).toISOString()
+                };
+
+                fetch('/api/practice/v2/expenses', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(transaction)
+                })
+                    .then(response => response.json())
+                    .then(() => {
+                        form.reset();
+                        document.getElementById('date').value = new Date().toISOString().slice(0, 16);
+                        loadExpenses();
+                    });
+            });
+
+            // Delete expense
+            window.deleteExpense = (id) => {
+                const dialog = document.getElementById('confirmDialog');
+                const confirmBtn = document.getElementById('confirmDelete');
+                const cancelBtn = document.getElementById('cancelDelete');
+
+                dialog.classList.add('visible');
+
+                const handleDelete = () => {
+                    fetch(`/api/practice/v2/expenses/${id}`, {
+                        method: 'DELETE'
+                    }).then(() => {
+                        loadExpenses();
+                        cleanup();
+                    });
+                };
+
+                const handleCancel = () => {
+                    cleanup();
+                };
+
+                const cleanup = () => {
+                    dialog.classList.remove('visible');
+                    confirmBtn.removeEventListener('click', handleDelete);
+                    cancelBtn.removeEventListener('click', handleCancel);
+                };
+
+                confirmBtn.addEventListener('click', handleDelete);
+                cancelBtn.addEventListener('click', handleCancel);
+            };
+
+            // Apply filters
+            window.applyFilters = () => {
+                const filters = {
+                    type: document.getElementById('filterType').value,
+                    category: document.getElementById('filterCategory').value,
+                    fromDate: document.getElementById('filterFromDate').value,
+                    toDate: document.getElementById('filterToDate').value
+                };
+
+                // Remove empty filters
+                Object.keys(filters).forEach(key => {
+                    if (!filters[key]) delete filters[key];
+                });
+
+                loadExpenses(filters);
+            };
+
+            // Initial load
+            loadExpenses();
+        });
+
+        function getCategoryIcon(category) {
+            const icons = {
+                food: '<i class="fas fa-utensils"></i>',
+                rent: '<i class="fas fa-home"></i>',
+                utilities: '<i class="fas fa-bolt"></i>',
+                transport: '<i class="fas fa-car"></i>',
+                salary: '<i class="fas fa-money-check-alt"></i>',
+                other: '<i class="fas fa-box"></i>'
+            };
+            return icons[category] || icons.other;
+        }
+
+        function getTypeIcon(type) {
+            return type === 'income'
+                ? '<i class="fas fa-arrow-circle-up income-icon"></i>'
+                : '<i class="fas fa-arrow-circle-down expense-icon"></i>';
+        }
+    </script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>

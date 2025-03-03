@@ -11,6 +11,13 @@ const { searchForBookShopAccountWithUserId } = require("../../helpers/db-operati
 function handleBookShopPaymentHistory(req, res, isAdmin) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
   if (req.method === "GET" && req.url.includes("/api/book-shop-payment-history")) {
+    /*
+    Retrieves payment history
+    - Returns user's transaction history
+    - Validates account access
+    - Shows payment details and status
+    - Includes refunds and purchases
+    */
     const verifyTokenResult = verifyAccessToken(req, res, "GET book-shop-accounts", req.url);
     const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
 
@@ -32,6 +39,13 @@ function handleBookShopPaymentHistory(req, res, isAdmin) {
 
     res.status(HTTP_OK).send(paymentHistory);
   } else if (req.method === "GET" && req.url.includes("/api/book-shop-payment-history/mock")) {
+    /*
+    Provides mock payment data
+    - Returns sample transaction history
+    - Includes various payment types
+    - Shows different payment statuses
+    - Demonstrates history format
+    */
     const samplePaymentHistory = [
       {
         id: 1,

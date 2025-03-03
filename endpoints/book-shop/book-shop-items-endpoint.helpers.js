@@ -9,6 +9,14 @@ const { searchForBookShopAccountWithUserId } = require("../../helpers/db-operati
 function handleBookShopItems(req, res, isAdmin) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
   if (req.method === "GET" && req.url.includes("/api/book-shop-items")) {
+    /*
+    Handles shop item retrieval
+    - Validates user authentication and account access
+    - Returns available shop items
+    - Filters active items only
+    - Includes pricing and availability information
+    - Checks user permissions for item access
+    */
     const verifyTokenResult = verifyAccessToken(req, res, "GET book-shop-accounts", req.url);
     const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
 

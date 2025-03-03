@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>🦎 GAD - TODO App - V2</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="styles/todo-app.css">
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <div class="todo-app">
+        <nav class="todo-nav">
+            <a href="index.html" class="todo-nav__link">← Back to versions</a>
+        </nav>
+
+        <div class="todo-header">
+            <h1 class="todo-header__title">TODO App</h1>
+            <p class="todo-header__subtitle">Version 2 - Advanced Tasks</p>
+        </div>
+
+        <form class="todo-form" id="todoForm">
+            <input type="text" id="todoTitle" class="todo-form__input" placeholder="Enter todo title" required>
+            <select id="todoPriority" class="todo-form__select">
+                <option value="low">Low Priority</option>
+                <option value="medium" selected>Medium Priority</option>
+                <option value="high">High Priority</option>
+            </select>
+            <button type="submit" class="todo-form__button">Add Todo</button>
+        </form>
+
+        <div id="todoList" class="todo-list"></div>
+    </div>
+
+    <script>
+        const api = {
+            getAll: () => fetch('/api/practice/v2/todos').then(r => r.json()),
+            create: (title, priority) => fetch('/api/practice/v2/todos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title, priority })
+            }).then(r => r.json()),
+            update: (id, data) => fetch(`/api/practice/v2/todos/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).then(r => r.json()),
+            delete: (id) => fetch(`/api/practice/v2/todos/${id}`, { method: 'DELETE' })
+        };
+
+        function formatDate(isoDate) {
+            return new Date(isoDate).toLocaleString();
+        }
+
+        function renderTodos(todos) {
+            const container = document.getElementById('todoList');
+            container.innerHTML = todos.map(todo => `
+                <div class="todo-item todo-item--priority-${todo.priority} ${todo.isCompleted ? 'todo-item--completed' : ''}" data-id="${todo.id}">
+                    <input type="checkbox" class="todo-item__checkbox"
+                           ${todo.isCompleted ? 'checked' : ''} 
+                           onchange="toggleTodo(${todo.id}, this.checked)">
+                    <div class="todo-item__content">
+                        <span class="todo-item__title">${todo.title}</span>
+                        <span class="todo-item__date">Created: ${formatDate(todo.creationDate)}</span>
+                    </div>
+                    <button class="todo-item__delete" onclick="deleteTodo(${todo.id})">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        async function toggleTodo(id, isCompleted) {
+            const todo = document.querySelector(`[data-id="${id}"]`);
+            const title = todo.querySelector('.todo-item__title').textContent;
+            const priority = todo.className.match(/priority-(\w+)/)[1];
+            await api.update(id, { title, isCompleted, priority });
+            loadTodos();
+        }
+
+        async function deleteTodo(id) {
+            await api.delete(id);
+            loadTodos();
+        }
+
+        async function loadTodos() {
+            const todos = await api.getAll();
+            renderTodos(todos);
+        }
+
+        document.getElementById('todoForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const titleInput = document.getElementById('todoTitle');
+            const prioritySelect = document.getElementById('todoPriority');
+            await api.create(titleInput.value, prioritySelect.value);
+            titleInput.value = '';
+            loadTodos();
+        };
+
+        loadTodos();
+    </script>
+
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>

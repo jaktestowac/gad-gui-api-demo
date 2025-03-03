@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | Manage Course Lessons</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="./css/learning.css" />
+    <link rel="stylesheet" href="./css/lessons.css">
+    <link rel="stylesheet" href="./css/instructor.css" />
+</head>
+
+<body class="bg-slate-50">
+    <header>
+        <div class="main-nav-menu">
+            <h1 id="menu-main-gui-learning" class="nav-menu"></h1>
+        </div>
+    </header>
+    <br />
+    <br />
+    <br />
+    <div class="dashboard-container">
+        <div id="sidebarContainer"></div>
+        <main>
+            <div class="course-lessons-panel compact"><!-- Added compact class -->
+                <div class="panel-header">
+                    <h2>Manage Course Lessons</h2>
+                    <button id="addLessonBtn" class="primary-button">
+                        <i class="fas fa-plus"></i> Add New Lesson
+                    </button>
+                </div>
+                <div id="lessonsList" class="lessons-list">
+                    <!-- Lessons will be populated here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="./js/services/api.js"></script>
+    <script src="./js/utils/notifications.js"></script>
+    <script src="./js/utils/auth-helpers.js"></script>
+    <script src="./js/utils/confirm-dialog.js"></script>
+    <script src="./js/components/sidebar.js"></script>
+    <script src="./js/course-lessons.js"></script>
+    <script src="./js/sidebar.js"></script>
+    <script src="./js/auth-check.js"></script>
+    <script src="./js/auth.js"></script>
+</body>
+
+</html>

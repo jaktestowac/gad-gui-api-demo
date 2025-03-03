@@ -33,6 +33,14 @@ function getGeneralReviewStats(bookIds) {
 function handleBookShopBookReviews(req, res, isAdmin) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
   if (req.method === "GET" && req.url.includes("/api/book-shop-book-reviews?book_id")) {
+    /*
+    Handles book review retrieval and statistics
+    - Supports single and multiple book review queries
+    - Provides aggregated review statistics (mean rating, review count)
+    - Anonymizes reviewer information
+    - Returns formatted review data or statistical summaries
+    - Handles different response formats based on query parameters
+    */
     const bookId = req.query.book_id;
     if (req.url.includes("book_ids=") && req.url.includes("mean=")) {
       const bookIds = req.query.book_ids.split(",");

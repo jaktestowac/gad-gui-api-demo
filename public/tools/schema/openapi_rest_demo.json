@@ -996,17 +996,10 @@
           {
             "name": "id",
             "in": "path",
-            "description": "Id of article-labels entity that need to be updated",
-            "required": false,
+            "description": "Id of article-labels entity",
+            "required": true,
             "schema": {
-              "oneOf": [
-                {
-                  "type": "integer"
-                },
-                {
-                  "type": "string"
-                }
-              ]
+              "type": "integer"
             }
           }
         ],
@@ -1135,7 +1128,7 @@
       "get": {
         "tags": ["likes"],
         "summary": "Get likes for article",
-        "operationId": "getLikesForArticle",
+        "operationId": "getLikesForArticleById",
         "parameters": [
           {
             "name": "id",
@@ -1297,7 +1290,6 @@
         }
       }
     },
-
     "/captcha": {
       "get": {
         "tags": ["captcha"],
@@ -1322,12 +1314,8 @@
           "required": true,
           "content": {
             "application/json": {
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/CaptchaSolution"
-                  }
-                }
+              "schema": {
+                "$ref": "#/components/schemas/CaptchaSolution"
               }
             }
           }
@@ -1381,7 +1369,6 @@
         }
       }
     },
-
     "/files/uploaded": {
       "get": {
         "tags": ["files"],
@@ -1414,7 +1401,7 @@
         }
       }
     },
-    "/files/uploaded?userId={id}": {
+    "/files/uploaded/{userId}": {
       "get": {
         "tags": ["files"],
         "security": [
@@ -1426,7 +1413,7 @@
         "operationId": "getUserFiles",
         "parameters": [
           {
-            "name": "id",
+            "name": "userId",
             "in": "path",
             "description": "ID of user",
             "required": true,
@@ -1487,14 +1474,14 @@
         }
       }
     },
-    "/files/uploaded/public?userIds={id}": {
+    "/files/uploaded/public/users/{userIds}": {
       "get": {
         "tags": ["files"],
         "summary": "Get users public files",
         "operationId": "getUsersPublicFiles",
         "parameters": [
           {
-            "name": "id",
+            "name": "userIds",
             "in": "path",
             "description": "ID of user or multiple IDs of users separated by comma",
             "required": true,
@@ -1760,7 +1747,6 @@
         }
       }
     },
-
     "/book-authors": {
       "get": {
         "tags": ["book-shop"],
@@ -1819,7 +1805,6 @@
         }
       }
     },
-
     "/book-shop-roles": {
       "get": {
         "tags": ["book-shop"],
@@ -1849,7 +1834,6 @@
         }
       }
     },
-
     "/book-shop-account-payment-cards": {
       "get": {
         "tags": ["book-shop-account-payment-cards"],
@@ -2024,7 +2008,6 @@
         }
       }
     },
-
     "/book-shop-order-statuses": {
       "get": {
         "tags": ["book-shop"],
@@ -2054,7 +2037,6 @@
         }
       }
     },
-
     "/book-shop-orders": {
       "get": {
         "tags": ["book-shop-orders"],
@@ -2278,16 +2260,6 @@
             "bearerAuth": []
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/BookShopOrderItem"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": "Item removed from order successfully",
@@ -2310,7 +2282,57 @@
         }
       }
     },
-
+    "/book-shop-order-items": {
+      "post": {
+        "tags": ["book-shop-orders"],
+        "summary": "Add item to order",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookShopOrderItem"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Item added successfully"
+          },
+          "404": {
+            "description": "Item not found"
+          },
+          "409": {
+            "description": "Item already in order"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["book-shop-orders"],
+        "summary": "Remove item from order",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookShopOrderItem"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Item removed successfully"
+          },
+          "404": {
+            "description": "Item not found in order"
+          }
+        }
+      }
+    },
     "/books": {
       "get": {
         "tags": ["book-shop-books"],
@@ -2534,7 +2556,6 @@
         }
       }
     },
-
     "/book-shop-accounts": {
       "get": {
         "tags": ["book-shop-accounts"],
@@ -2791,7 +2812,6 @@
         }
       }
     },
-
     "/book-shop-items": {
       "get": {
         "tags": ["book-shop-items"],
@@ -2836,7 +2856,6 @@
         }
       }
     },
-
     "/book-shop-stats/orders": {
       "get": {
         "tags": ["book-shop-stats"],
@@ -2933,56 +2952,37 @@
         }
       }
     },
-
     "/book-shop-book-reviews": {
       "get": {
         "tags": ["book-shop"],
-        "summary": "Get book reviews",
+        "summary": "Get book reviews or review stats",
         "operationId": "getBookReviews",
         "parameters": [
           {
-            "name": "book_ids",
-            "in": "query",
-            "description": "IDs of the book in format book_ids=id1,id2,... Works only with mean parameter",
-            "required": false,
-            "schema": {
-              "oneOf": [
-                {
-                  "type": "string"
-                }
-              ]
-            }
-          },
-          {
             "name": "book_id",
             "in": "query",
-            "description": "ID of the book",
+            "description": "ID of book to get reviews for",
             "required": false,
             "schema": {
-              "oneOf": [
-                {
-                  "type": "integer"
-                },
-                {
-                  "type": "string"
-                }
-              ]
+              "type": "string"
             }
           },
           {
             "name": "mean",
             "in": "query",
-            "description": "Return mean rating",
+            "description": "Get mean rating",
             "required": false,
             "schema": {
-              "oneOf": [
-                {
-                  "type": "integer"
-                },
-                {
-                  "type": "string"
-                }
-              ]
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "book_ids",
+            "in": "query",
+            "description": "Comma separated list of book IDs",
+            "required": false,
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -2992,20 +2992,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/BookReviews"
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorMessage"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/BookReviews"
+                    },
+                    {
+                      "$ref": "#/components/schemas/BookReviewStats"
+                    }
+                  ]
                 }
               }
             }
@@ -3013,7 +3007,6 @@
         }
       }
     },
-
     "/book-shop-manage/orders": {
       "get": {
         "tags": ["book-shop-manage"],
@@ -3044,7 +3037,9 @@
             "content": {}
           }
         }
-      },
+      }
+    },
+    "/book-shop-manage/orders/{id}": {
       "patch": {
         "tags": ["book-shop-manage"],
         "summary": "Update order status",
@@ -3175,7 +3170,9 @@
             "content": {}
           }
         }
-      },
+      }
+    },
+    "/book-shop-manage/items/{id}": {
       "patch": {
         "tags": ["book-shop-manage"],
         "summary": "Update an item",
@@ -3267,7 +3264,7 @@
         }
       }
     },
-    "/book-shop-manage/items?book_id={book_id}": {
+    "/book-shop-manage/items/by-book/{bookId}": {
       "get": {
         "tags": ["book-shop-manage"],
         "summary": "Get item by book ID",
@@ -3279,8 +3276,8 @@
         ],
         "parameters": [
           {
-            "name": "book_id",
-            "in": "query",
+            "name": "bookId",
+            "in": "path",
             "description": "ID of the book",
             "required": true,
             "schema": {
@@ -3342,7 +3339,7 @@
       "get": {
         "tags": ["book-shop-manage"],
         "summary": "Get users",
-        "operationId": "getUsers",
+        "operationId": "getBookshopUsers",
         "security": [
           {
             "bearerAuth": []
@@ -3381,7 +3378,6 @@
         }
       }
     },
-
     "/comments/{id}": {
       "get": {
         "tags": ["comments"],
@@ -3646,7 +3642,7 @@
         }
       }
     },
-    "/articles?": {
+    "/articles/search": {
       "get": {
         "tags": ["search"],
         "summary": "Get articles with query",
@@ -3790,7 +3786,7 @@
         }
       }
     },
-    "/users?": {
+    "/users/search": {
       "get": {
         "tags": ["search"],
         "summary": "Get users with query",
@@ -3928,7 +3924,7 @@
         }
       }
     },
-    "/comments?": {
+    "/comments/search": {
       "get": {
         "tags": ["search"],
         "summary": "Get comments with query",
@@ -4138,10 +4134,19 @@
         "summary": "Add contact",
         "operationId": "addContact",
         "requestBody": {
+          "required": true,
           "content": {
-            "email": "string"
-          },
-          "required": true
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
         },
         "responses": {
           "200": {
@@ -4156,19 +4161,11 @@
           },
           "404": {
             "description": "User not found",
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ErrorMessage"
-              }
-            }
+            "content": {}
           },
           "409": {
             "description": "Can not add contact",
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ErrorMessage"
-              }
-            }
+            "content": {}
           }
         }
       }
@@ -4272,11 +4269,7 @@
           },
           "404": {
             "description": "User not found",
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ErrorMessage"
-              }
-            }
+            "content": {}
           }
         }
       }
@@ -4369,7 +4362,7 @@
       "get": {
         "tags": ["other"],
         "summary": "Get translations",
-        "operationId": "getTranslations",
+        "operationId": "getTranslationsByLang",
         "parameters": [
           {
             "name": "lang",
@@ -4635,11 +4628,11 @@
         "responses": {
           "200": {
             "description": "Quiz started"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
           }
-        },
-        "401": {
-          "description": "Unauthorized",
-          "content": {}
         }
       }
     },
@@ -5373,6 +5366,24 @@
         "tags": ["visits"],
         "summary": "Get articles visits stats",
         "operationId": "getArticlesVisitsStats",
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "query",
+            "description": "ID of user or multiple IDs of articles separated by comma",
+            "required": false,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Visits received",
@@ -5406,17 +5417,17 @@
         }
       }
     },
-    "/visits/articles?ids={id}": {
+    "/visits/users": {
       "get": {
         "tags": ["visits"],
-        "summary": "Get articles visits stats",
-        "operationId": "getSelectedArticlesVisitsStats",
+        "summary": "Get users visits stats",
+        "operationId": "getUsersVisitsStats",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "description": "ID of user or multiple IDs of articles separated by comma",
-            "required": true,
+            "name": "ids",
+            "in": "query",
+            "description": "ID of user or multiple IDs of users separated by comma",
+            "required": false,
             "schema": {
               "oneOf": [
                 {
@@ -5429,25 +5440,6 @@
             }
           }
         ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Visits"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/visits/users": {
-      "get": {
-        "tags": ["visits"],
-        "summary": "Get users visits stats",
-        "operationId": "getUsersVisitsStats",
         "responses": {
           "200": {
             "description": "Visits received",
@@ -5481,17 +5473,17 @@
         }
       }
     },
-    "/visits/users?ids={id}": {
+    "/visits/comments": {
       "get": {
         "tags": ["visits"],
-        "summary": "Get users visits stats",
-        "operationId": "getSelectedUsersVisitsStats",
+        "summary": "Get comments visits stats",
+        "operationId": "getCommentsVisitsStats",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "description": "ID of user or multiple IDs of users separated by comma",
-            "required": true,
+            "name": "ids",
+            "in": "query",
+            "description": "ID of user or multiple IDs of comments separated by comma",
+            "required": false,
             "schema": {
               "oneOf": [
                 {
@@ -5504,25 +5496,6 @@
             }
           }
         ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Visits"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/visits/comments": {
-      "get": {
-        "tags": ["visits"],
-        "summary": "Get comments visits stats",
-        "operationId": "getCommentsVisitsStats",
         "responses": {
           "200": {
             "description": "Visits received",
@@ -5556,44 +5529,6 @@
         }
       }
     },
-    "/visits/comments?ids={id}": {
-      "get": {
-        "tags": ["visits"],
-        "summary": "Get comments visits stats",
-        "operationId": "getSelectedCommentsVisitsStats",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of user or multiple IDs of comments separated by comma",
-            "required": true,
-            "schema": {
-              "oneOf": [
-                {
-                  "type": "integer"
-                },
-                {
-                  "type": "string"
-                }
-              ]
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Visits"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-
     "/surveys/statistics/{type}": {
       "get": {
         "tags": ["surveys"],
@@ -5902,6 +5837,144 @@
           "401": {
             "description": "Unauthorized",
             "content": {}
+          }
+        }
+      }
+    },
+    "/book-shop-accounts/files": {
+      "post": {
+        "tags": ["book-shop-accounts"],
+        "summary": "Upload account files",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "files": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Files uploaded successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/book-shop-manage/team": {
+      "get": {
+        "tags": ["book-shop-manage"],
+        "summary": "Get team members",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Team members retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookShopTeamMember"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/books/{id}": {
+      "patch": {
+        "tags": ["Books"],
+        "summary": "Update a book",
+        "description": "Update specific fields of a book",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Book ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "active": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Book updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "book": {
+                      "$ref": "#/components/schemas/Book"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Book not found"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       }
@@ -6361,6 +6434,15 @@
           }
         }
       },
+      "MyLikes": {
+        "type": "object",
+        "required": ["likes"],
+        "properties": {
+          "likes": {
+            "type": "number"
+          }
+        }
+      },
       "Like": {
         "type": "object",
         "required": ["date", "user_id"],
@@ -6462,6 +6544,15 @@
           }
         }
       },
+      "QuizQuestionCount": {
+        "type": "object",
+        "required": ["count"],
+        "properties": {
+          "count": {
+            "type": "number"
+          }
+        }
+      },
       "QuizAnswerValidation": {
         "type": "object",
         "required": ["isCorrect"],
@@ -6491,6 +6582,50 @@
                 "type": "number"
               }
             }
+          }
+        }
+      },
+      "HangmanRandomWord": {
+        "type": "object",
+        "required": ["word"],
+        "properties": {
+          "word": {
+            "type": "string"
+          }
+        }
+      },
+      "Scores": {
+        "type": "object",
+        "required": ["score", "user", "game"],
+        "properties": {
+          "highScore": {
+            "type": "object",
+            "properties": {
+              "user": {
+                "type": "string"
+              },
+              "game": {
+                "type": "string"
+              },
+              "score": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      },
+      "ScoreRecord": {
+        "type": "object",
+        "required": ["game_id", "user_id", "score"],
+        "properties": {
+          "game_id": {
+            "type": "number"
+          },
+          "user_id": {
+            "type": "number"
+          },
+          "score": {
+            "type": "number"
           }
         }
       },
@@ -6561,7 +6696,6 @@
           }
         }
       },
-
       "BookShopRoles": {
         "type": "array",
         "items": {
@@ -6633,7 +6767,6 @@
           }
         }
       },
-
       "BookShopPaymentCardUpdate": {
         "type": "object",
         "required": ["card_number", "expiry_date", "cvv"],
@@ -6652,14 +6785,12 @@
           }
         }
       },
-
       "BookShopOrderStatuses": {
         "type": "array",
         "items": {
           "$ref": "#/components/schemas/BookShopOrderStatus"
         }
       },
-
       "BookShopOrderStatus": {
         "type": "object",
         "required": ["status", "id", "name", "icon", "possible_next_statuses"],
@@ -6681,7 +6812,6 @@
           }
         }
       },
-
       "BookShopAccount": {
         "type": "object",
         "required": [
@@ -6694,8 +6824,7 @@
           "favorite_books_ids",
           "purchased_book_ids",
           "read_books_ids",
-          "owned_books_ids",
-          "funds"
+          "owned_books_ids"
         ],
         "properties": {
           "id": {
@@ -6814,14 +6943,12 @@
           }
         }
       },
-
       "BookShopItems": {
         "type": "array",
         "items": {
           "$ref": "#/components/schemas/BookShopItem"
         }
       },
-
       "BookShopItem": {
         "type": "object",
         "required": ["id", "book_id", "price", "quantity", "created_at"],
@@ -6845,7 +6972,6 @@
           }
         }
       },
-
       "allBookShopStats": {
         "type": "object",
         "properties": {
@@ -6899,7 +7025,6 @@
           }
         }
       },
-
       "bookShopUsersStats": {
         "type": "object",
         "properties": {
@@ -6935,7 +7060,6 @@
           }
         }
       },
-
       "bookShopOrdersStats": {
         "type": "object",
         "properties": {
@@ -6968,7 +7092,6 @@
           }
         }
       },
-
       "CouponCode": {
         "type": "object",
         "required": ["order_id", "coupon_code"],
@@ -6981,7 +7104,6 @@
           }
         }
       },
-
       "BookShopOrderItem": {
         "type": "object",
         "required": ["book_id"],
@@ -6991,14 +7113,12 @@
           }
         }
       },
-
       "BookShopOrders": {
         "type": "array",
         "items": {
           "$ref": "#/components/schemas/BookShopOrder"
         }
       },
-
       "BookShopOrder": {
         "type": "object",
         "required": [
@@ -7053,7 +7173,6 @@
           }
         }
       },
-
       "BookShopOrderStatusUpdate": {
         "type": "object",
         "required": ["status_id"],
@@ -7063,14 +7182,12 @@
           }
         }
       },
-
       "BookReviews": {
         "type": "array",
         "items": {
           "$ref": "#/components/schemas/BookReviews"
         }
       },
-
       "BookReview": {
         "type": "object",
         "required": ["id", "book_id", "user_id", "rating", "content", "created_at"],
@@ -7096,14 +7213,12 @@
           }
         }
       },
-
       "BookReviewStats": {
         "type": "array",
         "items": {
           "$ref": "#/components/schemas/BookReviewStat"
         }
       },
-
       "BookReviewStat": {
         "type": "object",
         "properties": {
@@ -7120,7 +7235,6 @@
         },
         "required": ["book_id", "mean", "numberOfReviews"]
       },
-
       "Flashpost": {
         "type": "object",
         "required": ["id", "user_id", "date", "settings", "body", "is_public"],
@@ -7233,6 +7347,28 @@
                 "type": "string"
               }
             }
+          }
+        }
+      },
+      "Visits": {
+        "type": "object",
+        "properties": {
+          "visits": {
+            "type": "object",
+            "properties": {
+              "count": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      },
+      "SurveyStatistics": {
+        "type": "object",
+        "properties": {
+          "statistics": {
+            "type": "object",
+            "properties": {}
           }
         }
       },
@@ -7434,6 +7570,25 @@
           }
         }
       },
+      "Games": {
+        "type": "object",
+        "properties": {
+          "games": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number"
+                },
+                "name": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
       "SimpleRoiParameters": {
         "type": "object",
         "properties": {
@@ -7487,41 +7642,41 @@
             "type": "array",
             "description": "List of total costs accumulated by each sprint, where the first entry can be null to indicate no data.",
             "items": {
-              "type": ["integer", "null"]
+              "type": "integer"
             },
-            "example": [null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            "example": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
           },
           "totalCumulativeBenefitsPerSprint": {
             "type": "array",
             "description": "List of total benefits accumulated by each sprint, where the first entry can be null to indicate no data.",
             "items": {
-              "type": ["integer", "null"]
+              "type": "integer"
             },
-            "example": [null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            "example": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
           },
           "profitPerSprint": {
             "type": "array",
             "description": "List of profits per each sprint, where the first entry can be null to indicate no data.",
             "items": {
-              "type": ["integer", "null"]
+              "type": "integer"
             },
-            "example": [null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            "example": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
           },
           "totalCumulativeProfitPerSprint": {
             "type": "array",
             "description": "List of cumulative profit per each sprint, where the first entry can be null to indicate no data.",
             "items": {
-              "type": ["integer", "null"]
+              "type": "integer"
             },
-            "example": [null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            "example": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
           },
           "sprintROI": {
             "type": "array",
             "description": "Return on investment for each sprint, where the first entry can be null to indicate no data and other entries are typically integers.",
             "items": {
-              "type": ["integer", "null"]
+              "type": "integer"
             },
-            "example": [null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            "example": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
           },
           "sprints": {
             "type": "array",
@@ -8341,6 +8496,116 @@
           "removedTests",
           "automationNotApplicableTests"
         ]
+      },
+      "BookShopTeamMember": {
+        "type": "object",
+        "required": ["id", "user_id", "role_id", "joined_at"],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "user_id": {
+            "type": "integer"
+          },
+          "role_id": {
+            "type": "integer"
+          },
+          "joined_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "BookShopReview": {
+        "type": "object",
+        "required": ["id", "book_id", "user_id", "rating", "comment", "created_at"],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "book_id": {
+            "type": "integer"
+          },
+          "user_id": {
+            "type": "integer"
+          },
+          "rating": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "comment": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Book": {
+        "type": "object",
+        "required": ["id", "title", "author", "price", "stock", "created_at"],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "author_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "published_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date and time when the book was published."
+          },
+          "genre_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "language": {
+            "type": "string"
+          },
+          "pages": {
+            "type": "integer"
+          },
+          "cover": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "BookShopStats": {
+        "type": "object",
+        "properties": {
+          "totalOrders": {
+            "type": "integer"
+          },
+          "totalBooks": {
+            "type": "integer"
+          },
+          "totalRevenue": {
+            "type": "number"
+          },
+          "averageOrderValue": {
+            "type": "number"
+          },
+          "topSellingBooks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BookShopBook"
+            }
+          }
+        }
       }
     }
   }

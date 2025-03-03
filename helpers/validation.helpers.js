@@ -24,6 +24,16 @@ const mandatory_non_empty_fields_flashpost = ["user_id", "body"];
 const all_possible_fields_flashpost = ["user_id", "body", "settings", "date", "id", "is_public"];
 const all_possible_fields_book_shop_account = ["country", "city", "street", "postal_code"];
 const mandatory_non_empty_fields_flashpost_settings = ["color"];
+const mandatory_non_empty_fields_body = [
+  "title",
+  "author_ids",
+  "published_at",
+  "genre_ids",
+  "language",
+  "pages",
+  "cover",
+  "description",
+];
 
 function isLikesDataValid(body) {
   if (!isUndefined(body["comment_id"]) && !isUndefined(body["article_id"])) {
@@ -209,7 +219,11 @@ const isEmailValid = (email) => {
 
 const isDateValid = (date) => {
   try {
-    return date.match(getConfigValue(ConfigKeys.DATE_REGEXP));
+    const result = date.match(getConfigValue(ConfigKeys.DATE_REGEXP));
+    if (result === null) {
+      return false;
+    }
+    return true;
   } catch (error) {
     logDebug("Invalid date:", date);
     return false;
@@ -361,4 +375,5 @@ module.exports = {
   all_possible_fields_flashpost,
   mandatory_non_empty_fields_flashpost_settings,
   all_possible_fields_book_shop_account,
+  mandatory_non_empty_fields_body,
 };

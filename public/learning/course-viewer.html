@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | Course Viewer</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="./css/learning.css" />
+    <style>
+        .lesson-item.current-lesson {
+            background-color: #e0f7fa;
+            border-left: 4px solid #00796b;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-gui-learning" class="nav-menu"></h1>
+        </div>
+    </header>
+    <br />
+    <br />
+    <img src="/data/learning/gad-learning-logo.png" alt="GAD Learning" class="hero-logo hero-absolute" aria-label="GAD Learning" title="GAD Learning">
+    <main class="dashboard-container">
+        <div id="sidebarContainer"></div>
+
+        <div class="lesson-viewer">
+            <div class="lesson-sidebar">
+                <h3 id="courseName">Course Name</h3>
+                <div id="lessonList">
+                </div>
+            </div>
+
+            <div class="lesson-content">
+                <div id="videoPlayer"></div>
+                <div id="lessonMaterials"></div>
+                <div id="quizContainer"></div>
+            </div>
+        </div>
+    </main>
+
+    <button class="mobile-menu-button" aria-label="Open menu">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div class="sidebar-overlay"></div>
+
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+    <script type="text/javascript" src="/username.js"></script>
+    <script type="text/javascript" src="/js/message-notifier.js"></script>
+    <script type="text/javascript" src="./js/services/api.js"></script>
+    <script type="text/javascript" src="./js/utils/notifications.js"></script> 
+    <script type="text/javascript" src="./js/course-viewer.js"></script>
+    <script type="text/javascript" src="./js/components/sidebar.js"></script>
+    <script type="text/javascript" src="./js/sidebar.js"></script>
+    <script type="text/javascript" src="./js/auth-check.js"></script>
+    <script src="./js/auth.js"></script>
+</body>
+
+</html>

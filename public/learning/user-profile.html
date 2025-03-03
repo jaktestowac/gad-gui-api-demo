@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | User Profile</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="./css/learning.css" />
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-gui-learning" class="nav-menu"></h1>
+        </div>
+    </header>
+    <br /><br /><br />
+    <img src="/data/learning/gad-learning-logo.png" alt="GAD Learning" class="hero-logo hero-absolute">
+    <main class="dashboard-container">
+        <div id="sidebarContainer"></div>
+        <div class="profile-container">
+            <div class="return-nav">
+                <button id="returnButton" class="return-button">
+                    <i class="fas fa-arrow-left"></i> Return
+                </button>
+            </div>
+            <h2 class="main-header">Public User Profile</h2>
+            <div class="profile-header">
+                <img id="userProfileAvatar" class="profile-avatar" src="/data/icons/user.png" alt="User avatar">
+                <div class="profile-info">
+                    <h2 id="userProfileName">Loading...</h2>
+                    <p id="userProfileRole" class="user-role">Student</p>
+                    <p id="joinDate" class="join-date">Member since: ...</p>
+                </div>
+            </div>
+            <div class="profile-stats">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Enrolled Courses</h3>
+                        <div class="stat-value" id="enrollmentCount">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Certificates</h3>
+                        <div class="stat-value" id="certificateCount">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Course Reviews</h3>
+                        <div class="stat-value" id="reviewCount">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Avg. Rating</h3>
+                        <div class="stat-value" id="avgRating">0.0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-sections">
+                <div class="enrolled-courses-section">
+                    <h3><i class="fas fa-book-reader"></i> Enrolled Courses</h3>
+                    <div class="enrolled-courses-grid" id="enrolledCoursesGrid">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="certificates-section">
+                    <h3><i class="fas fa-certificate"></i> Certificates</h3>
+                    <div class="certificates-grid" id="certificatesGrid">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="ratings-section">
+                    <h3><i class="fas fa-star"></i> Course Reviews</h3>
+                    <div class="ratings-list" id="ratingsList">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <button class="mobile-menu-button">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div class="sidebar-overlay"></div>
+
+    <script src="./js/auth.js"></script>
+    <script src="./js/utils/notifications.js"></script>
+    <script src="/js/common.js"></script>
+    <script src="/js/header.js"></script>
+    <script src="/version.js"></script>
+    <script src="/username.js"></script>
+    <script src="/js/message-notifier.js"></script>
+    <script src="./js/services/api.js"></script>
+    <script src="./js/user-profile.js"></script>
+    <script src="./js/components/sidebar.js"></script>
+    <script src="./js/sidebar.js"></script>
+    <script src="js/user-profile.js"></script>
+</body>
+
+</html>

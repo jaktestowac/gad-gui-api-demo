@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | Regex Challenge</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
+<style>
+    .regex-challenge-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 30px;
+        background: var(--surface);
+        border-radius: 15px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .regex-score-display {
+        font-size: 1.8em;
+        color: var(--text);
+        margin-bottom: 20px;
+        text-align: center;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .regex-score-display i {
+        color: #FFD700;
+        margin-right: 10px;
+        animation: bounce 1s infinite;
+    }
+
+    @keyframes bounce {
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-3px);
+        }
+    }
+
+    .regex-progress-track {
+        height: 12px;
+        background: var(--surface-border);
+        border-radius: 8px;
+        margin: 25px 0;
+        overflow: hidden;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .regex-progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #4CAF50, #8BC34A);
+        transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+    }
+
+    .regex-difficulty-btn {
+        flex: 1;
+        padding: 12px 20px;
+        border: 2px solid transparent;
+        border-radius: 8px;
+        background: var(--surface-alt);
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        margin: 0 5px;
+        font-size: 1.1em;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .regex-difficulty-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        background: var(--surface);
+        color: var(--primary);
+        border-color: var(--primary);
+    }
+
+    .regex-difficulty-btn.active {
+        background: var(--primary);
+        color: rgb(49, 49, 49);
+        border-color: var(--primary);
+        transform: translateY(0);
+        box-shadow: 0 2px 8px rgba(var(--primary-rgb), 0.4);
+    }
+
+    .regex-difficulty-btn i {
+        margin-right: 10px;
+        font-size: 1.2em;
+        vertical-align: middle;
+        transition: transform 0.3s ease;
+    }
+
+    .regex-difficulty-btn:hover i {
+        transform: scale(1.2);
+    }
+
+    .regex-difficulty-btn.active i {
+        color: rgb(37, 37, 37);
+        animation: glow 5s infinite;
+    }
+
+    .regex-input-field {
+        width: 100%;
+        padding: 15px;
+        font-size: 1.2em;
+        border: 3px solid var(--surface-border);
+        border-radius: 8px;
+        background: var(--surface);
+        color: var(--text);
+        margin: 20px 0;
+        font-family: 'Fira Code', monospace;
+        transition: all 0.3s ease;
+    }
+
+    .regex-input-field:focus {
+        border-color: var(--primary);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.2);
+    }
+
+    .regex-test-container {
+        background: var(--surface-alt);
+        padding: 20px;
+        border-radius: 10px;
+        margin: 25px 0;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .regex-test-case {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 15px;
+        border-bottom: 2px solid var(--surface-border);
+        transition: background-color 0.2s ease;
+        color: var(--text);
+        /* Add explicit text color */
+    }
+
+    .regex-test-case:hover {
+        background: var(--surface-hover);
+    }
+
+    .regex-test-case code {
+        color: var(--text);
+        background: var(--surface);
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 1.1em;
+    }
+
+    .regex-status-icon {
+        font-size: 1.4em;
+        width: 24px;
+        text-align: center;
+    }
+
+    .regex-status-correct {
+        color: #4CAF50;
+        animation: pulse 1s ease-in-out;
+    }
+
+    .regex-status-incorrect {
+        color: #f44336;
+        animation: shake 0.5s ease-in-out;
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.2);
+        }
+
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    @keyframes shake {
+
+        0%,
+        100% {
+            transform: translateX(0);
+        }
+
+        25% {
+            transform: translateX(-3px);
+        }
+
+        75% {
+            transform: translateX(3px);
+        }
+    }
+
+    .regex-match-highlight {
+        background: rgba(76, 175, 80, 0.2);
+        padding: 3px 6px;
+        border-radius: 4px;
+        border: 1px solid rgba(76, 175, 80, 0.3);
+        font-weight: 600;
+        color: var(--text);
+        /* Add explicit text color */
+    }
+
+    .regex-hint-box {
+        padding: 18px;
+        background: var(--surface-alt);
+        border-radius: 8px;
+        cursor: pointer;
+        margin: 20px 0;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+        color: var(--text);
+        /* Add explicit text color */
+    }
+
+    .regex-hint-box:hover {
+        background: var(--surface-hover);
+        border-color: var(--primary);
+        transform: translateY(-2px);
+    }
+
+    .regex-hint-box i {
+        color: #FFC107;
+        margin-right: 10px;
+        animation: glow 2s infinite;
+    }
+
+    @keyframes glow {
+
+        0%,
+        100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.5;
+        }
+    }
+
+    .regex-next-btn {
+        width: 100%;
+        padding: 15px 25px;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: rgb(32, 32, 32);
+        border: none;
+        border-radius: 8px;
+        font-size: 1.2em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        margin-top: 20px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .regex-next-btn:hover {
+        background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    .regex-next-btn:active {
+        transform: translateY(1px);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .regex-next-btn i {
+        margin-right: 10px;
+        font-size: 1.1em;
+        vertical-align: middle;
+    }
+
+    .regex-next-btn::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(rgba(255, 255, 255, 0.2), transparent);
+        clip-path: polygon(0 0, 100% 0, 100% 70%, 0 100%);
+    }
+
+    /* Add this if you want to disable button styles */
+    .regex-difficulty-btn:disabled,
+    .regex-next-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+        background: var(--surface-border);
+        border-color: var(--surface-border);
+        box-shadow: none;
+    }
+
+    /* Add focus styles for accessibility */
+    .regex-difficulty-btn:focus,
+    .regex-next-btn:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.3);
+    }
+
+    /* Add container style for difficulty buttons */
+    .regex-difficulty-controls {
+        display: flex;
+        gap: 15px;
+        margin: 20px 0;
+        padding: 15px;
+        background: var(--surface);
+        border-radius: 12px;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .regex-challenge-title {
+        text-align: center;
+        margin: 30px 0;
+    }
+
+    .regex-challenge-title h2 {
+        font-size: 2em;
+        color: var(--text);
+        /* Change from primary to text color */
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .regex-challenge-title i {
+        color: var(--primary);
+        /* Keep icon in primary color */
+        font-size: 1.5em;
+        margin-right: 10px;
+    }
+
+    .regex-test-container h3 {
+        color: var(--text);
+        margin-bottom: 15px;
+    }
+
+    #challenge-description {
+        color: var(--text);
+        font-size: 1.1em;
+        background: var(--surface);
+        padding: 15px;
+        border-radius: 8px;
+        margin: 20px 0;
+    }
+
+    /* Add styles for test case status text */
+    .regex-test-case span:last-child {
+        color: var(--text-secondary);
+        font-style: italic;
+    }
+
+    /* Improve contrast for pending status */
+    .regex-status-pending {
+        color: #FFA000;
+        /* Darker amber color for better visibility */
+    }
+
+    .regex-score-details {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        margin: 10px 0;
+        padding: 10px;
+        background: var(--surface-alt);
+        border-radius: 8px;
+    }
+
+    .regex-score-item {
+        text-align: center;
+    }
+
+    .regex-score-label {
+        font-size: 0.9em;
+        color: var(--text-secondary);
+    }
+
+    .regex-score-value {
+        font-size: 1.2em;
+        font-weight: bold;
+        color: var(--text);
+    }
+
+    .regex-score-popup {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        background: var(--primary);
+        color: white;
+        border-radius: 8px;
+        animation: slideIn 0.3s ease-out;
+        z-index: 1000;
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .regex-difficulty-btn {
+            padding: 10px;
+            font-size: 0.9em;
+        }
+
+        .regex-difficulty-btn i {
+            margin-right: 5px;
+        }
+    }
+</style>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-gui" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <div class="regex-challenge-container">
+        <div class="regex-score-display">
+            <i class="fas fa-trophy"></i>
+            Score: <span id="score">0</span>
+        </div>
+        <div class="regex-progress-track">
+            <div id="progress" class="regex-progress-fill" style="width: 0%"></div>
+        </div>
+        <div class="difficulty">
+            <button onclick="setDifficulty('easy')" class="regex-difficulty-btn active" id="easy">
+                <i class="fas fa-baby"></i> Easy
+            </button>
+            <button onclick="setDifficulty('medium')" class="regex-difficulty-btn" id="medium">
+                <i class="fas fa-user"></i> Medium
+            </button>
+            <button onclick="setDifficulty('hard')" class="regex-difficulty-btn" id="hard">
+                <i class="fas fa-dragon"></i> Hard
+            </button>
+        </div>
+        <div class="regex-challenge-title">
+            <i class="fas fa-code"></i>
+            <h2>Regex Challenge</h2>
+        </div>
+        <p id="challenge-description">
+            <i class="fas fa-tasks"></i>
+            <span id="challenge-text">Current Challenge: Match all email addresses</span>
+        </p>
+        <input type="text" id="regex-input" class="regex-input-field" placeholder="Enter your regex pattern here..." />
+        <div class="regex-test-container">
+            <h3><i class="fas fa-vial"></i> Test Cases:</h3>
+            <div id="test-cases-preview"></div>
+        </div>
+        <div class="regex-hint-box" onclick="showHint()" id="hint-text">
+            <i class="fas fa-lightbulb"></i>
+            <span>Click for a hint</span>
+        </div>
+        <button onclick="nextChallenge()" class="regex-next-btn">
+            <i class="fas fa-forward"></i>
+            Next Challenge
+        </button>
+    </div>
+
+    <script>
+        const challenges = {
+            easy: [
+                {
+                    description: "Match all lowercase letters",
+                    hint: "Use [a-z] to match lowercase letters",
+                    testCases: [
+                        { input: "abc", shouldMatch: true },
+                        { input: "ABC", shouldMatch: false },
+                        { input: "123", shouldMatch: false },
+                        { input: "def", shouldMatch: true }
+                    ]
+                },
+                {
+                    description: "Match numbers from 0-9",
+                    hint: "Use \\d or [0-9]",
+                    testCases: [
+                        { input: "123", shouldMatch: true },
+                        { input: "abc", shouldMatch: false },
+                        { input: "456", shouldMatch: true },
+                        { input: "9", shouldMatch: true }
+                    ]
+                },
+                {
+                    description: "Match words that start with 'a'",
+                    hint: "Use '^a' at the start of the pattern",
+                    testCases: [
+                        { input: "apple", shouldMatch: true },
+                        { input: "banana", shouldMatch: false },
+                        { input: "avocado", shouldMatch: true },
+                        { input: "grape", shouldMatch: false }
+                    ]
+                },
+                {
+                    description: "Match words ending with 'ing'",
+                    hint: "Use 'ing$' at the end of the pattern",
+                    testCases: [
+                        { input: "running", shouldMatch: true },
+                        { input: "run", shouldMatch: false },
+                        { input: "jumping", shouldMatch: true },
+                        { input: "begins", shouldMatch: false }
+                    ]
+                }
+            ],
+            medium: [
+                {
+                    description: "Match valid email addresses",
+                    hint: "Use @ and . with word characters",
+                    testCases: [
+                        { input: "test@example.com", shouldMatch: true },
+                        { input: "invalid.email", shouldMatch: false },
+                        { input: "user.name@domain.co.uk", shouldMatch: true },
+                        { input: "@nodomain.com", shouldMatch: false }
+                    ]
+                },
+                {
+                    description: "Match valid dates (YYYY-MM-DD)",
+                    hint: "Use \\d{4} for year and check ranges for month and day",
+                    testCases: [
+                        { input: "2023-12-25", shouldMatch: true },
+                        { input: "2023/12/25", shouldMatch: false },
+                        { input: "2023-13-45", shouldMatch: false },
+                        { input: "2023-01-01", shouldMatch: true }
+                    ]
+                },
+                {
+                    description: "Match valid time format (HH:MM)",
+                    hint: "Use ranges for hours (00-23) and minutes (00-59)",
+                    testCases: [
+                        { input: "23:59", shouldMatch: true },
+                        { input: "24:00", shouldMatch: false },
+                        { input: "09:45", shouldMatch: true },
+                        { input: "9:5", shouldMatch: false }
+                    ]
+                },
+                {
+                    description: "Match valid US phone numbers",
+                    hint: "Format: (555) 555-5555 or 555-555-5555",
+                    testCases: [
+                        { input: "(555) 555-5555", shouldMatch: true },
+                        { input: "555-555-5555", shouldMatch: true },
+                        { input: "5555555555", shouldMatch: false },
+                        { input: "(555) 5555-5555", shouldMatch: false }
+                    ]
+                }
+            ],
+            hard: [
+                {
+                    description: "Match valid IPv4 addresses",
+                    hint: "Use groups and ranges for numbers 0-255",
+                    testCases: [
+                        { input: "192.168.1.1", shouldMatch: true },
+                        { input: "256.1.2.3", shouldMatch: false },
+                        { input: "127.0.0.1", shouldMatch: true },
+                        { input: "1.2.3.4.5", shouldMatch: false }
+                    ]
+                },
+                {
+                    description: "Match valid HTML tags",
+                    hint: "Use < > and capture group for tag name",
+                    testCases: [
+                        { input: "&lt;div>", shouldMatch: true },
+                        { input: "&lt;/p>", shouldMatch: true },
+                        { input: "&lt;123>", shouldMatch: false },
+                        { input: "&lt; div >", shouldMatch: false }
+                    ]
+                },
+                {
+                    description: "Match valid hexadecimal color codes",
+                    hint: "Format: #RGB or #RRGGBB",
+                    testCases: [
+                        { input: "#FFF", shouldMatch: true },
+                        { input: "#FF00FF", shouldMatch: true },
+                        { input: "#XYZ", shouldMatch: false },
+                        { input: "FFF", shouldMatch: false }
+                    ]
+                },
+                {
+                    description: "Match valid password requirements",
+                    hint: "At least 8 chars, 1 uppercase, 1 lowercase, 1 number",
+                    testCases: [
+                        { input: "Password123", shouldMatch: true },
+                        { input: "password123", shouldMatch: false },
+                        { input: "Pass123", shouldMatch: false },
+                        { input: "PASSWORD123", shouldMatch: false }
+                    ]
+                }
+            ]
+        };
+
+        const scoring = {
+            difficulty: {
+                easy: { base: 10, bonus: 5 },
+                medium: { base: 20, bonus: 10 },
+                hard: { base: 30, bonus: 15 }
+            },
+            streakMultiplier: 0.2, // 20% bonus per streak
+            hintPenalty: 0.5, // 50% reduction when hint is used
+            maxStreak: 5
+        };
+
+        let currentDifficulty = 'easy';
+        let currentChallengeIndex = 0;
+        let score = 0;
+        let streak = 0;
+        let hintsUsed = new Set();
+        let attempts = new Map();
+        let solvedChallenges = new Set();
+
+        function setDifficulty(difficulty) {
+            if (difficulty === currentDifficulty) return; // Don't reset if same difficulty
+            currentDifficulty = difficulty;
+            currentChallengeIndex = 0;
+            streak = 0; // Reset streak when changing difficulty
+            document.querySelectorAll('.regex-difficulty-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(difficulty).classList.add('active');
+            document.getElementById('regex-input').value = ''; // Clear input
+            updateChallenge();
+            updateScoreDisplay();
+        }
+
+        function showHint() {
+            const challengeId = `${currentDifficulty}-${currentChallengeIndex}`;
+            hintsUsed.add(challengeId);
+            const currentChallenge = challenges[currentDifficulty][currentChallengeIndex];
+            document.getElementById('hint-text').textContent = `💡 Hint: ${currentChallenge.hint}`;
+        }
+
+        function updateProgress() {
+            const totalChallenges = challenges[currentDifficulty].length;
+            const progress = ((currentChallengeIndex) / totalChallenges) * 100;
+            document.getElementById('progress').style.width = `${progress}%`;
+        }
+
+        function updateChallenge() {
+            const currentChallenge = challenges[currentDifficulty][currentChallengeIndex];
+            document.getElementById('challenge-description').textContent =
+                'Current Challenge: ' + currentChallenge.description;
+            document.getElementById('hint-text').textContent = '💡 Click for a hint';
+            document.getElementById('regex-input').value = '';
+            updateTestCasesPreview();
+            updateProgress();
+        }
+
+        function validateRegex(input) {
+            try {
+                if (!input.trim()) {
+                    return false;
+                }
+                // Just check if it's a valid regex without adding ^ and $
+                new RegExp(input);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        function createTestRegex(pattern) {
+            try {
+                // Create regex for exact match validation
+                return new RegExp('^' + pattern + '$');
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function createHighlightRegex(pattern) {
+            try {
+                // Create regex for highlighting matches
+                return new RegExp('(' + pattern + ')', 'g');
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function checkMatch(regex, input) {
+            // Reset lastIndex to ensure consistent testing
+            regex.lastIndex = 0;
+            return regex.test(input);
+        }
+
+        function highlightMatches(text, pattern) {
+            try {
+                const highlightRegex = createHighlightRegex(pattern);
+                if (!highlightRegex) return text;
+                return text.replace(highlightRegex, match => `<span class="regex-match-highlight">${match}</span>`);
+            } catch (e) {
+                return text;
+            }
+        }
+
+        function updateTestCasesPreview() {
+            const challengeId = `${currentDifficulty}-${currentChallengeIndex}`;
+            const isSolved = solvedChallenges.has(challengeId);
+            const currentChallenge = challenges[currentDifficulty][currentChallengeIndex];
+            const testCasesPreviewDiv = document.getElementById('test-cases-preview');
+            const regexInput = document.getElementById('regex-input').value;
+
+            testCasesPreviewDiv.innerHTML = currentChallenge.testCases.map((testCase, index) => {
+                let statusIcon = '<i class="fas fa-circle"></i>';
+                let statusClass = 'regex-status-pending';
+                let highlightedText = testCase.input;
+
+                if (regexInput && validateRegex(regexInput)) {
+                    const validationRegex = createTestRegex(regexInput);
+                    if (validationRegex) {
+                        // Test for exact match
+                        const matches = validationRegex.test(testCase.input);
+                        const isCorrect = matches === testCase.shouldMatch;
+
+                        statusIcon = isCorrect ?
+                            '<i class="fas fa-check-circle"></i>' :
+                            '<i class="fas fa-times-circle"></i>';
+                        statusClass = isCorrect ?
+                            'regex-status-correct' :
+                            'regex-status-incorrect';
+
+                        // Show partial matches for visual feedback
+                        highlightedText = highlightMatches(testCase.input, regexInput);
+                    }
+                }
+
+                return `
+                    <div class="regex-test-case">
+                        <span class="regex-status-icon ${statusClass}">${statusIcon}</span>
+                        <code>${highlightedText}</code>
+                        <span>${testCase.shouldMatch ? 'should match' : 'should not match'}</span>
+                    </div>
+                `;
+            }).join('');
+
+            if (isSolved) {
+                const container = document.querySelector('.regex-test-container');
+                if (!container.querySelector('.solved-badge')) {
+                    const badge = document.createElement('div');
+                    badge.className = 'solved-badge';
+                    badge.innerHTML = '<i class="fas fa-check-circle"></i> Completed';
+                    badge.style.cssText = `
+                        background: var(--primary);
+                        color: white;
+                        padding: 5px 10px;
+                        border-radius: 4px;
+                        position: absolute;
+                        top: 10px;
+                        right: 10px;
+                        font-size: 0.9em;
+                        font-weight: bold;
+                    `;
+                    container.style.position = 'relative';
+                    container.appendChild(badge);
+                }
+            }
+        }
+
+        function updateTestCases() {
+            const regexInput = document.getElementById('regex-input').value;
+            const challengeId = `${currentDifficulty}-${currentChallengeIndex}`;
+
+            if (solvedChallenges.has(challengeId)) {
+                updateTestCasesPreview();
+                return; // Don't allow scoring for already solved challenges
+            }
+
+            if (!attempts.has(challengeId)) {
+                attempts.set(challengeId, 0);
+            }
+            attempts.set(challengeId, attempts.get(challengeId) + 1);
+
+            updateTestCasesPreview();
+
+            if (!regexInput || !validateRegex(regexInput)) {
+                return;
+            }
+
+            const validationRegex = createTestRegex(regexInput);
+            if (!validationRegex) return;
+
+            const currentChallenge = challenges[currentDifficulty][currentChallengeIndex];
+            const allPassing = currentChallenge.testCases.every(testCase => {
+                const matches = validationRegex.test(testCase.input);
+                return matches === testCase.shouldMatch;
+            });
+
+            if (allPassing && !solvedChallenges.has(challengeId)) {
+                solvedChallenges.add(challengeId); // Mark as solved
+                const usedHint = hintsUsed.has(challengeId);
+                const points = calculateScore(currentDifficulty, usedHint, streak);
+                score += points;
+                streak++;
+
+                let reason = `${currentDifficulty} challenge`;
+                if (streak > 1) reason += `, ${streak}x streak`;
+                if (!usedHint) reason += ', no hints';
+
+                showScorePopup(points, reason);
+                updateScoreDisplay();
+            }
+        }
+
+        function nextChallenge() {
+            currentChallengeIndex = (currentChallengeIndex + 1) % challenges[currentDifficulty].length;
+            if (currentChallengeIndex === 0) {
+                streak = 0; // Reset streak when completing all challenges in a difficulty
+            }
+            // Clear input when moving to next challenge
+            document.getElementById('regex-input').value = '';
+            updateChallenge();
+            updateScoreDisplay();
+        }
+
+        function showScorePopup(points, reason) {
+            const popup = document.createElement('div');
+            popup.className = 'regex-score-popup';
+            popup.textContent = `+${points} points: ${reason}`;
+            document.body.appendChild(popup);
+            setTimeout(() => popup.remove(), 2000);
+        }
+
+        function calculateScore(difficulty, usedHint, currentStreak) {
+            const basePoints = scoring.difficulty[difficulty].base;
+            const streakBonus = Math.min(currentStreak, scoring.maxStreak) * scoring.streakMultiplier * basePoints;
+            const difficultyBonus = usedHint ? 0 : scoring.difficulty[difficulty].bonus;
+
+            return Math.round(usedHint ?
+                (basePoints + streakBonus) * scoring.hintPenalty :
+                basePoints + streakBonus + difficultyBonus);
+        }
+
+        function updateScoreDisplay() {
+            const scoreContainer = document.querySelector('.regex-score-display');
+            scoreContainer.innerHTML = `
+                <div class="regex-score-details">
+                    <div class="regex-score-item">
+                        <div class="regex-score-value">${score}</div>
+                        <div class="regex-score-label">Total Score</div>
+                    </div>
+                    <div class="regex-score-item">
+                        <div class="regex-score-value">${streak}</div>
+                        <div class="regex-score-label">Streak</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        document.getElementById('regex-input').addEventListener('input', updateTestCases);
+        document.addEventListener('DOMContentLoaded', updateScoreDisplay);
+        updateChallenge();
+    </script>
+
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+    <script type="text/javascript" src="/username.js"></script>
+    <script type="text/javascript" src="/js/darkmode.js"></script>
+    <script type="text/javascript" src="/js/message-notifier.js"></script>
+</body>
+
+</html>

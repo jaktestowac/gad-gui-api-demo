@@ -171,6 +171,15 @@ function searchForPaymentHistory(accountId) {
   return foundPaymentHistory;
 }
 
+function searchForBookShopBookByBookId(bookId) {
+  const foundBook = booksDb().find((book) => {
+    if (areIdsEqual(book["id"], bookId)) {
+      return book;
+    }
+  });
+  return foundBook;
+}
+
 module.exports = {
   searchForBookShopAccount,
   searchForBookShopAccountPaymentCardByAccountId,
@@ -190,4 +199,5 @@ module.exports = {
   searchForBookShopAccountRole,
   searchForBookShopAccountsWithRoles,
   searchForPaymentHistory,
+  searchForBookShopBookByBookId,
 };

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | BookShop Manage Books</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/book-shop-side-panel.css" />
+    <link rel="stylesheet" href="./css/book-shop.css" />
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-gui-book-shop" class="nav-menu"></h1>
+        </div>
+    </header>
+    <br />
+    <br />
+    <br />
+
+    <div style="position: absolute; right: 270px;">
+        <div id="alerts-placeholder" class="alerts-placeholder"></div>
+    </div>
+    <div id="side-panel" class="sidepanel"></div>
+
+    <div class="manage-books-container">
+        <div class="manage-books-header" align="center">
+            <div>
+                <h2>Manage Books</h2>
+
+                <div class="search-controls">
+                    <input type="text" id="searchInput" placeholder="Search books..." class="search-input">
+                    <select id="filterSelect" class="filter-select">
+                        <option value="all">All Books</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div id="booksGrid" class="books-grid compact">
+            <!-- Books will be populated here -->
+        </div>
+    </div>
+
+    <!-- Edit Book Modal -->
+    <div id="editBookModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Edit Book</h3>
+            <form id="editBookForm" class="edit-book-form">
+                <input type="hidden" id="bookId">
+                <div class="form-group">
+                    <label for="editTitle">Title*</label>
+                    <input type="text" id="editTitle" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="editDescription">Description*</label>
+                    <textarea id="editDescription" name="description" required></textarea>
+                </div>
+                <button type="submit" class="book-shop-button-primary">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Confirm Delete Modal -->
+    <div id="confirmDeleteModal" class="modal">
+        <div class="modal-content">
+            <h3>Confirm Delete</h3>
+            <p>Are you sure you want to delete this book? This action cannot be undone.</p>
+            <div class="modal-actions">
+                <button id="confirmDelete" class="book-shop-button-primary red">Delete</button>
+                <button id="cancelDelete" class="book-shop-button-primary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="/username.js"></script>
+<script type="text/javascript" src="./js/book-common.js"></script>
+<script type="text/javascript" src="./js/book-shop-side-panel.js"></script>
+<script type="text/javascript" src="/js/message-notifier.js"></script>
+<script type="text/javascript" src="./js/manage-books.js"></script>
+
+</html>
