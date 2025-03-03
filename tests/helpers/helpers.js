@@ -110,7 +110,7 @@ function jsonToBase64(object) {
   return btoa(json);
 }
 
-async function invokeRequestUntil(id, requestFun, conditionFun, maxAttempts = 10, delay = 200) {
+async function invokeRequestUntil(id, requestFun, conditionFun, maxAttempts = 8, delay = 150) {
   let attempts = 0;
   let response;
   while (attempts < maxAttempts) {

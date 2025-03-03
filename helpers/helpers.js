@@ -32,6 +32,10 @@ function formatNoFieldsErrorResponse(isValid, all_fields) {
   return formatErrorResponse(`No fields were provided! ${isValid.error}`, all_fields);
 }
 
+function formatNonStringFieldErrorResponse(isValid, field) {
+  return formatErrorResponse(`Field value is not a string: ${isValid?.error}`, field);
+}
+
 function formatInvalidFieldValueErrorResponse(isValid, field) {
   return formatErrorResponse(`Field value is invalid: ${isValid?.error}`, field);
 }
@@ -288,4 +292,5 @@ module.exports = {
   hideCardNumber,
   isValidNumber,
   isStringValidNumberInRange,
+  formatNonStringFieldErrorResponse,
 };

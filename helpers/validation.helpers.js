@@ -73,6 +73,17 @@ function areAnyAdditionalFieldsPresent(body, all_possible_fields) {
   return { status: false, error: "" };
 }
 
+function areFieldsInStringFormat(body, fields) {
+  for (let index = 0; index < fields.length; index++) {
+    const element = fields[index];
+    if (typeof body[element] !== "string") {
+      logDebug(`Field validation: field ${element} not string ${body[element]}`);
+      return false;
+    }
+  }
+  return true;
+}
+
 function areMandatoryFieldsPresent(body, mandatory_non_empty_fields) {
   if (isBugEnabled(BugConfigKeys.BUG_VALIDATION_001)) {
     return true;
@@ -214,12 +225,12 @@ function areAllFieldsValid(
 }
 
 const isEmailValid = (email) => {
-  return email.match(getConfigValue(ConfigKeys.EMAIL_REGEXP));
+  return `${email}`.match(getConfigValue(ConfigKeys.EMAIL_REGEXP));
 };
 
 const isDateValid = (date) => {
   try {
-    const result = date.match(getConfigValue(ConfigKeys.DATE_REGEXP));
+    const result = `${date}`.match(getConfigValue(ConfigKeys.DATE_REGEXP));
     if (result === null) {
       return false;
     }
@@ -376,4 +387,5 @@ module.exports = {
   mandatory_non_empty_fields_flashpost_settings,
   all_possible_fields_book_shop_account,
   mandatory_non_empty_fields_body,
+  areFieldsInStringFormat,
 };

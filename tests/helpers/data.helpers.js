@@ -313,6 +313,8 @@ async function prepareUniqueLoggedUser() {
   const responseLogin = await invokeRequestUntil(
     testUserData.email,
     async () => {
+      const getResponse = await request.get("/api/users/" + userId).send();
+      console.log(`[${testUserData.email}] getResponse: ${JSON.stringify(getResponse.body)}`);
       return await request.post("/api/login").send({
         email: testUserData.email,
         password: testUserData.password,
