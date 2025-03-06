@@ -113,7 +113,7 @@ function handleUsers(req, res, { isAdmin }) {
 
     const areStrings = areFieldsInStringFormat(req.body, mandatory_non_empty_fields_user);
     if (!areStrings) {
-      res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatNonStringFieldErrorResponse(areStrings, all_fields_user));
+      res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatNonStringFieldErrorResponse(areStrings, mandatory_non_empty_fields_user));
       return;
     }
 

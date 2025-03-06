@@ -189,9 +189,9 @@ describe("Endpoint /users", async () => {
         });
       });
 
-      [null, true, undefined, 0, {}, []].forEach((value) => {
+      [null, true, undefined, 0, {}, [], ""].forEach((value) => {
         ["firstname", "lastname", "email", "avatar"].forEach((field) => {
-          it(`invalid value of field ${field} set to ${value}`, async () => {
+          it(`invalid value of field ${field} set to "${JSON.stringify(value)}"`, async () => {
             // Arrange:
             const testUserData = generateValidUserData();
 
