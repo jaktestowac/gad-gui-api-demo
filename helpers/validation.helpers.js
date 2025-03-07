@@ -5,7 +5,7 @@ const { getDateTimeFromString } = require("./datetime.helpers");
 const { verifyToken, getJwtExpiryDate } = require("./jwtauth");
 const { logDebug, logError, logTrace, logWarn, logInsane } = require("./logger-api");
 
-const mandatory_non_empty_fields_user = ["firstname", "lastname", "email", "avatar"];
+const mandatory_non_empty_fields_user = ["firstname", "lastname", "email", "avatar", "password"];
 const all_fields_user = ["id", "firstname", "lastname", "email", "avatar", "password", "birthDate"];
 const mandatory_non_empty_fields_article = ["user_id", "title", "body", "date"];
 const mandatory_non_empty_fields_labels = ["user_id", "name"];

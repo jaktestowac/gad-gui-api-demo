@@ -7,7 +7,7 @@ const {
   generateValidUserData,
 } = require("../helpers/data.helpers.js");
 
-describe("Endpoint /users", async () => {
+describe.only("Endpoint /users", async () => {
   const baseUrl = baseUsersUrl;
 
   before(async () => {
@@ -159,7 +159,7 @@ describe("Endpoint /users", async () => {
         expect(response.status).to.equal(422);
       });
 
-      ["firstname", "lastname", "email", "avatar"].forEach((field) => {
+      ["firstname", "lastname", "email", "avatar", "password"].forEach((field) => {
         it(`should not register with missing mandatory field - ${field}`, async () => {
           // Arrange:
           const testUserData = generateValidUserData();
@@ -174,7 +174,7 @@ describe("Endpoint /users", async () => {
         });
       });
 
-      ["firstname", "lastname", "email", "avatar"].forEach((field) => {
+      ["firstname", "lastname", "email", "avatar", "password"].forEach((field) => {
         it(`length of field exceeded - ${field}`, async () => {
           // Arrange:
           const testUserData = generateValidUserData();
@@ -190,7 +190,7 @@ describe("Endpoint /users", async () => {
       });
 
       [null, true, undefined, 0, {}, [], ""].forEach((value) => {
-        ["firstname", "lastname", "email", "avatar"].forEach((field) => {
+        ["firstname", "lastname", "email", "avatar", "password"].forEach((field) => {
           it(`invalid value of field ${field} set to "${JSON.stringify(value)}"`, async () => {
             // Arrange:
             const testUserData = generateValidUserData();
