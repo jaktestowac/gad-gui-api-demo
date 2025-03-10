@@ -7,7 +7,7 @@ const {
   generateValidUserData,
 } = require("../helpers/data.helpers.js");
 
-describe("Endpoint /users", async () => {
+describe.only("Endpoint /users", async () => {
   const baseUrl = baseUsersUrl;
 
   before(async () => {
@@ -343,6 +343,19 @@ describe("Endpoint /users", async () => {
       expect(response.body).to.deep.equal(oldUserData);
     });
 
+    it("PUT /users/:id - should update user with existing user email (known ISSUE!)", async () => {
+      // Act:
+      const oldUserData = { ...baseUserData };
+      oldUserData.id = userId;
+      oldUserData.email = "Danial.Dicki@dicki.test";
+      const response = await request.put(`${baseUrl}/${userId}`).set(headers).send(oldUserData);
+
+      // Assert:
+      expect(response.status).to.equal(200);
+      testUserData.id = response.body.id;
+      expect(response.body).to.deep.equal(oldUserData);
+    });
+
     it("PUT /users/:id - should update user with new data", async () => {
       // Act:
       const response = await request.put(`${baseUrl}/${userId}`).set(headers).send(testUserData);
@@ -365,7 +378,7 @@ describe("Endpoint /users", async () => {
       expect(response.body).to.deep.equal(testUserData);
     });
 
-    ["firstname", "lastname", "email", "avatar"].forEach((field) => {
+    ["firstname", "lastname", "email", "avatar", "password"].forEach((field) => {
       it(`PUT /users/:id - should not update with missing mandatory field - ${field}`, async () => {
         // Arrange:
         const testUserData = generateValidUserData();
@@ -377,6 +390,23 @@ describe("Endpoint /users", async () => {
 
         // Assert:
         expect(response.status, `${JSON.stringify(response.body)} - ${testUserData}`).to.equal(422);
+      });
+    });
+
+    [null, true, undefined, 0, {}, [], ""].forEach((value) => {
+      ["firstname", "lastname", "email", "avatar", "password"].forEach((field) => {
+        it(`PUT - shoud not update -  value of field ${field} set to "${JSON.stringify(value)}"`, async () => {
+          // Arrange:
+          const testUserData = generateValidUserData();
+
+          testUserData[field] = value;
+
+          // Act:
+          const response = await request.put(`${baseUrl}/${userId}`).set(headers).send(testUserData);
+
+          // Assert:
+          expect(response.status).to.equal(422);
+        });
       });
     });
 
@@ -418,6 +448,15 @@ describe("Endpoint /users", async () => {
       baseUserData.firstname = testPartialUserData.firstname;
       baseUserData.id = response.body.id;
       expect(response.body).to.deep.equal(baseUserData);
+    });
+
+    it("PATCH /users/:id - should not update user with existing user email", async () => {
+      // Act:
+      const testPartialUserData = { email: "Danial.Dicki@dicki.test" };
+      const response = await request.put(`${baseUrl}/${userId}`).set(headers).send(testPartialUserData);
+
+      // Assert:
+      expect(response.status, JSON.stringify(response.body)).to.equal(422);
     });
 
     it("PATCH /users/:id - should do partial update", async () => {

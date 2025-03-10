@@ -5,9 +5,33 @@ const { HTTP_NOT_FOUND, HTTP_OK, HTTP_UNAUTHORIZED } = require("../helpers/respo
 const { sessionV1, sessionV2 } = require("./practice/session-handlers");
 const { todoV1, todoV2, todoV3, todoV4, todoV5, todoV6 } = require("./practice/todo-handlers");
 const { expenseV1, expenseV2, expenseV3 } = require("./practice/expense-handlers");
+const { employeeV1 } = require("./practice/employee-management-system/employee-handlers");
+const { departmentV1 } = require("./practice/employee-management-system/department-handlers");
+const { roleV1 } = require("./practice/employee-management-system/role-handlers");
+const { attendanceV1 } = require("./practice/employee-management-system/attendance-handlers");
+const { authV1 } = require("./practice/employee-management-system/auth-handlers");
+const { verifyToken, hasPermission } = require("./practice/employee-management-system/auth-middleware");
 
 function isIdValid(id) {
   return id !== undefined && id !== "";
+}
+
+// Helper to chain middleware
+function applyMiddleware(middlewares, handler) {
+  return (req, res, ...args) => {
+    let index = 0;
+
+    function next(req, res) {
+      if (index < middlewares.length) {
+        const middleware = middlewares[index++];
+        return middleware(req, res, next);
+      } else {
+        return handler(req, res, ...args);
+      }
+    }
+
+    return next(req, res);
+  };
 }
 
 function handlePractice(req, res) {
@@ -239,6 +263,102 @@ function handlePractice(req, res) {
           return expenseV3.patch(req, res, id);
         case req.method === "DELETE" && isIdValid(id):
           return expenseV3.delete(req, res, id);
+        default:
+          return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
+      }
+    }
+
+    // Employee management system endpoints
+    if (req.url.includes("/api/practice/v1/employees")) {
+      const url = req.url;
+      const id = url.split("/api/practice/v1/employees")[1]?.split("/")[1];
+
+      switch (true) {
+        case req.method === "GET" && !isIdValid(id):
+          return applyMiddleware([verifyToken, hasPermission("VIEW")], employeeV1.getAll)(req, res);
+        case req.method === "GET" && isIdValid(id):
+          return applyMiddleware([verifyToken, hasPermission("VIEW")], employeeV1.getOne)(req, res, id);
+        case req.method === "POST" && !isIdValid(id):
+          return applyMiddleware([verifyToken, hasPermission("CREATE")], employeeV1.create)(req, res);
+        case req.method === "PUT" && isIdValid(id):
+          return applyMiddleware([verifyToken, hasPermission("UPDATE")], employeeV1.update)(req, res, id);
+        case req.method === "DELETE" && isIdValid(id):
+          return applyMiddleware([verifyToken, hasPermission("DELETE")], employeeV1.delete)(req, res, id);
+        default:
+          return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
+      }
+    }
+
+    // Department endpoints
+    if (req.url.includes("/api/practice/v1/departments")) {
+      const url = req.url;
+      const id = url.split("/api/practice/v1/departments")[1]?.split("/")[1];
+
+      switch (true) {
+        case req.method === "GET" && !isIdValid(id):
+          return applyMiddleware([verifyToken, hasPermission("VIEW")], departmentV1.getAll)(req, res);
+        case req.method === "GET" && isIdValid(id):
+          return applyMiddleware([verifyToken, hasPermission("VIEW")], departmentV1.getOne)(req, res, id);
+        case req.method === "POST" && !isIdValid(id):
+          return applyMiddleware([verifyToken, hasPermission("CREATE")], departmentV1.create)(req, res);
+        case req.method === "PUT" && isIdValid(id):
+          return applyMiddleware([verifyToken, hasPermission("UPDATE")], departmentV1.update)(req, res, id);
+        case req.method === "DELETE" && isIdValid(id):
+          return applyMiddleware([verifyToken, hasPermission("DELETE")], departmentV1.delete)(req, res, id);
+        default:
+          return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
+      }
+    }
+
+    // Role/permission endpoints
+    if (req.url.includes("/api/practice/v1/roles")) {
+      const url = req.url;
+      const id = url.split("/api/practice/v1/roles")[1]?.split("/")[1];
+
+      switch (true) {
+        case req.method === "GET" && !isIdValid(id):
+          return applyMiddleware([verifyToken, hasPermission("VIEW")], roleV1.getAll)(req, res);
+        case req.method === "POST" && !isIdValid(id):
+          return applyMiddleware([verifyToken, hasPermission("CREATE")], roleV1.create)(req, res);
+        case req.method === "PUT" && isIdValid(id):
+          return applyMiddleware([verifyToken, hasPermission("UPDATE")], roleV1.update)(req, res, id);
+        case req.method === "DELETE" && isIdValid(id):
+          return applyMiddleware([verifyToken, hasPermission("DELETE")], roleV1.delete)(req, res, id);
+        default:
+          return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
+      }
+    }
+
+    // Attendance endpoints
+    if (req.url.includes("/api/practice/v1/attendance")) {
+      const url = req.url;
+      const id = url.split("/api/practice/v1/attendance")[1]?.split("/")[1];
+
+      switch (true) {
+        case req.method === "GET" && !isIdValid(id):
+          return applyMiddleware([verifyToken, hasPermission("VIEW")], attendanceV1.getAll)(req, res);
+        case req.method === "POST" && !isIdValid(id):
+          return applyMiddleware([verifyToken, hasPermission("CREATE")], attendanceV1.create)(req, res);
+        case req.method === "PUT" && isIdValid(id):
+          return applyMiddleware([verifyToken, hasPermission("UPDATE")], attendanceV1.update)(req, res, id);
+        case req.method === "DELETE" && isIdValid(id):
+          return applyMiddleware([verifyToken, hasPermission("DELETE")], attendanceV1.delete)(req, res, id);
+        default:
+          return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
+      }
+    }
+
+    // Auth endpoints
+    if (req.url.includes("/api/practice/v1/auth")) {
+      const endpoint = req.url.split("/api/practice/v1/auth/")[1];
+
+      switch (true) {
+        case req.method === "POST" && endpoint === "login":
+          return authV1.login(req, res);
+        case req.method === "POST" && endpoint === "logout":
+          return authV1.logout(req, res);
+        case req.method === "GET" && endpoint === "permissions":
+          return applyMiddleware([verifyToken], authV1.getPermissions)(req, res);
         default:
           return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
       }

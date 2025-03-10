@@ -1,0 +1,1656 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD - Employee Management System</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="ems.css" />
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <div class="ems-container">
+        <div class="ems-header">
+            <h1>🏢 Employee Management System</h1>
+            <div id="auth-info">
+                <span id="user-info">Not logged in</span>
+                <button id="login-btn" class="ems-btn">Login</button>
+            </div>
+        </div>
+
+        <div id="login-message-container" class="ems-alert ems-alert-danger" style="display: none;">
+            <i class="fas fa-exclamation-circle"></i>
+            Please log in to access the Employee Management System.
+        </div>
+
+        <div id="login-form" class="ems-auth-section" style="display: none;">
+            <h2>Login</h2>
+            <div class="ems-form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" placeholder="admin or user">
+            </div>
+            <div class="ems-form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" placeholder="1234 or user123">
+            </div>
+            <button id="submit-login" class="ems-btn">Login</button>
+            <div id="login-message"></div>
+        </div>
+
+        <div id="main-content" class="ems-main" style="display: none;">
+            <div class="ems-nav-tabs">
+                <button class="ems-nav-tab active" data-tab="employees">Employees</button>
+                <button class="ems-nav-tab" data-tab="departments">Departments</button>
+                <button class="ems-nav-tab" data-tab="attendance">Attendance</button>
+            </div>
+
+            <div class="ems-tab-content active" id="employees-tab">
+                <button id="add-employee" class="ems-btn">
+                    <i class="fas fa-user-plus"></i> Add Employee
+                </button>
+                <div id="employee-message" class="ems-message"></div>
+                <div id="employee-form" style="display: none;">
+                    <!-- Employee form will be dynamically populated -->
+                </div>
+                <table id="employees-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Position</th>
+                            <th>Department</th>
+                            <th>Salary</th>
+                            <th>Manager</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="employees-list"></tbody>
+                </table>
+            </div>
+
+            <div class="ems-tab-content" id="departments-tab">
+                <button id="add-department" class="ems-btn">Add Department</button>
+                <div id="department-message" class="ems-message"></div>
+                <div id="department-form" style="display: none;">
+                    <!-- Department form will be dynamically populated -->
+                </div>
+                <table id="departments-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Structure</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="departments-list"></tbody>
+                </table>
+            </div>
+
+            <div class="ems-tab-content" id="attendance-tab">
+                <button id="add-attendance" class="ems-btn">
+                    <i class="fas fa-plus"></i> Add Attendance
+                </button>
+                <div class="attendance-filters">
+                    <div class="ems-form-group">
+                        <label>Employee:</label>
+                        <select id="filter-employee">
+                            <option value="">All Employees</option>
+                        </select>
+                    </div>
+                    <div class="ems-form-group">
+                        <label>Status:</label>
+                        <select id="filter-status">
+                            <option value="">All Status</option>
+                            <option value="PRESENT">Present</option>
+                            <option value="ABSENT">Absent</option>
+                        </select>
+                    </div>
+                    <div class="ems-form-group">
+                        <label>Search:</label>
+                        <input type="search" id="filter-search" placeholder="Search employee or date...">
+                    </div>
+                </div>
+                <div id="attendance-message" class="ems-message"></div>
+                <div id="attendance-form" style="display: none;"></div>
+                <div id="attendance-records"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let authToken = localStorage.getItem('empAuthToken');
+        let currentUser = null;
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            setupEventListeners();
+            checkAuthStatus();
+        });
+
+        // Event listener setup
+        function setupEventListeners() {
+            // Auth related listeners
+            document.getElementById('login-btn').addEventListener('click', () => {
+                document.getElementById('login-form').style.display = 'block';
+            });
+            document.getElementById('submit-login').addEventListener('click', handleLogin);
+
+            // Tab navigation
+            document.querySelectorAll('.ems-nav-tab').forEach(tab => {
+                tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+            });
+
+            // Add buttons
+            document.getElementById('add-employee').addEventListener('click', showEmployeeForm);
+            document.getElementById('add-department').addEventListener('click', showDepartmentForm);
+            document.getElementById('add-attendance').addEventListener('click', showAttendanceForm);
+        }
+
+        async function handleLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('/api/practice/v1/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    authToken = data.token;
+                    localStorage.setItem('empAuthToken', authToken);
+                    currentUser = { username: data.username, userId: data.userId };
+                    showLoggedInState();
+                    loadEmployees();
+                } else {
+                    showMessage('login-message', data.error.message, true);
+                }
+            } catch (error) {
+                showMessage('login-message', 'Error connecting to server', true);
+            }
+        }
+
+        async function checkAuthStatus() {
+            if (!authToken) {
+                showLoginState();
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/practice/v1/auth/permissions', {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    currentUser = {
+                        userId: data.userId,
+                        username: data.username,
+                        permissions: data.permissions
+                    };
+                    showLoggedInState();
+                    loadEmployees();
+                } else {
+                    // Token is invalid or expired
+                    handleLogout();
+                }
+            } catch (error) {
+                console.error('Auth check error:', error);
+                handleLogout();
+            }
+        }
+
+        function showLoginState() {
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('main-content').style.display = 'none';
+            document.getElementById('login-message-container').style.display = 'block';
+            document.getElementById('user-info').textContent = 'Not logged in';
+            document.getElementById('login-btn').textContent = 'Login';
+            document.getElementById('login-btn').onclick = () => {
+                document.getElementById('login-form').style.display = 'block';
+                document.getElementById('login-message-container').style.display = 'none';
+            };
+        }
+
+        function showLoggedInState() {
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+            document.getElementById('login-message-container').style.display = 'none';
+            document.getElementById('user-info').textContent = `Logged in as: ${currentUser.username}`;
+            document.getElementById('login-btn').textContent = 'Logout';
+            document.getElementById('login-btn').onclick = handleLogout;
+        }
+
+        async function handleLogout() {
+            if (authToken) {
+                try {
+                    await fetch('/api/practice/v1/auth/logout', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${authToken}`
+                        }
+                    });
+                } catch (error) {
+                    console.error('Logout error:', error);
+                }
+            }
+            
+            authToken = null;
+            currentUser = null;
+            localStorage.removeItem('empAuthToken');
+            showLoginState();
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.ems-nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.ems-tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+
+            switch (tabName) {
+                case 'employees':
+                    loadEmployees();
+                    break;
+                case 'departments':
+                    loadDepartments();
+                    break;
+                case 'attendance':
+                    loadAttendance();
+                    break;
+            }
+        }
+
+        function showMessage(elementId, message, isError = false) {
+            const element = document.getElementById(elementId);
+            if (!element) {
+                console.error(`Message container ${elementId} not found`);
+                return;
+            }
+            element.className = `ems-alert ${isError ? 'ems-alert-danger' : 'ems-alert-success'}`;
+            element.textContent = message;
+            element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            setTimeout(() => {
+                if (element) {
+                    element.textContent = '';
+                    element.className = '';
+                }
+            }, 5000);
+        }
+
+        async function loadAllData() {
+            await Promise.all([
+                loadEmployees(),
+                loadDepartments(),
+                loadAttendance()
+            ]);
+        }
+
+        async function loadEmployees() {
+            try {
+                const response = await fetch('/api/practice/v1/employees', {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                
+                if (response.ok) {
+                    const employees = await response.json();
+                    const tbody = document.getElementById('employees-list');
+                    tbody.innerHTML = employees.map(emp => `
+                        <tr>
+                            <td>${emp.firstName} ${emp.lastName}</td>
+                            <td>${emp.personalInfo?.email || ''}</td>
+                            <td>${emp.employmentDetails?.position || ''}</td>
+                            <td>${emp.employmentDetails?.department?.name || ''}</td>
+                            <td>${formatSalary(emp.employmentDetails?.compensation?.salary)}</td>
+                            <td>${emp.employmentDetails?.manager ? 
+                                `${emp.employmentDetails.manager.name}` : 
+                                'No Manager'}</td>
+                            <td>
+                                <button class="ems-btn" onclick="editEmployee(${emp.id})">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="ems-btn ems-btn-danger" onclick="deleteEmployee(${emp.id})">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    const error = await response.json();
+                    console.error('Error loading employees:', error);
+                }
+            } catch (error) {
+                console.error('Error loading employees:', error);
+            }
+        }
+
+        function formatSalary(salary) {
+            if (!salary) return '';
+            return new Intl.NumberFormat('en-US', { 
+                style: 'currency', 
+                currency: salary.currency || 'USD'
+            }).format(salary.base);
+        }
+
+        async function loadDepartments() {
+            try {
+                const response = await fetch('/api/practice/v1/departments', {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                
+                if (response.ok) {
+                    const departments = await response.json();
+                    const tbody = document.getElementById('departments-list');
+                    
+                    const parentDepartments = departments
+                        .filter(dept => !dept.parentDepartmentId)
+                        .sort((a, b) => a.name.localeCompare(b.name));
+                    
+                    tbody.innerHTML = '';
+                    
+                    parentDepartments.forEach(parent => {
+                        const hasChildren = parent.subDepartments?.length > 0;
+                        tbody.innerHTML += `
+                            <tr class="department-parent-row" data-department-id="${parent.id}">
+                                <td>
+                                    <div class="department-row">
+                                        ${hasChildren ? `
+                                            <span class="department-toggle" onclick="toggleDepartmentChildren(${parent.id}, event)">
+                                                <i class="fas fa-caret-right"></i>
+                                            </span>
+                                        ` : `<span style="width: 24px"></span>`}
+                                        <i class="fas fa-building"></i>
+                                        <span class="department-parent-name">${parent.name}</span>
+                                        ${hasChildren ? 
+                                            `<span class="ems-badge">${parent.subDepartments.length}</span>` : 
+                                            ''}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="department-structure">
+                                        <i class="fas fa-sitemap"></i>
+                                        Main Department
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="ems-btn" onclick="editDepartment(${parent.id})">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    <button class="ems-btn ems-btn-danger" onclick="deleteDepartment(${parent.id})">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+
+                        if (parent.subDepartments) {
+                            const sortedChildren = parent.subDepartments.sort((a, b) => 
+                                a.name.localeCompare(b.name)
+                            );
+
+                            sortedChildren.forEach(child => {
+                                tbody.innerHTML += `
+                                    <tr class="department-child" data-parent-id="${parent.id}">
+                                        <td>
+                                            <div class="department-row">
+                                                <span style="width: 24px"></span>
+                                                <i class="fas fa-code-branch fa-rotate-90"></i>
+                                                ${child.name}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="department-structure">
+                                                <i class="fas fa-level-up-alt fa-rotate-90"></i>
+                                                Reports to ${parent.name}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button class="ems-btn" onclick="editDepartment(${child.id})">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </button>
+                                            <button class="ems-btn ems-btn-danger" onclick="deleteDepartment(${child.id})">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                `;
+                            });
+                        }
+                    });
+                } else {
+                    const error = await response.json();
+                    console.error('Error loading departments:', error);
+                }
+            } catch (error) {
+                console.error('Error loading departments:', error);
+            }
+        }
+
+        async function loadAttendance() {
+            try {
+                // First, fetch attendance records
+                const attendanceResponse = await fetch('/api/practice/v1/attendance', {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                
+                if (!attendanceResponse.ok) {
+                    console.error('Error loading attendance:', await attendanceResponse.json());
+                    return;
+                }
+
+                const records = await attendanceResponse.json();
+
+                const employeesResponse = await fetch('/api/practice/v1/employees', {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                if (!employeesResponse.ok) {
+                    console.error('Error loading employees:', await employeesResponse.json());
+                    return;
+                }
+
+                const employees = await employeesResponse.json();
+                const employeeMap = new Map(employees.map(emp => [
+                    emp.id, 
+                    `${emp.firstName} ${emp.lastName}`
+                ]));
+
+                const filteredRecords = filterAttendanceRecords(records);
+                
+                const grouped = groupAttendanceByMonth(filteredRecords);
+                
+                const container = document.getElementById('attendance-records');
+                container.innerHTML = Object.entries(grouped)
+                    .sort(([a], [b]) => new Date(b) - new Date(a))
+                    .map(([month, monthRecords]) => `
+                        <div class="attendance-month-group">
+                            <div class="attendance-month-header" onclick="toggleAttendanceMonth(event)">
+                                <div class="attendance-month-title">
+                                    <span class="attendance-month-toggle">
+                                        <i class="fas fa-caret-right"></i>
+                                    </span>
+                                    ${formatMonthYear(month)}
+                                    <span class="attendance-month-count">${monthRecords.length} records</span>
+                                </div>
+                            </div>
+                            <div class="attendance-month-content">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Employee</th>
+                                            <th>Date</th>
+                                            <th>Status</th>
+                                            <th>Details</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${monthRecords.map(record => `
+                                            <tr>
+                                                <td>
+                                                    <div class="attendance-employee">
+                                                        <i class="fas fa-user"></i>
+                                                        ${employeeMap.get(record.employeeId) || record.employeeId}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="attendance-date">
+                                                        <i class="fas fa-calendar"></i>
+                                                        ${formatDate(record.date)}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="attendance-status ${record.status.toLowerCase()}">
+                                                        <i class="fas ${record.status === 'PRESENT' ? 'fa-check-circle' : 'fa-times-circle'}"></i>
+                                                        ${record.status}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    ${record.status === 'PRESENT' ? 
+                                                        `<div class="attendance-hours">
+                                                            <i class="fas fa-clock"></i>
+                                                            ${record.hoursWorked} hours
+                                                        </div>` : 
+                                                        `<div class="attendance-info">
+                                                            <i class="fas fa-comment"></i>
+                                                            <span class="attendance-reason">${record.reason}</span>
+                                                        </div>`
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <button class="ems-btn" onclick="editAttendance(${record.id})">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button class="ems-btn ems-btn-danger" onclick="deleteAttendance(${record.id})">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    `).join('');
+                
+                // Update filters with employee names
+                const employeeSelect = document.getElementById('filter-employee');
+                employeeSelect.innerHTML = `
+                    <option value="">All Employees</option>
+                    ${[...employeeMap.entries()]
+                        .sort((a, b) => a[1].localeCompare(b[1]))
+                        .map(([id, name]) => `<option value="${id}">${name}</option>`)
+                        .join('')}
+                `;
+                 
+                ['filter-employee', 'filter-status', 'filter-search'].forEach(id => {
+                    document.getElementById(id).addEventListener('change', () => loadAttendance());
+                });
+                
+            } catch (error) {
+                console.error('Error loading attendance:', error);
+            }
+        }
+
+        function filterAttendanceRecords(records) {
+            const employee = document.getElementById('filter-employee').value;
+            const status = document.getElementById('filter-status').value;
+            const search = document.getElementById('filter-search').value.toLowerCase();
+            
+            if (!employee && !status && !search) return records;
+            
+            return records.filter(record => {
+                const matchEmployee = !employee || record.employeeId === parseInt(employee);
+                const matchStatus = !status || record.status === status;
+                const matchSearch = !search || 
+                    record.employeeId.toString().includes(search) ||
+                    formatDate(record.date).toLowerCase().includes(search);
+                return matchEmployee && matchStatus && matchSearch;
+            });
+        }
+
+        function groupAttendanceByMonth(records) {
+            return records.reduce((groups, record) => {
+                const month = record.date.substring(0, 7); // YYYY-MM
+                if (!groups[month]) groups[month] = [];
+                groups[month].push(record);
+                return groups;
+            }, {});
+        }
+
+        function formatMonthYear(dateStr) {
+            return new Date(dateStr + '-01').toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long'
+            });
+        }
+
+        function toggleAttendanceMonth(event) {
+            const header = event.currentTarget;
+            const content = header.nextElementSibling;
+            const toggle = header.querySelector('.attendance-month-toggle');
+            
+            toggle.classList.toggle('expanded');
+            content.classList.toggle('show');
+        }
+
+        function updateAttendanceFilters(records) {
+            const employees = [...new Set(records.map(r => r.employeeId))];
+            const employeeSelect = document.getElementById('filter-employee');
+            employeeSelect.innerHTML = `
+                <option value="">All Employees</option>
+                ${[...employeeMap.entries()]
+                    .sort((a, b) => a[1].localeCompare(b[1]))
+                    .map(([id, name]) => `<option value="${id}">${name}</option>`)
+                    .join('')}
+            `;
+            
+            ['filter-employee', 'filter-status'].forEach(id => {
+                document.getElementById(id).addEventListener('change', () => loadAttendance());
+            });
+
+            const searchInput = document.getElementById('filter-search');
+            searchInput.addEventListener('input', () => loadAttendance()); // Changed from 'keyup'
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    loadAttendance();
+                    e.preventDefault();
+                }
+            });
+        }
+
+        function validateEmployeeForm() {
+            const activePanel = document.querySelector('.ems-form-panel.active');
+            if (!activePanel) return [];
+
+            activePanel.querySelectorAll('input, select').forEach(field => {
+                field.classList.remove('field-error');
+            });
+
+            const errors = [];
+            const currentTab = document.querySelector('.ems-form-tab.active').dataset.panel;
+
+            if (currentTab === 'basic') {
+                const fields = [
+                    { id: 'firstName', label: 'First Name' },
+                    { id: 'lastName', label: 'Last Name' },
+                    { id: 'email', label: 'Email' }
+                ];
+
+                fields.forEach(({ id, label }) => {
+                    const field = document.getElementById(id);
+                    if (!field?.value?.trim()) {
+                        field.classList.add('field-error');
+                        errors.push(`${label} is required`);
+                    }
+                });
+            }
+
+            if (currentTab === 'employment') {
+                const fields = [
+                    { id: 'position', label: 'Position' },
+                    { id: 'baseSalary', label: 'Base Salary' },
+                    { id: 'hireDate', label: 'Hire Date' }
+                ];
+
+                fields.forEach(({ id, label }) => {
+                    const field = document.getElementById(id);
+                    if (!field?.value?.trim()) {
+                        field.classList.add('field-error');
+                        errors.push(`${label} is required`);
+                    }
+                });
+            }
+
+            const validationRules = {
+                firstName: {
+                    rules: [
+                        {
+                            test: value => /^[a-zA-Z\s]{2,30}$/.test(value),
+                            message: 'First name must be 2-30 characters and contain only letters'
+                        }
+                    ]
+                },
+                lastName: {
+                    rules: [
+                        {
+                            test: value => /^[a-zA-Z\s]{2,30}$/.test(value),
+                            message: 'Last name must be 2-30 characters and contain only letters'
+                        }
+                    ]
+                },
+                email: {
+                    rules: [
+                        {
+                            test: value => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
+                            message: 'Please enter a valid email address'
+                        }
+                    ]
+                },
+                phone: {
+                    rules: [
+                        {
+                            test: value => !value || /^\+?[\d\s-]{10,}$/.test(value),
+                            message: 'Phone number must contain at least 10 digits'
+                        }
+                    ]
+                },
+                position: {
+                    rules: [
+                        {
+                            test: value => value.length >= 2 && value.length <= 50,
+                            message: 'Position must be between 2 and 50 characters'
+                        }
+                    ]
+                },
+                baseSalary: {
+                    rules: [
+                        {
+                            test: value => !isNaN(value) && parseFloat(value) > 0,
+                            message: 'Salary must be a positive number'
+                        }
+                    ]
+                },
+                zipCode: {
+                    rules: [
+                        {
+                            test: value => !value || /^\d{5}(-\d{4})?$/.test(value),
+                            message: 'Please enter a valid ZIP code (e.g., 12345 or 12345-6789)'
+                        }
+                    ]
+                }
+            };
+
+            const relevantFields = {
+                basic: ['firstName', 'lastName', 'email'],
+                employment: ['position', 'baseSalary', 'hireDate']
+            }[currentTab] || [];
+
+            for (const field of relevantFields) {
+                const validation = validationRules[field];
+                if (!validation) continue;
+
+                const fieldElement = document.getElementById(field);
+                if (!fieldElement) continue;
+                
+                for (const rule of validation.rules) {
+                    if (!rule.test(validation.value)) {
+                        errors.push(rule.message);
+                        fieldElement.classList.add('field-error');
+                        break;
+                    }
+                }
+            }
+
+            return errors;
+        }
+
+        async function saveEmployee() {
+            let allErrors = [];
+            let firstErrorTab = null;
+            const tabs = ['basic', 'employment'];
+            
+            for (const tab of tabs) {
+                const tabButton = document.querySelector(`[data-panel="${tab}"]`);
+                tabButton.click();
+                
+                const errors = validateEmployeeForm();
+                if (errors.length > 0 && !firstErrorTab) {
+                    firstErrorTab = tab;
+                }
+                allErrors.push(...errors);
+            }
+
+            if (allErrors.length > 0) {
+                const errorTabButton = document.querySelector(`[data-panel="${firstErrorTab}"]`);
+                errorTabButton.click();
+                showMessage('employee-message', allErrors.join('\n'), true);
+                return;
+            }
+
+            const employee = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                personalInfo: {
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    address: {
+                        street: document.getElementById('street').value,
+                        city: document.getElementById('city').value,
+                        state: document.getElementById('state').value,
+                        zipCode: document.getElementById('zipCode').value,
+                        country: "USA"
+                    },
+                    emergencyContact: {
+                        name: document.getElementById('emergencyName').value,
+                        phone: document.getElementById('emergencyPhone').value
+                    }
+                },
+                employmentDetails: {
+                    position: document.getElementById('position').value,
+                    department: {
+                        id: parseInt(document.getElementById('departmentId').value),
+                        name: document.getElementById('departmentId').options[document.getElementById('departmentId').selectedIndex].text
+                    },
+                    manager: document.getElementById('managerId').value ? {
+                        id: parseInt(document.getElementById('managerId').value),
+                        name: document.getElementById('managerId').options[document.getElementById('managerId').selectedIndex].text
+                    } : null,
+                    compensation: {
+                        salary: {
+                            base: parseFloat(document.getElementById('baseSalary').value),
+                            currency: document.getElementById('currency').value
+                        }
+                    },
+                    dates: {
+                        hired: document.getElementById('hireDate').value
+                    }
+                },
+                performance: {
+                    rating: parseFloat(document.getElementById('rating').value) || 0,
+                    skills: document.getElementById('skills').value.split(',').map(s => s.trim()).filter(Boolean)
+                }
+            };
+
+            try {
+                const response = await fetch('/api/practice/v1/employees', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(employee)
+                });
+
+                if (response.ok) {
+                    hideEmployeeForm();
+                    await loadEmployees();
+                    showMessage('employee-message', 'Employee created successfully');
+                } else {
+                    const error = await response.json();
+                    showMessage('employee-message', error.error.message, true);
+                }
+            } catch (error) {
+                console.error('Error saving employee:', error);
+                showMessage('employee-message', 'Error saving employee', true);
+            }
+        }
+
+        function addValidationListeners() {
+            const fields = ['firstName', 'lastName', 'email', 'phone', 'position', 
+                          'baseSalary', 'hireDate', 'startRole', 'zipCode'];
+            
+            fields.forEach(field => {
+                const element = document.getElementById(field);
+                if (element) {
+                    element.addEventListener('input', () => {
+                        element.classList.remove('field-error');
+                        const validation = validateEmployeeForm();
+                        if (validation.length === 0) {
+                            document.getElementById('employee-message').textContent = '';
+                            document.getElementById('employee-message').className = '';
+                        }
+                    });
+                }
+            });
+        }
+
+        function showEmployeeForm() {
+            const formWrapper = document.createElement('div');
+            formWrapper.className = 'ems-form-wrapper';
+            formWrapper.id = 'employee-form';
+            
+            formWrapper.innerHTML = `
+                <div class="ems-form-container">
+                    <h3>Add Employee</h3>
+                    <div class="ems-form-tabs">
+                        <button class="ems-form-tab active" data-panel="basic">Basic Info</button>
+                        <button class="ems-form-tab" data-panel="personal">Personal</button>
+                        <button class="ems-form-tab" data-panel="employment">Employment</button>
+                        <button class="ems-form-tab" data-panel="performance">Performance</button>
+                    </div>
+
+                    <div class="ems-form-panel active" id="basic-panel">
+                        <div class="ems-form-compact">
+                            <div class="ems-form-group">
+                                <label for="firstName" class="required-field">First Name:</label>
+                                <input type="text" id="firstName" required>
+                            </div>
+                            <div class="ems-form-group">
+                                <label for="lastName" class="required-field">Last Name:</label>
+                                <input type="text" id="lastName" required>
+                            </div>
+                            <div class="ems-form-group">
+                                <label for="email" class="required-field">Email:</label>
+                                <input type="email" id="email" required>
+                            </div>
+                            <div class="ems-form-group">
+                                <label for="phone">Phone:</label>
+                                <input type="tel" id="phone">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ems-form-panel" id="personal-panel">
+                        <div class="ems-form-compact">
+                            <div class="ems-form-group">
+                                <label for="street">Street:</label>
+                                <input type="text" id="street">
+                            </div>
+                            <div class="ems-form-group">
+                                <label for="city">City:</label>
+                                <input type="text" id="city">
+                            </div>
+                            <div class="ems-form-group">
+                                <label for="state">State:</label>
+                                <input type="text" id="state">
+                            </div>
+                            <div class="ems-form-group">
+                                <label for="zipCode">Zip Code:</label>
+                                <input type="text" id="zipCode">
+                            </div>
+                            <div class="ems-form-group">
+                                <label for="emergencyName">Emergency Contact:</label>
+                                <input type="text" id="emergencyName">
+                            </div>
+                            <div class="ems-form-group">
+                                <label for="emergencyPhone">Emergency Phone:</label>
+                                <input type="tel" id="emergencyPhone">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ems-form-panel" id="employment-panel">
+                        <div class="ems-form-compact">
+                            <div class="ems-form-group">
+                                <label for="position" class="required-field">Position:</label>
+                                <input type="text" id="position" required>
+                            </div>
+                            <div class="ems-form-group">
+                                <label for="departmentId" class="required-field">Department:</label>
+                                <select id="departmentId" required></select>
+                            </div>
+                            <div class="ems-form-group">
+                                <label for="managerId">Manager:</label>
+                                <select id="managerId">
+                                    <option value="">No Manager</option>
+                                </select>
+                            </div>
+                            <div class="ems-form-group">
+                                <label for="baseSalary" class="required-field">Base Salary:</label>
+                                <input type="number" id="baseSalary" required>
+                            </div>
+                            <div class="ems-form-group">
+                                <label for="currency" class="required-field">Currency:</label>
+                                <select id="currency">
+                                    <option value="USD">USD</option>
+                                    <option value="EUR">EUR</option>
+                                    <option value="GBP">GBP</option>
+                                </select>
+                            </div>
+                            <div class="ems-form-group">
+                                <label for="hireDate" class="required-field">Hire Date:</label>
+                                <input type="date" id="hireDate" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ems-form-panel" id="performance-panel">
+                        <div class="ems-form-compact">
+                            <div class="ems-form-group">
+                                <label for="rating">Rating:</label>
+                                <input type="number" id="rating" min="0" max="5" step="0.1">
+                            </div>
+                            <div class="ems-form-group">
+                                <label for="skills">Skills:</label>
+                                <input type="text" id="skills" placeholder="Comma-separated">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ems-form-actions">
+                        <button class="ems-btn" onclick="saveEmployee()">Save</button>
+                        <button class="ems-btn ems-btn-secondary" onclick="hideEmployeeForm()">Cancel</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(formWrapper);
+            
+            const formContainer = formWrapper.querySelector('.ems-form-container');
+            formContainer.querySelectorAll('.ems-form-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    formContainer.querySelectorAll('.ems-form-tab').forEach(t => t.classList.remove('active'));
+                    formContainer.querySelectorAll('.ems-form-panel').forEach(p => p.classList.remove('active'));
+                    
+                    tab.classList.add('active');
+                    const panelId = `${tab.dataset.panel}-panel`;
+                    formContainer.querySelector(`#${panelId}`).classList.add('active');
+                });
+            });
+
+            window.hideEmployeeForm = function() {
+                const formWrapper = document.getElementById('employee-form');
+                if (formWrapper) {
+                    formWrapper.remove();
+                }
+            };
+
+            formWrapper.addEventListener('click', (e) => {
+                if (e.target === formWrapper) {
+                    hideEmployeeForm();
+                }
+            });
+
+            populateFormDropdowns();
+            addValidationListeners();
+        }
+
+        function showDepartmentForm() {
+            const form = document.getElementById('department-form');
+            form.innerHTML = `
+                <div class="ems-form-section">
+                    <h3>Add Department</h3>
+                    <div class="ems-form-compact">
+                        <div class="ems-form-group">
+                            <label for="deptName" class="required-field">Department Name:</label>
+                            <input type="text" id="deptName" required>
+                        </div>
+                        <div class="ems-form-group">
+                            <label for="parentDepartmentId">Parent Department:</label>
+                            <select id="parentDepartmentId">
+                                <option value="">No Parent Department</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="ems-form-actions">
+                        <button class="ems-btn" onclick="saveDepartment()">Save</button>
+                        <button class="ems-btn ems-btn-secondary" onclick="hideDepartmentForm()">Cancel</button>
+                    </div>
+                </div>
+            `;
+            populateParentDepartments();
+            form.style.display = 'block';
+        }
+
+        function showAttendanceForm() {
+            const form = document.getElementById('attendance-form');
+            form.innerHTML = `
+                <div class="ems-form-section">
+                    <h3>Add Attendance</h3>
+                    <div class="ems-form-compact">
+                        <div class="ems-form-group">
+                            <label for="employeeId" class="required-field">Employee:</label>
+                            <select id="employeeId" required></select>
+                        </div>
+                        <div class="ems-form-group">
+                            <label for="date" class="required-field">Date:</label>
+                            <input type="date" id="date" required>
+                        </div>
+                        <div class="ems-form-group">
+                            <label for="status" class="required-field">Status:</label>
+                            <select id="status" onchange="toggleAttendanceFields()" required>
+                                <option value="PRESENT">Present</option>
+                                <option value="ABSENT">Absent</option>
+                            </select>
+                        </div>
+                        <div id="present-fields">
+                            <div class="ems-form-group">
+                                <label for="hoursWorked" class="required-field">Hours Worked:</label>
+                                <input type="number" id="hoursWorked" min="0" max="24" step="0.5" required>
+                            </div>
+                        </div>
+                        <div id="absent-fields" style="display: none;">
+                            <div class="ems-form-group">
+                                <label for="reason" class="required-field">Reason:</label>
+                                <input type="text" id="reason" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ems-form-actions">
+                        <button class="ems-btn" onclick="saveAttendance()">Save</button>
+                        <button class="ems-btn ems-btn-secondary" onclick="hideAttendanceForm()">Cancel</button>
+                    </div>
+                </div>
+            `;
+            populateEmployeeSelect();
+            form.style.display = 'block';
+        }
+
+        // Helper functions
+        function formatDate(dateStr) {
+            return new Date(dateStr).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                weekday: 'short'
+            });
+        }
+
+        function hideEmployeeForm() {
+            document.getElementById('employee-form').style.display = 'none';
+        }
+
+        function hideDepartmentForm() {
+            document.getElementById('department-form').style.display = 'none';
+        }
+
+        function hideAttendanceForm() {
+            document.getElementById('attendance-form').style.display = 'none';
+        }
+
+        function toggleAttendanceFields() {
+            const status = document.getElementById('status').value;
+            document.getElementById('present-fields').style.display = status === 'PRESENT' ? 'block' : 'none';
+            document.getElementById('absent-fields').style.display = status === 'ABSENT' ? 'block' : 'none';
+        }
+
+        async function populateFormDropdowns() {
+            try { 
+                const departmentResponse = await fetch('/api/practice/v1/departments', {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                const departments = await departmentResponse.json();
+                const departmentSelect = document.getElementById('departmentId');
+                departmentSelect.innerHTML = departments.map(dept => 
+                    `<option value="${dept.id}">${dept.name}</option>`
+                ).join('');
+ 
+                const employeeResponse = await fetch('/api/practice/v1/employees', {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                const employees = await employeeResponse.json();
+                const managerSelect = document.getElementById('managerId');
+                managerSelect.innerHTML = '<option value="">No Manager</option>' + 
+                    employees.map(emp => 
+                        `<option value="${emp.id}">${emp.firstName} ${emp.lastName}</option>`
+                    ).join('');
+            } catch (error) {
+                console.error('Error populating dropdowns:', error);
+            }
+        }
+
+        async function populateParentDepartments() {
+            try {
+                const response = await fetch('/api/practice/v1/departments', {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                const departments = await response.json();
+                const select = document.getElementById('parentDepartmentId');
+                select.innerHTML = '<option value="">No Parent Department</option>' + 
+                    departments.map(dept => 
+                        `<option value="${dept.id}">${dept.name}</option>`
+                    ).join('');
+            } catch (error) {
+                console.error('Error populating parent departments:', error);
+            }
+        }
+
+        async function populateEmployeeSelect() {
+            try {
+                const response = await fetch('/api/practice/v1/employees', {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                const employees = await response.json();
+                const select = document.getElementById('employeeId');
+                select.innerHTML = employees.map(emp => 
+                    `<option value="${emp.id}">${emp.firstName} ${emp.lastName}</option>`
+                ).join('');
+            } catch (error) {
+                console.error('Error populating employee select:', error);
+            }
+        }
+ 
+        async function deleteEmployee(id) {
+            showConfirmModal('Are you sure you want to delete this employee?', async () => {
+                try {
+                    const response = await fetch(`/api/practice/v1/employees/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${authToken}`
+                        }
+                    });
+
+                    if (response.ok) {
+                        await loadEmployees();
+                        showMessage('employee-message', 'Employee deleted successfully');
+                    } else {
+                        const error = await response.json();
+                        showMessage('employee-message', error.error.message, true);
+                    }
+                } catch (error) {
+                    console.error('Error deleting employee:', error);
+                    showMessage('employee-message', 'Error deleting employee', true);
+                }
+            });
+        }
+
+        async function editEmployee(id) {
+            try {
+                const response = await fetch(`/api/practice/v1/employees/${id}`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                if (response.ok) {
+                    const employee = await response.json();
+                    showEmployeeForm();
+ 
+                    setTimeout(() => { 
+                        document.getElementById('firstName').value = employee.firstName;
+                        document.getElementById('lastName').value = employee.lastName;
+                        document.getElementById('email').value = employee.personalInfo?.email || '';
+                        document.getElementById('phone').value = employee.personalInfo?.phone || '';
+                        document.getElementById('street').value = employee.personalInfo?.address?.street || '';
+                        document.getElementById('city').value = employee.personalInfo?.address?.city || '';
+                        document.getElementById('state').value = employee.personalInfo?.address?.state || '';
+                        document.getElementById('zipCode').value = employee.personalInfo?.address?.zipCode || '';
+                        document.getElementById('emergencyName').value = employee.personalInfo?.emergencyContact?.name || '';
+                        document.getElementById('emergencyPhone').value = employee.personalInfo?.emergencyContact?.phone || '';
+                        document.getElementById('position').value = employee.employmentDetails?.position || '';
+                        document.getElementById('departmentId').value = employee.employmentDetails?.department?.id || '';
+                        document.getElementById('managerId').value = employee.employmentDetails?.manager?.id || '';
+                        document.getElementById('baseSalary').value = employee.employmentDetails?.compensation?.salary?.base || '';
+                        document.getElementById('currency').value = employee.employmentDetails?.compensation?.salary?.currency || 'USD';
+                        document.getElementById('hireDate').value = employee.employmentDetails?.dates?.hired || '';
+                        document.getElementById('rating').value = employee.performance?.rating || '';
+                        document.getElementById('skills').value = employee.performance?.skills?.join(', ') || '';
+ 
+                        const saveBtn = document.querySelector('.ems-form-actions .ems-btn');
+                        saveBtn.textContent = 'Update Employee';
+                        saveBtn.onclick = () => updateEmployee(id);
+                    }, 100);
+                } else {
+                    const error = await response.json();
+                    showMessage('employee-message', error.error.message, true);
+                }
+            } catch (error) {
+                console.error('Error loading employee:', error);
+                showMessage('employee-message', 'Error loading employee', true);
+            }
+        }
+
+        async function updateEmployee(id) { 
+            let allErrors = [];
+            let firstErrorTab = null;
+            const tabs = ['basic', 'employment'];
+            
+            for (const tab of tabs) {
+                const tabButton = document.querySelector(`[data-panel="${tab}"]`);
+                tabButton.click();
+                
+                const errors = validateEmployeeForm();
+                if (errors.length > 0 && !firstErrorTab) {
+                    firstErrorTab = tab;
+                }
+                allErrors.push(...errors);
+            }
+
+            if (allErrors.length > 0) {
+                const errorTabButton = document.querySelector(`[data-panel="${firstErrorTab}"]`);
+                errorTabButton.click();
+                showMessage('employee-message', allErrors.join('\n'), true);
+                return;
+            }
+
+            const employee = { 
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                personalInfo: {
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    address: {
+                        street: document.getElementById('street').value,
+                        city: document.getElementById('city').value,
+                        state: document.getElementById('state').value,
+                        zipCode: document.getElementById('zipCode').value,
+                        country: "USA"
+                    },
+                    emergencyContact: {
+                        name: document.getElementById('emergencyName').value,
+                        phone: document.getElementById('emergencyPhone').value
+                    }
+                },
+                employmentDetails: {
+                    position: document.getElementById('position').value,
+                    department: {
+                        id: parseInt(document.getElementById('departmentId').value),
+                        name: document.getElementById('departmentId').options[document.getElementById('departmentId').selectedIndex].text
+                    },
+                    manager: document.getElementById('managerId').value ? {
+                        id: parseInt(document.getElementById('managerId').value),
+                        name: document.getElementById('managerId').options[document.getElementById('managerId').selectedIndex].text
+                    } : null,
+                    compensation: {
+                        salary: {
+                            base: parseFloat(document.getElementById('baseSalary').value),
+                            currency: document.getElementById('currency').value
+                        }
+                    },
+                    dates: {
+                        hired: document.getElementById('hireDate').value
+                    }
+                },
+                performance: {
+                    rating: parseFloat(document.getElementById('rating').value) || 0,
+                    skills: document.getElementById('skills').value.split(',').map(s => s.trim()).filter(Boolean)
+                }
+            };
+
+            try {
+                const response = await fetch(`/api/practice/v1/employees/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(employee)
+                });
+
+                if (response.ok) {
+                    hideEmployeeForm();
+                    await loadEmployees();
+                    showMessage('employee-message', 'Employee updated successfully');
+                } else {
+                    const error = await response.json();
+                    showMessage('employee-message', error.error.message, true);
+                }
+            } catch (error) {
+                console.error('Error updating employee:', error);
+                showMessage('employee-message', 'Error updating employee', true);
+            }
+        }
+
+        async function editDepartment(id) {
+            try {
+                const response = await fetch(`/api/practice/v1/departments/${id}`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                if (response.ok) {
+                    const department = await response.json();
+                    showDepartmentForm();
+                     
+                    document.getElementById('deptName').value = department.name;
+                    document.getElementById('parentDepartmentId').value = department.parentDepartmentId || '';
+ 
+                    const saveBtn = document.querySelector('#department-form .ems-btn');
+                    saveBtn.textContent = 'Update Department';
+                    saveBtn.onclick = () => updateDepartment(id);
+                } else {
+                    const error = await response.json();
+                    showMessage('department-message', error.error.message, true);
+                }
+            } catch (error) {
+                console.error('Error loading department:', error);
+                showMessage('department-message', 'Error loading department', true);
+            }
+        }
+
+        async function deleteDepartment(id) {
+            showConfirmModal('Are you sure you want to delete this department?', async () => {
+                try {
+                    const response = await fetch(`/api/practice/v1/departments/${id}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${authToken}` }
+                    });
+
+                    if (response.ok) {
+                        await loadDepartments();
+                        const data = await response.json();
+                        showMessage('department-message', `Department "${data.name}" deleted successfully`);
+                    } else {
+                        const error = await response.json();
+                        showMessage('department-message', error.error.message, true);
+                    }
+                } catch (error) {
+                    console.error('Error deleting department:', error);
+                    showMessage('department-message', 'Error deleting department', true);
+                }
+            });
+        }
+
+        async function updateDepartment(id) {
+            const department = {
+                name: document.getElementById('deptName').value,
+                parentDepartmentId: document.getElementById('parentDepartmentId').value || null
+            };
+
+            try {
+                const response = await fetch(`/api/practice/v1/departments/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(department)
+                });
+
+                if (response.ok) {
+                    hideDepartmentForm();
+                    await loadDepartments();
+                    showMessage('department-message', 'Department updated successfully');
+                } else {
+                    const error = await response.json();
+                    showMessage('department-message', error.error.message, true);
+                }
+            } catch (error) {
+                console.error('Error updating department:', error);
+                showMessage('department-message', 'Error updating department', true);
+            }
+        }
+
+        async function editAttendance(id) {
+            try {
+                const response = await fetch(`/api/practice/v1/attendance/${id}`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                if (response.ok) {
+                    const record = await response.json();
+                    showAttendanceForm();
+                     
+                    document.getElementById('employeeId').value = record.employeeId;
+                    document.getElementById('date').value = record.date;
+                    document.getElementById('status').value = record.status;
+                     
+                    toggleAttendanceFields();
+                    if (record.status === 'PRESENT') {
+                        document.getElementById('hoursWorked').value = record.hoursWorked;
+                    } else {
+                        document.getElementById('reason').value = record.reason;
+                    }
+ 
+                    const saveBtn = document.querySelector('#attendance-form .ems-btn');
+                    saveBtn.textContent = 'Update Attendance';
+                    saveBtn.onclick = () => updateAttendance(id);
+                } else {
+                    const error = await response.json();
+                    showMessage('attendance-message', error.error.message, true);
+                }
+            } catch (error) {
+                console.error('Error loading attendance:', error);
+                showMessage('attendance-message', 'Error loading attendance', true);
+            }
+        }
+
+        async function deleteAttendance(id) {
+            showConfirmModal('Are you sure you want to delete this attendance record?', async () => {
+                try {
+                    const response = await fetch(`/api/practice/v1/attendance/${id}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${authToken}` }
+                    });
+
+                    if (response.ok) {
+                        await loadAttendance();
+                        showMessage('attendance-message', 'Attendance record deleted successfully');
+                    } else {
+                        const error = await response.json();
+                        showMessage('attendance-message', error.error.message, true);
+                    }
+                } catch (error) {
+                    console.error('Error deleting attendance:', error);
+                    showMessage('attendance-message', 'Error deleting attendance', true);
+                }
+            });
+        }
+
+        async function updateAttendance(id) {
+            const status = document.getElementById('status').value;
+            const attendance = {
+                employeeId: parseInt(document.getElementById('employeeId').value),
+                date: document.getElementById('date').value,
+                status: status,
+                ...(status === 'PRESENT' ? {
+                    hoursWorked: parseFloat(document.getElementById('hoursWorked').value)
+                } : {
+                    reason: document.getElementById('reason').value
+                })
+            };
+
+            try {
+                const response = await fetch(`/api/practice/v1/attendance/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(attendance)
+                });
+
+                if (response.ok) {
+                    hideAttendanceForm();
+                    await loadAttendance();
+                    showMessage('attendance-message', 'Attendance record updated successfully');
+                } else {
+                    const error = await response.json();
+                    showMessage('attendance-message', error.error.message, true);
+                }
+            } catch (error) {
+                console.error('Error updating attendance:', error);
+                showMessage('attendance-message', 'Error updating attendance', true);
+            }
+        }
+
+        async function saveDepartment() {
+            const name = document.getElementById('deptName').value;
+            const parentDepartmentId = document.getElementById('parentDepartmentId').value;
+ 
+            if (!name?.trim()) {
+                showMessage('department-message', 'Department name is required', true);
+                return;
+            }
+
+            const department = {
+                name: name.trim(),
+                parentDepartmentId: parentDepartmentId || null
+            };
+
+            try {
+                const response = await fetch('/api/practice/v1/departments', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(department)
+                });
+
+                if (response.ok) {
+                    hideDepartmentForm();
+                    await loadDepartments();
+                    showMessage('department-message', 'Department created successfully');
+                } else {
+                    const error = await response.json();
+                    showMessage('department-message', error.error.message, true);
+                }
+            } catch (error) {
+                console.error('Error saving department:', error);
+                showMessage('department-message', 'Error saving department', true);
+            }
+        }
+
+        async function saveAttendance() {
+            const employeeId = document.getElementById('employeeId').value;
+            const date = document.getElementById('date').value;
+            const status = document.getElementById('status').value;
+            const hoursWorked = document.getElementById('hoursWorked').value;
+            const reason = document.getElementById('reason').value;
+
+            if (!employeeId || !date) {
+                showMessage('attendance-message', 'Employee and date are required', true);
+                return;
+            }
+
+            const attendance = {
+                employeeId: parseInt(employeeId),
+                date,
+                status,
+                ...(status === 'PRESENT' ? {
+                    hoursWorked: parseFloat(hoursWorked)
+                } : {
+                    reason: reason
+                })
+            };
+
+            try {
+                const response = await fetch('/api/practice/v1/attendance', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(attendance)
+                });
+
+                if (response.ok) {
+                    hideAttendanceForm();
+                    await loadAttendance();
+                    showMessage('attendance-message', 'Attendance record created successfully');
+                } else {
+                    const error = await response.json();
+                    showMessage('attendance-message', error.error.message, true);
+                }
+            } catch (error) {
+                console.error('Error saving attendance:', error);
+                showMessage('attendance-message', 'Error saving attendance', true);
+            }
+        }
+
+        function showConfirmModal(message, onConfirm) {
+            const modal = document.getElementById('confirm-modal');
+            const messageEl = document.getElementById('confirm-message');
+            const yesBtn = document.getElementById('confirm-yes');
+            const noBtn = document.getElementById('confirm-no');
+
+            messageEl.textContent = message;
+            modal.style.display = 'flex';
+
+            yesBtn.onclick = () => {
+                modal.style.display = 'none';
+                onConfirm();
+            };
+
+            noBtn.onclick = () => {
+                modal.style.display = 'none';
+            };
+ 
+            modal.onclick = (e) => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            };
+        }
+    
+    function toggleDepartmentChildren(departmentId, event) {
+        event.stopPropagation();
+        const toggle = document.querySelector(`.department-parent-row[data-department-id="${departmentId}"] .department-toggle`);
+        const children = document.querySelectorAll(`.department-child[data-parent-id="${departmentId}"]`);
+        
+        toggle.classList.toggle('expanded');
+        children.forEach(child => {
+            child.classList.toggle('show');
+        });
+    }
+    
+    </script>
+    <div id="confirm-modal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-title">Confirm Action</div>
+            <div id="confirm-message"></div>
+            <div class="modal-actions">
+                <button class="ems-btn ems-btn-danger" id="confirm-yes">Yes</button>
+                <button class="ems-btn ems-btn-secondary" id="confirm-no">No</button>
+            </div>
+        </div>
+    </div>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+</body>
+</html>
