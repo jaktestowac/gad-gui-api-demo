@@ -7,9 +7,9 @@ function updateAuthButtons() {
 
   const isAuthenticated = isLoggedIn();
   requirementsButtons.innerHTML = `
-        <a href="test-requirements.html" class="requirements-button">
+        <a href="business-requirements.html" class="requirements-button">
             <i class="fas fa-tasks"></i>
-            View Test Requirements
+            View Business Requirements
         </a>
     `;
 

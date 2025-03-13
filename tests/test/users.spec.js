@@ -7,7 +7,7 @@ const {
   generateValidUserData,
 } = require("../helpers/data.helpers.js");
 
-describe.only("Endpoint /users", async () => {
+describe("Endpoint /users", async () => {
   const baseUrl = baseUsersUrl;
 
   before(async () => {

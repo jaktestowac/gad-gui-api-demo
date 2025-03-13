@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | BookShop Business Requirements</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #5395ff;
+            --background-light: #f8fafc;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .requirements-container {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .return-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--primary-color);
+            color: white !important;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .return-button i {
+            color: white;
+        }
+
+        .return-button:hover {
+            background: var(--secondary-color);
+        }
+
+        .requirement-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border: 1px solid #eee;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .requirement-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .requirement-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .requirement-id {
+            background: #4CAF50;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+
+        .priority {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: auto;
+        }
+
+        .priority-high {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .priority-medium {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+
+        .priority-low {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .requirement-title {
+            font-size: 1.2em;
+            margin: 0;
+            color: #333;
+        }
+
+        .requirement-description {
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .acceptance-criteria {
+            margin-top: 15px;
+            padding-left: 20px;
+        }
+
+        .acceptance-criteria li {
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .filter-section {
+            margin-bottom: 12px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 12px;
+        }
+
+        .filter-section-title {
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+        }
+
+        .filter-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .filter-button {
+            padding: 6px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            height: 28px;
+        }
+
+        .filter-button .count {
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 6px;
+            font-size: 11px;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        .active-filters {
+            margin-top: 6px;
+            padding: 8px;
+            background: #fff;
+            border-radius: 4px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .active-filter-tag {
+            padding: 3px 8px;
+            background: #f0f0f0;
+            font-size: 0.85em;
+            height: 24px;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .priority-filter-high {
+            border-left: 4px solid #c62828;
+        }
+
+        .priority-filter-medium {
+            border-left: 4px solid #ef6c00;
+        }
+
+        .priority-filter-low {
+            border-left: 4px solid #2e7d32;
+        }
+
+        .active-filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            align-items: center;
+        }
+
+        .active-filters.hidden {
+            display: none;
+        }
+
+        .active-filter-label {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .active-filter-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 8px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .clear-filters {
+            margin-left: auto;
+            padding: 4px 8px;
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .clear-filters:hover {
+            color: #333;
+        }
+
+        .requirement-card.hidden {
+            display: none;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary-color);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .back-to-top:hover {
+            background: var(--secondary-color);
+            transform: translateY(-3px);
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .requirement-section {
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .requirement {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f5f5f5;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-gui-book-shop" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br /><br /><br />
+    <div class="requirements-container">
+        <div class="page-header">
+            <h2>BookShop Requirements</h2>
+            <a href="dashboard.html" class="return-button">
+                <i class="fa-solid fa-arrow-left"></i>
+                Return to Dashboard
+            </a>
+            <br />&nbsp;
+            <br />
+            <div align="center">
+                This are the business requirements for the BookShop application.<br />
+                The requirements are divided into different roles and priorities. <br />
+                Are they all correct? Well... You can find out by designing proper tests for them😉<br />
+                And for sure there are bugs!🐞
+            </div>
+        </div>
+
+        <div class="filter-controls">
+            <div class="filter-section">
+                <div class="filter-section-title">Filter by Role</div>
+                <div class="filter-group role-filters">
+                    <button class="filter-button active" data-filter-role="all">All Roles <span class="count">0</span></button>
+                    <button class="filter-button" data-filter-role="anonymous">Anonymous <span class="count">0</span></button>
+                    <button class="filter-button" data-filter-role="registered">Registered <span class="count">0</span></button>
+                    <button class="filter-button" data-filter-role="coordinator">Coordinator <span class="count">0</span></button>
+                    <button class="filter-button" data-filter-role="admin">Admin <span class="count">0</span></button>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-section-title">Filter by Priority</div>
+                <div class="filter-group priority-filters">
+                    <button class="filter-button priority-filter-all active" data-filter-priority="all">All Priorities <span class="count">0</span></button>
+                    <button class="filter-button priority-filter-high" data-filter-priority="high">High Priority <span class="count">0</span></button>
+                    <button class="filter-button priority-filter-medium" data-filter-priority="medium">Medium Priority <span class="count">0</span></button>
+                    <button class="filter-button priority-filter-low" data-filter-priority="low">Low Priority <span class="count">0</span></button>
+                </div>
+            </div>
+
+            <div class="active-filters hidden">
+                <span class="active-filter-label">Active filters:</span>
+                <div class="active-filter-tags"></div>
+                <button class="clear-filters">
+                    <i class="fas fa-times"></i>
+                    Clear all filters
+                </button>
+            </div>
+        </div>
+
+        <div class="requirement-card" data-card-role="anonymous">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-001</span>
+                <h3 class="requirement-title">Book Browsing and Search</h3>
+                <span class="priority priority-high">High Priority</span>
+            </div>
+            <div class="requirement-description">
+                Basic access features for browsing books without an account.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>Browse book catalog with infinite scroll</li>
+                <li>Search books by title and description</li>
+                <li>Sort books by different criteria</li>
+                <li>View book cover images</li>
+                <li>See book details including author, genre, and publication date</li>
+                <li>View book ratings and number of reviews</li>
+            </ul>
+        </div>
+
+        <div class="requirement-card" data-card-role="registered">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-002</span>
+                <h3 class="requirement-title">Account and Payment Management</h3>
+                <span class="priority priority-high">High Priority</span>
+            </div>
+            <div class="requirement-description">
+                Account and payment features for registered users.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>Update profile address information (country, city, street, postal code)</li>
+                <li>Manage payment cards with validation (20-digit number, 5-digit CVV)</li>
+                <li>View account balance</li>
+                <li>Top up account funds</li>
+                <li>View payment history</li>
+            </ul>
+        </div>
+
+        <div class="requirement-card" data-card-role="registered">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-003</span>
+                <h3 class="requirement-title">Personal Book Collections</h3>
+                <span class="priority priority-medium">Medium Priority</span>
+            </div>
+            <div class="requirement-description">
+                Manage personal book collections and lists.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>Mark books as owned</li>
+                <li>Add books to wishlist</li>
+                <li>Mark books as read</li>
+                <li>Add books to favorites</li>
+                <li>View all personal book collections in profile</li>
+                <li>Add reviews and ratings to books</li>
+            </ul>
+        </div>
+
+        <div class="requirement-card" data-card-role="registered">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-004</span>
+                <h3 class="requirement-title">Shopping Cart and Orders</h3>
+                <span class="priority priority-high">High Priority</span>
+            </div>
+            <div class="requirement-description">
+                Order management capabilities for customers.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>Add books to shopping cart</li>
+                <li>View order history</li>
+                <li>Apply discount coupons to orders</li>
+                <li>Cancel orders</li>
+                <li>Check item stock availability</li>
+                <li>View order status</li>
+            </ul>
+        </div>
+
+        <div class="requirement-card" data-card-role="coordinator">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-005</span>
+                <h3 class="requirement-title">Inventory Management</h3>
+                <span class="priority priority-high">High Priority</span>
+            </div>
+            <div class="requirement-description">
+                Inventory management tools for coordinators.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>Add new items to inventory</li>
+                <li>Update item prices and quantities</li>
+                <li>Delete items from inventory</li>
+                <li>Search and filter inventory items</li>
+                <li>View item details including stock levels</li>
+                <li>Toggle between compact and full inventory view</li>
+            </ul>
+        </div>
+
+        <div class="requirement-card" data-card-role="coordinator">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-006</span>
+                <h3 class="requirement-title">Order Processing</h3>
+                <span class="priority priority-high">High Priority</span>
+            </div>
+            <div class="requirement-description">
+                Order management tools for coordinators.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>View all customer orders</li>
+                <li>Update order statuses</li>
+                <li>Approve and send orders</li>
+                <li>View basic order statistics</li>
+            </ul>
+        </div>
+
+        <div class="requirement-card" data-card-role="admin">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-007</span>
+                <h3 class="requirement-title">Book Management</h3>
+                <span class="priority priority-high">High Priority</span>
+            </div>
+            <div class="requirement-description">
+                Book catalog management for administrators.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>Add new books to the catalog</li>
+                <li>Upload book cover images</li>
+                <li>Manage book details (title, description, authors, genres)</li>
+                <li>Set book publication dates</li>
+                <li>Manage book pages and language information</li>
+            </ul>
+        </div>
+
+        <div class="requirement-card" data-card-role="admin">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-008</span>
+                <h3 class="requirement-title">Advanced Analytics</h3>
+                <span class="priority priority-medium">Medium Priority</span>
+            </div>
+            <div class="requirement-description">
+                Comprehensive statistics and analytics for administrators.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>View detailed order statistics with charts</li>
+                <li>Analyze total costs and partial costs</li>
+                <li>View user purchase statistics</li>
+                <li>Monitor item statistics (price distribution, quantities)</li>
+                <li>Export statistics data</li>
+            </ul>
+        </div>
+
+        <div class="requirement-card" data-card-role="registered">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-009</span>
+                <h3 class="requirement-title">Book Reviews and Ratings</h3>
+                <span class="priority priority-medium">Medium Priority</span>
+            </div>
+            <div class="requirement-description">
+                Interactive book rating and review system.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>View book average rating out of 5 stars</li>
+                <li>See total number of reviews per book</li>
+                <li>Read detailed reviews with author names and dates</li>
+                <li>View review content and individual ratings</li>
+                <li>Sort and filter reviews</li>
+            </ul>
+        </div>
+
+        <div class="requirement-card" data-card-role="registered">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-010</span>
+                <h3 class="requirement-title">Side Panel Navigation</h3>
+                <span class="priority priority-medium">Medium Priority</span>
+            </div>
+            <div class="requirement-description">
+                Role-based navigation panel with quick access to features.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>Access dashboard, books, and orders</li>
+                <li>Role-specific menu items (admin, coordinator)</li>
+                <li>Collapsible side panel interface</li>
+                <li>Visual indicators for active section</li>
+                <li>Quick access to account management</li>
+            </ul>
+        </div>
+
+        <div class="requirement-card" data-card-role="registered">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-011</span>
+                <h3 class="requirement-title">Customer Order Management</h3>
+                <span class="priority priority-high">High Priority</span>
+            </div>
+            <div class="requirement-description">
+                Comprehensive order management system for customers.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>Create new orders (one active order at a time)</li>
+                <li>View order history with complete details</li>
+                <li>Cancel active orders</li>
+                <li>Add and remove items from active orders</li>
+                <li>Apply discount coupons to orders</li>
+                <li>Send orders for processing</li>
+                <li>View order details including:
+                    <ul>
+                        <li>Order ID and creation date</li>
+                        <li>Current status and total cost</li>
+                        <li>Partial costs breakdown</li>
+                        <li>List of ordered books with prices</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="requirement-card" data-card-role="admin">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-012</span>
+                <h3 class="requirement-title">Administrative Order Management</h3>
+                <span class="priority priority-high">High Priority</span>
+            </div>
+            <div class="requirement-description">
+                Advanced order management capabilities for administrators.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>View all customer orders in the system</li>
+                <li>Filter and sort orders by various statuses</li>
+                <li>Change order status following workflow rules</li>
+                <li>Access detailed order information with user details</li>
+                <li>Track and validate order status changes</li>
+                <li>Manage order workflow and status transitions</li>
+            </ul>
+        </div>
+
+        <div class="requirement-card" data-card-role="registered">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-013</span>
+                <h3 class="requirement-title">Payment History System</h3>
+                <span class="priority priority-high">High Priority</span>
+            </div>
+            <div class="requirement-description">
+                Comprehensive payment tracking and management system.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>Maintain complete transaction history including:
+                    <ul>
+                        <li>Transaction dates and activity types</li>
+                        <li>Payment amounts and methods</li>
+                        <li>Order references and payment status</li>
+                        <li>Balance tracking (before/after)</li>
+                    </ul>
+                </li>
+                <li>Filter payments by date range</li>
+                <li>Filter payments by status</li>
+                <li>Search through payment history</li>
+                <li>View detailed transaction information</li>
+            </ul>
+        </div>
+
+        <div class="requirement-card" data-card-role="admin">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-014</span>
+                <h3 class="requirement-title">Team Management System</h3>
+                <span class="priority priority-medium">Medium Priority</span>
+            </div>
+            <div class="requirement-description">
+                Team member profile and access management system.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>Maintain detailed team member profiles</li>
+                <li>Track member username and role assignments</li>
+                <li>Manage member avatars and profile images</li>
+                <li>Monitor registration dates and activity</li>
+                <li>Implement role-based access control</li>
+                <li>Verify authentication for team data access</li>
+                <li>Validate account existence for data display</li>
+            </ul>
+        </div>
+
+        <div class="requirement-card" data-card-role="admin">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-015</span>
+                <h3 class="requirement-title">Authentication & Authorization</h3>
+                <span class="priority priority-high">High Priority</span>
+            </div>
+            <div class="requirement-description">
+                Secure authentication and authorization system.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>Require authentication for all protected actions</li>
+                <li>Implement role-based access levels:
+                    <ul>
+                        <li>Customer - Basic order management</li>
+                        <li>Admin - Full system management</li>
+                    </ul>
+                </li>
+                <li>Enforce BookShop account creation requirement</li>
+                <li>Validate permissions for administrative actions</li>
+                <li>Implement secure session management</li>
+                <li>Track and log authorization attempts</li>
+            </ul>
+        </div>
+
+        <div class="requirement-card" data-card-role="registered">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-016</span>
+                <h3 class="requirement-title">Payment Filtering System</h3>
+                <span class="priority priority-low">Low Priority</span>
+            </div>
+            <div class="requirement-description">
+                Advanced payment history filtering and search capabilities.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>Filter payments by date range with calendar picker</li>
+                <li>Search payments by any field or content</li>
+                <li>Filter by payment status</li>
+                <li>Expandable/collapsible payment details</li>
+                <li>Bulk expand/collapse all payments</li>
+                <li>Reset filters to default state</li>
+                <li>Visual feedback for filter operations</li>
+            </ul>
+        </div>
+
+        <div class="requirement-card" data-card-role="admin">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-017</span>
+                <h3 class="requirement-title">Order Status Workflow</h3>
+                <span class="priority priority-low">Low Priority</span>
+            </div>
+            <div class="requirement-description">
+                Flexible order status management system with workflow controls.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>Visual status change buttons with icons</li>
+                <li>Direct status selection via dropdown</li>
+                <li>Status change validation rules</li>
+                <li>Status-based order filtering</li>
+                <li>Status change history tracking</li>
+                <li>Role-based status change permissions</li>
+                <li>Visual feedback for status changes</li>
+            </ul>
+        </div>
+
+        <div class="requirement-card" data-card-role="coordinator">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-018</span>
+                <h3 class="requirement-title">Order Cost Management</h3>
+                <span class="priority priority-low">Low Priority</span>
+            </div>
+            <div class="requirement-description">
+                Detailed order cost tracking and management system.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>Track partial costs separately from total cost</li>
+                <li>Display individual book costs within orders</li>
+                <li>Support for multiple cost categories</li>
+                <li>Automatic cost calculations</li>
+                <li>Cost breakdown visualization</li>
+                <li>Support for discount coupons</li>
+                <li>Historical cost tracking</li>
+            </ul>
+        </div>
+
+        <div class="requirement-card" data-card-role="registered">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-019</span>
+                <h3 class="requirement-title">Team Profile System</h3>
+                <span class="priority priority-low">Low Priority</span>
+            </div>
+            <div class="requirement-description">
+                Enhanced team member profile and display system.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>Custom avatar support for team members</li>
+                <li>Role-based profile styling</li>
+                <li>Member registration date display</li>
+                <li>Team member activity tracking</li>
+                <li>Profile card layout with hover effects</li>
+                <li>Secure profile data access</li>
+                <li>Team hierarchy visualization</li>
+            </ul>
+        </div>
+
+        <div class="requirement-card" data-card-role="coordinator">
+            <div class="requirement-header">
+                <span class="requirement-id">REQ-020</span>
+                <h3 class="requirement-title">Order Statistics Dashboard</h3>
+                <span class="priority priority-low">Low Priority</span>
+            </div>
+            <div class="requirement-description">
+                Interactive statistics dashboard for order management.
+            </div>
+            <ul class="acceptance-criteria">
+                <li>Interactive charts for order data</li>
+                <li>Books count visualization</li>
+                <li>Cost distribution analysis</li>
+                <li>Order status distribution charts</li>
+                <li>User purchase patterns visualization</li>
+                <li>Inventory level tracking</li>
+                <li>Export capabilities for statistics</li>
+            </ul>
+        </div>
+
+        <a href="#" class="back-to-top" id="backToTop" title="Back to Top">
+            <i class="fas fa-arrow-up"></i>
+        </a>
+
+        <script type="text/javascript" src="/js/common.js"></script>
+        <script type="text/javascript" src="/js/header.js"></script>
+        <script type="text/javascript" src="/version.js"></script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const filterButtons = document.querySelectorAll('.filter-button');
+                const requirements = document.querySelectorAll('.requirement-card');
+                const activeFilters = document.querySelector('.active-filters');
+                const activeFilterTags = document.querySelector('.active-filter-tags');
+
+                let currentFilters = {
+                    role: 'all',
+                    priority: 'all'
+                };
+
+                // Calculate and display counts
+                const counts = {
+                    all: requirements.length,
+                    anonymous: 0,
+                    registered: 0,
+                    coordinator: 0,
+                    admin: 0,
+                    high: 0,
+                    medium: 0,
+                    low: 0
+                };
+
+                requirements.forEach(req => {
+                    const role = req.dataset.cardRole;
+                    const priority = req.querySelector('.priority').className.split('-').pop();
+                    counts[role]++;
+                    counts[priority]++;
+                });
+
+                // Update count displays
+                filterButtons.forEach(button => {
+                    const role = button.dataset.filterRole;
+                    const priority = button.dataset.filterPriority;
+                    const count = button.querySelector('.count');
+                    if (role) {
+                        count.textContent = counts[role];
+                    } else if (priority) {
+                        count.textContent = counts[priority];
+                    }
+                });
+
+                function updateActiveFilters() {
+                    const tags = [];
+                    if (currentFilters.role !== 'all') {
+                        tags.push(`Role: ${currentFilters.role}`);
+                    }
+                    if (currentFilters.priority !== 'all') {
+                        tags.push(`Priority: ${currentFilters.priority}`);
+                    }
+
+                    if (tags.length > 0) {
+                        activeFilterTags.innerHTML = tags.map(tag => `
+                            <span class="active-filter-tag">
+                                ${tag}
+                                <i class="fas fa-times"></i>
+                            </span>
+                        `).join('');
+                        activeFilters.classList.remove('hidden');
+                    } else {
+                        activeFilters.classList.add('hidden');
+                    }
+                }
+
+                function applyFilters() {
+                    requirements.forEach(req => {
+                        const role = req.dataset.cardRole;
+                        const priority = req.querySelector('.priority').className.split('-').pop();
+                        const roleMatch = currentFilters.role === 'all' || role === currentFilters.role;
+                        const priorityMatch = currentFilters.priority === 'all' || priority === currentFilters.priority;
+                        req.classList.toggle('hidden', !roleMatch || !priorityMatch);
+                    });
+                    updateActiveFilters();
+                }
+
+                // Role filter buttons
+                document.querySelectorAll('[data-filter-role]').forEach(button => {
+                    button.addEventListener('click', () => {
+                        document.querySelectorAll('[data-filter-role]').forEach(btn => btn.classList.remove('active'));
+                        button.classList.add('active');
+                        currentFilters.role = button.dataset.filterRole;
+                        applyFilters();
+                    });
+                });
+
+                // Priority filter buttons
+                document.querySelectorAll('[data-filter-priority]').forEach(button => {
+                    button.addEventListener('click', () => {
+                        document.querySelectorAll('[data-filter-priority]').forEach(btn => btn.classList.remove('active'));
+                        button.classList.add('active');
+                        currentFilters.priority = button.dataset.filterPriority;
+                        applyFilters();
+                    });
+                });
+
+                // Clear filters button
+                document.querySelector('.clear-filters').addEventListener('click', () => {
+                    currentFilters = { role: 'all', priority: 'all' };
+                    document.querySelectorAll('.filter-button').forEach(btn => btn.classList.remove('active'));
+                    document.querySelector('[data-filter-role="all"]').classList.add('active');
+                    document.querySelector('[data-filter-priority="all"]').classList.add('active');
+                    applyFilters();
+                });
+
+                // Handle clicking on filter tags
+                activeFilterTags.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('fa-times')) {
+                        const tag = e.target.parentElement.textContent.trim();
+                        if (tag.startsWith('Role:')) {
+                            currentFilters.role = 'all';
+                            document.querySelectorAll('[data-filter-role]').forEach(btn => btn.classList.remove('active'));
+                            document.querySelector('[data-filter-role="all"]').classList.add('active');
+                        } else if (tag.startsWith('Priority:')) {
+                            currentFilters.priority = 'all';
+                            document.querySelectorAll('[data-filter-priority]').forEach(btn => btn.classList.remove('active'));
+                            document.querySelector('[data-filter-priority="all"]').classList.add('active');
+                        }
+                        applyFilters();
+                    }
+                });
+            });
+
+            // Back to top functionality
+            const backToTopButton = document.getElementById('backToTop');
+
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopButton.classList.add('visible');
+                } else {
+                    backToTopButton.classList.remove('visible');
+                }
+            });
+
+            backToTopButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        </script>
+</body>
+
+</html>
