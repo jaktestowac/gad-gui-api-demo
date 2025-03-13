@@ -5,7 +5,7 @@ const { getDateTimeFromString } = require("./datetime.helpers");
 const { verifyToken, getJwtExpiryDate } = require("./jwtauth");
 const { logDebug, logError, logTrace, logWarn, logInsane } = require("./logger-api");
 
-const mandatory_non_empty_fields_user = ["firstname", "lastname", "email", "avatar"];
+const mandatory_non_empty_fields_user = ["firstname", "lastname", "email", "avatar", "password"];
 const all_fields_user = ["id", "firstname", "lastname", "email", "avatar", "password", "birthDate"];
 const mandatory_non_empty_fields_article = ["user_id", "title", "body", "date"];
 const mandatory_non_empty_fields_labels = ["user_id", "name"];
@@ -24,6 +24,16 @@ const mandatory_non_empty_fields_flashpost = ["user_id", "body"];
 const all_possible_fields_flashpost = ["user_id", "body", "settings", "date", "id", "is_public"];
 const all_possible_fields_book_shop_account = ["country", "city", "street", "postal_code"];
 const mandatory_non_empty_fields_flashpost_settings = ["color"];
+const mandatory_non_empty_fields_body = [
+  "title",
+  "author_ids",
+  "published_at",
+  "genre_ids",
+  "language",
+  "pages",
+  "cover",
+  "description",
+];
 
 function isLikesDataValid(body) {
   if (!isUndefined(body["comment_id"]) && !isUndefined(body["article_id"])) {
@@ -61,6 +71,17 @@ function areAnyAdditionalFieldsPresent(body, all_possible_fields) {
     }
   }
   return { status: false, error: "" };
+}
+
+function areFieldsInStringFormat(body, fields) {
+  for (let index = 0; index < fields.length; index++) {
+    const element = fields[index];
+    if (typeof body[element] !== "string") {
+      logDebug(`Field validation: field ${element} not string ${body[element]}`);
+      return false;
+    }
+  }
+  return true;
 }
 
 function areMandatoryFieldsPresent(body, mandatory_non_empty_fields) {
@@ -204,12 +225,16 @@ function areAllFieldsValid(
 }
 
 const isEmailValid = (email) => {
-  return email.match(getConfigValue(ConfigKeys.EMAIL_REGEXP));
+  return `${email}`.match(getConfigValue(ConfigKeys.EMAIL_REGEXP));
 };
 
 const isDateValid = (date) => {
   try {
-    return date.match(getConfigValue(ConfigKeys.DATE_REGEXP));
+    const result = `${date}`.match(getConfigValue(ConfigKeys.DATE_REGEXP));
+    if (result === null) {
+      return false;
+    }
+    return true;
   } catch (error) {
     logDebug("Invalid date:", date);
     return false;
@@ -361,4 +386,6 @@ module.exports = {
   all_possible_fields_flashpost,
   mandatory_non_empty_fields_flashpost_settings,
   all_possible_fields_book_shop_account,
+  mandatory_non_empty_fields_body,
+  areFieldsInStringFormat,
 };

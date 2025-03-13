@@ -1600,6 +1600,15 @@
             `;
             }
 
+            if (area.disabled !== undefined) {
+                details += `
+                <div class="detail-item">
+                    <div class="detail-label">Disabled</div>
+                    <div class="detail-value ${area.disabled ? 'text-danger' : 'text-success'}">${area.disabled ? 'Yes' : 'No'}</div>
+                </div>
+            `;
+            }
+
             if (area.riskFactor !== undefined) {
                 details += `
                 <div class="detail-item">

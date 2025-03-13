@@ -16,6 +16,7 @@ const {
   formatInvalidFieldErrorResponse,
   formatNoFieldsErrorResponse,
   formatInvalidTokenErrorResponse,
+  formatNonStringFieldErrorResponse,
 } = require("../helpers/helpers");
 const { logDebug, logTrace } = require("../helpers/logger-api");
 const {
@@ -34,11 +35,12 @@ const {
   all_fields_user,
   verifyAccessToken,
   areAnyFieldsPresent,
+  areFieldsInStringFormat,
 } = require("../helpers/validation.helpers");
 
 function handleUsers(req, res, { isAdmin }) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
-  
+
   if (urlEnds.includes("/api/users/validate")) {
     logTrace("Validators: Check user auth", { url: urlEnds });
     const verifyTokenResult = verifyAccessToken(req, res, "users", req.url);
@@ -109,6 +111,12 @@ function handleUsers(req, res, { isAdmin }) {
       return;
     }
 
+    const areStrings = areFieldsInStringFormat(req.body, mandatory_non_empty_fields_user);
+    if (!areStrings) {
+      res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatNonStringFieldErrorResponse(areStrings, mandatory_non_empty_fields_user));
+      return;
+    }
+
     const emails = userDb().map((user) => user?.email);
     let foundUser = emails.filter((email) => areStringsEqualIgnoringCase(email, req.body["email"]));
 
@@ -143,6 +151,18 @@ function handleUsers(req, res, { isAdmin }) {
     const isValid = areAllFieldsValid(req.body, all_fields_user, mandatory_non_empty_fields_user);
     if (!isValid.status) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidFieldErrorResponse(isValid, all_fields_user));
+      return;
+    }
+    
+    // validate email:
+    if (!isEmailValid(req.body["email"])) {
+      res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatErrorResponse("Invalid email"));
+      return;
+    }
+
+    const areStrings = areFieldsInStringFormat(req.body, mandatory_non_empty_fields_user);
+    if (!areStrings) {
+      res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatNonStringFieldErrorResponse(areStrings, mandatory_non_empty_fields_user));
       return;
     }
 

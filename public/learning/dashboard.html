@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | Learning Dashboard</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="./css/learning.css" />
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-gui-learning" class="nav-menu"></h1>
+        </div>
+    </header>
+    <br />
+    <br />
+    <br />
+    <img src="/data/learning/gad-learning-logo.png" alt="GAD Learning" class="hero-logo hero-absolute" aria-label="GAD Learning" title="GAD Learning">
+    <main class="dashboard-container">
+        <div id="sidebarContainer"></div>
+
+        <div class="course-grid" aria-label="Available Courses" title="Available Courses">
+            <div id="guestBanner"></div>
+            <div class="dashboard-header">
+                <h2>Available Courses</h2>
+                <div class="header-controls">
+                    <div class="sort-container">
+                        <select id="courseSort" class="course-sort-select">
+                            <option value="default">Default</option>
+                            <option value="duration">Duration</option>
+                            <option value="students">Popular</option>
+                            <option value="rating">Top Rated</option>
+                        </select>
+                    </div>
+                    <div class="search-container">
+                        <input type="text" id="courseSearch" placeholder="Search courses..." aria-label="Search courses" title="Search courses">
+                        <i class="fas fa-search"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="filters-container">
+                <div id="courseTags" class="course-tags-filter">
+                    <div class="tags-header">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <h3><i class="fas fa-tags"></i> Filter by Tags</h3>
+                            <select id="tagSort" class="tag-sort-select">
+                                <option value="alphabetical">A-Z</option>
+                                <option value="popularity">Most Popular</option>
+                            </select>
+                        </div>
+                        <button id="clearTags" class="clear-tags-btn" style="display: none;">
+                            <i class="fas fa-times"></i> Clear
+                        </button>
+                    </div>
+                    <div id="tagsList" class="tags-list"></div>
+                </div>
+                <div id="courseLevels" class="course-levels-filter">
+                    <div class="levels-header">
+                        <h3><i class="fas fa-signal"></i> Filter by Level</h3>
+                        <button id="clearLevels" class="clear-levels-btn" style="display: none;">
+                            <i class="fas fa-times"></i> Clear
+                        </button>
+                    </div>
+                    <div id="levelsList" class="levels-list"></div>
+                </div>
+            </div>
+            <div id="courseList" class="course-cards"></div>
+        </div>
+    </main>
+
+    <button class="mobile-menu-button" aria-label="Open menu">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="sidebar-overlay"></div>
+
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+    <script type="text/javascript" src="/username.js"></script>
+    <script type="text/javascript" src="/js/message-notifier.js"></script>
+
+    <script src="./js/services/api.js"></script>
+    <script src="./js/utils/notifications.js"></script> <!-- Add this line -->
+    <script src="./js/dashboard.js"></script>
+    <script src="./js/components/sidebar.js"></script>
+    <script src="./js/sidebar.js"></script>
+    <script src="./js/auth-check.js"></script>
+    <script src="./js/auth.js"></script>
+</body>
+
+</html>

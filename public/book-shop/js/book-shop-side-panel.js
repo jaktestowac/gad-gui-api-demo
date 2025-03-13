@@ -12,10 +12,11 @@ function populateLibrarySidePanel(links = []) {
   const innerSidePanelElement = document.createElement("div");
   innerSidePanelElement.id = "book-shop-side-panel";
   innerSidePanelElement.classList.add("sidepanel");
+
   const buttonElement = document.createElement("button");
   buttonElement.classList.add("openbtn");
-
   buttonElement.onclick = openNav;
+
   buttonElement.innerHTML = `<i class="fa-solid fa-gear"></i>`;
 
   const closeElement = document.createElement("a");

@@ -109,6 +109,14 @@ function handleBookShopOrders(req, res, isAdmin) {
   statusesVerified = true;
 
   if (req.method === "POST" && req.url.endsWith("/api/book-shop-orders/coupon")) {
+    /*
+    Handles coupon application to a book shop order
+    - Verifies user token and book shop account
+    - Checks if order exists and is in 'new' status
+    - Validates coupon code, expiration, and usage limits
+    - Prevents duplicate coupon application
+    - Recalculates order costs with applied coupon
+    */
     logDebug("handleBookShopOrders/coupon: apply coupon", { url: req.url, urlEnds, body: req.body });
 
     const verifyTokenResult = verifyAccessToken(req, res, "GET book-shop-accounts", req.url);
@@ -197,7 +205,12 @@ function handleBookShopOrders(req, res, isAdmin) {
 
     return true;
   } else if (req.method === "GET" && req.url.endsWith("/api/book-shop-orders")) {
-    // get all user orders
+    /*
+    Retrieves all orders for the authenticated user
+    - Verifies user token
+    - Checks if user has a book shop account
+    - Returns all orders associated with the user regardless of status
+    */
     const verifyTokenResult = verifyAccessToken(req, res, "GET book-shop-accounts", req.url);
     const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
 
@@ -221,6 +234,12 @@ function handleBookShopOrders(req, res, isAdmin) {
     res.status(HTTP_OK).send(foundBookShopOrders);
     return true;
   } else if (req.method === "GET" && req.url.includes("/api/book-shop-orders/")) {
+    /*
+    Retrieves specific order details
+    - Verifies user authentication
+    - Validates book shop account access
+    - Returns detailed order information for a specific order ID
+    */
     const verifyTokenResult = verifyAccessToken(req, res, "GET book-shop-accounts", req.url);
     const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
 
@@ -243,6 +262,13 @@ function handleBookShopOrders(req, res, isAdmin) {
 
     return true;
   } else if (req.method === "POST" && req.url.endsWith("/api/book-shop-orders")) {
+    /*
+    Creates a new book shop order
+    - Validates user authentication and book shop account
+    - Checks for existing active orders (prevents multiple 'new' status orders)
+    - Initializes new order with default values
+    - Sets up basic order structure with empty book list and costs
+    */
     logDebug("handleBookShopOrders: Creating a new order", { url: req.url, urlEnds });
     const verifyTokenResult = verifyAccessToken(req, res, "GET book-shop-accounts", req.url);
     const foundUser = searchForUserWithOnlyToken(verifyTokenResult);
@@ -286,6 +312,15 @@ function handleBookShopOrders(req, res, isAdmin) {
     return true;
     // } else if (req.method === "POST" && req.url.match(/\/api\/book-shop-orders\/\d+\/items/)) {
   } else if (req.method === "PATCH" && req.url.includes("/api/book-shop-orders/")) {
+    /*
+    Handles order status changes and updates
+    - Verifies user authentication and book shop account
+    - Validates status transition according to allowed next statuses
+    - Checks for required conditions (items in order, sufficient funds)
+    - Validates stock availability for order items
+    - Updates order timestamps based on status changes
+    - Handles special processing for sent, cancelled, returned, delivered, and completed statuses
+    */
     logDebug("handleBookShopOrders: change order status", { url: req.url, urlEnds });
 
     const verifyTokenResult = verifyAccessToken(req, res, "GET book-shop-accounts", req.url);
@@ -334,8 +369,9 @@ function handleBookShopOrders(req, res, isAdmin) {
       return false;
     }
 
-    if (orderBase.book_ids.length === 0 && 
-      areIdsEqual(currentOrderStatus.id, orderStatuses.new) === true  &&
+    if (
+      orderBase.book_ids.length === 0 &&
+      areIdsEqual(currentOrderStatus.id, orderStatuses.new) === true &&
       areIdsEqual(newStatusId, orderStatuses.cancelled) === false
     ) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatErrorResponse("Order has no items"));
@@ -414,6 +450,20 @@ function handleBookShopOrders(req, res, isAdmin) {
       registerSentOrder(booksShopAccount, orderBase, currentOrderStatus, newStatusId);
     }
   } else if (req.url.includes("/api/book-shop-orders/items")) {
+    /*
+    Manages order items (add/remove books)
+    - Verifies user authentication and order access
+    - For POST: 
+      * Validates item existence and stock availability
+      * Prevents duplicate items in order
+      * Calculates updated order costs
+      * Creates new order if none exists
+    - For DELETE:
+      * Removes specified item from order
+      * Recalculates order costs
+      * Updates order totals
+    - Handles both new orders and modifications to existing ones
+    */
     logDebug("handleBookShopOrders: Add/delete items to/from order", { url: req.url, urlEnds });
     // const numberFromUrl = req.url.match(/\/api\/book-shop-orders\/\d+\/items/);
 
@@ -462,6 +512,15 @@ function handleBookShopOrders(req, res, isAdmin) {
     }
 
     if (req.method === "POST") {
+      /*
+      Handles adding items to order
+      - Checks for existing order and creates new if needed
+      - Validates item existence and stock availability
+      - Prevents duplicate items in same order
+      - Calculates costs including shipping
+      - Updates order with new item and costs
+      - Handles both new orders and additions to existing ones
+      */
       if (foundBookShopOrders.length > 0) {
         logDebug("handleBookShopOrders: Adding items to existing order", { foundItem });
 
@@ -497,6 +556,14 @@ function handleBookShopOrders(req, res, isAdmin) {
           body: req.body,
         });
       } else {
+        /*
+        Creates new order with initial item
+        - Initializes order with default values
+        - Adds first book to order
+        - Sets up basic shipping cost
+        - Calculates initial total cost
+        - Creates complete order structure
+        */
         logDebug("handleBookShopOrders: Creating a new order", { userId: foundUser.id });
 
         let newOrder = {
@@ -523,6 +590,15 @@ function handleBookShopOrders(req, res, isAdmin) {
         });
       }
     } else if (req.method === "DELETE") {
+      /*
+      Handles removing items from order
+      - Validates order exists and is accessible
+      - Checks item exists in order
+      - Removes item from book list
+      - Updates costs and shipping
+      - Recalculates order totals
+      - Maintains order state consistency
+      */
       if (foundBookShopOrders.length === 0) {
         logDebug("handleBookShopOrders: Order not found", { url: req.url, urlEnds });
         res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Order not found"));

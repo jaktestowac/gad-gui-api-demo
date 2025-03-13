@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | Course Preview</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="./css/learning.css" />
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-gui-learning" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <img src="/data/learning/gad-learning-logo.png" alt="GAD Learning" class="hero-logo hero-absolute" aria-label="GAD Learning" title="GAD Learning">
+    <main class="preview-container">
+        <div id="sidebarContainer"></div>
+
+        <div class="course-preview-content">
+            <div class="preview-banner" aria-label="Preview Mode" title="Preview Mode">
+                <p>📚 Preview Mode - <a href="javascript:void(0)" onclick="redirectToCourseDetailsAuto()">Sign in</a> to access full course content</p>
+            </div>
+            <div id="courseHeader" class="course-header"></div>
+            <div id="previewContent" class="preview-content"></div>
+        </div>
+    </main>
+
+
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+
+    <script src="./js/services/api.js"></script>
+    <script type="text/javascript" src="./js/utils/notifications.js"></script>
+    <script src="./js/preview.js"></script>
+    <script src="./js/components/sidebar.js"></script>
+    <script src="./js/sidebar.js"></script>
+    <script src="./js/auth-check.js"></script>
+    <script src="./js/auth.js"></script>
+</body>
+
+</html>

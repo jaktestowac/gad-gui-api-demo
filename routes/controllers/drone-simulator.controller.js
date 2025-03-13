@@ -12,11 +12,11 @@ class DroneSimulatorContext {
     ];
 
     this.chargingAreas = [
-      { x: 0, y: 14, type: "base", name: "Home Base", chargeRate: 2 },
-      { x: 19, y: 14, type: "station", name: "Charging Station 1", chargeRate: 1 },
-      { x: 10, y: 0, type: "station", name: "Charging Station 2", chargeRate: 1 },
-      { x: 19, y: 0, type: "solar", name: "Solar Station", chargeRate: 1.5 },
-      { x: 0, y: 0, type: "emergency", name: "Emergency Charger", chargeRate: 3 },
+      { x: 0, y: 14, type: "base", name: "Home Base", chargeRate: 2, disabled: true },
+      { x: 19, y: 14, type: "station", name: "Charging Station 1 (disabled)", chargeRate: 1, disabled: true },
+      { x: 10, y: 0, type: "station", name: "Charging Station 2 (disabled)", chargeRate: 1, disabled: true },
+      { x: 19, y: 0, type: "solar", name: "Solar Station (disabled)", chargeRate: 1.5, disabled: true },
+      { x: 0, y: 0, type: "emergency", name: "Emergency Charger (disabled)", chargeRate: 3, disabled: true },
     ];
 
     this.drones = [

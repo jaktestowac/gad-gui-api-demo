@@ -1,0 +1,76 @@
+.free-course-tag {
+  background: linear-gradient(45deg, #22c55e, #10b981);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 0.9em;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+  margin: 8px 0;
+}
+
+.free-course-tag i {
+  font-size: 1em;
+}
+
+.course-card.free-course {
+  border: 2px solid #10b981;
+  box-shadow: 0 4px 6px rgba(16, 185, 129, 0.1);
+}
+
+.free-course .enroll-button {
+  background: linear-gradient(45deg, #22c55e, #10b981);
+  border: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.free-course .enroll-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.price-tag {
+  font-size: 1.2em;
+  font-weight: 600;
+  margin: 8px 0;
+}
+
+.price-tag.free {
+  color: #10b981;
+}
+
+.course-header-links {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.course-header-links h2 {
+  margin: 0;
+}
+
+.course-details-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #4b5563;
+  text-decoration: none;
+  font-size: 0.9em;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  background-color: #f3f4f6;
+  transition: all 0.2s ease;
+}
+
+.course-details-link:hover {
+  background-color: #e5e7eb;
+  color: #1f2937;
+}
+
+.course-details-link i {
+  font-size: 1em;
+}

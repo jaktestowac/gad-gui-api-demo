@@ -64,6 +64,14 @@ function handleBookShopManage(req, res, isAdmin) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
 
   if (req.method === "GET" && req.url.includes("/api/book-shop-manage/team")) {
+    /*
+    Retrieves team member information
+    - Gets staff members with specific roles
+    - Formats user details (name, avatar)
+    - Maps role assignments
+    - Returns simplified team structure
+    - Includes account creation timestamps
+    */
     logDebug("handleBookShopManage: get the team");
 
     const roles = bookShopRolesDb();
@@ -105,6 +113,13 @@ function handleBookShopManage(req, res, isAdmin) {
 
   // validate role
   if (req.url.includes("/api/book-shop-manage/orders")) {
+    /*
+    Manages order administration permissions
+    - Validates management access rights
+    - Checks role-based authorization
+    - Controls order management capabilities
+    - Enforces access restrictions
+    */
     const action = searchForBookShopActions("manage-orders");
     logDebug("handleBookShopManage: possibleRoleIds", { user_role_id: booksShopAccount.role_id, action });
 
@@ -153,6 +168,14 @@ function handleBookShopManage(req, res, isAdmin) {
     res.status(HTTP_OK).send(allOrders);
     return true;
   } else if (req.method === "PATCH" && req.url.includes("/api/book-shop-manage/orders")) {
+    /*
+    Updates order status
+    - Validates order existence and access
+    - Checks status transition validity
+    - Processes inventory updates
+    - Handles order state changes
+    - Updates associated timestamps
+    */
     const orderId = getIdFromUrl(urlEnds);
     logDebug("handleBookShopManageOrders: PATCH - change status of order", { orderId, urlEnds });
 
@@ -282,6 +305,13 @@ function handleBookShopManage(req, res, isAdmin) {
 
     return true;
   } else if (req.method === "GET" && req.url.includes("/api/book-shop-manage/items?book_id=")) {
+    /*
+    Retrieves specific item details
+    - Gets item by book ID
+    - Validates item existence
+    - Returns detailed item information
+    - Provides stock and pricing data
+    */
     const bookId = req.query.book_id;
     logDebug("handleBookShopManageItems: GET bookId", { bookId });
 
@@ -295,6 +325,13 @@ function handleBookShopManage(req, res, isAdmin) {
     res.status(HTTP_OK).send(itemBase);
     return;
   } else if (req.method === "GET" && req.url.includes("/api/book-shop-manage/books-without-items")) {
+    /*
+    Lists books without shop items
+    - Identifies books not in inventory
+    - Compares book and item databases
+    - Returns available books for item creation
+    - Helps inventory management
+    */
     const allItems = bookShopItemsDb();
     const allBooks = booksDb();
 
@@ -308,6 +345,14 @@ function handleBookShopManage(req, res, isAdmin) {
     res.status(HTTP_OK).send(allItems);
     return false;
   } else if (req.method === "POST" && req.url.endsWith("/api/book-shop-manage/items")) {
+    /*
+    Creates new shop items
+    - Validates book existence
+    - Checks for duplicate items
+    - Validates price and quantity
+    - Creates inventory entries
+    - Sets initial item state
+    */
     const bookId = req.body.book_id;
     const quantity = req.body.quantity;
     const price = req.body.price;
@@ -360,6 +405,13 @@ function handleBookShopManage(req, res, isAdmin) {
 
     return true;
   } else if (req.method === "PATCH" && req.url.includes("/api/book-shop-manage/items")) {
+    /*
+    Updates existing items
+    - Validates item existence
+    - Updates price and quantity
+    - Ensures valid data formats
+    - Maintains inventory accuracy
+    */
     const itemId = getIdFromUrl(urlEnds);
     logDebug("handleBookShopManageItems: PATCH itemId", { itemId, urlEnds });
 
@@ -400,6 +452,13 @@ function handleBookShopManage(req, res, isAdmin) {
 
     return true;
   } else if (req.method === "DELETE" && req.url.includes("/api/book-shop-manage/items")) {
+    /*
+    Handles item removal (soft delete)
+    - Validates item existence
+    - Performs soft delete
+    - Updates item status
+    - Maintains referential integrity
+    */
     const itemId = getIdFromUrl(urlEnds);
     logDebug("handleBookShopManageItems: (soft) DELETE itemId", { itemId, urlEnds });
 
@@ -428,6 +487,13 @@ function handleBookShopManage(req, res, isAdmin) {
       body: req.body,
     });
   } else if (req.method === "GET" && req.url.includes("/api/book-shop-manage/users")) {
+    /*
+    Retrieves user information
+    - Gets user details by ID
+    - Formats user names
+    - Returns user data
+    - Handles multiple user lookups
+    */
     let userIds = req.query.id;
 
     if (isUndefined(userIds) === true) {
@@ -451,6 +517,13 @@ function handleBookShopManage(req, res, isAdmin) {
     res.status(HTTP_OK).send(userData);
     return false;
   } else if (req.method === "GET" && req.url.includes("/api/book-shop-manage/accounts")) {
+    /*
+    Lists account information
+    - Retrieves all shop accounts
+    - Includes user and role details
+    - Formats account data
+    - Provides complete account overview
+    */
     logDebug("handleBookShopManageAccounts: GET accounts");
     const accountsDataRaw = bookShopAccountsDb();
 
@@ -472,6 +545,13 @@ function handleBookShopManage(req, res, isAdmin) {
     res.status(HTTP_OK).send(accountsData);
     return false;
   } else if (req.method === "PATCH" && req.url.includes("/api/book-shop-manage/accounts/")) {
+    /*
+    Updates account settings
+    - Validates account existence
+    - Updates role assignments
+    - Verifies role validity
+    - Maintains account permissions
+    */
     const accountId = getIdFromUrl(urlEnds);
     logDebug("handleBookShopManageAccounts: PATCH account - change role", { accountId, urlEnds });
 

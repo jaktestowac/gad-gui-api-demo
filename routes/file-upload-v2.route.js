@@ -6,7 +6,12 @@ const { formatErrorResponse } = require("../helpers/helpers");
 const { verifyAccessToken } = require("../helpers/validation.helpers");
 const { searchForUserWithOnlyToken } = require("../helpers/db-operation.helpers");
 const { isUndefined } = require("../helpers/compare.helpers");
-const { HTTP_NOT_FOUND, HTTP_UNAUTHORIZED } = require("../helpers/response.helpers");
+const {
+  HTTP_NOT_FOUND,
+  HTTP_UNAUTHORIZED,
+  HTTP_OK,
+  HTTP_UNPROCESSABLE_ENTITY,
+} = require("../helpers/response.helpers");
 const { formatInvalidTokenErrorResponse } = require("../helpers/helpers");
 const {
   searchForBookShopAccountWithUserId,
@@ -77,17 +82,12 @@ const bookShopCoverUploadRoutes = (req, res, next) => {
   if (allowedFileTypes.includes(fileExtention)) {
     fs.rename(tempPath, targetPath, (err) => {
       if (err) return handleError(err, res);
-
-      res.status(200).contentType("text/plain").end("File uploaded!");
+      res.status(HTTP_OK).send({ success: true, message: "File uploaded!", file: req.file.originalname });
     });
   } else {
     fs.unlink(tempPath, (err) => {
       if (err) return handleError(err, res);
-
-      res
-        .status(403)
-        .contentType("text/plain")
-        .end(`Only ${allowedFileTypes.join(", ")} files are allowed!`);
+      res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse(`Only ${allowedFileTypes.join(", ")} files are allowed!`));
     });
   }
 };

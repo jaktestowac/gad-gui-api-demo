@@ -73,20 +73,24 @@ function renderResponse(req, res) {
     } else {
       // This is for single user
       usersMapped = users;
-      if (loggedUser !== "admin") {
-        usersMapped.email = "****";
-      }
-      if (!loggedUser) {
-        usersMapped.lastname = "****";
-      }
-      usersMapped.password = "****";
 
-      usersMapped.creationDate = undefined;
-      usersMapped.birthDate = undefined;
-
-      if (usersMapped?._inactive === true) {
+      if (usersMapped.email === undefined && usersMapped.lastname === undefined) {
         usersMapped = {};
         res.status(404);
+      } else if (usersMapped?._inactive === true) {
+        usersMapped = {};
+        res.status(404);
+      } else {
+        if (loggedUser !== "admin") {
+          usersMapped.email = "****";
+        }
+        if (!loggedUser) {
+          usersMapped.lastname = "****";
+        }
+        usersMapped.password = "****";
+
+        usersMapped.creationDate = undefined;
+        usersMapped.birthDate = undefined;
       }
     }
     res.jsonp(usersMapped);

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | Welcome to Learning</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="./css/learning.css" />
+    <style>
+        .welcome-container {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            z-index: 1;
+        }
+
+        .welcome-container::before {
+            content: '';
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 800px;
+            height: 800px;
+            background: url('/data/learning/gad-learning-logo.png') center/contain no-repeat;
+            opacity: 0.05;
+            pointer-events: none;
+            z-index: -1;
+            animation: slowRotate 180s linear infinite;
+        }
+
+        .welcome-hero {
+            position: relative;
+            z-index: 2;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 10px 10px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .features-grid {
+            position: relative;
+            z-index: 2;
+            margin-top: 40px;
+        }
+
+        @keyframes slowRotate {
+            from {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        .welcome-container>* {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .features-grid {
+            animation-delay: 0.3s;
+        }
+
+        h1 {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        .secondary-actions {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .requirements-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .requirements-button:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .requirements-button i {
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-gui-learning" class="nav-menu"></h1>
+        </div>
+    </header>
+    <br />
+    <br />
+
+    <main class="welcome-container">
+        <div class="welcome-hero">
+            <img src="/data/learning/gad-learning-logo.png" alt="GAD Learning" class="hero-logo">
+            <h1>Start Learning Today</h1>
+            <p>Explore our comprehensive courses and enhance your skills with hands-on learning experiences designed for your success.</p>
+            <p id="welcomeMessage" class="welcome-message"></p>
+            <div id="authButtons" class="cta-buttons">
+            </div>
+            <br />
+            <div id="requirementsButtons" class="cta-buttons"></div>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <i class="fas fa-laptop-code"></i>
+                <h3>Interactive Learning</h3>
+                <p>Engage with practical exercises and real-world projects to reinforce your understanding.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-certificate"></i>
+                <h3>Earn Certificates</h3>
+                <p>Get recognized for your achievements with course completion certificates.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-users"></i>
+                <h3>Expert Instructors</h3>
+                <p>Learn from industry professionals with years of practical experience.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-clock"></i>
+                <h3>Learn at Your Pace</h3>
+                <p>Access course content anytime and progress through lessons at your own speed.</p>
+            </div>
+        </div>
+    </main>
+
+    <script src="./js/services/api.js"></script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+    <script src="./js/auth.js"></script>
+    <script src="./js/auth-check.js"></script>
+    <script src="./js/welcome.js"></script>
+</body>
+
+</html>

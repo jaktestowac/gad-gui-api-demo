@@ -38,6 +38,7 @@ class PowerGrid {
     this.totalMoneyEarned = 0;
     this.selectedWinCondition = "wealth5k";
     this.objectives = {
+      infinite: { target: Infinity, completed: false },
       wealth5k: { target: 5000, completed: false },
       wealth10k: { target: 10000, completed: false },
       wealth50k: { target: 10000, completed: false },
@@ -585,6 +586,10 @@ class PowerGrid {
       return;
     }
 
+    if (this.selectedWinCondition === "infinite") {
+      return;
+    }
+
     const connectedRatio = this.getConnectionRatio();
     let hasWon = false;
     let hasLost = false;
@@ -699,6 +704,8 @@ class PowerGrid {
     const turnTypeSelect = document.getElementById("turn-type");
     const endTurnBtn = document.getElementById("end-turn");
     const turnIndicator = document.querySelector(".turn-indicator");
+    const winCondition = document.getElementById("winCondition");
+    winCondition.innerHTML = this.selectedWinCondition;
 
     turnTypeSelect.value = this.turnType;
     endTurnBtn.disabled = true;

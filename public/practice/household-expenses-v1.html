@@ -74,6 +74,66 @@
             </span>
         </a>
     </div>
+    <br />
+    <div align="center">
+        <div id="business-context">
+            <span class="simpleInfoBox" style="font-size: 16px; ">PS. See sample business context!&nbsp;
+                <span class="span-button toggleSpoilerButton" onclick="toggleSpoiler('businessContext', this)">Show context!</span></span>
+            <span>
+                <span id="businessContext" style="display:none;"><br />
+                    <div class="simpleInfoBox1">
+                        <div align="left" style="width: 600px;">
+                            <h4>Business Context (Summary)</h4>
+                            <p>
+                                This page represents a <strong>household expense tracking system</strong> using the <code>/api/v1/data/random/costs</code> endpoint.</br>
+                                The application provides:
+                            <ul>
+                                <li>Daily transaction details with categories</li>
+                                <li>Running balance calculations</li>
+                                <li>Transaction count statistics</li>
+                            </ul>
+                            </p>
+                            <h4>Core Features</h4>
+                            <ul>
+                                <li><strong>Data Display:</strong>
+                                    <ul>
+                                        <li>Transaction date and category details</li>
+                                        <li>Category icons (emojis) and names</li>
+                                        <li>Individual transaction amounts</li>
+                                        <li>Visual chart (7-day view only)</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Calculations:</strong>
+                                    <ul>
+                                        <li>Daily Balance: Sum of day's transactions</li>
+                                        <li>Running Balance: Cumulative sum from current day forward</li>
+                                        <li>Transaction Count: Number of entries per day</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Risks:</strong> The frontend logic is critical for accurate financial tracking and reporting</li>
+                            </ul>
+                            <h4>Important notes</h4>
+                            <ul>
+                                <li>All amounts are formatted in Polish currency (PLN)</li>
+                                <li>Days with no transactions display "No transactions"</li>
+                                <li>Running balance includes current and future days</li>
+                                <li><strong>Missing or invalid amounts may affect calculations</strong></li>
+                            </ul>
+                            <h4>Known Limitations</h4>
+                            <ul>
+                                <li>Chart visualization only in 7-day view</li>
+                                <li>Random data changes on each refresh</li>
+                                <li>Predefined transaction categories</li>
+                                <li><strong>Edge cases with undefined values may cause formatting issues</strong></li>
+                            </ul>
+
+                            There are several hidden bugs in this implementation. Can you spot them? 😉
+                        </div>
+                    </div>
+                </span>
+            </span>
+        </div>
+    </div>
 </body>
 
 <script type="text/javascript" src="/js/common.js"></script>

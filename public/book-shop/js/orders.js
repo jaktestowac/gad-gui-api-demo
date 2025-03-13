@@ -30,11 +30,6 @@ function createOrderItemData(order, orderElement) {
     cancelButton.innerHTML = `<i class="fa-solid fa-trash-can"></i>`;
 
     cancelButton.onclick = () => {
-      if (order.book_ids?.length === 0) {
-        showSimpleAlert("Order is empty", 1);
-        return;
-      }
-
       issueCancelOrderRequest(order.id).then((response) => {
         if (response.status === 200) {
           orderStatusValue.textContent = "cancelled";

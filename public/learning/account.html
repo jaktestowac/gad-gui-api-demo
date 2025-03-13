@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | Account Settings</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="./css/learning.css" />
+    <link rel="stylesheet" href="./css/auth.css" />
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-gui-learning" class="nav-menu"></h1>
+        </div>
+    </header>
+    <span id="top-section"></span>
+    <br />
+    <br />
+    <br />
+    <img src="/data/learning/gad-learning-logo.png" alt="GAD Learning" class="hero-logo hero-absolute" aria-label="GAD Learning" title="GAD Learning">
+    <main class="dashboard-container">
+        <div id="sidebarContainer"></div>
+
+        <div class="account-container">
+            <nav class="floating-nav">
+                <ul>
+                    <li><a href="#top-section">Top</a></li>
+                    <li><a href="#balance-section">Balance</a></li>
+                    <li><a href="#profile-section">Profile</a></li>
+                    <li><a href="#password-section">Password</a></li>
+                    <li><a href="#privacy-section">Privacy</a></li>
+                    <li><a href="#deactivation-section">Deactivation</a></li>
+                </ul>
+            </nav>
+
+            <h2 class="main-header">Account Settings</h2>
+            <div class="account-details compact">
+                <div class="profile-header">
+                    <img id="userAvatarLarge" src="/data/icons/user.png" alt="User avatar" class="large-avatar">
+                    <div>
+                        <h2 id="userFullName">Loading...</h2>
+                        <div class="form-group-row" style="margin: 0;">
+                            <input type="text" id="usernameInput" name="username" readonly class="readonly-input">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="account-sections">
+                    <!-- Balance Section -->
+                    <section class="account-section" id="balance-section">
+                        <h3 class="section-title">Account Balance</h3>
+                        <div class="funds-section">
+                            <div class="funds-display">
+                                <span class="funds-amount">$<span id="userFunds">0.00</span></span>
+                                <button id="topUpBtn" class="primary-button">
+                                    <i class="fas fa-plus"></i> Top Up Funds
+                                </button>
+                            </div>
+                            <div id="fundsHistory" class="funds-history">
+                                <h4>Transaction History</h4>
+                                <div class="transactions-list"></div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Profile Section -->
+                    <section class="account-section" id="profile-section">
+                        <h3 class="section-title">Profile Information</h3>
+                        <div class="account-form">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="firstName">First Name</label>
+                                    <input type="text" id="firstName" name="firstName">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="lastName">Last Name</label>
+                                    <input type="text" id="lastName" name="lastName">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" name="email">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="confirmProfilePassword">Current Password</label>
+                                <input type="password" id="confirmProfilePassword" name="confirmProfilePassword" required>
+                            </div>
+
+                            <div class="form-actions">
+                                <span class="warning-box">
+                                    After updating your profile, you will need to sign in again
+                                </span>
+                                <button id="updateProfileBtn" class="primary-button">
+                                    Update Profile
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Password Section -->
+                    <section class="account-section" id="password-section">
+                        <h3 class="section-title">Change Password</h3>
+                        <div class="account-form">
+                            <div class="form-group">
+                                <label for="changePasswordCurrentPassword">Current Password</label>
+                                <input type="password" id="changePasswordCurrentPassword" name="currentPassword" required>
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="newPassword">New Password</label>
+                                    <input type="password" id="newPassword" name="newPassword">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="confirmPassword">Confirm Password</label>
+                                    <input type="password" id="confirmPassword" name="confirmPassword">
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button id="changePasswordBtn" class="primary-button">
+                                    Change Password
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Warning Zone Section -->
+                    <section class="account-section warning-zone" id="privacy-section">
+                        <h3 class="section-title">Privacy Settings</h3>
+                        <div class="warning-box2">
+                            <div class="warning-content">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <div>
+                                    <h4>Profile Visibility</h4>
+                                    <p>Warning: Making your profile public will allow anyone to see your basic profile information</p>
+
+                                    <div class="form-group">
+                                        <label for="profileVisibilityPassword">Current Password</label>
+                                        <input type="password" id="profileVisibilityPassword" name="profileVisibilityPassword" required>
+                                    </div>
+                                    <div class="visibility-controls">
+                                        <button id="isPublicProfile" class="toggle-button compact private">
+                                            <i class="fas fa-lock"></i>
+                                            <span>Make Public</span>
+                                        </button>
+                                        <div class="visibility-status">
+                                            <i class="fas fa-circle-info"></i>
+                                            <span>Current: <strong id="visibilityStatus">Private</strong></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" style="margin-top: 15px;">
+                                        <button id="viewPublicProfile" class="view-profile-button">
+                                            <i class="fas fa-external-link-alt"></i> View Public Profile
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Danger Zone Section -->
+                    <section class="account-section danger-zone" id="deactivation-section">
+                        <h3 class="section-title">Account Deactivation</h3>
+                        <div class="deactivation-box">
+                            <div class="warning-content">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <div>
+                                    <h4>Deactivate Account</h4>
+                                    <p>This action will permanently deactivate your account. All your data will be removed.</p>
+                                </div>
+                            </div>
+                            <div class="deactivation-form">
+                                <div class="form-group">
+                                    <label for="deactivatePassword">Current Password</label>
+                                    <input type="password" id="deactivatePassword" name="deactivatePassword" required>
+                                </div>
+                                <div class="form-group flex-row">
+                                    <label>
+                                        <input type="checkbox" id="deactivateConfirm">
+                                        I understand this action cannot be undone
+                                    </label>
+                                </div>
+                                <button id="deactivateAccountBtn" class="danger-button" disabled>
+                                    Deactivate Account
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <button class="mobile-menu-button" aria-label="Open menu">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="sidebar-overlay"></div>
+
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+    <script type="text/javascript" src="/username.js"></script>
+    <script type="text/javascript" src="/js/message-notifier.js"></script>
+
+    <script src="./js/services/api.js"></script>
+    <script src="./js/utils/notifications.js"></script>
+    <script src="./js/utils/confirm-dialog.js"></script>
+    <script src="./js/account.js"></script>
+    <script src="./js/components/sidebar.js"></script>
+    <script src="./js/sidebar.js"></script>
+    <script src="./js/auth-check.js"></script>
+    <script src="./js/auth.js"></script>
+
+    <div id="confirmDialog" style="display: none;" class="dialog-overlay">
+        <div class="top-up-dialog">
+            <h3>Confirm Action</h3>
+            <p id="confirmMessage" style="margin-bottom: 20px; text-align: center;">Are you sure?</p>
+            <div class="dialog-actions">
+                <button class="cancel" id="confirmCancel">Cancel</button>
+                <button class="confirm" id="confirmYes">Yes</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

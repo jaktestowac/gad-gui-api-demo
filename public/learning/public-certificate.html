@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | Certificate Verification</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="./css/learning.css" />
+    <link rel="stylesheet" href="./css/public-certificate.css" />
+</head>
+
+<body>
+    <a href="welcome.html" id="back-button" class="back-button">
+        <i class="fas fa-arrow-left"></i>
+        Back to 🦎 GAD Learning Platform
+    </a>
+    <a onclick="downloadCertificate()" id="get-pdf" class="back-button on-center">
+        <i class="fas fa-download"></i>
+        Download PDF
+    </a>
+
+    <main class="certificate-public-view">
+        <div id="certificateContainer" class="certificate-container">
+            <!-- Certificate will be loaded here -->
+        </div>
+        <div align="center">
+            <div id="qrCodeContainer" class="qr-code-container"></div>
+        </div>
+        <div class="verification-info">
+            <h3>Certificate Authentication</h3>
+            <p>This digital certificate is securely stored in the GAD Learning Platform database.</p>
+            <div class="verification-badge">
+                <i class="fas fa-shield-alt"></i>
+                Verified Certificate
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/libs/pdf/html2canvas.min.js"></script>
+    <script src="/js/libs/pdf/jspdf.umd.min.js"></script>
+    <script src="/js/libs/qr/qrcode.min.js"></script>
+    <script src="./js/services/api.js"></script>
+    <script src="./js/public-certificate.js"></script>
+</body>
+
+</html>

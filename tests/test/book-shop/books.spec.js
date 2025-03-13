@@ -1,5 +1,5 @@
 const { booksUrl, request, expect, bookShopAccountUrl } = require("../../config.js");
-const { authUser } = require("../../helpers/data.helpers.js");
+const { authUser, authUser4 } = require("../../helpers/data.helpers.js");
 const { setupEnv, gracefulQuit } = require("../../helpers/helpers.js");
 
 describe("Endpoint /books", async () => {
@@ -23,46 +23,50 @@ describe("Endpoint /books", async () => {
     });
 
     it(`POST ${baseUrl}`, () => {
-      return request.post(baseUrl).send({}).expect(404);
+      return request.post(baseUrl).send({}).expect(401);
     });
 
     it(`PUT ${baseUrl}`, () => {
-      return request.put(baseUrl).send({}).expect(404);
+      return request.put(baseUrl).send({}).expect(401);
     });
 
     it(`PUT ${baseUrl}/:id`, () => {
-      return request.put(`${baseUrl}/1`).send({}).expect(404);
+      return request.put(`${baseUrl}/1`).send({}).expect(401);
     });
 
     it(`PATCH ${baseUrl}`, () => {
-      return request.patch(baseUrl).send({}).expect(404);
+      return request.patch(baseUrl).send({}).expect(401);
     });
 
     it(`PATCH ${baseUrl}/:id`, () => {
-      return request.patch(`${baseUrl}/1`).send({}).expect(404);
+      return request.patch(`${baseUrl}/1`).send({}).expect(401);
     });
 
     it(`DELETE ${baseUrl}`, () => {
-      return request.delete(baseUrl).expect(404);
+      return request.delete(baseUrl).expect(401);
     });
 
     it(`DELETE ${baseUrl}/:id`, () => {
-      return request.delete(`${baseUrl}/1`).expect(404);
+      return request.delete(`${baseUrl}/1`).expect(401);
     });
 
     it(`HEAD ${baseUrl}`, () => {
-      return request.head(`${baseUrl}/1`).expect(404);
+      return request.head(`${baseUrl}/1`).expect(401);
     });
   });
 
   describe(`With auth ${baseUrl}`, async () => {
     let headers;
     let userId;
+    let headersAdmin;
 
     beforeEach(async () => {
       const data = await authUser();
       headers = data.headers;
       userId = data.userId;
+
+      const dataAdmin = await authUser4();
+      headersAdmin = dataAdmin.headers;
     });
 
     it(`GET ${baseUrl}`, async () => {
@@ -99,35 +103,139 @@ describe("Endpoint /books", async () => {
     });
 
     it(`POST ${baseUrl}`, () => {
-      return request.post(baseUrl).send({}).set(headers).expect(404);
+      return request.post(baseUrl).send({}).set(headers).expect(401);
+    });
+
+    it(`POST ${baseUrl} - create new book`, async () => {
+      const newBook = {
+        title: "Test Book",
+        author_ids: [1],
+        published_at: "2016-01-19T15:21:32.123Z",
+        genre_ids: [1],
+        language: "English",
+        pages: 200,
+        cover: "test-cover.jpg",
+        description: "Test description",
+      };
+
+      // Act:
+      const response = await request.post(baseUrl).send(newBook).set(headersAdmin);
+
+      // Assert:
+      expect(response.status, JSON.stringify(response.body)).to.equal(201);
+      expect(response.body.title).to.equal(newBook.title);
+      expect(response.body.language).to.equal(newBook.language);
+    });
+
+    it(`POST ${baseUrl} - create new book without admin rights`, async () => {
+      const newBook = {
+        title: "Test Book",
+        author_ids: [1],
+        published_at: "2016-01-19T15:21:32.123Z",
+        genre_ids: [1],
+        language: "English",
+        pages: 200,
+        cover: "test-cover.jpg",
+        description: "Test description",
+      };
+
+      // Act:
+      const response = await request.post(baseUrl).send(newBook).set(headers);
+
+      // Assert:
+      expect(response.status, JSON.stringify(response.body)).to.equal(401);
+    });
+
+    it(`POST ${baseUrl} - create book with missing fields`, async () => {
+      const invalidBook = {
+        title: "Test Book",
+        // missing required fields
+      };
+
+      const response = await request.post(baseUrl).send(invalidBook).set(headersAdmin);
+      expect(response.status, JSON.stringify(response.body)).to.equal(422);
+    });
+
+    it(`POST ${baseUrl} - create book with invalid date`, async () => {
+      const invalidBook = {
+        title: "Test Book",
+        author_ids: [1],
+        published_at: "123",
+        genre_ids: [1],
+        language: "English",
+        pages: 200,
+        cover: "test-cover.jpg",
+        description: "Test description",
+      };
+
+      const response = await request.post(baseUrl).send(invalidBook).set(headersAdmin);
+      expect(response.status, JSON.stringify(response.body)).to.equal(422);
     });
 
     it(`PUT ${baseUrl}`, () => {
-      return request.put(baseUrl).send({}).set(headers).expect(404);
+      return request.put(baseUrl).send({}).set(headers).expect(401);
     });
 
     it(`PUT ${baseUrl}/:id`, () => {
-      return request.put(`${baseUrl}/1`).send({}).set(headers).expect(404);
+      return request.put(`${baseUrl}/1`).send({}).set(headers).expect(401);
     });
 
     it(`PATCH ${baseUrl}`, () => {
-      return request.patch(baseUrl).send({}).set(headers).expect(404);
+      return request.patch(baseUrl).send({}).set(headers).expect(401);
     });
 
     it(`PATCH ${baseUrl}/:id`, () => {
-      return request.patch(`${baseUrl}/1`).send({}).set(headers).expect(404);
+      return request.patch(`${baseUrl}/1`).send({}).set(headers).expect(401);
+    });
+
+    it(`PATCH ${baseUrl}/:id - update book`, async () => {
+      const updates = {
+        title: "Updated Book Title",
+        description: "Updated description",
+      };
+
+      // Act:
+      const response = await request.patch(`${baseUrl}/1`).send(updates).set(headersAdmin);
+
+      // Assert:
+      expect(response.status, JSON.stringify(response.body)).to.equal(200);
+      expect(response.body.title).to.equal(updates.title);
+      expect(response.body.description).to.equal(updates.description);
+    });
+
+    it(`PATCH ${baseUrl}/:id - update book with invalid ID`, async () => {
+      const updates = {
+        title: "Updated Title",
+      };
+
+      const response = await request.patch(`${baseUrl}/99999`).send(updates).set(headersAdmin);
+      expect(response.status).to.equal(404);
     });
 
     it(`DELETE ${baseUrl}`, () => {
-      return request.delete(baseUrl).set(headers).expect(404);
+      return request.delete(baseUrl).set(headers).expect(401);
     });
 
     it(`DELETE ${baseUrl}/:id`, () => {
-      return request.delete(`${baseUrl}/1`).set(headers).expect(404);
+      return request.delete(`${baseUrl}/1`).set(headers).expect(401);
+    });
+
+    it(`DELETE ${baseUrl}/:id - soft delete book`, async () => {
+      // Act:
+      const response = await request.delete(`${baseUrl}/1`).set(headersAdmin);
+
+      // Assert:
+      expect(response.status, JSON.stringify(response.body)).to.equal(200);
+      expect(response.body._inactive).to.be.true;
+    });
+
+    it(`DELETE ${baseUrl}/:id - delete non-existent book`, async () => {
+      const response = await request.delete(`${baseUrl}/99999`).set(headersAdmin);
+      expect(response.status).to.equal(404);
     });
 
     it(`HEAD ${baseUrl}`, () => {
-      return request.head(`${baseUrl}/1`).set(headers).expect(404);
+      return request.head(`${baseUrl}/1`).set(headers).expect(401);
     });
 
     ["owned", "wishlist", "read", "favorites"].forEach((field) => {
@@ -199,35 +307,35 @@ describe("Endpoint /books", async () => {
       });
 
       it(`POST ${baseUrl}/${field}`, () => {
-        return request.post(`${baseUrl}/${field}`).send({}).set(headers).expect(404);
+        return request.post(`${baseUrl}/${field}`).send({}).set(headers).expect(401);
       });
 
       it(`PUT ${baseUrl}/${field}`, () => {
-        return request.put(`${baseUrl}/${field}`).send({}).set(headers).expect(404);
+        return request.put(`${baseUrl}/${field}`).send({}).set(headers).expect(401);
       });
 
       it(`PUT ${baseUrl}/${field}/:id`, () => {
-        return request.put(`${baseUrl}/${field}/1`).send({}).set(headers).expect(404);
+        return request.put(`${baseUrl}/${field}/1`).send({}).set(headers).expect(401);
       });
 
       it(`PATCH ${baseUrl}/${field}`, () => {
-        return request.patch(`${baseUrl}/${field}`).send({}).set(headers).expect(404);
+        return request.patch(`${baseUrl}/${field}`).send({}).set(headers).expect(401);
       });
 
       it(`PATCH ${baseUrl}/${field}/:id`, () => {
-        return request.patch(`${baseUrl}/${field}/1`).send({}).set(headers).expect(404);
+        return request.patch(`${baseUrl}/${field}/1`).send({}).set(headers).expect(401);
       });
 
       it(`DELETE ${baseUrl}/${field}`, () => {
-        return request.delete(`${baseUrl}/${field}`).set(headers).expect(404);
+        return request.delete(`${baseUrl}/${field}`).set(headers).expect(401);
       });
 
       it(`DELETE ${baseUrl}/${field}/:id`, () => {
-        return request.delete(`${baseUrl}/${field}/1`).set(headers).expect(404);
+        return request.delete(`${baseUrl}/${field}/1`).set(headers).expect(401);
       });
 
       it(`HEAD ${baseUrl}/${field}`, () => {
-        return request.head(`${baseUrl}/${field}/1`).set(headers).expect(404);
+        return request.head(`${baseUrl}/${field}/1`).set(headers).expect(401);
       });
     });
   });

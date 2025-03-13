@@ -37,8 +37,11 @@ describe("Endpoint /users", async () => {
 
       // Assert:
       expect(response.status).to.equal(200);
-      expect(response.body).to.deep.equal(expectedData);
-      expect(response.body.email).to.deep.equal("****");
+      expect(response.body, JSON.stringify(response.body)).to.deep.equal(expectedData);
+      expect(response.body.email, JSON.stringify(response.body)).to.deep.equal("****");
+      expect(response.body.firstname, JSON.stringify(response.body)).to.not.equal("****");
+      expect(response.body.lastname, JSON.stringify(response.body)).to.deep.equal("****");
+      expect(response.body.password, JSON.stringify(response.body)).to.deep.equal("****");
     });
 
     it("GET /users/:id - should not get non existing user", async () => {
@@ -47,6 +50,7 @@ describe("Endpoint /users", async () => {
 
       // Assert:
       expect(response.status).to.equal(404);
+      expect(response.body, JSON.stringify(response.body)).to.be.empty;
     });
 
     describe("POST /users (register)", async () => {
@@ -62,7 +66,7 @@ describe("Endpoint /users", async () => {
         const response = await request.post(baseUrl).send(testUserData);
 
         // Assert:
-        expect(response.status).to.equal(201);
+        expect(response.status, JSON.stringify(response.body)).to.equal(201);
         testUserData.id = response.body.id;
         expect(response.body).to.deep.equal(testUserData);
       });
@@ -76,7 +80,7 @@ describe("Endpoint /users", async () => {
         const response = await request.post(baseUrl).send(testUserData);
 
         // Assert:
-        expect(response.status).to.equal(201);
+        expect(response.status, JSON.stringify(response.body)).to.equal(201);
         testUserData.id = response.body.id;
         expect(response.body).to.deep.equal(testUserData);
       });
@@ -110,7 +114,7 @@ describe("Endpoint /users", async () => {
         const testUserData = generateValidUserData();
         testUserData.email = testUserData.email.toUpperCase();
         const response = await request.post(baseUrl).send(testUserData);
-        expect(response.status).to.equal(201);
+        expect(response.status, JSON.stringify(response.body)).to.equal(201);
 
         await sleep(sleepTime);
 
@@ -155,7 +159,7 @@ describe("Endpoint /users", async () => {
         expect(response.status).to.equal(422);
       });
 
-      ["firstname", "lastname", "email", "avatar"].forEach((field) => {
+      ["firstname", "lastname", "email", "avatar", "password"].forEach((field) => {
         it(`should not register with missing mandatory field - ${field}`, async () => {
           // Arrange:
           const testUserData = generateValidUserData();
@@ -170,7 +174,7 @@ describe("Endpoint /users", async () => {
         });
       });
 
-      ["firstname", "lastname", "email", "avatar"].forEach((field) => {
+      ["firstname", "lastname", "email", "avatar", "password"].forEach((field) => {
         it(`length of field exceeded - ${field}`, async () => {
           // Arrange:
           const testUserData = generateValidUserData();
@@ -182,6 +186,23 @@ describe("Endpoint /users", async () => {
 
           // Assert:
           expect(response.status).to.equal(422);
+        });
+      });
+
+      [null, true, undefined, 0, {}, [], ""].forEach((value) => {
+        ["firstname", "lastname", "email", "avatar", "password"].forEach((field) => {
+          it(`invalid value of field ${field} set to "${JSON.stringify(value)}"`, async () => {
+            // Arrange:
+            const testUserData = generateValidUserData();
+
+            testUserData[field] = value;
+
+            // Act:
+            const response = await request.post(baseUrl).send(testUserData);
+
+            // Assert:
+            expect(response.status).to.equal(422);
+          });
         });
       });
     });
@@ -252,7 +273,7 @@ describe("Endpoint /users", async () => {
       const response = await request.post(baseUrl).send(testUserData).set(headers);
 
       // Assert:
-      expect(response.status).to.equal(201);
+      expect(response.status, JSON.stringify(response.body)).to.equal(201);
       testUserData.id = response.body.id;
       expect(response.body).to.deep.equal(testUserData);
     });
@@ -266,7 +287,7 @@ describe("Endpoint /users", async () => {
       const response = await request.post(baseUrl).send(testUserData).set(headers);
 
       // Assert:
-      expect(response.status).to.equal(201);
+      expect(response.status, JSON.stringify(response.body)).to.equal(201);
       testUserData.id = response.body.id;
       expect(response.body).to.deep.equal(testUserData);
     });
@@ -322,6 +343,19 @@ describe("Endpoint /users", async () => {
       expect(response.body).to.deep.equal(oldUserData);
     });
 
+    it("PUT /users/:id - should update user with existing user email (known ISSUE!)", async () => {
+      // Act:
+      const oldUserData = { ...baseUserData };
+      oldUserData.id = userId;
+      oldUserData.email = "Danial.Dicki@dicki.test";
+      const response = await request.put(`${baseUrl}/${userId}`).set(headers).send(oldUserData);
+
+      // Assert:
+      expect(response.status).to.equal(200);
+      testUserData.id = response.body.id;
+      expect(response.body).to.deep.equal(oldUserData);
+    });
+
     it("PUT /users/:id - should update user with new data", async () => {
       // Act:
       const response = await request.put(`${baseUrl}/${userId}`).set(headers).send(testUserData);
@@ -344,7 +378,7 @@ describe("Endpoint /users", async () => {
       expect(response.body).to.deep.equal(testUserData);
     });
 
-    ["firstname", "lastname", "email", "avatar"].forEach((field) => {
+    ["firstname", "lastname", "email", "avatar", "password"].forEach((field) => {
       it(`PUT /users/:id - should not update with missing mandatory field - ${field}`, async () => {
         // Arrange:
         const testUserData = generateValidUserData();
@@ -356,6 +390,23 @@ describe("Endpoint /users", async () => {
 
         // Assert:
         expect(response.status, `${JSON.stringify(response.body)} - ${testUserData}`).to.equal(422);
+      });
+    });
+
+    [null, true, undefined, 0, {}, [], ""].forEach((value) => {
+      ["firstname", "lastname", "email", "avatar", "password"].forEach((field) => {
+        it(`PUT - shoud not update -  value of field ${field} set to "${JSON.stringify(value)}"`, async () => {
+          // Arrange:
+          const testUserData = generateValidUserData();
+
+          testUserData[field] = value;
+
+          // Act:
+          const response = await request.put(`${baseUrl}/${userId}`).set(headers).send(testUserData);
+
+          // Assert:
+          expect(response.status).to.equal(422);
+        });
       });
     });
 
@@ -397,6 +448,15 @@ describe("Endpoint /users", async () => {
       baseUserData.firstname = testPartialUserData.firstname;
       baseUserData.id = response.body.id;
       expect(response.body).to.deep.equal(baseUserData);
+    });
+
+    it("PATCH /users/:id - should not update user with existing user email", async () => {
+      // Act:
+      const testPartialUserData = { email: "Danial.Dicki@dicki.test" };
+      const response = await request.put(`${baseUrl}/${userId}`).set(headers).send(testPartialUserData);
+
+      // Assert:
+      expect(response.status, JSON.stringify(response.body)).to.equal(422);
     });
 
     it("PATCH /users/:id - should do partial update", async () => {

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="./css/video-player.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+
+<body>
+    <div class="custom-video-player">
+        <div class="video-screen">
+            <div class="video-message">
+                <i class="fas fa-play-circle play-icon"></i>
+                <div class="wave-animation">
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                </div>
+            </div>
+        </div>
+        <div class="video-controls-bar">
+            <button class="video-control-btn play-btn">
+                <i class="fas fa-play"></i>
+            </button>
+            <div class="video-progress">
+                <div class="video-progress-inner"></div>
+            </div>
+            <div class="controls">
+                <button class="speed-control" data-speed="0.5">0.5x</button>
+                <button class="speed-control" data-speed="1">1x</button>
+                <button class="speed-control" data-speed="2">2x</button>
+            </div>
+            <span class="video-time">00:00 / 00:00</span>
+        </div>
+    </div>
+    <script src="./js/video-player.js"></script>
+</body>
+
+</html>

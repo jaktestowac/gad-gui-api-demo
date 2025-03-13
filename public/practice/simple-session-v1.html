@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>🦎 GAD | Simple Session V1 Demo</title>
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+
+        body {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        /* Login Form Styles */
+        #loginForm {
+            background: white;
+            max-width: 400px;
+            margin: 40px auto;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #loginForm h2 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+
+        .header-bar {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: auto auto auto;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+        }
+
+        .header-bar h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #2c3e50;
+        }
+
+        .countdown {
+            justify-self: center;
+            background: #f8f9fa;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #2c3e50;
+            font-weight: 500;
+            border: 1px solid #e9ecef;
+        }
+
+        .countdown.warning {
+            color: #fff;
+            background: #e74c3c;
+            border-color: #c0392b;
+            animation: pulse 1s infinite;
+        }
+
+        .header-bar button {
+            justify-self: end;
+            padding: 8px 20px;
+            background: #e74c3c;
+            transition: background 0.3s ease;
+        }
+
+        .header-bar button:hover {
+            background: #c0392b;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.8;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .controls-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 10px;
+        }
+
+        .control-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .control-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: #3498db;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .control-card:hover::before {
+            transform: translateX(0);
+        }
+
+        .control-card h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Enhanced Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+            margin: 10px 0;
+        }
+
+        .toggle-switch input {
+            display: none;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: #2ecc71;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Enhanced Status Display */
+        #statusDisplay {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 14px;
+            border-left: 4px solid #3498db;
+            transition: all 0.3s ease;
+        }
+
+        #statusDisplay.status-ready {
+            border-color: #2ecc71;
+        }
+
+        #statusDisplay.status-processing {
+            border-color: #f1c40f;
+        }
+
+        #statusDisplay.status-standby {
+            border-color: #95a5a6;
+        }
+
+        /* Enhanced Action Buttons */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .action-buttons button {
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .action-buttons button[data-action="start"] {
+            background: #2ecc71;
+        }
+
+        .action-buttons button[data-action="stop"] {
+            background: #e74c3c;
+        }
+
+        .action-buttons button[data-action="reset"] {
+            background: #f1c40f;
+        }
+
+        .action-buttons button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Input Control Enhancements */
+        .input-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .input-control input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-control input:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+
+        /* Remove all tooltip-related styles */
+        .tooltip,
+        .tooltip::after,
+        .tooltip::before,
+        .tooltip:hover::after,
+        .tooltip:hover::before {
+            display: none !important;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(3px);
+        }
+
+        .modal {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            animation: modalFade 0.3s ease;
+        }
+
+        .modal h3 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+            font-size: 1.5rem;
+        }
+
+        .modal p {
+            color: #666;
+            margin-top: 15px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes modalFade {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Additional Control Styles */
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .metric-item {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        .notification-list {
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            padding: 8px;
+            border-left: 3px solid #3498db;
+            margin: 5px 0;
+            background: #f8f9fa;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .notification-item.warning {
+            border-color: #f1c40f;
+        }
+
+        .notification-item.error {
+            border-color: #e74c3c;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .config-grid {
+            display: grid;
+            gap: 10px;
+        }
+
+        .config-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .config-item select {
+            padding: 5px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        .sample-accounts {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .sample-accounts h3 {
+            color: #2c3e50;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .account-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .account-item {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 10px;
+            padding: 8px;
+            background: white;
+            border-radius: 4px;
+            border: 1px solid #eee;
+        }
+
+        .account-item span {
+            color: #666;
+        }
+
+        .account-item .timeout {
+            color: #e74c3c;
+            font-size: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <div class="container">
+        <div id="loginForm">
+            <h2>Login</h2>
+            <input type="text" id="username" placeholder="Username" /><br><br>
+            <input type="password" id="password" placeholder="Password" /><br><br>
+            <button onclick="handleLogin()">Login</button>
+            <div id="errorMessage" class="error-message"></div>
+
+            <div class="sample-accounts">
+                <h3>Sample Accounts</h3>
+                <div class="account-list">
+                    <div class="account-item">
+                        <span><strong>Username</strong></span>
+                        <span><strong>Password</strong></span>
+                        <span><strong>Session Timeout</strong></span>
+                    </div>
+                    <div class="account-item">
+                        <span>user</span>
+                        <span>demo</span>
+                        <span>1:00</span>
+                    </div>
+                    <div class="account-item">
+                        <span>user2</span>
+                        <span>demo2</span>
+                        <span>2:00</span>
+                    </div>
+                    <div class="account-item">
+                        <span>admin</span>
+                        <span>pass</span>
+                        <span>5:00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="userInfo" class="hidden">
+            <div class="header-bar">
+                <h2>Welcome, <span id="userDisplay"></span>!</h2>
+                <span id="countdown" class="countdown">Session: 1:00</span>
+                <button onclick="handleLogout()">Logout</button>
+            </div>
+
+            <div class="controls-panel">
+                <div class="control-card">
+                    <h3>
+                        <span>System Control</span>
+                    </h3>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="toggle1" onchange="handleToggle(1)">
+                        <span class="slider"></span>
+                    </label>
+                    <p id="toggleStatus">System is offline</p>
+                </div>
+
+                <div class="control-card">
+                    <h3>
+                        <span>Value Control</span>
+                    </h3>
+                    <div class="input-control">
+                        <input type="number" id="valueInput" min="0" max="100" value="50">
+                        <button onclick="handleValueUpdate()">Set</button>
+                    </div>
+                    <p id="valueDisplay">Current: 50</p>
+                </div>
+
+                <div class="control-card">
+                    <h3>
+                        <span>Actions</span>
+                    </h3>
+                    <div class="action-buttons">
+                        <button data-action="start" onclick="handleAction('start')">Start</button>
+                        <button data-action="stop" onclick="handleAction('stop')">Stop</button>
+                        <button data-action="reset" onclick="handleAction('reset')">Reset</button>
+                    </div>
+                </div>
+
+                <div class="control-card">
+                    <h3>
+                        <span>System Status</span>
+                    </h3>
+                    <div id="statusDisplay">System Ready</div>
+                    <button onclick="refreshStatus()">Refresh Status</button>
+                </div>
+
+                <div class="control-card">
+                    <h3>
+                        <span>System Metrics</span>
+                    </h3>
+                    <div class="metric-grid">
+                        <div class="metric-item">
+                            <div class="metric-value" id="cpuMetric">0%</div>
+                            <div class="metric-label">CPU Usage</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-value" id="memoryMetric">0%</div>
+                            <div class="metric-label">Memory</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-value" id="tempMetric">0°C</div>
+                            <div class="metric-label">Temperature</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-value" id="uptimeMetric">0h</div>
+                            <div class="metric-label">Uptime</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-card">
+                    <h3>
+                        <span>Configuration</span>
+                    </h3>
+                    <div class="config-grid">
+                        <div class="config-item">
+                            <span>Mode:</span>
+                            <select id="modeSelect" onchange="handleConfigChange('mode', this.value)">
+                                <option value="auto">Automatic</option>
+                                <option value="manual">Manual</option>
+                                <option value="eco">Eco</option>
+                            </select>
+                        </div>
+                        <div class="config-item">
+                            <span>Priority:</span>
+                            <select id="prioritySelect" onchange="handleConfigChange('priority', this.value)">
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-card">
+                    <h3>
+                        <span>Notifications</span>
+                    </h3>
+                    <div class="notification-list" id="notificationList">
+                        <div class="notification-item">System started successfully</div>
+                        <div class="notification-item warning">Performance optimization recommended</div>
+                        <div class="notification-item error">Connection timeout detected</div>
+                    </div>
+                </div>
+
+                <div class="control-card">
+                    <h3>
+                        <span>Quick Actions</span>
+                    </h3>
+                    <div class="quick-actions">
+                        <button onclick="handleQuickAction('scan')">Quick Scan</button>
+                        <button onclick="handleQuickAction('optimize')">Optimize</button>
+                        <button onclick="handleQuickAction('backup')">Backup</button>
+                        <button onclick="handleQuickAction('sync')">Sync</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="checkingModal" class="modal-overlay">
+        <div class="modal">
+            <h3>Checking Session</h3>
+            <div class="spinner"></div>
+            <p>Please wait...</p>
+        </div>
+    </div>
+
+    <script>
+        function setV1Cookie(name, value, minutes) {
+            const date = new Date();
+            date.setTime(date.getTime() + (minutes * 60 * 1000));
+            const expires = `expires=${date.toUTCString()}`;
+            document.cookie = `v1_${name}=${value};${expires};path=/`;
+        }
+
+        function getV1Cookie(name) {
+            const cookieName = `v1_${name}=`;
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                cookie = cookie.trim();
+                if (cookie.startsWith(cookieName)) {
+                    return cookie.substring(cookieName.length);
+                }
+            }
+            return null;
+        }
+
+        function deleteCookie(name) {
+            document.cookie = `v1_${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+        }
+
+        function clearAllCookies() {
+            console.log('Clearing all cookies');
+            deleteCookie('userSession');
+            deleteCookie('sessionStart');
+            deleteCookie('maxAge');
+            deleteCookie('sessionToken');
+        }
+
+        async function handleLogin() {
+            showModal();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+
+            try {
+                const response = await fetch('/api/practice/session/v1/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password }),
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    errorMessage.textContent = '';
+                    const sessionStart = Date.now();
+                    setV1Cookie('sessionStart', sessionStart, 999999);
+                    setV1Cookie('sessionToken', data.token, data.maxAge / 60000);
+                    setV1Cookie('maxAge', data.maxAge, data.maxAge / 60000);
+
+                    // Show dashboard immediately
+                    document.getElementById('loginForm').classList.add('hidden');
+                    document.getElementById('userInfo').classList.remove('hidden');
+                    document.getElementById('userDisplay').textContent = username;
+
+                    resetSystemState();
+                    initializeCountdown(sessionStart, data.maxAge);
+                } else {
+                    errorMessage.textContent = data.error.message || 'Login failed!';
+                    clearAllCookies()
+                }
+            } catch (err) {
+                console.error(err);
+                errorMessage.textContent = 'An error occurred during login';
+                clearAllCookies()
+            } finally {
+                hideModal();
+            }
+        }
+
+        function initializeCountdown(sessionStartTime, maxAge = 60000) {
+            const now = Date.now();
+            const elapsed = Math.floor((now - sessionStartTime) / 1000);
+            const sessionDuration = Math.floor(maxAge / 1000);
+            const remaining = Math.max(0, sessionDuration - elapsed);
+            if (remaining > 0) {
+                startCountdown(remaining);
+            } else {
+                handleLogout();
+            }
+        }
+
+        function startCountdown(remainingSeconds) {
+            let totalSeconds = remainingSeconds;
+            const countdownElement = document.getElementById('countdown');
+
+            clearInterval(countdownInterval);
+
+            function updateCountdown() {
+                if (totalSeconds <= 0) {
+                    clearInterval(countdownInterval);
+                    handleLogout();
+                    return;
+                }
+
+                const minutes = Math.floor(totalSeconds / 60);
+                const seconds = totalSeconds % 60;
+                countdownElement.textContent = `Session: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+                if (totalSeconds <= 30) {
+                    countdownElement.classList.add('warning');
+                } else {
+                    countdownElement.classList.remove('warning');
+                }
+
+                totalSeconds--;
+            }
+
+            updateCountdown();
+            countdownInterval = setInterval(updateCountdown, 1000);
+        }
+
+        async function checkSession() {
+            try {
+                const sessionStart = getV1Cookie('sessionStart');
+                const response = await fetch('/api/practice/session/v1/check', {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+
+                if (data.username && sessionStart) {
+                    document.getElementById('loginForm').classList.add('hidden');
+                    document.getElementById('userInfo').classList.remove('hidden');
+                    document.getElementById('userDisplay').textContent = data.username;
+                    initializeCountdown(parseInt(sessionStart), parseInt(getCookie('maxAge')));
+                } else {
+                    document.getElementById('loginForm').classList.remove('hidden');
+                    document.getElementById('userInfo').classList.add('hidden');
+                    clearAllCookies();
+                    resetSystemState();
+                    stopCountdown();
+                }
+            } catch (err) {
+                console.error(err);
+                document.getElementById('loginForm').classList.remove('hidden');
+                document.getElementById('userInfo').classList.add('hidden');
+                clearAllCookies();
+                resetSystemState();
+                stopCountdown();
+            } finally {
+                hideModal();
+            }
+        }
+
+        async function handleLogout() {
+            stopCountdown();
+            try {
+                await fetch('/api/practice/session/v1/logout', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                deleteCookie('userSession');
+                deleteCookie('sessionStart');
+                resetSystemState();
+                checkSession();
+            } catch (err) {
+                console.error(err);
+                deleteCookie('userSession');
+                deleteCookie('sessionStart');
+                resetSystemState();
+            }
+        }
+
+        function handleToggle(id) {
+            const toggle = document.getElementById(`toggle${id}`);
+            const status = document.getElementById('toggleStatus');
+            systemState.isOnline = toggle.checked;
+
+            if (systemState.isOnline) {
+                status.textContent = 'System is online';
+                status.style.color = '#2ecc71';
+                startSystem();
+            } else {
+                status.textContent = 'System is offline';
+                status.style.color = '#e74c3c';
+                stopSystem();
+            }
+        }
+
+        function handleValueUpdate() {
+            const input = document.getElementById('valueInput');
+            const value = input.value;
+            document.getElementById('valueDisplay').textContent = `Current: ${value}`;
+
+            input.style.borderColor = '#2ecc71';
+            setTimeout(() => input.style.borderColor = '', 500);
+        }
+
+        function handleAction(action) {
+            if (!systemState.isOnline) {
+                addNotification('System is offline. Please enable system first.', 'error');
+                return;
+            }
+
+            const button = document.querySelector(`button[data-action="${action}"]`);
+            button.style.transform = 'scale(0.95)';
+            setTimeout(() => button.style.transform = '', 200);
+
+            systemState.lastAction = action;
+            const statusDisplay = document.getElementById('statusDisplay');
+
+            switch (action) {
+                case 'start':
+                    if (!systemState.operations.running) {
+                        systemState.operations.running = true;
+                        systemState.operations.paused = false;
+                        statusDisplay.textContent = 'Operation Started';
+                        statusDisplay.className = 'status-ready';
+                        addNotification('Operation started successfully');
+                    }
+                    break;
+
+                case 'stop':
+                    if (systemState.operations.running) {
+                        systemState.operations.running = false;
+                        systemState.operations.paused = true;
+                        statusDisplay.textContent = 'Operation Stopped';
+                        statusDisplay.className = 'status-standby';
+                        addNotification('Operation stopped', 'warning');
+                    }
+                    break;
+
+                case 'reset':
+                    systemState.operations = {
+                        running: false,
+                        paused: false,
+                        error: null
+                    };
+                    statusDisplay.textContent = 'System Reset Complete';
+                    statusDisplay.className = 'status-processing';
+                    addNotification('System reset completed', 'warning');
+                    setTimeout(() => {
+                        statusDisplay.textContent = 'System Ready';
+                        statusDisplay.className = 'status-ready';
+                    }, 2000);
+                    break;
+            }
+
+            updateMetricsBasedOnAction(action);
+        }
+
+        function refreshStatus() {
+            const statuses = ['Ready', 'Processing', 'Standby'];
+            const status = statuses[Math.floor(Math.random() * 3)];
+            const statusDisplay = document.getElementById('statusDisplay');
+
+            statusDisplay.textContent = `System ${status}`;
+            statusDisplay.className = `status-${status.toLowerCase()}`;
+        }
+
+        let countdownInterval;
+
+        function stopCountdown() {
+            clearInterval(countdownInterval);
+            const countdownElement = document.getElementById('countdown');
+            countdownElement.textContent = 'Session: 0:00';
+            countdownElement.classList.remove('warning');
+        }
+
+        function showModal() {
+            document.getElementById('checkingModal').style.display = 'flex';
+        }
+
+        function hideModal() {
+            document.getElementById('checkingModal').style.display = 'none';
+        }
+
+        const configState = {
+            mode: 'auto',
+            priority: 'medium',
+            lastUpdate: null
+        };
+
+        function handleConfigChange(type, value) {
+            configState[type] = value;
+            configState.lastUpdate = new Date();
+
+            const select = document.getElementById(`${type}Select`);
+            const originalColor = select.style.backgroundColor;
+            select.style.backgroundColor = '#e8f5e9';
+
+            const notification = document.createElement('div');
+            notification.className = 'notification-item';
+            notification.textContent = `${type.charAt(0).toUpperCase() + type.slice(1)} changed to: ${value}`;
+
+            const list = document.getElementById('notificationList');
+            list.insertBefore(notification, list.firstChild);
+
+            while (list.children.length > 5) {
+                list.removeChild(list.lastChild);
+            }
+
+            updateConfigDependendMetrics(type, value);
+
+            setTimeout(() => {
+                select.style.backgroundColor = originalColor;
+            }, 500);
+        }
+
+        function updateConfigDependendMetrics(type, value) {
+            if (type === 'mode') {
+                switch (value) {
+                    case 'eco':
+                        document.getElementById('cpuMetric').textContent =
+                            `${Math.floor(Math.random() * 30)}%`; // Lower CPU usage in eco mode
+                        break;
+                    case 'manual':
+                        document.getElementById('cpuMetric').textContent =
+                            `${Math.floor(Math.random() * 50 + 25)}%`; // Medium CPU usage
+                        break;
+                    case 'auto':
+                        document.getElementById('cpuMetric').textContent =
+                            `${Math.floor(Math.random() * 70 + 30)}%`; // Higher CPU usage
+                        break;
+                }
+            }
+
+            if (type === 'priority') {
+                const statusDisplay = document.getElementById('statusDisplay');
+                switch (value) {
+                    case 'high':
+                        statusDisplay.textContent = 'System: High Performance';
+                        statusDisplay.className = 'status-ready';
+                        break;
+                    case 'medium':
+                        statusDisplay.textContent = 'System: Balanced';
+                        statusDisplay.className = 'status-processing';
+                        break;
+                    case 'low':
+                        statusDisplay.textContent = 'System: Power Saving';
+                        statusDisplay.className = 'status-standby';
+                        break;
+                }
+            }
+        }
+
+        function updateMetrics() {
+            if (!systemState.isOnline) {
+                document.getElementById('cpuMetric').textContent = '0%';
+                document.getElementById('memoryMetric').textContent = '0%';
+                document.getElementById('tempMetric').textContent = '25°C';
+                document.getElementById('uptimeMetric').textContent = '0h';
+                return;
+            }
+
+            const uptime = systemState.startTime ?
+                Math.floor((Date.now() - systemState.startTime) / (1000 * 60 * 60)) : 0;
+
+            const baseLoad = systemState.operations.running ? 50 : 10;
+            const variation = Math.floor(Math.random() * 20);
+
+            document.getElementById('cpuMetric').textContent = `${baseLoad + variation}%`;
+            document.getElementById('memoryMetric').textContent =
+                `${Math.floor(Math.random() * 40 + baseLoad)}%`;
+            document.getElementById('tempMetric').textContent =
+                `${Math.floor(Math.random() * 15 + 35)}°C`;
+            document.getElementById('uptimeMetric').textContent = `${uptime}h`;
+
+            if (configState.mode === 'eco') {
+                document.getElementById('cpuMetric').textContent =
+                    `${Math.min(30, baseLoad + variation)}%`;
+                document.getElementById('tempMetric').textContent =
+                    `${Math.min(30, Math.floor(Math.random() * 10 + 25))}°C`;
+            }
+        }
+
+        function handleQuickAction(action) {
+            const notification = document.createElement('div');
+            notification.className = 'notification-item';
+            notification.textContent = `Action ${action} executed`;
+
+            const list = document.getElementById('notificationList');
+            list.insertBefore(notification, list.firstChild);
+
+            while (list.children.length > 5) {
+                list.removeChild(list.lastChild);
+            }
+        }
+
+        function updateMetricsBasedOnAction(action) {
+            const cpuMetric = document.getElementById('cpuMetric');
+            const tempMetric = document.getElementById('tempMetric');
+
+            switch (action) {
+                case 'start':
+                    cpuMetric.textContent = `${Math.floor(Math.random() * 30 + 60)}%`; // 60-90%
+                    tempMetric.textContent = `${Math.floor(Math.random() * 20 + 40)}°C`; // 40-60°C
+                    break;
+                case 'stop':
+                    cpuMetric.textContent = `${Math.floor(Math.random() * 20)}%`; // 0-20%
+                    tempMetric.textContent = `${Math.floor(Math.random() * 10 + 25)}°C`; // 25-35°C
+                    break;
+                case 'reset':
+                    cpuMetric.textContent = '0%';
+                    tempMetric.textContent = '25°C';
+                    setTimeout(() => updateMetrics(), 2000);
+                    break;
+            }
+        }
+
+        const systemState = {
+            isOnline: false,
+            currentStatus: 'idle',
+            lastAction: null,
+            startTime: null,
+            operations: {
+                running: false,
+                paused: false,
+                error: null
+            }
+        };
+
+        function startSystem() {
+            systemState.startTime = Date.now();
+            systemState.currentStatus = 'running';
+            addNotification('System started successfully', 'success');
+            updateMetrics();
+        }
+
+        function stopSystem() {
+            systemState.startTime = null;
+            systemState.currentStatus = 'stopped';
+            systemState.operations.running = false;
+            addNotification('System stopped', 'warning');
+            document.getElementById('statusDisplay').textContent = 'System Stopped';
+            document.getElementById('statusDisplay').className = 'status-standby';
+        }
+
+        function addNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification-item ${type}`;
+
+            let icon = '📝';
+            switch (type) {
+                case 'success':
+                    icon = '✅';
+                    break;
+                case 'warning':
+                    icon = '⚠️';
+                    break;
+                case 'error':
+                    icon = '❌';
+                    break;
+            }
+
+            notification.textContent = `${icon} ${message}`;
+
+            const timestamp = document.createElement('small');
+            timestamp.style.color = '#666';
+            timestamp.style.marginLeft = '5px';
+            timestamp.textContent = new Date().toLocaleTimeString();
+            notification.appendChild(timestamp);
+
+            const list = document.getElementById('notificationList');
+            list.insertBefore(notification, list.firstChild);
+
+            notification.style.animation = 'highlightNew 2s ease-out';
+
+            while (list.children.length > 5) {
+                list.removeChild(list.lastChild);
+            }
+
+            if (type === 'info') {
+                setTimeout(() => {
+                    notification.style.animation = 'fadeOut 0.5s ease-out';
+                    setTimeout(() => notification.remove(), 500);
+                }, 10000);
+            }
+        }
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes highlightNew {
+                0% { background: #fff3cd; }
+                100% { background: #f8f9fa; }
+            }
+
+            @keyframes fadeOut {
+                from { opacity: 1; }
+                to { opacity: 0; }
+            }
+
+            .notification-item.success { border-left-color: #2ecc71; }
+            .notification-item.warning { border-left-color: #f1c40f; }
+            .notification-item.error { border-left-color: #e74c3c; }
+            .notification-item.info { border-left-color: #3498db; }
+        `;
+        document.head.appendChild(style);
+
+        function resetSystemState() {
+            systemState.isOnline = false;
+            systemState.currentStatus = 'idle';
+            systemState.lastAction = null;
+            systemState.startTime = null;
+            systemState.operations = {
+                running: false,
+                paused: false,
+                error: null
+            };
+
+            document.getElementById('toggle1').checked = false;
+            document.getElementById('toggleStatus').textContent = 'System is offline';
+            document.getElementById('toggleStatus').style.color = '#e74c3c';
+            document.getElementById('statusDisplay').textContent = 'System Ready';
+            document.getElementById('statusDisplay').className = 'status-standby';
+
+            document.getElementById('cpuMetric').textContent = '0%';
+            document.getElementById('memoryMetric').textContent = '0%';
+            document.getElementById('tempMetric').textContent = '25°C';
+            document.getElementById('uptimeMetric').textContent = '0h';
+
+            document.getElementById('modeSelect').value = 'auto';
+            document.getElementById('prioritySelect').value = 'medium';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            showModal();
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('userInfo').classList.add('hidden');
+            checkSession();
+            setInterval(refreshStatus, 5000);
+            setInterval(() => {
+                if (systemState.isOnline) {
+                    updateMetrics();
+                }
+            }, 2000);
+        });
+    </script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>

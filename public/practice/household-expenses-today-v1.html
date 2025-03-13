@@ -79,6 +79,53 @@
             </span>
         </a>
     </div>
+
+    <br />
+    <div align="center">
+        <div id="business-context">
+            <span class="simpleInfoBox" style="font-size: 16px; ">PS. See sample business context!&nbsp;
+                <span class="span-button toggleSpoilerButton" onclick="toggleSpoiler('businessContext', this)">Show context!</span></span>
+            <span>
+                <span id="businessContext" style="display:none;"><br />
+                    <div class="simpleInfoBox1">
+                        <div align="left" style="width: 600px;">
+                            <h4>Business Context (Summary)</h4>
+                            <p>
+                                This page represents a <strong>household expense tracking system</strong> for personal finance management.</br>
+                                It integrates API data with frontend logic to:
+                            <ul>
+                                <li>Display daily expenses by category</li>
+                                <li>Calculate daily and cumulative balances</li>
+                            </ul>
+                            </p>
+                            <h4>Key Highlights</h4>
+                            <ul>
+                                <li><strong>API:</strong> The API provides transaction details (<strong>date</strong>, <strong>category</strong>, <strong>amount</strong>, <strong>daily balance</strong>)</li>
+                                <li><strong>UI with Core Logic:</strong> The frontend calculates <strong>total balances</strong> and organizes transactions by date</li>
+                                <li><strong>Risks:</strong> The frontend logic is critical for accurate financial tracking and reporting</li>
+                                <li><strong>Testing Relevance:</strong>
+                                    <ul>
+                                        <li>Verify accuracy of balance calculations (daily and cumulative)</li>
+                                        <li>Ensure proper categorization and display of transactions</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                            <h4>Important notes</h4>
+                            <ul>
+                                <li>Each day shows individual transactions with their categories and amounts</li>
+                                <li>Daily balance represents the sum of all transactions for that day</li>
+                                <li>Total balance is cumulative, including the current day and all following days</li>
+                                <li><strong>Transactions are grouped by date and displayed with category icons</strong></li>
+                                <li><strong>Empty days are shown with zero transactions but still affect the running balance</strong></li>
+                            </ul>
+
+                            These are the requirements for the page. But... <strong>there are hidden bugs</strong> in the code. Can you find them? 😉
+                        </div>
+                    </div>
+                </span>
+            </span>
+        </div>
+    </div>
 </body>
 
 <script type="text/javascript" src="/js/common.js"></script>

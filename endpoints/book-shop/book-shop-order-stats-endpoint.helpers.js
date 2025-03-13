@@ -14,6 +14,15 @@ const {
 function handleBookShopOrdersStats(req, res, isAdmin) {
   const urlEnds = req.url.replace(/\/\/+/g, "/");
   if (req.method === "GET" && req.url.includes("/api/book-shop-stats")) {
+    /*
+    Provides comprehensive shop statistics
+    - Calculates sales metrics and trends
+    - Aggregates order and customer data
+    - Tracks inventory movements
+    - Generates performance reports
+    - Analyzes user purchasing patterns
+    - Monitors financial indicators
+    */
     // validate account
     const verifyTokenResult = verifyAccessToken(req, res, "GET book-shop-accounts", req.url);
     const foundUser = searchForUserWithOnlyToken(verifyTokenResult);

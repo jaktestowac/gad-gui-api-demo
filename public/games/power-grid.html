@@ -37,6 +37,7 @@
             <div class="win-condition-select">
                 <label for="win-condition">Choose Victory Condition:</label>
                 <select id="win-condition">
+                    <option value="infinite">Infinite Mode</option>
                     <option value="wealth5k">Wealth ($5000)</option>
                     <option value="wealth10k">Wealth ($10000)</option>
                     <option value="wealth50k">Wealth ($50000)</option>
@@ -118,6 +119,7 @@
                 </div>
                 <div class="turn-indicator">
                     <div class="score">
+                        <div>Win: <span id="winCondition">-</span></div>
                         <div>Money: $<span id="money">1000</span></div>
                         <div class="money-spent">Spent: $<span id="money-spent">0</span></div>
                     </div>
