@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD - Simple nested table v3</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/practice-controls.css" />
+    <style>
+        .data-table {
+            text-align: center;
+            width: 800px;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+        }
+
+        .data-table th {
+            background-color: #f8f9fa;
+            color: #2c3e50;
+            font-weight: 600;
+            padding: 12px;
+            text-transform: uppercase;
+            font-size: 0.9em;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .data-table td {
+            padding: 12px 8px;
+            border-bottom: 1px solid #e9ecef;
+            transition: background-color 0.3s ease;
+        }
+
+        .data-table tr:hover>td {
+            background-color: #f8f9fa;
+        }
+
+        .footer-link {
+            color: dimgray;
+            font-size: medium;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .footer-icon {
+            width: 25px !important;
+            height: 25px !important;
+            padding: 0;
+            border: none;
+        }
+
+        .table-button {
+            height: 32px;
+            padding: 0 16px;
+            margin: 0;
+            min-width: 80px;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .table-button:hover {
+            background-color: #357abd;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .nested-table {
+            width: 100%;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 4px 0;
+        }
+
+        .nested-table th {
+            background-color: #edf2f7;
+            font-size: 0.85em;
+            padding: 8px;
+        }
+
+        .nested-table td {
+            padding: 8px;
+            font-size: 0.9em;
+        }
+
+        .nested-table .table-button {
+            background-color: #6c757d;
+            font-size: 0.85em;
+        }
+
+        .nested-table .table-button:hover {
+            background-color: #5a6268;
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .results-container {
+            margin: 24px 0;
+            padding: 16px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 800px;
+        }
+
+        .collapse-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0 8px;
+            color: #4a90e2;
+            font-size: 1.1em;
+        }
+
+        .collapsed {
+            display: none;
+        }
+
+        .expand-icon::before {
+            content: '►';
+            display: inline-block;
+            transition: transform 0.2s;
+        }
+
+        .expanded .expand-icon::before {
+            transform: rotate(90deg);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+    <style>
+        th,
+        td {
+            border-bottom: 2px solid #dddddd;
+        }
+    </style>
+
+    <br />
+    <br />
+    <br />
+    <div align="center">
+        <h2>Simple nested table v3</h2>
+
+        <table class="data-table">
+            <tr>
+                <th>Organization</th>
+                <th>Region</th>
+                <th>Location</th>
+                <th>Department</th>
+                <th>Actions</th>
+            </tr>
+            <tr>
+                <td>Global Corp</td>
+                <td>Europe</td>
+                <td>Poland</td>
+                <td>Sales</td>
+                <td><button class="my-button table-button" onclick="buttonOnClick('(Global-Corp-Europe-Poland-Sales)')">View</button></td>
+            </tr>
+            <tr>
+                <td>Tech Solutions</td>
+                <td colspan="3">
+                    <button class="collapse-btn" onclick="toggleCollapse(this)">
+                        <span class="expand-icon"></span> Regions
+                    </button>
+                    <table class="nested-table collapsed">
+                        <tr>
+                            <th>Region</th>
+                            <th>Location</th>
+                            <th>Action</th>
+                        </tr>
+                        <tr>
+                            <td>Europe</td>
+                            <td>
+                                <table class="nested-table">
+                                    <tr>
+                                        <td>Warsaw</td>
+                                        <td><button class="my-button table-button" onclick="buttonOnClick('(Tech-Solutions-Europe-Warsaw)')">Select</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Berlin</td>
+                                        <td><button class="my-button table-button" onclick="buttonOnClick('(Tech-Solutions-Europe-Berlin)')">Select</button></td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td><button class="my-button table-button" onclick="buttonOnClick('(Tech-Solutions-Europe-All)')">All</button></td>
+                        </tr>
+                        <tr>
+                            <td>Americas</td>
+                            <td>
+                                <table class="nested-table">
+                                    <tr>
+                                        <td>New York</td>
+                                        <td><button class="my-button table-button" onclick="buttonOnClick('(Tech-Solutions-Americas-NewYork)')">Select</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Toronto</td>
+                                        <td><button class="my-button table-button" onclick="buttonOnClick('(Tech-Solutions-Americas-Toronto)')">Select</button></td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td><button class="my-button table-button" onclick="buttonOnClick('(Tech-Solutions-Americas-All)')">All</button></td>
+                        </tr>
+                    </table>
+                </td>
+                <td><button class="my-button table-button" onclick="buttonOnClick('(Tech-Solutions-Global)')">Global</button></td>
+            </tr>
+            <tr>
+                <td>Mega Industries</td>
+                <td colspan="4">
+                    <button class="collapse-btn" onclick="toggleCollapse(this)">
+                        <span class="expand-icon"></span> Divisions
+                    </button>
+                    <table class="nested-table collapsed">
+                        <tr>
+                            <th>Division</th>
+                            <th>Locations</th>
+                            <th>Teams</th>
+                        </tr>
+                        <tr>
+                            <td>Research</td>
+                            <td>
+                                <table class="nested-table">
+                                    <tr>
+                                        <td>Europe</td>
+                                        <td><button class="my-button table-button" onclick="buttonOnClick('(Mega-Research-Europe)')">View</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Asia</td>
+                                        <td><button class="my-button table-button" onclick="buttonOnClick('(Mega-Research-Asia)')">View</button></td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td>
+                                <table class="nested-table">
+                                    <tr>
+                                        <td>Alpha</td>
+                                        <td><button class="my-button table-button" onclick="buttonOnClick('(Mega-Research-Alpha)')">Select</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Beta</td>
+                                        <td><button class="my-button table-button" onclick="buttonOnClick('(Mega-Research-Beta)')">Select</button></td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td>Digital Dynamics</td>
+                <td colspan="3">
+                    <button class="collapse-btn" onclick="toggleCollapse(this)">
+                        <span class="expand-icon"></span> Departments
+                    </button>
+                    <table class="nested-table collapsed">
+                        <tr>
+                            <th>Department</th>
+                            <th>Teams</th>
+                            <th>Action</th>
+                        </tr>
+                        <tr>
+                            <td>Engineering</td>
+                            <td>
+                                <table class="nested-table">
+                                    <tr>
+                                        <td>Frontend</td>
+                                        <td><button class="my-button table-button" onclick="buttonOnClick('(Digital-Eng-Frontend)')">Select</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Backend</td>
+                                        <td><button class="my-button table-button" onclick="buttonOnClick('(Digital-Eng-Backend)')">Select</button></td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td><button class="my-button table-button" onclick="buttonOnClick('(Digital-Eng-All)')">All</button></td>
+                        </tr>
+                    </table>
+                </td>
+                <td><button class="my-button table-button" onclick="buttonOnClick('(Digital-Global)')">Global</button></td>
+            </tr>
+            <tr>
+                <td>Innovation Labs</td>
+                <td colspan="4">
+                    <button class="collapse-btn" onclick="toggleCollapse(this)">
+                        <span class="expand-icon"></span> Projects
+                    </button>
+                    <table class="nested-table collapsed">
+                        <tr>
+                            <th>Project</th>
+                            <th>Status</th>
+                            <th>Team Size</th>
+                            <th>Action</th>
+                        </tr>
+                        <tr>
+                            <td>Project Alpha</td>
+                            <td>Active</td>
+                            <td>15</td>
+                            <td><button class="my-button table-button" onclick="buttonOnClick('(Innovation-Alpha)')">View</button></td>
+                        </tr>
+                        <tr>
+                            <td>Project Beta</td>
+                            <td>Planning</td>
+                            <td>8</td>
+                            <td><button class="my-button table-button" onclick="buttonOnClick('(Innovation-Beta)')">View</button></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div align="center">
+        Results:
+        <div class="results-container" data-testid="dti-results-container" id="results-container"></div>
+
+        Results history:
+        <br />
+        <textarea class="results-history-container" id="results-history-container" readonly> </textarea>
+    </div>
+
+    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 24px">
+        <a href="https://jaktestowac.pl" class="footer-link">
+            <span>
+                <img src="/data/icons/favicon.png" class="footer-icon" alt="" />&nbsp&nbspjaktestowac.pl
+            </span>
+        </a>
+    </div>
+
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+    <script type="text/javascript" src="./js/practice-common.js"></script>
+    <script>
+        function toggleCollapse(button) {
+            const table = button.nextElementSibling;
+            table.classList.toggle('collapsed');
+            button.classList.toggle('expanded');
+        }
+    </script>
+</body>
+
+</html>
