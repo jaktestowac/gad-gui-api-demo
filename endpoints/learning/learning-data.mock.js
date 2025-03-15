@@ -1911,6 +1911,19 @@ const mockData = {
       description: "Account top up",
     },
   ],
+
+  roleRequests: [
+    {
+      id: 1,
+      userId: 2,
+      requestedRole: "instructor",
+      reason: "I would like to create courses about software architecture",
+      status: "pending",
+      createdAt: "2024-01-15T10:30:00.000Z",
+      updatedAt: null,
+      resolvedBy: null,
+    },
+  ],
 };
 
 module.exports = mockData;

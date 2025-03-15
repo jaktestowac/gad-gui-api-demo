@@ -168,7 +168,7 @@
             background: #fff;
             cursor: pointer;
             transition: all 0.2s;
-            font-size: 14px;
+            font-size: 12px;
         }
 
         .filter-button.active {
@@ -197,6 +197,58 @@
         .requirement-card.hidden {
             display: none;
         }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 12px 0;
+        }
+
+        .tag {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .tag i {
+            margin-right: 4px;
+            font-size: 10px;
+        }
+
+        .tag-filter-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .clear-filters {
+            background: #ff5252;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: none;
+            font-size: 12px;
+        }
+
+        .clear-filters.visible {
+            display: block;
+        }
+
+        .tag.active {
+            background: #1976d2;
+            color: white;
+        }
     </style>
 </head>
 
@@ -222,6 +274,11 @@
             <button class="filter-button" data-priority="high">High Priority <span class="count">0</span></button>
             <button class="filter-button" data-priority="medium">Medium Priority <span class="count">0</span></button>
             <button class="filter-button" data-priority="low">Low Priority <span class="count">0</span></button>
+            <button class="clear-filters">Clear Filters</button>
+        </div>
+
+        <div class="tag-filter-controls">
+            <!-- Tags will be populated dynamically -->
         </div>
 
         <div class="requirement-card">
@@ -232,6 +289,11 @@
             </div>
             <div class="requirement-description">
                 Users must be able to register, login, and manage their accounts securely.
+            </div>
+            <div class="tags">
+                <span class="tag"><i class="fas fa-tag"></i>Security</span>
+                <span class="tag"><i class="fas fa-tag"></i>Authentication</span>
+                <span class="tag"><i class="fas fa-tag"></i>User Management</span>
             </div>
             <ul class="acceptance-criteria">
                 <li>Verify email validation during registration</li>
@@ -249,6 +311,11 @@
             <div class="requirement-description">
                 Students should be able to browse, enroll in, and access their courses.
             </div>
+            <div class="tags">
+                <span class="tag"><i class="fas fa-tag"></i>Enrollment</span>
+                <span class="tag"><i class="fas fa-tag"></i>Courses</span>
+                <span class="tag"><i class="fas fa-tag"></i>Access Control</span>
+            </div>
             <ul class="acceptance-criteria">
                 <li>Test course catalog browsing functionality</li>
                 <li>Verify enrollment process and confirmation</li>
@@ -264,6 +331,11 @@
             </div>
             <div class="requirement-description">
                 System must track and display student progress through courses.
+            </div>
+            <div class="tags">
+                <span class="tag"><i class="fas fa-tag"></i>Learning</span>
+                <span class="tag"><i class="fas fa-tag"></i>Progress</span>
+                <span class="tag"><i class="fas fa-tag"></i>Analytics</span>
             </div>
             <ul class="acceptance-criteria">
                 <li>Verify progress percentage calculation</li>
@@ -281,6 +353,11 @@
             <div class="requirement-description">
                 Instructors must be able to create and manage course content.
             </div>
+            <div class="tags">
+                <span class="tag"><i class="fas fa-tag"></i>Content Management</span>
+                <span class="tag"><i class="fas fa-tag"></i>Instructors</span>
+                <span class="tag"><i class="fas fa-tag"></i>Multimedia</span>
+            </div>
             <ul class="acceptance-criteria">
                 <li>Test content creation and editing</li>
                 <li>Verify multimedia content upload</li>
@@ -297,6 +374,11 @@
             <div class="requirement-description">
                 Platform must support various types of assessments and quizzes.
             </div>
+            <div class="tags">
+                <span class="tag"><i class="fas fa-tag"></i>Assessment</span>
+                <span class="tag"><i class="fas fa-tag"></i>Grading</span>
+                <span class="tag"><i class="fas fa-tag"></i>Testing</span>
+            </div>
             <ul class="acceptance-criteria">
                 <li>Test multiple question types</li>
                 <li>Verify automated grading</li>
@@ -312,6 +394,11 @@
             </div>
             <div class="requirement-description">
                 System should generate and issue certificates upon course completion.
+            </div>
+            <div class="tags">
+                <span class="tag"><i class="fas fa-tag"></i>Certificates</span>
+                <span class="tag"><i class="fas fa-tag"></i>Verification</span>
+                <span class="tag"><i class="fas fa-tag"></i>Achievement</span>
             </div>
             <ul class="acceptance-criteria">
                 <li>Verify certificate generation triggers</li>
@@ -330,6 +417,11 @@
             <div class="requirement-description">
                 Secure payment processing for course purchases and subscription management.
             </div>
+            <div class="tags">
+                <span class="tag"><i class="fas fa-tag"></i>Payments</span>
+                <span class="tag"><i class="fas fa-tag"></i>Security</span>
+                <span class="tag"><i class="fas fa-tag"></i>Transactions</span>
+            </div>
             <ul class="acceptance-criteria">
                 <li>Test payment gateway integration</li>
                 <li>Verify transaction processing</li>
@@ -345,6 +437,11 @@
             </div>
             <div class="requirement-description">
                 Instructors should have access to course and student performance analytics.
+            </div>
+            <div class="tags">
+                <span class="tag"><i class="fas fa-tag"></i>Analytics</span>
+                <span class="tag"><i class="fas fa-tag"></i>Reporting</span>
+                <span class="tag"><i class="fas fa-tag"></i>Performance</span>
             </div>
             <ul class="acceptance-criteria">
                 <li>Verify data visualization accuracy</li>
@@ -362,6 +459,11 @@
             <div class="requirement-description">
                 Students should have a progress page to track their courses completion status.
             </div>
+            <div class="tags">
+                <span class="tag"><i class="fas fa-tag"></i>Progress</span>
+                <span class="tag"><i class="fas fa-tag"></i>Tracking</span>
+                <span class="tag"><i class="fas fa-tag"></i>Dashboard</span>
+            </div>
             <ul class="acceptance-criteria">
                 <li>Verify progress percentage calculation</li>
                 <li>Test course completion status updates</li>
@@ -378,6 +480,11 @@
             <div class="requirement-description">
                 Platform must be fully functional on mobile devices.
             </div>
+            <div class="tags">
+                <span class="tag"><i class="fas fa-tag"></i>Mobile</span>
+                <span class="tag"><i class="fas fa-tag"></i>Responsive</span>
+                <span class="tag"><i class="fas fa-tag"></i>UX</span>
+            </div>
             <ul class="acceptance-criteria">
                 <li>Test responsive design on various devices</li>
                 <li>Verify mobile navigation and usability</li>
@@ -393,6 +500,11 @@
             </div>
             <div class="requirement-description">
                 Users should be able to manage their profile information and account settings.
+            </div>
+            <div class="tags">
+                <span class="tag"><i class="fas fa-tag"></i>Profile</span>
+                <span class="tag"><i class="fas fa-tag"></i>Account</span>
+                <span class="tag"><i class="fas fa-tag"></i>Settings</span>
             </div>
             <ul class="acceptance-criteria">
                 <li>Test profile information update functionality</li>
@@ -411,6 +523,11 @@
             <div class="requirement-description">
                 Students must be able to navigate through course content efficiently.
             </div>
+            <div class="tags">
+                <span class="tag"><i class="fas fa-tag"></i>Navigation</span>
+                <span class="tag"><i class="fas fa-tag"></i>Content</span>
+                <span class="tag"><i class="fas fa-tag"></i>Learning</span>
+            </div>
             <ul class="acceptance-criteria">
                 <li>Test lesson navigation and progression</li>
                 <li>Verify video player functionality</li>
@@ -428,6 +545,11 @@
             <div class="requirement-description">
                 Instructors need comprehensive tools to manage courses and monitor student progress.
             </div>
+            <div class="tags">
+                <span class="tag"><i class="fas fa-tag"></i>Dashboard</span>
+                <span class="tag"><i class="fas fa-tag"></i>Management</span>
+                <span class="tag"><i class="fas fa-tag"></i>Analytics</span>
+            </div>
             <ul class="acceptance-criteria">
                 <li>Test course creation and editing features</li>
                 <li>Verify student progress tracking</li>
@@ -444,6 +566,11 @@
             </div>
             <div class="requirement-description">
                 Users should be able to easily find courses and content through search and filters.
+            </div>
+            <div class="tags">
+                <span class="tag"><i class="fas fa-tag"></i>Search</span>
+                <span class="tag"><i class="fas fa-tag"></i>Filtering</span>
+                <span class="tag"><i class="fas fa-tag"></i>Organization</span>
             </div>
             <ul class="acceptance-criteria">
                 <li>Test course search functionality</li>
@@ -464,6 +591,11 @@
             <div class="requirement-description">
                 Users should be able to rate courses and provide feedback to instructors.
             </div>
+            <div class="tags">
+                <span class="tag"><i class="fas fa-tag"></i>Feedback</span>
+                <span class="tag"><i class="fas fa-tag"></i>Rating</span>
+                <span class="tag"><i class="fas fa-tag"></i>Reviews</span>
+            </div>
             <ul class="acceptance-criteria">
                 <li>Test rating system functionality</li>
                 <li>Verify feedback submission process</li>
@@ -479,6 +611,11 @@
             </div>
             <div class="requirement-description">
                 Enhanced accessibility features for users with disabilities.
+            </div>
+            <div class="tags">
+                <span class="tag"><i class="fas fa-tag"></i>Accessibility</span>
+                <span class="tag"><i class="fas fa-tag"></i>Inclusivity</span>
+                <span class="tag"><i class="fas fa-tag"></i>Standards</span>
             </div>
             <ul class="acceptance-criteria">
                 <li>Test screen reader compatibility</li>
@@ -498,6 +635,11 @@
             <div class="requirement-description">
                 Users should be able to preview a free demo of the course content.
             </div>
+            <div class="tags">
+                <span class="tag"><i class="fas fa-tag"></i>Preview</span>
+                <span class="tag"><i class="fas fa-tag"></i>Demo</span>
+                <span class="tag"><i class="fas fa-tag"></i>Marketing</span>
+            </div>
             <ul class="acceptance-criteria">
                 <li>Verify demo access without registration</li>
                 <li>Test demo content availability</li>
@@ -513,6 +655,11 @@
             </div>
             <div class="requirement-description">
                 Users should be able to enroll in free courses without payment.
+            </div>
+            <div class="tags">
+                <span class="tag"><i class="fas fa-tag"></i>Access</span>
+                <span class="tag"><i class="fas fa-tag"></i>Free Content</span>
+                <span class="tag"><i class="fas fa-tag"></i>Learning</span>
             </div>
             <ul class="acceptance-criteria">
                 <li>Verify free course enrollment process</li>
@@ -530,6 +677,11 @@
             <div class="requirement-description">
                 Users can have a public profile page to showcase their learning achievements.
             </div>
+            <div class="tags">
+                <span class="tag"><i class="fas fa-tag"></i>Profile</span>
+                <span class="tag"><i class="fas fa-tag"></i>Public Access</span>
+                <span class="tag"><i class="fas fa-tag"></i>Achievements</span>
+            </div>
             <ul class="acceptance-criteria">
                 <li>Verify public profile visibility settings</li>
                 <li>Test profile information update</li>
@@ -545,6 +697,11 @@
             </div>
             <div class="requirement-description">
                 Users should be able to download course content in multiple formats for offline access.
+            </div>
+            <div class="tags">
+                <span class="tag"><i class="fas fa-tag"></i>Downloads</span>
+                <span class="tag"><i class="fas fa-tag"></i>Offline Access</span>
+                <span class="tag"><i class="fas fa-tag"></i>Content</span>
             </div>
             <ul class="acceptance-criteria">
                 <li>Test lesson content download in TXT format</li>
@@ -562,6 +719,11 @@
             </div>
             <div class="requirement-description">
                 Enhanced course tagging and categorization system for better content organization.
+            </div>
+            <div class="tags">
+                <span class="tag"><i class="fas fa-tag"></i>Tags</span>
+                <span class="tag"><i class="fas fa-tag"></i>Organization</span>
+                <span class="tag"><i class="fas fa-tag"></i>Categories</span>
             </div>
             <ul class="acceptance-criteria">
                 <li>Test tag-based course filtering</li>
@@ -607,9 +769,105 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             const filterButtons = document.querySelectorAll('.filter-button');
+            const clearFiltersButton = document.querySelector('.clear-filters');
             const requirements = document.querySelectorAll('.requirement-card');
 
-            // Calculate and display counts
+            let activePriority = 'all';
+            let activeTags = new Set();
+
+            const importantTags = new Set([
+                'Security',
+                'Authentication',
+                'Content',
+                'Analytics',
+                'Learning',
+                'Progress',
+                'Management',
+                'Assessment',
+                'Mobile',
+                'Accessibility'
+            ]);
+
+            function updateVisibility() {
+                requirements.forEach(req => {
+                    const reqPriority = req.querySelector('.priority').textContent
+                        .toLowerCase().replace(' priority', '');
+                    const reqTags = Array.from(req.querySelectorAll('.tags .tag'))
+                        .map(tag => tag.textContent.trim());
+
+                    const matchesPriority = activePriority === 'all' || reqPriority === activePriority;
+                    const matchesTags = activeTags.size === 0 ||
+                        Array.from(activeTags).every(tag => reqTags.includes(tag));
+
+                    req.classList.toggle('hidden', !matchesPriority || !matchesTags);
+                });
+
+                clearFiltersButton.classList.toggle('visible',
+                    activePriority !== 'all' || activeTags.size > 0);
+            }
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    activePriority = button.dataset.priority;
+                    updateVisibility();
+                });
+            });
+
+            function populateTagFilters() {
+                const tagFilterContainer = document.querySelector('.tag-filter-controls');
+                const allTags = new Set();
+
+                requirements.forEach(req => {
+                    const reqTags = Array.from(req.querySelectorAll('.tags .tag'))
+                        .map(tag => tag.textContent.trim())
+                        .filter(tag => importantTags.has(tag));
+                    reqTags.forEach(tag => allTags.add(tag));
+                });
+
+                const sortedTags = Array.from(allTags).sort();
+
+                tagFilterContainer.innerHTML = '';
+
+                sortedTags.forEach(tag => {
+                    const tagElement = document.createElement('span');
+                    tagElement.className = 'tag';
+                    tagElement.dataset.tag = tag;
+                    tagElement.innerHTML = `<i class="fas fa-tag"></i>${tag}`;
+                    tagFilterContainer.appendChild(tagElement);
+                });
+
+                const tagButtons = document.querySelectorAll('.tag-filter-controls .tag');
+                tagButtons.forEach(tag => {
+                    tag.addEventListener('click', () => {
+                        const tagName = tag.dataset.tag;
+                        tag.classList.toggle('active');
+
+                        if (tag.classList.contains('active')) {
+                            activeTags.add(tagName);
+                        } else {
+                            activeTags.delete(tagName);
+                        }
+
+                        updateVisibility();
+                    });
+                });
+            }
+
+            populateTagFilters();
+
+            clearFiltersButton.addEventListener('click', () => {
+                activePriority = 'all';
+                activeTags.clear();
+                filterButtons.forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.priority === 'all');
+                });
+                const tagButtons = document.querySelectorAll('.tag-filter-controls .tag');
+                tagButtons.forEach(tag => tag.classList.remove('active'));
+                updateVisibility();
+            });
+
             const counts = {
                 all: requirements.length,
                 high: 0,
@@ -626,23 +884,6 @@
             filterButtons.forEach(button => {
                 const priority = button.dataset.priority;
                 button.querySelector('.count').textContent = counts[priority];
-
-                button.addEventListener('click', () => {
-                    filterButtons.forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active');
-
-                    const priority = button.dataset.priority;
-
-                    requirements.forEach(req => {
-                        if (priority === 'all') {
-                            req.classList.remove('hidden');
-                        } else {
-                            const reqPriority = req.querySelector('.priority').textContent
-                                .toLowerCase().replace(' priority', '');
-                            req.classList.toggle('hidden', reqPriority !== priority);
-                        }
-                    });
-                });
             });
         });
     </script>

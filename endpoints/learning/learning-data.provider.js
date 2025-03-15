@@ -437,6 +437,45 @@ function getAllCoursesStats() {
   });
 }
 
+function getRoleRequests() {
+  return data.roleRequests.filter((r) => !isInactive(r));
+}
+
+function getUserRoleRequests(userId, status = "pending") {
+  return data.roleRequests.filter((r) => areIdsEqual(r.userId, userId) && r.status === status && !isInactive(r));
+}
+
+function addRoleRequest(request) {
+  const maxId = Math.max(...data.roleRequests.map((r) => r.id), 0);
+  const newRequest = {
+    ...request,
+    id: maxId + 1,
+    status: "pending",
+    createdAt: new Date().toISOString(),
+    updatedAt: null,
+    resolvedBy: null,
+  };
+  data.roleRequests.push(newRequest);
+  return newRequest;
+}
+
+function updateRoleRequest(requestId, updates, adminId) {
+  const request = data.roleRequests.find((r) => areIdsEqual(r.id, requestId));
+  if (!request) return false;
+
+  Object.assign(request, {
+    ...updates,
+    updatedAt: new Date().toISOString(),
+    resolvedBy: adminId,
+  });
+
+  // replace the request in the data
+  const requestIndex = data.roleRequests.findIndex((r) => areIdsEqual(r.id, requestId));
+  data.roleRequests[requestIndex] = request;
+
+  return true;
+}
+
 module.exports = {
   getUserByEmail,
   getAllUserEnrollments,
@@ -496,4 +535,8 @@ module.exports = {
   restoreDefaultDatabase,
   restoreDatabase,
   getBackupData,
+  getRoleRequests,
+  getUserRoleRequests,
+  addRoleRequest,
+  updateRoleRequest,
 };
