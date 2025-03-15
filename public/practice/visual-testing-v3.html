@@ -1,0 +1,1960 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | Visual Testing Practice</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <style>
+        .visual-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .static-section {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+
+        .dynamic-section {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #fff;
+        }
+
+        .logo {
+            width: 150px;
+            height: 150px;
+            object-fit: contain;
+        }
+
+        .clock {
+            font-size: 2em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .quote-box {
+            font-style: italic;
+            padding: 15px;
+            background-color: #f0f0f0;
+            border-left: 4px solid #4CAF50;
+            margin: 10px 0;
+        }
+
+        .weather-widget {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 15px;
+            background-color: #e9f5ff;
+            border-radius: 8px;
+        }
+
+        .color-changing-box {
+            width: 100px;
+            height: 100px;
+            transition: background-color 2s;
+        }
+
+        .widget-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .widget {
+            padding: 15px;
+            border-radius: 8px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #4CAF50;
+            width: 0%;
+            transition: width 0.5s ease-in-out;
+        }
+
+        .counter-widget {
+            text-align: center;
+            font-size: 1.5em;
+        }
+
+        .image-carousel {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .carousel-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .static-widget {
+            background: #fff;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            margin-bottom: 15px;
+        }
+
+        .notification-widget {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 5px 0;
+        }
+
+        .chart-container {
+            height: 150px;
+            position: relative;
+            border: 1px solid #ddd;
+        }
+
+        .bar {
+            position: absolute;
+            bottom: 0;
+            width: 30px;
+            background: #4CAF50;
+            transition: height 0.5s ease;
+        }
+
+        .user-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #e0e0e0;
+        }
+
+        .loading-bar {
+            height: 4px;
+            background: linear-gradient(to right, #4CAF50 0%, #4CAF50 50%, #f0f0f0 50%, #f0f0f0 100%);
+            animation: loading 2s infinite linear;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: -200px 0;
+            }
+
+            100% {
+                background-position: 200px 0;
+            }
+        }
+
+        .complex-widget {
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            border-radius: 15px;
+            box-shadow: 5px 5px 15px #d1d1d1, -5px -5px 15px #ffffff;
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .complex-widget:hover {
+            transform: translateY(-5px);
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .data-cell {
+            background: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #eee;
+        }
+
+        .circular-progress {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: conic-gradient(#4CAF50 var(--progress), #eee 0deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .circular-progress::before {
+            content: attr(data-value) '%';
+            position: absolute;
+            background: white;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .metrics-panel {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .metric-card {
+            flex: 1;
+            min-width: 120px;
+            padding: 15px;
+            border-radius: 10px;
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .animated-bar {
+            height: 30px;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .animated-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shine 1.5s infinite;
+        }
+
+        @keyframes shine {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .metric-detail {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .trend-indicator {
+            display: inline-block;
+            margin-left: 5px;
+            font-size: 0.9em;
+        }
+
+        .trend-up {
+            color: #4CAF50;
+        }
+
+        .trend-down {
+            color: #f44336;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        .widget-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .widget-status {
+            font-size: 0.8em;
+            padding: 2px 8px;
+            border-radius: 12px;
+            background: #068811;
+            color: white;
+        }
+
+        .analytics-card {
+            background: linear-gradient(135deg, #614385, #516395);
+            color: white;
+            border-radius: 15px;
+            padding: 15px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .analytics-item {
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .analytics-item:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .analytics-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin: 3px 0;
+        }
+
+        .timeline-widget {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 8px 0;
+            border-left: 2px solid rgba(255, 255, 255, 0.3);
+            margin-left: 15px;
+            padding-left: 15px;
+        }
+
+        .timeline-dot {
+            width: 10px;
+            height: 10px;
+            background: #fff;
+            border-radius: 50%;
+            margin-left: -21px;
+            margin-top: 5px;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+        }
+
+        .timeline-content {
+            font-size: 0.9em;
+        }
+
+        .timeline-date {
+            font-size: 0.8em;
+            opacity: 0.8;
+        }
+
+        .dashboard-stats {
+            background: linear-gradient(135deg, #0F2027, #203A43);
+            color: white;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .stats-header {
+            margin-bottom: 12px;
+        }
+
+        .stats-badge {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.75em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .stats-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stats-chart {
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            margin-top: 6px;
+            border-radius: 2px;
+        }
+
+        .stats-fill {
+            height: 100%;
+            background: #fff;
+            width: var(--fill-width, 50%);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        .interactive-widget {
+            background: linear-gradient(145deg, #2c3e50, #3498db);
+            color: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .interactive-widget:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .resource-widget {
+            background: linear-gradient(135deg, #00b09b, #96c93d);
+            text-align: center;
+            padding: 15px;
+            border-radius: 12px;
+        }
+
+        .weather-compact {
+            background: linear-gradient(135deg, #457fca, #5691c8);
+            padding: 12px;
+            border-radius: 12px;
+            color: white;
+        }
+
+        .weather-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chart-widget {
+            background: linear-gradient(135deg, #283c86, #45a247);
+            padding: 15px;
+            border-radius: 12px;
+            color: white;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .activity-stats {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .activity-stat {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.8em;
+            opacity: 0.8;
+        }
+
+        .stat-number {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 4px;
+        }
+
+        .chart-legend {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+            font-size: 0.85em;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .legend-color {
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 5px;
+            height: 100px;
+            padding: 10px 0;
+            position: relative;
+        }
+
+        .chart-bars::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .mini-bar {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.3);
+            min-width: 8px;
+            border-radius: 3px 3px 0 0;
+            transition: height 0.5s ease;
+            position: relative;
+        }
+
+        .mini-bar:hover::after {
+            content: attr(data-value);
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            white-space: nowrap;
+        }
+
+        .mini-bar.highlight {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .activity-widget {
+            background: linear-gradient(135deg, #4b6cb7, #182848);
+            color: white;
+            border-radius: 12px;
+            padding: 12px;
+        }
+
+        .activity-item {
+            padding: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9em;
+        }
+
+        .compact-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .metric-mini {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin: 3px 0;
+        }
+
+        .profile-widget {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-widget::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+            border-radius: 50%;
+            transform: translate(50%, -50%);
+        }
+
+        .profile-header {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .profile-avatar {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: bold;
+            color: #1e3c72;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-status {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #4CAF50;
+            border: 2px solid #1e3c72;
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
+        }
+
+        .profile-name {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .profile-role {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            transition: transform 0.2s;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-value {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: #fff;
+        }
+
+        .profile-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 15px 0;
+        }
+
+        .profile-tag {
+            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            font-size: 0.85em;
+            transition: all 0.2s;
+        }
+
+        .profile-tag:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .profile-footer {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85em;
+            opacity: 0.8;
+        }
+
+        .mini-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            height: 40px;
+            margin-top: 10px;
+            padding: 0 5px;
+        }
+
+        .mini-chart-bar {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.2);
+            min-width: 4px;
+            border-radius: 2px 2px 0 0;
+            transition: height 0.3s ease;
+        }
+
+        .analytics-chart-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 15px;
+        }
+
+        .chart-label {
+            font-size: 0.8em;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+
+        .line-chart {
+            position: relative;
+            width: 100%;
+            height: 60px;
+            margin-top: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .line-chart-container {
+            position: relative;
+            height: 100%;
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+        }
+
+        .line-point {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.2);
+            min-width: 3px;
+            transition: height 0.3s ease;
+            position: relative;
+        }
+
+        .line-point::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: 50%;
+            width: 4px;
+            height: 4px;
+            background: #fff;
+            border-radius: 50%;
+            transform: translateX(-50%);
+        }
+
+        .chart-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                    rgba(255, 255, 255, 0.1) 0%,
+                    transparent 50%,
+                    rgba(255, 255, 255, 0.1) 100%);
+            pointer-events: none;
+        }
+
+        .weather-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .weather-stat {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        .weather-trend {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 10px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            font-size: 0.85em;
+        }
+
+        .trend-arrow {
+            font-size: 1.2em;
+            transition: color 0.3s ease;
+        }
+
+        .trend-up {
+            color: #ff6b6b;
+        }
+
+        .trend-down {
+            color: #4ecdc4;
+        }
+
+        .weather-icon {
+            font-size: 1.5em;
+            margin-right: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .weather-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .test-status-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .test-status-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 0.85em;
+        }
+
+        .test-type-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+            opacity: 0.9;
+        }
+
+        .test-progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .test-progress-fill {
+            height: 100%;
+            background: #fff;
+            width: var(--progress);
+            transition: width 0.3s ease;
+        }
+
+        .test-stats-grid {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .test-stat {
+            flex: 1;
+            text-align: center;
+        }
+
+        .test-stat-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .test-stat-label {
+            font-size: 0.8em;
+            opacity: 0.8;
+        }
+
+        .status-badge {
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 0.75em;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .status-badge.success {
+            background: rgba(76, 175, 80, 0.3);
+        }
+
+        .status-badge.warning {
+            background: rgba(255, 152, 0, 0.3);
+        }
+
+        .status-badge.error {
+            background: rgba(244, 67, 54, 0.3);
+        }
+
+        .metrics-details {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .metric-detail-card {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 0.85em;
+        }
+
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .metric-trend {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.8em;
+        }
+
+        .metric-chart {
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .metric-fill {
+            height: 100%;
+            background: #fff;
+            width: var(--fill-width, 0%);
+            transition: width 0.3s ease;
+        }
+
+        .metric-badge {
+            font-size: 0.75em;
+            padding: 2px 6px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .metric-badge.warning {
+            background: rgba(255, 152, 0, 0.3);
+        }
+
+        .metric-badge.danger {
+            background: rgba(244, 67, 54, 0.3);
+        }
+
+        .metric-badge.success {
+            background: rgba(76, 175, 80, 0.3);
+        }
+
+        .system-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+            display: inline-block;
+        }
+
+        .status-indicator.active {
+            background: #4CAF50;
+        }
+
+        .status-indicator.warning {
+            background: #FFC107;
+        }
+
+        .status-indicator.error {
+            background: #f44336;
+        }
+
+        .system-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .system-info {
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            font-size: 0.85em;
+        }
+
+        .process-list {
+            max-height: 80px;
+            overflow-y: auto;
+            margin-top: 10px;
+            font-size: 0.85em;
+        }
+
+        .process-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-bottom: 2px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .process-name {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .process-icon {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .performance-indicators {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .indicator {
+            flex: 1;
+            text-align: center;
+        }
+
+        .indicator-value {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .indicator-label {
+            font-size: 0.8em;
+            opacity: 0.8;
+        }
+
+        .mini-graph {
+            height: 20px;
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            margin-top: 5px;
+        }
+
+        .graph-bar {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.2);
+            height: 30%;
+            transition: height 0.3s ease;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-practice" class="nav-menu">Visual Testing Practice</h1>
+        </div>
+    </header>
+    <br />
+
+    <div class="visual-container">
+        <div class="static-section">
+            <h2>Static Widgets</h2>
+            <div class="widget-grid">
+                <div class="profile-widget" data-testid="user-profile">
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            JD
+                            <div class="profile-status" title="Online"></div>
+                        </div>
+                        <div class="profile-info">
+                            <h3 class="profile-name">John Doe</h3>
+                            <div class="profile-role">Senior QA Engineer</div>
+                        </div>
+                    </div>
+
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">152</div>
+                            <div>Tests</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">98%</div>
+                            <div>Success</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">12</div>
+                            <div>Projects</div>
+                        </div>
+                    </div>
+
+                    <div class="profile-tags">
+                        <span class="profile-tag">Automation</span>
+                        <span class="profile-tag">API Testing</span>
+                        <span class="profile-tag">Performance</span>
+                        <span class="profile-tag">CI/CD</span>
+                    </div>
+
+                    <div class="profile-footer">
+                        <div>Member since: Jan 2023</div>
+                        <div>Last active: Just now</div>
+                    </div>
+                </div>
+
+                <div class="analytics-card" data-testid="analytics-widget">
+                    <h3>Performance Analytics</h3>
+                    <div class="analytics-grid">
+                        <div class="analytics-item" title="Success rate over last 30 days">
+                            <div>Success Rate</div>
+                            <div class="analytics-value">98.5%</div>
+                        </div>
+                        <div class="analytics-item" title="Average response time">
+                            <div>Response</div>
+                            <div class="analytics-value">245ms</div>
+                        </div>
+                        <div class="analytics-item" title="Total monthly requests">
+                            <div>Requests</div>
+                            <div class="analytics-value">1.2M</div>
+                        </div>
+                        <div class="analytics-item" title="Daily active users">
+                            <div>Users</div>
+                            <div class="analytics-value">45.2K</div>
+                        </div>
+                    </div>
+                    <div class="analytics-chart-container">
+                        <div class="chart-label">Weekly Trends</div>
+                        <div class="mini-chart">
+                            <div class="mini-chart-bar" style="height: 60%"></div>
+                            <div class="mini-chart-bar" style="height: 80%"></div>
+                            <div class="mini-chart-bar" style="height: 40%"></div>
+                            <div class="mini-chart-bar" style="height: 70%"></div>
+                            <div class="mini-chart-bar" style="height: 90%"></div>
+                            <div class="mini-chart-bar" style="height: 65%"></div>
+                            <div class="mini-chart-bar" style="height: 75%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-widget" data-testid="timeline-widget">
+                    <h3>Release Timeline</h3>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <div><strong>2.4.0</strong> - Major feature release</div>
+                            <div class="timeline-date">Dec 15</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <div><strong>2.3.2</strong> - Bug fixes</div>
+                            <div class="timeline-date">Nov 30</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <div><strong>2.3.1</strong> - Security updates</div>
+                            <div class="timeline-date">Nov 15</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-stats" data-testid="dashboard-stats">
+                    <div class="stats-header">
+                        <h3>System Statistics <span class="stats-badge">Live</span></h3>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stats-item">
+                            <div>CPU</div>
+                            <strong>65%</strong>
+                            <div class="stats-chart">
+                                <div class="stats-fill" style="--fill-width: 65%"></div>
+                            </div>
+                        </div>
+                        <div class="stats-item">
+                            <div>Memory</div>
+                            <strong>48%</strong>
+                            <div class="stats-chart">
+                                <div class="stats-fill" style="--fill-width: 48%"></div>
+                            </div>
+                        </div>
+                        <div class="stats-item">
+                            <div>Storage</div>
+                            <strong>72%</strong>
+                            <div class="stats-chart">
+                                <div class="stats-fill" style="--fill-width: 72%"></div>
+                            </div>
+                        </div>
+                        <div class="stats-item">
+                            <div>Network</div>
+                            <strong>33%</strong>
+                            <div class="stats-chart">
+                                <div class="stats-fill" style="--fill-width: 33%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dynamic-section">
+            <h2>Interactive Widgets</h2>
+            <div class="widget-grid">
+                <div class="interactive-widget" data-testid="system-metrics-widget">
+                    <div class="widget-header">
+                        <h3>System Metrics</h3>
+                        <span class="widget-status">Live</span>
+                    </div>
+                    <div class="compact-metrics">
+                        <div class="metric-mini">
+                            <div>CPU</div>
+                            <div id="cpu-usage" class="metric-value">0%</div>
+                        </div>
+                        <div class="metric-mini">
+                            <div>Memory</div>
+                            <div id="memory-usage" class="metric-value">0%</div>
+                        </div>
+                        <div class="metric-mini">
+                            <div>Network</div>
+                            <div id="network-usage" class="metric-value">0 MB/s</div>
+                        </div>
+                    </div>
+                    <div class="metrics-details">
+                        <div class="metric-detail-card">
+                            <div class="metric-header">
+                                <span>Core Usage</span>
+                                <span id="cpu-status" class="metric-badge">Normal</span>
+                            </div>
+                            <div class="metric-trend">
+                                <span id="core-count">4 Cores</span>
+                                <span id="cpu-temp">45°C</span>
+                            </div>
+                            <div class="metric-chart">
+                                <div id="cpu-chart" class="metric-fill"></div>
+                            </div>
+                        </div>
+                        <div class="metric-detail-card">
+                            <div class="metric-header">
+                                <span>Memory Pool</span>
+                                <span id="memory-status" class="metric-badge">Normal</span>
+                            </div>
+                            <div class="metric-trend">
+                                <span id="memory-used">2.4</span>
+                                <span>/</span>
+                                <span id="memory-total">16 GB</span>
+                            </div>
+                            <div class="metric-chart">
+                                <div id="memory-chart" class="metric-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="performance-indicators">
+                        <div class="indicator">
+                            <div id="iops-value" class="indicator-value">0</div>
+                            <div class="indicator-label">IOPS</div>
+                            <div class="mini-graph" id="iops-graph">
+                                <div class="graph-bar"></div>
+                                <div class="graph-bar"></div>
+                                <div class="graph-bar"></div>
+                                <div class="graph-bar"></div>
+                                <div class="graph-bar"></div>
+                            </div>
+                        </div>
+                        <div class="indicator">
+                            <div id="latency-value" class="indicator-value">0ms</div>
+                            <div class="indicator-label">Latency</div>
+                            <div class="mini-graph" id="latency-graph">
+                                <div class="graph-bar"></div>
+                                <div class="graph-bar"></div>
+                                <div class="graph-bar"></div>
+                                <div class="graph-bar"></div>
+                                <div class="graph-bar"></div>
+                            </div>
+                        </div>
+                        <div class="indicator">
+                            <div id="threads-value" class="indicator-value">0</div>
+                            <div class="indicator-label">Threads</div>
+                            <div class="mini-graph" id="threads-graph">
+                                <div class="graph-bar"></div>
+                                <div class="graph-bar"></div>
+                                <div class="graph-bar"></div>
+                                <div class="graph-bar"></div>
+                                <div class="graph-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="system-grid">
+                        <div class="system-info">
+                            <div>Kernel: <span id="kernel-version">5.15.0</span></div>
+                            <div>Uptime: <span id="system-uptime">0:00:00</span></div>
+                        </div>
+                        <div class="system-info">
+                            <div>Processes: <span id="process-count">0</span></div>
+                            <div>Load Avg: <span id="load-average">0.00</span></div>
+                        </div>
+                    </div>
+                    <div class="process-list" id="process-list">
+                        <!-- Process items will be added dynamically -->
+                    </div>
+                    <div class="line-chart">
+                        <div class="line-chart-container" id="metrics-chart">
+                            <!-- Points will be added dynamically -->
+                        </div>
+                        <div class="chart-overlay"></div>
+                    </div>
+                    <div class="system-status">
+                        <div>
+                            <span class="status-indicator active"></span>
+                            <span id="system-status-text">System Healthy</span>
+                        </div>
+                        <span id="last-update">Updated: Just now</span>
+                    </div>
+                </div>
+
+                <div class="resource-widget" data-testid="test-status-widget">
+                    <div class="widget-header">
+                        <h3>Test Progress</h3>
+                        <span id="test-duration" class="widget-status">00:00:00</span>
+                    </div>
+                    <div class="test-stats-grid">
+                        <div class="test-stat">
+                            <div id="success-rate" class="test-stat-value">0%</div>
+                            <div class="test-stat-label">Success Rate</div>
+                        </div>
+                        <div class="test-stat">
+                            <div id="total-tests" class="test-stat-value">0</div>
+                            <div class="test-stat-label">Total Tests</div>
+                        </div>
+                        <div class="test-stat">
+                            <div id="remaining-time" class="test-stat-value">--:--</div>
+                            <div class="test-stat-label">Remaining</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: row; gap: 10px;">
+                        <div id="circular-progress" class="circular-progress" data-value="0"></div>
+                        <div id="circular-progress2" class="circular-progress" data-value="0"></div>
+                        <div id="circular-progress3" class="circular-progress" data-value="0"></div>
+                    </div>
+                    <div class="compact-metrics" style="margin-top: 10px">
+                        <div class="metric-mini">
+                            <div id="passed-tests" class="metric-value">0</div>
+                            <div>Passed</div>
+                        </div>
+                        <div class="metric-mini">
+                            <div id="failed-tests" class="metric-value">0</div>
+                            <div>Failed</div>
+                        </div>
+                        <div class="metric-mini">
+                            <div id="pending-tests" class="metric-value">0</div>
+                            <div>Pending</div>
+                        </div>
+                    </div>
+                    <div class="test-status-details">
+                        <div class="test-status-item">
+                            <div class="test-type-label">
+                                <span>Unit Tests</span>
+                                <span id="unit-status" class="status-badge">Pending</span>
+                            </div>
+                            <div class="test-progress-bar">
+                                <div id="unit-progress" class="test-progress-fill" style="--progress: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="test-status-item">
+                            <div class="test-type-label">
+                                <span>Integration</span>
+                                <span id="integration-status" class="status-badge">Pending</span>
+                            </div>
+                            <div class="test-progress-bar">
+                                <div id="integration-progress" class="test-progress-fill" style="--progress: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="test-status-item">
+                            <div class="test-type-label">
+                                <span>E2E Tests</span>
+                                <span id="e2e-status" class="status-badge">Pending</span>
+                            </div>
+                            <div class="test-progress-bar">
+                                <div id="e2e-progress" class="test-progress-fill" style="--progress: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="test-status-item">
+                            <div class="test-type-label">
+                                <span>API Tests</span>
+                                <span id="api-status" class="status-badge">Pending</span>
+                            </div>
+                            <div class="test-progress-bar">
+                                <div id="api-progress" class="test-progress-fill" style="--progress: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="weather-compact" data-testid="weather-widget">
+                    <div class="widget-header">
+                        <h3>Weather</h3>
+                        <span id="weather-update-time"></span>
+                    </div>
+                    <div class="weather-info">
+                        <div>
+                            <i id="weather-icon" class="fas fa-sun weather-icon"></i>
+                            <span id="temperature">--°C</span>
+                        </div>
+                        <div>
+                            <i class="fas fa-cloud"></i>
+                            <span id="weather-description">--</span>
+                        </div>
+                    </div>
+                    <div class="weather-stats">
+                        <div class="weather-stat">
+                            <div>Humidity</div>
+                            <div id="humidity-value">--%</div>
+                        </div>
+                        <div class="weather-stat">
+                            <div>Wind</div>
+                            <div id="wind-speed">-- km/h</div>
+                        </div>
+                    </div>
+                    <div class="weather-trend">
+                        <span>Trend:</span>
+                        <span id="temp-trend-value">--°C</span>
+                        <span id="trend-arrow" class="trend-arrow">→</span>
+                        <span id="temp-trend-next">--°C</span>
+                    </div>
+                </div>
+
+                <div class="chart-widget" data-testid="live-activity-widget">
+                    <div class="chart-header">
+                        <h3>Live Activity</h3>
+                        <span id="activity-time" class="widget-status">Now</span>
+                    </div>
+                    <div class="activity-stats">
+                        <div class="activity-stat">
+                            <div class="stat-label">Current</div>
+                            <div id="current-activity" class="stat-number">0</div>
+                        </div>
+                        <div class="activity-stat">
+                            <div class="stat-label">Average</div>
+                            <div id="avg-activity" class="stat-number">0</div>
+                        </div>
+                        <div class="activity-stat">
+                            <div class="stat-label">Peak</div>
+                            <div id="peak-activity" class="stat-number">0</div>
+                        </div>
+                    </div>
+                    <div class="chart-bars" id="activity-bars">
+                    </div>
+                    <div class="chart-legend">
+                        <div class="legend-item">
+                            <div class="legend-color"></div>
+                            <span>Current Hour</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="opacity: 0.5"></div>
+                            <span>Previous Hour</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="activity-widget">
+                    <h3>Recent Activity</h3>
+                    <div id="activity-log" style="max-height: 150px; overflow-y: auto">
+                        <div class="activity-item">Initializing...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center">
+        <a href="/practice" class="menu-link">
+            <button class="button-primary-small" style="margin-top: 4px; font-size: 14px;">Return to practice page</button>
+        </a>
+    </div>
+
+    <script>
+        function updateWeather() {
+            const temperatures = [15, 18, 20, 22, 25, 28];
+            const descriptions = ['Sunny', 'Partly Cloudy', 'Cloudy', 'Light Rain', 'Clear'];
+            const icons = {
+                'Sunny': 'fa-sun',
+                'Partly Cloudy': 'fa-cloud-sun',
+                'Cloudy': 'fa-cloud',
+                'Light Rain': 'fa-cloud-rain',
+                'Clear': 'fa-sun'
+            };
+
+            const temp = temperatures[Math.floor(Math.random() * temperatures.length)];
+            const desc = descriptions[Math.floor(Math.random() * descriptions.length)];
+            const humidity = Math.floor(Math.random() * 30 + 50);
+            const windSpeed = Math.floor(Math.random() * 20 + 5);
+            const nextTemp = temp + Math.floor(Math.random() * 5) - 2;
+
+            const elements = {
+                temp: document.getElementById('temperature'),
+                desc: document.getElementById('weather-description'),
+                time: document.getElementById('weather-update-time'),
+                icon: document.getElementById('weather-icon'),
+                humidity: document.getElementById('humidity-value'),
+                wind: document.getElementById('wind-speed'),
+                trendValue: document.getElementById('temp-trend-value'),
+                trendNext: document.getElementById('temp-trend-next'),
+                trendArrow: document.getElementById('trend-arrow')
+            };
+
+            if (elements.temp) elements.temp.textContent = `${temp}°C`;
+            if (elements.desc) elements.desc.textContent = desc;
+            if (elements.time) elements.time.textContent = new Date().toLocaleTimeString();
+            if (elements.humidity) elements.humidity.textContent = `${humidity}%`;
+            if (elements.wind) elements.wind.textContent = `${windSpeed} km/h`;
+            if (elements.trendValue) elements.trendValue.textContent = `${temp}°C`;
+            if (elements.trendNext) elements.trendNext.textContent = `${nextTemp}°C`;
+
+            if (elements.icon) {
+                elements.icon.className = `fas weather-icon ${icons[desc] || 'fa-sun'}`;
+            }
+
+            if (elements.trendArrow) {
+                if (nextTemp > temp) {
+                    elements.trendArrow.textContent = '↗';
+                    elements.trendArrow.className = 'trend-arrow trend-up';
+                } else if (nextTemp < temp) {
+                    elements.trendArrow.textContent = '↘';
+                    elements.trendArrow.className = 'trend-arrow trend-down';
+                } else {
+                    elements.trendArrow.textContent = '→';
+                    elements.trendArrow.className = 'trend-arrow';
+                }
+            }
+        }
+
+        setInterval(updateWeather, 5000);
+
+        function updateChart() {
+            const bars = document.querySelectorAll('.bar');
+            bars.forEach(bar => {
+                bar.style.height = Math.floor(Math.random() * 100) + 'px';
+            });
+        }
+        setInterval(updateChart, 2000);
+
+        function addActivity() {
+            const activities = [
+                "User login detected",
+                "New test case added",
+                "Report generated",
+                "System scan completed"
+            ];
+            const log = document.getElementById('activity-log');
+            const activity = activities[Math.floor(Math.random() * activities.length)];
+            const time = new Date().toLocaleTimeString();
+            const newActivity = document.createElement('div');
+            newActivity.className = 'activity-item';
+            newActivity.textContent = `${time}: ${activity}`;
+            log.insertBefore(newActivity, log.firstChild);
+
+            while (log.children.length > 5) {
+                log.removeChild(log.lastChild);
+            }
+        }
+        setInterval(addActivity, 4000);
+
+        updateWeather();
+        updateChart();
+        addActivity();
+
+        function updateSystemMetrics() {
+            const cpuUsage = Math.floor(Math.random() * 100);
+            const memoryUsage = Math.floor(Math.random() * 100);
+            const networkSpeed = Math.floor(Math.random() * 100);
+
+            const elements = {
+                cpu: document.getElementById('cpu-usage'),
+                memory: document.getElementById('memory-usage'),
+                network: document.getElementById('network-usage')
+            };
+
+            if (elements.cpu) elements.cpu.textContent = `${cpuUsage}%`;
+            if (elements.memory) elements.memory.textContent = `${memoryUsage}%`;
+            if (elements.network) elements.network.textContent = `${networkSpeed} MB/s`;
+        }
+
+        function updateTestStatus() {
+            const passed = Math.floor(Math.random() * 50);
+            const failed = Math.floor(Math.random() * 10);
+            const pending = Math.floor(Math.random() * 20);
+            const total = passed + failed + pending;
+            const successRate = Math.floor((passed / total) * 100);
+
+            const elements = {
+                passed: document.getElementById('passed-tests'),
+                failed: document.getElementById('failed-tests'),
+                pending: document.getElementById('pending-tests'),
+                success: document.getElementById('success-rate'),
+                total: document.getElementById('total-tests'),
+                duration: document.getElementById('test-duration')
+            };
+
+            if (elements.passed) elements.passed.textContent = passed;
+            if (elements.failed) elements.failed.textContent = failed;
+            if (elements.pending) elements.pending.textContent = pending;
+            if (elements.success) elements.success.textContent = `${successRate}%`;
+            if (elements.total) elements.total.textContent = total;
+            if (elements.duration) {
+                elements.duration.textContent = new Date().toLocaleTimeString('en-US', { hour12: false });
+            }
+
+            const circularProgress = document.getElementById('circular-progress');
+            if (circularProgress) {
+                circularProgress.style.setProperty('--progress', `${successRate * 3.6}deg`);
+                circularProgress.setAttribute('data-value', successRate);
+            }
+
+            const circularProgress2 = document.getElementById('circular-progress2');
+            if (circularProgress2) {
+                circularProgress2.style.setProperty('--progress', `${(failed / total) * 360}deg`);
+                circularProgress2.setAttribute('data-value', failed);
+            }
+
+            const circularProgress3 = document.getElementById('circular-progress3');
+            if (circularProgress3) {
+                circularProgress3.style.setProperty('--progress', `${(pending / total) * 360}deg`);
+                circularProgress3.setAttribute('data-value', pending);
+            }
+        }
+
+        function updateCircularProgress() {
+            const progress = Math.floor(Math.random() * 100);
+            const circularProgress = document.getElementById('circular-progress');
+            circularProgress.style.setProperty('--progress', `${progress * 3.6}deg`);
+            circularProgress.setAttribute('data-value', progress);
+
+            const progress2 = Math.floor(Math.random() * 100);
+            const circularProgress2 = document.getElementById('circular-progress2');
+            circularProgress2.style.setProperty('--progress', `${progress2 * 3.6}deg`);
+            circularProgress2.setAttribute('data-value', progress2);
+
+            const progress3 = Math.floor(Math.random() * 100);
+            const circularProgress3 = document.getElementById('circular-progress3');
+            circularProgress3.style.setProperty('--progress', `${progress3 * 3.6}deg`);
+            circularProgress3.setAttribute('data-value', progress3);
+        }
+
+        function updateChartBars() {
+            const bars = document.querySelectorAll('.mini-bar');
+            bars.forEach(bar => {
+                const height = Math.floor(Math.random() * 80) + 20;
+                bar.style.height = `${height}px`;
+            });
+        }
+        setInterval(updateChartBars, 2000);
+        updateChartBars();
+
+        setInterval(updateSystemMetrics, 2000);
+        setInterval(updateTestStatus, 3000);
+        setInterval(updateCircularProgress, 4000);
+
+        updateSystemMetrics();
+        updateTestStatus();
+        updateCircularProgress();
+
+        function initializeLineChart() {
+            const container = document.getElementById('metrics-chart');
+            for (let i = 0; i < 20; i++) {
+                const point = document.createElement('div');
+                point.className = 'line-point';
+                point.style.height = '0%';
+                container.appendChild(point);
+            }
+        }
+
+        function updateLineChart() {
+            const points = document.querySelectorAll('.line-point');
+            const newHeight = Math.floor(Math.random() * 80) + 10;
+
+            points.forEach((point, index) => {
+                if (index < points.length - 1) {
+                    point.style.height = points[index + 1].style.height;
+                }
+            });
+
+            points[points.length - 1].style.height = `${newHeight}%`;
+        }
+
+        initializeLineChart();
+        setInterval(updateLineChart, 1000);
+
+        function initializeActivityBars() {
+            const container = document.getElementById('activity-bars');
+            container.innerHTML = '';
+
+            for (let i = 0; i < 12; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'mini-bar';
+                bar.style.height = '0%';
+                bar.setAttribute('data-value', '0');
+                container.appendChild(bar);
+            }
+        }
+
+        function updateLiveActivity() {
+            const currentValue = Math.floor(Math.random() * 100);
+            const values = Array.from(document.querySelectorAll('.mini-bar')).map(bar =>
+                parseInt(bar.getAttribute('data-value')) || 0
+            );
+
+            const peak = Math.max(currentValue, ...values);
+            const average = Math.floor([...values, currentValue].reduce((a, b) => a + b, 0) / (values.length + 1));
+
+            document.getElementById('current-activity').textContent = currentValue;
+            document.getElementById('avg-activity').textContent = average;
+            document.getElementById('peak-activity').textContent = peak;
+            document.getElementById('activity-time').textContent =
+                new Date().toLocaleTimeString('en-US', { hour12: false });
+
+            const bars = document.querySelectorAll('.mini-bar');
+            bars.forEach((bar, index) => {
+                if (index < bars.length - 1) {
+                    const nextBar = bars[index + 1];
+                    bar.style.height = nextBar.style.height;
+                    bar.setAttribute('data-value', nextBar.getAttribute('data-value'));
+                    bar.className = 'mini-bar';
+                }
+            });
+
+            const lastBar = bars[bars.length - 1];
+            lastBar.style.height = `${currentValue}%`;
+            lastBar.setAttribute('data-value', currentValue);
+            lastBar.className = 'mini-bar highlight';
+        }
+
+        initializeActivityBars();
+        setInterval(updateLiveActivity, 5000);
+        updateLiveActivity();
+
+        function updateTestDetails() {
+            const testTypes = ['unit', 'integration', 'e2e', 'api'];
+            const statuses = ['success', 'warning', 'error'];
+
+            testTypes.forEach(type => {
+                const progress = Math.floor(Math.random() * 100);
+                const status = statuses[Math.floor(Math.random() * statuses.length)];
+
+                const progressBar = document.getElementById(`${type}-progress`);
+                const statusBadge = document.getElementById(`${type}-status`);
+
+                if (progressBar) {
+                    progressBar.style.setProperty('--progress', `${progress}%`);
+                }
+
+                if (statusBadge) {
+                    statusBadge.className = `status-badge ${status}`;
+                    statusBadge.textContent = progress === 100 ? 'Complete' :
+                        progress === 0 ? 'Pending' : 'Running';
+                }
+            });
+
+            // Update remaining time
+            const remainingMin = Math.floor(Math.random() * 30);
+            const remainingSec = Math.floor(Math.random() * 60);
+            document.getElementById('remaining-time').textContent =
+                `${remainingMin}:${remainingSec.toString().padStart(2, '0')}`;
+        }
+
+        setInterval(updateTestDetails, 3000);
+        updateTestDetails();
+
+        function updateSystemMetricsDetailed() {
+            const cpuUsage = Math.floor(Math.random() * 100);
+            const memoryUsage = Math.floor(Math.random() * 100);
+            const networkSpeed = Math.floor(Math.random() * 100);
+            const cpuTemp = Math.floor(Math.random() * 20) + 40; // 40-60°C
+            const memoryUsedGB = (16 * memoryUsage / 100).toFixed(1);
+
+            // Update basic metrics
+            const elements = {
+                cpu: document.getElementById('cpu-usage'),
+                memory: document.getElementById('memory-usage'),
+                network: document.getElementById('network-usage'),
+                cpuStatus: document.getElementById('cpu-status'),
+                memoryStatus: document.getElementById('memory-status'),
+                cpuChart: document.getElementById('cpu-chart'),
+                memoryChart: document.getElementById('memory-chart'),
+                cpuTemp: document.getElementById('cpu-temp'),
+                memoryUsed: document.getElementById('memory-used'),
+                systemStatus: document.getElementById('system-status-text'),
+                lastUpdate: document.getElementById('last-update')
+            };
+
+            // Update values
+            if (elements.cpu) elements.cpu.textContent = `${cpuUsage}%`;
+            if (elements.memory) elements.memory.textContent = `${memoryUsage}%`;
+            if (elements.network) elements.network.textContent = `${networkSpeed} MB/s`;
+            if (elements.cpuTemp) elements.cpuTemp.textContent = `${cpuTemp}°C`;
+            if (elements.memoryUsed) elements.memoryUsed.textContent = memoryUsedGB;
+
+            // Update charts
+            if (elements.cpuChart) {
+                elements.cpuChart.style.setProperty('--fill-width', `${cpuUsage}%`);
+            }
+            if (elements.memoryChart) {
+                elements.memoryChart.style.setProperty('--fill-width', `${memoryUsage}%`);
+            }
+
+            // Update status badges
+            if (elements.cpuStatus) {
+                elements.cpuStatus.className = `metric-badge ${cpuUsage > 80 ? 'danger' : cpuUsage > 60 ? 'warning' : 'success'}`;
+                elements.cpuStatus.textContent = cpuUsage > 80 ? 'Critical' : cpuUsage > 60 ? 'Warning' : 'Normal';
+            }
+            if (elements.memoryStatus) {
+                elements.memoryStatus.className = `metric-badge ${memoryUsage > 80 ? 'danger' : memoryUsage > 60 ? 'warning' : 'success'}`;
+                elements.memoryStatus.textContent = memoryUsage > 80 ? 'Critical' : memoryUsage > 60 ? 'Warning' : 'Normal';
+            }
+
+            // Update system status
+            if (elements.systemStatus && elements.lastUpdate) {
+                const statusIndicator = document.querySelector('.status-indicator');
+                const isHealthy = cpuUsage < 80 && memoryUsage < 80;
+
+                statusIndicator.className = `status-indicator ${isHealthy ? 'active' : 'warning'}`;
+                elements.systemStatus.textContent = isHealthy ? 'System Healthy' : 'System Under Load';
+                elements.lastUpdate.textContent = `Updated: ${new Date().toLocaleTimeString()}`;
+            }
+
+            // Update performance indicators
+            const iops = Math.floor(Math.random() * 5000);
+            const latency = Math.floor(Math.random() * 100);
+            const threads = Math.floor(Math.random() * 200);
+
+            document.getElementById('iops-value').textContent = iops.toLocaleString();
+            document.getElementById('latency-value').textContent = `${latency}ms`;
+            document.getElementById('threads-value').textContent = threads;
+
+            // Update mini graphs
+            ['iops', 'latency', 'threads'].forEach(metric => {
+                const bars = document.querySelectorAll(`#${metric}-graph .graph-bar`);
+                bars.forEach(bar => {
+                    bar.style.height = `${Math.floor(Math.random() * 70 + 30)}%`;
+                });
+            });
+
+            // Update system info
+            const uptime = new Date();
+            uptime.setHours(Math.floor(Math.random() * 24));
+            uptime.setMinutes(Math.floor(Math.random() * 60));
+            document.getElementById('system-uptime').textContent = uptime.toLocaleTimeString();
+
+            document.getElementById('process-count').textContent = Math.floor(Math.random() * 100 + 50);
+            document.getElementById('load-average').textContent = (Math.random() * 2).toFixed(2);
+
+            // Update process list
+            const processes = [
+                { name: 'system', icon: 'fa-microchip', usage: '2.5%' },
+                { name: 'chrome', icon: 'fa-globe', usage: '12.8%' },
+                { name: 'node', icon: 'fa-code', usage: '5.3%' },
+                { name: 'docker', icon: 'fa-cube', usage: '8.1%' }
+            ];
+
+            const processList = document.getElementById('process-list');
+            processList.innerHTML = processes.map(proc => `
+                <div class="process-item">
+                    <div class="process-name">
+                        <i class="fas ${proc.icon} process-icon"></i>
+                        ${proc.name}
+                    </div>
+                    <div>${Math.floor(Math.random() * 15)}%</div>
+                </div>
+            `).join('');
+        }
+
+        // Update interval
+        setInterval(updateSystemMetricsDetailed, 2000);
+        updateSystemMetricsDetailed();
+    </script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>

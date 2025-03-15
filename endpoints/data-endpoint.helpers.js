@@ -162,6 +162,17 @@ function handleData(req, res, isAdmin) {
     return;
   }
 
+  if (req.method === "GET" && req.url.includes("/api/v1/data/random/system-simple")) {
+    const queryParams = new URLSearchParams(req.url.split("?")[1]);
+    const seed = queryParams.get("seed");
+    const samples = parseInt(queryParams.get("samples")) || 1;
+    const interval = parseInt(queryParams.get("interval")) || 1000;
+
+    const systemData = generateSystemMetricsResponse(samples, interval, true);
+    res.status(HTTP_OK).json(systemData);
+    return;
+  }
+
   if (req.method === "GET" && req.url.includes("/api/v1/data/random/system")) {
     const queryParams = new URLSearchParams(req.url.split("?")[1]);
     const seed = queryParams.get("seed");
