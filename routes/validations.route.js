@@ -99,7 +99,7 @@ const validationsRoutes = (req, res, next) => {
     }
 
     // data endpoints
-    if (req.url.includes("/api/v1/data")) {
+    if (req.url.includes("/api/v1/data") || req.url.includes("/api/v2/data")) {
       handleData(req, res);
       return;
     }

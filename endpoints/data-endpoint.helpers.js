@@ -173,6 +173,53 @@ function handleData(req, res, isAdmin) {
     return;
   }
 
+  if (req.method === "GET" && req.url.includes("/api/v2/data/random/system-simple")) {
+    const queryParams = new URLSearchParams(req.url.split("?")[1]);
+    const seed = queryParams.get("seed");
+    const samples = parseInt(queryParams.get("samples")) || 1;
+    const interval = parseInt(queryParams.get("interval")) || 1000;
+
+    const systemData = generateSystemMetricsResponse(samples, interval, false)[0];
+
+    const simplifiedSystemData = {
+      cpu: {
+        usage: systemData.cpu.usage.total,
+        temperature: systemData.cpu.temperature,
+        cores: systemData.cpu.usage.cores.length,
+      },
+      memory: {
+        usage: systemData.memory.used,
+        total: systemData.memory.total,
+      },
+      disk: {
+        reads: systemData.disk.reads,
+        writes: systemData.disk.writes,
+        volumes: [],
+      },
+      network: {
+        interfaces: [],
+      },
+    };
+
+    systemData.network.interfaces.forEach((_interface) => {
+      simplifiedSystemData.network.interfaces.push({
+        name: _interface.name,
+        bytesReceived: _interface.bytesReceived,
+        bytesSent: _interface.bytesSent,
+      });
+    });
+
+    systemData.disk.volumes.forEach((disc) => {
+      simplifiedSystemData.disk.volumes.push({
+        name: disc.name,
+        percentage: disc.percentage,
+      });
+    });
+
+    res.status(HTTP_OK).json(simplifiedSystemData);
+    return;
+  }
+
   if (req.method === "GET" && req.url.includes("/api/v1/data/random/system")) {
     const queryParams = new URLSearchParams(req.url.split("?")[1]);
     const seed = queryParams.get("seed");
