@@ -57,7 +57,7 @@ const mockData = {
       id: 2,
       username: "john_doe",
       email: "john.doe@test.test.com",
-      password: "demo",
+      password: "demo1",
       firstName: "John",
       lastName: "Doe",
       avatar: "..\\data\\users\\face_1713017346.0038195_m_1.jpg",

@@ -20,6 +20,10 @@ function updateAuthButtons() {
                 <i class="fas fa-columns"></i>
                 Go to Dashboard
             </a>
+            <button class="cta-button secondary" name="logout" aria-label="Logout" onclick="handleLogout()">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </button>
         `;
     welcomeMessage.innerHTML = `
             <span>Welcome back, ${getCookie("learning_first_name")} ${getCookie("learning_last_name")}!</span>
@@ -41,11 +45,6 @@ function updateAuthButtons() {
             </a>
         `;
   }
-}
-
-function handleLogout() {
-  localStorage.removeItem("username");
-  updateAuthButtons();
 }
 
 document.addEventListener("DOMContentLoaded", updateAuthButtons);

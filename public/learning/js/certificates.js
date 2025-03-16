@@ -27,10 +27,10 @@ async function displayCertificates() {
                     </div>
                     <div class="certificate-details">
                         <h4>${cert.courseTitle}</h4>
-                        <p><i class="fas fa-user"></i>${cert.recipientName}</p>
-                        <p><i class="fas fa-calendar"></i>${new Date(cert.issueDate).toLocaleDateString()}</p>
-                        <p><i class="fas fa-hashtag"></i>${cert.certificateNumber}</p>
-                        <p><i class="fas fa-chalkboard-teacher"></i>${cert.issuedBy}</p>
+                        <p><i class="fas fa-user"></i> ${cert.recipientName}</p>
+                        <p><i class="fas fa-calendar"></i> ${new Date(cert.issueDate).toLocaleDateString()}</p>
+                        <p><i class="fas fa-hashtag"></i> ${cert.certificateNumber}</p>
+                        <p><i class="fas fa-chalkboard-teacher"></i> &nbsp; ${cert.issuedBy}</p>
                     </div>
                     <div class="certificate-actions">
                         <button class="primary-button" onclick="viewFullCertificate('${cert.uuid}')">

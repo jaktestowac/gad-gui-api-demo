@@ -3983,7 +3983,6 @@ html {
   color: var(--text-light);
   font-size: 0.9em;
   margin: 0;
-  display: flex;
   align-items: center;
   gap: 8px;
 }
@@ -4114,7 +4113,7 @@ html {
 }
 
 .certificate-details {
-  text-align: left;
+  text-align: center;
   border-top: 1px solid #e2e8f0;
   padding-top: 20px;
 }
@@ -4130,7 +4129,6 @@ html {
   color: var(--text-light);
   margin: 8px 0;
   font-size: 0.95em;
-  display: flex;
   align-items: center;
   gap: 8px;
 }

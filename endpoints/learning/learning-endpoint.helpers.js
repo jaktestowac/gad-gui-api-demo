@@ -483,7 +483,7 @@ function handleLearning(req, res) {
         }
 
         console.log(`Role request ${requestId} updated to status: ${status}`);
-        res.status(HTTP_OK).send({ success: true, status, });
+        res.status(HTTP_OK).send({ success: true, status });
         return;
       }
     }
@@ -499,11 +499,12 @@ function handleLearning(req, res) {
           res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Certificate not found"));
           return;
         }
-
+        const stats = dataProvider.getAllCoursesStats();
         // Get additional data
         const course = dataProvider.getCourseById(certificate.courseId);
         const user = dataProvider.getUserById(certificate.userId);
 
+        const courseDuration = stats.find((s) => areIdsEqual(s.id, course.id))?.duration;
         const publicCertData = {
           certificateNumber: certificate.certificateNumber,
           uuid: certificate.uuid,
@@ -511,7 +512,7 @@ function handleLearning(req, res) {
           recipientName: `${user.firstName} ${user.lastName}`,
           issueDate: certificate.issueDate,
           issuedBy: certificate.issuedBy,
-          courseDuration: course.duration,
+          courseDuration: courseDuration,
           courseLevel: course.level,
           issuerTitle: "Course Instructor",
         };
