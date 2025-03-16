@@ -1,6 +1,7 @@
 const DataProxy = require("./db-data.proxy");
 const { areIdsEqual } = require("../../helpers/compare.helpers");
 const mockData2 = require("./learning-data-2.mock");
+const mockData = require("./learning-data.mock");
 const { logTrace, logDebug, logError } = require("../../helpers/logger-api");
 
 const dataProxy = new DataProxy();
@@ -8,6 +9,7 @@ const data = dataProxy.getData();
 
 function restoreDefaultDatabase() {
   try {
+    dataProxy.setMockDataSource(mockData);
     const result = dataProxy.restoreToDefault();
     return result;
   } catch (error) {
