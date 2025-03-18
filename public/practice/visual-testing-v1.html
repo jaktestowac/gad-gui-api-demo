@@ -11,9 +11,12 @@
     <link rel="stylesheet" href="/css/style.css" />
     <style>
         .visual-container {
-            max-width: 800px;
+            display: flex;
             margin: 0 auto;
             padding: 10px;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
         }
 
         h2 {
@@ -26,11 +29,11 @@
             padding: 10px;
             margin-bottom: 10px;
             background-color: #f9f9f9;
+            width: 400px !important;
         }
 
         .widget-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
             gap: 20px;
         }
 
@@ -200,7 +203,7 @@
         }
 
         .performance-chart {
-            height: 50px;
+            height: 60px;
             position: relative;
             margin-top: 15px;
             background: rgba(255, 255, 255, 0.05);
@@ -245,7 +248,6 @@
     <br />
     <br />
     <br />
-
     <div class="visual-container">
         <div class="widgets-section">
             <div class="widget-grid">
@@ -322,7 +324,7 @@
                         </div>
                         <div class="performance-chart" data-testid="performance-chart">
                             <svg width="100%" height="100%" preserveAspectRatio="none">
-                                <path class="perf-line" d="M 0,30 10,25 20,28 30,20 40,22 50,18 60,15 70,20 80,22 90,19 100,25" />
+                                <path class="perf-line" d="M 0,30 10,25 20,28 30,20 40,22 50,18 60,15 70,20 80,22 90,19 100,25 110,30 120,28 130,25 140,22 150,20 160,18 170,15 180,20 190,22" />
                             </svg>
                         </div>
                         <div class="system-status">
@@ -335,199 +337,38 @@
                         </div>
                     </div>
                 </div>
-                <div data-testid="dynamic-widget">
-                    <h2>Dynamic Widgets</h2>
-                    <div class="interactive-widget" data-testid="system-metrics-widget">
-                        <div class="widget-header">
-                            <h3>System Metrics</h3>
-                            <span class="widget-status">Live</span>
-                        </div>
-                        <div class="compact-metrics">
-                            <div class="metric-mini">
-                                <div>CPU</div>
-                                <div id="cpu-usage" class="metric-value">0%</div>
-                                <div id="cpu-detail" class="metric-detail">4 Cores | 45°C</div>
-                                <div class="loading-bar">
-                                    <div id="cpu-bar" class="loading-progress"></div>
-                                </div>
-                            </div>
-                            <div class="metric-mini">
-                                <div>Memory</div>
-                                <div id="memory-usage" class="metric-value">0%</div>
-                                <div id="memory-detail" class="metric-detail">0/16 GB</div>
-                                <div class="loading-bar">
-                                    <div id="memory-bar" class="loading-progress"></div>
-                                </div>
-                            </div>
-                            <div class="metric-mini">
-                                <div>Network</div>
-                                <div id="network-usage" class="metric-value">0 MB/s</div>
-                                <div class="network-details">
-                                    <span id="network-up">↑ 0 MB/s</span>
-                                    <span id="network-down">↓ 0 MB/s</span>
-                                </div>
-                                <div class="loading-bar">
-                                    <div id="network-bar" class="loading-progress"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="process-list">
-                            <div style="margin-bottom: 8px; font-size: 0.9em;">Top Processes</div>
-                            <div id="process-container"></div>
-                        </div>
-                        <div class="disk-metrics">
-                            <div class="disk-item">
-                                <div>System Drive (C:)</div>
-                                <div id="disk-c-usage">0/256 GB</div>
-                                <div class="disk-progress">
-                                    <div id="disk-c-bar" class="disk-bar"></div>
-                                </div>
-                            </div>
-                            <div class="disk-item">
-                                <div>Data Drive (D:)</div>
-                                <div id="disk-d-usage">0/512 GB</div>
-                                <div class="disk-progress">
-                                    <div id="disk-d-bar" class="disk-bar"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="performance-chart">
-                            <svg id="perf-chart" width="100%" height="100%" preserveAspectRatio="none">
-                                <path id="perf-path" class="perf-line" d=""></path>
-                            </svg>
-                        </div>
-                        <div class="system-status">
-                            <div>
-                                <span class="status-indicator active"></span>
-                                <span id="system-status-text">System Healthy</span>
-                                <span id="uptime" style="margin-left: 10px; font-size: 0.8em; opacity: 0.7">Uptime: 00:00:00</span>
-                            </div>
-                            <span id="last-update">Updated: Just now</span>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
-
     <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center">
         <a href="/practice" class="menu-link">
             <button class="button-primary-small" style="margin-top: 4px; font-size: 14px;">Return to practice page</button>
         </a>
     </div>
-
-    <script>
-        let startTime = new Date();
-
-        function formatUptime(ms) {
-            const seconds = Math.floor(ms / 1000);
-            const hours = Math.floor(seconds / 3600);
-            const minutes = Math.floor((seconds % 3600) / 60);
-            const secs = seconds % 60;
-            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-        }
-
-        let performanceHistory = Array(50).fill(0);
-        let processes = [
-            { name: 'chrome', icon: '🌐', usage: 0 },
-            { name: 'node', icon: '⚙️', usage: 0 },
-            { name: 'vscode', icon: '📝', usage: 0 },
-            { name: 'system', icon: '💻', usage: 0 }
-        ];
-
-        function updateProcessList() {
-            const container = document.getElementById('process-container');
-            processes.forEach(proc => {
-                proc.usage = Math.floor(Math.random() * 30);
-            });
-
-            processes.sort((a, b) => b.usage - a.usage);
-
-            container.innerHTML = processes.map(proc => `
-                <div class="process-item">
-                    <div class="process-name">
-                        <span>${proc.icon}</span>
-                        ${proc.name}
-                    </div>
-                    <div>${proc.usage}%</div>
-                </div>
-            `).join('');
-        }
-
-        function updatePerformanceChart() {
-            performanceHistory.push(Math.floor(Math.random() * 100));
-            performanceHistory.shift();
-
-            const width = document.getElementById('perf-chart').clientWidth;
-            const height = document.getElementById('perf-chart').clientHeight;
-            const points = performanceHistory.map((value, index) =>
-                `${(index * width / 49)},${height - (value * height / 100)}`
-            ).join(' ');
-
-            document.getElementById('perf-path').setAttribute('d', `M ${points}`);
-        }
-
-        function updateDiskMetrics() {
-            const diskC = Math.floor(Math.random() * 256);
-            const diskD = Math.floor(Math.random() * 512);
-
-            document.getElementById('disk-c-usage').textContent = `${diskC}/256 GB`;
-            document.getElementById('disk-d-usage').textContent = `${diskD}/512 GB`;
-
-            document.getElementById('disk-c-bar').style.width = `${(diskC / 256) * 100}%`;
-            document.getElementById('disk-d-bar').style.width = `${(diskD / 512) * 100}%`;
-        }
-
-        function updateSystemMetrics() {
-            const cpuUsage = Math.floor(Math.random() * 100);
-            const memoryUsage = Math.floor(Math.random() * 100);
-            const networkSpeed = Math.floor(Math.random() * 100);
-            const cpuTemp = Math.floor(Math.random() * 20) + 40; // 40-60°C
-            const memoryUsedGB = ((16 * memoryUsage) / 100).toFixed(1);
-            const networkUp = Math.floor(Math.random() * 50);
-            const networkDown = Math.floor(Math.random() * 100);
-
-            // Update CPU metrics
-            document.getElementById('cpu-usage').textContent = `${cpuUsage}%`;
-            document.getElementById('cpu-detail').textContent = `4 Cores | ${cpuTemp}°C`;
-            document.getElementById('cpu-bar').style.width = `${cpuUsage}%`;
-
-            // Update Memory metrics
-            document.getElementById('memory-usage').textContent = `${memoryUsage}%`;
-            document.getElementById('memory-detail').textContent = `${memoryUsedGB}/16 GB`;
-            document.getElementById('memory-bar').style.width = `${memoryUsage}%`;
-
-            // Update Network metrics
-            document.getElementById('network-usage').textContent = `${networkSpeed} MB/s`;
-            document.getElementById('network-up').textContent = `↑ ${networkUp} MB/s`;
-            document.getElementById('network-down').textContent = `↓ ${networkDown} MB/s`;
-            document.getElementById('network-bar').style.width = `${(networkSpeed / 100) * 100}%`;
-
-            // Update status
-            const statusIndicator = document.querySelector('.status-indicator');
-            const statusText = document.getElementById('system-status-text');
-            const isHealthy = cpuUsage < 80 && memoryUsage < 80;
-
-            statusIndicator.className = `status-indicator ${isHealthy ? 'active' : 'warning'}`;
-            statusText.textContent = isHealthy ? 'System Healthy' : 'System Under Load';
-
-            // Update uptime
-            const uptime = new Date() - startTime;
-            document.getElementById('uptime').textContent = `Uptime: ${formatUptime(uptime)}`;
-
-            document.getElementById('last-update').textContent = `Updated: ${new Date().toLocaleTimeString()}`;
-
-            updateProcessList();
-            updatePerformanceChart();
-            updateDiskMetrics();
-        }
-
-        setInterval(updateSystemMetrics, 2000);
-        updateSystemMetrics();
-    </script>
     <script type="text/javascript" src="/js/common.js"></script>
     <script type="text/javascript" src="/js/header.js"></script>
     <script type="text/javascript" src="/version.js"></script>
+    <script>
+        function getRandomValue() {
+            return Math.floor(Math.random() * 31) + 15;
+        }
+
+        let dataPoints = Array(100).fill(0).map(() => getRandomValue());
+
+        function updateChart() {
+            const newValue = getRandomValue();
+            dataPoints = [...dataPoints.slice(1), newValue];
+
+            const path = dataPoints.reduce((acc, point, index) => {
+                return acc + `${index * 8},${point} `;
+            }, 'M ');
+
+            document.querySelector('.perf-line').setAttribute('d', path);
+        }
+
+        updateChart();
+        setInterval(updateChart, 1000);
+    </script>
 </body>
 
 </html>

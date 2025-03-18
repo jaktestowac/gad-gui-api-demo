@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>🦎 GAD | System Metrics V1 (Auto Refresh)</title>
+    <title>🦎 GAD | System Metrics (API)</title>
     <link rel="icon" href="/data/icons/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
@@ -11,152 +11,122 @@
     <link rel="stylesheet" href="/css/style.css" />
     <style>
         .sysmetrics-container {
-            max-width: 800px;
+            max-width: 1000px;
             margin: 0 auto;
-            padding: 30px;
+            padding: 20px;
         }
 
         .sysmetrics-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
             margin-top: 20px;
         }
 
         .sysmetric-card {
-            background: linear-gradient(145deg, #2d3436 0%, #1e272e 100%);
-            border-radius: 16px;
-            padding: 25px;
-            color: #e2e8f0;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .sysmetric-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+            background: linear-gradient(145deg, #2c3e50, #3498db);
+            border-radius: 10px;
+            padding: 20px;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .sysmetric-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .sysmetric-title {
-            font-size: 1.1em;
-            font-weight: 500;
-            color: rgba(255, 255, 255, 0.9);
-            letter-spacing: 0.5px;
+            font-size: 1.2em;
+            margin: 0;
         }
 
         .sysmetric-value {
-            font-size: 2.8em;
-            font-weight: 600;
-            margin: 15px 0;
-            background: linear-gradient(90deg, #fff, #a8b8d0);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
+            font-size: 2em;
+            font-weight: bold;
+            margin: 10px 0;
         }
 
         .sysmetric-progress {
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            height: 12px;
+            border-radius: 4px;
+            height: 8px;
             overflow: hidden;
-            backdrop-filter: blur(5px);
         }
 
         .sysmetric-progress-fill {
+            background: rgba(255, 255, 255, 0.8);
             height: 100%;
             width: 0%;
-            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            background: linear-gradient(90deg, #00b894, #00cec9);
-            box-shadow: 0 0 20px rgba(0, 184, 148, 0.5);
+            transition: width 0.5s ease;
         }
 
         .sysmetric-details {
-            margin-top: 15px;
-            font-size: 0.85em;
-            color: rgba(255, 255, 255, 0.6);
-            font-weight: 400;
+            margin-top: 10px;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .sysmetric-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .sysmetric-button {
+            background: #34495e;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .sysmetric-button:hover {
+            background: #2c3e50;
+            transform: translateY(-1px);
+        }
+
+        .sysmetric-button.active {
+            background: #27ae60;
+        }
+
+        .sysmetric-button.active:hover {
+            background: #219a52;
         }
 
         .sysmetric-network-stats {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin: 20px 0;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
             font-size: 0.9em;
-        }
-
-        .sysmetric-network-stats>div {
-            text-align: center;
-        }
-
-        .sysmetric-network-stats>div>div:first-child {
-            color: rgba(255, 255, 255, 0.6);
-            margin-bottom: 5px;
-            font-size: 0.9em;
-        }
-
-        .sysmetric-network-stats>div>div:last-child {
-            font-size: 1.2em;
-            font-weight: 500;
         }
 
         .sysmetric-status {
-            padding: 6px 12px;
-            border-radius: 20px;
+            padding: 4px 8px;
+            border-radius: 4px;
             font-size: 0.8em;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .sysmetric-status-healthy {
-            background: rgba(46, 213, 115, 0.15);
-            color: #2ed573;
-            border: 1px solid rgba(46, 213, 115, 0.3);
+            background: rgba(76, 175, 80, 0.2);
         }
 
         .sysmetric-status-warning {
-            background: rgba(255, 171, 0, 0.15);
-            color: #ffab00;
-            border: 1px solid rgba(255, 171, 0, 0.3);
+            background: rgba(255, 152, 0, 0.2);
         }
 
         .sysmetric-status-critical {
-            background: rgba(255, 71, 87, 0.15);
-            color: #ff4757;
-            border: 1px solid rgba(255, 71, 87, 0.3);
-        }
-
-        @media (max-width: 768px) {
-            .sysmetrics-container {
-                padding: 20px;
-                border-radius: 15px;
-            }
-
-            .sysmetrics-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-
-            .sysmetric-card {
-                padding: 20px;
-            }
-
-            .sysmetric-value {
-                font-size: 2.2em;
-            }
+            background: rgba(244, 67, 54, 0.2);
         }
     </style>
 </head>
@@ -164,7 +134,7 @@
 <body>
     <header>
         <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
-            <h1 id="menu-main-practice" class="nav-menu">System Metrics Monitor V1 (Auto)</h1>
+            <h1 id="menu-main-practice" class="nav-menu">System Metrics Monitor</h1>
         </div>
     </header>
     <br />
@@ -172,6 +142,10 @@
     <br />
 
     <div class="sysmetrics-container">
+        <div class="sysmetric-controls">
+            <button id="toggleUpdateBtn" class="sysmetric-button">Auto Update</button>
+            <button id="refreshBtn" class="sysmetric-button">Refresh Now</button>
+        </div>
 
         <div class="sysmetrics-grid">
             <div class="sysmetric-card">
@@ -223,16 +197,12 @@
                 </div>
                 <div class="sysmetric-network-stats">
                     <div>
-                        <div>Current Received:</div>
+                        <div>Received:</div>
                         <div id="networkReceived">0 B/s</div>
-                        <div style="margin-top: 10px;">Total Received:</div>
-                        <div id="networkTotalReceived">0 B</div>
                     </div>
                     <div>
-                        <div>Current Sent:</div>
+                        <div>Sent:</div>
                         <div id="networkSent">0 B/s</div>
-                        <div style="margin-top: 10px;">Total Sent:</div>
-                        <div id="networkTotalSent">0 B</div>
                     </div>
                 </div>
                 <div id="networkDetails" class="sysmetric-details">
@@ -249,13 +219,12 @@
     </div>
 
     <script>
+        let isAutoUpdate = false;
         let updateInterval;
-        let totalReceived = 0;
-        let totalSent = 0;
 
         function formatBytes(bytes) {
             if (bytes === 0) return '0 B/s';
-            const sizes = ['B/s', 'KB/s', 'MB/s', 'GB/s', 'TB/s', 'PB/s', 'EB/s', 'ZB/s', 'YB/s'];
+            const sizes = ['B/s', 'KB/s', 'MB/s', 'GB/s'];
             const i = Math.floor(Math.log(bytes) / Math.log(1024));
             return `${(bytes / Math.pow(1024, i)).toFixed(2)} ${sizes[i]}`;
         }
@@ -296,16 +265,8 @@
             // Network
             const bytesReceived = ensureNumber(data.network?.bytesReceived ?? 0);
             const bytesSent = ensureNumber(data.network?.bytesSent ?? 0);
-
-            // Update current rates
             document.getElementById('networkReceived').textContent = formatBytes(bytesReceived);
             document.getElementById('networkSent').textContent = formatBytes(bytesSent);
-
-            // Update totals
-            totalReceived += bytesReceived;
-            totalSent += bytesSent;
-            document.getElementById('networkTotalReceived').textContent = formatBytes(totalReceived).replace('/s', '');
-            document.getElementById('networkTotalSent').textContent = formatBytes(totalSent).replace('/s', '');
 
             const updateTime = new Date().toLocaleTimeString();
             document.querySelectorAll('.sysmetric-details').forEach(detail => {
@@ -325,8 +286,23 @@
             }
         }
 
+        function toggleAutoUpdate() {
+            isAutoUpdate = !isAutoUpdate;
+            const btn = document.getElementById('toggleUpdateBtn');
+
+            if (isAutoUpdate) {
+                btn.classList.add('active');
+                updateInterval = setInterval(fetchMetrics, 2000);
+            } else {
+                btn.classList.remove('active');
+                clearInterval(updateInterval);
+            }
+        }
+
+        document.getElementById('toggleUpdateBtn').addEventListener('click', toggleAutoUpdate);
+        document.getElementById('refreshBtn').addEventListener('click', fetchMetrics);
+
         fetchMetrics();
-        updateInterval = setInterval(fetchMetrics, 1000);
     </script>
     <script type="text/javascript" src="/js/common.js"></script>
     <script type="text/javascript" src="/js/header.js"></script>
