@@ -11,6 +11,10 @@ const { generateRandomSimpleBusTicketCard } = require("../helpers/generators/bus
 const { generateRandomStudentsData } = require("../helpers/generators/student-grades-manager.generator");
 const { generateRandomEmployeesData } = require("../helpers/generators/employees.generator");
 const { generateSystemMetricsResponse } = require("../helpers/generators/system-metrics");
+const {
+  generateStockExchangeResponse,
+  stockGeneratorDefaultOptions,
+} = require("../helpers/generators/stock-exchange.generator");
 
 function generateWeatherResponseBasedOnQuery(queryParams, simplified = false, totalRandom = false) {
   const days = parseInt(queryParams.get("days"));
@@ -241,6 +245,19 @@ function handleData(req, res, isAdmin) {
     res.status(HTTP_OK).json(employeesData);
     return;
   }
+
+  if (req.method === "GET" && req.url.includes("/api/v1/data/random/stock-exchange")) {
+    const queryParams = new URLSearchParams(req.url.split("?")[1]);
+    const seed = queryParams.get("seed") || stockGeneratorDefaultOptions.seed;
+    const simplified = queryParams.get("simplified") === "true";
+    const samples = parseInt(queryParams.get("samples")) || stockGeneratorDefaultOptions.samples;
+    const interval = parseInt(queryParams.get("interval")) || stockGeneratorDefaultOptions.interval;
+
+    const stockExchangeData = generateStockExchangeResponse({ seed, samples, interval }, simplified);
+    res.status(HTTP_OK).json(stockExchangeData);
+    return;
+  }
+
   return;
 }
 
