@@ -15,6 +15,10 @@ const {
   generateStockExchangeResponse,
   stockGeneratorDefaultOptions,
 } = require("../helpers/generators/stock-exchange.generator");
+const {
+  listOfNumbersDefaultOptions,
+  generateListOfNumbersResponse,
+} = require("../helpers/generators/numbers.generator");
 
 function generateWeatherResponseBasedOnQuery(queryParams, simplified = false, totalRandom = false) {
   const days = parseInt(queryParams.get("days"));
@@ -255,6 +259,15 @@ function handleData(req, res, isAdmin) {
 
     const stockExchangeData = generateStockExchangeResponse({ seed, samples, interval }, simplified);
     res.status(HTTP_OK).json(stockExchangeData);
+    return;
+  }
+
+  if (req.method === "GET" && req.url.includes("/api/v1/data/random/numbers")) {
+    const queryParams = new URLSearchParams(req.url.split("?")[1]);
+    const samples = parseInt(queryParams.get("samples")) || listOfNumbersDefaultOptions.samples;
+
+    const numbers = generateListOfNumbersResponse({ samples });
+    res.status(HTTP_OK).json({ data: numbers });
     return;
   }
 
