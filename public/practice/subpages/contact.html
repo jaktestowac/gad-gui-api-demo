@@ -13,6 +13,7 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="./subpages.css" />
     <script src="./nav-highlight.js" defer></script>
+    <script src="./components/navigation.js"></script>
 </head>
 
 <body>
@@ -25,13 +26,7 @@
     <br />
     <br />
     <br />
-    <nav class="mp-navigation" id="contact-nav" data-testid="contact-navigation">
-        <a href="../multipage-v1.html" class="mp-nav-link">Main Page</a>
-        <a href="home.html?section=main&user=guest" class="mp-nav-link">Home</a>
-        <a href="about.html?section=company&year=2024" class="mp-nav-link">About</a>
-        <a href="contact.html?dept=support&priority=high" class="mp-nav-link">Contact</a>
-        <a href="products.html?category=new&sort=price" class="mp-nav-link">Products</a>
-    </nav>
+    <script>createNavigation('contact-nav');</script>
     <div class="mp-content-wrapper" id="contact-content" data-testid="contact-content">
         <h1 class="mp-title" id="contact-title" data-testid="contact-title">Contact Us</h1>
         <form id="contactForm" class="contact-form" onsubmit="handleSubmit(event)">

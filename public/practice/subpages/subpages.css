@@ -7,7 +7,7 @@ body {
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 }
 
-.mp-navigation {
+.gad-mp-navigation {
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(10px);
   border-radius: 12px;
@@ -17,9 +17,10 @@ body {
   display: flex;
   justify-content: center;
   gap: 2rem;
+  z-index: 9999;
 }
 
-.mp-nav-link {
+.gad-mp-nav-link {
   color: #2d3436;
   text-decoration: none;
   font-weight: 500;
@@ -28,13 +29,13 @@ body {
   transition: all 0.3s ease;
 }
 
-.mp-nav-link:hover {
+.gad-mp-nav-link:hover {
   background: #2d3436;
   color: white;
   transform: translateY(-2px);
 }
 
-.mp-nav-link.active {
+.gad-mp-nav-link.active {
   background: #2d3436;
   color: white;
   pointer-events: none;
@@ -281,4 +282,202 @@ body {
   padding: 1rem;
   border-radius: 8px;
   text-align: center;
+}
+
+/* Gallery styles */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.gallery-item {
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.gallery-item:hover {
+  transform: scale(1.05);
+}
+
+.gallery-item img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.lightbox {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  justify-content: center;
+  align-items: center;
+}
+
+.lightbox img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 8px;
+}
+
+/* Services styles */
+.services-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.service-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.service-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+/* FAQ styles */
+.faq-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.faq-item {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.faq-question {
+  padding: 1rem;
+  font-weight: bold;
+  background: #f8f9fa;
+}
+
+.faq-answer {
+  padding: 0 1rem;
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.faq-item.active .faq-answer {
+  padding: 1rem;
+  max-height: 200px;
+}
+
+/* Mobile Navigation Styles */
+.gad-mp-nav-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+}
+
+.gad-mp-hamburger {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: #2d3436;
+  position: relative;
+  transition: all 0.3s;
+}
+
+.gad-mp-hamburger::before,
+.gad-mp-hamburger::after {
+  content: "";
+  position: absolute;
+  width: 24px;
+  height: 2px;
+  background: #2d3436;
+  transition: all 0.3s;
+}
+
+.gad-mp-hamburger::before {
+  top: -6px;
+}
+
+.gad-mp-hamburger::after {
+  top: 6px;
+}
+
+.gad-mp-nav-toggle.active .gad-mp-hamburger {
+  background: transparent;
+}
+
+.gad-mp-nav-toggle.active .gad-mp-hamburger::before {
+  transform: rotate(45deg);
+  top: 0;
+}
+
+.gad-mp-nav-toggle.active .gad-mp-hamburger::after {
+  transform: rotate(-45deg);
+  top: 0;
+}
+
+@media screen and (max-width: 768px) {
+  .gad-mp-navigation {
+    position: relative;
+    padding: 1rem;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .gad-mp-nav-toggle {
+    display: block;
+    position: relative;
+    right: 0;
+    top: 0;
+    z-index: 2;
+  }
+
+  .gad-mp-nav-links {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 1rem;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .gad-mp-nav-links.active {
+    display: flex; 
+  }
+
+  .gad-mp-nav-link {
+    width: 100%;
+    text-align: center;
+    padding: 0.75rem;
+  }
+
+  .mp-content-wrapper {
+    margin: 1rem;
+  }
+
+  .mp-title {
+    font-size: 2rem;
+  }
 }

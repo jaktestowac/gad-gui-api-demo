@@ -2,7 +2,7 @@ function highlightCurrentPage() {
   const currentPath = window.location.pathname;
   const currentPage = currentPath.split("/").pop();
 
-  document.querySelectorAll(".mp-nav-link").forEach((link) => {
+  document.querySelectorAll(".gad-mp-nav-link").forEach((link) => {
     const href = link.getAttribute("href");
     const linkPage = href.split("?")[0].split("/").pop();
 

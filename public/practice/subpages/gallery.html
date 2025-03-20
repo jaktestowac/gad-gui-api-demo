@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD | Gallery Page</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./subpages.css" />
+    <script src="./nav-highlight.js" defer></script>
+    <script src="./components/navigation.js"></script>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <script>createNavigation('gallery-nav');</script>
+    <div class="mp-content-wrapper">
+        <h1 class="mp-title">Gallery</h1>
+        <div class="gallery-grid" id="galleryGrid">
+            <div class="gallery-item" onclick="showImage(1)">
+                <img src="https://picsum.photos/200/200?random=1" alt="Gallery 1">
+            </div>
+            <div class="gallery-item" onclick="showImage(2)">
+                <img src="https://picsum.photos/200/200?random=2" alt="Gallery 2">
+            </div>
+            <div class="gallery-item" onclick="showImage(3)">
+                <img src="https://picsum.photos/200/200?random=3" alt="Gallery 3">
+            </div>
+        </div>
+        <div id="lightbox" class="lightbox" onclick="hideLightbox()">
+            <img id="lightboxImg" src="" alt="Lightbox Image">
+        </div>
+    </div>
+    <script>
+        function showImage(id) {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightboxImg');
+            lightboxImg.src = `https://picsum.photos/800/600?random=${id}`;
+            lightbox.style.display = 'flex';
+        }
+
+        function hideLightbox() {
+            document.getElementById('lightbox').style.display = 'none';
+        }
+    </script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>
