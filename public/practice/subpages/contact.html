@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD | Contact Page</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./subpages.css" />
+    <script src="./nav-highlight.js" defer></script>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <nav class="mp-navigation" id="contact-nav" data-testid="contact-navigation">
+        <a href="../multipage-v1.html" class="mp-nav-link">Main Page</a>
+        <a href="home.html?section=main&user=guest" class="mp-nav-link">Home</a>
+        <a href="about.html?section=company&year=2024" class="mp-nav-link">About</a>
+        <a href="contact.html?dept=support&priority=high" class="mp-nav-link">Contact</a>
+        <a href="products.html?category=new&sort=price" class="mp-nav-link">Products</a>
+    </nav>
+    <div class="mp-content-wrapper" id="contact-content" data-testid="contact-content">
+        <h1 class="mp-title" id="contact-title" data-testid="contact-title">Contact Us</h1>
+        <form id="contactForm" class="contact-form" onsubmit="handleSubmit(event)">
+            <input type="text" id="name" placeholder="Your Name" required>
+            <input type="email" id="email" placeholder="Your Email" required>
+            <textarea id="message" placeholder="Your Message" required></textarea>
+            <button type="submit">Send Message</button>
+        </form>
+        <div id="formStatus" class="form-status"></div>
+        <div class="mp-params-contact" id="paramDisplay" data-testid="contact-params"></div>
+    </div>
+
+    <script>
+        function handleSubmit(event) {
+            event.preventDefault();
+            const status = document.getElementById('formStatus');
+            status.textContent = 'Message sent successfully!';
+            status.className = 'form-status success';
+            event.target.reset();
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        const paramDisplay = document.getElementById('paramDisplay');
+
+        if (params.toString()) {
+            params.forEach((value, key) => {
+                const paramItem = document.createElement('div');
+                paramItem.className = 'mp-param-item-contact';
+                paramItem.textContent = `${key.toUpperCase()}: ${value}`;
+                paramDisplay.appendChild(paramItem);
+            });
+        }
+    </script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>

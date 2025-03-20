@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD | Multi-page Demo</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./subpages/subpages.css" />
+    <script src="./subpages/nav-highlight.js" defer></script>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <nav class="mp-navigation" id="main-nav" data-testid="main-navigation">
+        <a href="multipage-v1.html" class="mp-nav-link" id="nav-main" data-testid="nav-main-link">Main Page</a>
+        <a href="subpages/home.html?section=main&user=guest" class="mp-nav-link" id="nav-home" data-testid="nav-home-link">Home</a>
+        <a href="subpages/about.html?section=company&year=2024" class="mp-nav-link" id="nav-about" data-testid="nav-about-link">About</a>
+        <a href="subpages/contact.html?dept=support&priority=high" class="mp-nav-link" id="nav-contact" data-testid="nav-contact-link">Contact</a>
+        <a href="subpages/products.html?category=new&sort=price" class="mp-nav-link" id="nav-products" data-testid="nav-products-link">Products</a>
+    </nav>
+    <div class="mp-content-wrapper" id="main-content" data-testid="main-content">
+        <h1 class="mp-title" id="main-title" data-testid="main-title">Welcome to Multi-page Demo</h1>
+        <p class="mp-text" id="main-description" data-testid="main-description">Click on the links above to navigate to different pages.</p>
+    </div>
+</body>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+
+</html>

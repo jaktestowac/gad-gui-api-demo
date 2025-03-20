@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD | Products Page</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./subpages.css" />
+    <script src="./nav-highlight.js" defer></script>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+
+    <nav class="mp-navigation" id="products-nav" data-testid="products-navigation">
+        <a href="../multipage-v1.html" class="mp-nav-link">Main Page</a>
+        <a href="home.html?section=main&user=guest" class="mp-nav-link">Home</a>
+        <a href="about.html?section=company&year=2024" class="mp-nav-link">About</a>
+        <a href="contact.html?dept=support&priority=high" class="mp-nav-link">Contact</a>
+        <a href="products.html?category=new&sort=price" class="mp-nav-link">Products</a>
+    </nav>
+    <div class="mp-content-wrapper" id="products-content" data-testid="products-content">
+        <h1 class="mp-title" id="products-title" data-testid="products-title">Our Products</h1>
+        <div class="product-filters">
+            <button onclick="filterProducts('all')" class="active">All</button>
+            <button onclick="filterProducts('new')">New</button>
+            <button onclick="filterProducts('sale')">On Sale</button>
+        </div>
+        <div class="product-grid">
+            <div class="product-item" data-category="new">Product 1 (New)</div>
+            <div class="product-item" data-category="sale">Product 2 (Sale)</div>
+            <div class="product-item" data-category="new">Product 3 (New)</div>
+        </div>
+        <p class="mp-text" id="products-description" data-testid="products-description">This is the products page content.</p>
+        <div class="mp-params-products" id="paramDisplay" data-testid="products-params"></div>
+    </div>
+
+    <script>
+        function filterProducts(category) {
+            const products = document.querySelectorAll('.product-item');
+            const buttons = document.querySelectorAll('.product-filters button');
+
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            products.forEach(product => {
+                if (category === 'all' || product.dataset.category === category) {
+                    product.style.display = 'block';
+                } else {
+                    product.style.display = 'none';
+                }
+            });
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        const paramDisplay = document.getElementById('paramDisplay');
+
+        if (params.toString()) {
+            params.forEach((value, key) => {
+                const paramItem = document.createElement('div');
+                paramItem.className = 'mp-param-item-products';
+                paramItem.innerHTML = `
+                    <strong>${key}</strong>
+                    <hr style="margin: 0.5rem 0">
+                    <span>${value}</span>
+                `;
+                paramDisplay.appendChild(paramItem);
+            });
+        } else {
+            paramDisplay.innerHTML = '<div class="mp-param-item">No parameters received</div>';
+        }
+    </script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>
