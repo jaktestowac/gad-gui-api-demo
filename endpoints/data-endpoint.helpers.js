@@ -250,6 +250,68 @@ function handleData(req, res, isAdmin) {
     return;
   }
 
+  if (req.method === "GET" && req.url.includes("/api/v2/data/random/employees")) {
+    const queryParams = new URLSearchParams(req.url.split("?")[1]);
+    const seed = queryParams.get("seed") || "my random seed";
+    const details = queryParams.get("details") === "true";
+    const page = parseInt(queryParams.get("page")) || 1;
+    const pageSize = parseInt(queryParams.get("pageSize")) || 10;
+
+    const nameFilter = queryParams.get("name")?.split(",") || [];
+    const roleFilter = queryParams.get("role")?.split(",") || [];
+    const statusFilter = queryParams.get("status")?.split(",") || [];
+
+    if (pageSize > 100) {
+      res.status(400).json({ error: "pageSize cannot be greater than 100" });
+      return;
+    }
+
+    let employeesData = generateRandomEmployeesData({ seed, details });
+
+    const allRoles = [...new Set(employeesData.map((employee) => employee.role))];
+    const allStatus = [...new Set(employeesData.map((employee) => employee.status))];
+
+    if (nameFilter.length > 0 || roleFilter.length > 0 || statusFilter.length > 0) {
+      employeesData = employeesData.filter(
+        (employee) =>
+          (nameFilter.length === 0 || nameFilter.includes(employee.name)) &&
+          (roleFilter.length === 0 || roleFilter.includes(employee.role)) &&
+          (statusFilter.length === 0 || statusFilter.includes(employee.status))
+      );
+    }
+
+    const total = employeesData.length;
+    const totalPages = Math.ceil(total / pageSize);
+    const start = (page - 1) * pageSize;
+    const end = page * pageSize;
+
+    const data = {
+      allRoles,
+      allStatus,
+      page,
+      pageSize,
+      total,
+      totalPages,
+      data: employeesData.slice(start, end),
+    };
+
+    logDebug(`Returning filtered page ${page} of ${data.totalPages} with ${pageSize} items each`, {
+      page,
+      pageSize,
+      total,
+      totalPages: data.totalPages,
+      employees: data.data.length,
+      filters: {
+        name: nameFilter,
+        role: roleFilter,
+        status: statusFilter,
+      },
+    });
+
+    res.status(HTTP_OK).json(data);
+    return;
+  }
+
   if (req.method === "GET" && req.url.includes("/api/v1/data/random/stock-exchange")) {
     const queryParams = new URLSearchParams(req.url.split("?")[1]);
     const seed = queryParams.get("seed") || stockGeneratorDefaultOptions.seed;

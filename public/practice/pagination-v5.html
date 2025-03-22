@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>🦎 GAD - Multi-Select Dropdown with Search in Data Grid with Pagination (API)</title>
+    <title>🦎 GAD - Multi-Select Dropdown with Search in Data Grid with Pagination and Expanded Content (API V2)</title>
     <link rel="icon" href="/data/icons/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
@@ -219,30 +219,89 @@
             padding-bottom: 15px;
             display: block;
         }
+
+        .expandable-row {
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .expandable-row:hover {
+            background-color: #f5f5f5;
+        }
+
+        .expandable-row.expanded {
+            background-color: #e9ecef;
+        }
+
+        .expanded-content td {
+            padding: 15px;
+            background-color: #f8f9fa;
+        }
+
+        .expanded-info {
+            padding: 10px;
+            border-radius: 4px;
+            background-color: white;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .expanded-info p {
+            margin: 5px 0;
+        }
+
+        .expanded-content {
+            max-height: 0;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        .expanded-content.show {
+            max-height: 200px;
+            opacity: 1;
+        }
+
+        .expanded-info {
+            padding: 10px;
+            border-radius: 4px;
+            background-color: white;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+            transform: translateY(-10px);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .expanded-content.show .expanded-info {
+            transform: translateY(0);
+        }
+
+        .collapse-all-button {
+            padding: 8px 16px;
+            color: black;
+            border: 1px solid #007bff;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background-color 0.3s;
+        }
+
+        .collapse-all-button:hover {
+            background: #b0d6ff;
+        }
+
+        .collapse-all-button.hidden {
+            display: none;
+        }
     </style>
 
     <br />
     <br />
     <br />
     <div align="center">
-        <h2>Multi-Select Dropdown with Search in Data Grid with Pagination (API)</h2>
-        <span class="infoSpan">Random data is fetched from an API.</span>
+        <h2>Multi-Select Dropdown with Search in Data Grid with Pagination and Expanded Content (API V2)</h2>
+        <span class="infoSpan">Data is fetched from an API.</span>
         <div class="data-grid-container">
             <div class="data-grid-header">
                 <div class="dropdowns">
-                    <div class="dropdown-container dropdown-names-container">
-                        <div class="dropdown-names-header dropdown-header">
-                            <span>Filter by Name</span>
-                            <span class="dropdown-names-arrow dropdown-arrow">&#9660;</span>
-                        </div>
-                        <div class="dropdown-names-list dropdown-list">
-                            <div class="search-box">
-                                <input type="text" placeholder="Search..." id="dropdownSearchName">
-                            </div>
-                            <div id="dropdownItemsNames">
-                            </div>
-                        </div>
-                    </div>
                     <div class="dropdown-container dropdown-roles-container">
                         <div class="dropdown-roles-header dropdown-header">
                             <span>Filter by Role</span>
@@ -269,6 +328,7 @@
                             </div>
                         </div>
                     </div>
+                    <button id="collapseAllButton" class="collapse-all-button" aria-label="Collapse all"><i class="fa-solid fa-down-left-and-up-right-to-center"></i></button>
                 </div>
                 <div class="selected-items" id="selectedItems"></div>
             </div>
@@ -287,9 +347,6 @@
                 <tbody id="dataGridBody">
                 </tbody>
             </table>
-            <div style="text-align: center; margin: 10px 0;">
-                <button id="collapseAllButton" style="padding: 5px 10px;">Collapse All</button>
-            </div>
             <div class="pagination">
                 <button id="prevPage" class="disabled">Previous</button>
                 <span id="pageInfo"></span>
@@ -315,9 +372,10 @@
 <script type="text/javascript" src="./js/test-data.js"></script>
 <script type="text/javascript" src="./js/data-generators.js"></script>
 <script type="text/javascript" src="./js/prepare-elements.js"></script>
-<script type="text/javascript" src="./js/pagination-v1.js"></script>
+<script type="text/javascript" src="./js/pagination-v2.js"></script>
 <script>
-    populateDataFromAPI(true)
+    // Initialize with page 1
+    populateDataFromAPIV2(1, true);
 </script>
 
 </html>

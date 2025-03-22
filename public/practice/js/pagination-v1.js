@@ -1227,6 +1227,27 @@ async function getRandomEmployeesData(seed, details) {
   });
 }
 
+async function getRandomEmployeesDataV2(page = 1, pageSize = 10, seed, details) {
+  let url = `/api/v2/data/random/employees?page=${page}&pageSize=${pageSize}`;
+
+  if (seed !== undefined) {
+    url += `&seed=${seed}`;
+  }
+
+  if (details === true) {
+    url += `&details=true`;
+  }
+
+  return fetch(url, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: getBearerToken(),
+    },
+  });
+}
+
 function populateDataFromAPI(random = false) {
   let seed = undefined;
   if (random === false) {
@@ -1250,6 +1271,29 @@ function populateDataFromAPIWithRenderCallback(renderCallback, random = false) {
     .then((response) => response.json())
     .then((json) => {
       populateData(json, false, renderCallback);
+    });
+}
+
+function populateDataFromAPIV2(page = 1, random = false) {
+  let seed = undefined;
+  if (random === false) {
+    seed = "test";
+  }
+
+  getRandomEmployeesDataV2(page, rowsPerPage, seed, true)
+    .then((response) => response.json())
+    .then((json) => {
+      data = json.data;
+      filteredData = [...json.data];
+      currentPage = json.page;
+      pageInfo.textContent = `Page ${json.page} of ${json.totalPages} (${json.total} total records)`;
+      prevPageButton.classList.toggle("disabled", json.page === 1);
+      nextPageButton.classList.toggle("disabled", json.page === json.totalPages);
+      populateDropdownItems(dropdownItemsNamesContainer, "name");
+      populateDropdownItems(dropdownItemsRolesContainer, "role");
+      populateDropdownItems(dropdownItemsStatusContainer, "status");
+      renderTableGlobalCallback();
+      updateElementsCount(json.total);
     });
 }
 
@@ -1295,4 +1339,18 @@ function collapseAllRows() {
   });
 }
 
-collapseAllButton.addEventListener("click", collapseAllRows);
+if (collapseAllButton) {
+  collapseAllButton.addEventListener("click", collapseAllRows);
+}
+
+prevPageButton.addEventListener("click", () => {
+  if (!prevPageButton.classList.contains("disabled")) {
+    populateDataFromAPIV2(currentPage - 1);
+  }
+});
+
+nextPageButton.addEventListener("click", () => {
+  if (!nextPageButton.classList.contains("disabled")) {
+    populateDataFromAPIV2(currentPage + 1);
+  }
+});
