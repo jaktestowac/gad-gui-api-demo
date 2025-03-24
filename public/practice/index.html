@@ -18,6 +18,34 @@
             border-bottom: 2px solid #dddddd;
         }
 
+        .search-container {
+            position: relative;
+            margin: 0 auto 10px;
+            max-width: 300px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 30px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        .search-input:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 3px rgba(76, 175, 80, 0.3);
+        }
+
         .tag-filter {
             margin: 10px;
             text-align: center;
@@ -77,13 +105,18 @@
         .greyed-out {
             opacity: 0.5;
             background-color: #f5f5f5;
-            font-size: 12px !important;
+            font-size: 10px !important;
         }
 
         .no-results {
             text-align: center;
             font-style: italic;
             color: #666;
+        }
+
+        .additionalDesc {
+            font-size: 12px;
+            font-weight: normal;
         }
     </style>
 </head>
@@ -107,6 +140,10 @@
         <h2 style="margin: 0px;padding: 0px;">Practice your test automation skills!</h2>
     </div>
     <div class="tag-filter-container">
+        <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="searchInput" placeholder="Search by name or tag..." class="search-input">
+        </div>
         <div class="tag-filter">
             <h3>Filter by tags:</h3>
         </div>
@@ -341,7 +378,7 @@
             </tr>
             <tr>
                 <th style="text-align: center;" id="pagination" class="anchorWithStickyNavbar">Pagination<a href="#pagination" class="hash-link">#</a>
-                    <br /><span style="font-size: 12px; font-weight: normal;">Multi-Select Dropdown<br />with Search in Data Grid</span>
+                    <br /><span class="additionalDesc">Multi-Select Dropdown<br />with Search in Data Grid</span>
                 </th>
                 <td> </td>
                 <td style="text-align: left;" class="pages-btns">
@@ -654,8 +691,11 @@
 <script>
     document.getElementById("btnPractice").disabled = true;
 
+    const searchInput = document.getElementById('searchInput');
     const tagFilter = document.querySelector('.tag-filter');
     const uniqueTags = new Set();
+
+    searchInput.value = '';
 
     document.querySelectorAll('.button-primary-small').forEach(button => {
         const tags = button.dataset.tags?.split(',') || [];
@@ -679,65 +719,66 @@
         tagFilter.appendChild(button);
     });
 
-    const tagButtons = document.querySelectorAll('.tag-button');
-    const menuButtons = document.querySelectorAll('.button-primary-small');
-
-    tagButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            if (button.classList.contains('active')) {
-                tagButtons.forEach(btn => btn.classList.remove('active'));
-                menuButtons.forEach(btn => btn.classList.remove('hidden'));
-                document.querySelectorAll('.no-results').forEach(el => el.remove());
-                document.querySelectorAll('tr').forEach(row => row.classList.remove('greyed-out'));
-
-                const menuLinks = document.querySelectorAll('.menu-link');
-                menuLinks.forEach(btn => btn.classList.remove('hidden'));
-
-                document.querySelector('.tag-button[data-tag="all"]').classList.add('active');
-                return;
+    function updateRowVisibility(row, hasVisibleButtons) {
+        const tdButtons = row.querySelector('.pages-btns');
+        if (!hasVisibleButtons) {
+            row.classList.add('greyed-out');
+            if (tdButtons) {
+                const noResults = document.createElement('div');
+                noResults.className = 'no-results';
+                noResults.textContent = 'No items match the selected filter';
+                const existingMsg = tdButtons.querySelector('.no-results');
+                if (existingMsg) existingMsg.remove();
+                tdButtons.appendChild(noResults);
             }
+            row.querySelectorAll('.menu-label').forEach(link => link.classList.add('hidden'));
+        } else {
+            row.classList.remove('greyed-out');
+            const noResults = tdButtons.querySelector('.no-results');
+            if (noResults) noResults.remove();
+            row.querySelectorAll('.menu-label').forEach(link => link.classList.remove('hidden'));
+        }
+    }
 
-            tagButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
+    function filterItems() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const activeTag = document.querySelector('.tag-button.active').dataset.tag;
 
-            const selectedTag = button.dataset.tag.toLowerCase();
+        document.querySelectorAll('tr').forEach(row => {
+            const menuLinks = row.querySelectorAll('.menu-link');
+            if (menuLinks.length === 0) return;
 
-            document.querySelectorAll('tr').forEach(row => {
-                const menuLinks = row.querySelectorAll('.menu-link');
-                if (menuLinks.length === 0) return;
+            let hasVisibleButtons = false;
+            menuLinks.forEach(link => {
+                const menuButton = link.querySelector('.button-primary-small');
+                const buttonText = menuButton?.textContent?.toLowerCase() || '';
+                const buttonTags = (menuButton?.dataset?.tags?.split(',') || []).map(t => t.trim().toLowerCase());
 
-                let hasVisibleButtons = false;
-                menuLinks.forEach(link => {
-                    const menuButton = link.querySelector('.button-primary-small');
-                    const buttonTags = (menuButton?.dataset?.tags?.split(',') || []).map(t => t.trim().toLowerCase());
-                    if (selectedTag === 'all' || buttonTags.includes(selectedTag)) {
-                        link.classList.remove('hidden');
-                        hasVisibleButtons = true;
-                    } else {
-                        link.classList.add('hidden');
-                    }
-                });
+                const matchesSearch = searchTerm === '' ||
+                    buttonText.includes(searchTerm) ||
+                    buttonTags.some(tag => tag.includes(searchTerm));
+                const matchesTag = activeTag === 'all' || buttonTags.includes(activeTag);
 
-                const tdButtons = row.querySelector('.pages-btns');
-                if (!hasVisibleButtons) {
-                    row.classList.add('greyed-out');
-                    if (tdButtons) {
-                        const noResults = document.createElement('div');
-                        noResults.className = 'no-results';
-                        noResults.textContent = 'No items match the selected filter';
-                        const existingMsg = tdButtons.querySelector('.no-results');
-                        if (existingMsg) existingMsg.remove();
-                        menuLinks.forEach(link => link.classList.add('hidden'));
-                        tdButtons.appendChild(noResults);
-                    }
-                    row.querySelectorAll('.menu-label').forEach(link => link.classList.add('hidden'));
+                if (matchesSearch && matchesTag) {
+                    link.classList.remove('hidden');
+                    hasVisibleButtons = true;
                 } else {
-                    row.classList.remove('greyed-out');
-                    const noResults = tdButtons.querySelector('.no-results');
-                    if (noResults) noResults.remove();
-                    row.querySelectorAll('.menu-label').forEach(link => link.classList.remove('hidden'));
+                    link.classList.add('hidden');
                 }
             });
+
+            updateRowVisibility(row, hasVisibleButtons);
+        });
+    }
+
+    // Add event listeners
+    searchInput.addEventListener('input', filterItems);
+
+    document.querySelectorAll('.tag-button').forEach(button => {
+        button.addEventListener('click', () => {
+            document.querySelectorAll('.tag-button').forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            filterItems();
         });
     });
 </script>
