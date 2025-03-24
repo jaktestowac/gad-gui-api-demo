@@ -41,6 +41,27 @@
             color: #666;
         }
 
+        .clear-search {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            cursor: pointer;
+            display: none;
+            font-size: 14px;
+            padding: 2px 6px;
+            border-radius: 50%;
+        }
+
+        .clear-search:hover {
+            background: #f0f0f0;
+        }
+
+        .clear-search.visible {
+            display: block;
+        }
+
         .search-input:focus {
             border-color: #4CAF50;
             box-shadow: 0 0 3px rgba(76, 175, 80, 0.3);
@@ -143,6 +164,7 @@
         <div class="search-container">
             <i class="fas fa-search search-icon"></i>
             <input type="text" id="searchInput" placeholder="Search by name or tag..." class="search-input">
+            <i class="fas fa-times clear-search" id="clearSearch" title="Clear search"></i>
         </div>
         <div class="tag-filter">
             <h3>Filter by tags:</h3>
@@ -697,6 +719,26 @@
 
     searchInput.value = '';
 
+    const clearSearch = document.getElementById('clearSearch');
+
+    function toggleClearButton() {
+        clearSearch.classList.toggle('visible', searchInput.value.length > 0);
+    }
+
+    function clearSearchInput() {
+        searchInput.value = '';
+        toggleClearButton();
+        filterItems();
+        searchInput.focus();
+    }
+
+    searchInput.addEventListener('input', () => {
+        toggleClearButton();
+        filterItems();
+    });
+
+    clearSearch.addEventListener('click', clearSearchInput);
+
     document.querySelectorAll('.button-primary-small').forEach(button => {
         const tags = button.dataset.tags?.split(',') || [];
         tags.forEach(tag => uniqueTags.add(tag.trim().toLowerCase()));
@@ -771,7 +813,6 @@
         });
     }
 
-    // Add event listeners
     searchInput.addEventListener('input', filterItems);
 
     document.querySelectorAll('.tag-button').forEach(button => {
