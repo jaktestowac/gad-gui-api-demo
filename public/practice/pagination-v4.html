@@ -291,6 +291,52 @@
         .collapse-all-button.hidden {
             display: none;
         }
+
+
+        .test-cases {
+            width: 80%;
+            margin: 20px auto;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .test-cases h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .test-cases h3:before {
+            content: '►';
+            margin-right: 10px;
+            transition: transform 0.3s;
+        }
+
+        .test-cases.expanded h3:before {
+            transform: rotate(90deg);
+        }
+
+        .test-cases ul {
+            list-style-type: none;
+            padding-left: 0;
+            display: none;
+        }
+
+        .test-cases.expanded ul {
+            display: block;
+        }
+
+        .test-cases li {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-left: 3px solid #4a90e2;
+            background-color: white;
+            padding-left: 15px;
+        }
     </style>
 
     <br />
@@ -366,6 +412,18 @@
                 <button id="nextPage">Next</button>
             </div>
             <span id="elementsCount" class="infoCount">No data found</span>
+        </div>
+        <div class="test-cases">
+            <h3 onclick="this.parentElement.classList.toggle('expanded')">Test Cases for Automation (Expanded Content)</h3>
+            <ul>
+                <li>TC1: Verify additional data loading for expanded rows</li>
+                <li>TC2: Test dynamic content rendering in expanded state</li>
+                <li>TC3: Validate expanded content data structure and format</li>
+                <li>TC4: Check expanded state persistence during filtering</li>
+                <li>TC5: Test multiple row expansion data accuracy</li>
+                <li>TC6: Verify collapse all functionality and data cleanup</li>
+                <li>TC7: Test expanded content update on data refresh</li>
+            </ul>
         </div>
     </div>
     <br />

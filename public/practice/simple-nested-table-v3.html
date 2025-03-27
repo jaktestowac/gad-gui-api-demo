@@ -141,6 +141,33 @@
         .expanded .expand-icon::before {
             transform: rotate(90deg);
         }
+
+        .test-cases {
+            width: 800px;
+            margin: 20px auto;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .test-cases h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .test-cases ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .test-cases li {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-left: 3px solid #4a90e2;
+            background-color: white;
+            padding-left: 15px;
+        }
     </style>
 </head>
 
@@ -338,6 +365,22 @@
         Results history:
         <br />
         <textarea class="results-history-container" id="results-history-container" readonly> </textarea>
+    </div>
+
+    <div class="test-cases">
+        <h3>Test Cases for Automation</h3>
+        <ul>
+            <li>TC1: Verify main table headers are displayed correctly (Organization, Region, Location, Department, Actions)</li>
+            <li>TC2: Check that "Regions" button expands/collapses nested table for Tech Solutions</li>
+            <li>TC3: Verify "Departments" button expands/collapses nested table for Digital Dynamics</li>
+            <li>TC4: Validate "View" button click displays results for Global Corp</li>
+            <li>TC5: Ensure nested table "Select" buttons work for Tech Solutions locations</li>
+            <li>TC6: Check that "Global" buttons function for both Tech Solutions and Digital Dynamics</li>
+            <li>TC7: Verify results are displayed in results container after button clicks</li>
+            <li>TC8: Validate results history is updated after each action</li>
+            <li>TC9: Check that all nested tables maintain functionality after multiple expand/collapse operations</li>
+            <li>TC10: Verify proper display and functionality of Innovation Labs projects section</li>
+        </ul>
     </div>
 
     <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 24px">

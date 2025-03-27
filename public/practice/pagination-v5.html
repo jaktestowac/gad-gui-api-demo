@@ -291,6 +291,52 @@
         .collapse-all-button.hidden {
             display: none;
         }
+
+
+        .test-cases {
+            width: 80%;
+            margin: 20px auto;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .test-cases h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .test-cases h3:before {
+            content: '►';
+            margin-right: 10px;
+            transition: transform 0.3s;
+        }
+
+        .test-cases.expanded h3:before {
+            transform: rotate(90deg);
+        }
+
+        .test-cases ul {
+            list-style-type: none;
+            padding-left: 0;
+            display: none;
+        }
+
+        .test-cases.expanded ul {
+            display: block;
+        }
+
+        .test-cases li {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-left: 3px solid #4a90e2;
+            background-color: white;
+            padding-left: 15px;
+        }
     </style>
 
     <br />
@@ -356,6 +402,46 @@
         </div>
     </div>
     <br />
+    <div class="test-cases">
+        <h3 onclick="this.parentElement.classList.toggle('expanded')">Functional Test Cases</h3>
+        <ul>
+            <li>Pagination Tests:
+                <ul>
+                    <li>TC1.1: Verify navigation between pages using Previous/Next buttons</li>
+                    <li>TC1.2: Validate correct number of records per page (10 items)</li>
+                    <li>TC1.3: Check page info display accuracy</li>
+                </ul>
+            </li>
+            <li>Filtering Tests:
+                <ul>
+                    <li>TC2.1: Test single role filter selection and results</li>
+                    <li>TC2.2: Verify multiple status filters combination</li>
+                    <li>TC2.3: Test search functionality within dropdown filters</li>
+                </ul>
+            </li>
+            <li>Sorting Tests:
+                <ul>
+                    <li>TC3.1: Verify ascending/descending sort for each column</li>
+                    <li>TC3.2: Test sort persistence when changing pages</li>
+                    <li>TC3.3: Validate sort indicators in column headers</li>
+                </ul>
+            </li>
+            <li>Expanded Content Tests:
+                <ul>
+                    <li>TC4.1: Check row expansion/collapse functionality</li>
+                    <li>TC4.2: Verify all employee details are displayed correctly</li>
+                    <li>TC4.3: Test multiple rows expansion simultaneously</li>
+                </ul>
+            </li>
+            <li>Error Handling:
+                <ul>
+                    <li>TC5.1: Verify error messages for failed API requests</li>
+                    <li>TC5.2: Test behavior with empty data sets</li>
+                    <li>TC5.3: Validate handling of invalid filter combinations</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
     <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 24px">
         <a href="https://jaktestowac.pl" style="color: dimgray">
             <span style="display: flex; align-items: center; justify-self: center; font-size: medium">

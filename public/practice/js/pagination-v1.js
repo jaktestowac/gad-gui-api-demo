@@ -1354,3 +1354,7 @@ nextPageButton.addEventListener("click", () => {
     populateDataFromAPIV2(currentPage + 1);
   }
 });
+
+function populateDataPredefined() {
+  populateData(data, true, renderSimpleTable);
+}
