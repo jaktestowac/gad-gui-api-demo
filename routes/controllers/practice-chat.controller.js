@@ -64,7 +64,7 @@ const handleJoinMessage = (context, ws, data) => {
     throw new Error("Invalid username");
   }
   if (!/^[a-zA-Z0-9]+$/.test(userName)) {
-    throw new Error("Invalid username");
+    throw new Error("Username can only contain letters and numbers");
   }
   if (userName.length < 3 || userName.length > 20) {
     throw new Error("Username already taken");

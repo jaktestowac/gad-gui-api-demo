@@ -25,10 +25,10 @@ const authV2 = {
         return res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Username must be between 3 and 16 characters"));
       }
 
-      if (!/^[a-zA-Z0-9_]*$/.test(username)) {
+      if (!/^[a-zA-Z0-9]*$/.test(username)) {
         return res
           .status(HTTP_BAD_REQUEST)
-          .send(formatErrorResponse("Username can only contain letters, numbers, and underscores"));
+          .send(formatErrorResponse("Username can only contain letters and numbers"));
       }
 
       // Check if username already exists

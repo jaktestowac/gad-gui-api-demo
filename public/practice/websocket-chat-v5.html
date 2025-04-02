@@ -341,7 +341,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            color: #7289da;
+            color: #4e67c0;
             border: 1px solid #3f3f3f;
             border-bottom: none;
             min-width: 100px;
@@ -349,6 +349,12 @@
             justify-content: space-between;
             user-select: none;
             font-size: 0.85rem;
+        }
+
+        .tab.active {
+            background: #7289da;
+            color: white;
+            box-shadow: 0 2px 8px rgba(114, 137, 218, 0.3);
         }
 
         #conversations {
@@ -713,6 +719,27 @@
             transform: translateZ(0);
             /* fixes a bug in Safari iOS where the scroller doesn't update */
         }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 0;
+            cursor: pointer;
+        }
+
+        .message-compact {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .message-very-compact {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px !important;
+        }
     </style>
 </head>
 
@@ -941,6 +968,16 @@
                 return;
             }
 
+            if (usernameInputValue.length < 3) {
+                document.getElementById('registerError').textContent = 'Username must be at least 3 characters long';
+                return;
+            }
+
+            if (!/^[a-zA-Z0-9]+$/.test(usernameInputValue)) {
+                document.getElementById('registerError').textContent = 'Username can only contain letters and numbers';
+                return;
+            }
+
             // Send registration request
             fetch('/api/practice/v2/auth/register', {
                 method: 'POST',
@@ -1161,6 +1198,7 @@
                     const messagesDiv = document.getElementById(`messages-${conversationId}`).querySelector('.messages-content');
                     const messageElement = document.createElement('p');
                     messageElement.className = isPrivate ? 'private-message' : '';
+                    messageElement.classList.add('message-compact');
                     messageElement.innerHTML = `
                         <span class="message-time">${time}</span>
                         <span class="${className}">
@@ -1178,14 +1216,19 @@
                     updateUserList(data.users);
                     break;
                 case 'error':
-                    const messagesDiv = document.getElementById(`messages-general`);
+                    // const messagesDiv = document.getElementById(`messages-general`);
+                    const messagesDiv = document.querySelector('.conversation.active');
                     if (messagesDiv) {
                         const contentDiv = messagesDiv.querySelector('.messages-content');
                         const errorElement = document.createElement('p');
+                        errorElement.classList.add('message-compact');
+                        if (data?.data?.message === undefined && data.message === undefined) {
+                            break;
+                        }
                         errorElement.innerHTML = `
                             <span class="message-time">${time}</span>
                             <span class="message-content system-message">
-                                ${data.message}
+                                ${data.message || data?.data?.message || 'An error occurred.'}
                             </span>
                         `;
                         contentDiv.appendChild(errorElement);
