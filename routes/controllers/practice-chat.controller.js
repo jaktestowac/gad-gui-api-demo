@@ -117,6 +117,10 @@ const handlePrivateMessage = (context, ws, data) => {
   context.sendPrivateMessage(ws.userName, data.recipient, data.message);
 };
 
+const practiceChatLeave = (context, ws) => {
+  handleDisconnect(context, ws);
+};
+
 const handleDisconnect = (context, ws) => {
   if (ws.userName) {
     context.connectedUsers.delete(ws.userName);
@@ -143,6 +147,7 @@ const handleUnknownMessage = (context, ws, data) => {
 
 const messageHandlers = {
   practiceChatJoin: handleJoinMessage,
+  practiceChatLeave: practiceChatLeave,
   practiceChatMessage: handleChatMessage,
   practiceChatPrivate: handlePrivateMessage,
   practiceChatDefault: handleUnknownMessage,

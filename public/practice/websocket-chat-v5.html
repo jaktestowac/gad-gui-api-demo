@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD - Real-Time Chat with Weather Widget (based on WebSockets)</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            margin: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            text-align: center;
+            margin-bottom: 4px;
+            color: #7289da;
+        }
+
+        h6 {
+            margin-bottom: 6px;
+        }
+
+        .description {
+            margin-bottom: 20px;
+        }
+
+        #messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #2c2c2c;
+            border-radius: 12px;
+            height: 100%;
+        }
+
+        #messages p {
+            background-color: #3f3f3f;
+            padding: 10px 15px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            word-wrap: break-word;
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+        }
+
+        .message-time {
+            color: #666;
+            font-size: 0.8em;
+            min-width: 45px;
+        }
+
+        .message-content {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        #usernameInput,
+        #messageInput,
+        #passwordInput,
+        #registerUsernameInput,
+        #registerPasswordInput,
+        #registerConfirmPasswordInput {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            background-color: #2c2c2c;
+            color: #ffffff;
+            font-size: 16px;
+            width: 400px;
+        }
+
+        #usernameInput {
+            background-color: #585858;
+            width: 280px !important;
+        }
+
+        #usernameInput:focus,
+        #messageInput:focus,
+        #passwordInput:focus,
+        #registerUsernameInput:focus,
+        #registerPasswordInput:focus,
+        #registerConfirmPasswordInput:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #7289da;
+        }
+
+        .chat-button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            background-color: #7289da;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .chat-button:hover {
+            background-color: #5c6fb1;
+        }
+
+        #loginScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+        }
+
+        .login-box {
+            background-color: #2c2c2c;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            width: 380px;
+        }
+
+        .login-box h2 {
+            margin-bottom: 20px;
+            color: #7289da;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ddd;
+        }
+
+        #usernameInput,
+        #passwordInput,
+        #registerUsernameInput,
+        #registerPasswordInput,
+        #registerConfirmPasswordInput {
+            width: 100% !important;
+            margin-bottom: 5px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .message-username {
+            color: #7289da;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .chat-container {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            align-content: center;
+            flex: 1 0 auto;
+            padding: 5rem 1rem;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0px;
+            flex-shrink: 0;
+            background: var(--bg-card);
+            color: #fff;
+            padding: 0rem !important;
+            text-align: center;
+            width: 100%;
+        }
+
+        #footer-container {
+            padding: 0rem;
+        }
+
+        .error-message {
+            color: #ff4444;
+            font-size: 0.9em;
+            margin-top: 6px;
+            margin-bottom: 6px;
+            min-height: 1.2em;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .success-message {
+            color: #44ff44;
+            font-size: 0.9em;
+            margin-top: 6px;
+            margin-bottom: 6px;
+            min-height: 1.2em;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .form-input {
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            background-color: #5c5c5c !important;
+            color: #ffffff;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        .form-input.error {
+            box-shadow: 0 0 0 2px #ff4444 !important;
+        }
+
+        .system-message {
+            color: #ff4444;
+            font-style: italic;
+        }
+
+        .chat-layout {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        #userList {
+            width: 200px;
+            background: #2c2c2c;
+            border-radius: 12px;
+            padding: 15px;
+            height: 40vh;
+        }
+
+        .user-item {
+            padding: 8px 12px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .user-item:hover {
+            background-color: #3f3f3f;
+        }
+
+        .user-item.selected {
+            background-color: #7289da;
+        }
+
+        .recipient-indicator {
+            font-size: 0.8em;
+            color: #7289da;
+            margin-left: 8px;
+        }
+
+        #weatherWidget {
+            background: #2c2c2c;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            width: 200px;
+            text-align: center;
+        }
+
+        .weather-data {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            color: #fff;
+        }
+
+        .weather-label {
+            color: #7289da;
+        }
+
+        .secondary-button {
+            padding: 10px 12px;
+            border: none;
+            border-radius: 12px;
+            background-color: #795454;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background-color 0.3s;
+        }
+
+        .secondary-button:hover {
+            background-color: #5c3f3f;
+        }
+
+        .tab-container {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            height: 70vh;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 10px;
+            background: #1a1a1a;
+            padding: 4px 4px 0 4px;
+            border-radius: 8px 8px 0 0;
+            min-height: 45px;
+        }
+
+        .tab {
+            padding: 8px 16px;
+            background: #2c2c2c;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #7289da;
+            border: 1px solid #3f3f3f;
+            border-bottom: none;
+            min-width: 120px;
+            height: 40px;
+            justify-content: space-between;
+            user-select: none;
+        }
+
+        .tab.active {
+            background: #3f3f3f;
+            color: white;
+            position: relative;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #3f3f3f;
+        }
+
+        #conversations {
+            background: #3f3f3f;
+            border-radius: 0 0 12px 12px;
+            height: calc(70vh - 50px);
+            overflow: hidden;
+        }
+
+        .conversation {
+            height: 100%;
+            background: #2c2c2c;
+            margin: 2px;
+            border-radius: 8px;
+        }
+
+        .tab-close {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #585858;
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .tab-close:hover {
+            background: #ff4444;
+        }
+
+        .conversation {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            background-color: #2c2c2c;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .conversation.active {
+            display: flex;
+        }
+
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            background-color: #2c2c2c;
+            border-radius: 12px;
+            height: calc(100% - 80px);
+            min-height: 0;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .messages-content {
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 100%;
+            flex: 1;
+        }
+
+        .messages p:last-child {
+            margin-bottom: 0;
+        }
+
+        .conversation .input-container {
+            margin-top: auto;
+            padding-top: 10px;
+            min-height: 60px;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            background-color: #3f3f3f;
+            color: #ffffff;
+            font-size: 16px;
+        }
+
+        .message-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #7289da;
+        }
+
+        #conversations {
+            height: 500px;
+        }
+
+        .tab-notification {
+            background: #ff4444;
+            color: white;
+            border-radius: 50%;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 6px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .tab.active .tab-notification {
+            display: none;
+        }
+
+        .auth-switch {
+            margin-top: 20px;
+            color: #7289da;
+            cursor: pointer;
+        }
+
+        .auth-form {
+            transition: all 0.3s ease;
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .auth-tab {
+            padding: 8px 16px;
+            background: #3f3f3f;
+            border-radius: 8px;
+            cursor: pointer;
+            color: #ddd;
+        }
+
+        .auth-tab.active {
+            background: #7289da;
+            color: white;
+        }
+
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background-color: #2c2c2c;
+            padding: 15px 20px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .user-info h3 {
+            margin: 0;
+            text-align: left;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .logout-btn,
+        .leave-chat-btn {
+            background-color: #3f3f3f;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            color: #ff4444;
+        }
+
+        .leave-chat-btn {
+            color: #ffa500;
+        }
+
+        .logout-btn:hover {
+            background-color: #ff4444;
+            color: white;
+        }
+
+        .leave-chat-btn:hover {
+            background-color: #ffa500;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <div id="loginScreen">
+        <div class="login-box">
+            <h2>Chat Authentication</h2>
+
+            <div class="auth-tabs">
+                <div class="auth-tab active" data-tab="login">Login</div>
+                <div class="auth-tab" data-tab="register">Register</div>
+            </div>
+
+            <div id="loginForm" class="auth-form">
+                <div class="form-group">
+                    <label for="usernameInput">Username</label>
+                    <input type="text" id="usernameInput" class="form-input" maxlength="32" placeholder="Your username" />
+                </div>
+
+                <div class="form-group">
+                    <label for="passwordInput">Password</label>
+                    <input type="password" id="passwordInput" class="form-input" placeholder="Your password" />
+                </div>
+
+                <div id="loginError" class="error-message"></div>
+                <button class="chat-button" onclick="login()">Login</button>
+            </div>
+
+            <div id="registerForm" class="auth-form hidden">
+                <div class="form-group">
+                    <label for="registerUsernameInput">Username</label>
+                    <input type="text" id="registerUsernameInput" class="form-input" maxlength="32" placeholder="Choose a username" />
+                </div>
+
+                <div class="form-group">
+                    <label for="registerPasswordInput">Password</label>
+                    <input type="password" id="registerPasswordInput" class="form-input" placeholder="Choose a password" />
+                </div>
+
+                <div class="form-group">
+                    <label for="registerConfirmPasswordInput">Confirm Password</label>
+                    <input type="password" id="registerConfirmPasswordInput" class="form-input" placeholder="Confirm your password" />
+                </div>
+
+                <div id="registerError" class="error-message"></div>
+                <div id="registerSuccess" class="success-message"></div>
+                <button class="chat-button" onclick="register()">Register</button>
+            </div>
+
+            <br />
+            <br />
+            <div align="center">
+                <a href="/practice/">
+                    <button class="secondary-button">Return to practice pages</button></a>
+            </div>
+        </div>
+    </div>
+
+    <div id="chatScreen" class="chat-container hidden">
+        <h2>Real-Time Chat with Weather Widget (v5)</h2>
+        <div class="user-info">
+            <h3>Welcome, <span id="welcomeUsername"></span>!</h3>
+            <div class="user-actions">
+                <button id="leaveChatButton" class="leave-chat-btn hidden" onclick="leaveChat()"><i class="fas fa-sign-out-alt"></i> Leave Chat</button>
+                <button id="logoutButton" class="logout-btn" onclick="logout()"><i class="fas fa-power-off"></i> Logout</button>
+            </div>
+        </div>
+
+        <button id="joinChatButton" class="chat-button" onclick="joinChat()">Join Chat</button>
+
+        <div id="chatInterface" class="chat-layout hidden">
+            <div>
+                <div id="weatherWidget">
+                    <h3 style="margin-bottom: 15px; color: #7289da;">Weather Info</h3>
+                    <div class="weather-data">
+                        <span class="weather-label">Temperature:</span>
+                        <span id="temperature">--°C</span>
+                    </div>
+                    <div class="weather-data">
+                        <span class="weather-label">Humidity:</span>
+                        <span id="humidity">--%</span>
+                    </div>
+                    <div class="weather-data">
+                        <span class="weather-label">Wind Speed:</span>
+                        <span id="windSpeed">-- m/s</span>
+                    </div>
+                </div>
+                <div id="userList">
+                    <h3 style="margin-bottom: 15px; color: #7289da;">Online Users</h3>
+                    <div id="userListContent"></div>
+                </div>
+            </div>
+            <div class="tab-container">
+                <div class="tabs" id="conversationTabs"></div>
+                <div id="conversations"></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="/js/wsh.js"></script>
+    <script>
+        // Authentication state
+        let authToken = localStorage.getItem('chatAuthToken');
+        let currentUser = null;
+
+        // WebSocket connection
+        const socket = new WebSocket(wsAddr);
+        let username = '';
+        let selectedUser = null;
+        let weatherInterval;
+        let conversations = new Map();
+        let isChatActive = false;
+
+        // Check if user is already authenticated
+        function checkAuthentication() {
+            if (!authToken) {
+                showLoginScreen();
+                return;
+            }
+
+            fetch('/api/practice/v2/auth/check', {
+                headers: {
+                    'Authorization': `Bearer ${authToken}`
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Authentication failed');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    currentUser = data;
+                    username = data.username;
+                    showChatScreen();
+                    document.getElementById('welcomeUsername').textContent = username;
+                })
+                .catch(error => {
+                    console.error('Auth check failed:', error);
+                    localStorage.removeItem('chatAuthToken');
+                    authToken = null;
+                    showLoginScreen();
+                });
+        }
+
+        function showLoginScreen() {
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('chatScreen').classList.add('hidden');
+        }
+
+        function showChatScreen() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('chatScreen').classList.remove('hidden');
+            document.getElementById('welcomeUsername').textContent = username;
+        }
+
+        function switchAuthTab(tabName) {
+            document.querySelectorAll('.auth-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.tab === tabName);
+            });
+
+            document.getElementById('loginForm').classList.toggle('hidden', tabName !== 'login');
+            document.getElementById('registerForm').classList.toggle('hidden', tabName !== 'register');
+
+            // Clear error messages when switching tabs
+            document.getElementById('loginError').textContent = '';
+            document.getElementById('registerError').textContent = '';
+            document.getElementById('registerSuccess').textContent = '';
+        }
+
+        function register() {
+            const usernameInputValue = document.getElementById('registerUsernameInput').value.trim();
+            const password = document.getElementById('registerPasswordInput').value;
+            const confirmPassword = document.getElementById('registerConfirmPasswordInput').value;
+
+            // Clear error and success messages
+            document.getElementById('registerError').textContent = '';
+            document.getElementById('registerSuccess').textContent = '';
+
+            // Validate inputs
+            if (!usernameInputValue || !password) {
+                document.getElementById('registerError').textContent = 'Username and password are required';
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                document.getElementById('registerError').textContent = 'Passwords do not match';
+                return;
+            }
+
+            // Send registration request
+            fetch('/api/practice/v2/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username: usernameInputValue, password })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById('registerError').textContent = data.error?.message;
+                    } else {
+                        document.getElementById('registerSuccess').textContent = 'Registration successful! You can now log in.';
+                        // Clear registration fields
+                        document.getElementById('registerUsernameInput').value = '';
+                        document.getElementById('registerPasswordInput').value = '';
+                        document.getElementById('registerConfirmPasswordInput').value = '';
+
+                        // Automatically switch to login tab after successful registration
+                        setTimeout(() => {
+                            switchAuthTab('login');
+                            document.getElementById('usernameInput').value = username;
+                        }, 1500);
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('registerError').textContent = 'Registration failed. Please try again.';
+                    console.error('Registration error:', error);
+                });
+        }
+
+        function login() {
+            let usernameInputValue = document.getElementById('usernameInput').value.trim();
+            const password = document.getElementById('passwordInput').value;
+
+            // Clear error message
+            document.getElementById('loginError').textContent = '';
+
+            if (!usernameInputValue || !password) {
+                document.getElementById('loginError').textContent = 'Username and password are required';
+                return;
+            }
+
+            fetch('/api/practice/v2/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username: usernameInputValue, password })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById('loginError').textContent = data.error?.message;
+                    } else {
+                        // Store token and user info
+                        authToken = data.token;
+                        localStorage.setItem('chatAuthToken', authToken);
+                        currentUser = {
+                            userId: data.userId,
+                            username: data.username
+                        };
+                        username = data.username;
+
+                        // Show chat screen
+                        showChatScreen();
+                        document.getElementById('welcomeUsername').textContent = username;
+                        // Clear login fields after successful login
+                        document.getElementById('usernameInput').value = '';
+                        document.getElementById('passwordInput').value = '';
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('loginError').textContent = 'Login failed. Please try again.';
+                    console.error('Login error:', error);
+                });
+        }
+
+        function logout() {
+            if (!authToken) return;
+
+            // If chat is active, leave the chat first
+            if (isChatActive) {
+                leaveChat();
+            }
+
+            // Call logout API
+            fetch('/api/practice/v2/auth/logout', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${authToken}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(() => {
+                    // Clear local auth data
+                    localStorage.removeItem('chatAuthToken');
+                    authToken = null;
+                    currentUser = null;
+                    username = '';
+
+                    // Show login screen
+                    showLoginScreen();
+                })
+                .catch(error => {
+                    console.error('Logout error:', error);
+                    // Still clear local auth data and show login screen on error
+                    localStorage.removeItem('chatAuthToken');
+                    authToken = null;
+                    showLoginScreen();
+                });
+        }
+
+        function joinChat() {
+            if (!authToken || !currentUser) {
+                showLoginScreen();
+                return;
+            }
+
+            document.getElementById('joinChatButton').classList.add('hidden');
+            document.getElementById('chatInterface').classList.remove('hidden');
+            document.getElementById('leaveChatButton').classList.remove('hidden');
+
+            // Initialize conversations if not already done
+            if (conversations.size === 0) {
+                createConversation(null);
+                activateConversation('general');
+            }
+
+            // Send join message to websocket
+            socket.send(JSON.stringify({
+                type: 'practiceChatJoin',
+                username: username,
+                version: 'v5'
+            }));
+
+            isChatActive = true;
+            requestWeatherUpdate();
+            activateConversation('general');
+        }
+
+        function leaveChat() {
+            if (isChatActive) {
+                socket.send(JSON.stringify({
+                    type: 'practiceChatLeave',
+                    username: username
+                }));
+                isChatActive = false;
+
+                // Reset UI elements
+                document.getElementById('chatInterface').classList.add('hidden');
+                document.getElementById('leaveChatButton').classList.add('hidden');
+                document.getElementById('joinChatButton').classList.remove('hidden');
+
+                // Clear conversations
+                conversations.forEach((conv, id) => {
+                    conv.tab.remove();
+                    conv.container.remove();
+                });
+                conversations.clear();
+
+                // Clear user list
+                document.getElementById('userListContent').innerHTML = '';
+            }
+        }
+
+        function requestWeatherUpdate() {
+            socket.send(JSON.stringify({
+                type: 'getWeather',
+                days: 1,
+                city: 'Current'
+            }));
+        }
+
+        socket.addEventListener('open', () => {
+            weatherInterval = setInterval(requestWeatherUpdate, 5000);
+        });
+
+        socket.addEventListener('close', () => {
+            if (weatherInterval) {
+                clearInterval(weatherInterval);
+            }
+        });
+
+        function formatTime(date) {
+            return date.toLocaleTimeString('en-US', {
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        socket.addEventListener('message', (event) => {
+            const data = JSON.parse(event.data);
+            const time = formatTime(new Date());
+
+            switch (data.type) {
+                case 'practiceChatMessage':
+                case 'practiceChatPrivate': {
+                    const isPrivate = data.type === 'practiceChatPrivate';
+                    const conversationId = isPrivate ?
+                        (data.username === username ? data.recipient : data.username) :
+                        'general';
+
+                    createConversation(isPrivate ? conversationId : null);
+
+                    if (data.username !== username) {
+                        incrementNotification(conversationId);
+                    }
+
+                    let className = 'message-content';
+                    if (data.username?.toLowerCase().includes('[system]')) {
+                        className += ' system-message';
+                    }
+
+                    const messagesDiv = document.getElementById(`messages-${conversationId}`).querySelector('.messages-content');
+                    messagesDiv.innerHTML += `
+                        <p class="${isPrivate ? 'private-message' : ''}">
+                            <span class="message-time">${time}</span>
+                            <span class="${className}">
+                                <span class="message-username">${data.username}:</span>
+                                <span>${data.message}</span>
+                            </span>
+                        </p>
+                    `;
+
+                    setTimeout(() => {
+                        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                    }, 50);
+                    break;
+                }
+                case 'practiceChatUserList':
+                    updateUserList(data.users);
+                    break;
+                case 'error':
+                    const messagesDiv = document.getElementById(`messages-general`);
+                    if (messagesDiv) {
+                        messagesDiv.innerHTML += `
+                            <p>
+                                <span class="message-time">${time}</span>
+                                <span class="message-content system-message">
+                                    ${data.message}
+                                </span>
+                            </p>
+                        `;
+                    }
+                    break;
+                case 'weatherData': {
+                    const weather = data.weather[0];
+                    document.getElementById('temperature').textContent = `${weather.temperature}°C`;
+                    document.getElementById('humidity').textContent = `${weather.humidity}`;
+                    document.getElementById('windSpeed').textContent = `${weather.windSpeed} km/h`;
+                    break;
+                }
+            }
+        });
+
+        function sendMessage(conversationId) {
+            const messageInput = document.getElementById(`messageInput-${conversationId}`);
+            const message = messageInput.value.trim();
+
+            if (message && username) {
+                socket.send(JSON.stringify({
+                    type: conversationId !== 'general' ? 'practiceChatPrivate' : 'practiceChatMessage',
+                    username: username,
+                    message: message,
+                    recipient: conversationId !== 'general' ? conversationId : null
+                }));
+                messageInput.value = '';
+            }
+        }
+
+        function updateUserList(users) {
+            const userListContent = document.getElementById('userListContent');
+            userListContent.innerHTML = users
+                .filter(user => user !== username)
+                .map(user => `
+                    <div class="user-item" onclick="selectUser('${user}')" id="user-${user}">
+                        <i class="fas fa-user"></i> ${user}
+                    </div>
+                `).join('');
+        }
+
+        function selectUser(user) {
+            if (selectedUser === user) {
+                selectedUser = null;
+                activateConversation('general');
+            } else {
+                selectedUser = user;
+                const conversationId = createConversation(user);
+                activateConversation(conversationId);
+            }
+        }
+
+        function createConversation(recipient) {
+            const conversationsDiv = document.getElementById('conversations');
+            const tabsDiv = document.getElementById('conversationTabs');
+            const conversationId = recipient || 'general';
+
+            if (!conversations.has(conversationId)) {
+                const tab = document.createElement('div');
+                tab.className = 'tab';
+                tab.onclick = (e) => {
+                    if (e.target.classList.contains('tab-close')) return;
+                    activateConversation(conversationId);
+                };
+                tab.innerHTML = `
+                    <span class="tab-title">${recipient || 'General Chat'}</span>
+                    <span class="tab-notification" style="display: none">0</span>
+                    ${recipient ? `<button class="tab-close" onclick="closeConversation('${conversationId}')">×</button>` : ''}
+                `;
+
+                tabsDiv.appendChild(tab);
+
+                const conv = document.createElement('div');
+                conv.className = 'conversation';
+                conv.innerHTML = `
+                    <div id="messages-${conversationId}" class="messages">
+                        <div class="messages-content"></div>
+                    </div>
+                    <div class="input-container">
+                        <input type="text" 
+                               class="message-input" 
+                               id="messageInput-${conversationId}" 
+                               maxlength="128" 
+                               placeholder="${recipient ? `Message to ${recipient}...` : 'Message to everyone...'}" />
+                        <button class="chat-button" onclick="sendMessage('${conversationId}')">Send</button>
+                    </div>
+                `;
+
+                conv.querySelector('.message-input').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') sendMessage(conversationId);
+                });
+
+                conversationsDiv.appendChild(conv);
+
+                conversations.set(conversationId, {
+                    tab,
+                    container: conv,
+                    unreadCount: 0
+                });
+            }
+
+            return conversationId;
+        }
+
+        function incrementNotification(conversationId) {
+            const conv = conversations.get(conversationId);
+            if (!conv) return;
+
+            const notificationSpan = conv.tab.querySelector('.tab-notification');
+            conv.unreadCount++;
+
+            if (!conv.tab.classList.contains('active')) {
+                notificationSpan.style.display = 'flex';
+                notificationSpan.textContent = conv.unreadCount;
+            }
+        }
+
+        function clearNotifications(conversationId) {
+            const conv = conversations.get(conversationId);
+            if (!conv) return;
+
+            conv.unreadCount = 0;
+            const notificationSpan = conv.tab.querySelector('.tab-notification');
+            notificationSpan.style.display = 'none';
+        }
+
+        function activateConversation(conversationId) {
+            conversations.forEach((conv, id) => {
+                conv.tab.classList.toggle('active', id === conversationId);
+                conv.container.classList.toggle('active', id === conversationId);
+            });
+            selectedUser = conversationId === 'general' ? null : conversationId;
+
+            clearNotifications(conversationId);
+
+            const input = document.getElementById(`messageInput-${conversationId}`);
+            if (input) input.focus();
+        }
+
+        function closeConversation(conversationId) {
+            if (conversationId === 'general') return;
+
+            const conv = conversations.get(conversationId);
+            if (!conv) return;
+
+            event.stopPropagation();
+
+            conv.tab.remove();
+            conv.container.remove();
+            conversations.delete(conversationId);
+
+            activateConversation('general');
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set up auth tab switching
+            document.querySelectorAll('.auth-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    switchAuthTab(tab.dataset.tab);
+                });
+            });
+
+            // Check if user is already authenticated
+            checkAuthentication();
+        });
+
+        // Input event handlers
+        document.getElementById('usernameInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') login();
+        });
+
+        document.getElementById('passwordInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') login();
+        });
+
+        document.getElementById('registerUsernameInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') register();
+        });
+
+        document.getElementById('registerPasswordInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') register();
+        });
+
+        document.getElementById('registerConfirmPasswordInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') register();
+        });
+    </script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+    <script type="text/javascript" src="./js/practice-common.js"></script>
+</body>
+
+</html>
