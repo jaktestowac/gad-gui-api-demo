@@ -144,6 +144,10 @@
             background-color: #5c6fb1;
         }
 
+        .chat-button-secondary {
+            background-color: #3f3f3f;
+        }
+
         #loginScreen {
             position: fixed;
             top: 0;
@@ -155,6 +159,37 @@
             justify-content: center;
             align-items: center;
             z-index: 2;
+        }
+
+        #loadingScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 3;
+            color: white;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(114, 137, 218, 0.2);
+            border-top-color: #7289da;
+            border-radius: 50%;
+            animation: spinner 1s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spinner {
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .login-box {
@@ -396,34 +431,64 @@
             display: none;
         }
 
-        .auth-switch {
-            margin-top: 20px;
-            color: #7289da;
-            cursor: pointer;
-        }
-
-        .auth-form {
-            transition: all 0.3s ease;
-        }
-
         .auth-tabs {
             display: flex;
             margin-bottom: 20px;
-            gap: 10px;
+            gap: 0;
             justify-content: center;
+            background-color: #1a1a1a;
+            border-radius: 8px;
+            padding: 4px;
+            width: 100%;
+            overflow: hidden;
         }
 
         .auth-tab {
-            padding: 8px 16px;
+            padding: 10px 20px;
             background: #3f3f3f;
-            border-radius: 8px;
             cursor: pointer;
             color: #ddd;
+            flex: 1;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            font-weight: 500;
+            font-size: 0.95rem;
+            border-radius: 6px;
+            margin: 0 2px;
+        }
+
+        .auth-tab:first-child {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            margin-left: 0;
+        }
+
+        .auth-tab:last-child {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            margin-right: 0;
         }
 
         .auth-tab.active {
             background: #7289da;
             color: white;
+            box-shadow: 0 2px 8px rgba(114, 137, 218, 0.3);
+        }
+
+        .auth-tab:not(.active):hover {
+            background: #4f4f4f;
+        }
+
+        .auth-form {
+            transition: all 0.3s ease;
+            padding: 10px 0;
+        }
+
+        .auth-switch {
+            margin-top: 20px;
+            color: #7289da;
+            cursor: pointer;
         }
 
         .user-info {
@@ -634,13 +699,22 @@
         </div>
     </header>
 
-    <div id="loginScreen">
+    <div id="loadingScreen">
+        <div class="spinner"></div>
+        <p>User authentication in progress...</p>
+    </div>
+
+    <div id="loginScreen" class="hidden">
         <div class="login-box">
             <h2>Chat Authentication</h2>
 
             <div class="auth-tabs">
-                <div class="auth-tab active" data-tab="login">Login</div>
-                <div class="auth-tab" data-tab="register">Register</div>
+                <div class="auth-tab active" data-tab="login">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </div>
+                <div class="auth-tab" data-tab="register">
+                    <i class="fas fa-user-plus"></i> Register
+                </div>
             </div>
 
             <div id="loginForm" class="auth-form">
@@ -655,7 +729,9 @@
                 </div>
 
                 <div id="loginError" class="error-message"></div>
-                <button class="chat-button" onclick="login()">Login</button>
+                <div align="center">
+                    <button class="chat-button" onclick="login()"><i class="fa-solid fa-right-to-bracket"></i> &nbsp;Login</button>
+                </div>
             </div>
 
             <div id="registerForm" class="auth-form hidden">
@@ -676,14 +752,19 @@
 
                 <div id="registerError" class="error-message"></div>
                 <div id="registerSuccess" class="success-message"></div>
-                <button class="chat-button" onclick="register()">Register</button>
+                <div align="center">
+                    <button class="chat-button" onclick="register()">Register</button>
+                </div>
             </div>
 
             <br />
             <br />
             <div align="center">
                 <a href="/practice/">
-                    <button class="secondary-button">Return to practice pages</button></a>
+                    <button class="chat-button chat-button-secondary">
+                        <i class="fa-solid fa-left-long"></i> &nbsp; Return to practice pages
+                    </button>
+                </a>
             </div>
         </div>
     </div>
@@ -755,6 +836,7 @@
         // Check if user is already authenticated
         function checkAuthentication() {
             if (!authToken) {
+                hideLoadingScreen();
                 showLoginScreen();
                 return;
             }
@@ -773,6 +855,7 @@
                 .then(data => {
                     currentUser = data;
                     username = data.username;
+                    hideLoadingScreen();
                     showChatScreen();
                     document.getElementById('welcomeUsername').textContent = username;
                 })
@@ -780,8 +863,13 @@
                     console.error('Auth check failed:', error);
                     localStorage.removeItem('chatAuthToken');
                     authToken = null;
+                    hideLoadingScreen();
                     showLoginScreen();
                 });
+        }
+
+        function hideLoadingScreen() {
+            document.getElementById('loadingScreen').classList.add('hidden');
         }
 
         function showLoginScreen() {
@@ -873,6 +961,10 @@
                 return;
             }
 
+            // Show loading screen during login
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('loadingScreen').classList.remove('hidden');
+
             fetch('/api/practice/v2/auth/login', {
                 method: 'POST',
                 headers: {
@@ -883,6 +975,8 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) {
+                        hideLoadingScreen();
+                        showLoginScreen();
                         document.getElementById('loginError').textContent = data.error?.message;
                     } else {
                         // Store token and user info
@@ -895,6 +989,7 @@
                         username = data.username;
 
                         // Show chat screen
+                        hideLoadingScreen();
                         showChatScreen();
                         document.getElementById('welcomeUsername').textContent = username;
                         // Clear login fields after successful login
@@ -903,6 +998,8 @@
                     }
                 })
                 .catch(error => {
+                    hideLoadingScreen();
+                    showLoginScreen();
                     document.getElementById('loginError').textContent = 'Login failed. Please try again.';
                     console.error('Login error:', error);
                 });
