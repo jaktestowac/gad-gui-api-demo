@@ -128,6 +128,25 @@ function generatePasteDateStrings(pastDays) {
   return dateStrings;
 }
 
+function generatePastAndFutureDateStringsFromDate(dateStr, pastDays = 0, futureDays = 0) {
+  const dateStrings = [];
+  for (let i = 0; i < pastDays; i++) {
+    const date = new Date(dateStr);
+    date.setDate(date.getDate() - i);
+    dateStrings.push(date.toISOString().split("T")[0]);
+  }
+  for (let i = 0; i < futureDays; i++) {
+    const date = new Date(dateStr);
+    date.setDate(date.getDate() + i);
+    dateStrings.push(date.toISOString().split("T")[0]);
+  }
+
+  const uniqueDateStrings = [...new Set(dateStrings)];
+  uniqueDateStrings.sort((a, b) => new Date(a) - new Date(b));
+
+  return uniqueDateStrings;
+}
+
 function generatePastDateStringsFromDate(dateStr, pastDays) {
   const dateStrings = [];
   for (let i = 0; i < pastDays; i++) {
@@ -466,8 +485,63 @@ function generateWeatherResponse(
   return weatherData;
 }
 
+function simpleWeatherGeneratorV2ForOneDay(date, location) {
+  const dataGenerator = new RandomValueGeneratorWithSeed(date + location);
+
+  const conditions = [
+    { name: "Sunny", icon: "fa-sun" },
+    { name: "Partly Cloudy", icon: "fa-cloud-sun" },
+    { name: "Cloudy", icon: "fa-cloud" },
+    { name: "Rainy", icon: "fa-cloud-rain" },
+    { name: "Thunderstorm", icon: "fa-bolt" },
+  ];
+
+  const baseTemp = dataGenerator.getNextValue(15, 35);
+  const condition = conditions[dataGenerator.getNextValue(0, conditions.length - 1)];
+  const humidity = dataGenerator.getNextValue(30, 90);
+  const wind = dataGenerator.getNextValue(0, 20);
+  const feelsLike = baseTemp + Math.floor(Math.random() * 5) - 2;
+
+  return {
+    date,
+    location,
+    temperature: baseTemp,
+    condition: condition.name,
+    icon: condition.icon,
+    humidity,
+    wind,
+    feelsLike,
+  };
+}
+
+const defaultWeatherV2Options = {
+  daysBefore: 3,
+  daysAfter: 3,
+  location: "Warsaw",
+  date: new Date().toISOString().split("T")[0],
+};
+
+function generateWeatherV2Response({ options }) {
+  const newOptions = options || defaultWeatherV2Options;
+  const params = { ...defaultWeatherV2Options, ...newOptions };
+  logDebug(`Requested weather V2 data for:`, { params });
+
+  const dates = generatePastAndFutureDateStringsFromDate(params.date, params.daysBefore, params.daysAfter);
+
+  const weatherData = [];
+  for (let i = 0; i < dates.length; i++) {
+    const currentDate = dates[i];
+    const weather = simpleWeatherGeneratorV2ForOneDay(currentDate, params.location);
+    weatherData.push(weather);
+  }
+
+  return { weatherData, params };
+}
+
 module.exports = {
   generateWeatherResponse,
+  generateWeatherV2Response,
+  defaultWeatherV2Options,
   generateWeatherDataForNPastDays,
   generateWeatherDataForNFutureDays,
   generateWeatherDataForNPastDaysFromDate,

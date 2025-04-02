@@ -2,7 +2,11 @@ const {
   generateIncomeOutcomeData,
   generateRandomSimplifiedIncomeOutcomeData,
 } = require("../helpers/generators/income-outcome.generator");
-const { generateWeatherResponse } = require("../helpers/generators/weather.generator");
+const {
+  generateWeatherResponse,
+  generateWeatherV2Response,
+  defaultWeatherV2Options,
+} = require("../helpers/generators/weather.generator");
 const { HTTP_OK } = require("../helpers/response.helpers");
 const { logDebug } = require("../helpers/logger-api");
 const { generateEcommerceShoppingCart } = require("../helpers/generators/ecommerce-shopping-cart.generator");
@@ -131,6 +135,20 @@ function handleData(req, res, isAdmin) {
       true
     );
     res.status(HTTP_OK).json(weatherData);
+    return;
+  }
+
+  if (
+    req.method === "GET" &&
+    (req.url.includes("/api/v2/data/random/weather") || req.url.includes("/api/v2/data/random/weather-simple"))
+  ) {
+    const queryParams = new URLSearchParams(req.url.split("?")[1]);
+    const daysBefore = parseInt(queryParams.get("daysBefore")) || defaultWeatherV2Options.daysBefore;
+    const daysAfter = parseInt(queryParams.get("daysAfter")) || defaultWeatherV2Options.daysAfter;
+    const city = queryParams.get("city") || defaultWeatherV2Options.city;
+    const date = queryParams.get("date") || new Date().toISOString().split("T")[0];
+    const { weatherData, params } = generateWeatherV2Response({ date, daysBefore, daysAfter, city });
+    res.status(HTTP_OK).json({ params, weather: weatherData });
     return;
   }
 
