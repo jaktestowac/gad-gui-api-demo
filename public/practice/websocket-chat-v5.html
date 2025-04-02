@@ -359,7 +359,7 @@
         }
 
         .conversation {
-            height: 100%;
+            height: calc(100% - 25px);
             background: #2c2c2c;
             margin: 2px;
             border-radius: 8px;
@@ -372,7 +372,7 @@
             margin-bottom: 10px;
             background-color: #2c2c2c;
             border-radius: 8px;
-            height: calc(100% - 45px);
+            height: calc(100% - 25px);
             min-height: 0;
             position: relative;
             display: flex;
@@ -688,6 +688,30 @@
             background: #3f3f3f;
             border-radius: 5px;
             height: 30px;
+        }
+
+        .conversation {
+            visibility: hidden;
+            height: 0px;
+            padding: 0px;
+        }
+
+        .conversation.active {
+            visibility: visible;
+            height: calc(100% - 25px);
+            padding: 8px;
+        }
+
+        .scroller {
+            overflow: auto;
+            display: flex;
+            flex-direction: column-reverse;
+        }
+
+        .scroller .scroller-content .item {
+            height: 20px;
+            transform: translateZ(0);
+            /* fixes a bug in Safari iOS where the scroller doesn't update */
         }
     </style>
 </head>
@@ -1107,6 +1131,10 @@
             });
         }
 
+        function scrollToLatestMessage(messagesDiv) {
+            // Scroll to the bottom of the messages div
+        }
+
         socket.addEventListener('message', (event) => {
             const data = JSON.parse(event.data);
             const time = formatTime(new Date());
@@ -1131,19 +1159,19 @@
                     }
 
                     const messagesDiv = document.getElementById(`messages-${conversationId}`).querySelector('.messages-content');
-                    messagesDiv.innerHTML += `
-                        <p class="${isPrivate ? 'private-message' : ''}">
-                            <span class="message-time">${time}</span>
-                            <span class="${className}">
-                                <span class="message-username">${data.username}:</span>
-                                <span>${data.message}</span>
-                            </span>
-                        </p>
+                    const messageElement = document.createElement('p');
+                    messageElement.className = isPrivate ? 'private-message' : '';
+                    messageElement.innerHTML = `
+                        <span class="message-time">${time}</span>
+                        <span class="${className}">
+                            <span class="message-username">${data.username}:</span>
+                            <span>${data.message}</span>
+                        </span>
                     `;
+                    messagesDiv.appendChild(messageElement);
 
-                    setTimeout(() => {
-                        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-                    }, 50);
+                    // Scroll to bottom after adding new message
+                    scrollToLatestMessage(messagesDiv);
                     break;
                 }
                 case 'practiceChatUserList':
@@ -1152,14 +1180,16 @@
                 case 'error':
                     const messagesDiv = document.getElementById(`messages-general`);
                     if (messagesDiv) {
-                        messagesDiv.innerHTML += `
-                            <p>
-                                <span class="message-time">${time}</span>
-                                <span class="message-content system-message">
-                                    ${data.message}
-                                </span>
-                            </p>
+                        const contentDiv = messagesDiv.querySelector('.messages-content');
+                        const errorElement = document.createElement('p');
+                        errorElement.innerHTML = `
+                            <span class="message-time">${time}</span>
+                            <span class="message-content system-message">
+                                ${data.message}
+                            </span>
                         `;
+                        contentDiv.appendChild(errorElement);
+                        scrollToLatestMessage(contentDiv);
                     }
                     break;
             }
@@ -1177,6 +1207,8 @@
                     recipient: conversationId !== 'general' ? conversationId : null
                 }));
                 messageInput.value = '';
+
+                messageInput.focus();
             }
         }
 
@@ -1226,7 +1258,9 @@
                 conv.className = 'conversation';
                 conv.innerHTML = `
                     <div id="messages-${conversationId}" class="messages">
-                        <div class="messages-content"></div>
+                        <div class="scroller">
+                        <div class="messages-content scroller-content"></div>
+                        </div>
                     </div>
                     <div class="input-container">
                         <input type="text" 
@@ -1249,6 +1283,12 @@
                     container: conv,
                     unreadCount: 0
                 });
+
+                // When a new conversation is created, ensure it's scrolled to the bottom
+                const messagesDiv = conv.querySelector('.messages-content');
+                if (messagesDiv) {
+                    scrollToLatestMessage(messagesDiv);
+                }
             }
 
             return conversationId;
@@ -1280,6 +1320,14 @@
             conversations.forEach((conv, id) => {
                 conv.tab.classList.toggle('active', id === conversationId);
                 conv.container.classList.toggle('active', id === conversationId);
+
+                // When switching to a conversation, scroll to the latest message
+                if (id === conversationId) {
+                    const messagesDiv = document.getElementById(`messages-${conversationId}`)?.querySelector('.messages-content');
+                    if (messagesDiv) {
+                        scrollToLatestMessage(messagesDiv);
+                    }
+                }
             });
             selectedUser = conversationId === 'general' ? null : conversationId;
 
