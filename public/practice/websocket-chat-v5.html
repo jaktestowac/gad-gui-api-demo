@@ -243,7 +243,7 @@
             align-items: center;
             align-content: center;
             flex: 1 0 auto;
-            padding: 5rem 1rem;
+            padding: 4rem 1rem 1rem 1rem;
         }
 
         footer {
@@ -568,6 +568,138 @@
             color: white;
         }
 
+        .weather-widget {
+            background-color: #2c2c2c;
+            border-radius: 8px;
+            padding: 10px;
+            width: 100%;
+            max-width: 1100px;
+            margin-top: 0px;
+            margin-bottom: 5px;
+            color: #ffffff;
+        }
+
+        .weather-header,
+        .weather-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .weather-row {
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 0px;
+            
+            justify-content: center;
+            align-content: center;
+        }
+
+        .weather-info {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            align-content: center;
+            justify-content: center;
+        }
+
+        .weather-main {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .weather-temp {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #7289da;
+            line-height: 1;
+        }
+
+        .weather-condition {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.8rem;
+        }
+
+        .weather-details {
+            display: flex;
+            gap: 8px;
+            font-size: 0.7rem;
+        }
+
+        .weather-detail {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            color: #aaa;
+            font-size: 0.7rem;
+            white-space: nowrap;
+        }
+
+        .weather-chart-container {
+            padding: 10px 5px;
+            margin: 8px 0;
+            background-color: #2a2a2a;
+            border-radius: 6px;
+            border: 1px solid #3a3a3a;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+
+        canvas#temperatureChart {
+            width: 100%;
+            height: 70px;
+            background-color: #3f3f3f;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            display: block;
+            margin: 0 auto;
+        }
+
+        .weather-location {
+            font-weight: 500;
+            color: #ddd;
+            margin-bottom: 0;
+            font-size: 0.85rem;
+        }
+
+        .weather-forecast {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            padding-top: 5px;
+            border-top: 1px solid #3f3f3f;
+        }
+
+        .forecast-day {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.75rem;
+        }
+
+        .forecast-date {
+            font-size: 0.7rem;
+            color: #aaa;
+            width: 25px;
+        }
+
+        .forecast-temp {
+            font-weight: 500;
+            color: #7289da;
+            width: 32px;
+            text-align: right;
+        }
+
+        .forecast-icon {
+            width: 18px;
+            text-align: center;
+        }
+
         .chat-preview-container {
             position: relative;
             width: 100%;
@@ -766,7 +898,7 @@
             padding: 8px 12px;
             width: 100%;
             max-width: 1100px;
-            margin-bottom: 15px;
+            margin-bottom: 5px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -954,6 +1086,85 @@
             </div>
         </div>
 
+        <!-- Weather Widget -->
+        <div id="weatherWidget" class="weather-widget">
+            <div class="weather-header">
+                <div class="weather-title">
+                    <i class="fas fa-cloud-sun"></i>
+                    <span>Weather Forecast</span>
+                </div><div class="weather-row">
+                <div class="weather-info">
+                    <div class="weather-main">
+                        <div class="weather-location">San Francisco, CA</div>
+                        <div class="weather-temp">72°C</div>
+                    </div>
+                    <div class="weather-condition">
+                        <i class="fas fa-sun"></i>
+                        <span>Sunny</span>
+                    </div>
+                </div>
+                <div class="weather-details">
+                    <div class="weather-detail">
+                        <i class="fas fa-tint"></i>
+                        <span id="humidity">45%</span>
+                    </div>
+                    <div class="weather-detail">
+                        <i class="fas fa-wind"></i>
+                        <span id="wind">8 km/h</span>
+                    </div>
+                    <div class="weather-detail">
+                        <i class="fas fa-temperature-high"></i>
+                        <span id="feels-like">75°C</span>
+                    </div>
+                </div>
+            </div>
+                <button class="chat-button chat-button-secondary" onclick="refreshWeather()" style="height: 28px; min-width: 28px; padding: 3px 6px;">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+            
+            <div class="weather-chart-container">
+                <canvas id="temperatureChart"></canvas>
+            </div>
+            <div class="weather-forecast">
+                <div class="forecast-day">
+                    <div class="forecast-date">Mon</div>
+                    <div class="forecast-icon"><i class="fas fa-sun"></i></div>
+                    <div class="forecast-temp">74°C</div>
+                </div>
+                <div class="forecast-day">
+                    <div class="forecast-date">Tue</div>
+                    <div class="forecast-icon"><i class="fas fa-cloud"></i></div>
+                    <div class="forecast-temp">70°C</div>
+                </div>
+                <div class="forecast-day">
+                    <div class="forecast-date">Wed</div>
+                    <div class="forecast-icon"><i class="fas fa-cloud-sun"></i></div>
+                    <div class="forecast-temp">72°C</div>
+                </div>
+                <div class="forecast-day">
+                    <div class="forecast-date">Thu</div>
+                    <div class="forecast-icon"><i class="fas fa-cloud-rain"></i></div>
+                    <div class="forecast-temp">68°C</div>
+                </div>
+                <div class="forecast-day">
+                    <div class="forecast-date">Fri</div>
+                    <div class="forecast-icon"><i class="fas fa-cloud-sun"></i></div>
+                    <div class="forecast-temp">71°C</div>
+                </div>
+                <div class="forecast-day">
+                    <div class="forecast-date">Sat</div>
+                    <div class="forecast-icon"><i class="fas fa-sun"></i></div>
+                    <div class="forecast-temp">70°C</div>
+                </div>
+                <div class="forecast-day">
+                    <div class="forecast-date">Sun</div>
+                    <div class="forecast-icon"><i class="fas fa-cloud-sun"></i></div>
+                    <div class="forecast-temp">72°C</div>
+                </div>
+            </div>
+        </div>
+
         <!-- Mock chat preview to show what the interface will look like -->
         <div id="chatPreviewContainer" class="chat-preview-container">
             <div id="chatPreview" class="chat-preview">
@@ -1012,6 +1223,243 @@
         let selectedUser = null;
         let conversations = new Map();
         let isChatActive = false;
+
+        // Weather widget data
+        let weatherData = {
+            location: "San Francisco, CA",
+            temperature: 72,
+            condition: "Sunny",
+            icon: "fa-sun",
+            humidity: 45,
+            wind: 8,
+            feelsLike: 75,
+            weeklyForecast: [
+                { day: "Sun", temp: 65 },
+                { day: "Mon", temp: 68 },
+                { day: "Tue", temp: 70 },
+                { day: "Wed", temp: 72 },
+                { day: "Thu", temp: 73 },
+                { day: "Fri", temp: 72 },
+                { day: "Sat", temp: 70 }
+            ],
+            dailyForecast: [
+                { day: "Mon", temp: 74, icon: "fa-sun" },
+                { day: "Tue", temp: 70, icon: "fa-cloud" },
+                { day: "Wed", temp: 72, icon: "fa-cloud-sun" },
+                { day: "Thu", temp: 68, icon: "fa-cloud-rain" },
+                { day: "Fri", temp: 71, icon: "fa-cloud-sun" }
+            ]
+        };
+
+        // Function to generate random weather data
+        function generateMockWeatherData() {
+            const locations = [
+                "San Francisco, CA",
+                "New York, NY",
+                "Chicago, IL",
+                "Miami, FL",
+                "Seattle, WA"
+            ];
+
+            const conditions = [
+                { name: "Sunny", icon: "fa-sun" },
+                { name: "Partly Cloudy", icon: "fa-cloud-sun" },
+                { name: "Cloudy", icon: "fa-cloud" },
+                { name: "Rainy", icon: "fa-cloud-rain" },
+                { name: "Thunderstorm", icon: "fa-bolt" }
+            ];
+
+            const baseTemp = Math.floor(Math.random() * 10) + 20; // 20-30°C
+            const condition = conditions[Math.floor(Math.random() * conditions.length)];
+            const location = locations[Math.floor(Math.random() * locations.length)];
+            const humidity = Math.floor(Math.random() * 50) + 30; // 30-80%
+            const wind = Math.floor(Math.random() * 15) + 5; // 5-20 km/h
+            const feelsLike = baseTemp + (Math.random() > 0.5 ? 3 : -2);
+
+            // Generate weekly forecast
+            const weeklyForecast = [];
+            const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+            let tempVariation = baseTemp;
+
+            for (let day of days) {
+                tempVariation += Math.floor(Math.random() * 6) - 3; // -3 to +2 temperature change
+                weeklyForecast.push({ day, temp: tempVariation });
+            }
+
+            // Generate daily forecast
+            const dailyForecast = [];
+            const forecastDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+            for (let day of forecastDays) {
+                const dayCondition = conditions[Math.floor(Math.random() * conditions.length)];
+                const dayTemp = baseTemp + Math.floor(Math.random() * 10) - 5;
+                dailyForecast.push({
+                    day,
+                    temp: dayTemp,
+                    icon: dayCondition.icon
+                });
+            }
+
+            return {
+                location,
+                temperature: baseTemp,
+                condition: condition.name,
+                icon: condition.icon,
+                humidity,
+                wind,
+                feelsLike,
+                weeklyForecast,
+                dailyForecast
+            };
+        }
+
+        // Function to draw temperature chart
+        function drawTemperatureChart(weeklyData) {
+            const canvas = document.getElementById('temperatureChart');
+            if (!canvas || !canvas.getContext) return;
+
+            const ctx = canvas.getContext('2d');
+
+            // Make sure the canvas dimensions are properly set
+            if (canvas.width === 0 || canvas.height === 0) {
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+            }
+
+            const width = canvas.width;
+            const height = canvas.height;
+
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+
+            // Get temperature range
+            const temps = weeklyData.map(item => item.temp);
+            const minTemp = Math.min(...temps) - 2;
+            const maxTemp = Math.max(...temps) + 2;
+            const tempRange = maxTemp - minTemp;
+
+            // Draw background with gradient
+            const gradient = ctx.createLinearGradient(0, 0, 0, height);
+            gradient.addColorStop(0, '#353535');
+            gradient.addColorStop(1, '#3f3f3f');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, width, height);
+
+            // Draw grid lines
+            ctx.strokeStyle = 'rgba(85, 85, 85, 0.6)';
+            ctx.lineWidth = 0.5;
+            ctx.beginPath();
+            for (let i = 0; i < 3; i++) {
+                const y = height * (i / 2);
+                ctx.moveTo(0, y);
+                ctx.lineTo(width, y);
+            }
+            ctx.stroke();
+
+            // Draw vertical grid lines (days separation)
+            ctx.strokeStyle = 'rgba(85, 85, 85, 0.4)';
+            ctx.beginPath();
+            for (let i = 1; i < weeklyData.length; i++) {
+                const x = width * (i / weeklyData.length);
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, height);
+            }
+            ctx.stroke();
+
+            // Draw temperature line with glow effect
+            ctx.shadowColor = 'rgba(114, 137, 218, 0.5)';
+            ctx.shadowBlur = 5;
+            ctx.strokeStyle = '#7289da';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+
+            weeklyData.forEach((item, index) => {
+                const x = width * ((index + 0.5) / weeklyData.length);
+                const normalizedTemp = (item.temp - minTemp) / tempRange;
+                const y = height - (normalizedTemp * height * 0.75) - (height * 0.15);
+
+                if (index === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+
+            ctx.stroke();
+
+            // Reset shadow for other elements
+            ctx.shadowColor = 'transparent';
+            ctx.shadowBlur = 0;
+
+            // Draw points and labels
+            weeklyData.forEach((item, index) => {
+                const x = width * ((index + 0.5) / weeklyData.length);
+                const normalizedTemp = (item.temp - minTemp) / tempRange;
+                const y = height - (normalizedTemp * height * 0.75) - (height * 0.15);
+
+                // Draw day labels
+                ctx.fillStyle = '#bbb';
+                ctx.font = '9px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(item.day, x, height - 3);
+
+                // Draw temperature points with highlight effect
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(x, y, 3, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Add small highlight to points
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                ctx.beginPath();
+                ctx.arc(x, y, 1.5, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Draw temperature value labels with better contrast
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 9px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${item.temp}°`, x, y - 8);
+            });
+        }
+
+        // Function to update weather widget with data
+        function updateWeatherWidget(data) {
+            document.querySelector('.weather-location').textContent = data.location;
+            document.querySelector('.weather-temp').textContent = `${data.temperature}°C`;
+
+            const conditionIcon = document.querySelector('.weather-condition i');
+            conditionIcon.className = '';
+            conditionIcon.classList.add('fas', data.icon);
+
+            document.querySelector('.weather-condition span').textContent = data.condition;
+            document.getElementById('humidity').textContent = `${data.humidity}%`;
+            document.getElementById('wind').textContent = `${data.wind} km/h`;
+            document.getElementById('feels-like').textContent = `${data.feelsLike}°C`;
+
+            // Update forecast days
+            const forecastElements = document.querySelectorAll('.forecast-day');
+            data.dailyForecast.forEach((forecast, index) => {
+                if (forecastElements[index]) {
+                    forecastElements[index].querySelector('.forecast-date').textContent = forecast.day;
+
+                    const icon = forecastElements[index].querySelector('.forecast-icon i');
+                    icon.className = '';
+                    icon.classList.add('fas', forecast.icon);
+
+                    forecastElements[index].querySelector('.forecast-temp').textContent = `${forecast.temp}°C`;
+                }
+            });
+
+            // Draw temperature chart
+            drawTemperatureChart(data.weeklyForecast);
+        }
+
+        // Function to refresh weather data
+        function refreshWeather() {
+            weatherData = generateMockWeatherData();
+            updateWeatherWidget(weatherData);
+        }
 
         // Check if user is already authenticated
         function checkAuthentication() {
@@ -1596,9 +2044,43 @@
             const oldUserInfo = document.querySelector('.chat-container > .user-info');
             if (oldUserInfo) oldUserInfo.remove();
 
+            // Initialize weather widget
+            updateWeatherWidget(weatherData);
+
+            // Make canvas responsive
+            const resizeCanvas = () => {
+                const canvas = document.getElementById('temperatureChart');
+                if (canvas) {
+                    canvas.width = canvas.offsetWidth;
+                    canvas.height = canvas.offsetHeight;
+                    drawTemperatureChart(weatherData.weeklyForecast);
+                }
+            };
+
+            window.addEventListener('resize', resizeCanvas);
+
+            // Force resize after DOM is fully loaded to ensure canvas dimensions are set
+            setTimeout(resizeCanvas, 100);
+
+            // Ensure chart is drawn when page is fully visible
+            window.addEventListener('load', () => {
+                setTimeout(resizeCanvas, 200);
+            });
+
             // Check if user is already authenticated
             checkAuthentication();
         });
+
+        // Add to the end of the file, right before the closing scripts
+        // Ensure weather chart is displayed on initial load
+        setTimeout(() => {
+            const canvas = document.getElementById('temperatureChart');
+            if (canvas) {
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+                drawTemperatureChart(weatherData.weeklyForecast);
+            }
+        }, 500);
 
         // Input event handlers
         document.getElementById('usernameInput').addEventListener('keypress', (e) => {
