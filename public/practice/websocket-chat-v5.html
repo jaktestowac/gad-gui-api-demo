@@ -1060,7 +1060,7 @@
         function showChatScreen() {
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('chatScreen').classList.remove('hidden');
-            document.getElementById('welcomeUsername').textContent = username; 
+            document.getElementById('welcomeUsername').textContent = username;
             updateConnectionStatus(false);
         }
 
@@ -1332,7 +1332,7 @@
                         const errorElement = document.createElement('p');
                         errorElement.classList.add('message-compact');
                         errorElement.innerHTML = `
-                            <span class="message-time">${formatTime(new Date())}</span>
+                            <span class="message-time" title="${formatTime(new Date())}">${formatTime(new Date())}</span>
                             <span class="message-content system-message">
                                 Connection lost. Please try leaving and rejoining the chat.
                             </span>
@@ -1374,7 +1374,7 @@
                         messageElement.className = isPrivate ? 'private-message' : '';
                         messageElement.classList.add('message-compact');
                         messageElement.innerHTML = `
-                            <span class="message-time">${time}</span>
+                            <span class="message-time" title="${formatTime(new Date())}">${time}</span>
                             <span class="${className}">
                                 <span class="message-username">${data.username}:</span>
                                 <span>${data.message}</span>
@@ -1399,7 +1399,7 @@
                                 break;
                             }
                             errorElement.innerHTML = `
-                                <span class="message-time">${time}</span>
+                                <span class="message-time" title="${formatTime(new Date())}">${time}</span>
                                 <span class="message-content system-message">
                                     ${data.message || data?.data?.message || 'An error occurred.'}
                                 </span>
