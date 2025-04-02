@@ -54,19 +54,20 @@
 
         #messages p {
             background-color: #3f3f3f;
-            padding: 10px 15px;
-            border-radius: 12px;
-            margin-bottom: 10px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
             word-wrap: break-word;
             display: flex;
             align-items: baseline;
             gap: 10px;
+            font-size: 0.95rem;
         }
 
         .message-time {
             color: #666;
-            font-size: 0.8em;
-            min-width: 45px;
+            font-size: 0.75em;
+            min-width: 40px;
         }
 
         .message-content {
@@ -124,13 +125,13 @@
         }
 
         .chat-button {
-            padding: 12px 24px;
+            padding: 8px 16px;
             border: none;
-            border-radius: 12px;
+            border-radius: 8px;
             background-color: #7289da;
             color: white;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 0.95rem;
             transition: background-color 0.3s;
         }
 
@@ -191,7 +192,8 @@
         .message-username {
             color: #7289da;
             font-weight: bold;
-            margin-right: 8px;
+            margin-right: 6px;
+            font-size: 0.95rem;
         }
 
         .chat-container {
@@ -259,26 +261,27 @@
 
         .chat-layout {
             display: flex;
-            gap: 20px;
+            gap: 15px;
             width: 100%;
-            max-width: 1200px;
+            max-width: 1100px;
             margin: 0 auto;
         }
 
         #userList {
-            width: 200px;
+            width: 180px;
             background: #2c2c2c;
-            border-radius: 12px;
-            padding: 15px;
+            border-radius: 8px;
+            padding: 12px;
             height: 40vh;
         }
 
         .user-item {
-            padding: 8px 12px;
-            margin-bottom: 5px;
-            border-radius: 8px;
+            padding: 6px 10px;
+            margin-bottom: 4px;
+            border-radius: 6px;
             cursor: pointer;
             transition: background-color 0.2s;
+            font-size: 0.9rem;
         }
 
         .user-item:hover {
@@ -296,23 +299,8 @@
         }
 
         #weatherWidget {
-            background: #2c2c2c;
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            width: 200px;
-            text-align: center;
-        }
-
-        .weather-data {
-            display: flex;
-            justify-content: space-between;
-            margin: 8px 0;
-            color: #fff;
-        }
-
-        .weather-label {
-            color: #7289da;
+            display: none;
+            /* Hide the weather widget */
         }
 
         .secondary-button {
@@ -348,20 +336,21 @@
         }
 
         .tab {
-            padding: 8px 16px;
+            padding: 6px 12px;
             background: #2c2c2c;
             border-radius: 8px 8px 0 0;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             color: #7289da;
             border: 1px solid #3f3f3f;
             border-bottom: none;
-            min-width: 120px;
-            height: 40px;
+            min-width: 110px;
+            height: 35px;
             justify-content: space-between;
             user-select: none;
+            font-size: 0.9rem;
         }
 
         .tab.active {
@@ -417,7 +406,7 @@
             height: 100%;
             background-color: #2c2c2c;
             border-radius: 12px;
-            padding: 20px;
+            padding: 10px;
         }
 
         .conversation.active {
@@ -456,12 +445,12 @@
 
         .message-input {
             flex: 1;
-            padding: 12px;
+            padding: 8px 12px;
             border: none;
-            border-radius: 12px;
+            border-radius: 8px;
             background-color: #3f3f3f;
             color: #ffffff;
-            font-size: 16px;
+            font-size: 0.95rem;
         }
 
         .message-input:focus {
@@ -525,33 +514,35 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             background-color: #2c2c2c;
-            padding: 15px 20px;
-            border-radius: 12px;
+            padding: 10px 15px;
+            border-radius: 8px;
             width: 100%;
-            max-width: 800px;
+            max-width: 700px;
         }
 
         .user-info h3 {
             margin: 0;
             text-align: left;
+            font-size: 1rem;
         }
 
         .user-actions {
             display: flex;
-            gap: 10px;
+            gap: 8px;
         }
 
         .logout-btn,
         .leave-chat-btn {
             background-color: #3f3f3f;
             border: none;
-            padding: 8px 15px;
-            border-radius: 8px;
+            padding: 6px 12px;
+            border-radius: 6px;
             cursor: pointer;
             transition: all 0.2s;
             font-weight: 500;
+            font-size: 0.85rem;
         }
 
         .logout-btn {
@@ -570,6 +561,95 @@
         .leave-chat-btn:hover {
             background-color: #ffa500;
             color: white;
+        }
+
+        .chat-preview {
+            position: relative;
+            width: 100%;
+            max-width: 1100px;
+            margin: 20px 0;
+            display: flex;
+            gap: 15px;
+            opacity: 0.6;
+            pointer-events: none;
+            filter: blur(3px);
+        }
+
+        .preview-sidebar {
+            width: 180px;
+            background: #2c2c2c;
+            border-radius: 8px;
+            padding: 12px;
+            height: 250px;
+        }
+
+        .preview-chat {
+            flex: 1;
+            background: #2c2c2c;
+            border-radius: 8px;
+            padding: 15px;
+            height: 250px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .preview-header {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+            background: #1a1a1a;
+            border-radius: 8px 8px 0 0;
+            padding: 5px;
+        }
+
+        .preview-tab {
+            padding: 5px 10px;
+            background: #3f3f3f;
+            border-radius: 5px 5px 0 0;
+            font-size: 0.8rem;
+            width: 100px;
+        }
+
+        .preview-messages {
+            flex: 1;
+            background: #2c2c2c;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .preview-message {
+            margin: 8px;
+            padding: 8px;
+            background: #3f3f3f;
+            border-radius: 5px;
+        }
+
+        .preview-input {
+            display: flex;
+            gap: 8px;
+            margin-top: auto;
+        }
+
+        .preview-input-field {
+            flex: 1;
+            height: 35px;
+            background: #3f3f3f;
+            border-radius: 5px;
+        }
+
+        .preview-button {
+            width: 70px;
+            background: #7289da;
+            border-radius: 5px;
+        }
+
+        .preview-user {
+            margin: 8px 0;
+            padding: 6px;
+            background: #3f3f3f;
+            border-radius: 5px;
+            height: 30px;
         }
     </style>
 </head>
@@ -636,36 +716,45 @@
     </div>
 
     <div id="chatScreen" class="chat-container hidden">
-        <h2>Real-Time Chat with Weather Widget (v5)</h2>
+        <h2 style="margin-bottom: 15px;">Real-Time Chat (v5)</h2>
         <div class="user-info">
-            <h3>Welcome, <span id="welcomeUsername"></span>!</h3>
+            <h3><i class="fas fa-user-circle" style="margin-right: 5px;"></i> <span id="welcomeUsername"></span></h3>
             <div class="user-actions">
-                <button id="leaveChatButton" class="leave-chat-btn hidden" onclick="leaveChat()"><i class="fas fa-sign-out-alt"></i> Leave Chat</button>
+                <button id="leaveChatButton" class="leave-chat-btn hidden" onclick="leaveChat()"><i class="fas fa-sign-out-alt"></i> Leave</button>
                 <button id="logoutButton" class="logout-btn" onclick="logout()"><i class="fas fa-power-off"></i> Logout</button>
             </div>
         </div>
 
         <button id="joinChatButton" class="chat-button" onclick="joinChat()">Join Chat</button>
 
+        <!-- Mock chat preview to show what the interface will look like -->
+        <div id="chatPreview" class="chat-preview">
+            <div class="preview-sidebar">
+                <div style="margin-bottom: 10px; font-size: 0.9rem;">Online Users</div>
+                <div class="preview-user"></div>
+                <div class="preview-user"></div>
+                <div class="preview-user"></div>
+            </div>
+            <div class="preview-chat">
+                <div class="preview-header">
+                    <div class="preview-tab"></div>
+                </div>
+                <div class="preview-messages">
+                    <div class="preview-message"></div>
+                    <div class="preview-message"></div>
+                    <div class="preview-message"></div>
+                </div>
+                <div class="preview-input">
+                    <div class="preview-input-field"></div>
+                    <div class="preview-button"></div>
+                </div>
+            </div>
+        </div>
+
         <div id="chatInterface" class="chat-layout hidden">
             <div>
-                <div id="weatherWidget">
-                    <h3 style="margin-bottom: 15px; color: #7289da;">Weather Info</h3>
-                    <div class="weather-data">
-                        <span class="weather-label">Temperature:</span>
-                        <span id="temperature">--°C</span>
-                    </div>
-                    <div class="weather-data">
-                        <span class="weather-label">Humidity:</span>
-                        <span id="humidity">--%</span>
-                    </div>
-                    <div class="weather-data">
-                        <span class="weather-label">Wind Speed:</span>
-                        <span id="windSpeed">-- m/s</span>
-                    </div>
-                </div>
                 <div id="userList">
-                    <h3 style="margin-bottom: 15px; color: #7289da;">Online Users</h3>
+                    <h3 style="margin-bottom: 10px; font-size: 0.95rem;"><i class="fas fa-users"></i> Online Users</h3>
                     <div id="userListContent"></div>
                 </div>
             </div>
@@ -686,7 +775,6 @@
         const socket = new WebSocket(wsAddr);
         let username = '';
         let selectedUser = null;
-        let weatherInterval;
         let conversations = new Map();
         let isChatActive = false;
 
@@ -888,6 +976,7 @@
             }
 
             document.getElementById('joinChatButton').classList.add('hidden');
+            document.getElementById('chatPreview').classList.add('hidden');
             document.getElementById('chatInterface').classList.remove('hidden');
             document.getElementById('leaveChatButton').classList.remove('hidden');
 
@@ -905,7 +994,6 @@
             }));
 
             isChatActive = true;
-            requestWeatherUpdate();
             activateConversation('general');
         }
 
@@ -920,6 +1008,7 @@
                 // Reset UI elements
                 document.getElementById('chatInterface').classList.add('hidden');
                 document.getElementById('leaveChatButton').classList.add('hidden');
+                document.getElementById('chatPreview').classList.remove('hidden');
                 document.getElementById('joinChatButton').classList.remove('hidden');
 
                 // Clear conversations
@@ -934,22 +1023,10 @@
             }
         }
 
-        function requestWeatherUpdate() {
-            socket.send(JSON.stringify({
-                type: 'getWeather',
-                days: 1,
-                city: 'Current'
-            }));
-        }
-
         socket.addEventListener('open', () => {
-            weatherInterval = setInterval(requestWeatherUpdate, 5000);
         });
 
         socket.addEventListener('close', () => {
-            if (weatherInterval) {
-                clearInterval(weatherInterval);
-            }
         });
 
         function formatTime(date) {
@@ -1015,13 +1092,6 @@
                         `;
                     }
                     break;
-                case 'weatherData': {
-                    const weather = data.weather[0];
-                    document.getElementById('temperature').textContent = `${weather.temperature}°C`;
-                    document.getElementById('humidity').textContent = `${weather.humidity}`;
-                    document.getElementById('windSpeed').textContent = `${weather.windSpeed} km/h`;
-                    break;
-                }
             }
         });
 
@@ -1046,7 +1116,7 @@
                 .filter(user => user !== username)
                 .map(user => `
                     <div class="user-item" onclick="selectUser('${user}')" id="user-${user}">
-                        <i class="fas fa-user"></i> ${user}
+                        <i class="fas fa-user" style="font-size: 0.8rem;"></i> ${user}
                     </div>
                 `).join('');
         }
@@ -1075,7 +1145,7 @@
                     activateConversation(conversationId);
                 };
                 tab.innerHTML = `
-                    <span class="tab-title">${recipient || 'General Chat'}</span>
+                    <span class="tab-title">${recipient ? `<i class="fas fa-user-alt" style="font-size: 0.8rem; margin-right: 4px;"></i>${recipient}` : '<i class="fas fa-comments" style="font-size: 0.8rem; margin-right: 4px;"></i>General'}</span>
                     <span class="tab-notification" style="display: none">0</span>
                     ${recipient ? `<button class="tab-close" onclick="closeConversation('${conversationId}')">×</button>` : ''}
                 `;
@@ -1094,7 +1164,7 @@
                                id="messageInput-${conversationId}" 
                                maxlength="128" 
                                placeholder="${recipient ? `Message to ${recipient}...` : 'Message to everyone...'}" />
-                        <button class="chat-button" onclick="sendMessage('${conversationId}')">Send</button>
+                        <button class="chat-button" onclick="sendMessage('${conversationId}')"><i class="fas fa-paper-plane"></i></button>
                     </div>
                 `;
 
