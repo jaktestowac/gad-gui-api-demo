@@ -759,6 +759,78 @@
             gap: 4px;
             font-size: 12px !important;
         }
+
+        .top-panel {
+            background-color: #2c2c2c;
+            border-radius: 8px;
+            padding: 15px;
+            width: 100%;
+            max-width: 1100px;
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #3f3f3f;
+            padding-bottom: 12px;
+        }
+
+        .panel-header h2 {
+            margin: 0;
+            text-align: left;
+            font-size: 1.2rem;
+        }
+
+        .panel-header .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .panel-header .version-tag {
+            background: #4e67c0;
+            color: white;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        .panel-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-content .user-info {
+            margin: 0;
+            background: transparent;
+            padding: 0;
+        }
+
+        .panel-content .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #aaa;
+            font-size: 0.85rem;
+        }
+
+        .status-indicator .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #44ff44;
+        }
+
+        .status-indicator .status-dot.offline {
+            background: #ff4444;
+        }
     </style>
 </head>
 
@@ -840,11 +912,27 @@
     </div>
 
     <div id="chatScreen" class="chat-container hidden">
-        <h2 style="margin-bottom: 15px;">Real-Time Chat (v5)</h2>
-        <div class="user-info">
-            <h3><i class="fas fa-user-circle" style="margin-right: 5px;"></i> <span id="welcomeUsername"></span></h3>
-            <div class="user-actions">
-                <button id="logoutButton" class="logout-btn" onclick="logout()"><i class="fas fa-power-off"></i> Logout</button>
+        <div class="top-panel">
+            <div class="panel-header">
+                <div class="logo">
+                    <h2><i class="fas fa-comment-dots"></i> Real-Time Chat</h2>
+                    <span class="version-tag">v5</span>
+                </div>
+                <button id="logoutButton" class="logout-btn" onclick="logout()">
+                    <i class="fas fa-power-off"></i> Logout
+                </button>
+            </div>
+            <div class="panel-content">
+                <div class="user-info">
+                    <h3>
+                        <i class="fas fa-user-circle" style="margin-right: 5px;"></i>
+                        <span id="welcomeUsername"></span>
+                    </h3>
+                </div>
+                <div class="status-indicator">
+                    <div id="connectionStatus" class="status-dot"></div>
+                    <span id="connectionStatusText">Connecting...</span>
+                </div>
             </div>
         </div>
 
@@ -1145,6 +1233,10 @@
                 activateConversation('general');
             }
 
+            // Update connection indicator to "Connecting..."
+            updateConnectionStatus(false);
+            document.getElementById('connectionStatusText').textContent = 'Connecting...';
+
             // We'll send the join message once the connection is established
             socket.addEventListener('open', () => {
                 // Send join message to websocket
@@ -1173,6 +1265,9 @@
                 }
                 socket = null;
                 isChatActive = false;
+
+                // Update connection status
+                updateConnectionStatus(false);
 
                 // Reset UI elements
                 document.getElementById('chatInterface').classList.add('hidden');
@@ -1206,10 +1301,12 @@
         function setupWebSocketHandlers() {
             socket.addEventListener('open', () => {
                 console.log('WebSocket connection established');
+                updateConnectionStatus(true);
             });
 
             socket.addEventListener('close', () => {
                 console.log('WebSocket connection closed');
+                updateConnectionStatus(false);
                 if (isChatActive) {
                     // Handle unexpected connection close
                     const messagesDiv = document.querySelector('.conversation.active')?.querySelector('.messages-content');
@@ -1295,6 +1392,19 @@
                         break;
                 }
             });
+        }
+
+        function updateConnectionStatus(isConnected) {
+            const statusDot = document.getElementById('connectionStatus');
+            const statusText = document.getElementById('connectionStatusText');
+
+            if (isConnected) {
+                statusDot.classList.remove('offline');
+                statusText.textContent = 'Connected';
+            } else {
+                statusDot.classList.add('offline');
+                statusText.textContent = 'Disconnected';
+            }
         }
 
         function sendMessage(conversationId) {
@@ -1463,8 +1573,9 @@
                 });
             });
 
-            // Remove the leave button from the user-info area at the top
-            document.querySelector('.user-info .user-actions .leave-chat-btn')?.remove();
+            // Remove the old user-info div since we moved it to the top panel
+            const oldUserInfo = document.querySelector('.chat-container > .user-info');
+            if (oldUserInfo) oldUserInfo.remove();
 
             // Check if user is already authenticated
             checkAuthentication();
