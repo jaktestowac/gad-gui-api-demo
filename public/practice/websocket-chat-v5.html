@@ -125,14 +125,19 @@
         }
 
         .chat-button {
-            padding: 8px 16px;
+            padding: 6px 10px;
             border: none;
-            border-radius: 8px;
+            border-radius: 5px;
             background-color: #7289da;
             color: white;
             cursor: pointer;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             transition: background-color 0.3s;
+            height: 35px;
+            min-width: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .chat-button:hover {
@@ -265,6 +270,7 @@
             width: 100%;
             max-width: 1100px;
             margin: 0 auto;
+            height: 333px;
         }
 
         #userList {
@@ -272,57 +278,14 @@
             background: #2c2c2c;
             border-radius: 8px;
             padding: 12px;
-            height: 40vh;
-        }
-
-        .user-item {
-            padding: 6px 10px;
-            margin-bottom: 4px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            font-size: 0.9rem;
-        }
-
-        .user-item:hover {
-            background-color: #3f3f3f;
-        }
-
-        .user-item.selected {
-            background-color: #7289da;
-        }
-
-        .recipient-indicator {
-            font-size: 0.8em;
-            color: #7289da;
-            margin-left: 8px;
-        }
-
-        #weatherWidget {
-            display: none;
-            /* Hide the weather widget */
-        }
-
-        .secondary-button {
-            padding: 10px 12px;
-            border: none;
-            border-radius: 12px;
-            background-color: #795454;
-            color: white;
-            cursor: pointer;
-            font-size: 12px;
-            transition: background-color 0.3s;
-        }
-
-        .secondary-button:hover {
-            background-color: #5c3f3f;
+            height: inherit;
         }
 
         .tab-container {
             display: flex;
             flex-direction: column;
             flex: 1;
-            height: 70vh;
+            height: 333px;
         }
 
         .tabs {
@@ -332,11 +295,11 @@
             background: #1a1a1a;
             padding: 4px 4px 0 4px;
             border-radius: 8px 8px 0 0;
-            min-height: 45px;
+            min-height: 32px;
         }
 
         .tab {
-            padding: 6px 12px;
+            padding: 4px 10px;
             background: #2c2c2c;
             border-radius: 8px 8px 0 0;
             cursor: pointer;
@@ -346,33 +309,17 @@
             color: #7289da;
             border: 1px solid #3f3f3f;
             border-bottom: none;
-            min-width: 110px;
-            height: 35px;
+            min-width: 100px;
+            height: 28px;
             justify-content: space-between;
             user-select: none;
-            font-size: 0.9rem;
-        }
-
-        .tab.active {
-            background: #3f3f3f;
-            color: white;
-            position: relative;
-        }
-
-        .tab.active::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: #3f3f3f;
+            font-size: 0.85rem;
         }
 
         #conversations {
             background: #3f3f3f;
-            border-radius: 0 0 12px 12px;
-            height: calc(70vh - 50px);
+            border-radius: 0 0 8px 8px;
+            height: inherit;
             overflow: hidden;
         }
 
@@ -381,6 +328,37 @@
             background: #2c2c2c;
             margin: 2px;
             border-radius: 8px;
+            padding: 8px;
+        }
+
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            background-color: #2c2c2c;
+            border-radius: 8px;
+            height: calc(100% - 45px);
+            min-height: 0;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .conversation .input-container {
+            margin-top: auto;
+            padding-top: 5px;
+            min-height: 35px;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 6px 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #3f3f3f;
+            color: #ffffff;
+            font-size: 0.9rem;
+            height: 35px;
         }
 
         .tab-close {
@@ -398,68 +376,6 @@
 
         .tab-close:hover {
             background: #ff4444;
-        }
-
-        .conversation {
-            display: none;
-            flex-direction: column;
-            height: 100%;
-            background-color: #2c2c2c;
-            border-radius: 12px;
-            padding: 10px;
-        }
-
-        .conversation.active {
-            display: flex;
-        }
-
-        .messages {
-            flex: 1;
-            overflow-y: auto;
-            margin-bottom: 20px;
-            background-color: #2c2c2c;
-            border-radius: 12px;
-            height: calc(100% - 80px);
-            min-height: 0;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .messages-content {
-            padding: 20px;
-            overflow-y: auto;
-            max-height: 100%;
-            flex: 1;
-        }
-
-        .messages p:last-child {
-            margin-bottom: 0;
-        }
-
-        .conversation .input-container {
-            margin-top: auto;
-            padding-top: 10px;
-            min-height: 60px;
-        }
-
-        .message-input {
-            flex: 1;
-            padding: 8px 12px;
-            border: none;
-            border-radius: 8px;
-            background-color: #3f3f3f;
-            color: #ffffff;
-            font-size: 0.95rem;
-        }
-
-        .message-input:focus {
-            outline: none;
-            box-shadow: 0 0 0 2px #7289da;
-        }
-
-        #conversations {
-            height: 500px;
         }
 
         .tab-notification {
@@ -567,15 +483,17 @@
             position: relative;
             width: 100%;
             max-width: 1100px;
-            margin: 20px 0;
+            margin: 2px 0;
             display: flex;
             gap: 15px;
+            height: 333px;
         }
 
         .chat-preview {
             opacity: 0.6;
             pointer-events: none;
             filter: blur(3px);
+            height: inherit;
         }
 
         .preview-sidebar {
@@ -583,7 +501,7 @@
             background: #2c2c2c;
             border-radius: 8px;
             padding: 12px;
-            height: 250px;
+            height: inherit;
         }
 
         .preview-chat {
@@ -591,7 +509,7 @@
             background: #2c2c2c;
             border-radius: 8px;
             padding: 15px;
-            height: 250px;
+            height: inherit;
             display: flex;
             flex-direction: column;
         }
@@ -621,12 +539,13 @@
             position: relative;
             width: 100%;
             max-width: 1100px;
-            margin: 20px 0;
+            margin: 0px 0;
             display: flex;
             gap: 15px;
             opacity: 0.6;
             pointer-events: none;
             filter: blur(3px);
+            height: inherit;
         }
 
         .preview-sidebar {
@@ -634,7 +553,7 @@
             background: #2c2c2c;
             border-radius: 8px;
             padding: 12px;
-            height: 250px;
+            height: inherit;
         }
 
         .preview-chat {
@@ -642,7 +561,7 @@
             background: #2c2c2c;
             border-radius: 8px;
             padding: 15px;
-            height: 250px;
+            height: inherit;
             display: flex;
             flex-direction: column;
         }
@@ -809,11 +728,9 @@
         </div>
 
         <div id="chatInterface" class="chat-layout hidden">
-            <div>
-                <div id="userList">
-                    <h3 style="margin-bottom: 10px; font-size: 0.95rem;"><i class="fas fa-users"></i> Online Users</h3>
-                    <div id="userListContent"></div>
-                </div>
+            <div id="userList">
+                <h3 style="margin-bottom: 10px; font-size: 0.95rem;"><i class="fas fa-users"></i> Online Users</h3>
+                <div id="userListContent"></div>
             </div>
             <div class="tab-container">
                 <div class="tabs" id="conversationTabs"></div>
