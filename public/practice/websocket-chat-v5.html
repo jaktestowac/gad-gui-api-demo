@@ -314,6 +314,25 @@
             border-radius: 8px;
             padding: 12px;
             height: inherit;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-list-header {
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            text-align: center;
+        }
+
+        #userListContent {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .user-list-footer {
+            margin-top: auto;
+            padding-top: 10px;
+            border-top: 1px solid #3f3f3f;
         }
 
         .tab-container {
@@ -825,7 +844,6 @@
         <div class="user-info">
             <h3><i class="fas fa-user-circle" style="margin-right: 5px;"></i> <span id="welcomeUsername"></span></h3>
             <div class="user-actions">
-                <button id="leaveChatButton" class="leave-chat-btn hidden" onclick="leaveChat()"><i class="fas fa-sign-out-alt"></i> Leave</button>
                 <button id="logoutButton" class="logout-btn" onclick="logout()"><i class="fas fa-power-off"></i> Logout</button>
             </div>
         </div>
@@ -861,8 +879,13 @@
 
         <div id="chatInterface" class="chat-layout hidden">
             <div id="userList">
-                <h3 style="margin-bottom: 10px; font-size: 0.95rem;"><i class="fas fa-users"></i> Online Users</h3>
+                <h3 class="user-list-header"><i class="fas fa-users"></i> Online Users</h3>
                 <div id="userListContent"></div>
+                <div class="user-list-footer">
+                    <button id="leaveChatButton" class="leave-chat-btn" onclick="leaveChat()" style="width: 100%;">
+                        <i class="fas fa-sign-out-alt"></i> Leave Chat
+                    </button>
+                </div>
             </div>
             <div class="tab-container">
                 <div class="tabs" id="conversationTabs"></div>
@@ -1115,7 +1138,6 @@
 
             document.getElementById('chatPreviewContainer').classList.add('hidden');
             document.getElementById('chatInterface').classList.remove('hidden');
-            document.getElementById('leaveChatButton').classList.remove('hidden');
 
             // Initialize conversations if not already done
             if (conversations.size === 0) {
@@ -1154,7 +1176,6 @@
 
                 // Reset UI elements
                 document.getElementById('chatInterface').classList.add('hidden');
-                document.getElementById('leaveChatButton').classList.add('hidden');
                 document.getElementById('chatPreviewContainer').classList.remove('hidden');
                 document.getElementById('joinChatButton').classList.remove('hidden');
 
@@ -1441,6 +1462,9 @@
                     switchAuthTab(tab.dataset.tab);
                 });
             });
+
+            // Remove the leave button from the user-info area at the top
+            document.querySelector('.user-info .user-actions .leave-chat-btn')?.remove();
 
             // Check if user is already authenticated
             checkAuthentication();
