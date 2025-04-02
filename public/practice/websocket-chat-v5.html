@@ -878,7 +878,7 @@
         let currentUser = null;
 
         // WebSocket connection
-        const socket = new WebSocket(wsAddr);
+        let socket = null;
         let username = '';
         let selectedUser = null;
         let conversations = new Map();
@@ -1107,6 +1107,12 @@
                 return;
             }
 
+            // Create WebSocket connection when joining chat
+            socket = new WebSocket(wsAddr);
+
+            // Set up WebSocket event handlers
+            setupWebSocketHandlers();
+
             document.getElementById('chatPreviewContainer').classList.add('hidden');
             document.getElementById('chatInterface').classList.remove('hidden');
             document.getElementById('leaveChatButton').classList.remove('hidden');
@@ -1117,23 +1123,33 @@
                 activateConversation('general');
             }
 
-            // Send join message to websocket
-            socket.send(JSON.stringify({
-                type: 'practiceChatJoin',
-                username: username,
-                version: 'v5'
-            }));
+            // We'll send the join message once the connection is established
+            socket.addEventListener('open', () => {
+                // Send join message to websocket
+                socket.send(JSON.stringify({
+                    type: 'practiceChatJoin',
+                    username: username,
+                    version: 'v5'
+                }));
 
-            isChatActive = true;
-            activateConversation('general');
+                isChatActive = true;
+                activateConversation('general');
+            });
         }
 
         function leaveChat() {
             if (isChatActive) {
-                socket.send(JSON.stringify({
-                    type: 'practiceChatLeave',
-                    username: username
-                }));
+                // Send leave message if socket is still open
+                if (socket && socket.readyState === WebSocket.OPEN) {
+                    socket.send(JSON.stringify({
+                        type: 'practiceChatLeave',
+                        username: username
+                    }));
+
+                    // Close the WebSocket connection
+                    socket.close();
+                }
+                socket = null;
                 isChatActive = false;
 
                 // Reset UI elements
@@ -1154,12 +1170,6 @@
             }
         }
 
-        socket.addEventListener('open', () => {
-        });
-
-        socket.addEventListener('close', () => {
-        });
-
         function formatTime(date) {
             return date.toLocaleTimeString('en-US', {
                 hour12: false,
@@ -1172,71 +1182,99 @@
             // Scroll to the bottom of the messages div
         }
 
-        socket.addEventListener('message', (event) => {
-            const data = JSON.parse(event.data);
-            const time = formatTime(new Date());
+        function setupWebSocketHandlers() {
+            socket.addEventListener('open', () => {
+                console.log('WebSocket connection established');
+            });
 
-            switch (data.type) {
-                case 'practiceChatMessage':
-                case 'practiceChatPrivate': {
-                    const isPrivate = data.type === 'practiceChatPrivate';
-                    const conversationId = isPrivate ?
-                        (data.username === username ? data.recipient : data.username) :
-                        'general';
-
-                    createConversation(isPrivate ? conversationId : null);
-
-                    if (data.username !== username) {
-                        incrementNotification(conversationId);
-                    }
-
-                    let className = 'message-content';
-                    if (data.username?.toLowerCase().includes('[system]')) {
-                        className += ' system-message';
-                    }
-
-                    const messagesDiv = document.getElementById(`messages-${conversationId}`).querySelector('.messages-content');
-                    const messageElement = document.createElement('p');
-                    messageElement.className = isPrivate ? 'private-message' : '';
-                    messageElement.classList.add('message-compact');
-                    messageElement.innerHTML = `
-                        <span class="message-time">${time}</span>
-                        <span class="${className}">
-                            <span class="message-username">${data.username}:</span>
-                            <span>${data.message}</span>
-                        </span>
-                    `;
-                    messagesDiv.appendChild(messageElement);
-
-                    // Scroll to bottom after adding new message
-                    scrollToLatestMessage(messagesDiv);
-                    break;
-                }
-                case 'practiceChatUserList':
-                    updateUserList(data.users);
-                    break;
-                case 'error':
-                    // const messagesDiv = document.getElementById(`messages-general`);
-                    const messagesDiv = document.querySelector('.conversation.active');
+            socket.addEventListener('close', () => {
+                console.log('WebSocket connection closed');
+                if (isChatActive) {
+                    // Handle unexpected connection close
+                    const messagesDiv = document.querySelector('.conversation.active')?.querySelector('.messages-content');
                     if (messagesDiv) {
-                        const contentDiv = messagesDiv.querySelector('.messages-content');
                         const errorElement = document.createElement('p');
                         errorElement.classList.add('message-compact');
-                        if (data?.data?.message === undefined && data.message === undefined) {
-                            break;
-                        }
                         errorElement.innerHTML = `
-                            <span class="message-time">${time}</span>
+                            <span class="message-time">${formatTime(new Date())}</span>
                             <span class="message-content system-message">
-                                ${data.message || data?.data?.message || 'An error occurred.'}
+                                Connection lost. Please try leaving and rejoining the chat.
                             </span>
                         `;
-                        contentDiv.appendChild(errorElement);
-                        scrollToLatestMessage(contentDiv);
+                        messagesDiv.appendChild(errorElement);
                     }
-                    break;
-            }
-        });
+                }
+            });
+
+            socket.addEventListener('error', () => {
+                console.error('WebSocket error occurred');
+            });
+
+            socket.addEventListener('message', (event) => {
+                const data = JSON.parse(event.data);
+                const time = formatTime(new Date());
+
+                switch (data.type) {
+                    case 'practiceChatMessage':
+                    case 'practiceChatPrivate': {
+                        const isPrivate = data.type === 'practiceChatPrivate';
+                        const conversationId = isPrivate ?
+                            (data.username === username ? data.recipient : data.username) :
+                            'general';
+
+                        createConversation(isPrivate ? conversationId : null);
+
+                        if (data.username !== username) {
+                            incrementNotification(conversationId);
+                        }
+
+                        let className = 'message-content';
+                        if (data.username?.toLowerCase().includes('[system]')) {
+                            className += ' system-message';
+                        }
+
+                        const messagesDiv = document.getElementById(`messages-${conversationId}`).querySelector('.messages-content');
+                        const messageElement = document.createElement('p');
+                        messageElement.className = isPrivate ? 'private-message' : '';
+                        messageElement.classList.add('message-compact');
+                        messageElement.innerHTML = `
+                            <span class="message-time">${time}</span>
+                            <span class="${className}">
+                                <span class="message-username">${data.username}:</span>
+                                <span>${data.message}</span>
+                            </span>
+                        `;
+                        messagesDiv.appendChild(messageElement);
+
+                        // Scroll to bottom after adding new message
+                        scrollToLatestMessage(messagesDiv);
+                        break;
+                    }
+                    case 'practiceChatUserList':
+                        updateUserList(data.users);
+                        break;
+                    case 'error':
+                        const messagesDiv = document.querySelector('.conversation.active');
+                        if (messagesDiv) {
+                            const contentDiv = messagesDiv.querySelector('.messages-content');
+                            const errorElement = document.createElement('p');
+                            errorElement.classList.add('message-compact');
+                            if (data?.data?.message === undefined && data.message === undefined) {
+                                break;
+                            }
+                            errorElement.innerHTML = `
+                                <span class="message-time">${time}</span>
+                                <span class="message-content system-message">
+                                    ${data.message || data?.data?.message || 'An error occurred.'}
+                                </span>
+                            `;
+                            contentDiv.appendChild(errorElement);
+                            scrollToLatestMessage(contentDiv);
+                        }
+                        break;
+                }
+            });
+        }
 
         function sendMessage(conversationId) {
             const messageInput = document.getElementById(`messageInput-${conversationId}`);
@@ -1427,6 +1465,16 @@
 
         document.getElementById('registerConfirmPasswordInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') register();
+        });
+
+        // Handle browser close/refresh
+        window.addEventListener('beforeunload', () => {
+            if (isChatActive && socket) {
+                socket.send(JSON.stringify({
+                    type: 'practiceChatLeave',
+                    username: username
+                }));
+            }
         });
     </script>
     <script type="text/javascript" src="/js/common.js"></script>
