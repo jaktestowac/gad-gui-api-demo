@@ -1062,28 +1062,7 @@
     </div>
 
     <div id="chatScreen" class="chat-container hidden">
-        <div class="top-panel">
-            <div class="panel-left">
-                <div class="panel-title">
-                    <i class="fas fa-comment-dots"></i>
-                    <h2>Real-Time Chat</h2>
-                    <span class="version-tag">v5</span>
-                </div>
-                <div class="status-indicator">
-                    <div id="connectionStatus" class="status-dot"></div>
-                    <span id="connectionStatusText">Disconnected</span>
-                </div>
-            </div>
-            <div class="panel-right">
-                <div class="user-profile">
-                    <i class="fas fa-user-circle"></i>
-                    <span id="welcomeUsername"></span>
-                </div>
-                <button id="logoutButton" class="logout-btn" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
-            </div>
-        </div>
+        
 
         <!-- Weather Widget -->
         <div id="weatherWidget" class="weather-widget">
@@ -1165,6 +1144,29 @@
             </div>
         </div>
 
+        <div class="top-panel">
+            <div class="panel-left">
+                <div class="panel-title">
+                    <i class="fas fa-comment-dots"></i>
+                    <h2>Real-Time Chat</h2>
+                    <span class="version-tag">v5</span>
+                </div>
+                <div class="status-indicator">
+                    <div id="connectionStatus" class="status-dot"></div>
+                    <span id="connectionStatusText">Disconnected</span>
+                </div>
+            </div>
+            <div class="panel-right">
+                <div class="user-profile">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="welcomeUsername"></span>
+                </div>
+                <button id="logoutButton" class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+        
         <!-- Mock chat preview to show what the interface will look like -->
         <div id="chatPreviewContainer" class="chat-preview-container">
             <div id="chatPreview" class="chat-preview">
