@@ -405,3 +405,107 @@ function getAndShowSimpleTicketData() {
     return data;
   });
 }
+
+const data1 = {
+  id: 415,
+  ticketNumber: "TICKET-7662",
+  owner: {
+    name: "Rose Melo",
+    age: 29,
+  },
+  funds: 306,
+  validUntil: "2025-03-20T11:08:54.287Z",
+  status: 0,
+  useHistory: [
+    {
+      date: "2014-11-02T11:08:54.287Z",
+      from: "Smallville",
+      to: "Bludhaven",
+      cost: 11,
+      timeInMinutes: 25,
+    },
+    {
+      date: "2014-11-03T11:08:54.287Z",
+      from: "Vanity",
+      to: "Midway City",
+      cost: 11,
+      timeInMinutes: 38,
+    },
+    {
+      date: "2015-01-04T11:08:54.287Z",
+      from: "Dakota City",
+      to: "Gotham",
+      cost: 10,
+      timeInMinutes: 53,
+    },
+    {
+      date: "2015-02-20T11:08:54.287Z",
+      from: "Blue Valley",
+      to: "Opal City",
+      cost: 16,
+      timeInMinutes: 40,
+    },
+    {
+      date: "2015-03-21T11:08:54.287Z",
+      from: "Metropolis",
+      to: "Keystone City",
+      cost: 20,
+      timeInMinutes: 30,
+    },
+  ],
+};
+
+function formatDataAsStringForDoc(data) {
+  const lines = [
+    `Ticket Number: ${data.ticketNumber}`,
+    `Owner: ${data.owner.name}`,
+    `Age: ${data.owner.age}`,
+    `Funds: ${formatCurrency(data.funds)}`,
+    `Valid Until: ${new Date(data.validUntil).toLocaleDateString()}`,
+    `Status: ${possibleStatuses[data.status]}`,
+    ` `,
+    `Trips History:`,
+  ];
+
+  data.useHistory.forEach((history) => {
+    lines.push(
+      `Date: ${new Date(history.date).toLocaleDateString()}, From: ${history.from}, To: ${
+        history.to
+      }, Cost: ${formatCurrency(history.cost)}, Time: ${formatTimeElapsedFromMinutes(history.timeInMinutes)}`
+    );
+  });
+
+  return lines.join("\r\n\r\n");
+}
+
+function loadFile(url, callback) {
+  PizZipUtils.getBinaryContent(url, callback);
+}
+
+function generateDocx(data) {
+  loadFile("./data/input.docx", function (error, content) {
+    if (error) {
+      throw error;
+    }
+    const zip = new PizZip(content);
+    const doc = new window.docxtemplater(zip, {
+      paragraphLoop: true,
+      linebreaks: true,
+    });
+
+    doc.render({
+      first_name: "John",
+      last_name: "Doe",
+      phone: "+",
+      description: "GAD application",
+      content: formatDataAsStringForDoc(data),
+    });
+
+    const blob = doc.getZip().generate({
+      type: "blob",
+      mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      compression: "DEFLATE",
+    });
+    saveAs(blob, `bus-ticket-data-${data.ticketNumber}.docx`);
+  });
+}

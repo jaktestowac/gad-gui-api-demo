@@ -64,7 +64,7 @@ const handleJoinMessage = (context, ws, data) => {
     throw new Error("Invalid username");
   }
   if (!/^[a-zA-Z0-9]+$/.test(userName)) {
-    throw new Error("Invalid username");
+    throw new Error("Username can only contain letters and numbers");
   }
   if (userName.length < 3 || userName.length > 20) {
     throw new Error("Username already taken");
@@ -117,6 +117,10 @@ const handlePrivateMessage = (context, ws, data) => {
   context.sendPrivateMessage(ws.userName, data.recipient, data.message);
 };
 
+const practiceChatLeave = (context, ws) => {
+  handleDisconnect(context, ws);
+};
+
 const handleDisconnect = (context, ws) => {
   if (ws.userName) {
     context.connectedUsers.delete(ws.userName);
@@ -143,6 +147,7 @@ const handleUnknownMessage = (context, ws, data) => {
 
 const messageHandlers = {
   practiceChatJoin: handleJoinMessage,
+  practiceChatLeave: practiceChatLeave,
   practiceChatMessage: handleChatMessage,
   practiceChatPrivate: handlePrivateMessage,
   practiceChatDefault: handleUnknownMessage,

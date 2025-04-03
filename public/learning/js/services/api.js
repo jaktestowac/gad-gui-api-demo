@@ -684,6 +684,11 @@ class ApiService {
     const data = await response.json();
 
     const coursesStats = await this.getAllCoursesStats();
+
+    if (data.error !== undefined) {
+      return data;
+    }
+
     return data.map((course) => {
       const stats = coursesStats.find((s) => `${s.id}` === `${course.id}`) || {};
       return { ...course, ...stats };
@@ -797,6 +802,62 @@ class ApiService {
         await new Promise((resolve) => setTimeout(resolve, delay * Math.pow(2, i)));
       }
     }
+  }
+
+  // Add these new methods for role management
+  async getAllUsers() {
+    const response = await fetch(`${this.baseUrl}/admin/users`, {
+      headers: this.getDefaultHeaders(),
+    });
+    return response.json();
+  }
+
+  async updateUserRole(userId, role) {
+    const response = await fetch(`${this.baseUrl}/admin/roles`, {
+      method: "POST",
+      headers: this.getDefaultHeaders(),
+      body: JSON.stringify({ userId, role }),
+    });
+    return response.json();
+  }
+
+  // Role request methods
+  async getRoleRequests() {
+    const response = await fetch(`${this.baseUrl}/roles/requests`, {
+      method: "GET",
+      headers: this.getDefaultHeaders(),
+    });
+    if (!response.ok) throw new Error("Failed to get role requests");
+    return response.json();
+  }
+
+  async createRoleRequest(requestData) {
+    const response = await fetch(`${this.baseUrl}/roles/requests`, {
+      method: "POST",
+      headers: this.getDefaultHeaders(),
+      body: JSON.stringify(requestData),
+    });
+    if (!response.ok) throw new Error("Failed to create role request");
+    return response.json();
+  }
+
+  async updateRoleRequest(requestId, updateData) {
+    const response = await fetch(`${this.baseUrl}/roles/requests/${requestId}`, {
+      method: "PUT",
+      headers: this.getDefaultHeaders(),
+      body: JSON.stringify(updateData),
+    });
+    if (!response.ok) throw new Error("Failed to update role request");
+    return response.json();
+  }
+
+  async getUserRoleRequests(userId) {
+    const response = await fetch(`${this.baseUrl}/roles/requests/user/${userId}`, {
+      method: "GET",
+      headers: this.getDefaultHeaders(),
+    });
+    if (!response.ok) throw new Error("Failed to get user role requests");
+    return response.json();
   }
 }
 

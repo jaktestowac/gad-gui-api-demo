@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | System Metrics (API)</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <style>
+        .sysmetrics-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .sysmetrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .sysmetric-card {
+            background: linear-gradient(145deg, #2c3e50, #3498db);
+            border-radius: 10px;
+            padding: 20px;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .sysmetric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .sysmetric-title {
+            font-size: 1.2em;
+            margin: 0;
+        }
+
+        .sysmetric-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .sysmetric-progress {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .sysmetric-progress-fill {
+            background: rgba(255, 255, 255, 0.8);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .sysmetric-details {
+            margin-top: 10px;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .sysmetric-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .sysmetric-button {
+            background: #34495e;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .sysmetric-button:hover {
+            background: #2c3e50;
+            transform: translateY(-1px);
+        }
+
+        .sysmetric-button.active {
+            background: #27ae60;
+        }
+
+        .sysmetric-button.active:hover {
+            background: #219a52;
+        }
+
+        .sysmetric-network-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        .sysmetric-status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .sysmetric-status-healthy {
+            background: rgba(76, 175, 80, 0.2);
+        }
+
+        .sysmetric-status-warning {
+            background: rgba(255, 152, 0, 0.2);
+        }
+
+        .sysmetric-status-critical {
+            background: rgba(244, 67, 54, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-practice" class="nav-menu">System Metrics Monitor</h1>
+        </div>
+    </header>
+    <br />
+    <br />
+    <br />
+
+    <div class="sysmetrics-container">
+        <div class="sysmetric-controls">
+            <button id="toggleUpdateBtn" class="sysmetric-button">Auto Update</button>
+            <button id="refreshBtn" class="sysmetric-button">Refresh Now</button>
+        </div>
+
+        <div class="sysmetrics-grid">
+            <div class="sysmetric-card">
+                <div class="sysmetric-header">
+                    <h3 class="sysmetric-title">CPU Usage</h3>
+                    <span id="cpuStatus" class="sysmetric-status sysmetric-status-healthy">Healthy</span>
+                </div>
+                <div id="cpuValue" class="sysmetric-value">0%</div>
+                <div class="sysmetric-progress">
+                    <div id="cpuBar" class="sysmetric-progress-fill"></div>
+                </div>
+                <div id="cpuDetails" class="sysmetric-details">
+                    Last updated: Never
+                </div>
+            </div>
+
+            <div class="sysmetric-card">
+                <div class="sysmetric-header">
+                    <h3 class="sysmetric-title">Memory Usage</h3>
+                    <span id="memoryStatus" class="sysmetric-status sysmetric-status-healthy">Healthy</span>
+                </div>
+                <div id="memoryValue" class="sysmetric-value">0%</div>
+                <div class="sysmetric-progress">
+                    <div id="memoryBar" class="sysmetric-progress-fill"></div>
+                </div>
+                <div id="memoryDetails" class="sysmetric-details">
+                    Last updated: Never
+                </div>
+            </div>
+
+            <div class="sysmetric-card">
+                <div class="sysmetric-header">
+                    <h3 class="sysmetric-title">Disk Usage</h3>
+                    <span id="diskStatus" class="sysmetric-status sysmetric-status-healthy">Healthy</span>
+                </div>
+                <div id="diskValue" class="sysmetric-value">0%</div>
+                <div class="sysmetric-progress">
+                    <div id="diskBar" class="sysmetric-progress-fill"></div>
+                </div>
+                <div id="diskDetails" class="sysmetric-details">
+                    Last updated: Never
+                </div>
+            </div>
+
+            <div class="sysmetric-card">
+                <div class="sysmetric-header">
+                    <h3 class="sysmetric-title">Network Traffic</h3>
+                    <span id="networkStatus" class="sysmetric-status sysmetric-status-healthy">Healthy</span>
+                </div>
+                <div class="sysmetric-network-stats">
+                    <div>
+                        <div>Received:</div>
+                        <div id="networkReceived">0 B/s</div>
+                    </div>
+                    <div>
+                        <div>Sent:</div>
+                        <div id="networkSent">0 B/s</div>
+                    </div>
+                </div>
+                <div id="networkDetails" class="sysmetric-details">
+                    Last updated: Never
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center">
+        <a href="/practice" class="menu-link">
+            <button class="button-primary-small" style="margin-top: 20px; font-size: 14px;">Return to practice page</button>
+        </a>
+    </div>
+
+    <script>
+        let isAutoUpdate = false;
+        let updateInterval;
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 B/s';
+            const sizes = ['B/s', 'KB/s', 'MB/s', 'GB/s'];
+            const i = Math.floor(Math.log(bytes) / Math.log(1024));
+            return `${(bytes / Math.pow(1024, i)).toFixed(2)} ${sizes[i]}`;
+        }
+
+        function updateStatus(element, value) {
+            element.className = 'sysmetric-status ' +
+                (value >= 80 ? 'sysmetric-status-critical' :
+                    value >= 60 ? 'sysmetric-status-warning' :
+                        'sysmetric-status-healthy');
+            element.textContent = value >= 80 ? 'Critical' :
+                value >= 60 ? 'Warning' : 'Healthy';
+        }
+
+        function updateMetrics(data) {
+            const ensureNumber = (value) => {
+                const num = Number(value);
+                return isNaN(num) ? 0 : num;
+            };
+
+            // CPU
+            const cpuValue = ensureNumber(data.cpu);
+            document.getElementById('cpuValue').textContent = `${Math.round(cpuValue)}%`;
+            document.getElementById('cpuBar').style.width = `${cpuValue}%`;
+            updateStatus(document.getElementById('cpuStatus'), cpuValue);
+
+            // Memory
+            const memoryValue = ensureNumber(data.memory);
+            document.getElementById('memoryValue').textContent = `${Math.round(memoryValue)}%`;
+            document.getElementById('memoryBar').style.width = `${memoryValue}%`;
+            updateStatus(document.getElementById('memoryStatus'), memoryValue);
+
+            // Disk
+            const diskValue = ensureNumber(data.disk);
+            document.getElementById('diskValue').textContent = `${Math.round(diskValue)}%`;
+            document.getElementById('diskBar').style.width = `${diskValue}%`;
+            updateStatus(document.getElementById('diskStatus'), diskValue);
+
+            // Network
+            const bytesReceived = ensureNumber(data.network?.bytesReceived ?? 0);
+            const bytesSent = ensureNumber(data.network?.bytesSent ?? 0);
+            document.getElementById('networkReceived').textContent = formatBytes(bytesReceived);
+            document.getElementById('networkSent').textContent = formatBytes(bytesSent);
+
+            const updateTime = new Date().toLocaleTimeString();
+            document.querySelectorAll('.sysmetric-details').forEach(detail => {
+                detail.textContent = `Last updated: ${updateTime}`;
+            });
+        }
+
+        async function fetchMetrics() {
+            try {
+                const response = await fetch('/api/v1/data/random/system-simple');
+                const data = await response.json();
+                if (data && data.length > 0) {
+                    updateMetrics(data[0]);
+                }
+            } catch (error) {
+                console.error('Error fetching metrics:', error);
+            }
+        }
+
+        function toggleAutoUpdate() {
+            isAutoUpdate = !isAutoUpdate;
+            const btn = document.getElementById('toggleUpdateBtn');
+
+            if (isAutoUpdate) {
+                btn.classList.add('active');
+                updateInterval = setInterval(fetchMetrics, 2000);
+            } else {
+                btn.classList.remove('active');
+                clearInterval(updateInterval);
+            }
+        }
+
+        document.getElementById('toggleUpdateBtn').addEventListener('click', toggleAutoUpdate);
+        document.getElementById('refreshBtn').addEventListener('click', fetchMetrics);
+
+        fetchMetrics();
+    </script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | System Metrics V2 (Auto Refresh)</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <style>
+        .sysmetrics-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .sysmetrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 5px;
+        }
+
+        .sysmetric-card {
+            background: rgba(3, 4, 5, 0.829);
+            border-radius: 12px;
+            padding: 20px;
+            color: #e2e8f0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            transition: all 0.2s ease;
+        }
+
+        .sysmetric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+            border-color: rgba(255, 255, 255, 0.1);
+            background: rgba(3, 4, 5, 0.918);
+        }
+
+        .sysmetric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0px;
+            padding: 0px;
+        }
+
+        .sysmetric-title {
+            font-size: 0.9em;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .sysmetric-value {
+            font-size: 2.2em;
+            font-weight: 600;
+            margin: 10px 0;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .sysmetric-progress {
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 6px;
+            height: 6px;
+            overflow: hidden;
+        }
+
+        .sysmetric-progress-fill {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease-out;
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+        }
+
+        .sysmetric-status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .sysmetric-status-healthy {
+            background: #2ecc7133;
+            color: #2ecc71;
+        }
+
+        .sysmetric-status-warning {
+            background: #f1c40f33;
+            color: #f1c40f;
+        }
+
+        .sysmetric-status-critical {
+            background: #e74c3c33;
+            color: #e74c3c;
+        }
+
+        .temperature-indicator {
+            font-size: 0.75em;
+            padding: 3px 6px;
+            border-radius: 4px;
+            margin-left: 8px;
+        }
+
+        .metric-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 5px;
+            padding-top: 5px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .metric-detail-item {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .metric-detail-item span:first-child {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .metric-detail-item span:last-child {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .sysmetric-network-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+            font-size: 0.8em;
+        }
+
+        .sysmetric-network-stats>div>div:first-child {
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 3px;
+            font-size: 0.85em;
+        }
+
+        .sysmetric-network-stats>div>div:last-child {
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+
+        .sysmetric-details {
+            margin-top: 10px;
+            font-size: 0.75em;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .io-metrics {
+            display: flex;
+            gap: 10px;
+            font-size: 0.8em;
+            margin-top: 8px;
+        }
+
+        .io-metric {
+            padding: 3px 6px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .io-metric i {
+            margin-right: 4px;
+            font-size: 0.9em;
+            opacity: 0.7;
+        }
+
+        .volumes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .volume-item {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 8px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .volume-name {
+            font-size: 0.8em;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 4px;
+        }
+
+        .volume-usage {
+            font-size: 1em;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .network-interfaces {
+            margin-top: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .network-interface {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        .interface-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        .interface-name {
+            font-size: 0.8em;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .interface-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75em;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .sysmetrics-container {
+                padding: 15px;
+            }
+
+            .sysmetrics-grid {
+                gap: 12px;
+            }
+
+            .sysmetric-card {
+                padding: 15px;
+            }
+
+            .sysmetric-value {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-practice" class="nav-menu">System Metrics Monitor V2 (Auto)</h1>
+        </div>
+    </header>
+    <br />
+    <br />
+    <br />
+
+    <div class="sysmetrics-container">
+
+        <div class="sysmetrics-grid">
+            <div class="sysmetric-card">
+                <div class="sysmetric-header">
+                    <h3 class="sysmetric-title">CPU Usage</h3>
+                    <div style="display: flex; align-items: center;">
+                        <span id="cpuStatus" class="sysmetric-status sysmetric-status-healthy">Healthy</span>
+                        <div id="cpuTemp" class="temperature-indicator temperature-normal">0°C</div>
+                    </div>
+                </div>
+                <div id="cpuValue" class="sysmetric-value">0%</div>
+                <div class="sysmetric-progress">
+                    <div id="cpuBar" class="sysmetric-progress-fill"></div>
+                </div>
+                <div class="metric-details">
+                    <div class="metric-detail-item">
+                        <span>Cores:</span>
+                        <span id="cpuCores">0</span>
+                    </div>
+                </div>
+                <div id="cpuDetails" class="sysmetric-details">Last updated: Never</div>
+            </div>
+
+            <div class="sysmetric-card">
+                <div class="sysmetric-header">
+                    <h3 class="sysmetric-title">Memory Usage</h3>
+                    <span id="memoryStatus" class="sysmetric-status sysmetric-status-healthy">Healthy</span>
+                </div>
+                <div id="memoryValue" class="sysmetric-value">0%</div>
+                <div class="sysmetric-progress">
+                    <div id="memoryBar" class="sysmetric-progress-fill"></div>
+                </div>
+                <div class="metric-details">
+                    <div class="metric-detail-item">
+                        <span>Used:</span>
+                        <span id="memoryUsed">0 GB</span>
+                    </div>
+                    <div class="metric-detail-item">
+                        <span>Total:</span>
+                        <span id="memoryTotal">0 GB</span>
+                    </div>
+                </div>
+                <div id="memoryDetails" class="sysmetric-details">Last updated: Never</div>
+            </div>
+
+            <div class="sysmetric-card">
+                <div class="sysmetric-header">
+                    <h3 class="sysmetric-title">Disk Activity</h3>
+                    <span id="diskStatus" class="sysmetric-status sysmetric-status-healthy">Healthy</span>
+                </div>
+                <div id="diskValue" class="sysmetric-value">0%</div>
+                <div class="sysmetric-progress">
+                    <div id="diskBar" class="sysmetric-progress-fill"></div>
+                </div>
+                <div class="io-metrics">
+                    <div class="io-metric">
+                        <i class="fas fa-arrow-down"></i>
+                        <span id="diskReads">0</span> reads/s
+                    </div>
+                    <div class="io-metric">
+                        <i class="fas fa-arrow-up"></i>
+                        <span id="diskWrites">0</span> writes/s
+                    </div>
+                </div>
+                <div id="volumes" class="volumes-grid">
+                    <!-- Volumes will be added here dynamically -->
+                </div>
+                <div id="diskDetails" class="sysmetric-details">Last updated: Never</div>
+            </div>
+
+            <div class="sysmetric-card">
+                <div class="sysmetric-header">
+                    <h3 class="sysmetric-title">Network Traffic</h3>
+                    <span id="networkStatus" class="sysmetric-status sysmetric-status-healthy">Healthy</span>
+                </div>
+                <div class="sysmetric-network-stats">
+                    <div>
+                        <div>Received Rate:</div>
+                        <div id="networkReceived">0 B/s</div>
+                        <div style="margin-top: 10px;">Total Received:</div>
+                        <div id="networkTotalReceived">0 B</div>
+                    </div>
+                    <div>
+                        <div>Sent Rate:</div>
+                        <div id="networkSent">0 B/s</div>
+                        <div style="margin-top: 10px;">Total Sent:</div>
+                        <div id="networkTotalSent">0 B</div>
+                    </div>
+                </div>
+                <div id="networkInterfaces" class="network-interfaces">
+                    <!-- Network interfaces will be added here dynamically -->
+                </div>
+                <div id="networkDetails" class="sysmetric-details">Last updated: Never</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center">
+        <a href="/practice" class="menu-link">
+            <button class="button-primary-small" style="margin-top: 20px; font-size: 14px;">Return to practice page</button>
+        </a>
+    </div>
+
+    <script>
+        let updateInterval;
+        let totalReceived = 0;
+        let totalSent = 0;
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 B/s';
+            const sizes = ['B/s', 'KB/s', 'MB/s', 'GB/s', 'TB/s', 'PB/s', 'EB/s', 'ZB/s', 'YB/s'];
+            const i = Math.floor(Math.log(bytes) / Math.log(1024));
+            return `${(bytes / Math.pow(1024, i)).toFixed(2)} ${sizes[i]}`;
+        }
+
+        function formatSize(bytes) {
+            if (bytes === 0) return '0 GB';
+            const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(1024));
+            return `${(bytes / Math.pow(1024, i)).toFixed(2)} ${sizes[i]}`;
+        }
+
+        function updateStatus(element, value) {
+            element.className = 'sysmetric-status ' +
+                (value >= 80 ? 'sysmetric-status-critical' :
+                    value >= 60 ? 'sysmetric-status-warning' :
+                        'sysmetric-status-healthy');
+            element.textContent = value >= 80 ? 'Critical' :
+                value >= 60 ? 'Warning' : 'Healthy';
+        }
+
+        function updateMetrics(data) {
+            const ensureNumber = (value) => {
+                const num = Number(value);
+                return isNaN(num) ? 0 : num;
+            };
+
+            // CPU
+            const cpuValue = ensureNumber(data.cpu.usage);
+            document.getElementById('cpuValue').textContent = `${Math.round(cpuValue)}%`;
+            document.getElementById('cpuBar').style.width = `${cpuValue}%`;
+            updateStatus(document.getElementById('cpuStatus'), cpuValue);
+
+            // CPU temperature
+            const cpuTemp = data.cpu.temperature;
+            const tempElement = document.getElementById('cpuTemp');
+            tempElement.textContent = `${Math.round(cpuTemp)}°C`;
+            tempElement.className = 'temperature-indicator ' +
+                (cpuTemp >= 80 ? 'temperature-hot' :
+                    cpuTemp >= 60 ? 'temperature-warm' :
+                        'temperature-normal');
+
+            // CPU cores
+            document.getElementById('cpuCores').textContent = data.cpu.cores;
+
+            // Memory with detailed info
+            const memoryPercent = (data.memory.usage / data.memory.total) * 100;
+            document.getElementById('memoryValue').textContent = `${Math.round(memoryPercent)}%`;
+            document.getElementById('memoryBar').style.width = `${memoryPercent}%`;
+            document.getElementById('memoryUsed').textContent = formatSize(data.memory.usage);
+            document.getElementById('memoryTotal').textContent = formatSize(data.memory.total);
+            updateStatus(document.getElementById('memoryStatus'), memoryPercent);
+
+            // Disk with I/O metrics
+            const meanDiscPercentage = data.disk.volumes.reduce((acc, volume) => acc + volume.percentage, 0) / data.disk.volumes.length;
+            const diskActivity = Math.min(100, meanDiscPercentage);
+            document.getElementById('diskValue').textContent = `${Math.round(diskActivity)}%`;
+            document.getElementById('diskBar').style.width = `${diskActivity}%`;
+            document.getElementById('diskReads').textContent = data.disk.reads;
+            document.getElementById('diskWrites').textContent = data.disk.writes;
+            updateStatus(document.getElementById('diskStatus'), diskActivity);
+
+            // Update disk volumes
+            const volumesContainer = document.getElementById('volumes');
+            volumesContainer.innerHTML = data.disk.volumes.map(volume => `
+                <div class="volume-item">
+                    <div class="volume-name">${volume.name}</div>
+                    <div class="volume-usage">${volume.percentage}%</div>
+                </div>
+            `).join('');
+
+            // Network updates
+            const interfacesContainer = document.getElementById('networkInterfaces');
+            let totalReceived = 0;
+            let totalSent = 0;
+
+            // Calculate totals and update interfaces display
+            interfacesContainer.innerHTML = data.network.interfaces
+                .filter(iface => iface.name !== 'lo')
+                .map(iface => {
+                    totalReceived += iface.bytesReceived;
+                    totalSent += iface.bytesSent;
+                    return `
+                        <div class="network-interface">
+                            <div class="interface-header">
+                                <span class="interface-name">${iface.name}</span>
+                            </div>
+                            <div class="interface-stats">
+                                <span>↓ ${formatBytes(iface.bytesReceived)}</span>
+                                <span>↑ ${formatBytes(iface.bytesSent)}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+            // Update network stats
+            document.getElementById('networkReceived').textContent = formatBytes(totalReceived);
+            document.getElementById('networkSent').textContent = formatBytes(totalSent);
+
+            // Update totals
+            document.getElementById('networkTotalReceived').textContent = formatBytes(totalReceived).replace('/s', '');
+            document.getElementById('networkTotalSent').textContent = formatBytes(totalSent).replace('/s', '');
+
+            // Update last refresh time
+            const updateTime = new Date().toLocaleTimeString();
+            document.querySelectorAll('.sysmetric-details').forEach(detail => {
+                detail.textContent = `Last updated: ${updateTime}`;
+            });
+        }
+
+        async function fetchMetrics() {
+            try {
+                const response = await fetch('/api/v2/data/random/system-simple');
+                const data = await response.json();
+                updateMetrics(data);
+            } catch (error) {
+                console.error('Error fetching metrics:', error);
+            }
+        }
+
+        fetchMetrics();
+        updateInterval = setInterval(fetchMetrics, 1000);
+    </script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>

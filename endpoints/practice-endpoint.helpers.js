@@ -10,6 +10,7 @@ const { departmentV1 } = require("./practice/employee-management-system/departme
 const { roleV1 } = require("./practice/employee-management-system/role-handlers");
 const { attendanceV1 } = require("./practice/employee-management-system/attendance-handlers");
 const { authV1 } = require("./practice/employee-management-system/auth-handlers");
+const { authV2 } = require("./practice/chat-auth-handlers");
 const { verifyToken, hasPermission } = require("./practice/employee-management-system/auth-middleware");
 
 function isIdValid(id) {
@@ -359,6 +360,24 @@ function handlePractice(req, res) {
           return authV1.logout(req, res);
         case req.method === "GET" && endpoint === "permissions":
           return applyMiddleware([verifyToken], authV1.getPermissions)(req, res);
+        default:
+          return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
+      }
+    }
+
+    // Chat Auth endpoints v2
+    if (req.url.includes("/api/practice/v2/auth")) {
+      const endpoint = req.url.split("/api/practice/v2/auth/")[1];
+
+      switch (true) {
+        case req.method === "POST" && endpoint === "register":
+          return authV2.register(req, res);
+        case req.method === "POST" && endpoint === "login":
+          return authV2.login(req, res);
+        case req.method === "POST" && endpoint === "logout":
+          return authV2.logout(req, res);
+        case req.method === "GET" && endpoint === "check":
+          return authV2.checkAuth(req, res);
         default:
           return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
       }

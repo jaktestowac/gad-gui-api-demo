@@ -86,6 +86,10 @@ const websocketRoute = (wss, webSocketPort) => {
       handleConnection(contexts.chat, ws);
     });
 
+    ws.on("practiceChatLeave", (message) => {
+      handleDisconnect(contexts.chat, ws);
+    });
+
     ws.on("message", (message) => {
       try {
         let data;

@@ -552,6 +552,6 @@ function generateDocx(data) {
       mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       compression: "DEFLATE",
     });
-    saveAs(blob, "weather-data.docx");
+    saveAs(blob, `weather-data-${new Date().toISOString().slice(0, 10)}.docx`);
   });
 }

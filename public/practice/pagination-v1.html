@@ -11,14 +11,6 @@
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/infoBoxes.css" />
     <link rel="stylesheet" href="./css/practice-controls.css" />
-</head>
-
-<body>
-    <header>
-        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
-            <h1 id="menu-practice" class="nav-menu"></h1>
-        </div>
-    </header>
     <style>
         .data-grid-container {
             width: 80%;
@@ -207,8 +199,60 @@
             margin-top: 10px;
             font-size: 12px;
         }
-    </style>
 
+        .test-cases {
+            width: 80%;
+            margin: 20px auto;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .test-cases h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .test-cases h3:before {
+            content: '►';
+            margin-right: 10px;
+            transition: transform 0.3s;
+        }
+
+        .test-cases.expanded h3:before {
+            transform: rotate(90deg);
+        }
+
+        .test-cases ul {
+            list-style-type: none;
+            padding-left: 0;
+            display: none;
+        }
+
+        .test-cases.expanded ul {
+            display: block;
+        }
+
+        .test-cases li {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-left: 3px solid #4a90e2;
+            background-color: white;
+            padding-left: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
     <br />
     <br />
     <br />
@@ -281,6 +325,21 @@
             </div>
             <span id="elementsCount" class="infoCount">No data found</span>
         </div>
+    </div>
+    <div class="test-cases">
+        <h3 onclick="this.parentElement.classList.toggle('expanded')">Test Cases for Automation (Basic Pagination)</h3>
+        <ul>
+            <li>TC1: Verify data loading and display in grid with predefined dataset</li>
+            <li>TC2: Test sorting functionality for each column (ascending/descending)</li>
+            <li>TC3: Validate multi-select filter behavior with name combinations</li>
+            <li>TC4: Check role-based filtering with multiple role selections</li>
+            <li>TC5: Test status filter combinations and their effects</li>
+            <li>TC6: Verify pagination - records per page and total pages calculation</li>
+            <li>TC7: Validate search functionality within dropdown filters (partial matches)</li>
+            <li>TC8: Test selected filter tags display and removal functionality</li>
+            <li>TC9: Check data persistence when switching between pages</li>
+            <li>TC10: Verify element count accuracy with different filter combinations</li>
+        </ul>
     </div>
     <br />
     <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 24px">

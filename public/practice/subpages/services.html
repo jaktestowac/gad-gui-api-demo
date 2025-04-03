@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD | Services Page</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./subpages.css" />
+    <script src="./nav-highlight.js" defer></script>
+    <script src="./components/navigation.js"></script>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <script>createNavigation('services-nav');</script>
+    <div class="mp-content-wrapper">
+        <h1 class="mp-title">Our Services</h1>
+        <div class="services-container">
+            <div class="service-card" onmouseover="rotateCard(this)">
+                <div class="service-icon">🚀</div>
+                <h3>Fast Delivery</h3>
+                <p>Quick and reliable service</p>
+            </div>
+            <div class="service-card" onmouseover="rotateCard(this)">
+                <div class="service-icon">💡</div>
+                <h3>Innovation</h3>
+                <p>Cutting edge solutions</p>
+            </div>
+            <div class="service-card" onmouseover="rotateCard(this)">
+                <div class="service-icon">🛠️</div>
+                <h3>Support</h3>
+                <p>24/7 technical assistance</p>
+            </div>
+        </div>
+    </div>
+    <script>
+        function rotateCard(card) {
+            card.style.transform = 'rotateY(180deg)';
+            setTimeout(() => {
+                card.style.transform = 'rotateY(0deg)';
+            }, 1000);
+        }
+    </script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>

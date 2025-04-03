@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | Interactive Tabs Demo</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="./css/sub-popup-v1.css" />
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --primary-hover: #45a049;
+        }
+
+        /* Update theme-related styles */
+        .theme-btn {
+            padding: 8px 16px;
+            border: 2px solid transparent;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .theme-btn.active {
+            border-color: #000;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .button-primary,
+        .button-primary-small,
+        .counter-controls button {
+            background-color: var(--primary-color);
+        }
+
+        .button-primary:hover,
+        .button-primary-small:hover,
+        .counter-controls button:hover {
+            background-color: var(--primary-hover);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-practice" class="nav-menu">Visual Testing Practice</h1>
+        </div>
+    </header>
+    <br />
+    <br />
+    <br />
+
+    <div class="container">
+        <div class="tabs-container">
+            <div class="tabs">
+                <button class="tab-button active" data-tab="form">
+                    <i class="fas fa-file-alt"></i> Form
+                </button>
+                <button class="tab-button" data-tab="toggles">
+                    <i class="fas fa-toggle-on"></i> Toggles
+                </button>
+                <button class="tab-button" data-tab="progress">
+                    <i class="fas fa-tasks"></i> Progress
+                </button>
+                <button class="tab-button" data-tab="dynamic">
+                    <i class="fas fa-random"></i> Dynamic
+                </button>
+                <button class="tab-button" data-tab="test-cases">
+                    <i class="fas fa-vial"></i> Test Cases
+                </button>
+            </div>
+
+            <div class="tab-content active" id="form">
+                <h2>Interactive Form</h2>
+                <form id="interactive-form">
+                    <div class="form-group">
+                        <label>
+                            Name:
+                            <span class="info-icon">
+                                <i class="fas fa-info-circle"></i>
+                                <span class="tooltip">Enter your full name (2-50 characters)</span>
+                            </span>
+                        </label>
+                        <input type="text" id="name" required minlength="2" maxlength="50">
+                        <span class="validation-message"></span>
+                        <div class="char-counter" id="nameCounter">0/50</div>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            Email:
+                            <span class="info-icon">
+                                <i class="fas fa-info-circle"></i>
+                                <span class="tooltip">Enter a valid email address</span>
+                            </span>
+                        </label>
+                        <input type="email" id="email" required>
+                        <span class="validation-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            Password:
+                            <span class="info-icon">
+                                <i class="fas fa-info-circle"></i>
+                                <span class="tooltip">Password must be at least 8 characters long and include uppercase, lowercase, number, and special character</span>
+                            </span>
+                        </label>
+                        <input type="password" id="password" required>
+                        <div class="password-strength">
+                            <div class="strength-meter"></div>
+                        </div>
+                        <ul class="validation-list">
+                            <li class="validation-item" data-rule="length">At least 8 characters</li>
+                            <li class="validation-item" data-rule="uppercase">One uppercase letter</li>
+                            <li class="validation-item" data-rule="lowercase">One lowercase letter</li>
+                            <li class="validation-item" data-rule="number">One number</li>
+                            <li class="validation-item" data-rule="special">One special character</li>
+                        </ul>
+                    </div>
+                    <div class="form-group">
+                        <label>Category:</label>
+                        <select id="category">
+                            <option value="">Select category...</option>
+                            <option value="1">Category 1</option>
+                            <option value="2">Category 2</option>
+                            <option value="3">Category 3</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="button-primary">Submit</button>
+                </form>
+                <div class="form-summary" id="formSummary">
+                    <h3>Submission Summary</h3>
+                    <div class="form-summary-item">
+                        <span class="form-summary-label">Name:</span>
+                        <span class="form-summary-value" id="summaryName"></span>
+                    </div>
+                    <div class="form-summary-item">
+                        <span class="form-summary-label">Email:</span>
+                        <span class="form-summary-value" id="summaryEmail"></span>
+                    </div>
+                    <div class="form-summary-item">
+                        <span class="form-summary-label">Category:</span>
+                        <span class="form-summary-value" id="summaryCategory"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="success-message" id="successMessage">
+                <i class="fas fa-check-circle"></i>
+                <span>Form submitted successfully!</span>
+            </div>
+
+            <div class="tab-content" id="toggles">
+                <h2>Toggle Switches</h2>
+                <div class="toggle-group">
+                    <label class="toggle">
+                        <input type="checkbox" id="toggle1">
+                        <span class="slider"></span>
+                        <span class="toggle-label">Toggle 1</span>
+                    </label>
+                    <div class="toggle-content" id="toggle1-content">
+                        Content for Toggle 1
+                    </div>
+                </div>
+                <div class="toggle-group">
+                    <label class="toggle">
+                        <input type="checkbox" id="toggle2">
+                        <span class="slider"></span>
+                        <span class="toggle-label">Toggle 2</span>
+                    </label>
+                    <div class="toggle-content" id="toggle2-content">
+                        Content for Toggle 2
+                    </div>
+                </div>
+
+                <!-- New toggle switches -->
+                <div class="toggle-group">
+                    <label class="toggle">
+                        <input type="checkbox" id="toggle3">
+                        <span class="slider"></span>
+                        <span class="toggle-label">Color Theme</span>
+                    </label>
+                    <div class="toggle-content" id="toggle3-content">
+                        <div class="color-theme-options">
+                            <button class="theme-btn" data-color="#4CAF50">Green</button>
+                            <button class="theme-btn" data-color="#2196F3">Blue</button>
+                            <button class="theme-btn" data-color="#f44336">Red</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="toggle-group">
+                    <label class="toggle">
+                        <input type="checkbox" id="toggle4">
+                        <span class="slider"></span>
+                        <span class="toggle-label">Counter</span>
+                    </label>
+                    <div class="toggle-content" id="toggle4-content">
+                        <div class="counter-controls">
+                            <button onclick="updateCounter(-1)">-</button>
+                            <span id="counter">0</span>
+                            <button onclick="updateCounter(1)">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="toggle-group">
+                    <label class="toggle">
+                        <input type="checkbox" id="toggle5">
+                        <span class="slider"></span>
+                        <span class="toggle-label">Text Input</span>
+                    </label>
+                    <div class="toggle-content" id="toggle5-content">
+                        <input type="text" id="echoInput" placeholder="Type something...">
+                        <div id="echoOutput"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="progress">
+                <h2>Progress Indicators</h2>
+                <div class="progress-grid">
+                    <!-- Linear Progress -->
+                    <div class="progress-section">
+                        <h3>Linear Progress</h3>
+                        <div class="progress-bar" id="progress1">
+                            <div class="progress-fill"></div>
+                            <span class="progress-text">0%</span>
+                        </div>
+                        <div class="progress-controls">
+                            <button onclick="toggleProgress('progress1')">Pause/Resume</button>
+                            <button onclick="resetProgress('progress1')">Reset</button>
+                            <button onclick="updateProgress('progress1')">Update</button>
+                        </div>
+                    </div>
+
+                    <!-- Circular Progress -->
+                    <div class="progress-section">
+                        <h3>Circular Progress</h3>
+                        <div class="circular-progress" id="circularProgress">
+                            <svg width="120" height="120">
+                                <circle class="progress-background" cx="60" cy="60" r="54" />
+                                <circle class="progress-circle" cx="60" cy="60" r="54" />
+                            </svg>
+                            <span class="progress-value">0%</span>
+                        </div>
+                        <div class="progress-controls">
+                            <button class="button-primary-small" onclick="updateCircularProgress()">Update</button>
+                        </div>
+                    </div>
+
+                    <div class="progress-section">
+                        <h3>Countdown Timer</h3>
+                        <div class="countdown-display" id="countdown">05:00</div>
+                        <div class="progress-controls">
+                            <button onclick="startCountdown()">Start</button>
+                            <button onclick="pauseCountdown()">Pause</button>
+                            <button onclick="resetCountdown()">Reset</button>
+                        </div>
+                    </div>
+
+                    <div class="progress-section">
+                        <h3>Custom Loader</h3>
+                        <div class="loader" id="customLoader"></div>
+                        <div class="progress-controls">
+                            <button class="button-primary-small" onclick="toggleLoader()">Toggle Loader</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="dynamic">
+                <h2>Dynamic Content</h2>
+                <div class="dynamic-container">
+                    <button class="button-primary-small" onclick="addItem()">Add Item</button>
+                    <div id="dynamic-items"></div>
+                </div>
+                <h3>Color Picker</h3>
+                <div class="form-group">
+                    <input type="color" id="colorPicker" value="#4caf50">
+                    <div class="color-preview" id="colorPreview"></div>
+                </div>
+
+                <h3>Draggable Elements</h3>
+                <div class="draggable-container" id="draggableContainer">
+                    <div class="draggable" draggable="true">Drag me 1</div>
+                    <div class="draggable" draggable="true">Drag me 2</div>
+                    <div class="draggable" draggable="true">Drag me 3</div>
+                </div>
+
+                <h3>Range Slider</h3>
+                <div class="range-container">
+                    <input type="range" min="0" max="100" value="50" class="range-slider" id="rangeSlider">
+                    <div class="range-value" id="rangeValue">50</div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="test-cases">
+                <h2>Test Cases</h2>
+                <div class="test-grid">
+                    <!-- Form Validation Tests -->
+                    <div class="test-section">
+                        <h3>Form Validation</h3>
+                        <div class="test-case">
+                            <div class="test-case-header">
+                                <span>TC001: Name Field Validation</span>
+                                <span class="test-priority priority-high">High</span>
+                            </div>
+                            <ol class="test-steps">
+                                <li>Navigate to Form tab</li>
+                                <li>Enter name with less than 2 characters</li>
+                                <li>Enter name with more than 50 characters</li>
+                                <li>Enter valid name (2-50 chars)</li>
+                            </ol>
+                            <div class="test-expected">
+                                <strong>Expected:</strong> Error message for invalid lengths, success for valid input
+                            </div>
+                        </div>
+                        <div class="test-case">
+                            <div class="test-case-header">
+                                <span>TC002: Password Strength</span>
+                                <span class="test-priority priority-high">High</span>
+                            </div>
+                            <ol class="test-steps">
+                                <li>Enter password without uppercase</li>
+                                <li>Enter password without number</li>
+                                <li>Enter password without special char</li>
+                                <li>Enter valid password meeting all criteria</li>
+                            </ol>
+                            <div class="test-expected">
+                                <strong>Expected:</strong> Strength indicator updates, validation list updates accordingly
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Progress Tests -->
+                    <div class="test-section">
+                        <h3>Progress Indicators</h3>
+                        <div class="test-case">
+                            <div class="test-case-header">
+                                <span>TC003: Linear Progress</span>
+                                <span class="test-priority priority-medium">Medium</span>
+                            </div>
+                            <ol class="test-steps">
+                                <li>Click Update multiple times</li>
+                                <li>Click Pause/Resume</li>
+                                <li>Click Reset</li>
+                            </ol>
+                            <div class="test-expected">
+                                <strong>Expected:</strong> Progress updates by 10%, pauses, resets to 0%
+                            </div>
+                        </div>
+                        <div class="test-case">
+                            <div class="test-case-header">
+                                <span>TC004: Timer Controls</span>
+                                <span class="test-priority priority-medium">Medium</span>
+                            </div>
+                            <ol class="test-steps">
+                                <li>Start timer</li>
+                                <li>Pause timer</li>
+                                <li>Resume timer</li>
+                                <li>Reset timer</li>
+                            </ol>
+                            <div class="test-expected">
+                                <strong>Expected:</strong> Timer starts from 5:00, pauses, continues, resets to 5:00
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Tests -->
+                    <div class="test-section">
+                        <h3>Interactive Elements</h3>
+                        <div class="test-case">
+                            <div class="test-case-header">
+                                <span>TC005: Drag and Drop</span>
+                                <span class="test-priority priority-low">Low</span>
+                            </div>
+                            <ol class="test-steps">
+                                <li>Drag first element to last position</li>
+                                <li>Drag middle element to first position</li>
+                                <li>Drag between positions rapidly</li>
+                            </ol>
+                            <div class="test-expected">
+                                <strong>Expected:</strong> Elements reorder smoothly, maintain draggable functionality
+                            </div>
+                        </div>
+                        <div class="test-case">
+                            <div class="test-case-header">
+                                <span>TC006: Color Picker</span>
+                                <span class="test-priority priority-low">Low</span>
+                            </div>
+                            <ol class="test-steps">
+                                <li>Select different colors</li>
+                                <li>Check preview updates</li>
+                                <li>Test extreme values (black/white)</li>
+                            </ol>
+                            <div class="test-expected">
+                                <strong>Expected:</strong> Preview updates in real-time with selected color
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Timer Tests -->
+                    <div class="test-section">
+                        <h3>Timer and Countdown</h3>
+                        <div class="test-case">
+                            <div class="test-case-header">
+                                <span>TC007: Timer Edge Cases</span>
+                                <span class="test-priority priority-medium">Medium</span>
+                            </div>
+                            <ol class="test-steps">
+                                <li>Start timer and wait until 00:00</li>
+                                <li>Try to resume after completion</li>
+                                <li>Start multiple timers simultaneously</li>
+                            </ol>
+                            <div class="test-expected">
+                                <strong>Expected:</strong> Timer stops at 00:00, can't resume, only one timer active at a time
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Subscription Tests -->
+                    <div class="test-section">
+                        <h3>Subscription Features</h3>
+                        <div class="test-case">
+                            <div class="test-case-header">
+                                <span>TC008: Popup Timing</span>
+                                <span class="test-priority priority-medium">Medium</span>
+                            </div>
+                            <ol class="test-steps">
+                                <li>Load page first time</li>
+                                <li>Close popup and refresh page</li>
+                                <li>Wait 60 seconds and refresh</li>
+                            </ol>
+                            <div class="test-expected">
+                                <strong>Expected:</strong> Popup appears on first load, not on immediate refresh, reappears after 60s
+                            </div>
+                        </div>
+                        <div class="test-case">
+                            <div class="test-case-header">
+                                <span>TC009: Email Validation</span>
+                                <span class="test-priority priority-high">High</span>
+                            </div>
+                            <ol class="test-steps">
+                                <li>Submit empty email</li>
+                                <li>Submit invalid email format</li>
+                                <li>Submit valid email</li>
+                            </ol>
+                            <div class="test-expected">
+                                <strong>Expected:</strong> Form validates email format, shows confirmation on success
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cross-browser Tests -->
+                    <div class="test-section">
+                        <h3>Cross-browser Compatibility</h3>
+                        <div class="test-case">
+                            <div class="test-case-header">
+                                <span>TC010: Browser Support</span>
+                                <span class="test-priority priority-high">High</span>
+                            </div>
+                            <ol class="test-steps">
+                                <li>Test in Chrome, Firefox, Safari</li>
+                                <li>Test responsive design</li>
+                                <li>Verify animations work</li>
+                            </ol>
+                            <div class="test-expected">
+                                <strong>Expected:</strong> Consistent appearance and functionality across browsers
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Subscribe Popup -->
+    <div class="overlay" id="subscribeOverlay"></div>
+    <div class="subscribe-popup" id="subscribePopup">
+        <button class="subscribe-close" onclick="closeSubscribe()">&times;</button>
+        <h2>Stay Updated!</h2>
+        <p>Subscribe to our newsletter for the latest updates and exclusive content.</p>
+        <form class="subscribe-form" onsubmit="handleSubscribe(event)">
+            <input type="email" placeholder="Enter your email" required>
+            <button type="submit" class="button-primary">Subscribe</button>
+        </form>
+    </div>
+
+    <!-- Confirmation Popup -->
+    <div class="confirmation-popup" id="confirmationPopup">
+        <i class="fas fa-check-circle"></i>
+        <h3>Thank You!</h3>
+        <p>You have successfully subscribed to our newsletter.</p>
+    </div>
+
+    <!-- Timer Completion Popup -->
+    <div class="confirmation-popup" id="timerCompletionPopup">
+        <i class="fas fa-clock"></i>
+        <h3>Time's Up!</h3>
+        <p>The countdown timer has reached zero.</p>
+    </div>
+
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+    <script>
+        // Tab switching
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+                button.classList.add('active');
+                document.getElementById(button.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Form validation
+        document.getElementById('interactive-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name');
+            const email = document.getElementById('email');
+            const password = document.getElementById('password');
+            const category = document.getElementById('category');
+            let isValid = true;
+
+            if (!name.value.trim()) {
+                showError(name, 'Name is required');
+                isValid = false;
+            } else {
+                clearError(name);
+            }
+
+            if (!email.value.trim()) {
+                showError(email, 'Email is required');
+                isValid = false;
+            } else if (!/\S+@\S+\.\S+/.test(email.value)) {
+                showError(email, 'Invalid email format');
+                isValid = false;
+            } else {
+                clearError(email);
+            }
+
+            if (!password.value.trim()) {
+                showError(password, 'Password is required');
+                isValid = false;
+            } else {
+                clearError(password);
+            }
+
+            if (isValid) {
+                // Show success message
+                const successMessage = document.getElementById('successMessage');
+                successMessage.style.display = 'block';
+
+                // Update and show summary
+                document.getElementById('summaryName').textContent = name.value;
+                document.getElementById('summaryEmail').textContent = email.value;
+                document.getElementById('summaryCategory').textContent =
+                    category.options[category.selectedIndex].text;
+
+                document.getElementById('formSummary').style.display = 'block';
+
+                // Auto-hide success message
+                setTimeout(() => {
+                    successMessage.style.display = 'none';
+                }, 3500);
+
+                // Reset form
+                e.target.reset();
+
+                // Reset password validation
+                document.querySelectorAll('.validation-item').forEach(item => {
+                    item.classList.remove('valid');
+                });
+                document.querySelector('.strength-meter').className = 'strength-meter';
+            }
+        });
+
+        function showError(input, message) {
+            const validation = input.nextElementSibling;
+            validation.textContent = message;
+            input.classList.add('error');
+        }
+
+        function clearError(input) {
+            const validation = input.nextElementSibling;
+            validation.textContent = '';
+            input.classList.remove('error');
+        }
+
+        // Toggle switches
+        document.querySelectorAll('.toggle input').forEach(toggle => {
+            toggle.addEventListener('change', () => {
+                const content = document.getElementById(`${toggle.id}-content`);
+                content.style.display = toggle.checked ? 'block' : 'none';
+            });
+        });
+
+        // Progress bars
+        function updateProgress(id) {
+            const progressBar = document.getElementById(id);
+            const fill = progressBar.querySelector('.progress-fill');
+            const text = progressBar.querySelector('.progress-text');
+            const currentWidth = parseInt(fill.style.width || '0');
+            const newWidth = Math.min(currentWidth + 10, 100);
+
+            fill.style.width = `${newWidth}%`;
+            text.textContent = `${newWidth}%`;
+        }
+
+        // Progress state management
+        const progressStates = {};
+
+        function toggleProgress(id) {
+            progressStates[id] = !progressStates[id];
+        }
+
+        function resetProgress(id) {
+            const progressBar = document.getElementById(id);
+            const fill = progressBar.querySelector('.progress-fill');
+            const text = progressBar.querySelector('.progress-text');
+            fill.style.width = '0%';
+            text.textContent = '0%';
+            progressStates[id] = false;
+        }
+
+        // Circular Progress
+        let circularProgress = 0;
+        const circle = document.querySelector('.progress-circle');
+        const radius = circle.r.baseVal.value;
+        const circumference = 2 * Math.PI * radius;
+
+        circle.style.strokeDasharray = circumference;
+        circle.style.strokeDashoffset = circumference;
+
+        function updateCircularProgress() {
+            circularProgress = (circularProgress + 10) % 101;
+            const offset = circumference - (circularProgress / 100) * circumference;
+            circle.style.strokeDashoffset = offset;
+            document.querySelector('.progress-value').textContent = `${circularProgress}%`;
+        }
+
+        // Countdown Timer
+        let countdownInterval;
+        let timeLeft = 60; // 1 minute in seconds
+
+        function startCountdown() {
+            if (!countdownInterval) {
+                countdownInterval = setInterval(() => {
+                    timeLeft--;
+                    updateCountdownDisplay();
+                    if (timeLeft <= 0) {
+                        clearInterval(countdownInterval);
+                        countdownInterval = null;
+                        // Show timer completion popup
+                        const timerPopup = document.getElementById('timerCompletionPopup');
+                        timerPopup.style.display = 'block';
+                        setTimeout(() => {
+                            timerPopup.style.display = 'none';
+                        }, 2300);
+                    }
+                }, 1000);
+            }
+        }
+
+        function pauseCountdown() {
+            clearInterval(countdownInterval);
+            countdownInterval = null;
+        }
+
+        function resetCountdown() {
+            clearInterval(countdownInterval);
+            countdownInterval = null;
+            timeLeft = 300;
+            updateCountdownDisplay();
+        }
+
+        function updateCountdownDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('countdown').textContent =
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Custom Loader
+        function toggleLoader() {
+            const loader = document.getElementById('customLoader');
+            loader.style.display = loader.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Dynamic content
+        let itemCount = 0;
+        function addItem() {
+            const container = document.getElementById('dynamic-items');
+            itemCount++;
+
+            const item = document.createElement('div');
+            item.className = 'dynamic-item';
+            item.innerHTML = `
+                <span>Item ${itemCount}</span>
+                <button class="button-primary-small" onclick="this.parentElement.remove()">Remove</button>
+            `;
+
+            container.appendChild(item);
+        }
+
+        // Color picker
+        const colorPicker = document.getElementById('colorPicker');
+        const colorPreview = document.getElementById('colorPreview');
+        colorPreview.style.backgroundColor = colorPicker.value;
+        colorPicker.addEventListener('input', (e) => {
+            colorPreview.style.backgroundColor = e.target.value;
+        });
+
+        // Draggable elements
+        const draggables = document.querySelectorAll('.draggable');
+        draggables.forEach(draggable => {
+            draggable.addEventListener('dragstart', () => {
+                draggable.classList.add('dragging');
+            });
+            draggable.addEventListener('dragend', () => {
+                draggable.classList.remove('dragging');
+            });
+        });
+
+        const container = document.getElementById('draggableContainer');
+        container.addEventListener('dragover', e => {
+            e.preventDefault();
+            const dragging = document.querySelector('.dragging');
+            const afterElement = getDragAfterElement(container, e.clientY);
+            if (afterElement == null) {
+                container.appendChild(dragging);
+            } else {
+                container.insertBefore(dragging, afterElement);
+            }
+        });
+
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('.draggable:not(.dragging)')];
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+
+        // Range slider
+        const rangeSlider = document.getElementById('rangeSlider');
+        const rangeValue = document.getElementById('rangeValue');
+        rangeSlider.addEventListener('input', (e) => {
+            rangeValue.textContent = e.target.value;
+        });
+
+        // Initialize
+        updateCountdownDisplay();
+        document.getElementById('customLoader').style.display = 'none';
+
+        // Form validation enhancements
+        const password = document.getElementById('password');
+        const name = document.getElementById('name');
+        const nameCounter = document.getElementById('nameCounter');
+
+        // Name character counter
+        name.addEventListener('input', (e) => {
+            const length = e.target.value.length;
+            const max = e.target.maxLength;
+            nameCounter.textContent = `${length}/${max}`;
+
+            if (length >= max - 10) {
+                nameCounter.className = 'char-counter limit-near';
+            }
+            if (length >= max) {
+                nameCounter.className = 'char-counter limit-reached';
+            }
+            if (length < max - 10) {
+                nameCounter.className = 'char-counter';
+            }
+        });
+
+        // Password validation
+        const validations = {
+            length: str => str.length >= 8,
+            uppercase: str => /[A-Z]/.test(str),
+            lowercase: str => /[a-z]/.test(str),
+            number: str => /[0-9]/.test(str),
+            special: str => /[!@#$%^&*]/.test(str)
+        };
+
+        password.addEventListener('input', (e) => {
+            const value = e.target.value;
+            let strength = 0;
+
+            Object.entries(validations).forEach(([rule, validate]) => {
+                const element = document.querySelector(`[data-rule="${rule}"]`);
+                if (validate(value)) {
+                    element.classList.add('valid');
+                    strength++;
+                } else {
+                    element.classList.remove('valid');
+                }
+            });
+
+            const strengthMeter = document.querySelector('.strength-meter');
+            strengthMeter.className = 'strength-meter';
+            if (strength > 3) strengthMeter.classList.add('strength-strong');
+            else if (strength > 2) strengthMeter.classList.add('strength-medium');
+            else if (strength > 0) strengthMeter.classList.add('strength-weak');
+        });
+
+        function setCookie(name, value, seconds) {
+            const date = new Date();
+            date.setTime(date.getTime() + (seconds * 1000));
+            const expires = "expires=" + date.toUTCString();
+            document.cookie = name + "=" + value + ";" + expires + ";path=/";
+        }
+
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+
+        function showSubscribe() {
+            document.getElementById('subscribeOverlay').style.display = 'block';
+            document.getElementById('subscribePopup').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSubscribe(safeTime = 30) {
+            document.getElementById('subscribeOverlay').style.display = 'none';
+            document.getElementById('subscribePopup').style.display = 'none';
+            document.body.style.overflow = '';
+            setCookie('subscribePopupShown', 'true', safeTime);
+        }
+
+        if (!getCookie('subscribePopupShown')) {
+            const minDelay = 3000;
+            const maxDelay = 5000;
+            const randomDelay = Math.floor(Math.random() * (maxDelay - minDelay + 1)) + minDelay;
+
+            setTimeout(showSubscribe, randomDelay);
+        }
+
+        function handleSubscribe(e) {
+            e.preventDefault();
+            const email = e.target.querySelector('input').value;
+            closeSubscribe(60);
+
+            const confirmationPopup = document.getElementById('confirmationPopup');
+            confirmationPopup.style.display = 'block';
+
+            setTimeout(() => {
+                confirmationPopup.style.display = 'none';
+            }, 2300);
+        }
+
+        // Color theme functionality
+        document.querySelectorAll('.theme-btn').forEach(btn => {
+            const color = btn.dataset.color;
+            btn.style.backgroundColor = color;
+            btn.addEventListener('click', () => {
+                // Remove active class from all buttons
+                document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+                // Add active class to clicked button
+                btn.classList.add('active');
+
+                // Update CSS variables
+                document.documentElement.style.setProperty('--primary-color', color);
+                // Calculate and set hover color (slightly darker)
+                const hoverColor = adjustColor(color, -10);
+                document.documentElement.style.setProperty('--primary-hover', hoverColor);
+            });
+        });
+
+        // Helper function to adjust color brightness
+        function adjustColor(color, percent) {
+            const num = parseInt(color.replace('#', ''), 16),
+                amt = Math.round(2.55 * percent),
+                R = (num >> 16) + amt,
+                G = (num >> 8 & 0x00FF) + amt,
+                B = (num & 0x0000FF) + amt;
+            return '#' + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+                (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+                (B < 255 ? B < 1 ? 0 : B : 255))
+                .toString(16)
+                .slice(1);
+        }
+
+        // Counter functionality
+        let count = 0;
+        function updateCounter(val) {
+            count += val;
+            document.getElementById('counter').textContent = count;
+        }
+
+        // Echo input functionality
+        document.getElementById('echoInput')?.addEventListener('input', (e) => {
+            document.getElementById('echoOutput').textContent = e.target.value;
+        });
+    </script>
+
+    <style>
+        .color-theme-options {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .theme-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+        }
+
+        .counter-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 10px 0;
+        }
+
+        .counter-controls button {
+            padding: 5px 15px;
+            font-size: 18px;
+            border: none;
+            border-radius: 4px;
+            background: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+
+        #counter {
+            font-size: 20px;
+            font-weight: bold;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        #echoInput {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        #echoOutput {
+            margin-top: 10px;
+            padding: 8px;
+            background: #f5f5f5;
+            border-radius: 4px;
+            min-height: 24px;
+        }
+    </style>
+</body>
+
+</html>

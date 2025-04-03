@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD | About Page</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./subpages.css" />
+    <script src="./nav-highlight.js" defer></script>
+    <script src="./components/navigation.js"></script>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <script>createNavigation('about-nav');</script>
+    <div class="mp-content-wrapper" id="about-content" data-testid="about-content">
+        <h1 class="mp-title" id="about-title" data-testid="about-title">About Us</h1>
+        <div class="info-cards">
+            <div class="info-card" onclick="toggleCard(this)">
+                <h3>Our Mission</h3>
+                <div class="card-content">
+                    <p>To provide the best service to our customers.</p>
+                </div>
+            </div>
+            <div class="info-card" onclick="toggleCard(this)">
+                <h3>Our Team</h3>
+                <div class="card-content">
+                    <p>Experienced professionals dedicated to excellence.</p>
+                </div>
+            </div>
+        </div>
+        <p class="mp-text" id="about-description" data-testid="about-description">This is the about page content.</p>
+        <div class="mp-params-about" id="paramDisplay" data-testid="about-params"></div>
+    </div>
+
+    <script>
+        function toggleCard(card) {
+            card.classList.toggle('expanded');
+        }
+        const params = new URLSearchParams(window.location.search);
+        const paramDisplay = document.getElementById('paramDisplay');
+
+        if (params.toString()) {
+            params.forEach((value, key) => {
+                const paramItem = document.createElement('div');
+                paramItem.className = 'mp-param-item-about';
+                paramItem.innerHTML = `
+                    <h3>${key}</h3>
+                    <p>${value}</p>
+                `;
+                paramDisplay.appendChild(paramItem);
+            });
+        }
+    </script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>

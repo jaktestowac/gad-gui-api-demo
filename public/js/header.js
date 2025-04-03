@@ -119,6 +119,9 @@ const mainLearningGUIMenuHTMLLogged = (path = "") => {
 };
 
 const mainAPIMenuHTML = `
+<a href="/tools/backoffice.html">
+  <button id="btnBackoffice" data-testid="btn-tools" class="button-primary">Backoffice</button>
+</a>
 <a href="/tools/index.html">
   <button id="btnTools" data-testid="btn-tools" class="button-primary">Tools</button>
 </a>

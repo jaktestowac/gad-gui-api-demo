@@ -241,7 +241,7 @@ body {
 }
 
 .recipient {
-  font-size: 1.6rem;
+  font-size: 1.6rem !important;
   font-weight: 600;
   color: #2c3e50;
   padding: 0.5rem 2rem;

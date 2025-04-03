@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD | FAQ Page</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./subpages.css" />
+    <script src="./nav-highlight.js" defer></script>
+    <script src="./components/navigation.js"></script>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <script>createNavigation('faq-nav');</script>
+    <div class="mp-content-wrapper">
+        <h1 class="mp-title">FAQ</h1>
+        <div class="faq-container">
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">What is this demo about?</div>
+                <div class="faq-answer">This is a multi-page demo showcasing different dynamic elements.</div>
+            </div>
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">How does it work?</div>
+                <div class="faq-answer">Click on different pages to see various interactive features.</div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function toggleFaq(item) {
+            item.classList.toggle('active');
+        }
+    </script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>
