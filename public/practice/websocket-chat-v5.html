@@ -99,18 +99,17 @@
         #registerPasswordInput,
         #registerConfirmPasswordInput {
             flex: 1;
-            padding: 12px;
+            padding: 8px 10px;
             border: none;
-            border-radius: 12px;
+            border-radius: 6px;
             background-color: #2c2c2c;
             color: #ffffff;
-            font-size: 16px;
-            width: 400px;
+            font-size: 0.9rem;
         }
 
         #usernameInput {
             background-color: #585858;
-            width: 280px !important;
+            width: 100% !important;
         }
 
         #usernameInput:focus,
@@ -124,16 +123,16 @@
         }
 
         .chat-button {
-            padding: 6px 10px;
+            padding: 0 12px;
             border: none;
             border-radius: 5px;
             background-color: #7289da;
             color: white;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             transition: background-color 0.3s;
-            height: 35px;
-            min-width: 70px;
+            height: 32px;
+            min-width: 80px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -145,6 +144,10 @@
 
         .chat-button-secondary {
             background-color: #3f3f3f;
+            margin-top: 8px;
+            font-size: 0.8rem;
+            padding: 4px 8px;
+            height: 28px;
         }
 
         #loginScreen {
@@ -193,35 +196,120 @@
 
         .login-box {
             background-color: #2c2c2c;
-            padding: 30px;
-            border-radius: 12px;
+            padding: 12px;
+            border-radius: 8px;
             text-align: center;
-            width: 380px;
+            width: 280px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        #registerForm,
+        #loginForm {
+            height: 230px !important;
         }
 
         .login-box h2 {
-            margin-bottom: 20px;
+            margin-bottom: 6px;
             color: #7289da;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 4px;
             text-align: left;
+            position: relative;
+        }
+
+        .form-input-clear {
+            position: absolute;
+            right: 6px;
+            top: 70%;
+            transform: translateY(-50%);
+            color: #a3a3a3;
+            cursor: pointer;
+            padding: 4px;
+            display: none;
+            font-size: 0.7rem;
+        }
+
+        .form-input-clear:hover {
+            color: #ff4444;
+        }
+
+        .form-group input:not(:placeholder-shown)+.form-input-clear {
+            display: block;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 5px;
-            color: #ddd;
+            margin-bottom: 1px;
+            color: #aaa;
+            font-size: 0.7rem;
         }
 
-        #usernameInput,
-        #passwordInput,
-        #registerUsernameInput,
-        #registerPasswordInput,
-        #registerConfirmPasswordInput {
-            width: 100% !important;
-            margin-bottom: 5px;
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 12px;
+            gap: 0;
+            justify-content: center;
+            background-color: #1a1a1a;
+            border-radius: 4px;
+            padding: 3px;
+            width: 100%;
+            overflow: hidden;
+            border: 1px solid #3f3f3f;
+        }
+
+        .auth-tab {
+            padding: 6px 12px;
+            background: transparent;
+            cursor: pointer;
+            color: #888;
+            flex: 1;
+            text-align: center;
+            transition: all 0.2s ease;
+            font-size: 0.8rem;
+            position: relative;
+            border-radius: 3px;
+        }
+
+        .auth-tab.active {
+            background: #2c2c2c;
+            color: #7289da;
+            font-weight: 500;
+        }
+
+        .auth-tab:not(.active):hover {
+            background: #2c2c2c;
+            color: #aaa;
+        }
+
+        .auth-tab i {
+            margin-right: 4px;
+            font-size: 0.75rem;
+        }
+
+        .auth-form {
+            padding: 4px 0;
+        }
+
+        .form-input {
+            padding: 4px 26px 4px 8px;
+            height: 28px;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            background-color: #585858 !important;
+        }
+
+        .error-message,
+        .success-message {
+            font-size: 0.7rem;
+            margin: 2px 0;
+            min-height: 1em;
         }
 
         .hidden {
@@ -276,16 +364,6 @@
             margin-bottom: 6px;
             min-height: 1.2em;
             animation: fadeIn 0.3s ease-in;
-        }
-
-        .form-input {
-            padding: 12px;
-            border: none;
-            border-radius: 12px;
-            background-color: #5c5c5c !important;
-            color: #ffffff;
-            font-size: 16px;
-            width: 100%;
         }
 
         .form-input.error {
@@ -452,66 +530,6 @@
 
         .tab.active .tab-notification {
             display: none;
-        }
-
-        .auth-tabs {
-            display: flex;
-            margin-bottom: 20px;
-            gap: 0;
-            justify-content: center;
-            background-color: #1a1a1a;
-            border-radius: 8px;
-            padding: 4px;
-            width: 100%;
-            overflow: hidden;
-        }
-
-        .auth-tab {
-            padding: 10px 20px;
-            background: #3f3f3f;
-            cursor: pointer;
-            color: #ddd;
-            flex: 1;
-            text-align: center;
-            transition: all 0.3s ease;
-            position: relative;
-            font-weight: 500;
-            font-size: 0.95rem;
-            border-radius: 6px;
-            margin: 0 2px;
-        }
-
-        .auth-tab:first-child {
-            border-top-right-radius: 0;
-            border-bottom-right-radius: 0;
-            margin-left: 0;
-        }
-
-        .auth-tab:last-child {
-            border-top-left-radius: 0;
-            border-bottom-left-radius: 0;
-            margin-right: 0;
-        }
-
-        .auth-tab.active {
-            background: #7289da;
-            color: white;
-            box-shadow: 0 2px 8px rgba(114, 137, 218, 0.3);
-        }
-
-        .auth-tab:not(.active):hover {
-            background: #4f4f4f;
-        }
-
-        .auth-form {
-            transition: all 0.3s ease;
-            padding: 10px 0;
-        }
-
-        .auth-switch {
-            margin-top: 20px;
-            color: #7289da;
-            cursor: pointer;
         }
 
         .user-info {
@@ -981,6 +999,64 @@
             align-items: center;
             gap: 5px;
         }
+
+        .predefined-users {
+            margin-top: 8px;
+            padding-top: 6px;
+            border-top: 1px solid #3f3f3f;
+            font-size: 0.8rem;
+        }
+
+        .predefined-users h3 {
+            font-size: 0.7rem;
+            color: #aaa;
+            margin-bottom: 4px;
+            text-align: center;
+        }
+
+        .predefined-users table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.7rem;
+            color: #ddd;
+            background: #1a1a1a;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .predefined-users th {
+            text-align: center;
+            padding: 4px 6px;
+            background: #3f3f3f;
+            color: #7289da;
+            font-weight: normal;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            width: 50%;
+        }
+
+        .predefined-users td {
+            padding: 3px 6px;
+            font-family: 'Consolas', monospace;
+        }
+
+        .predefined-users tr {
+            transition: background-color 0.2s;
+        }
+
+        .predefined-users tr:hover {
+            background: #2c2c2c;
+            cursor: pointer;
+        }
+
+        .predefined-users tr:not(:last-child) {
+            border-bottom: 1px solid #2c2c2c;
+        }
+
+        .predefined-users td:first-child {
+            color: #7289da;
+        }
     </style>
 </head>
 
@@ -998,7 +1074,7 @@
 
     <div id="loginScreen" class="hidden">
         <div class="login-box">
-            <h2>Chat Authentication</h2>
+            <h2><i class="fas fa-comments"></i> Chat Login</h2>
 
             <div class="auth-tabs">
                 <div class="auth-tab active" data-tab="login">
@@ -1012,57 +1088,86 @@
             <div id="loginForm" class="auth-form">
                 <div class="form-group">
                     <label for="usernameInput">Username</label>
-                    <input type="text" id="usernameInput" class="form-input" maxlength="32" placeholder="Your username" />
+                    <input type="text" id="usernameInput" class="form-input" maxlength="32" placeholder="Enter username" autocomplete="username" />
+                    <i class="fas fa-times form-input-clear" onclick="clearInput('usernameInput')"></i>
                 </div>
 
                 <div class="form-group">
                     <label for="passwordInput">Password</label>
-                    <input type="password" id="passwordInput" class="form-input" placeholder="Your password" />
+                    <input type="password" id="passwordInput" class="form-input" placeholder="Enter password" autocomplete="current-password" />
+                    <i class="fas fa-times form-input-clear" onclick="clearInput('passwordInput')"></i>
                 </div>
 
                 <div id="loginError" class="error-message"></div>
-                <div align="center">
-                    <button class="chat-button" onclick="login()"><i class="fa-solid fa-right-to-bracket"></i> &nbsp;Login</button>
-                </div>
+                <button class="chat-button" onclick="login()">
+                    <i class="fas fa-sign-in-alt"></i>&nbsp; Login
+                </button>
             </div>
 
             <div id="registerForm" class="auth-form hidden">
                 <div class="form-group">
                     <label for="registerUsernameInput">Username</label>
-                    <input type="text" id="registerUsernameInput" class="form-input" maxlength="32" placeholder="Choose a username" />
+                    <input type="text" id="registerUsernameInput" class="form-input" maxlength="32" placeholder="Choose username" />
+                    <i class="fas fa-times form-input-clear" onclick="clearInput('registerUsernameInput')"></i>
                 </div>
 
                 <div class="form-group">
                     <label for="registerPasswordInput">Password</label>
-                    <input type="password" id="registerPasswordInput" class="form-input" placeholder="Choose a password" />
+                    <input type="password" id="registerPasswordInput" class="form-input" placeholder="Choose password" />
+                    <i class="fas fa-times form-input-clear" onclick="clearInput('registerPasswordInput')"></i>
                 </div>
 
                 <div class="form-group">
                     <label for="registerConfirmPasswordInput">Confirm Password</label>
-                    <input type="password" id="registerConfirmPasswordInput" class="form-input" placeholder="Confirm your password" />
+                    <input type="password" id="registerConfirmPasswordInput" class="form-input" placeholder="Confirm password" />
+                    <i class="fas fa-times form-input-clear" onclick="clearInput('registerConfirmPasswordInput')"></i>
                 </div>
 
                 <div id="registerError" class="error-message"></div>
                 <div id="registerSuccess" class="success-message"></div>
-                <div align="center">
-                    <button class="chat-button" onclick="register()">Register</button>
-                </div>
+                <button class="chat-button" onclick="register()">
+                    <i class="fas fa-user-plus"></i>&nbsp; Register
+                </button>
             </div>
 
-            <br />
-            <br />
-            <div align="center">
-                <a href="/practice/">
-                    <button class="chat-button chat-button-secondary">
-                        <i class="fa-solid fa-left-long"></i> &nbsp; Return to practice pages
-                    </button>
-                </a>
+            <button class="chat-button chat-button-secondary" onclick="window.location.href='/practice/'">
+                <i class="fas fa-arrow-left"></i>&nbsp; Back
+            </button>
+
+            <div class="predefined-users">
+                <h3>Quick Login - Test Users</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Password</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="predefined-user-item">
+                            <td>John</td>
+                            <td>123</td>
+                        </tr>
+                        <tr class="predefined-user-item">
+                            <td>Maria</td>
+                            <td>123</td>
+                        </tr>
+                        <tr class="predefined-user-item">
+                            <td>Lucy</td>
+                            <td>test1</td>
+                        </tr>
+                        <tr class="predefined-user-item">
+                            <td>David</td>
+                            <td>pass123</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 
     <div id="chatScreen" class="chat-container hidden">
-        
+
 
         <!-- Weather Widget -->
         <div id="weatherWidget" class="weather-widget">
@@ -1166,7 +1271,7 @@
                 </button>
             </div>
         </div>
-        
+
         <!-- Mock chat preview to show what the interface will look like -->
         <div id="chatPreviewContainer" class="chat-preview-container">
             <div id="chatPreview" class="chat-preview">
@@ -2082,6 +2187,14 @@
             activateConversation('general');
         }
 
+        function clearInput(inputId) {
+            const input = document.getElementById(inputId);
+            if (input) {
+                input.value = '';
+                input.focus();
+            }
+        }
+
         // Event listeners
         document.addEventListener('DOMContentLoaded', () => {
             // Set up auth tab switching
@@ -2109,6 +2222,16 @@
 
             // Check if user is already authenticated
             checkAuthentication();
+
+            // Add click handler for predefined users
+            document.querySelectorAll('.predefined-user-item').forEach(row => {
+                row.addEventListener('click', () => {
+                    const username = row.cells[0].textContent;
+                    const password = row.cells[1].textContent;
+                    document.getElementById('usernameInput').value = username;
+                    document.getElementById('passwordInput').value = password;
+                });
+            });
         });
 
         // Add to the end of the file, right before the closing scripts

@@ -3,10 +3,23 @@ const { logDebug, logError } = require("../../helpers/logger-api");
 const { HTTP_BAD_REQUEST, HTTP_OK, HTTP_UNAUTHORIZED } = require("../../helpers/response.helpers");
 const jwt = require("jsonwebtoken");
 
-// In-memory user database (would be replaced by a real database in production)
 const users = new Map();
-// Active sessions
 const sessions = new Map();
+
+// create 4 predefined users
+function createPredefinedUsers() {
+  const predefinedUsers = [
+    { id: "user1", username: "John", password: "123" },
+    { id: "user2", username: "Maria", password: "123" },
+    { id: "user3", username: "Lucy", password: "test1" },
+    { id: "user4", username: "David", password: "pass123" },
+  ];
+
+  predefinedUsers.forEach((user) => {
+    users.set(user.id, user);
+  });
+}
+createPredefinedUsers();
 
 const JWT_SECRET = "chat-app-secret-key";
 const TOKEN_EXPIRY = "24h";
