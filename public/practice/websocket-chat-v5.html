@@ -15,7 +15,6 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
@@ -651,7 +650,7 @@
 
         canvas#temperatureChart {
             width: 100%;
-            height: 70px;
+            height: 90px;
             background-color: #3f3f3f;
             border-radius: 5px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
@@ -1491,7 +1490,14 @@
             const forecastContainer = document.querySelector('.weather-forecast');
             const today = new Date().toISOString().split('T')[0];
 
-            forecastContainer.innerHTML = weatherData.weather.slice(0, 7).map(day => {
+            // weatherData.weather get 3 days before and 3 days after today
+            const forecastDays = weatherData.weather.filter(day => {
+                const dayDate = new Date(day.date);
+                return dayDate >= new Date(today).setDate(new Date(today).getDate() - 3) &&
+                    dayDate <= new Date(today).setDate(new Date(today).getDate() + 3);
+            });
+
+            forecastContainer.innerHTML = forecastDays.map(day => {
                 const isToday = day.date === today;
                 return `
                     <div class="forecast-day" style="${isToday ? 'background: #3f3f3f; padding: 4px; border-radius: 4px;' : ''}">
