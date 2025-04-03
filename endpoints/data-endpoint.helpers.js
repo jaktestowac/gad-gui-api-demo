@@ -147,7 +147,12 @@ function handleData(req, res, isAdmin) {
     const daysAfter = parseInt(queryParams.get("daysAfter")) || defaultWeatherV2Options.daysAfter;
     const city = queryParams.get("city") || defaultWeatherV2Options.city;
     const date = queryParams.get("date") || new Date().toISOString().split("T")[0];
-    const { weatherData, params } = generateWeatherV2Response({ date, daysBefore, daysAfter, city });
+    const { weatherData, params } = generateWeatherV2Response({
+      date,
+      daysBefore: Math.min(daysBefore, 14),
+      daysAfter: Math.min(daysAfter, 14),
+      city,
+    });
     res.status(HTTP_OK).json({ params, weather: weatherData });
     return;
   }

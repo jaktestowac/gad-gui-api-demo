@@ -500,8 +500,7 @@ function simpleWeatherGeneratorV2ForOneDay(date, location) {
   const condition = conditions[dataGenerator.getNextValue(0, conditions.length - 1)];
   const humidity = dataGenerator.getNextValue(30, 90);
   const wind = dataGenerator.getNextValue(0, 20);
-  const feelsLike = baseTemp + Math.floor(Math.random() * 5) - 2;
-
+  const feelsLike = baseTemp + dataGenerator.getNextValue(-5, 5);
   return {
     date,
     location,
@@ -521,7 +520,7 @@ const defaultWeatherV2Options = {
   date: new Date().toISOString().split("T")[0],
 };
 
-function generateWeatherV2Response({ options }) {
+function generateWeatherV2Response(options) {
   const newOptions = options || defaultWeatherV2Options;
   const params = { ...defaultWeatherV2Options, ...newOptions };
   logDebug(`Requested weather V2 data for:`, { params });

@@ -591,7 +591,7 @@
             border-bottom: none;
             padding-bottom: 0;
             margin-bottom: 0px;
-            
+
             justify-content: center;
             align-content: center;
         }
@@ -1092,37 +1092,38 @@
                 <div class="weather-title">
                     <i class="fas fa-cloud-sun"></i>
                     <span>Weather Forecast</span>
-                </div><div class="weather-row">
-                <div class="weather-info">
-                    <div class="weather-main">
-                        <div class="weather-location">San Francisco, CA</div>
-                        <div class="weather-temp">72°C</div>
+                </div>
+                <div class="weather-row">
+                    <div class="weather-info">
+                        <div class="weather-main">
+                            <div class="weather-location">San Francisco, CA</div>
+                            <div class="weather-temp">72°C</div>
+                        </div>
+                        <div class="weather-condition">
+                            <i class="fas fa-sun"></i>
+                            <span>Sunny</span>
+                        </div>
                     </div>
-                    <div class="weather-condition">
-                        <i class="fas fa-sun"></i>
-                        <span>Sunny</span>
+                    <div class="weather-details">
+                        <div class="weather-detail">
+                            <i class="fas fa-tint"></i>
+                            <span id="humidity">45%</span>
+                        </div>
+                        <div class="weather-detail">
+                            <i class="fas fa-wind"></i>
+                            <span id="wind">8 km/h</span>
+                        </div>
+                        <div class="weather-detail">
+                            <i class="fas fa-temperature-high"></i>
+                            <span id="feels-like">75°C</span>
+                        </div>
                     </div>
                 </div>
-                <div class="weather-details">
-                    <div class="weather-detail">
-                        <i class="fas fa-tint"></i>
-                        <span id="humidity">45%</span>
-                    </div>
-                    <div class="weather-detail">
-                        <i class="fas fa-wind"></i>
-                        <span id="wind">8 km/h</span>
-                    </div>
-                    <div class="weather-detail">
-                        <i class="fas fa-temperature-high"></i>
-                        <span id="feels-like">75°C</span>
-                    </div>
-                </div>
-            </div>
                 <button class="chat-button chat-button-secondary" onclick="refreshWeather()" style="height: 28px; min-width: 28px; padding: 3px 6px;">
                     <i class="fas fa-sync-alt"></i>
                 </button>
             </div>
-            
+
             <div class="weather-chart-container">
                 <canvas id="temperatureChart"></canvas>
             </div>
@@ -1226,91 +1227,38 @@
 
         // Weather widget data
         let weatherData = {
-            location: "San Francisco, CA",
-            temperature: 72,
-            condition: "Sunny",
-            icon: "fa-sun",
-            humidity: 45,
-            wind: 8,
-            feelsLike: 75,
-            weeklyForecast: [
-                { day: "Sun", temp: 65 },
-                { day: "Mon", temp: 68 },
-                { day: "Tue", temp: 70 },
-                { day: "Wed", temp: 72 },
-                { day: "Thu", temp: 73 },
-                { day: "Fri", temp: 72 },
-                { day: "Sat", temp: 70 }
-            ],
-            dailyForecast: [
-                { day: "Mon", temp: 74, icon: "fa-sun" },
-                { day: "Tue", temp: 70, icon: "fa-cloud" },
-                { day: "Wed", temp: 72, icon: "fa-cloud-sun" },
-                { day: "Thu", temp: 68, icon: "fa-cloud-rain" },
-                { day: "Fri", temp: 71, icon: "fa-cloud-sun" }
-            ]
+            weather: {
+                date: new Date().toISOString().split('T')[0],
+                location: "Warsaw",
+                temperature: 72,
+                condition: "Sunny",
+                icon: "fa-sun",
+                humidity: 45,
+                wind: 8,
+                feelsLike: 75
+            }
         };
 
-        // Function to generate random weather data
-        function generateMockWeatherData() {
-            const locations = [
-                "San Francisco, CA",
-                "New York, NY",
-                "Chicago, IL",
-                "Miami, FL",
-                "Seattle, WA"
-            ];
+        // Function to refresh weather data
+        function refreshWeather() {
+            fetch('/api/v2/data/random/weather?location=Warsaw&daysBefore=7&daysAfter=7')
+                .then(response => response.json())
+                .then(data => {
+                    weatherData = data;
+                    const currentWeather = data.weather[Math.floor(data.weather.length / 2)];
+                    updateWeatherWidget(currentWeather);
 
-            const conditions = [
-                { name: "Sunny", icon: "fa-sun" },
-                { name: "Partly Cloudy", icon: "fa-cloud-sun" },
-                { name: "Cloudy", icon: "fa-cloud" },
-                { name: "Rainy", icon: "fa-cloud-rain" },
-                { name: "Thunderstorm", icon: "fa-bolt" }
-            ];
+                    // Convert weather data for temperature chart
+                    const chartData = data.weather.map(w => ({
+                        day: new Date(w.date).toLocaleDateString('en-US', { weekday: 'short' }),
+                        temp: w.temperature
+                    }));
 
-            const baseTemp = Math.floor(Math.random() * 10) + 20; // 20-30°C
-            const condition = conditions[Math.floor(Math.random() * conditions.length)];
-            const location = locations[Math.floor(Math.random() * locations.length)];
-            const humidity = Math.floor(Math.random() * 50) + 30; // 30-80%
-            const wind = Math.floor(Math.random() * 15) + 5; // 5-20 km/h
-            const feelsLike = baseTemp + (Math.random() > 0.5 ? 3 : -2);
-
-            // Generate weekly forecast
-            const weeklyForecast = [];
-            const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-            let tempVariation = baseTemp;
-
-            for (let day of days) {
-                tempVariation += Math.floor(Math.random() * 6) - 3; // -3 to +2 temperature change
-                weeklyForecast.push({ day, temp: tempVariation });
-            }
-
-            // Generate daily forecast
-            const dailyForecast = [];
-            const forecastDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
-            for (let day of forecastDays) {
-                const dayCondition = conditions[Math.floor(Math.random() * conditions.length)];
-                const dayTemp = baseTemp + Math.floor(Math.random() * 10) - 5;
-                dailyForecast.push({
-                    day,
-                    temp: dayTemp,
-                    icon: dayCondition.icon
+                    drawTemperatureChart(chartData);
+                })
+                .catch(error => {
+                    console.error('Error fetching weather:', error);
                 });
-            }
-
-            return {
-                location,
-                temperature: baseTemp,
-                condition: condition.name,
-                icon: condition.icon,
-                humidity,
-                wind,
-                feelsLike,
-                weeklyForecast,
-                dailyForecast
-            };
         }
 
         // Function to draw temperature chart
@@ -1437,28 +1385,22 @@
             document.getElementById('wind').textContent = `${data.wind} km/h`;
             document.getElementById('feels-like').textContent = `${data.feelsLike}°C`;
 
-            // Update forecast days
-            const forecastElements = document.querySelectorAll('.forecast-day');
-            data.dailyForecast.forEach((forecast, index) => {
-                if (forecastElements[index]) {
-                    forecastElements[index].querySelector('.forecast-date').textContent = forecast.day;
-
-                    const icon = forecastElements[index].querySelector('.forecast-icon i');
-                    icon.className = '';
-                    icon.classList.add('fas', forecast.icon);
-
-                    forecastElements[index].querySelector('.forecast-temp').textContent = `${forecast.temp}°C`;
-                }
+            // Update forecast section with max 2 days before and 2 days after
+            const forecastDays = weatherData.weather.slice(0, 5).map(day => {
+                return {
+                    date: day.date,
+                    temperature: day.temperature,
+                    icon: day.icon
+                };
             });
-
-            // Draw temperature chart
-            drawTemperatureChart(data.weeklyForecast);
-        }
-
-        // Function to refresh weather data
-        function refreshWeather() {
-            weatherData = generateMockWeatherData();
-            updateWeatherWidget(weatherData);
+            const forecastContainer = document.querySelector('.weather-forecast');
+            forecastContainer.innerHTML = forecastDays.map(day => `
+                <div class="forecast-day">
+                    <div class="forecast-date">${new Date(day.date).toLocaleDateString('en-US', { weekday: 'short' })}</div>
+                    <div class="forecast-icon"><i class="fas ${day.icon}"></i></div>
+                    <div class="forecast-temp">${day.temperature}°C</div>
+                </div>
+            `).join('');
         }
 
         // Check if user is already authenticated
@@ -1630,6 +1572,7 @@
                         hideLoadingScreen();
 
                         showChatScreen();
+                        refreshWeather()
                         document.getElementById('welcomeUsername').textContent = username;
                         document.getElementById('usernameInput').value = '';
                         document.getElementById('passwordInput').value = '';
@@ -2044,8 +1987,8 @@
             const oldUserInfo = document.querySelector('.chat-container > .user-info');
             if (oldUserInfo) oldUserInfo.remove();
 
-            // Initialize weather widget
-            updateWeatherWidget(weatherData);
+            // Initialize weather widget with API data instead of mock data
+            refreshWeather();
 
             // Make canvas responsive
             const resizeCanvas = () => {
@@ -2053,19 +1996,8 @@
                 if (canvas) {
                     canvas.width = canvas.offsetWidth;
                     canvas.height = canvas.offsetHeight;
-                    drawTemperatureChart(weatherData.weeklyForecast);
                 }
             };
-
-            window.addEventListener('resize', resizeCanvas);
-
-            // Force resize after DOM is fully loaded to ensure canvas dimensions are set
-            setTimeout(resizeCanvas, 100);
-
-            // Ensure chart is drawn when page is fully visible
-            window.addEventListener('load', () => {
-                setTimeout(resizeCanvas, 200);
-            });
 
             // Check if user is already authenticated
             checkAuthentication();
@@ -2078,7 +2010,6 @@
             if (canvas) {
                 canvas.width = canvas.offsetWidth;
                 canvas.height = canvas.offsetHeight;
-                drawTemperatureChart(weatherData.weeklyForecast);
             }
         }, 500);
 
