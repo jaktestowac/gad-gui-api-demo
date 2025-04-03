@@ -1245,16 +1245,20 @@
                 .then(response => response.json())
                 .then(data => {
                     weatherData = data;
-                    const currentWeather = data.weather[Math.floor(data.weather.length / 2)];
+                    const currentWeather = data.weather.find(w =>
+                        w.date === new Date().toISOString().split('T')[0]
+                    ) || data.weather[Math.floor(data.weather.length / 2)];
+
                     updateWeatherWidget(currentWeather);
 
-                    // Convert weather data for temperature chart
                     const chartData = data.weather.map(w => ({
                         day: new Date(w.date).toLocaleDateString('en-US', { weekday: 'short' }),
-                        temp: w.temperature
+                        temp: w.temperature,
+                        date: w.date
                     }));
 
                     drawTemperatureChart(chartData);
+                    initializeChartInteractions();
                 })
                 .catch(error => {
                     console.error('Error fetching weather:', error);
@@ -1262,7 +1266,7 @@
         }
 
         // Function to draw temperature chart
-        function drawTemperatureChart(weeklyData) {
+        function drawTemperatureChart(weeklyData, hoverIndex = -1) {
             const canvas = document.getElementById('temperatureChart');
             if (!canvas || !canvas.getContext) return;
 
@@ -1339,36 +1343,134 @@
             ctx.shadowColor = 'transparent';
             ctx.shadowBlur = 0;
 
-            // Draw points and labels
+            // Find today's index in the data
+            const today = new Date().toISOString().split('T')[0];
+            const todayIndex = weeklyData.findIndex(item =>
+                new Date(item.date).toISOString().split('T')[0] === today
+            );
+
+            // Draw points and labels with highlight for today and hover
             weeklyData.forEach((item, index) => {
                 const x = width * ((index + 0.5) / weeklyData.length);
                 const normalizedTemp = (item.temp - minTemp) / tempRange;
                 const y = height - (normalizedTemp * height * 0.75) - (height * 0.15);
+                const isToday = index === todayIndex;
+                const isHovered = index === hoverIndex;
 
                 // Draw day labels
-                ctx.fillStyle = '#bbb';
-                ctx.font = '9px Arial';
+                ctx.fillStyle = isHovered ? '#ff9f43' : (isToday ? '#7289da' : '#bbb');
+                ctx.font = (isHovered || isToday) ? 'bold 9px Arial' : '9px Arial';
                 ctx.textAlign = 'center';
                 ctx.fillText(item.day, x, height - 3);
 
                 // Draw temperature points with highlight effect
-                ctx.fillStyle = '#ffffff';
+                ctx.fillStyle = isHovered ? '#ff9f43' : (isToday ? '#7289da' : '#ffffff');
                 ctx.beginPath();
-                ctx.arc(x, y, 3, 0, Math.PI * 2);
+                ctx.arc(x, y, isHovered ? 5 : (isToday ? 4 : 3), 0, Math.PI * 2);
                 ctx.fill();
 
-                // Add small highlight to points
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-                ctx.beginPath();
-                ctx.arc(x, y, 1.5, 0, Math.PI * 2);
-                ctx.fill();
+                // Add glow effect for hover or today
+                if (isHovered || isToday) {
+                    ctx.shadowColor = isHovered ? 'rgba(255, 159, 67, 0.5)' : 'rgba(114, 137, 218, 0.5)';
+                    ctx.shadowBlur = 8;
+                    ctx.beginPath();
+                    ctx.arc(x, y, isHovered ? 5 : 4, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
 
-                // Draw temperature value labels with better contrast
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 9px Arial';
+                // Draw temperature value labels
+                ctx.fillStyle = isHovered ? '#ff9f43' : (isToday ? '#7289da' : '#ffffff');
+                ctx.font = (isHovered || isToday) ? 'bold 9px Arial' : 'bold 9px Arial';
                 ctx.textAlign = 'center';
                 ctx.fillText(`${item.temp}°`, x, y - 8);
             });
+        }
+
+        // Add mouse interaction with the chart
+        function initializeChartInteractions() {
+            const canvas = document.getElementById('temperatureChart');
+            if (!canvas) return;
+
+            let activeIndex = -1;
+
+            function getDataIndexAtPosition(x) {
+                const width = canvas.width;
+                const dayWidth = width / weatherData.weather.length;
+                return Math.floor(x / dayWidth);
+            }
+
+            function handleMouseMove(event) {
+                const rect = canvas.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const dayIndex = getDataIndexAtPosition(x);
+
+                if (dayIndex >= 0 && dayIndex < weatherData.weather.length) {
+                    if (dayIndex !== activeIndex) {
+                        activeIndex = dayIndex;
+                        canvas.style.cursor = 'pointer';
+
+                        // Redraw chart with hover effect
+                        const chartData = weatherData.weather.map(w => ({
+                            day: new Date(w.date).toLocaleDateString('en-US', { weekday: 'short' }),
+                            temp: w.temperature,
+                            date: w.date
+                        }));
+
+                        drawTemperatureChart(chartData, dayIndex);
+                    }
+                } else {
+                    if (activeIndex !== -1) {
+                        activeIndex = -1;
+                        canvas.style.cursor = 'default';
+
+                        // Redraw chart without hover effect
+                        const chartData = weatherData.weather.map(w => ({
+                            day: new Date(w.date).toLocaleDateString('en-US', { weekday: 'short' }),
+                            temp: w.temperature,
+                            date: w.date
+                        }));
+
+                        drawTemperatureChart(chartData);
+                    }
+                }
+            }
+
+            function handleClick(event) {
+                const rect = canvas.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const dayIndex = getDataIndexAtPosition(x);
+
+                if (dayIndex >= 0 && dayIndex < weatherData.weather.length) {
+                    updateWeatherWidget(weatherData.weather[dayIndex]);
+                }
+            }
+
+            // Remove old event listeners if they exist
+            canvas.removeEventListener('mousemove', handleMouseMove);
+            canvas.removeEventListener('click', handleClick);
+            canvas.removeEventListener('mouseleave', handleMouseLeave);
+
+            // Add new event listeners
+            canvas.addEventListener('mousemove', handleMouseMove);
+            canvas.addEventListener('click', handleClick);
+            canvas.addEventListener('mouseleave', handleMouseLeave);
+
+            function handleMouseLeave() {
+                if (activeIndex !== -1) {
+                    activeIndex = -1;
+                    canvas.style.cursor = 'default';
+
+                    // Redraw chart without hover effect
+                    const chartData = weatherData.weather.map(w => ({
+                        day: new Date(w.date).toLocaleDateString('en-US', { weekday: 'short' }),
+                        temp: w.temperature,
+                        date: w.date
+                    }));
+
+                    drawTemperatureChart(chartData);
+                }
+            }
         }
 
         // Function to update weather widget with data
@@ -1385,22 +1487,20 @@
             document.getElementById('wind').textContent = `${data.wind} km/h`;
             document.getElementById('feels-like').textContent = `${data.feelsLike}°C`;
 
-            // Update forecast section with max 2 days before and 2 days after
-            const forecastDays = weatherData.weather.slice(0, 5).map(day => {
-                return {
-                    date: day.date,
-                    temperature: day.temperature,
-                    icon: day.icon
-                };
-            });
+            // Update forecast section with highlighting for today
             const forecastContainer = document.querySelector('.weather-forecast');
-            forecastContainer.innerHTML = forecastDays.map(day => `
-                <div class="forecast-day">
-                    <div class="forecast-date">${new Date(day.date).toLocaleDateString('en-US', { weekday: 'short' })}</div>
-                    <div class="forecast-icon"><i class="fas ${day.icon}"></i></div>
-                    <div class="forecast-temp">${day.temperature}°C</div>
-                </div>
-            `).join('');
+            const today = new Date().toISOString().split('T')[0];
+
+            forecastContainer.innerHTML = weatherData.weather.slice(0, 7).map(day => {
+                const isToday = day.date === today;
+                return `
+                    <div class="forecast-day" style="${isToday ? 'background: #3f3f3f; padding: 4px; border-radius: 4px;' : ''}">
+                        <div class="forecast-date" style="${isToday ? 'color: #7289da; font-weight: bold;' : ''}">${new Date(day.date).toLocaleDateString('en-US', { weekday: 'short' })}</div>
+                        <div class="forecast-icon"><i class="fas ${day.icon}" style="${isToday ? 'color: #7289da;' : ''}"></i></div>
+                        <div class="forecast-temp" style="${isToday ? 'color: #7289da; font-weight: bold;' : ''}">${day.temperature}°C</div>
+                    </div>
+                `;
+            }).join('');
         }
 
         // Check if user is already authenticated
