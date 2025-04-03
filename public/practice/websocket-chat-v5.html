@@ -2050,7 +2050,6 @@
         function updateUserList(users) {
             const userListContent = document.getElementById('userListContent');
             userListContent.innerHTML = users
-                .filter(user => user !== username)
                 .map(user => `
                     <div class="user-item" onclick="selectUser('${user}')" id="user-${user}">
                         <i class="fas fa-user" style="font-size: 0.8rem;"></i> ${user}
