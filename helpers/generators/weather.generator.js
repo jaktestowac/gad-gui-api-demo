@@ -500,6 +500,13 @@ function simpleWeatherGeneratorV2ForOneDay(date, location) {
   const condition = conditions[dataGenerator.getNextValue(0, conditions.length - 1)];
   const humidity = dataGenerator.getNextValue(30, 90);
   const wind = dataGenerator.getNextValue(0, 20);
+
+  const humidityRandom = humidity + Math.random() * 5 - 10;
+  const humidityRandomFormatted = Math.round(humidityRandom * 100) / 100;
+
+  const windRandom = wind + Math.random() * 5 - 10;
+  const windRandomFormatted = Math.round(windRandom * 100) / 100;
+
   const feelsLike = baseTemp + dataGenerator.getNextValue(-5, 5);
   return {
     date,
@@ -507,8 +514,8 @@ function simpleWeatherGeneratorV2ForOneDay(date, location) {
     temperature: baseTemp,
     condition: condition.name,
     icon: condition.icon,
-    humidity,
-    wind,
+    humidity: humidityRandomFormatted,
+    wind: windRandomFormatted > 0 ? windRandomFormatted : 0,
     feelsLike,
   };
 }

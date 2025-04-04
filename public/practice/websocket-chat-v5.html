@@ -136,6 +136,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            margin: 0px !important;
         }
 
         .chat-button:hover {
@@ -334,10 +335,10 @@
         }
 
         footer {
-            position: fixed;
+            position: inherit;
             bottom: 0px;
             flex-shrink: 0;
-            background: var(--bg-card);
+            background: #1a1a1a;
             color: #fff;
             padding: 0rem !important;
             text-align: center;
@@ -392,23 +393,47 @@
             height: inherit;
             display: flex;
             flex-direction: column;
+            transition: width 0.3s ease;
+        }
+
+        #userList.collapsed {
+            width: 40px;
+        }
+
+        #userList.collapsed .user-list-header span,
+        #userList.collapsed #userListContent,
+        #userList.collapsed .user-list-footer,
+        #userList.collapsed .fas.fa-users {
+            display: none;
         }
 
         .user-list-header {
             margin-bottom: 10px;
             font-size: 0.95rem;
             text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .collapse-button {
+            cursor: pointer;
+            color: #7289da;
+            padding: 2px;
+            transition: transform 0.3s;
+        }
+
+        .collapse-button:hover {
+            color: #5c6fb1;
+        }
+
+        .collapse-button.collapsed {
+            transform: rotate(-180deg);
         }
 
         #userListContent {
             flex: 1;
             overflow-y: auto;
-        }
-
-        .user-list-footer {
-            margin-top: auto;
-            padding-top: 10px;
-            border-top: 1px solid #3f3f3f;
         }
 
         .tab-container {
@@ -573,6 +598,7 @@
 
         .leave-chat-btn {
             color: #ffa500;
+            visibility: hidden;
         }
 
         .logout-btn:hover {
@@ -602,6 +628,7 @@
             justify-content: space-between;
             align-items: center;
             gap: 25px;
+            height: 20px;
         }
 
         .weather-row {
@@ -684,7 +711,8 @@
         }
 
         .weather-forecast {
-            display: flex;
+            /* display: flex; */
+            display: none;
             justify-content: space-between;
             margin-top: 5px;
             padding-top: 5px;
@@ -927,6 +955,12 @@
             gap: 12px;
         }
 
+        .status-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
         .panel-right {
             display: flex;
             align-items: center;
@@ -998,6 +1032,23 @@
             display: flex;
             align-items: center;
             gap: 5px;
+        }
+
+        .leave-chat-btn {
+            background-color: #3f3f3f;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            font-size: 0.8rem;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #ffa500;
+            visibility: hidden;
         }
 
         .predefined-users {
@@ -1256,9 +1307,14 @@
                     <h2>Real-Time Chat</h2>
                     <span class="version-tag">v5</span>
                 </div>
-                <div class="status-indicator">
-                    <div id="connectionStatus" class="status-dot"></div>
-                    <span id="connectionStatusText">Disconnected</span>
+                <div class="status-group">
+                    <div class="status-indicator">
+                        <div id="connectionStatus" class="status-dot"></div>
+                        <span id="connectionStatusText">Disconnected</span>
+                    </div>
+                    <button id="leaveChatButton" class="leave-chat-btn" onclick="leaveChat()">
+                        <i class="fas fa-sign-out-alt"></i> Leave Chat
+                    </button>
                 </div>
             </div>
             <div class="panel-right">
@@ -1303,13 +1359,11 @@
 
         <div id="chatInterface" class="chat-layout hidden">
             <div id="userList">
-                <h3 class="user-list-header"><i class="fas fa-users"></i> Online Users</h3>
+                <h3 class="user-list-header">
+                    <span><i class="fas fa-users"></i> Online Users</span>
+                    <i class="fas fa-chevron-left collapse-button" onclick="toggleUserList()"></i>
+                </h3>
                 <div id="userListContent"></div>
-                <div class="user-list-footer">
-                    <button id="leaveChatButton" class="leave-chat-btn" onclick="leaveChat()" style="width: 100%;">
-                        <i class="fas fa-sign-out-alt"></i> Leave Chat
-                    </button>
-                </div>
             </div>
             <div class="tab-container">
                 <div class="tabs" id="conversationTabs"></div>
@@ -1333,7 +1387,7 @@
 
         // Weather widget data
         let weatherData = {
-            weather: {
+            weather: [{
                 date: new Date().toISOString().split('T')[0],
                 location: "Warsaw",
                 temperature: 72,
@@ -1342,7 +1396,7 @@
                 humidity: 45,
                 wind: 8,
                 feelsLike: 75
-            }
+            }]
         };
 
         // Function to refresh weather data
@@ -1616,6 +1670,31 @@
             }).join('');
         }
 
+        function initializeTemperatureChart() {
+            const canvas = document.getElementById('temperatureChart');
+            if (!canvas) return;
+
+            // Set initial dimensions
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            // Draw initial chart if we have valid data structure
+            if (weatherData?.weather && Array.isArray(weatherData.weather)) {
+                const chartData = weatherData.weather.map(w => ({
+                    day: new Date(w.date).toLocaleDateString('en-US', { weekday: 'short' }),
+                    temp: w.temperature,
+                    date: w.date
+                }));
+                drawTemperatureChart(chartData);
+                initializeChartInteractions();
+            } else {
+                // Draw empty chart or placeholder until data is available
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#3f3f3f';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+
         // Check if user is already authenticated
         function checkAuthentication() {
             if (!authToken) {
@@ -1664,7 +1743,11 @@
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('chatScreen').classList.remove('hidden');
             document.getElementById('welcomeUsername').textContent = username;
+            document.getElementById('leaveChatButton').style.visibility = 'hidden';
             updateConnectionStatus(false);
+
+            // Refresh chart when chat screen becomes visible
+            setTimeout(initializeTemperatureChart, 100);
         }
 
         function switchAuthTab(tabName) {
@@ -1869,6 +1952,7 @@
                 }));
 
                 isChatActive = true;
+                document.getElementById('leaveChatButton').style.visibility = 'visible';
                 activateConversation('general');
             });
         }
@@ -1895,6 +1979,7 @@
                 document.getElementById('chatInterface').classList.add('hidden');
                 document.getElementById('chatPreviewContainer').classList.remove('hidden');
                 document.getElementById('joinChatButton').classList.remove('hidden');
+                document.getElementById('leaveChatButton').style.visibility = 'hidden';
 
                 // Clear conversations
                 conversations.forEach((conv, id) => {
@@ -2194,6 +2279,14 @@
             }
         }
 
+        function toggleUserList() {
+            const userList = document.getElementById('userList');
+            const button = document.querySelector('.collapse-button');
+
+            userList.classList.toggle('collapsed');
+            button.classList.toggle('collapsed');
+        }
+
         // Event listeners
         document.addEventListener('DOMContentLoaded', () => {
             // Set up auth tab switching
@@ -2207,8 +2300,21 @@
             const oldUserInfo = document.querySelector('.chat-container > .user-info');
             if (oldUserInfo) oldUserInfo.remove();
 
-            // Initialize weather widget with API data instead of mock data
+            // Initialize weather widget with API data
             refreshWeather();
+            initializeTemperatureChart();
+
+            // Add resize listener for responsive canvas
+            window.addEventListener('resize', () => {
+                initializeTemperatureChart();
+            });
+
+            // Handle visibility changes
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') {
+                    initializeTemperatureChart();
+                }
+            });
 
             // Make canvas responsive
             const resizeCanvas = () => {
@@ -2232,16 +2338,6 @@
                 });
             });
         });
-
-        // Add to the end of the file, right before the closing scripts
-        // Ensure weather chart is displayed on initial load
-        setTimeout(() => {
-            const canvas = document.getElementById('temperatureChart');
-            if (canvas) {
-                canvas.width = canvas.offsetWidth;
-                canvas.height = canvas.offsetHeight;
-            }
-        }, 500);
 
         // Input event handlers
         document.getElementById('usernameInput').addEventListener('keypress', (e) => {
