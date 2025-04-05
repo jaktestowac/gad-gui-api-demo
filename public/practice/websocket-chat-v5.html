@@ -1118,26 +1118,26 @@
         </div>
     </header>
 
-    <div id="loadingScreen">
-        <div class="spinner"></div>
+    <div id="loadingScreen" data-testid="loading-screen">
+        <div class="spinner" data-testid="loading-spinner"></div>
         <h2>WeatherChat</h2>
-        <p>User authentication in progress...</p>
+        <p data-testid="loading-message">User authentication in progress...</p>
     </div>
 
-    <div id="loginScreen" class="hidden">
-        <div class="login-box">
+    <div id="loginScreen" class="hidden" data-testid="login-screen">
+        <div class="login-box" data-testid="login-box">
             <h2><i class="fas fa-comments"></i> WeatherChat Login</h2>
 
-            <div class="auth-tabs">
-                <div class="auth-tab active" data-tab="login">
+            <div class="auth-tabs" data-testid="auth-tabs">
+                <div class="auth-tab active" data-tab="login" data-testid="login-tab">
                     <i class="fas fa-sign-in-alt"></i> Login
                 </div>
-                <div class="auth-tab" data-tab="register">
+                <div class="auth-tab" data-tab="register" data-testid="register-tab">
                     <i class="fas fa-user-plus"></i> Register
                 </div>
             </div>
 
-            <div id="loginForm" class="auth-form">
+            <div id="loginForm" class="auth-form" data-testid="login-form">
                 <div class="form-group">
                     <label for="usernameInput">Username</label>
                     <input type="text" id="usernameInput" class="form-input" maxlength="32" placeholder="Enter username" autocomplete="username" />
@@ -1222,24 +1222,24 @@
 
 
         <!-- Weather Widget -->
-        <div id="weatherWidget" class="weather-widget">
-            <div class="weather-header">
-                <div class="weather-title">
+        <div id="weatherWidget" class="weather-widget" data-testid="weather-widget">
+            <div class="weather-header" data-testid="weather-header">
+                <div class="weather-title" data-testid="weather-title">
                     <i class="fas fa-cloud-sun"></i>
                     <span>Weather Forecast</span>
                 </div>
-                <div class="weather-row">
-                    <div class="weather-info">
-                        <div class="weather-main">
-                            <div class="weather-location">San Francisco, CA</div>
-                            <div class="weather-temp">72°C</div>
+                <div class="weather-row" data-testid="weather-row">
+                    <div class="weather-info" data-testid="weather-info">
+                        <div class="weather-main" data-testid="weather-main">
+                            <div class="weather-location" data-testid="weather-location">San Francisco, CA</div>
+                            <div class="weather-temp" data-testid="weather-temperature">72°C</div>
                         </div>
-                        <div class="weather-condition">
+                        <div class="weather-condition" data-testid="weather-condition">
                             <i class="fas fa-sun"></i>
                             <span>Sunny</span>
                         </div>
                     </div>
-                    <div class="weather-details">
+                    <div class="weather-details" data-testid="weather-details">
                         <div class="weather-detail">
                             <i class="fas fa-tint"></i>
                             <span id="humidity">45%</span>
@@ -1254,7 +1254,7 @@
                         </div>
                     </div>
                 </div>
-                <button class="chat-button chat-button-secondary" onclick="refreshWeather()" style="height: 28px; min-width: 28px; padding: 3px 6px;">
+                <button class="chat-button chat-button-secondary" onclick="refreshWeather()" data-testid="refresh-weather-button" style="height: 28px; min-width: 28px; padding: 3px 6px;">
                     <i class="fas fa-sync-alt"></i>
                 </button>
             </div>
@@ -1301,68 +1301,68 @@
             </div>
         </div>
 
-        <div class="top-panel">
+        <div class="top-panel" data-testid="top-panel">
             <div class="panel-left">
-                <div class="panel-title">
+                <div class="panel-title" data-testid="panel-title">
                     <i class="fas fa-comment-dots"></i>
                     <h2>WeatherChat</h2>
                     <span class="version-tag">v5</span>
                 </div>
-                <div class="status-group">
-                    <div class="status-indicator">
-                        <div id="connectionStatus" class="status-dot"></div>
-                        <span id="connectionStatusText">Disconnected</span>
+                <div class="status-group" data-testid="status-group">
+                    <div class="status-indicator" data-testid="connection-status">
+                        <div id="connectionStatus" class="status-dot" data-testid="status-dot"></div>
+                        <span id="connectionStatusText" data-testid="status-text">Disconnected</span>
                     </div>
-                    <button id="leaveChatButton" class="leave-chat-btn" onclick="leaveChat()">
+                    <button id="leaveChatButton" class="leave-chat-btn" onclick="leaveChat()" data-testid="leave-chat-button">
                         <i class="fas fa-sign-out-alt"></i> Leave Chat
                     </button>
                 </div>
             </div>
             <div class="panel-right">
-                <div class="user-profile">
+                <div class="user-profile" data-testid="user-profile">
                     <i class="fas fa-user-circle"></i>
-                    <span id="welcomeUsername"></span>
+                    <span id="welcomeUsername" data-testid="welcome-username"></span>
                 </div>
-                <button id="logoutButton" class="logout-btn" onclick="logout()">
+                <button id="logoutButton" class="logout-btn" onclick="logout()" data-testid="logout-button">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </button>
             </div>
         </div>
 
         <!-- Mock chat preview to show what the interface will look like -->
-        <div id="chatPreviewContainer" class="chat-preview-container">
-            <div id="chatPreview" class="chat-preview">
-                <div class="preview-sidebar">
+        <div id="chatPreviewContainer" class="chat-preview-container" data-testid="chat-preview-container">
+            <div id="chatPreview" class="chat-preview" data-testid="chat-preview">
+                <div class="preview-sidebar" data-testid="preview-sidebar">
                     <div style="margin-bottom: 10px; font-size: 0.9rem;">Online Users</div>
-                    <div class="preview-user"></div>
-                    <div class="preview-user"></div>
-                    <div class="preview-user"></div>
+                    <div class="preview-user" data-testid="preview-user"></div>
+                    <div class="preview-user" data-testid="preview-user"></div>
+                    <div class="preview-user" data-testid="preview-user"></div>
                 </div>
-                <div class="preview-chat">
-                    <div class="preview-header">
-                        <div class="preview-tab"></div>
+                <div class="preview-chat" data-testid="preview-chat">
+                    <div class="preview-header" data-testid="preview-header">
+                        <div class="preview-tab" data-testid="preview-tab"></div>
                     </div>
-                    <div class="preview-messages">
-                        <div class="preview-message"></div>
-                        <div class="preview-message"></div>
-                        <div class="preview-message"></div>
+                    <div class="preview-messages" data-testid="preview-messages">
+                        <div class="preview-message" data-testid="preview-message"></div>
+                        <div class="preview-message" data-testid="preview-message"></div>
+                        <div class="preview-message" data-testid="preview-message"></div>
                     </div>
-                    <div class="preview-input">
-                        <div class="preview-input-field"></div>
-                        <div class="preview-button"></div>
+                    <div class="preview-input" data-testid="preview-input">
+                        <div class="preview-input-field" data-testid="preview-input-field"></div>
+                        <div class="preview-button" data-testid="preview-button"></div>
                     </div>
                 </div>
             </div>
-            <div class="join-button-container">
-                <button id="joinChatButton" class="chat-button" onclick="joinChat()">Join Chat</button>
+            <div class="join-button-container" data-testid="join-button-container">
+                <button id="joinChatButton" class="chat-button" onclick="joinChat()" data-testid="join-chat-button">Join Chat</button>
             </div>
         </div>
 
-        <div id="chatInterface" class="chat-layout hidden">
-            <div id="userList">
-                <h3 class="user-list-header">
+        <div id="chatInterface" class="chat-layout hidden" data-testid="chat-interface">
+            <div id="userList" data-testid="user-list">
+                <h3 class="user-list-header" data-testid="user-list-header">
                     <span><i class="fas fa-users"></i> Online Users</span>
-                    <i class="fas fa-chevron-left collapse-button" onclick="toggleUserList()"></i>
+                    <i class="fas fa-chevron-left collapse-button" onclick="toggleUserList()" data-testid="collapse-button"></i>
                 </h3>
                 <div id="userListContent"></div>
             </div>
@@ -2063,11 +2063,12 @@
                         const messageElement = document.createElement('p');
                         messageElement.className = isPrivate ? 'private-message' : '';
                         messageElement.classList.add('message-compact');
+                        messageElement.setAttribute('data-testid', `message-${conversationId}-${Date.now()}`);
                         messageElement.innerHTML = `
-                            <span class="message-time" title="${formatTime(new Date())}">${time}</span>
-                            <span class="${className}">
-                                <span class="message-username">${data.username}:</span>
-                                <span>${data.message}</span>
+                            <span class="message-time" data-testid="message-time" title="${formatTime(new Date())}">${time}</span>
+                            <span class="${className}" data-testid="message-content">
+                                <span class="message-username" data-testid="message-username">${data.username}:</span>
+                                <span data-testid="message-text">${data.message}</span>
                             </span>
                         `;
                         messagesDiv.appendChild(messageElement);
@@ -2137,7 +2138,7 @@
             const userListContent = document.getElementById('userListContent');
             userListContent.innerHTML = users
                 .map(user => `
-                    <div class="user-item" onclick="selectUser('${user}')" id="user-${user}">
+                    <div class="user-item" onclick="selectUser('${user}')" id="user-${user}" data-testid="user-item-${user}">
                         <i class="fas fa-user" style="font-size: 0.8rem;"></i> ${user}
                     </div>
                 `).join('');
@@ -2162,33 +2163,38 @@
             if (!conversations.has(conversationId)) {
                 const tab = document.createElement('div');
                 tab.className = 'tab';
+                tab.setAttribute('data-testid', `conversation-tab-${conversationId}`);
                 tab.onclick = (e) => {
                     if (e.target.classList.contains('tab-close')) return;
                     activateConversation(conversationId);
                 };
                 tab.innerHTML = `
-                    <span class="tab-title">${recipient ? `<i class="fas fa-user-alt" style="font-size: 0.8rem; margin-right: 4px;"></i>${recipient}` : '<i class="fas fa-comments" style="font-size: 0.8rem; margin-right: 4px;"></i>General'}</span>
-                    <span class="tab-notification" style="display: none">0</span>
-                    ${recipient ? `<button class="tab-close" onclick="closeConversation('${conversationId}')">×</button>` : ''}
+                    <span class="tab-title" data-testid="tab-title-${conversationId}">${recipient ? `<i class="fas fa-user-alt" style="font-size: 0.8rem; margin-right: 4px;"></i>${recipient}` : '<i class="fas fa-comments" style="font-size: 0.8rem; margin-right: 4px;"></i>General'}</span>
+                    <span class="tab-notification" data-testid="tab-notification-${conversationId}" style="display: none">0</span>
+                    ${recipient ? `<button class="tab-close" data-testid="tab-close-${conversationId}" onclick="closeConversation('${conversationId}')">×</button>` : ''}
                 `;
 
                 tabsDiv.appendChild(tab);
 
                 const conv = document.createElement('div');
                 conv.className = 'conversation';
+                conv.setAttribute('data-testid', `conversation-${conversationId}`);
                 conv.innerHTML = `
-                    <div id="messages-${conversationId}" class="messages">
-                        <div class="scroller">
-                        <div class="messages-content scroller-content"></div>
+                    <div id="messages-${conversationId}" class="messages" data-testid="messages-${conversationId}">
+                        <div class="scroller" data-testid="scroller-${conversationId}">
+                        <div class="messages-content scroller-content" data-testid="messages-content-${conversationId}"></div>
                         </div>
                     </div>
                     <div class="input-container">
                         <input type="text" 
                                class="message-input" 
-                               id="messageInput-${conversationId}" 
+                               id="messageInput-${conversationId}"
+                               data-testid="message-input-${conversationId}"
                                maxlength="128" 
                                placeholder="${recipient ? `Message to ${recipient}...` : 'Message to everyone...'}" />
-                        <button class="chat-button" onclick="sendMessage('${conversationId}')"><i class="fas fa-paper-plane"></i></button>
+                        <button class="chat-button" data-testid="send-button-${conversationId}" onclick="sendMessage('${conversationId}')">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
                     </div>
                 `;
 
