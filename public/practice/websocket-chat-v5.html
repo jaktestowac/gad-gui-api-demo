@@ -1140,18 +1140,18 @@
             <div id="loginForm" class="auth-form" data-testid="login-form">
                 <div class="form-group">
                     <label for="usernameInput">Username</label>
-                    <input type="text" id="usernameInput" class="form-input" maxlength="32" placeholder="Enter username" autocomplete="username" />
+                    <input type="text" id="usernameInput" class="form-input" maxlength="32" placeholder="Enter username" autocomplete="username" data-testid="usernameInput" />
                     <i class="fas fa-times form-input-clear" onclick="clearInput('usernameInput')"></i>
                 </div>
 
                 <div class="form-group">
                     <label for="passwordInput">Password</label>
-                    <input type="password" id="passwordInput" class="form-input" placeholder="Enter password" autocomplete="current-password" />
+                    <input type="password" id="passwordInput" class="form-input" placeholder="Enter password" autocomplete="current-password" data-testid="passwordInput" />
                     <i class="fas fa-times form-input-clear" onclick="clearInput('passwordInput')"></i>
                 </div>
 
                 <div id="loginError" class="error-message"></div>
-                <button class="chat-button" onclick="login()">
+                <button class="chat-button" onclick="login()" data-testid="login-button">
                     <i class="fas fa-sign-in-alt"></i>&nbsp; Login
                 </button>
             </div>
@@ -1159,30 +1159,30 @@
             <div id="registerForm" class="auth-form hidden">
                 <div class="form-group">
                     <label for="registerUsernameInput">Username</label>
-                    <input type="text" id="registerUsernameInput" class="form-input" maxlength="32" placeholder="Choose username" />
+                    <input type="text" id="registerUsernameInput" class="form-input" maxlength="32" placeholder="Choose username" data-testid="registerUsernameInput" />
                     <i class="fas fa-times form-input-clear" onclick="clearInput('registerUsernameInput')"></i>
                 </div>
 
                 <div class="form-group">
                     <label for="registerPasswordInput">Password</label>
-                    <input type="password" id="registerPasswordInput" class="form-input" placeholder="Choose password" />
+                    <input type="password" id="registerPasswordInput" class="form-input" placeholder="Choose password" data-testid="registerPasswordInput" />
                     <i class="fas fa-times form-input-clear" onclick="clearInput('registerPasswordInput')"></i>
                 </div>
 
                 <div class="form-group">
                     <label for="registerConfirmPasswordInput">Confirm Password</label>
-                    <input type="password" id="registerConfirmPasswordInput" class="form-input" placeholder="Confirm password" />
+                    <input type="password" id="registerConfirmPasswordInput" class="form-input" placeholder="Confirm password" data-testid="registerConfirmPasswordInput" />
                     <i class="fas fa-times form-input-clear" onclick="clearInput('registerConfirmPasswordInput')"></i>
                 </div>
 
                 <div id="registerError" class="error-message"></div>
                 <div id="registerSuccess" class="success-message"></div>
-                <button class="chat-button" onclick="register()">
+                <button class="chat-button" onclick="register()" data-testid="register-button">
                     <i class="fas fa-user-plus"></i>&nbsp; Register
                 </button>
             </div>
 
-            <button class="chat-button chat-button-secondary" onclick="window.location.href='/practice/'">
+            <button class="chat-button chat-button-secondary" onclick="window.location.href='/practice/'" data-testid="back-button">
                 <i class="fas fa-arrow-left"></i>&nbsp; Back
             </button>
 
@@ -1260,7 +1260,7 @@
             </div>
 
             <div class="weather-chart-container">
-                <canvas id="temperatureChart"></canvas>
+                <canvas id="temperatureChart" data-testid="temperatureChart"></canvas>
             </div>
             <div class="weather-forecast">
                 <div class="forecast-day">
@@ -1367,8 +1367,8 @@
                 <div id="userListContent"></div>
             </div>
             <div class="tab-container">
-                <div class="tabs" id="conversationTabs"></div>
-                <div id="conversations"></div>
+                <div class="tabs" id="conversationTabs" data-testid="conversationTabs"></div>
+                <div id="conversations" data-testid="conversations"></div>
             </div>
         </div>
     </div>
@@ -2104,7 +2104,6 @@
         }
 
         function updateConnectionStatus(isConnected) {
-            console.log('Connection status:', isConnected);
             const statusDot = document.getElementById('connectionStatus');
             const statusText = document.getElementById('connectionStatusText');
 
