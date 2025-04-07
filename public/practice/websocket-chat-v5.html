@@ -787,9 +787,11 @@
             width: 100%;
             height: 100%;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             pointer-events: auto;
+            gap: 10px;
             z-index: 1;
         }
 
@@ -799,6 +801,12 @@
             padding: 12px 30px;
             font-size: 1.1rem;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .join-button-text {
+            align-items: center;
+            justify-content: center;
+            text-align: center;
         }
 
         .chat-preview {
@@ -1354,6 +1362,7 @@
                 </div>
             </div>
             <div class="join-button-container" data-testid="join-button-container">
+                <div class="join-button-text" id="join-button-text" data-testid="join-button-text">Join the chat to start chatting!</div>
                 <button id="joinChatButton" class="chat-button" onclick="joinChat()" data-testid="join-chat-button">Join Chat</button>
             </div>
         </div>
@@ -1991,6 +2000,10 @@
 
                 // Clear user list
                 document.getElementById('userListContent').innerHTML = '';
+                const el = document.getElementById('join-button-text');
+                if (el) {
+                    el.innerHTML = 'Join the chat to start chatting!';
+                }
             }
         }
 
@@ -2098,6 +2111,14 @@
                             contentDiv.appendChild(errorElement);
                             scrollToLatestMessage(contentDiv);
                         }
+                        if (data.data.message === 'Username already taken') {
+                            leaveChat();
+                            const el = document.getElementById('join-button-text');
+                            if (el) {
+                                el.innerHTML = 'Username already taken<br>Are you logged in another window?';
+                            }
+                        }
+
                         break;
                 }
             });
