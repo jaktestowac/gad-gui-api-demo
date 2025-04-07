@@ -9,10 +9,11 @@ const sessions = new Map();
 // create 4 predefined users
 function createPredefinedUsers() {
   const predefinedUsers = [
-    { id: "user1", username: "John", password: "123" },
-    { id: "user2", username: "Maria", password: "123" },
-    { id: "user3", username: "Lucy", password: "test1" },
+    { id: "user1", username: "JohnWeb", password: "123" },
+    { id: "user2", username: "MariaWeb", password: "123" },
+    { id: "user3", username: "Emma", password: "test1" },
     { id: "user4", username: "David", password: "pass123" },
+    
   ];
 
   predefinedUsers.forEach((user) => {
@@ -39,9 +40,7 @@ const authV2 = {
       }
 
       if (!/^[a-zA-Z0-9]*$/.test(username)) {
-        return res
-          .status(HTTP_BAD_REQUEST)
-          .send(formatErrorResponse("Username can only contain letters and numbers"));
+        return res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Username can only contain letters and numbers"));
       }
 
       // Check if username already exists
