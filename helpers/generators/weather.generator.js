@@ -498,13 +498,14 @@ function simpleWeatherGeneratorV2ForOneDay(date, location) {
 
   const baseTemp = dataGenerator.getNextValue(15, 35);
   const condition = conditions[dataGenerator.getNextValue(0, conditions.length - 1)];
-  const humidity = dataGenerator.getNextValue(30, 90);
-  const wind = dataGenerator.getNextValue(0, 20);
+  const humidity = dataGenerator.getNextValue(50, 90);
+  const wind = dataGenerator.getNextValue(0, 90);
 
-  const humidityRandom = humidity + Math.random() * 5 - 10;
+  // randomize humidity from 40 to 90% of the base humidity
+  const humidityRandom = Math.random() * (humidity - humidity / 2) + humidity / 2;
   const humidityRandomFormatted = Math.round(humidityRandom * 100) / 100;
 
-  const windRandom = wind + Math.random() * 5 - 10;
+  const windRandom = Math.random() * wind - wind / 6;
   const windRandomFormatted = Math.round(windRandom * 100) / 100;
 
   const feelsLike = baseTemp + dataGenerator.getNextValue(-5, 5);

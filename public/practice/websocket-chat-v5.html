@@ -684,6 +684,73 @@
             white-space: nowrap;
         }
 
+        #wind {
+            font-weight: 500;
+        }
+
+        #wind.wind-calm {
+            color: #6fb1d9;
+            /* Light blue for calm winds */
+        }
+
+        #wind.wind-moderate {
+            color: #72da89;
+            /* Light green for moderate winds */
+        }
+
+        #wind.wind-strong {
+            color: #daa472;
+            /* Orange for strong winds */
+        }
+
+        #wind.wind-severe {
+            color: #da7272;
+            /* Red for severe winds */
+        }
+
+        #humidity {
+            font-weight: 500;
+        }
+
+        #humidity.humidity-low {
+            color: #da7272;
+            /* Red for dry conditions */
+        }
+
+        #humidity.humidity-normal {
+            color: #72da89;
+            /* Green for comfortable conditions */
+        }
+
+        #humidity.humidity-high {
+            color: #6fb1d9;
+            /* Blue for humid conditions */
+        }
+
+        #feels-like {
+            font-weight: 500;
+        }
+
+        #feels-like.feels-cold {
+            color: #6fb1d9;
+            /* Blue for cold */
+        }
+
+        #feels-like.feels-comfortable {
+            color: #72da89;
+            /* Green for comfortable */
+        }
+
+        #feels-like.feels-warm {
+            color: #daa472;
+            /* Orange for warm */
+        }
+
+        #feels-like.feels-hot {
+            color: #da7272;
+            /* Red for hot */
+        }
+
         .weather-chart-container {
             padding: 10px 5px;
             margin: 8px 0;
@@ -1657,31 +1724,61 @@
             conditionIcon.classList.add('fas', data.icon);
 
             document.querySelector('.weather-condition span').textContent = data.condition;
-            document.getElementById('humidity').textContent = `${data.humidity}%`;
-            document.getElementById('wind').textContent = `${data.wind} km/h`;
-            document.getElementById('feels-like').textContent = `${data.feelsLike}°C`;
 
-            // // Update forecast section with highlighting for today
-            // const forecastContainer = document.querySelector('.weather-forecast');
-            // const today = new Date().toISOString().split('T')[0];
+            const humidityElement = document.getElementById('humidity');
+            const feelsLikeElement = document.getElementById('feels-like');
+            const humidityValue = parseInt(data.humidity);
+            const feelsLikeValue = parseInt(data.feelsLike);
 
-            // // weatherData.weather get 3 days before and 3 days after today
-            // const forecastDays = weatherData.weather.filter(day => {
-            //     const dayDate = new Date(day.date);
-            //     return dayDate >= new Date(today).setDate(new Date(today).getDate() - 3) &&
-            //         dayDate <= new Date(today).setDate(new Date(today).getDate() + 3);
-            // });
+            // format value to DD.D
+            humidityElement.textContent = `${humidityValue.toFixed(1)}%`;
+            feelsLikeElement.textContent = `${feelsLikeValue}°C`;
 
-            // forecastContainer.innerHTML = forecastDays.map(day => {
-            //     const isToday = day.date === today;
-            //     return `
-            //         <div class="forecast-day" style="${isToday ? 'background: #3f3f3f; padding: 4px; border-radius: 4px;' : ''}">
-            //             <div class="forecast-date" style="${isToday ? 'color: #7289da; font-weight: bold;' : ''}">${new Date(day.date).toLocaleDateString('en-US', { weekday: 'short' })}</div>
-            //             <div class="forecast-icon"><i class="fas ${day.icon}" style="${isToday ? 'color: #7289da;' : ''}"></i></div>
-            //             <div class="forecast-temp" style="${isToday ? 'color: #7289da; font-weight: bold;' : ''}">${day.temperature}°C</div>
-            //         </div>
-            //     `;
-            // }).join('');
+            // Remove all humidity classes
+            humidityElement.classList.remove('humidity-low', 'humidity-normal', 'humidity-high');
+
+            // Add appropriate humidity class
+            if (humidityValue < 30) {
+                humidityElement.classList.add('humidity-low');
+            } else if (humidityValue < 60) {
+                humidityElement.classList.add('humidity-normal');
+            } else {
+                humidityElement.classList.add('humidity-high');
+            }
+
+            // Remove all feels-like classes
+            feelsLikeElement.classList.remove('feels-cold', 'feels-comfortable', 'feels-warm', 'feels-hot');
+
+            // Add appropriate feels-like class
+            if (feelsLikeValue < 10) {
+                feelsLikeElement.classList.add('feels-cold');
+            } else if (feelsLikeValue < 20) {
+                feelsLikeElement.classList.add('feels-comfortable');
+            } else if (feelsLikeValue < 30) {
+                feelsLikeElement.classList.add('feels-warm');
+            } else {
+                feelsLikeElement.classList.add('feels-hot');
+            }
+
+            const windElement = document.getElementById('wind');
+            const windSpeed = parseInt(data.wind);
+
+            // format value to DD.D
+            windElement.textContent = `${windSpeed.toFixed(1)} km/h`;
+
+            // Remove all wind classes first
+            windElement.classList.remove('wind-calm', 'wind-moderate', 'wind-strong', 'wind-severe');
+
+            // Add appropriate class based on wind speed
+            if (windSpeed < 15) {
+                windElement.classList.add('wind-calm');
+            } else if (windSpeed < 30) {
+                windElement.classList.add('wind-moderate');
+            } else if (windSpeed < 50) {
+                windElement.classList.add('wind-strong');
+            } else {
+                windElement.classList.add('wind-severe');
+            }
         }
 
         function initializeTemperatureChart() {
