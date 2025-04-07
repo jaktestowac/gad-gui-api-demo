@@ -708,6 +708,16 @@
             /* Red for severe winds */
         }
 
+        #wind.wind-extreme {
+            color: #ff4444;
+            /* Dark red for extreme winds */
+        }
+
+        #wind.wind-hurricane {
+            color: #ff0000;
+            /* Bright red for hurricane winds */
+        }
+
         #humidity {
             font-weight: 500;
         }
@@ -1767,7 +1777,7 @@
             windElement.textContent = `${windSpeed.toFixed(1)} km/h`;
 
             // Remove all wind classes first
-            windElement.classList.remove('wind-calm', 'wind-moderate', 'wind-strong', 'wind-severe');
+            windElement.classList.remove('wind-calm', 'wind-moderate', 'wind-strong', 'wind-severe', 'wind-extreme', 'wind-hurricane');
 
             // Add appropriate class based on wind speed
             if (windSpeed < 15) {
@@ -1776,8 +1786,12 @@
                 windElement.classList.add('wind-moderate');
             } else if (windSpeed < 50) {
                 windElement.classList.add('wind-strong');
-            } else {
+            } else if (windSpeed < 100) {
                 windElement.classList.add('wind-severe');
+            } else if (windSpeed < 150) {
+                windElement.classList.add('wind-extreme');
+            } else {
+                windElement.classList.add('wind-hurricane');
             }
         }
 
