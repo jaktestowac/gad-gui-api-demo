@@ -138,6 +138,20 @@ function handleData(req, res, isAdmin) {
     return;
   }
 
+  if (req.method === "GET" && req.url.includes("/api/v2/data/random/weatherToday")) {
+    const queryParams = new URLSearchParams(req.url.split("?")[1]);
+    const city = queryParams.get("city") || defaultWeatherV2Options.location;
+    const date = queryParams.get("date") || new Date().toISOString().split("T")[0];
+    const { weatherData, params } = generateWeatherV2Response({
+      date,
+      daysBefore: 0,
+      daysAfter: 0,
+      city,
+    });
+    res.status(HTTP_OK).json({ params, weather: weatherData });
+    return;
+  }
+
   if (
     req.method === "GET" &&
     (req.url.includes("/api/v2/data/random/weather") || req.url.includes("/api/v2/data/random/weather-simple"))
@@ -145,7 +159,7 @@ function handleData(req, res, isAdmin) {
     const queryParams = new URLSearchParams(req.url.split("?")[1]);
     const daysBefore = parseInt(queryParams.get("daysBefore")) || defaultWeatherV2Options.daysBefore;
     const daysAfter = parseInt(queryParams.get("daysAfter")) || defaultWeatherV2Options.daysAfter;
-    const city = queryParams.get("city") || defaultWeatherV2Options.city;
+    const city = queryParams.get("city") || defaultWeatherV2Options.location;
     const date = queryParams.get("date") || new Date().toISOString().split("T")[0];
     const { weatherData, params } = generateWeatherV2Response({
       date,

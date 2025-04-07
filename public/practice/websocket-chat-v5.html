@@ -1240,25 +1240,25 @@
                     <div class="weather-info" data-testid="weather-info">
                         <div class="weather-main" data-testid="weather-main">
                             <div class="weather-location" data-testid="weather-location">San Francisco, CA</div>
-                            <div class="weather-temp" data-testid="weather-temperature">72°C</div>
+                            <div class="weather-temp" data-testid="weather-temperature">--°C</div>
                         </div>
                         <div class="weather-condition" data-testid="weather-condition">
                             <i class="fas fa-sun"></i>
-                            <span>Sunny</span>
+                            <span data-testid="weather-condition-text">Sunny</span>
                         </div>
                     </div>
                     <div class="weather-details" data-testid="weather-details">
                         <div class="weather-detail">
                             <i class="fas fa-tint"></i>
-                            <span id="humidity">45%</span>
+                            <span id="humidity" data-testid="humidity">--%</span>
                         </div>
                         <div class="weather-detail">
                             <i class="fas fa-wind"></i>
-                            <span id="wind">8 km/h</span>
+                            <span id="wind" data-testid="wind">-- km/h</span>
                         </div>
                         <div class="weather-detail">
                             <i class="fas fa-temperature-high"></i>
-                            <span id="feels-like">75°C</span>
+                            <span id="feels-like" data-testid="feels-like">--°C</span>
                         </div>
                     </div>
                 </div>
@@ -1411,16 +1411,10 @@
 
         // Function to refresh weather data
         function refreshWeather() {
-            fetch('/api/v2/data/random/weather?location=Warsaw&daysBefore=7&daysAfter=7')
+            fetch('/api/v2/data/random/weather?location=Warsaw&daysBefore=5&daysAfter=5')
                 .then(response => response.json())
                 .then(data => {
                     weatherData = data;
-                    const currentWeather = data.weather.find(w =>
-                        w.date === new Date().toISOString().split('T')[0]
-                    ) || data.weather[Math.floor(data.weather.length / 2)];
-
-                    updateWeatherWidget(currentWeather);
-
                     const chartData = data.weather.map(w => ({
                         day: new Date(w.date).toLocaleDateString('en-US', { weekday: 'short' }),
                         temp: w.temperature,
@@ -1432,6 +1426,16 @@
                 })
                 .catch(error => {
                     console.error('Error fetching weather:', error);
+                });
+
+            fetch('/api/v2/data/random/weatherToday?location=Warsaw')
+                .then(response => response.json())
+                .then(data => {
+                    const currentWeatherToday = data.weather[0];
+                    updateWeatherWidget(currentWeatherToday); // Update the widget with today's weather
+                })
+                .catch(error => {
+                    console.error('Error fetching today\'s weather:', error);
                 });
         }
 
@@ -1657,27 +1661,27 @@
             document.getElementById('wind').textContent = `${data.wind} km/h`;
             document.getElementById('feels-like').textContent = `${data.feelsLike}°C`;
 
-            // Update forecast section with highlighting for today
-            const forecastContainer = document.querySelector('.weather-forecast');
-            const today = new Date().toISOString().split('T')[0];
+            // // Update forecast section with highlighting for today
+            // const forecastContainer = document.querySelector('.weather-forecast');
+            // const today = new Date().toISOString().split('T')[0];
 
-            // weatherData.weather get 3 days before and 3 days after today
-            const forecastDays = weatherData.weather.filter(day => {
-                const dayDate = new Date(day.date);
-                return dayDate >= new Date(today).setDate(new Date(today).getDate() - 3) &&
-                    dayDate <= new Date(today).setDate(new Date(today).getDate() + 3);
-            });
+            // // weatherData.weather get 3 days before and 3 days after today
+            // const forecastDays = weatherData.weather.filter(day => {
+            //     const dayDate = new Date(day.date);
+            //     return dayDate >= new Date(today).setDate(new Date(today).getDate() - 3) &&
+            //         dayDate <= new Date(today).setDate(new Date(today).getDate() + 3);
+            // });
 
-            forecastContainer.innerHTML = forecastDays.map(day => {
-                const isToday = day.date === today;
-                return `
-                    <div class="forecast-day" style="${isToday ? 'background: #3f3f3f; padding: 4px; border-radius: 4px;' : ''}">
-                        <div class="forecast-date" style="${isToday ? 'color: #7289da; font-weight: bold;' : ''}">${new Date(day.date).toLocaleDateString('en-US', { weekday: 'short' })}</div>
-                        <div class="forecast-icon"><i class="fas ${day.icon}" style="${isToday ? 'color: #7289da;' : ''}"></i></div>
-                        <div class="forecast-temp" style="${isToday ? 'color: #7289da; font-weight: bold;' : ''}">${day.temperature}°C</div>
-                    </div>
-                `;
-            }).join('');
+            // forecastContainer.innerHTML = forecastDays.map(day => {
+            //     const isToday = day.date === today;
+            //     return `
+            //         <div class="forecast-day" style="${isToday ? 'background: #3f3f3f; padding: 4px; border-radius: 4px;' : ''}">
+            //             <div class="forecast-date" style="${isToday ? 'color: #7289da; font-weight: bold;' : ''}">${new Date(day.date).toLocaleDateString('en-US', { weekday: 'short' })}</div>
+            //             <div class="forecast-icon"><i class="fas ${day.icon}" style="${isToday ? 'color: #7289da;' : ''}"></i></div>
+            //             <div class="forecast-temp" style="${isToday ? 'color: #7289da; font-weight: bold;' : ''}">${day.temperature}°C</div>
+            //         </div>
+            //     `;
+            // }).join('');
         }
 
         function initializeTemperatureChart() {

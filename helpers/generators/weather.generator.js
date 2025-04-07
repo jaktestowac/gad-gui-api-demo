@@ -130,12 +130,12 @@ function generatePasteDateStrings(pastDays) {
 
 function generatePastAndFutureDateStringsFromDate(dateStr, pastDays = 0, futureDays = 0) {
   const dateStrings = [];
-  for (let i = 0; i < pastDays; i++) {
+  for (let i = 0; i <= pastDays; i++) {
     const date = new Date(dateStr);
     date.setDate(date.getDate() - i);
     dateStrings.push(date.toISOString().split("T")[0]);
   }
-  for (let i = 0; i < futureDays; i++) {
+  for (let i = 0; i <= futureDays; i++) {
     const date = new Date(dateStr);
     date.setDate(date.getDate() + i);
     dateStrings.push(date.toISOString().split("T")[0]);
