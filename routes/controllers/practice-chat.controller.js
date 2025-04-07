@@ -22,6 +22,7 @@ class WebSocketPracticeChatContext {
     this.broadcast({
       type: "practiceChatUserList",
       users: userList,
+      broadcast: true,
     });
   }
 
@@ -48,6 +49,7 @@ const sendError = (ws, message) => {
     JSON.stringify({
       type: "error",
       message: message,
+      broadcast: true,
     })
   );
 };
@@ -78,6 +80,7 @@ const handleJoinMessage = (context, ws, data) => {
     type: "practiceChatMessage",
     username: "[System]",
     message: `${userName} joined the chat`,
+    broadcast: true,
   });
 
   context.broadcastUserList();
@@ -99,6 +102,7 @@ const handleChatMessage = (context, ws, data) => {
     type: "practiceChatMessage",
     username: ws.userName,
     message: data.message,
+    broadcast: true,
   });
 };
 
@@ -128,6 +132,7 @@ const handleDisconnect = (context, ws) => {
       type: "practiceChatMessage",
       username: "[System]",
       message: `${ws.userName} left the chat`,
+      broadcast: true,
     });
     logDebug(`[websocketRoute] User disconnected: ${ws.userName}`);
 
