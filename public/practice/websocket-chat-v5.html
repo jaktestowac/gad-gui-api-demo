@@ -1550,7 +1550,7 @@
 
             // Draw grid lines
             ctx.strokeStyle = 'rgba(85, 85, 85, 0.6)';
-            ctx.lineWidth = 0.5;
+            ctx.lineWidth = 1;
             ctx.beginPath();
             for (let i = 0; i < 3; i++) {
                 const y = height * (i / 2);
@@ -1610,7 +1610,7 @@
 
                 // Draw day labels
                 ctx.fillStyle = isHovered ? '#ff9f43' : (isToday ? '#7289da' : '#bbb');
-                ctx.font = (isHovered || isToday) ? 'bold 9px Arial' : '9px Arial';
+                ctx.font = (isHovered || isToday) ? 'bold 12px Arial' : '12px Arial';
                 ctx.textAlign = 'center';
                 ctx.fillText(item.day, x, height - 3);
 
@@ -1632,7 +1632,7 @@
 
                 // Draw temperature value labels
                 ctx.fillStyle = isHovered ? '#ff9f43' : (isToday ? '#7289da' : '#ffffff');
-                ctx.font = (isHovered || isToday) ? 'bold 9px Arial' : 'bold 9px Arial';
+                ctx.font = (isHovered || isToday) ? 'bold 12px Arial' : 'bold 12px Arial';
                 ctx.textAlign = 'center';
                 ctx.fillText(`${item.temp}°`, x, y - 8);
             });
