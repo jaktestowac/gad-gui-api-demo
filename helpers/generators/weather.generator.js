@@ -524,7 +524,7 @@ function simpleWeatherGeneratorV2ForOneDay(date, location) {
 const defaultWeatherV2Options = {
   daysBefore: 3,
   daysAfter: 3,
-  location: "Warsaw",
+  city: "Warsaw",
   date: new Date().toISOString().split("T")[0],
 };
 
