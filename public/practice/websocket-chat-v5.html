@@ -649,7 +649,7 @@
             border-radius: 6px;
             border: 1px solid #3a3a3a;
             box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-            height: 150px;
+            height: 200px;
         }
 
         .weather-chart {
@@ -674,9 +674,9 @@
             padding: 10px;
             background-color: #3f3f3f;
             border-radius: 6px;
-            min-width: 200px;
-            max-width: 200px;
-            font-size: 12px;
+            min-width: 240px;
+            max-width: 240px;
+            font-size: 22px;
         }
 
         #wind {
@@ -1304,7 +1304,7 @@
             <div class="weather-header" data-testid="weather-header">
                 <div class="weather-title" data-testid="weather-title">
                     <i class="fas fa-cloud-sun"></i>
-                    <span>Weather Forecast</span>
+                    <span>Weather</span>
                 </div>
                 <div class="weather-row" data-testid="weather-row">
                     <div class="weather-info" data-testid="weather-info">
@@ -1325,10 +1325,8 @@
                 </div>
                 <div class="weather-details-container">
                     <div class="weather-detail-item">
-                        <i class="fas fa-cloud-sun"></i>
-                        <span>Condition:</span>
+                        <i class="fas fa-sun weather-condition-icon" data-testid="weather-condition-icon"></i>
                         <span class="weather-condition" data-testid="weather-condition">
-                            <i class="fas fa-sun" data-testid="weather-condition-icon"></i>
                             <span data-testid="weather-condition-text">Sunny</span>
                         </span>
                     </div>
@@ -1731,8 +1729,8 @@
             document.querySelector('.weather-location').textContent = data.location;
             document.querySelector('.weather-temp').textContent = `${data.temperature}°C`;
 
-            const conditionIcon = document.querySelector('.weather-condition i');
-            conditionIcon.className = '';
+            const conditionIcon = document.querySelector('.weather-condition-icon');
+            conditionIcon.className = 'weather-condition-icon';
             conditionIcon.classList.add('fas', data.icon);
 
             document.querySelector('.weather-condition span').textContent = data.condition;
