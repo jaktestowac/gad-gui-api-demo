@@ -622,8 +622,7 @@
             color: #ffffff;
         }
 
-        .weather-header,
-        .weather-row {
+        .weather-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -635,53 +634,49 @@
             border-bottom: none;
             padding-bottom: 0;
             margin-bottom: 0px;
-
-            justify-content: center;
-            align-content: center;
-        }
-
-        .weather-info {
-            display: flex;
-            gap: 8px;
+            justify-content: space-between;
             align-items: center;
-            align-content: center;
-            justify-content: center;
+            width: 100%;
         }
 
-        .weather-main {
+        .weather-chart-container {
             display: flex;
-            flex-direction: row;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 10px;
+            margin: 8px 0;
+            background-color: #2a2a2a;
+            border-radius: 6px;
+            border: 1px solid #3a3a3a;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+            height: 150px;
+        }
+
+        .weather-chart {
+            flex: 1;
+            position: relative;
+            height: 100%;
+            min-width: 0;
+        }
+
+        canvas#temperatureChart {
+            width: 100% !important;
+            height: 100% !important;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .weather-details-container {
+            display: flex;
+            flex-direction: column;
             gap: 10px;
-            align-items: center;
-        }
-
-        .weather-temp {
-            font-size: 1rem;
-            font-weight: 500;
-            color: #7289da;
-            line-height: 1;
-        }
-
-        .weather-condition {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 0.8rem;
-        }
-
-        .weather-details {
-            display: flex;
-            gap: 8px;
-            font-size: 0.7rem;
-        }
-
-        .weather-detail {
-            display: flex;
-            align-items: center;
-            gap: 3px;
-            color: #aaa;
-            font-size: 0.7rem;
-            white-space: nowrap;
+            padding: 10px;
+            background-color: #3f3f3f;
+            border-radius: 6px;
+            min-width: 200px;
+            max-width: 200px;
+            font-size: 12px;
         }
 
         #wind {
@@ -762,25 +757,6 @@
         #feels-like.feels-hot {
             color: #da7272;
             /* Red for hot */
-        }
-
-        .weather-chart-container {
-            padding: 10px 5px;
-            margin: 8px 0;
-            background-color: #2a2a2a;
-            border-radius: 6px;
-            border: 1px solid #3a3a3a;
-            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-        }
-
-        canvas#temperatureChart {
-            width: 100%;
-            height: 90px;
-            background-color: #3f3f3f;
-            border-radius: 5px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-            display: block;
-            margin: 0 auto;
         }
 
         .weather-location {
@@ -1196,6 +1172,20 @@
         .predefined-users td:first-child {
             color: #7289da;
         }
+
+        .weather-main {
+            display: flex;
+            align-items: center;
+            align-self: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .weather-title {
+            font-size: 1.2rem;
+            font-weight: 500;
+            width: 300px !important;
+        }
     </style>
 </head>
 
@@ -1322,24 +1312,6 @@
                             <div class="weather-location" data-testid="weather-location">San Francisco, CA</div>
                             <div class="weather-temp" data-testid="weather-temperature">--°C</div>
                         </div>
-                        <div class="weather-condition" data-testid="weather-condition">
-                            <i class="fas fa-sun"></i>
-                            <span data-testid="weather-condition-text">Sunny</span>
-                        </div>
-                    </div>
-                    <div class="weather-details" data-testid="weather-details">
-                        <div class="weather-detail">
-                            <i class="fas fa-tint"></i>
-                            <span id="humidity" data-testid="humidity">--%</span>
-                        </div>
-                        <div class="weather-detail">
-                            <i class="fas fa-wind"></i>
-                            <span id="wind" data-testid="wind">-- km/h</span>
-                        </div>
-                        <div class="weather-detail">
-                            <i class="fas fa-temperature-high"></i>
-                            <span id="feels-like" data-testid="feels-like">--°C</span>
-                        </div>
                     </div>
                 </div>
                 <button class="chat-button chat-button-secondary" onclick="refreshWeather()" data-testid="refresh-weather-button" style="height: 28px; min-width: 28px; padding: 3px 6px;">
@@ -1348,7 +1320,34 @@
             </div>
 
             <div class="weather-chart-container">
-                <canvas id="temperatureChart" data-testid="temperatureChart"></canvas>
+                <div class="weather-chart">
+                    <canvas id="temperatureChart" data-testid="temperatureChart"></canvas>
+                </div>
+                <div class="weather-details-container">
+                    <div class="weather-detail-item">
+                        <i class="fas fa-cloud-sun"></i>
+                        <span>Condition:</span>
+                        <span class="weather-condition" data-testid="weather-condition">
+                            <i class="fas fa-sun" data-testid="weather-condition-icon"></i>
+                            <span data-testid="weather-condition-text">Sunny</span>
+                        </span>
+                    </div>
+                    <div class="weather-detail-item">
+                        <i class="fas fa-tint"></i>
+                        <span>Humidity:</span>
+                        <span id="humidity" data-testid="humidity">--%</span>
+                    </div>
+                    <div class="weather-detail-item">
+                        <i class="fas fa-wind"></i>
+                        <span>Wind:</span>
+                        <span id="wind" data-testid="wind">-- km/h</span>
+                    </div>
+                    <div class="weather-detail-item">
+                        <i class="fas fa-temperature-high"></i>
+                        <span>Feels like:</span>
+                        <span id="feels-like" data-testid="feels-like">--°C</span>
+                    </div>
+                </div>
             </div>
             <div class="weather-forecast">
                 <div class="forecast-day">
@@ -1491,7 +1490,7 @@
 
         // Function to refresh weather data
         function refreshWeather() {
-            fetch('/api/v2/data/random/weather?location=Warsaw&daysBefore=5&daysAfter=5')
+            fetch('/api/v2/data/random/weather?location=Warsaw&daysBefore=3&daysAfter=3')
                 .then(response => response.json())
                 .then(data => {
                     weatherData = data;
