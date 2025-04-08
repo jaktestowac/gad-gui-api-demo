@@ -1836,7 +1836,7 @@
 
         // Function to update weather widget with data
         function updateWeatherWidget(data) {
-            document.querySelector('.weather-location').textContent = data.location;
+            document.querySelector('.weather-location').textContent = data.location || data.city || 'Unknown Location';
             document.querySelector('.weather-temp').textContent = `${data.temperature}°C`;
 
             const conditionIcon = document.querySelector('.weather-condition-icon');

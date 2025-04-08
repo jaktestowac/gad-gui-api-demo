@@ -511,7 +511,7 @@ function simpleWeatherGeneratorV2ForOneDay(date, location) {
   const feelsLike = baseTemp + dataGenerator.getNextValue(-5, 5);
   return {
     date,
-    city: location,
+    location,
     temperature: baseTemp,
     condition: condition.name,
     icon: condition.icon,
@@ -524,7 +524,7 @@ function simpleWeatherGeneratorV2ForOneDay(date, location) {
 const defaultWeatherV2Options = {
   daysBefore: 3,
   daysAfter: 3,
-  city: "Warsaw",
+  location: "Warsaw",
   date: new Date().toISOString().split("T")[0],
 };
 
@@ -538,7 +538,7 @@ function generateWeatherV2Response(options) {
   const weatherData = [];
   for (let i = 0; i < dates.length; i++) {
     const currentDate = dates[i];
-    const weather = simpleWeatherGeneratorV2ForOneDay(currentDate, params.city);
+    const weather = simpleWeatherGeneratorV2ForOneDay(currentDate, params.location);
     weatherData.push(weather);
   }
 
