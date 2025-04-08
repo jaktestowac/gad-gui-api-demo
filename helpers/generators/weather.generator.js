@@ -511,7 +511,7 @@ function simpleWeatherGeneratorV2ForOneDay(date, location) {
   const feelsLike = baseTemp + dataGenerator.getNextValue(-5, 5);
   return {
     date,
-    location,
+    city: location,
     temperature: baseTemp,
     condition: condition.name,
     icon: condition.icon,
@@ -538,7 +538,7 @@ function generateWeatherV2Response(options) {
   const weatherData = [];
   for (let i = 0; i < dates.length; i++) {
     const currentDate = dates[i];
-    const weather = simpleWeatherGeneratorV2ForOneDay(currentDate, params.location);
+    const weather = simpleWeatherGeneratorV2ForOneDay(currentDate, params.city);
     weatherData.push(weather);
   }
 
