@@ -284,8 +284,9 @@ function handleLearning(req, res) {
 
             const user = dataProvider.getUserById(userId);
             if (user) {
-              user.role = role;
+              dataProvider.updateUserRole(userId, role);
               res.status(HTTP_OK).send({ success: true });
+              return;
             }
 
             res.status(HTTP_NOT_FOUND).send(formatErrorResponse("User not found"));
@@ -372,6 +373,121 @@ function handleLearning(req, res) {
       }
     }
 
+    // Inside handleLearning function, add these new handlers:
+    if (urlParts[2] === "roles" && urlParts[3] === "requests") {
+      // POST /api/learning/roles/requests - Create new role request
+      if (req.method === "POST") {
+        if (!checkIfUserIsAuthenticated(req, res)) {
+          res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not authenticated"));
+          return;
+        }
+
+        const { userId, requestedRole, reason } = req.body;
+
+        if (!checkIfUserIdMatchesEmail(userId, verifyTokenResult?.email)) {
+          res.status(HTTP_FORBIDDEN).send(formatErrorResponse("User not authorized"));
+          return;
+        }
+
+        // Check if user already has a pending request
+        const existingRequests = dataProvider.getUserRoleRequests(userId);
+        if (existingRequests && existingRequests.length > 0) {
+          res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("User already has a pending role request"));
+          return;
+        }
+
+        const request = dataProvider.addRoleRequest({ userId, requestedRole, reason });
+        res.status(HTTP_OK).send(request);
+        return;
+      }
+
+      // GET /api/learning/roles/requests/user/:id - Get role request by user ID
+      if (req.method === "GET" && urlParts[4] === "user") {
+        if (!checkIfUserIsAuthenticated(req, res)) {
+          res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not authenticated"));
+          return;
+        }
+
+        const userId = parseInt(urlParts[5]);
+        if (!checkIfUserIdMatchesEmail(userId, verifyTokenResult?.email)) {
+          res.status(HTTP_FORBIDDEN).send(formatErrorResponse("User not authorized"));
+          return;
+        }
+
+        const requests = dataProvider.getUserRoleRequests(userId);
+        if (requests) {
+          res.status(HTTP_OK).send(requests);
+        } else {
+          res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Role request not found"));
+        }
+        return;
+      }
+
+      // GET /api/learning/roles/requests - Get all role requests (admin only)
+      if (req.method === "GET") {
+        if (!checkIfUserIsAuthenticated(req, res)) {
+          res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not authenticated"));
+          return;
+        }
+
+        const user = dataProvider.getUserByEmail(verifyTokenResult?.email);
+        if (!isAdmin(user)) {
+          res.status(HTTP_FORBIDDEN).send(formatErrorResponse("Admin access required"));
+          return;
+        }
+
+        const requests = dataProvider.getRoleRequests();
+        const enhancedRequests = requests.map((req) => {
+          const user = dataProvider.getUserById(req.userId);
+          return {
+            ...req,
+            user: {
+              name: `${user.firstName} ${user.lastName}`,
+              email: user.email,
+              currentRole: user.role,
+            },
+          };
+        });
+
+        res.status(HTTP_OK).send(enhancedRequests);
+        return;
+      }
+
+      // PUT /api/learning/roles/requests/:requestId - Update role request status (admin only)
+      if (req.method === "PUT" && urlParts[4]) {
+        if (!checkIfUserIsAuthenticated(req, res)) {
+          res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not authenticated"));
+          return;
+        }
+
+        const user = dataProvider.getUserByEmail(verifyTokenResult?.email);
+        if (!isAdmin(user)) {
+          res.status(HTTP_FORBIDDEN).send(formatErrorResponse("Admin access required"));
+          return;
+        }
+
+        const requestId = parseInt(urlParts[4]);
+        const { status, comment } = req.body;
+
+        const updateRoleRequestSuccess = dataProvider.updateRoleRequest(requestId, { status, comment }, user.id);
+
+        if (!updateRoleRequestSuccess) {
+          res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Request not found"));
+          return;
+        }
+
+        if (status === "approved") {
+          const request = dataProvider.getRoleRequestById(requestId);
+          const user = dataProvider.getUserById(request.userId);
+          dataProvider.updateUserRole(user.id, request.requestedRole);
+        }
+
+        console.log(`Role request ${requestId} updated to status: ${status}`);
+        res.status(HTTP_OK).send({ success: true, status });
+        return;
+      }
+    }
+
     // GET endpoints
     if (req.method === "GET") {
       // Add public certificate endpoint
@@ -383,11 +499,12 @@ function handleLearning(req, res) {
           res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Certificate not found"));
           return;
         }
-
+        const stats = dataProvider.getAllCoursesStats();
         // Get additional data
         const course = dataProvider.getCourseById(certificate.courseId);
         const user = dataProvider.getUserById(certificate.userId);
 
+        const courseDuration = stats.find((s) => areIdsEqual(s.id, course.id))?.duration;
         const publicCertData = {
           certificateNumber: certificate.certificateNumber,
           uuid: certificate.uuid,
@@ -395,7 +512,7 @@ function handleLearning(req, res) {
           recipientName: `${user.firstName} ${user.lastName}`,
           issueDate: certificate.issueDate,
           issuedBy: certificate.issuedBy,
-          courseDuration: course.duration,
+          courseDuration: courseDuration,
           courseLevel: course.level,
           issuerTitle: "Course Instructor",
         };
@@ -788,10 +905,10 @@ function handleLearning(req, res) {
 
         const user = dataProvider.getUserByEmail(verifyTokenResult?.email);
 
-        if (!hasPermission(user, "manage_roles")) {
-          res.status(HTTP_FORBIDDEN).send(formatErrorResponse("Insufficient permissions"));
-          return;
-        }
+        // if (!hasPermission(user, "manage_roles")) {
+        //   res.status(HTTP_FORBIDDEN).send(formatErrorResponse("Insufficient permissions"));
+        //   return;
+        // }
 
         res.status(HTTP_OK).send({
           roles: Object.values(dataProvider.getRoles()),

@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD - Interactive JavaScript Basics</title>
+    <meta charset="UTF-8">
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css" integrity="sha512-mIs9kKbaw6JZFfSuo+MovjU+Ntggfoj8RwAmJbVXQ5mkAX5LlgETQEweFPI18humSPHymTb5iikEOKWF7I8ncQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/practice-controls.css" />
+    <style>
+        body {
+            line-height: 1.6;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        h1 {
+            color: #0056b3;
+            text-align: center;
+            border-bottom: 2px solid #0056b3;
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            color: #0056b3;
+            margin-top: 30px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+        }
+
+        section {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Adjust <pre> styles for Prism compatibility */
+        pre[class*="language-"] {
+            margin: 0.5em 0 1em 0;
+            /* Add some margin */
+            padding: 1em;
+            /* Prism themes usually handle padding */
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            /* Subtle border */
+            position: relative;
+            /* Needed for potential plugins like line numbers */
+        }
+
+        /* Style the editable code block container */
+        code[class*="language-"] {
+            display: block;
+            /* Ensure it takes up block space */
+            font-family: 'Courier New', Courier, monospace;
+            /* Consistent font */
+            font-size: 0.9em;
+            white-space: pre;
+            /* Preserve whitespace like <pre> */
+            outline: none;
+            /* Remove default focus outline */
+            min-height: 40px;
+            /* Ensure it has some height */
+            /* Background/color handled by Prism theme */
+        }
+
+        /* Indicate editability on focus - Add a subtle outline/border */
+        code[class*="language-"]:focus {
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5);
+            /* Example focus indicator */
+            /* background-color: rgba(255, 255, 255, 0.05); Slightly change background on focus */
+        }
+
+        .button-container {
+            margin-top: -10px;
+            /* Pull buttons closer to code block */
+            margin-bottom: 10px;
+            display: flex;
+            gap: 10px;
+            /* Space between buttons */
+        }
+
+        button.run-button,
+        button.reset-button {
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.2s ease;
+        }
+
+        button.run-button {
+            background-color: #28a745;
+            /* Green */
+        }
+
+        button.run-button:hover {
+            background-color: #218838;
+        }
+
+        button.reset-button {
+            background-color: #ffc107;
+            /* Yellow/Orange */
+            color: #333;
+            /* Darker text for contrast */
+        }
+
+        button.reset-button:hover {
+            background-color: #e0a800;
+        }
+
+        .output {
+            background-color: #e9ecef;
+            border: 1px dashed #ced4da;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 5px;
+            min-height: 30px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+            /* Preserve whitespace and newlines */
+            word-wrap: break-word;
+            /* Break long words */
+            color: #495057;
+        }
+
+        .output.error {
+            color: #dc3545;
+            /* Bootstrap danger color */
+            border-color: #dc3545;
+            background-color: #f8d7da;
+            /* Light red background */
+            font-weight: bold;
+        }
+
+        .output.syntax-error {
+            color: #e44d26;
+            /* More orangey-red for syntax errors */
+            border-color: #e44d26;
+            background-color: #fddfD7;
+            font-weight: bold;
+        }
+
+
+        p {
+            margin-bottom: 10px;
+        }
+
+        /* Style for inline code */
+        code.inline {
+            background-color: #e0e0e0;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.95em;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <h1>Learn JavaScript Interactively!</h1>
+
+    <!-- ... (Keep all your section HTML content) ... -->
+    <!-- Section 1: Basic Programming -->
+    <section id="basics">
+        <h2>1. Basic Programming Concepts</h2>
+        <p>Let's start with the fundamentals of JavaScript. <strong>You can edit the code below!</strong> Syntax errors will be flagged when you run.</p>
+
+        <h3>Variables</h3>
+        <p>Variables store data. Use <code class="inline">let</code> for variables that might change and <code class="inline">const</code> for variables that shouldn't be reassigned.</p>
+        <!-- Added line-numbers class -->
+        <pre class="line-numbers"><code class="code-block language-javascript" id="code-vars">
+let message = "Hello";
+const year = 2024;
+
+message = "Hello World!"; // 'let' allows reassignment
+
+console.log(message);
+console.log("The year is:", year);
+
+// Try uncommenting the line below - it will cause an error!
+// year = 2025; // TypeError on execution
+
+// Try adding invalid syntax like: let x = ;
+        </code></pre>
+        <div class="button-container">
+            <button class="run-button" data-code-id="code-vars">Run Code</button>
+            <button class="reset-button" data-code-id="code-vars">Reset Code</button>
+        </div>
+        <div class="output" data-output-id="code-vars">Output will appear here...</div>
+
+        <h3>Functions</h3>
+        <p>Functions are blocks of code designed to perform a particular task. They can take inputs (parameters) and return a value.</p>
+        <pre class="line-numbers"><code class="code-block language-javascript" id="code-func">
+function greet(name) {
+  // Missing closing brace for syntax error:
+  // if (name) {
+  return "Hello, " + name + "!";
+}
+
+let greeting = greet("Alice");
+console.log(greeting);
+console.log(greet("Bob"));
+        </code></pre>
+        <div class="button-container">
+            <button class="run-button" data-code-id="code-func">Run Code</button>
+            <button class="reset-button" data-code-id="code-func">Reset Code</button>
+        </div>
+        <div class="output" data-output-id="code-func">Output will appear here...</div>
+
+        <h3>Conditionals (if/else)</h3>
+        <p>Conditionals allow your code to make decisions based on whether a condition is true or false.</p>
+        <pre class="line-numbers"><code class="code-block language-javascript" id="code-if">
+let temperature = 25; // Try changing this value!
+
+if (temperature > 30) {
+  console.log("It's very hot!");
+} else if (temperature > 20) {
+  console.log("It's a pleasant day.");
+} else {
+  console.log("It's cool or cold.");
+}
+
+// Try removing a parenthesis: if (temperature > 30 { ...
+        </code></pre>
+        <div class="button-container">
+            <button class="run-button" data-code-id="code-if">Run Code</button>
+            <button class="reset-button" data-code-id="code-if">Reset Code</button>
+        </div>
+        <div class="output" data-output-id="code-if">Output will appear here...</div>
+
+        <h3>Loops (for)</h3>
+        <p>Loops are used to execute a block of code repeatedly.</p>
+        <pre class="line-numbers"><code class="code-block language-javascript" id="code-loop">
+console.log("Counting up:");
+// Try invalid loop syntax: for (let i = 1 i <= 5; i++)
+for (let i = 1; i <= 5; i++) { // Try changing the 5
+  console.log(i);
+}
+
+console.log("Iterating through an array:");
+const fruits = ["Apple", "Banana", "Cherry"];
+for (let i = 0; i < fruits.length; i++) {
+    console.log("Fruit:", fruits[i]);
+}
+        </code></pre>
+        <div class="button-container">
+            <button class="run-button" data-code-id="code-loop">Run Code</button>
+            <button class="reset-button" data-code-id="code-loop">Reset Code</button>
+        </div>
+        <div class="output" data-output-id="code-loop">Output will appear here...</div>
+    </section>
+
+    <!-- Section 2: Objects -->
+    <section id="objects">
+        <h2>2. Objects in JavaScript</h2>
+        <p>Objects are collections of key-value pairs. They allow you to group related data and functions together.</p>
+
+        <h3>Creating Objects</h3>
+        <p>Objects can be created using object literal syntax <code class="inline">{}</code>.</p>
+        <pre class="line-numbers"><code class="code-block language-javascript" id="code-obj-create">
+const person = {
+  firstName: "John",
+  lastName: "Doe",
+  age: 30,
+  isStudent: false,
+  // Try adding a property with invalid syntax like: city: "New York" ,
+  city: "New York"
+};
+
+console.log("Person Object:", person);
+        </code></pre>
+        <div class="button-container">
+            <button class="run-button" data-code-id="code-obj-create">Run Code</button>
+            <button class="reset-button" data-code-id="code-obj-create">Reset Code</button>
+        </div>
+        <div class="output" data-output-id="code-obj-create">Output will appear here...</div>
+
+        <h3>Accessing Properties</h3>
+        <p>You can access object properties using dot notation (<code class="inline">object.property</code>) or bracket notation (<code class="inline">object['property']</code>).</p>
+        <pre class="line-numbers"><code class="code-block language-javascript" id="code-obj-access">
+const car = {
+  make: "Toyota",
+  model: "Camry",
+  year: 2022
+};
+
+console.log("Make:", car.make); // Dot notation
+console.log("Model:", car['model']); // Bracket notation
+
+// Try accessing a property that doesn't exist: car.color
+// console.log(car.color); // This is valid syntax, but logs 'undefined'
+
+let propertyName = 'year'; // Try changing this to 'make'
+console.log("Property (" + propertyName + "):", car[propertyName]);
+        </code></pre>
+        <div class="button-container">
+            <button class="run-button" data-code-id="code-obj-access">Run Code</button>
+            <button class="reset-button" data-code-id="code-obj-access">Reset Code</button>
+        </div>
+        <div class="output" data-output-id="code-obj-access">Output will appear here...</div>
+
+        <h3>Object Methods</h3>
+        <p>Objects can have functions as properties, which are called methods. Methods often use the <code class="inline">this</code> keyword to refer to the object they belong to.</p>
+        <pre class="line-numbers"><code class="code-block language-javascript" id="code-obj-method">
+const calculator = {
+  value: 0,
+  add: function(num) {
+    this.value += num; // 'this' refers to the calculator object
+    console.log(`Added ${num}. New value: ${this.value}`);
+  },
+  // Try invalid method syntax: subtract(num) => { ... }
+  subtract(num) { // Shorthand method syntax
+    this.value -= num;
+    console.log(`Subtracted ${num}. New value: ${this.value}`);
+  },
+  getValue() {
+    return this.value;
+  }
+};
+
+calculator.add(10);
+calculator.subtract(3);
+// Try adding more calls!
+// calculator.add(5);
+console.log("Final Value:", calculator.getValue());
+console.log("Calculator object:", calculator);
+        </code></pre>
+        <div class="button-container">
+            <button class="run-button" data-code-id="code-obj-method">Run Code</button>
+            <button class="reset-button" data-code-id="code-obj-method">Reset Code</button>
+        </div>
+        <div class="output" data-output-id="code-obj-method">Output will appear here...</div>
+    </section>
+
+    <!-- Section 3: Closures -->
+    <section id="closures">
+        <h2>3. Closures</h2>
+        <p>A closure is a function that "remembers" the environment (the scope) in which it was created, even after that environment is gone.</p>
+        <p>Essentially, an inner function has access to the variables and parameters of its outer function, even after the outer function has finished executing.</p>
+
+        <pre class="line-numbers"><code class="code-block language-javascript" id="code-closure">
+function createGreeter(greeting) {
+  // 'greeting' is part of the outer function's scope
+
+  // This inner function is returned
+  function greet(name) {
+    // It remembers the 'greeting' variable from its creation scope
+    console.log(greeting + ", " + name + "!");
+  } // Try removing this closing brace
+
+  return greet; // Return the inner function
+}
+
+// Create two different greeters by calling the outer function
+const sayHello = createGreeter("Hello");
+const sayHi = createGreeter("Hi there"); // Modify this greeting
+
+// Call the inner functions (the closures)
+sayHello("Alice"); // Uses "Hello"
+sayHi("Bob");    // Uses "Hi there"
+
+// Example: Counter
+function createCounter(startValue = 0) { // Add default parameter
+  let count = startValue; // This variable is 'closed over'
+
+  return function() {
+    count++;
+    console.log("Count is now:", count);
+    return count;
+  };
+}
+
+const counter1 = createCounter();
+const counter2 = createCounter(10); // Start counter2 at 10
+
+counter1();
+counter1();
+counter2();
+counter1();
+        </code></pre>
+        <div class="button-container">
+            <button class="run-button" data-code-id="code-closure">Run Code</button>
+            <button class="reset-button" data-code-id="code-closure">Reset Code</button>
+        </div>
+        <div class="output" data-output-id="code-closure">Output will appear here...</div>
+    </section>
+
+    <!-- Section 4: Spread Operator -->
+    <section id="spread">
+        <h2>4. Spread Operator (...)</h2>
+        <p>The spread operator (<code class="inline">...</code>) allows an iterable (like an array or string) to be expanded in places where zero or more arguments (for function calls) or elements (for array literals) are expected. It's also used for expanding object properties.</p>
+
+        <h3>Spread with Arrays</h3>
+        <p>Useful for copying arrays, concatenating arrays, or passing array elements as arguments to functions.</p>
+        <pre class="line-numbers"><code class="code-block language-javascript" id="code-spread-array">
+const arr1 = [1, 2, 3];
+const arr2 = [4, 5, 6];
+const moreNums = [7, 8]; // Add another array
+
+// Copying an array
+const arr1Copy = [...arr1];
+console.log("Copied array:", arr1Copy);
+console.log("Are they the same array?", arr1 === arr1Copy); // false
+
+// Concatenating arrays
+// Try invalid spread: const combined = [..arr1, ...arr2];
+const combined = [...arr1, ...arr2, ...moreNums]; // Add moreNums here
+console.log("Combined array:", combined);
+
+// Adding elements
+const withMoreElements = [0, ...arr1, 4];
+console.log("Array with added elements:", withMoreElements);
+
+// Passing elements as arguments
+function sum(a, b, c) {
+  console.log(`Summing ${a}, ${b}, ${c}`);
+  return a + b + c;
+}
+console.log("Sum using spread:", sum(...arr1)); // like calling sum(1, 2, 3)
+        </code></pre>
+        <div class="button-container">
+            <button class="run-button" data-code-id="code-spread-array">Run Code</button>
+            <button class="reset-button" data-code-id="code-spread-array">Reset Code</button>
+        </div>
+        <div class="output" data-output-id="code-spread-array">Output will appear here...</div>
+
+        <h3>Spread with Objects</h3>
+        <p>Useful for copying objects, merging objects, or adding/overriding properties.</p>
+        <pre class="line-numbers"><code class="code-block language-javascript" id="code-spread-object">
+const obj1 = { a: 1, b: 2, source: 'original' };
+const obj2 = { b: 3, c: 4 }; // 'b' will override obj1.b
+
+// Copying an object
+const obj1Copy = { ...obj1 };
+console.log("Copied object:", obj1Copy);
+console.log("Are they the same object?", obj1 === obj1Copy); // false
+
+// Merging objects (properties later in the list override earlier ones)
+// Try invalid object spread: const merged = { ...obj1, obj2 };
+const merged = { ...obj1, ...obj2, d: 5 }; // Add a new property 'd' directly
+console.log("Merged object:", merged); // { a: 1, b: 3, source: 'original', c: 4, d: 5 }
+
+// Adding/overriding properties
+const updatedObj = { ...obj1, b: 99, isActive: true }; // Override 'b', add 'isActive'
+console.log("Updated object:", updatedObj); // { a: 1, b: 99, source: 'original', isActive: true }
+        </code></pre>
+        <div class="button-container">
+            <button class="run-button" data-code-id="code-spread-object">Run Code</button>
+            <button class="reset-button" data-code-id="code-spread-object">Reset Code</button>
+        </div>
+        <div class="output" data-output-id="code-spread-object">Output will appear here...</div>
+
+    </section>
+
+
+    <!-- 2. Prism.js Core + JS Language Component + Line Numbers Plugin (Place before closing </body>) -->
+    <!-- Corrected Integrity Hashes -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js" integrity="sha512-9khQRAUBYEJDCDVP2yw3LRUQvjJ0Pjx0EShmaQjcHa6AXiOv6qHQu9lCAIR8O+/D8FtaCoJ2c0Tf9Xo7hYH01Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js" integrity="sha512-SkmBfuA2hqjzEVpmnMt/LINrjop3GKWqsuLSSB3e7iBmYK7JuWw4ldmmxwD9mdm2IRTTi0OxSAfEGvgEi0i2Kw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-BttltKXFyWnGZQcRWj6osIg7lbizJchuAMotOkdLxHxwt/Hyo+cl47bZU0QADg+Qt5DJwni3SbYGXeGMB5cBcw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+    <script>
+        // ... (Keep all your existing JavaScript logic) ...
+        document.addEventListener('DOMContentLoaded', () => {
+            const codeBlocks = document.querySelectorAll('.code-block');
+            const runButtons = document.querySelectorAll('.run-button');
+            const resetButtons = document.querySelectorAll('.reset-button');
+
+            // --- Initialize Code Blocks ---
+            codeBlocks.forEach(codeBlock => {
+                // Make editable
+                codeBlock.contentEditable = true;
+                // Store original content carefully preserving whitespace
+                codeBlock.dataset.originalCode = codeBlock.textContent;
+
+                // Prevent rich text pasting
+                codeBlock.addEventListener('paste', (e) => {
+                    e.preventDefault();
+                    const text = (e.originalEvent || e).clipboardData.getData('text/plain');
+                    document.execCommand('insertText', false, text);
+                });
+
+                // Basic accessibility for editable code
+                codeBlock.setAttribute('role', 'textbox');
+                codeBlock.setAttribute('aria-label', 'Editable code example');
+            });
+
+            // --- Initial Syntax Highlighting ---
+            // Ensure Prism is loaded before highlighting
+            if (window.Prism) {
+                Prism.highlightAll();
+            } else {
+                console.warn("Prism.js not loaded yet. Highlighting might be delayed or missing.");
+                // You could potentially add a small delay or wait for an event
+                // if Prism loading is consistently slow, but usually DOMContentLoaded
+                // after the script tags is sufficient.
+            }
+
+
+            // --- Run Button Logic ---
+            runButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const codeId = button.dataset.codeId;
+                    const codeBlock = document.getElementById(codeId);
+                    const outputElement = document.querySelector(`.output[data-output-id="${codeId}"]`);
+
+                    if (!codeBlock || !outputElement) {
+                        console.error("Could not find code block or output element for ID:", codeId);
+                        return;
+                    }
+
+                    // Get the CURRENT (potentially edited) code
+                    const code = codeBlock.textContent; // Read text content
+                    outputElement.textContent = 'Running...';
+                    outputElement.className = 'output'; // Reset classes (remove error/syntax-error)
+
+                    // --- Temporary Console Override ---
+                    let outputLog = [];
+                    const originalConsoleLog = console.log;
+                    console.log = (...args) => {
+                        const message = args.map(arg => {
+                            if (typeof arg === 'object' && arg !== null) {
+                                try {
+                                    return JSON.stringify(arg, null, 2);
+                                } catch (e) {
+                                    if (arg instanceof Error) return `Error: ${arg.message}`;
+                                    return Object.prototype.toString.call(arg);
+                                }
+                            }
+                            return String(arg);
+                        }).join(' ');
+                        outputLog.push(message);
+                        originalConsoleLog.apply(console, args);
+                    };
+                    // --- End Override ---
+
+                    try {
+                        // Attempt to create and execute the function
+                        const result = new Function(code)();
+
+                        // If successful, display output
+                        outputElement.textContent = outputLog.join('\n');
+                        if (result !== undefined) {
+                            let resultString;
+                            if (typeof result === 'object' && result !== null) {
+                                try {
+                                    resultString = JSON.stringify(result, null, 2);
+                                } catch (e) { resultString = '[Object]'; }
+                            } else {
+                                resultString = String(result);
+                            }
+                            outputElement.textContent += (outputLog.length > 0 ? '\n\n' : '') + `// Return Value: ${resultString}`;
+                        }
+                        if (outputElement.textContent.trim() === '' && result === undefined) {
+                            outputElement.textContent = '// Execution successful. No console output or return value.';
+                        }
+
+                    } catch (error) {
+                        console.error("Execution Attempt Error:", error); // Log full error to dev console
+                        // --- VALIDATION CHECK ---
+                        if (error instanceof SyntaxError || error.name === 'SyntaxError') {
+                            outputElement.textContent = `Syntax Error:\n${error.message}`;
+                            outputElement.classList.add('syntax-error'); // Specific class for syntax errors
+                        } else {
+                            // Runtime or other errors
+                            outputElement.textContent = `Execution Error:\n${error.name}: ${error.message}`;
+                            // Optionally add stack trace hint if available
+                            if (error.stack) {
+                                // Attempt to get the relevant line from the anonymous function stack
+                                const stackLines = error.stack.split('\n');
+                                // Look for lines like "at Function (<anonymous>:...)"
+                                const relevantLine = stackLines.find(line => line.includes('<anonymous>'));
+                                if (relevantLine) {
+                                    outputElement.textContent += `\n(Check code around line indicated in console)`;
+                                }
+                            }
+                            outputElement.classList.add('error'); // General error class
+                        }
+                    } finally {
+                        console.log = originalConsoleLog; // Restore original console.log
+                    }
+                });
+            });
+
+            // --- Reset Button Logic ---
+            resetButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const codeId = button.dataset.codeId;
+                    const codeBlock = document.getElementById(codeId);
+                    const outputElement = document.querySelector(`.output[data-output-id="${codeId}"]`);
+                    const parentPre = codeBlock.closest('pre'); // Find the parent <pre> tag
+
+                    if (codeBlock && codeBlock.dataset.originalCode) {
+                        // Restore original code
+                        codeBlock.textContent = codeBlock.dataset.originalCode;
+
+                        // Re-apply syntax highlighting
+                        if (window.Prism) {
+                            Prism.highlightElement(codeBlock);
+                            // If using line numbers, need to ensure the <pre> still has the class
+                            if (parentPre && parentPre.classList.contains('line-numbers')) {
+                                // Re-run line number plugin logic if necessary, though highlightElement might handle it.
+                                // Often, just ensuring the class is there is enough.
+                                // Force re-initialization if needed (might cause flicker)
+                                // parentPre.classList.remove('line-numbers');
+                                // void parentPre.offsetWidth; // Force reflow
+                                // parentPre.classList.add('line-numbers');
+                                // Prism.highlightAllUnder(parentPre); // Or re-highlight container
+                            }
+                        }
+                    } else {
+                        console.error("Could not find code block or its original code for ID:", codeId);
+                    }
+
+                    if (outputElement) {
+                        // Clear the output area
+                        outputElement.textContent = 'Code reset. Output cleared.';
+                        outputElement.className = 'output'; // Remove error/syntax-error classes
+                    }
+                });
+            });
+
+        });
+    </script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+
+</body>
+
+</html>

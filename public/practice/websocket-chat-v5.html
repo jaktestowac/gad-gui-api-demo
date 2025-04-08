@@ -1,0 +1,2649 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD - WeatherChat - Real-Time Chat with Weather Widget (based on WebSockets)</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            text-align: center;
+            margin-bottom: 4px;
+            color: #7289da;
+        }
+
+        h6 {
+            margin-bottom: 6px;
+        }
+
+        .description {
+            margin-bottom: 20px;
+        }
+
+        #messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #2c2c2c;
+            border-radius: 12px;
+            height: 100%;
+        }
+
+        #messages p {
+            background-color: #3f3f3f;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            word-wrap: break-word;
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            font-size: 0.95rem;
+        }
+
+        .message-time {
+            color: #666;
+            font-size: 0.75em;
+            min-width: 40px;
+        }
+
+        .message-content {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        #usernameInput,
+        #messageInput,
+        #passwordInput,
+        #registerUsernameInput,
+        #registerPasswordInput,
+        #registerConfirmPasswordInput {
+            flex: 1;
+            padding: 8px 10px;
+            border: none;
+            border-radius: 6px;
+            background-color: #2c2c2c;
+            color: #ffffff;
+            font-size: 0.9rem;
+        }
+
+        #usernameInput {
+            background-color: #585858;
+            width: 100% !important;
+        }
+
+        #usernameInput:focus,
+        #messageInput:focus,
+        #passwordInput:focus,
+        #registerUsernameInput:focus,
+        #registerPasswordInput:focus,
+        #registerConfirmPasswordInput:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #7289da;
+        }
+
+        .chat-button {
+            padding: 0 12px;
+            border: none;
+            border-radius: 5px;
+            background-color: #7289da;
+            color: white;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: background-color 0.3s;
+            height: 32px;
+            min-width: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0px !important;
+        }
+
+        .chat-button:hover {
+            background-color: #5c6fb1;
+        }
+
+        .chat-button-secondary {
+            background-color: #3f3f3f;
+            margin-top: 8px;
+            font-size: 0.8rem;
+            padding: 4px 8px;
+            height: 28px;
+        }
+
+        #loginScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+        }
+
+        #loadingScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 3;
+            color: white;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(114, 137, 218, 0.2);
+            border-top-color: #7289da;
+            border-radius: 50%;
+            animation: spinner 1s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spinner {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .login-box {
+            background-color: #2c2c2c;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            width: 280px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        #registerForm,
+        #loginForm {
+            height: 230px !important;
+        }
+
+        .login-box h2 {
+            margin-bottom: 6px;
+            color: #7289da;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .form-group {
+            margin-bottom: 4px;
+            text-align: left;
+            position: relative;
+        }
+
+        .form-input-clear {
+            position: absolute;
+            right: 6px;
+            top: 70%;
+            transform: translateY(-50%);
+            color: #a3a3a3;
+            cursor: pointer;
+            padding: 4px;
+            display: none;
+            font-size: 0.7rem;
+        }
+
+        .form-input-clear:hover {
+            color: #ff4444;
+        }
+
+        .form-group input:not(:placeholder-shown)+.form-input-clear {
+            display: block;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 1px;
+            color: #aaa;
+            font-size: 0.7rem;
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 12px;
+            gap: 0;
+            justify-content: center;
+            background-color: #1a1a1a;
+            border-radius: 4px;
+            padding: 3px;
+            width: 100%;
+            overflow: hidden;
+            border: 1px solid #3f3f3f;
+        }
+
+        .auth-tab {
+            padding: 6px 12px;
+            background: transparent;
+            cursor: pointer;
+            color: #888;
+            flex: 1;
+            text-align: center;
+            transition: all 0.2s ease;
+            font-size: 0.8rem;
+            position: relative;
+            border-radius: 3px;
+        }
+
+        .auth-tab.active {
+            background: #2c2c2c;
+            color: #7289da;
+            font-weight: 500;
+        }
+
+        .auth-tab:not(.active):hover {
+            background: #2c2c2c;
+            color: #aaa;
+        }
+
+        .auth-tab i {
+            margin-right: 4px;
+            font-size: 0.75rem;
+        }
+
+        .auth-form {
+            padding: 4px 0;
+        }
+
+        .form-input {
+            padding: 4px 26px 4px 8px;
+            height: 28px;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            background-color: #585858 !important;
+        }
+
+        .error-message,
+        .success-message {
+            font-size: 0.7rem;
+            margin: 2px 0;
+            min-height: 1em;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .message-username {
+            color: #7289da;
+            font-weight: bold;
+            margin-right: 6px;
+        }
+
+        .chat-container {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            align-content: center;
+            flex: 1 0 auto;
+            padding: 4rem 1rem 1rem 1rem;
+        }
+
+        footer {
+            position: inherit;
+            bottom: 0px;
+            flex-shrink: 0;
+            background: #1a1a1a;
+            color: #fff;
+            padding: 0rem !important;
+            text-align: center;
+            width: 100%;
+        }
+
+        #footer-container {
+            padding: 0rem;
+        }
+
+        .error-message {
+            color: #ff4444;
+            font-size: 0.9em;
+            margin-top: 6px;
+            margin-bottom: 6px;
+            min-height: 1.2em;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .success-message {
+            color: #44ff44;
+            font-size: 0.9em;
+            margin-top: 6px;
+            margin-bottom: 6px;
+            min-height: 1.2em;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .form-input.error {
+            box-shadow: 0 0 0 2px #ff4444 !important;
+        }
+
+        .system-message {
+            color: #ff4444;
+            font-style: italic;
+        }
+
+        .chat-layout {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            height: 333px;
+        }
+
+        #userList {
+            width: 180px;
+            background: #2c2c2c;
+            border-radius: 8px;
+            padding: 12px;
+            height: inherit;
+            display: flex;
+            flex-direction: column;
+            transition: width 0.3s ease;
+        }
+
+        #userList.collapsed {
+            width: 40px;
+        }
+
+        #userList.collapsed .user-list-header span,
+        #userList.collapsed #userListContent,
+        #userList.collapsed .user-list-footer,
+        #userList.collapsed .fas.fa-users {
+            display: none;
+        }
+
+        .user-list-header {
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .collapse-button {
+            cursor: pointer;
+            color: #7289da;
+            padding: 2px;
+            transition: transform 0.3s;
+        }
+
+        .collapse-button:hover {
+            color: #5c6fb1;
+        }
+
+        .collapse-button.collapsed {
+            transform: rotate(-180deg);
+        }
+
+        #userListContent {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .tab-container {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            height: 333px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 10px;
+            background: #1a1a1a;
+            padding: 4px 4px 0 4px;
+            border-radius: 8px 8px 0 0;
+            min-height: 32px;
+        }
+
+        .tab {
+            padding: 4px 10px;
+            background: #2c2c2c;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #4e67c0;
+            border: 1px solid #3f3f3f;
+            border-bottom: none;
+            min-width: 100px;
+            height: 28px;
+            justify-content: space-between;
+            user-select: none;
+            font-size: 0.85rem;
+        }
+
+        .tab.active {
+            background: #7289da;
+            color: white;
+            box-shadow: 0 2px 8px rgba(114, 137, 218, 0.3);
+        }
+
+        #conversations {
+            background: #3f3f3f;
+            border-radius: 0 0 8px 8px;
+            height: inherit;
+            overflow: hidden;
+        }
+
+        .conversation {
+            height: calc(100% - 25px);
+            background: #2c2c2c;
+            margin: 2px;
+            border-radius: 8px;
+            padding: 8px;
+        }
+
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            background-color: #2c2c2c;
+            border-radius: 8px;
+            height: calc(100% - 25px);
+            min-height: 0;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .conversation .input-container {
+            margin-top: auto;
+            padding-top: 5px;
+            min-height: 35px;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 6px 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #3f3f3f;
+            color: #ffffff;
+            font-size: 0.9rem;
+            height: 35px;
+        }
+
+        .tab-close {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #585858;
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .tab-close:hover {
+            background: #ff4444;
+        }
+
+        .tab-notification {
+            background: #ff4444;
+            color: white;
+            border-radius: 50%;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 6px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .tab.active .tab-notification {
+            display: none;
+        }
+
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            background-color: #2c2c2c;
+            padding: 10px 15px;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 700px;
+        }
+
+        .user-info h3 {
+            margin: 0;
+            text-align: left;
+            font-size: 1rem;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .logout-btn,
+        .leave-chat-btn {
+            background-color: #3f3f3f;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .logout-btn {
+            color: #ff4444;
+        }
+
+        .leave-chat-btn {
+            color: #ffa500;
+            visibility: hidden;
+        }
+
+        .logout-btn:hover {
+            background-color: #ff4444;
+            color: white;
+        }
+
+        .leave-chat-btn:hover {
+            background-color: #ffa500;
+            color: white;
+        }
+
+        .weather-widget {
+            background-color: #2c2c2c;
+            border-radius: 8px;
+            padding: 10px;
+            width: 100%;
+            max-width: 1100px;
+            margin-top: 0px;
+            margin-bottom: 5px;
+            color: #ffffff;
+            transition: height 0.3s ease, padding 0.3s ease;
+            overflow: hidden;
+        }
+
+        .weather-widget.collapsed {
+            height: 40px !important;
+            padding: 10px;
+        }
+
+        .weather-widget.collapsed .weather-chart-container,
+        .weather-widget.collapsed .weather-forecast {
+            display: none;
+        }
+
+        .weather-collapse-button {
+            cursor: pointer;
+            color: #7289da;
+            padding: 2px;
+            transition: transform 0.3s;
+            margin-left: 8px;
+        }
+
+        .weather-collapse-button:hover {
+            color: #5c6fb1;
+        }
+
+        .weather-collapse-button.collapsed {
+            transform: rotate(-180deg);
+        }
+
+        .weather-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 25px;
+            height: 20px;
+        }
+
+        .weather-row {
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 0px;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .weather-chart-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 10px;
+            margin: 8px 0;
+            background-color: #2a2a2a;
+            border-radius: 6px;
+            border: 1px solid #3a3a3a;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+            height: 200px;
+        }
+
+        .weather-chart {
+            flex: 1;
+            position: relative;
+            height: 100%;
+            min-width: 0;
+        }
+
+        canvas#temperatureChart {
+            width: 100% !important;
+            height: 100% !important;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .weather-details-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 10px;
+            background-color: #3f3f3f;
+            border-radius: 6px;
+            min-width: 240px;
+            max-width: 240px;
+            font-size: 22px;
+        }
+
+        #wind {
+            font-weight: 500;
+        }
+
+        #wind.wind-calm {
+            color: #6fb1d9;
+            /* Light blue for calm winds */
+        }
+
+        #wind.wind-moderate {
+            color: #72da89;
+            /* Light green for moderate winds */
+        }
+
+        #wind.wind-strong {
+            color: #daa472;
+            /* Orange for strong winds */
+        }
+
+        #wind.wind-severe {
+            color: #da7272;
+            /* Red for severe winds */
+            font-weight: 800;
+        }
+
+        #wind.wind-extreme {
+            color: #ff4444;
+            /* Dark red for extreme winds */
+            font-weight: 900;
+        }
+
+        #wind.wind-hurricane {
+            color: #ff0000;
+            /* Bright red for hurricane winds */
+            font-weight: 1000;
+        }
+
+        #humidity {
+            font-weight: 500;
+        }
+
+        #humidity.humidity-low {
+            color: #da7272;
+            /* Red for dry conditions */
+        }
+
+        #humidity.humidity-normal {
+            color: #72da89;
+            /* Green for comfortable conditions */
+        }
+
+        #humidity.humidity-high {
+            color: #6fb1d9;
+            /* Blue for humid conditions */
+        }
+
+        #feels-like {
+            font-weight: 500;
+        }
+
+        #feels-like.feels-cold {
+            color: #6fb1d9;
+            /* Blue for cold */
+        }
+
+        #feels-like.feels-comfortable {
+            color: #72da89;
+            /* Green for comfortable */
+        }
+
+        #feels-like.feels-warm {
+            color: #daa472;
+            /* Orange for warm */
+        }
+
+        #feels-like.feels-hot {
+            color: #da7272;
+            /* Red for hot */
+        }
+
+        .weather-location {
+            font-weight: 500;
+            color: #ddd;
+            margin-bottom: 0;
+            font-size: 0.85rem;
+        }
+
+        .weather-forecast {
+            /* display: flex; */
+            display: none;
+            justify-content: space-between;
+            margin-top: 5px;
+            padding-top: 5px;
+            border-top: 1px solid #3f3f3f;
+        }
+
+        .forecast-day {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.75rem;
+        }
+
+        .forecast-date {
+            font-size: 0.7rem;
+            color: #aaa;
+            width: 25px;
+        }
+
+        .forecast-temp {
+            font-weight: 500;
+            color: #7289da;
+            width: 32px;
+            text-align: right;
+        }
+
+        .forecast-icon {
+            width: 18px;
+            text-align: center;
+        }
+
+        .chat-preview-container {
+            position: relative;
+            width: 100%;
+            max-width: 1100px;
+            margin: 2px 0;
+            display: flex;
+            gap: 15px;
+            height: 333px;
+        }
+
+        .chat-preview {
+            opacity: 0.6;
+            pointer-events: none;
+            filter: blur(3px);
+            height: inherit;
+        }
+
+        .preview-sidebar {
+            width: 180px;
+            background: #2c2c2c;
+            border-radius: 8px;
+            padding: 12px;
+            height: inherit;
+        }
+
+        .preview-chat {
+            flex: 1;
+            background: #2c2c2c;
+            border-radius: 8px;
+            padding: 15px;
+            height: inherit;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .join-button-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            pointer-events: auto;
+            gap: 10px;
+            z-index: 1;
+        }
+
+        .join-button-container .chat-button {
+            filter: none;
+            opacity: 1;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .join-button-text {
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .chat-preview {
+            position: relative;
+            width: 100%;
+            max-width: 1100px;
+            margin: 0px 0;
+            display: flex;
+            gap: 15px;
+            opacity: 0.6;
+            pointer-events: none;
+            filter: blur(3px);
+            height: inherit;
+        }
+
+        .preview-sidebar {
+            width: 180px;
+            background: #2c2c2c;
+            border-radius: 8px;
+            padding: 12px;
+            height: inherit;
+        }
+
+        .preview-chat {
+            flex: 1;
+            background: #2c2c2c;
+            border-radius: 8px;
+            padding: 15px;
+            height: inherit;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .preview-header {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+            background: #1a1a1a;
+            border-radius: 8px 8px 0 0;
+            padding: 5px;
+        }
+
+        .preview-tab {
+            padding: 5px 10px;
+            background: #3f3f3f;
+            border-radius: 5px 5px 0 0;
+            font-size: 0.8rem;
+            width: 100px;
+        }
+
+        .preview-messages {
+            flex: 1;
+            background: #2c2c2c;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .preview-message {
+            margin: 8px;
+            padding: 8px;
+            background: #3f3f3f;
+            border-radius: 5px;
+        }
+
+        .preview-input {
+            display: flex;
+            gap: 8px;
+            margin-top: auto;
+        }
+
+        .preview-input-field {
+            flex: 1;
+            height: 35px;
+            background: #3f3f3f;
+            border-radius: 5px;
+        }
+
+        .preview-button {
+            width: 70px;
+            background: #7289da;
+            border-radius: 5px;
+        }
+
+        .preview-user {
+            margin: 8px 0;
+            padding: 6px;
+            background: #3f3f3f;
+            border-radius: 5px;
+            height: 30px;
+        }
+
+        .conversation {
+            visibility: hidden;
+            height: 0px;
+            padding: 0px;
+        }
+
+        .conversation.active {
+            visibility: visible;
+            height: calc(100% - 25px);
+            padding: 8px;
+        }
+
+        .scroller {
+            overflow: auto;
+            display: flex;
+            flex-direction: column-reverse;
+        }
+
+        .scroller .scroller-content .item {
+            height: 20px;
+            transform: translateZ(0);
+            /* fixes a bug in Safari iOS where the scroller doesn't update */
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 0;
+            cursor: pointer;
+        }
+
+        .message-compact {
+            display: flex;
+            align-items: center;
+            font-size: 12px !important;
+            gap: 8px;
+        }
+
+        .message-very-compact {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px !important;
+        }
+
+        .top-panel {
+            background-color: #2c2c2c;
+            border-radius: 8px;
+            padding: 8px 12px;
+            width: 100%;
+            max-width: 1100px;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .status-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .panel-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .panel-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .panel-title h2 {
+            margin: 0;
+            text-align: left;
+            font-size: 1rem;
+        }
+
+        .version-tag {
+            background: #4e67c0;
+            color: white;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: 500;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+        }
+
+        .user-profile .fa-user-circle {
+            color: #7289da;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #aaa;
+            font-size: 0.8rem;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #44ff44;
+        }
+
+        .status-dot.offline {
+            background: #ff4444;
+        }
+
+        .logout-btn {
+            background-color: #3f3f3f;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            font-size: 0.8rem;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .leave-chat-btn {
+            background-color: #3f3f3f;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            font-size: 0.8rem;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #ffa500;
+            visibility: hidden;
+        }
+
+        .predefined-users {
+            margin-top: 8px;
+            padding-top: 6px;
+            border-top: 1px solid #3f3f3f;
+            font-size: 0.8rem;
+        }
+
+        .predefined-users h3 {
+            font-size: 0.7rem;
+            color: #aaa;
+            margin-bottom: 4px;
+            text-align: center;
+        }
+
+        .predefined-users table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.7rem;
+            color: #ddd;
+            background: #1a1a1a;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .predefined-users th {
+            text-align: center;
+            padding: 4px 6px;
+            background: #3f3f3f;
+            color: #7289da;
+            font-weight: normal;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            width: 50%;
+        }
+
+        .predefined-users td {
+            padding: 3px 6px;
+            font-family: 'Consolas', monospace;
+        }
+
+        .predefined-users tr {
+            transition: background-color 0.2s;
+        }
+
+        .predefined-users tr:hover {
+            background: #2c2c2c;
+            cursor: pointer;
+        }
+
+        .predefined-users tr:not(:last-child) {
+            border-bottom: 1px solid #2c2c2c;
+        }
+
+        .predefined-users td:first-child {
+            color: #7289da;
+        }
+
+        .weather-main {
+            display: flex;
+            align-items: center;
+            align-self: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .weather-title {
+            font-size: 1.2rem;
+            font-weight: 500;
+            width: 300px !important;
+        }
+
+        .font-size-small {
+            font-size: 0.85rem !important;
+        }
+
+        .font-size-normal {
+            font-size: 1rem !important;
+        }
+
+        .font-size-large {
+            font-size: 1.2rem !important;
+        }
+
+        .font-size-controls {
+            display: flex;
+            gap: 4px;
+            margin-left: 12px;
+            padding: 2px;
+            background: #3f3f3f;
+            border-radius: 4px;
+        }
+
+        .font-size-button {
+            padding: 2px 8px;
+            border: none;
+            background: none;
+            color: #aaa;
+            cursor: pointer;
+            border-radius: 3px;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .font-size-button:hover {
+            color: #fff;
+            background: #4e67c0;
+        }
+
+        .font-size-button.active {
+            color: #fff;
+            background: #7289da;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <div id="loadingScreen" data-testid="loading-screen">
+        <div class="spinner" data-testid="loading-spinner"></div>
+        <h2>WeatherChat</h2>
+        <p data-testid="loading-message">User authentication in progress...</p>
+    </div>
+
+    <div id="loginScreen" class="hidden" data-testid="login-screen">
+        <div class="login-box" data-testid="login-box">
+            <h2><i class="fas fa-comments"></i> WeatherChat Login</h2>
+
+            <div class="auth-tabs" data-testid="auth-tabs">
+                <div class="auth-tab active" data-tab="login" data-testid="login-tab">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </div>
+                <div class="auth-tab" data-tab="register" data-testid="register-tab">
+                    <i class="fas fa-user-plus"></i> Register
+                </div>
+            </div>
+
+            <div id="loginForm" class="auth-form" data-testid="login-form">
+                <div class="form-group">
+                    <label for="usernameInput">Username</label>
+                    <input type="text" id="usernameInput" class="form-input" maxlength="32" placeholder="Enter username" autocomplete="username" data-testid="usernameInput" />
+                    <i class="fas fa-times form-input-clear" onclick="clearInput('usernameInput')"></i>
+                </div>
+
+                <div class="form-group">
+                    <label for="passwordInput">Password</label>
+                    <input type="password" id="passwordInput" class="form-input" placeholder="Enter password" autocomplete="current-password" data-testid="passwordInput" />
+                    <i class="fas fa-times form-input-clear" onclick="clearInput('passwordInput')"></i>
+                </div>
+
+                <div id="loginError" class="error-message"></div>
+                <button class="chat-button" onclick="login()" data-testid="login-button">
+                    <i class="fas fa-sign-in-alt"></i>&nbsp; Login
+                </button>
+            </div>
+
+            <div id="registerForm" class="auth-form hidden">
+                <div class="form-group">
+                    <label for="registerUsernameInput">Username</label>
+                    <input type="text" id="registerUsernameInput" class="form-input" maxlength="32" placeholder="Choose username" data-testid="registerUsernameInput" />
+                    <i class="fas fa-times form-input-clear" onclick="clearInput('registerUsernameInput')"></i>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerPasswordInput">Password</label>
+                    <input type="password" id="registerPasswordInput" class="form-input" placeholder="Choose password" data-testid="registerPasswordInput" />
+                    <i class="fas fa-times form-input-clear" onclick="clearInput('registerPasswordInput')"></i>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerConfirmPasswordInput">Confirm Password</label>
+                    <input type="password" id="registerConfirmPasswordInput" class="form-input" placeholder="Confirm password" data-testid="registerConfirmPasswordInput" />
+                    <i class="fas fa-times form-input-clear" onclick="clearInput('registerConfirmPasswordInput')"></i>
+                </div>
+
+                <div id="registerError" class="error-message"></div>
+                <div id="registerSuccess" class="success-message"></div>
+                <button class="chat-button" onclick="register()" data-testid="register-button">
+                    <i class="fas fa-user-plus"></i>&nbsp; Register
+                </button>
+            </div>
+
+            <button class="chat-button chat-button-secondary" onclick="window.location.href='/practice/'" data-testid="back-button">
+                <i class="fas fa-arrow-left"></i>&nbsp; Back
+            </button>
+
+            <div class="predefined-users">
+                <h3>Quick Login - Test Users</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Password</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="predefined-user-item">
+                            <td>JohnWeb</td>
+                            <td>123</td>
+                        </tr>
+                        <tr class="predefined-user-item">
+                            <td>MariaWeb</td>
+                            <td>123</td>
+                        </tr>
+                        <tr class="predefined-user-item">
+                            <td>Emma</td>
+                            <td>test1</td>
+                        </tr>
+                        <tr class="predefined-user-item">
+                            <td>David</td>
+                            <td>pass123</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="chatScreen" class="chat-container hidden">
+
+
+        <!-- Weather Widget -->
+        <div id="weatherWidget" class="weather-widget" data-testid="weather-widget">
+            <div class="weather-header" data-testid="weather-header">
+                <div class="weather-title" data-testid="weather-title">
+                    <i class="fas fa-cloud-sun"></i>
+                    <span>Weather</span>
+                    <i class="fas fa-chevron-up weather-collapse-button" onclick="toggleWeather()" data-testid="weather-collapse-button"></i>
+                </div>
+                <div class="weather-row" data-testid="weather-row">
+                    <div class="weather-info" data-testid="weather-info">
+                        <div class="weather-main" data-testid="weather-main">
+                            <div class="weather-location" data-testid="weather-location">San Francisco, CA</div>
+                            <div class="weather-temp" data-testid="weather-temperature">--°C</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="chat-button chat-button-secondary" onclick="refreshWeather()" data-testid="refresh-weather-button" style="height: 28px; min-width: 28px; padding: 3px 6px;">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+
+            <div class="weather-chart-container">
+                <div class="weather-chart">
+                    <canvas id="temperatureChart" data-testid="temperatureChart"></canvas>
+                </div>
+                <div class="weather-details-container">
+                    <div class="weather-detail-item">
+                        <i class="fas fa-sun weather-condition-icon" data-testid="weather-condition-icon"></i>
+                        <span class="weather-condition" data-testid="weather-condition">
+                            <span data-testid="weather-condition-text">Sunny</span>
+                        </span>
+                    </div>
+                    <div class="weather-detail-item">
+                        <i class="fas fa-tint"></i>
+                        <span>Humidity:</span>
+                        <span id="humidity" data-testid="humidity">--%</span>
+                    </div>
+                    <div class="weather-detail-item">
+                        <i class="fas fa-wind"></i>
+                        <span>Wind:</span>
+                        <span id="wind" data-testid="wind">-- km/h</span>
+                    </div>
+                    <div class="weather-detail-item">
+                        <i class="fas fa-temperature-high"></i>
+                        <span>Feels like:</span>
+                        <span id="feels-like" data-testid="feels-like">--°C</span>
+                    </div>
+                </div>
+            </div>
+            <div class="weather-forecast">
+                <div class="forecast-day">
+                    <div class="forecast-date">Mon</div>
+                    <div class="forecast-icon"><i class="fas fa-sun"></i></div>
+                    <div class="forecast-temp">74°C</div>
+                </div>
+                <div class="forecast-day">
+                    <div class="forecast-date">Tue</div>
+                    <div class="forecast-icon"><i class="fas fa-cloud"></i></div>
+                    <div class="forecast-temp">70°C</div>
+                </div>
+                <div class="forecast-day">
+                    <div class="forecast-date">Wed</div>
+                    <div class="forecast-icon"><i class="fas fa-cloud-sun"></i></div>
+                    <div class="forecast-temp">72°C</div>
+                </div>
+                <div class="forecast-day">
+                    <div class="forecast-date">Thu</div>
+                    <div class="forecast-icon"><i class="fas fa-cloud-rain"></i></div>
+                    <div class="forecast-temp">68°C</div>
+                </div>
+                <div class="forecast-day">
+                    <div class="forecast-date">Fri</div>
+                    <div class="forecast-icon"><i class="fas fa-cloud-sun"></i></div>
+                    <div class="forecast-temp">71°C</div>
+                </div>
+                <div class="forecast-day">
+                    <div class="forecast-date">Sat</div>
+                    <div class="forecast-icon"><i class="fas fa-sun"></i></div>
+                    <div class="forecast-temp">70°C</div>
+                </div>
+                <div class="forecast-day">
+                    <div class="forecast-date">Sun</div>
+                    <div class="forecast-icon"><i class="fas fa-cloud-sun"></i></div>
+                    <div class="forecast-temp">72°C</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="top-panel" data-testid="top-panel">
+            <div class="panel-left">
+                <div class="panel-title" data-testid="panel-title">
+                    <i class="fas fa-comment-dots"></i>
+                    <h2>WeatherChat</h2>
+                    <span class="version-tag">v5</span>
+                </div>
+                <div class="status-group" data-testid="status-group">
+                    <div class="status-indicator" data-testid="connection-status">
+                        <div id="connectionStatus" class="status-dot" data-testid="status-dot"></div>
+                        <span id="connectionStatusText" data-testid="status-text">Disconnected</span>
+                    </div>
+                    <div class="font-size-controls">
+                        <button class="font-size-button" onclick="changeFontSize('small')" title="Small">A</button>
+                        <button class="font-size-button active" onclick="changeFontSize('normal')" title="Normal">A</button>
+                        <button class="font-size-button" onclick="changeFontSize('large')" title="Large">A</button>
+                    </div>
+                    <button id="leaveChatButton" class="leave-chat-btn" onclick="leaveChat()" data-testid="leave-chat-button">
+                        <i class="fas fa-sign-out-alt"></i> Leave Chat
+                    </button>
+                </div>
+            </div>
+            <div class="panel-right">
+                <div class="user-profile" data-testid="user-profile">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="welcomeUsername" data-testid="welcome-username"></span>
+                </div>
+                <button id="logoutButton" class="logout-btn" onclick="logout()" data-testid="logout-button">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+
+        <!-- Mock chat preview to show what the interface will look like -->
+        <div id="chatPreviewContainer" class="chat-preview-container" data-testid="chat-preview-container">
+            <div id="chatPreview" class="chat-preview" data-testid="chat-preview">
+                <div class="preview-sidebar" data-testid="preview-sidebar">
+                    <div style="margin-bottom: 10px; font-size: 0.9rem;">Online Users</div>
+                    <div class="preview-user" data-testid="preview-user"></div>
+                    <div class="preview-user" data-testid="preview-user"></div>
+                    <div class="preview-user" data-testid="preview-user"></div>
+                </div>
+                <div class="preview-chat" data-testid="preview-chat">
+                    <div class="preview-header" data-testid="preview-header">
+                        <div class="preview-tab" data-testid="preview-tab"></div>
+                    </div>
+                    <div class="preview-messages" data-testid="preview-messages">
+                        <div class="preview-message" data-testid="preview-message"></div>
+                        <div class="preview-message" data-testid="preview-message"></div>
+                        <div class="preview-message" data-testid="preview-message"></div>
+                    </div>
+                    <div class="preview-input" data-testid="preview-input">
+                        <div class="preview-input-field" data-testid="preview-input-field"></div>
+                        <div class="preview-button" data-testid="preview-button"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="join-button-container" data-testid="join-button-container">
+                <div class="join-button-text" id="join-button-text" data-testid="join-button-text">Join the chat to start chatting!</div>
+                <button id="joinChatButton" class="chat-button" onclick="joinChat()" data-testid="join-chat-button">Join Chat</button>
+            </div>
+        </div>
+
+        <div id="chatInterface" class="chat-layout hidden" data-testid="chat-interface">
+            <div id="userList" data-testid="user-list">
+                <h3 class="user-list-header" data-testid="user-list-header">
+                    <span><i class="fas fa-users"></i> Online Users</span>
+                    <i class="fas fa-chevron-left collapse-button" onclick="toggleUserList()" data-testid="collapse-button"></i>
+                </h3>
+                <div id="userListContent"></div>
+            </div>
+            <div class="tab-container">
+                <div class="tabs" id="conversationTabs" data-testid="conversationTabs"></div>
+                <div id="conversations" data-testid="conversations"></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="/js/wsh.js"></script>
+    <script>
+        // Authentication state
+        let authToken = localStorage.getItem('chatAuthToken');
+        let currentUser = null;
+        let currentFontSize = localStorage.getItem('chatFontSize') || 'normal';
+        let isWeatherCollapsed = localStorage.getItem('weatherCollapsed') === 'true';
+
+        function changeFontSize(size) {
+            const messages = document.querySelectorAll('.message-content');
+            const buttons = document.querySelectorAll('.font-size-button');
+
+            messages.forEach(container => {
+                container.classList.remove('font-size-small', 'font-size-normal', 'font-size-large');
+                container.classList.add(`font-size-${size}`);
+            });
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            document.querySelector(`.font-size-button[onclick*="${size}"]`).classList.add('active');
+
+            localStorage.setItem('chatFontSize', size);
+            currentFontSize = size;
+        }
+
+        function toggleWeather() {
+            const weatherWidget = document.getElementById('weatherWidget');
+            const collapseButton = document.querySelector('.weather-collapse-button');
+
+            isWeatherCollapsed = !isWeatherCollapsed;
+            weatherWidget.classList.toggle('collapsed', isWeatherCollapsed);
+            collapseButton.classList.toggle('collapsed', isWeatherCollapsed);
+
+            localStorage.setItem('weatherCollapsed', isWeatherCollapsed);
+
+            if (!isWeatherCollapsed) {
+                // Refresh chart when expanding
+                setTimeout(initializeTemperatureChart, 100);
+            }
+        }
+
+        // WebSocket connection
+        let socket = null;
+        let username = '';
+        let selectedUser = null;
+        let conversations = new Map();
+        let isChatActive = false;
+
+        // Weather widget data
+        let weatherData = {
+            weather: [{
+                date: new Date().toISOString().split('T')[0],
+                location: "Warsaw",
+                temperature: 72,
+                condition: "Sunny",
+                icon: "fa-sun",
+                humidity: 45,
+                wind: 8,
+                feelsLike: 75
+            }]
+        };
+
+        // Function to refresh weather data
+        function refreshWeather() {
+            fetch('/api/v2/data/random/weather?location=Warsaw&daysBefore=3&daysAfter=3')
+                .then(response => response.json())
+                .then(data => {
+                    weatherData = data;
+                    const chartData = data.weather.map(w => ({
+                        day: new Date(w.date).toLocaleDateString('en-US', { weekday: 'short' }),
+                        temp: w.temperature,
+                        date: w.date
+                    }));
+
+                    drawTemperatureChart(chartData);
+                    initializeChartInteractions();
+                })
+                .catch(error => {
+                    console.error('Error fetching weather:', error);
+                });
+
+            fetch('/api/v2/data/random/weatherToday?location=Warsaw')
+                .then(response => response.json())
+                .then(data => {
+                    const currentWeatherToday = data.weather[0];
+                    updateWeatherWidget(currentWeatherToday); // Update the widget with today's weather
+                })
+                .catch(error => {
+                    console.error('Error fetching today\'s weather:', error);
+                });
+        }
+
+        // Function to draw temperature chart
+        function drawTemperatureChart(weeklyData, hoverIndex = -1) {
+            const canvas = document.getElementById('temperatureChart');
+            if (!canvas || !canvas.getContext) return;
+
+            const ctx = canvas.getContext('2d');
+
+            // Make sure the canvas dimensions are properly set
+            if (canvas.width === 0 || canvas.height === 0) {
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+            }
+
+            const width = canvas.width;
+            const height = canvas.height;
+
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+
+            // Get temperature range
+            const temps = weeklyData.map(item => item.temp);
+            const minTemp = Math.min(...temps) - 2;
+            const maxTemp = Math.max(...temps) + 2;
+            const tempRange = maxTemp - minTemp;
+
+            // Draw background with gradient
+            const gradient = ctx.createLinearGradient(0, 0, 0, height);
+            gradient.addColorStop(0, '#353535');
+            gradient.addColorStop(1, '#3f3f3f');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, width, height);
+
+            // Draw grid lines
+            ctx.strokeStyle = 'rgba(85, 85, 85, 0.6)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            for (let i = 0; i < 3; i++) {
+                const y = height * (i / 2);
+                ctx.moveTo(0, y);
+                ctx.lineTo(width, y);
+            }
+            ctx.stroke();
+
+            // Draw vertical grid lines (days separation)
+            ctx.strokeStyle = 'rgba(85, 85, 85, 0.4)';
+            ctx.beginPath();
+            for (let i = 1; i < weeklyData.length; i++) {
+                const x = width * (i / weeklyData.length);
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, height);
+            }
+            ctx.stroke();
+
+            // Draw temperature line with glow effect
+            ctx.shadowColor = 'rgba(114, 137, 218, 0.5)';
+            ctx.shadowBlur = 5;
+            ctx.strokeStyle = '#7289da';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+
+            weeklyData.forEach((item, index) => {
+                const x = width * ((index + 0.5) / weeklyData.length);
+                const normalizedTemp = (item.temp - minTemp) / tempRange;
+                const y = height - (normalizedTemp * height * 0.75) - (height * 0.15);
+
+                if (index === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+
+            ctx.stroke();
+
+            // Reset shadow for other elements
+            ctx.shadowColor = 'transparent';
+            ctx.shadowBlur = 0;
+
+            // Find today's index in the data
+            const today = new Date().toISOString().split('T')[0];
+            const todayIndex = weeklyData.findIndex(item =>
+                new Date(item.date).toISOString().split('T')[0] === today
+            );
+
+            // Draw points and labels with highlight for today and hover
+            weeklyData.forEach((item, index) => {
+                const x = width * ((index + 0.5) / weeklyData.length);
+                const normalizedTemp = (item.temp - minTemp) / tempRange;
+                const y = height - (normalizedTemp * height * 0.75) - (height * 0.15);
+                const isToday = index === todayIndex;
+                const isHovered = index === hoverIndex;
+
+                // Draw day labels
+                ctx.fillStyle = isHovered ? '#ff9f43' : (isToday ? '#7289da' : '#bbb');
+                ctx.font = (isHovered || isToday) ? 'bold 12px Arial' : '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(item.day, x, height - 3);
+
+                // Draw temperature points with highlight effect
+                ctx.fillStyle = isHovered ? '#ff9f43' : (isToday ? '#7289da' : '#ffffff');
+                ctx.beginPath();
+                ctx.arc(x, y, isHovered ? 5 : (isToday ? 4 : 3), 0, Math.PI * 2);
+                ctx.fill();
+
+                // Add glow effect for hover or today
+                if (isHovered || isToday) {
+                    ctx.shadowColor = isHovered ? 'rgba(255, 159, 67, 0.5)' : 'rgba(114, 137, 218, 0.5)';
+                    ctx.shadowBlur = 8;
+                    ctx.beginPath();
+                    ctx.arc(x, y, isHovered ? 5 : 4, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+
+                // Draw temperature value labels
+                ctx.fillStyle = isHovered ? '#ff9f43' : (isToday ? '#7289da' : '#ffffff');
+                ctx.font = (isHovered || isToday) ? 'bold 12px Arial' : 'bold 12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${item.temp}°`, x, y - 8);
+            });
+        }
+
+        // Add mouse interaction with the chart
+        function initializeChartInteractions() {
+            const canvas = document.getElementById('temperatureChart');
+            if (!canvas) return;
+
+            let activeIndex = -1;
+
+            function getDataIndexAtPosition(x) {
+                const width = canvas.width;
+                const dayWidth = width / weatherData.weather.length;
+                return Math.floor(x / dayWidth);
+            }
+
+            function handleMouseMove(event) {
+                const rect = canvas.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const dayIndex = getDataIndexAtPosition(x);
+
+                if (dayIndex >= 0 && dayIndex < weatherData.weather.length) {
+                    if (dayIndex !== activeIndex) {
+                        activeIndex = dayIndex;
+                        canvas.style.cursor = 'pointer';
+
+                        // Redraw chart with hover effect
+                        const chartData = weatherData.weather.map(w => ({
+                            day: new Date(w.date).toLocaleDateString('en-US', { weekday: 'short' }),
+                            temp: w.temperature,
+                            date: w.date
+                        }));
+
+                        drawTemperatureChart(chartData, dayIndex);
+                    }
+                } else {
+                    if (activeIndex !== -1) {
+                        activeIndex = -1;
+                        canvas.style.cursor = 'default';
+
+                        // Redraw chart without hover effect
+                        const chartData = weatherData.weather.map(w => ({
+                            day: new Date(w.date).toLocaleDateString('en-US', { weekday: 'short' }),
+                            temp: w.temperature,
+                            date: w.date
+                        }));
+
+                        drawTemperatureChart(chartData);
+                    }
+                }
+            }
+
+            function handleClick(event) {
+                const rect = canvas.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const dayIndex = getDataIndexAtPosition(x);
+
+                if (dayIndex >= 0 && dayIndex < weatherData.weather.length) {
+                    updateWeatherWidget(weatherData.weather[dayIndex]);
+                }
+            }
+
+            // Remove old event listeners if they exist
+            canvas.removeEventListener('mousemove', handleMouseMove);
+            canvas.removeEventListener('click', handleClick);
+            canvas.removeEventListener('mouseleave', handleMouseLeave);
+
+            // Add new event listeners
+            canvas.addEventListener('mousemove', handleMouseMove);
+            canvas.addEventListener('click', handleClick);
+            canvas.addEventListener('mouseleave', handleMouseLeave);
+
+            function handleMouseLeave() {
+                if (activeIndex !== -1) {
+                    activeIndex = -1;
+                    canvas.style.cursor = 'default';
+
+                    // Redraw chart without hover effect
+                    const chartData = weatherData.weather.map(w => ({
+                        day: new Date(w.date).toLocaleDateString('en-US', { weekday: 'short' }),
+                        temp: w.temperature,
+                        date: w.date
+                    }));
+
+                    drawTemperatureChart(chartData);
+                }
+            }
+        }
+
+        // Function to update weather widget with data
+        function updateWeatherWidget(data) {
+            document.querySelector('.weather-location').textContent = data.location || data.city || 'Unknown Location';
+            document.querySelector('.weather-temp').textContent = `${data.temperature}°C`;
+
+            const conditionIcon = document.querySelector('.weather-condition-icon');
+            conditionIcon.className = 'weather-condition-icon';
+            conditionIcon.classList.add('fas', data.icon);
+
+            document.querySelector('.weather-condition span').textContent = data.condition;
+
+            const humidityElement = document.getElementById('humidity');
+            const feelsLikeElement = document.getElementById('feels-like');
+            const humidityValue = parseInt(data.humidity);
+            const feelsLikeValue = parseInt(data.feelsLike);
+
+            // format value to DD.D
+            humidityElement.textContent = `${humidityValue.toFixed(1)}%`;
+            feelsLikeElement.textContent = `${feelsLikeValue}°C`;
+
+            // Remove all humidity classes
+            humidityElement.classList.remove('humidity-low', 'humidity-normal', 'humidity-high');
+
+            // Add appropriate humidity class
+            if (humidityValue < 30) {
+                humidityElement.classList.add('humidity-low');
+            } else if (humidityValue < 60) {
+                humidityElement.classList.add('humidity-normal');
+            } else {
+                humidityElement.classList.add('humidity-high');
+            }
+
+            // Remove all feels-like classes
+            feelsLikeElement.classList.remove('feels-cold', 'feels-comfortable', 'feels-warm', 'feels-hot');
+
+            // Add appropriate feels-like class
+            if (feelsLikeValue < 10) {
+                feelsLikeElement.classList.add('feels-cold');
+            } else if (feelsLikeValue < 20) {
+                feelsLikeElement.classList.add('feels-comfortable');
+            } else if (feelsLikeValue < 30) {
+                feelsLikeElement.classList.add('feels-warm');
+            } else {
+                feelsLikeElement.classList.add('feels-hot');
+            }
+
+            const windElement = document.getElementById('wind');
+            const windSpeed = parseInt(data.wind);
+
+            // format value to DD.D
+            windElement.textContent = `${windSpeed.toFixed(1)} km/h`;
+
+            // Remove all wind classes first
+            windElement.classList.remove('wind-calm', 'wind-moderate', 'wind-strong', 'wind-severe', 'wind-extreme', 'wind-hurricane');
+
+            // Add appropriate class based on wind speed
+            if (windSpeed < 15) {
+                windElement.classList.add('wind-calm');
+            } else if (windSpeed < 30) {
+                windElement.classList.add('wind-moderate');
+            } else if (windSpeed < 50) {
+                windElement.classList.add('wind-strong');
+            } else if (windSpeed < 100) {
+                windElement.classList.add('wind-severe');
+            } else if (windSpeed < 150) {
+                windElement.classList.add('wind-extreme');
+            } else {
+                windElement.classList.add('wind-hurricane');
+            }
+        }
+
+        function initializeTemperatureChart() {
+            const canvas = document.getElementById('temperatureChart');
+            if (!canvas) return;
+
+            // Set initial dimensions
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            // Draw initial chart if we have valid data structure
+            if (weatherData?.weather && Array.isArray(weatherData.weather)) {
+                const chartData = weatherData.weather.map(w => ({
+                    day: new Date(w.date).toLocaleDateString('en-US', { weekday: 'short' }),
+                    temp: w.temperature,
+                    date: w.date
+                }));
+                drawTemperatureChart(chartData);
+                initializeChartInteractions();
+            } else {
+                // Draw empty chart or placeholder until data is available
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#3f3f3f';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+
+        // Check if user is already authenticated
+        function checkAuthentication() {
+            if (!authToken) {
+                hideLoadingScreen();
+                showLoginScreen();
+                return;
+            }
+
+            fetch('/api/practice/v2/auth/check', {
+                headers: {
+                    'Authorization': `Bearer ${authToken}`
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Authentication failed');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    currentUser = data;
+                    username = data.username;
+                    hideLoadingScreen();
+                    showChatScreen();
+                    document.getElementById('welcomeUsername').textContent = username;
+                })
+                .catch(error => {
+                    console.error('Auth check failed:', error);
+                    localStorage.removeItem('chatAuthToken');
+                    authToken = null;
+                    hideLoadingScreen();
+                    showLoginScreen();
+                });
+        }
+
+        function hideLoadingScreen() {
+            document.getElementById('loadingScreen').classList.add('hidden');
+        }
+
+        function showLoginScreen() {
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('chatScreen').classList.add('hidden');
+        }
+
+        function showChatScreen() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('chatScreen').classList.remove('hidden');
+            document.getElementById('welcomeUsername').textContent = username;
+            document.getElementById('leaveChatButton').style.visibility = 'hidden';
+            updateConnectionStatus(false);
+
+            // Refresh chart when chat screen becomes visible
+            setTimeout(initializeTemperatureChart, 100);
+        }
+
+        function switchAuthTab(tabName) {
+            document.querySelectorAll('.auth-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.tab === tabName);
+            });
+
+            document.getElementById('loginForm').classList.toggle('hidden', tabName !== 'login');
+            document.getElementById('registerForm').classList.toggle('hidden', tabName !== 'register');
+
+            // Clear error messages when switching tabs
+            document.getElementById('loginError').textContent = '';
+            document.getElementById('registerError').textContent = '';
+            document.getElementById('registerSuccess').textContent = '';
+        }
+
+        function register() {
+            const usernameInputValue = document.getElementById('registerUsernameInput').value.trim();
+            const password = document.getElementById('registerPasswordInput').value;
+            const confirmPassword = document.getElementById('registerConfirmPasswordInput').value;
+
+            // Clear error and success messages
+            document.getElementById('registerError').textContent = '';
+            document.getElementById('registerSuccess').textContent = '';
+
+            // Validate inputs
+            if (!usernameInputValue || !password) {
+                document.getElementById('registerError').textContent = 'Username and password are required';
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                document.getElementById('registerError').textContent = 'Passwords do not match';
+                return;
+            }
+
+            if (usernameInputValue.length < 3) {
+                document.getElementById('registerError').textContent = 'Username must be at least 3 characters long';
+                return;
+            }
+
+            if (!/^[a-zA-Z0-9]+$/.test(usernameInputValue)) {
+                document.getElementById('registerError').textContent = 'Username can only contain letters and numbers';
+                return;
+            }
+
+            // Send registration request
+            fetch('/api/practice/v2/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username: usernameInputValue, password })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById('registerError').textContent = data.error?.message;
+                    } else {
+                        document.getElementById('registerSuccess').textContent = 'Registration successful! You can now log in.';
+                        // Clear registration fields
+                        document.getElementById('registerUsernameInput').value = '';
+                        document.getElementById('registerPasswordInput').value = '';
+                        document.getElementById('registerConfirmPasswordInput').value = '';
+
+                        // Automatically switch to login tab after successful registration
+                        setTimeout(() => {
+                            switchAuthTab('login');
+                            document.getElementById('usernameInput').value = username;
+                        }, 1500);
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('registerError').textContent = 'Registration failed. Please try again.';
+                    console.error('Registration error:', error);
+                });
+        }
+
+        function login() {
+            let usernameInputValue = document.getElementById('usernameInput').value.trim();
+            const password = document.getElementById('passwordInput').value;
+
+            // Clear error message
+            document.getElementById('loginError').textContent = '';
+
+            if (!usernameInputValue || !password) {
+                document.getElementById('loginError').textContent = 'Username and password are required';
+                return;
+            }
+
+            // Show loading screen during login
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('loadingScreen').classList.remove('hidden');
+
+            fetch('/api/practice/v2/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username: usernameInputValue, password })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        hideLoadingScreen();
+                        showLoginScreen();
+                        document.getElementById('loginError').textContent = data.error?.message;
+                    } else {
+                        // Store token and user info
+                        authToken = data.token;
+                        localStorage.setItem('chatAuthToken', authToken);
+                        currentUser = {
+                            userId: data.userId,
+                            username: data.username
+                        };
+                        username = data.username;
+
+                        hideLoadingScreen();
+
+                        showChatScreen();
+                        refreshWeather()
+                        document.getElementById('welcomeUsername').textContent = username;
+                        document.getElementById('usernameInput').value = '';
+                        document.getElementById('passwordInput').value = '';
+                    }
+                })
+                .catch(error => {
+                    hideLoadingScreen();
+                    showLoginScreen();
+                    document.getElementById('loginError').textContent = 'Login failed. Please try again.';
+                    console.error('Login error:', error);
+                });
+        }
+
+        function logout() {
+            if (!authToken) return;
+
+            // If chat is active, leave the chat first
+            if (isChatActive) {
+                leaveChat();
+            }
+
+            // Call logout API
+            fetch('/api/practice/v2/auth/logout', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${authToken}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(() => {
+                    // Clear local auth data
+                    localStorage.removeItem('chatAuthToken');
+                    authToken = null;
+                    currentUser = null;
+                    username = '';
+
+                    // Show login screen
+                    showLoginScreen();
+                })
+                .catch(error => {
+                    console.error('Logout error:', error);
+                    // Still clear local auth data and show login screen on error
+                    localStorage.removeItem('chatAuthToken');
+                    authToken = null;
+                    showLoginScreen();
+                });
+        }
+
+        function joinChat() {
+            if (!authToken || !currentUser) {
+                showLoginScreen();
+                return;
+            }
+
+            // Create WebSocket connection when joining chat
+            socket = new WebSocket(wsAddr);
+
+            // Set up WebSocket event handlers
+            setupWebSocketHandlers();
+
+            document.getElementById('chatPreviewContainer').classList.add('hidden');
+            document.getElementById('chatInterface').classList.remove('hidden');
+
+            // Initialize conversations if not already done
+            if (conversations.size === 0) {
+                createConversation(null);
+                activateConversation('general');
+            }
+
+            // Update connection indicator to "Connecting..."
+            updateConnectionStatus(false);
+            document.getElementById('connectionStatusText').textContent = 'Connecting...';
+
+            // We'll send the join message once the connection is established
+            socket.addEventListener('open', () => {
+                // Send join message to websocket
+                socket.send(JSON.stringify({
+                    type: 'practiceChatJoin',
+                    username: username,
+                    version: 'v5'
+                }));
+
+                isChatActive = true;
+                document.getElementById('leaveChatButton').style.visibility = 'visible';
+                activateConversation('general');
+            });
+
+
+        }
+
+        function leaveChat() {
+            if (isChatActive) {
+                // Send leave message if socket is still open
+                if (socket && socket.readyState === WebSocket.OPEN) {
+                    socket.send(JSON.stringify({
+                        type: 'practiceChatLeave',
+                        username: username
+                    }));
+
+                    // Close the WebSocket connection
+                    socket.close();
+                }
+                socket = null;
+                isChatActive = false;
+
+                // Update connection status
+                updateConnectionStatus(false);
+
+                // Reset UI elements
+                document.getElementById('chatInterface').classList.add('hidden');
+                document.getElementById('chatPreviewContainer').classList.remove('hidden');
+                document.getElementById('joinChatButton').classList.remove('hidden');
+                document.getElementById('leaveChatButton').style.visibility = 'hidden';
+
+                // Clear conversations
+                conversations.forEach((conv, id) => {
+                    conv.tab.remove();
+                    conv.container.remove();
+                });
+                conversations.clear();
+
+                // Clear user list
+                document.getElementById('userListContent').innerHTML = '';
+                const el = document.getElementById('join-button-text');
+                if (el) {
+                    el.innerHTML = 'Join the chat to start chatting!';
+                }
+            }
+        }
+
+        function formatTime(date) {
+            return date.toLocaleTimeString('en-US', {
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function scrollToLatestMessage(messagesDiv) {
+            // Scroll to the bottom of the messages div
+        }
+
+        function setupWebSocketHandlers() {
+            socket.addEventListener('open', () => {
+                console.log('WebSocket connection established');
+                updateConnectionStatus(true);
+            });
+
+            socket.addEventListener('close', () => {
+                console.log('WebSocket connection closed');
+                updateConnectionStatus(false);
+                if (isChatActive) {
+                    // Handle unexpected connection close
+                    const messagesDiv = document.querySelector('.conversation.active')?.querySelector('.messages-content');
+                    if (messagesDiv) {
+                        const errorElement = document.createElement('p');
+                        errorElement.classList.add('message-compact');
+                        errorElement.innerHTML = `
+                            <span class="message-time" title="${formatTime(new Date())}">${formatTime(new Date())}</span>
+                            <span class="message-content system-message">
+                                Connection lost. Please try leaving and rejoining the chat.
+                            </span>
+                        `;
+                        messagesDiv.appendChild(errorElement);
+                    }
+                }
+            });
+
+            socket.addEventListener('error', () => {
+                console.error('WebSocket error occurred');
+            });
+
+            socket.addEventListener('message', (event) => {
+                const data = JSON.parse(event.data);
+                const time = formatTime(new Date());
+
+                switch (data.type) {
+                    case 'practiceChatMessage':
+                    case 'practiceChatPrivate': {
+                        const isPrivate = data.type === 'practiceChatPrivate';
+                        const conversationId = isPrivate ?
+                            (data.username === username ? data.recipient : data.username) :
+                            'general';
+
+                        createConversation(isPrivate ? conversationId : null);
+
+                        if (data.username !== username) {
+                            incrementNotification(conversationId);
+                        }
+
+                        let className = 'message-content';
+                        if (data.username?.toLowerCase().includes('[system]')) {
+                            className += ' system-message';
+                        }
+
+                        const messagesDiv = document.getElementById(`messages-${conversationId}`).querySelector('.messages-content');
+                        const messageElement = document.createElement('p');
+                        messageElement.className = isPrivate ? 'private-message' : '';
+                        messageElement.classList.add('message-compact');
+                        messageElement.setAttribute('data-testid', `message-${conversationId}-${Date.now()}`);
+                        messageElement.innerHTML = `
+                            <span class="message-time" data-testid="message-time" title="${formatTime(new Date())}">${time}</span>
+                            <span class="${className} font-size-${currentFontSize}" data-testid="message-content">
+                                <span class="message-username" data-testid="message-username">${data.username}:</span>
+                                <span data-testid="message-text">${data.message}</span>
+                            </span>
+                        `;
+                        messagesDiv.appendChild(messageElement);
+
+                        // Scroll to bottom after adding new message
+                        scrollToLatestMessage(messagesDiv);
+                        break;
+                    }
+                    case 'practiceChatUserList':
+                        updateUserList(data.users);
+                        break;
+                    case 'error':
+                        const messagesDiv = document.querySelector('.conversation.active');
+                        if (messagesDiv) {
+                            const contentDiv = messagesDiv.querySelector('.messages-content');
+                            const errorElement = document.createElement('p');
+                            errorElement.classList.add('message-compact');
+                            if (data?.data?.message === undefined && data.message === undefined) {
+                                break;
+                            }
+                            errorElement.innerHTML = `
+                                <span class="message-time" title="${formatTime(new Date())}">${time}</span>
+                                <span class="message-content system-message">
+                                    ${data.message || data?.data?.message || 'An error occurred.'}
+                                </span>
+                            `;
+                            contentDiv.appendChild(errorElement);
+                            scrollToLatestMessage(contentDiv);
+                        }
+                        if (data.data.message === 'Username already taken') {
+                            leaveChat();
+                            const el = document.getElementById('join-button-text');
+                            if (el) {
+                                el.innerHTML = 'Username already taken<br>Are you logged in another window?';
+                            }
+                        }
+
+                        break;
+                }
+            });
+        }
+
+        function updateConnectionStatus(isConnected) {
+            const statusDot = document.getElementById('connectionStatus');
+            const statusText = document.getElementById('connectionStatusText');
+
+            if (isConnected) {
+                statusDot.classList.remove('offline');
+                statusText.textContent = 'Connected';
+            } else {
+                statusDot.classList.add('offline');
+                statusText.textContent = 'Disconnected';
+            }
+        }
+
+        function sendMessage(conversationId) {
+            const messageInput = document.getElementById(`messageInput-${conversationId}`);
+            const message = messageInput.value.trim();
+
+            if (message && username) {
+                socket.send(JSON.stringify({
+                    type: conversationId !== 'general' ? 'practiceChatPrivate' : 'practiceChatMessage',
+                    username: username,
+                    message: message,
+                    recipient: conversationId !== 'general' ? conversationId : null
+                }));
+                messageInput.value = '';
+
+                messageInput.focus();
+            }
+        }
+
+        function updateUserList(users) {
+            const userListContent = document.getElementById('userListContent');
+            userListContent.innerHTML = users
+                .map(user => `
+                    <div class="user-item" onclick="selectUser('${user}')" id="user-${user}" data-testid="user-item-${user}">
+                        <i class="fas fa-user" style="font-size: 0.8rem;"></i> ${user}
+                    </div>
+                `).join('');
+        }
+
+        function selectUser(user) {
+            if (selectedUser === user) {
+                selectedUser = null;
+                activateConversation('general');
+            } else {
+                selectedUser = user;
+                const conversationId = createConversation(user);
+                activateConversation(conversationId);
+            }
+        }
+
+        function createConversation(recipient) {
+            const conversationsDiv = document.getElementById('conversations');
+            const tabsDiv = document.getElementById('conversationTabs');
+            const conversationId = recipient || 'general';
+
+            if (!conversations.has(conversationId)) {
+                const tab = document.createElement('div');
+                tab.className = 'tab';
+                tab.setAttribute('data-testid', `conversation-tab-${conversationId}`);
+                tab.onclick = (e) => {
+                    if (e.target.classList.contains('tab-close')) return;
+                    activateConversation(conversationId);
+                };
+                tab.innerHTML = `
+                    <span class="tab-title" data-testid="tab-title-${conversationId}">${recipient ? `<i class="fas fa-user-alt" style="font-size: 0.8rem; margin-right: 4px;"></i>${recipient}` : '<i class="fas fa-comments" style="font-size: 0.8rem; margin-right: 4px;"></i>General'}</span>
+                    <span class="tab-notification" data-testid="tab-notification-${conversationId}" style="display: none">0</span>
+                    ${recipient ? `<button class="tab-close" data-testid="tab-close-${conversationId}" onclick="closeConversation('${conversationId}')">×</button>` : ''}
+                `;
+
+                tabsDiv.appendChild(tab);
+
+                const conv = document.createElement('div');
+                conv.className = 'conversation';
+                conv.setAttribute('data-testid', `conversation-${conversationId}`);
+                conv.innerHTML = `
+                    <div id="messages-${conversationId}" class="messages" data-testid="messages-${conversationId}">
+                        <div class="scroller" data-testid="scroller-${conversationId}">
+                        <div class="messages-content scroller-content font-size-${currentFontSize}" data-testid="messages-content-${conversationId}"></div>
+                        </div>
+                    </div>
+                    <div class="input-container">
+                        <input type="text" 
+                               class="message-input" 
+                               id="messageInput-${conversationId}"
+                               data-testid="message-input-${conversationId}"
+                               maxlength="128" 
+                               placeholder="${recipient ? `Message to ${recipient}...` : 'Message to everyone...'}" />
+                        <button class="chat-button" data-testid="send-button-${conversationId}" onclick="sendMessage('${conversationId}')">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                `;
+
+                conv.querySelector('.message-input').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') sendMessage(conversationId);
+                });
+
+                conversationsDiv.appendChild(conv);
+
+                conversations.set(conversationId, {
+                    tab,
+                    container: conv,
+                    unreadCount: 0
+                });
+
+                // Apply current font size to new conversation
+                const messagesContent = conv.querySelector('.messages-content');
+                if (messagesContent) {
+                    messagesContent.classList.add(`font-size-${currentFontSize}`);
+                }
+
+                // When a new conversation is created, ensure it's scrolled to the bottom
+                const messagesDiv = conv.querySelector('.messages-content');
+                if (messagesDiv) {
+                    scrollToLatestMessage(messagesDiv);
+                }
+            }
+
+            return conversationId;
+        }
+
+        function incrementNotification(conversationId) {
+            const conv = conversations.get(conversationId);
+            if (!conv) return;
+
+            const notificationSpan = conv.tab.querySelector('.tab-notification');
+            conv.unreadCount++;
+
+            if (!conv.tab.classList.contains('active')) {
+                notificationSpan.style.display = 'flex';
+                notificationSpan.textContent = conv.unreadCount;
+            }
+        }
+
+        function clearNotifications(conversationId) {
+            const conv = conversations.get(conversationId);
+            if (!conv) return;
+
+            conv.unreadCount = 0;
+            const notificationSpan = conv.tab.querySelector('.tab-notification');
+            notificationSpan.style.display = 'none';
+        }
+
+        function activateConversation(conversationId) {
+            conversations.forEach((conv, id) => {
+                conv.tab.classList.toggle('active', id === conversationId);
+                conv.container.classList.toggle('active', id === conversationId);
+
+                // When switching to a conversation, scroll to the latest message
+                if (id === conversationId) {
+                    const messagesDiv = document.getElementById(`messages-${conversationId}`)?.querySelector('.messages-content');
+                    if (messagesDiv) {
+                        scrollToLatestMessage(messagesDiv);
+                    }
+                }
+            });
+            selectedUser = conversationId === 'general' ? null : conversationId;
+
+            clearNotifications(conversationId);
+
+            const input = document.getElementById(`messageInput-${conversationId}`);
+            if (input) input.focus();
+        }
+
+        function closeConversation(conversationId) {
+            if (conversationId === 'general') return;
+
+            const conv = conversations.get(conversationId);
+            if (!conv) return;
+
+            event.stopPropagation();
+
+            conv.tab.remove();
+            conv.container.remove();
+            conversations.delete(conversationId);
+
+            activateConversation('general');
+        }
+
+        function clearInput(inputId) {
+            const input = document.getElementById(inputId);
+            if (input) {
+                input.value = '';
+                input.focus();
+            }
+        }
+
+        function toggleUserList() {
+            const userList = document.getElementById('userList');
+            const button = document.querySelector('.collapse-button');
+
+            userList.classList.toggle('collapsed');
+            button.classList.toggle('collapsed');
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set up auth tab switching
+            document.querySelectorAll('.auth-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    switchAuthTab(tab.dataset.tab);
+                });
+            });
+
+            // Remove the old user-info div since we moved it to the top panel
+            const oldUserInfo = document.querySelector('.chat-container > .user-info');
+            if (oldUserInfo) oldUserInfo.remove();
+
+            // Initialize weather widget with API data
+            refreshWeather();
+            initializeTemperatureChart();
+
+            // Add resize listener for responsive canvas
+            window.addEventListener('resize', () => {
+                initializeTemperatureChart();
+            });
+
+            // Handle visibility changes
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') {
+                    initializeTemperatureChart();
+                }
+            });
+
+            // Make canvas responsive
+            const resizeCanvas = () => {
+                const canvas = document.getElementById('temperatureChart');
+                if (canvas) {
+                    canvas.width = canvas.offsetWidth;
+                    canvas.height = canvas.offsetHeight;
+                }
+            };
+
+            // Check if user is already authenticated
+            checkAuthentication();
+
+            // Apply saved font size preference
+            if (currentFontSize) {
+                changeFontSize(currentFontSize);
+            }
+
+            // Apply saved weather collapse state
+            if (isWeatherCollapsed) {
+                toggleWeather();
+            }
+
+            // Add click handler for predefined users
+            document.querySelectorAll('.predefined-user-item').forEach(row => {
+                row.addEventListener('click', () => {
+                    const username = row.cells[0].textContent;
+                    const password = row.cells[1].textContent;
+                    document.getElementById('usernameInput').value = username;
+                    document.getElementById('passwordInput').value = password;
+                });
+            });
+        });
+
+        // Input event handlers
+        document.getElementById('usernameInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') login();
+        });
+
+        document.getElementById('passwordInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') login();
+        });
+
+        document.getElementById('registerUsernameInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') register();
+        });
+
+        document.getElementById('registerPasswordInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') register();
+        });
+
+        document.getElementById('registerConfirmPasswordInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') register();
+        });
+
+        // Handle browser close/refresh
+        window.addEventListener('beforeunload', () => {
+            if (isChatActive && socket) {
+                socket.send(JSON.stringify({
+                    type: 'practiceChatLeave',
+                    username: username
+                }));
+            }
+        });
+    </script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+    <script type="text/javascript" src="./js/practice-common.js"></script>
+</body>
+
+</html>

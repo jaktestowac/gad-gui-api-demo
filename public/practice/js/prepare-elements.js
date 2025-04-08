@@ -163,6 +163,10 @@ function attachPlacesOfInterestToElement(selector, placeOfInterest, addIds = tru
 
 function addElementsToContainer(containerSelector, elementHTML) {
   const container = document.querySelector(containerSelector);
+  if (container === null) {
+    console.error(`Container with selector ${containerSelector} not found`);
+    return;
+  }
   container.innerHTML += elementHTML;
 }
 

@@ -305,6 +305,7 @@ if (sslEnabled !== true) {
     address = address == "::" ? "localhost" : "localhost";
     logDebug(`Visit it on -> http://${address}:${port}`);
     logDebug(`🎉 Your custom 🦎 GAD (${app.version}) is up and running!!!`);
+    logDebug(`--------------------------------`);
   });
 } else {
   logDebug(`Starting 🔒 SSL 🦎 GAD on port ${port}...`);
@@ -324,6 +325,7 @@ if (sslEnabled !== true) {
     address = address == "::" ? "localhost" : "localhost";
     logDebug(`Visit it on -> https://${address}:${port}`);
     logDebug(`🎉 Your custom 🔒 SSL 🦎 GAD (${app.version}) is up and running!!!`);
+    logDebug(`--------------------------------`);
   });
 }
 

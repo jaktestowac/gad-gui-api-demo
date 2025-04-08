@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="/css/style.css" />
     <style>
         .visual-container {
-            max-width: 1200px;
+            max-width: 800px;
             margin: 0 auto;
             padding: 10px;
         }
@@ -46,11 +46,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 4px;
-        }
-
-        h3 {
-            margin: 0;
+            margin-bottom: 10px;
         }
 
         .widget-status {
@@ -63,35 +59,29 @@
 
         .compact-metrics {
             display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 6px;
-            margin-bottom: 10px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 15px;
         }
 
         .metric-mini {
             background: rgba(255, 255, 255, 0.1);
-            padding: 6px;
+            padding: 8px;
             border-radius: 8px;
             text-align: center;
-            font-size: 0.9em;
-        }
-
-        .metric-value {
-            font-size: 1.1em;
-            margin: 2px 0;
         }
 
         .metric-detail {
-            font-size: 0.75em;
+            font-size: 0.8em;
             opacity: 0.7;
-            margin-top: 1px;
+            margin-top: 2px;
         }
 
         .loading-bar {
-            height: 2px;
+            height: 3px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 2px;
-            margin-top: 3px;
+            margin-top: 5px;
             overflow: hidden;
         }
 
@@ -110,83 +100,13 @@
         }
 
         .system-status {
-            display: grid;
-            grid-template-columns: auto 180px;
-            gap: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-top: 10px;
-            padding: 8px 12px;
+            padding: 8px;
             background: rgba(255, 255, 255, 0.05);
             border-radius: 8px;
-        }
-
-        .status-details {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .status-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 4px 10px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 6px;
-            font-size: 0.85em;
-            min-width: fit-content;
-        }
-
-        .status-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 2px 0;
-            min-width: 80px;
-        }
-
-        .status-item i {
-            width: 14px;
-            text-align: center;
-            font-size: 0.9em;
-        }
-
-        .status-item-wide {
-            width: 200px;
-        }
-
-        .status-badge {
-            padding: 2px 6px;
-            border-radius: 10px;
-            font-size: 0.8em;
-            background: rgba(255, 255, 255, 0.1);
-            min-width: 60px;
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        .status-badge.high {
-            background: rgba(244, 67, 54, 0.2);
-        }
-
-        .status-badge.medium {
-            background: rgba(255, 152, 0, 0.2);
-        }
-
-        .status-badge.low {
-            background: rgba(76, 175, 80, 0.2);
-        }
-
-        .timestamp-group {
-            text-align: right;
-            font-size: 0.85em;
-            min-width: 180px;
-        }
-
-        .load-average {
-            opacity: 0.8;
-            font-size: 0.9em;
-            margin-top: 2px;
         }
 
         .status-indicator {
@@ -225,18 +145,18 @@
         }
 
         .process-list {
-            margin-top: 10px;
+            margin-top: 15px;
             background: rgba(255, 255, 255, 0.05);
             border-radius: 8px;
-            padding: 6px;
+            padding: 8px;
         }
 
         .process-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 3px 6px;
-            font-size: 0.8em;
+            padding: 4px 8px;
+            font-size: 0.85em;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
@@ -252,23 +172,23 @@
 
         .disk-metrics {
             display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 6px;
-            margin-top: 10px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-top: 15px;
         }
 
         .disk-item {
             background: rgba(255, 255, 255, 0.05);
-            padding: 6px;
+            padding: 8px;
             border-radius: 6px;
-            font-size: 0.8em;
+            font-size: 0.85em;
         }
 
         .disk-progress {
-            height: 3px;
+            height: 4px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 2px;
-            margin-top: 3px;
+            margin-top: 4px;
             overflow: hidden;
         }
 
@@ -280,12 +200,12 @@
         }
 
         .performance-chart {
-            height: 70px;
+            height: 50px;
             position: relative;
-            margin-top: 10px;
+            margin-top: 15px;
             background: rgba(255, 255, 255, 0.05);
             border-radius: 6px;
-            padding: 6px;
+            padding: 8px;
         }
 
         .perf-line {
@@ -313,365 +233,6 @@
             margin-bottom: 15px;
             color: #333;
         }
-
-        .unified-widget {
-            background: linear-gradient(145deg, #2c3e50, #3498db);
-            color: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .widget-controls {
-            display: flex;
-            gap: 10px;
-            margin: 15px 0;
-            justify-content: flex-end;
-        }
-
-        .control-button {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .control-button:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .control-button.active {
-            background: #4CAF50;
-        }
-
-        .metrics-comparison {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-            margin-top: 15px;
-        }
-
-        .comparison-label {
-            font-size: 0.9em;
-            opacity: 0.8;
-            margin-bottom: 8px;
-            text-align: center;
-        }
-
-        .metrics-details {
-            margin-top: 10px;
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 6px;
-        }
-
-        .detail-card {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 8px;
-            border-radius: 8px;
-            font-size: 0.9em;
-        }
-
-        .detail-card h4 {
-            font-size: 0.9em;
-            margin: 0 0 0 0;
-        }
-
-        h4 {
-            margin: 0 0 10px 0;
-        }
-
-        .event-log {
-            background: rgba(0, 0, 0, 0.2);
-            padding: 6px;
-            border-radius: 6px;
-            height: 120px;
-            overflow-y: auto;
-            font-family: monospace;
-            font-size: 0.75em;
-        }
-
-        .log-entry {
-            padding: 2px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .log-entry:last-child {
-            border-bottom: none;
-        }
-
-        .log-time {
-            color: #4CAF50;
-            margin-right: 8px;
-        }
-
-        .log-type {
-            color: #FFC107;
-            margin-right: 8px;
-        }
-
-        .cpu-cores {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 4px;
-        }
-
-        .core-item {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 4px;
-            border-radius: 6px;
-            text-align: center;
-            font-size: 0.8em;
-        }
-
-        .core-usage {
-            font-size: 1em;
-            margin-bottom: 2px;
-        }
-
-        .temp-gauge {
-            position: relative;
-            width: 80px;
-            height: 80px;
-            margin: 0 auto;
-        }
-
-        .gauge-circle {
-            fill: none;
-            stroke: rgba(255, 255, 255, 0.1);
-            stroke-width: 8;
-        }
-
-        .gauge-progress {
-            fill: none;
-            stroke: #4CAF50;
-            stroke-width: 8;
-            stroke-linecap: round;
-            transition: stroke-dasharray 0.3s ease;
-        }
-
-        .gauge-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 1.1em;
-            font-weight: bold;
-        }
-
-        .alert-section {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            align-items: start;
-            margin-top: 10px;
-            padding: 8px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-        }
-
-        .alert-item {
-            padding: 6px;
-            margin: 2px 0;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.8em;
-        }
-
-        .alert-critical {
-            background: rgba(244, 67, 54, 0.2);
-        }
-
-        .alert-warning {
-            background: rgba(255, 152, 0, 0.2);
-        }
-
-        .alert-info {
-            background: rgba(33, 150, 243, 0.2);
-        }
-
-        .network-traffic {
-            height: 70px;
-            position: relative;
-            margin-top: 10px;
-        }
-
-        .traffic-line {
-            fill: none;
-            stroke-width: 2;
-        }
-
-        .traffic-in {
-            stroke: #4CAF50;
-        }
-
-        .traffic-out {
-            stroke: #2196F3;
-        }
-
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .metrics-main {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .metrics-sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .widget-layout {
-            display: grid;
-            grid-template-columns: 3fr 1fr;
-            gap: 15px;
-        }
-
-        .widget-main {
-            display: grid;
-            grid-template-rows: auto auto 1fr auto;
-            gap: 10px;
-        }
-
-        .metrics-overview {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-        }
-
-        .charts-section {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            grid-template-rows: repeat(2, 1fr);
-        }
-
-        .widget-sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            width: 25%;
-        }
-
-        .system-info {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-        }
-
-        .info-card {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 8px;
-            border-radius: 6px;
-            font-size: 0.85em;
-        }
-
-        .performance-card {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 10px;
-            border-radius: 8px;
-        }
-
-        .system-alerts {
-            flex: 0 0 auto;
-        }
-
-        .system-events {
-            flex: 1 1 auto;
-            min-height: 300px;
-        }
-
-        .event-log {
-            height: 250px;
-            padding: 8px;
-            font-size: 0.7em;
-            line-height: 1.2;
-        }
-
-        .log-entry {
-            padding: 1px 0;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .log-time {
-            flex: 0 0 auto;
-            font-size: 0.9em;
-        }
-
-        .log-type {
-            flex: 0 0 55px;
-            text-align: center;
-            padding: 1px 4px;
-            border-radius: 3px;
-            font-size: 0.9em;
-        }
-
-        .log-type.error {
-            background: rgba(244, 67, 54, 0.2);
-            color: #f44336;
-        }
-
-        .log-type.warn {
-            background: rgba(255, 152, 0, 0.2);
-            color: #ff9800;
-        }
-
-        .log-type.info {
-            background: rgba(33, 150, 243, 0.2);
-            color: #2196F3;
-        }
-
-        .log-message {
-            flex: 1;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .temp-gauges {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .temp-gauge {
-            position: relative;
-            width: 70px;
-            height: 70px;
-        }
-
-        .gauge-label {
-            font-size: 0.75em;
-            opacity: 0.7;
-            text-align: center;
-            margin-top: 4px;
-        }
-
-        .gauge-text {
-            font-size: 1em;
-        }
-
-        .widget-sidebar {
-            display: grid;
-            grid-template-rows: auto auto 1fr;
-            gap: 10px;
-            max-height: 600px;
-        }
     </style>
 </head>
 
@@ -687,230 +248,161 @@
 
     <div class="visual-container">
         <div class="widgets-section">
-            <div class="unified-widget">
-                <div class="widget-header" style="margin-bottom: 20px;">
-                    <div>
-                        <h3>System Metrics Monitoring</h3>
-                        <div style="font-size: 0.9em; opacity: 0.8; margin-top: 4px;">Comprehensive system performance analysis</div>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 15px;">
-                        <span class="widget-status">Testing</span>
-                        <div class="widget-controls" style="margin: 0;">
-                            <button id="mockDataBtn" class="control-button">Load Mock Data</button>
-                            <button id="toggleUpdateBtn" class="control-button active">Auto Update</button>
-                            <button id="resetDataBtn" class="control-button">Random Data</button>
-                            <button id="resetAllBtn" class="control-button">Reset All</button>
+            <div class="widget-grid">
+                <div data-testid="static-widget">
+                    <h2>Static Widgets</h2>
+                    <div class="static-widget" data-testid="static-metrics-widget">
+                        <div class="widget-header">
+                            <h3>System Metrics</h3>
+                            <span class="widget-status">Static</span>
+                        </div>
+                        <div class="compact-metrics">
+                            <div class="metric-mini">
+                                <div>CPU</div>
+                                <div class="metric-value">45%</div>
+                                <div class="metric-detail">4 Cores | 52°C</div>
+                                <div class="loading-bar">
+                                    <div class="loading-progress" style="width: 45%"></div>
+                                </div>
+                            </div>
+                            <div class="metric-mini">
+                                <div>Memory</div>
+                                <div class="metric-value">68%</div>
+                                <div class="metric-detail">10.9/16 GB</div>
+                                <div class="loading-bar">
+                                    <div class="loading-progress" style="width: 68%"></div>
+                                </div>
+                            </div>
+                            <div class="metric-mini">
+                                <div>Network</div>
+                                <div class="metric-value">25 MB/s</div>
+                                <div class="network-details">
+                                    <span>↑ 8 MB/s</span>
+                                    <span>↓ 17 MB/s</span>
+                                </div>
+                                <div class="loading-bar">
+                                    <div class="loading-progress" style="width: 25%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="process-list" data-testid="process-list">
+                            <div style="margin-bottom: 8px; font-size: 0.9em;">Top Processes</div>
+                            <div class="process-item">
+                                <div class="process-name"><span>🌐</span>chrome</div>
+                                <div>28%</div>
+                            </div>
+                            <div class="process-item">
+                                <div class="process-name"><span>⚙️</span>node</div>
+                                <div>15%</div>
+                            </div>
+                            <div class="process-item">
+                                <div class="process-name"><span>📝</span>vscode</div>
+                                <div>12%</div>
+                            </div>
+                            <div class="process-item">
+                                <div class="process-name"><span>💻</span>system</div>
+                                <div>8%</div>
+                            </div>
+                        </div>
+                        <div class="disk-metrics">
+                            <div class="disk-item">
+                                <div>System Drive (C:)</div>
+                                <div>120/256 GB</div>
+                                <div class="disk-progress">
+                                    <div class="disk-bar" style="width: 47%"></div>
+                                </div>
+                            </div>
+                            <div class="disk-item">
+                                <div>Data Drive (D:)</div>
+                                <div>256/512 GB</div>
+                                <div class="disk-progress">
+                                    <div class="disk-bar" style="width: 50%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="performance-chart" data-testid="performance-chart">
+                            <svg width="100%" height="100%" preserveAspectRatio="none">
+                                <path class="perf-line" d="M 0,30 10,25 20,28 30,20 40,22 50,18 60,15 70,20 80,22 90,19 100,25" />
+                            </svg>
+                        </div>
+                        <div class="system-status">
+                            <div>
+                                <span class="status-indicator active"></span>
+                                <span>System Healthy</span>
+                                <span style="margin-left: 10px; font-size: 0.8em; opacity: 0.7">Uptime: 02:45:30</span>
+                            </div>
+                            <span>Updated: 12:00:00</span>
                         </div>
                     </div>
                 </div>
-
-                <div class="metrics-comparison">
-                    <div>
-                        <div class="interactive-widget" data-testid="dynamic-metrics-widget">
-                            <div class="widget-header">
-                                <h3>System Metrics</h3>
-                                <span class="widget-status">Live</span>
-                            </div>
-                            <div class="widget-layout">
-                                <div class="widget-main">
-                                    <div class="metrics-overview">
-                                        <div class="metric-mini">
-                                            <div>CPU</div>
-                                            <div id="cpu-usage" class="metric-value">0%</div>
-                                            <div id="cpu-detail" class="metric-detail">4 Cores | 45°C</div>
-                                            <div class="loading-bar">
-                                                <div id="cpu-bar" class="loading-progress"></div>
-                                            </div>
-                                        </div>
-                                        <div class="metric-mini">
-                                            <div>Memory</div>
-                                            <div id="memory-usage" class="metric-value">0%</div>
-                                            <div id="memory-detail" class="metric-detail">0/16 GB</div>
-                                            <div class="loading-bar">
-                                                <div id="memory-bar" class="loading-progress"></div>
-                                            </div>
-                                        </div>
-                                        <div class="metric-mini">
-                                            <div>Network</div>
-                                            <div id="network-usage" class="metric-value">0 MB/s</div>
-                                            <div class="network-details">
-                                                <span id="network-up">↑ 0 MB/s</span>
-                                                <span id="network-down">↓ 0 MB/s</span>
-                                            </div>
-                                            <div class="loading-bar">
-                                                <div id="network-bar" class="loading-progress"></div>
-                                            </div>
-                                        </div>
-                                        <div class="metric-mini">
-                                            <div>Disk</div>
-                                            <div id="disk-total-usage" class="metric-value">0%</div>
-                                            <div class="metric-detail">Total Usage</div>
-                                            <div class="loading-bar">
-                                                <div id="disk-total-bar" class="loading-progress"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="system-info">
-                                        <div class="info-card cpu-card">
-                                            <h4>CPU Cores</h4>
-                                            <div id="cpu-cores" class="cpu-cores">
-                                            </div>
-                                        </div>
-
-                                        <div class="info-card temperature-card">
-                                            <h4>Temperature</h4>
-                                            <div class="temp-gauges">
-                                                <div>
-                                                    <div class="temp-gauge">
-                                                        <svg viewBox="0 0 100 100">
-                                                            <circle class="gauge-circle" cx="50" cy="50" r="40"></circle>
-                                                            <circle id="temp-gauge-c" class="gauge-progress" cx="50" cy="50" r="40"></circle>
-                                                        </svg>
-                                                        <div id="temp-value-c" class="gauge-text">45°C</div>
-                                                    </div>
-                                                    <div class="gauge-label">Celsius</div>
-                                                </div>
-                                                <div>
-                                                    <div class="temp-gauge">
-                                                        <svg viewBox="0 0 100 100">
-                                                            <circle class="gauge-circle" cx="50" cy="50" r="40"></circle>
-                                                            <circle id="temp-gauge-f" class="gauge-progress" cx="50" cy="50" r="40"></circle>
-                                                        </svg>
-                                                        <div id="temp-value-f" class="gauge-text">113°F</div>
-                                                    </div>
-                                                    <div class="gauge-label">Fahrenheit</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="charts-section">
-                                        <div class="performance-card">
-                                            <h4>System Performance</h4>
-                                            <div class="performance-chart">
-                                                <svg id="perf-chart" width="100%" height="100%" preserveAspectRatio="none">
-                                                    <path id="perf-path" class="perf-line" d=""></path>
-                                                </svg>
-                                            </div>
-                                        </div>
-                                        <div class="performance-card">
-                                            <h4>Network Traffic</h4>
-                                            <div class="network-traffic">
-                                                <svg width="100%" height="100%" preserveAspectRatio="none">
-                                                    <path id="traffic-in" class="traffic-line traffic-in" d=""></path>
-                                                    <path id="traffic-out" class="traffic-line traffic-out" d=""></path>
-                                                </svg>
-                                            </div>
-                                        </div>
-                                        <div class="performance-card">
-                                            <h4>Secondary Performance</h4>
-                                            <div class="performance-chart">
-                                                <svg id="perf-chart-2" width="100%" height="100%" preserveAspectRatio="none">
-                                                    <path id="perf-path-2" class="perf-line" d=""></path>
-                                                </svg>
-                                            </div>
-                                        </div>
-                                        <div class="performance-card">
-                                            <h4>Secondary Network Traffic</h4>
-                                            <div class="network-traffic">
-                                                <svg width="100%" height="100%" preserveAspectRatio="none">
-                                                    <path id="traffic-in-2" class="traffic-line traffic-in" d=""></path>
-                                                    <path id="traffic-out-2" class="traffic-line traffic-out" d=""></path>
-                                                </svg>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="disk-metrics">
-                                        <div class="disk-item">
-                                            <div>System Drive (C:)</div>
-                                            <div id="disk-c-usage">0/256 GB</div>
-                                            <div class="disk-progress">
-                                                <div id="disk-c-bar" class="disk-bar"></div>
-                                            </div>
-                                        </div>
-                                        <div class="disk-item">
-                                            <div>Data Drive (D:)</div>
-                                            <div id="disk-d-usage">0/512 GB</div>
-                                            <div class="disk-progress">
-                                                <div id="disk-d-bar" class="disk-bar"></div>
-                                            </div>
-                                        </div>
-                                        <div class="disk-item">
-                                            <div>Programs (E:)</div>
-                                            <div id="disk-e-usage">0/1024 GB</div>
-                                            <div class="disk-progress">
-                                                <div id="disk-e-bar" class="disk-bar"></div>
-                                            </div>
-                                        </div>
-                                        <div class="disk-item">
-                                            <div>Backup (F:)</div>
-                                            <div id="disk-f-usage">0/2048 GB</div>
-                                            <div class="disk-progress">
-                                                <div id="disk-f-bar" class="disk-bar"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="widget-sidebar">
-                                    <div class="system-alerts">
-                                        <h4>System Alerts</h4>
-                                        <div id="alerts-container">
-                                            <!-- Alerts will be added dynamically -->
-                                        </div>
-                                    </div>
-
-                                    <div class="process-list">
-                                        <h4>Top Processes</h4>
-                                        <div id="process-container">
-                                        </div>
-                                    </div>
-
-                                    <div class="system-events">
-                                        <h4>System Events</h4>
-                                        <div id="event-log" class="event-log">
-                                        </div>
-                                    </div>
+                <div data-testid="dynamic-widget">
+                    <h2>Dynamic Widgets</h2>
+                    <div class="interactive-widget" data-testid="system-metrics-widget">
+                        <div class="widget-header">
+                            <h3>System Metrics</h3>
+                            <span class="widget-status">Live</span>
+                        </div>
+                        <div class="compact-metrics">
+                            <div class="metric-mini">
+                                <div>CPU</div>
+                                <div id="cpu-usage" class="metric-value">0%</div>
+                                <div id="cpu-detail" class="metric-detail">4 Cores | 45°C</div>
+                                <div class="loading-bar">
+                                    <div id="cpu-bar" class="loading-progress"></div>
                                 </div>
                             </div>
-                            <div class="system-status">
-                                <div class="status-details">
-                                    <div class="status-group status-item-wide">
-                                        <span class="status-indicator active"></span>
-                                        <span id="system-status-text">System Healthy</span>
-                                    </div>
-                                    <div class="status-group">
-                                        <div class="status-item">
-                                            <i class="fas fa-microchip"></i>
-                                            <span id="load-status" class="status-badge low">Load: 1.2</span>
-                                        </div>
-                                        <div class="status-item">
-                                            <i class="fas fa-tasks"></i>
-                                            <span id="process-status" class="status-badge">P: 124</span>
-                                        </div>
-                                        <div class="status-item">
-                                            <i class="fas fa-clock"></i>
-                                            <span id="uptime" class="status-badge">00:00:00</span>
-                                        </div>
-                                    </div>
-                                    <div class="status-group">
-                                        <div class="status-item">
-                                            <i class="fas fa-server"></i>
-                                            <span id="services-status" class="status-badge">Services: 45</span>
-                                        </div>
-                                        <div class="status-item">
-                                            <i class="fas fa-network-wired"></i>
-                                            <span id="connections-status" class="status-badge">Conn: 32</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="timestamp-group">
-                                    <span id="last-update">Updated: Just now</span>
-                                    <div id="load-average" class="load-average">Load avg: 1.2, 1.5, 1.8</div>
+                            <div class="metric-mini">
+                                <div>Memory</div>
+                                <div id="memory-usage" class="metric-value">0%</div>
+                                <div id="memory-detail" class="metric-detail">0/16 GB</div>
+                                <div class="loading-bar">
+                                    <div id="memory-bar" class="loading-progress"></div>
                                 </div>
                             </div>
+                            <div class="metric-mini">
+                                <div>Network</div>
+                                <div id="network-usage" class="metric-value">0 MB/s</div>
+                                <div class="network-details">
+                                    <span id="network-up">↑ 0 MB/s</span>
+                                    <span id="network-down">↓ 0 MB/s</span>
+                                </div>
+                                <div class="loading-bar">
+                                    <div id="network-bar" class="loading-progress"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="process-list">
+                            <div style="margin-bottom: 8px; font-size: 0.9em;">Top Processes</div>
+                            <div id="process-container"></div>
+                        </div>
+                        <div class="disk-metrics">
+                            <div class="disk-item">
+                                <div>System Drive (C:)</div>
+                                <div id="disk-c-usage">0/256 GB</div>
+                                <div class="disk-progress">
+                                    <div id="disk-c-bar" class="disk-bar"></div>
+                                </div>
+                            </div>
+                            <div class="disk-item">
+                                <div>Data Drive (D:)</div>
+                                <div id="disk-d-usage">0/512 GB</div>
+                                <div class="disk-progress">
+                                    <div id="disk-d-bar" class="disk-bar"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="performance-chart">
+                            <svg id="perf-chart" width="100%" height="100%" preserveAspectRatio="none">
+                                <path id="perf-path" class="perf-line" d=""></path>
+                            </svg>
+                        </div>
+                        <div class="system-status">
+                            <div>
+                                <span class="status-indicator active"></span>
+                                <span id="system-status-text">System Healthy</span>
+                                <span id="uptime" style="margin-left: 10px; font-size: 0.8em; opacity: 0.7">Uptime: 00:00:00</span>
+                            </div>
+                            <span id="last-update">Updated: Just now</span>
                         </div>
                     </div>
                 </div>
@@ -936,7 +428,6 @@
         }
 
         let performanceHistory = Array(50).fill(0);
-        let performanceHistory2 = Array(50).fill(0);
         let processes = [
             { name: 'chrome', icon: '🌐', usage: 0 },
             { name: 'node', icon: '⚙️', usage: 0 },
@@ -974,56 +465,45 @@
             ).join(' ');
 
             document.getElementById('perf-path').setAttribute('d', `M ${points}`);
-
-            performanceHistory2.push(Math.floor(Math.random() * 100));
-            performanceHistory2.shift();
-            const points2 = performanceHistory2.map((value, index) =>
-                `${(index * width / 49)},${height - (value * height / 100)}`
-            ).join(' ');
-            document.getElementById('perf-path-2').setAttribute('d', `M ${points2}`);
         }
 
-        const THRESHOLDS = {
-            cpu: { warning: 70, critical: 85 },
-            memory: { warning: 75, critical: 90 },
-            temperature: { warning: 60, critical: 70 },
-            disk: { warning: 80, critical: 90 },
-            network: { warning: 80, critical: 95 }
-        };
+        function updateDiskMetrics() {
+            const diskC = Math.floor(Math.random() * 256);
+            const diskD = Math.floor(Math.random() * 512);
 
-        function checkMetricStatus(metric, value, type) {
-            if (value >= THRESHOLDS[type].critical) {
-                addSystemEvent('ERROR', `Critical ${metric}: ${value}`);
-                return 'critical';
-            } else if (value >= THRESHOLDS[type].warning) {
-                addSystemEvent('WARN', `High ${metric}: ${value}`);
-                return 'warning';
-            }
-            return 'normal';
+            document.getElementById('disk-c-usage').textContent = `${diskC}/256 GB`;
+            document.getElementById('disk-d-usage').textContent = `${diskD}/512 GB`;
+
+            document.getElementById('disk-c-bar').style.width = `${(diskC / 256) * 100}%`;
+            document.getElementById('disk-d-bar').style.width = `${(diskD / 512) * 100}%`;
         }
 
         function updateSystemMetrics() {
             const cpuUsage = Math.floor(Math.random() * 100);
             const memoryUsage = Math.floor(Math.random() * 100);
             const networkSpeed = Math.floor(Math.random() * 100);
-            const cpuTemp = Math.floor(Math.random() * 20) + 40;
+            const cpuTemp = Math.floor(Math.random() * 20) + 40; // 40-60°C
             const memoryUsedGB = ((16 * memoryUsage) / 100).toFixed(1);
             const networkUp = Math.floor(Math.random() * 50);
             const networkDown = Math.floor(Math.random() * 100);
 
+            // Update CPU metrics
             document.getElementById('cpu-usage').textContent = `${cpuUsage}%`;
             document.getElementById('cpu-detail').textContent = `4 Cores | ${cpuTemp}°C`;
             document.getElementById('cpu-bar').style.width = `${cpuUsage}%`;
 
+            // Update Memory metrics
             document.getElementById('memory-usage').textContent = `${memoryUsage}%`;
             document.getElementById('memory-detail').textContent = `${memoryUsedGB}/16 GB`;
             document.getElementById('memory-bar').style.width = `${memoryUsage}%`;
 
+            // Update Network metrics
             document.getElementById('network-usage').textContent = `${networkSpeed} MB/s`;
             document.getElementById('network-up').textContent = `↑ ${networkUp} MB/s`;
             document.getElementById('network-down').textContent = `↓ ${networkDown} MB/s`;
             document.getElementById('network-bar').style.width = `${(networkSpeed / 100) * 100}%`;
 
+            // Update status
             const statusIndicator = document.querySelector('.status-indicator');
             const statusText = document.getElementById('system-status-text');
             const isHealthy = cpuUsage < 80 && memoryUsage < 80;
@@ -1031,6 +511,7 @@
             statusIndicator.className = `status-indicator ${isHealthy ? 'active' : 'warning'}`;
             statusText.textContent = isHealthy ? 'System Healthy' : 'System Under Load';
 
+            // Update uptime
             const uptime = new Date() - startTime;
             document.getElementById('uptime').textContent = `Uptime: ${formatUptime(uptime)}`;
 
@@ -1038,473 +519,10 @@
 
             updateProcessList();
             updatePerformanceChart();
-            updateTrafficGraph();
-            updateCPUCores();
-            updateTemperatureGauge(cpuTemp);
-            updateSystemStatus();
-
-            if (Math.random() < 0.4) {
-                const events = [
-                    { type: 'INFO', message: 'System scan completed successfully' },
-                    { type: 'INFO', message: 'Backup process initiated' },
-                    { type: 'INFO', message: 'Software updates available' },
-                    { type: 'WARN', message: 'High memory usage detected in chrome.exe' },
-                    { type: 'WARN', message: 'Network latency increased above threshold' },
-                    { type: 'WARN', message: 'CPU temperature approaching warning level' },
-                    { type: 'ERROR', message: 'Service failed to start: MongoDB' },
-                    { type: 'ERROR', message: 'Disk write error on drive D:' },
-                    { type: 'ERROR', message: 'Network connection timeout on interface eth0' }
-                ];
-                const event = events[Math.floor(Math.random() * events.length)];
-                addSystemEvent(event.type, event.message);
-            }
-
-            checkMetricStatus(`CPU Usage`, cpuUsage, 'cpu');
-
-            checkMetricStatus(`Memory Usage`, memoryUsage, 'memory');
-
-            const tempStatus = checkMetricStatus(`CPU Temperature`, cpuTemp, 'temperature');
-            if (tempStatus === 'critical') {
-                addSystemAlert('critical', 'Critical CPU temperature detected');
-            }
-
-            const diskMetrics = {
-                C: Math.floor(Math.random() * 256),
-                D: Math.floor(Math.random() * 512),
-                E: Math.floor(Math.random() * 1024),
-                F: Math.floor(Math.random() * 2048)
-            };
-
-            document.getElementById('disk-c-usage').textContent = `${diskMetrics.C}/256 GB`;
-            document.getElementById('disk-d-usage').textContent = `${diskMetrics.D}/512 GB`;
-            document.getElementById('disk-e-usage').textContent = `${diskMetrics.E}/1024 GB`;
-            document.getElementById('disk-f-usage').textContent = `${diskMetrics.F}/2048 GB`;
-
-            document.getElementById('disk-c-bar').style.width = `${(diskMetrics.C / 256) * 100}%`;
-            document.getElementById('disk-d-bar').style.width = `${(diskMetrics.D / 512) * 100}%`;
-            document.getElementById('disk-e-bar').style.width = `${(diskMetrics.E / 1024) * 100}%`;
-            document.getElementById('disk-f-bar').style.width = `${(diskMetrics.F / 2048) * 100}%`;
-
-            const totalCapacity = 256 + 512 + 1024 + 2048;
-            const totalUsed = diskMetrics.C + diskMetrics.D + diskMetrics.E + diskMetrics.F;
-            const diskUsagePercent = Math.floor((totalUsed / totalCapacity) * 100);
-
-            document.getElementById('disk-total-usage').textContent = `${diskUsagePercent}%`;
-            document.getElementById('disk-total-bar').style.width = `${diskUsagePercent}%`;
-
-            checkMetricStatus(`Disk Usage`, diskUsagePercent, 'disk');
-
-            if (networkSpeed > 90) {
-                addSystemEvent('WARN', `High network activity: ${networkSpeed} MB/s`);
-            }
-
-            const coreLoads = Array(4).fill(0).map(() => Math.floor(Math.random() * 100));
-            const maxCoreDiff = Math.max(...coreLoads) - Math.min(...coreLoads);
-            if (maxCoreDiff > 50) {
-                addSystemEvent('WARN', `Uneven core load distribution detected`);
-            }
-
-            const servicesCount = Math.floor(Math.random() * 30) + 30;
-            if (servicesCount < 40) {
-                addSystemEvent('WARN', `Low service count: ${servicesCount}`);
-            }
-
-            const connectionsCount = Math.floor(Math.random() * 50) + 10;
-            if (connectionsCount > 45) {
-                addSystemEvent('WARN', `High connection count: ${connectionsCount}`);
-            }
-
-            if (Math.random() < 0.1) {
-                const randomEvents = [
-                    { type: 'INFO', message: 'Routine system maintenance scheduled' },
-                    { type: 'INFO', message: 'Updates available' },
-                    { type: 'WARN', message: 'Resource contention detected' },
-                    { type: 'ERROR', message: 'Service restart required' }
-                ];
-                const event = randomEvents[Math.floor(Math.random() * randomEvents.length)];
-                addSystemEvent(event.type, event.message);
-            }
+            updateDiskMetrics();
         }
 
-        const mockData = {
-            cpu: 45,
-            memory: 68,
-            network: 25,
-            cpuTemp: 52,
-            memoryUsedGB: 10.9,
-            networkUp: 8,
-            networkDown: 17,
-            diskC: 120,
-            diskD: 256,
-            diskE: 512,
-            diskF: 1024,
-            cpuCores: [
-                { id: 1, usage: 42 },
-                { id: 2, usage: 38 },
-                { id: 3, usage: 45 },
-                { id: 4, usage: 35 }
-            ],
-            processes: [
-                { name: 'chrome', icon: '🌐', usage: 28 },
-                { name: 'node', icon: '⚙️', usage: 15 },
-                { name: 'vscode', icon: '📝', usage: 12 },
-                { name: 'system', icon: '💻', usage: 8 }
-            ],
-            systemStatus: {
-                load: 1.2,
-                processCount: 124,
-                servicesCount: 45,
-                connectionsCount: 32,
-                loadAverage: [1.2, 1.5, 1.8]
-            },
-            mockTimestamp: '14:30:00',
-
-            performance: Array(50).fill(0).map((_, i) => {
-                const base = 45;
-                const amplitude = 15;
-                const period = 10;
-                return base + amplitude * Math.sin(i / period);
-            }),
-
-            performance2: Array(50).fill(0).map((_, i) => {
-                const base = 35;
-                const amplitude = 10;
-                const period = 8;
-                return base + amplitude * Math.cos(i / period);
-            }),
-
-            traffic: {
-                in: Array(50).fill(0).map((_, i) => {
-                    const base = 30;
-                    const amplitude = 12;
-                    const period = 15;
-                    return base + amplitude * Math.sin(i / period);
-                }),
-                out: Array(50).fill(0).map((_, i) => {
-                    const base = 25;
-                    const amplitude = 8;
-                    const period = 12;
-                    return base + amplitude * Math.cos(i / period);
-                })
-            },
-
-            traffic2: {
-                in: Array(50).fill(0).map((_, i) => {
-                    const base = 20;
-                    const amplitude = 10;
-                    const period = 13;
-                    return base + amplitude * Math.sin(i / period);
-                }),
-                out: Array(50).fill(0).map((_, i) => {
-                    const base = 15;
-                    const amplitude = 7;
-                    const period = 10;
-                    return base + amplitude * Math.cos(i / period);
-                })
-            },
-
-            events: [
-                { type: 'INFO', message: 'System initialized with mock data', time: '14:30:00' },
-                { type: 'INFO', message: 'All services running normally', time: '14:29:45' },
-                { type: 'WARN', message: 'Memory usage above 65%', time: '14:29:30' },
-                { type: 'ERROR', message: 'Disk write latency high', time: '14:29:15' },
-                { type: 'INFO', message: 'Backup scheduled', time: '14:29:00' }
-            ],
-
-            alerts: [
-                { severity: 'info', message: 'System running in mock data mode', time: '14:30:00' },
-                { severity: 'warning', message: 'Memory usage trending high', time: '14:29:45' },
-                { severity: 'critical', message: 'Disk write latency warning', time: '14:29:30' }
-            ]
-        };
-
-        let isAutoUpdate = true;
-        let updateInterval;
-
-        function loadMockData() {
-            performanceHistory = [...mockData.performance];
-            performanceHistory2 = [...mockData.performance2];
-            trafficHistory = {
-                in: [...mockData.traffic.in],
-                out: [...mockData.traffic.out]
-            };
-            trafficHistory2 = {
-                in: [...mockData.traffic2.in],
-                out: [...mockData.traffic2.out]
-            };
-
-            const logContainer = document.getElementById('event-log');
-            logContainer.innerHTML = mockData.events.map(event => `
-                <div class="log-entry">
-                    <span class="log-time">${event.time}</span>
-                    <span class="log-type ${event.type.toLowerCase()}">[${event.type}]</span>
-                    <span class="log-message">${event.message}</span>
-                </div>
-            `).join('');
-
-            const alertsContainer = document.getElementById('alerts-container');
-            alertsContainer.innerHTML = mockData.alerts.map(alert => `
-                <div class="alert-item alert-${alert.severity}">
-                    <span>${alert.time}</span>
-                    ${alert.message}
-                </div>
-            `).join('');
-
-            updateChartsWithMockData();
-        }
-
-        function updateChartsWithMockData() {
-            const width = document.getElementById('perf-chart').clientWidth;
-            const height = document.getElementById('perf-chart').clientHeight;
-
-            const points = mockData.performance.map((value, index) =>
-                `${(index * width / 49)},${height - (value * height / 100)}`
-            ).join(' ');
-            document.getElementById('perf-path').setAttribute('d', `M ${points}`);
-
-            const points2 = mockData.performance2.map((value, index) =>
-                `${(index * width / 49)},${height - (value * height / 100)}`
-            ).join(' ');
-            document.getElementById('perf-path-2').setAttribute('d', `M ${points2}`);
-
-            [
-                { data: mockData.traffic, inId: 'traffic-in', outId: 'traffic-out' },
-                { data: mockData.traffic2, inId: 'traffic-in-2', outId: 'traffic-out-2' }
-            ].forEach(({ data, inId, outId }) => {
-                const pointsIn = data.in.map((value, index) =>
-                    `${(index * width / 49)},${height - (value * height / 100)}`
-                ).join(' ');
-
-                const pointsOut = data.out.map((value, index) =>
-                    `${(index * width / 49)},${height - (value * height / 100)}`
-                ).join(' ');
-
-                document.getElementById(inId).setAttribute('d', `M ${pointsIn}`);
-                document.getElementById(outId).setAttribute('d', `M ${pointsOut}`);
-            });
-        }
-
-        function toggleAutoUpdate() {
-            isAutoUpdate = !isAutoUpdate;
-            const btn = document.getElementById('toggleUpdateBtn');
-
-            if (isAutoUpdate) {
-                btn.classList.add('active');
-                updateInterval = setInterval(updateSystemMetrics, 2000);
-            } else {
-                btn.classList.remove('active');
-                clearInterval(updateInterval);
-            }
-        }
-
-        function resetData() {
-            performanceHistory = Array(50).fill(0);
-            processes = [
-                { name: 'chrome', icon: '🌐', usage: 0 },
-                { name: 'node', icon: '⚙️', usage: 0 },
-                { name: 'vscode', icon: '📝', usage: 0 },
-                { name: 'system', icon: '💻', usage: 0 }
-            ];
-            updateSystemMetrics();
-        }
-
-        let trafficHistory = {
-            in: Array(50).fill(0),
-            out: Array(50).fill(0)
-        };
-
-        let trafficHistory2 = {
-            in: Array(50).fill(0),
-            out: Array(50).fill(0)
-        };
-
-        let systemEvents = [];
-        let systemAlerts = [];
-
-        function updateTrafficGraph() {
-            trafficHistory.in.push(Math.floor(Math.random() * 100));
-            trafficHistory.out.push(Math.floor(Math.random() * 100));
-            trafficHistory.in.shift();
-            trafficHistory.out.shift();
-
-            trafficHistory2.in.push(Math.floor(Math.random() * 100));
-            trafficHistory2.out.push(Math.floor(Math.random() * 100));
-            trafficHistory2.in.shift();
-            trafficHistory2.out.shift();
-
-            const width = document.querySelector('.network-traffic').clientWidth;
-            const height = document.querySelector('.network-traffic').clientHeight;
-
-            [
-                { data: trafficHistory, inId: 'traffic-in', outId: 'traffic-out' },
-                { data: trafficHistory2, inId: 'traffic-in-2', outId: 'traffic-out-2' }
-            ].forEach(({ data, inId, outId }) => {
-                const pointsIn = data.in.map((value, index) =>
-                    `${(index * width / 49)},${height - (value * height / 100)}`
-                ).join(' ');
-
-                const pointsOut = data.out.map((value, index) =>
-                    `${(index * width / 49)},${height - (value * height / 100)}`
-                ).join(' ');
-
-                document.getElementById(inId).setAttribute('d', `M ${pointsIn}`);
-                document.getElementById(outId).setAttribute('d', `M ${pointsOut}`);
-            });
-        }
-
-        function addSystemEvent(type, message) {
-            const time = new Date().toLocaleTimeString();
-            const typeClass = type.toLowerCase();
-
-            systemEvents.unshift({ time, type, message });
-            if (systemEvents.length > 20) systemEvents.pop();
-
-            const logContainer = document.getElementById('event-log');
-            logContainer.innerHTML = systemEvents.map(event => `
-                <div class="log-entry">
-                    <span class="log-time">${event.time}</span>
-                    <span class="log-type ${event.type.toLowerCase()}">[${event.type}]</span>
-                    <span class="log-message" title="${event.message}">${event.message}</span>
-                </div>
-            `).join('');
-        }
-
-        function updateCPUCores() {
-            const cores = document.getElementById('cpu-cores');
-            cores.innerHTML = Array(4).fill(0).map((_, i) => {
-                const usage = Math.floor(Math.random() * 100);
-                return `
-                    <div class="core-item">
-                        <div class="core-usage">${usage}%</div>
-                        <div>Core ${i + 1}</div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function celsiusToFahrenheit(celsius) {
-            return (celsius * 9 / 5) + 32;
-        }
-
-        function updateTemperatureGauge(tempC) {
-            const tempF = celsiusToFahrenheit(tempC);
-
-            const circumference = 2 * Math.PI * 40;
-            const progressC = (tempC - 30) / (80 - 30);
-            const progressF = (tempF - 86) / (176 - 86);
-
-            const dashArrayC = `${circumference * progressC} ${circumference}`;
-            const dashArrayF = `${circumference * progressF} ${circumference}`;
-
-            document.getElementById('temp-gauge-c').style.strokeDasharray = dashArrayC;
-            document.getElementById('temp-value-c').textContent = `${tempC}°C`;
-
-            document.getElementById('temp-gauge-f').style.strokeDasharray = dashArrayF;
-            document.getElementById('temp-value-f').textContent = `${Math.round(tempF)}°F`;
-
-            const gaugeColor = tempC > 70 ? '#f44336' : tempC > 60 ? '#ff9800' : '#4CAF50';
-            document.getElementById('temp-gauge-c').style.stroke = gaugeColor;
-            document.getElementById('temp-gauge-f').style.stroke = gaugeColor;
-
-            if (tempC > 70) {
-                addSystemAlert('critical', 'High CPU temperature detected');
-            }
-        }
-
-        function addSystemAlert(severity, message) {
-            const alert = { severity, message, time: new Date().toLocaleTimeString() };
-            systemAlerts.unshift(alert);
-            if (systemAlerts.length > 3) systemAlerts.pop();
-
-            const alertsContainer = document.getElementById('alerts-container');
-            alertsContainer.innerHTML = systemAlerts.map(alert => `
-                <div class="alert-item alert-${alert.severity}">
-                    <span>${alert.time}</span>
-                    ${alert.message}
-                </div>
-            `).join('');
-        }
-
-        function updateSystemStatus(metrics) {
-            const loadAvg = [
-                (Math.random() * 2).toFixed(1),
-                (Math.random() * 2).toFixed(1),
-                (Math.random() * 2).toFixed(1)
-            ];
-            document.getElementById('load-average').textContent = `Load avg: ${loadAvg.join(', ')}`;
-
-            const currentLoad = parseFloat(loadAvg[0]);
-            const loadStatus = document.getElementById('load-status');
-            loadStatus.textContent = `Load: ${currentLoad}`;
-            loadStatus.className = `status-badge ${currentLoad > 1.5 ? 'high' : currentLoad > 1.0 ? 'medium' : 'low'}`;
-
-            const processCount = Math.floor(Math.random() * 100) + 50;
-            const servicesCount = Math.floor(Math.random() * 30) + 30;
-            const connectionsCount = Math.floor(Math.random() * 50) + 10;
-
-            document.getElementById('process-status').textContent = `P: ${processCount}`;
-            document.getElementById('services-status').textContent = `Services: ${servicesCount}`;
-            document.getElementById('connections-status').textContent = `Conn: ${connectionsCount}`;
-        }
-
-        function resetAllData() {
-            performanceHistory = Array(50).fill(0);
-            performanceHistory2 = Array(50).fill(0);
-            trafficHistory = {
-                in: Array(50).fill(0),
-                out: Array(50).fill(0)
-            };
-            trafficHistory2 = {
-                in: Array(50).fill(0),
-                out: Array(50).fill(0)
-            };
-
-            processes = [
-                { name: 'chrome', icon: '🌐', usage: 0 },
-                { name: 'node', icon: '⚙️', usage: 0 },
-                { name: 'vscode', icon: '📝', usage: 0 },
-                { name: 'system', icon: '💻', usage: 0 }
-            ];
-
-            systemEvents = [];
-            systemAlerts = [];
-            document.getElementById('event-log').innerHTML = '';
-            document.getElementById('alerts-container').innerHTML = '';
-
-            document.getElementById('cpu-usage').textContent = '0%';
-            document.getElementById('memory-usage').textContent = '0%';
-            document.getElementById('network-usage').textContent = '0 MB/s';
-            document.getElementById('disk-total-usage').textContent = '0%';
-
-            document.getElementById('cpu-bar').style.width = '0%';
-            document.getElementById('memory-bar').style.width = '0%';
-            document.getElementById('network-bar').style.width = '0%';
-            document.getElementById('disk-total-bar').style.width = '0%';
-
-            ['c', 'd', 'e', 'f'].forEach(drive => {
-                document.getElementById(`disk-${drive}-usage`).textContent = '0/0 GB';
-                document.getElementById(`disk-${drive}-bar`).style.width = '0%';
-            });
-
-            document.getElementById('system-status-text').textContent = 'System Healthy';
-            document.querySelector('.status-indicator').className = 'status-indicator active';
-            document.getElementById('load-status').textContent = 'Load: 0.0';
-            document.getElementById('load-status').className = 'status-badge low';
-
-            updatePerformanceChart();
-            updateTrafficGraph();
-
-            updateCPUCores();
-
-            updateTemperatureGauge(40);
-        }
-
-        document.getElementById('mockDataBtn').addEventListener('click', loadMockData);
-        document.getElementById('toggleUpdateBtn').addEventListener('click', toggleAutoUpdate);
-        document.getElementById('resetDataBtn').addEventListener('click', resetData);
-        document.getElementById('resetAllBtn').addEventListener('click', resetAllData);
-
-        updateInterval = setInterval(updateSystemMetrics, 2000);
+        setInterval(updateSystemMetrics, 2000);
         updateSystemMetrics();
     </script>
     <script type="text/javascript" src="/js/common.js"></script>

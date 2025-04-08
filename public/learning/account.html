@@ -11,6 +11,64 @@
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="./css/learning.css" />
     <link rel="stylesheet" href="./css/auth.css" />
+    <style>
+        .role-request-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .role-request-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-width: 600px;
+        }
+
+        .role-request-form textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .role-request-form select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .request-status-message {
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .request-status-message.pending {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+            display: block;
+        }
+    </style>
 </head>
 
 <body>
@@ -33,6 +91,7 @@
                     <li><a href="#top-section">Top</a></li>
                     <li><a href="#balance-section">Balance</a></li>
                     <li><a href="#profile-section">Profile</a></li>
+                    <li><a href="#role-request-section">Role Request</a></li>
                     <li><a href="#password-section">Password</a></li>
                     <li><a href="#privacy-section">Privacy</a></li>
                     <li><a href="#deactivation-section">Deactivation</a></li>
@@ -104,6 +163,25 @@
                                 </button>
                             </div>
                         </div>
+                    </section>
+
+                    <!-- Role Request Section -->
+                    <section class="account-section" id="role-request-section">
+                        <h3 class="section-title">Request Role Change</h3>
+                        <div id="requestStatusMessage" class="request-status-message"></div>
+                        <form class="role-request-form" id="roleRequestForm">
+                            <div class="form-group">
+                                <label for="requestedRole">Requested Role:</label>
+                                <select id="requestedRole" required>
+                                    <option value="instructor">Instructor</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="reason">Reason for Request:</label>
+                                <textarea id="reason" placeholder="Please explain why you would like this role change..." required></textarea>
+                            </div>
+                            <button type="submit" class="primary-button">Submit Request</button>
+                        </form>
                     </section>
 
                     <!-- Password Section -->
@@ -196,6 +274,7 @@
                             </div>
                         </div>
                     </section>
+
                 </div>
             </div>
         </div>
@@ -221,6 +300,80 @@
     <script src="./js/sidebar.js"></script>
     <script src="./js/auth-check.js"></script>
     <script src="./js/auth.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const roleRequestForm = document.getElementById('roleRequestForm');
+            const requestStatusMessage = document.getElementById('requestStatusMessage');
+            const roleSelect = document.getElementById('requestedRole');
+
+            // Get current user and available roles
+            try {
+                const currentUser = await api.getCurrentUser();
+                const rolesResponse = await api.getRoles();
+
+                // Filter roles based on current user's role
+                const roles = rolesResponse.roles || [];
+                const filteredRoles = currentUser.role === 'instructor'
+                    ? ['student']  // If current role is instructor, only allow changing to student
+                    : roles.filter(role =>     // Otherwise show all roles except admin and current role
+                        typeof role === 'string' &&
+                        role !== currentUser.role &&
+                        role !== 'admin'
+                    );
+
+                if (filteredRoles.length === 0) {
+                    requestStatusMessage.innerHTML = `
+                        <i class="fas fa-info-circle"></i> 
+                        No role changes available at this time.
+                    `;
+                    requestStatusMessage.classList.add('pending');
+                    roleRequestForm.style.display = 'none';
+                    return;
+                }
+
+                // Populate role select with available roles
+                roleSelect.innerHTML = filteredRoles.map(role => `
+                    <option value="${role.toLowerCase()}">${role.charAt(0).toUpperCase() + role.slice(1)}</option>
+                `).join('');
+
+                // Check for pending requests
+                const userRequests = await api.getUserRoleRequests(currentUser.id);
+                const pendingRequest = userRequests.find(req => req.status === 'pending');
+
+                if (pendingRequest) {
+                    requestStatusMessage.innerHTML = `
+                        <i class="fas fa-clock"></i> 
+                        You have a pending request for ${pendingRequest.requestedRole} role. 
+                        Please wait for admin approval.
+                    `;
+                    requestStatusMessage.classList.add('pending');
+                    roleRequestForm.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Failed to initialize role request form:', error);
+                notifications.show('Failed to load role options', 'error');
+            }
+
+            roleRequestForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const userId = api.getUserIdFromCookie();
+                const requestData = {
+                    userId: userId,
+                    requestedRole: roleRequestForm.querySelector('#requestedRole').value,
+                    reason: roleRequestForm.querySelector('#reason').value
+                };
+
+                try {
+                    await api.createRoleRequest(requestData);
+                    notifications.show('Role request submitted successfully', 'success');
+                    roleRequestForm.reset();
+                } catch (error) {
+                    notifications.show('Failed to submit role request', 'error');
+                }
+            });
+        });
+    </script>
 
     <div id="confirmDialog" style="display: none;" class="dialog-overlay">
         <div class="top-up-dialog">

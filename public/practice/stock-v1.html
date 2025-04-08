@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <title>🦎 GAD | Stock Exchange</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" rel="stylesheet">
+    <script src="/js/libs/charts/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <style>
+        body {
+            background-color: #0a0c1b;
+            color: #e1e1e1;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .gad-stock-card {
+            background: linear-gradient(145deg, #131629, #1a1f3c);
+            transition: all 0.3s ease;
+            border: 1px solid #2a2f4c;
+            border-radius: 12px;
+            height: 100%;
+            min-height: 220px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .gad-stock-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        .gad-price-positive {
+            color: #00ff9d;
+            font-weight: 600;
+        }
+
+        .gad-price-negative {
+            color: #ff4d6b;
+            font-weight: 600;
+        }
+
+        .gad-chart-container {
+            background: linear-gradient(145deg, #131629, #1a1f3c);
+            border: 1px solid #2a2f4c;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .gad-stats-card {
+            background: linear-gradient(145deg, #131629, #1a1f3c);
+            border: 1px solid #2a2f4c;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .gad-mini-chart {
+            height: 60px;
+            width: 100%;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .gad-market-indicator {
+            font-size: 0.9rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .gad-stock-detail {
+            font-size: 0.85rem;
+            color: #8888a0;
+        }
+
+        .gad-header-stats {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 8px;
+        }
+
+        /* Add pulsing animation for live indicator */
+        .gad-live-indicator {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .gad-stock-symbol {
+            font-size: 1.25rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .gad-stock-exchange {
+            font-size: 0.75rem;
+            opacity: 0.7;
+        }
+
+        .stock-sector {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+        }
+
+        .gad-stock-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .gad-stock-change {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .gad-stock-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .gad-metric-item {
+            font-size: 0.8rem;
+        }
+
+        .gad-metric-label {
+            color: #8888a0;
+            font-size: 0.7rem;
+        }
+
+        .gad-metric-value {
+            font-weight: 500;
+            color: #e1e1e1;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <div class="container-fluid py-4">
+        <div class="row mb-4">
+            <div class="col">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h1 class="display-5">Market Watch <span class="badge bg-success gad-live-indicator" title="Data updates every minute">LIVE</span></h1>
+                        <p class="text-muted" id="lastUpdate" title="Time of the last data update">Last update: Never</p>
+                    </div>
+                    <div class="d-flex gap-3 align-items-center">
+                        <div class="gad-header-stats px-3" title="Overall market performance indicator">
+                            <div class="text-muted">Market Index</div>
+                            <div class="h5 mb-0" id="marketIndex">0.00</div>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="autoRefresh" checked title="Toggle automatic data updates">
+                            <label class="form-check-label" for="autoRefresh" title="Updates data every minute when enabled">Auto-refresh</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="stock-cards">
+            <div class="row" id="stockCards"></div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-lg-8">
+                <div class="main-chart gad-chart-container mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 title="Historical price data for all stocks">Price History</h5>
+                        <div class="btn-group btn-group-sm" id="priceHistoryButtons" title="Select time range for historical data">
+                            <button class="btn btn-outline-secondary" title="View last 10 minutes of trading">10M</button>
+                            <button class="btn btn-outline-secondary active" title="View last hour of trading">1H</button>
+                            <button class="btn btn-outline-secondary" title="View last 24 hours of trading">1D</button>
+                            <button class="btn btn-outline-secondary" title="View last week of trading">1W</button>
+                        </div>
+                    </div>
+                    <canvas id="priceChart" title="Interactive chart showing price movements over time"></canvas>
+                </div>
+                <div class="gad-chart-container">
+                    <h5 title="Trading volume shows market activity and liquidity">Trading Volume</h5>
+                    <canvas id="volumeChart" title="Bar chart showing trading volume for each stock"></canvas>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="gad-stats-card mb-4">
+                    <h5 title="Overview of current market conditions">Market Summary</h5>
+                    <div id="marketStats"></div>
+                </div>
+                <div class="gad-stats-card">
+                    <h5 title="Stocks with the largest price movements">Top Movers</h5>
+                    <div id="topMovers"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let priceChart;
+        let volumeChart;
+        let miniCharts = [];
+        const MAX_DATA_POINTS = 10;
+        let stockData = [];
+        const colors = ['#4CAF50', '#2196F3', '#9C27B0', '#F44336', '#FF9800'];
+
+        const timeRanges = {
+            '10M': { interval: 60_000, samples: 10 },     // 1 minute intervals for 10 minutes
+            '1H': { interval: 60_000, samples: 60 },    // 1 minute intervals for 1 hour
+            '1D': { interval: 12 * 60_000, samples: 120 },  // 12 minute intervals for 24 hours
+            '1W': { interval: 60 * 60_000, samples: 240 }  // 1 hour intervals for 1 week
+        };
+        let currentTimeRange = '1H';
+
+        async function fetchStockData() {
+            try {
+                const { interval, samples } = timeRanges[currentTimeRange];
+                const response = await fetch(`/api/v1/data/random/stock-exchange?samples=${samples}&interval=${interval}`);
+                const data = await response.json();
+                stockData = data;
+                updateUI(data);
+            } catch (error) {
+                console.error('Error fetching stock data:', error);
+            }
+        }
+
+        function destroyCharts() {
+            if (priceChart) {
+                priceChart.destroy();
+            }
+            if (volumeChart) {
+                volumeChart.destroy();
+            }
+            miniCharts.forEach(chart => chart.destroy());
+            miniCharts = [];
+        }
+
+        function updateUI(data) {
+            const latestData = data[data.length - 1];
+            updateStockCards(latestData.stocks);
+            updateChart(data);
+            updateMarketStats(latestData.stocks);
+            updateTopMovers(latestData.stocks);  // Add this line
+            document.getElementById('lastUpdate').textContent = `Last update: ${new Date().toLocaleTimeString()}`;
+        }
+
+        function updateStockCards(stocks) {
+            miniCharts.forEach(chart => chart.destroy());
+            miniCharts = [];
+
+            const container = document.getElementById('stockCards');
+            container.innerHTML = stocks.map((stock, index) => `
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="gad-stock-card p-3 animate__animated animate__fadeIn">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <div class="gad-stock-symbol" title="Stock symbol">${stock.symbol}</div>
+                                <div class="gad-stock-exchange" title="Exchange and sector information">${stock.exchange} • ${stock.sector}</div>
+                            </div>
+                            <div class="d-flex flex-column align-items-end">
+                                <div class="gad-stock-price" title="Current stock price">$${stock.currentPrice.toFixed(2)}</div>
+                                <div class="gad-stock-change ${stock.change >= 0 ? 'gad-price-positive' : 'gad-price-negative'}" 
+                                     title="Price change since previous update">
+                                    ${stock.change >= 0 ? '▲' : '▼'} ${Math.abs(stock.changePercent).toFixed(2)}%
+                                    <small>(${stock.change >= 0 ? '+' : ''}${stock.change.toFixed(2)})</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="flex: 1; min-height: 60px; position: relative;" title="Price trend chart">
+                            <canvas class="gad-mini-chart" id="miniChart${index}"></canvas>
+                        </div>
+
+                        <div class="gad-stock-metrics">
+                            <div class="gad-metric-item">
+                                <div class="gad-metric-label" title="Number of shares traded">Volume</div>
+                                <div class="gad-metric-value">${(stock.volume / 1000000).toFixed(1)}M</div>
+                            </div>
+                            <div class="gad-metric-item">
+                                <div class="gad-metric-label" title="Total market value of the company">Market Cap</div>
+                                <div class="gad-metric-value">$${(stock.marketCap / 1000000000).toFixed(1)}B</div>
+                            </div>
+                            <div class="gad-metric-item">
+                                <div class="gad-metric-label" title="Price to Earnings ratio - Higher values indicate higher growth expectations">P/E Ratio</div>
+                                <div class="gad-metric-value">${stock.pe_ratio.toFixed(1)}</div>
+                            </div>
+                            <div class="gad-metric-item">
+                                <div class="gad-metric-label" title="Annual dividend yield percentage">Dividend</div>
+                                <div class="gad-metric-value">${stock.dividend_yield.toFixed(2)}%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            setTimeout(() => {
+                stocks.forEach((stock, index) => {
+                    const canvas = document.getElementById(`miniChart${index}`);
+                    if (canvas) {
+                        const ctx = canvas.getContext('2d');
+                        const color = stock.change >= 0 ? '#00ff9d' : '#ff4d6b';
+                        const gradient = ctx.createLinearGradient(0, 0, 0, 60);
+                        gradient.addColorStop(0, `${color}33`);
+                        gradient.addColorStop(1, 'transparent');
+
+                        // Get historical data for this stock
+                        const stockHistory = stockData.map(d => ({
+                            price: d.stocks.find(s => s.symbol === stock.symbol)?.currentPrice,
+                            time: new Date(d.timestamp).toLocaleTimeString()
+                        }));
+
+                        const miniChart = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: stockHistory.map(d => d.time),
+                                datasets: [{
+                                    data: stockHistory.map(d => d.price),
+                                    borderColor: color,
+                                    backgroundColor: gradient,
+                                    borderWidth: 1.5,
+                                    tension: 0.4,
+                                    pointRadius: 0,
+                                    fill: true
+                                }]
+                            },
+                            options: {
+                                plugins: {
+                                    legend: { display: false },
+                                    tooltip: { enabled: false }
+                                },
+                                scales: {
+                                    x: {
+                                        display: false,
+                                        grid: { display: false }
+                                    },
+                                    y: {
+                                        display: false,
+                                        grid: { display: false },
+                                        min: Math.min(...stockHistory.map(d => d.price)) * 0.999,
+                                        max: Math.max(...stockHistory.map(d => d.price)) * 1.001
+                                    }
+                                },
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                animation: {
+                                    duration: 0 // Disable animations for better performance
+                                },
+                                elements: {
+                                    line: {
+                                        borderWidth: 1.5
+                                    }
+                                }
+                            }
+                        });
+                        miniCharts.push(miniChart);
+                    }
+                });
+            }, 0);
+        }
+
+        function updateChart(data) {
+            destroyCharts();
+
+            const ctx = document.getElementById('priceChart').getContext('2d');
+            const datasets = data[0].stocks.map((stock, index) => ({
+                label: stock.symbol,
+                data: data.map(d => d.stocks[index].currentPrice),
+                borderColor: colors[index % colors.length],
+                backgroundColor: `${colors[index % colors.length]}22`,
+                tension: 0.4,
+                fill: true,
+                pointRadius: 2,
+                pointHoverRadius: 5,
+                borderWidth: 2
+            }));
+
+            priceChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.map(d => new Date(d.timestamp).toLocaleTimeString()),
+                    datasets
+                },
+                options: {
+                    responsive: true,
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
+                    scales: {
+                        y: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#e1e1e1'
+                            }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        }
+                    }
+                }
+            });
+
+            const volumeCtx = document.getElementById('volumeChart').getContext('2d');
+            volumeChart = new Chart(volumeCtx, {
+                type: 'bar',
+                data: {
+                    labels: data.map(d => new Date(d.timestamp).toLocaleTimeString()),
+                    datasets: data[0].stocks.map((stock, index) => ({
+                        label: stock.symbol,
+                        data: data.map(d => d.stocks[index].volume),
+                        backgroundColor: colors[index % colors.length],
+                        borderColor: colors[index % colors.length],
+                        borderWidth: 1
+                    }))
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                callback: value => `${(value / 1000000).toFixed(1)}M`
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            stacked: true
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#e1e1e1'
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: (context) => {
+                                    const value = context.raw;
+                                    return `${context.dataset.label}: ${(value / 1000000).toFixed(1)}M`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateMarketStats(stocks) {
+            const totalVolume = stocks.reduce((sum, stock) => sum + stock.volume, 0);
+            const avgPrice = stocks.reduce((sum, stock) => sum + stock.currentPrice, 0) / stocks.length;
+            const gainers = stocks.filter(stock => stock.change > 0).length;
+            const losers = stocks.filter(stock => stock.change < 0).length;
+            const marketCap = stocks.reduce((sum, stock) => sum + stock.marketCap, 0);
+
+            document.getElementById('marketStats').innerHTML = `
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="gad-market-indicator" title="Average price of all listed stocks">
+                            <div class="text-muted">Avg Price</div>
+                            <div class="h6 mb-0">$${avgPrice.toFixed(2)}</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="gad-market-indicator" title="Total trading volume across all stocks">
+                            <div class="text-muted">Volume</div>
+                            <div class="h6 mb-0">${(totalVolume / 1000000).toFixed(1)}M</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="gad-market-indicator ${gainers > losers ? 'gad-price-positive' : 'gad-price-negative'}" 
+                             title="Number of stocks with price increases vs decreases">
+                            <div class="text-muted">Market Breadth</div>
+                            <div class="h6 mb-0">${gainers}↑ ${losers}↓</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="gad-market-indicator" title="Total market value of all listed stocks">
+                            <div class="text-muted">Total Cap</div>
+                            <div class="h6 mb-0">$${(marketCap / 1000000000).toFixed(1)}B</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('marketIndex').innerHTML = `
+                <span class="${avgPrice > 100 ? 'gad-price-positive' : 'gad-price-negative'}">
+                    ${avgPrice.toFixed(2)} 
+                    <small>${avgPrice > 100 ? '▲' : '▼'}</small>
+                </span>
+            `;
+        }
+
+        function updateTopMovers(stocks) {
+            const sortedStocks = [...stocks].sort((a, b) =>
+                Math.abs(b.changePercent) - Math.abs(a.changePercent)
+            ).slice(0, 5); // Get top 5 movers
+
+            document.getElementById('topMovers').innerHTML = `
+                ${sortedStocks.map(stock => `
+                    <div class="d-flex justify-content-between align-items-center mb-2" 
+                         title="Stock showing significant price movement">
+                        <div>
+                            <div class="gad-stock-symbol mb-0" title="Trading symbol for ${stock.symbol}">${stock.symbol}</div>
+                            <small class="text-muted" title="Industry sector">${stock.sector}</small>
+                        </div>
+                        <div class="text-end">
+                            <div class="gad-stock-price mb-0" title="Current trading price">$${stock.currentPrice.toFixed(2)}</div>
+                            <div class="${stock.change >= 0 ? 'gad-price-positive' : 'gad-price-negative'}" 
+                                 title="Percentage change in price">
+                                ${stock.change >= 0 ? '▲' : '▼'} ${Math.abs(stock.changePercent).toFixed(2)}%
+                            </div>
+                        </div>
+                    </div>
+                    <div class="progress mb-3" style="height: 4px; background: rgba(255,255,255,0.1)" 
+                         title="Visual indicator of price movement magnitude">
+                        <div class="progress-bar ${stock.change >= 0 ? 'bg-success' : 'bg-danger'}" 
+                             style="width: ${Math.min(Math.abs(stock.changePercent) * 5, 100)}%">
+                        </div>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        let refreshInterval;
+        const autoRefreshCheckbox = document.getElementById('autoRefresh');
+
+        function startAutoRefresh() {
+            fetchStockData();
+            refreshInterval = setInterval(fetchStockData, 60_000);
+        }
+
+        autoRefreshCheckbox.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                startAutoRefresh();
+            } else {
+                clearInterval(refreshInterval);
+            }
+        });
+
+        function setupPriceHistoryButtons() {
+            const container = document.getElementById('priceHistoryButtons');
+            container.addEventListener('click', (e) => {
+                if (e.target.tagName === 'BUTTON') {
+                    container.querySelectorAll('button').forEach(btn =>
+                        btn.classList.remove('active'));
+
+                    e.target.classList.add('active');
+
+                    currentTimeRange = e.target.textContent;
+                    clearInterval(refreshInterval);
+                    fetchStockData();
+
+                    if (autoRefreshCheckbox.checked) {
+                        refreshInterval = setInterval(fetchStockData, 60_000);
+                    }
+                }
+            });
+        }
+
+        setupPriceHistoryButtons();
+        startAutoRefresh();
+    </script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>

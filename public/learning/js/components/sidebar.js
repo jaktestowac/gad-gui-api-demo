@@ -95,6 +95,9 @@ function injectSidebar() {
                     ? `
                     <hr class="nav-divider">
                     <nav>
+                        <a href="roles.html" ${currentPath.endsWith("roles.html") ? 'class="active"' : ""}>
+                            <i class="fas fa-user-tag"></i> User Roles
+                        </a>
                         <a href="admin-health.html" ${
                           currentPath.endsWith("admin-health.html") ? 'class="active"' : ""
                         }>
@@ -109,7 +112,7 @@ function injectSidebar() {
                     <i class="fas fa-arrow-left"></i> Back to Welcome
                 </a>
                 ${
-                  isUserLoggedIn
+                  isUserLoggedIn || isAdmin()
                     ? `
                     <a href="#" onclick="handleLogout()" aria-label="Sign Out" name="sign-out">
                         <i class="fas fa-sign-out-alt"></i> Sign Out

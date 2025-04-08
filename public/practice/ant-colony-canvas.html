@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD - Interactive Ant Colony Simulation</title>
+    <meta charset="UTF-8">
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/practice-controls.css" />
+    <style>
+        .main-container {
+            top: 70px;
+            position: relative;
+        }
+
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            /* Align items to the top */
+            margin: 0;
+            background-color: #f0f0f0;
+            min-height: 100vh;
+            flex-wrap: wrap;
+            /* Allow wrapping on smaller screens */
+        }
+
+        #simulationContainer {
+            margin-right: 20px;
+            margin-bottom: 20px;
+            /* Add margin below canvas */
+            position: relative;
+            /* Needed for overlay text */
+        }
+
+        #simulationCanvas {
+            border: 1px solid #333;
+            background-color: #e8dcbA;
+            /* Sandy ground color */
+            cursor: crosshair;
+            display: block;
+            /* Remove extra space below canvas */
+        }
+
+        #overlayText {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 5px;
+            border-radius: 3px;
+            font-size: 0.9em;
+            pointer-events: none;
+            /* Don't interfere with clicks */
+        }
+
+        #controls,
+        #info {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            /* Spacing between panels */
+            width: 300px;
+            /* Fixed width for control/info panels */
+        }
+
+        #controls h3,
+        #info h3 {
+            margin-top: 0;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+            color: #333;
+        }
+
+        .control-group {
+            margin-bottom: 12px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 3px;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .control-group input[type="range"] {
+            width: calc(100% - 50px);
+            /* Adjust width to fit value display */
+            vertical-align: middle;
+        }
+
+        .control-group span {
+            display: inline-block;
+            width: 40px;
+            text-align: right;
+            font-size: 0.9em;
+            color: #333;
+            vertical-align: middle;
+        }
+
+        .control-group button {
+            padding: 8px 12px;
+            margin-right: 5px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .control-group button:hover {
+            background-color: #45a049;
+        }
+
+        .control-group button#resetButton {
+            background-color: #f44336;
+        }
+
+        .control-group button#resetButton:hover {
+            background-color: #da190b;
+        }
+
+        #info p {
+            font-size: 0.95em;
+            margin: 8px 0;
+            color: #333;
+        }
+
+        #info strong {
+            color: #000;
+        }
+
+        #educationalText {
+            font-style: italic;
+            color: #006400;
+            /* Dark green */
+            margin-top: 10px;
+            font-size: 0.9em;
+            border-top: 1px dashed #ccc;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+
+    <div class="main-container">
+        <div id="simulationContainer">
+            <canvas id="simulationCanvas"></canvas>
+            <div id="overlayText">Click to add food</div>
+        </div>
+
+        <div> <!-- Container for controls and info -->
+            <div id="controls">
+                <h3>Controls</h3>
+
+                <div class="control-group">
+                    <label for="numAntsSlider">Number of Ants:</label>
+                    <input type="range" id="numAntsSlider" min="10" max="300" value="100">
+                    <span id="numAntsValue">100</span>
+                </div>
+
+                <div class="control-group">
+                    <label for="antSpeedSlider">Ant Speed:</label>
+                    <input type="range" id="antSpeedSlider" min="0.5" max="5" step="0.1" value="1.5">
+                    <span id="antSpeedValue">1.5</span>
+                </div>
+
+                <div class="control-group">
+                    <label for="wanderStrengthSlider">Wander Strength:</label>
+                    <input type="range" id="wanderStrengthSlider" min="0.05" max="0.8" step="0.01" value="0.2">
+                    <span id="wanderStrengthValue">0.20</span>
+                </div>
+
+                <div class="control-group">
+                    <label for="evaporationSlider">Pheromone Evaporation (per frame):</label>
+                    <input type="range" id="evaporationSlider" min="0.0001" max="0.01" step="0.0001" value="0.001">
+                    <span id="evaporationValue">0.001</span>
+                </div>
+
+                <div class="control-group">
+                    <label for="pheromoneDropRateSlider">Pheromone Drop Rate (frames):</label>
+                    <input type="range" id="pheromoneDropRateSlider" min="1" max="20" step="1" value="5">
+                    <span id="pheromoneDropRateValue">5</span>
+                </div>
+
+                <div class="control-group">
+                    <label for="senseRadiusSlider">Pheromone Sense Radius:</label>
+                    <input type="range" id="senseRadiusSlider" min="5" max="40" step="1" value="20">
+                    <span id="senseRadiusValue">20</span>
+                </div>
+
+                <div class="control-group">
+                    <label for="senseAngleSlider">Pheromone Sense Angle (degrees):</label>
+                    <input type="range" id="senseAngleSlider" min="10" max="90" step="1" value="45">
+                    <span id="senseAngleValue">45</span>
+                </div>
+
+                <div class="control-group">
+                    <label for="foodAmountSlider">Food Amount per Source:</label>
+                    <input type="range" id="foodAmountSlider" min="10" max="500" step="10" value="100">
+                    <span id="foodAmountValue">100</span>
+                </div>
+
+                <div class="control-group">
+                    <label for="simSpeedSlider">Simulation Speed Multiplier:</label>
+                    <input type="range" id="simSpeedSlider" min="0.1" max="5" step="0.1" value="1.0">
+                    <span id="simSpeedValue">1.0</span>
+                </div>
+
+                <div class="control-group">
+                    <button id="pauseButton">Pause</button>
+                    <button id="resetButton">Reset</button>
+                    <button id="addRandomFoodButton">Add Random Food</button>
+                </div>
+            </div>
+
+            <div id="info">
+                <h3>Colony Info</h3>
+                <p><strong>Ants:</strong> <span id="infoAntCount">0</span></p>
+                <p><strong>Food Collected:</strong> <span id="infoFoodCollected">0</span></p>
+                <p><strong>Food Sources:</strong> <span id="infoFoodSources">0</span></p>
+                <p><strong>Pheromones (Home/Food):</strong> <span id="infoPheromones">0 / 0</span></p>
+                <p><strong>Simulation Time:</strong> <span id="infoSimTime">0.0</span>s</p>
+                <div id="educationalText">Initializing...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('simulationCanvas');
+        const ctx = canvas.getContext('2d');
+        const overlayText = document.getElementById('overlayText');
+
+        // --- Settings ---
+        let settings = {
+            width: 800,
+            height: 600,
+            numAnts: 50,
+            antSpeed: 1.5,
+            antSize: 2.5,
+            wanderStrength: 0.2, // How much angle changes randomly
+            pheromoneEvaporation: 0.001, // Amount strength decreases per frame
+            pheromoneDropRate: 5, // Drop pheromone every N frames
+            pheromoneSenseRadius: 20, // How far ahead ants look for pheromones
+            pheromoneSenseAngle: Math.PI / 4, // Angle spread for sensing (45 degrees)
+            pheromoneToHomeColor: 'rgba(0, 0, 255, 0.5)', // Blue
+            pheromoneToFoodColor: 'rgba(255, 100, 0, 0.5)', // Orange
+            foodAmount: 100, // Food units per source
+            foodSize: 5,
+            foodColor: 'rgba(0, 180, 0, 0.8)',
+            nestSize: 20,
+            nestColor: 'rgba(139, 69, 19, 0.9)', // Brown
+            simulationSpeed: 1.0,
+            maxAnts: 300 // Hard limit to prevent performance issues
+        };
+
+        // --- Global State ---
+        let ants = [];
+        let foodSources = [];
+        let pheromones = [];
+        let nest = { x: settings.width / 2, y: settings.height / 2, food: 0 };
+        let simulationTime = 0;
+        let frameCount = 0;
+        let isPaused = false;
+        let lastTimestamp = 0;
+        let educationalTextEl = document.getElementById('educationalText');
+
+        // --- Utility Functions ---
+        function random(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        function distance(x1, y1, x2, y2) {
+            const dx = x1 - x2;
+            const dy = y1 - y2;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+
+        // Normalize angle to be between -PI and PI
+        function normalizeAngle(angle) {
+            while (angle > Math.PI) angle -= 2 * Math.PI;
+            while (angle < -Math.PI) angle += 2 * Math.PI;
+            return angle;
+        }
+
+        // --- Classes ---
+        class Ant {
+            constructor() {
+                this.x = nest.x;
+                this.y = nest.y;
+                this.angle = random(0, Math.PI * 2);
+                this.speed = settings.antSpeed * (0.8 + Math.random() * 0.4); // Slight speed variation
+                this.state = 'SEARCHING'; // SEARCHING, RETURNING
+                this.hasFood = false;
+                this.timeSinceLastPheromone = 0;
+                this.targetFood = null; // Reference to the food source it's heading towards/carrying from
+            }
+
+            update(dt) {
+                // Pheromone following or wandering
+                let steerAngle = this.findPheromoneTrail();
+                if (steerAngle !== null) {
+                    // Gradually turn towards the pheromone direction
+                    const turnRate = 0.2; // How quickly the ant turns towards the target angle
+                    let angleDiff = normalizeAngle(steerAngle - this.angle);
+                    this.angle = normalizeAngle(this.angle + angleDiff * turnRate);
+                    setEducationalText("Ant following pheromones...");
+                } else {
+                    // Wander randomly
+                    this.angle += random(-settings.wanderStrength, settings.wanderStrength);
+                    if (this.state === 'SEARCHING') setEducationalText("Ant searching randomly...");
+                    else setEducationalText("Ant returning to nest (wandering slightly)...");
+                }
+
+
+                // Move ant
+                this.x += Math.cos(this.angle) * this.speed * dt * settings.simulationSpeed;
+                this.y += Math.sin(this.angle) * this.speed * dt * settings.simulationSpeed;
+
+                // Keep ant within bounds
+                this.handleBoundaryCollision();
+
+                // State-specific logic
+                if (this.state === 'SEARCHING') {
+                    this.searchForFood();
+                } else if (this.state === 'RETURNING') {
+                    this.returnToNest();
+                }
+
+                // Drop pheromones
+                this.timeSinceLastPheromone++;
+                if (this.timeSinceLastPheromone >= settings.pheromoneDropRate) {
+                    this.dropPheromone();
+                    this.timeSinceLastPheromone = 0;
+                }
+            }
+
+            handleBoundaryCollision() {
+                const margin = 5;
+                let bounced = false;
+                if (this.x < margin) { this.x = margin; this.angle = Math.PI - this.angle; bounced = true; }
+                if (this.x > settings.width - margin) { this.x = settings.width - margin; this.angle = Math.PI - this.angle; bounced = true; }
+                if (this.y < margin) { this.y = margin; this.angle = -this.angle; bounced = true; }
+                if (this.y > settings.height - margin) { this.y = settings.height - margin; this.angle = -this.angle; bounced = true; }
+                if (bounced) this.angle = normalizeAngle(this.angle + random(-0.1, 0.1)); // Add slight randomness on bounce
+            }
+
+            searchForFood() {
+                for (let i = foodSources.length - 1; i >= 0; i--) {
+                    const food = foodSources[i];
+                    if (distance(this.x, this.y, food.x, food.y) < settings.foodSize + settings.antSize) {
+                        if (food.takeFood()) {
+                            this.hasFood = true;
+                            this.state = 'RETURNING';
+                            this.targetFood = food; // Remember where the food came from
+                            this.angle = Math.atan2(nest.y - this.y, nest.x - this.x) + Math.PI; // Turn back towards nest initially (roughly) - adding PI is wrong, should be opposite direction
+                            this.angle = Math.atan2(nest.y - this.y, nest.x - this.x); // Turn towards nest
+                            setEducationalText("Ant found food! Returning to nest.");
+                            break;
+                        } else {
+                            // Food source depleted
+                            foodSources.splice(i, 1);
+                        }
+                    }
+                }
+            }
+
+            returnToNest() {
+                if (distance(this.x, this.y, nest.x, nest.y) < settings.nestSize) {
+                    if (this.hasFood) {
+                        nest.food++;
+                        this.hasFood = false;
+                        this.state = 'SEARCHING';
+                        // Turn around roughly 180 degrees
+                        this.angle = normalizeAngle(this.angle + Math.PI + random(-0.5, 0.5));
+                        this.targetFood = null; // Forget the specific food source
+                        setEducationalText("Ant delivered food! Searching again.");
+                    }
+                }
+            }
+
+            dropPheromone() {
+                const type = this.hasFood ? 'TO_FOOD' : 'TO_HOME';
+                // Strengthen pheromone if returning from a known good source
+                const strengthMultiplier = (type === 'TO_FOOD' && this.targetFood && this.targetFood.amount > 0) ? 1.5 : 1.0;
+                // Prevent dropping TO_FOOD right at the nest, or TO_HOME right at food
+                const nearNest = distance(this.x, this.y, nest.x, nest.y) < settings.nestSize * 1.5;
+                const nearFood = this.targetFood && distance(this.x, this.y, this.targetFood.x, this.targetFood.y) < settings.foodSize * 2;
+
+                if ((type === 'TO_FOOD' && !nearNest) || (type === 'TO_HOME' && !nearFood)) {
+                    pheromones.push(new Pheromone(this.x, this.y, type, strengthMultiplier));
+                }
+            }
+
+            findPheromoneTrail() {
+                let strongestSignal = 0;
+                let targetAngle = null;
+                const desiredType = this.hasFood ? 'TO_HOME' : 'TO_FOOD';
+
+                // Check 3 points: straight ahead, left, right
+                const anglesToCheck = [
+                    this.angle, // Straight ahead
+                    normalizeAngle(this.angle - settings.pheromoneSenseAngle / 2), // Left
+                    normalizeAngle(this.angle + settings.pheromoneSenseAngle / 2)  // Right
+                ];
+
+                anglesToCheck.forEach(checkAngle => {
+                    const senseX = this.x + Math.cos(checkAngle) * settings.pheromoneSenseRadius;
+                    const senseY = this.y + Math.sin(checkAngle) * settings.pheromoneSenseRadius;
+
+                    // Check pheromones near the sensing point
+                    for (const p of pheromones) {
+                        if (p.type === desiredType) {
+                            const dist = distance(senseX, senseY, p.x, p.y);
+                            // Weighted strength: stronger if closer to sense point AND higher intrinsic strength
+                            const signalStrength = p.strength * Math.max(0, 1 - dist / (settings.pheromoneSenseRadius * 0.8)); // Closer pheromones have more influence
+
+                            if (signalStrength > strongestSignal) {
+                                strongestSignal = signalStrength;
+                                // Steer towards the pheromone itself, not just the sensing angle
+                                targetAngle = Math.atan2(p.y - this.y, p.x - this.x);
+                            }
+                        }
+                    }
+                });
+
+                // Also add slight bias towards target (nest or food)
+                if (strongestSignal < 0.1) { // Only apply bias if pheromone signal is weak
+                    let targetX, targetY;
+                    if (this.hasFood) { // Target is nest
+                        targetX = nest.x;
+                        targetY = nest.y;
+                    } else if (this.targetFood) { // If remembers a food source, bias towards it slightly when searching
+                        targetX = this.targetFood.x;
+                        targetY = this.targetFood.y;
+                    }
+
+                    if (targetX !== undefined) {
+                        const targetDirectionAngle = Math.atan2(targetY - this.y, targetX - this.x);
+                        const angleDiff = normalizeAngle(targetDirectionAngle - this.angle);
+                        // Apply a very weak pull towards the target
+                        this.angle = normalizeAngle(this.angle + angleDiff * 0.01);
+                    }
+                }
+
+
+                return targetAngle; // Returns the angle towards the strongest pheromone, or null
+            }
+
+
+            draw(ctx) {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle);
+
+                ctx.fillStyle = this.hasFood ? '#ff6347' : '#333'; // Tomato color if carrying food, else black
+                ctx.beginPath();
+                // Simple elongated ant shape
+                ctx.ellipse(0, 0, settings.antSize * 1.5, settings.antSize * 0.8, 0, 0, Math.PI * 2);
+                // Add a small head indicator
+                // ctx.arc(settings.antSize * 0.8, 0, settings.antSize * 0.6, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.restore();
+            }
+        }
+
+        class FoodSource {
+            constructor(x, y, amount) {
+                this.x = x;
+                this.y = y;
+                this.initialAmount = amount;
+                this.amount = amount;
+            }
+
+            takeFood() {
+                if (this.amount > 0) {
+                    this.amount--;
+                    return true;
+                }
+                return false;
+            }
+
+            draw(ctx) {
+                if (this.amount <= 0) return;
+                const sizeRatio = Math.max(0.1, this.amount / this.initialAmount); // Ensure minimum size
+                const currentSize = settings.foodSize * (1 + sizeRatio); // Size decreases slightly
+
+                ctx.fillStyle = settings.foodColor;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, currentSize, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Optional: Draw amount text (can impact performance)
+                // ctx.fillStyle = '#000';
+                // ctx.font = '10px sans-serif';
+                // ctx.textAlign = 'center';
+                // ctx.fillText(this.amount, this.x, this.y - currentSize - 2);
+            }
+        }
+
+        class Pheromone {
+            constructor(x, y, type, strengthMultiplier = 1.0) {
+                this.x = x;
+                this.y = y;
+                this.type = type; // 'TO_HOME' or 'TO_FOOD'
+                this.strength = 1.0 * strengthMultiplier; // Initial strength
+            }
+
+            update(dt) {
+                this.strength -= settings.pheromoneEvaporation * dt * settings.simulationSpeed;
+            }
+
+            draw(ctx) {
+                if (this.strength <= 0) return;
+                ctx.fillStyle = this.type === 'TO_HOME' ? settings.pheromoneToHomeColor : settings.pheromoneToFoodColor;
+                // Adjust alpha based on strength
+                ctx.globalAlpha = Math.min(0.6, this.strength * 0.6); // Max alpha 0.6
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.strength * 2 + 1, 0, Math.PI * 2); // Size based on strength
+                ctx.fill();
+                ctx.globalAlpha = 1.0; // Reset global alpha
+            }
+        }
+
+        // --- Simulation Loop ---
+        function gameLoop(timestamp) {
+            if (isPaused) {
+                lastTimestamp = timestamp; // Keep track for dt calculation when resuming
+                requestAnimationFrame(gameLoop);
+                return;
+            }
+
+            const deltaTime = (timestamp - lastTimestamp) / 16.667; // Normalize to 60 FPS target
+            lastTimestamp = timestamp;
+            const dt = Math.min(deltaTime, 3); // Cap dt to prevent huge jumps
+
+            simulationTime += (dt / 60) * settings.simulationSpeed; // Approximate seconds
+            frameCount++;
+
+            update(dt);
+            draw();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        function update(dt) {
+            // Update ants
+            ants.forEach(ant => ant.update(dt));
+
+            // Update and prune pheromones
+            pheromones = pheromones.filter(p => {
+                p.update(dt);
+                return p.strength > 0;
+            });
+
+            // Update UI Info
+            updateInfoPanel();
+        }
+
+        let lastEducationalText = "";
+        let textTimeout;
+        function setEducationalText(text) {
+            if (text === lastEducationalText) return; // Avoid redundant updates
+            lastEducationalText = text;
+
+            clearTimeout(textTimeout); // Clear previous timeout if exists
+            educationalTextEl.textContent = text;
+
+            // Set a timeout to clear the text after a while if nothing new comes in
+            textTimeout = setTimeout(() => {
+                if (educationalTextEl.textContent === text) { // Only clear if it's still the same text
+                    educationalTextEl.textContent = "Observing colony...";
+                    lastEducationalText = "Observing colony...";
+                }
+            }, 4000); // Clear after 4 seconds of inactivity
+        }
+
+        function draw() {
+            // Clear canvas
+            // Slightly transparent clear for trail effect (optional, can reduce performance)
+            // ctx.fillStyle = 'rgba(232, 220, 186, 0.1)'; // Trail effect
+            // ctx.fillRect(0, 0, settings.width, settings.height);
+            ctx.clearRect(0, 0, settings.width, settings.height); // Full clear
+
+            // Draw pheromones first (background layer)
+            pheromones.forEach(p => p.draw(ctx));
+
+            // Draw food sources
+            foodSources.forEach(food => food.draw(ctx));
+
+            // Draw nest
+            ctx.fillStyle = settings.nestColor;
+            ctx.beginPath();
+            ctx.arc(nest.x, nest.y, settings.nestSize, 0, Math.PI * 2);
+            ctx.fill();
+            // Draw food count in nest
+            ctx.fillStyle = '#fff';
+            ctx.font = '12px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(nest.food, nest.x, nest.y);
+
+            // Draw ants
+            ants.forEach(ant => ant.draw(ctx));
+        }
+
+        function updateInfoPanel() {
+            document.getElementById('infoAntCount').textContent = ants.length;
+            document.getElementById('infoFoodCollected').textContent = nest.food;
+            document.getElementById('infoFoodSources').textContent = foodSources.length;
+            const homePheromones = pheromones.filter(p => p.type === 'TO_HOME').length;
+            const foodPheromones = pheromones.filter(p => p.type === 'TO_FOOD').length;
+            document.getElementById('infoPheromones').textContent = `${homePheromones} / ${foodPheromones}`;
+            document.getElementById('infoSimTime').textContent = simulationTime.toFixed(1) + 's';
+        }
+
+        // --- Event Listeners ---
+        function setupEventListeners() {
+            // Canvas click to add food
+            canvas.addEventListener('click', (event) => {
+                const rect = canvas.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const y = event.clientY - rect.top;
+                foodSources.push(new FoodSource(x, y, settings.foodAmount));
+                setEducationalText("New food source added!");
+            });
+
+            // Sliders
+            const sliders = [
+                { id: 'numAntsSlider', valueId: 'numAntsValue', setting: 'numAnts', isInt: true },
+                { id: 'antSpeedSlider', valueId: 'antSpeedValue', setting: 'antSpeed', factor: 1, decimals: 1 },
+                { id: 'wanderStrengthSlider', valueId: 'wanderStrengthValue', setting: 'wanderStrength', factor: 1, decimals: 2 },
+                { id: 'evaporationSlider', valueId: 'evaporationValue', setting: 'pheromoneEvaporation', factor: 1, decimals: 4 },
+                { id: 'pheromoneDropRateSlider', valueId: 'pheromoneDropRateValue', setting: 'pheromoneDropRate', isInt: true },
+                { id: 'senseRadiusSlider', valueId: 'senseRadiusValue', setting: 'pheromoneSenseRadius', isInt: true },
+                { id: 'senseAngleSlider', valueId: 'senseAngleValue', setting: 'pheromoneSenseAngle', isInt: true, isDegrees: true },
+                { id: 'foodAmountSlider', valueId: 'foodAmountValue', setting: 'foodAmount', isInt: true },
+                { id: 'simSpeedSlider', valueId: 'simSpeedValue', setting: 'simulationSpeed', factor: 1, decimals: 1 },
+            ];
+
+            sliders.forEach(s => {
+                const slider = document.getElementById(s.id);
+                const valueDisplay = document.getElementById(s.valueId);
+                slider.addEventListener('input', () => {
+                    let value = parseFloat(slider.value);
+                    if (s.isInt) value = parseInt(value);
+                    if (s.isDegrees) {
+                        settings[s.setting] = value * (Math.PI / 180); // Convert degrees to radians
+                        valueDisplay.textContent = value; // Display degrees
+                    } else {
+                        settings[s.setting] = value;
+                        valueDisplay.textContent = value.toFixed(s.decimals || 0);
+                    }
+
+                    // Special handling for numAnts
+                    if (s.setting === 'numAnts') {
+                        adjustAntPopulation();
+                    }
+                    // Update existing ant speeds if changed
+                    if (s.setting === 'antSpeed') {
+                        ants.forEach(ant => ant.speed = settings.antSpeed * (0.8 + Math.random() * 0.4));
+                    }
+                });
+            });
+
+            // Buttons
+            const pauseButton = document.getElementById('pauseButton');
+            pauseButton.addEventListener('click', () => {
+                isPaused = !isPaused;
+                pauseButton.textContent = isPaused ? 'Resume' : 'Pause';
+                overlayText.style.display = isPaused ? 'block' : 'none';
+                overlayText.textContent = 'Paused';
+            });
+
+            const resetButton = document.getElementById('resetButton');
+            resetButton.addEventListener('click', initializeSimulation);
+
+            const addRandomFoodButton = document.getElementById('addRandomFoodButton');
+            addRandomFoodButton.addEventListener('click', () => {
+                const margin = 50;
+                const x = random(margin, settings.width - margin);
+                const y = random(margin, settings.height - margin);
+                // Avoid placing food right on the nest
+                if (distance(x, y, nest.x, nest.y) > settings.nestSize * 3) {
+                    foodSources.push(new FoodSource(x, y, settings.foodAmount));
+                    setEducationalText("Random food source added!");
+                } else {
+                    setEducationalText("Tried placing random food too close to nest.");
+                }
+            });
+        }
+
+        function adjustAntPopulation() {
+            const targetAnts = Math.min(settings.numAnts, settings.maxAnts); // Apply max limit
+            while (ants.length < targetAnts) {
+                ants.push(new Ant());
+            }
+            while (ants.length > targetAnts) {
+                ants.pop(); // Remove ants from the end
+            }
+        }
+
+        // --- Initialization ---
+        function initializeSimulation() {
+            console.log("Initializing Simulation...");
+            isPaused = false; // Ensure simulation is not paused on reset
+            document.getElementById('pauseButton').textContent = 'Pause';
+            overlayText.style.display = 'block'; // Show default text initially
+            overlayText.textContent = 'Click to add food';
+
+
+            // Set canvas dimensions
+            canvas.width = settings.width;
+            canvas.height = settings.height;
+
+            // Reset state
+            ants = [];
+            foodSources = [];
+            pheromones = [];
+            nest = { x: settings.width / 2, y: settings.height / 2, food: 0 };
+            simulationTime = 0;
+            frameCount = 0;
+            lastTimestamp = performance.now(); // Reset timestamp
+
+            // Create initial ants
+            adjustAntPopulation();
+
+            // Set initial educational text
+            setEducationalText("Colony initialized. Ants are leaving the nest to search for food.");
+
+            // Start the loop if it's not already running (or restart if needed)
+            // requestAnimationFrame handles the loop start
+            console.log("Simulation Initialized.");
+        }
+
+        // --- Start ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set initial values from settings object to sliders/displays
+            document.getElementById('numAntsSlider').value = settings.numAnts;
+            document.getElementById('numAntsValue').textContent = settings.numAnts;
+            document.getElementById('antSpeedSlider').value = settings.antSpeed;
+            document.getElementById('antSpeedValue').textContent = settings.antSpeed.toFixed(1);
+            document.getElementById('wanderStrengthSlider').value = settings.wanderStrength;
+            document.getElementById('wanderStrengthValue').textContent = settings.wanderStrength.toFixed(2);
+            document.getElementById('evaporationSlider').value = settings.pheromoneEvaporation;
+            document.getElementById('evaporationValue').textContent = settings.pheromoneEvaporation.toFixed(4);
+            document.getElementById('pheromoneDropRateSlider').value = settings.pheromoneDropRate;
+            document.getElementById('pheromoneDropRateValue').textContent = settings.pheromoneDropRate;
+            document.getElementById('senseRadiusSlider').value = settings.pheromoneSenseRadius;
+            document.getElementById('senseRadiusValue').textContent = settings.pheromoneSenseRadius;
+            document.getElementById('senseAngleSlider').value = settings.pheromoneSenseAngle * (180 / Math.PI); // Convert back to degrees for display
+            document.getElementById('senseAngleValue').textContent = Math.round(settings.pheromoneSenseAngle * (180 / Math.PI));
+            document.getElementById('foodAmountSlider').value = settings.foodAmount;
+            document.getElementById('foodAmountValue').textContent = settings.foodAmount;
+            document.getElementById('simSpeedSlider').value = settings.simulationSpeed;
+            document.getElementById('simSpeedValue').textContent = settings.simulationSpeed.toFixed(1);
+
+
+            setupEventListeners();
+            initializeSimulation();
+            requestAnimationFrame(gameLoop); // Start the main loop
+        });
+
+    </script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+
+</body>
+
+</html>

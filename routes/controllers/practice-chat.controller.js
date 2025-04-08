@@ -22,6 +22,7 @@ class WebSocketPracticeChatContext {
     this.broadcast({
       type: "practiceChatUserList",
       users: userList,
+      broadcast: true,
     });
   }
 
@@ -48,6 +49,7 @@ const sendError = (ws, message) => {
     JSON.stringify({
       type: "error",
       message: message,
+      broadcast: true,
     })
   );
 };
@@ -64,7 +66,7 @@ const handleJoinMessage = (context, ws, data) => {
     throw new Error("Invalid username");
   }
   if (!/^[a-zA-Z0-9]+$/.test(userName)) {
-    throw new Error("Invalid username");
+    throw new Error("Username can only contain letters and numbers");
   }
   if (userName.length < 3 || userName.length > 20) {
     throw new Error("Username already taken");
@@ -78,6 +80,7 @@ const handleJoinMessage = (context, ws, data) => {
     type: "practiceChatMessage",
     username: "[System]",
     message: `${userName} joined the chat`,
+    broadcast: true,
   });
 
   context.broadcastUserList();
@@ -99,6 +102,7 @@ const handleChatMessage = (context, ws, data) => {
     type: "practiceChatMessage",
     username: ws.userName,
     message: data.message,
+    broadcast: true,
   });
 };
 
@@ -117,6 +121,10 @@ const handlePrivateMessage = (context, ws, data) => {
   context.sendPrivateMessage(ws.userName, data.recipient, data.message);
 };
 
+const practiceChatLeave = (context, ws) => {
+  handleDisconnect(context, ws);
+};
+
 const handleDisconnect = (context, ws) => {
   if (ws.userName) {
     context.connectedUsers.delete(ws.userName);
@@ -124,6 +132,7 @@ const handleDisconnect = (context, ws) => {
       type: "practiceChatMessage",
       username: "[System]",
       message: `${ws.userName} left the chat`,
+      broadcast: true,
     });
     logDebug(`[websocketRoute] User disconnected: ${ws.userName}`);
 
@@ -143,6 +152,7 @@ const handleUnknownMessage = (context, ws, data) => {
 
 const messageHandlers = {
   practiceChatJoin: handleJoinMessage,
+  practiceChatLeave: practiceChatLeave,
   practiceChatMessage: handleChatMessage,
   practiceChatPrivate: handlePrivateMessage,
   practiceChatDefault: handleUnknownMessage,

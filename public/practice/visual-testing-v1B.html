@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | Visual Testing Practice</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <style>
+        .visual-container {
+            display: flex;
+            margin: 0 auto;
+            padding: 10px;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        h2 {
+            margin: 6px;
+            padding: 6px;
+        }
+
+        .widgets-section {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+            width: 400px !important;
+        }
+
+        .widget-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .interactive-widget {
+            background: linear-gradient(145deg, #2c3e50, #3498db);
+            color: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .widget-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .widget-status {
+            font-size: 0.8em;
+            padding: 2px 8px;
+            border-radius: 12px;
+            background: #068811;
+            color: white;
+        }
+
+        .compact-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .metric-mini {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .metric-detail {
+            font-size: 0.8em;
+            opacity: 0.7;
+            margin-top: 2px;
+        }
+
+        .loading-bar {
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .loading-progress {
+            height: 100%;
+            background: rgba(255, 255, 255, 0.5);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .network-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8em;
+            opacity: 0.7;
+        }
+
+        .system-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+            display: inline-block;
+        }
+
+        .status-indicator.active {
+            background: #4CAF50;
+        }
+
+        .status-indicator.warning {
+            background: #FFC107;
+        }
+
+        .mini-chart {
+            height: 30px;
+            display: flex;
+            align-items: flex-end;
+            gap: 1px;
+            margin-top: 8px;
+            padding: 2px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+
+        .chart-bar {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.2);
+            min-width: 3px;
+            height: 20%;
+            transition: height 0.3s ease;
+        }
+
+        .process-list {
+            margin-top: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 8px;
+        }
+
+        .process-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 8px;
+            font-size: 0.85em;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .process-item:last-child {
+            border-bottom: none;
+        }
+
+        .process-name {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .disk-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .disk-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 0.85em;
+        }
+
+        .disk-progress {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            margin-top: 4px;
+            overflow: hidden;
+        }
+
+        .disk-bar {
+            height: 100%;
+            background: rgba(255, 255, 255, 0.5);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .performance-chart {
+            height: 100px;
+            position: relative;
+            margin-top: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            padding: 8px;
+        }
+
+        .perf-line {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.5);
+            stroke-width: 1.5;
+        }
+
+        .static-widget {
+            background: linear-gradient(145deg, #2c3e50, #3498db);
+            color: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .monitoring-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+
+        .section-header {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-practice" class="nav-menu">Visual Testing Practice</h1>
+        </div>
+    </header>
+    <br />
+    <br />
+    <br />
+    <div class="visual-container">
+        <div class="widgets-section">
+            <div class="widget-grid">
+                <div data-testid="static-widget">
+                    <h2 style="padding-bottom: 0px; margin-bottom: 0px;">Static Widget</h2>
+                    <h4 style="padding-top: 0px; margin-top: 0px;">(with dynamic component with API)</h4>
+                    <div class="static-widget" data-testid="static-metrics-widget">
+                        <div class="widget-header">
+                            <h3>System Metrics</h3>
+                            <span class="widget-status">Static</span>
+                        </div>
+                        <div class="compact-metrics">
+                            <div class="metric-mini">
+                                <div>CPU</div>
+                                <div class="metric-value">45%</div>
+                                <div class="metric-detail">4 Cores | 52°C</div>
+                                <div class="loading-bar">
+                                    <div class="loading-progress" style="width: 45%"></div>
+                                </div>
+                            </div>
+                            <div class="metric-mini">
+                                <div>Memory</div>
+                                <div class="metric-value">68%</div>
+                                <div class="metric-detail">10.9/16 GB</div>
+                                <div class="loading-bar">
+                                    <div class="loading-progress" style="width: 68%"></div>
+                                </div>
+                            </div>
+                            <div class="metric-mini">
+                                <div>Network</div>
+                                <div class="metric-value">25 MB/s</div>
+                                <div class="network-details">
+                                    <span>↑ 8 MB/s</span>
+                                    <span>↓ 17 MB/s</span>
+                                </div>
+                                <div class="loading-bar">
+                                    <div class="loading-progress" style="width: 25%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="process-list" data-testid="process-list">
+                            <div style="margin-bottom: 8px; font-size: 0.9em;">Top Processes</div>
+                            <div class="process-item">
+                                <div class="process-name"><span>🌐</span>chrome</div>
+                                <div>28%</div>
+                            </div>
+                            <div class="process-item">
+                                <div class="process-name"><span>⚙️</span>node</div>
+                                <div>15%</div>
+                            </div>
+                            <div class="process-item">
+                                <div class="process-name"><span>📝</span>vscode</div>
+                                <div>12%</div>
+                            </div>
+                            <div class="process-item">
+                                <div class="process-name"><span>💻</span>system</div>
+                                <div>8%</div>
+                            </div>
+                        </div>
+                        <div class="disk-metrics">
+                            <div class="disk-item">
+                                <div>System Drive (C:)</div>
+                                <div>120/256 GB</div>
+                                <div class="disk-progress">
+                                    <div class="disk-bar" style="width: 47%"></div>
+                                </div>
+                            </div>
+                            <div class="disk-item">
+                                <div>Data Drive (D:)</div>
+                                <div>256/512 GB</div>
+                                <div class="disk-progress">
+                                    <div class="disk-bar" style="width: 50%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="performance-chart" data-testid="performance-chart">
+                            <svg width="100%" height="100%" preserveAspectRatio="none">
+                                <path class="perf-line" d="M 0,30 10,25 20,28 30,20" />
+                            </svg>
+                        </div>
+                        <div class="system-status">
+                            <div>
+                                <span class="status-indicator active"></span>
+                                <span>System Healthy</span>
+                                <span style="margin-left: 10px; font-size: 0.8em; opacity: 0.7">Uptime: 02:45:30</span>
+                            </div>
+                            <span>Updated: 12:00:00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center">
+        <a href="/practice" class="menu-link">
+            <button class="button-primary-small" style="margin-top: 4px; font-size: 14px;">Return to practice page</button>
+        </a>
+    </div>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+    <script>
+        async function fetchMetrics() {
+            try {
+                const response = await fetch('/api/v1/data/random/numbers');
+                const data = await response.json();
+                if (data?.data && data.data.length > 0) {
+                    updateChart(data?.data);
+                }
+            } catch (error) {
+                console.error('Error fetching metrics:', error);
+            }
+        }
+
+        function updateChart(dataPoints) {
+            const path = dataPoints.reduce((acc, point, index) => {
+                return acc + `${index * 8},${point} `;
+            }, 'M ');
+
+            document.querySelector('.perf-line').setAttribute('d', path);
+        }
+
+        fetchMetrics();
+        setInterval(fetchMetrics, 1000);
+
+    </script>
+</body>
+
+</html>

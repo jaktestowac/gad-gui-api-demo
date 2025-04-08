@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD | Home Page</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./subpages.css" />
+    <script src="./nav-highlight.js" defer></script>
+    <script src="./components/navigation.js"></script>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <script>createNavigation('home-nav');</script>
+    <div class="mp-content-wrapper" id="home-content" data-testid="home-content">
+        <h1 class="mp-title" id="home-title" data-testid="home-title">Home Page</h1>
+        <div id="clock" class="mp-clock">Loading...</div>
+        <p class="mp-text" id="home-description" data-testid="home-description">This is the home page content.</p>
+        <div class="mp-params-home" id="paramDisplay" data-testid="home-params"></div>
+    </div>
+
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const clock = document.getElementById('clock');
+            clock.textContent = now.toLocaleTimeString();
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        const params = new URLSearchParams(window.location.search);
+        const paramDisplay = document.getElementById('paramDisplay');
+
+        if (params.toString()) {
+            params.forEach((value, key) => {
+                const paramItem = document.createElement('div');
+                paramItem.className = 'mp-param-item-home';
+                paramItem.innerHTML = `
+                    <strong>${key}:</strong>
+                    <span>${value}</span>
+                `;
+                paramDisplay.appendChild(paramItem);
+            });
+        } else {
+            paramDisplay.innerHTML = '<div class="mp-param-item">No parameters received</div>';
+        }
+    </script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>
