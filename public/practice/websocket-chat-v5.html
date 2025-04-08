@@ -620,6 +620,34 @@
             margin-top: 0px;
             margin-bottom: 5px;
             color: #ffffff;
+            transition: height 0.3s ease, padding 0.3s ease;
+            overflow: hidden;
+        }
+
+        .weather-widget.collapsed {
+            height: 40px !important;
+            padding: 10px;
+        }
+
+        .weather-widget.collapsed .weather-chart-container,
+        .weather-widget.collapsed .weather-forecast {
+            display: none;
+        }
+
+        .weather-collapse-button {
+            cursor: pointer;
+            color: #7289da;
+            padding: 2px;
+            transition: transform 0.3s;
+            margin-left: 8px;
+        }
+
+        .weather-collapse-button:hover {
+            color: #5c6fb1;
+        }
+
+        .weather-collapse-button.collapsed {
+            transform: rotate(-180deg);
         }
 
         .weather-header {
@@ -1186,6 +1214,48 @@
             font-weight: 500;
             width: 300px !important;
         }
+
+        .font-size-small {
+            font-size: 0.85rem !important;
+        }
+
+        .font-size-normal {
+            font-size: 1rem !important;
+        }
+
+        .font-size-large {
+            font-size: 1.2rem !important;
+        }
+
+        .font-size-controls {
+            display: flex;
+            gap: 4px;
+            margin-left: 12px;
+            padding: 2px;
+            background: #3f3f3f;
+            border-radius: 4px;
+        }
+
+        .font-size-button {
+            padding: 2px 8px;
+            border: none;
+            background: none;
+            color: #aaa;
+            cursor: pointer;
+            border-radius: 3px;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .font-size-button:hover {
+            color: #fff;
+            background: #4e67c0;
+        }
+
+        .font-size-button.active {
+            color: #fff;
+            background: #7289da;
+        }
     </style>
 </head>
 
@@ -1305,6 +1375,7 @@
                 <div class="weather-title" data-testid="weather-title">
                     <i class="fas fa-cloud-sun"></i>
                     <span>Weather</span>
+                    <i class="fas fa-chevron-up weather-collapse-button" onclick="toggleWeather()" data-testid="weather-collapse-button"></i>
                 </div>
                 <div class="weather-row" data-testid="weather-row">
                     <div class="weather-info" data-testid="weather-info">
@@ -1398,6 +1469,11 @@
                         <div id="connectionStatus" class="status-dot" data-testid="status-dot"></div>
                         <span id="connectionStatusText" data-testid="status-text">Disconnected</span>
                     </div>
+                    <div class="font-size-controls">
+                        <button class="font-size-button" onclick="changeFontSize('small')" title="Small">A</button>
+                        <button class="font-size-button active" onclick="changeFontSize('normal')" title="Normal">A</button>
+                        <button class="font-size-button" onclick="changeFontSize('large')" title="Large">A</button>
+                    </div>
                     <button id="leaveChatButton" class="leave-chat-btn" onclick="leaveChat()" data-testid="leave-chat-button">
                         <i class="fas fa-sign-out-alt"></i> Leave Chat
                     </button>
@@ -1464,6 +1540,40 @@
         // Authentication state
         let authToken = localStorage.getItem('chatAuthToken');
         let currentUser = null;
+        let currentFontSize = localStorage.getItem('chatFontSize') || 'normal';
+        let isWeatherCollapsed = localStorage.getItem('weatherCollapsed') === 'true';
+
+        function changeFontSize(size) {
+            const messages = document.querySelectorAll('.message-content');
+            const buttons = document.querySelectorAll('.font-size-button');
+
+            messages.forEach(container => {
+                container.classList.remove('font-size-small', 'font-size-normal', 'font-size-large');
+                container.classList.add(`font-size-${size}`);
+            });
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            document.querySelector(`.font-size-button[onclick*="${size}"]`).classList.add('active');
+
+            localStorage.setItem('chatFontSize', size);
+            currentFontSize = size;
+        }
+
+        function toggleWeather() {
+            const weatherWidget = document.getElementById('weatherWidget');
+            const collapseButton = document.querySelector('.weather-collapse-button');
+
+            isWeatherCollapsed = !isWeatherCollapsed;
+            weatherWidget.classList.toggle('collapsed', isWeatherCollapsed);
+            collapseButton.classList.toggle('collapsed', isWeatherCollapsed);
+
+            localStorage.setItem('weatherCollapsed', isWeatherCollapsed);
+
+            if (!isWeatherCollapsed) {
+                // Refresh chart when expanding
+                setTimeout(initializeTemperatureChart, 100);
+            }
+        }
 
         // WebSocket connection
         let socket = null;
@@ -2080,6 +2190,8 @@
                 document.getElementById('leaveChatButton').style.visibility = 'visible';
                 activateConversation('general');
             });
+
+
         }
 
         function leaveChat() {
@@ -2194,7 +2306,7 @@
                         messageElement.setAttribute('data-testid', `message-${conversationId}-${Date.now()}`);
                         messageElement.innerHTML = `
                             <span class="message-time" data-testid="message-time" title="${formatTime(new Date())}">${time}</span>
-                            <span class="${className}" data-testid="message-content">
+                            <span class="${className} font-size-${currentFontSize}" data-testid="message-content">
                                 <span class="message-username" data-testid="message-username">${data.username}:</span>
                                 <span data-testid="message-text">${data.message}</span>
                             </span>
@@ -2317,7 +2429,7 @@
                 conv.innerHTML = `
                     <div id="messages-${conversationId}" class="messages" data-testid="messages-${conversationId}">
                         <div class="scroller" data-testid="scroller-${conversationId}">
-                        <div class="messages-content scroller-content" data-testid="messages-content-${conversationId}"></div>
+                        <div class="messages-content scroller-content font-size-${currentFontSize}" data-testid="messages-content-${conversationId}"></div>
                         </div>
                     </div>
                     <div class="input-container">
@@ -2344,6 +2456,12 @@
                     container: conv,
                     unreadCount: 0
                 });
+
+                // Apply current font size to new conversation
+                const messagesContent = conv.querySelector('.messages-content');
+                if (messagesContent) {
+                    messagesContent.classList.add(`font-size-${currentFontSize}`);
+                }
 
                 // When a new conversation is created, ensure it's scrolled to the bottom
                 const messagesDiv = conv.querySelector('.messages-content');
@@ -2469,6 +2587,16 @@
 
             // Check if user is already authenticated
             checkAuthentication();
+
+            // Apply saved font size preference
+            if (currentFontSize) {
+                changeFontSize(currentFontSize);
+            }
+
+            // Apply saved weather collapse state
+            if (isWeatherCollapsed) {
+                toggleWeather();
+            }
 
             // Add click handler for predefined users
             document.querySelectorAll('.predefined-user-item').forEach(row => {
