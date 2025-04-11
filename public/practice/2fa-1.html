@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD - 2FA Authentication Demo</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/practice-controls.css" />
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <style>
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .tfa-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .tfa-panel-left,
+        .tfa-panel-right {
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 20px;
+        }
+
+        .tfa-form-group {
+            margin-bottom: 15px;
+        }
+
+        .tfa-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .tfa-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .tfa-button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .tfa-button:hover {
+            background-color: #2980b9;
+        }
+
+        .tfa-result {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            border-left: 4px solid #3498db;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+
+        .tfa-error {
+            color: #e74c3c;
+            margin-top: 5px;
+        }
+
+        .tfa-success {
+            color: #2ecc71;
+            margin-top: 5px;
+        }
+
+        .tfa-qr-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .tfa-qr-code {
+            max-width: 200px;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .tfa-hidden {
+            display: none;
+        }
+
+        .tfa-step {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .tfa-step-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #3498db;
+        }
+
+        .tfa-session-info {
+            padding: 15px 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid #e0e4e8;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            display: inline-flex;
+            gap: 40px;
+            font-size: 1em;
+            min-width: 350px;
+        }
+
+        .tfa-session-info div {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tfa-session-info strong {
+            color: #4a5568;
+            white-space: nowrap;
+            font-weight: 600;
+        }
+
+        .tfa-session-info span {
+            color: #2d3748;
+            padding: 4px 12px;
+            background: #f7fafc;
+            border: 1px solid #edf2f7;
+            border-radius: 6px;
+            min-width: 90px;
+            text-align: center;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .tfa-session-info span:hover {
+            background: #edf2f7;
+            border-color: #e2e8f0;
+        }
+
+        .status-logged-in {
+            background: #c6f6d5 !important;
+            border-color: #9ae6b4 !important;
+            color: #276749 !important;
+        }
+
+        .status-logged-out {
+            background: #fed7d7 !important;
+            border-color: #feb2b2 !important;
+            color: #9b2c2c !important;
+        }
+
+        .status-enabled {
+            background: #c6f6d5 !important;
+            border-color: #9ae6b4 !important;
+            color: #276749 !important;
+        }
+
+        .status-disabled {
+            background: #feebc8 !important;
+            border-color: #fbd38d !important;
+            color: #975a16 !important;
+        }
+
+        .status-unknown {
+            background: #e2e8f0 !important;
+            border-color: #cbd5e0 !important;
+            color: #4a5568 !important;
+        }
+
+        .tfa-demo-users {
+            margin: 20px auto;
+            width: auto;
+            min-width: 300px;
+            max-width: 600px;
+            border-collapse: separate;
+            border-spacing: 0;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            border-radius: 6px;
+            overflow: hidden;
+            font-size: 0.95em;
+            border: 1px solid #e9ecef;
+        }
+
+        .tfa-demo-users th,
+        .tfa-demo-users td {
+            padding: 8px 12px;
+            text-align: left;
+            border: none;
+            white-space: nowrap;
+        }
+
+        .tfa-demo-users th {
+            background-color: #f8f9fa;
+            color: #2c3e50;
+            font-weight: 600;
+            border-bottom: 2px solid #e9ecef;
+            font-size: 0.9em;
+        }
+
+        .tfa-demo-users td {
+            border-bottom: 1px solid #f1f4f8;
+        }
+
+        .tfa-demo-users tr:last-child td {
+            border-bottom: none;
+        }
+
+        .tfa-demo-users td:last-child {
+            text-align: center;
+            padding: 4px 12px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <br />
+    <h1>Two-Factor Authentication Demo</h1>
+    <div align="center">
+        <table class="tfa-demo-users">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Password</th>
+                    <th>2FA Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>demo</td>
+                    <td>pass</td>
+                    <td class="tfa-status-enabled">Enabled</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>user3</td>
+                    <td>password789</td>
+                    <td class="tfa-status-disabled">Disabled</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div align="center">
+        <div class="tfa-session-info">
+            <div><strong>User ID:</strong> <span id="userId">Not logged in</span></div>
+            <div><strong>Status:</strong> <span id="userStatus">Not logged in</span></div>
+            <div><strong>2FA Status:</strong> <span id="twoFAStatus">Unknown</span></div>
+        </div>
+    </div>
+
+    <div class="tfa-container">
+        <div class="tfa-panel-left">
+            <div class="tfa-step">
+                <div class="tfa-step-title">Step 1: Register a New User</div>
+                <div class="tfa-form-group">
+                    <label class="tfa-label" for="reg-username">Username:</label>
+                    <input class="tfa-input" type="text" id="reg-username" placeholder="Enter username">
+                </div>
+                <div class="tfa-form-group">
+                    <label class="tfa-label" for="reg-password">Password:</label>
+                    <input class="tfa-input" type="password" id="reg-password" placeholder="Enter password">
+                </div>
+                <div class="tfa-form-group">
+                    <label class="tfa-label" for="reg-email">Email:</label>
+                    <input class="tfa-input" type="email" id="reg-email" placeholder="Enter email">
+                </div>
+                <button class="tfa-button" id="register-btn">Register</button>
+                <div id="register-result" class="tfa-result tfa-hidden"></div>
+            </div>
+
+            <div class="tfa-step">
+                <div class="tfa-step-title">Step 2: Login</div>
+                <div class="tfa-form-group">
+                    <label class="tfa-label" for="login-username">Username:</label>
+                    <input class="tfa-input" type="text" id="login-username" placeholder="Enter username">
+                </div>
+                <div class="tfa-form-group">
+                    <label class="tfa-label" for="login-password">Password:</label>
+                    <input class="tfa-input" type="password" id="login-password" placeholder="Enter password">
+                </div>
+                <div id="token-container" class="tfa-form-group tfa-hidden">
+                    <label class="tfa-label" for="token">2FA Code:</label>
+                    <input class="tfa-input" type="text" id="token" placeholder="Enter 6-digit code">
+                </div>
+                <button class="tfa-button" id="login-btn">Login</button>
+                <div id="login-result" class="tfa-result tfa-hidden"></div>
+            </div>
+        </div>
+
+        <div class="tfa-panel-right">
+            <div class="tfa-step">
+                <div class="tfa-step-title">Step 3: Enable 2FA</div>
+                <p>Click the button below to enable 2FA for your account. You must be logged in first.</p>
+                <button class="tfa-button" id="enable-2fa-btn">Enable 2FA</button>
+                <div id="qr-container" class="tfa-qr-container tfa-hidden">
+                    <p>Scan this QR code with your authenticator app (like Google Authenticator or Authy):</p>
+                    <img id="qr-code" class="tfa-qr-code" src="" alt="QR Code">
+                    <p>Or enter this code manually:</p>
+                    <div id="secret-key" class="tfa-result"></div>
+                </div>
+                <div id="enable-2fa-result" class="tfa-result tfa-hidden"></div>
+            </div>
+
+            <div class="tfa-step">
+                <div class="tfa-step-title">Step 4: Verify and Activate 2FA</div>
+                <p>Enter the code from your authenticator app to activate 2FA:</p>
+                <div class="tfa-form-group">
+                    <label class="tfa-label" for="verify-token">Verification Code:</label>
+                    <input class="tfa-input" type="text" id="verify-token" placeholder="Enter 6-digit code">
+                </div>
+                <button class="tfa-button" id="verify-2fa-btn">Verify & Activate 2FA</button>
+                <div id="verify-result" class="tfa-result tfa-hidden"></div>
+            </div>
+
+            <div class="tfa-step">
+                <div class="tfa-step-title">Additional Actions</div>
+                <div class="tfa-action-buttons">
+                    <button class="tfa-button" id="logout-btn">Logout</button>
+                    <button class="tfa-button" id="clear-btn">Clear All</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API endpoints
+        const API_BASE = '/api/practice/v1/2fa';
+        const REGISTER_ENDPOINT = `${API_BASE}/register`;
+        const LOGIN_ENDPOINT = `${API_BASE}/login`;
+        const ENABLE_2FA_ENDPOINT = `${API_BASE}/enable-2fa`;
+        const VERIFY_2FA_ENDPOINT = `${API_BASE}/verify-2fa`;
+        const LOGOUT_ENDPOINT = `${API_BASE}/logout`;
+
+        // State management
+        let currentState = {
+            userId: null,
+            username: null,
+            twoFAEnabled: false,
+            secret: null,
+            qrCode: null
+        };
+
+        // DOM Elements
+        const userIdElement = document.getElementById('userId');
+        const userStatusElement = document.getElementById('userStatus');
+        const twoFAStatusElement = document.getElementById('twoFAStatus');
+
+        const tokenInput = document.getElementById('token')
+
+        if (tokenInput) {
+            // clear token input after page refresh
+            tokenInput.value = ''
+        }
+
+        // Helper for API calls
+        async function apiCall(url, method, data = null) {
+            try {
+                const options = {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                };
+
+                if (data) {
+                    options.body = JSON.stringify(data);
+                }
+
+                const response = await fetch(url, options);
+                return await response.json();
+            } catch (error) {
+                console.error('API Error:', error);
+                return { success: false, message: 'API call failed: ' + error.message };
+            }
+        }
+
+        // Update the UI based on the current state
+        function updateUI() {
+            userIdElement.textContent = currentState.userId ? currentState.userId : 'Not logged in';
+            userStatusElement.textContent = currentState.userId ? 'Logged in' : 'Not logged in';
+
+            if (currentState.userId) {
+                twoFAStatusElement.textContent = currentState.twoFAEnabled ? 'Enabled' : 'Disabled';
+            } else {
+                twoFAStatusElement.textContent = "Unknown"
+            }
+
+            // Apply status-specific classes
+            userStatusElement.className = currentState.userId ? 'status-logged-in' : 'status-logged-out';
+            twoFAStatusElement.className = currentState.userId
+                ? (currentState.twoFAEnabled ? 'status-enabled' : 'status-disabled')
+                : 'status-unknown';
+
+            // Show/hide token field based on 2FA status
+            const tokenContainer = document.getElementById('token-container');
+            if (currentState.twoFAEnabled) {
+                tokenContainer.classList.remove('tfa-hidden');
+            } else {
+                tokenContainer.classList.add('tfa-hidden');
+            }
+        }
+
+        // Register a new user
+        document.getElementById('register-btn').addEventListener('click', async () => {
+            const username = document.getElementById('reg-username').value;
+            const password = document.getElementById('reg-password').value;
+            const email = document.getElementById('reg-email').value;
+
+            if (!username || !password || !email) {
+                showResult('register-result', 'All fields are required', 'error');
+                return;
+            }
+
+            const result = await apiCall(REGISTER_ENDPOINT, 'POST', { username, password, email });
+
+            if (result.success) {
+                showResult('register-result', `Registration successful! User ID: ${result.userId}`, 'success');
+                // Auto-fill login form with the registered credentials
+                document.getElementById('login-username').value = username;
+                document.getElementById('login-password').value = password;
+            } else {
+                showResult('register-result', `Registration failed: ${result.message}`, 'error');
+            }
+        });
+
+        // Login
+        document.getElementById('login-btn').addEventListener('click', async () => {
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+            const token = document.getElementById('token').value;
+
+            if (!username || !password) {
+                showResult('login-result', 'Username and password are required', 'error');
+                return;
+            }
+
+            const loginData = { username, password };
+            if (token) {
+                loginData.token = token;
+            }
+
+            const result = await apiCall(LOGIN_ENDPOINT, 'POST', loginData);
+
+            if (result.success) {
+                if (result.requireTwoFA && result.userId === undefined) {
+                    showResult('login-result', 'Please enter your 2FA token to continue', 'success');
+                    document.getElementById('token-container').classList.remove('tfa-hidden');
+                    return;
+                }
+
+                currentState.userId = result.userId;
+                currentState.username = username;
+                showResult('login-result', `Login successful! Welcome, ${username}`, 'success');
+                updateUI();
+
+                // Check if 2FA is enabled for the user
+                const userTwoFAStatus = result.twoFAEnabled || false;
+                currentState.twoFAEnabled = userTwoFAStatus;
+                updateUI();
+            } else {
+                showResult('login-result', `Login failed: ${result.message}`, 'error');
+            }
+        });
+
+        // Enable 2FA
+        document.getElementById('enable-2fa-btn').addEventListener('click', async () => {
+            if (!currentState.userId) {
+                showResult('enable-2fa-result', 'You must be logged in to enable 2FA', 'error');
+                return;
+            }
+
+            const result = await apiCall(ENABLE_2FA_ENDPOINT, 'POST', { userId: currentState.userId });
+
+            if (result.success) {
+                currentState.secret = result.secret;
+                currentState.qrCode = result.qrCode;
+
+                // Show QR code
+                const qrContainer = document.getElementById('qr-container');
+                const qrCode = document.getElementById('qr-code');
+                const secretKey = document.getElementById('secret-key');
+
+                qrCode.src = result.qrCode;
+                secretKey.textContent = result.secret;
+                qrContainer.classList.remove('tfa-hidden');
+
+                showResult('enable-2fa-result', 'Scan the QR code with your authenticator app, then verify with a code to activate 2FA', 'success');
+            } else {
+                showResult('enable-2fa-result', `Failed to enable 2FA: ${result.message}`, 'error');
+            }
+        });
+
+        // Verify and activate 2FA
+        document.getElementById('verify-2fa-btn').addEventListener('click', async () => {
+            if (!currentState.userId) {
+                showResult('verify-result', 'You must be logged in to verify 2FA', 'error');
+                return;
+            }
+
+            const token = document.getElementById('verify-token').value;
+
+            if (!token) {
+                showResult('verify-result', 'Please enter the verification code from your authenticator app', 'error');
+                return;
+            }
+
+            const result = await apiCall(VERIFY_2FA_ENDPOINT, 'POST', {
+                userId: currentState.userId,
+                token
+            });
+
+            if (result.success) {
+                currentState.twoFAEnabled = true;
+                updateUI();
+                showResult('verify-result', '2FA has been successfully enabled for your account!', 'success');
+            } else {
+                showResult('verify-result', `Failed to verify 2FA: ${result.message}`, 'error');
+            }
+        });
+
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            if (!currentState.userId) {
+                return;
+            }
+
+            await apiCall(LOGOUT_ENDPOINT, 'POST', { userId: currentState.userId });
+
+            // Reset state
+            currentState = {
+                userId: null,
+                username: null,
+                twoFAEnabled: false,
+                secret: null,
+                qrCode: null
+            };
+
+            // Reset UI
+            updateUI();
+            document.getElementById('token-container').classList.add('tfa-hidden');
+            document.getElementById('qr-container').classList.add('tfa-hidden');
+
+            // Clear results
+            hideElement('register-result');
+            hideElement('login-result');
+            hideElement('enable-2fa-result');
+            hideElement('verify-result');
+
+            alert('Logged out successfully!');
+        });
+
+        // Clear all fields and reset the UI
+        document.getElementById('clear-btn').addEventListener('click', () => {
+            // Clear all input fields
+            const inputs = document.querySelectorAll('input');
+            inputs.forEach(input => input.value = '');
+
+            // Hide all result containers
+            hideElement('register-result');
+            hideElement('login-result');
+            hideElement('enable-2fa-result');
+            hideElement('verify-result');
+            hideElement('qr-container');
+
+            // Reset state only if not logged in
+            if (!currentState.userId) {
+                currentState = {
+                    userId: null,
+                    username: null,
+                    twoFAEnabled: false,
+                    secret: null,
+                    qrCode: null
+                };
+                updateUI();
+            }
+        });
+
+        // Helper to show result messages
+        function showResult(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `tfa-result ${type === 'error' ? 'tfa-error' : 'tfa-success'}`;
+            element.classList.remove('tfa-hidden');
+        }
+
+        // Helper to hide an element
+        function hideElement(elementId) {
+            const element = document.getElementById(elementId);
+            element.classList.add('tfa-hidden');
+        }
+
+        // Initialize UI
+        updateUI();
+
+        // Color the 2FA status cells
+        document.querySelectorAll('.tfa-demo-users td:last-child').forEach(cell => {
+            if (cell.textContent === 'Enabled') {
+                cell.style.color = '#2ecc71';
+            } else if (cell.textContent === 'Disabled') {
+                cell.style.color = '#e74c3c';
+            }
+        });
+
+    </script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>
