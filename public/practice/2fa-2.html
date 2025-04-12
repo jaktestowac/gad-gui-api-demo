@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD - 2FA Authentication Demo V2</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/practice-controls.css" />
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --primary-hover: #3a56d4;
+            --secondary-color: #4f5d75;
+            --success-color: #4CAF50;
+            --danger-color: #f72585;
+            --warning-color: #ffaa00;
+            --text-dark: #2b2d42;
+            --text-light: #6c757d;
+            --bg-light: #f8f9fa;
+            --bg-dark: #212529;
+            --border-radius: 6px;
+            --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            --transition: all 0.2s ease;
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-family);
+            color: var(--text-dark);
+            line-height: 1.5;
+            background-color: #f5f7fa;
+            margin: 0;
+        }
+
+        .gad2fa-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .gad2fa-auth-section {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .gad2fa-auth-form {
+            flex: 1;
+            min-width: 250px;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            background-color: white;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 15px;
+        }
+
+        .gad2fa-qr-container {
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .gad2fa-qr-image {
+            max-width: 180px;
+            border: 1px solid #eee;
+            padding: 8px;
+            background-color: white;
+            border-radius: var(--border-radius);
+        }
+
+        .gad2fa-hidden {
+            display: none;
+        }
+
+        #gad2fa-user-section {
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: white;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        /* User header styling */
+        .gad2fa-user-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 12px;
+        }
+
+        .gad2fa-avatar {
+            background: var(--primary-color);
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            color: white;
+            font-size: 16px;
+            box-shadow: 0 1px 3px rgba(67, 97, 238, 0.3);
+        }
+
+        /* User info styling */
+        .gad2fa-user-info {
+            background-color: var(--bg-light);
+            border-radius: var(--border-radius);
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .gad2fa-info-group {
+            display: flex;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .gad2fa-info-group:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .gad2fa-info-label {
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .gad2fa-info-label i {
+            margin-right: 6px;
+            color: var(--primary-color);
+        }
+
+        .gad2fa-info-value {
+            flex: 2;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Status indicator */
+        .gad2fa-status-indicator {
+            margin-left: 8px;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .gad2fa-indicator-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--danger-color);
+            transition: var(--transition);
+        }
+
+        .text-success+.gad2fa-status-indicator .gad2fa-indicator-dot {
+            background-color: var(--success-color);
+        }
+
+        /* Security meter */
+        .gad2fa-security-meter {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 12px;
+            margin-bottom: 12px;
+            text-align: center;
+            border: 1px solid #eee;
+        }
+
+        .gad2fa-meter-label {
+            font-size: 13px;
+            margin-bottom: 6px;
+            color: var(--text-light);
+        }
+
+        .gad2fa-meter-container {
+            height: 5px;
+            background-color: #eee;
+            border-radius: 3px;
+            margin: 8px 0;
+        }
+
+        .gad2fa-meter-bar {
+            height: 100%;
+            width: 66%;
+            background: var(--warning-color);
+            border-radius: 3px;
+            transition: var(--transition);
+        }
+
+        #gad2fa-security-level {
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--warning-color);
+        }
+
+        /* Warning box */
+        .gad2fa-warning-box {
+            display: flex;
+            align-items: center;
+            background-color: #fff8e5;
+            border-radius: var(--border-radius);
+            padding: 8px 10px;
+            margin-bottom: 12px;
+        }
+
+        .gad2fa-warning-box i {
+            color: var(--warning-color);
+            font-size: 16px;
+            margin-right: 8px;
+        }
+
+        .gad2fa-warning-text {
+            color: var(--text-dark);
+            font-size: 13px;
+        }
+
+        /* Token input styling */
+        .gad2fa-token-input {
+            position: relative;
+        }
+
+        .gad2fa-token-input i {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+
+        .gad2fa-token-input input {
+            padding-left: 30px;
+            letter-spacing: 2px;
+        }
+
+        /* Action buttons */
+        .gad2fa-user-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+
+        .gad2fa-btn-secondary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .gad2fa-btn-secondary:hover {
+            background-color: #404b5e;
+        }
+
+        /* Settings panel */
+        #gad2fa-settings-panel {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 12px;
+            margin-top: 12px;
+            box-shadow: var(--box-shadow);
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .gad2fa-settings-group {
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .gad2fa-settings-group:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .gad2fa-settings-group h5 {
+            font-size: 15px;
+            margin-top: 0;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .gad2fa-settings-group h5 i {
+            margin-right: 8px;
+            color: var(--primary-color);
+        }
+
+        /* Session timer */
+        .gad2fa-timer-container {
+            margin: 10px 0;
+        }
+
+        .gad2fa-timer {
+            height: 4px;
+            background-color: #eee;
+            border-radius: 3px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 5px;
+        }
+
+        .gad2fa-timer-progress {
+            height: 100%;
+            width: 100%;
+            background: var(--success-color);
+            border-radius: 3px;
+            transition: width 1s linear;
+        }
+
+        .gad2fa-timer-text {
+            font-size: 11px;
+            color: var(--text-light);
+            text-align: center;
+        }
+
+        .gad2fa-info-text {
+            color: var(--text-light);
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .gad2fa-alert {
+            padding: 8px 12px;
+            margin: 12px 0;
+            border-radius: var(--border-radius);
+            font-size: 13px;
+        }
+
+        .gad2fa-alert-success {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: #2e7d32;
+            border-left: 3px solid var(--success-color);
+        }
+
+        .gad2fa-alert-danger {
+            background-color: rgba(247, 37, 133, 0.1);
+            color: #c9184a;
+            border-left: 3px solid var(--danger-color);
+        }
+
+        .gad2fa-alert-info {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: #364fc7;
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .gad2fa-alert-warning {
+            background-color: rgba(255, 170, 0, 0.1);
+            color: #cc8a00;
+            border-left: 3px solid var(--warning-color);
+        }
+
+        h1 {
+            font-size: 22px;
+            margin: 15px 0;
+            color: var(--text-dark);
+        }
+
+        h3 {
+            font-size: 16px;
+            margin: 0 0 12px 0;
+            color: var(--text-dark);
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="email"] {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            box-sizing: border-box;
+            font-size: 13px;
+            transition: var(--transition);
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        input[type="email"]:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.15);
+        }
+
+        button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 13px;
+            transition: var(--transition);
+        }
+
+        .gad2fa-btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .gad2fa-btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .gad2fa-btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .gad2fa-btn-success:hover {
+            background-color: #43a047;
+        }
+
+        .gad2fa-btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .gad2fa-btn-danger:hover {
+            background-color: #e01e79;
+        }
+
+        .text-success {
+            color: var(--success-color);
+        }
+
+        .text-warning {
+            color: var(--warning-color);
+        }
+
+        .margin-bottom {
+            margin-bottom: 12px;
+        }
+
+        .margin-left {
+            margin-left: 8px;
+        }
+
+        /* Test Users Table */
+        .gad2fa-test-users {
+            margin-bottom: 15px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 15px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .gad2fa-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .gad2fa-table th,
+        .gad2fa-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .gad2fa-table th {
+            font-weight: 600;
+            color: var(--text-dark);
+            background-color: var(--bg-light);
+        }
+
+        .gad2fa-table tbody tr:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+
+        .gad2fa-badge {
+            display: inline-block;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .gad2fa-badge-success {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: var(--success-color);
+        }
+
+        .gad2fa-badge-warning {
+            background-color: rgba(255, 170, 0, 0.1);
+            color: var(--warning-color);
+        }
+
+        /* Session info styling */
+        .gad2fa-session-info {
+            margin-top: 12px;
+            padding: 10px;
+            background-color: rgba(67, 97, 238, 0.05);
+            border-radius: var(--border-radius);
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .gad2fa-session-info p {
+            margin: 5px 0;
+            font-size: 12px;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+        }
+
+        .gad2fa-session-info i {
+            margin-right: 6px;
+            color: var(--primary-color);
+            width: 16px;
+            text-align: center;
+        }
+
+        .gad2fa-session-info strong {
+            color: var(--primary-color);
+            margin-left: 3px;
+        }
+
+        /* Test Scenarios Styling */
+        .gad2fa-test-scenarios {
+            margin-top: 12px;
+            border-top: 1px solid #eee;
+            padding-top: 12px;
+        }
+
+        .gad2fa-test-scenarios h4 {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 0 0 8px 0;
+            cursor: pointer;
+            font-size: 15px;
+            color: var(--text-dark);
+        }
+
+        .gad2fa-test-scenarios h4 i {
+            margin-right: 6px;
+            color: var(--primary-color);
+        }
+
+        .gad2fa-btn-compact {
+            padding: 3px 6px;
+            background-color: transparent;
+            color: var(--text-light);
+            border: 1px solid #ddd;
+        }
+
+        .gad2fa-btn-compact:hover {
+            background-color: var(--bg-light);
+        }
+
+        .gad2fa-scenario {
+            background-color: var(--bg-light);
+            border-radius: var(--border-radius);
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+
+        .gad2fa-scenario h5 {
+            margin: 0;
+            padding: 8px 12px;
+            background-color: rgba(67, 97, 238, 0.05);
+            font-size: 13px;
+            border-bottom: 1px solid #eee;
+            color: var(--primary-color);
+        }
+
+        .gad2fa-code {
+            display: block;
+            padding: 10px;
+            margin: 0;
+            background-color: #f8f9fa;
+            font-family: monospace;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #333;
+            overflow-x: auto;
+            white-space: pre;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+        }
+
+        @media (max-width: 768px) {
+            .gad2fa-auth-section {
+                flex-direction: column;
+            }
+
+            .gad2fa-user-actions {
+                justify-content: center;
+            }
+
+            .gad2fa-info-group {
+                flex-direction: column;
+            }
+
+            .gad2fa-info-label {
+                margin-bottom: 4px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <div class="gad2fa-container">
+        <h1 class="margin-bottom">Two-Factor Authentication Demo v2</h1>
+
+        <div id="gad2fa-user-section" class="gad2fa-hidden">
+            <div class="gad2fa-user-header">
+                <div class="gad2fa-avatar">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <h3>User Information</h3>
+            </div>
+
+            <div class="gad2fa-user-info">
+                <div class="gad2fa-info-group">
+                    <div class="gad2fa-info-label">
+                        <i class="fas fa-user"></i>
+                        <strong>Username: </strong>
+                    </div>
+                    <div class="gad2fa-info-value">
+                        <span id="gad2fa-username"></span>
+                    </div>
+                </div>
+
+                <div class="gad2fa-info-group">
+                    <div class="gad2fa-info-label">
+                        <i class="fas fa-shield-alt"></i>
+                        <strong>2FA Status: </strong>
+                    </div>
+                    <div class="gad2fa-info-value">
+                        <span id="gad2fa-status"></span>
+                        <div class="gad2fa-status-indicator">
+                            <div class="gad2fa-indicator-dot"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gad2fa-info-group">
+                    <div class="gad2fa-info-label">
+                        <i class="fas fa-clock"></i>
+                        <strong>Last Login: </strong>
+                    </div>
+                    <div class="gad2fa-info-value">
+                        <span id="gad2fa-last-login">Just Now</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gad2fa-security-meter">
+                <div class="gad2fa-meter-label">Security Level</div>
+                <div class="gad2fa-meter-container">
+                    <div id="gad2fa-meter" class="gad2fa-meter-bar"></div>
+                </div>
+                <div id="gad2fa-security-level">Medium</div>
+            </div>
+
+            <div id="gad2fa-disable-section" class="gad2fa-hidden margin-bottom">
+                <h4><i class="fas fa-unlock"></i> Disable Two-Factor Authentication</h4>
+                <div class="gad2fa-warning-box">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div class="gad2fa-warning-text">
+                        <strong>Warning:</strong> Disabling 2FA will reduce your account security. Only proceed if necessary.
+                    </div>
+                </div>
+                <form id="gad2fa-disable-form">
+                    <div class="form-group">
+                        <label for="gad2fa-disable-token">Enter your 2FA token to confirm disabling:</label>
+                        <div class="gad2fa-token-input">
+                            <i class="fas fa-key"></i>
+                            <input type="text" id="gad2fa-disable-token" placeholder="6-digit code" required maxlength="6">
+                        </div>
+                    </div>
+                    <button type="submit" class="gad2fa-btn-danger">
+                        <i class="fas fa-power-off"></i> Disable 2FA
+                    </button>
+                </form>
+            </div>
+
+            <div class="gad2fa-user-actions">
+                <button id="gad2fa-refresh-btn" class="gad2fa-btn-secondary">
+                    <i class="fas fa-sync"></i> Refresh Status
+                </button>
+                <button id="gad2fa-logout-btn" class="gad2fa-btn-danger">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+
+        <div id="gad2fa-auth-forms" class="gad2fa-auth-section">
+            <!-- Registration Form -->
+            <div class="gad2fa-auth-form">
+                <h3>Register</h3>
+                <form id="gad2fa-register-form">
+                    <div class="form-group">
+                        <label for="gad2fa-reg-username">Username</label>
+                        <input type="text" id="gad2fa-reg-username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="gad2fa-reg-password">Password</label>
+                        <input type="password" id="gad2fa-reg-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="gad2fa-reg-email">Email</label>
+                        <input type="email" id="gad2fa-reg-email" required>
+                    </div>
+                    <button type="submit" class="gad2fa-btn-primary">Register</button>
+                </form>
+            </div>
+
+            <!-- Login Form -->
+            <div class="gad2fa-auth-form">
+                <h3>Login</h3>
+                <form id="gad2fa-login-form">
+                    <div class="form-group">
+                        <label for="gad2fa-login-username">Username</label>
+                        <input type="text" id="gad2fa-login-username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="gad2fa-login-password">Password</label>
+                        <input type="password" id="gad2fa-login-password" required>
+                    </div>
+                    <div id="gad2fa-token-container" class="form-group gad2fa-hidden">
+                        <label for="gad2fa-login-token">2FA Token</label>
+                        <input type="text" id="gad2fa-login-token" placeholder="6-digit code">
+                    </div>
+                    <button type="submit" class="gad2fa-btn-success">Login</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 2FA Setup -->
+        <div id="gad2fa-setup-section" class="gad2fa-hidden">
+            <h3>Enable Two-Factor Authentication</h3>
+            <p>Scan the QR code with an authenticator app like Google Authenticator or Authy:</p>
+            <div class="gad2fa-qr-container">
+                <img id="gad2fa-qr-image" class="gad2fa-qr-image" src="" alt="QR Code">
+            </div>
+            <p>Or enter this secret key manually into your authenticator app:</p>
+            <div class="form-group">
+                <input type="text" id="gad2fa-secret-key" readonly>
+            </div>
+            <form id="gad2fa-verify-form">
+                <div class="form-group">
+                    <label for="gad2fa-verify-token">Enter the 6-digit code from your authenticator app</label>
+                    <input type="text" id="gad2fa-verify-token" required>
+                </div>
+                <button type="submit" class="gad2fa-btn-primary">Verify and Enable 2FA</button>
+            </form>
+        </div>
+
+        <!-- Test Users Table -->
+        <div class="gad2fa-test-users">
+            <h3>Test Users</h3>
+            <table class="gad2fa-table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Password</th>
+                        <th>2FA Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>user1</td>
+                        <td>test</td>
+                        <td><span class="gad2fa-badge gad2fa-badge-success">Enabled</span></td>
+                    </tr>
+                    <tr>
+                        <td>user2</td>
+                        <td>1234</td>
+                        <td><span class="gad2fa-badge gad2fa-badge-warning">Disabled</span></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="gad2fa-session-info">
+                <p><i class="fas fa-info-circle"></i> Default session duration: <strong>2 minutes</strong></p>
+            </div>
+
+            <!-- Test Scenarios Section -->
+            <div class="gad2fa-test-scenarios">
+                <h4><i class="fas fa-vial"></i> Test Scenarios <button id="toggle-scenarios" class="gad2fa-btn-compact"><i class="fas fa-chevron-down"></i></button></h4>
+                <div id="scenario-content" class="gad2fa-hidden">
+                    <div class="gad2fa-scenario">
+                        <h5>Scenario 1: Register, login, and enable 2FA</h5>
+                        <pre class="gad2fa-code">
+1. Register a new account:
+   - Enter a unique username
+   - Enter a secure password
+   - Enter a valid email
+   - Click "Register"
+   - Confirm the success message
+
+2. Login to the account:
+   - Enter the username you registered
+   - Enter the password
+   - Click "Login"
+   - Verify you are logged in
+
+3. Enable 2FA:
+   - Click the "Enable 2FA" button next to your 2FA status
+   - Scan the QR code with an authenticator app
+   - Enter the 6-digit code from the app
+   - Click "Verify and Enable 2FA"
+   - Verify 2FA status changed to "Enabled"
+   - Verify security level changed to "High"
+
+4. Logout and login again:
+   - Click "Logout" 
+   - Login with your username and password
+   - Observe that you're prompted for 2FA token
+   - Enter the 6-digit code from your authenticator app
+   - Verify successful login</pre>
+                    </div>
+
+                    <div class="gad2fa-scenario">
+                        <h5>Scenario 2: Test 2FA security bypass attempts</h5>
+                        <pre class="gad2fa-code">
+1. Attempt to bypass with empty token:
+   - Login with username "user1" and password "test"
+   - Leave the 2FA token field empty
+   - Click "Login"
+   - Verify login is rejected
+   
+2. Attempt to bypass with incorrect token:
+   - Login with username "user1" and password "test"
+   - Enter an invalid 2FA token (e.g., "000000")
+   - Click "Login"
+   - Verify login is rejected
+   
+3. Test session management:
+   - Login successfully with username "user1", password "test", and valid 2FA token
+   - Wait for 2 minutes (session duration)
+   - Refresh the page
+   - Verify you are logged out automatically
+   
+4. Test disable 2FA:
+   - Login successfully with proper credentials
+   - Click "Disable 2FA" under user section
+   - Try submitting without a token
+   - Verify it requires a valid token
+   - Enter a valid token and submit
+   - Verify 2FA is disabled and security level drops</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="gad2fa-message-area"></div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentUserId = null;
+        let isTwoFAEnabled = false;
+
+        // DOM Elements
+        const registerForm = document.getElementById('gad2fa-register-form');
+        const loginForm = document.getElementById('gad2fa-login-form');
+        const verify2FAForm = document.getElementById('gad2fa-verify-form');
+        const twoFATokenContainer = document.getElementById('gad2fa-token-container');
+        const twoFASetupSection = document.getElementById('gad2fa-setup-section');
+        const userSection = document.getElementById('gad2fa-user-section');
+        const authForms = document.getElementById('gad2fa-auth-forms');
+        const logoutBtn = document.getElementById('gad2fa-logout-btn');
+        const userUsername = document.getElementById('gad2fa-username');
+        const user2FAStatus = document.getElementById('gad2fa-status');
+        const messageArea = document.getElementById('gad2fa-message-area');
+
+        // API endpoints
+        const API_BASE = '/api/practice/v2/2fa';
+
+        // Check if user is logged in
+        async function checkAuth() {
+            try {
+                const response = await fetch(`${API_BASE}/check`);
+                const data = await response.json();
+
+                if (data.success && data.authenticated) {
+                    // User is logged in
+                    showLoggedInUser(data.user);
+                    currentUserId = data.user.id;
+                    isTwoFAEnabled = data.user.twoFAEnabled;
+                } else {
+                    // User is not logged in
+                    showAuthForms();
+                }
+            } catch (error) {
+                console.error('Error checking authentication:', error);
+                showMessage('Error checking authentication', 'danger');
+                showAuthForms();
+            }
+        }
+
+        // Register user
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const username = document.getElementById('gad2fa-reg-username').value;
+            const password = document.getElementById('gad2fa-reg-password').value;
+            const email = document.getElementById('gad2fa-reg-email').value;
+
+            try {
+                const response = await fetch(`${API_BASE}/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password, email })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage(`Registration successful! You can now log in.`, 'success');
+                    registerForm.reset();
+                } else {
+                    showMessage(`Registration failed: ${data.message}`, 'danger');
+                }
+            } catch (error) {
+                console.error('Error registering user:', error);
+                showMessage('Error registering user', 'danger');
+            }
+        });
+
+        // Login user
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const username = document.getElementById('gad2fa-login-username').value;
+            const password = document.getElementById('gad2fa-login-password').value;
+            const token = document.getElementById('gad2fa-login-token').value;
+
+            try {
+                const response = await fetch(`${API_BASE}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password, token })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    if (data.requireTwoFA && !token) {
+                        // Show 2FA token input field
+                        twoFATokenContainer.classList.remove('gad2fa-hidden');
+                        showMessage('Please enter your 2FA token to complete login', 'info');
+                        return;
+                    }
+
+                    // Login successful
+                    currentUserId = data.userId;
+                    isTwoFAEnabled = data.twoFAEnabled;
+
+                    // Check auth to get full user details
+                    await checkAuth();
+
+                    showMessage('Login successful!', 'success');
+                    loginForm.reset();
+                } else {
+                    showMessage(`Login failed: ${data.message}`, 'danger');
+                }
+            } catch (error) {
+                console.error('Error logging in:', error);
+                showMessage('Error logging in', 'danger');
+            }
+        });
+
+        // Enable 2FA
+        document.addEventListener('click', async (e) => {
+            if (e.target && e.target.id === 'gad2fa-enable-btn') {
+                try {
+                    const response = await fetch(`${API_BASE}/enable-2fa`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        // Show QR code and secret
+                        document.getElementById('gad2fa-qr-image').src = data.qrCode;
+                        document.getElementById('gad2fa-secret-key').value = data.secret;
+                        twoFASetupSection.classList.remove('gad2fa-hidden');
+                        showMessage('Scan the QR code with your authenticator app', 'info');
+                    } else {
+                        showMessage(`Failed to enable 2FA: ${data.message}`, 'danger');
+                    }
+                } catch (error) {
+                    console.error('Error enabling 2FA:', error);
+                    showMessage('Error enabling 2FA', 'danger');
+                }
+            }
+        });
+
+        // Verify and enable 2FA
+        verify2FAForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const token = document.getElementById('gad2fa-verify-token').value;
+
+            try {
+                const response = await fetch(`${API_BASE}/verify-2fa`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ token })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    isTwoFAEnabled = true;
+
+                    // Update user display
+                    user2FAStatus.textContent = 'Enabled';
+                    user2FAStatus.classList.add('text-success');
+
+                    // Hide 2FA setup section
+                    twoFASetupSection.classList.add('gad2fa-hidden');
+
+                    showMessage('Two-Factor Authentication enabled successfully!', 'success');
+                    verify2FAForm.reset();
+                } else {
+                    showMessage(`Failed to verify 2FA: ${data.message}`, 'danger');
+                }
+            } catch (error) {
+                console.error('Error verifying 2FA:', error);
+                showMessage('Error verifying 2FA', 'danger');
+            }
+        });
+
+        // Disable 2FA
+        const disable2FAForm = document.getElementById('gad2fa-disable-form');
+        disable2FAForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const token = document.getElementById('gad2fa-disable-token').value;
+
+            try {
+                const response = await fetch(`${API_BASE}/disable-2fa`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ token })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    isTwoFAEnabled = false;
+
+                    // Update user display
+                    user2FAStatus.textContent = 'Disabled';
+                    user2FAStatus.classList.add('text-warning');
+                    user2FAStatus.classList.remove('text-success');
+
+                    // Hide disable 2FA section
+                    document.getElementById('gad2fa-disable-section').classList.add('gad2fa-hidden');
+
+                    showMessage('Two-Factor Authentication disabled successfully!', 'success');
+                    disable2FAForm.reset();
+                } else {
+                    showMessage(`Failed to disable 2FA: ${data.message}`, 'danger');
+                }
+            } catch (error) {
+                console.error('Error disabling 2FA:', error);
+                showMessage('Error disabling 2FA', 'danger');
+            }
+        });
+
+        // Logout
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                const response = await fetch(`${API_BASE}/logout`, {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentUserId = null;
+                    isTwoFAEnabled = false;
+                    showAuthForms();
+                    showMessage('Logged out successfully', 'success');
+                } else {
+                    showMessage(`Logout failed: ${data.message}`, 'danger');
+                }
+            } catch (error) {
+                console.error('Error logging out:', error);
+                showMessage('Error logging out', 'danger');
+            }
+        });
+
+        // Helper function to show logged in user
+        function showLoggedInUser(user) {
+            userSection.classList.remove('gad2fa-hidden');
+            authForms.classList.add('gad2fa-hidden');
+            twoFASetupSection.classList.add('gad2fa-hidden');
+
+            userUsername.textContent = user.username;
+            if (user.twoFAEnabled) {
+                user2FAStatus.textContent = 'Enabled';
+                user2FAStatus.classList.add('text-success');
+                user2FAStatus.classList.remove('text-warning');
+
+                // Update security meter to high
+                updateSecurityMeter('high');
+
+                // Show disable 2FA section
+                document.getElementById('gad2fa-disable-section').classList.remove('gad2fa-hidden');
+            } else {
+                user2FAStatus.textContent = 'Disabled';
+                user2FAStatus.classList.add('text-warning');
+                user2FAStatus.classList.remove('text-success');
+
+                // Update security meter to medium/low
+                updateSecurityMeter('low');
+
+                // Add button to enable 2FA
+                if (!document.getElementById('gad2fa-enable-btn')) {
+                    const enableBtn = document.createElement('button');
+                    enableBtn.id = 'gad2fa-enable-btn';
+                    enableBtn.className = 'gad2fa-btn-primary margin-left';
+                    enableBtn.innerHTML = '<i class="fas fa-shield-alt"></i> Enable 2FA';
+                    user2FAStatus.parentNode.appendChild(enableBtn);
+                }
+            }
+
+            // Set last login time
+            document.getElementById('gad2fa-last-login').textContent = new Date().toLocaleTimeString();
+        }
+
+        // Function to update security meter
+        function updateSecurityMeter(level) {
+            const meterBar = document.getElementById('gad2fa-meter');
+            const securityLevel = document.getElementById('gad2fa-security-level');
+
+            switch (level) {
+                case 'high':
+                    meterBar.style.width = '100%';
+                    meterBar.style.background = 'linear-gradient(90deg, #2ecc71, #27ae60)';
+                    securityLevel.textContent = 'High';
+                    securityLevel.style.color = '#2ecc71';
+                    break;
+                case 'medium':
+                    meterBar.style.width = '66%';
+                    meterBar.style.background = 'linear-gradient(90deg, #f39c12, #e67e22)';
+                    securityLevel.textContent = 'Medium';
+                    securityLevel.style.color = '#e67e22';
+                    break;
+                case 'low':
+                default:
+                    meterBar.style.width = '33%';
+                    meterBar.style.background = 'linear-gradient(90deg, #e74c3c, #c0392b)';
+                    securityLevel.textContent = 'Low';
+                    securityLevel.style.color = '#e74c3c';
+            }
+        }
+
+        // Refresh button click handler
+        document.getElementById('gad2fa-refresh-btn').addEventListener('click', async function () {
+            // Show spinner in button while refreshing
+            const originalContent = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
+            this.disabled = true;
+
+            // Refresh user data
+            await checkAuth();
+
+            // Restore button
+            setTimeout(() => {
+                this.innerHTML = originalContent;
+                this.disabled = false;
+                showMessage('Status refreshed successfully', 'info');
+            }, 500);
+        });
+
+        // Update last login time format
+        function updateLastLoginTime() {
+            const loginTimeElement = document.getElementById('gad2fa-last-login');
+            const loginTimeText = loginTimeElement.textContent;
+
+            if (loginTimeText === 'Just Now') {
+                return;
+            }
+
+            const loginTime = new Date(loginTimeText);
+            const now = new Date();
+            const diffMinutes = Math.floor((now - loginTime) / (1000 * 60));
+
+            if (diffMinutes < 1) {
+                loginTimeElement.textContent = 'Just Now';
+            } else if (diffMinutes < 60) {
+                loginTimeElement.textContent = `${diffMinutes} minute${diffMinutes > 1 ? 's' : ''} ago`;
+            }
+        }
+
+        // Update last login time periodically
+        setInterval(updateLastLoginTime, 30_000);
+
+        // Helper function to show auth forms
+        function showAuthForms() {
+            userSection.classList.add('gad2fa-hidden');
+            authForms.classList.remove('gad2fa-hidden');
+            twoFASetupSection.classList.add('gad2fa-hidden');
+            twoFATokenContainer.classList.add('gad2fa-hidden');
+        }
+
+        // Helper function to show messages
+        function showMessage(message, type) {
+            messageArea.innerHTML = `<div class="gad2fa-alert gad2fa-alert-${type}">${message}</div>`;
+
+            // Auto-hide message after 5 seconds
+            setTimeout(() => {
+                messageArea.innerHTML = '';
+            }, 5000);
+        }
+
+        // Check authentication on page load
+        window.addEventListener('load', checkAuth);
+
+        // Test scenarios toggle functionality
+        document.getElementById('toggle-scenarios').addEventListener('click', function () {
+            const scenarioContent = document.getElementById('scenario-content');
+            const icon = this.querySelector('i');
+
+            scenarioContent.classList.toggle('gad2fa-hidden');
+
+            if (scenarioContent.classList.contains('gad2fa-hidden')) {
+                icon.className = 'fas fa-chevron-down';
+            } else {
+                icon.className = 'fas fa-chevron-up';
+            }
+        });
+
+        // Make the entire test scenarios header clickable
+        document.querySelector('.gad2fa-test-scenarios h4').addEventListener('click', function (e) {
+            // Ignore clicks on the button itself (it has its own handler)
+            if (e.target.id !== 'toggle-scenarios' && !e.target.closest('#toggle-scenarios')) {
+                document.getElementById('toggle-scenarios').click();
+            }
+        });
+    </script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>

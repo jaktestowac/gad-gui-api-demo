@@ -13,6 +13,7 @@ const { authV1 } = require("./practice/employee-management-system/auth-handlers"
 const { authV2 } = require("./practice/chat-auth-handlers");
 const { verifyToken, hasPermission } = require("./practice/employee-management-system/auth-middleware");
 const twoFactor = require("./practice/2fa-handlers");
+const twoFactorV2 = require("./practice/2fa-handlers-v2");
 
 function isIdValid(id) {
   return id !== undefined && id !== "";
@@ -398,6 +399,31 @@ function handlePractice(req, res) {
           return twoFactor.enableTwoFA(req, res);
         case req.method === "POST" && endpoint === "verify-2fa":
           return twoFactor.verifyTwoFA(req, res);
+        default:
+          return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
+      }
+    }
+
+    if (req.url.includes("/api/practice/v2/2fa")) {
+      const endpoint = req.url.split("/api/practice/v2/2fa/")[1];
+
+      switch (true) {
+        case req.method === "POST" && endpoint === "register":
+          return twoFactorV2.registerUser(req, res);
+        case req.method === "POST" && endpoint === "login":
+          return twoFactorV2.loginUser(req, res);
+        case req.method === "POST" && endpoint === "logout":
+          return twoFactorV2.logout(req, res);
+        case req.method === "POST" && endpoint === "enable-2fa":
+          return twoFactorV2.enableTwoFA(req, res);
+        case req.method === "POST" && endpoint === "verify-2fa":
+          return twoFactorV2.verifyTwoFA(req, res);
+        case req.method === "POST" && endpoint === "disable-2fa":
+          return twoFactorV2.disable2FA(req, res);
+        case req.method === "POST" && endpoint === "extend-session":
+          return twoFactorV2.extendSession(req, res);
+        case req.method === "GET" && endpoint === "check":
+          return twoFactorV2.checkAuth(req, res);
         default:
           return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
       }

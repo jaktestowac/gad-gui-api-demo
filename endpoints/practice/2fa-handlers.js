@@ -142,6 +142,11 @@ async function enableTwoFA(req, res) {
     return res.status(404).json({ success: false, message: "User not found" });
   }
 
+  // Check if user has 2FA data
+  if (USER_2FA_DATA[userId]) {
+    return res.status(400).json({ success: false, message: "2FA already enabled" });
+  }
+
   // Get or generate 2FA data
   if (!USER_2FA_DATA[userId]) {
     const secret = generateSecret();
