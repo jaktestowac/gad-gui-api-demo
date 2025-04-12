@@ -39,7 +39,7 @@ P.S. In addition, the application has some **serious design flaws** - I wonder i
 Features of **🦎 GAD**:
 
 - **GUI** (front-end)
-- **REST API** (back-end)
+- **REST API** and **WebSockets** (back-end)
 - **Two Application Domains**:
   - **Testers Blog**
     - Resources - Articles, Users, Comments, and more
@@ -62,7 +62,7 @@ Features of **🦎 GAD**:
   - **Feature Flags** - Enable or disable features
   - **Bug Flags** - Introduce or remove bugs for testing purposes
 - Different **data presentation** (charts, tables etc.)
-- **Challenging elements for test automation** (iframes, file uploads, drag&drop, likes, labels, surveys, banners, pop-ups, logic on front-end and back-end, dynamic elements, games etc.)
+- **Challenging elements for test automation** (iframes, file uploads, drag&drop, 2 factor authentication, labels, surveys, banners, pop-ups, logic on front-end and back-end, dynamic elements, games etc.)
 - **Admins' Backoffice**: Includes advanced functionalities such as:
   - Database reset
   - SQL playground for experimenting and testing queries
