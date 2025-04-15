@@ -8,8 +8,12 @@ let finalScore = 0;
 const winningBonus = 10;
 const resetBtn = document.getElementById("resetBtn");
 const lastClick = { x: -1, y: -1 };
+let userIsAuthenticated = false;
 
 async function issuePostScoreRequest(score) {
+  // Only send score if user is authenticated
+  if (!userIsAuthenticated) return;
+
   fetch(minesweeperScoreEndpoint, {
     method: "POST",
     body: JSON.stringify({ score }),
@@ -54,9 +58,17 @@ function initializeBoard() {
   placeMines();
   calculateNeighborCounts();
   renderBoard();
+  const cells = document.querySelectorAll(".cell");
+  cells.forEach((cell) => {
+    cell.classList.remove("death-field");
+  });
+
   blockBoard = false;
   const scoreElement = document.getElementById("score");
   scoreElement.textContent = "";
+  revealedCells = 0;
+  lastClick.x = { x: -1, y: -1 };
+  finalScore = 0;
 }
 
 function placeMines() {
@@ -173,14 +185,19 @@ function handleRightClick(row, col, event) {
 
 function endGame(isWinner) {
   finalScore = calculateScore(isWinner);
-  const msg = isWinner
+  let msg = isWinner
     ? `Congratulations! You win with a score of ${finalScore}!`
     : `Game over! You clicked on a mine. Score: ${finalScore}!`;
-  updateScore(msg);
 
-  if (isWinner === true) {
+  // Add message about score submission only for authenticated users
+  if (isWinner && userIsAuthenticated) {
+    msg += " Your score has been submitted!";
     issuePostScoreRequest(finalScore);
+  } else if (isWinner && !userIsAuthenticated) {
+    msg += " Log in to save your scores!";
   }
+
+  updateScore(msg);
   revealAllMines();
   blockBoard = true;
 }
@@ -206,25 +223,27 @@ function startGame() {
   const token = getBearerToken();
   lastClick.x = -1;
   lastClick.y = -1;
+  userIsAuthenticated = token !== undefined;
 
-  if (token === undefined) {
-    resetBtn.style.display = "none";
-  } else {
-    resetBtn.style.display = "block";
-    initializeBoard();
-  }
+  // Always show reset button
+  resetBtn.style.display = "block";
+  initializeBoard();
 }
 
-checkIfAuthenticated(
-  "info-container",
-  () => {
-    resetBtn.addEventListener("click", resetGame);
-    startGame();
-  },
-  () => {
-    resetBtn.style.display = "none";
-    const boardContainer = document.querySelector(".board-container");
-    boardContainer.style.display = "none";
-  },
-  { defaultRedirect: true }
-);
+// Replace the checkIfAuthenticated call with direct initialization
+document.addEventListener("DOMContentLoaded", function () {
+  resetBtn.addEventListener("click", resetGame);
+  startGame();
+
+  // Show authentication info but don't block the game
+  const infoContainer = document.getElementById("info-container");
+  if (!userIsAuthenticated) {
+    const url = new URL(window.location.href);
+    const redirectUrl = url.pathname;
+    infoContainer.innerHTML = `<div class="info-box"><p>Playing as guest. <a href="/login?redirectURL=${encodeURIComponent(
+      redirectUrl
+    )}">Login</a> to save your scores!</p></div>`;
+  } else {
+    infoContainer.innerHTML = "";
+  }
+});
