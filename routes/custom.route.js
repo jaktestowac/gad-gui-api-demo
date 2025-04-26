@@ -25,6 +25,7 @@ const {
   parseUserActivityStats,
   parseUserPublicationStats,
 } = require("../helpers/stats.helpers");
+const schema = require("../public/tools/schema/openapi_rest_demo.json");
 
 const statsRoutes = (req, res, next) => {
   try {
@@ -252,8 +253,10 @@ const queryRoutes = (req, res, next) => {
 const customRoutes = (req, res, next) => {
   try {
     const urlEnds = req.url.replace(/\/\/+/g, "/");
-
-    if (req.method === "GET" && req.url.endsWith("/db")) {
+    if (req.method === "GET" && req.url.endsWith("/schema")) {
+      res.json(schema);
+      req.body = schema;
+    } else if (req.method === "GET" && req.url.endsWith("/db")) {
       const dbData = fullDb();
       res.json(dbData);
       req.body = dbData;
