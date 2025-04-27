@@ -253,7 +253,7 @@ const queryRoutes = (req, res, next) => {
 const customRoutes = (req, res, next) => {
   try {
     const urlEnds = req.url.replace(/\/\/+/g, "/");
-    if (req.method === "GET" && req.url.endsWith("/schema")) {
+    if ((req.method === "GET" && req.url.endsWith("/schema")) || req.url.endsWith("/openapi.json")) {
       res.json(schema);
       req.body = schema;
     } else if (req.method === "GET" && req.url.endsWith("/db")) {
