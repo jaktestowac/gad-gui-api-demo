@@ -162,6 +162,10 @@
     {
       "name": "healthcheck",
       "description": "Healthcheck - check status and health of 🦎GAD"
+    },
+    {
+      "name": "debug",
+      "description": "Debug operations"
     }
   ],
   "paths": {
@@ -214,6 +218,30 @@
           "401": {
             "description": "Unauthorized",
             "content": {}
+          }
+        }
+      }
+    },
+    "/debug/exit": {
+      "get": {
+        "tags": ["debug"],
+        "summary": "Exit the application",
+        "operationId": "exitApplication",
+        "responses": {
+          "200": {
+            "description": "Application exited successfully"
+          }
+        }
+      }
+    },
+    "/debug/restart": {
+      "get": {
+        "tags": ["debug"],
+        "summary": "Restart the application (process manager must be running)",
+        "operationId": "restartApplication",
+        "responses": {
+          "200": {
+            "description": "Application restarted successfully"
           }
         }
       }
@@ -4377,6 +4405,45 @@
         "responses": {
           "200": {
             "description": "Translations received",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/openapi.json": {
+      "get": {
+        "tags": ["other"],
+        "summary": "Get OpenAPI schema",
+        "operationId": "getOpenApiSchema",
+        "responses": {
+          "200": {
+            "description": "OpenAPI schema retrieved",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/schema": {
+      "get": {
+        "tags": ["other"],
+        "summary": "Get OpenAPI schema",
+        "operationId": "getOpenApiSchema2",
+        "responses": {
+          "200": {
+            "description": "OpenAPI schema retrieved",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/restore/list": {
+      "get": {
+        "tags": ["other"],
+        "summary": "Get list of restoreDB endpoints",
+        "operationId": "getRestoreList",
+        "responses": {
+          "200": {
+            "description": "List of restoreDB endpoints",
             "content": {}
           }
         }
