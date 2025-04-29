@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD - Banners and adverts</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/practice-controls.css" />
+    <style>
+        :root {
+            --primary-color: #3a86ff;
+            --secondary-color: #8338ec;
+            --accent-color: #ff006e;
+            --success-color: #38b000;
+            --danger-color: #e71d36;
+            --background-color: #f8f9fa;
+            --text-color: #212529;
+            --light-text: #f8f9fa;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.3;
+            color: var(--text-color);
+            background-color: var(--background-color);
+        }
+
+        .main-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px 8px;
+            min-height: 100vh;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-weight: 600;
+            margin-top: 0.5em;
+            margin-bottom: 0.5em;
+        }
+
+        /* Cookie Banner Styles */
+        .cookie-banner {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 10px 12px;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            transform: translateY(0);
+            transition: var(--transition);
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .cookie-banner.hidden {
+            transform: translateY(100%);
+        }
+
+        .cookie-banner p {
+            margin: 0;
+            padding-right: 10px;
+            flex: 1;
+            line-height: 1.3;
+            font-size: 0.95rem;
+        }
+
+        .cookie-banner .buttons {
+            display: flex;
+            gap: 8px;
+            flex-direction: column;
+            margin-right: 10px;
+        }
+
+        .cookie-banner button {
+            padding: 6px 14px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .accept-btn {
+            background-color: var(--success-color);
+            color: var(--light-text);
+        }
+
+        .accept-btn:hover {
+            background-color: #2b9348;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(56, 176, 0, 0.3);
+        }
+
+        .decline-btn {
+            background-color: transparent;
+            color: var(--text-color);
+            border: 1px solid #ccc;
+        }
+
+        .decline-btn:hover {
+            background-color: #f1f1f1;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Ad Banner Styles */
+        .ad-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .ad-banner {
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center;
+            position: relative;
+            max-width: 500px;
+            width: 95%;
+            box-shadow: var(--shadow);
+            animation: slideUp 0.5s ease;
+        }
+
+        .ad-banner h3 {
+            color: var(--accent-color);
+            font-size: 1.1rem;
+            margin-top: 0;
+        }
+
+        .ad-banner img {
+            width: 180px;
+            height: auto;
+            border-radius: 6px;
+            margin: 6px 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: var(--transition);
+        }
+
+        .ad-banner img:hover {
+            transform: scale(1.01);
+        }
+
+        .close-ad {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            font-size: 15px;
+            cursor: pointer;
+            color: #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .close-ad:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: rotate(90deg);
+        }
+
+        .close-ad.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .timer-overlay {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .ad-banner .action-btn {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 7px 12px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 6px;
+            box-shadow: 0 2px 8px rgba(58, 134, 255, 0.18);
+            font-size: 0.95rem;
+        }
+
+        .ad-banner .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(58, 134, 255, 0.22);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Content styling */
+        p {
+            color: #555;
+            margin-bottom: 0.6rem;
+            font-size: 0.97rem;
+        }
+
+        .content-section {
+            padding: 12px;
+            background: white;
+            border-radius: 7px;
+            margin-bottom: 18px;
+            box-shadow: var(--shadow);
+        }
+
+        .content-section h2 {
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 6px;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        .cookies-menu {
+            position: fixed;
+            top: 60px;
+            right: 10px;
+            z-index: 999;
+            background-color: white;
+            border-radius: 7px;
+            padding: 8px;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .cookies-menu button {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+
+        .cookies-menu button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+        }
+
+        /* New interactive element styles */
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 12px 0;
+        }
+
+        .action-button {
+            padding: 7px 12px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            color: white;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+            font-size: 0.95rem;
+        }
+
+        .action-button.primary {
+            background-color: var(--primary-color);
+        }
+
+        .action-button.secondary {
+            background-color: var(--secondary-color);
+        }
+
+        .action-button.accent {
+            background-color: var(--accent-color);
+        }
+
+        .action-button.danger {
+            background-color: var(--danger-color);
+        }
+
+        .action-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.13);
+        }
+
+        .action-button:active {
+            transform: translateY(1px);
+        }
+
+        .chart-container {
+            width: 100%;
+            margin: 16px 0;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            padding: 10px;
+            background-color: #fff;
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+        }
+
+        .chart-info {
+            margin-top: 8px;
+            padding: 6px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            font-size: 0.88rem;
+        }
+
+        .features-container {
+            margin: 16px 0;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 8px;
+            margin-bottom: 6px;
+            border-radius: 6px;
+            background-color: #f8f9fa;
+            border-left: 3px solid var(--primary-color);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.97rem;
+        }
+
+        .feature-item:hover {
+            transform: translateX(3px);
+            background-color: #f1f3f5;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+        }
+
+        .feature-item.active {
+            background-color: rgba(58, 134, 255, 0.08);
+            box-shadow: 0 1px 4px rgba(58, 134, 255, 0.13);
+        }
+
+        .feature-icon {
+            font-size: 1.1rem;
+            margin-right: 10px;
+        }
+
+        .feature-title {
+            font-weight: 600;
+            margin-right: auto;
+        }
+
+        .feature-details {
+            display: none;
+            padding-top: 6px;
+            padding-left: 24px;
+            color: #666;
+            font-size: 0.88rem;
+        }
+
+        .feature-item.active .feature-details {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .form-container {
+            margin: 16px 0;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .feedback-form {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            font-size: 0.88rem;
+            color: #444;
+        }
+
+        .form-control {
+            padding: 7px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 0.97rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(58, 134, 255, 0.13);
+        }
+
+        .rating-container {
+            display: flex;
+            gap: 3px;
+        }
+
+        .star {
+            font-size: 1.1rem;
+            color: #ddd;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .star:hover,
+        .star.active {
+            color: #ffb703;
+        }
+
+        .submit-btn {
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            padding: 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 6px;
+            transition: var(--transition);
+            align-self: flex-start;
+            font-size: 0.97rem;
+        }
+
+        .submit-btn:hover {
+            background-color: #2b9348;
+            box-shadow: 0 1px 4px rgba(56, 176, 0, 0.18);
+        }
+
+        .feedback-result {
+            margin-top: 8px;
+            padding: 6px;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .feedback-result.success {
+            background-color: rgba(56, 176, 0, 0.08);
+            color: var(--success-color);
+            display: block;
+        }
+
+        .feedback-result.error {
+            background-color: rgba(231, 29, 54, 0.08);
+            color: var(--danger-color);
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+
+    <script>
+        // Cookie utility functions
+        function setCookie(name, value, days) {
+            const expirationDate = new Date();
+            expirationDate.setTime(expirationDate.getTime() + (days * 24 * 60 * 60 * 1000));
+            const cookieString = `${name}=${value}; expires=${expirationDate.toUTCString()}; path=/`;
+            document.cookie = cookieString;
+        }
+
+        function getCookie(name) {
+            const cookieName = name + "=";
+            const decodedCookie = decodeURIComponent(document.cookie);
+            const cookieArray = decodedCookie.split(';');
+
+            for (let i = 0; i < cookieArray.length; i++) {
+                let cookie = cookieArray[i];
+                while (cookie.charAt(0) == ' ') {
+                    cookie = cookie.substring(1);
+                }
+                if (cookie.indexOf(cookieName) == 0) {
+                    return cookie.substring(cookieName.length, cookie.length);
+                }
+            }
+            return "";
+        }
+
+        function deleteCookie(name) {
+            document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+        }
+
+        // Check if user has already made a choice about cookies
+        window.onload = function () {
+            if (getCookie('cookieConsent') === 'accepted') {
+                document.getElementById('cookieBanner').classList.add('hidden');
+            } else if (getCookie('cookieConsent') === 'declined') {
+                document.getElementById('cookieBanner').classList.add('hidden');
+            }
+
+            // Handle ad overlay
+            if (getCookie('adClosed') !== 'true') {
+                startAdTimer();
+            } else {
+                hideAdOverlay();
+            }
+        };
+
+        // Cookie banner functions
+        function acceptCookies() {
+            setCookie('cookieConsent', 'accepted', 30); // Cookie lasts for 30 days
+            document.getElementById('cookieBanner').classList.add('hidden');
+            console.log('Cookies accepted');
+            checkAndSetTempCookie();
+        }
+
+        function declineCookies() {
+            setCookie('cookieConsent', 'declined', 30); // Cookie lasts for 30 days
+            document.getElementById('cookieBanner').classList.add('hidden');
+            console.log('Cookies declined');
+        }
+
+        // Ad banner functions
+        function startAdTimer() {
+            let timeLeft = 5;
+            const timerElement = document.getElementById('timer');
+            const timerInterval = setInterval(() => {
+                timeLeft--;
+                timerElement.textContent = timeLeft;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timerElement.remove();
+
+                    // Add close button after timer completes
+                    const adBanner = document.getElementById('adBanner');
+                    const closeButton = document.createElement('button');
+                    closeButton.className = 'close-ad';
+                    closeButton.innerHTML = '&times;';
+                    closeButton.onclick = closeAd;
+                    adBanner.appendChild(closeButton);
+                }
+            }, 1000);
+        }
+
+        function closeAd() {
+            hideAdOverlay();
+            setCookie('adClosed', 'true', 1); // Cookie lasts for 1 day
+            checkAndSetTempCookie();
+        }
+
+        function hideAdOverlay() {
+            const adOverlay = document.getElementById('adOverlay');
+            adOverlay.style.display = 'none';
+        }
+
+        // Function to set unique temporary cookie
+        function setTempCookie() {
+            // Create a unique ID for the temporary cookie
+            const uniqueId = 'temp_' + Math.random().toString(36).substr(2, 9);
+
+            // Set expiration time to 60 seconds from now
+            const expirationTime = new Date();
+            expirationTime.setTime(expirationTime.getTime() + (60 * 1000));
+
+            // Format the cookie string
+            document.cookie = `uniqueVisitor=${uniqueId}; expires=${expirationTime.toUTCString()}; path=/`;
+
+            console.log(`Temporary cookie set: ${uniqueId} (expires in 60 seconds)`);
+
+            // Show a notification that the cookie was set
+            showCookieNotification(uniqueId, Math.round((expirationTime - new Date()) / 1000));
+        }
+
+        // Function to check if both cookie consent and ad are handled
+        function checkAndSetTempCookie() {
+            if (getCookie('cookieConsent') === 'accepted' &&
+                getCookie('adClosed') === 'true') {
+                setTempCookie();
+            }
+        }
+
+        // Cookie clearing functions
+        function clearCookieBannerChoice() {
+            deleteCookie('cookieConsent');
+            console.log('Cookie banner choice cleared');
+            showCookieNotification('Cookie banner choice cleared', 0);
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        }
+
+        function clearAdCookie() {
+            deleteCookie('adClosed');
+            console.log('Ad cookie cleared');
+            showCookieNotification('Ad cookie cleared', 0);
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        }
+
+        function clearAllCookies() {
+            deleteCookie('cookieConsent');
+            deleteCookie('adClosed');
+            deleteCookie('uniqueVisitor');
+            console.log('All cookies cleared');
+            showCookieNotification('All cookies cleared', 0);
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        }
+
+        // Function to show a temporary notification about cookie
+        function showCookieNotification(id, seconds) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.position = 'fixed';
+            notification.style.bottom = '20px';
+            notification.style.left = '20px';
+            notification.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+            notification.style.color = 'white';
+            notification.style.padding = '10px 20px';
+            notification.style.borderRadius = '5px';
+            notification.style.zIndex = '1002';
+            notification.style.transition = 'opacity 0.5s ease';
+
+            if (seconds > 0) {
+                notification.textContent = `Unique cookie set: ${id} (expires in ${seconds} seconds)`;
+            } else {
+                notification.textContent = id;
+            }
+
+            // Add to page
+            document.body.appendChild(notification);
+
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 500);
+            }, 3000);
+        }
+
+        // Interactive Chart functions - moved before HTML elements that reference them
+        let chart;
+        let currentRating = 0;
+        const chartData = {
+            barChart: {
+                labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+                datasets: [{
+                    label: 'Monthly Sales',
+                    data: [65, 59, 80, 81, 56, 55],
+                    backgroundColor: [
+                        'rgba(58, 134, 255, 0.6)',
+                        'rgba(131, 56, 236, 0.6)',
+                        'rgba(255, 0, 110, 0.6)',
+                        'rgba(56, 176, 0, 0.6)',
+                        'rgba(240, 147, 43, 0.6)',
+                        'rgba(231, 29, 54, 0.6)'
+                    ],
+                    borderColor: [
+                        'rgba(58, 134, 255, 1)',
+                        'rgba(131, 56, 236, 1)',
+                        'rgba(255, 0, 110, 1)',
+                        'rgba(56, 176, 0, 1)',
+                        'rgba(240, 147, 43, 1)',
+                        'rgba(231, 29, 54, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            pieChart: {
+                labels: ['Desktop', 'Mobile', 'Tablet', 'Other'],
+                datasets: [{
+                    label: 'User Devices',
+                    data: [45, 35, 15, 5],
+                    backgroundColor: [
+                        'rgba(58, 134, 255, 0.6)',
+                        'rgba(131, 56, 236, 0.6)',
+                        'rgba(255, 0, 110, 0.6)',
+                        'rgba(56, 176, 0, 0.6)'
+                    ],
+                    borderColor: [
+                        'rgba(58, 134, 255, 1)',
+                        'rgba(131, 56, 236, 1)',
+                        'rgba(255, 0, 110, 1)',
+                        'rgba(56, 176, 0, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            lineChart: {
+                labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+                datasets: [{
+                    label: 'User Growth',
+                    data: [10, 25, 28, 40, 67, 89],
+                    fill: false,
+                    borderColor: 'rgba(58, 134, 255, 1)',
+                    tension: 0.1
+                }]
+            }
+        };
+
+        const chartOptions = {
+            barChart: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                responsive: true,
+                maintainAspectRatio: false
+            },
+            pieChart: {
+                responsive: true,
+                maintainAspectRatio: false
+            },
+            lineChart: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        };
+
+        const chartInfo = {
+            barChart: "This bar chart shows monthly sales data across the first half of the year. Highest sales were in April.",
+            pieChart: "This pie chart shows the distribution of user devices accessing our website. Desktop leads at 45%, followed by mobile at 35%.",
+            lineChart: "This line chart shows user growth over time. There's a positive trend with significant growth between May and June."
+        };
+
+        // Chart functions
+        function toggleChart(chartType) {
+            const chartCanvas = document.getElementById('dataChart');
+            const chartInfoElement = document.getElementById('chartInfo');
+
+            // Destroy previous chart if it exists
+            if (chart) {
+                chart.destroy();
+            }
+
+            // Create new chart
+            let config = {
+                type: chartType === 'pieChart' ? 'pie' : (chartType === 'lineChart' ? 'line' : 'bar'),
+                data: chartData[chartType],
+                options: chartOptions[chartType]
+            };
+
+            chart = new Chart(chartCanvas, config);
+
+            // Update info text
+            chartInfoElement.textContent = chartInfo[chartType];
+            chartInfoElement.style.display = 'block';
+        }
+
+        function resetCharts() {
+            const chartInfoElement = document.getElementById('chartInfo');
+
+            if (chart) {
+                chart.destroy();
+                chart = null;
+            }
+
+            chartInfoElement.textContent = "Select a chart type to display data";
+            chartInfoElement.style.display = 'block';
+        }
+
+        // Feature list functionality
+        function toggleFeature(element) {
+            // Check if this item is already active
+            const isActive = element.classList.contains('active');
+
+            // Remove active class from all items
+            const items = document.querySelectorAll('.feature-item');
+            items.forEach(item => item.classList.remove('active'));
+
+            // If the clicked item wasn't active, make it active
+            if (!isActive) {
+                element.classList.add('active');
+            }
+        }
+
+        // Rating functionality
+        function setRating(rating) {
+            currentRating = rating;
+            const stars = document.querySelectorAll('.star');
+
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        // Form submission
+        function submitFeedback() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+            const resultElement = document.getElementById('feedbackResult');
+
+            // Simple validation
+            if (!name || !email || currentRating === 0 || !message) {
+                resultElement.textContent = "Please fill in all fields and provide a rating";
+                resultElement.className = "feedback-result error";
+                return;
+            }
+
+            // Here you would typically send data to a server
+            console.log("Feedback submitted:", { name, email, rating: currentRating, message });
+
+            // Show success message
+            resultElement.textContent = "Thank you for your feedback! We appreciate your input.";
+            resultElement.className = "feedback-result success";
+
+            // Reset form
+            document.getElementById('name').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('message').value = '';
+            setRating(0);
+
+            // Hide success message after a few seconds
+            setTimeout(() => {
+                resultElement.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+
+    <div class="main-content">
+        <h1>Welcome to 🦎GAD Website</h1>
+
+        <div class="content-section">
+            <p>This is a demonstration of cookie consent and advertisement banners with modern styling.</p>
+
+            <h2>Interactive Dashboard</h2>
+
+            <!-- Interactive Features List -->
+            <div class="features-container">
+                <h3>Interactive Features</h3>
+                <ul class="feature-list" id="featureList">
+                    <li class="feature-item" onclick="toggleFeature(this)">
+                        <span class="feature-icon">📊</span>
+                        <span class="feature-title">Data Visualization</span>
+                        <div class="feature-details">Explore data through dynamic charts and graphs</div>
+                    </li>
+                    <li class="feature-item" onclick="toggleFeature(this)">
+                        <span class="feature-icon">🍪</span>
+                        <span class="feature-title">Cookie Management</span>
+                        <div class="feature-details">Control how cookies are used on this site</div>
+                    </li>
+                    <li class="feature-item" onclick="toggleFeature(this)">
+                        <span class="feature-icon">🔔</span>
+                        <span class="feature-title">Notifications</span>
+                        <div class="feature-details">Custom notification system with visual feedback</div>
+                    </li>
+                    <li class="feature-item" onclick="toggleFeature(this)">
+                        <span class="feature-icon">🎨</span>
+                        <span class="feature-title">Modern Design</span>
+                        <div class="feature-details">Using latest CSS features including animations and gradients</div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Interactive Form -->
+            <div class="form-container">
+                <h3>Send Feedback</h3>
+                <div class="feedback-form">
+                    <div class="form-group">
+                        <label for="name">Name:</label>
+                        <input type="text" id="name" class="form-control" placeholder="Your name">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" class="form-control" placeholder="Your email">
+                    </div>
+                    <div class="form-group">
+                        <label for="rating">Rating:</label>
+                        <div class="rating-container" id="ratingStars">
+                            <span class="star" data-value="1" onclick="setRating(1)">★</span>
+                            <span class="star" data-value="2" onclick="setRating(2)">★</span>
+                            <span class="star" data-value="3" onclick="setRating(3)">★</span>
+                            <span class="star" data-value="4" onclick="setRating(4)">★</span>
+                            <span class="star" data-value="5" onclick="setRating(5)">★</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message:</label>
+                        <textarea id="message" class="form-control" rows="3" placeholder="Your feedback"></textarea>
+                    </div>
+                    <button class="submit-btn" onclick="submitFeedback()">Submit Feedback</button>
+                </div>
+                <div id="feedbackResult" class="feedback-result"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Advertisement Overlay -->
+    <div class="ad-overlay" id="adOverlay">
+        <div class="ad-banner" id="adBanner">
+            <div id="timer" class="timer-overlay">5</div>
+            <h3>Special Offer!</h3>
+            <p>Check out our amazing practice pages!</p>
+            <img src="/images/advert1-bg.jpg" alt="Advertisement">
+            <p>Limited time offer! Don't miss out chance to practice!</p>
+            <button class="action-btn" onclick="window.open('/practice/', '_blank')">See all practice pages</button>
+        </div>
+    </div>
+
+    <!-- Cookie Consent Banner -->
+    <div class="cookie-banner" id="cookieBanner">
+        <p>This website uses cookies to ensure you get the best experience on our website. By continuing to use this site, you consent to our use of cookies.</p>
+        <div class="buttons">
+            <button class="accept-btn" onclick="acceptCookies()">Accept Cookies</button>
+            <button class="decline-btn" onclick="declineCookies()">Decline</button>
+        </div>
+    </div>
+
+    <!-- Cookie management menu -->
+    <div class="cookies-menu" id="cookiesMenu">
+        <button onclick="clearCookieBannerChoice()">Clear Cookie Banner Choice</button>
+        <button onclick="clearAdCookie()">Clear Ad Cookie</button>
+        <button onclick="clearAllCookies()">Clear All Cookies</button>
+    </div>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>
