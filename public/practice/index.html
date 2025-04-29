@@ -26,10 +26,10 @@
 
         .search-input {
             width: 100%;
-            padding: 8px 30px;
+            padding: 3px 30px;
             border: 1px solid #ccc;
             border-radius: 20px;
-            font-size: 14px;
+            font-size: 12px;
             outline: none;
         }
 
@@ -74,7 +74,7 @@
             flex-wrap: wrap;
             justify-content: center;
             align-items: center;
-            gap: 6px;
+            gap: 2px;
             max-width: 800px;
             margin: 0 auto;
         }
@@ -140,6 +140,12 @@
             font-size: 12px;
             font-weight: normal;
         }
+
+        .small-description {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
     </style>
 </head>
 
@@ -158,8 +164,9 @@
             <span style="color: rgb(8, 195, 1)">D</span>emo <span style="color: rgb(8, 195, 1)">Practice Page</span>!
         </h1>
     </div>
-    <div style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center">
-        <h2 style="margin: 0px;padding: 0px;">Practice your test automation skills!</h2>
+    <div style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center; flex-direction: column; margin: 0 auto; max-width: 800px;">
+        <h2 style="margin: 0px;padding: 0px;">Practice your test automation skills!</h2><br />
+        <div class="small-description">Displaying <span id="pageCount">-</span> practice pages</div>
     </div>
     <div class="tag-filter-container">
         <div class="search-container">
@@ -178,16 +185,16 @@
                 <th style="text-align: center; " id="simpleElements" class="anchorWithStickyNavbar" section-name="Simple Elements">Simple Elements<a href="#simpleElements" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;" class="pages-btns">
-                    <a href="./simple-elements.html" class="menu-link">
+                    <a href="./simple-elements.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple" style="margin-top: 4px; font-size: 14px;">With IDs</button>
                     </a>
-                    <a href="./simple-elements-no-ids.html" class="menu-link">
+                    <a href="./simple-elements-no-ids.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple" style="margin-top: 4px; font-size: 14px;">Without IDs</button>
                     </a>
-                    <a href="./simple-elements-custom-attribute.html" class="menu-link">
+                    <a href="./simple-elements-custom-attribute.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple" style="margin-top: 4px; font-size: 14px;">Custom attribute</button>
                     </a>
-                    <a href="./simple-multiple-elements-no-ids.html" class="menu-link">
+                    <a href="./simple-multiple-elements-no-ids.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple" style="margin-top: 4px; font-size: 14px;">Multiple elements</button>
                     </a>
                 </td>
@@ -196,16 +203,16 @@
                 <th style="text-align: center; " id="elementsChangingState" class="anchorWithStickyNavbar" section-name="Elements with changing state">Elements with changing state<a href="#elementsChangingState" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;" class="pages-btns">
-                    <a href="./disabled-elements-1.html" class="menu-link">
+                    <a href="./disabled-elements-1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="dynamic" style="margin-top: 4px; font-size: 14px;">Disabled</button>
                     </a>
-                    <a href="./not-displayed-elements-1.html" class="menu-link">
+                    <a href="./not-displayed-elements-1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="dynamic" style="margin-top: 4px; font-size: 14px;">Not displayed</button>
                     </a>
-                    <a href="./not-present-elements-1.html" class="menu-link">
+                    <a href="./not-present-elements-1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="dynamic" style="margin-top: 4px; font-size: 14px;">Not present</button>
                     </a>
-                    <a href="./not-present-disabled-elements-1.html" class="menu-link">
+                    <a href="./not-present-disabled-elements-1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="dynamic" style="margin-top: 4px; font-size: 14px;">Not present -> enabled</button>
                     </a>
                 </td>
@@ -214,13 +221,13 @@
                 <th style="text-align: center; " id="elementsChangingStateExtended" class="anchorWithStickyNavbar" section-name="Elements with changing state (extended timeout and delayed)">Elements with changing state<br />(extended timeout and delayed)<a href="#elementsChangingStateExtended" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;" class="pages-btns">
-                    <a href="./not-present-disabled-elements-2.html" class="menu-link">
+                    <a href="./not-present-disabled-elements-2.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="dynamic" style="margin-top: 4px; font-size: 14px;">Dynamic elements (extended timeout)</button>
                     </a>
-                    <a href="./delayed-elements-and-delayed-result-1.html" class="menu-link">
+                    <a href="./delayed-elements-and-delayed-result-1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="dynamic" style="margin-top: 4px; font-size: 14px;">Dynamic elements (delayed result)</button>
                     </a>
-                    <a href="./delayed-elements-and-delayed-result-2.html" class="menu-link">
+                    <a href="./delayed-elements-and-delayed-result-2.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="dynamic" style="margin-top: 4px; font-size: 14px;">Dynamic elements (delayed result and extended timeout)</button>
                     </a>
                 </td>
@@ -229,29 +236,29 @@
                 <th style="text-align: center;" id="tables" class="anchorWithStickyNavbar" section-name="Tables">Tables<a href="#tables" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;" class="pages-btns">
-                    <a href="./simple-tables.html" class="menu-link">
+                    <a href="./simple-tables.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple,tables" style="margin-top: 4px; font-size: 14px;">Weather table (IDs)</button>
                     </a>
-                    <a href="./simple-tables-no-ids.html" class="menu-link">
+                    <a href="./simple-tables-no-ids.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple,tables" style="margin-top: 4px; font-size: 14px;">Weather table (no IDs)</button>
                     </a>
-                    <a href="./simple-tables-other-attributes.html" class="menu-link">
+                    <a href="./simple-tables-other-attributes.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple,tables" style="margin-top: 4px; font-size: 14px;">Weather table (other attributes)</button>
                     </a>
-                    <a href="./simple-weather-forecast.html" class="menu-link">
+                    <a href="./simple-weather-forecast.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="api,tables" style="margin-top: 4px; font-size: 14px;">Simple Weather forecast (API)</button>
                     </a>
-                    <a href="./simple-weather-forecast-delay.html" class="menu-link">
+                    <a href="./simple-weather-forecast-delay.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="api,tables" style="margin-top: 4px; font-size: 14px;">Simple Weather forecast (slow🐌)(API)</button>
                     </a>
-                    <a href="./simple-nested-table-v1.html" class="menu-link">
+                    <a href="./simple-nested-table-v1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple,tables" style="margin-top: 4px; font-size: 14px;">Nested table v1</button>
                     </a>
-                    <a href="./simple-nested-table-v2.html" class="menu-link">
+                    <a href="./simple-nested-table-v2.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple,tables" style="margin-top: 4px; font-size: 14px;">Nested table v2</button>
                     </a>
 
-                    <a href="./simple-nested-table-v3.html" class="menu-link">
+                    <a href="./simple-nested-table-v3.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="advanced,tables,test cases" style="margin-top: 4px; font-size: 14px;">Nested table v3</button>
                     </a>
                 </td>
@@ -260,10 +267,10 @@
                 <th style="text-align: center;" id="slowlyLoadedData" class="anchorWithStickyNavbar" section-name="Slowly loaded data">Slowly loaded data<a href="#slowlyLoadedData" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;" class="pages-btns">
-                    <a href="./slowly-loaded-table-1.html" class="menu-link">
+                    <a href="./slowly-loaded-table-1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="dynamic,tables" style="margin-top: 4px; font-size: 14px;">Weather table</button>
                     </a>
-                    <a href="./slowly-loaded-table-2.html" class="menu-link">
+                    <a href="./slowly-loaded-table-2.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="dynamic,tables" style="margin-top: 4px; font-size: 14px;">Weather table (random data)</button>
                     </a>
                 </td>
@@ -272,18 +279,18 @@
                 <th style="text-align: center;" id="charts" class="anchorWithStickyNavbar" section-name="Charts">Charts<a href="#charts" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;" class="pages-btns">
-                    <a href="./charts-1.html" class="menu-link">
+                    <a href="./charts-1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple,charts" style="margin-top: 4px; font-size: 14px;">Weather Charts</button>
                     </a>
 
-                    <a href="./charts-2-api.html" class="menu-link">
+                    <a href="./charts-2-api.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="api,charts" style="margin-top: 4px; font-size: 14px;">Weather Charts (API)</button>
                     </a>
 
-                    <a href="./charts-2-multi.html" class="menu-link">
+                    <a href="./charts-2-multi.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple,charts" style="margin-top: 4px; font-size: 14px;">Weather Charts (Multiple)</button>
                     </a>
-                    <a href="./charts-3-multi.html" class="menu-link">
+                    <a href="./charts-3-multi.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple,charts" style="margin-top: 4px; font-size: 14px;">Weather Charts (Grid)</button>
                     </a>
                 </td>
@@ -292,10 +299,10 @@
                 <th style="text-align: center;" id="canvas" class="anchorWithStickyNavbar" section-name="Canvas">Canvas<a href="#canvas" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;" class="pages-btns">
-                    <a href="./canvas-1.html" class="menu-link">
+                    <a href="./canvas-1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple,canvas" style="margin-top: 4px; font-size: 14px;">Weather Canvas</button>
                     </a>
-                    <a href="./canvas-2.html" class="menu-link">
+                    <a href="./canvas-2.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple,canvas" style="margin-top: 4px; font-size: 14px;">Weather Canvas (slow🐌)</button>
                     </a>
                 </td>
@@ -304,13 +311,13 @@
                 <th style="text-align: center;" id="dragDrop" class="anchorWithStickyNavbar" section-name="Drag & drop">Drag & drop<a href="#dragDrop" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;" class="pages-btns">
-                    <a href="./drag-and-drop-1.html" class="menu-link">
+                    <a href="./drag-and-drop-1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple,dynamic" style="margin-top: 4px; font-size: 14px;">Drag & drop v1</button>
                     </a>
-                    <a href="./drag-and-drop-2.html" class="menu-link">
+                    <a href="./drag-and-drop-2.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="advanced,dynamic" style="margin-top: 4px; font-size: 14px;">Multi Drag & drop v2</button>
                     </a>
-                    <a href="./drag-and-drop-3.html" class="menu-link">
+                    <a href="./drag-and-drop-3.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="advanced,dynamic,images" style="margin-top: 4px; font-size: 14px;">Multi Image Drag & drop v3</button>
                     </a>
                 </td>
@@ -319,10 +326,10 @@
                 <th style="text-align: center;" id="dynamicIds" class="anchorWithStickyNavbar" section-name="Dynamic IDs">Dynamic IDs<a href="#dynamicIds" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;" class="pages-btns">
-                    <a href="./dynamic-ids-1.html" class="menu-link">
+                    <a href="./dynamic-ids-1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="dynamic" style="margin-top: 4px; font-size: 14px;">Locations</button>
                     </a>
-                    <a href="./dynamic-ids-2.html" class="menu-link">
+                    <a href="./dynamic-ids-2.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="dynamic" style="margin-top: 4px; font-size: 14px;">Random Places of Interest</button>
                     </a>
                 </td>
@@ -331,7 +338,7 @@
                 <th style="text-align: center;" id="noIds" class="anchorWithStickyNavbar" section-name="No IDs">No IDs<a href="#noIds" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;" class="pages-btns">
-                    <a href="./random-places-no-ids-1.html" class="menu-link">
+                    <a href="./random-places-no-ids-1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="dynamic" style="margin-top: 4px; font-size: 14px;">Random Places of Interest</button>
                     </a>
                 </td>
@@ -340,14 +347,14 @@
                 <th style="text-align: center;" id="popupAlerts" class="anchorWithStickyNavbar" section-name="Popup and alerts">Popup and alerts<a href="#popupAlerts" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;" class="pages-btns">
-                    <a href="./alerts-1.html" class="menu-link">
+                    <a href="./alerts-1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple,popup" style="margin-top: 4px; font-size: 14px;">Alerts</button>
                     </a>
 
-                    <a href="./login-modal.html" class="menu-link">
+                    <a href="./login-modal.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple,popup,canvas" style="margin-top: 4px; font-size: 14px;">Login Modal</button>
                     </a>
-                    <a href="./sub-popup-v1.html" class="menu-link">
+                    <a href="./sub-popup-v1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="popup,tabs,dynamic,cookies,test cases" style="margin-top: 4px; font-size: 14px;">Subscribe popup</button>
                     </a>
                 </td>
@@ -356,24 +363,24 @@
                 <th style="text-align: center;" id="iFrames" class="anchorWithStickyNavbar" section-name="IFrames">IFrames<a href="#iFrames" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;" class="pages-btns">
-                    <a href="./iframe-0.html" class="menu-link">
+                    <a href="./iframe-0.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple,iframe" style="margin-top: 4px; font-size: 14px;">Forms</button>
                     </a>
-                    <a href="./iframe-1.html" class="menu-link">
+                    <a href="./iframe-1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple,iframe" style="margin-top: 4px; font-size: 14px;">Time Zones</button>
                     </a>
-                    <a href="./iframe-2.html" class="menu-link">
+                    <a href="./iframe-2.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple,iframe" style="margin-top: 4px; font-size: 14px;">Places of Interest</button>
                     </a>
 
 
                     <strong id="nestedIframes" class="anchorWithStickyNavbar menu-label">Nested IFrames:<a href="#nestedIframes" class="hash-link">#</a></strong>
 
-                    <a href="./iframe-3.html" class="menu-link">
+                    <a href="./iframe-3.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="api,iframe" style="margin-top: 4px; font-size: 14px;">Simple Weather forecast (API)</button>
                     </a>
 
-                    <a href="./iframe-4.html" class="menu-link">
+                    <a href="./iframe-4.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple,iframe" style="margin-top: 4px; font-size: 14px;">Simple Registration Form</button>
                     </a>
                 </td>
@@ -382,13 +389,13 @@
                 <th style="text-align: center;" id="shadowDom" class="anchorWithStickyNavbar" section-name="Shadow DOM">Shadow DOM<a href="#shadowDom" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;" class="pages-btns">
-                    <a href="./shadow-dom-0.html" class="menu-link">
+                    <a href="./shadow-dom-0.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple,shadow DOM" style="margin-top: 4px; font-size: 14px;">Simple Example</button>
                     </a>
-                    <a href="./shadow-dom-1.html" class="menu-link">
+                    <a href="./shadow-dom-1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple,shadow DOM" style="margin-top: 4px; font-size: 14px;">Time Zones</button>
                     </a>
-                    <a href="./shadow-dom-2.html" class="menu-link">
+                    <a href="./shadow-dom-2.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple,shadow DOM" style="margin-top: 4px; font-size: 14px;">Places of Interest</button>
                     </a>
                 </td>
@@ -397,7 +404,7 @@
                 <th style="text-align: center;" id="customElements" class="anchorWithStickyNavbar" section-name="Custom elements">Custom elements<a href="#customElements" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;" class="pages-btns">
-                    <a href="./custom-elements.html" class="menu-link">
+                    <a href="./custom-elements.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple" style="margin-top: 4px; font-size: 14px;">Custom elements</button>
                     </a>
                 </td>
@@ -408,27 +415,27 @@
                 </th>
                 <td> </td>
                 <td style="text-align: left;" class="pages-btns">
-                    <!-- <a href="./pagination-v1.html" class="menu-link">
+                    <!-- <a href="./pagination-v1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple,tables,pagination" style="margin-top: 4px; font-size: 14px;">Employees Data Table</button>
                     </a> -->
 
-                    <a href="./pagination-v2.html" class="menu-link">
+                    <a href="./pagination-v2.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="api,tables,pagination,test cases" style="margin-top: 4px; font-size: 14px;">Employees Data Table (API V1)</button>
                     </a>
 
-                    <a href="./pagination-v3.html" class="menu-link">
+                    <a href="./pagination-v3.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="api,tables,pagination,test cases" style="margin-top: 4px; font-size: 14px;">Random employees Data Table (API V1)</button>
                     </a>
 
-                    <a href="./pagination-v4.html" class="menu-link">
+                    <a href="./pagination-v4.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="api,tables,pagination,advanced,test cases" style="margin-top: 4px; font-size: 14px;">Employees Data Table with Extendables (API V1)</button>
                     </a>
 
-                    <a href="./pagination-v5.html" class="menu-link">
+                    <a href="./pagination-v5.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="api,tables,pagination,advanced,test cases" style="margin-top: 4px; font-size: 14px;">Employees Data Table with Extendables (API V2)</button>
                     </a>
 
-                    <a href="./infinite-scroll-v1.html" class="menu-link">
+                    <a href="./infinite-scroll-v1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="scroll,tables,advanced" style="margin-top: 4px; font-size: 14px;">Infinite Scroll</button>
                     </a>
 
@@ -438,7 +445,7 @@
                 <th style="text-align: center;" id="forms" class="anchorWithStickyNavbar" section-name="Forms">Forms<a href="#forms" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;" class="pages-btns">
-                    <a href="./form-v1.html" class="menu-link">
+                    <a href="./form-v1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple,popup" style="margin-top: 4px; font-size: 14px;">Multi-Step Form with Summary</button>
                     </a>
 
@@ -448,11 +455,11 @@
                 <th style="text-align: center;" id="session" class="anchorWithStickyNavbar" section-name="Session">Session<a href="#session" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;" class="pages-btns">
-                    <a href="./simple-session-v1.html" class="menu-link">
+                    <a href="./simple-session-v1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="api,session,dynamic,advanced,cookies" style="margin-top: 4px; font-size: 14px;">Simple Session V1 (API)</button>
                     </a>
 
-                    <a href="./simple-session-v2.html" class="menu-link">
+                    <a href="./simple-session-v2.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="api,session,dynamic,advanced,cookies" style="margin-top: 4px; font-size: 14px;">Simple Session V2 (API)</button>
                     </a>
 
@@ -463,25 +470,25 @@
                 <th style="text-align: center;" id="mocking" class="anchorWithStickyNavbar" section-name="Mocking challenges">Mocking challenges<a href="#mocking" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;" class="pages-btns">
-                    <a href="./random-simple-user-v1.html" class="menu-link">
+                    <a href="./random-simple-user-v1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="tables,api,test cases" style="margin-top: 4px; font-size: 14px;">Random Simple User (API)</button>
                     </a>
-                    <a href="./random-shopping-cart-v1.html" class="menu-link">
+                    <a href="./random-shopping-cart-v1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="tables,api,test cases" style="margin-top: 4px; font-size: 14px;">Random Shopping Cart (API)</button>
                     </a>
-                    <a href="./random-weather-v1.html" class="menu-link">
+                    <a href="./random-weather-v1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="tables,api,test cases" style="margin-top: 4px; font-size: 14px;">Random Weather (API)</button>
                     </a>
-                    <a href="./random-weather-v2.html" class="menu-link">
+                    <a href="./random-weather-v2.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="tables,api,test cases" style="margin-top: 4px; font-size: 14px;">Random Weather for City (API)</button>
                     </a>
-                    <a href="./simple-bus-card-ticket-v1.html" class="menu-link">
+                    <a href="./simple-bus-card-ticket-v1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="tables,api,test cases" style="margin-top: 4px; font-size: 14px;">Simple Bus Card Ticket (API)</button>
                     </a>
-                    <a href="./household-expenses-today-v1.html" class="menu-link">
+                    <a href="./household-expenses-today-v1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="tables,api,test cases" style="margin-top: 4px; font-size: 14px;">Random 1-day Household Expenses (API)</button>
                     </a>
-                    <a href="./household-expenses-v1.html" class="menu-link">
+                    <a href="./household-expenses-v1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="tables,api,canvas,test cases" style="margin-top: 4px; font-size: 14px;">Random 7-days Household Expenses (API)</button>
                     </a>
                 </td>
@@ -490,10 +497,10 @@
                 <th style="text-align: center;" id="docs" class="anchorWithStickyNavbar" section-name="Documents (docx, xlsx)">Documents (docx, xlsx)<a href="#docs" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;" class="pages-btns">
-                    <a href="./random-weather-doc-v1.html" class="menu-link">
+                    <a href="./random-weather-doc-v1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="api,files,files (docx xlsx pdf)" style="margin-top: 4px; font-size: 14px;">Random Weather (API)</button>
                     </a>
-                    <a href="./simple-bus-card-ticket-doc-v1.html" class="menu-link">
+                    <a href="./simple-bus-card-ticket-doc-v1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="api,files,files (docx xlsx pdf)" style="margin-top: 4px; font-size: 14px;">Simple Bus Card Ticket (API)</button>
                     </a>
                 </td>
@@ -502,35 +509,35 @@
                 <th style="text-align: center;" id="animations" class="anchorWithStickyNavbar" section-name="Animations and Transitions">Animations and Transitions<a href="#animations" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;" class="pages-btns">
-                    <a href="./carousel-v1.html" class="menu-link">
+                    <a href="./carousel-v1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple,dynamic" style="margin-top: 4px; font-size: 14px;">Carousel Slider</button>
                     </a>
 
-                    <a href="./linked-boxes-v1.html" class="menu-link">
+                    <a href="./linked-boxes-v1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="advanced,popup,files,dynamic" style="margin-top: 4px; font-size: 14px;">Movable Linked Boxes</button>
                     </a>
 
-                    <a href="./card-board.html" class="menu-link">
+                    <a href="./card-board.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="advanced,dynamic" style="margin-top: 4px; font-size: 14px;">Card Board</button>
                     </a>
 
-                    <a href="./sequence-diagram.html" class="menu-link">
+                    <a href="./sequence-diagram.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="advanced,canvas,dynamic" style="margin-top: 4px; font-size: 14px;">Sequence Diagram (Canvas)</button>
                     </a>
 
-                    <a href="./sequence-diagram-v2.html" class="menu-link">
+                    <a href="./sequence-diagram-v2.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="advanced,dynamic" style="margin-top: 4px; font-size: 14px;">Sequence Diagram</button>
                     </a>
 
-                    <a href="./sortable-list-v1.html" class="menu-link">
+                    <a href="./sortable-list-v1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="advanced,dynamic" style="margin-top: 4px; font-size: 14px;">Sortable List Challenge</button>
                     </a>
 
-                    <a href="./task-board-v1.html" class="menu-link">
+                    <a href="./task-board-v1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="advanced,files,dynamic,tabs,cookies" style="margin-top: 4px; font-size: 14px;">Task Board</button>
                     </a>
 
-                    <a href="./math-blocks.html" class="menu-link">
+                    <a href="./math-blocks.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="advanced,dynamic" style="margin-top: 4px; font-size: 14px;">Math Blocks</button>
                     </a>
                 </td>
@@ -542,50 +549,50 @@
                 </th>
                 <td></td>
                 <td style="text-align: left;" class="pages-btns">
-                    <a href="./websocket-v0.html" class="menu-link">
+                    <a href="./websocket-v0.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="WebSocket" style="margin-top: 4px; font-size: 14px;">Simple Weather Widget</button>
                     </a>
 
-                    <a href="./websocket-v1.html" class="menu-link">
+                    <a href="./websocket-v1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="WebSocket" style="margin-top: 4px; font-size: 14px;">Random Weather for City</button>
                     </a>
 
-                    <a href="./websocket-v2.html" class="menu-link">
+                    <a href="./websocket-v2.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="WebSocket,canvas" style="margin-top: 4px; font-size: 14px;">Advanced Weather Widget</button>
                     </a>
 
-                    <a href="./websocket-cinema.html" class="menu-link">
+                    <a href="./websocket-cinema.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="WebSocket,tabs" style="margin-top: 4px; font-size: 14px;">Cinema Ticket Management</button>
                     </a>
 
-                    <a href="./websocket-drones.html" class="menu-link">
+                    <a href="./websocket-drones.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="WebSocket,multi browsers" style="margin-top: 4px; font-size: 14px;">Drone Simulator</button>
                     </a>
 
 
                     <strong id="advancedWebSockets" class="anchorWithStickyNavbar menu-label">Advanced:<a href="#advancedWebSockets" class="hash-link">#</a></strong>
 
-                    <a href="./websocket-chat-v1.html" class="menu-link">
+                    <a href="./websocket-chat-v1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="WebSocket,advanced,multi browsers" style="margin-top: 4px; font-size: 14px;">Simple Real-Time Chat V1</button>
                     </a>
 
-                    <a href="./websocket-chat-v2.html" class="menu-link">
+                    <a href="./websocket-chat-v2.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="WebSocket,advanced,multi browsers" style="margin-top: 4px; font-size: 14px;">Real-Time Chat V2 (with priv messages)</button>
                     </a>
 
-                    <a href="./websocket-chat-v3.html" class="menu-link">
+                    <a href="./websocket-chat-v3.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="WebSocket,advanced,multi browsers" style="margin-top: 4px; font-size: 14px;">Real-Time Chat V3 (with priv messages and weather widget)</button>
                     </a>
 
-                    <a href="./websocket-chat-v4.html" class="menu-link">
+                    <a href="./websocket-chat-v4.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="WebSocket,advanced,multi browsers" style="margin-top: 4px; font-size: 14px;">Real-Time Chat V4 (with priv message tabs and weather widget)</button>
                     </a>
 
-                    <a href="./websocket-chat-v5.html" class="menu-link">
+                    <a href="./websocket-chat-v5.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="WebSocket,advanced,multi browsers,💻 webinar" style="margin-top: 4px; font-size: 14px;">WeatherChat (Real-Time Chat V5with session)</button>
                     </a>
 
-                    <a href="./websocket-docs.html" class="menu-link">
+                    <a href="./websocket-docs.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="WebSocket,advanced,multi browsers" style="margin-top: 4px; font-size: 14px;">Real-time Document Editor</button>
                     </a>
                 </td>
@@ -594,43 +601,43 @@
                 <th style="text-align: center;" id="visualTesting" class="anchorWithStickyNavbar" section-name="Visual testing challenges">Visual testing challenges<a href="#visualTesting" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;" class="pages-btns">
-                    <a href="./visual-testing-v0.html" class="menu-link">
+                    <a href="./visual-testing-v0.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple,visual testing,charts" style="margin-top: 4px; font-size: 14px;">Static widget</button>
                     </a>
 
-                    <a href="./visual-testing-v0B.html" class="menu-link">
+                    <a href="./visual-testing-v0B.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple,visual testing,charts,dynamic" style="margin-top: 4px; font-size: 14px;">Static widget (with random border radius)</button>
                     </a>
 
-                    <a href="./visual-testing-v1.html" class="menu-link">
+                    <a href="./visual-testing-v1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="dynamic,visual testing,charts,dynamic" style="margin-top: 4px; font-size: 14px;">Static widget with dynamic parts</button>
                     </a>
 
-                    <a href="./visual-testing-v1B.html" class="menu-link">
+                    <a href="./visual-testing-v1B.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="api,visual testing,charts,dynamic" style="margin-top: 4px; font-size: 14px;">Static widget with dynamic parts (API V1)</button>
                     </a>
 
-                    <a href="./visual-testing-v2.html" class="menu-link">
+                    <a href="./visual-testing-v2.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple,visual testing,charts,dynamic" style="margin-top: 4px; font-size: 14px;">Static & dynamic widgets</button>
                     </a>
 
-                    <a href="./visual-testing-v3.html" class="menu-link">
+                    <a href="./visual-testing-v3.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple,visual testing,charts,dynamic" style="margin-top: 4px; font-size: 14px;">System metrics monitoring</button>
                     </a>
 
-                    <a href="./visual-testing-v4.html" class="menu-link">
+                    <a href="./visual-testing-v4.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple,visual testing,charts,dynamic" style="margin-top: 4px; font-size: 14px;">Multiple elements (static & dynamic)</button>
                     </a>
 
-                    <a href="./visual-testing-v5.html" class="menu-link">
+                    <a href="./visual-testing-v5.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="api,visual testing,dynamic" style="margin-top: 4px; font-size: 14px;">System metrics monitoring V1 (API V1)</button>
                     </a>
 
-                    <a href="./visual-testing-v6.html" class="menu-link">
+                    <a href="./visual-testing-v6.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="api,visual testing,dynamic" style="margin-top: 4px; font-size: 14px;">System metrics monitoring V2 (only auto refresh) (API V1)</button>
                     </a>
 
-                    <a href="./visual-testing-v7.html" class="menu-link">
+                    <a href="./visual-testing-v7.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="api,visual testing,dynamic" style="margin-top: 4px; font-size: 14px;">System metrics monitoring V3 (only auto refresh) (API V2)</button>
                     </a>
                 </td>
@@ -639,11 +646,11 @@
                 <th style="text-align: center;" id="apiVersioning" class="anchorWithStickyNavbar" section-name="API versioning">API versioning<a href="#apiVersioning" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;" class="pages-btns">
-                    <a href="./todoapp/index.html" class="menu-link">
+                    <a href="./todoapp/index.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="api,advanced,popup" style="margin-top: 4px; font-size: 14px;">TODO App (API)</button>
                     </a>
 
-                    <a href="./budgetapp/index.html" class="menu-link">
+                    <a href="./budgetapp/index.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="api,advanced,charts,popup,canvas" style="margin-top: 4px; font-size: 14px;">Budget App (API)</button>
                     </a>
                 </td>
@@ -652,7 +659,7 @@
                 <th style="text-align: center;" id="subPages" class="anchorWithStickyNavbar" section-name="Page with sub-pages">Page with sub-pages<a href="#subPages" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;" class="pages-btns">
-                    <a href="./multipage-v1.html" class="menu-link">
+                    <a href="./multipage-v1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple,tabs,dynamic" style="margin-top: 4px; font-size: 14px;">Multipage</button>
                     </a>
 
@@ -662,11 +669,11 @@
                 <th style="text-align: center;" id="subPages" class="anchorWithStickyNavbar empty-relative" section-name="Two-Factor Authentication"><span class="star-glow"><i class="fa-solid fa-star"></i></span>Two-Factor Authentication<a href="#2fa" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;" class="pages-btns">
-                    <a href="./2fa-1.html" class="menu-link">
+                    <a href="./2fa-1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="2fa, two-factor authentication" style="margin-top: 4px; font-size: 14px;">Simple Two-Factor Authentication V1</button>
                     </a>
 
-                    <a href="./2fa-2.html" class="menu-link">
+                    <a href="./2fa-2.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="2fa, two-factor authentication" style="margin-top: 4px; font-size: 14px;">Simple Two-Factor Authentication V2</button>
                     </a>
 
@@ -676,34 +683,34 @@
                 <th style="text-align: center;" id="otherChallenges" class="anchorWithStickyNavbar" section-name="Other challenges">Other challenges<a href="#otherChallenges" class="hash-link">#</a></th>
                 <td> </td>
                 <td style="text-align: left;" class="pages-btns">
-                    <a href="./simple-reservation-v1.html" class="menu-link">
+                    <a href="./simple-reservation-v1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple" style="margin-top: 4px; font-size: 14px;">Reservation V1</button>
                     </a>
-                    <a href="./simple-reservation-v2.html" class="menu-link">
+                    <a href="./simple-reservation-v2.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple" style="margin-top: 4px; font-size: 14px;">Reservation V2</button>
                     </a>
-                    <a href="./steps-to-complete-1.html" class="menu-link">
+                    <a href="./steps-to-complete-1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple" style="margin-top: 4px; font-size: 14px;">Simple game v1</button>
                     </a>
-                    <a href="./steps-to-complete-2.html" class="menu-link">
+                    <a href="./steps-to-complete-2.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple" style="margin-top: 4px; font-size: 14px;">Simple game v2</button>
                     </a>
-                    <a href="./simple-reservation-with-errors-v1.html" class="menu-link">
+                    <a href="./simple-reservation-with-errors-v1.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple" style="margin-top: 4px; font-size: 14px;">Reservation V1 (with errors)</button>
                     </a>
-                    <a href="./simple-reservation-with-errors-v2.html" class="menu-link">
+                    <a href="./simple-reservation-with-errors-v2.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="simple" style="margin-top: 4px; font-size: 14px;">Reservation V2 (with errors)</button>
                     </a>
-                    <a href="./ems/index.html" class="menu-link">
+                    <a href="./ems/index.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="api,advanced" style="margin-top: 4px; font-size: 14px;">Employee Management System (API)</button>
                     </a>
-                    <a href="./code-js.html" class="menu-link">
+                    <a href="./code-js.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="advanced, code" style="margin-top: 4px; font-size: 14px;">Code JS</button>
                     </a>
-                    <a href="./ant-colony.html" class="menu-link">
+                    <a href="./ant-colony.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="advanced, simulation" style="margin-top: 4px; font-size: 14px;">Ant Colony</button>
                     </a>
-                    <a href="./ant-colony-canvas.html" class="menu-link">
+                    <a href="./ant-colony-canvas.html" class="menu-link practice-page-link">
                         <button class="button-primary-small" data-tags="advanced, canvas, simulation" style="margin-top: 4px; font-size: 14px;">Ant Colony (Canvas)</button>
                     </a>
                 </td>
@@ -747,6 +754,7 @@
     const searchInput = document.getElementById('searchInput');
     const tagFilter = document.querySelector('.tag-filter');
     const uniqueTags = new Set();
+    const pageCountElement = document.getElementById('pageCount');
 
     searchInput.value = '';
 
@@ -761,6 +769,11 @@
         toggleClearButton();
         filterItems();
         searchInput.focus();
+    }
+
+    function updatePageCount() {
+        const visibleButtons = document.querySelectorAll('.practice-page-link:not(.hidden)');
+        pageCountElement.textContent = visibleButtons.length;
     }
 
     searchInput.addEventListener('input', () => {
@@ -799,7 +812,7 @@
             if (tdButtons) {
                 const noResults = document.createElement('div');
                 noResults.className = 'no-results';
-                noResults.textContent = 'No items match the selected filter';
+                noResults.textContent = 'No matching items';
                 const existingMsg = tdButtons.querySelector('.no-results');
                 if (existingMsg) existingMsg.remove();
                 tdButtons.appendChild(noResults);
@@ -845,6 +858,8 @@
 
             updateRowVisibility(row, hasVisibleButtons);
         });
+
+        updatePageCount();
     }
 
     searchInput.addEventListener('input', filterItems);
@@ -863,6 +878,9 @@
             filterItems();
         });
     });
+
+    // Update page count on initial load
+    updatePageCount();
 </script>
 
 </html>
