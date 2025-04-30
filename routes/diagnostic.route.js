@@ -4,6 +4,7 @@ const { getLogs } = require("../helpers/logger-api");
 const { HTTP_OK, HTTP_BAD_REQUEST } = require("../helpers/response.helpers");
 const { TimeHistogramReporterJson, TimeHistogramReporterHtml } = require("../helpers/time-histogram/time-histogram");
 const { TimeHistogramManager } = require("../helpers/time-histogram/time-histogram.manager");
+const { logDebug } = require("../helpers/logger-api");
 
 const diagnosticRoutes = (req, res, next) => {
   function afterFinishResponse() {
@@ -17,6 +18,7 @@ const diagnosticRoutes = (req, res, next) => {
       !getConfigValue(ConfigKeys.DIAGNOSTICS_ENABLED)
     );
     const logsEnabled = setConfigValue(ConfigKeys.PUBLIC_LOGS_ENABLED, !getConfigValue(ConfigKeys.PUBLIC_LOGS_ENABLED));
+    logDebug("Changing diagnostic logs", { diagnosticsEnabled, logsEnabled });
     res.status(HTTP_OK).json({ diagnosticsEnabled, logsEnabled });
     return;
   }
@@ -32,7 +34,7 @@ const diagnosticRoutes = (req, res, next) => {
   }
   if (req.method === "POST" && urlEnds.includes("api/diagnostic/log-level")) {
     const level = req.body?.level;
-    console.log("level", req.body);
+    logDebug("Changing log level", { level });
     if (level) {
       setConfigValue(ConfigKeys.CURRENT_LOG_LEVEL, level);
       res.status(HTTP_OK).json({ level });
