@@ -4509,10 +4509,55 @@
         }
       }
     },
+    "/diagnostic/toggle-logs": {
+      "get": {
+        "tags": ["diagnostic"],
+        "summary": "Toggle logs on/off",
+        "operationId": "toggleLogs",
+        "responses": {
+          "200": {
+            "description": "Logs toggled",
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ToggleLogs"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/diagnostic/log-level": {
+      "post": {
+        "tags": ["diagnostic"],
+        "summary": "Set the log level. Default is 4 (debug).",
+        "description": "0 is for error only. 1 is for console. 2 is for warning. 4 is for debug. 5 is for trace. 10 is for insane.",
+        "operationId": "setLogLevel",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LogLevel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Logs toggled",
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ToggleLogs"
+              }
+            }
+          }
+        }
+      }
+    },
     "/logs": {
       "get": {
         "tags": ["diagnostic"],
-        "summary": "Get logs from server (diagnostics must be on - use toggleDiagnostics)",
+        "summary": "Get logs from server (diagnostics must be on - use toggleDiagnostics or toggleLogs)",
         "operationId": "getLogs",
         "responses": {
           "200": {
@@ -7361,6 +7406,22 @@
           },
           "logsEnabled": {
             "type": "boolean"
+          }
+        }
+      },
+      "ToggleLogs": {
+        "type": "object",
+        "properties": {
+          "logsEnabled": {
+            "type": "boolean"
+          }
+        }
+      },
+      "LogLevel": {
+        "type": "object",
+        "properties": {
+          "level": {
+            "type": "string"
           }
         }
       },

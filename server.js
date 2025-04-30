@@ -79,8 +79,6 @@ const router = jsonServer.router(getDbPath(getConfigValue(ConfigKeys.DB_PATH)));
 const dbManager = DatabaseManager.getInstance();
 dbManager.setDb(router.db);
 
-server.use(diagnosticRoutes);
-
 const clearDbRoutes = (req, res, next) => {
   try {
     const restoreDbWithKey = (dbPathKey, successMessage) => {
@@ -167,8 +165,6 @@ server.use((req, res, next) => {
   next();
 });
 
-server.use(healthCheckRoutes);
-
 // actions invoked just before returning response
 server.use((req, res, next) => {
   res.on("finish", function () {
@@ -194,6 +190,9 @@ server.use(jsonServer.bodyParser);
 
 server.use(helmet());
 server.use(cookieparser());
+
+server.use(healthCheckRoutes);
+server.use(diagnosticRoutes);
 
 // allow the express server to read and render the static css file
 server.use(express.static(path.join(__dirname, "public", "login")));
