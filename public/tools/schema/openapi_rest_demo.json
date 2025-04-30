@@ -166,6 +166,10 @@
     {
       "name": "debug",
       "description": "Debug operations"
+    },
+    {
+      "name": "diagnostic",
+      "description": "Diagnostic operations"
     }
   ],
   "paths": {
@@ -4452,7 +4456,7 @@
     "/restoreDB": {
       "get": {
         "tags": ["other"],
-        "summary": "Restore DB",
+        "summary": "Restore DB with predefined and default data",
         "operationId": "restoreDB",
         "responses": {
           "201": {
@@ -4483,6 +4487,53 @@
         "responses": {
           "201": {
             "description": "Big database restored",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/diagnostic/toggle-diagnostics": {
+      "get": {
+        "tags": ["diagnostic"],
+        "summary": "Toggle diagnostics on/off",
+        "operationId": "toggleDiagnostics",
+        "responses": {
+          "200": {
+            "description": "Diagnostics toggled",
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ToggleDiagnostics"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/logs": {
+      "get": {
+        "tags": ["diagnostic"],
+        "summary": "Get logs from server (diagnostics must be on - use toggleDiagnostics)",
+        "operationId": "getLogs",
+        "responses": {
+          "200": {
+            "description": "Diagnostics toggled",
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GadLogs"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/diagnostic/request/histogram": {
+      "get": {
+        "tags": ["diagnostic"],
+        "summary": "Get request histogram",
+        "operationId": "getRequestHistogram",
+        "responses": {
+          "200": {
+            "description": "Request histogram retrieved",
             "content": {}
           }
         }
@@ -7301,6 +7352,39 @@
           }
         },
         "required": ["book_id", "mean", "numberOfReviews"]
+      },
+      "ToggleDiagnostics": {
+        "type": "object",
+        "properties": {
+          "diagnosticsEnabled": {
+            "type": "boolean"
+          },
+          "logsEnabled": {
+            "type": "boolean"
+          }
+        }
+      },
+      "GadLogs": {
+        "type": "object",
+        "properties": {
+          "logs": {
+            "type": "object",
+            "properties": {
+              "limit": {
+                "type": "number"
+              },
+              "itemCount": {
+                "type": "number"
+              },
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
       },
       "Flashpost": {
         "type": "object",
