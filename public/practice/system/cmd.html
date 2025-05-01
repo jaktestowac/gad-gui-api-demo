@@ -658,7 +658,9 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
+        import * as CmdActions from './cmd-actions.js';
+
         document.addEventListener('DOMContentLoaded', function () {
             let activePanel = 'left';
             let currentLeftPath = 'C:';
@@ -712,15 +714,6 @@
                 passwordInput.value = '';
                 showModal(passwordModal);
                 setTimeout(() => passwordInput.focus(), 100);
-            }
-
-            // Store passwords for accessed items (in-memory, per session)
-            const passwordStore = {};
-            function getPasswordForPath(path) {
-                return passwordStore[path];
-            }
-            function setPasswordForPath(path, pwd) {
-                passwordStore[path] = pwd;
             }
 
             // Utility for name validation
@@ -792,165 +785,6 @@
                         { text: 'OK', onClick: onOk }
                     ]
                 });
-            }
-
-            // Enhanced API functions for password-protected items
-            async function fetchDirectoryContentsWithPassword(path) {
-                let pwd = getPasswordForPath(path);
-                let url = `/api/practice/v1/file-system/directory?path=${encodeURIComponent(path)}`;
-                if (pwd) url += `&password=${encodeURIComponent(pwd)}`;
-                let response = await fetch(url);
-                if (response.status === 401) {
-                    // Prompt for password
-                    return new Promise((resolve) => {
-                        promptPassword(async (enteredPwd) => {
-                            if (!enteredPwd) return resolve({ directory: null, contents: [] });
-                            setPasswordForPath(path, enteredPwd);
-                            let retryUrl = `/api/practice/v1/file-system/directory?path=${encodeURIComponent(path)}&password=${encodeURIComponent(enteredPwd)}`;
-                            let retryRes = await fetch(retryUrl);
-                            if (retryRes.ok) {
-                                resolve(await retryRes.json());
-                            } else {
-                                showStatus('Incorrect password');
-                                resolve({ directory: null, contents: [] });
-                            }
-                        });
-                    });
-                }
-                if (!response.ok) {
-                    showStatus('Error fetching directory');
-                    return { directory: null, contents: [] };
-                }
-                return await response.json();
-            }
-
-            async function fetchFileContentWithPassword(path) {
-                let pwd = getPasswordForPath(path);
-                let url = `/api/practice/v1/file-system/file?path=${encodeURIComponent(path)}`;
-                if (pwd) url += `&password=${encodeURIComponent(pwd)}`;
-                let response = await fetch(url);
-                if (response.status === 401) {
-                    // Prompt for password
-                    return new Promise((resolve) => {
-                        promptPassword(async (enteredPwd) => {
-                            if (!enteredPwd) return resolve(null);
-                            setPasswordForPath(path, enteredPwd);
-                            let retryUrl = `/api/practice/v1/file-system/file?path=${encodeURIComponent(path)}&password=${encodeURIComponent(enteredPwd)}`;
-                            let retryRes = await fetch(retryUrl);
-                            if (retryRes.ok) {
-                                resolve(await retryRes.json());
-                            } else {
-                                showStatus('Incorrect password');
-                                resolve(null);
-                            }
-                        });
-                    });
-                }
-                if (!response.ok) {
-                    showStatus('Error fetching file');
-                    return null;
-                }
-                return await response.json();
-            }
-
-            // API functions
-            async function fetchDirectoryContents(path) {
-                try {
-                    const response = await fetch(`/api/practice/v1/file-system/directory?path=${encodeURIComponent(path)}`);
-                    if (!response.ok) {
-                        throw new Error(`Error fetching directory contents: ${response.statusText}`);
-                    }
-                    const data = await response.json();
-                    return data;
-                } catch (error) {
-                    showStatus(`Error: ${error.message}`);
-                    return [];
-                }
-            }
-
-            async function fetchFileContent(path) {
-                try {
-                    const response = await fetch(`/api/practice/v1/file-system/file?path=${encodeURIComponent(path)}`);
-                    if (!response.ok) {
-                        throw new Error(`Error fetching file: ${response.statusText}`);
-                    }
-                    return await response.json();
-                } catch (error) {
-                    showStatus(`Error: ${error.message}`);
-                    return null;
-                }
-            }
-
-            async function createDirectory(parentPath, name) {
-                try {
-                    const response = await fetch('/api/practice/v1/file-system/create', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            path: parentPath,
-                            name: name,
-                            type: 'directory'
-                        })
-                    });
-
-                    if (!response.ok) {
-                        const error = await response.json();
-                        throw new Error(error.message || 'Error creating directory');
-                    }
-
-                    showStatus(`Directory ${name} created successfully`);
-                    return true;
-                } catch (error) {
-                    showStatus(`Error: ${error.message}`);
-                    return false;
-                }
-            }
-
-            async function updateFile(path, content) {
-                try {
-                    const response = await fetch('/api/practice/v1/file-system/update', {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            path: path,
-                            content: content
-                        })
-                    });
-
-                    if (!response.ok) {
-                        const error = await response.json();
-                        throw new Error(error.message || 'Error updating file');
-                    }
-
-                    showStatus(`File updated successfully`);
-                    return true;
-                } catch (error) {
-                    showStatus(`Error: ${error.message}`);
-                    return false;
-                }
-            }
-
-            async function deleteItem(path) {
-                try {
-                    const response = await fetch(`/api/practice/v1/file-system/delete?path=${encodeURIComponent(path)}`, {
-                        method: 'DELETE'
-                    });
-
-                    if (!response.ok) {
-                        const error = await response.json();
-                        throw new Error(error.message || 'Error deleting item');
-                    }
-
-                    showStatus(`Item deleted successfully`);
-                    return true;
-                } catch (error) {
-                    showStatus(`Error: ${error.message}`);
-                    return false;
-                }
             }
 
             // Display functions
@@ -1110,6 +944,70 @@
                 return activePanel === 'left' ? currentLeftPath : currentRightPath;
             }
 
+            // Override navigation and file view to use password logic from the imported module
+            function navigateToDirectory(panel, path) {
+                CmdActions.fetchDirectoryContentsWithPassword(path).then(data => {
+                    if (data.status === 401) {
+                        // Need password
+                        promptPassword(async (enteredPwd) => {
+                            if (!enteredPwd) return;
+                            CmdActions.setPasswordForPath(path, enteredPwd);
+                            let retryData = await CmdActions.fetchDirectoryContentsWithPassword(path);
+                            if (retryData.status === 401) {
+                                showStatus('Incorrect password');
+                            } else {
+                                displayDirectoryContents(panel, path, retryData);
+                            }
+                        });
+                    } else {
+                        displayDirectoryContents(panel, path, data);
+                    }
+                });
+            }
+
+            function viewFile(path) {
+                CmdActions.fetchFileContentWithPassword(path).then(fileData => {
+                    if (fileData && fileData.status === 401) {
+                        // Need password
+                        promptPassword(async (enteredPwd) => {
+                            if (!enteredPwd) return;
+                            CmdActions.setPasswordForPath(path, enteredPwd);
+                            let retryData = await CmdActions.fetchFileContentWithPassword(path);
+                            if (retryData && retryData.status === 401) {
+                                showStatus('Incorrect password');
+                            } else if (retryData && retryData.content !== undefined) {
+                                displayFileContent(path, retryData);
+                            } else {
+                                showStatus('Error loading file content');
+                            }
+                        });
+                    } else if (fileData && fileData.content !== undefined) {
+                        displayFileContent(path, fileData);
+                    } else {
+                        showStatus('Error loading file content');
+                    }
+                });
+            }
+
+            function displayFileContent(path, fileData) {
+                // Check if file is corrupted in lastDirData
+                let isCorrupted = false;
+                const panel = activePanel;
+                const dirData = lastDirData[panel];
+                if (dirData && Array.isArray(dirData)) {
+                    const fileName = path.split('/').pop();
+                    const match = dirData.find(item => item.name === fileName && item.corrupted && item.type === 'file');
+                    if (match) isCorrupted = true;
+                }
+                if (isCorrupted) {
+                    fileContent.innerHTML = '<span style="color:#FF3333;font-weight:bold;">This file is corrupted and cannot be previewed.</span>';
+                    showModal(viewModal);
+                    return;
+                }
+                fileContent.textContent = fileData.content;
+                showModal(viewModal);
+            }
+
             function buildPath(currentPath, itemName) {
                 if (itemName === '..') {
                     return navigateToParent(null, currentPath);
@@ -1126,37 +1024,6 @@
                 }
 
                 return `${currentPath}/${itemName}`;
-            }
-
-            // Override navigation and file view to use password logic
-            function navigateToDirectory(panel, path) {
-                fetchDirectoryContentsWithPassword(path).then(data => {
-                    displayDirectoryContents(panel, path, data);
-                });
-            }
-            function viewFile(path) {
-                fetchFileContentWithPassword(path).then(fileData => {
-                    // Check if file is corrupted in lastDirData
-                    let isCorrupted = false;
-                    const panel = activePanel;
-                    const dirData = lastDirData[panel];
-                    if (dirData && Array.isArray(dirData)) {
-                        const fileName = path.split('/').pop();
-                        const match = dirData.find(item => item.name === fileName && item.corrupted && item.type === 'file');
-                        if (match) isCorrupted = true;
-                    }
-                    if (isCorrupted) {
-                        fileContent.innerHTML = '<span style="color:#FF3333;font-weight:bold;">This file is corrupted and cannot be previewed.</span>';
-                        showModal(viewModal);
-                        return;
-                    }
-                    if (fileData && fileData.content !== undefined) {
-                        fileContent.textContent = fileData.content;
-                        showModal(viewModal);
-                    } else {
-                        showStatus('Error loading file content');
-                    }
-                });
             }
 
             function navigateToParent(panel, currentPath) {
@@ -1246,7 +1113,7 @@
                 }
 
                 const path = buildPath(getCurrentPath(), selectedItem.dataset.name);
-                const fileData = await fetchFileContent(path);
+                const fileData = await CmdActions.fetchFileContent(path);
 
                 if (fileData && fileData.content !== undefined) {
                     fileEditContent.value = fileData.content;
@@ -1268,7 +1135,7 @@
 
             document.getElementById('saveEditBtn').addEventListener('click', async function () {
                 if (currentFileBeingEdited) {
-                    const success = await updateFile(currentFileBeingEdited, fileEditContent.value);
+                    const success = await CmdActions.updateFile(currentFileBeingEdited, fileEditContent.value);
                     if (success) {
                         hideModal(editModal);
                         // Refresh the current panel
@@ -1293,7 +1160,7 @@
                     return;
                 }
 
-                const success = await createDirectory(getCurrentPath(), dirName);
+                const success = await CmdActions.createDirectory(getCurrentPath(), dirName);
                 if (success) {
                     hideModal(mkdirModal);
                     // Refresh the current panel
@@ -1313,7 +1180,7 @@
                 }
                 const path = buildPath(getCurrentPath(), selectedItem.dataset.name);
                 customConfirm(`Are you sure you want to delete ${selectedItem.dataset.name}?`, async function () {
-                    const success = await deleteItem(path);
+                    const success = await CmdActions.deleteItem(path);
                     if (success) {
                         navigateToDirectory(activePanel, getCurrentPath());
                     }
@@ -1378,7 +1245,7 @@
                     const srcFullPath = buildPath(srcPath, name);
                     let srcData = null;
                     if (selectedItem.dataset.type === 'file') {
-                        srcData = await fetchFileContent(srcFullPath);
+                        srcData = await CmdActions.fetchFileContent(srcFullPath);
                         if (!srcData) {
                             customAlert('Failed to fetch source file');
                             return;
@@ -1402,7 +1269,7 @@
                     }
                     // If move, delete source
                     if (mode === 'move') {
-                        await deleteItem(srcFullPath);
+                        await CmdActions.deleteItem(srcFullPath);
                     }
                     hideModal(document.getElementById('copyMoveModal'));
                     // Refresh both panels
@@ -1575,7 +1442,7 @@
                     case 'cd':
                         if (arg1) {
                             const newPath = resolveCdPath(getCurrentPath(), arg1);
-                            fetchDirectoryContentsWithPassword(newPath).then(data => {
+                            CmdActions.fetchDirectoryContentsWithPassword(newPath).then(data => {
                                 // If directory info is present, path exists
                                 if (data && data.directory) {
                                     navigateToDirectory(activePanel, newPath);
@@ -1596,7 +1463,7 @@
                                 showStatus('Invalid directory name.');
                                 break;
                             }
-                            createDirectory(getCurrentPath(), arg1).then(success => {
+                            CmdActions.createDirectory(getCurrentPath(), arg1).then(success => {
                                 if (success) navigateToDirectory(activePanel, getCurrentPath());
                             });
                         } else {
@@ -1606,7 +1473,7 @@
                     case 'rmdir':
                         if (arg1) {
                             const path = buildPath(getCurrentPath(), arg1);
-                            deleteItem(path).then(success => {
+                            CmdActions.deleteItem(path).then(success => {
                                 if (success) navigateToDirectory(activePanel, getCurrentPath());
                             });
                         } else {
@@ -1616,7 +1483,7 @@
                     case 'del':
                         if (arg1) {
                             const path = buildPath(getCurrentPath(), arg1);
-                            deleteItem(path).then(success => {
+                            CmdActions.deleteItem(path).then(success => {
                                 if (success) navigateToDirectory(activePanel, getCurrentPath());
                             });
                         } else {
@@ -1626,7 +1493,7 @@
                     case 'type':
                         if (arg1) {
                             const path = buildPath(getCurrentPath(), arg1);
-                            fetchFileContentWithPassword(path).then(fileData => {
+                            CmdActions.fetchFileContentWithPassword(path).then(fileData => {
                                 if (fileData && fileData.content !== undefined) {
                                     fileContent.textContent = fileData.content;
                                     showModal(viewModal);
