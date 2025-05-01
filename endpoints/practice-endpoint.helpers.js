@@ -14,6 +14,13 @@ const { authV2 } = require("./practice/chat-auth-handlers");
 const { verifyToken, hasPermission } = require("./practice/employee-management-system/auth-middleware");
 const twoFactor = require("./practice/2fa-handlers");
 const twoFactorV2 = require("./practice/2fa-handlers-v2");
+const {
+  getDirectoryContents,
+  getFileDetails,
+  createItem,
+  updateFile,
+  deleteItem,
+} = require("./practice/file-system-handlers");
 
 function isIdValid(id) {
   return id !== undefined && id !== "";
@@ -424,6 +431,27 @@ function handlePractice(req, res) {
           return twoFactorV2.extendSession(req, res);
         case req.method === "GET" && endpoint === "check":
           return twoFactorV2.checkAuth(req, res);
+        default:
+          return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
+      }
+    }
+
+    if (req.url.includes("/api/practice/v1/file-system")) {
+      let endpoint = req.url.split("/api/practice/v1/file-system/")[1];
+      if (endpoint && endpoint.includes("?")) {
+        endpoint = endpoint.split("?")[0];
+      }
+      switch (true) {
+        case req.method === "GET" && endpoint === "directory":
+          return getDirectoryContents(req, res);
+        case req.method === "GET" && endpoint === "file":
+          return getFileDetails(req, res);
+        case req.method === "POST" && endpoint === "create":
+          return createItem(req, res);
+        case req.method === "PUT" && endpoint === "update":
+          return updateFile(req, res);
+        case req.method === "DELETE" && endpoint === "delete":
+          return deleteItem(req, res);
         default:
           return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
       }
