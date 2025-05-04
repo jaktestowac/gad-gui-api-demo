@@ -457,6 +457,28 @@ function handlePractice(req, res) {
       }
     }
 
+    if (req.url === "/api/practice/lang/v1/languages" && req.method === "GET") {
+      // Return available languages
+      return res.status(HTTP_OK).json({
+        en: "English",
+        pl: "Polski",
+        de: "Deutsch",
+      });
+    }
+    if (req.url === "/api/practice/lang/v1/translations" && req.method === "GET") {
+      // Return translations JSON
+      const fs = require("fs");
+      const path = require("path");
+      const filePath = path.join(__dirname, "../data/translations/practice-lang.json");
+      try {
+        const data = fs.readFileSync(filePath, "utf8");
+        return res.status(HTTP_OK).json(JSON.parse(data));
+      } catch (e) {
+        logDebug("handlePractice:translations", { error: e.message });
+        return res.status(HTTP_NOT_FOUND).json({ error: "Translations not found" });
+      }
+    }
+
     return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
   }
 }

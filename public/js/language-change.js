@@ -1,5 +1,5 @@
-const translationsEndpoint = "../../api/languages/translations";
-const languagesEndpoint = "../../api/languages";
+const translationsEndpoint = "../../api/v1/languages/translations";
+const languagesEndpoint = "../../api/v1/languages";
 
 let translationsStored = {};
 let languagesStored = {};

@@ -4364,7 +4364,7 @@
         }
       }
     },
-    "/languages": {
+    "/v1/languages": {
       "get": {
         "tags": ["other"],
         "summary": "Get languages",
@@ -4377,7 +4377,7 @@
         }
       }
     },
-    "/languages/translations": {
+    "/v1/languages/translations": {
       "get": {
         "tags": ["other"],
         "summary": "Get translations",
@@ -4390,7 +4390,7 @@
         }
       }
     },
-    "/languages/translations/{lang}": {
+    "/v1/languages/translations/{lang}": {
       "get": {
         "tags": ["other"],
         "summary": "Get translations",

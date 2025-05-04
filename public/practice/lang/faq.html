@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD - Language Practice Page FAQ</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="lang-style.css">
+</head>
+
+<body class="langpr-body">
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <div id="langpr-skeleton" class="langpr-skeleton">
+        <div class="skeleton-title" style="width: 32%; height: 38px;"></div>
+        <div class="skeleton-nav" style="width: 60%; height: 28px;"></div>
+        <div class="skeleton-block" style="width: 100%; height: 32px; margin-bottom: 1.2em;"></div>
+        <!-- FAQ Q&A blocks -->
+        <div class="skeleton-block" style="width: 70%; height: 22px; margin-bottom: 0.5em;"></div>
+        <div class="skeleton-block" style="width: 90%; height: 22px; margin-bottom: 0.5em;"></div>
+        <div class="skeleton-block" style="width: 60%; height: 22px; margin-bottom: 0.5em;"></div>
+        <div class="skeleton-block" style="width: 80%; height: 22px; margin-bottom: 1em;"></div>
+        <!-- Survey block -->
+        <div class="skeleton-block" style="width: 30%; height: 22px; margin-bottom: 0.5em;"></div>
+        <div class="skeleton-block" style="width: 60%; height: 32px; margin-bottom: 0.5em;"></div>
+        <div class="skeleton-block" style="width: 110px; height: 32px; margin-bottom: 0.5em;"></div>
+        <div class="skeleton-block" style="width: 50%; height: 22px; margin-bottom: 1em;"></div>
+        <!-- Joke block -->
+        <div class="skeleton-block" style="width: 30%; height: 22px; margin-bottom: 0.5em;"></div>
+        <div class="skeleton-block" style="width: 110px; height: 32px; margin-bottom: 0.5em;"></div>
+        <div class="skeleton-block" style="width: 80%; height: 22px; margin-bottom: 0.5em;"></div>
+    </div>
+    <div class="langpr-container" style="display:none">
+        <div class="langpr-lang-switch">
+            <label for="lang-select" id="change_language">Change language</label>
+            <select id="lang-select"></select>
+        </div>
+        <h1 id="faq" class="langpr-title">FAQ</h1>
+        <nav class="langpr-nav">
+            <a href="index.html" id="title">Home</a>
+            <a href="about.html" id="about">About</a>
+            <a href="contact.html" id="contact">Contact</a>
+            <a href="faq.html" id="faq" class="active">FAQ</a>
+        </nav>
+        <div class="langpr-content langpr-faq-list">
+            <div>
+                <div class="langpr-faq-q" id="faq_q1">How do I change the language?</div>
+                <div class="langpr-faq-a" id="faq_a1">Use the dropdown at the top to switch between Polish and English.</div>
+            </div>
+            <div>
+                <div class="langpr-faq-q" id="faq_q2">What is this page for?</div>
+                <div class="langpr-faq-a" id="faq_a2">This is a demo practice page for testing language switching and navigation.</div>
+            </div>
+            <div>
+                <div class="langpr-faq-q" id="faq_q3">Can I add more subpages?</div>
+                <div class="langpr-faq-a" id="faq_a3">Yes, you can add more subpages by copying the structure of these files.</div>
+            </div>
+            <div class="langpr-interactive-block">
+                <h2 id="faq_survey_title" class="langpr-h2">FAQ Survey</h2>
+                <label for="faq_survey_input" id="faq_survey_label">What topic should we add to FAQ?</label>
+                <input type="text" id="faq_survey_input" class="langpr-input" data-translate-placeholder="faq_survey_input_placeholder">
+                <button id="faq_survey_btn" class="langpr-button">Submit</button>
+                <div id="faq_survey_result" style="margin-top:1em;"></div>
+            </div>
+            <div class="langpr-interactive-block">
+                <h2 id="faq_joke_title" class="langpr-h2">Random Joke</h2>
+                <button id="faq_joke_btn" class="langpr-button">Show Joke</button>
+                <div id="faq_joke_result" style="margin-top:1em;"></div>
+            </div>
+        </div>
+    </div>
+    <script src="lang-scripts.js"></script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>

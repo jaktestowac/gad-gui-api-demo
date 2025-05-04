@@ -1,0 +1,294 @@
+.langpr-body {
+  font-family: "Roboto", Arial, sans-serif;
+  background: linear-gradient(135deg, #e0e7ef 0%, #f8fafc 100%);
+  margin: 0;
+  min-height: 100vh;
+  color: #222;
+}
+.langpr-container {
+  max-width: 700px;
+  margin: 48px auto;
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 22px;
+  box-shadow: 0 8px 32px rgba(44, 62, 80, 0.12);
+  padding: 2.8em 2.2em 2.2em 2.2em;
+  position: relative;
+  overflow: hidden;
+}
+.langpr-container--hidden {
+  display: none !important;
+}
+.langpr-container:before {
+  content: "";
+  position: absolute;
+  top: -60px;
+  left: -60px;
+  width: 180px;
+  height: 180px;
+  background: linear-gradient(120deg, #2a6edb 60%, #6ee7b7 100%);
+  opacity: 0.12;
+  border-radius: 50%;
+  z-index: 0;
+}
+.langpr-lang-switch {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1em;
+  gap: 0.5em;
+  z-index: 1;
+  position: relative;
+  font-size: 0.95em;
+  padding: 0.2em 0.5em;
+  background: #f7fafd;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(44, 62, 80, 0.04);
+  width: fit-content;
+  min-width: 0;
+}
+.langpr-lang-switch label {
+  font-weight: 500;
+  color: #555;
+  margin-bottom: 0;
+  width: fit-content;
+}
+#lang-select {
+  padding: 0.2em 0.7em;
+  border-radius: 6px;
+  border: 1px solid #bbb;
+  font-size: 0.98em;
+  background: #f7fafd;
+  min-width: 80px;
+}
+#lang-select:focus {
+  border: 1.5px solid #2a6edb;
+  outline: none;
+}
+.langpr-title {
+  font-size: 2.5em;
+  margin-bottom: 0.2em;
+  color: #2a6edb;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 8px #e0e7ef;
+  z-index: 1;
+  position: relative;
+}
+.langpr-nav {
+  margin: 2em 0 1em 0;
+  display: flex;
+  gap: 1.5em;
+  justify-content: center;
+  z-index: 1;
+  position: relative;
+}
+.langpr-nav a {
+  text-decoration: none;
+  color: #2a6edb;
+  font-weight: 600;
+  padding: 0.4em 1.2em;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #e0e7ef 60%, #f8fafc 100%);
+  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.04);
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.langpr-nav a.active,
+.langpr-nav a:hover {
+  background: linear-gradient(90deg, #2a6edb 60%, #6ee7b7 100%);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(44, 62, 80, 0.1);
+}
+.langpr-content {
+  font-size: 1.18em;
+  margin-top: 1.5em;
+  line-height: 1.7;
+  z-index: 1;
+  position: relative;
+}
+.langpr-faq-list {
+  margin-top: 1.5em;
+}
+.langpr-faq-q {
+  font-weight: 700;
+  color: #2a6edb;
+  margin-top: 1em;
+}
+.langpr-faq-a {
+  margin-bottom: 1em;
+}
+.langpr-interactive-block,
+.langpr-quiz-block,
+.langpr-game-block,
+.langpr-color-block {
+  background: #f7fafd;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(44, 62, 80, 0.06);
+  padding: 1.5em 1.2em 1.2em 1.2em;
+  margin-bottom: 2em;
+  margin-top: 1.5em;
+  position: relative;
+}
+.langpr-interactive-block .langpr-h2,
+.langpr-quiz-block .langpr-h2,
+.langpr-game-block .langpr-h2,
+.langpr-color-block .langpr-h2 {
+  color: #2a6edb;
+  font-size: 1.3em;
+  margin-bottom: 0.7em;
+}
+.langpr-input {
+  border: 1px solid #bbb;
+  border-radius: 7px;
+  padding: 0.5em 1em;
+  font-size: 1em;
+  margin-bottom: 0.5em;
+  background: #fff;
+  transition: border 0.2s;
+}
+.langpr-input:focus {
+  border: 1.5px solid #2a6edb;
+  outline: none;
+}
+.langpr-button {
+  background: linear-gradient(90deg, #2a6edb 60%, #6ee7b7 100%);
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  padding: 0.5em 1.2em;
+  font-size: 1em;
+  font-weight: 600;
+  margin: 0.2em 0.3em;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.08);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.langpr-button:hover {
+  background: linear-gradient(90deg, #174a8b 60%, #34d399 100%);
+  box-shadow: 0 4px 16px rgba(44, 62, 80, 0.12);
+}
+.langpr-output,
+.langpr-quiz-result,
+.langpr-game-result,
+.langpr-color-result {
+  font-size: 1.1em;
+  margin-top: 1em;
+  min-height: 1.5em;
+}
+.langpr-color-preview {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid #2a6edb;
+  margin-left: 1em;
+  vertical-align: middle;
+  background: #fff;
+}
+#about_chart_inputs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em 0.7em;
+  margin-bottom: 1em;
+  align-items: flex-end;
+  background: #f2f6fa;
+  border-radius: 8px;
+  padding: 0.7em 1em 0.5em 1em;
+  box-shadow: 0 1px 4px rgba(44, 62, 80, 0.04);
+  width: fit-content;
+}
+#about_chart_inputs > div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 60px;
+}
+#about_chart_inputs label {
+  font-size: 0.98em;
+  color: #2a6edb;
+  font-weight: 600;
+  margin-bottom: 0.2em;
+  margin-left: 2px;
+}
+#about_chart_inputs input[type="number"] {
+  width: 60px;
+  padding: 0.3em 0.5em;
+  font-size: 0.98em;
+  border-radius: 6px;
+  border: 1px solid #bbb;
+  background: #fff;
+}
+#about_chart_generate {
+  align-self: flex-end;
+  margin-left: 1em;
+  margin-bottom: 2px;
+  padding: 0.45em 1.1em;
+  font-size: 1em;
+}
+@media (max-width: 600px) {
+  #about_chart_inputs {
+    flex-direction: column;
+    gap: 0.5em;
+    padding: 0.5em 0.5em 0.3em 0.5em;
+  }
+  #about_chart_generate {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+@media (max-width: 700px) {
+  .langpr-container {
+    padding: 1.2em 0.5em;
+  }
+  .langpr-nav {
+    flex-direction: column;
+    gap: 0.5em;
+  }
+}
+.langpr-skeleton {
+  max-width: 700px;
+  margin: 48px auto;
+  padding: 2.8em 2.2em 2.2em 2.2em;
+  background: #f7fafd;
+  border-radius: 22px;
+  box-shadow: 0 8px 32px rgba(44, 62, 80, 0.1);
+  position: relative;
+  overflow: hidden;
+  z-index: 10;
+}
+.skeleton-title {
+  height: 38px;
+  width: 60%;
+  margin-bottom: 2em;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #e0e7ef 25%, #f3f6fa 50%, #e0e7ef 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.2s infinite linear;
+}
+.skeleton-nav {
+  height: 28px;
+  width: 90%;
+  margin-bottom: 2em;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #e0e7ef 25%, #f3f6fa 50%, #e0e7ef 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.2s infinite linear;
+}
+.skeleton-block {
+  height: 32px;
+  width: 100%;
+  margin-bottom: 1.2em;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #e0e7ef 25%, #f3f6fa 50%, #e0e7ef 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.2s infinite linear;
+}
+.skeleton-block.short {
+  width: 60%;
+}
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

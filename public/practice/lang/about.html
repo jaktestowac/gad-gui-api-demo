@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD - Language Practice Page About</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="lang-style.css">
+</head>
+
+<body class="langpr-body">
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <div id="langpr-skeleton" class="langpr-skeleton">
+        <div class="skeleton-title" style="width: 40%; height: 38px;"></div>
+        <div class="skeleton-nav" style="width: 70%; height: 28px;"></div>
+        <div class="skeleton-block" style="width: 100%; height: 32px; margin-bottom: 1.2em;"></div>
+        <div class="skeleton-block" style="width: 60%; height: 24px; margin-bottom: 0.7em;"></div>
+        <!-- Chart input skeleton -->
+        <div style="display: flex; gap: 0.7em; align-items: flex-end; margin-bottom: 1em;">
+            <div class="skeleton-block" style="width: 60px; height: 32px;"></div>
+            <div class="skeleton-block" style="width: 60px; height: 32px;"></div>
+            <div class="skeleton-block" style="width: 60px; height: 32px;"></div>
+            <div class="skeleton-block" style="width: 60px; height: 32px;"></div>
+            <div class="skeleton-block" style="width: 60px; height: 32px;"></div>
+            <div class="skeleton-block" style="width: 110px; height: 32px;"></div>
+        </div>
+        <!-- Chart area skeleton -->
+        <div class="skeleton-block" style="width: 100%; height: 220px; border-radius: 12px;"></div>
+    </div>
+    <div class="langpr-container" style="display:none">
+        <div class="langpr-lang-switch">
+            <label for="lang-select" id="change_language">Change language</label>
+            <select id="lang-select"></select>
+        </div>
+        <h1 id="about" class="langpr-title">About</h1>
+        <nav class="langpr-nav">
+            <a href="index.html" id="title">Home</a>
+            <a href="about.html" id="about" class="active">About</a>
+            <a href="contact.html" id="contact">Contact</a>
+            <a href="faq.html" id="faq">FAQ</a>
+        </nav>
+        <div class="langpr-content">
+            <p id="main_content"></p>
+            <div class="langpr-interactive-block">
+                <h2 id="about_chart_title" class="langpr-h2"></h2>
+                <form id="about_chart_inputs" style="display:flex;flex-wrap:wrap;gap:1em;margin-bottom:1em;align-items:end;">
+                    <div>
+                        <label for="progress_jan" id="progress_jan_label"></label>
+                        <input type="number" id="progress_jan" min="0" max="100" value="20" class="langpr-input" style="width:70px;">
+                    </div>
+                    <div>
+                        <label for="progress_feb" id="progress_feb_label"></label>
+                        <input type="number" id="progress_feb" min="0" max="100" value="40" class="langpr-input" style="width:70px;">
+                    </div>
+                    <div>
+                        <label for="progress_mar" id="progress_mar_label"></label>
+                        <input type="number" id="progress_mar" min="0" max="100" value="60" class="langpr-input" style="width:70px;">
+                    </div>
+                    <div>
+                        <label for="progress_apr" id="progress_apr_label"></label>
+                        <input type="number" id="progress_apr" min="0" max="100" value="80" class="langpr-input" style="width:70px;">
+                    </div>
+                    <div>
+                        <label for="progress_may" id="progress_may_label"></label>
+                        <input type="number" id="progress_may" min="0" max="100" value="100" class="langpr-input" style="width:70px;">
+                    </div>
+                    <button type="button" id="about_chart_generate" class="langpr-button" style="margin-left:1em;"></button>
+                </form>
+                <div id="about_chart" style="height:300px;"></div>
+            </div>
+        </div>
+    </div>
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="lang-scripts.js"></script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>

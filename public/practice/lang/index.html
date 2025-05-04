@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD - Language Practice Page</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="lang-style.css">
+</head>
+
+<body class="langpr-body">
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <div id="langpr-skeleton" class="langpr-skeleton">
+        <div class="skeleton-title" style="width: 45%; height: 38px;"></div>
+        <div class="skeleton-nav" style="width: 80%; height: 28px;"></div>
+        <div class="skeleton-block" style="width: 100%; height: 32px; margin-bottom: 1.2em;"></div>
+        <!-- Interactive translation block -->
+        <div class="skeleton-block" style="width: 35%; height: 22px; margin-bottom: 0.5em;"></div>
+        <div class="skeleton-block" style="width: 60%; height: 32px; margin-bottom: 0.5em;"></div>
+        <div style="display: flex; gap: 0.5em; margin-bottom: 1em;">
+            <div class="skeleton-block" style="width: 110px; height: 32px;"></div>
+            <div class="skeleton-block" style="width: 70px; height: 32px;"></div>
+        </div>
+        <!-- Quiz block -->
+        <div class="skeleton-block" style="width: 30%; height: 22px; margin-bottom: 0.5em;"></div>
+        <div class="skeleton-block" style="width: 60%; height: 32px; margin-bottom: 0.5em;"></div>
+        <div style="display: flex; gap: 0.5em; margin-bottom: 1em;">
+            <div class="skeleton-block" style="width: 90px; height: 32px;"></div>
+            <div class="skeleton-block" style="width: 90px; height: 32px;"></div>
+            <div class="skeleton-block" style="width: 90px; height: 32px;"></div>
+        </div>
+        <!-- Number game block -->
+        <div class="skeleton-block" style="width: 35%; height: 22px; margin-bottom: 0.5em;"></div>
+        <div class="skeleton-block" style="width: 80px; height: 32px; margin-bottom: 0.5em;"></div>
+        <div style="display: flex; gap: 0.5em; margin-bottom: 1em;">
+            <div class="skeleton-block" style="width: 70px; height: 32px;"></div>
+            <div class="skeleton-block" style="width: 70px; height: 32px;"></div>
+        </div>
+        <!-- Color picker block -->
+        <div class="skeleton-block" style="width: 30%; height: 22px; margin-bottom: 0.5em;"></div>
+        <div class="skeleton-block" style="width: 120px; height: 32px; margin-bottom: 0.5em;"></div>
+        <div class="skeleton-block" style="width: 60px; height: 32px; margin-bottom: 0.5em;"></div>
+    </div>
+    <div class="langpr-container" style="display:none">
+        <div class="langpr-lang-switch">
+            <label for="lang-select" id="change_language">Change language</label>
+            <select id="lang-select"></select>
+        </div>
+        <h1 id="welcome" class="langpr-title">Language Practice Page</h1>
+        <nav class="langpr-nav">
+            <a href="index.html" id="title" class="active">Home</a>
+            <a href="about.html" id="about">About</a>
+            <a href="contact.html" id="contact">Contact</a>
+            <a href="faq.html" id="faq">FAQ</a>
+        </nav>
+        <div class="langpr-content">
+            <p id="main_content">Welcome! This is the Language Practice Page. Use the navigation above to explore subpages and try switching languages using the selector at the top.</p>
+            <hr style="margin:2em 0;">
+            <div class="langpr-interactive-block">
+                <h2 id="try_translation" class="langpr-h2">Try Interactive Translation</h2>
+                <label for="user_text" id="your_text_label">Your text:</label>
+                <input type="text" id="user_text" class="langpr-input" placeholder="Type something..." style="width:60%;margin:0.5em 0;" data-translate-placeholder="user_text_placeholder">
+                <button id="reverse_btn" class="langpr-button">Reverse Text</button>
+                <button id="clear_btn" class="langpr-button">Clear</button>
+                <div id="output_block" class="langpr-output" style="margin-top:1em;"></div>
+            </div>
+            <div class="langpr-quiz-block" style="margin-top:2em;">
+                <h2 id="quiz_title" class="langpr-h2">Quick Language Quiz</h2>
+                <div id="quiz_question"></div>
+                <div id="quiz_options"></div>
+                <div id="quiz_result" class="langpr-quiz-result" style="margin-top:1em;font-weight:bold;"></div>
+            </div>
+            <div class="langpr-game-block">
+                <h2 id="number_game_title" class="langpr-h2">Number Guessing Game</h2>
+                <label for="guess_input" id="guess_label">Guess a number (1-20):</label>
+                <input type="number" id="guess_input" class="langpr-input" min="1" max="20" style="width:80px;" data-translate-placeholder="guess_input_placeholder">
+                <button id="guess_btn" class="langpr-button">Guess</button>
+                <button id="reset_game_btn" class="langpr-button">Reset</button>
+                <div id="game_result" class="langpr-game-result"></div>
+            </div>
+        </div>
+    </div>
+    <script src="lang-scripts.js"></script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>

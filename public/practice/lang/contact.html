@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD - Language Practice Page Contact</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="lang-style.css">
+</head>
+
+<body class="langpr-body">
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <div id="langpr-skeleton" class="langpr-skeleton">
+        <div class="skeleton-title" style="width: 38%; height: 38px;"></div>
+        <div class="skeleton-nav" style="width: 65%; height: 28px;"></div>
+        <div class="skeleton-block" style="width: 100%; height: 32px; margin-bottom: 1.2em;"></div>
+        <!-- Poll block -->
+        <div class="skeleton-block" style="width: 40%; height: 22px; margin-bottom: 0.5em;"></div>
+        <div style="display: flex; gap: 0.7em; margin-bottom: 1em;">
+            <div class="skeleton-block" style="width: 110px; height: 32px;"></div>
+            <div class="skeleton-block" style="width: 110px; height: 32px;"></div>
+            <div class="skeleton-block" style="width: 110px; height: 32px;"></div>
+        </div>
+        <div class="skeleton-block" style="width: 60%; height: 22px;"></div>
+    </div>
+    <div class="langpr-container" style="display:none">
+        <div class="langpr-lang-switch">
+            <label for="lang-select" id="change_language">Change language</label>
+            <select id="lang-select"></select>
+        </div>
+        <h1 id="contact" class="langpr-title">Contact</h1>
+        <nav class="langpr-nav">
+            <a href="index.html" id="title">Home</a>
+            <a href="about.html" id="about">About</a>
+            <a href="contact.html" id="contact" class="active">Contact</a>
+            <a href="faq.html" id="faq">FAQ</a>
+        </nav>
+        <div class="langpr-content">
+            <p id="main_content">For any questions or feedback, please contact us at <a href="mailto:practice@example.com">practice@example.com</a>.</p>
+            <div class="langpr-interactive-block">
+                <h2 id="contact_poll_title" class="langpr-h2">How did you find us?</h2>
+                <button class="contact-poll-btn langpr-button" data-poll="search" id="contact_poll_search">Search Engine</button>
+                <button class="contact-poll-btn langpr-button" data-poll="friend" id="contact_poll_friend">Friend</button>
+                <button class="contact-poll-btn langpr-button" data-poll="other" id="contact_poll_other">Other</button>
+                <div id="contact_poll_result" style="margin-top:1em;"></div>
+            </div>
+        </div>
+    </div>
+    <script src="lang-scripts.js"></script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>

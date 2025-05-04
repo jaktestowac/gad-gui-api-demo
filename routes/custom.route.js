@@ -268,21 +268,21 @@ const customRoutes = (req, res, next) => {
       const files = getImagesForArticles();
       res.json(files);
       req.body = files;
-    } else if (req.method === "GET" && req.url.endsWith("/languages/translations")) {
+    } else if (req.method === "GET" && req.url.endsWith("api/v1/languages/translations")) {
       const dbData = translationsDb();
       res.json(dbData);
       req.body = dbData;
-    } else if (req.method === "GET" && req.url.includes("/languages/translations/")) {
+    } else if (req.method === "GET" && req.url.includes("api/v1/languages/translations/")) {
       let language = getIdFromUrl(urlEnds);
       const dbData = translationsDb();
       const translations = dbData[language] ?? {};
       res.json(translations);
       req.body = translations;
-    } else if (req.method === "GET" && req.url.endsWith("/languages")) {
+    } else if (req.method === "GET" && req.url.endsWith("api/v1/languages")) {
       const languages = getLanguages();
       res.json(languages);
       req.body = languages;
-    } else if (req.method === "GET" && req.url.includes("/languages")) {
+    } else if (req.method === "GET" && req.url.includes("api/v1/languages")) {
       res.status(HTTP_NOT_FOUND).json({});
     }
     if (res.headersSent !== true) {
