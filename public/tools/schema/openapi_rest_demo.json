@@ -162,6 +162,14 @@
     {
       "name": "healthcheck",
       "description": "Healthcheck - check status and health of 🦎GAD"
+    },
+    {
+      "name": "debug",
+      "description": "Debug operations"
+    },
+    {
+      "name": "diagnostic",
+      "description": "Diagnostic operations"
     }
   ],
   "paths": {
@@ -214,6 +222,30 @@
           "401": {
             "description": "Unauthorized",
             "content": {}
+          }
+        }
+      }
+    },
+    "/debug/exit": {
+      "get": {
+        "tags": ["debug"],
+        "summary": "Exit the application",
+        "operationId": "exitApplication",
+        "responses": {
+          "200": {
+            "description": "Application exited successfully"
+          }
+        }
+      }
+    },
+    "/debug/restart": {
+      "get": {
+        "tags": ["debug"],
+        "summary": "Restart the application (process manager must be running)",
+        "operationId": "restartApplication",
+        "responses": {
+          "200": {
+            "description": "Application restarted successfully"
           }
         }
       }
@@ -4332,7 +4364,7 @@
         }
       }
     },
-    "/languages": {
+    "/v1/languages": {
       "get": {
         "tags": ["other"],
         "summary": "Get languages",
@@ -4345,7 +4377,7 @@
         }
       }
     },
-    "/languages/translations": {
+    "/v1/languages/translations": {
       "get": {
         "tags": ["other"],
         "summary": "Get translations",
@@ -4358,7 +4390,7 @@
         }
       }
     },
-    "/languages/translations/{lang}": {
+    "/v1/languages/translations/{lang}": {
       "get": {
         "tags": ["other"],
         "summary": "Get translations",
@@ -4382,10 +4414,49 @@
         }
       }
     },
+    "/openapi.json": {
+      "get": {
+        "tags": ["other"],
+        "summary": "Get OpenAPI schema",
+        "operationId": "getOpenApiSchema",
+        "responses": {
+          "200": {
+            "description": "OpenAPI schema retrieved",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/schema": {
+      "get": {
+        "tags": ["other"],
+        "summary": "Get OpenAPI schema",
+        "operationId": "getOpenApiSchema2",
+        "responses": {
+          "200": {
+            "description": "OpenAPI schema retrieved",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/restore/list": {
+      "get": {
+        "tags": ["other"],
+        "summary": "Get list of restoreDB endpoints",
+        "operationId": "getRestoreList",
+        "responses": {
+          "200": {
+            "description": "List of restoreDB endpoints",
+            "content": {}
+          }
+        }
+      }
+    },
     "/restoreDB": {
       "get": {
         "tags": ["other"],
-        "summary": "Restore DB",
+        "summary": "Restore DB with predefined and default data",
         "operationId": "restoreDB",
         "responses": {
           "201": {
@@ -4416,6 +4487,98 @@
         "responses": {
           "201": {
             "description": "Big database restored",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/diagnostic/toggle-diagnostics": {
+      "get": {
+        "tags": ["diagnostic"],
+        "summary": "Toggle diagnostics on/off",
+        "operationId": "toggleDiagnostics",
+        "responses": {
+          "200": {
+            "description": "Diagnostics toggled",
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ToggleDiagnostics"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/diagnostic/toggle-logs": {
+      "get": {
+        "tags": ["diagnostic"],
+        "summary": "Toggle logs on/off",
+        "operationId": "toggleLogs",
+        "responses": {
+          "200": {
+            "description": "Logs toggled",
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ToggleLogs"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/diagnostic/log-level": {
+      "post": {
+        "tags": ["diagnostic"],
+        "summary": "Set the log level. Default is 4 (debug).",
+        "description": "0 is for error only. 1 is for console. 2 is for warning. 4 is for debug. 5 is for trace. 10 is for insane.",
+        "operationId": "setLogLevel",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LogLevel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Logs toggled",
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ToggleLogs"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/logs": {
+      "get": {
+        "tags": ["diagnostic"],
+        "summary": "Get logs from server (diagnostics must be on - use toggleDiagnostics or toggleLogs)",
+        "operationId": "getLogs",
+        "responses": {
+          "200": {
+            "description": "Diagnostics toggled",
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GadLogs"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/diagnostic/request/histogram": {
+      "get": {
+        "tags": ["diagnostic"],
+        "summary": "Get request histogram",
+        "operationId": "getRequestHistogram",
+        "responses": {
+          "200": {
+            "description": "Request histogram retrieved",
             "content": {}
           }
         }
@@ -7234,6 +7397,55 @@
           }
         },
         "required": ["book_id", "mean", "numberOfReviews"]
+      },
+      "ToggleDiagnostics": {
+        "type": "object",
+        "properties": {
+          "diagnosticsEnabled": {
+            "type": "boolean"
+          },
+          "logsEnabled": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ToggleLogs": {
+        "type": "object",
+        "properties": {
+          "logsEnabled": {
+            "type": "boolean"
+          }
+        }
+      },
+      "LogLevel": {
+        "type": "object",
+        "properties": {
+          "level": {
+            "type": "string"
+          }
+        }
+      },
+      "GadLogs": {
+        "type": "object",
+        "properties": {
+          "logs": {
+            "type": "object",
+            "properties": {
+              "limit": {
+                "type": "number"
+              },
+              "itemCount": {
+                "type": "number"
+              },
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
       },
       "Flashpost": {
         "type": "object",

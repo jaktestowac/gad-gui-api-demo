@@ -12,6 +12,15 @@ const { attendanceV1 } = require("./practice/employee-management-system/attendan
 const { authV1 } = require("./practice/employee-management-system/auth-handlers");
 const { authV2 } = require("./practice/chat-auth-handlers");
 const { verifyToken, hasPermission } = require("./practice/employee-management-system/auth-middleware");
+const twoFactor = require("./practice/2fa-handlers");
+const twoFactorV2 = require("./practice/2fa-handlers-v2");
+const {
+  getDirectoryContents,
+  getFileDetails,
+  createItem,
+  updateFile,
+  deleteItem,
+} = require("./practice/file-system-handlers");
 
 function isIdValid(id) {
   return id !== undefined && id !== "";
@@ -380,6 +389,93 @@ function handlePractice(req, res) {
           return authV2.checkAuth(req, res);
         default:
           return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
+      }
+    }
+
+    if (req.url.includes("/api/practice/v1/2fa")) {
+      const endpoint = req.url.split("/api/practice/v1/2fa/")[1];
+
+      switch (true) {
+        case req.method === "POST" && endpoint === "register":
+          return twoFactor.registerUser(req, res);
+        case req.method === "POST" && endpoint === "login":
+          return twoFactor.loginUser(req, res);
+        case req.method === "POST" && endpoint === "logout":
+          return twoFactor.logout(req, res);
+        case req.method === "POST" && endpoint === "enable-2fa":
+          return twoFactor.enableTwoFA(req, res);
+        case req.method === "POST" && endpoint === "verify-2fa":
+          return twoFactor.verifyTwoFA(req, res);
+        default:
+          return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
+      }
+    }
+
+    if (req.url.includes("/api/practice/v2/2fa")) {
+      const endpoint = req.url.split("/api/practice/v2/2fa/")[1];
+
+      switch (true) {
+        case req.method === "POST" && endpoint === "register":
+          return twoFactorV2.registerUser(req, res);
+        case req.method === "POST" && endpoint === "login":
+          return twoFactorV2.loginUser(req, res);
+        case req.method === "POST" && endpoint === "logout":
+          return twoFactorV2.logout(req, res);
+        case req.method === "POST" && endpoint === "enable-2fa":
+          return twoFactorV2.enableTwoFA(req, res);
+        case req.method === "POST" && endpoint === "verify-2fa":
+          return twoFactorV2.verifyTwoFA(req, res);
+        case req.method === "POST" && endpoint === "disable-2fa":
+          return twoFactorV2.disable2FA(req, res);
+        case req.method === "POST" && endpoint === "extend-session":
+          return twoFactorV2.extendSession(req, res);
+        case req.method === "GET" && endpoint === "check":
+          return twoFactorV2.checkAuth(req, res);
+        default:
+          return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
+      }
+    }
+
+    if (req.url.includes("/api/practice/v1/file-system")) {
+      let endpoint = req.url.split("/api/practice/v1/file-system/")[1];
+      if (endpoint && endpoint.includes("?")) {
+        endpoint = endpoint.split("?")[0];
+      }
+      switch (true) {
+        case req.method === "GET" && endpoint === "directory":
+          return getDirectoryContents(req, res);
+        case req.method === "GET" && endpoint === "file":
+          return getFileDetails(req, res);
+        case req.method === "POST" && endpoint === "create":
+          return createItem(req, res);
+        case req.method === "PUT" && endpoint === "update":
+          return updateFile(req, res);
+        case req.method === "DELETE" && endpoint === "delete":
+          return deleteItem(req, res);
+        default:
+          return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
+      }
+    }
+
+    if (req.url === "/api/practice/lang/v1/languages" && req.method === "GET") {
+      // Return available languages
+      return res.status(HTTP_OK).json({
+        en: "English",
+        pl: "Polski",
+        de: "Deutsch",
+      });
+    }
+    if (req.url === "/api/practice/lang/v1/translations" && req.method === "GET") {
+      // Return translations JSON
+      const fs = require("fs");
+      const path = require("path");
+      const filePath = path.join(__dirname, "../data/translations/practice-lang.json");
+      try {
+        const data = fs.readFileSync(filePath, "utf8");
+        return res.status(HTTP_OK).json(JSON.parse(data));
+      } catch (e) {
+        logDebug("handlePractice:translations", { error: e.message });
+        return res.status(HTTP_NOT_FOUND).json({ error: "Translations not found" });
       }
     }
 

@@ -79,8 +79,6 @@ const router = jsonServer.router(getDbPath(getConfigValue(ConfigKeys.DB_PATH)));
 const dbManager = DatabaseManager.getInstance();
 dbManager.setDb(router.db);
 
-server.use(diagnosticRoutes);
-
 const clearDbRoutes = (req, res, next) => {
   try {
     const restoreDbWithKey = (dbPathKey, successMessage) => {
@@ -96,41 +94,53 @@ const clearDbRoutes = (req, res, next) => {
       res.status(HTTP_CREATED).send({ message: successMessage, entities });
     };
 
+    const dbRestorDict = {
+      restoreDB: {
+        dbPath: path.join(__dirname, getConfigValue(ConfigKeys.DB_RESTORE_PATH)),
+        successMessage: "Database successfully restored",
+      },
+      restoreBigDB: {
+        dbPath: path.join(__dirname, getConfigValue(ConfigKeys.DB_BIG_RESTORE_PATH)),
+        successMessage: "Big Database successfully restored",
+      },
+      restoreDB2: {
+        dbPath: path.join(__dirname, getConfigValue(ConfigKeys.DB2_RESTORE_PATH)),
+        successMessage: "Database successfully restored",
+      },
+      restoreInterviewDB: {
+        dbPath: path.join(__dirname, getConfigValue(ConfigKeys.GENERIC_DB_RESTORE_PATH), "db-base-interview.json"),
+        successMessage: "Database successfully restored",
+      },
+      restoreTinyDB: {
+        dbPath: path.join(__dirname, getConfigValue(ConfigKeys.DB_TINY_RESTORE_PATH)),
+        successMessage: "Tiny Database successfully restored",
+      },
+      restoreEmptyDB: {
+        dbPath: path.join(__dirname, getConfigValue(ConfigKeys.DB_EMPTY_RESTORE_PATH)),
+        successMessage: "Empty Database successfully restored",
+      },
+      restoreTestDB: {
+        dbPath: path.join(__dirname, getConfigValue(ConfigKeys.DB_TEST_RESTORE_PATH)),
+        successMessage: "Test Database successfully restored",
+      },
+    };
+
+    if (req.method === "GET" && req.url.includes("restore/list")) {
+      const dbRestoreList = Object.keys(dbRestorDict).map((key) => {
+        return { name: key, path: `/api/${key}` };
+      });
+      res.status(HTTP_CREATED).send({ message: "List of available endpoints for restore Articles DB", dbRestoreList });
+    }
     if (req.method === "GET" && req.url.includes("restore") && req.url.includes("DB")) {
       const url = req.url.replace(/\?.*$/, "").replace(/\/$/, "");
       const urlLastPart = url.split("/").pop();
-      switch (urlLastPart) {
-        case "restoreDB":
-          restoreDbWithKey(ConfigKeys.DB_RESTORE_PATH, "Database successfully restored");
-          break;
-        case "restoreBigDB":
-          restoreDbWithKey(ConfigKeys.DB_BIG_RESTORE_PATH, "Big Database successfully restored");
-          break;
-        case "restoreDB2":
-          restoreDbWithKey(ConfigKeys.DB2_RESTORE_PATH, "Database successfully restored");
-          break;
-        case "restoreInterviewDB": {
-          const dbPath = path.join(
-            __dirname,
-            getConfigValue(ConfigKeys.GENERIC_DB_RESTORE_PATH),
-            "db-base-interview.json"
-          );
-          restoreDb(dbPath, "Database successfully restored");
-          break;
-        }
-        case "restoreTinyDB":
-          restoreDbWithKey(ConfigKeys.DB_TINY_RESTORE_PATH, "Tiny Database successfully restored");
-          break;
-        case "restoreEmptyDB":
-          restoreDbWithKey(ConfigKeys.DB_EMPTY_RESTORE_PATH, "Empty Database successfully restored");
-          break;
-        case "restoreTestDB":
-          restoreDbWithKey(ConfigKeys.DB_TEST_RESTORE_PATH, "Test Database successfully restored");
-          break;
-        default:
-          logDebug("No action for restore", { url, req_url: req.url, urlLastPart });
-          res.status(HTTP_NOT_FOUND).send(formatErrorResponse("No action for restore", { parameter: urlLastPart }));
-          break;
+
+      const dbRestore = dbRestorDict[urlLastPart];
+      if (dbRestore) {
+        restoreDb(dbRestore.dbPath, dbRestore.successMessage);
+      } else {
+        logDebug("No action for restore", { url, req_url: req.url, urlLastPart });
+        res.status(HTTP_NOT_FOUND).send(formatErrorResponse("No action for restore", { parameter: urlLastPart }));
       }
     }
     if (res.headersSent !== true) {
@@ -154,8 +164,6 @@ server.use((req, res, next) => {
   }
   next();
 });
-
-server.use(healthCheckRoutes);
 
 // actions invoked just before returning response
 server.use((req, res, next) => {
@@ -182,6 +190,9 @@ server.use(jsonServer.bodyParser);
 
 server.use(helmet());
 server.use(cookieparser());
+
+server.use(healthCheckRoutes);
+server.use(diagnosticRoutes);
 
 // allow the express server to read and render the static css file
 server.use(express.static(path.join(__dirname, "public", "login")));

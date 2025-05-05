@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD - Interactive Banners</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/practice-controls.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary-color: #8b5cf6;
+            --accent-color: #ec4899;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --info-color: #3b82f6;
+            --background-color: #f9fafb;
+            --card-bg: #ffffff;
+            --text-color: #1f2937;
+            --text-light: #6b7280;
+            --text-lighter: #9ca3af;
+            --light-text: #f9fafb;
+            --border-color: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --border-radius: 0.75rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        .gad-main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            transform: translateY(0);
+            opacity: 1;
+            animation: fade-in 0.8s ease-out;
+        }
+
+        @keyframes fade-in {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--primary-dark);
+            position: relative;
+        }
+
+        h1:after {
+            content: '';
+            position: absolute;
+            bottom: -0.5rem;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            border-radius: 4px;
+        }
+
+        p {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* Banner Styling */
+        .gad-cookie-banner {
+            position: fixed;
+            bottom: -100%;
+            width: 100%;
+            background: linear-gradient(135deg, var(--card-bg) 0%, #f3f4f6 100%);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1005;
+            transition: var(--transition);
+            border-top: 1px solid var(--border-color);
+            opacity: 0;
+            animation: slide-up 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        @keyframes slide-up {
+            0% {
+                bottom: -100%;
+                opacity: 0;
+            }
+
+            100% {
+                bottom: 0;
+                opacity: 1;
+            }
+        }
+
+        .gad-cookie-banner.gad-hidden {
+            animation: slide-down 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        @keyframes slide-down {
+            0% {
+                bottom: 0;
+                opacity: 1;
+            }
+
+            100% {
+                bottom: -100%;
+                opacity: 0;
+            }
+        }
+
+        .gad-banner-content {
+            flex: 1;
+            font-size: 1.1rem;
+            color: var(--text-color);
+            padding-right: 2rem;
+        }
+
+        .gad-banner-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .gad-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            font-size: 1rem;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .gad-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.6s;
+            transform: skewX(-15deg);
+        }
+
+        .gad-btn:hover::before {
+            left: 100%;
+        }
+
+        .gad-btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: var(--light-text);
+        }
+
+        .gad-btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .gad-btn-danger {
+            background: linear-gradient(135deg, var(--danger-color), #dc2626);
+            color: var(--light-text);
+        }
+
+        .gad-btn-danger:hover {
+            background: linear-gradient(135deg, #dc2626, var(--danger-color));
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .gad-btn-success {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            color: var(--light-text);
+        }
+
+        .gad-btn-success:hover {
+            background: linear-gradient(135deg, #059669, var(--success-color));
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .gad-btn-warning {
+            background: linear-gradient(135deg, var(--warning-color), #d97706);
+            color: var(--light-text);
+        }
+
+        .gad-btn-warning:hover {
+            background: linear-gradient(135deg, #d97706, var(--warning-color));
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Ad Container Styling */
+        .gad-ad-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+            opacity: 0;
+            animation: fade-in 0.5s ease-out forwards;
+        }
+
+        .gad-ad-content {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            transform: scale(0.9);
+            animation: scale-in 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        @keyframes scale-in {
+            0% {
+                transform: scale(0.9);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .gad-ad-content h3 {
+            color: var(--accent-color);
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .gad-ad-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        .gad-ad-content img {
+            width: 100%;
+            border-radius: var(--border-radius);
+            margin: 1rem 0;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .gad-ad-content img:hover {
+            transform: scale(1.02);
+            box-shadow: var(--shadow-md);
+        }
+
+        .gad-ad-close {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            background: var(--danger-color);
+            color: var(--light-text);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 1.25rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            z-index: 1;
+        }
+
+        .gad-ad-close:hover {
+            transform: rotate(90deg);
+            background: #dc2626;
+        }
+
+        /* Floating Menu Styling */
+        .gad-floating-menu {
+            position: fixed;
+            top: 100px;
+            right: 15px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            min-width: 150px;
+            max-width: 170px;
+            transform: translateX(0);
+            animation: slide-in-right 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .gad-floating-menu:before {
+            content: 'Cookie Settings';
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+            color: var(--primary-dark);
+            text-align: center;
+            padding-bottom: 0.3rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.8rem;
+        }
+
+        .gad-floating-button {
+            padding: 0.4rem 0.6rem;
+            background: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-align: left;
+            font-size: 0.75rem;
+        }
+
+        .gad-floating-button:after {
+            content: '🗑️';
+            margin-left: 0.3rem;
+            font-size: 0.7rem;
+        }
+
+        /* Fix for flickering ads/banners when page loads */
+        .gad-initially-hidden {
+            display: none;
+        }
+
+        /* Animation classes applied by JavaScript */
+        .gad-show-cookie-banner {
+            display: flex;
+            animation: slide-up 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        .gad-show-ad-container {
+            display: flex;
+            animation: fade-in 0.5s ease-out forwards;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .gad-main-container {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+
+            .gad-cookie-banner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .gad-banner-content {
+                margin-bottom: 1rem;
+                padding-right: 0;
+            }
+
+            .gad-banner-buttons {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+
+        /* Header specific styling */
+        .gad-header {
+            background: linear-gradient(135deg, var(--primary-dark), var(--secondary-color));
+            color: var(--light-text);
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .gad-main-nav-menu {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        #gad-menu-practice {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        /* Interactive Elements Styling */
+        .gad-interactive-elements {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .gad-interactive-elements h2 {
+            margin-bottom: 1.5rem;
+            color: var(--primary-dark);
+        }
+
+        .gad-element-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .gad-element-card {
+            background: #f9fafb;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .gad-element-card:hover {
+            box-shadow: var(--shadow);
+            transform: translateY(-2px);
+        }
+
+        .gad-element-card h3 {
+            color: var(--primary-dark);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        /* Button Styles */
+        .gad-button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .gad-button {
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            font-size: 0.9rem;
+            border: none;
+        }
+
+        .gad-button-primary {
+            background-color: var(--primary-color);
+            color: var(--light-text);
+        }
+
+        .gad-button-secondary {
+            background-color: var(--secondary-color);
+            color: var(--light-text);
+        }
+
+        .gad-button-outline {
+            background-color: transparent;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .gad-button-text {
+            background-color: transparent;
+            color: var(--primary-color);
+            padding: 0.5rem;
+        }
+
+        .gad-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Dropdown Styles */
+        .gad-dropdown {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .gad-dropdown-toggle {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 0.6rem 1rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            min-width: 180px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .gad-dropdown-toggle:hover {
+            background-color: #f9fafb;
+        }
+
+        .gad-dropdown-menu {
+            position: absolute;
+            top: calc(100% + 5px);
+            left: 0;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            min-width: 180px;
+            box-shadow: var(--shadow);
+            display: none;
+            z-index: 10;
+            overflow: hidden;
+        }
+
+        .gad-dropdown-menu.show {
+            display: block;
+            animation: dropdown-fade 0.2s ease-in;
+        }
+
+        @keyframes dropdown-fade {
+            0% {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .gad-dropdown-item {
+            display: block;
+            padding: 0.6rem 1rem;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .gad-dropdown-item:hover {
+            background-color: #f3f4f6;
+            color: var(--primary-color);
+        }
+
+        /* Toggle Switch */
+        .gad-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+            margin-bottom: 0.5rem;
+        }
+
+        .gad-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .gad-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: var(--transition);
+            border-radius: 34px;
+        }
+
+        .gad-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: var(--transition);
+            border-radius: 50%;
+        }
+
+        input:checked+.gad-slider {
+            background-color: var(--primary-color);
+        }
+
+        input:focus+.gad-slider {
+            box-shadow: 0 0 1px var(--primary-color);
+        }
+
+        input:checked+.gad-slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Tooltip */
+        .gad-tooltip-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .gad-tooltip {
+            visibility: hidden;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            white-space: nowrap;
+            font-size: 0.9rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .gad-tooltip::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #333 transparent transparent transparent;
+        }
+
+        .gad-tooltip-container:hover .gad-tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Result Box */
+        .gad-result-box {
+            background-color: #f0f9ff;
+            border: 1px solid #e0f2fe;
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+            border-radius: var(--border-radius);
+            min-height: 30px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+
+    <div class="gad-main-container">
+        <h1>Welcome to 🦎 GAD Interactive Banners</h1>
+        <p>Explore our new banner and advertisement system with improved functionality and design.</p>
+
+        <!-- Interactive Elements Section -->
+        <section class="gad-interactive-elements">
+            <h2>Interactive Elements</h2>
+            <div class="gad-element-grid">
+                <!-- Button Group -->
+                <div class="gad-element-card">
+                    <h3>Buttons</h3>
+                    <div class="gad-button-group">
+                        <button class="gad-button gad-button-primary" id="primaryBtn">Primary</button>
+                        <button class="gad-button gad-button-secondary" id="secondaryBtn">Secondary</button>
+                        <button class="gad-button gad-button-outline" id="outlineBtn">Outline</button>
+                        <button class="gad-button gad-button-text" id="textBtn">Text</button>
+                    </div>
+                    <div id="buttonClickResult" class="gad-result-box"></div>
+                </div>
+
+                <!-- Dropdown -->
+                <div class="gad-element-card">
+                    <h3>Dropdown</h3>
+                    <div class="gad-dropdown">
+                        <button class="gad-dropdown-toggle" id="dropdownToggle">
+                            Select an option
+                            <i class="gad-icon">▼</i>
+                        </button>
+                        <div class="gad-dropdown-menu" id="dropdownMenu">
+                            <a class="gad-dropdown-item" data-value="option1">Option 1</a>
+                            <a class="gad-dropdown-item" data-value="option2">Option 2</a>
+                            <a class="gad-dropdown-item" data-value="option3">Option 3</a>
+                            <a class="gad-dropdown-item" data-value="option4">Option 4</a>
+                        </div>
+                    </div>
+                    <div id="dropdownResult" class="gad-result-box"></div>
+                </div>
+
+                <!-- Toggle Switch -->
+                <div class="gad-element-card">
+                    <h3>Toggle Switch</h3>
+                    <label class="gad-switch">
+                        <input type="checkbox" id="toggleSwitch">
+                        <span class="gad-slider"></span>
+                    </label>
+                    <p>Dark Mode</p>
+                    <div id="toggleResult" class="gad-result-box"></div>
+                </div>
+
+                <!-- Tooltip -->
+                <div class="gad-element-card">
+                    <h3>Tooltip</h3>
+                    <div class="gad-tooltip-container">
+                        <button class="gad-button gad-button-primary" id="tooltipBtn">
+                            Hover Me
+                        </button>
+                        <span class="gad-tooltip">This is a tooltip!</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Cookie Banner -->
+    <div class="gad-cookie-banner gad-initially-hidden" id="cookieBanner">
+        <div class="gad-banner-content">
+            <h3>🍪 Cookie Policy</h3>
+            <p>This website uses cookies to enhance your experience and analyze our traffic. By clicking "Accept All", you consent to our use of cookies.</p>
+        </div>
+        <div class="gad-banner-buttons">
+            <button class="gad-btn gad-btn-success" onclick="acceptCookies()">Accept All</button>
+            <button class="gad-btn gad-btn-danger" onclick="declineCookies()">Decline</button>
+        </div>
+    </div>
+
+    <!-- Floating Menu -->
+    <div class="gad-floating-menu" id="floatingMenu">
+        <button class="gad-floating-button" onclick="clearCookieBannerCookie()">Clear Cookie Consent</button>
+        <button class="gad-floating-button" onclick="clearAdBannerCookie()">Clear Ad Preferences</button>
+    </div>
+
+    <!-- Advertisement -->
+    <div class="gad-ad-container gad-initially-hidden" id="adContainer">
+        <div class="gad-ad-content">
+            <button class="gad-ad-close" id="adCloseButton" onclick="closeAd()" disabled>&times;</button>
+            <h3>✨ Special Offer!</h3>
+            <p>Limited time promotion - Get access to premium features!</p>
+            <img src="/images/advert1-bg.jpg" alt="Ad Image">
+            <div class="gad-banner-buttons" align="center">
+                <button class="gad-btn gad-btn-success" onclick="window.open('/practice/', '_blank')">Learn More</button>
+            </div>
+            <div id="closeTimer" style="margin-top: 10px; font-size: 0.8rem; color: var(--text-light);">
+                Close available in <span id="secondsRemaining">2</span>s
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Cookie functions
+        function setCookie(name, value, seconds) {
+            const date = new Date();
+            date.setTime(date.getTime() + (seconds * 1000));
+            document.cookie = `${name}=${value}; expires=${date.toUTCString()}; path=/`;
+        }
+
+        function getCookie(name) {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                const [key, value] = cookie.trim().split('=');
+                if (key === name) return value;
+            }
+            return null;
+        }
+
+        function acceptCookies() {
+            setCookie('userConsentBanner2', 'accepted', 60);
+            document.getElementById('cookieBanner').classList.add('gad-hidden');
+        }
+
+        function declineCookies() {
+            setCookie('userConsentBanner2', 'declined', 60);
+            document.getElementById('cookieBanner').classList.add('gad-hidden');
+        }
+
+        function clearBannerCookies() {
+            setCookie('userConsentBanner2', '', -1); // Clear user consent cookie
+            setCookie('adDismissedBanner2', '', -1); // Clear ad dismissed cookie
+            alert('Cookies cleared!');
+        }
+
+        function clearCookieBannerCookie() {
+            setCookie('userConsentBanner2', '', -1); // Clear user consent cookie
+            console.log('Cookie Banner cookie cleared!');
+            location.reload(); // Refresh banners
+        }
+
+        function clearAdBannerCookie() {
+            setCookie('adDismissedBanner2', '', -1); // Clear ad dismissed cookie
+            console.log('Ad Banner cookie cleared!');
+            location.reload(); // Refresh banners
+        }
+
+        // Ad functions
+        function closeAd() {
+            document.getElementById('adContainer').style.display = 'none';
+            setCookie('adDismissedBanner2', 'true', 60);
+        }
+
+        // Enable close button after 2 seconds
+        function startAdCloseTimer() {
+            const closeBtn = document.getElementById('adCloseButton');
+            const timerElement = document.getElementById('closeTimer');
+            const secondsElement = document.getElementById('secondsRemaining');
+
+            // Disable button initially and apply disabled style
+            closeBtn.disabled = true;
+            closeBtn.style.opacity = '0.5';
+            closeBtn.style.cursor = 'not-allowed';
+
+            let secondsLeft = 2;
+
+            const timer = setInterval(() => {
+                secondsLeft--;
+                secondsElement.textContent = secondsLeft;
+
+                if (secondsLeft <= 0) {
+                    clearInterval(timer);
+                    closeBtn.disabled = false;
+                    closeBtn.style.opacity = '1';
+                    closeBtn.style.cursor = 'pointer';
+                    timerElement.innerHTML = ' &nbsp; ';
+                }
+            }, 1000);
+        }
+
+        // Interactive Elements JavaScript
+        document.addEventListener('DOMContentLoaded', function () {
+            // Button click handlers
+            const resultBox = document.getElementById('buttonClickResult');
+            const buttons = {
+                'primaryBtn': 'Primary button',
+                'secondaryBtn': 'Secondary button',
+                'outlineBtn': 'Outline button',
+                'textBtn': 'Text button'
+            };
+
+            Object.keys(buttons).forEach(id => {
+                document.getElementById(id).addEventListener('click', function () {
+                    resultBox.textContent = `You clicked: ${buttons[id]}`;
+                    resultBox.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color') + '20';
+                    setTimeout(() => {
+                        resultBox.style.backgroundColor = '#f0f9ff';
+                    }, 1500);
+                });
+            });
+
+            // Dropdown functionality
+            const dropdownToggle = document.getElementById('dropdownToggle');
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            const dropdownItems = document.querySelectorAll('.gad-dropdown-item');
+            const dropdownResult = document.getElementById('dropdownResult');
+
+            dropdownToggle.addEventListener('click', function () {
+                dropdownMenu.classList.toggle('show');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function (event) {
+                if (!event.target.matches('.gad-dropdown-toggle') &&
+                    !event.target.closest('.gad-dropdown-menu')) {
+                    dropdownMenu.classList.remove('show');
+                }
+            });
+
+            // Dropdown item selection
+            dropdownItems.forEach(item => {
+                item.addEventListener('click', function () {
+                    const value = this.getAttribute('data-value');
+                    const text = this.textContent;
+                    dropdownToggle.textContent = text;
+                    dropdownResult.textContent = `Selected: ${text} (${value})`;
+                    dropdownMenu.classList.remove('show');
+                });
+            });
+
+            // Toggle switch
+            const toggleSwitch = document.getElementById('toggleSwitch');
+            const toggleResult = document.getElementById('toggleResult');
+
+            toggleSwitch.addEventListener('change', function () {
+                if (this.checked) {
+                    document.body.classList.add('dark-mode');
+                    toggleResult.textContent = 'Dark mode enabled';
+                    toggleResult.style.backgroundColor = '#1e293b';
+                    toggleResult.style.color = '#f8fafc';
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    toggleResult.textContent = 'Dark mode disabled';
+                    toggleResult.style.backgroundColor = '#f0f9ff';
+                    toggleResult.style.color = '#1f2937';
+                }
+            });
+        });
+
+        // On load
+        window.onload = function () {
+            if (getCookie('userConsentBanner2')) {
+                document.getElementById('cookieBanner').classList.add('gad-hidden');
+            } else {
+                document.getElementById('cookieBanner').classList.remove('gad-hidden');
+                document.getElementById('cookieBanner').classList.add('gad-show-cookie-banner');
+            }
+
+            if (getCookie('adDismissedBanner2')) {
+                document.getElementById('adContainer').style.display = 'none';
+            } else {
+                document.getElementById('adContainer').classList.add('gad-show-ad-container');
+                startAdCloseTimer(); // Start the timer when ad is shown
+            }
+        };
+    </script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>

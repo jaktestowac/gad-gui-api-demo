@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD | Commander</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #000080;
+            color: #FFFFFF;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .header {
+            background-color: #000080;
+            color: #FFFFFF;
+            text-align: center;
+            padding: 5px;
+            font-weight: bold;
+        }
+
+        .panels-container {
+            display: flex;
+            flex: 1;
+            margin: 0 5px;
+        }
+
+        .panel {
+            background-color: #0000AA;
+            flex: 1;
+            border: 2px solid rgb(147, 147, 147);
+            margin: 0 5px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            background-color: #00AAAA;
+            color: #000000;
+            text-align: center;
+            padding: 2px;
+            font-weight: bold;
+            transition: box-shadow 0.2s, background 0.2s;
+        }
+
+        .panel-header.active {
+            background-color: #00FFFF;
+            color: #000080;
+            box-shadow: 0 0 10px 2px #FFFF00, 0 0 2px 1px #00FFFF inset;
+        }
+
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0;
+        }
+
+        .file-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: transparent;
+        }
+
+        .file-table th,
+        .file-table td {
+            padding: 2px 6px;
+            border-bottom: 1px solid #008080;
+            text-align: left;
+            font-size: 1em;
+        }
+
+        .file-table th {
+            background: #008080;
+            color: #FFFF00;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .file-table th.sorted {
+            background: #00AAAA;
+            color: #000000;
+        }
+
+        .file-table tr.selected td {
+            background-color: #00AAAA !important;
+            color: #000000 !important;
+        }
+
+        .file-table tr:hover td {
+            background-color: #00AAAA;
+            color: #000000;
+        }
+
+        .file-table .directory {
+            color: #FFFFFF;
+            font-weight: bold;
+        }
+
+        .file-table .executable {
+            color: #00FF00;
+        }
+
+        .file-table .document {
+            color: #AAAAAA;
+        }
+
+        .footer {
+            background-color: #000080;
+            padding: 5px;
+        }
+
+        .function-keys {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+        }
+
+        .function-key {
+            background-color: #0000AA;
+            color: #FFFFFF;
+            padding: 3px 6px;
+            border: 1px solid #FFFFFF;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .function-key:hover {
+            background-color: #0000FF;
+        }
+
+        .function-key span {
+            color: #00FFFF;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #0000AA;
+            border: 2px solid #FFFFFF;
+            padding: 20px;
+            z-index: 101;
+            min-width: 350px;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+        }
+
+        #editModal .file-view {
+            width: 100%;
+            min-height: 220px;
+            max-height: 350px;
+            font-size: 1.1em;
+            color: #00FF00;
+            background: #000020;
+            border: 1px solid #00FFFF;
+            resize: vertical;
+        }
+
+        #editModal textarea.file-view {
+            font-family: 'Courier New', monospace;
+            padding: 8px;
+        }
+
+        .modal-title {
+            color: #FFFFFF;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .modal-content {
+            margin-bottom: 15px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .modal-button {
+            background-color: #000080;
+            color: #FFFFFF;
+            border: 1px solid #FFFFFF;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .modal-button:hover {
+            background-color: #0000FF;
+        }
+
+        .modal-input {
+            background-color: #000000;
+            color: #FFFFFF;
+            border: 1px solid #FFFFFF;
+            padding: 5px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+
+        .file-view {
+            background-color: #000000;
+            color: #AAAAAA;
+            border: 1px solid #FFFFFF;
+            padding: 10px;
+            white-space: pre;
+            overflow: auto;
+            height: 300px;
+        }
+
+        .command-line-container {
+            background-color: #000000;
+            border: 2px solid #00FFFF;
+            padding: 4px 0 4px 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 5px;
+        }
+
+        .command-label {
+            color: #00FFFF;
+            font-weight: bold;
+            margin-right: 4px;
+            min-width: 180px;
+            display: inline-block;
+            max-width: 40vw;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .command-input {
+            background-color: #000000;
+            color: #00FF00;
+            border: none;
+            outline: none;
+            width: 80%;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+            padding: 2px 4px;
+        }
+
+        .status-message {
+            color: #FFFF00;
+            text-align: center;
+            margin-top: 5px;
+            min-height: 1.2em;
+        }
+
+        /* DOS-style Menu Modal */
+        #menuModal .modal-content {
+            background: #000080;
+            border: 2px solid #FFFF00;
+            padding: 0;
+        }
+
+        #menuModal ul {
+            margin: 0;
+            padding: 0;
+        }
+
+        #menuModal li {
+            margin: 0;
+            padding: 0;
+        }
+
+        #menuModal .modal-button {
+            width: 100%;
+            background: #000080;
+            color: #FFFF00;
+            border: none;
+            border-bottom: 1px solid #00FFFF;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            text-align: left;
+            padding: 8px 16px;
+            font-weight: bold;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        #menuModal .modal-button:hover,
+        #menuModal .modal-button:focus {
+            background: #00AAAA;
+            color: #000000;
+            outline: 2px solid #FFFF00;
+        }
+
+        #menuModal .modal-title {
+            background: #000080;
+            color: #00FFFF;
+            border-bottom: 2px solid #FFFF00;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2em;
+            font-weight: bold;
+            padding: 6px 0 6px 12px;
+            margin: 0 0 0 0;
+            text-align: left;
+        }
+
+        /* Password Modal */
+        #passwordModal .modal-content {
+            background: #000080;
+            border: 2px solid #FFFF00;
+            padding: 16px 24px;
+            text-align: left;
+        }
+
+        #passwordModal .modal-title {
+            background: #000080;
+            color: #00FFFF;
+            border-bottom: 2px solid #FFFF00;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2em;
+            font-weight: bold;
+            padding: 6px 0 6px 12px;
+            margin: 0 0 12px 0;
+            text-align: left;
+        }
+
+        #passwordModal .modal-input {
+            background-color: #000000;
+            color: #FFFF00;
+            border: 1px solid #FFFF00;
+            padding: 6px;
+            width: 100%;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+            margin-bottom: 12px;
+        }
+
+        .lock-icon {
+            color: #FFFF00;
+            margin-right: 4px;
+            font-weight: bold;
+        }
+
+        .glitch {
+            position: relative;
+            animation: glitch 0.6s infinite steps(2, end);
+            overflow: hidden;
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-glitch);
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .glitch::before {
+            color: #00fff7;
+            z-index: 2;
+            clip-path: polygon(0 2%, 100% 0, 100% 20%, 0 22%);
+            transform: translate(-2px, -1px) skew(-2deg);
+            animation: glitchTop 0.4s infinite steps(2, end);
+        }
+
+        .glitch::after {
+            color: #ff00c8;
+            z-index: 2;
+            clip-path: polygon(0 80%, 100% 78%, 100% 100%, 0 100%);
+            transform: translate(2px, 1px) skew(2deg);
+            animation: glitchBot 0.4s infinite steps(2, end);
+        }
+
+        @keyframes glitch {
+            0% {
+                transform: none;
+                text-shadow: 2px 0 #00fff7, -2px 0 #ff00c8;
+            }
+
+            10% {
+                transform: translate(-2px, 1px);
+                text-shadow: 4px 2px #ff00c8, -4px -2px #00fff7;
+            }
+
+            20% {
+                transform: translate(2px, -1px);
+                text-shadow: -2px 2px #00fff7, 2px -2px #ff00c8;
+            }
+
+            30% {
+                transform: translate(-1px, 2px);
+                text-shadow: 2px -2px #ff00c8, -2px 2px #00fff7;
+            }
+
+            40% {
+                transform: translate(1px, -2px);
+                text-shadow: -4px 2px #00fff7, 4px -2px #ff00c8;
+            }
+
+            50% {
+                transform: none;
+                text-shadow: 2px 0 #00fff7, -2px 0 #ff00c8;
+            }
+
+            60% {
+                transform: translate(2px, 1px);
+                text-shadow: 4px 2px #ff00c8, -4px -2px #00fff7;
+            }
+
+            70% {
+                transform: translate(-2px, -1px);
+                text-shadow: -2px 2px #00fff7, 2px -2px #ff00c8;
+            }
+
+            80% {
+                transform: translate(1px, 2px);
+                text-shadow: 2px -2px #ff00c8, -2px 2px #00fff7;
+            }
+
+            90% {
+                transform: translate(-1px, -2px);
+                text-shadow: -4px 2px #00fff7, 4px -2px #ff00c8;
+            }
+
+            100% {
+                transform: none;
+                text-shadow: 2px 0 #00fff7, -2px 0 #ff00c8;
+            }
+        }
+
+        @keyframes glitchTop {
+            0% {
+                transform: translate(-2px, -1px) skew(-2deg);
+            }
+
+            50% {
+                transform: translate(2px, 1px) skew(2deg);
+            }
+
+            100% {
+                transform: translate(-2px, -1px) skew(-2deg);
+            }
+        }
+
+        @keyframes glitchBot {
+            0% {
+                transform: translate(2px, 1px) skew(2deg);
+            }
+
+            50% {
+                transform: translate(-2px, -1px) skew(-2deg);
+            }
+
+            100% {
+                transform: translate(2px, 1px) skew(2deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">GAD Commander</div>
+
+    <div class="panels-container">
+        <!-- Left Panel -->
+        <div class="panel" id="leftPanel">
+            <div class="panel-header" id="leftPanelHeader">C:\</div>
+            <div class="panel-content">
+                <table class="file-table" id="leftFileTable">
+                    <thead>
+                        <tr>
+                            <th data-panel="left" data-sort="name">Name</th>
+                            <th data-panel="left" data-sort="type">Type</th>
+                            <th data-panel="left" data-sort="size">Size</th>
+                            <th data-panel="left" data-sort="date">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leftFileTbody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="panel" id="rightPanel">
+            <div class="panel-header" id="rightPanelHeader">D:\</div>
+            <div class="panel-content">
+                <table class="file-table" id="rightFileTable">
+                    <thead>
+                        <tr>
+                            <th data-panel="right" data-sort="name">Name</th>
+                            <th data-panel="right" data-sort="type">Type</th>
+                            <th data-panel="right" data-sort="size">Size</th>
+                            <th data-panel="right" data-sort="date">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rightFileTbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="function-keys">
+            <div class="function-key" id="help-btn"><span>F1</span> Help</div>
+            <div class="function-key" id="menu-btn"><span>F2</span> Menu</div>
+            <div class="function-key" id="view-btn"><span>F3</span> View</div>
+            <div class="function-key" id="edit-btn"><span>F4</span> Edit</div>
+            <div class="function-key" id="copy-btn"><span>F5</span> Copy</div>
+            <div class="function-key" id="move-btn"><span>F6</span> Move</div>
+            <div class="function-key" id="mkdir-btn"><span>F7</span> MkDir</div>
+            <div class="function-key" id="delete-btn"><span>F8</span> Delete</div>
+            <div class="function-key" id="pulldown-btn"><span>F9</span> PullDn</div>
+            <div class="function-key" id="quit-btn"><span>F10</span> Quit</div>
+        </div>
+        <div class="status-message" id="statusMessage"></div>
+        <div class="command-line-container">
+            <span class="command-label" id="commandLabel">C:\&gt;</span>
+            <input type="text" class="command-input" id="commandInput" placeholder="Type command...">
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay"></div>
+
+    <!-- View File Modal -->
+    <div class="modal" id="viewModal">
+        <div class="modal-title">View File</div>
+        <div class="modal-content">
+            <div class="file-view" id="fileContent"></div>
+        </div>
+        <div class="modal-buttons">
+            <button class="modal-button" id="closeViewBtn">Close</button>
+        </div>
+    </div>
+
+    <!-- Edit File Modal -->
+    <div class="modal" id="editModal">
+        <div class="modal-title">Edit File</div>
+        <div class="modal-content">
+            <textarea class="file-view" id="fileEditContent" spellcheck="false"></textarea>
+        </div>
+        <div class="modal-buttons">
+            <button class="modal-button" id="saveEditBtn">Save</button>
+            <button class="modal-button" id="cancelEditBtn">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Create Directory Modal -->
+    <div class="modal" id="mkdirModal">
+        <div class="modal-title">Create Directory</div>
+        <div class="modal-content">
+            <input type="text" class="modal-input" id="dirNameInput" placeholder="Directory name">
+        </div>
+        <div class="modal-buttons">
+            <button class="modal-button" id="createDirBtn">Create</button>
+            <button class="modal-button" id="cancelDirBtn">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div class="modal" id="helpModal">
+        <div class="modal-title">GAD Commander Help</div>
+        <div class="modal-content">
+            <p><strong>F1</strong> - Display this help</p>
+            <p><strong>F2</strong> - Show user menu</p>
+            <p><strong>F3</strong> - View file content</p>
+            <p><strong>F4</strong> - Edit file content</p>
+            <p><strong>F5</strong> - Copy selected file</p>
+            <p><strong>F6</strong> - Move selected file</p>
+            <p><strong>F7</strong> - Create new directory</p>
+            <p><strong>F8</strong> - Delete selected file/directory</p>
+            <p><strong>F9</strong> - Access pull-down menus</p>
+            <p><strong>F10</strong> - Exit application</p>
+            <p>Double-click on directories to navigate into them</p>
+            <p>Use Tab to switch between panels</p>
+        </div>
+        <div class="modal-buttons">
+            <button class="modal-button" id="closeHelpBtn">Close</button>
+        </div>
+    </div>
+
+    <!-- Custom Alert/Confirm Modal -->
+    <div class="modal" id="customModal">
+        <div class="modal-title" id="customModalTitle"></div>
+        <div class="modal-content" id="customModalContent"></div>
+        <div class="modal-buttons" id="customModalButtons"></div>
+    </div>
+
+    <!-- Menu Modal (F2) -->
+    <div class="modal" id="menuModal">
+        <div class="modal-title">Menu</div>
+        <div class="modal-content">
+            <ul style="list-style:none; padding:0; margin:0;">
+                <li><button class="modal-button" onclick="customAlert('Settings coming soon!')">Settings</button></li>
+                <li><button class="modal-button" onclick="customAlert('About: GAD Commander v1.0')">About</button></li>
+                <li><button class="modal-button" onclick="location.reload()">Refresh</button></li>
+            </ul>
+        </div>
+        <div class="modal-buttons">
+            <button class="modal-button" id="closeMenuBtn">Close</button>
+        </div>
+    </div>
+
+    <!-- Pull-down Menu Modal (F9) -->
+    <div class="modal" id="pulldownModal">
+        <div class="modal-title">Pull-down Menu</div>
+        <div class="modal-content">
+            <p>Pull-down menu placeholder. (Add your menu items here.)</p>
+        </div>
+        <div class="modal-buttons">
+            <button class="modal-button" id="closePulldownBtn">Close</button>
+        </div>
+    </div>
+
+    <!-- Copy/Move Modal (F5/F6) -->
+    <div class="modal" id="copyMoveModal">
+        <div class="modal-title" id="copyMoveModalTitle"></div>
+        <div class="modal-content">
+            <label for="copyMoveNameInput">New name:</label>
+            <input type="text" class="modal-input" id="copyMoveNameInput">
+        </div>
+        <div class="modal-buttons">
+            <button class="modal-button" id="copyMoveConfirmBtn">OK</button>
+            <button class="modal-button" id="copyMoveCancelBtn">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Password Modal -->
+    <div class="modal" id="passwordModal">
+        <div class="modal-title">Password Required</div>
+        <div class="modal-content">
+            <input type="password" class="modal-input" id="passwordInput" placeholder="Enter password">
+        </div>
+        <div class="modal-buttons">
+            <button class="modal-button" id="passwordOkBtn">OK</button>
+            <button class="modal-button" id="passwordCancelBtn">Cancel</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import * as CmdActions from './cmd-actions.js';
+
+        document.addEventListener('DOMContentLoaded', function () {
+            let activePanel = 'left';
+            let currentLeftPath = 'C:';
+            let currentRightPath = 'D:';
+            let selectedLeftItem = null;
+            let selectedRightItem = null;
+            let currentFileBeingEdited = null;
+            let leftItems = [];
+            let rightItems = [];
+            let leftSelectedIndex = 0;
+            let rightSelectedIndex = 0;
+            let leftSort = { by: 'type', asc: true, secondary: { by: 'name', asc: true } };
+            let rightSort = { by: 'type', asc: true, secondary: { by: 'name', asc: true } };
+
+            // Store last directory data for each panel to check for corruption
+            const lastDirData = { left: null, right: null };
+
+            // DOM elements
+            const leftPanelHeader = document.getElementById('leftPanelHeader');
+            const rightPanelHeader = document.getElementById('rightPanelHeader');
+            const leftFileTbody = document.getElementById('leftFileTbody');
+            const rightFileTbody = document.getElementById('rightFileTbody');
+            const statusMessage = document.getElementById('statusMessage');
+            const commandInput = document.getElementById('commandInput');
+            const commandLabel = document.getElementById('commandLabel');
+
+            // Modals
+            const viewModal = document.getElementById('viewModal');
+            const editModal = document.getElementById('editModal');
+            const mkdirModal = document.getElementById('mkdirModal');
+            const helpModal = document.getElementById('helpModal');
+            const fileContent = document.getElementById('fileContent');
+            const fileEditContent = document.getElementById('fileEditContent');
+            const dirNameInput = document.getElementById('dirNameInput');
+
+            // Password modal logic
+            let passwordCallback = null;
+            const passwordModal = document.getElementById('passwordModal');
+            const passwordInput = document.getElementById('passwordInput');
+            document.getElementById('passwordOkBtn').onclick = function () {
+                if (passwordCallback) passwordCallback(passwordInput.value);
+                passwordInput.value = '';
+                hideModal(passwordModal);
+            };
+            document.getElementById('passwordCancelBtn').onclick = function () {
+                passwordInput.value = '';
+                hideModal(passwordModal);
+            };
+            function promptPassword(cb) {
+                passwordCallback = cb;
+                passwordInput.value = '';
+                showModal(passwordModal);
+                setTimeout(() => passwordInput.focus(), 100);
+            }
+
+            // Utility for name validation
+            function isValidName(name) {
+                // Limit: max 50 chars, no / \ : * ? " < > |
+                const invalidPattern = /[\\/:*?"<>|]/;
+                return name.length > 0 && name.length <= 50 && !invalidPattern.test(name);
+            }
+
+            function truncateName(name, maxLength = 24) {
+                if (name.length > maxLength) {
+                    return name.slice(0, maxLength - 1) + '…';
+                }
+                return name;
+            }
+
+            // Custom modal logic
+            function showModal(modal) {
+                document.getElementById('modalOverlay').style.display = 'block';
+                modal.style.display = 'block';
+            }
+
+            function hideModal(modal) {
+                modal.style.display = 'none';
+                // Hide overlay if no other modals are open
+                setTimeout(() => {
+                    const anyOpen = Array.from(document.querySelectorAll('.modal')).some(m => m.style.display === 'block');
+                    if (!anyOpen) document.getElementById('modalOverlay').style.display = 'none';
+                }, 10);
+            }
+
+            function showCustomModal({ title, content, buttons }) {
+                const modal = document.getElementById('customModal');
+                const modalTitle = document.getElementById('customModalTitle');
+                const modalContent = document.getElementById('customModalContent');
+                const modalButtons = document.getElementById('customModalButtons');
+                modalTitle.textContent = title || '';
+                modalContent.textContent = content || '';
+                modalButtons.innerHTML = '';
+                buttons.forEach(btn => {
+                    const button = document.createElement('button');
+                    button.className = 'modal-button';
+                    button.textContent = btn.text;
+                    button.onclick = function () {
+                        hideModal(modal);
+                        btn.onClick && btn.onClick();
+                    };
+                    modalButtons.appendChild(button);
+                });
+                showModal(modal);
+            }
+
+            function customConfirm(message, onYes, onNo) {
+                showCustomModal({
+                    title: 'Confirm',
+                    content: message,
+                    buttons: [
+                        { text: 'Yes', onClick: onYes },
+                        { text: 'No', onClick: onNo }
+                    ]
+                });
+            }
+
+            function customAlert(message, onOk) {
+                showCustomModal({
+                    title: 'Alert',
+                    content: message,
+                    buttons: [
+                        { text: 'OK', onClick: onOk }
+                    ]
+                });
+            }
+
+            // Display functions
+            function showStatus(message) {
+                statusMessage.textContent = message;
+                setTimeout(() => {
+                    statusMessage.textContent = '';
+                }, 3000);
+            }
+
+            function sortItems(items, sort) {
+                return Array.from(items).sort((a, b) => {
+                    let av, bv;
+                    if (sort.by === 'name') {
+                        av = a.name.toLowerCase();
+                        bv = b.name.toLowerCase();
+                    } else if (sort.by === 'type') {
+                        av = a.type || '';
+                        bv = b.type || '';
+                    } else if (sort.by === 'size') {
+                        av = parseInt((a.size || '').replace(/[^\d]/g, '')) || 0;
+                        bv = parseInt((b.size || '').replace(/[^\d]/g, '')) || 0;
+                    } else if (sort.by === 'date') {
+                        av = a.updatedAt || a.createdAt || '';
+                        bv = b.updatedAt || b.createdAt || '';
+                    }
+                    if (av < bv) return sort.asc ? -1 : 1;
+                    if (av > bv) return sort.asc ? 1 : -1;
+                    // Secondary sort if available
+                    if (sort.secondary) {
+                        let sav, sbv;
+                        if (sort.secondary.by === 'name') {
+                            sav = a.name.toLowerCase();
+                            sbv = b.name.toLowerCase();
+                        } else if (sort.secondary.by === 'type') {
+                            sav = a.type || '';
+                            sbv = b.type || '';
+                        }
+                        if (sav < sbv) return sort.secondary.asc ? -1 : 1;
+                        if (sav > sbv) return sort.secondary.asc ? 1 : -1;
+                    }
+                    return 0;
+                });
+            }
+
+            function renderTable(panel, path, data, dirInfo) {
+                const tbody = panel === 'left' ? leftFileTbody : rightFileTbody;
+                const sort = panel === 'left' ? leftSort : rightSort;
+                tbody.innerHTML = '';
+                let items = data.map(item => Object.assign({}, item));
+                // If at root ("/"), do not add parent item
+                if (path !== '/' && !path.endsWith(':')) {
+                    items.unshift({
+                        name: '..',
+                        type: 'directory',
+                        size: '',
+                        updatedAt: '',
+                        isParent: true
+                    });
+                }
+                // Only sort if not at root (drives)
+                if (path !== '/') {
+                    items = sortItems(items, sort);
+                }
+                items.forEach((item, idx) => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'file-item';
+                    if (item.type === 'directory' || item.type === 'drive') tr.classList.add('directory');
+                    else if (item.name.endsWith('.EXE') || item.name.endsWith('.COM') || item.name.endsWith('.BAT')) tr.classList.add('executable');
+                    else tr.classList.add('document');
+                    tr.dataset.name = item.name;
+                    tr.dataset.type = item.type;
+                    tr.dataset.size = item.size || '';
+                    if (item.isParent) tr.dataset.isParent = 'true';
+                    let displayName = truncateName(item.name);
+                    if (item.passwordProtected) displayName = '<span class="lock-icon"><i class="fa fa-lock"></i></span>' + displayName;
+                    tr.innerHTML = `
+                        <td title="${item.name}">${displayName}</td>
+                        <td>${item.isParent ? '' : (item.type || '')}</td>
+                        <td>${item.size || ''}</td>
+                        <td>${(item.updatedAt || item.createdAt || '') ? (item.updatedAt || item.createdAt).split('T')[0] : ''}</td>
+                    `;
+                    if (item.corrupted) tr.classList.add('corrupted-row');
+                    tbody.appendChild(tr);
+                    tr.addEventListener('click', function () { selectItem(panel, tr); });
+                    tr.addEventListener('dblclick', function () {
+                        if (item.isParent) {
+                            navigateToDirectory(panel, navigateToParent(null, path));
+                        } else if (item.type === 'directory' || item.type === 'drive') {
+                            // If drive, go to drive root
+                            if (item.type === 'drive') {
+                                navigateToDirectory(panel, item.name.replace(':', ':'));
+                            } else {
+                                navigateToDirectory(panel, buildPath(path, item.name));
+                            }
+                        } else if (item.type === 'file') {
+                            viewFile(buildPath(path, item.name));
+                        }
+                    });
+                });
+                lastDirData[panel] = data;
+                if (panel === 'left') {
+                    leftPanelHeader.textContent = path;
+                    currentLeftPath = path;
+                    leftItems = tbody.querySelectorAll('tr.file-item');
+                    leftSelectedIndex = 0;
+                    if (leftItems.length > 0) selectItem('left', leftItems[0]);
+                    updatePanelHighlight();
+                } else {
+                    rightPanelHeader.textContent = path;
+                    currentRightPath = path;
+                    rightItems = tbody.querySelectorAll('tr.file-item');
+                    rightSelectedIndex = 0;
+                    if (rightItems.length > 0) selectItem('right', rightItems[0]);
+                    updatePanelHighlight();
+                }
+            }
+
+            function displayDirectoryContents(panel, path, apiData) {
+                const dirInfo = apiData && apiData.directory ? apiData.directory : null;
+                const data = apiData && apiData.contents ? apiData.contents : [];
+                renderTable(panel, path, data, dirInfo);
+                // Glitch effect for corrupted directory
+                const panelDiv = panel === 'left' ? document.getElementById('leftPanel') : document.getElementById('rightPanel');
+                let isCorrupted = false;
+                if (dirInfo && dirInfo.corrupted) {
+                    isCorrupted = true;
+                }
+                if (isCorrupted) {
+                    panelDiv.classList.add('glitch');
+                } else {
+                    panelDiv.classList.remove('glitch');
+                }
+            }
+
+            function selectItem(panel, item) {
+                // Clear previous selection
+                if (panel === 'left') {
+                    document.querySelectorAll('#leftFileTbody .file-item').forEach(i => i.classList.remove('selected'));
+                    selectedLeftItem = item;
+                    activePanel = 'left';
+                } else {
+                    document.querySelectorAll('#rightFileTbody .file-item').forEach(i => i.classList.remove('selected'));
+                    selectedRightItem = item;
+                    activePanel = 'right';
+                }
+
+                item.classList.add('selected');
+                updatePanelHighlight();
+            }
+
+            function getSelectedItem() {
+                return activePanel === 'left' ? selectedLeftItem : selectedRightItem;
+            }
+
+            function getCurrentPath() {
+                return activePanel === 'left' ? currentLeftPath : currentRightPath;
+            }
+
+            // Override navigation and file view to use password logic from the imported module
+            function navigateToDirectory(panel, path) {
+                CmdActions.fetchDirectoryContentsWithPassword(path).then(data => {
+                    if (data.status === 401) {
+                        // Need password
+                        promptPassword(async (enteredPwd) => {
+                            if (!enteredPwd) return;
+                            CmdActions.setPasswordForPath(path, enteredPwd);
+                            let retryData = await CmdActions.fetchDirectoryContentsWithPassword(path);
+                            if (retryData.status === 401) {
+                                showStatus('Incorrect password');
+                            } else {
+                                displayDirectoryContents(panel, path, retryData);
+                            }
+                        });
+                    } else {
+                        displayDirectoryContents(panel, path, data);
+                    }
+                });
+            }
+
+            function viewFile(path) {
+                CmdActions.fetchFileContentWithPassword(path).then(fileData => {
+                    if (fileData && fileData.status === 401) {
+                        // Need password
+                        promptPassword(async (enteredPwd) => {
+                            if (!enteredPwd) return;
+                            CmdActions.setPasswordForPath(path, enteredPwd);
+                            let retryData = await CmdActions.fetchFileContentWithPassword(path);
+                            if (retryData && retryData.status === 401) {
+                                showStatus('Incorrect password');
+                            } else if (retryData && retryData.content !== undefined) {
+                                displayFileContent(path, retryData);
+                            } else {
+                                showStatus('Error loading file content');
+                            }
+                        });
+                    } else if (fileData && fileData.content !== undefined) {
+                        displayFileContent(path, fileData);
+                    } else {
+                        showStatus('Error loading file content');
+                    }
+                });
+            }
+
+            function displayFileContent(path, fileData) {
+                // Check if file is corrupted in lastDirData
+                let isCorrupted = false;
+                const panel = activePanel;
+                const dirData = lastDirData[panel];
+                if (dirData && Array.isArray(dirData)) {
+                    const fileName = path.split('/').pop();
+                    const match = dirData.find(item => item.name === fileName && item.corrupted && item.type === 'file');
+                    if (match) isCorrupted = true;
+                }
+                if (isCorrupted) {
+                    fileContent.innerHTML = '<span style="color:#FF3333;font-weight:bold;">This file is corrupted and cannot be previewed.</span>';
+                    showModal(viewModal);
+                    return;
+                }
+                fileContent.textContent = fileData.content;
+                showModal(viewModal);
+            }
+
+            function buildPath(currentPath, itemName) {
+                if (itemName === '..') {
+                    return navigateToParent(null, currentPath);
+                }
+
+                // If it's just a drive (e.g., "C:"), return it
+                if (itemName.endsWith(':')) {
+                    return itemName;
+                }
+
+                // If the current path is a drive, we don't need an extra slash
+                if (currentPath.endsWith(':')) {
+                    return `${currentPath}/${itemName}`;
+                }
+
+                return `${currentPath}/${itemName}`;
+            }
+
+            function navigateToParent(panel, currentPath) {
+                if (currentPath === '/' || currentPath.endsWith(':')) {
+                    return '/';  // Go to root if at drive level
+                }
+
+                const lastSlashIndex = currentPath.lastIndexOf('/');
+                let parentPath;
+
+                if (lastSlashIndex === -1) {
+                    parentPath = '/';
+                } else {
+                    parentPath = currentPath.substring(0, lastSlashIndex);
+
+                    // If we're left with an empty string or just a drive letter with no slash
+                    if (parentPath === '' || parentPath.endsWith(':')) {
+                        parentPath = parentPath || '/';
+                    }
+                }
+
+                if (panel) {
+                    navigateToDirectory(panel, parentPath);
+                }
+
+                return parentPath;
+            }
+
+            function updatePanelHighlight() {
+
+                // Clear previous selection
+                leftPanelHeader.classList.remove('active');
+                rightPanelHeader.classList.remove('active');
+
+                if (activePanel === 'left') {
+                    leftPanelHeader.classList.add('active');
+                    document.getElementById('leftPanel').style.borderColor = '#FFFF00';
+                    document.getElementById('rightPanel').style.borderColor = 'rgb(147, 147, 147)';
+                } else {
+                    rightPanelHeader.classList.add('active');
+                    document.getElementById('rightPanel').style.borderColor = '#FFFF00';
+                    document.getElementById('leftPanel').style.borderColor = 'rgb(147, 147, 147)';
+                }
+
+                // Update command label to show current path and panel
+                const leftDisplay = truncateName(currentLeftPath, 32);
+                const rightDisplay = truncateName(currentRightPath, 32);
+                leftPanelHeader.textContent = leftDisplay;
+                leftPanelHeader.title = currentLeftPath;
+                rightPanelHeader.textContent = rightDisplay;
+                rightPanelHeader.title = currentRightPath;
+                if (activePanel === 'left') {
+                    commandLabel.textContent = `[LEFT] ${leftDisplay}>`;
+                } else {
+                    commandLabel.textContent = `[RIGHT] ${rightDisplay}>`;
+                }
+            }
+
+            // Function button handlers
+            document.getElementById('help-btn').addEventListener('click', function () {
+                showModal(helpModal);
+            });
+
+            document.getElementById('closeHelpBtn').addEventListener('click', function () {
+                hideModal(helpModal);
+            });
+
+            document.getElementById('view-btn').addEventListener('click', function () {
+                const selectedItem = getSelectedItem();
+                if (!selectedItem || selectedItem.dataset.type === 'directory' || selectedItem.dataset.isParent === 'true') {
+                    showStatus('Select a file to view');
+                    return;
+                }
+                const path = buildPath(getCurrentPath(), selectedItem.dataset.name);
+                viewFile(path);
+            });
+
+            document.getElementById('closeViewBtn').addEventListener('click', function () {
+                hideModal(viewModal);
+            });
+
+            document.getElementById('edit-btn').addEventListener('click', async function () {
+                const selectedItem = getSelectedItem();
+                if (!selectedItem || selectedItem.dataset.type === 'directory' || selectedItem.dataset.isParent === 'true') {
+                    showStatus('Select a file to edit');
+                    return;
+                }
+
+                const path = buildPath(getCurrentPath(), selectedItem.dataset.name);
+                const fileData = await CmdActions.fetchFileContent(path);
+
+                if (fileData && fileData.content !== undefined) {
+                    fileEditContent.value = fileData.content;
+                    currentFileBeingEdited = path;
+                    showModal(editModal);
+                    fileEditContent.focus();
+                } else {
+                    showStatus('Error loading file for editing');
+                }
+            });
+
+            // Ensure Enter in edit modal adds a new line
+            fileEditContent.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' && !e.ctrlKey && !e.altKey) {
+                    // Default behavior: insert new line
+                    // Do nothing, allow default
+                }
+            });
+
+            document.getElementById('saveEditBtn').addEventListener('click', async function () {
+                if (currentFileBeingEdited) {
+                    const success = await CmdActions.updateFile(currentFileBeingEdited, fileEditContent.value);
+                    if (success) {
+                        hideModal(editModal);
+                        // Refresh the current panel
+                        navigateToDirectory(activePanel, getCurrentPath());
+                    }
+                }
+            });
+
+            document.getElementById('cancelEditBtn').addEventListener('click', function () {
+                hideModal(editModal);
+            });
+
+            document.getElementById('mkdir-btn').addEventListener('click', function () {
+                dirNameInput.value = '';
+                showModal(mkdirModal);
+            });
+
+            document.getElementById('createDirBtn').addEventListener('click', async function () {
+                const dirName = dirNameInput.value.trim();
+                if (!isValidName(dirName)) {
+                    showStatus('Invalid directory name. Max 50 chars, no / \\: * ? " < > |');
+                    return;
+                }
+
+                const success = await CmdActions.createDirectory(getCurrentPath(), dirName);
+                if (success) {
+                    hideModal(mkdirModal);
+                    // Refresh the current panel
+                    navigateToDirectory(activePanel, getCurrentPath());
+                }
+            });
+
+            document.getElementById('cancelDirBtn').addEventListener('click', function () {
+                hideModal(mkdirModal);
+            });
+
+            document.getElementById('delete-btn').addEventListener('click', async function () {
+                const selectedItem = getSelectedItem();
+                if (!selectedItem || selectedItem.dataset.isParent === 'true') {
+                    customAlert('Select a file or directory to delete');
+                    return;
+                }
+                const path = buildPath(getCurrentPath(), selectedItem.dataset.name);
+                customConfirm(`Are you sure you want to delete ${selectedItem.dataset.name}?`, async function () {
+                    const success = await CmdActions.deleteItem(path);
+                    if (success) {
+                        navigateToDirectory(activePanel, getCurrentPath());
+                    }
+                }, function () { });
+            });
+
+            document.getElementById('quit-btn').addEventListener('click', function () {
+                customConfirm('Are you sure you want to exit GAD Commander?', function () {
+                    window.location.href = '/practice';
+                }, function () { });
+            });
+
+            // F2 Menu
+            document.getElementById('menu-btn').addEventListener('click', function () {
+                showModal(document.getElementById('menuModal'));
+            });
+            document.getElementById('closeMenuBtn').addEventListener('click', function () {
+                hideModal(document.getElementById('menuModal'));
+            });
+
+            // F9 Pull-down
+            document.getElementById('pulldown-btn').addEventListener('click', function () {
+                showModal(document.getElementById('pulldownModal'));
+            });
+            document.getElementById('closePulldownBtn').addEventListener('click', function () {
+                hideModal(document.getElementById('pulldownModal'));
+            });
+
+            // F5 Copy
+            document.getElementById('copy-btn').addEventListener('click', function () {
+                handleCopyMove('copy');
+            });
+
+            // F6 Move
+            document.getElementById('move-btn').addEventListener('click', function () {
+                handleCopyMove('move');
+            });
+
+            // Copy/Move logic
+            function handleCopyMove(mode) {
+                const selectedItem = getSelectedItem();
+                if (!selectedItem || selectedItem.dataset.isParent === 'true') {
+                    customAlert('Select a file or directory to ' + mode);
+                    return;
+                }
+                const srcPanel = activePanel;
+                const dstPanel = srcPanel === 'left' ? 'right' : 'left';
+                const srcPath = getCurrentPath();
+                const dstPath = dstPanel === 'left' ? currentLeftPath : currentRightPath;
+                const name = selectedItem.dataset.name;
+                document.getElementById('copyMoveModalTitle').textContent = (mode === 'copy' ? 'Copy' : 'Move') + ` "${name}" to ${dstPath}`;
+                const nameInput = document.getElementById('copyMoveNameInput');
+                nameInput.value = name;
+                showModal(document.getElementById('copyMoveModal'));
+                document.getElementById('copyMoveConfirmBtn').onclick = async function () {
+                    const newName = nameInput.value.trim();
+                    if (!isValidName(newName)) {
+                        customAlert('Invalid name. Max 50 chars, no / \\: * ? " < > |');
+                        return;
+                    }
+                    // Fetch source item details
+                    const srcFullPath = buildPath(srcPath, name);
+                    let srcData = null;
+                    if (selectedItem.dataset.type === 'file') {
+                        srcData = await CmdActions.fetchFileContent(srcFullPath);
+                        if (!srcData) {
+                            customAlert('Failed to fetch source file');
+                            return;
+                        }
+                    }
+                    // Create item in destination
+                    const createRes = await fetch('/api/practice/v1/file-system/create', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            path: dstPath,
+                            name: newName,
+                            type: selectedItem.dataset.type,
+                            content: srcData ? srcData.content : undefined
+                        })
+                    });
+                    if (!createRes.ok) {
+                        const err = await createRes.json();
+                        customAlert('Failed to ' + mode + ': ' + (err.message || 'Error'));
+                        return;
+                    }
+                    // If move, delete source
+                    if (mode === 'move') {
+                        await CmdActions.deleteItem(srcFullPath);
+                    }
+                    hideModal(document.getElementById('copyMoveModal'));
+                    // Refresh both panels
+                    navigateToDirectory(srcPanel, getCurrentPath());
+                    navigateToDirectory(dstPanel, dstPath);
+                };
+                document.getElementById('copyMoveCancelBtn').onclick = function () {
+                    hideModal(document.getElementById('copyMoveModal'));
+                };
+            }
+
+            // Keyboard navigation
+            document.addEventListener('keydown', function (e) {
+                // Block all keyboard events when overlay is visible,
+                // except if focus is on an input, textarea, or button inside a modal
+                if (document.getElementById('modalOverlay').style.display === 'block') {
+                    const ae = document.activeElement;
+                    const isModalInput = (
+                        (ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.tagName === 'BUTTON')) &&
+                        ae.closest('.modal') && ae.closest('.modal').style.display === 'block'
+                    );
+                    if (!isModalInput) {
+                        // Allow Esc to close topmost modal
+                        if (e.key === 'Escape') {
+                            const openModals = Array.from(document.querySelectorAll('.modal')).filter(m => m.style.display === 'block');
+                            if (openModals.length > 0) {
+                                hideModal(openModals[openModals.length - 1]);
+                            }
+                        }
+                        // Block all other keys
+                        if (e.key !== 'Escape') {
+                            e.stopPropagation();
+                            e.preventDefault();
+                        }
+                        return;
+                    }
+                }
+
+                // Prevent Enter in edit modal textarea from triggering file open
+                const editModal = document.getElementById('editModal');
+                const fileEditContent = document.getElementById('fileEditContent');
+                if (editModal && editModal.style.display === 'block' && document.activeElement === fileEditContent && e.key === 'Enter') {
+                    // Let textarea handle Enter, do not trigger file open
+                    return;
+                }
+
+                // Panel switching
+                if (e.key === 'Tab') {
+                    e.preventDefault();
+                    activePanel = activePanel === 'left' ? 'right' : 'left';
+                    document.getElementById('leftPanel').style.borderColor = activePanel === 'left' ? '#FFFF00' : 'rgb(147, 147, 147)';
+                    document.getElementById('rightPanel').style.borderColor = activePanel === 'right' ? '#FFFF00' : 'rgb(147, 147, 147)';
+                    updatePanelHighlight();
+                    // Focus first item in new panel
+                    if (activePanel === 'left' && leftItems.length > 0) {
+                        selectItem('left', leftItems[leftSelectedIndex]);
+                    } else if (activePanel === 'right' && rightItems.length > 0) {
+                        selectItem('right', rightItems[rightSelectedIndex]);
+                    }
+                    return;
+                }
+                // Command line focus (Ctrl+E)
+                if (e.ctrlKey && (e.key === 'e' || e.key === 'E')) {
+                    e.preventDefault();
+                    commandInput.focus();
+                    return;
+                }
+                // If command line is focused, don't handle navigation
+                if (document.activeElement === commandInput) return;
+                // Arrow navigation
+                let items, selectedIndex, setIndex;
+                if (activePanel === 'left') {
+                    items = leftItems;
+                    selectedIndex = leftSelectedIndex;
+                    setIndex = (i) => { leftSelectedIndex = i; };
+                } else {
+                    items = rightItems;
+                    selectedIndex = rightSelectedIndex;
+                    setIndex = (i) => { rightSelectedIndex = i; };
+                }
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    if (items.length > 0 && selectedIndex < items.length - 1) {
+                        setIndex(selectedIndex + 1);
+                        selectItem(activePanel, items[selectedIndex + 1]);
+                    }
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    if (items.length > 0 && selectedIndex > 0) {
+                        setIndex(selectedIndex - 1);
+                        selectItem(activePanel, items[selectedIndex - 1]);
+                    }
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (items.length >= 0) {
+                        const selected = items[selectedIndex];
+                        if (selected.dataset.isParent === 'true') {
+                            navigateToDirectory(activePanel, navigateToParent(null, getCurrentPath()));
+                        } else if (selected.dataset.type === 'directory' || selected.dataset.type === 'drive') {
+                            navigateToDirectory(activePanel, buildPath(getCurrentPath(), selected.dataset.name));
+                        } else if (selected.dataset.type === 'file') {
+                            viewFile(buildPath(getCurrentPath(), selected.dataset.name));
+                        }
+                    }
+                }
+                // Keyboard shortcuts for function keys
+                if (e.key === 'F1') { e.preventDefault(); document.getElementById('help-btn').click(); }
+                if (e.key === 'F2') { e.preventDefault(); document.getElementById('menu-btn').click(); }
+                if (e.key === 'F3') { e.preventDefault(); document.getElementById('view-btn').click(); }
+                if (e.key === 'F4') { e.preventDefault(); document.getElementById('edit-btn').click(); }
+                if (e.key === 'F5') { e.preventDefault(); document.getElementById('copy-btn').click(); }
+                if (e.key === 'F6') { e.preventDefault(); document.getElementById('move-btn').click(); }
+                if (e.key === 'F7') { e.preventDefault(); document.getElementById('mkdir-btn').click(); }
+                if (e.key === 'F8') { e.preventDefault(); document.getElementById('delete-btn').click(); }
+                if (e.key === 'F9') { e.preventDefault(); document.getElementById('pulldown-btn').click(); }
+                if (e.key === 'F10') { e.preventDefault(); document.getElementById('quit-btn').click(); }
+            });
+
+            // Block all mouse events when overlay is visible
+            document.getElementById('modalOverlay').addEventListener('mousedown', function (e) { e.stopPropagation(); e.preventDefault(); });
+            document.getElementById('modalOverlay').addEventListener('click', function (e) { e.stopPropagation(); e.preventDefault(); });
+
+            // Command input handling
+            commandInput.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    const command = commandInput.value.trim();
+                    if (command) {
+                        processCommand(command);
+                        commandInput.value = '';
+                    }
+                }
+            });
+
+            function resolveCdPath(currentPath, arg) {
+                if (!arg) return currentPath;
+                // Normalize slashes
+                arg = arg.replace(/\\/g, '/');
+                // If root
+                if (arg === '/' || arg === '\\') return '/';
+                // If drive only (e.g., D:)
+                if (/^[A-Za-z]:$/.test(arg)) return arg;
+                // If absolute path (starts with drive or /)
+                if (/^[A-Za-z]:\//.test(arg)) return arg;
+                if (arg.startsWith('/')) return arg;
+                // Relative navigation
+                let base = currentPath;
+                if (base === '/') base = '';
+                let parts = (base ? base.split('/') : []);
+                let argParts = arg.split('/');
+                for (let part of argParts) {
+                    if (part === '' || part === '.') continue;
+                    if (part === '..') {
+                        if (parts.length > 0) parts.pop();
+                    } else {
+                        parts.push(part);
+                    }
+                }
+                let result = parts.join('/');
+                // If result is a drive (e.g., C:), keep as is
+                if (/^[A-Za-z]:$/.test(result)) return result;
+                return result.startsWith('/') ? result : (result ? result : '/');
+            }
+
+            function processCommand(command) {
+                const parts = command.trim().split(/\s+/);
+                const cmd = parts[0].toLowerCase();
+                const arg1 = parts[1];
+                const arg2 = parts[2];
+                switch (cmd) {
+                    case 'cd':
+                        if (arg1) {
+                            const newPath = resolveCdPath(getCurrentPath(), arg1);
+                            CmdActions.fetchDirectoryContentsWithPassword(newPath).then(data => {
+                                // If directory info is present, path exists
+                                if (data && data.directory) {
+                                    navigateToDirectory(activePanel, newPath);
+                                } else {
+                                    showStatus('Directory not found: ' + arg1);
+                                }
+                            });
+                        } else {
+                            showStatus('Current directory: ' + getCurrentPath());
+                        }
+                        break;
+                    case 'dir':
+                        navigateToDirectory(activePanel, getCurrentPath());
+                        break;
+                    case 'mkdir':
+                        if (arg1) {
+                            if (!isValidName(arg1)) {
+                                showStatus('Invalid directory name.');
+                                break;
+                            }
+                            CmdActions.createDirectory(getCurrentPath(), arg1).then(success => {
+                                if (success) navigateToDirectory(activePanel, getCurrentPath());
+                            });
+                        } else {
+                            showStatus('Usage: mkdir <dirname>');
+                        }
+                        break;
+                    case 'rmdir':
+                        if (arg1) {
+                            const path = buildPath(getCurrentPath(), arg1);
+                            CmdActions.deleteItem(path).then(success => {
+                                if (success) navigateToDirectory(activePanel, getCurrentPath());
+                            });
+                        } else {
+                            showStatus('Usage: rmdir <dirname>');
+                        }
+                        break;
+                    case 'del':
+                        if (arg1) {
+                            const path = buildPath(getCurrentPath(), arg1);
+                            CmdActions.deleteItem(path).then(success => {
+                                if (success) navigateToDirectory(activePanel, getCurrentPath());
+                            });
+                        } else {
+                            showStatus('Usage: del <filename>');
+                        }
+                        break;
+                    case 'type':
+                        if (arg1) {
+                            const path = buildPath(getCurrentPath(), arg1);
+                            CmdActions.fetchFileContentWithPassword(path).then(fileData => {
+                                if (fileData && fileData.content !== undefined) {
+                                    fileContent.textContent = fileData.content;
+                                    showModal(viewModal);
+                                } else {
+                                    showStatus('File not found or cannot be read');
+                                }
+                            });
+                        } else {
+                            showStatus('Usage: type <filename>');
+                        }
+                        break;
+                    case 'help':
+                        document.getElementById('help-btn').click();
+                        break;
+                    default:
+                        showStatus('Unknown command: ' + cmd);
+                }
+                updatePanelHighlight();
+            }
+
+            // Sorting handlers
+            document.querySelectorAll('.file-table th').forEach(th => {
+                th.addEventListener('click', function () {
+                    const panel = th.dataset.panel;
+                    const sortBy = th.dataset.sort;
+                    if (panel === 'left') {
+                        if (leftSort.by === sortBy) leftSort.asc = !leftSort.asc;
+                        else { leftSort.by = sortBy; leftSort.asc = true; }
+                        navigateToDirectory('left', currentLeftPath);
+                    } else {
+                        if (rightSort.by === sortBy) rightSort.asc = !rightSort.asc;
+                        else { rightSort.by = sortBy; rightSort.asc = true; }
+                        navigateToDirectory('right', currentRightPath);
+                    }
+                    // Update header highlight
+                    document.querySelectorAll(`.file-table th[data-panel="${panel}"]`).forEach(h => h.classList.remove('sorted'));
+                    th.classList.add('sorted');
+                });
+            });
+
+            // Initial load
+            async function initialize() {
+                // Set left panel to C: drive contents
+                navigateToDirectory('left', 'C:');
+
+                // Set right panel to D: drive contents
+                navigateToDirectory('right', 'D:');
+
+                // Highlight left panel as active by default
+                activePanel = 'left';
+                updatePanelHighlight();
+            }
+
+            initialize();
+        });
+    </script>
+</body>
+
+</html>
