@@ -46,5 +46,21 @@ describe("Endpoint /other", () => {
       // Assert:
       expect(response.status).to.equal(201);
     });
+
+    it("GET /schema", async () => {
+      // Act:
+      const response = await request.get(`${baseUrl}/schema`);
+
+      // Assert:
+      expect(response.status).to.equal(200);
+    });
+
+    it("GET /openapi.json", async () => {
+      // Act:
+      const response = await request.get(`${baseUrl}/openapi.json`);
+
+      // Assert:
+      expect(response.status).to.equal(200);
+    });
   });
 });
