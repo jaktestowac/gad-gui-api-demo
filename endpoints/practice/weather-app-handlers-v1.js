@@ -31,9 +31,30 @@ function adminOnly(req, res, next) {
   return next(req, res);
 }
 
-function getWeatherData(day) {
+/*
+Scopes:
+1. minimal data (temp, humidity, date, wind speed, wind direction)
+   - Example: { "temp": 17, "humidity": 58, "date": "2025-05-08", "wind": { "speed": 22, "direction": "NW" } }
+Default.  full data (all weather data for the day)
+   - Example: { "temp": 17, "humidity": 58, "date": "2025-05-08", "wind": { "speed": 22, "direction": "NW" }, ... }
+*/
+function getWeatherData(day, scope = 1) {
   const data = generateWeatherAppV1Response({ date: day });
-  return data;
+
+  switch (scope) {
+    case 1:
+      return {
+        temp: data.temp,
+        humidity: data.humidity,
+        date: data.date,
+        wind: {
+          speed: data.wind.speed,
+          direction: data.wind.direction,
+        },
+      };
+    default:
+      return data; // Return all data if scope is not recognized
+  }
 }
 
 // Weather API handlers
