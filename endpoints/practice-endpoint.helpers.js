@@ -14,6 +14,7 @@ const { authV2 } = require("./practice/chat-auth-handlers");
 const { verifyToken, hasPermission } = require("./practice/employee-management-system/auth-middleware");
 const twoFactor = require("./practice/2fa-handlers");
 const twoFactorV2 = require("./practice/2fa-handlers-v2");
+const weatherAppV1 = require("./practice/weather-app-handlers-v1");
 const {
   getDirectoryContents,
   getFileDetails,
@@ -454,6 +455,62 @@ function handlePractice(req, res) {
           return deleteItem(req, res);
         default:
           return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
+      }
+    }
+
+    // Weather App v1 endpoints
+    if (req.url.includes("/api/practice/v1/weather")) {
+      const url = req.url;
+
+      // Weather data endpoints
+      if (req.method === "GET" && url.endsWith("/api/practice/v1/weather/current")) {
+        return weatherAppV1.getCurrentWeather(req, res);
+      }
+
+      if (req.method === "POST" && url.endsWith("/api/practice/v1/weather/day")) {
+        return weatherAppV1.getWeatherByDay(req, res);
+      }
+
+      // Weather events endpoints
+      if (req.method === "POST" && url.endsWith("/api/practice/v1/weather/event")) {
+        return applyMiddleware([weatherAppV1.authenticate], weatherAppV1.createWeatherEvent)(req, res);
+      }
+
+      if (req.method === "GET" && url.includes("/api/practice/v1/weather/event")) {
+        return applyMiddleware([weatherAppV1.authenticate], weatherAppV1.getWeatherEvents)(req, res);
+      }
+
+      if (req.method === "PUT" && url.endsWith("/api/practice/v1/weather/event")) {
+        return applyMiddleware([weatherAppV1.authenticate], weatherAppV1.updateWeatherEvent)(req, res);
+      }
+
+      const eventIdMatch = url.match(/\/api\/practice\/v1\/weather\/event\/([^\/]+)$/);
+      if (req.method === "DELETE" && eventIdMatch) {
+        const id = eventIdMatch[1];
+        req.params = { id };
+        return applyMiddleware([weatherAppV1.authenticate], weatherAppV1.deleteWeatherEvent)(req, res);
+      }
+
+      // Weather auth endpoints
+      if (req.method === "POST" && url.endsWith("/api/practice/v1/weather/auth/register")) {
+        return weatherAppV1.register(req, res);
+      }
+
+      if (req.method === "POST" && url.endsWith("/api/practice/v1/weather/auth/login")) {
+        return weatherAppV1.login(req, res);
+      }
+
+      if (req.method === "POST" && url.endsWith("/api/practice/v1/weather/auth/logout")) {
+        return weatherAppV1.logout(req, res);
+      }
+
+      if (req.method === "GET" && url.endsWith("/api/practice/v1/weather/auth/current-user")) {
+        return applyMiddleware([weatherAppV1.authenticate], weatherAppV1.getCurrentUser)(req, res);
+      }
+
+      // Admin endpoints
+      if (req.method === "GET" && url.endsWith("/api/practice/v1/weather/admin/data")) {
+        return applyMiddleware([weatherAppV1.authenticate, weatherAppV1.adminOnly], weatherAppV1.getAllData)(req, res);
       }
     }
 
