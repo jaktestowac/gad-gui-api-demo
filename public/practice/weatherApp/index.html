@@ -325,6 +325,11 @@
         .weather-app-refresh-btn:active {
             background-color: rgba(255, 255, 255, 0.6);
         }
+
+        .navbar a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
     </style>
 </head>
 
@@ -359,6 +364,13 @@
                     </li>
                     <li class="nav-item weather-app-logged-out">
                         <a class="nav-link" href="#" id="loginModalBtn" data-bs-toggle="modal" data-bs-target="#authModal">Login / Register</a>
+                    </li>
+                    <li>
+                        <div align="center" style="padding: 5px 0px 0px 10px;">
+                            <a href="/tools/swagger-w.html" style="text-decoration: none; color: white; ">
+                                <img src="/data/icons/swagger-simple.png" style="width: 30px !important; height: 30px !important; padding: 0" alt="" />
+                            </a>
+                        </div>
                     </li>
                 </ul>
             </div>

@@ -211,6 +211,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const data = await response.json();
       showSuccess("Registration successful! You can now login.");
+
+      // Switch to the login tab after successful registration
+      const loginTab = document.getElementById("login-tab");
+      if (loginTab) {
+        const tabInstance = new bootstrap.Tab(loginTab);
+        tabInstance.show();
+
+        // Pre-fill the login form with the registered username for convenience
+        const loginUsernameField = document.getElementById("loginUsername");
+        if (loginUsernameField) {
+          loginUsernameField.value = username;
+          // Focus the password field for better user experience
+          document.getElementById("loginPassword").focus();
+        }
+      }
+
       return data;
     } catch (error) {
       showError(error.message);
