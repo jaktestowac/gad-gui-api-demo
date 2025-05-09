@@ -43,6 +43,7 @@ const bookShopOrderStatusesUrl = "/api/book-shop-order-statuses";
 const bookShopOrdersUrl = "/api/book-shop-orders";
 const bookShopManageUrl = "/api/book-shop-manage";
 const learningBaseUrl = "/api/learning";
+const practiceBaseUrl = "/api/practice";
 
 const existingUserEmail = "Danial.Dicki@dicki.test";
 const existingUserPass = "test2";
@@ -145,4 +146,5 @@ module.exports = {
   existingUserBookShopAdminPass,
   existingUserBookShopAdminId,
   learningBaseUrl,
+  practiceBaseUrl,
 };
