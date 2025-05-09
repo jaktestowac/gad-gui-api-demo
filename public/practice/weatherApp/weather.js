@@ -93,20 +93,35 @@ document.addEventListener("DOMContentLoaded", () => {
   const errorToast = new bootstrap.Toast(errorToastEl);
   const successToast = new bootstrap.Toast(successToastEl);
 
+  // UI helper functions
+  function showLoadingSkeleton() {
+    document.getElementById("weatherSkeleton").style.display = "block";
+    document.getElementById("weatherContent").style.display = "none";
+  }
+
+  function hideLoadingSkeleton() {
+    document.getElementById("weatherSkeleton").style.display = "none";
+    document.getElementById("weatherContent").style.display = "block";
+  }
+
   // API functions
   async function fetchCurrentWeather() {
     try {
+      showLoadingSkeleton();
       const response = await fetch("/api/practice/v1/weather/current");
       if (!response.ok) throw new Error("Failed to fetch current weather");
       const data = await response.json();
       updateWeatherUI(data);
     } catch (error) {
       showError(error.message);
+    } finally {
+      hideLoadingSkeleton();
     }
   }
 
   async function fetchWeatherForSelectedDate() {
     try {
+      showLoadingSkeleton();
       const response = await fetch("/api/practice/v1/weather/day", {
         method: "POST",
         headers: {
@@ -120,6 +135,8 @@ document.addEventListener("DOMContentLoaded", () => {
       updateWeatherUI(data);
     } catch (error) {
       showError(error.message);
+    } finally {
+      hideLoadingSkeleton();
     }
   }
 
@@ -310,13 +327,49 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     weatherDateEl.textContent = displayDate;
-    temperatureEl.textContent = `${data.temp}°C`;
-    humidityEl.textContent = `${data.humidity}%`;
-    windSpeedEl.textContent = `${data.wind.speed} km/h`;
-    windDirectionEl.textContent = data.wind.direction;
 
-    // Update wind direction icon
-    setWindDirectionIcon(data.wind.direction);
+    // Get container elements by ID - assuming you have added these IDs to the HTML
+    const tempContainerEl = document.getElementById("tempContainer");
+    const humidityContainerEl = document.getElementById("humidityContainer");
+    const windDirContainerEl = document.getElementById("windDirContainer");
+    const windSpeedContainerEl = document.getElementById("windSpeedContainer");
+
+    // Display temperature if available
+    if (data.temp !== undefined) {
+      tempContainerEl.style.display = "block";
+      temperatureEl.textContent = `${data.temp}°C`;
+    } else {
+      tempContainerEl.style.display = "none";
+    }
+
+    // Display humidity if available
+    if (data.humidity !== undefined) {
+      humidityContainerEl.style.display = "block";
+      humidityEl.textContent = `${data.humidity}%`;
+    } else {
+      humidityContainerEl.style.display = "none";
+    }
+
+    // Handle wind direction if available
+    if (data.wind && typeof data.wind === "object" && data.wind.direction !== undefined) {
+      windDirContainerEl.style.display = "block";
+      windDirectionEl.textContent = data.wind.direction;
+      setWindDirectionIcon(data.wind.direction);
+    } else {
+      windDirContainerEl.style.display = "none";
+    }
+
+    // Handle wind speed if available
+    if (data.wind !== undefined) {
+      windSpeedContainerEl.style.display = "block";
+      if (typeof data.wind === "object") {
+        windSpeedEl.textContent = `${data.wind.speed} km/h`;
+      } else {
+        windSpeedEl.textContent = `${data.wind} km/h`;
+      }
+    } else {
+      windSpeedContainerEl.style.display = "none";
+    }
 
     // Check the selected date compared to today and apply appropriate styling
     const weatherCardEl = document.querySelector(".weather-app-card");
@@ -775,4 +828,34 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initialize app
   fetchWeatherForSelectedDate();
   checkAuthentication();
+
+  // Previous day button handler
+  document.getElementById("prevDayBtn").addEventListener("click", () => {
+    const currentDate = datePicker.selectedDates[0];
+    const prevDay = new Date(currentDate);
+    prevDay.setDate(prevDay.getDate() - 1);
+    datePicker.setDate(prevDay);
+
+    // Manual trigger to ensure complete update of the weather card
+    selectedDate = formatDateYYYYMMDD(prevDay);
+    fetchWeatherForSelectedDate();
+    if (currentUser) {
+      fetchEventsForDate();
+    }
+  });
+
+  // Next day button handler
+  document.getElementById("nextDayBtn").addEventListener("click", () => {
+    const currentDate = datePicker.selectedDates[0];
+    const nextDay = new Date(currentDate);
+    nextDay.setDate(nextDay.getDate() + 1);
+    datePicker.setDate(nextDay);
+
+    // Manual trigger to ensure complete update of the weather card
+    selectedDate = formatDateYYYYMMDD(nextDay);
+    fetchWeatherForSelectedDate();
+    if (currentUser) {
+      fetchEventsForDate();
+    }
+  });
 });

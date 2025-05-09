@@ -17,6 +17,64 @@
             background-color: #f5f8fa;
         }
 
+        /* Skeleton loading styles */
+        .skeleton-loading {
+            animation: skeleton-loading-animation 1.5s infinite ease-in-out;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) 25%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.1) 75%);
+            background-size: 200% 100%;
+            border-radius: 4px;
+        }
+
+        @keyframes skeleton-loading-animation {
+            0% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0 50%;
+            }
+        }
+
+        .skeleton-text {
+            height: 20px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+        }
+
+        .skeleton-title {
+            height: 28px;
+            width: 70%;
+            margin-bottom: 16px;
+        }
+
+        .skeleton-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .skeleton-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: 12px;
+        }
+
+        .skeleton-content {
+            flex: 1;
+        }
+
+        .skeleton-label {
+            height: 16px;
+            width: 50%;
+            margin-bottom: 8px;
+        }
+
+        .skeleton-value {
+            height: 24px;
+            width: 70%;
+        }
+
         .weather-app-card {
             background: linear-gradient(to bottom right, #3498db, #2980b9);
             color: white;
@@ -391,7 +449,15 @@
                             <h5 class="card-title mb-0">Select Date</h5>
                         </div>
                         <div class="card-body">
-                            <input type="text" class="form-control" id="datePicker" placeholder="Select a date">
+                            <div class="input-group">
+                                <button id="prevDayBtn" class="btn btn-outline-primary" type="button">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <input type="text" class="form-control" id="datePicker" placeholder="Select a date">
+                                <button id="nextDayBtn" class="btn btn-outline-primary" type="button">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -399,44 +465,74 @@
                 <div class="card weather-app-card">
                     <div class="card-body">
                         <h3 class="card-title" id="weatherDate">Today's Weather</h3>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <div class="d-flex align-items-center">
-                                    <i class="fas fa-thermometer-half fa-2x me-2 text-light"></i>
-                                    <div>
-                                        <h5 class="mb-0">Temperature</h5>
-                                        <h3 id="temperature">--°C</h3>
+
+                        <!-- Skeleton loading template (initially hidden) -->
+                        <div id="weatherSkeleton" style="display: none;">
+                            <div class="skeleton-title skeleton-loading"></div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="skeleton-item">
+                                        <div class="skeleton-icon skeleton-loading"></div>
+                                        <div class="skeleton-content">
+                                            <div class="skeleton-label skeleton-loading"></div>
+                                            <div class="skeleton-value skeleton-loading"></div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="d-flex align-items-center">
-                                    <i class="fas fa-tint fa-2x me-2 text-light"></i>
-                                    <div>
-                                        <h5 class="mb-0">Humidity</h5>
-                                        <h3 id="humidity">--%</h3>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="d-flex align-items-center">
-                                    <i id="windDirectionIcon" class="fas fa-location-arrow fa-2x me-2 text-light"></i>
-                                    <div>
-                                        <h5 class="mb-0">Wind Direction</h5>
-                                        <h3 id="windDirection">--</h3>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="d-flex align-items-center">
-                                    <i class="fas fa-wind fa-2x me-2 text-light"></i>
-                                    <div>
-                                        <h5 class="mb-0">Wind Speed</h5>
-                                        <h3 id="windSpeed">-- km/h</h3>
+                                <div class="col-md-6 mb-3">
+                                    <div class="skeleton-item">
+                                        <div class="skeleton-icon skeleton-loading"></div>
+                                        <div class="skeleton-content">
+                                            <div class="skeleton-label skeleton-loading"></div>
+                                            <div class="skeleton-value skeleton-loading"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Actual weather content -->
+                        <div id="weatherContent">
+                            <div class="row">
+                                <div class="col-md-6 mb-3" id="tempContainer">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-thermometer-half fa-2x me-2 text-light"></i>
+                                        <div>
+                                            <h5 class="mb-0">Temperature</h5>
+                                            <h3 id="temperature">--°C</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3" id="humidityContainer">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-tint fa-2x me-2 text-light"></i>
+                                        <div>
+                                            <h5 class="mb-0">Humidity</h5>
+                                            <h3 id="humidity">--%</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3" id="windDirContainer">
+                                    <div class="d-flex align-items-center">
+                                        <i id="windDirectionIcon" class="fas fa-location-arrow fa-2x me-2 text-light"></i>
+                                        <div>
+                                            <h5 class="mb-0">Wind Direction</h5>
+                                            <h3 id="windDirection">--</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3" id="windSpeedContainer">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-wind fa-2x me-2 text-light"></i>
+                                        <div>
+                                            <h5 class="mb-0">Wind Speed</h5>
+                                            <h3 id="windSpeed">-- km/h</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <button id="refreshWeatherBtn" class="btn btn-sm weather-app-refresh-btn" title="Refresh Weather Data">
                             <i class="fas fa-sync-alt"></i>
                         </button>

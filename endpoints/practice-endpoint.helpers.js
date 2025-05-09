@@ -477,16 +477,25 @@ function handlePractice(req, res) {
       }
 
       if (req.method === "GET" && url.includes("/api/practice/v1/weather/event")) {
-        return applyMiddleware([weatherAppV1.authenticate], weatherAppV1.getWeatherEvents)(req, res);
+        // Check if this is the get single event by ID endpoint
+        const eventIdMatch = url.match(/\/api\/practice\/v1\/weather\/event\/([^\/]+)$/);
+        if (eventIdMatch) {
+          const id = eventIdMatch[1];
+          req.params = { id };
+          return applyMiddleware([weatherAppV1.authenticate], weatherAppV1.getWeatherEventById)(req, res);
+        } else {
+          // This is the get all events endpoint
+          return applyMiddleware([weatherAppV1.authenticate], weatherAppV1.getWeatherEvents)(req, res);
+        }
       }
 
       if (req.method === "PUT" && url.endsWith("/api/practice/v1/weather/event")) {
         return applyMiddleware([weatherAppV1.authenticate], weatherAppV1.updateWeatherEvent)(req, res);
       }
 
-      const eventIdMatch = url.match(/\/api\/practice\/v1\/weather\/event\/([^\/]+)$/);
-      if (req.method === "DELETE" && eventIdMatch) {
-        const id = eventIdMatch[1];
+      const deleteEventIdMatch = url.match(/\/api\/practice\/v1\/weather\/event\/([^\/]+)$/);
+      if (req.method === "DELETE" && deleteEventIdMatch) {
+        const id = deleteEventIdMatch[1];
         req.params = { id };
         return applyMiddleware([weatherAppV1.authenticate], weatherAppV1.deleteWeatherEvent)(req, res);
       }

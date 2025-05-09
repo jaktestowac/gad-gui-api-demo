@@ -8,6 +8,8 @@ const { HTTP_OK, HTTP_BAD_REQUEST, HTTP_NOT_FOUND, HTTP_UNAUTHORIZED } = require
 let weatherEvents = [];
 let users = [];
 let sessions = {};
+// Counter for event IDs
+let nextEventId = 1;
 
 // Authentication middleware
 function authenticate(req, res, next) {
@@ -33,17 +35,27 @@ function adminOnly(req, res, next) {
 
 /*
 Scopes:
-1. minimal data (temp, humidity, date, wind speed, wind direction)
+1. minimal data (temp, date, wind speed)
+   - Example: { "temp": 17, "date": "2025-05-08", "wind": 22 }
+2.  data (temp, humidity, date, wind speed, wind direction)
    - Example: { "temp": 17, "humidity": 58, "date": "2025-05-08", "wind": { "speed": 22, "direction": "NW" } }
 Default.  full data (all weather data for the day)
    - Example: { "temp": 17, "humidity": 58, "date": "2025-05-08", "wind": { "speed": 22, "direction": "NW" }, ... }
 */
-function getWeatherData(day, scope = 1) {
-  const data = generateWeatherAppV1Response({ date: day });
+function getWeatherData(day, scope = 1, historicalStable = true) {
+  const data = generateWeatherAppV1Response({ date: day, historicalStable });
+  let result;
 
   switch (scope) {
     case 1:
-      return {
+      result = {
+        temp: data.temp,
+        date: data.date,
+        wind: data.wind.speed,
+      };
+      break;
+    case 2:
+      result = {
         temp: data.temp,
         humidity: data.humidity,
         date: data.date,
@@ -52,9 +64,12 @@ function getWeatherData(day, scope = 1) {
           direction: data.wind.direction,
         },
       };
+      break;
     default:
-      return data; // Return all data if scope is not recognized
+      result = data;
   }
+
+  return result;
 }
 
 // Weather API handlers
@@ -91,7 +106,7 @@ function createWeatherEvent(req, res) {
   }
 
   const newEvent = {
-    id: generateUuid(),
+    id: nextEventId++, // Use incrementing ID instead of UUID
     day,
     event,
     userId: req.user.id,
@@ -103,6 +118,35 @@ function createWeatherEvent(req, res) {
   logDebug("weatherApp:createEvent", { event: newEvent });
 
   return res.status(HTTP_OK).json(newEvent);
+}
+
+// Get event by ID
+function getWeatherEventById(req, res) {
+  const { id } = req.params;
+
+  if (isUndefined(id)) {
+    return res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("ID parameter is required!"));
+  }
+
+  // Convert string ID to number for comparison
+  const eventId = parseInt(id, 10);
+
+  if (isNaN(eventId)) {
+    return res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Invalid ID format!"));
+  }
+
+  const event = weatherEvents.find((item) => item.id === eventId);
+
+  if (!event) {
+    return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Event not found!"));
+  }
+
+  // Check if user has permission to view this event (own events or admin)
+  if (event.userId !== req.user.id && !req.user.isAdmin) {
+    return res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("You can only view your own events!"));
+  }
+
+  return res.status(HTTP_OK).json(event);
 }
 
 function getWeatherEvents(req, res) {
@@ -135,7 +179,14 @@ function updateWeatherEvent(req, res) {
     return res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Note must be between 3 and 256 characters!"));
   }
 
-  const eventIndex = weatherEvents.findIndex((item) => item.id === id);
+  // Convert id to number if it's a string
+  const eventId = typeof id === "string" ? parseInt(id, 10) : id;
+
+  if (isNaN(eventId)) {
+    return res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Invalid ID format!"));
+  }
+
+  const eventIndex = weatherEvents.findIndex((item) => item.id === eventId);
 
   if (eventIndex === -1) {
     return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Event not found!"));
@@ -160,7 +211,14 @@ function deleteWeatherEvent(req, res) {
     return res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("ID parameter is required!"));
   }
 
-  const eventIndex = weatherEvents.findIndex((item) => item.id === id);
+  // Convert string ID to number for comparison
+  const eventId = parseInt(id, 10);
+
+  if (isNaN(eventId)) {
+    return res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Invalid ID format!"));
+  }
+
+  const eventIndex = weatherEvents.findIndex((item) => item.id === eventId);
 
   if (eventIndex === -1) {
     return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Event not found!"));
@@ -313,6 +371,7 @@ module.exports = {
   getWeatherByDay,
   createWeatherEvent,
   getWeatherEvents,
+  getWeatherEventById,
   updateWeatherEvent,
   deleteWeatherEvent,
 

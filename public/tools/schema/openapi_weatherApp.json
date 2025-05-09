@@ -76,9 +76,8 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Unique identifier for the event"
+            "type": "integer",
+            "description": "Unique identifier for the event (auto-incrementing)"
           },
           "day": {
             "type": "string",
@@ -385,8 +384,7 @@
                 "required": ["id", "event"],
                 "properties": {
                   "id": {
-                    "type": "string",
-                    "format": "uuid",
+                    "type": "integer",
                     "description": "Event ID to update"
                   },
                   "event": {
@@ -445,6 +443,69 @@
       }
     },
     "/event/{id}": {
+      "get": {
+        "tags": ["events"],
+        "summary": "Get a weather event by ID",
+        "description": "Get details of a specific weather event by its ID",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the event to retrieve",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Weather event details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Event"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized or not owner",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Event not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
       "delete": {
         "tags": ["events"],
         "summary": "Delete a weather event",
@@ -461,8 +522,7 @@
             "required": true,
             "description": "ID of the event to delete",
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "type": "integer"
             }
           }
         ],

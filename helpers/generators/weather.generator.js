@@ -599,7 +599,15 @@ function generateWeatherAppV1Response(options) {
   const params = { ...defaultWeatherAppV1Options, ...newOptions };
   logDebug(`Requested weatherApp V1 data for:`, { params });
 
-  const weather = simpleWeatherAppGeneratorV1ForOneDay(params.date);
+  // check if date is in past
+  const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+
+  let windRandom = true;
+  if (params.date < today && params.historicalStable === true) {
+    windRandom = false;
+  }
+
+  const weather = simpleWeatherAppGeneratorV1ForOneDay(params.date, windRandom);
 
   return weather;
 }
