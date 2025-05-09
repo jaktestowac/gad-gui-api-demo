@@ -400,16 +400,41 @@
                     <div class="card-body">
                         <h3 class="card-title" id="weatherDate">Today's Weather</h3>
                         <div class="row">
-                            <div class="col-6">
-                                <h2 class="display-4" id="temperature">--°C</h2>
-                                <p class="mb-0">Humidity: <span id="humidity">--%</span></p>
-                            </div>
-                            <div class="col-6 text-end">
-                                <div class="mb-2">
-                                    <i id="windDirectionIcon" class="fas fa-arrow-up weather-app-wind-icon"></i>
-                                    <span id="windDirection">--</span>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-thermometer-half fa-2x me-2 text-light"></i>
+                                    <div>
+                                        <h5 class="mb-0">Temperature</h5>
+                                        <h3 id="temperature">--°C</h3>
+                                    </div>
                                 </div>
-                                <p class="mb-0">Wind Speed: <span id="windSpeed">-- km/h</span></p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-tint fa-2x me-2 text-light"></i>
+                                    <div>
+                                        <h5 class="mb-0">Humidity</h5>
+                                        <h3 id="humidity">--%</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex align-items-center">
+                                    <i id="windDirectionIcon" class="fas fa-location-arrow fa-2x me-2 text-light"></i>
+                                    <div>
+                                        <h5 class="mb-0">Wind Direction</h5>
+                                        <h3 id="windDirection">--</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-wind fa-2x me-2 text-light"></i>
+                                    <div>
+                                        <h5 class="mb-0">Wind Speed</h5>
+                                        <h3 id="windSpeed">-- km/h</h3>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <button id="refreshWeatherBtn" class="btn btn-sm weather-app-refresh-btn" title="Refresh Weather Data">
