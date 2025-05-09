@@ -10,17 +10,69 @@ let users = [];
 let sessions = {};
 // Counter for event IDs
 let nextEventId = 1;
+// Counter for user IDs
+let nextUserId = 1;
+
+function createMockWeatherAppData() {
+  // create 2 users
+  const user1 = {
+    id: nextUserId++,
+    username: "1",
+    password: "1",
+    isAdmin: false,
+    createdAt: new Date().toISOString(),
+  };
+  const user2 = {
+    id: nextUserId++,
+    username: "2",
+    password: "2",
+    isAdmin: true,
+    createdAt: new Date().toISOString(),
+  };
+  users.push(user1, user2);
+
+  // create 1 weather events for each user with todays date
+  const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+  const event1 = {
+    id: nextEventId++,
+    day: today,
+    event: "Sunny",
+    userId: user1.id,
+    username: user1.username,
+    createdAt: new Date().toISOString(),
+  };
+  const event2 = {
+    id: nextEventId++,
+    day: today,
+    event: "Rainy",
+    userId: user2.id,
+    username: user2.username,
+    createdAt: new Date().toISOString(),
+  };
+  weatherEvents.push(event1, event2);
+  return { users, weatherEvents };
+}
 
 // Authentication middleware
 function authenticate(req, res, next) {
-  // Check for token in cookie
-  const token = req.cookies?.weatherAppSession;
+  // Check for token in cookie or Authorization header
+  // let token = req.cookies?.weatherAppSession;
+  let token = undefined;
+
+  // If no token in cookies, check the Authorization header (Bearer token)
+  if (!token) {
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      token = authHeader.substring(7);
+    }
+  }
 
   if (!token || !sessions[token]) {
     return res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Unauthorized! Please login."));
   }
 
   req.user = sessions[token];
+  req.token = token; // Store the token for potential use in handlers
   return next(req, res);
 }
 
@@ -170,6 +222,23 @@ function getWeatherEvents(req, res) {
 function updateWeatherEvent(req, res) {
   const { id, event } = req.body;
 
+  // Verify token from Authorization header for PUT requests
+  const authHeader = req.headers.authorization;
+  let token;
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    token = authHeader.substring(7);
+  }
+
+  // Check if token is valid and corresponds to an active session
+  if (!token || !sessions[token]) {
+    return res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Invalid or missing token! Authorization required."));
+  }
+
+  // Validate that the token in the header matches the authenticated session
+  if (req.token !== token) {
+    return res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Token mismatch! Please provide the correct token."));
+  }
+
   if (isUndefined(id) || isUndefined(event)) {
     return res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("ID and event parameters are required!"));
   }
@@ -261,7 +330,7 @@ function register(req, res) {
   }
 
   const newUser = {
-    id: generateUuid(),
+    id: nextUserId++, // Use incrementing ID instead of UUID
     username,
     password, // In a real app, this should be hashed
     isAdmin: !!isAdmin,
@@ -295,17 +364,19 @@ function login(req, res) {
     return res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Invalid credentials!"));
   }
 
+  // Set cookie for 30 minutes
+  const thirtyMinutesInMs = 30 * 60 * 1000;
+  const expiryDate = new Date(Date.now() + thirtyMinutesInMs);
+
   // Create session
   const token = generateUuid();
   sessions[token] = {
     id: user.id,
     username: user.username,
     isAdmin: user.isAdmin,
+    createdAt: new Date().toISOString(),
+    expiresAt: expiryDate.toISOString(),
   };
-
-  // Set cookie for 30 minutes
-  const thirtyMinutesInMs = 30 * 60 * 1000;
-  const expiryDate = new Date(Date.now() + thirtyMinutesInMs);
 
   res.cookie("weatherAppSession", token, {
     expires: expiryDate,

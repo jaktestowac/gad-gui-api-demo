@@ -38,10 +38,54 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // State
   let currentUser = null;
+  let userToken = null; // Store the user's token
   // Get today's date formatted as YYYY-MM-DD using the browser's capabilities
   let selectedDate = formatDateYYYYMMDD(new Date()); // Default to today in YYYY-MM-DD format
   let events = [];
-  let adminData = null;
+
+  // Cookie utilities
+  const COOKIE_NAME = "weatherAppToken";
+
+  function setTokenCookie(token, expiryMinutes = 30) {
+    const date = new Date();
+    date.setTime(date.getTime() + expiryMinutes * 60 * 1000);
+    const expires = "expires=" + date.toUTCString();
+    document.cookie = `${COOKIE_NAME}=${token};${expires};path=/;SameSite=Strict`;
+  }
+
+  function getTokenFromCookie() {
+    const name = COOKIE_NAME + "=";
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const cookieArray = decodedCookie.split(";");
+    for (let i = 0; i < cookieArray.length; i++) {
+      let cookie = cookieArray[i].trim();
+      if (cookie.indexOf(name) === 0) {
+        return cookie.substring(name.length, cookie.length);
+      }
+    }
+    return null;
+  }
+
+  function removeTokenCookie() {
+    document.cookie = `${COOKIE_NAME}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
+  }
+
+  // Utility function to create headers with auth token
+  function createAuthHeaders(contentType = true) {
+    const headers = {};
+
+    if (contentType) {
+      headers["Content-Type"] = "application/json";
+    }
+
+    // Get token from cookie instead of using the variable
+    const token = getTokenFromCookie();
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    return headers;
+  }
 
   // Check if response is unauthorized (401) and handle expired session
   function handleUnauthorizedResponse(response) {
@@ -124,9 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
       showLoadingSkeleton();
       const response = await fetch("/api/practice/v1/weather/day", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: createAuthHeaders(),
         body: JSON.stringify({ day: selectedDate }),
       });
       if (handleUnauthorizedResponse(response)) return;
@@ -143,7 +185,9 @@ document.addEventListener("DOMContentLoaded", () => {
   async function fetchEventsForDate() {
     try {
       // Get events only for the current user and selected date
-      const response = await fetch(`/api/practice/v1/weather/event?day=${selectedDate}`);
+      const response = await fetch(`/api/practice/v1/weather/event?day=${selectedDate}`, {
+        headers: createAuthHeaders(false), // No need for Content-Type on GET request
+      });
       if (handleUnauthorizedResponse(response)) return;
       if (!response.ok) throw new Error("Failed to fetch events");
       const data = await response.json();
@@ -161,9 +205,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const response = await fetch("/api/practice/v1/weather/event", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: createAuthHeaders(),
         body: JSON.stringify({ day: selectedDate, event }),
       });
       if (handleUnauthorizedResponse(response)) return null;
@@ -180,13 +222,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function updateEvent(id, event) {
     try {
-      const response = await fetch("/api/practice/v1/weather/event", {
+      const response = await fetch(`/api/practice/v1/weather/event/${id}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: createAuthHeaders(),
         body: JSON.stringify({ id, event }),
       });
+
       if (handleUnauthorizedResponse(response)) return null;
       if (!response.ok) throw new Error("Failed to update event");
       const data = await response.json();
@@ -203,6 +244,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const response = await fetch(`/api/practice/v1/weather/event/${id}`, {
         method: "DELETE",
+        headers: createAuthHeaders(false), // No need for Content-Type on DELETE
       });
       if (handleUnauthorizedResponse(response)) return;
       if (!response.ok) throw new Error("Failed to delete event");
@@ -266,6 +308,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const data = await response.json();
       currentUser = data.user;
+
+      // Store token in cookie instead of variable
+      setTokenCookie(data.token);
+
       updateAuthUI();
       fetchEventsForDate();
       showSuccess("Login successful!");
@@ -281,15 +327,18 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       await fetch("/api/practice/v1/weather/auth/logout", {
         method: "POST",
+        headers: createAuthHeaders(false), // Send token in logout request
       });
 
       // Clear local state
       currentUser = null;
+      removeTokenCookie(); // Remove token from cookies instead of clearing variable
       updateAuthUI();
       showSuccess("Logout successful!");
     } catch (error) {
       // Still clear local state on error
       currentUser = null;
+      removeTokenCookie(); // Remove token from cookies on error too
       updateAuthUI();
       showError(error.message);
     }
@@ -299,7 +348,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!currentUser?.isAdmin) return;
 
     try {
-      const response = await fetch("/api/practice/v1/weather/admin/data");
+      const response = await fetch("/api/practice/v1/weather/admin/data", {
+        headers: createAuthHeaders(false), // No need for Content-Type on GET request
+      });
       if (!response.ok) {
         const data = await response.json();
         throw new Error(data.message || "Failed to fetch admin data");
@@ -615,11 +666,14 @@ document.addEventListener("DOMContentLoaded", () => {
   async function checkAuthentication() {
     try {
       // Try to fetch user information from an authenticated endpoint
-      const response = await fetch("/api/practice/v1/weather/event");
+      const response = await fetch("/api/practice/v1/weather/event", {
+        headers: createAuthHeaders(false), // No Content-Type needed for GET
+      });
 
       if (!response.ok) {
         // If unauthorized, reset UI to logged out state
         currentUser = null;
+        userToken = null; // Also clear the token
         updateAuthUI();
         return;
       }
@@ -632,7 +686,9 @@ document.addEventListener("DOMContentLoaded", () => {
         };
       } else {
         // Try to get user info another way if no events found
-        const userResponse = await fetch("/api/practice/v1/weather/auth/current-user");
+        const userResponse = await fetch("/api/practice/v1/weather/auth/current-user", {
+          headers: createAuthHeaders(false),
+        });
         if (userResponse.ok) {
           const userData = await userResponse.json();
           currentUser = userData;
@@ -643,7 +699,9 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       // Check if user is admin
-      const adminResponse = await fetch("/api/practice/v1/weather/admin/data");
+      const adminResponse = await fetch("/api/practice/v1/weather/admin/data", {
+        headers: createAuthHeaders(false),
+      });
       if (adminResponse.ok) {
         currentUser.isAdmin = true;
       }
@@ -653,6 +711,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (error) {
       // If any errors, assume not logged in
       currentUser = null;
+      userToken = null; // Clear token on error
       updateAuthUI();
     }
   }

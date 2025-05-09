@@ -489,7 +489,16 @@ function handlePractice(req, res) {
         }
       }
 
-      if (req.method === "PUT" && url.endsWith("/api/practice/v1/weather/event")) {
+      // Fixed PUT endpoint to extract ID from URL instead of body
+      const updateEventIdMatch = url.match(/\/api\/practice\/v1\/weather\/event\/([^\/]+)$/);
+      if (req.method === "PUT" && updateEventIdMatch) {
+        const id = updateEventIdMatch[1];
+        req.params = { id };
+        // Make sure ID is also available in the body
+        if (!req.body) {
+          req.body = {};
+        }
+        req.body.id = parseInt(id, 10);
         return applyMiddleware([weatherAppV1.authenticate], weatherAppV1.updateWeatherEvent)(req, res);
       }
 
