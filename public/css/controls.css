@@ -454,6 +454,7 @@ td:first-child {
   visibility: visible;
 }
 
+/* Hamburger menu styling */
 .hamburger {
   display: none;
 }
@@ -492,23 +493,34 @@ td:first-child {
   }
 }
 
-/* # Hamburger menu - to disable comment @media below */
+/* Mobile view hamburger menu styles */
 @media only screen and (max-width: 768px) {
+  .hamburger {
+    display: block;
+    cursor: pointer;
+    z-index: 10;
+    position: absolute;
+    left: 20px;
+    top: 20px;
+  }
+
   .nav-menu {
     z-index: 1;
     display: flex;
     position: fixed;
     left: -110%;
-    top: 3rem;
+    top: 70px;
     flex-direction: column !important;
     background-color: #202020;
     width: 100%;
     border-radius: 10px;
     text-align: center;
     transition: 0.3s;
-    height: 100%;
+    height: calc(100% - 70px);
     box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
     margin-left: 0px !important;
+    overflow-y: auto;
+    padding-bottom: 50px;
   }
 
   .main-nav-menu .button-disabled {
@@ -525,21 +537,11 @@ td:first-child {
 
   .nav-menu.active {
     left: 0;
+    padding-top: 15px;
   }
 
   .nav-item {
     margin: 2.5rem 0;
-  }
-
-  .hamburger {
-    display: block;
-    cursor: pointer;
-    align-items: center;
-    justify-self: left;
-    -ms-transform: translateY(25%);
-    transform: translateY(25%);
-    padding-left: 20px;
-    height: 40px;
   }
 
   .hamburger.active .bar:nth-child(2) {
