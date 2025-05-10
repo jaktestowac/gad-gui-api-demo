@@ -555,6 +555,23 @@ function simpleWeatherAppGeneratorV1ForOneDay(date, windRandom = true) {
     icon: airQualityIndexAQI.icon,
   };
 
+  const pressure = dataGenerator.getNextValue(950, 1050);
+  const visibility = dataGenerator.getNextValue(0, 10);
+
+  // cloudCoverage based on weather condition
+  let cloudCoverage = 0;
+  if (weatherCondition === "Sunny") {
+    cloudCoverage = dataGenerator.getNextValue(0, 20);
+  } else if (weatherCondition === "Partly Cloudy") {
+    cloudCoverage = dataGenerator.getNextValue(20, 50);
+  } else if (weatherCondition === "Cloudy") {
+    cloudCoverage = dataGenerator.getNextValue(50, 80);
+  } else if (weatherCondition === "Rainy") {
+    cloudCoverage = dataGenerator.getNextValue(80, 100);
+  } else if (weatherCondition === "Thunderstorm") {
+    cloudCoverage = dataGenerator.getNextValue(80, 100);
+  }
+
   return {
     temp: baseTemp,
     humidity,
@@ -562,9 +579,12 @@ function simpleWeatherAppGeneratorV1ForOneDay(date, windRandom = true) {
     wind: {
       speed: windSpeed,
       direction: windDirection,
-      condition: weatherCondition,
     },
     airQuality: airQualityIndexAQIFormatted,
+    pressure,
+    visibility,
+    cloudCoverage,
+    weatherCondition,
   };
 }
 
