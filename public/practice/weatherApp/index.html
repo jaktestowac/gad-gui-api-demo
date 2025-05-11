@@ -18,6 +18,47 @@
             background-color: #f5f8fa;
         }
 
+        /* Wind speed animations */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.2);
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Beat animation for strong winds */
+        @keyframes fa-beat {
+            0% {
+                transform: scale(1);
+            }
+
+            25% {
+                transform: scale(1.1);
+            }
+
+            40% {
+                transform: scale(1);
+            }
+
+            60% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
         /* Skeleton loading styles */
         .skeleton-loading {
             animation: skeleton-loading-animation 1.5s infinite ease-in-out;
@@ -407,6 +448,10 @@
             background-color: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
         }
+
+        .text-danger {
+            font-size: 2rem;
+        }
     </style>
 </head>
 
@@ -516,11 +561,11 @@
                         <div id="weatherContent">
                             <div class="row">
                                 <div class="col-md-6 mb-3" id="tempContainer">
-                                    <div class="d-flex align-items-center">
-                                        <i class="fas fa-thermometer-half fa-2x me-2 text-light"></i>
+                                    <div class="d-flex align-items-center"> <i id="temperatureIcon" class="fas fa-thermometer-half fa-2x me-2 text-light"></i>
                                         <div>
                                             <h5 class="mb-0">Temperature</h5>
                                             <h3 id="temperature">--°C</h3>
+                                            <small id="tempCategory" class="text-light" style="display: none;"></small>
                                         </div>
                                     </div>
                                 </div>
@@ -548,6 +593,7 @@
                                         <div>
                                             <h5 class="mb-0">Wind Speed</h5>
                                             <h3 id="windSpeed">-- km/h</h3>
+                                            <small id="windCategory" class="text-light" style="display: none;"></small>
                                         </div>
                                     </div>
                                 </div>

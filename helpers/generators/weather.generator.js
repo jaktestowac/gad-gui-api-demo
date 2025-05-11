@@ -527,10 +527,10 @@ function simpleWeatherAppGeneratorV1ForOneDay(date, windRandom = true) {
   const humidity = dataGenerator.getNextValue(40, 80);
   const windDirections = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
 
-  let windSpeed = dataGenerator.getNextValue(0, 30);
+  let windSpeed = dataGenerator.getNextValue(0, 70);
   let windDirection = windDirections[dataGenerator.getNextValue(0, windDirections.length - 1)];
   if (windRandom) {
-    windSpeed = Math.floor(Math.random() * 30); // 0-30 km/h
+    windSpeed = Math.floor(Math.random() * 70); // 0-70 km/h
     windDirection = windDirections[Math.floor(Math.random() * windDirections.length)];
   }
 

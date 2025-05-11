@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
   // DOM Elements
   const temperatureEl = document.getElementById("temperature");
+  const temperatureIconEl = document.getElementById("temperatureIcon");
+  const tempCategoryEl = document.getElementById("tempCategory");
   const humidityEl = document.getElementById("humidity");
   const windDirectionEl = document.getElementById("windDirection");
   const windDirectionIconEl = document.getElementById("windDirectionIcon");
@@ -390,6 +392,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (data.temp !== undefined) {
       tempContainerEl.style.display = "block";
       temperatureEl.textContent = `${data.temp}°C`;
+      setTemperatureIcon(data.temp);
     } else {
       tempContainerEl.style.display = "none";
     }
@@ -416,8 +419,10 @@ document.addEventListener("DOMContentLoaded", () => {
       windSpeedContainerEl.style.display = "block";
       if (typeof data.wind === "object") {
         windSpeedEl.textContent = `${data.wind.speed} km/h`;
+        setWindSpeedIcon(data.wind.speed);
       } else {
         windSpeedEl.textContent = `${data.wind} km/h`;
+        setWindSpeedIcon(data.wind);
       }
     } else {
       windSpeedContainerEl.style.display = "none";
@@ -487,6 +492,120 @@ document.addEventListener("DOMContentLoaded", () => {
     const angle = directionAngle[direction] || 0;
     windDirectionIconEl.style.transform = `rotate(${angle}deg)`;
   }
+  // Function to set wind speed icon based on speed
+  function setWindSpeedIcon(speed) {
+    // Convert speed to a number if it's a string
+    const windSpeed = parseFloat(speed);
+
+    // Get the icon element
+    const iconContainer = document.querySelector("#windSpeedContainer i");
+    // Get the wind category label element
+    const windCategoryEl = document.getElementById("windCategory");
+
+    if (!iconContainer || !windCategoryEl) return;
+
+    // Reset any previous styles
+    iconContainer.style.animation = "";
+
+    let category = "";
+
+    // Apply appropriate icon and styling based on wind speed
+    if (windSpeed < 10) {
+      // Light breeze (0-9 km/h)
+      iconContainer.className = "fas fa-wind fa-2x me-2 text-light";
+      category = "Light Breeze";
+      windCategoryEl.className = "text-light";
+    } else if (windSpeed < 20) {
+      // Moderate wind (10-19 km/h)
+      iconContainer.className = "fas fa-wind fa-2x me-2 text-info";
+      category = "Moderate Wind";
+      windCategoryEl.className = "text-info";
+    } else if (windSpeed < 40) {
+      // Strong wind (20-39 km/h)
+      iconContainer.className = "fas fa-wind fa-2x me-2 text-warning";
+      category = "Strong Wind";
+      windCategoryEl.className = "text-warning";
+      // Add gentle shake animation
+      iconContainer.style.animation = "pulse 2s infinite";
+    } else if (windSpeed < 60) {
+      // Gale/Storm (40-59 km/h)
+      iconContainer.className = "fas fa-wind fa-2x me-2 text-danger";
+      category = "Gale Force";
+      windCategoryEl.className = "text-danger";
+      // Add more pronounced animation
+      iconContainer.style.animation = "fa-beat 1s infinite";
+    } else {
+      // Hurricane force (60+ km/h)
+      iconContainer.className = "fas fa-exclamation-triangle fa-2x me-2 text-danger";
+      category = "Hurricane Force";
+      windCategoryEl.className = "text-danger fw-bold";
+      // Add intense animation
+      iconContainer.style.animation = "fa-beat 1.5s infinite linear";
+    }
+
+    // Update the wind category text
+    windCategoryEl.textContent = category;
+  }
+
+  // Function to set temperature icon based on temperature value
+  function setTemperatureIcon(temp) {
+    // Convert temperature to a number if it's a string
+    const temperature = parseFloat(temp);
+
+    // Get the icon element
+    const iconContainer = document.getElementById("temperatureIcon");
+    // Get the temperature category label element
+    const tempCategoryEl = document.getElementById("tempCategory");
+
+    if (!iconContainer || !tempCategoryEl) return;
+
+    // Reset any previous styles
+    iconContainer.style.animation = "";
+
+    let category = "";
+
+    // Apply appropriate icon and styling based on temperature
+    if (temperature < 0) {
+      // Very cold (below 0°C)
+      iconContainer.className = "fas fa-thermometer-empty fa-2x me-2 text-info";
+      category = "Very Cold";
+      tempCategoryEl.className = "text-info";
+      // Add gentle pulse animation
+      iconContainer.style.animation = "pulse 2s infinite";
+    } else if (temperature < 10) {
+      // Cold (0-9°C)
+      iconContainer.className = "fas fa-thermometer-quarter fa-2x me-2 text-info";
+      category = "Cold";
+      tempCategoryEl.className = "text-info";
+    } else if (temperature < 20) {
+      // Mild (10-19°C)
+      iconContainer.className = "fas fa-thermometer-half fa-2x me-2 text-light";
+      category = "Mild";
+      tempCategoryEl.className = "text-light";
+    } else if (temperature < 30) {
+      // Warm (20-29°C)
+      iconContainer.className = "fas fa-thermometer-three-quarters fa-2x me-2 text-warning";
+      category = "Warm";
+      tempCategoryEl.className = "text-warning";
+    } else if (temperature < 40) {
+      // Hot (30-39°C)
+      iconContainer.className = "fas fa-thermometer-full fa-2x me-2 text-danger";
+      category = "Hot";
+      tempCategoryEl.className = "text-danger";
+      // Add gentle beat animation
+      iconContainer.style.animation = "pulse 2s infinite";
+    } else {
+      // Extreme heat (40°C+)
+      iconContainer.className = "fas fa-fire fa-2x me-2 text-danger";
+      category = "Extreme Heat";
+      tempCategoryEl.className = "text-danger fw-bold";
+      // Add intense animation
+      iconContainer.style.animation = "fa-beat 1.5s infinite";
+    }
+
+    // Update the temperature category text
+    tempCategoryEl.textContent = category;
+  }
 
   function updateEventsUI() {
     if (!events || events.length === 0) {
@@ -540,7 +659,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const content = document.createElement("p");
       content.className = "mb-1";
-      content.textContent = event.event;
+      content.innerHTML = event.event;
 
       const timestamp = document.createElement("small");
       timestamp.className = "text-muted";
