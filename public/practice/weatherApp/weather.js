@@ -24,6 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const totalUsersEl = document.getElementById("totalUsers");
   const totalNotesEl = document.getElementById("totalNotes");
   const totalAdminsEl = document.getElementById("totalAdmins");
+  const avgNotesPerUserEl = document.getElementById("avgNotesPerUser");
   const errorToastEl = document.getElementById("errorToast");
   const successToastEl = document.getElementById("successToast");
   const errorToastMessageEl = document.getElementById("errorToastMessage");
@@ -552,14 +553,21 @@ document.addEventListener("DOMContentLoaded", () => {
       eventsListEl.appendChild(eventCard);
     });
   }
-
   function updateAdminUI(data) {
     if (!data) return;
 
     // Update stats
-    totalUsersEl.textContent = data.users.length;
-    totalNotesEl.textContent = data.events.length;
-    totalAdminsEl.textContent = data.users.filter((user) => user.isAdmin).length;
+    const userCount = data.users.length;
+    const noteCount = data.events.length;
+    const adminCount = data.users.filter((user) => user.isAdmin).length;
+
+    totalUsersEl.textContent = userCount;
+    totalNotesEl.textContent = noteCount;
+    totalAdminsEl.textContent = adminCount;
+
+    // Calculate and update average notes per user
+    const avgNotesPerUser = userCount > 0 ? (noteCount / userCount).toFixed(2) : "0";
+    avgNotesPerUserEl.textContent = avgNotesPerUser;
 
     // Update users table
     usersListEl.innerHTML = "";
