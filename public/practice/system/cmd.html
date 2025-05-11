@@ -393,6 +393,39 @@
             animation: glitchBot 0.4s infinite steps(2, end);
         }
 
+        /* Settings Modal Styles */
+        .settings-group {
+            margin-bottom: 15px;
+            border: 1px solid #00AAAA;
+            padding: 10px;
+            background-color: #000060;
+        }
+
+        .setting-item {
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .setting-checkbox {
+            margin-right: 8px;
+            width: 16px;
+            height: 16px;
+            accent-color: #00FFFF;
+        }
+
+        .setting-select {
+            background-color: #000080;
+            color: #FFFFFF;
+            border: 1px solid #00FFFF;
+            padding: 5px;
+            width: 100%;
+        }
+
+        .setting-select:focus {
+            outline: 2px solid #FFFF00;
+        }
+
         @keyframes glitch {
             0% {
                 transform: none;
@@ -476,6 +509,69 @@
             100% {
                 transform: translate(2px, 1px) skew(2deg);
             }
+        }
+
+        /* Settings Modal Styles */
+        .settings-group {
+            margin-bottom: 15px;
+            border: 1px solid #00AAAA;
+            padding: 10px;
+            background-color: #000060;
+        }
+
+        .setting-item {
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .setting-checkbox {
+            margin-right: 8px;
+            width: 16px;
+            height: 16px;
+            accent-color: #00FFFF;
+        }
+
+        .setting-select {
+            background-color: #000080;
+            color: #FFFFFF;
+            border: 1px solid #00FFFF;
+            padding: 5px;
+            width: 100%;
+        }
+
+        .setting-select:focus {
+            outline: 2px solid #FFFF00;
+        }
+
+        /* Image Preview Styles */
+        .image-preview-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 300px;
+            overflow: auto;
+            background-color: #000020;
+            border: 1px solid #00FFFF;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .image-error {
+            color: #FF3333;
+            text-align: center;
+            font-weight: bold;
+            padding: 20px;
+        }
+
+        #imageModal .modal-content {
+            min-width: 400px;
+            min-height: 300px;
         }
     </style>
 </head>
@@ -612,8 +708,8 @@
         <div class="modal-title">Menu</div>
         <div class="modal-content">
             <ul style="list-style:none; padding:0; margin:0;">
-                <li><button class="modal-button" onclick="customAlert('Settings coming soon!')">Settings</button></li>
-                <li><button class="modal-button" onclick="customAlert('About: GAD Commander v1.0')">About</button></li>
+                <li><button class="modal-button" id="openSettingsBtn">Settings</button></li>
+                <li><button class="modal-button" id="openAboutBtn">About</button></li>
                 <li><button class="modal-button" onclick="location.reload()">Refresh</button></li>
             </ul>
         </div>
@@ -644,9 +740,7 @@
             <button class="modal-button" id="copyMoveConfirmBtn">OK</button>
             <button class="modal-button" id="copyMoveCancelBtn">Cancel</button>
         </div>
-    </div>
-
-    <!-- Password Modal -->
+    </div> <!-- Password Modal -->
     <div class="modal" id="passwordModal">
         <div class="modal-title">Password Required</div>
         <div class="modal-content">
@@ -655,6 +749,90 @@
         <div class="modal-buttons">
             <button class="modal-button" id="passwordOkBtn">OK</button>
             <button class="modal-button" id="passwordCancelBtn">Cancel</button>
+        </div>
+    </div>
+
+    <!-- About Modal -->
+    <div class="modal" id="aboutModal">
+        <div class="modal-title">About GAD Commander</div>
+        <div class="modal-content">
+            <div style="text-align: center; margin-bottom: 15px;">
+                <h3 style="color: #00FFFF; margin: 10px 0;">GAD Commander v1.0</h3>
+                <p>A retro file manager inspired by Norton Commander</p>
+            </div>
+            <div style="border-top: 1px solid #00AAAA; padding-top: 10px;">
+                <p><strong>Features:</strong></p>
+                <ul style="list-style-type: none; padding-left: 10px;">
+                    <li>• Dual-panel file browsing</li>
+                    <li>• File operations (copy, move, delete)</li>
+                    <li>• File viewing and editing</li>
+                    <li>• Directory management</li>
+                    <li>• Password-protected files/directories</li>
+                </ul>
+                <p style="margin-top: 10px;"><strong>Created:</strong> May 2025</p>
+                <p><strong>Part of:</strong> GAD GUI API Demo Project</p>
+            </div>
+        </div>
+        <div class="modal-buttons">
+            <button class="modal-button" id="closeAboutBtn">Close</button>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-title">GAD Commander Settings</div>
+        <div class="modal-content">
+            <div class="settings-group">
+                <h3 style="color: #00FFFF; margin: 10px 0;">Display Settings</h3>
+                <div class="setting-item">
+                    <label>
+                        <input type="checkbox" id="settingShowHidden" class="setting-checkbox">
+                        Show hidden files
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <label>
+                        <input type="checkbox" id="settingConfirmDelete" class="setting-checkbox" checked>
+                        Confirm file deletion
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <label>
+                        <input type="checkbox" id="settingShowDates" class="setting-checkbox" checked>
+                        Show file dates
+                    </label>
+                </div>
+            </div>
+            <div class="settings-group" style="margin-top: 15px;">
+                <h3 style="color: #00FFFF; margin: 10px 0;">Color Theme</h3>
+                <div class="setting-item">
+                    <select id="settingColorTheme" class="setting-select">
+                        <option value="classic">Classic Blue</option>
+                        <option value="green">Matrix Green</option>
+                        <option value="amber">Amber Terminal</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="modal-buttons">
+            <button class="modal-button" id="saveSettingsBtn">Save</button>
+            <button class="modal-button" id="closeSettingsBtn">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Image Preview Modal -->
+    <div class="modal" id="imageModal">
+        <div class="modal-title">Image Preview</div>
+        <div class="modal-content">
+            <div class="image-preview-container">
+                <img id="imagePreview" class="image-preview" alt="Image Preview">
+            </div>
+            <div class="image-path" style="margin-top: 10px; color: #00FFFF; font-size: 0.9em; text-align: center;">
+                <span id="imagePathText"></span>
+            </div>
+        </div>
+        <div class="modal-buttons">
+            <button class="modal-button" id="closeImageBtn">Close</button>
         </div>
     </div>
 
@@ -828,9 +1006,7 @@
                     }
                     return 0;
                 });
-            }
-
-            function renderTable(panel, path, data, dirInfo) {
+            } function renderTable(panel, path, data) {
                 const tbody = panel === 'left' ? leftFileTbody : rightFileTbody;
                 const sort = panel === 'left' ? leftSort : rightSort;
                 tbody.innerHTML = '';
@@ -849,18 +1025,30 @@
                 if (path !== '/') {
                     items = sortItems(items, sort);
                 }
-                items.forEach((item, idx) => {
+                items.forEach(item => {
                     const tr = document.createElement('tr');
                     tr.className = 'file-item';
                     if (item.type === 'directory' || item.type === 'drive') tr.classList.add('directory');
                     else if (item.name.endsWith('.EXE') || item.name.endsWith('.COM') || item.name.endsWith('.BAT')) tr.classList.add('executable');
+                    else if (isImageFile(item.name)) tr.classList.add('document'); // Mark image files
                     else tr.classList.add('document');
+
                     tr.dataset.name = item.name;
                     tr.dataset.type = item.type;
                     tr.dataset.size = item.size || '';
                     if (item.isParent) tr.dataset.isParent = 'true';
+
+                    // Determine file icon/indicator
                     let displayName = truncateName(item.name);
-                    if (item.passwordProtected) displayName = '<span class="lock-icon"><i class="fa fa-lock"></i></span>' + displayName;
+                    if (item.passwordProtected) {
+                        displayName = '<span class="lock-icon"><i class="fa fa-lock"></i></span>' + displayName;
+                    }
+
+                    // Add image icon for image files
+                    if (item.type === 'file' && isImageFile(item.name)) {
+                        displayName = '<span style="color:#C0C0FF;margin-right:4px;"><i class="fa fa-image"></i></span>' + displayName;
+                    }
+
                     tr.innerHTML = `
                         <td title="${item.name}">${displayName}</td>
                         <td>${item.isParent ? '' : (item.type || '')}</td>
@@ -901,12 +1089,10 @@
                     if (rightItems.length > 0) selectItem('right', rightItems[0]);
                     updatePanelHighlight();
                 }
-            }
-
-            function displayDirectoryContents(panel, path, apiData) {
+            } function displayDirectoryContents(panel, path, apiData) {
                 const dirInfo = apiData && apiData.directory ? apiData.directory : null;
                 const data = apiData && apiData.contents ? apiData.contents : [];
-                renderTable(panel, path, data, dirInfo);
+                renderTable(panel, path, data);
                 // Glitch effect for corrupted directory
                 const panelDiv = panel === 'left' ? document.getElementById('leftPanel') : document.getElementById('rightPanel');
                 let isCorrupted = false;
@@ -987,9 +1173,7 @@
                         showStatus('Error loading file content');
                     }
                 });
-            }
-
-            function displayFileContent(path, fileData) {
+            } function displayFileContent(path, fileData) {
                 // Check if file is corrupted in lastDirData
                 let isCorrupted = false;
                 const panel = activePanel;
@@ -1004,8 +1188,60 @@
                     showModal(viewModal);
                     return;
                 }
-                fileContent.textContent = fileData.content;
-                showModal(viewModal);
+
+                // Check if this is an image file
+                if (isImageFile(path)) {
+                    displayImagePreview(path, fileData);
+                } else {
+                    // Regular text file
+                    fileContent.textContent = fileData.content;
+                    showModal(viewModal);
+                }
+            }
+
+            function isImageFile(path) {
+                const fileName = path.toLowerCase();
+                const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg'];
+                return imageExtensions.some(ext => fileName.endsWith(ext));
+            }
+
+            function displayImagePreview(path, fileData) {
+                // Check if content is a valid image path
+                if (fileData.content && typeof fileData.content === 'string' && fileData.content.trim()) {
+                    const imagePath = fileData.content.trim();
+                    const imgPreview = document.getElementById('imagePreview');
+
+                    if (imgPreview === null) {
+                        console.error('Image preview element not found');
+                        return;
+                    }
+
+                    // Set image source
+                    console.log('Image path:', imagePath);
+                    imgPreview.src = imagePath;
+
+                    // Handle image load error
+                    imgPreview.onerror = function () {
+                        imgPreview.style.display = 'none';
+                        const container = document.querySelector('.image-preview-container');
+                        container.innerHTML = '<div id="imagePreview" class="image-preview image-error">Unable to load image. Invalid path or image format.</div>';
+                    };
+
+                    // Handle successful load
+                    imgPreview.onload = function () {
+                        imgPreview.style.display = 'block';
+                    };
+
+                    showModal(document.getElementById('imageModal'));
+                } else {
+                    // If content isn't a valid path, show error
+                    const imgPreview = document.getElementById('imagePreview');
+                    imgPreview.style.display = 'none';
+                    const container = document.querySelector('.image-preview-container');
+                    container.innerHTML = '<div class="image-error">Invalid image path in file.</div>';
+                    document.getElementById('imagePathText').textContent = '';
+                    showModal(document.getElementById('imageModal'));
+                }
             }
 
             function buildPath(currentPath, itemName) {
@@ -1105,6 +1341,18 @@
                 hideModal(viewModal);
             });
 
+            // Image preview modal close button
+            document.getElementById('closeImageBtn').addEventListener('click', function () {
+                // Reset the image preview container when closing
+                if (document.getElementById('imagePreview')) {
+                    document.getElementById('imagePreview').style.display = 'block';
+                }
+                if (document.getElementById('image-preview-container')) {
+                    document.querySelector('.image-preview-container').innerHTML = '<img id="imagePreview" class="image-preview" alt="Image Preview">';
+                }
+                hideModal(document.getElementById('imageModal'));
+            });
+
             document.getElementById('edit-btn').addEventListener('click', async function () {
                 const selectedItem = getSelectedItem();
                 if (!selectedItem || selectedItem.dataset.type === 'directory' || selectedItem.dataset.isParent === 'true') {
@@ -1196,10 +1444,115 @@
             // F2 Menu
             document.getElementById('menu-btn').addEventListener('click', function () {
                 showModal(document.getElementById('menuModal'));
-            });
-            document.getElementById('closeMenuBtn').addEventListener('click', function () {
+            }); document.getElementById('closeMenuBtn').addEventListener('click', function () {
                 hideModal(document.getElementById('menuModal'));
             });
+
+            // About modal handlers
+            document.getElementById('openAboutBtn').addEventListener('click', function () {
+                hideModal(document.getElementById('menuModal'));
+                showModal(document.getElementById('aboutModal'));
+            });
+
+            document.getElementById('closeAboutBtn').addEventListener('click', function () {
+                hideModal(document.getElementById('aboutModal'));
+            });
+
+            // Settings modal handlers
+            document.getElementById('openSettingsBtn').addEventListener('click', function () {
+                hideModal(document.getElementById('menuModal'));
+                showModal(document.getElementById('settingsModal'));
+            });
+
+            document.getElementById('closeSettingsBtn').addEventListener('click', function () {
+                hideModal(document.getElementById('settingsModal'));
+            });
+
+            document.getElementById('saveSettingsBtn').addEventListener('click', function () {
+                // Save settings to local storage
+                const settings = {
+                    showHidden: document.getElementById('settingShowHidden').checked,
+                    confirmDelete: document.getElementById('settingConfirmDelete').checked,
+                    showDates: document.getElementById('settingShowDates').checked,
+                    colorTheme: document.getElementById('settingColorTheme').value
+                };
+
+                localStorage.setItem('gadCommanderSettings', JSON.stringify(settings));
+
+                // Apply theme if changed
+                applyColorTheme(settings.colorTheme);
+
+                // Refresh panels to apply settings
+                navigateToDirectory('left', currentLeftPath);
+                navigateToDirectory('right', currentRightPath);
+
+                hideModal(document.getElementById('settingsModal'));
+                showStatus('Settings saved');
+            });
+
+            // Apply color theme function
+            function applyColorTheme(theme) {
+                let bgColor, textColor, panelColor, headerColor, buttonColor;
+
+                switch (theme) {
+                    case 'green':
+                        bgColor = '#002800';
+                        textColor = '#00FF00';
+                        panelColor = '#004000';
+                        headerColor = '#006600';
+                        buttonColor = '#003300';
+                        break;
+                    case 'amber':
+                        bgColor = '#402000';
+                        textColor = '#FFA500';
+                        panelColor = '#603000';
+                        headerColor = '#804000';
+                        buttonColor = '#503000';
+                        break;
+                    default: // classic blue
+                        bgColor = '#000080';
+                        textColor = '#FFFFFF';
+                        panelColor = '#0000AA';
+                        headerColor = '#00AAAA';
+                        buttonColor = '#000080';
+                        break;
+                }
+
+                document.body.style.backgroundColor = bgColor;
+                document.body.style.color = textColor;
+                document.querySelectorAll('.panel').forEach(el => el.style.backgroundColor = panelColor);
+                document.querySelectorAll('.panel-header').forEach(el => el.style.backgroundColor = headerColor);
+                document.querySelectorAll('.function-key').forEach(el => el.style.backgroundColor = buttonColor);
+            }
+            // Load settings from local storage
+            function loadSettings() {
+                try {
+                    const savedSettings = localStorage.getItem('gadCommanderSettings');
+                    if (savedSettings) {
+                        const settings = JSON.parse(savedSettings);
+
+                        // Apply settings to UI elements
+                        if (document.getElementById('settingShowHidden')) {
+                            document.getElementById('settingShowHidden').checked = settings.showHidden || false;
+                        }
+                        if (document.getElementById('settingConfirmDelete')) {
+                            document.getElementById('settingConfirmDelete').checked = settings.confirmDelete !== false;
+                        }
+                        if (document.getElementById('settingShowDates')) {
+                            document.getElementById('settingShowDates').checked = settings.showDates !== false;
+                        }
+                        if (document.getElementById('settingColorTheme')) {
+                            document.getElementById('settingColorTheme').value = settings.colorTheme || 'classic';
+                        }
+
+                        // Apply theme
+                        applyColorTheme(settings.colorTheme || 'classic');
+                    }
+                } catch (error) {
+                    // Log error quietly without console statements
+                    showStatus('Error loading settings');
+                }
+            }
 
             // F9 Pull-down
             document.getElementById('pulldown-btn').addEventListener('click', function () {
@@ -1431,13 +1784,10 @@
                 // If result is a drive (e.g., C:), keep as is
                 if (/^[A-Za-z]:$/.test(result)) return result;
                 return result.startsWith('/') ? result : (result ? result : '/');
-            }
-
-            function processCommand(command) {
+            } function processCommand(command) {
                 const parts = command.trim().split(/\s+/);
                 const cmd = parts[0].toLowerCase();
                 const arg1 = parts[1];
-                const arg2 = parts[2];
                 switch (cmd) {
                     case 'cd':
                         if (arg1) {
@@ -1532,10 +1882,11 @@
                     document.querySelectorAll(`.file-table th[data-panel="${panel}"]`).forEach(h => h.classList.remove('sorted'));
                     th.classList.add('sorted');
                 });
-            });
-
-            // Initial load
+            });            // Initial load
             async function initialize() {
+                // Load settings first to apply theme
+                loadSettings();
+
                 // Set left panel to C: drive contents
                 navigateToDirectory('left', 'C:');
 
@@ -1553,3 +1904,4 @@
 </body>
 
 </html>
+`

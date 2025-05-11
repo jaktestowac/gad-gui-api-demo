@@ -70,7 +70,7 @@ export async function updateFile(path, content) {
 
 export async function deleteItem(path) {
   const res = await fetch("/api/practice/v1/file-system/delete", {
-    method: "POST",
+    method: "DELETE",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ path }),
   });
