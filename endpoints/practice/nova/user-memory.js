@@ -1,4 +1,5 @@
 const { detectSentiment } = require("./text-processing");
+const { logDebug } = require("../../../helpers/logger-api");
 
 // In-memory storage for user memory
 const userMemory = {};
@@ -40,7 +41,9 @@ function initUserMemory(userId) {
  */
 function generatePersonalizedResponse(userId) {
   const memory = userMemory[userId];
-  if (!memory) return null;
+  if (!memory) {
+    return null; // No memory found for this user
+  }
 
   // If we know their name, occasionally use it
   if (memory.name && Math.random() < 0.4) {
@@ -86,7 +89,22 @@ function extractAndRememberUserInfo(message, conversationId) {
   let infoExtracted = false;
 
   // Extract name (expanded to detect more name patterns)
-  const namePatterns = [/my name is ([A-Za-z]+)/i, /i am ([A-Za-z]+)/i, /call me ([A-Za-z]+)/i, /i'm ([A-Za-z]+)/i];
+  const namePatterns = [
+    /my name is ([A-Za-z]+)/i,
+    /i am ([A-Za-z]+)/i,
+    /call me ([A-Za-z]+)/i,
+    /i'm ([A-Za-z]+)/i,
+    /my name's ([A-Za-z]+)/i,
+    /you can call me ([A-Za-z]+)/i,
+    /i'm known as ([A-Za-z]+)/i,
+    /i go by ([A-Za-z]+)/i,
+    /my nickname is ([A-Za-z]+)/i,
+    /i prefer to be called ([A-Za-z]+)/i,
+    /i would like to be called ([A-Za-z]+)/i,
+    /i am known as ([A-Za-z]+)/i,
+    /my friends call me ([A-Za-z]+)/i,
+    /im ([A-Za-z]+)/i,
+  ];
 
   for (const pattern of namePatterns) {
     const nameMatch = message.match(pattern);
@@ -145,6 +163,17 @@ function extractAndRememberUserInfo(message, conversationId) {
     /i'm(?: an?| ) ([^,.!?]+(?: developer| engineer| designer| programmer| student| teacher| manager| professional))/i,
     /my job is(?: an?| ) ([^,.!?]+(?: developer| engineer| designer| programmer| teacher| manager))/i,
     /my profession is ([^,.!?]+)/i,
+    /i work as ([^,.!?]+)/i,
+    /i am a ([^,.!?]+)/i,
+    /i'm a ([^,.!?]+)/i,
+    /im a ([^,.!?]+)/i,
+    /i am working as ([^,.!?]+)/i,
+    /i'm working as ([^,.!?]+)/i,
+    /i work as ([^,.!?]+)/i,
+    /i am(?: a| an) ([^,.!?]+)/i,
+    /i'm(?: a| an) ([^,.!?]+)/i,
+    /i work(?: as)? ([^,.!?]+)/i,
+    /my role is ([^,.!?]+)/i,
   ];
 
   for (const pattern of professionPatterns) {
@@ -206,6 +235,12 @@ function extractAndRememberUserInfo(message, conversationId) {
     } else {
       memory.needsPositivity = false;
     }
+
+    logDebug("User sentiment detected:", {
+      sentiment,
+      recentSentiments,
+      needsPositivity: memory.needsPositivity,
+    });
   }
 
   // Track topics of interest

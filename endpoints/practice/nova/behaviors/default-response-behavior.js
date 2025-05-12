@@ -39,10 +39,14 @@ class DefaultResponseBehavior extends BaseBehavior {
         ? `Hello ${userMem.name}! How can I help you today?`
         : "Hello! How can I help you today?";
       return greeting;
-    }
-
-    // Handle status/feelings questions
-    else if (lowerMessage.includes("how are you")) {
+    } // Handle status/feelings questions
+    else if (
+      lowerMessage.includes("how are you") ||
+      lowerMessage.includes("how do you feel") ||
+      lowerMessage.includes("how's it going") ||
+      lowerMessage.includes("how is it going") ||
+      lowerMessage.includes("how have you been")
+    ) {
       return "I'm just a simple AI, but I'm functioning well! How can I assist you?";
     }
 
@@ -113,6 +117,12 @@ class DefaultResponseBehavior extends BaseBehavior {
         "Databases are essential for most applications. SQL or NoSQL preference?",
         "Data management is crucial for scalable applications. Working on anything specific?",
         "I find data modeling quite interesting. What database systems do you work with?",
+      ],
+      wellbeing: [
+        "I'm just a simple AI, but I'm functioning well! How can I assist you?",
+        "I'm doing well, thanks for asking! How can I help you today?",
+        "All systems operational! What can I do for you?",
+        "I'm here and ready to help! What can I do for you today?",
       ],
       general: [
         "That's interesting. Can you tell me more?",

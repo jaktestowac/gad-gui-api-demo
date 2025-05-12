@@ -79,7 +79,7 @@ const knowledgeBase = {
   // About the AI
   "who made you":
     "I'm a simple AI assistant created as part of a demo application. I was built to demonstrate basic AI chat functionality.",
-  "what is your name": "I'm GadAI, a simple AI assistant created for the GAD application demo.",
+  "what is your name": "I'm Nova, a simple AI assistant created for the GAD application demo.",
   "what can you do":
     "I can answer questions about programming concepts, help with calculations, remember information about you, play simple games like rock-paper-scissors, tell jokes and facts, and have basic conversations. Try typing 'help' for more information!",
 };
@@ -96,6 +96,23 @@ const funFacts = [
   "The first 1GB hard drive was announced in 1980, weighed 550 pounds, and cost $40,000.",
   "QWERTY keyboard layout was designed to slow typing and prevent jamming on mechanical typewriters.",
   "The original name for Windows was 'Interface Manager'.",
+  "The first computer game was 'Tennis for Two', created in 1958 by physicist William Higinbotham.",
+  "The first smartphone was IBM's Simon Personal Communicator, released in 1994.",
+  "The first email was sent by Ray Tomlinson to himself in 1971.",
+  "The first computer virus was called 'Creeper' and was created in the early 1970s.",
+  "The first website ever created is still online. It's a simple page about the World Wide Web project.",
+  "The first computer to use a mouse was the Xerox Alto, developed in the 1970s.",
+  "The first computer game to be played in space was 'Tetris' aboard the Space Shuttle Endeavour in 1993.",
+  "The first computer to beat a human champion at chess was IBM's Deep Blue in 1997.",
+  "The first computer-generated music was created in 1957 by a computer at Bell Labs.",
+  "The first computer to use a graphical user interface (GUI) was the Xerox Alto, developed in the 1970s.",
+  "The first computer to use a touchscreen was the IBM Simon Personal Communicator, released in 1994.",
+  "The first computer to use a hard disk drive was the IBM 305 RAMAC, introduced in 1956.",
+  "The first computer to use a floppy disk was the IBM 3740, introduced in 1971.",
+  "The first computer to use a laser printer was the Xerox Star, introduced in 1981.",
+  "The first computer to use a CD-ROM was the Apple Macintosh, introduced in 1984.",
+  "The first computer to use a USB port was the Apple iMac, introduced in 1998.",
+  "The first computer to use a Wi-Fi connection was the Apple iBook, introduced in 1999.",
 ];
 
 // Collection of jokes
@@ -357,7 +374,7 @@ const sentimentPatterns = [
   { pattern: /(?:^|\s)(good|nice|cool|helpful|interesting|neat|okay|ok)/i, sentiment: "neutral-positive" },
   { pattern: /(?:^|\s)(confused|unsure|unclear|not sure|don't understand|dont understand)/i, sentiment: "confused" },
   { pattern: /(?:^|\s)(bad|terrible|awful|horrible|hate|dislike|stupid|useless|broken|sucks)/i, sentiment: "negative" },
-  { pattern: /(?:^|\s)(wtf|fuck|shit|damn|crap|idiot|moron|ass)/i, sentiment: "very-negative" },
+  { pattern: /(?:^|\s)(wtf|damn|crap|idiot|moron|ass)/i, sentiment: "very-negative" },
 ];
 
 module.exports = {

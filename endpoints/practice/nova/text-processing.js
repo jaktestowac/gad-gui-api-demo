@@ -310,7 +310,6 @@ function isQuestion(message) {
  */
 function detectTopic(message) {
   const lowerMessage = message.toLowerCase();
-
   // Define topic patterns
   const topics = {
     programming: ["code", "program", "develop", "script", "function", "variable", "class", "method"],
@@ -322,6 +321,17 @@ function detectTopic(message) {
     personal: ["name", "feel", "think", "believe", "opinion", "favorite", "like", "hate"],
     greeting: ["hello", "hi", "hey", "morning", "afternoon", "evening", "greet"],
     farewell: ["bye", "goodbye", "see you", "later", "farewell", "exit"],
+    wellbeing: [
+      "how are you",
+      "how do you feel",
+      "how are things",
+      "how is it going",
+      "how's it going",
+      "how've you been",
+      "how have you been",
+      "how's your day",
+      "feeling today",
+    ],
   };
 
   // Find matching topics
