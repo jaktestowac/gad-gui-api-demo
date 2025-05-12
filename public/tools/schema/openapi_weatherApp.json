@@ -179,10 +179,9 @@
       }
     },
     "securitySchemes": {
-      "cookieAuth": {
-        "type": "apiKey",
-        "in": "cookie",
-        "name": "weatherAppSession"
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
       }
     }
   },
@@ -260,7 +259,7 @@
         "description": "Get weather events for the current user, optionally filtered by day",
         "security": [
           {
-            "cookieAuth": []
+            "bearerAuth": []
           }
         ],
         "parameters": [
@@ -306,7 +305,7 @@
         "description": "Create a new weather event or note",
         "security": [
           {
-            "cookieAuth": []
+            "bearerAuth": []
           }
         ],
         "requestBody": {
@@ -372,7 +371,7 @@
         "description": "Update an existing weather event or note",
         "security": [
           {
-            "cookieAuth": []
+            "bearerAuth": []
           }
         ],
         "requestBody": {
@@ -449,7 +448,7 @@
         "description": "Get details of a specific weather event by its ID",
         "security": [
           {
-            "cookieAuth": []
+            "bearerAuth": []
           }
         ],
         "parameters": [
@@ -512,7 +511,7 @@
         "description": "Delete an existing weather event by ID",
         "security": [
           {
-            "cookieAuth": []
+            "bearerAuth": []
           }
         ],
         "parameters": [
@@ -732,7 +731,7 @@
         "description": "Get information about the currently authenticated user",
         "security": [
           {
-            "cookieAuth": []
+            "bearerAuth": []
           }
         ],
         "responses": {
@@ -766,7 +765,7 @@
         "description": "Get all users and events data (admin only)",
         "security": [
           {
-            "cookieAuth": []
+            "bearerAuth": []
           }
         ],
         "responses": {
