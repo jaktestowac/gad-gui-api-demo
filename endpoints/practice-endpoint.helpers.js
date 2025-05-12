@@ -1,7 +1,7 @@
 const { isUndefined } = require("../helpers/compare.helpers");
 const { formatErrorResponse } = require("../helpers/helpers");
 const { logDebug } = require("../helpers/logger-api");
-const { HTTP_NOT_FOUND, HTTP_OK, HTTP_UNAUTHORIZED } = require("../helpers/response.helpers");
+const { HTTP_NOT_FOUND, HTTP_OK, HTTP_UNAUTHORIZED, HTTP_BAD_REQUEST } = require("../helpers/response.helpers");
 const { sessionV1, sessionV2 } = require("./practice/session-handlers");
 const { todoV1, todoV2, todoV3, todoV4, todoV5, todoV6 } = require("./practice/todo-handlers");
 const { expenseV1, expenseV2, expenseV3 } = require("./practice/expense-handlers");
@@ -15,6 +15,7 @@ const { verifyToken, hasPermission } = require("./practice/employee-management-s
 const twoFactor = require("./practice/2fa-handlers");
 const twoFactorV2 = require("./practice/2fa-handlers-v2");
 const weatherAppV1 = require("./practice/weather-app-handlers-v1");
+const aiChat = require("./practice/nova/nova-chat-handlers");
 const {
   getDirectoryContents,
   getFileDetails,
@@ -455,6 +456,47 @@ function handlePractice(req, res) {
           return deleteItem(req, res);
         default:
           return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
+      }
+    } // AI Chat endpoints
+    if (req.url.includes("/api/practice/v1/ai-chat")) {
+      let endpoint = req.url.split("/api/practice/v1/ai-chat/")[1];
+
+      // endpoint can have query params
+      if (endpoint && endpoint.includes("?")) {
+        endpoint = endpoint.split("?")[0];
+      }
+
+      switch (true) {
+        case req.method === "POST" && endpoint === "message":
+          return aiChat.handleMessage(req, res);
+        case req.method === "GET" && endpoint === "history":
+          return aiChat.getConversationHistory(req, res);
+        case req.method === "POST" && endpoint === "clear":
+          return aiChat.clearConversation(req, res);
+        case req.method === "POST" && endpoint === "rename":
+          return aiChat.renameConversation(req, res);
+        case req.method === "GET" && endpoint === "list":
+          return aiChat.listConversations(req, res);
+        case req.method === "GET" && endpoint === "stats":
+          return aiChat.getStatistics(req, res);
+        case req.method === "GET" && endpoint === "session":
+          return aiChat.initSession(req, res);
+        case req.method === "POST" && endpoint === "clear-memory":
+          return aiChat.clearUserMemory(req, res);
+        case req.method === "POST" && endpoint === "clear-all": {
+          const userId = req.body && req.body.userId;
+          if (!userId) {
+            return res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Missing userId"));
+          }
+          const result = aiChat.clearAllConversations(userId);
+          if (result) {
+            return res.status(HTTP_OK).json({ success: true });
+          } else {
+            return res.status(HTTP_OK).json({ success: false, message: "No conversations found for user" });
+          }
+        }
+        default:
+          return res.status(HTTP_NOT_FOUND).send(formatErrorResponse(`Not Found! ${req.url}`));
       }
     }
 
