@@ -185,6 +185,24 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  async function fetchWeatherForCurrentDate() {
+    try {
+      showLoadingSkeleton();
+      const response = await fetch("/api/practice/v1/weather/current", {
+        method: "GET",
+        headers: createAuthHeaders(),
+      });
+      if (handleUnauthorizedResponse(response)) return;
+      if (!response.ok) throw new Error("Failed to fetch weather for current date");
+      const data = await response.json();
+      updateWeatherUI(data);
+    } catch (error) {
+      showError(error.message);
+    } finally {
+      hideLoadingSkeleton();
+    }
+  }
+
   async function fetchEventsForDate() {
     try {
       // Get events only for the current user and selected date
@@ -1011,10 +1029,6 @@ document.addEventListener("DOMContentLoaded", () => {
     hideAdminDashboard();
   });
 
-  // Initialize app
-  fetchWeatherForSelectedDate();
-  checkAuthentication();
-
   // Previous day button handler
   document.getElementById("prevDayBtn").addEventListener("click", () => {
     const currentDate = datePicker.selectedDates[0];
@@ -1044,4 +1058,8 @@ document.addEventListener("DOMContentLoaded", () => {
       fetchEventsForDate();
     }
   });
+
+  // Initialize app
+  fetchWeatherForCurrentDate();
+  checkAuthentication();
 });

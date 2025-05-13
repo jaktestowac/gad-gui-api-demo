@@ -102,19 +102,19 @@ function getWeatherData(day, scope = 1, historicalStable = true) {
     case 1:
       result = {
         temp: data.temp,
-        date: data.date,
         wind: data.wind.speed,
+        date: data.date,
       };
       break;
     case 2:
       result = {
         temp: data.temp,
         humidity: data.humidity,
-        date: data.date,
         wind: {
           speed: data.wind.speed,
           direction: data.wind.direction,
         },
+        date: data.date,
       };
       break;
     default:
