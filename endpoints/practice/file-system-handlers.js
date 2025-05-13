@@ -7,6 +7,7 @@ const {
   HTTP_CREATED,
   HTTP_UNAUTHORIZED,
 } = require("../../helpers/response.helpers");
+const { logDebug } = require("../../helpers/logger-api");
 
 // Helper to find a directory or file by path
 function findNodeByPath(path) {
@@ -251,9 +252,10 @@ function updateFile(req, res) {
 
 // Delete a file or directory
 function deleteItem(req, res) {
-  const rawPath = req.query.path;
+  const rawPath = req.body.path;
 
   if (!rawPath) {
+    logDebug("Attempt to delete without path", { path: rawPath });
     return res.status(HTTP_BAD_REQUEST).json(formatErrorResponse("Path is required"));
   }
 
@@ -261,6 +263,7 @@ function deleteItem(req, res) {
 
   // Handle root paths
   if (path === "/" || path === "") {
+    logDebug("Attempt to delete root directory", { path });
     return res.status(HTTP_BAD_REQUEST).json(formatErrorResponse("Cannot delete root directory"));
   }
 

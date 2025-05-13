@@ -521,6 +521,73 @@ function simpleWeatherGeneratorV2ForOneDay(date, location) {
   };
 }
 
+function simpleWeatherAppGeneratorV1ForOneDay(date, windRandom = true) {
+  const dataGenerator = new RandomValueGeneratorWithSeed(date);
+  const baseTemp = dataGenerator.getNextValue(15, 35);
+  const humidity = dataGenerator.getNextValue(40, 80);
+  const windDirections = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+
+  let windSpeed = dataGenerator.getNextValue(0, 70);
+  let windDirection = windDirections[dataGenerator.getNextValue(0, windDirections.length - 1)];
+  if (windRandom) {
+    windSpeed = Math.floor(Math.random() * 70); // 0-70 km/h
+    windDirection = windDirections[Math.floor(Math.random() * windDirections.length)];
+  }
+
+  const weatherConditions = ["Sunny", "Partly Cloudy", "Cloudy", "Rainy", "Thunderstorm"];
+  const weatherCondition = weatherConditions[dataGenerator.getNextValue(0, weatherConditions.length - 1)];
+
+  // air quality index
+  const airQualityIndex = dataGenerator.getNextValue(0, 5);
+  const airQualityIndexAQI = [
+    { range: "0-50", quality: "Good", color: "green", icon: "😊" },
+    { range: "51-100", quality: "Moderate", color: "yellow", icon: "😐" },
+    { range: "101-150", quality: "Unhealthy for Sensitive Groups", color: "orange", icon: "😷" },
+    { range: "151-200", quality: "Unhealthy", color: "red", icon: "🤢" },
+    { range: "201-300", quality: "Very Unhealthy", color: "purple", icon: "🤮" },
+    { range: "301-500", quality: "Hazardous", color: "maroon", icon: "💀" },
+  ][airQualityIndex];
+
+  const airQualityIndexAQIFormatted = {
+    range: airQualityIndexAQI.range,
+    quality: airQualityIndexAQI.quality,
+    color: airQualityIndexAQI.color,
+    icon: airQualityIndexAQI.icon,
+  };
+
+  const pressure = dataGenerator.getNextValue(950, 1050);
+  const visibility = dataGenerator.getNextValue(0, 10);
+
+  // cloudCoverage based on weather condition
+  let cloudCoverage = 0;
+  if (weatherCondition === "Sunny") {
+    cloudCoverage = dataGenerator.getNextValue(0, 20);
+  } else if (weatherCondition === "Partly Cloudy") {
+    cloudCoverage = dataGenerator.getNextValue(20, 50);
+  } else if (weatherCondition === "Cloudy") {
+    cloudCoverage = dataGenerator.getNextValue(50, 80);
+  } else if (weatherCondition === "Rainy") {
+    cloudCoverage = dataGenerator.getNextValue(80, 100);
+  } else if (weatherCondition === "Thunderstorm") {
+    cloudCoverage = dataGenerator.getNextValue(80, 100);
+  }
+
+  return {
+    temp: baseTemp,
+    humidity,
+    date,
+    wind: {
+      speed: windSpeed,
+      direction: windDirection,
+    },
+    airQuality: airQualityIndexAQIFormatted,
+    pressure,
+    visibility,
+    cloudCoverage,
+    weatherCondition,
+  };
+}
+
 const defaultWeatherV2Options = {
   daysBefore: 3,
   daysAfter: 3,
@@ -545,6 +612,26 @@ function generateWeatherV2Response(options) {
   return { weatherData, params };
 }
 
+const defaultWeatherAppV1Options = {};
+
+function generateWeatherAppV1Response(options) {
+  const newOptions = options || defaultWeatherAppV1Options;
+  const params = { ...defaultWeatherAppV1Options, ...newOptions };
+  logDebug(`Requested weatherApp V1 data for:`, { params });
+
+  // check if date is in past
+  const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+
+  let windRandom = true;
+  if (params.date < today && params.historicalStable === true) {
+    windRandom = false;
+  }
+
+  const weather = simpleWeatherAppGeneratorV1ForOneDay(params.date, windRandom);
+
+  return weather;
+}
+
 module.exports = {
   generateWeatherResponse,
   generateWeatherV2Response,
@@ -553,4 +640,5 @@ module.exports = {
   generateWeatherDataForNFutureDays,
   generateWeatherDataForNPastDaysFromDate,
   generateWeatherDataForNFutureDaysFromDate,
+  generateWeatherAppV1Response,
 };

@@ -1,0 +1,1592 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>🦎 GAD - NOVA AI - Deep Space Network Chat</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <style>
+        /* Space-themed styling */
+        :root {
+            --ai-blue: #00c2ff;
+            --ai-blue-glow: rgba(0, 194, 255, 0.6);
+            --dark-space: #000915;
+            --space-panel: #0a1a2a;
+            --console-text: #acc8e5;
+            --console-green: #6fffe9;
+            --console-yellow: #ffda22;
+            --console-blue: #3c6e71;
+            --panel-border: #234e70;
+            --button-active: #2a677a;
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Courier New', monospace;
+            background-color: var(--dark-space);
+            color: var(--console-text);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background-color: #ffffff;
+            border-radius: 50%;
+        }
+
+        .space-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 2px solid var(--panel-border);
+            background-color: rgba(10, 26, 42, 0.9);
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Home button styling */
+        .home-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: var(--space-panel);
+            color: var(--console-text);
+            border: 1px solid var(--panel-border);
+            border-radius: 4px;
+            padding: 6px 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            z-index: 11;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .home-button:hover {
+            background-color: var(--panel-border);
+            color: var(--console-green);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        .home-button i {
+            margin-right: 5px;
+        }
+
+        /* Mobile responsiveness for home button */
+        @media (max-width: 768px) {
+            .home-button {
+                top: 10px;
+                right: 10px;
+                padding: 5px 8px;
+                font-size: 12px;
+            }
+
+            .home-button i {
+                margin-right: 3px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .home-button {
+                padding: 4px 6px;
+            }
+
+            .home-button span {
+                display: none;
+                /* Hide text on very small screens, show only icon */
+            }
+
+            .home-button i {
+                margin-right: 0;
+            }
+        }
+
+        .nova-eye {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #00c2ff 0%, #0088ff 50%, var(--dark-space) 100%);
+            box-shadow: 0 0 15px rgba(0, 194, 255, 0.6), 0 0 25px rgba(0, 136, 255, 0.6);
+            animation: pulse 3s ease-in-out infinite;
+            margin-right: 20px;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 15px rgba(0, 194, 255, 0.6), 0 0 25px rgba(0, 136, 255, 0.6);
+            }
+
+            50% {
+                box-shadow: 0 0 20px rgba(0, 194, 255, 0.8), 0 0 40px rgba(0, 136, 255, 0.8);
+            }
+
+            100% {
+                box-shadow: 0 0 15px rgba(0, 194, 255, 0.6), 0 0 25px rgba(0, 136, 255, 0.6);
+            }
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .nova-subtitle {
+            font-size: 14px;
+            font-style: italic;
+            color: var(--console-yellow);
+            margin-top: 5px;
+        }
+
+        .chat-container {
+            display: flex;
+            height: calc(100% - 100px);
+        }
+
+        .chat-sidebar {
+            width: 250px;
+            background-color: rgba(10, 26, 42, 0.8);
+            border-right: 1px solid var(--panel-border);
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-controls {
+            margin-bottom: 15px;
+        }
+
+        .control-button,
+        .sidebar-button {
+            background-color: var(--space-panel);
+            color: var(--console-text);
+            border: 1px solid var(--panel-border);
+            padding: 8px 12px;
+            margin: 5px 0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            text-align: left;
+        }
+
+        .control-button:hover,
+        .sidebar-button:hover {
+            background-color: var(--panel-border);
+        }
+
+        .control-button:active,
+        .sidebar-button:active {
+            background-color: var(--button-active);
+        }
+
+        .conversation-list {
+            overflow-y: auto;
+            flex-grow: 1;
+            border-top: 1px solid var(--panel-border);
+            padding-top: 10px;
+        }
+
+        .conversation-item {
+            padding: 8px;
+            margin: 5px 0;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .conversation-item:hover {
+            background-color: rgba(35, 78, 112, 0.4);
+        }
+
+        .conversation-item.active {
+            background-color: rgba(35, 78, 112, 0.7);
+        }
+
+        .conversation-item .name {
+            font-weight: bold;
+            color: var(--console-green);
+        }
+
+        .conversation-item .count {
+            font-size: 0.8em;
+            color: var(--console-yellow);
+        }
+
+        .main-chat {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: rgba(0, 9, 21, 0.7);
+            position: relative;
+        }
+
+        .mission-status {
+            background-color: rgba(10, 26, 42, 0.8);
+            padding: 10px 15px;
+            border-bottom: 1px solid var(--panel-border);
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .status-indicator {
+            color: var(--console-green);
+        }
+
+        .status-text {
+            color: var(--console-text);
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 6px;
+            position: relative;
+        }
+
+        .user-message {
+            background-color: var(--console-blue);
+            align-self: flex-end;
+            color: white;
+        }
+
+        .nova-message {
+            background-color: rgba(10, 26, 42, 0.9);
+            border-left: 3px solid var(--ai-blue);
+            align-self: flex-start;
+            color: var(--console-text);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .nova-message::before {
+            content: "NOVA AI";
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--ai-blue);
+        }
+
+        .message-input-container {
+            padding: 15px;
+            background-color: rgba(10, 26, 42, 0.9);
+            border-top: 1px solid var(--panel-border);
+            display: flex;
+        }
+
+        .message-input {
+            flex-grow: 1;
+            background-color: rgba(0, 9, 21, 0.8);
+            border: 1px solid var(--panel-border);
+            border-radius: 4px;
+            padding: 10px 15px;
+            color: white;
+            font-family: 'Courier New', monospace;
+            resize: none;
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: var(--console-green);
+        }
+
+        .send-button {
+            background-color: var(--panel-border);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 0 15px;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .send-button:hover {
+            background-color: var(--button-active);
+        }
+
+        .send-button:active {
+            transform: scale(0.98);
+        }
+
+        .voice-indicator {
+            position: absolute;
+            bottom: 10px;
+            top: -12px;
+            left: 10px;
+            width: 30px;
+            height: 5px;
+            display: flex;
+        }
+
+        .voice-bar {
+            width: 3px;
+            background-color: var(--ai-blue);
+            height: 100%;
+            animation: voice-animation 0.5s infinite alternate;
+        }
+
+        @keyframes voice-animation {
+            0% {
+                height: 5px;
+            }
+
+            100% {
+                height: 15px;
+            }
+        }
+
+        .voice-bar:nth-child(1) {
+            animation-delay: 0.0s;
+        }
+
+        .voice-bar:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .voice-bar:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        .voice-bar:nth-child(4) {
+            animation-delay: 0.3s;
+        }
+
+        .voice-bar:nth-child(5) {
+            animation-delay: 0.4s;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: var(--space-panel);
+            border: 1px solid var(--panel-border);
+            border-radius: 5px;
+            width: 350px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 136, 255, 0.2);
+        }
+
+        .modal-title {
+            color: var(--console-yellow);
+            margin-top: 0;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--console-text);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 8px;
+            background-color: rgba(0, 9, 21, 0.8);
+            border: 1px solid var(--panel-border);
+            border-radius: 4px;
+            color: white;
+            font-family: 'Courier New', monospace;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .modal-button {
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+            border: none;
+        }
+
+        .modal-button.primary {
+            background-color: var(--console-blue);
+            color: white;
+        }
+
+        .modal-button.secondary {
+            background-color: transparent;
+            border: 1px solid var(--panel-border);
+            color: var(--console-text);
+        }
+
+        .typing-indicator {
+            display: none;
+            bottom: 10px;
+            left: 15px;
+            color: var(--ai-blue);
+            background-color: rgba(0, 9, 21, 0.5);
+            padding: 5px 10px;
+            border-radius: 4px;
+            z-index: 5;
+        }
+
+        .typing-indicator span {
+            animation: blink 1s infinite;
+            animation-fill-mode: both;
+            margin-left: 2px;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes blink {
+            0% {
+                opacity: 0.2;
+            }
+
+            20% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.2;
+            }
+        }
+
+        .system-message {
+            text-align: center;
+            margin: 10px 0;
+            font-style: italic;
+            color: var(--console-yellow);
+        }
+
+        /* Add styles for the commands menu */
+        .commands-menu {
+            position: absolute;
+            bottom: 150px;
+            left: 15px;
+            background-color: var(--space-panel);
+            border: 1px solid var(--panel-border);
+            border-radius: 4px;
+            width: calc(100% - 30px);
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            animation: fade-in 0.2s ease-out;
+        }
+
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .command-item {
+            padding: 8px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--panel-border);
+            color: var(--console-text);
+            transition: background-color 0.2s;
+        }
+
+        .command-item:last-child {
+            border-bottom: none;
+        }
+
+        .command-item:hover,
+        .command-item.selected {
+            background-color: var(--panel-border);
+        }
+
+        .command-name {
+            color: var(--console-green);
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .command-description {
+            color: var(--console-yellow);
+            font-size: 0.9em;
+        }
+
+        /* Command hint styling */
+        .command-hint {
+            position: absolute;
+            bottom: 70px;
+            left: 15px;
+            background-color: rgba(0, 9, 21, 0.95);
+            border: 1px solid var(--ai-blue);
+            border-radius: 4px;
+            padding: 8px 12px;
+            color: var(--console-yellow);
+            font-size: 0.9em;
+            max-width: calc(100% - 30px);
+            box-shadow: 0 0 10px rgba(0, 194, 255, 0.3);
+            display: none;
+            z-index: 11;
+            pointer-events: none;
+        }
+
+        /* Command key hints */
+        .command-keys {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .key-hint {
+            background-color: var(--panel-border);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .chat-container {
+                flex-direction: column;
+            }
+
+            .chat-sidebar {
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid var(--panel-border);
+            }
+
+            .main-chat {
+                height: calc(100% - 130px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Star background -->
+    <div class="stars" id="stars"></div> <!-- Header -->
+    <div class="space-header">
+        <div class="nova-eye"></div>
+        <div>
+            <div class="header-title">NOVA AI</div>
+            <div class="nova-subtitle">Advanced Intelligence System - Deep Space Network</div>
+        </div>
+        <a href="/practice/" class="home-button" title="Go to Practice Pages"><i class="fas fa-home"></i> <span>Practice Pages</span></a>
+    </div>
+
+    <!-- Chat container -->
+    <div class="chat-container">
+        <!-- Sidebar -->
+        <div class="chat-sidebar">
+            <div class="chat-controls">
+                <button class="control-button" id="new-conversation">New Conversation</button>
+                <button class="control-button" id="clear-conversation">Clear Current Conversation</button>
+                <button class="control-button" id="rename-conversation">Rename Conversation</button>
+                <button class="control-button" id="clear-memory">Clear My Information</button>
+            </div>
+            <div class="conversation-list" id="conversation-list">
+                <!-- Conversation items will be populated here -->
+            </div>
+        </div>
+
+        <!-- Main Chat area -->
+        <div class="main-chat">
+            <div class="mission-status">
+                <div>
+                    <span class="status-indicator">●</span>
+                    <span class="status-text">MISSION STATUS: NOMINAL</span>
+                </div>
+                <div id="current-time">00:00:00</div>
+            </div>
+            <div class="chat-messages" id="chat-messages">
+                <div class="system-message">-- Connection established with NOVA AI --</div>
+                <div class="nova-message message">
+                    <div>Greetings, I am NOVA AI, the Deep Space Network's advanced intelligence system. How may I assist you with your mission today?</div>
+                </div>
+            </div>
+            <div class="typing-indicator" id="typing-indicator">
+                NOVA is thinking<span>.</span><span>.</span><span>.</span>
+            </div>
+            <div class="message-input-container">
+                <div class="commands-menu" id="commands-menu"></div>
+                <div class="command-hint" id="command-hint">
+                    <div id="hint-text"></div>
+                    <div class="command-keys">
+                        <span class="key-hint">↑↓ Navigate</span>
+                        <span class="key-hint">Enter / Tab Select</span>
+                        <span class="key-hint">Esc Close</span>
+                    </div>
+                </div>
+                <textarea class="message-input" id="message-input" placeholder="Type your message or command (try /help)..." rows="2"></textarea>
+                <button class="send-button" id="send-button">SEND</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rename Conversation Modal -->
+    <div class="modal" id="rename-modal">
+        <div class="modal-content">
+            <h3 class="modal-title">Rename Conversation</h3>
+            <div class="form-group">
+                <label class="form-label" for="conversation-name">Conversation Name</label>
+                <input type="text" class="form-input" id="conversation-name">
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-button secondary" id="rename-cancel">Cancel</button>
+                <button class="modal-button primary" id="rename-confirm">Rename</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Generate stars in the background
+        function generateStars() {
+            const stars = document.getElementById('stars');
+            const count = 200;
+
+            for (let i = 0; i < count; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+
+                // Random position
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+
+                // Random size (0.5px to 2px)
+                const size = Math.random() * 1.5 + 0.5;
+
+                star.style.left = `${x}%`;
+                star.style.top = `${y}%`;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+
+                // Random opacity for twinkling effect
+                star.style.opacity = Math.random() * 0.7 + 0.3;
+
+                // Add slight animation delay for twinkling effect
+                star.style.animation = `twinkle ${Math.random() * 5 + 3}s infinite alternate`;
+
+                stars.appendChild(star);
+            }
+        }
+
+        // Update the current time
+        function updateTime() {
+            const timeElement = document.getElementById('current-time');
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            timeElement.textContent = `${hours}:${minutes}:${seconds}`;
+        }
+
+        // Ensure session and set cookies
+        async function ensureSession() {
+            function getCookie(name) {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return parts.pop().split(';').shift();
+            }
+            let userId = getCookie('novaUserId');
+            let conversationId = getCookie('novaConversationId');
+            if (!userId || !conversationId) {
+                const resp = await fetch('/api/practice/v1/ai-chat/session', { method: 'GET', credentials: 'same-origin' });
+                const data = await resp.json();
+                userId = data.userId;
+                conversationId = data.conversationId;
+            }
+            return { userId, conversationId };
+        }
+
+        // Helper to get cookie value
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+
+        // Global variables
+        let currentConversationId = null;
+        let conversations = [];
+        let userId = null;
+
+        // Escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Add a new message to the chat
+        function addMessage(text, isUser) {
+            const messagesContainer = document.getElementById('chat-messages');
+            if (!messagesContainer) {
+                return;
+            }
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = isUser ? 'user-message' : 'nova-message';
+            messageDiv.classList.add('message');
+
+            // Escape HTML and replace newlines with <br>
+            messageDiv.innerHTML = escapeHtml(text).replace(/\n/g, '<br>');
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Show typing indicator
+        function showTypingIndicator() {
+            const typingIndicator = document.getElementById('typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.style.display = 'block';
+            }
+        }
+
+        // Hide typing indicator
+        function hideTypingIndicator() {
+            const typingIndicator = document.getElementById('typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.style.display = 'none';
+            }
+        }
+
+        // Send message to the API
+        async function sendMessageToApi(message) {
+            let userId = getCookie('novaUserId');
+            let conversationId = getCookie('novaConversationId');
+            if (!userId || !conversationId) {
+                const session = await ensureSession();
+                userId = session.userId;
+                conversationId = session.conversationId;
+            }
+            const response = await fetch('/api/practice/v1/ai-chat/message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify({
+                    message,
+                    conversationId,
+                    conversationName: conversations.find(c => c.id === conversationId)?.name || 'New Conversation'
+                }),
+            });
+            const data = await response.json();
+            currentConversationId = data.conversationId;
+            // Refresh conversations list
+            loadConversations();
+            return data.response;
+        }
+
+        // Load conversation history
+        async function loadConversationHistory(conversationId) {
+            try {
+                const response = await fetch(`/api/practice/v1/ai-chat/history?conversationId=${conversationId}`);
+                const data = await response.json();
+
+                // Clear existing messages
+                const messagesContainer = document.getElementById('chat-messages');
+                if (!messagesContainer) {
+                    return;
+                }
+
+                messagesContainer.innerHTML = '';
+
+                // Add system message
+                const systemMessage = document.createElement('div');
+                systemMessage.className = 'system-message';
+                systemMessage.textContent = `-- Loaded conversation history --`;
+                messagesContainer.appendChild(systemMessage);
+
+                // Add history messages
+                data.history.forEach(msg => {
+                    addMessage(msg.content, msg.role === 'user');
+                });
+
+                // Scroll to bottom
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            } catch (error) {
+                addSystemMessage('Error loading conversation history');
+            }
+        }
+
+        // Add system message
+        function addSystemMessage(text) {
+            const messagesContainer = document.getElementById('chat-messages');
+            if (!messagesContainer) {
+                return;
+            }
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'system-message';
+            messageDiv.textContent = `-- ${text} --`;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Load all conversations
+        async function loadConversations() {
+            try {
+                userId = getCookie('novaUserId');
+                if (!userId) {
+                    const session = await ensureSession();
+                    userId = session.userId;
+                }
+                const response = await fetch(`/api/practice/v1/ai-chat/list?userId=${userId}`);
+                const data = await response.json();
+                conversations = data.conversations || [];
+                updateConversationList();
+            } catch (error) {
+                // Unexpected error loading conversations
+            }
+        }
+
+        // Update conversation list in the sidebar
+        function updateConversationList() {
+            const listContainer = document.getElementById('conversation-list');
+            if (!listContainer) {
+                return;
+            }
+
+            listContainer.innerHTML = '';
+
+            conversations.forEach(conv => {
+                const item = document.createElement('div');
+                item.className = 'conversation-item';
+                if (conv.id === currentConversationId) {
+                    item.className += ' active';
+                }
+
+                item.innerHTML = `
+                    <div class="name">${conv.name || 'Unnamed Conversation'}</div>
+                    <div class="count">${conv.messageCount} messages</div>
+                `;
+
+                item.addEventListener('click', () => {
+                    // Set novaConversationId cookie to selected conversation
+                    document.cookie = `novaConversationId=${conv.id}; path=/;`;
+                    currentConversationId = conv.id;
+                    loadConversationHistory(conv.id);
+                    updateConversationList();
+                });
+
+                listContainer.appendChild(item);
+            });
+        }
+
+        // Clear current conversation
+        async function clearCurrentConversation() {
+            if (!currentConversationId) return;
+
+            try {
+                await fetch('/api/practice/v1/ai-chat/clear', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        conversationId: currentConversationId
+                    }),
+                });
+
+                // Create a new conversation
+                currentConversationId = null;
+
+                // Clear the UI
+                const messagesContainer = document.getElementById('chat-messages');
+                if (messagesContainer) {
+                    messagesContainer.innerHTML = '';
+
+                    // Add welcome message
+                    addSystemMessage('Conversation cleared');
+                    addMessage('Greetings, I am NOVA AI, the Deep Space Network\'s advanced intelligence system. How may I assist you with your mission today?', false);
+                }
+
+                // Refresh conversations list
+                loadConversations();
+            } catch (error) {
+                // Unexpected error clearing conversation
+            }
+        }
+
+        // Clear all conversations for the user
+        async function clearAllConversations() {
+            if (!userId) {
+                const session = await ensureSession();
+                userId = session.userId;
+            }
+            try {
+                await fetch('/api/practice/v1/ai-chat/clear-all', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ userId }),
+                });
+                // Clear UI
+                currentConversationId = null;
+                const messagesContainer = document.getElementById('chat-messages');
+                if (messagesContainer) {
+                    messagesContainer.innerHTML = '';
+                    addSystemMessage('All conversations cleared');
+                    addMessage('Greetings, I am NOVA AI, the Deep Space Network\'s advanced intelligence system. How may I assist you with your mission today?', false);
+                }
+                // Refresh conversations list
+                loadConversations();
+            } catch (error) {
+                addSystemMessage('Error clearing all conversations');
+            }
+        }
+
+        // Rename conversation
+        async function renameConversation(name) {
+            if (!currentConversationId) return;
+
+            try {
+                await fetch('/api/practice/v1/ai-chat/rename', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        conversationId: currentConversationId,
+                        name
+                    }),
+                });
+
+                // Refresh conversations list
+                loadConversations();
+            } catch (error) {
+                // Unexpected error renaming conversation
+            }
+        }
+
+        // Clear user memory
+        async function clearUserMemory() {
+            try {
+                await fetch('/api/practice/v1/ai-chat/clear-memory', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        userId
+                    }),
+                });
+
+                // clear cookies
+                document.cookie = 'novaUserId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                document.cookie = 'novaConversationId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+
+                // refresh conversations list
+                conversations = [];
+                currentConversationId = null;
+                const messagesContainer = document.getElementById('chat-messages');
+                if (messagesContainer) {
+                    messagesContainer.innerHTML = '';
+                    addSystemMessage('User memory cleared');
+                    addMessage('Greetings, I am NOVA AI, the Deep Space Network\'s advanced intelligence system. How may I assist you with your mission today?', false);
+                }
+                // Refresh conversations list
+                loadConversations();
+
+                addSystemMessage('Personal information cleared');
+            } catch (error) {
+                // Unexpected error clearing user memory
+            }
+        }
+
+        // Toggle between light and dark themes
+        function toggleTheme() {
+            // Get the root element to toggle CSS variables
+            const root = document.documentElement;
+            const currentTheme = root.getAttribute('data-theme') || 'dark';
+
+            if (currentTheme === 'dark') {
+                // Switch to light theme
+                root.setAttribute('data-theme', 'light');
+                root.style.setProperty('--dark-space', '#e6f0ff');
+                root.style.setProperty('--space-panel', '#c8deff');
+                root.style.setProperty('--console-text', '#1a3c6e');
+                root.style.setProperty('--panel-border', '#8fb5e8');
+                root.style.setProperty('--console-green', '#037a70');
+                root.style.setProperty('--console-yellow', '#8e6e00');
+                root.style.setProperty('--console-blue', '#3a6774');
+                root.style.setProperty('--button-active', '#84b1c0');
+                addSystemMessage('Switched to light theme');
+            } else {
+                // Switch to dark theme
+                root.setAttribute('data-theme', 'dark');
+                root.style.setProperty('--dark-space', '#000915');
+                root.style.setProperty('--space-panel', '#0a1a2a');
+                root.style.setProperty('--console-text', '#acc8e5');
+                root.style.setProperty('--panel-border', '#234e70');
+                root.style.setProperty('--console-green', '#6fffe9');
+                root.style.setProperty('--console-yellow', '#ffda22');
+                root.style.setProperty('--console-blue', '#3c6e71');
+                root.style.setProperty('--button-active', '#2a677a');
+                addSystemMessage('Switched to dark theme');
+            }
+        }
+
+        const chatCommands = {
+            '/help': {
+                handler: function () {
+                    // Create help text from all available commands
+                    let helpText = 'Available commands:\n';
+                    for (const [cmd, details] of Object.entries(chatCommands)) {
+                        helpText += `${cmd} - ${details.description}\n`;
+                    }
+                    addSystemMessage('Command help');
+                    addMessage(helpText, false);
+                    return true;
+                },
+                description: 'Show available commands',
+                help: 'Lists all available commands with brief descriptions. Type /help to see what NOVA can do.'
+            },
+            '/clear': {
+                handler: function () {
+                    clearCurrentConversation();
+                    return true;
+                },
+                description: 'Clear current conversation',
+                help: 'Removes all messages from the current conversation while keeping the conversation in your history.'
+            },
+            '/new': {
+                handler: async function () {
+                    // Same as new conversation button
+                    let userId = getCookie('novaUserId');
+                    if (!userId) {
+                        const session = await ensureSession();
+                        userId = session.userId;
+                    }
+                    // Ask backend for a new conversationId for this user
+                    const resp = await fetch(`/api/practice/v1/ai-chat/session?userId=${userId}`, { method: 'GET', credentials: 'same-origin' });
+                    const data = await resp.json();
+                    currentConversationId = data.conversationId;
+                    // Clear the UI
+                    const messagesContainer = document.getElementById('chat-messages');
+                    if (messagesContainer) {
+                        messagesContainer.innerHTML = '';
+                        addSystemMessage('New conversation started');
+                        addMessage('Greetings, I am NOVA AI, the Deep Space Network\'s advanced intelligence system. How may I assist you with your mission today?', false);
+                    }
+                    // Update the sidebar
+                    loadConversations();
+                    return true;
+                },
+                description: 'Start a new conversation',
+                help: 'Creates a fresh conversation with NOVA AI. Your previous conversations remain accessible from the sidebar.'
+            },
+            '/rename': {
+                handler: function () {
+                    if (!currentConversationId) {
+                        addSystemMessage('Please start a conversation first');
+                        return true;
+                    }
+
+                    document.getElementById('rename-modal').style.display = 'flex';
+
+                    // Find current name
+                    const currentConv = conversations.find(c => c.id === currentConversationId);
+                    if (currentConv) {
+                        document.getElementById('conversation-name').value = currentConv.name || '';
+                    }
+                    return true;
+                },
+                description: 'Rename current conversation',
+                help: 'Opens a dialog to change the name of your current conversation. Helps organize and find conversations later.'
+            },
+            '/clearall': {
+                handler: function () {
+                    clearAllConversations();
+                    return true;
+                },
+                description: 'Clear all conversations',
+                help: 'Warning: Permanently deletes all your conversations with NOVA. This cannot be undone.'
+            },
+            '/clearmemory': {
+                handler: function () {
+                    clearUserMemory();
+                    return true;
+                },
+                description: 'Clear your personal information',
+                help: 'Deletes any personal data NOVA has saved about you. Creates a new user session.'
+            },
+            '/status': {
+                handler: function () {
+                    const statusMsg = `
+System Status:
+User ID: ${userId || 'Not set'}
+Current Conversation: ${currentConversationId || 'Not set'}
+Active Conversations: ${conversations.length}
+Connection: Secure
+Mission Status: NOMINAL
+                        `.trim();
+
+                    addSystemMessage('System Status');
+                    addMessage(statusMsg, false);
+                    return true;
+                },
+                description: 'Display system status information',
+                help: 'Shows diagnostic information about your current session, including user ID, conversation ID, and connection status.'
+            }, '/debug': {
+                handler: function () {
+                    const debugMsg = `
+NOVA Debug Info:
+Interface Version: 0.1.0
+Connection: Secure
+Latency: ${Math.floor(Math.random() * 50) + 10}ms
+Browser: ${navigator.userAgent}
+Screen: ${window.innerWidth}x${window.innerHeight}
+User ID: ${userId || 'Not set'}
+Conversation ID: ${currentConversationId || 'Not set'}
+Conversations: ${conversations.length}
+Time: ${new Date().toISOString()}
+                        `.trim();
+
+                    addSystemMessage('Debug Information');
+                    addMessage(debugMsg, false);
+                    return true;
+                },
+                description: 'Show technical debug information',
+                help: 'Displays technical information useful for troubleshooting issues with the NOVA interface.'
+            },
+            '/theme': {
+                handler: function () {
+                    toggleTheme();
+                    return true;
+                },
+                description: 'Toggle between light and dark themes',
+                help: 'Switches between light and dark color schemes for the NOVA interface.'
+            }
+        };
+
+        // Document ready function
+        document.addEventListener('DOMContentLoaded', async function () {
+            generateStars();
+            updateTime();
+            setInterval(updateTime, 1000);            // Always ensure session on load
+            const session = await ensureSession();
+            userId = session.userId;
+            currentConversationId = session.conversationId;
+
+            // Load initial conversations
+            loadConversations();            // Check for required DOM elements
+            const messageInput = document.getElementById('message-input');
+            const sendButton = document.getElementById('send-button');
+            const typingIndicator = document.getElementById('typing-indicator');
+            const chatMessages = document.getElementById('chat-messages');
+
+            // Initialize commands menu
+            setupCommandsMenu();
+
+            if (!messageInput || !sendButton) {
+                return;
+            }
+
+            // Create typing indicator if it doesn't exist
+            if (!typingIndicator && chatMessages) {
+                const newTypingIndicator = document.createElement('div');
+                newTypingIndicator.id = 'typing-indicator';
+                newTypingIndicator.className = 'typing-indicator';
+                newTypingIndicator.innerHTML = 'NOVA is thinking<span>.</span><span>.</span><span>.</span>';
+                newTypingIndicator.style.display = 'none';
+                chatMessages.appendChild(newTypingIndicator);
+            }            // Define available chat commands with descriptions and detailed help
+
+            // Initialize commands menu
+            function setupCommandsMenu() {
+                const commandsMenu = document.getElementById('commands-menu');
+                if (!commandsMenu) return;
+
+                // Create menu items for each command
+                for (const [cmd, details] of Object.entries(chatCommands)) {
+                    const commandItem = document.createElement('div');
+                    commandItem.className = 'command-item';
+                    commandItem.dataset.command = cmd; // Store command name in dataset for easy access
+                    commandItem.innerHTML = `
+                        <span class="command-name">${cmd}</span>
+                        <span class="command-description">${details.description}</span>
+                    `;
+
+                    // Add click handler to insert command
+                    commandItem.addEventListener('click', function () {
+                        messageInput.value = cmd + ' ';
+                        messageInput.focus();
+                        hideCommandsMenu();
+                    });
+
+                    // Show hint when hovering over a command
+                    commandItem.addEventListener('mouseenter', function () {
+                        showCommandHint(cmd);
+                        // Select this item
+                        selectCommandItem(commandItem);
+                    });
+
+                    commandsMenu.appendChild(commandItem);
+                }
+            }
+
+            // Select a command item and deselect others
+            function selectCommandItem(item) {
+                const commandsMenu = document.getElementById('commands-menu');
+                if (!commandsMenu) return;
+
+                // Remove selected class from all items
+                commandsMenu.querySelectorAll('.command-item.selected').forEach(el => {
+                    el.classList.remove('selected');
+                });
+
+                // Add selected class to this item
+                item.classList.add('selected');
+
+                // Show hint for this command
+                const cmd = item.dataset.command;
+                if (cmd) {
+                    showCommandHint(cmd);
+                }
+            }
+
+            // Show commands menu
+            function showCommandsMenu() {
+                const commandsMenu = document.getElementById('commands-menu');
+                if (commandsMenu) {
+                    commandsMenu.style.display = 'block';
+
+                    // Select first command by default
+                    const firstItem = commandsMenu.querySelector('.command-item:not([style*="display: none"])');
+                    if (firstItem) {
+                        selectCommandItem(firstItem);
+                    }
+                }
+            }
+
+            // Hide commands menu and hint
+            function hideCommandsMenu() {
+                const commandsMenu = document.getElementById('commands-menu');
+                const commandHint = document.getElementById('command-hint');
+
+                if (commandsMenu) {
+                    commandsMenu.style.display = 'none';
+                }
+
+                if (commandHint) {
+                    commandHint.style.display = 'none';
+                }
+            }
+
+            // Show hint for a specific command
+            function showCommandHint(cmd) {
+                const commandDetails = chatCommands[cmd];
+                if (!commandDetails || !commandDetails.help) return;
+
+                const commandHint = document.getElementById('command-hint');
+                const hintText = document.getElementById('hint-text');
+
+                if (commandHint && hintText) {
+                    hintText.textContent = commandDetails.help;
+                    commandHint.style.display = 'block';
+                }
+            }
+
+            // Send message function
+            async function sendMessage() {
+                const messageText = messageInput.value.trim();
+                if (!messageText) return;
+
+                // Check if this is a command
+                if (messageText.startsWith('/')) {
+                    // Extract the command
+                    const commandParts = messageText.split(' ');
+                    const command = commandParts[0].toLowerCase();
+
+                    // Add user message to chat (showing the command)
+                    addMessage(messageText, true);
+                    messageInput.value = '';
+                    // Execute the command if it exists
+                    if (chatCommands[command]) {
+                        await chatCommands[command].handler();
+                    } else {
+                        // Unknown command
+                        addSystemMessage(`Unknown command: ${command}. Type /help for available commands.`);
+                    }
+                    return;
+                }
+
+                // Regular message handling
+                // Add user message to chat
+                addMessage(messageText, true);
+                messageInput.value = '';
+
+                // Show typing indicator
+                showTypingIndicator();
+
+                // Simulate thinking time (between 1-3 seconds)
+                const thinkingTime = Math.random() * 2000 + 1000;
+                setTimeout(async () => {
+                    // Get response from API
+                    const response = await sendMessageToApi(messageText);
+
+                    // Hide typing indicator
+                    hideTypingIndicator();
+
+                    // Add NOVA's response
+                    addMessage(response, false);
+                }, thinkingTime);
+            }
+
+            // Send message on button click
+            sendButton.addEventListener('click', sendMessage);            // Handle keydown events (send message, navigate commands)
+            messageInput.addEventListener('keydown', function (e) {
+                const commandsMenu = document.getElementById('commands-menu');
+                const isMenuVisible = commandsMenu && commandsMenu.style.display === 'block';
+
+                // Handle Enter key
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    // If the commands menu is visible, select the selected command
+                    if (isMenuVisible) {
+                        const selectedCommand = commandsMenu.querySelector('.command-item.selected');
+                        if (selectedCommand) {
+                            e.preventDefault();
+                            const cmdName = selectedCommand.querySelector('.command-name').textContent;
+                            messageInput.value = cmdName + ' ';
+                            messageInput.focus();
+                            hideCommandsMenu();
+                            return;
+                        }
+                    }
+
+                    e.preventDefault();
+                    sendMessage();
+                }
+
+                // Hide commands menu on escape
+                if (e.key === 'Escape') {
+                    hideCommandsMenu();
+                }
+
+                // Navigate through commands with arrow keys
+                if (isMenuVisible) {
+                    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                        e.preventDefault();
+
+                        // Get all visible command items
+                        const visibleItems = Array.from(commandsMenu.querySelectorAll('.command-item'))
+                            .filter(item => item.style.display !== 'none');
+
+                        if (visibleItems.length === 0) return;
+
+                        // Get current selected item
+                        const currentSelected = commandsMenu.querySelector('.command-item.selected');
+                        let nextIndex = 0;
+
+                        if (currentSelected) {
+                            const currentIndex = visibleItems.indexOf(currentSelected);
+                            if (e.key === 'ArrowDown') {
+                                nextIndex = (currentIndex + 1) % visibleItems.length;
+                            } else {
+                                nextIndex = (currentIndex - 1 + visibleItems.length) % visibleItems.length;
+                            }
+                        }
+
+                        // Remove selected class from all items
+                        commandsMenu.querySelectorAll('.command-item.selected').forEach(item => {
+                            item.classList.remove('selected');
+                        });
+
+                        // Add selected class to the next item
+                        visibleItems[nextIndex].classList.add('selected');
+
+                        // select hint
+                        const cmd = visibleItems[nextIndex]?.dataset?.command;
+                        if (cmd) {
+                            showCommandHint(cmd);
+                        }
+
+                        // Make sure the selected item is visible in the scrolling container
+                        visibleItems[nextIndex].scrollIntoView({ block: 'nearest' });
+                    }
+
+                    // Tab key to complete the command
+                    if (e.key === 'Tab') {
+                        e.preventDefault();
+                        const selectedCommand = commandsMenu.querySelector('.command-item.selected');
+                        if (selectedCommand) {
+                            const cmdName = selectedCommand.querySelector('.command-name').textContent;
+                            messageInput.value = cmdName + ' ';
+                            messageInput.focus();
+                            hideCommandsMenu();
+                        }
+                    }
+                }
+            });
+            // Show commands menu when typing '/' and filter as user types
+            messageInput.addEventListener('input', function () {
+                const text = messageInput.value;
+                if (text.startsWith('/')) {
+                    // Filter commands based on what user has typed
+                    const commandItems = document.querySelectorAll('.command-item');
+                    let anyVisible = false;
+
+                    commandItems.forEach(item => {
+                        const cmdName = item.querySelector('.command-name').textContent;
+                        if (text === '/' || cmdName.startsWith(text)) {
+                            item.style.display = 'block';
+                            anyVisible = true;
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+
+                    // Only show menu if we have matching commands and user hasn't typed a space yet
+                    if (anyVisible && !text.includes(' ')) {
+                        showCommandsMenu();
+                    } else {
+                        hideCommandsMenu();
+                    }
+                } else {
+                    hideCommandsMenu();
+                }
+            });
+
+            // Hide commands menu when clicking outside
+            document.addEventListener('click', function (e) {
+                if (!e.target.closest('#commands-menu') && !e.target.closest('#message-input')) {
+                    hideCommandsMenu();
+                }
+            });
+
+            // New conversation button
+            document.getElementById('new-conversation').addEventListener('click', async function () {
+                // Request new conversation from backend, but keep the same userId
+                let userId = getCookie('novaUserId');
+                if (!userId) {
+                    const session = await ensureSession();
+                    userId = session.userId;
+                }
+                // Ask backend for a new conversationId for this user
+                const resp = await fetch(`/api/practice/v1/ai-chat/session?userId=${userId}`, { method: 'GET', credentials: 'same-origin' });
+                const data = await resp.json();
+                currentConversationId = data.conversationId;
+                // Clear the UI
+                const messagesContainer = document.getElementById('chat-messages');
+                if (messagesContainer) {
+                    messagesContainer.innerHTML = '';
+                    addSystemMessage('New conversation started');
+                    addMessage('Greetings, I am NOVA AI, the Deep Space Network\'s advanced intelligence system. How may I assist you with your mission today?', false);
+                }
+                // Update the sidebar
+                loadConversations();
+            });
+
+            // Clear conversation button
+            document.getElementById('clear-conversation').addEventListener('click', clearCurrentConversation);
+
+            // Clear all conversations button
+            document.getElementById('clear-all-conversations')?.addEventListener('click', clearAllConversations);
+
+            // Clear memory button
+            document.getElementById('clear-memory')?.addEventListener('click', clearUserMemory);
+
+            // Rename conversation button
+            document.getElementById('rename-conversation').addEventListener('click', function () {
+                if (!currentConversationId) {
+                    addSystemMessage('Please start a conversation first');
+                    return;
+                }
+
+                document.getElementById('rename-modal').style.display = 'flex';
+
+                // Find current name
+                const currentConv = conversations.find(c => c.id === currentConversationId);
+                if (currentConv) {
+                    document.getElementById('conversation-name').value = currentConv.name || '';
+                }
+            });
+
+            // Modal cancel button
+            document.getElementById('rename-cancel').addEventListener('click', function () {
+                document.getElementById('rename-modal').style.display = 'none';
+            });
+
+            // Modal confirm button
+            document.getElementById('rename-confirm').addEventListener('click', function () {
+                const newName = document.getElementById('conversation-name').value.trim();
+                if (newName) {
+                    renameConversation(newName);
+                    document.getElementById('rename-modal').style.display = 'none';
+                }
+            });
+        });
+    </script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>

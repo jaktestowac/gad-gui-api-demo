@@ -1,7 +1,7 @@
 const { isUndefined } = require("../helpers/compare.helpers");
 const { formatErrorResponse } = require("../helpers/helpers");
 const { logDebug } = require("../helpers/logger-api");
-const { HTTP_NOT_FOUND, HTTP_OK, HTTP_UNAUTHORIZED } = require("../helpers/response.helpers");
+const { HTTP_NOT_FOUND, HTTP_OK, HTTP_UNAUTHORIZED, HTTP_BAD_REQUEST } = require("../helpers/response.helpers");
 const { sessionV1, sessionV2 } = require("./practice/session-handlers");
 const { todoV1, todoV2, todoV3, todoV4, todoV5, todoV6 } = require("./practice/todo-handlers");
 const { expenseV1, expenseV2, expenseV3 } = require("./practice/expense-handlers");
@@ -14,6 +14,8 @@ const { authV2 } = require("./practice/chat-auth-handlers");
 const { verifyToken, hasPermission } = require("./practice/employee-management-system/auth-middleware");
 const twoFactor = require("./practice/2fa-handlers");
 const twoFactorV2 = require("./practice/2fa-handlers-v2");
+const weatherAppV1 = require("./practice/weather-app-handlers-v1");
+const aiChat = require("./practice/nova/nova-chat-handlers");
 const {
   getDirectoryContents,
   getFileDetails,
@@ -454,6 +456,121 @@ function handlePractice(req, res) {
           return deleteItem(req, res);
         default:
           return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
+      }
+    } // AI Chat endpoints
+    if (req.url.includes("/api/practice/v1/ai-chat")) {
+      let endpoint = req.url.split("/api/practice/v1/ai-chat/")[1];
+
+      // endpoint can have query params
+      if (endpoint && endpoint.includes("?")) {
+        endpoint = endpoint.split("?")[0];
+      }
+
+      switch (true) {
+        case req.method === "POST" && endpoint === "message":
+          return aiChat.handleMessage(req, res);
+        case req.method === "GET" && endpoint === "history":
+          return aiChat.getConversationHistory(req, res);
+        case req.method === "POST" && endpoint === "clear":
+          return aiChat.clearConversation(req, res);
+        case req.method === "POST" && endpoint === "rename":
+          return aiChat.renameConversation(req, res);
+        case req.method === "GET" && endpoint === "list":
+          return aiChat.listConversations(req, res);
+        case req.method === "GET" && endpoint === "stats":
+          return aiChat.getStatistics(req, res);
+        case req.method === "GET" && endpoint === "session":
+          return aiChat.initSession(req, res);
+        case req.method === "POST" && endpoint === "clear-memory":
+          return aiChat.clearUserMemory(req, res);
+        case req.method === "POST" && endpoint === "clear-all": {
+          const userId = req.body && req.body.userId;
+          if (!userId) {
+            return res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Missing userId"));
+          }
+          const result = aiChat.clearAllConversations(userId);
+          if (result) {
+            return res.status(HTTP_OK).json({ success: true });
+          } else {
+            return res.status(HTTP_OK).json({ success: false, message: "No conversations found for user" });
+          }
+        }
+        default:
+          return res.status(HTTP_NOT_FOUND).send(formatErrorResponse(`Not Found! ${req.url}`));
+      }
+    }
+
+    // Weather App v1 endpoints
+    if (req.url.includes("/api/practice/v1/weather")) {
+      const url = req.url;
+
+      // Weather data endpoints
+      if (req.method === "GET" && url.endsWith("/api/practice/v1/weather/current")) {
+        return weatherAppV1.getCurrentWeather(req, res);
+      }
+
+      if (req.method === "POST" && url.endsWith("/api/practice/v1/weather/day")) {
+        return weatherAppV1.getWeatherByDay(req, res);
+      }
+
+      // Weather events endpoints
+      if (req.method === "POST" && url.endsWith("/api/practice/v1/weather/event")) {
+        return applyMiddleware([weatherAppV1.authenticate], weatherAppV1.createWeatherEvent)(req, res);
+      }
+
+      if (req.method === "GET" && url.includes("/api/practice/v1/weather/event")) {
+        // Check if this is the get single event by ID endpoint
+        const eventIdMatch = url.match(/\/api\/practice\/v1\/weather\/event\/([^\/]+)$/);
+        if (eventIdMatch) {
+          const id = eventIdMatch[1];
+          req.params = { id };
+          return applyMiddleware([weatherAppV1.authenticate], weatherAppV1.getWeatherEventById)(req, res);
+        } else {
+          // This is the get all events endpoint
+          return applyMiddleware([weatherAppV1.authenticate], weatherAppV1.getWeatherEvents)(req, res);
+        }
+      }
+
+      // Fixed PUT endpoint to extract ID from URL instead of body
+      const updateEventIdMatch = url.match(/\/api\/practice\/v1\/weather\/event\/([^\/]+)$/);
+      if (req.method === "PUT" && updateEventIdMatch) {
+        const id = updateEventIdMatch[1];
+        req.params = { id };
+        // Make sure ID is also available in the body
+        if (!req.body) {
+          req.body = {};
+        }
+        req.body.id = parseInt(id, 10);
+        return applyMiddleware([weatherAppV1.authenticate], weatherAppV1.updateWeatherEvent)(req, res);
+      }
+
+      const deleteEventIdMatch = url.match(/\/api\/practice\/v1\/weather\/event\/([^\/]+)$/);
+      if (req.method === "DELETE" && deleteEventIdMatch) {
+        const id = deleteEventIdMatch[1];
+        req.params = { id };
+        return applyMiddleware([weatherAppV1.authenticate], weatherAppV1.deleteWeatherEvent)(req, res);
+      }
+
+      // Weather auth endpoints
+      if (req.method === "POST" && url.endsWith("/api/practice/v1/weather/auth/register")) {
+        return weatherAppV1.register(req, res);
+      }
+
+      if (req.method === "POST" && url.endsWith("/api/practice/v1/weather/auth/login")) {
+        return weatherAppV1.login(req, res);
+      }
+
+      if (req.method === "POST" && url.endsWith("/api/practice/v1/weather/auth/logout")) {
+        return weatherAppV1.logout(req, res);
+      }
+
+      if (req.method === "GET" && url.endsWith("/api/practice/v1/weather/auth/current-user")) {
+        return applyMiddleware([weatherAppV1.authenticate], weatherAppV1.getCurrentUser)(req, res);
+      }
+
+      // Admin endpoints
+      if (req.method === "GET" && url.endsWith("/api/practice/v1/weather/admin/data")) {
+        return applyMiddleware([weatherAppV1.authenticate, weatherAppV1.adminOnly], weatherAppV1.getAllData)(req, res);
       }
     }
 

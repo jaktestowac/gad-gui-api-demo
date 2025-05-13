@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD - Weather App</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/bootstrap/bootstrap.min.css">
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/flatpickr.min.css">
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <style>
+        body {
+            background-color: #f5f8fa;
+        }
+
+        /* Wind speed animations */
+        @keyframes pulse {
+            /* 0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.2);
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            } */
+        }
+
+        /* Beat animation for strong winds */
+        @keyframes fa-beat {
+            /* 0% {
+                transform: scale(1);
+            }
+
+            25% {
+                transform: scale(1.1);
+            }
+
+            40% {
+                transform: scale(1);
+            }
+
+            60% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            } */
+        }
+
+        /* Skeleton loading styles */
+        .skeleton-loading {
+            animation: skeleton-loading-animation 1.5s infinite ease-in-out;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) 25%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.1) 75%);
+            background-size: 200% 100%;
+            border-radius: 4px;
+        }
+
+        @keyframes skeleton-loading-animation {
+            0% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0 50%;
+            }
+        }
+
+        .skeleton-text {
+            height: 20px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+        }
+
+        .skeleton-title {
+            height: 28px;
+            width: 70%;
+            margin-bottom: 16px;
+        }
+
+        .skeleton-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .skeleton-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: 12px;
+        }
+
+        .skeleton-content {
+            flex: 1;
+        }
+
+        .skeleton-label {
+            height: 16px;
+            width: 50%;
+            margin-bottom: 8px;
+        }
+
+        .skeleton-value {
+            height: 24px;
+            width: 70%;
+        }
+
+        .weather-app-card {
+            background: linear-gradient(to bottom right, #3498db, #2980b9);
+            color: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s, background 0.3s;
+        }
+
+        /* .weather-app-card:hover {
+            transform: translateY(-5px);
+        } */
+
+        /* Today's weather styling */
+        .weather-app-today-card {
+            background: linear-gradient(to bottom right, #2ecc71, #23834b);
+            position: relative;
+        }
+
+        .weather-app-today-card::before {
+            content: "TODAY";
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        /* Past weather styling */
+        .weather-app-past-card {
+            background: linear-gradient(to bottom right, #e67e22, #d35400);
+            position: relative;
+        }
+
+        .weather-app-past-card::before {
+            content: "HISTORICAL";
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .weather-app-forecast-card {
+            background: linear-gradient(to bottom right, #b27ec7, #78448f);
+            position: relative;
+        }
+
+        .weather-app-forecast-card::before {
+            content: "FORECAST";
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 990px) {
+
+            .weather-app-today-card::before,
+            .weather-app-past-card::before,
+            .weather-app-forecast-card::before {
+                font-size: 8px !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+
+            .weather-app-today-card::before,
+            .weather-app-past-card::before,
+            .weather-app-forecast-card::before {
+                font-size: 12px !important;
+            }
+        }
+
+        .weather-app-event-card {
+            border-left: 4px solid #3498db;
+            background-color: white;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .weather-app-auth-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .weather-app-wind-icon {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        #datePicker {
+            cursor: pointer;
+            background-color: white;
+        }
+
+        .weather-app-admin-dashboard {
+            display: none;
+            position: fixed;
+            top: 116px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #f5f8fa;
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .weather-app-admin-dashboard .card {
+            border: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .weather-app-admin-dashboard .card-header {
+            font-weight: bold;
+            padding: 15px;
+        }
+
+        .weather-app-stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .weather-app-stat-card {
+            flex: 1;
+            min-width: 200px;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .weather-app-stat-card .weather-app-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        .weather-app-stat-card .weather-app-label {
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+
+        .weather-app-close-admin {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+        }
+
+        .weather-app-logged-in {
+            display: none;
+        }
+
+        .weather-app-logged-out {
+            display: block;
+        }
+
+        .weather-app-main-content {
+            display: block;
+        }
+
+        .weather-app-main-content.weather-app-hidden {
+            display: none;
+        }
+
+        /* Enhanced button styles */
+        .weather-app-btn-admin {
+            background-color: #9b59b6;
+            color: white;
+            font-weight: bold;
+            border-radius: 8px;
+            padding: 8px 15px;
+            transition: all 0.3s;
+        }
+
+        .weather-app-btn-admin:hover {
+            background-color: #8e44ad;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            color: white;
+        }
+
+        .weather-app-btn-logout {
+            background-color: #e74c3c;
+            color: white;
+            font-weight: bold;
+            border-radius: 8px;
+            padding: 8px 15px;
+            transition: all 0.3s;
+        }
+
+        .weather-app-btn-logout:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            color: white;
+        }
+
+        .weather-app-return-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1010;
+            transition: all 0.3s;
+        }
+
+        .weather-app-return-btn:hover {
+            background: #2980b9;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Validation styles */
+        .form-control.is-invalid {
+            border-color: #dc3545;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right calc(0.375em + 0.1875rem) center;
+            background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+            padding-right: calc(1.5em + 0.75rem);
+        }
+
+        .validation-feedback {
+            display: none;
+            width: 100%;
+            margin-top: 0.25rem;
+            font-size: 0.875em;
+            color: #dc3545;
+        }
+
+        .form-control.is-invalid~.validation-feedback {
+            display: block;
+        }
+
+        .shake-animation {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+
+            /* 0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20%,
+            60% {
+                transform: translateX(-5px);
+            }
+
+            40%,
+            80% {
+                transform: translateX(5px);
+            } */
+        }
+
+        .navbar {
+            top: 60px
+        }
+
+        .weather-app-refresh-btn {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            padding: 0;
+            margin: 0;
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+        }
+
+        .weather-app-refresh-btn:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+            transform: rotate(180deg);
+        }
+
+        .weather-app-refresh-btn:focus {
+            box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.5);
+            outline: none;
+        }
+
+        .weather-app-refresh-btn:active {
+            background-color: rgba(255, 255, 255, 0.6);
+        }
+
+        .navbar a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .text-danger {
+            font-size: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-cloud-sun me-2"></i>Weather App
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item weather-app-logged-in">
+                        <a class="nav-link weather-app-btn-admin mx-2" href="#" id="adminDashboardLink">
+                            <i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item weather-app-logged-in">
+                        <span class="nav-link" id="userWelcome">Welcome</span>
+                    </li>
+                    <li class="nav-item weather-app-logged-in">
+                        <a class="nav-link weather-app-btn-logout mx-2" href="#" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                        </a>
+                    </li>
+                    <li class="nav-item weather-app-logged-out">
+                        <div align="center">
+                            <a class="nav-link" href="#" id="loginModalBtn" data-bs-toggle="modal" data-bs-target="#authModal">Login / Register</a>
+                        </div>
+                    </li>
+                    <li>
+                        <div align="center" style="padding: 5px 0px 0px 10px;">
+                            <a href="/tools/swagger-weatherApp.html" style="text-decoration: none; color: white; ">
+                                <img src="/data/icons/swagger-simple.png" style="width: 30px !important; height: 30px !important; padding: 0" alt="" />
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <br>
+    <br>
+    <br>
+    <div class="container my-4 weather-app-main-content">
+        <div class="row">
+            <!-- Weather Display Section -->
+            <div class="col-md-6 mb-4">
+
+
+                <div class="mb-4">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0">Select Date</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="input-group">
+                                <button id="prevDayBtn" class="btn btn-outline-primary" type="button">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <input type="text" class="form-control" id="datePicker" placeholder="Select a date">
+                                <button id="nextDayBtn" class="btn btn-outline-primary" type="button">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card weather-app-card">
+                    <div class="card-body">
+                        <h3 class="card-title" id="weatherDate">Today's Weather</h3>
+
+                        <!-- Skeleton loading template (initially hidden) -->
+                        <div id="weatherSkeleton" style="display: none;">
+                            <div class="skeleton-title skeleton-loading"></div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="skeleton-item">
+                                        <div class="skeleton-icon skeleton-loading"></div>
+                                        <div class="skeleton-content">
+                                            <div class="skeleton-label skeleton-loading"></div>
+                                            <div class="skeleton-value skeleton-loading"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="skeleton-item">
+                                        <div class="skeleton-icon skeleton-loading"></div>
+                                        <div class="skeleton-content">
+                                            <div class="skeleton-label skeleton-loading"></div>
+                                            <div class="skeleton-value skeleton-loading"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Actual weather content -->
+                        <div id="weatherContent">
+                            <div class="row">
+                                <div class="col-md-6 mb-3" id="tempContainer">
+                                    <div class="d-flex align-items-center"> <i id="temperatureIcon" class="fas fa-thermometer-half fa-2x me-2 text-light"></i>
+                                        <div>
+                                            <h5 class="mb-0">Temperature</h5>
+                                            <h3 id="temperature">--°C</h3>
+                                            <small id="tempCategory" class="text-light" style="display: none;"></small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3" id="humidityContainer">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-tint fa-2x me-2 text-light"></i>
+                                        <div>
+                                            <h5 class="mb-0">Humidity</h5>
+                                            <h3 id="humidity">--%</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3" id="windDirContainer">
+                                    <div class="d-flex align-items-center">
+                                        <i id="windDirectionIcon" class="fas fa-location-arrow fa-2x me-2 text-light"></i>
+                                        <div>
+                                            <h5 class="mb-0">Wind Direction</h5>
+                                            <h3 id="windDirection">--</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3" id="windSpeedContainer">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-wind fa-2x me-2 text-light"></i>
+                                        <div>
+                                            <h5 class="mb-0">Wind Speed</h5>
+                                            <h3 id="windSpeed">-- km/h</h3>
+                                            <small id="windCategory" class="text-light" style="display: none;"></small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button id="refreshWeatherBtn" class="btn btn-sm weather-app-refresh-btn" title="Refresh Weather Data">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weather Events Section (Visible only when logged in) -->
+            <div class="col-md-6 mb-4 weather-app-logged-in">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title mb-0">Weather Notes</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="eventForm" class="mb-3">
+                            <div class="mb-3">
+                                <textarea class="form-control" id="eventText" rows="2" placeholder="Add a weather note for this date..."></textarea>
+                                <div class="validation-feedback" id="noteValidationFeedback">
+                                    Note must be between 3 and 256 characters.
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Note</button>
+                        </form>
+
+                        <div id="eventsList" class="mt-4">
+                            <!-- Events will be populated here -->
+                            <div class="text-center text-muted" id="noEventsMessage">
+                                <p>No notes for this date</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard Section (Redesigned to be full page) -->
+    <div class="weather-app-admin-dashboard">
+        <button class="weather-app-close-admin" id="closeAdminBtn">
+            <i class="fas fa-times me-2"></i>Close Dashboard
+        </button>
+
+        <button class="weather-app-return-btn" id="returnToAppBtn">
+            <i class="fas fa-home me-2"></i>Return to Weather App
+        </button>
+
+        <div class="container-fluid">
+            <h2 class="mb-4"><i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard</h2>
+            <div class="weather-app-stats">
+                <div class="weather-app-stat-card">
+                    <i class="fas fa-users fa-2x mb-2" style="color: #3498db;"></i>
+                    <div class="weather-app-number" id="totalUsers">0</div>
+                    <div class="weather-app-label">Total Users</div>
+                </div>
+                <div class="weather-app-stat-card">
+                    <i class="fas fa-sticky-note fa-2x mb-2" style="color: #2ecc71;"></i>
+                    <div class="weather-app-number" id="totalNotes">0</div>
+                    <div class="weather-app-label">Total Notes</div>
+                </div>
+                <div class="weather-app-stat-card">
+                    <i class="fas fa-user-shield fa-2x mb-2" style="color: #9b59b6;"></i>
+                    <div class="weather-app-number" id="totalAdmins">0</div>
+                    <div class="weather-app-label">Admins</div>
+                </div>
+                <div class="weather-app-stat-card">
+                    <i class="fas fa-calculator fa-2x mb-2" style="color: #e74c3c;"></i>
+                    <div class="weather-app-number" id="avgNotesPerUser">0</div>
+                    <div class="weather-app-label">Avg Notes/User</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">Users</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Username</th>
+                                            <th>Admin</th>
+                                            <th>Notes</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="usersList">
+                                        <!-- Users will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">All Notes</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>User</th>
+                                            <th>Note</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="allEventsList">
+                                        <!-- All events will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Authentication Modal -->
+    <div class="modal fade" id="authModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="authModalTitle">Login</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs" id="authTabs">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="login-tab" data-bs-toggle="tab" href="#login-content">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="register-tab" data-bs-toggle="tab" href="#register-content">Register</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content mt-3">
+                        <div class="tab-pane fade show active" id="login-content">
+                            <form id="loginForm">
+                                <div class="mb-3">
+                                    <label for="loginUsername" class="form-label">Username</label>
+                                    <input type="text" class="form-control" id="loginUsername" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="loginPassword" class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="loginPassword" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Login</button>
+                            </form>
+                        </div>
+                        <div class="tab-pane fade" id="register-content">
+                            <form id="registerForm">
+                                <div class="mb-3">
+                                    <label for="registerUsername" class="form-label">Username</label>
+                                    <input type="text" class="form-control" id="registerUsername" required>
+                                    <div class="validation-feedback" id="usernameValidationFeedback">
+                                        Username must be 3-10 characters and contain only letters, numbers, and hyphens.
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="registerPassword" class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="registerPassword" required>
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="registerAsAdmin">
+                                    <label class="form-check-label" for="registerAsAdmin">Register as Admin</label>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Register</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Note Modal -->
+    <div class="modal fade" id="editNoteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Note</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editNoteForm">
+                        <div class="mb-3">
+                            <label for="editNoteText" class="form-label">Note</label>
+                            <textarea class="form-control" id="editNoteText" rows="3" required></textarea>
+                            <div class="validation-feedback" id="editNoteValidationFeedback">
+                                Note must be between 3 and 256 characters.
+                            </div>
+                        </div>
+                        <input type="hidden" id="editNoteId">
+                        <div class="text-end">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Toast -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-danger text-white">
+                <strong class="me-auto">Error</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="errorToastMessage"></div>
+        </div>
+    </div>
+
+    <!-- Success Toast -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-success text-white">
+                <strong class="me-auto">Success</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="successToastMessage"></div>
+        </div>
+    </div>
+
+    <script src="/js/libs/bootstrap.bundle.min.js"></script>
+    <script src="/js/libs/flatpickr.js"></script>
+    <script src="./weather.js"></script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>

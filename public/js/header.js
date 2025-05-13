@@ -320,6 +320,18 @@ const addMainMenuAndFooter = () => {
   function mobileMenu() {
     hamburger.classList.toggle("active");
     navMenu.classList.toggle("active");
+
+    // Add event listener to close menu when clicking outside
+    if (navMenu.classList.contains("active")) {
+      document.addEventListener("click", function closeMenu(e) {
+        // If clicking outside the menu and not on the hamburger
+        if (!navMenu.contains(e.target) && !hamburger.contains(e.target)) {
+          hamburger.classList.remove("active");
+          navMenu.classList.remove("active");
+          document.removeEventListener("click", closeMenu);
+        }
+      });
+    }
   }
 };
 
