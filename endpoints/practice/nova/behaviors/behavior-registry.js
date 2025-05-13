@@ -87,7 +87,10 @@ class BehaviorRegistry {
       }
     }
 
-    console.log("Matching Behaviors:", matchingBehaviors.map((b) => b.id));
+    console.log(
+      "Matching Behaviors:",
+      matchingBehaviors.map((b) => b.id)
+    );
 
     // If no behaviors can handle the message, return a default response
     if (matchingBehaviors.length === 0) {
@@ -96,6 +99,8 @@ class BehaviorRegistry {
 
     // If only one behavior can handle it, use that one
     if (matchingBehaviors.length === 1) {
+      // Track which behavior handled the message
+      context.handledBy = matchingBehaviors[0].id;
       return matchingBehaviors[0].handle(message, context);
     }
 
@@ -115,7 +120,8 @@ class BehaviorRegistry {
         behaviorId: r.behavior.id,
         score: r.score,
       })),
-    });
+    }); // Track which behavior handled the message
+    context.handledBy = responses[0].behavior.id;
 
     // Return the highest-scoring response
     return responses[0].response;

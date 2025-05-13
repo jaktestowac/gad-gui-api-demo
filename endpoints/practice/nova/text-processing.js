@@ -1,6 +1,26 @@
 const { sentimentPatterns, knowledgeBase } = require("./nova-base");
 
 /**
+ * Remove apostrophes from a string
+ * @param {string} text - Text to process
+ * @returns {string} - Text without apostrophes
+ */
+function removeApostrophes(text) {
+  return text ? text.replace(/[']/g, "") : text;
+}
+
+/**
+ * Normalize text for better matching by removing apostrophes and converting to lowercase
+ * @param {string} text - Text to normalize
+ * @returns {string} - Normalized text
+ */
+function normalizeText(text) {
+  if (!text) return "";
+  // Convert to lowercase and remove apostrophes
+  return removeApostrophes(text.toLowerCase());
+}
+
+/**
  * Calculate Levenshtein distance between two strings
  * @param {string} a - First string
  * @param {string} b - Second string
@@ -45,7 +65,7 @@ function levenshteinDistance(a, b) {
 function normalizeMessage(message, validTerms, threshold = 0.3) {
   if (!message || !validTerms || validTerms.length === 0) return message;
 
-  const lowerMessage = message.toLowerCase().trim();
+  const lowerMessage = normalizeText(message.trim());
 
   // First check for exact match
   if (validTerms.includes(lowerMessage)) return lowerMessage;
@@ -115,7 +135,7 @@ function normalizeMessage(message, validTerms, threshold = 0.3) {
 function suggestCommandCorrection(message) {
   if (!message) return null;
 
-  const lowerMessage = message.toLowerCase().trim();
+  const lowerMessage = normalizeText(message.trim());
 
   // Special handling for prefix commands - don't suggest corrections for valid command patterns
   if (
@@ -191,7 +211,7 @@ function suggestCommandCorrection(message) {
 function getNormalizedCommand(message) {
   if (!message) return message;
 
-  const lowerMessage = message.toLowerCase().trim();
+  const lowerMessage = normalizeText(message.trim());
 
   // Special handling for prefix commands that take parameters
   if (lowerMessage.startsWith("show example ")) {
@@ -238,7 +258,7 @@ function getNormalizedKnowledgeQuery(message) {
   if (!message) return message;
 
   // Convert to lowercase, trim whitespace and remove trailing question marks
-  const lowerMessage = message.toLowerCase().trim().replace(/\?+$/, "");
+  const lowerMessage = normalizeText(message.trim().replace(/\?+$/, ""));
 
   // All knowledge base keys to match against
   const knowledgeBaseKeys = Object.keys(knowledgeBase);
@@ -293,7 +313,7 @@ function isQuestion(message) {
     "did",
   ];
 
-  const lowerMessage = message.toLowerCase().trim();
+  const lowerMessage = normalizeText(message.trim());
   for (const word of questionStartWords) {
     if (lowerMessage.startsWith(word + " ")) {
       return true;
@@ -309,7 +329,7 @@ function isQuestion(message) {
  * @returns {string} - Detected topic
  */
 function detectTopic(message) {
-  const lowerMessage = message.toLowerCase();
+  const lowerMessage = normalizeText(message);
   // Define topic patterns
   const topics = {
     programming: ["code", "program", "develop", "script", "function", "variable", "class", "method"],
@@ -379,4 +399,6 @@ module.exports = {
   detectSentiment,
   isQuestion,
   detectTopic,
+  removeApostrophes,
+  normalizeText,
 };

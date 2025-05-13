@@ -23,6 +23,7 @@ class MessageContext {
     this.lowerCaseMessage = ""; // Will be set with normalized message
     this.normalizedCommand = ""; // Will be set with normalized command
     this.currentTopic = ""; // Will be set with detected topic
+    this.smallTalkCategory = ""; // Category for small talk behavior
     this.handled = false; // Whether message has been handled by a behavior
     this.response = ""; // Final response
   }
@@ -44,19 +45,47 @@ class MessageContext {
   getLatestMessages(count = 5) {
     return this.conversationHistory.slice(-count);
   }
-
   /**
    * Prepare a message for processing
    * @param {string} message - The message to prepare
    * @param {object} textProcessingUtils - Text processing utility functions
-   */
-  prepareMessage(message, textProcessingUtils) {
-    this.lowerCaseMessage = message.toLowerCase();
-    this.normalizedCommand = textProcessingUtils.getNormalizedCommand(message);
-    this.currentTopic = textProcessingUtils.detectTopic(message);
+   */ prepareMessage(message, textProcessingUtils) {
+    // Process message - convert to lowercase and remove apostrophes to improve matching
+    this.lowerCaseMessage = textProcessingUtils.normalizeText(message);
+
+    // Get normalized command and topic without apostrophes
+    const cleanMessage = textProcessingUtils.removeApostrophes(message);
+    this.normalizedCommand = textProcessingUtils.getNormalizedCommand(cleanMessage);
+    this.currentTopic = textProcessingUtils.detectTopic(cleanMessage);
+
+    // Check for topic interests in the message and add to user memory
+    // We use the extracted topic for better context awareness
+    if (this.currentTopic && this.currentTopic !== "general" && this.currentTopic !== "ambiguous") {
+      this.addTopicInterest(this.currentTopic);
+    }
 
     // Add user message to history
     this.addToConversationHistory("user", message);
+  }
+
+  /**
+   * Add user's topic interests to memory
+   * @param {string} topic - The topic of interest
+   */
+  addTopicInterest(topic) {
+    if (!this.userMemory.topics) {
+      this.userMemory.topics = [];
+    }
+
+    // Only add if not already present
+    if (!this.userMemory.topics.includes(topic)) {
+      this.userMemory.topics.unshift(topic);
+
+      // Keep the list manageable
+      if (this.userMemory.topics.length > 5) {
+        this.userMemory.topics = this.userMemory.topics.slice(0, 5);
+      }
+    }
   }
 }
 

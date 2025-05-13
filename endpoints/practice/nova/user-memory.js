@@ -88,6 +88,12 @@ function extractAndRememberUserInfo(message, conversationId) {
   const memory = initUserMemory(userId);
   let infoExtracted = false;
 
+  // First try to extract topic interests
+  const detectedTopic = extractAndTrackTopicInterest(message, userId);
+  if (detectedTopic) {
+    infoExtracted = true;
+  }
+
   // Extract name (expanded to detect more name patterns)
   const namePatterns = [
     /my name is ([A-Za-z]+)/i,
@@ -279,10 +285,87 @@ function extractAndRememberUserInfo(message, conversationId) {
   return infoExtracted;
 }
 
+/**
+ * Extract and save topic interests from a message
+ * @param {string} message - The user's message
+ * @param {string} userId - User identifier
+ * @returns {string|null} - Detected topic or null
+ */
+function extractAndTrackTopicInterest(message, userId) {
+  if (!message || !userId) return null;
+
+  // Initialize or get user memory
+  const memory = initUserMemory(userId);
+
+  // Ensure topics array exists
+  if (!memory.topics) {
+    memory.topics = [];
+  }
+
+  // Common programming topics to track
+  const topicKeywords = {
+    javascript: ["javascript", "js", "node", "react", "vue", "angular", "typescript", "ts"],
+    python: ["python", "py", "django", "flask", "pandas", "numpy", "scipy"],
+    web: ["web", "html", "css", "dom", "browser", "frontend", "website"],
+    database: ["database", "sql", "nosql", "mongodb", "postgres", "mysql", "oracle", "data"],
+    api: ["api", "rest", "graphql", "endpoint", "request", "http"],
+    ai: ["ai", "artificial intelligence", "ml", "machine learning", "nlp", "neural network"],
+    programming: ["code", "programming", "software", "development", "coding"],
+    backend: ["backend", "server", "node.js", "express", "php", "java"],
+    frontend: ["frontend", "ui", "ux", "interface", "design"],
+  };
+
+  const lowerMessage = message.toLowerCase();
+  let detectedTopic = null;
+
+  // First check for direct topic mentions
+  for (const [topic, keywords] of Object.entries(topicKeywords)) {
+    // Check for the topic name itself
+    if (lowerMessage.includes(topic)) {
+      detectedTopic = topic;
+      break;
+    }
+
+    // Check for specific keywords
+    for (const keyword of keywords) {
+      // Make sure we're matching whole words or phrases
+      if (
+        lowerMessage.includes(` ${keyword} `) ||
+        lowerMessage.includes(`${keyword} `) ||
+        lowerMessage.includes(` ${keyword}`) ||
+        lowerMessage === keyword
+      ) {
+        detectedTopic = topic;
+        break;
+      }
+    }
+
+    if (detectedTopic) break;
+  }
+
+  // If we found a topic, add it to user memory
+  if (detectedTopic) {
+    // Add to the beginning if not already in the list
+    if (!memory.topics.includes(detectedTopic)) {
+      memory.topics.unshift(detectedTopic);
+
+      // Keep only the 5 most recent topics
+      if (memory.topics.length > 5) {
+        memory.topics = memory.topics.slice(0, 5);
+      }
+
+      logDebug(`Added topic interest for user ${userId}: ${detectedTopic}`);
+    }
+  }
+
+  return detectedTopic;
+}
+
 // Export all user memory functions
 module.exports = {
   userMemory,
   initUserMemory,
   generatePersonalizedResponse,
   extractAndRememberUserInfo,
+  extractAndTrackTopicInterest,
 };

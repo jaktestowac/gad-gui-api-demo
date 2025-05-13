@@ -12,6 +12,8 @@ const CommandBehavior = require("./command-behavior");
 const GameBehavior = require("./game-behavior");
 const KnowledgeBaseBehavior = require("./knowledge-base-behavior");
 const UtilityBehavior = require("./utility-behavior");
+const SmallTalkBehavior = require("./small-talk-behavior");
+const RecommendationBehavior = require("./recommendation-behavior");
 const DefaultResponseBehavior = require("./default-response-behavior");
 
 /**
@@ -22,13 +24,14 @@ function initializeBehaviors() {
   if (behaviorRegistry.initialized) {
     return behaviorRegistry;
   }
-
   // Register behaviors in priority order
   behaviorRegistry
     .register(new CommandBehavior())
     .register(new GameBehavior())
     .register(new UtilityBehavior())
+    .register(new SmallTalkBehavior())
     .register(new KnowledgeBaseBehavior(textProcessingUtils))
+    .register(new RecommendationBehavior())
     .register(new DefaultResponseBehavior(textProcessingUtils));
 
   behaviorRegistry.initialized = true;

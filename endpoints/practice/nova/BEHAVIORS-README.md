@@ -30,6 +30,7 @@ A class that provides context for message processing, including:
 - User memory
 - Conversation analytics
 - Normalized message, command, and topic detection
+- Text normalization (removing apostrophes for better matching)
 
 ### 4. Behavior Manager (`behavior-manager.js`)
 
@@ -56,7 +57,21 @@ Handles games like:
 - Number Guessing
 - Hangman
 
-### 3. Knowledge Base Behavior (`knowledge-base-behavior.js`)
+### 3. Small Talk Behavior (`small-talk-behavior.js`)
+
+Handles realistic conversational exchanges including:
+
+- Greetings and farewells
+- Personal questions about Nova
+- "How are you" and other feeling-based questions
+- Weather-related small talk
+- Time and date questions
+- Compliments and short responses
+- Opinion questions
+
+The small talk behavior has been enhanced to handle messages without apostrophes, as users often type quickly without proper punctuation. For example, "whats your name" is now properly handled the same way as "what's your name".
+
+### 4. Knowledge Base Behavior (`knowledge-base-behavior.js`)
 
 Handles knowledge base lookups based on user questions.
 
@@ -69,7 +84,16 @@ Handles utility functions like:
 - Dictionary lookups
 - Code examples
 
-### 5. Default Response Behavior (`default-response-behavior.js`)
+### 5. Recommendation Behavior (`recommendation-behavior.js`)
+
+Provides personalized recommendations based on user interests:
+
+- Learning resources based on detected topics
+- Project suggestions and activities
+- Topic exploration recommendations
+- Personalized learning paths
+
+### 6. Default Response Behavior (`default-response-behavior.js`)
 
 A fallback behavior for handling basic conversations and responses when no other behavior is applicable.
 
@@ -146,6 +170,7 @@ Default priority levels:
 - Game behavior: 900
 - Utility behavior: 800
 - Knowledge base behavior: 700
+- Recommendation behavior: 300
 - Default response behavior: 100
 
 ## Benefits of the New Architecture
