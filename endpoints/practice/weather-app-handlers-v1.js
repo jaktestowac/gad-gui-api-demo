@@ -138,6 +138,11 @@ function getWeatherByDay(req, res) {
     return res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Day parameter is required!"));
   }
 
+  const datePattern = /^\d{1,}-\d{1,}-\d{1,}$/;
+  if (!datePattern.test(day)) {
+    return res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Invalid date format! Use YYYY-MM-DD."));
+  }
+
   return res.status(HTTP_OK).json(getWeatherData(day));
 }
 
