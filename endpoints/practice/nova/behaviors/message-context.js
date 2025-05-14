@@ -26,6 +26,17 @@ class MessageContext {
     this.smallTalkCategory = ""; // Category for small talk behavior
     this.handled = false; // Whether message has been handled by a behavior
     this.response = ""; // Final response
+
+    // Properties needed for new behaviors
+    this.generatedResponse = ""; // Store generated response for variation behavior
+    this.responseType = ""; // Type of response (fact, opinion, greeting, help)
+    this.isInterruption = false; // Whether this is an interruption
+    this.isTopicChange = false; // Whether this is a topic change
+    this.relevantMemoryTopic = null; // Topic from memory relevant to current message
+    this.relevantMemoryPreference = null; // Preference from memory relevant to current message
+
+    // Track consecutive unrecognized messages
+    this.unrecognizedCount = 0; // Count of consecutive unrecognized messages
   }
 
   /**

@@ -73,12 +73,12 @@ function generateAIResponse(message, conversationId) {
 
   // Smart conversation history management
   // Keep most recent messages and important context
-  if (conversations[conversationId].length > 30) {
-    // Keep first 2 messages (initial context)
-    const initialMessages = conversations[conversationId].slice(0, 2);
-    // Keep last 18 messages (recent context)
-    const recentMessages = conversations[conversationId].slice(-18);
-    // Combine for a total of 20 messages maximum
+  if (conversations[conversationId].length > 50) {
+    // Keep first 10 messages (initial context)
+    const initialMessages = conversations[conversationId].slice(0, 10);
+    // Keep last 40 messages (recent context)
+    const recentMessages = conversations[conversationId].slice(-40);
+    // Combine for a total of 50 messages maximum
     conversations[conversationId] = [...initialMessages, ...recentMessages];
   }
 
@@ -176,7 +176,7 @@ function handleMessage(req, res) {
       conversationName: conversationAnalytics[conversationId]?.name,
     });
   } catch (error) {
-    logDebug("AIChat:handleMessage", { error: error.message });
+    logDebug("[Nova] handleMessage", { error: error.message });
     return res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Failed to process message"));
   }
 }
@@ -199,7 +199,7 @@ function getConversationHistory(req, res) {
       conversationId,
     });
   } catch (error) {
-    logDebug("AIChat:getConversationHistory", { error: error.message });
+    logDebug("[Nova] getConversationHistory", { error: error.message });
     return res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Failed to retrieve conversation history"));
   }
 }
@@ -224,7 +224,7 @@ function clearConversation(req, res) {
       conversationId,
     });
   } catch (error) {
-    logDebug("AIChat:clearConversation", { error: error.message });
+    logDebug("[Nova] clearConversation", { error: error.message });
     return res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Failed to clear conversation"));
   }
 }
@@ -252,7 +252,7 @@ function renameConversation(req, res) {
       name,
     });
   } catch (error) {
-    logDebug("AIChat:renameConversation", { error: error.message });
+    logDebug("[Nova] renameConversation", { error: error.message });
     return res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Failed to rename conversation"));
   }
 }
@@ -284,7 +284,7 @@ function listConversations(req, res) {
       conversations: userConversations,
     });
   } catch (error) {
-    logDebug("AIChat:listConversations", { error: error.message });
+    logDebug("[Nova] listConversations", { error: error.message });
     return res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Failed to list conversations"));
   }
 }
@@ -309,7 +309,7 @@ function getStatistics(req, res) {
 
     return res.status(HTTP_OK).json(stats);
   } catch (error) {
-    logDebug("AIChat:getStatistics", { error: error.message });
+    logDebug("[Nova] getStatistics", { error: error.message });
     return res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Failed to get statistics"));
   }
 }
@@ -332,7 +332,7 @@ function clearUserMemory(req, res) {
       userId,
     });
   } catch (error) {
-    logDebug("AIChat:clearUserMemory", { error: error.message });
+    logDebug("[Nova] clearUserMemory", { error: error.message });
     return res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Failed to clear user memory"));
   }
 }
@@ -376,7 +376,7 @@ function initSession(req, res) {
       userId,
     };
 
-    logDebug("AIChat:initSession", { userId, conversationId });
+    logDebug("[Nova] initSession", { userId, conversationId });
 
     return res.status(HTTP_OK).json({
       userId,
@@ -384,7 +384,7 @@ function initSession(req, res) {
       conversationName: "New Conversation",
     });
   } catch (error) {
-    logDebug("AIChat:initSession", { error: error.message });
+    logDebug("[Nova] initSession", { error: error.message });
     return res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Failed to initialize session"));
   }
 }

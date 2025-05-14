@@ -45,7 +45,7 @@ class KnowledgeBaseBehavior extends BaseBehavior {
     if (this.textProcessingUtils.isQuestion(message)) {
       const potentialMatches = this._findPotentialMatches(message);
 
-      logDebug("Potential matches found:", potentialMatches);
+      logDebug("[Nova] Potential matches found:", potentialMatches);
       // If we have multiple good matches but none exact, ask for clarification
       if (potentialMatches.length >= 2 && potentialMatches.length <= 5 && potentialMatches[0].distance > 0.15) {
         let response = "I'm not sure which topic you're asking about. Did you mean one of these?\n\n";

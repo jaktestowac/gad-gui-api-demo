@@ -20,10 +20,12 @@ class DefaultResponseBehavior extends BaseBehavior {
 
   /**
    * Handle the message with general conversation patterns
-   */
-  handle(message, context) {
+   */ handle(message, context) {
     const lowerMessage = context.lowerCaseMessage;
     const userMem = context.userMemory;
+
+    // Reset the unrecognized counter when DefaultResponseBehavior successfully handles a message
+    context.unrecognizedCount = 0;
 
     // Extract and remember user information from message
     const extractAndRememberUserInfo = require("../user-memory").extractAndRememberUserInfo;

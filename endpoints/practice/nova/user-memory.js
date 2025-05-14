@@ -242,7 +242,7 @@ function extractAndRememberUserInfo(message, conversationId) {
       memory.needsPositivity = false;
     }
 
-    logDebug("User sentiment detected:", {
+    logDebug("[Nova] User sentiment detected:", {
       sentiment,
       recentSentiments,
       needsPositivity: memory.needsPositivity,
