@@ -125,13 +125,13 @@ function getWeatherData(day, scope = 1, historicalStable = true) {
 }
 
 // Weather API handlers
-function getCurrentWeather(req, res) {
+function getCurrentWeather(req, res, scope) {
   const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
 
-  return res.status(HTTP_OK).json(getWeatherData(today));
+  return res.status(HTTP_OK).json(getWeatherData(today, scope));
 }
 
-function getWeatherByDay(req, res) {
+function getWeatherByDay(req, res, scope) {
   const { day } = req.body;
 
   if (isUndefined(day)) {
@@ -143,7 +143,7 @@ function getWeatherByDay(req, res) {
     return res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Invalid date format! Use YYYY-MM-DD."));
   }
 
-  return res.status(HTTP_OK).json(getWeatherData(day));
+  return res.status(HTTP_OK).json(getWeatherData(day, scope));
 }
 
 function createWeatherEvent(req, res) {
@@ -459,4 +459,7 @@ module.exports = {
 
   // Admin endpoints
   getAllData,
+
+  // Expose sessions for GraphQL auth
+  sessions,
 };

@@ -15,6 +15,7 @@ const { verifyToken, hasPermission } = require("./practice/employee-management-s
 const twoFactor = require("./practice/2fa-handlers");
 const twoFactorV2 = require("./practice/2fa-handlers-v2");
 const weatherAppV1 = require("./practice/weather-app-handlers-v1");
+const { handleGraphQLRequest } = require("./practice/weather-graphql-handlers");
 const aiChat = require("./practice/nova/nova-chat-handlers");
 const {
   getDirectoryContents,
@@ -502,15 +503,13 @@ function handlePractice(req, res) {
 
     // Weather App v1 endpoints
     if (req.url.includes("/api/practice/v1/weather")) {
-      const url = req.url;
-
-      // Weather data endpoints
+      const url = req.url; // Weather data endpoints
       if (req.method === "GET" && url.endsWith("/api/practice/v1/weather/current")) {
-        return weatherAppV1.getCurrentWeather(req, res);
+        return weatherAppV1.getCurrentWeather(req, res, 1); // Use scope 1
       }
 
       if (req.method === "POST" && url.endsWith("/api/practice/v1/weather/day")) {
-        return weatherAppV1.getWeatherByDay(req, res);
+        return weatherAppV1.getWeatherByDay(req, res, 1); // Use scope 1
       }
 
       // Weather events endpoints
@@ -594,6 +593,11 @@ function handlePractice(req, res) {
         logDebug("handlePractice:translations", { error: e.message });
         return res.status(HTTP_NOT_FOUND).json({ error: "Translations not found" });
       }
+    }
+
+    if (req.url.includes("/api/practice/weather/v1/graphql")) {
+      // Handle GraphQL requests
+      return handleGraphQLRequest(req, res);
     }
 
     return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
