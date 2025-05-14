@@ -274,6 +274,110 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        /* History Panel Styles */
+        .weather-history-panel {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .weather-history-header {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 15px;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+
+        .weather-history-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .weather-history-content.expanded {
+            max-height: 800px;
+            overflow-y: auto;
+        }
+
+        .weather-history-item {
+            border-bottom: 1px solid #eee;
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+
+        .weather-history-item:hover {
+            background-color: #f9f9f9;
+        }
+
+        .weather-history-item-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .weather-history-item-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .weather-history-item-details.expanded {
+            max-height: 800px;
+        }
+
+        .weather-history-details-section {
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        .weather-history-details-section pre {
+            background: #f5f5f5;
+            padding: 8px;
+            border-radius: 4px;
+            margin: 5px 0;
+            max-height: 200px;
+            overflow: auto;
+        }
+
+        .weather-history-timestamp {
+            color: #666;
+            font-size: 0.8em;
+        }
+
+        .weather-history-operation {
+            color: #3498db;
+        }
+
+        .weather-history-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            margin-left: 8px;
+            background-color: #e0e0e0;
+        }
+
+        .weather-history-badge-success {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .weather-history-badge-error {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .weather-history-clear {
+            color: #e74c3c;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-left: 10px;
+        }
     </style>
 </head>
 
@@ -395,9 +499,182 @@
             <button class="weather-app-button weather-example-button" onclick="loadFormattingExample()">Example of Formatted Query</button>
             <button class="weather-app-button weather-example-button" onclick="loadFormattingExample(); testMultipleFormats()">Test Multiple Formats</button>
         </div>
-    </div>
 
+        <!-- Query History Panel -->
+        <div class="weather-app-card weather-history-panel">
+            <div class="weather-history-header" id="history-header">
+                <h3 class="weather-app-heading-h3">Query History</h3>
+                <div>
+                    <span class="weather-history-clear" onclick="clearQueryHistory()">Clear History</span>
+                    <i class="fa fa-chevron-down" id="history-toggle-icon"></i>
+                </div>
+            </div>
+            <div class="weather-history-content" id="history-content">
+                <div id="history-items">
+                    <!-- History items will be inserted here dynamically -->
+                    <div class="weather-history-item-empty" style="padding: 15px; text-align: center; color: #999;">
+                        No query history yet. Execute a query to see it here.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <script>
+        // Initialize query history from localStorage or create empty array
+        let queryHistory = JSON.parse(localStorage.getItem('weatherGraphQLQueryHistory') || '[]');
+        const MAX_HISTORY_ITEMS = 20;
+
+        // Function to toggle history panel visibility
+        function toggleHistoryPanel() {
+            const content = document.getElementById('history-content');
+            const icon = document.getElementById('history-toggle-icon');
+
+            if (content.classList.contains('expanded')) {
+                content.classList.remove('expanded');
+                icon.className = 'fa fa-chevron-down';
+            } else {
+                content.classList.add('expanded');
+                icon.className = 'fa fa-chevron-up';
+            }
+        }
+
+        // Function to toggle history item details
+        function toggleHistoryItem(id) {
+            const details = document.getElementById(`history-item-details-${id}`);
+            if (details.classList.contains('expanded')) {
+                details.classList.remove('expanded');
+            } else {
+                details.classList.add('expanded');
+            }
+        }
+
+        // Function to add a query to history
+        function addQueryToHistory(query, variables, headers, response) {
+            const timestamp = new Date().toISOString();
+            const id = `hist-${Date.now()}`;
+            const isError = response.errors && response.errors.length > 0;
+
+            // Extract operation type and name from query
+            let operationType = 'query';
+            let operationName = 'Anonymous';
+
+            const queryMatch = query.match(/(query|mutation|subscription)(?:\s+([A-Za-z0-9_]+))?/);
+            if (queryMatch) {
+                operationType = queryMatch[1];
+                operationName = queryMatch[2] || 'Anonymous';
+            }
+
+            // Create history entry
+            const historyEntry = {
+                id,
+                timestamp,
+                operationType,
+                operationName,
+                query,
+                variables,
+                headers,
+                response,
+                isError
+            };
+
+            // Add to beginning of array
+            queryHistory.unshift(historyEntry);
+
+            // Ensure we only keep MAX_HISTORY_ITEMS
+            if (queryHistory.length > MAX_HISTORY_ITEMS) {
+                queryHistory = queryHistory.slice(0, MAX_HISTORY_ITEMS);
+            }
+
+            // Save to localStorage
+            localStorage.setItem('weatherGraphQLQueryHistory', JSON.stringify(queryHistory));
+
+            // Update the UI
+            renderQueryHistory();
+        }
+
+        // Function to clear query history
+        function clearQueryHistory() {
+            queryHistory = [];
+            localStorage.removeItem('weatherGraphQLQueryHistory');
+            renderQueryHistory();
+            showNotification('Query history cleared', 'info');
+        }
+
+        // Function to load a query from history
+        function loadQueryFromHistory(id) {
+            const historyItem = queryHistory.find(item => item.id === id);
+            if (historyItem) {
+                document.querySelector('.weather-query-editor').value = historyItem.query;
+                document.querySelector('.weather-variables-editor').value = JSON.stringify(historyItem.variables, null, 2);
+                document.querySelector('.weather-headers-editor').value = JSON.stringify(historyItem.headers, null, 2);
+
+                showNotification('Query loaded from history', 'info');
+            }
+        }
+
+        // Function to render the query history in the UI
+        function renderQueryHistory() {
+            const historyItemsContainer = document.getElementById('history-items');
+
+            if (queryHistory.length === 0) {
+                historyItemsContainer.innerHTML = `
+                    <div class="weather-history-item-empty" style="padding: 15px; text-align: center; color: #999;">
+                        No query history yet. Execute a query to see it here.
+                    </div>
+                `;
+                return;
+            }
+
+            historyItemsContainer.innerHTML = queryHistory.map(item => {
+                const statusBadge = item.isError
+                    ? '<span class="weather-history-badge weather-history-badge-error">Error</span>'
+                    : '<span class="weather-history-badge weather-history-badge-success">Success</span>';
+
+                const formattedTime = new Date(item.timestamp).toLocaleString();
+
+                return `
+                    <div class="weather-history-item">
+                        <div class="weather-history-item-header" onclick="toggleHistoryItem('${item.id}')">
+                            <div>
+                                <span class="weather-history-operation">${item.operationType}: ${item.operationName}</span>
+                                ${statusBadge}
+                            </div>
+                            <div class="weather-history-timestamp">${formattedTime}</div>
+                        </div>
+                        <div id="history-item-details-${item.id}" class="weather-history-item-details">
+                            <div class="weather-history-details-section">
+                                <button class="weather-app-button" onclick="loadQueryFromHistory('${item.id}')">Load Query</button>
+                            </div>
+                            <div class="weather-history-details-section">
+                                <strong>Query:</strong>
+                                <pre>${item.query.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
+                            </div>
+                            <div class="weather-history-details-section">
+                                <strong>Variables:</strong>
+                                <pre>${JSON.stringify(item.variables, null, 2)}</pre>
+                            </div>
+                            <div class="weather-history-details-section">
+                                <strong>Headers:</strong>
+                                <pre>${JSON.stringify(item.headers, null, 2)}</pre>
+                            </div>
+                            <div class="weather-history-details-section">
+                                <strong>Response:</strong>
+                                <pre>${JSON.stringify(item.response, null, 2)}</pre>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Add event listener to toggle history panel visibility
+        document.addEventListener('DOMContentLoaded', function () {
+            const historyHeader = document.getElementById('history-header');
+            historyHeader.addEventListener('click', toggleHistoryPanel);
+
+            // Render the history
+            renderQueryHistory();
+        });
 
         const examples = {
             currentWeather: {
@@ -809,12 +1086,11 @@
 
             executeGraphQLQuery(query, variables, {})
                 .then(response => {
-                    if (response.data && response.data.register) {
-                        // If token is returned, store it
+                    if (response.data && response.data.register) {                        // If token is returned, store it
                         if (response.data.register.token) {
                             document.getElementById('token').value = response.data.register.token;
-                            document.getElementById('auth-status').className = 'status-indicator status-authenticated';
-                            document.getElementById('auth-status').title = 'Authenticated';
+                            document.getElementById('auth-status').className = 'weather-status-indicator weather-status-authenticated';
+                            document.getElementById('auth-status').title = `Authenticated as ${response.data.register.user.username}`;
                         }
                         closeModal('registerModal');
                         showNotification(`User registered: ${response.data.register.message}`, "success");
@@ -1012,9 +1288,7 @@
             // Add token to headers if available and not already set
             if (token && !headers.Authorization) {
                 headers.Authorization = `Bearer ${token}`;
-            }
-
-            try {
+            } try {
                 const response = await fetch('/api/practice/weather/v1/graphql', {
                     method: 'POST',
                     headers: {
@@ -1028,11 +1302,20 @@
                 });
 
                 const data = await response.json();
-                document.querySelector('.weather-app-output').textContent = JSON.stringify(data, null, 2);
+                document.querySelector('.weather-response-output').textContent = JSON.stringify(data, null, 2);
+
+                // Add query to history
+                addQueryToHistory(query, variables, headers, data);
+
                 return data;
             } catch (error) {
-                document.querySelector('.weather-app-output').textContent = `Error: ${error.message}`;
-                return { errors: [{ message: error.message }] };
+                const errorData = { errors: [{ message: error.message }] };
+                document.querySelector('.weather-response-output').textContent = `Error: ${error.message}`;
+
+                // Add failed query to history too
+                addQueryToHistory(query, variables, headers, errorData);
+
+                return errorData;
             }
         } function loadFormattingExample() {
             // A complex, unformatted query to demonstrate the formatter
