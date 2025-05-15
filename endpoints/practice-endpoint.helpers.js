@@ -16,6 +16,7 @@ const twoFactor = require("./practice/2fa-handlers");
 const twoFactorV2 = require("./practice/2fa-handlers-v2");
 const weatherAppV1 = require("./practice/weather-app-handlers-v1");
 const { handleGraphQLRequest } = require("./practice/weather-graphql-handlers");
+const { handleBooksGraphQLRequest } = require("./practice/books-graphql-handlers");
 const aiChat = require("./practice/nova/nova-chat-handlers");
 const {
   getDirectoryContents,
@@ -594,10 +595,14 @@ function handlePractice(req, res) {
         return res.status(HTTP_NOT_FOUND).json({ error: "Translations not found" });
       }
     }
-
     if (req.url.includes("/api/practice/weather/v1/graphql")) {
-      // Handle GraphQL requests
+      // Handle Weather GraphQL requests
       return handleGraphQLRequest(req, res);
+    }
+
+    if (req.url.includes("/api/practice/books/v1/graphql")) {
+      // Handle Books GraphQL requests
+      return handleBooksGraphQLRequest(req, res);
     }
 
     return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
