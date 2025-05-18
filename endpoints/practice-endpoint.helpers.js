@@ -18,6 +18,7 @@ const weatherAppV1 = require("./practice/weather-app-handlers-v1");
 const { handleGraphQLRequest } = require("./practice/weather-graphql-handlers");
 const { handleBooksGraphQLRequest } = require("./practice/books-graphql-handlers");
 const aiChat = require("./practice/nova/nova-chat-handlers");
+const testagram = require("./practice/testagram/testagram-handlers");
 const {
   getDirectoryContents,
   getFileDetails,
@@ -599,10 +600,94 @@ function handlePractice(req, res) {
       // Handle Weather GraphQL requests
       return handleGraphQLRequest(req, res);
     }
-
     if (req.url.includes("/api/practice/books/v1/graphql")) {
       // Handle Books GraphQL requests
       return handleBooksGraphQLRequest(req, res);
+    }
+
+    // Testagram routes
+    if (req.url.includes("/api/practice/v1/testagram")) {
+      const url = req.url;
+
+      // Auth routes
+      if (url.includes("/api/practice/v1/testagram/auth")) {
+        const endpoint = url.split("/api/practice/v1/testagram/auth/")[1];
+
+        switch (true) {
+          case req.method === "POST" && endpoint === "register":
+            return testagram.register(req, res);
+          case req.method === "POST" && endpoint === "login":
+            return testagram.login(req, res);
+          case req.method === "POST" && endpoint === "logout":
+            return testagram.logout(req, res);
+          case req.method === "GET" && endpoint === "check":
+            return applyMiddleware([testagram.verifyToken], testagram.checkAuth)(req, res);
+          default:
+            return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Auth endpoint not found"));
+        }
+      }
+
+      // Posts routes
+      if (url.includes("/api/practice/v1/testagram/posts")) {
+        const parts = url.split("/api/practice/v1/testagram/posts")[1]?.split("/");
+        const id = parts?.[1];
+        const action = parts?.[2];
+
+        switch (true) {
+          case req.method === "GET" && !isIdValid(id):
+            return applyMiddleware([testagram.verifyToken], testagram.getPosts)(req, res);
+          case req.method === "POST" && !isIdValid(id):
+            return applyMiddleware([testagram.verifyToken], testagram.createPost)(req, res);
+          case req.method === "GET" && isIdValid(id):
+            req.params = { id };
+            return applyMiddleware([testagram.verifyToken], testagram.getPostById)(req, res);
+          case req.method === "DELETE" && isIdValid(id):
+            req.params = { id };
+            return applyMiddleware([testagram.verifyToken], testagram.deletePost)(req, res);
+          case req.method === "POST" && isIdValid(id) && action === "like":
+            req.params = { id };
+            return applyMiddleware([testagram.verifyToken], testagram.toggleLike)(req, res);
+          case req.method === "POST" && isIdValid(id) && action === "comment":
+            req.params = { id };
+            return applyMiddleware([testagram.verifyToken], testagram.addComment)(req, res);
+          default:
+            return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Posts endpoint not found"));
+        }
+      }
+
+      // User profile routes
+      if (url.includes("/api/practice/v1/testagram/users")) {
+        const parts = url.split("/api/practice/v1/testagram/users")[1]?.split("/");
+        const username = parts?.[1];
+        const action = parts?.[2];
+
+        logDebug("handlePractice:testagram", { username, action, method: req.method });
+
+        switch (true) {
+          case req.method === "GET" && username !== undefined:
+            req.params = { username };
+            return applyMiddleware([testagram.verifyToken], testagram.getUserProfile)(req, res);
+          case req.method === "PUT":
+            return applyMiddleware([testagram.verifyToken], testagram.updateProfile)(req, res);
+          case req.method === "POST" && username && action === "follow":
+            req.params = { username };
+            return applyMiddleware([testagram.verifyToken], testagram.toggleFollow)(req, res);
+          default:
+            return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Users endpoint not found"));
+        }
+      }
+
+      // Search users
+      if (url.includes("/api/practice/v1/testagram/search") && req.method === "GET") {
+        return applyMiddleware([testagram.verifyToken], testagram.searchUsers)(req, res);
+      }
+
+      // Debug endpoint - get all data (only for development)
+      if (url.endsWith("/api/practice/v1/testagram/_debug/data") && req.method === "GET") {
+        return testagram._getAllData(req, res);
+      }
+
+      return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Testagram endpoint not found"));
     }
 
     return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));

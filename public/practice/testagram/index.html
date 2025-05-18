@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD - Testagram</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/practice-controls.css" />
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br /> <!-- App Container -->
+    <div id="app"> <!-- Loading State with Skeleton -->
+        <div id="loading-container" class="container">
+            <div class="skeleton-container">
+                <a href="/practice/testagram/">
+                    <h1 class="logo"><i class="fa-solid fa-image"></i> Testagram</h1>
+                </a>
+
+                <!-- Skeleton Header -->
+                <div class="skeleton-header">
+                    <div class="skeleton-search"></div>
+                    <div class="skeleton-nav">
+                        <div class="skeleton-nav-item"></div>
+                        <div class="skeleton-nav-item"></div>
+                        <div class="skeleton-nav-item"></div>
+                        <div class="skeleton-nav-item"></div>
+                    </div>
+                </div>
+
+                <!-- Skeleton Posts -->
+                <div class="skeleton-posts">
+                    <div class="skeleton-post">
+                        <div class="skeleton-post-header">
+                            <div class="skeleton-avatar"></div>
+                            <div class="skeleton-username"></div>
+                        </div>
+                        <div class="skeleton-post-image"></div>
+                        <div class="skeleton-post-actions"></div>
+                        <div class="skeleton-post-likes"></div>
+                        <div class="skeleton-post-caption"></div>
+                        <div class="skeleton-post-comments"></div>
+                    </div>
+
+                    <div class="skeleton-post">
+                        <div class="skeleton-post-header">
+                            <div class="skeleton-avatar"></div>
+                            <div class="skeleton-username"></div>
+                        </div>
+                        <div class="skeleton-post-image"></div>
+                        <div class="skeleton-post-actions"></div>
+                        <div class="skeleton-post-likes"></div>
+                        <div class="skeleton-post-caption"></div>
+                        <div class="skeleton-post-comments"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Auth Container (Login/Register) -->
+        <div id="auth-container" class="container hidden">
+            <div class="auth-box">
+                <a href="/practice/testagram/">
+                    <h1 class="logo"><i class="fa-solid fa-image"></i> Testagram</h1>
+                </a>
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="login">Login</button>
+                    <button class="tab-btn" data-tab="register">Register</button>
+                </div> <!-- Login Form -->
+                <form id="login-form" class="auth-form">
+                    <div class="form-group">
+                        <input type="text" id="login-username" placeholder="Username or Email" required autocomplete="username">
+                        <small class="form-hint">Enter your username or email address</small>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="login-password" placeholder="Password (min 3 characters)" required autocomplete="current-password" minlength="3">
+                        <small class="form-hint">Must be at least 3 characters long</small>
+                    </div> <button type="submit" class="btn btn-primary">Log In</button>
+                    <div class="error-message hidden" id="login-error"></div>
+                </form> <!-- Register Form -->
+                <form id="register-form" class="auth-form hidden">
+                    <div class="form-group">
+                        <input type="email" id="register-email" placeholder="Email (example@domain.com)" required>
+                        <small class="form-hint">Enter a valid email address</small>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="register-username" placeholder="Username (3-20 characters)" required minlength="3" maxlength="20" pattern="[a-zA-Z0-9._]{3,20}">
+                        <small class="form-hint">Letters, numbers, dots, and underscores only</small>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="register-fullname" placeholder="Full Name (optional)">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="register-password" placeholder="Password (min 3 characters)" required minlength="3">
+                        <small class="form-hint">Must be at least 3 characters long</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Sign Up</button>
+                    <div class="error-message hidden" id="register-error"></div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Main App Container (after login) -->
+        <div id="main-container" class="hidden">
+            <!-- Header/Navbar -->
+            <header class="header">
+                <div class="container">
+                    <a href="/practice/testagram/">
+                        <h1 class="logo"><i class="fa-solid fa-image"></i> Testagram</h1>
+                    </a>
+                    <div class="search-box">
+                        <input type="text" id="search-input" placeholder="Search users...">
+                        <div id="search-results" class="search-results hidden"></div>
+                    </div>
+                    <nav class="nav">
+                        <a href="#" class="nav-link home-link active"><i class="fas fa-home"></i></a>
+                        <a href="#" class="nav-link create-post-link"><i class="fas fa-plus-square"></i></a>
+                        <a href="#" class="nav-link profile-link"><i class="fas fa-user"></i></a>
+                        <a href="#" class="nav-link logout-link"><i class="fas fa-sign-out-alt"></i></a>
+                    </nav>
+                </div>
+            </header>
+
+            <!-- Main Content Area -->
+            <main class="main-content">
+                <div class="container">
+                    <!-- Feed Section -->
+                    <section id="feed-section" class="section">
+                        <div id="posts-container" class="posts-container">
+                            <!-- Posts will be loaded here -->
+                            <div class="loading-indicator">Loading posts...</div>
+                        </div>
+                    </section>
+
+                    <!-- Profile Section -->
+                    <section id="profile-section" class="section hidden">
+                        <div class="profile-header">
+                            <div class="profile-info">
+                                <div class="profile-pic">
+                                    <img id="profile-image" src="images/default-profile.svg" alt="Profile">
+                                </div>
+                                <div class="profile-details">
+                                    <h2 id="profile-username"></h2>
+                                    <h3 id="profile-fullname"></h3>
+                                    <div class="profile-stats">
+                                        <span id="posts-count">0 posts</span>
+                                        <span id="followers-count">0 followers</span>
+                                        <span id="following-count">0 following</span>
+                                    </div>
+                                    <p id="profile-bio"></p>
+                                    <button id="edit-profile-btn" class="btn btn-outline hidden">Edit Profile</button>
+                                    <button id="follow-btn" class="btn btn-primary hidden">Follow</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="profile-posts">
+                            <h3>Posts</h3>
+                            <div class="profile-posts-description"></div>
+                            <div class="profile-filter-indicator hidden"></div>
+                            <div id="profile-posts-container" class="posts-grid">
+                                <!-- Profile posts will be loaded here -->
+                            </div>
+                        </div>
+                    </section> <!-- Create Post Section -->
+                    <section id="create-post-section" class="section hidden">
+                        <h2>Create New Post</h2>
+                        <form id="create-post-form">
+                            <div class="form-group">
+                                <label for="post-image-url">Image URL</label>
+                                <input type="text" id="post-image-url" placeholder="Enter image URL" value="https://picsum.photos/600/600?random=10" required>
+                                <button type="button" id="generate-random-image" class="btn btn-outline">Generate Random Image</button>
+                                <div class="image-preview">
+                                    <img id="image-preview" src="" alt="Preview" class="hidden">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="post-caption">Caption</label>
+                                <textarea id="post-caption" placeholder="Write a caption..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Share</button>
+                            <div class="error-message hidden" id="post-error"></div>
+                        </form>
+                    </section>
+
+                    <!-- Edit Profile Section -->
+                    <section id="edit-profile-section" class="section hidden">
+                        <h2>Edit Profile</h2>
+                        <form id="edit-profile-form">
+                            <div class="form-group">
+                                <label for="edit-fullname">Full Name</label>
+                                <input type="text" id="edit-fullname">
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-bio">Bio</label>
+                                <textarea id="edit-bio"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-profile-pic">Profile Picture URL</label>
+                                <input type="text" id="edit-profile-pic">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <button type="button" class="btn btn-outline" id="cancel-edit">Cancel</button>
+                            <div class="error-message hidden" id="edit-profile-error"></div>
+                        </form>
+                    </section>
+                </div>
+            </main>
+        </div>
+
+        <!-- Post Modal -->
+        <div id="post-modal" class="modal hidden">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <button class="modal-close"><i class="fas fa-times"></i></button>
+                <div class="post-full">
+                    <div class="post-image">
+                        <img id="modal-post-image" src="" alt="Post image">
+                    </div>
+                    <div class="post-details">
+                        <div class="post-header">
+                            <div class="post-user">
+                                <img id="modal-user-pic" class="modal-user-pic" src="" alt="User">
+                                <a href="#" id="modal-username"></a>
+                            </div>
+                            <div class="post-actions dropdown" id="modal-post-actions">
+                                <button class="dropdown-toggle"><i class="fas fa-ellipsis-h"></i></button>
+                                <div class="dropdown-menu hidden">
+                                    <a href="#" id="modal-delete-post" class="hidden">Delete post</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="post-caption" id="modal-caption"></div>
+                        <div class="post-comments" id="modal-comments">
+                            <!-- Comments will be loaded here -->
+                        </div>
+                        <div class="post-interactions">
+                            <div class="post-likes">
+                                <button class="like-btn" id="modal-like-btn">
+                                    <i class="far fa-heart"></i>
+                                </button>
+                                <span id="modal-likes-count">0 likes</span>
+                            </div>
+                            <div class="post-time" id="modal-time"></div>
+                        </div>
+                        <form class="comment-form" id="modal-comment-form">
+                            <input type="text" id="modal-comment-input" placeholder="Add a comment...">
+                            <button type="submit">Post</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Alert/Popup -->
+    <div id="custom-alert" class="custom-popup hidden">
+        <div class="popup-overlay"></div>
+        <div class="popup-content">
+            <div class="popup-header">
+                <h3 id="popup-title">Alert</h3>
+                <button class="popup-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="popup-body">
+                <p id="popup-message"></p>
+            </div>
+            <div class="popup-footer">
+                <button id="popup-confirm" class="btn btn-primary">OK</button>
+                <button id="popup-cancel" class="btn btn-outline hidden">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <!-- Templates -->
+    <template id="post-template">
+        <div class="post">
+            <div class="post-header">
+                <div class="post-user">
+                    <img src="" alt="User" class="post-user-pic">
+                    <a href="#" class="post-username"></a>
+                </div>
+                <div class="post-actions dropdown">
+                    <button class="dropdown-toggle"><i class="fas fa-ellipsis-h"></i></button>
+                    <div class="dropdown-menu hidden">
+                        <a href="#" class="delete-post hidden">Delete post</a>
+                    </div>
+                </div>
+            </div>
+            <div class="post-image">
+                <img src="" alt="Post" class="post-img">
+            </div>
+            <div class="post-interactions">
+                <div class="post-likes">
+                    <button class="like-btn">
+                        <i class="far fa-heart"></i>
+                    </button>
+                    <button class="comment-btn">
+                        <i class="far fa-comment"></i>
+                    </button>
+                </div>
+                <div class="likes-count">0 likes</div>
+            </div>
+            <div class="post-caption">
+                <a href="#" class="post-username"></a>
+                <span class="caption-text"></span>
+            </div>
+            <div class="post-comments-preview">
+                <a href="#" class="view-comments">View all comments</a>
+            </div>
+            <div class="post-time"></div>
+        </div>
+    </template>
+
+    <template id="profile-post-template">
+        <div class="profile-post">
+            <img src="" alt="Post" class="profile-post-img">
+            <div class="profile-post-overlay">
+                <div class="profile-post-stats">
+                    <span><i class="fas fa-heart"></i> <span class="post-likes-count">0</span></span>
+                    <span><i class="fas fa-comment"></i> <span class="post-comments-count">0</span></span>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="comment-template">
+        <div class="comment">
+            <a href="#" class="comment-username"></a>
+            <span class="comment-text"></span>
+            <div class="comment-time"></div>
+        </div>
+    </template>
+
+    <template id="search-result-template">
+        <div class="search-result">
+            <img src="" alt="User" class="search-result-pic">
+            <div class="search-result-info">
+                <a href="#" class="search-result-username"></a>
+                <span class="search-result-fullname"></span>
+            </div>
+        </div>
+    </template>
+
+    <script src="app.js"></script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>
