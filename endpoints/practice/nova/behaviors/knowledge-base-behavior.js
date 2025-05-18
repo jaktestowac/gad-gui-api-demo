@@ -9,7 +9,7 @@ const { logDebug } = require("../../../../helpers/logger-api");
 class KnowledgeBaseBehavior extends BaseBehavior {
   constructor(textProcessingUtils) {
     // Knowledge base has medium-high priority
-    super("knowledge-base", 700);
+    super("knowledge-base", 750);
     this.textProcessingUtils = textProcessingUtils;
   }
   /**

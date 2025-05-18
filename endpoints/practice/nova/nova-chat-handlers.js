@@ -34,6 +34,7 @@ function generateAIResponse(message, conversationId) {
       startTime: Date.now(),
       messageCount: 0,
       lastActiveTime: Date.now(),
+      unknownTermContext: {}, // For tracking unknown term conversation state
     };
   }
 
@@ -52,7 +53,6 @@ function generateAIResponse(message, conversationId) {
 
   // Initialize or get user memory
   const userMem = initUserMemory(userId);
-
   // Create message context
   const context = new MessageContext(
     userId,
@@ -60,13 +60,67 @@ function generateAIResponse(message, conversationId) {
     conversations[conversationId],
     userMem,
     conversationAnalytics[conversationId]
-  );
-
+  ); // Restore the unknown term context if it exists and is recent (within 2 minutes)
+  const unknownTermContext = conversationAnalytics[conversationId].unknownTermContext || {};
+  if (unknownTermContext.term && Date.now() - unknownTermContext.timestamp < 2 * 60 * 1000) {
+    context.previousUnknownTerm = unknownTermContext.term;
+    // Set isDefiningUnknownTerm to true to indicate this message is likely a definition response
+    context.isDefiningUnknownTerm = true;
+    logDebug(`[Nova] Restored previous unknown term context: "${unknownTermContext.term}"`, {
+      userId,
+      message,
+      timestamp: unknownTermContext.timestamp,
+      timeSince: Date.now() - unknownTermContext.timestamp,
+      isDefiningUnknownTerm: context.isDefiningUnknownTerm,
+    });
+  }
   // Prepare message for processing
   context.prepareMessage(message, textProcessingUtils);
 
+  // Diagnostic log before behavior processing
+  if (context.previousUnknownTerm || context.unknownTerm) {
+    logDebug(`[Nova] Pre-processing message context for term learning:`, {
+      userId,
+      message: message.substring(0, 50) + (message.length > 50 ? "..." : ""),
+      previousUnknownTerm: context.previousUnknownTerm,
+      isDefiningUnknownTerm: context.isDefiningUnknownTerm,
+      knownTerm: context.knownTerm,
+      unknownTerm: context.unknownTerm,
+    });
+  }
+
   // Process message through behavior registry
   const response = behaviorRegistry.processMessage(message, context);
+  // Preserve unknown term context for the next message
+  if (context.unknownTerm) {
+    // Store the current unknown term for the next message
+    conversationAnalytics[conversationId].unknownTermContext = {
+      term: context.unknownTerm,
+      timestamp: Date.now(),
+    };
+    logDebug(`[Nova] Saved unknown term context for next message: "${context.unknownTerm}"`, {
+      userId,
+      conversationId,
+    });
+  } else if (context.previousUnknownTerm && context.isDefiningUnknownTerm) {
+    // Clear the context after the user has defined the term
+    conversationAnalytics[conversationId].unknownTermContext = {};
+    logDebug(`[Nova] Cleared unknown term context after definition was provided`, {
+      userId,
+      term: context.previousUnknownTerm,
+      isDefiningUnknownTerm: context.isDefiningUnknownTerm,
+      extractionAttempted: true,
+    });
+  } else if (context.knownTerm) {
+    // Log that we had a known term
+    logDebug(`[Nova] Known term detected: "${context.knownTerm}"`, {
+      userId,
+      message,
+    });
+
+    // Clear any previous unknown term context
+    conversationAnalytics[conversationId].unknownTermContext = {};
+  }
 
   // Add AI response to history
   conversations[conversationId].push({ role: "assistant", content: response });

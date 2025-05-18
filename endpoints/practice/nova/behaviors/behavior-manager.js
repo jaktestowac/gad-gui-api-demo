@@ -22,6 +22,8 @@ const VariationBehavior = require("./variation-behavior");
 const ContextualMemoryBehavior = require("./contextual-memory-behavior");
 const PersonalityBehavior = require("./personality-behavior");
 const ConversationalFlowBehavior = require("./conversational-flow-behavior");
+const GADFeatureBehavior = require("./gad-feature-behavior");
+const CuriosityBehavior = require("./curiosity-behavior");
 
 /**
  * Initialize all behaviors
@@ -40,8 +42,10 @@ function initializeBehaviors() {
     .register(new ConversationalFlowBehavior()) // New behavior
     .register(new ContextualMemoryBehavior()) // New behavior
     .register(new KnowledgeBaseBehavior(textProcessingUtils))
+    .register(new GADFeatureBehavior()) // GAD features behavior
     .register(new RecommendationBehavior())
     .register(new PersonalityBehavior()) // New behavior
+    .register(new CuriosityBehavior()) // New behavior for better understanding and questioning
     .register(new DefaultResponseBehavior(textProcessingUtils))
     .register(new VariationBehavior()); // New behavior (lowest priority as it modifies other responses)
 

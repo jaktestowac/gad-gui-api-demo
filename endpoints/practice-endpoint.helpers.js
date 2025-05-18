@@ -467,7 +467,7 @@ function handlePractice(req, res) {
       if (endpoint && endpoint.includes("?")) {
         endpoint = endpoint.split("?")[0];
       }
-
+      logDebug("--- --- handlePractice:aiChat", { endpoint, method: req.method });
       switch (true) {
         case req.method === "POST" && endpoint === "message":
           return aiChat.handleMessage(req, res);

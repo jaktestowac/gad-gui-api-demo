@@ -18,6 +18,7 @@ function initUserMemory(userId) {
       profession: null,
       sentiments: [],
       topics: [],
+      learnedTerms: {}, // Store learned terms and their definitions
       activeGames: {},
       lastInteractions: {},
       counters: {
@@ -92,24 +93,15 @@ function extractAndRememberUserInfo(message, conversationId) {
   const detectedTopic = extractAndTrackTopicInterest(message, userId);
   if (detectedTopic) {
     infoExtracted = true;
-  }
-
-  // Extract name (expanded to detect more name patterns)
+  } // Extract name (consolidated patterns for better performance)
   const namePatterns = [
-    /my name is ([A-Za-z]+)/i,
-    /i am ([A-Za-z]+)/i,
-    /call me ([A-Za-z]+)/i,
-    /i'm ([A-Za-z]+)/i,
-    /my name's ([A-Za-z]+)/i,
-    /you can call me ([A-Za-z]+)/i,
-    /i'm known as ([A-Za-z]+)/i,
+    /my (?:name is|name's) ([A-Za-z]+)/i,
+    /i(?:'?m|\s*am)\b ([A-Za-z]+)/i, // Improved consolidated "I am" variations
+    /(?:call|you can call) me ([A-Za-z]+)/i,
+    /i(?:'?m|\s*am)? known as ([A-Za-z]+)/i, // Improved pattern
     /i go by ([A-Za-z]+)/i,
-    /my nickname is ([A-Za-z]+)/i,
-    /i prefer to be called ([A-Za-z]+)/i,
-    /i would like to be called ([A-Za-z]+)/i,
-    /i am known as ([A-Za-z]+)/i,
-    /my friends call me ([A-Za-z]+)/i,
-    /im ([A-Za-z]+)/i,
+    /my (?:nickname|friends call) me ([A-Za-z]+)/i,
+    /i (?:prefer|would like) to be called ([A-Za-z]+)/i,
   ];
 
   for (const pattern of namePatterns) {
@@ -122,13 +114,12 @@ function extractAndRememberUserInfo(message, conversationId) {
         break;
       }
     }
-  }
-
-  // Extract preferences with more patterns
+  } // Extract preferences with consolidated patterns
   const likesPatterns = [
     /i (?:like|love|enjoy|prefer) ([^,.!?]+)/i,
     /([^,.!?]+) (?:is great|is awesome|is amazing)/i,
     /([^,.!?]+) (?:is my favorite)/i,
+    /i(?:'?m|\s*am)\b (?:a fan of|fond of|into|really into) ([^,.!?]+)/i,
   ];
 
   for (const pattern of likesPatterns) {
@@ -141,14 +132,12 @@ function extractAndRememberUserInfo(message, conversationId) {
         infoExtracted = true;
       }
     }
-  }
-
-  // Extract dislikes with more patterns
+  } // Extract dislikes with consolidated patterns
   const dislikesPatterns = [
-    /i (?:dislike|hate|don't like|do not like) ([^,.!?]+)/i,
+    /i (?:dislike|hate|don'?t like|do not like) ([^,.!?]+)/i,
     /([^,.!?]+) (?:is bad|is terrible|is awful)/i,
     /([^,.!?]+) (?:is my least favorite)/i,
-    /i'm not a fan of ([^,.!?]+)/i,
+    /i(?:'?m|\s*am)\b not (?:a fan of|fond of|into|really into|really a fan of|really fond of|really keen on|really interested in) ([^,.!?]+)/i,
   ];
 
   for (const pattern of dislikesPatterns) {
@@ -161,25 +150,13 @@ function extractAndRememberUserInfo(message, conversationId) {
         infoExtracted = true;
       }
     }
-  }
-
-  // Extract profession or role
+  } // Extract profession or role (consolidated patterns)
   const professionPatterns = [
-    /i (?:am|work as)(?: an?| ) ([^,.!?]+(?: developer| engineer| designer| programmer| student| teacher| manager| professional))/i,
-    /i'm(?: an?| ) ([^,.!?]+(?: developer| engineer| designer| programmer| student| teacher| manager| professional))/i,
-    /my job is(?: an?| ) ([^,.!?]+(?: developer| engineer| designer| programmer| teacher| manager))/i,
-    /my profession is ([^,.!?]+)/i,
-    /i work as ([^,.!?]+)/i,
-    /i am a ([^,.!?]+)/i,
-    /i'm a ([^,.!?]+)/i,
-    /im a ([^,.!?]+)/i,
-    /i am working as ([^,.!?]+)/i,
-    /i'm working as ([^,.!?]+)/i,
-    /i work as ([^,.!?]+)/i,
-    /i am(?: a| an) ([^,.!?]+)/i,
-    /i'm(?: a| an) ([^,.!?]+)/i,
+    /i(?:'?m|\s*am)\b(?: an?| ) ([^,.!?]+(?: developer| engineer| designer| programmer| student| teacher| manager| professional))/i,
+    /my (?:job|profession|role) is ([^,.!?]+)/i,
     /i work(?: as)? ([^,.!?]+)/i,
-    /my role is ([^,.!?]+)/i,
+    /i(?:'?m|\s*am)\b(?: a| an) ([^,.!?]+)/i,
+    /i(?:'?m|\s*am)\b working as ([^,.!?]+)/i,
   ];
 
   for (const pattern of professionPatterns) {
@@ -189,10 +166,10 @@ function extractAndRememberUserInfo(message, conversationId) {
       infoExtracted = true;
       break;
     }
-  }
-
-  // Extract age information
-  const agePatterns = [/i am (\d+)(?: years old)?/i, /i'm (\d+)(?: years old)?/i];
+  } // Extract age information (optimized pattern)
+  const agePatterns = [
+    /i(?:'?m|\s*am)\b (\d+)(?: years old)?/i, // Improved pattern for all "I am" variations
+  ];
 
   for (const pattern of agePatterns) {
     const ageMatch = message.match(pattern);
@@ -205,10 +182,11 @@ function extractAndRememberUserInfo(message, conversationId) {
         break;
       }
     }
-  }
-
-  // Extract location information
-  const locationPatterns = [/i (?:live|stay) in ([^,.!?]+)/i, /i am from ([^,.!?]+)/i, /i'm from ([^,.!?]+)/i];
+  } // Extract location information (optimized pattern)
+  const locationPatterns = [
+    /i (?:live|stay) in ([^,.!?]+)/i,
+    /i(?:'?m|\s*am)\b from ([^,.!?]+)/i, // Improved pattern for all "I am" variations
+  ];
 
   for (const pattern of locationPatterns) {
     const locationMatch = message.match(pattern);
@@ -354,11 +332,261 @@ function extractAndTrackTopicInterest(message, userId) {
         memory.topics = memory.topics.slice(0, 5);
       }
 
-      logDebug(`Added topic interest for user ${userId}: ${detectedTopic}`);
+      logDebug(`[Nova] Added topic interest for user ${userId}: ${detectedTopic}`);
     }
   }
 
   return detectedTopic;
+}
+
+/**
+ * Store information about a previously unknown term
+ * @param {string} term - The term being learned
+ * @param {string} definition - The definition or explanation of the term
+ * @param {string} userId - User identifier
+ * @returns {boolean} - Whether the term was successfully stored
+ */
+function learnNewTerm(term, definition, userId) {
+  if (!term || !definition || !userId) {
+    logDebug(`[Nova] ERROR: Failed to learn term - missing parameters`, { term, definition, userId });
+    return false;
+  }
+
+  logDebug(`[Nova] INVOKE: learnNewTerm called with term "${term}"`, { term, definition, userId });
+
+  // Initialize or get user memory
+  const memory = initUserMemory(userId);
+
+  if (!memory.learnedTerms) {
+    // Force initialize learnedTerms if missing
+    memory.learnedTerms = {};
+    logDebug(`[Nova] WARNING: Had to initialize learnedTerms for user ${userId}`);
+  }
+
+  // Store the term in lowercase for case-insensitive matching
+  const normalizedTerm = term.toLowerCase().trim();
+
+  // Log current state before updating
+  logDebug(`[Nova] LEARNING: Current learned terms before adding`, {
+    userId,
+    count: Object.keys(memory.learnedTerms).length,
+    terms: Object.keys(memory.learnedTerms),
+  });
+
+  // Store the definition with metadata
+  memory.learnedTerms[normalizedTerm] = {
+    definition: definition,
+    learnedAt: new Date().toISOString(),
+    usageCount: 0,
+    lastUsed: null,
+  };
+
+  // Verify the term was actually stored
+  if (!memory.learnedTerms[normalizedTerm]) {
+    logDebug(`[Nova] ERROR: Failed to store term "${normalizedTerm}" for user ${userId}`);
+    return false;
+  }
+
+  logDebug(`[Nova] SUCCESS: Learned new term for user ${userId}: "${normalizedTerm}"`, {
+    definition,
+    totalTermsKnown: Object.keys(memory.learnedTerms).length,
+    allTerms: Object.keys(memory.learnedTerms),
+  });
+
+  return true;
+}
+
+/**
+ * Check if Nova knows about a specific term for this user
+ * @param {string} term - The term to check
+ * @param {string} userId - User identifier
+ * @returns {boolean} - Whether Nova knows about this term
+ */
+function knowsTerm(term, userId) {
+  if (!term || !userId) {
+    logDebug(`[Nova] ERROR: Cannot check term - missing parameters`, { term, userId });
+    return false;
+  }
+
+  if (!userMemory[userId]) {
+    logDebug(`[Nova] ERROR: User memory doesn't exist for user ${userId}`);
+    return false;
+  }
+
+  if (!userMemory[userId].learnedTerms) {
+    logDebug(`[Nova] ERROR: learnedTerms object missing for user ${userId}`);
+    return false;
+  }
+
+  const normalizedTerm = term.toLowerCase().trim();
+  const termExists = !!userMemory[userId].learnedTerms[normalizedTerm];
+
+  // Log detailed info
+  logDebug(`[Nova] KNOWS_TERM: Checking if Nova knows term "${normalizedTerm}" for user ${userId}`, {
+    result: termExists,
+    allTerms: Object.keys(userMemory[userId].learnedTerms),
+    totalTermsKnown: Object.keys(userMemory[userId].learnedTerms).length,
+  });
+
+  return termExists;
+}
+
+/**
+ * Get the definition of a term Nova has learned
+ * @param {string} term - The term to retrieve
+ * @param {string} userId - User identifier
+ * @returns {string|null} - The definition or null if not found
+ */
+function getLearnedTermDefinition(term, userId) {
+  if (!term || !userId || !userMemory[userId]) {
+    logDebug(`[Nova] ERROR: Cannot get definition - missing parameters or user memory`, { term, userId });
+    return null;
+  }
+
+  const normalizedTerm = term.toLowerCase().trim();
+
+  if (!userMemory[userId].learnedTerms) {
+    logDebug(`[Nova] ERROR: learnedTerms object missing for user ${userId}`);
+    return null;
+  }
+
+  const termInfo = userMemory[userId].learnedTerms[normalizedTerm];
+
+  if (!termInfo) {
+    logDebug(`[Nova] ERROR: Term "${normalizedTerm}" not found for user ${userId}`, {
+      availableTerms: Object.keys(userMemory[userId].learnedTerms),
+    });
+    return null;
+  }
+
+  // Update usage statistics
+  termInfo.usageCount++;
+  termInfo.lastUsed = new Date().toISOString();
+
+  logDebug(`[Nova] SUCCESS: Retrieved definition for term "${normalizedTerm}" for user ${userId}`, {
+    usageCount: termInfo.usageCount,
+    definition: termInfo.definition,
+    allTerms: Object.keys(userMemory[userId].learnedTerms),
+  });
+
+  return termInfo.definition;
+}
+
+/**
+ * Extract potential term definition from a user's response
+ * @param {string} message - The user's message
+ * @param {string} term - The term that was previously unknown
+ * @param {string} userId - User identifier
+ * @returns {boolean} - Whether a definition was extracted and stored
+ */
+function extractTermDefinition(message, term, userId) {
+  if (!message || !term || !userId) {
+    logDebug(`[Nova] ERROR: Cannot extract definition - missing parameters`, { message, term, userId });
+    return false;
+  }
+
+  // Log detailed info about the extraction attempt
+  logDebug(`[Nova] EXTRACT: Attempting to extract definition for term "${term}"`, {
+    message,
+    userId,
+    messageLength: message.length,
+    timestamp: new Date().toISOString(),
+  });
+  // Try to extract a definition from various patterns in the message
+  let definition = null;
+
+  // Escape special characters in the term for regex safety
+  const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  // Pattern 1: Direct definition patterns like "X is Y" or "X means Y"
+  const directPatterns = [
+    new RegExp(`${escapedTerm}\\s+(?:is|means|refers to|=)\\s+(.+)`, "i"),
+    new RegExp(`(?:the|a|an)\\s+${escapedTerm}\\s+(?:is|means|refers to|=)\\s+(.+)`, "i"),
+    new RegExp(`${escapedTerm}(?::|-)\\s*(.+)`, "i"), // For patterns like "term: definition" or "term - definition"
+    new RegExp(`${escapedTerm}\\s+(?:can be defined as|is defined as)\\s+(.+)`, "i"), // Add "defined as" pattern
+  ];
+
+  for (const pattern of directPatterns) {
+    const match = message.match(pattern);
+    if (match && match[1]) {
+      definition = match[1].trim();
+      logDebug(`[Nova] EXTRACT: Found definition using direct pattern`, { pattern: pattern.toString(), definition });
+      break;
+    }
+  }
+
+  // Pattern 2: "It is X" or "That's X" patterns (when responding to a direct question)
+  if (!definition) {
+    const indirectPatterns = [
+      /^(?:it|that|this)\s+(?:is|means|refers to)\s+(.+)/i,
+      /^(?:it'?s|that'?s|this is)\s+(.+)/i,
+      /^(?:a|an)\s+(.+)/i,
+      /^(?:basically|simply|just)\s+(?:a|an|the)?\s*(.+)/i,
+      /^(?:something|a thing|an object|a concept)\s+(?:that|which|who)\s+(.+)/i,
+      /^(?:the|this|that)\s+(?:is|means|refers to)\s+(.+)/i,
+    ];
+
+    for (const pattern of indirectPatterns) {
+      const match = message.match(pattern);
+      if (match && match[1]) {
+        definition = match[1].trim();
+        logDebug(`[Nova] EXTRACT: Found definition using indirect pattern`, {
+          pattern: pattern.toString(),
+          definition,
+        });
+        break;
+      }
+    }
+  }
+  // Pattern 3: Use the entire message if it's a simple response and nothing else matched
+  if (!definition && message.trim().length > 3 && message.trim().length < 150) {
+    definition = message.trim();
+    logDebug(`[Nova] EXTRACT: Using entire message as definition`, { definition });
+  }
+
+  logDebug(`[Nova] EXTRACT: Final definition extracted`, {
+    term,
+    definition,
+    message,
+    userId,
+  });
+
+  // Clean up the definition (remove ending punctuation, etc.)
+  if (definition) {
+    // Remove phrase beginnings like "it is", "it's", etc. if using full message
+    definition = definition
+      .replace(/^(?:well,?|um,?|hmm,?|so,?|okay,?|like,?|you see,?|basically,?|actually,?)\s+/i, "") // Expanded filler words
+      .replace(/[.!?]+$/, "") // Remove ending punctuation
+      .trim();
+
+    // If definition is too short, use the entire message
+    if (definition.length < 5 && message.trim().length > 5) {
+      definition = message.trim();
+      logDebug(`[Nova] EXTRACT: Definition too short, falling back to entire message`, { definition });
+    }
+  }
+
+  // Store the term if the definition seems reasonable (not too short)
+  if (definition && definition.length > 3) {
+    const success = learnNewTerm(term, definition, userId);
+
+    if (!success) {
+      logDebug(`[Nova] ERROR: Failed to learn term after extraction`, { term, definition });
+      return false;
+    }
+
+    logDebug(`[Nova] SUCCESS: Successfully extracted and saved definition for "${term}"`, {
+      definition,
+      userId,
+    });
+
+    return true;
+  } else {
+    logDebug(`[Nova] ERROR: Could not extract a valid definition`, {
+      originalMessage: message,
+      extractedDefinition: definition || "(none)",
+    });
+    return false;
+  }
 }
 
 // Export all user memory functions
@@ -368,4 +596,8 @@ module.exports = {
   generatePersonalizedResponse,
   extractAndRememberUserInfo,
   extractAndTrackTopicInterest,
+  learnNewTerm,
+  knowsTerm,
+  getLearnedTermDefinition,
+  extractTermDefinition,
 };

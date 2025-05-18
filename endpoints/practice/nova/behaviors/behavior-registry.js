@@ -6,6 +6,7 @@
  */
 
 const { logDebug } = require("../../../../helpers/logger-api");
+const debugTermLearning = require("../debug-term-learning");
 
 /**
  * Registry of all available behaviors
@@ -56,6 +57,10 @@ class BehaviorRegistry {
         matchingBehaviors.push(behavior);
       }
     }
+
+    // Store the count of matching behaviors in the context for other behaviors to use
+    context.matchingBehaviorCount = matchingBehaviors.length;
+
     // Log all matching behaviors (for debugging)
     if (matchingBehaviors.length > 0) {
       logDebug("[Nova] BehaviorRegistry:getBehaviorForMessage", {
@@ -77,26 +82,202 @@ class BehaviorRegistry {
    * @param {string} message - The message to process
    * @param {object} context - Context for message processing
    * @returns {string} - The response
-   */
-  processMessage(message, context) {
+   */ processMessage(message, context) {
+    // Debug term learning: Check if this is a term definition that should be prioritized
+    const termDefinitionResponse = debugTermLearning.prioritizeTermDefinition(message, context, this.behaviors);
+    if (termDefinitionResponse) {
+      logDebug("[Nova] BehaviorRegistry: Term definition prioritized by debug module", {
+        term: context.previousUnknownTerm,
+        responseLength: termDefinitionResponse.length,
+      });
+      return termDefinitionResponse;
+    }
+
     // Collect all behaviors that can handle this message
     const matchingBehaviors = [];
+
+    // Track potential topics for better questioning
+    context.potentialTopics = [];
+
     for (const behavior of this.behaviors) {
       // Skip variation behavior for initial processing
       if (behavior.id === "variation") continue;
 
       if (behavior.canHandle(message, context)) {
         matchingBehaviors.push(behavior);
+
+        // If this is a topic-related behavior, store the topic
+        if (
+          ["knowledge-base", "recommendation", "gad-feature"].includes(behavior.id) &&
+          context.currentTopic &&
+          context.currentTopic !== "ambiguous"
+        ) {
+          context.potentialTopics.push(context.currentTopic);
+        }
+      }
+    } // Store the count of matching behaviors for curiosity behavior to use
+    context.matchingBehaviorCount = matchingBehaviors.length; // Log detailed information when a 'what is X' question is detected
+    if (/^what(?:'s| is)/i.test(message) || /^do you know/i.test(message) || /^tell me about/i.test(message)) {
+      // Try to extract the term from different question patterns
+      const whatIsMatch = message.match(/what(?:'s| is)(?: a| an| the)? ([a-zA-Z0-9_-]+)(?:\??|$)/i);
+      const doYouKnowMatch = message.match(/do you know(?: what| about)? ([a-zA-Z0-9_-]+)(?:\??|$)/i);
+      const tellMeMatch = message.match(/tell me about(?: the)? ([a-zA-Z0-9_-]+)(?:\??|$)/i);
+
+      // Try to extract multi-word terms in quotes
+      const quotedTermMatch =
+        message.match(/what(?:'s| is)(?: a| an| the)? "([^"]+)"(?:\??|$)/i) ||
+        message.match(/do you know(?: what| about)? "([^"]+)"(?:\??|$)/i) ||
+        message.match(/tell me about(?: the)? "([^"]+)"(?:\??|$)/i);
+
+      // Try to extract multi-word terms without quotes (end of sentence)
+      const endOfSentenceMatch =
+        message.match(/what(?:'s| is)(?: a| an| the)? (.+?)(?:\?|$)/i) ||
+        message.match(/do you know(?: what| about)? (.+?)(?:\?|$)/i) ||
+        message.match(/tell me about(?: the)? (.+?)(?:\?|$)/i); // Find the first matching term from any of the patterns
+      let termToCheck = null;
+      if (quotedTermMatch) termToCheck = quotedTermMatch[1].toLowerCase().trim();
+      else if (whatIsMatch) termToCheck = whatIsMatch[1].toLowerCase().trim();
+      else if (doYouKnowMatch) termToCheck = doYouKnowMatch[1].toLowerCase().trim();
+      else if (tellMeMatch) termToCheck = tellMeMatch[1].toLowerCase().trim();
+      else if (endOfSentenceMatch) {
+        termToCheck = endOfSentenceMatch[1].toLowerCase().trim();
+        // For multi-word matches without quotes, we need to be careful about extra words
+        // Remove common filler words at the end if they exist
+        termToCheck = termToCheck.replace(/\s+(is|means|refers to|definition).*$/, "");
+      }
+
+      const userId = context.userId || context.conversationId?.split("_")[0];
+
+      logDebug("[Nova] BehaviorRegistry:processMessage:TermQuestion", {
+        message: message,
+        matchingBehaviorsCount: matchingBehaviors.length,
+        behaviors: matchingBehaviors.map((b) => b.id).join(", "),
+        unknownTerm: context.unknownTerm || null,
+        extractedTerm: termToCheck,
+        userId: userId,
+      });
+
+      // First, check if this is a user-defined term
+      if (termToCheck && userId) {
+        const { knowsTerm } = require("../user-memory");
+
+        // If we know this term from user-taught definition, prioritize it
+        if (knowsTerm(termToCheck, userId)) {
+          logDebug("[Nova] BehaviorRegistry:processMessage:UserDefinedTermDetected", {
+            term: termToCheck,
+            userId: userId,
+            message: message,
+          });
+
+          // Mark this as a known term to ensure the curiosity behavior handles it
+          context.knownTerm = termToCheck;
+
+          // Find the curiosity behavior to handle this
+          const curiosityBehavior = this.behaviors.find((b) => b.id === "curiosity");
+          if (curiosityBehavior) {
+            // Force the curiosity behavior to handle the user-defined term
+            context.handledBy = "curiosity";
+            context.generatedResponse = curiosityBehavior.handle(message, context);
+            this._setResponseType(context);
+
+            // Log that we're prioritizing user-defined term
+            logDebug("[Nova] BehaviorRegistry:processMessage:PrioritizingUserDefinedTerm", {
+              knownTerm: termToCheck,
+              userId: userId,
+              message: message,
+            });
+
+            // Return the user-defined term response directly
+            return context.generatedResponse;
+          }
+        }
+      }
+
+      // When "what is X?" is asked and X is an unknown term, ensure Curiosity behavior handles it
+      // This special case overrides the normal behavior selection in some cases
+      if (context.unknownTerm && matchingBehaviors.length > 0) {
+        const curiosityBehavior = matchingBehaviors.find((b) => b.id === "curiosity");
+        if (curiosityBehavior) {
+          // Force the curiosity behavior to handle this
+          context.handledBy = "curiosity";
+          context.generatedResponse = curiosityBehavior.handle(message, context);
+          this._setResponseType(context);
+
+          // Log that we're forcing the curiosity behavior
+          logDebug("[Nova] BehaviorRegistry:processMessage:ForcingCuriosityForWhatIs", {
+            unknownTerm: context.unknownTerm,
+            message: message,
+          });
+
+          // Return the response directly
+          return context.generatedResponse;
+        }
+      }
+    } // If this is a potential term definition response, make sure the CuriosityBehavior handles it
+    if (context.isDefiningUnknownTerm && context.previousUnknownTerm) {
+      logDebug("[Nova] BehaviorRegistry:processMessage:DefiningUnknownTerm", {
+        previousUnknownTerm: context.previousUnknownTerm,
+        message: message.substring(0, 50) + (message.length > 50 ? "..." : ""),
+        matchingBehaviors: matchingBehaviors.map((b) => b.id).join(", "),
+        isDefiningUnknownTerm: context.isDefiningUnknownTerm,
+      });
+
+      // Try to find the curiosity behavior
+      const curiosityBehavior = this.behaviors.find((b) => b.id === "curiosity");
+      if (curiosityBehavior) {
+        // Force the curiosity behavior to handle this definition
+        context.handledBy = "curiosity";
+        context.generatedResponse = curiosityBehavior.handle(message, context);
+        this._setResponseType(context);
+
+        // Return the response directly
+        return context.generatedResponse;
       }
     }
 
-    // If no behaviors can handle the message, track unrecognized count and provide help
+    // If this is a potential term definition response, make sure the CuriosityBehavior handles it
+    if (context.isDefiningUnknownTerm && context.previousUnknownTerm) {
+      logDebug("[Nova] BehaviorRegistry:processMessage:DefiningUnknownTerm", {
+        previousUnknownTerm: context.previousUnknownTerm,
+        message: message.substring(0, 50) + (message.length > 50 ? "..." : ""),
+        matchingBehaviors: matchingBehaviors.map((b) => b.id).join(", "),
+        isDefiningUnknownTerm: context.isDefiningUnknownTerm,
+      });
+
+      // Try to find the curiosity behavior
+      const curiosityBehavior = this.behaviors.find((b) => b.id === "curiosity");
+      if (curiosityBehavior) {
+        // Force the curiosity behavior to handle this definition
+        context.handledBy = "curiosity";
+        context.generatedResponse = curiosityBehavior.handle(message, context);
+
+        // Return the response directly
+        return context.generatedResponse;
+      }
+    }
+
+    // If no behaviors can handle the message, try curiosity behavior or provide help
     if (matchingBehaviors.length === 0) {
       // Increment the count of unrecognized messages
-      context.unrecognizedCount = (context.unrecognizedCount || 0) + 1;
+      context.unrecognizedCount = (context.unrecognizedCount || 0) + 1; // Check if curiosity behavior is available
+      const curiosityBehavior = this.behaviors.find((b) => b.id === "curiosity");
 
+      if (curiosityBehavior && curiosityBehavior.canHandle(message, context)) {
+        // Track which behavior handled the message
+        context.handledBy = "curiosity";
+        context.generatedResponse = curiosityBehavior.handle(message, context);
+
+        // Log that curiosity behavior is handling unknown term
+        if (context.unknownTerm || context.previousUnknownTerm) {
+          logDebug("[Nova] BehaviorRegistry:processMessage:UnknownTerm", {
+            unknownTerm: context.unknownTerm || context.previousUnknownTerm,
+            isDefining: !!context.isDefiningUnknownTerm,
+            isPrevious: !!context.previousUnknownTerm,
+          });
+        }
+      }
       // After multiple unrecognized messages, provide help suggestions
-      if (context.unrecognizedCount >= 4) {
+      else if (context.unrecognizedCount >= 4) {
         // Reset the counter to prevent showing this every time
         context.unrecognizedCount = 0;
 
@@ -108,12 +289,10 @@ class BehaviorRegistry {
 - Ask for recommendations with "What do you recommend for..."
 
 How can I assist you today?`;
+      } else {
+        return "I'm not sure how to respond to that. Could you try a different question?";
       }
-
-      return "I'm not sure how to respond to that. Could you try a different question?";
-    }
-
-    // If only one behavior can handle it, use that one
+    } // If only one behavior can handle it, use that one
     if (matchingBehaviors.length === 1) {
       // Track which behavior handled the message
       context.handledBy = matchingBehaviors[0].id;
@@ -129,6 +308,15 @@ How can I assist you today?`;
 
       // Sort by score (highest first)
       responses.sort((a, b) => b.score - a.score);
+
+      // Determine if we have low confidence matches
+      const topScore = responses[0].score;
+      const secondScore = responses.length > 1 ? responses[1].score : 0;
+
+      // If the top score is close to the second score, mark as low confidence
+      if (responses.length > 1 && topScore - secondScore < 50) {
+        context.hasLowConfidenceMatches = true;
+      }
 
       // Log matching behaviors and their scores
       logDebug("[Nova] BehaviorRegistry:processMessage:MatchScores", {
@@ -153,6 +341,11 @@ How can I assist you today?`;
       // Apply variation to the response
       const response = variationBehavior.handle(message, context);
 
+      logDebug("[Nova] BehaviorRegistry:processMessage:FinalResponse Data", {
+        id: variationBehavior.id,
+        type: context.responseType,
+        behaviorId: context.handledBy,
+      });
       logDebug("[Nova] BehaviorRegistry:processMessage:FinalResponse", {
         response,
       });
@@ -169,7 +362,6 @@ How can I assist you today?`;
     // Return the generated response if no variation was applied
     return context.generatedResponse;
   }
-
   /**
    * Calculate a score for a response based on relevance to the message
    * @private
@@ -177,18 +369,54 @@ How can I assist you today?`;
    * @param {string} behaviorId - ID of the behavior
    * @param {object} context - Message context
    * @returns {number} - Score indicating how well this behavior matches the message
-   */
-  _calculateResponseScore(message, behaviorId, context) {
+   */ _calculateResponseScore(message, behaviorId, context) {
     const lowerMessage = message.toLowerCase();
     let score = 0;
+
+    // Extract userId from context for use in diagnostics
+    const userId = context.userId || context.conversationId?.split("_")[0];
 
     // Base score from behavior priority
     const behavior = this.behaviors.find((b) => b.id === behaviorId);
     score += behavior ? behavior.priority : 0;
 
+    // Boost score for proactive behavior when handling responses to proactive questions
+    if (behaviorId === "proactive" && context.isResponseToProactiveQuestion) {
+      score += 500; // Significant boost to ensure ProactiveBehavior handles responses to its questions
+      return score; // Early return - no need for further scoring
+    } // If this is a response to a proactive question about games, boost game behavior
+    if (context.proactiveResponseCategory === "games" && behaviorId === "game") {
+      score += 300;
+      return score;
+    }
+
     // Specific behavior scoring adjustments
     switch (behaviorId) {
-      case "knowledge-base":
+      case "curiosity":
+        // Boost curiosity behavior significantly when unknown terms are detected
+        if (context.unknownTerm || context.previousUnknownTerm || context.isDefiningUnknownTerm || context.knownTerm) {
+          score += 800; // Higher priority than any other behavior to ensure it handles unknown terms          // Log that we're boosting the curiosity behavior score due to terms
+          logDebug("[Nova] BehaviorRegistry:boostCuriosityScore", {
+            message: "Boosting curiosity behavior score for term handling",
+            unknownTerm: context.unknownTerm || context.previousUnknownTerm || null,
+            knownTerm: context.knownTerm || null,
+            isDefiningTerm: context.isDefiningUnknownTerm || false,
+            newScore: score,
+            originalMessage: message,
+          });
+
+          // If the message starts with "what is" or similar patterns, prioritize curiosity even more
+          if (/^what(?:'s| is)/i.test(message) || /^do you know/i.test(message) || /^tell me about/i.test(message)) {
+            score += 300; // Extra boost for direct questions about terms
+          }
+        }
+        break;
+      case "knowledge-base": // If an unknown term or known term is detected, heavily penalize the knowledge base behavior
+        if (context.unknownTerm || context.knownTerm) {
+          score -= 300;
+          break;
+        }
+
         // Boost knowledge base for factual questions
         if (
           context.currentTopic === "programming" ||
@@ -210,7 +438,18 @@ How can I assist you today?`;
           score -= 500; // Significant penalty to ensure DefaultResponseBehavior handles these
         }
         break;
-      case "default-response":
+      case "small-talk": // If an unknown term or known term is detected, penalize small-talk behavior
+        if (context.unknownTerm || context.knownTerm) {
+          score -= 300;
+          break;
+        }
+        break;
+
+      case "default-response": // If an unknown term or known term is detected, penalize default-response behavior
+        if (context.unknownTerm || context.knownTerm) {
+          score -= 300;
+          break;
+        }
         // Boost default response for wellbeing questions
         if (
           lowerMessage.includes("how are you") ||
@@ -234,7 +473,6 @@ How can I assist you today?`;
 
     return score;
   }
-
   /**
    * Set the response type based on the behavior that handled it
    * @private
@@ -270,6 +508,13 @@ How can I assist you today?`;
         break;
       case "personality":
         context.responseType = "personal";
+        break;
+      case "proactive":
+        if (context.isResponseToProactiveQuestion) {
+          context.responseType = "follow-up";
+        } else {
+          context.responseType = "proactive";
+        }
         break;
       default:
         context.responseType = "general";

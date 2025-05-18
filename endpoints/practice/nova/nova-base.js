@@ -368,7 +368,8 @@ I'm always learning! Feel free to chat with me about anything.
 // Emotion/sentiment detection patterns
 const sentimentPatterns = [
   {
-    pattern: /(?:^|\s)(love|great|excellent|amazing|awesome|fantastic|wonderful|happy|excited|thankyou|thanks)/i,
+    pattern:
+      /(?:^|\s)(love|great|excellent|amazing|awesome|fantastic|wonderful|happy|excited|thankyou|thanks|help|assist|support|guide|advise)/i,
     sentiment: "positive",
   },
   { pattern: /(?:^|\s)(good|nice|cool|helpful|interesting|neat|okay|ok)/i, sentiment: "neutral-positive" },
