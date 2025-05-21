@@ -1,5 +1,5 @@
 /**
- * Behavior Registry - Central registry for all AI behaviors
+ * Behavior Registry - Central registry for all behaviors
  *
  * This module is the core of the behavior system, allowing behaviors to register
  * themselves and providing a way to find the appropriate behavior for a message.

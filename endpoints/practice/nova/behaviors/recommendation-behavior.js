@@ -256,11 +256,11 @@ class RecommendationBehavior extends BaseBehavior {
    * @private
    */
   _isResponseToTopicQuestion(context) {
-    // Check if previous AI message asked for specific topic
+    // Check if previous message asked for specific topic
     if (context.conversationHistory && context.conversationHistory.length > 1) {
       const recentMessages = context.getLatestMessages(2);
 
-      // Check if last message was from AI and contained the topic question
+      // Check if last message was from Nova and contained the topic question
       for (let i = recentMessages.length - 1; i >= 0; i--) {
         const msg = recentMessages[i];
         if (

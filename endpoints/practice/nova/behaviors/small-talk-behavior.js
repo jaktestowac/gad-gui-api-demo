@@ -385,7 +385,7 @@ class SmallTalkBehavior extends BaseBehavior {
    * @private
    */ _handlePersonal(message) {
     if (/what(?:'?s|\s*is) your name/i.test(message) || /who are you/i.test(message)) {
-      return "I'm Nova, an AI assistant designed to help with a variety of tasks and have pleasant conversations.";
+      return "I'm Nova, an assistant designed to help with a variety of tasks and have pleasant conversations.";
     } else if (/how old are you/i.test(message)) {
       return "I don't have an age in the traditional sense. I was created recently but I'm constantly learning!";
     } else if (/where are you from/i.test(message)) {
@@ -399,7 +399,7 @@ class SmallTalkBehavior extends BaseBehavior {
       ];
       return favorites[Math.floor(Math.random() * favorites.length)];
     } else {
-      return "I'm Nova, an AI assistant. I'm here to help answer questions, have conversations, and assist with various tasks.";
+      return "I'm Nova, an assistant. I'm here to help answer questions, have conversations, and assist with various tasks.";
     }
   }
 

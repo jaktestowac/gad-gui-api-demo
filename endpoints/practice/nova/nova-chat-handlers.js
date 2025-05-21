@@ -21,10 +21,10 @@ const conversations = {};
 const conversationAnalytics = {};
 
 /**
- * Simple AI that responds to user messages
+ * Simple that responds to user messages
  * @param {string} message - The user's message
  * @param {string} conversationId - Unique identifier for the conversation
- * @returns {string} The AI's response
+ * @returns {string} The response
  */
 function generateAIResponse(message, conversationId) {
   // Initialize conversation history and analytics if they don't exist
@@ -122,7 +122,7 @@ function generateAIResponse(message, conversationId) {
     conversationAnalytics[conversationId].unknownTermContext = {};
   }
 
-  // Add AI response to history
+  // Add response to history
   conversations[conversationId].push({ role: "assistant", content: response });
 
   // Smart conversation history management
@@ -156,7 +156,7 @@ function getUserAndConversationIdFromCookies(req) {
 }
 
 /**
- * Handle a user message and generate an AI response
+ * Handle a user message and generate a Nova response
  */
 function handleMessage(req, res) {
   try {
@@ -344,7 +344,7 @@ function listConversations(req, res) {
 }
 
 /**
- * Get statistics about the AI chat system
+ * Get statistics about the Nova chat system
  */
 function getStatistics(req, res) {
   try {

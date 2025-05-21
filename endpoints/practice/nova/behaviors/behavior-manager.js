@@ -1,5 +1,5 @@
 /**
- * Behavior Manager - Initialize and manage all AI behaviors
+ * Behavior Manager - Initialize and manage all Nova behaviors
  *
  * This module initializes all behaviors and registers them with the registry.
  */

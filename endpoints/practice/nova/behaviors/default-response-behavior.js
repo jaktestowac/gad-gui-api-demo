@@ -137,7 +137,7 @@ class DefaultResponseBehavior extends BaseBehavior {
         "I'd like to understand better. Could you share a bit more context about what you're working on?",
         "Interesting point! Would you like to elaborate on that? I'm curious to learn more.",
         "I'm eager to help, but could use a bit more information. What specifically are you looking for?",
-      ], // Enhanced reactions for when AI doesn't understand
+      ], // Enhanced reactions for when Nova doesn't understand
       confused: [
         "I'm sorry, but I didn't quite understand what you meant. Could you please rephrase that? Or are you asking about programming, testing, or something else?",
         "I'm having trouble following. Could you try again with different wording? Maybe tell me if this is about web development, databases, or another topic?",

@@ -119,12 +119,12 @@ class PersonalityBehavior extends BaseBehavior {
 
     // If the message is a greeting, respond with a personality-driven greeting
     if (lowerMessage.includes("hello") || lowerMessage.includes("hi")) {
-      return "Hello! I'm Nova, your helpful AI assistant. How can I brighten your day today?";
+      return "Hello! I'm Nova, your helpful assistant. How can I brighten your day today?";
     }
 
     // If it's a question about Nova
     if (lowerMessage.includes("who are you") || lowerMessage.includes("what are you")) {
-      return "I'm Nova, an AI assistant designed to be helpful, friendly, and adaptable to your needs. I really enjoy solving problems and learning new things!";
+      return "I'm Nova, an assistant designed to be helpful, friendly, and adaptable to your needs. I really enjoy solving problems and learning new things!";
     }
 
     // Default personality response for other cases

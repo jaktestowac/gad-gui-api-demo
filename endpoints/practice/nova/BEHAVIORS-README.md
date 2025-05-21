@@ -1,14 +1,14 @@
-# Nova AI Behavior System Documentation
+# Nova Behavior System Documentation
 
 ## Overview
 
-The Nova AI chat system uses a sophisticated behavior-based architecture that allows for easy extension with new behaviors. This modular approach replaces traditional monolithic response generation with a plugin-based system where each type of interaction (commands, games, knowledge base lookups, proactive conversations, etc.) is handled by a specialized module that can be independently registered with the system.
+The Nova chat system uses a sophisticated behavior-based architecture that allows for easy extension with new behaviors. This modular approach replaces traditional monolithic response generation with a plugin-based system where each type of interaction (commands, games, knowledge base lookups, proactive conversations, etc.) is handled by a specialized module that can be independently registered with the system.
 
 ## Core Architecture
 
 ### 1. Behavior Registry (`behavior-registry.js`)
 
-The central registry for all AI behaviors. It provides methods to:
+The central registry for all behaviors. It provides methods to:
 
 - Register new behaviors
 - Find the appropriate behavior for a given message using a sophisticated scoring system

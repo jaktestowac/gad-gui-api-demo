@@ -1038,7 +1038,7 @@ const updatePostLikes = (post) => {
 };
 
 const openPostModal = (post) => {
-  // Populate modal  modalPostImage.src = post.imageUrl;
+  // Populate modal
   modalPostImage.dataset.postId = post.id;
   modalPostImage.src = post.imageUrl;
   modalPostImage.alt = post.caption || "Post image";
