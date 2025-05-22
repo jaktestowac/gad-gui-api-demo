@@ -296,7 +296,7 @@
         }
 
         .nova-message::before {
-            content: "NOVA AI";
+            content: "NOVA";
             display: block;
             font-weight: bold;
             margin-bottom: 5px;
@@ -632,7 +632,7 @@
     <div class="space-header">
         <div class="nova-eye"></div>
         <div>
-            <div class="header-title">NOVA AI</div>
+            <div class="header-title">NOVA</div>
             <div class="nova-subtitle">Advanced Intelligence System - Deep Space Network</div>
         </div>
         <a href="/practice/" class="home-button" title="Go to Practice Pages"><i class="fas fa-home"></i> <span>Practice Pages</span></a>
@@ -963,7 +963,7 @@
 
                     // Add welcome message
                     addSystemMessage('Conversation cleared');
-                    addMessage('Greetings, I am NOVA AI, the Deep Space Network\'s advanced intelligence system. How may I assist you with your mission today?', false);
+                    addMessage('Greetings, I am NOVA, the Deep Space Network\'s advanced intelligence system. How may I assist you with your mission today?', false);
                 }
 
                 // Refresh conversations list
@@ -993,7 +993,7 @@
                 if (messagesContainer) {
                     messagesContainer.innerHTML = '';
                     addSystemMessage('All conversations cleared');
-                    addMessage('Greetings, I am NOVA AI, the Deep Space Network\'s advanced intelligence system. How may I assist you with your mission today?', false);
+                    addMessage('Greetings, I am NOVA, the Deep Space Network\'s advanced intelligence system. How may I assist you with your mission today?', false);
                 }
                 // Refresh conversations list
                 loadConversations();
@@ -1049,7 +1049,7 @@
                 if (messagesContainer) {
                     messagesContainer.innerHTML = '';
                     addSystemMessage('User memory cleared');
-                    addMessage('Greetings, I am NOVA AI, the Deep Space Network\'s advanced intelligence system. How may I assist you with your mission today?', false);
+                    addMessage('Greetings, I am NOVA, the Deep Space Network\'s advanced intelligence system. How may I assist you with your mission today?', false);
                 }
                 // Refresh conversations list
                 loadConversations();
@@ -1133,14 +1133,14 @@
                     if (messagesContainer) {
                         messagesContainer.innerHTML = '';
                         addSystemMessage('New conversation started');
-                        addMessage('Greetings, I am NOVA AI, the Deep Space Network\'s advanced intelligence system. How may I assist you with your mission today?', false);
+                        addMessage('Greetings, I am NOVA, the Deep Space Network\'s advanced intelligence system. How may I assist you with your mission today?', false);
                     }
                     // Update the sidebar
                     loadConversations();
                     return true;
                 },
                 description: 'Start a new conversation',
-                help: 'Creates a fresh conversation with NOVA AI. Your previous conversations remain accessible from the sidebar.'
+                help: 'Creates a fresh conversation with NOVA. Your previous conversations remain accessible from the sidebar.'
             },
             '/rename': {
                 handler: function () {
@@ -1215,14 +1215,28 @@ Time: ${new Date().toISOString()}
                 },
                 description: 'Show technical debug information',
                 help: 'Displays technical information useful for troubleshooting issues with the NOVA interface.'
-            },
-            '/theme': {
+            }, '/theme': {
                 handler: function () {
                     toggleTheme();
                     return true;
                 },
                 description: 'Toggle between light and dark themes',
                 help: 'Switches between light and dark color schemes for the NOVA interface.'
+            },
+            '/list-terms': {
+                handler: async function () {
+                    const message = "/list-terms";
+
+                    // Send the command to the backend and wait for response
+                    const response = await sendMessageToApi(message);
+
+                    if (response) {
+                        addMessage(response, false);
+                    }
+                    return true;
+                },
+                description: 'List all terms Nova has learned',
+                help: 'Displays all the terms and their definitions that you have taught Nova during your conversations.'
             }
         };
 
@@ -1538,7 +1552,7 @@ Time: ${new Date().toISOString()}
                 if (messagesContainer) {
                     messagesContainer.innerHTML = '';
                     addSystemMessage('New conversation started');
-                    addMessage('Greetings, I am NOVA AI, the Deep Space Network\'s advanced intelligence system. How may I assist you with your mission today?', false);
+                    addMessage('Greetings, I am NOVA, the Deep Space Network\'s advanced intelligence system. How may I assist you with your mission today?', false);
                 }
                 // Update the sidebar
                 loadConversations();

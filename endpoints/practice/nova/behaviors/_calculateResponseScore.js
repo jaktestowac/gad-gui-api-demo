@@ -30,8 +30,7 @@ _calculateResponseScore(message, behaviorId, context) {
   }
 
   // Specific behavior scoring adjustments
-  switch (behaviorId) {
-    case "curiosity":
+  switch (behaviorId) {    case "curiosity":
       // Boost curiosity behavior significantly when terms (known or unknown) are detected
       if (context.unknownTerm || context.previousUnknownTerm || context.isDefiningUnknownTerm || context.knownTerm) {
         score += 800; // Higher priority than any other behavior to ensure it handles terms
@@ -50,6 +49,22 @@ _calculateResponseScore(message, behaviorId, context) {
         if (/^what(?:'s| is)/i.test(message) || /^do you know/i.test(message) || /^tell me about/i.test(message)) {
           score += 300; // Extra boost for direct questions about terms
         }
+            // Special case for single-word queries that might be a term lookup
+      if (message.trim().split(/\s+/).length === 1) {
+        // For single-word queries that might be term lookups, make this behavior dominant
+        score += 1000; // Much higher than any other behavior to absolutely ensure it handles terms
+        
+        // Log that we're giving maximum priority to the curiosity behavior for single-word queries
+        logDebug("[Nova] BehaviorRegistry:boostCuriosityScore:singleWordQueryMaxPriority", {
+          message: "Giving maximum priority to curiosity behavior for single-word query",
+          originalMessage: message,
+          newScore: score,
+          userId: userId
+        });
+        
+        // Return early to ensure this takes precedence
+        return score;
+      }
       }
       break;
     case "knowledge-base":

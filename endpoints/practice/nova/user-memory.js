@@ -443,10 +443,13 @@ function getLearnedTermDefinition(term, userId) {
     return null;
   }
 
+  // Clean the term - this helps with minor formatting differences
   const normalizedTerm = term.toLowerCase().trim();
 
   if (!userMemory[userId].learnedTerms) {
     logDebug(`[Nova] ERROR: learnedTerms object missing for user ${userId}`);
+    // Initialize it to prevent future errors
+    userMemory[userId].learnedTerms = {};
     return null;
   }
 
@@ -485,15 +488,49 @@ function extractTermDefinition(message, term, userId) {
     return false;
   }
 
+  // Check for dismissive phrases that indicate the user doesn't want to define the term
+  const dismissivePhrases = [
+    /^forget\s*it$/i,
+    /^never\s*mind$/i,
+    /^doesn'?t\s*matter$/i,
+    /^don'?t\s*(?:worry|bother)(?:\s*about\s*it)?$/i,
+    /^skip\s*(?:it|this)$/i,
+    /^i\s*don'?t\s*(?:know|care)$/i,
+    /^not\s*important$/i,
+    /^no\s*(?:thanks|thank\s*you)?$/i,
+  ];
+
+  // Check if the message matches any dismissive phrase
+  for (const pattern of dismissivePhrases) {
+    if (pattern.test(message.trim())) {
+      logDebug(`[Nova] EXTRACT: User dismissed defining the term "${term}"`, {
+        message,
+        userId,
+        pattern: pattern.toString(),
+      });
+      return false;
+    }
+  }
+
   // Log detailed info about the extraction attempt
   logDebug(`[Nova] EXTRACT: Attempting to extract definition for term "${term}"`, {
     message,
     userId,
     messageLength: message.length,
     timestamp: new Date().toISOString(),
-  });
-  // Try to extract a definition from various patterns in the message
+  }); // Try to extract a definition from various patterns in the message
   let definition = null;
+
+  // Simple pattern for very short definitions like "its X"
+  const simplePattern = /^its\s+(.+)$/i;
+  const simpleMatch = message.match(simplePattern);
+  if (simpleMatch && simpleMatch[1]) {
+    definition = simpleMatch[1].trim();
+    logDebug(`[Nova] EXTRACT: Found definition using simple pattern`, {
+      pattern: simplePattern.toString(),
+      definition,
+    });
+  }
 
   // Escape special characters in the term for regex safety
   const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -513,12 +550,12 @@ function extractTermDefinition(message, term, userId) {
       break;
     }
   }
-
   // Pattern 2: "It is X" or "That's X" patterns (when responding to a direct question)
   if (!definition) {
     const indirectPatterns = [
       /^(?:it|that|this)\s+(?:is|means|refers to)\s+(.+)/i,
       /^(?:it'?s|that'?s|this is)\s+(.+)/i,
+      /^(?:its|it is)\s+(.+)/i, // Added pattern for "its X" which is a common short form
       /^(?:a|an)\s+(.+)/i,
       /^(?:basically|simply|just)\s+(?:a|an|the)?\s*(.+)/i,
       /^(?:something|a thing|an object|a concept)\s+(?:that|which|who)\s+(.+)/i,
@@ -536,9 +573,8 @@ function extractTermDefinition(message, term, userId) {
         break;
       }
     }
-  }
-  // Pattern 3: Use the entire message if it's a simple response and nothing else matched
-  if (!definition && message.trim().length > 3 && message.trim().length < 150) {
+  } // Pattern 3: Use the entire message if it's a simple response and nothing else matched
+  if (!definition && message.trim().length > 2 && message.trim().length < 150) {
     definition = message.trim();
     logDebug(`[Nova] EXTRACT: Using entire message as definition`, { definition });
   }
@@ -564,9 +600,8 @@ function extractTermDefinition(message, term, userId) {
       logDebug(`[Nova] EXTRACT: Definition too short, falling back to entire message`, { definition });
     }
   }
-
   // Store the term if the definition seems reasonable (not too short)
-  if (definition && definition.length > 3) {
+  if (definition && definition.length > 2) {
     const success = learnNewTerm(term, definition, userId);
 
     if (!success) {
