@@ -162,6 +162,22 @@
             display: none;
         }
 
+        .no-data-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 1.5rem 2rem;
+            border-radius: 8px;
+            font-size: 1.5rem;
+            text-align: center;
+            z-index: 10;
+            display: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
         .chart-controls {
             display: flex;
             gap: 1rem;
@@ -327,9 +343,17 @@
                         <button class="toggle-btn active" data-metric="temperature">Temperature</button>
                         <button class="toggle-btn active" data-metric="humidity">Humidity</button>
                         <button class="toggle-btn active" data-metric="wind">Wind</button>
+                        <button class="toggle-btn" id="clearChartBtn" style="background: #e74c3c; margin-left: auto;">
+                            <i class="fas fa-trash-alt"></i> Clear Data
+                        </button>
                     </div>
                     <div class="chart-content">
                         <canvas id="weatherChart"></canvas>
+                        <div id="noDataMessage" class="no-data-message">
+                            <i class="fas fa-cloud-rain" style="font-size: 2rem; margin-bottom: 0.8rem; display: block;"></i>
+                            NO data
+                            <div style="font-size: 0.9rem; margin-top: 0.5rem; opacity: 0.8;">Chart has been cleared or no data available</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -390,10 +414,12 @@
             const lastIndex = chartData.temperature.length - 1;
             document.getElementById('temperature').textContent = `${chartData.temperature[lastIndex]}°C`;
             document.getElementById('humidity').textContent = `Humidity: ${chartData.humidity[lastIndex]}%`;
-            document.getElementById('wind').textContent = `Wind: ${chartData.wind[lastIndex]} km/h`;
-            document.getElementById('location').textContent = 'Loading real data...';
+            document.getElementById('wind').textContent = `Wind: ${chartData.wind[lastIndex]} km/h`; document.getElementById('location').textContent = 'Loading real data...';
             document.getElementById('minmax').textContent =
                 `Min/Max: ${Math.min(...chartData.temperature)}°C / ${Math.max(...chartData.temperature)}°C`;
+
+            // Hide NO data message initially
+            document.getElementById('noDataMessage').style.display = 'none';
 
             weatherChart = new Chart(ctx, {
                 type: 'line',
@@ -589,10 +615,9 @@
             } else {
                 warningElement.style.display = 'none';
             }
-        }
-
-        document.querySelectorAll('.toggle-btn').forEach(button => {
+        } document.querySelectorAll('.toggle-btn').forEach(button => {
             button.addEventListener('click', () => {
+                if (button.id === 'clearChartBtn') return;
                 button.classList.toggle('active');
                 const metric = button.dataset.metric;
                 const datasetIndex = {
@@ -605,13 +630,38 @@
             });
         });
 
+        function clearChartData() {
+            // Clear the chart data
+            chartData.labels = [];
+            chartData.temperature = [];
+            chartData.humidity = [];
+            chartData.wind = [];
+
+            // Update chart with empty data
+            weatherChart.data.labels = [];
+            weatherChart.data.datasets[0].data = [];
+            weatherChart.data.datasets[1].data = [];
+            weatherChart.data.datasets[2].data = [];
+            weatherChart.update();
+
+            // Update display elements
+            document.getElementById('temperature').textContent = `--°C`;
+            document.getElementById('humidity').textContent = `Humidity: --%`;
+            document.getElementById('wind').textContent = `Wind: -- km/h`;
+            document.getElementById('minmax').textContent = `Min/Max: --°C / --°C`;
+
+            // Show the NO data message
+            document.getElementById('noDataMessage').style.display = 'block';
+        }
+
+        // Add event listener for clear chart button
+        document.getElementById('clearChartBtn').addEventListener('click', clearChartData);
+
         socket.addEventListener('open', () => {
             initChart();
             requestWeatherUpdate();
             setInterval(requestWeatherUpdate, 3000);
-        });
-
-        socket.addEventListener('message', (event) => {
+        }); socket.addEventListener('message', (event) => {
             const data = JSON.parse(event.data);
             if (data.type === 'weatherData' && data.weather.length > 0) {
                 const weather = data.weather[0];
@@ -622,6 +672,9 @@
                 document.getElementById('wind').textContent = `Wind: ${weather.windSpeed} km/h`;
                 checkWarnings(weather);
                 updateChart(weather);
+
+                // Hide the NO data message when we receive data
+                document.getElementById('noDataMessage').style.display = 'none';
             }
         });
     </script>
