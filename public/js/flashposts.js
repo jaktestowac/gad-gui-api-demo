@@ -623,3 +623,5 @@ document.addEventListener("click", (event) => {
     }
   }
 });
+
+console.log("The chickens are not what they seem");
