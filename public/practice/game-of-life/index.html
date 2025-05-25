@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD - Game of Life</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="game-of-life.css">
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+    <br />
+    <br />
+    <div class="gol-container">
+        <h1>Conway's Game of Life</h1>
+
+        <div class="gol-main-content">
+            <div class="gol-sidebar">
+                <div class="gol-controls">
+                    <div class="gol-size-controls">
+                        <label for="grid-width">Width:</label>
+                        <input type="number" id="grid-width" min="10" max="100" value="50">
+
+                        <label for="grid-height">Height:</label>
+                        <input type="number" id="grid-height" min="10" max="100" value="50">
+
+                        <button id="resize-btn">Resize Grid</button>
+                    </div>
+                    <div class="gol-simulation-controls">
+                        <button id="start-btn">Start</button>
+                        <button id="stop-btn">Stop</button>
+                        <button id="step-btn">Step</button>
+                        <button id="clear-btn">Clear</button>
+                        <button id="random-btn">Random</button>
+                    </div>
+
+                    <div class="gol-speed-control">
+                        <label for="speed">Speed: <span id="speed-value">5</span></label>
+                        <input type="range" id="speed" min="1" max="20" value="5">
+                    </div>
+                </div>
+
+                <div class="gol-pattern-selection">
+                    <label>Patterns:</label> <select id="pattern-select">
+                        <option value="single">Single Cell</option>
+                        <option value="glider">Glider</option>
+                        <option value="blinker">Blinker</option>
+                        <option value="pulsar">Pulsar</option>
+                        <option value="gosper">Gosper Glider Gun</option>
+                        <option value="beacon">Beacon</option>
+                        <option value="toad">Toad</option>
+                        <option value="acorn">Acorn</option>
+                        <option value="spaceship">Spaceship</option>
+                        <option value="diehard">Diehard</option>
+                        <option value="pentadecathlon">Pentadecathlon</option>
+                        <option value="gliderFactory">Glider Factory</option>
+                        <option value="r_pentomino">R-Pentomino</option>
+                        <option value="cross">Cross</option>
+                        <option value="infiniteGrowth">Infinite Growth</option>
+                    </select>
+                </div>
+                <div class="gol-status-display">
+                    <div class="gol-status-item">
+                        <span class="gol-status-label">Status:</span>
+                        <span id="game-status" class="status-stopped">Stopped</span>
+                    </div>
+                    <div class="gol-status-item">
+                        <span class="gol-status-label">Generation:</span>
+                        <span id="generation-count">0</span>
+                    </div>
+                    <div class="gol-status-item">
+                        <span class="gol-status-label">Population:</span>
+                        <span id="living-cells" class="low-density">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gol-game-area">
+                <div class="gol-grid-container">
+                    <canvas id="game-grid"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="gol-info">
+            <h3>Rules:</h3>
+            <ol>
+                <li>Any live cell with fewer than two live neighbors dies (underpopulation)</li>
+                <li>Any live cell with two or three live neighbors lives on (survival)</li>
+                <li>Any live cell with more than three live neighbors dies (overpopulation)</li>
+                <li>Any dead cell with exactly three live neighbors becomes a live cell (reproduction)</li>
+            </ol>
+            <p>Click on the grid to add/remove cells manually or choose a pattern from the dropdown.</p>
+        </div>
+    </div>
+
+    <script src="game-of-life.js"></script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>
