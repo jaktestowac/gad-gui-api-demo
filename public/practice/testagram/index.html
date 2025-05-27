@@ -93,7 +93,25 @@
                         <small class="form-hint">Must be at least 3 characters long</small>
                     </div> <button type="submit" class="btn btn-primary">Log In</button>
                     <div class="error-message hidden" id="login-error"></div>
-                </form> <!-- Register Form -->
+
+                    <!-- Predefined Users Table -->
+                    <div class="predefined-users">
+                        <h4>Quick Login with Test Users</h4>
+                        <div class="users-table">
+                            <div class="user-row" onclick="fillLoginForm('user1', '1234')">
+                                <span class="username">user1</span>
+                                <span class="password">1234</span>
+                                <span class="name">Test User 1</span>
+                            </div>
+                            <div class="user-row" onclick="fillLoginForm('user2', 'qwer')">
+                                <span class="username">user2</span>
+                                <span class="password">qwer</span>
+                                <span class="name">Test User 2</span>
+                            </div>
+                        </div>
+                        <small class="form-hint">Click on a user to auto-fill the login form</small>
+                    </div>
+                </form><!-- Register Form -->
                 <form id="register-form" class="auth-form hidden">
                     <div class="form-group">
                         <input type="email" id="register-email" placeholder="Email (example@domain.com)" required>

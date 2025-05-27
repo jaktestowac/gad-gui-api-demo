@@ -135,6 +135,36 @@ const showError = (element, message) => {
   }, 5000);
 };
 
+// Function to fill login form with predefined user credentials
+const fillLoginForm = (username, password) => {
+  const usernameInput = document.getElementById("login-username");
+  const passwordInput = document.getElementById("login-password");
+
+  if (usernameInput && passwordInput) {
+    usernameInput.value = username;
+    passwordInput.value = password;
+
+    // Add a visual feedback
+    usernameInput.style.backgroundColor = "#e8f5e8";
+    passwordInput.style.backgroundColor = "#e8f5e8";
+
+    // Remove the background color after a short delay
+    setTimeout(() => {
+      usernameInput.style.backgroundColor = "";
+      passwordInput.style.backgroundColor = "";
+    }, 1000);
+
+    // Focus on the login button
+    const loginBtn = document.querySelector("#login-form button[type='submit']");
+    if (loginBtn) {
+      loginBtn.focus();
+    }
+  }
+};
+
+// Make fillLoginForm globally available for HTML onclick
+window.fillLoginForm = fillLoginForm;
+
 // Custom Alert Functions
 const showAlert = (message, title = "Alert") => {
   return new Promise((resolve) => {

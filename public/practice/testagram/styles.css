@@ -383,6 +383,68 @@ textarea {
   font-style: italic;
 }
 
+/* === Predefined Users Table === */
+.predefined-users {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.predefined-users h4 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-dark);
+  text-align: center;
+}
+
+.users-table {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.user-row {
+  display: grid;
+  grid-template-columns: 60px 60px 1fr;
+  gap: 12px;
+  padding: 8px 12px;
+  background-color: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 13px;
+}
+
+.user-row:hover {
+  background-color: #e3f2fd;
+  border-color: var(--primary-color);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.user-row .username {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.user-row .password {
+  font-family: monospace;
+  color: var(--text-light);
+  background-color: #f5f5f5;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 12px;
+}
+
+.user-row .name {
+  color: var(--text-dark);
+}
+
 /* === Header/Navbar === */
 .header {
   background-color: var(--white);
