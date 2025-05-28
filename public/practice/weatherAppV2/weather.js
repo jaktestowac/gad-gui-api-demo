@@ -1175,7 +1175,7 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
     const username = document.getElementById("registerUsernamePageInput").value;
     const password = document.getElementById("registerPasswordPageInput").value;
-    const isAdmin = document.getElementById("registerAsAdminPageCheckbox").checked;
+    const isAdmin = document.getElementById("registerIsAdminPageInput").checked;
 
     const success = await registerUser(username, password, isAdmin);
     if (success) {

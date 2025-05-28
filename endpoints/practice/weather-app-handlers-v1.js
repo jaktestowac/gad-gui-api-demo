@@ -17,15 +17,15 @@ function createMockWeatherAppData() {
   // create 2 users
   const user1 = {
     id: nextUserId++,
-    username: "1",
-    password: "1",
-    isAdmin: false,
+    username: "ala",
+    password: "nowak",
+    isAdmin: true,
     createdAt: new Date().toISOString(),
   };
   const user2 = {
     id: nextUserId++,
-    username: "2",
-    password: "2",
+    username: "adam",
+    password: "pass",
     isAdmin: true,
     createdAt: new Date().toISOString(),
   };
