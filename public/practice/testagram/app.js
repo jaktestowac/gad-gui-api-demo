@@ -118,12 +118,27 @@ const formatTimestamp = (timestamp) => {
   const diffHour = Math.floor(diffMin / 60);
   const diffDay = Math.floor(diffHour / 24);
 
-  if (diffSec < 60) return "Just now";
+  if (diffSec < 60) return "just now";
   if (diffMin < 60) return `${diffMin} ${diffMin === 1 ? "minute" : "minutes"} ago`;
   if (diffHour < 24) return `${diffHour} ${diffHour === 1 ? "hour" : "hours"} ago`;
   if (diffDay < 7) return `${diffDay} ${diffDay === 1 ? "day" : "days"} ago`;
 
   return date.toLocaleDateString();
+};
+
+// Update navigation elements visibility based on authentication status
+const updateNavigation = (isAuthenticated = false) => {
+  if (isAuthenticated) {
+    // Show navigation elements for authenticated users
+    if (profileLink) profileLink.style.display = "block";
+    if (createPostLink) createPostLink.style.display = "block";
+    if (logoutLink) logoutLink.style.display = "block";
+  } else {
+    // Hide navigation elements for unauthenticated users
+    if (profileLink) profileLink.style.display = "none";
+    if (createPostLink) createPostLink.style.display = "none";
+    if (logoutLink) logoutLink.style.display = "none";
+  }
 };
 
 const showError = (element, message) => {
@@ -259,13 +274,13 @@ const api = {
       localStorage.removeItem("token");
     }
   },
-
   async request(endpoint, method = "GET", data = null) {
     const url = `${API_BASE_URL}${endpoint}`;
     const headers = {
       "Content-Type": "application/json",
     };
 
+    // Add authorization token if available
     if (this.token) {
       headers["Authorization"] = `Bearer ${this.token}`;
     }
@@ -283,6 +298,13 @@ const api = {
     try {
       const response = await fetch(url, options);
       const result = await response.json();
+
+      // Handle auth-required responses
+      if (response.status === 401 && endpoint === "/posts" && method === "GET" && !data) {
+        // For the posts endpoint, return empty result for unauthenticated users
+        // This allows the first page to work without authentication
+        return { posts: result.posts || [], hasMore: result.hasMore || false, requiresAuth: true };
+      }
 
       if (!response.ok) {
         throw new Error(result.message || "API request failed");
@@ -405,6 +427,9 @@ const handleLogin = async (e) => {
     authContainer.classList.add("hidden");
     mainContainer.classList.remove("hidden");
 
+    // Update navigation for authenticated user
+    updateNavigation(true);
+
     // Load the user's feed
     loadFeed();
   } catch (error) {
@@ -485,6 +510,9 @@ const handleLogout = async () => {
     // Return to the auth screen
     mainContainer.classList.add("hidden");
     authContainer.classList.remove("hidden");
+
+    // Update navigation to hide authenticated elements
+    updateNavigation(false);
 
     // Clear forms
     loginForm.reset();
@@ -749,7 +777,7 @@ const handleEditProfile = async (e) => {
 };
 
 // UI Functions
-const loadFeed = async (loadMore = false) => {
+const loadFeed = async (loadMore = false, readOnly = false) => {
   if (isLoadingMore) return;
 
   try {
@@ -761,6 +789,15 @@ const loadFeed = async (loadMore = false) => {
       postsContainer.innerHTML = '<div class="loading-indicator">Loading posts...</div>';
     } else {
       // Loading more posts (infinite scroll)
+
+      // If this is a read-only mode (unauthenticated) and trying to load more,
+      // show the login container and return
+      if (readOnly || !currentUser) {
+        mainContainer.classList.add("hidden");
+        authContainer.classList.remove("hidden");
+        return;
+      }
+
       isLoadingMore = true;
       const loadingEl = document.createElement("div");
       loadingEl.className = "loading-indicator";
@@ -855,17 +892,27 @@ const loadProfile = async (username) => {
     followersCount.textContent = `${profileData.followersCount} followers`;
     followingCount.textContent = `${profileData.followingCount} following`;
 
-    // Show edit profile or follow button
-    const isOwnProfile = currentUser.username === username;
-    if (isOwnProfile) {
-      editProfileBtn.classList.remove("hidden");
+    // Check if user is authenticated
+    if (!currentUser) {
+      // For unauthenticated users, hide edit and follow buttons
+      editProfileBtn.classList.add("hidden");
       followBtn.classList.add("hidden");
     } else {
-      editProfileBtn.classList.add("hidden");
-      followBtn.classList.remove("hidden");
-      followBtn.textContent = profileData.isFollowing ? "Unfollow" : "Follow";
+      // Show edit profile or follow button for authenticated users
+      const isOwnProfile = currentUser.username === username;
+      if (isOwnProfile) {
+        editProfileBtn.classList.remove("hidden");
+        followBtn.classList.add("hidden");
+      } else {
+        editProfileBtn.classList.add("hidden");
+        followBtn.classList.remove("hidden");
+        followBtn.textContent = profileData.isFollowing ? "Unfollow" : "Follow";
+      }
     } // Display posts
     profilePostsContainer.innerHTML = "";
+
+    // Define isOwnProfile for both authenticated and unauthenticated users
+    const isOwnProfile = currentUser ? currentUser.username === username : false;
 
     if (profileData.posts.length === 0) {
       profilePostsContainer.innerHTML = `
@@ -929,21 +976,51 @@ const createPostElement = (post) => {
     el.href = `#/profile/${post.username}`;
     el.addEventListener("click", (e) => {
       e.preventDefault();
+
+      // If user is not logged in, show auth container instead of loading profile
+      if (!currentUser) {
+        mainContainer.classList.add("hidden");
+        authContainer.classList.remove("hidden");
+        return;
+      }
+
       loadProfile(post.username);
     });
   });
 
   postEl.querySelector(".post-img").src = post.imageUrl;
-  postEl.querySelector(".post-img").addEventListener("click", () => openPostModal(post));
+  postEl.querySelector(".post-img").addEventListener("click", () => {
+    // If user is not logged in, show auth container instead of opening post modal
+    if (!currentUser) {
+      mainContainer.classList.add("hidden");
+      authContainer.classList.remove("hidden");
+      return;
+    }
+
+    openPostModal(post);
+  });
 
   const likeBtn = postEl.querySelector(".like-btn");
-  const isLiked = post.likes.some((like) => like.userId === currentUser.id);
-  if (isLiked) {
-    likeBtn.classList.add("liked");
-    likeBtn.innerHTML = '<i class="fas fa-heart"></i>';
-  }
 
-  likeBtn.addEventListener("click", () => handlePostLike(post.id));
+  // Add event to show login when unauthenticated user tries to like a post
+  likeBtn.addEventListener("click", () => {
+    if (!currentUser) {
+      mainContainer.classList.add("hidden");
+      authContainer.classList.remove("hidden");
+      return;
+    }
+
+    handlePostLike(post.id);
+  });
+
+  // Only show like status for authenticated users
+  if (currentUser) {
+    const isLiked = post.likes.some((like) => like.userId === currentUser.id);
+    if (isLiked) {
+      likeBtn.classList.add("liked");
+      likeBtn.innerHTML = '<i class="fas fa-heart"></i>';
+    }
+  }
 
   postEl.querySelector(".comment-btn").addEventListener("click", () => openPostModal(post));
 
@@ -957,24 +1034,38 @@ const createPostElement = (post) => {
     viewComments.textContent = `View all ${post.comments.length} comments`;
     viewComments.addEventListener("click", (e) => {
       e.preventDefault();
+      // If user is not logged in, show auth container
+      if (!currentUser) {
+        mainContainer.classList.add("hidden");
+        authContainer.classList.remove("hidden");
+        return;
+      }
       openPostModal(post);
     });
   } else {
     viewComments.textContent = "Add a comment...";
     viewComments.addEventListener("click", (e) => {
       e.preventDefault();
+      // If user is not logged in, show auth container
+      if (!currentUser) {
+        mainContainer.classList.add("hidden");
+        authContainer.classList.remove("hidden");
+        return;
+      }
       openPostModal(post);
     });
   }
-
   // Delete button for own posts
   const deleteLink = postEl.querySelector(".delete-post");
-  if (post.userId === currentUser.id) {
+  if (currentUser && post.userId === currentUser.id) {
     deleteLink.classList.remove("hidden");
     deleteLink.addEventListener("click", (e) => {
       e.preventDefault();
       handlePostDelete(post.id);
     });
+  } else {
+    // Hide delete button for unauthenticated users or posts they don't own
+    deleteLink.classList.add("hidden");
   }
 
   // Dropdown toggle
@@ -1055,11 +1146,17 @@ const updatePostLikes = (post) => {
     if (modalPostId === post.id) {
       modalLikesCount.textContent = `${post.likes.length} likes`;
 
-      const isLiked = post.likes.some((like) => like.userId === currentUser.id);
-      if (isLiked) {
-        modalLikeBtn.classList.add("liked");
-        modalLikeBtn.innerHTML = '<i class="fas fa-heart"></i>';
+      if (currentUser) {
+        const isLiked = post.likes.some((like) => like.userId === currentUser.id);
+        if (isLiked) {
+          modalLikeBtn.classList.add("liked");
+          modalLikeBtn.innerHTML = '<i class="fas fa-heart"></i>';
+        } else {
+          modalLikeBtn.classList.remove("liked");
+          modalLikeBtn.innerHTML = '<i class="far fa-heart"></i>';
+        }
       } else {
+        // For unauthenticated users, always show the unliked state
         modalLikeBtn.classList.remove("liked");
         modalLikeBtn.innerHTML = '<i class="far fa-heart"></i>';
       }
@@ -1096,18 +1193,24 @@ const openPostModal = (post) => {
 
   modalTime.textContent = formatTimestamp(post.createdAt);
   modalLikesCount.textContent = `${post.likes.length} likes`;
-
   // Set up like button
-  const isLiked = post.likes.some((like) => like.userId === currentUser.id);
-  if (isLiked) {
-    modalLikeBtn.classList.add("liked");
-    modalLikeBtn.innerHTML = '<i class="fas fa-heart"></i>';
+  modalLikeBtn.onclick = () => handlePostLike(post.id);
+
+  // Set up like button state
+  if (currentUser) {
+    const isLiked = post.likes.some((like) => like.userId === currentUser.id);
+    if (isLiked) {
+      modalLikeBtn.classList.add("liked");
+      modalLikeBtn.innerHTML = '<i class="fas fa-heart"></i>';
+    } else {
+      modalLikeBtn.classList.remove("liked");
+      modalLikeBtn.innerHTML = '<i class="far fa-heart"></i>';
+    }
   } else {
+    // For unauthenticated users, always show unliked state
     modalLikeBtn.classList.remove("liked");
     modalLikeBtn.innerHTML = '<i class="far fa-heart"></i>';
   }
-
-  modalLikeBtn.onclick = () => handlePostLike(post.id);
 
   // Load comments
   modalComments.innerHTML = "";
@@ -1119,9 +1222,8 @@ const openPostModal = (post) => {
   // Set up comment form
   modalCommentForm.onsubmit = (e) => handlePostComment(e, post.id);
   modalCommentInput.value = "";
-
   // Delete button for own posts
-  if (post.userId === currentUser.id) {
+  if (currentUser && post.userId === currentUser.id) {
     modalDeletePost.classList.remove("hidden");
     modalDeletePost.onclick = (e) => {
       e.preventDefault();
@@ -1190,12 +1292,14 @@ const init = async () => {
       if (loadingElapsedTime < minLoadingTime) {
         await new Promise((resolve) => setTimeout(resolve, minLoadingTime - loadingElapsedTime));
       }
-
       if (authResult.isAuthenticated) {
         currentUser = authResult.user; // Show the main app, hide loading
         loadingContainer.classList.add("hidden");
         authContainer.classList.add("hidden");
         mainContainer.classList.remove("hidden");
+
+        // Update navigation for authenticated user
+        updateNavigation(true);
 
         // Process URL hash or load the feed
         if (window.location.hash) {
@@ -1229,10 +1333,16 @@ const init = async () => {
     // No token case - artificial delay to show skeleton
     await new Promise((resolve) => setTimeout(resolve, minLoadingTime));
 
-    // No token, show login, hide loading
+    // No token, but show feed first (read-only mode)
     loadingContainer.classList.add("hidden");
-    authContainer.classList.remove("hidden");
-    mainContainer.classList.add("hidden");
+    mainContainer.classList.remove("hidden");
+    authContainer.classList.add("hidden");
+
+    // Update navigation for unauthenticated user
+    updateNavigation(false);
+
+    // Load the first page of posts in read-only mode
+    loadFeed(false, true);
   }
 
   // Setup event listeners
@@ -1321,7 +1431,6 @@ const init = async () => {
       }
     });
   });
-
   // Add scroll event for infinite scrolling
   window.addEventListener("scroll", () => {
     if (feedSection.classList.contains("hidden") || !hasMorePosts || isLoadingMore) {
@@ -1332,6 +1441,13 @@ const init = async () => {
 
     // Load more posts when user scrolls near the bottom (200px before the end)
     if (scrollTop + clientHeight >= scrollHeight - 200) {
+      // If user is not logged in, show auth container instead of loading more posts
+      if (!currentUser) {
+        mainContainer.classList.add("hidden");
+        authContainer.classList.remove("hidden");
+        return;
+      }
+
       loadFeed(true);
     }
   });

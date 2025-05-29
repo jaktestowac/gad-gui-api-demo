@@ -632,10 +632,10 @@ function handlePractice(req, res) {
         const parts = url.split("/api/practice/v1/testagram/posts")[1]?.split("/");
         const id = parts?.[1];
         const action = parts?.[2];
-
         switch (true) {
           case req.method === "GET" && !isIdValid(id):
-            return applyMiddleware([testagram.verifyToken], testagram.getPosts)(req, res);
+            // Skip authentication middleware for GET requests to posts endpoint
+            return testagram.getPosts(req, res);
           case req.method === "POST" && !isIdValid(id):
             return applyMiddleware([testagram.verifyToken], testagram.createPost)(req, res);
           case req.method === "GET" && isIdValid(id):

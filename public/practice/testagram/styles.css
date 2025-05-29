@@ -821,21 +821,32 @@ textarea {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 28px;
+  max-width: 100%;
+  margin: 0 auto;
 }
 
 .profile-post {
   position: relative;
   padding-bottom: 100%;
   cursor: pointer;
+  overflow: hidden;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .profile-post-img {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: 5px;
+  left: 5px;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.3s ease;
+  z-index: 1;
+}
+
+.profile-post:hover .profile-post-img {
+  transform: scale(1.05);
 }
 
 .profile-post-overlay {
@@ -850,6 +861,12 @@ textarea {
   justify-content: center;
   align-items: center;
   transition: opacity 0.2s ease;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.profile-post:hover .profile-post-overlay {
+  pointer-events: auto;
 }
 
 .profile-post:hover .profile-post-overlay {
@@ -860,12 +877,21 @@ textarea {
   color: var(--white);
   font-weight: 600;
   display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  text-align: center;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 20px;
 }
 
 .profile-post-stats span {
-  margin: 0 10px;
+  margin: 0 15px;
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 .profile-post-stats i {

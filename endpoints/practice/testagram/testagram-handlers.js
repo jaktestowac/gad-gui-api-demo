@@ -16,7 +16,6 @@ const posts = [];
 const sessions = [];
 const SECRET_KEY = "testagram-secret-key-2025";
 
-
 // Add sample data to the in-memory storage
 sampleUsers.forEach((user) => {
   users.push(user);
@@ -45,24 +44,20 @@ const generateToken = (userId) => {
   return jwt.sign({ userId }, SECRET_KEY, { expiresIn: "24h" });
 };
 
-// Middleware to verify token from cookies or Authorization header
-const verifyToken = (req, res, next) => {
+const isTokenValid = (req, res) => {
+  // return true if token is valid, false otherwise
   let token = null;
-
   // Check Authorization header first
   const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith("Bearer ")) {
     token = authHeader.substring(7);
   }
-
   // If not in header, check cookies
   if (!token && req.cookies && req.cookies.token) {
     token = req.cookies.token;
   }
-  logDebug("verifyToken:Token verification", { token });
-
   if (!token) {
-    return res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Please log in to access this feature"));
+    return { isValid: false, message: "No token provided" };
   }
   try {
     const decoded = jwt.verify(token, SECRET_KEY);
@@ -71,15 +66,25 @@ const verifyToken = (req, res, next) => {
     // Check if user exists
     const user = users.find((u) => u.id === decoded.userId);
     if (!user) {
-      return res
-        .status(HTTP_UNAUTHORIZED)
-        .send(formatErrorResponse("Session expired or invalid. Please log in again."));
+      return { isValid: false, message: "Session expired or invalid. Please log in again." };
     }
-
-    return next(req, res);
+    return { isValid: true, userId: decoded.userId };
   } catch (error) {
-    return res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Session expired or invalid. Please log in again."));
+    return { isValid: false, message: "Session expired or invalid. Please log in again." };
   }
+};
+
+// Middleware to verify token from cookies or Authorization header
+const verifyToken = (req, res, next) => {
+  // Check if token is valid
+  const tokenValidation = isTokenValid(req, res);
+  if (!tokenValidation.isValid) {
+    return res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse(tokenValidation.message));
+  }
+  // If token is valid, set userId in request
+  req.userId = tokenValidation.userId;
+  // Call the next middleware or route handler
+  return next(req, res);
 };
 
 // User registration
@@ -114,8 +119,11 @@ const register = (req, res) => {
     return res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Password must be at least 6 characters long"));
   }
 
-  // Check if user already exists
-  if (users.some((u) => u.username === username || u.email === email)) {
+  // Check if user already exists - case insensitive for username and email
+  const existingUser = users.find(
+    (u) => u.username.toLowerCase() === username?.toLowerCase() || u.email.toLowerCase() === email?.toLowerCase()
+  );
+  if (existingUser) {
     return res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Username or email already in use"));
   }
 
@@ -169,8 +177,12 @@ const login = (req, res) => {
       .send(formatErrorResponse("Invalid password format. Password must be at least 3 characters long"));
   }
 
-  // Find user
-  const user = users.find((u) => (u.username === username || u.email === username) && u.password === password);
+  // Find user - case insensitive for username and email
+  const user = users.find(
+    (u) =>
+      (u.username.toLowerCase() === username?.toLowerCase() || u.email.toLowerCase() === username?.toLowerCase()) &&
+      u.password === password
+  );
 
   if (!user) {
     return res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Invalid username or password. Please try again."));
@@ -275,16 +287,23 @@ const createPost = (req, res) => {
 
 // Get all posts (feed)
 const getPosts = (req, res) => {
-  const user = users.find((u) => u.id === req.userId);
-
-  if (!user) {
-    return res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not found"));
-  }
+  // Check if user is authenticated
+  const isAuthenticated = isTokenValid(req, res).isValid;
 
   // Parse pagination parameters
   const page = parseInt(req.query.page) || 0;
   const limit = parseInt(req.query.limit) || 3;
   const startIndex = page * limit;
+
+  // For unauthenticated users, only allow the first page
+  if (!isAuthenticated && page > 0) {
+    logDebug("Unauthenticated user tried to access page > 0", { page });
+    return res.status(HTTP_OK).json({
+      posts: [],
+      hasMore: false,
+      requiresAuth: true,
+    });
+  }
 
   // Get all posts, sorted by creation date (newest first)
   const feedPosts = posts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -306,6 +325,7 @@ const getPosts = (req, res) => {
     posts: paginatedPosts,
     hasMore: startIndex + limit < feedPosts.length,
     total: feedPosts.length,
+    requiresAuth: !isAuthenticated,
   });
 };
 
@@ -475,15 +495,15 @@ const updateProfile = (req, res) => {
   });
 };
 
-// Follow/unfollow user
+// Follow/unfollow user - case insensitive for username and email
 const toggleFollow = (req, res) => {
   const { username } = req.params;
 
-  if (users.find((u) => u.id === req.userId).username === username) {
+  if (users.find((u) => u.id === req.userId).username.toLowerCase() === username?.toLowerCase()) {
     return res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("You cannot follow yourself"));
   }
 
-  const targetUser = users.find((u) => u.username === username);
+  const targetUser = users.find((u) => u.username.toLowerCase() === username?.toLowerCase());
 
   if (!targetUser) {
     return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("User not found"));
@@ -551,7 +571,7 @@ const deletePost = (req, res) => {
     return res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("You can only delete your own posts"));
   }
 
-  const deletedPost = posts.splice(postIndex, 1)[0];
+  posts.splice(postIndex, 1);
   logDebug("Post deleted", { postId: id, userId: req.userId });
 
   return res.status(HTTP_OK).json({
