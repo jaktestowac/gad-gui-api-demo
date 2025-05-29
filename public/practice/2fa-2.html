@@ -463,6 +463,7 @@
             border-radius: var(--border-radius);
             padding: 15px;
             box-shadow: var(--box-shadow);
+            position: relative;
         }
 
         .gad2fa-table {
@@ -484,8 +485,43 @@
             background-color: var(--bg-light);
         }
 
+        .gad2fa-table tbody tr {
+            transition: var(--transition);
+            position: relative;
+        }
+
         .gad2fa-table tbody tr:hover {
             background-color: rgba(67, 97, 238, 0.05);
+            cursor: pointer;
+            transform: translateX(2px);
+        }
+
+        .gad2fa-table tbody tr.selected {
+            background-color: rgba(67, 97, 238, 0.1);
+            border-left: 3px solid var(--primary-color);
+        }
+
+        /* Add a small icon to indicate clickable rows - positioned outside table */
+        .gad2fa-table tbody tr:hover::after {
+            content: "👆";
+            position: fixed;
+            z-index: 1000;
+            opacity: 0.7;
+            font-size: 24px;
+            pointer-events: none;
+            color: var(--primary-color);
+            transform: translate(-30px, -5px);
+            animation: pointingFinger 0.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes pointingFinger {
+            0% {
+                transform: translate(-30px, -5px) scale(1);
+            }
+
+            100% {
+                transform: translate(-30px, -7px) scale(1.1);
+            }
         }
 
         .gad2fa-badge {
@@ -598,6 +634,16 @@
             border-radius: 0 0 var(--border-radius) var(--border-radius);
         }
 
+        /* Message area positioning */
+        #gad2fa-message-area {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            z-index: 1100;
+            max-width: 300px;
+            min-width: 250px;
+        }
+
         @media (max-width: 768px) {
             .gad2fa-auth-section {
                 flex-direction: column;
@@ -613,6 +659,16 @@
 
             .gad2fa-info-label {
                 margin-bottom: 4px;
+            }
+
+            /* Adjust message area for mobile */
+            #gad2fa-message-area {
+                position: fixed;
+                top: 70px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+                min-width: auto;
             }
         }
     </style>
@@ -774,11 +830,9 @@
                 </div>
                 <button type="submit" class="gad2fa-btn-primary">Verify and Enable 2FA</button>
             </form>
-        </div>
-
-        <!-- Test Users Table -->
+        </div> <!-- Test Users Table -->
         <div class="gad2fa-test-users">
-            <h3>Test Users</h3>
+            <h3>Test Users <small style="color: var(--text-light); font-size: 14px;">(Click on a row to fill login form)</small></h3>
             <table class="gad2fa-table">
                 <thead>
                     <tr>
@@ -788,12 +842,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
+                    <tr data-username="user1" data-password="test">
                         <td>user1</td>
                         <td>test</td>
                         <td><span class="gad2fa-badge gad2fa-badge-success">Enabled</span></td>
                     </tr>
-                    <tr>
+                    <tr data-username="user2" data-password="1234">
                         <td>user2</td>
                         <td>1234</td>
                         <td><span class="gad2fa-badge gad2fa-badge-warning">Disabled</span></td>
@@ -1248,10 +1302,70 @@
             setTimeout(() => {
                 messageArea.innerHTML = '';
             }, 5000);
+        }        // Check authentication on page load
+        window.addEventListener('load', checkAuth);        // Add table row click functionality
+        function initializeTestUsersTable() {
+            const tableRows = document.querySelectorAll('.gad2fa-table tbody tr');
+
+            tableRows.forEach(row => {
+                row.addEventListener('click', function () {
+                    // Remove selected class from all rows
+                    tableRows.forEach(r => r.classList.remove('selected'));
+
+                    // Add selected class to clicked row
+                    this.classList.add('selected');
+
+                    // Get username and password from data attributes or text content
+                    const username = this.dataset.username || this.querySelectorAll('td')[0].textContent.trim();
+                    const password = this.dataset.password || this.querySelectorAll('td')[1].textContent.trim();
+
+                    // Fill the login form
+                    const usernameInput = document.getElementById('gad2fa-login-username');
+                    const passwordInput = document.getElementById('gad2fa-login-password');
+
+                    if (usernameInput && passwordInput) {
+                        usernameInput.value = username;
+                        passwordInput.value = password;
+
+                        // Clear any existing 2FA token
+                        const tokenInput = document.getElementById('gad2fa-login-token');
+                        if (tokenInput) {
+                            tokenInput.value = '';
+                        }
+
+                        // Hide 2FA token container if visible
+                        const tokenContainer = document.getElementById('gad2fa-token-container');
+                        if (tokenContainer) {
+                            tokenContainer.classList.add('gad2fa-hidden');
+                        }
+
+                        // Show success message
+                        showMessage(`Login form filled with user: ${username}`, 'info');
+
+                        // Add visual feedback to the inputs
+                        usernameInput.style.background = 'rgba(67, 97, 238, 0.05)';
+                        passwordInput.style.background = 'rgba(67, 97, 238, 0.05)';
+
+                        // Reset input background after 2 seconds
+                        setTimeout(() => {
+                            usernameInput.style.background = '';
+                            passwordInput.style.background = '';
+                        }, 2000);
+
+                        // Scroll to login form
+                        const loginForm = document.getElementById('gad2fa-login-form');
+                        if (loginForm) {
+                            loginForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    }
+                });
+            });
         }
 
-        // Check authentication on page load
-        window.addEventListener('load', checkAuth);
+        // Initialize table when page loads
+        window.addEventListener('load', function () {
+            initializeTestUsersTable();
+        });
 
         // Test scenarios toggle functionality
         document.getElementById('toggle-scenarios').addEventListener('click', function () {
