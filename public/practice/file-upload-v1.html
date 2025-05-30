@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>🦎 GAD - Simple File Upload V1</title>
+    <title><i class="fas fa-dragon"></i> GAD - Simple File Upload V1</title>
     <link rel="icon" href="/data/icons/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
@@ -84,6 +84,11 @@
 
         .upload-area.dragover .upload-icon {
             color: #667eea;
+        }
+
+        .fa-icon {
+            font-family: 'Font Awesome 6 Free', 'Font Awesome 6 Brands';
+            font-weight: 900;
         }
 
         .upload-text {
@@ -407,11 +412,11 @@
     <br />
     <br />
     <div class="upload-container">
-        <h1 class="upload-title">📁 File Upload</h1>
+        <h1 class="upload-title"><i class="fas fa-folder"></i> File Upload</h1>
         <p class="upload-subtitle">Select or drag and drop files to upload</p>
 
         <div class="upload-area" id="uploadArea">
-            <div class="upload-icon">📁</div>
+            <div class="upload-icon"><i class="fas fa-folder"></i></div>
             <div class="upload-text">Drop files here or click to browse</div>
             <div class="upload-hint">Supports multiple files of any type</div>
         </div>
@@ -440,22 +445,22 @@
         <div class="file-list" id="fileList">
             <div class="empty-state" id="emptyState">No files selected yet</div>
         </div>
-    </div>
-
-    <!-- Upload Notification -->
+    </div> <!-- Upload Notification -->
     <div class="upload-notification" id="uploadNotification">
         <button class="notification-close" onclick="closeNotification()">×</button>
         <div class="notification-header">
-            <div class="notification-icon">📤</div>
+            <div class="notification-icon"><i class="fas fa-upload"></i></div>
             <div class="notification-title">Uploading Files</div>
         </div>
-        <div class="notification-content" id="notificationContent">
-            Preparing to upload files...
-        </div>
-        <div class="upload-progress">
-            <div class="upload-progress-bar" id="progressBar"></div>
-        </div>
-        <div class="upload-status" id="uploadStatus">0% complete</div>
+        <div class="notification-title">Uploading Files</div>
+    </div>
+    <div class="notification-content" id="notificationContent">
+        Preparing to upload files...
+    </div>
+    <div class="upload-progress">
+        <div class="upload-progress-bar" id="progressBar"></div>
+    </div>
+    <div class="upload-status" id="uploadStatus">0% complete</div>
     </div>
 
     <script>
@@ -551,7 +556,7 @@
             updateStats();
         } function uploadFiles() {
             if (selectedFiles.length === 0) {
-                showNotification('⚠️', 'No Files Selected', 'Please select files before uploading.', 'error');
+                showNotification('<i class="fas fa-exclamation-triangle"></i>', 'No Files Selected', 'Please select files before uploading.', 'error');
                 return;
             }
 
@@ -597,7 +602,7 @@
                     progress = 100;
                     clearInterval(interval);                    // Upload complete
                     setTimeout(() => {
-                        document.querySelector('.notification-icon').textContent = '✅';
+                        document.querySelector('.notification-icon').innerHTML = '<i class="fas fa-check-circle"></i>';
                         document.querySelector('.notification-title').textContent = 'Upload Complete';
                         content.textContent = `Successfully uploaded ${fileCount} file(s)`;
                         status.textContent = 'Upload finished!';
@@ -619,9 +624,7 @@
                 progressBar.style.width = progress + '%';
                 status.textContent = Math.round(progress) + '% complete';
             }, 200);
-        }
-
-        function showNotification(icon, title, message, type = 'info') {
+        } function showNotification(icon, title, message, type = 'info') {
             const notification = document.getElementById('uploadNotification');
             const iconEl = document.querySelector('.notification-icon');
             const titleEl = document.querySelector('.notification-title');
@@ -629,7 +632,7 @@
             const progressContainer = document.querySelector('.upload-progress');
             const status = document.getElementById('uploadStatus');
 
-            iconEl.textContent = icon;
+            iconEl.innerHTML = icon;
             titleEl.textContent = title;
             content.textContent = message;
 
@@ -649,11 +652,9 @@
 
         function closeNotification() {
             const notification = document.getElementById('uploadNotification');
-            notification.classList.remove('show');
-
-            // Reset notification state
+            notification.classList.remove('show');            // Reset notification state
             setTimeout(() => {
-                document.querySelector('.notification-icon').textContent = '📤';
+                document.querySelector('.notification-icon').innerHTML = '<i class="fas fa-upload"></i>';
                 document.querySelector('.notification-title').textContent = 'Uploading Files';
                 document.getElementById('notificationContent').textContent = 'Preparing to upload files...';
                 document.getElementById('progressBar').style.width = '0%';
@@ -686,22 +687,20 @@
             const i = Math.floor(Math.log(bytes) / Math.log(k));
 
             return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
+        } function getFileIcon(mimeType) {
+            if (!mimeType) return '<i class="fas fa-file"></i>';
 
-        function getFileIcon(mimeType) {
-            if (!mimeType) return '📄';
+            if (mimeType.startsWith('image/')) return '<i class="fas fa-file-image"></i>';
+            if (mimeType.startsWith('video/')) return '<i class="fas fa-file-video"></i>';
+            if (mimeType.startsWith('audio/')) return '<i class="fas fa-file-audio"></i>';
+            if (mimeType.includes('pdf')) return '<i class="fas fa-file-pdf"></i>';
+            if (mimeType.includes('word') || mimeType.includes('document')) return '<i class="fas fa-file-word"></i>';
+            if (mimeType.includes('excel') || mimeType.includes('spreadsheet')) return '<i class="fas fa-file-excel"></i>';
+            if (mimeType.includes('powerpoint') || mimeType.includes('presentation')) return '<i class="fas fa-file-powerpoint"></i>';
+            if (mimeType.includes('zip') || mimeType.includes('archive') || mimeType.includes('compressed')) return '<i class="fas fa-file-archive"></i>';
+            if (mimeType.includes('text/')) return '<i class="fas fa-file-alt"></i>';
 
-            if (mimeType.startsWith('image/')) return '🖼️';
-            if (mimeType.startsWith('video/')) return '🎥';
-            if (mimeType.startsWith('audio/')) return '🎵';
-            if (mimeType.includes('pdf')) return '📕';
-            if (mimeType.includes('word') || mimeType.includes('document')) return '📝';
-            if (mimeType.includes('excel') || mimeType.includes('spreadsheet')) return '📊';
-            if (mimeType.includes('powerpoint') || mimeType.includes('presentation')) return '📋';
-            if (mimeType.includes('zip') || mimeType.includes('archive') || mimeType.includes('compressed')) return '📦';
-            if (mimeType.includes('text/')) return '📄';
-
-            return '📄';
+            return '<i class="fas fa-file"></i>';
         }
 
         // Prevent default drag behaviors on the page
