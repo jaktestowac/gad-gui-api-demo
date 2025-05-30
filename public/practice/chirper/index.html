@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD - Chirper</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="../css/practice-controls.css" />
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <meta charset="UTF-8">
+    <style>
+        :root {
+            --primary-color: #1DA1F2;
+            --primary-dark: #0D8BD9;
+            --background-color: #ffffff;
+            --text-color: #14171a;
+            --secondary-text: #657786;
+            --border-color: #E1E8ED;
+            --hover-color: #f5f8fa;
+            --error-color: #e0245e;
+            --success-color: #17bf63;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f8fa;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: var(--primary-color);
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .chirper-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Loading Container */
+        #loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        .loading-logo {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary-color);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Skeleton Loading */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 4px;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        .skeleton-chirp {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 10px;
+        }
+
+        .skeleton-chirp-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .skeleton-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .skeleton-username {
+            width: 120px;
+            height: 16px;
+        }
+
+        .skeleton-chirp-content {
+            height: 60px;
+            margin-bottom: 10px;
+        }
+
+        .skeleton-chirp-actions {
+            height: 24px;
+            width: 200px;
+        }
+
+        /* Auth Container */
+        #auth-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .auth-box {
+            background-color: var(--background-color);
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: var(--primary-color);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            padding: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--secondary-text);
+            position: relative;
+        }
+
+        .tab-btn.active {
+            color: var(--primary-color);
+        }
+
+        .tab-btn.active::after {
+            content: "";
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+
+        .auth-form {
+            text-align: left;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        .form-hint {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--secondary-text);
+            margin-top: 5px;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .error-message {
+            color: var(--error-color);
+            margin-top: 15px;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .predefined-users {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .predefined-users h4 {
+            margin-bottom: 15px;
+            color: var(--secondary-text);
+            font-size: 0.9rem;
+        }
+
+        .predefined-user {
+            display: inline-block;
+            margin: 5px;
+            padding: 8px 12px;
+            background-color: #f5f8fa;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .predefined-user:hover {
+            background-color: #e1e8ed;
+        }
+
+        /* Main Container */
+        #main-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .chirper-header {
+            background-color: var(--background-color);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .chirper-header .chirper-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chirper-header .logo {
+            margin-bottom: 0;
+            font-size: 1.5rem;
+        }
+
+        .search-box {
+            position: relative;
+            flex-grow: 1;
+            max-width: 300px;
+            margin: 0 20px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 8px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            background-color: #f5f8fa;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background-color: white;
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: white;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .search-result {
+            padding: 10px 15px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .search-result:last-child {
+            border-bottom: none;
+        }
+
+        .search-result-pic {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .search-result-username {
+            font-weight: 600;
+            margin-right: 5px;
+        }
+
+        .search-result-fullname {
+            color: var(--secondary-text);
+            font-size: 0.9rem;
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--secondary-text);
+            margin-left: 20px;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--primary-color);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex-grow: 1;
+            padding: 10px 0;
+        }
+
+        .section {
+            background-color: var(--background-color);
+            border-radius: 10px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.08);
+            margin-bottom: 15px;
+        }
+
+        /* Feed Section */
+        .compose-chirp {
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .compose-form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .compose-textarea {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            resize: none;
+            min-height: 60px;
+            margin-bottom: 8px;
+            width: 100%;
+        }
+
+        .compose-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .compose-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0;
+            margin-top: 0;
+            gap: 3px;
+            min-height: 14px;
+        }
+
+        .char-counter {
+            color: var(--secondary-text);
+            font-size: 0.65rem;
+            margin: 0;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .char-counter.limit-exceeded {
+            color: var(--error-color);
+            font-weight: bold;
+        }
+
+        .compose-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin: 0;
+        }
+
+        .privacy-toggle {
+            display: flex;
+            align-items: center;
+            margin: 0;
+            color: var(--secondary-text);
+            font-size: 0.65rem;
+            gap: 2px;
+            line-height: 1;
+            white-space: nowrap;
+        }
+
+        .privacy-toggle input {
+            margin: 0;
+            width: 9px;
+            height: 9px;
+        }
+
+        .compose-actions .btn {
+            padding: 4px 8px;
+            font-size: 1rem;
+            border-radius: 12px;
+            min-height: auto;
+            margin: 0;
+        }
+
+        .chirps-list {
+            padding: 0;
+        }
+
+        .chirp {
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color 0.3s;
+            position: relative;
+        }
+
+        .chirp:hover {
+            background-color: var(--hover-color);
+        }
+
+        .chirp-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .user-pic {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 8px;
+            object-fit: cover;
+        }
+
+        .user-info {
+            flex-grow: 1;
+        }
+
+        .user-info-top {
+            display: flex;
+            align-items: center;
+        }
+
+        .username {
+            font-weight: 700;
+            margin-right: 4px;
+            color: var(--text-color);
+            font-size: 0.95rem;
+        }
+
+        .username:hover {
+            text-decoration: underline;
+        }
+
+        .fullname {
+            color: var(--secondary-text);
+            font-size: 0.85rem;
+        }
+
+        .chirp-time {
+            color: var(--secondary-text);
+            font-size: 0.75rem;
+            margin-left: auto;
+        }
+
+        .chirp-content {
+            margin-left: 48px;
+            margin-bottom: 8px;
+            word-break: break-word;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .chirp-actions {
+            display: flex;
+            margin-left: 48px;
+        }
+
+        .chirp-action {
+            display: flex;
+            align-items: center;
+            margin-right: 15px;
+            color: var(--secondary-text);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .chirp-action i {
+            margin-right: 4px;
+        }
+
+        .chirp-action:hover {
+            color: var(--primary-color);
+        }
+
+        .chirp-action.liked {
+            color: #e0245e;
+        }
+
+        .chirp-action.liked:hover {
+            color: #c21f5a;
+        }
+
+        .reply-box {
+            margin-left: 48px;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            align-content: center;
+            flex-direction: column;
+        }
+
+        .reply-input {
+            flex-grow: 1;
+            padding: 6px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            font-size: 0.85rem;
+            width: 100%;
+        }
+
+        .reply-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .replies-container {
+            margin-left: 48px;
+            margin-top: 8px;
+            border-left: 2px solid var(--border-color);
+            padding-left: 12px;
+        }
+
+        .reply {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .reply:last-child {
+            border-bottom: none;
+        }
+
+        .reply-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .reply-username {
+            font-weight: 600;
+            margin-right: 4px;
+            font-size: 0.9rem;
+        }
+
+        .reply-time {
+            color: var(--secondary-text);
+            font-size: 0.75rem;
+        }
+
+        .reply-content {
+            word-break: break-word;
+            font-size: 0.9rem;
+            line-height: 1.3;
+        }
+
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-toggle {
+            background: none;
+            border: none;
+            color: var(--secondary-text);
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: white;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+            min-width: 150px;
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 10px 15px;
+            color: var(--text-color);
+            transition: background-color 0.3s;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--hover-color);
+        }
+
+        .dropdown-item.delete {
+            color: var(--error-color);
+        }
+
+        .load-more {
+            padding: 10px;
+            text-align: center;
+        }
+
+        .load-more-button {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .no-chirps {
+            padding: 20px 10px;
+            text-align: center;
+            color: var(--secondary-text);
+        }
+
+        .private-indicator {
+            margin-left: 5px;
+            color: var(--secondary-text);
+            font-size: 0.8rem;
+        }
+
+        /* Profile Section */
+        .profile-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .profile-cover {
+            height: 120px;
+            background-color: var(--primary-color);
+            border-radius: 15px 15px 0 0;
+            margin: -20px -20px 0;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 4px solid white;
+            margin-top: -50px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .profile-info {
+            margin-top: 10px;
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .profile-username {
+            color: var(--secondary-text);
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+
+        .profile-bio {
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+
+        .profile-stats {
+            display: flex;
+            margin-bottom: 15px;
+        }
+
+        .profile-stat {
+            margin-right: 20px;
+            font-size: 0.9rem;
+        }
+
+        .stat-value {
+            font-weight: 700;
+        }
+
+        .profile-actions {
+            margin-top: 15px;
+        }
+
+        .edit-profile-btn,
+        .follow-btn {
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: 1px solid var(--primary-color);
+            transition: all 0.3s;
+        }
+
+        .edit-profile-btn {
+            background-color: white;
+            color: var(--primary-color);
+        }
+
+        .edit-profile-btn:hover {
+            background-color: rgba(29, 161, 242, 0.1);
+        }
+
+        .follow-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .follow-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .profile-chirps {
+            padding: 10px;
+        }
+
+        .profile-chirps h3 {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            padding: 0 10px;
+        }
+
+        .profile-filter-indicator {
+            font-size: 0.85rem;
+            color: var(--secondary-text);
+            margin-bottom: 10px;
+            padding: 0 10px;
+        }
+
+        .profile-chirps-list {
+            padding: 0;
+        }
+
+        /* Edit Profile Section */
+        .edit-profile-form {
+            padding: 20px;
+        }
+
+        .edit-form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .edit-form-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .cancel-edit-btn {
+            background: none;
+            border: none;
+            color: var(--secondary-text);
+            cursor: pointer;
+        }
+
+        .cancel-edit-btn:hover {
+            color: var(--error-color);
+        }
+
+        /* Avatar Picker Styles */
+        .avatar-picker-container {
+            margin: 10px 0;
+        }
+
+        .avatar-display {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--background-color);
+        }
+
+        .avatar-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--border-color);
+        }
+
+        .randomize-avatar-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background-color 0.2s;
+        }
+
+        .randomize-avatar-btn:hover {
+            background: var(--primary-hover);
+            background-color: var(--primary-dark);
+        }
+
+        .randomize-avatar-btn i {
+            font-size: 0.8rem;
+        }
+
+        /* Custom Alert */
+        #custom-alert {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .popup-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 400px;
+            padding: 20px;
+            position: relative;
+        }
+
+        .popup-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--secondary-text);
+            cursor: pointer;
+        }
+
+        .popup-header {
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .popup-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .popup-body {
+            margin-bottom: 20px;
+        }
+
+        .popup-footer {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .popup-btn {
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-left: 10px;
+        }
+
+        .popup-btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+        }
+
+        .popup-btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .popup-btn-secondary {
+            background-color: white;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .popup-btn-secondary:hover {
+            background-color: var(--hover-color);
+        }
+
+        .loading-indicator {
+            text-align: center;
+            padding: 15px;
+            color: var(--secondary-text);
+            font-size: 0.85rem;
+        }
+
+        .end-message {
+            text-align: center;
+            padding: 10px;
+            color: var(--secondary-text);
+            font-size: 0.85rem;
+            margin-top: 8px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .chirper-header .chirper-container {
+                flex-wrap: wrap;
+            }
+
+            .chirper-header .logo {
+                order: 1;
+                margin-bottom: 10px;
+            }
+
+            .nav {
+                order: 3;
+                width: 100%;
+                justify-content: space-around;
+                margin-top: 10px;
+            }
+
+            .nav-link {
+                margin: 0;
+            }
+
+            .search-box {
+                order: 2;
+                max-width: none;
+                margin: 0;
+            }
+
+            .chirp-header,
+            .chirp-content,
+            .chirp-actions,
+            .reply-box,
+            .replies-container {
+                margin-left: 0;
+            }
+
+            .user-pic {
+                width: 36px;
+                height: 36px;
+                margin-right: 6px;
+            }
+
+            .chirp {
+                padding: 8px;
+            }
+
+            .compose-chirp {
+                padding: 8px;
+            }
+
+            .profile-stats {
+                flex-wrap: wrap;
+            }
+
+            .profile-stat {
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <!-- Loading Container -->
+    <div id="loading-container" class="chirper-container">
+        <h1 class="loading-logo"><i class="fa-solid fa-feather"></i> Chirper</h1>
+        <div class="loading-spinner"></div>
+        <p>Loading your feed...</p>
+
+        <!-- Skeleton Loading -->
+        <div class="skeleton-container">
+            <div class="skeleton-chirp">
+                <div class="skeleton-chirp-header">
+                    <div class="skeleton-avatar skeleton"></div>
+                    <div class="skeleton-username skeleton"></div>
+                </div>
+                <div class="skeleton-chirp-content skeleton"></div>
+                <div class="skeleton-chirp-actions skeleton"></div>
+            </div>
+
+            <div class="skeleton-chirp">
+                <div class="skeleton-chirp-header">
+                    <div class="skeleton-avatar skeleton"></div>
+                    <div class="skeleton-username skeleton"></div>
+                </div>
+                <div class="skeleton-chirp-content skeleton"></div>
+                <div class="skeleton-chirp-actions skeleton"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Container (Login/Register) -->
+    <div id="auth-container" class="chirper-container hidden">
+        <div class="auth-box">
+            <a href="/practice/chirper/">
+                <h1 class="logo"><i class="fa-solid fa-feather"></i> Chirper</h1>
+            </a>
+
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="login">Login</button>
+                <button class="tab-btn" data-tab="register">Register</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form" class="auth-form">
+                <div class="form-group">
+                    <input type="text" id="login-username" placeholder="Username or Email" required autocomplete="username" minlength="3" maxlength="32">
+                    <small class="form-hint">Enter your username or email address (3-32 characters)</small>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="login-password" placeholder="Password" required autocomplete="current-password" minlength="3" maxlength="32">
+                    <small class="form-hint">Password (3-32 characters)</small>
+                </div>
+                <button type="submit" class="btn btn-primary">Log In</button>
+                <div class="error-message hidden" id="login-error"></div>
+
+                <!-- Predefined Users Table -->
+                <div class="predefined-users">
+                    <h4>Quick Login with Test Users</h4>
+                    <div class="predefined-user" data-username="johndoe" data-password="password123">John Doe</div>
+                    <div class="predefined-user" data-username="janesmith" data-password="password123">Jane Smith</div>
+                    <div class="predefined-user" data-username="techguru" data-password="password123">Tech Guru</div>
+                    <div class="predefined-user" data-username="bookworm" data-password="password123">Book Worm</div>
+                </div>
+            </form>
+
+            <!-- Register Form -->
+            <form id="register-form" class="auth-form hidden">
+                <div class="form-group">
+                    <input type="email" id="register-email" placeholder="Email" required minlength="3" maxlength="32">
+                    <small class="form-hint">Your email address (3-32 characters)</small>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="register-username" placeholder="Username (letters, numbers, _, -)" required minlength="3" maxlength="32" pattern="[a-zA-Z0-9_-]{3,32}">
+                    <small class="form-hint">Letters, numbers, underscores, and hyphens only (3-32 characters)</small>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="register-fullname" placeholder="Full Name (optional)" maxlength="50">
+                    <small class="form-hint">Optional - Maximum 50 characters</small>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="register-password" placeholder="Password" required minlength="3" maxlength="32">
+                    <small class="form-hint">Password (3-32 characters)</small>
+                </div>
+                <button type="submit" class="btn btn-primary">Sign Up</button>
+                <div class="error-message hidden" id="register-error"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main App Container (after login) -->
+    <div id="main-container" class="hidden">
+        <!-- Header/Navbar -->
+        <header class="chirper-header">
+            <div class="chirper-container">
+                <a href="/practice/chirper/">
+                    <h1 class="logo"><i class="fa-solid fa-feather"></i> Chirper</h1>
+                </a>
+                <div class="search-box">
+                    <input type="text" id="search-input" placeholder="Search users...">
+                    <div id="search-results" class="search-results hidden"></div>
+                </div>
+                <nav class="nav">
+                    <a href="#" class="nav-link home-link active"><i class="fas fa-home"></i></a>
+                    <a href="#" class="nav-link profile-link"><i class="fas fa-user"></i></a>
+                    <a href="#" class="nav-link logout-link"><i class="fas fa-sign-out-alt"></i></a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <div class="chirper-container">
+                <!-- Feed Section -->
+                <section id="feed-section" class="section">
+                    <div class="compose-chirp">
+                        <form id="compose-form" class="compose-form">
+                            <textarea id="chirp-text" class="compose-textarea" placeholder="What's happening?" maxlength="64"></textarea>
+                            <div class="compose-footer">
+                                <div class="char-counter">0/64</div>
+                                <div class="compose-actions">
+                                    <label class="privacy-toggle">
+                                        <input type="checkbox" id="is-private">
+                                        Private (followers only)
+                                    </label>
+                                    <button type="submit" class="btn btn-primary" style="width: auto;">Chirp</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div id="chirps-container" class="chirps-list">
+                        <!-- Chirps will be loaded here -->
+                    </div>
+                </section>
+
+                <!-- Profile Section -->
+                <section id="profile-section" class="section hidden">
+                    <div class="profile-header">
+                        <div class="profile-cover"></div>
+                        <img id="profile-image" class="profile-avatar" src="/practice/chirper/images/default-avatar.svg" alt="Profile">
+                        <div class="profile-info">
+                            <h2 id="profile-fullname" class="profile-name">User Name</h2>
+                            <div id="profile-username" class="profile-username">@username</div>
+                            <p id="profile-bio" class="profile-bio">No bio yet.</p>
+                            <div class="profile-stats">
+                                <div class="profile-stat">
+                                    <span id="chirps-count" class="stat-value">0</span> chirps
+                                </div>
+                                <div class="profile-stat">
+                                    <span id="followers-count" class="stat-value">0</span> followers
+                                </div>
+                                <div class="profile-stat">
+                                    <span id="following-count" class="stat-value">0</span> following
+                                </div>
+                            </div>
+                            <div class="profile-actions">
+                                <button id="edit-profile-btn" class="edit-profile-btn">Edit Profile</button>
+                                <button id="follow-btn" class="follow-btn">Follow</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-chirps">
+                        <h3>Chirps</h3>
+                        <div id="profile-filter-indicator" class="profile-filter-indicator hidden"></div>
+                        <div id="profile-chirps-container" class="profile-chirps-list">
+                            <!-- Profile chirps will be loaded here -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Edit Profile Section -->
+                <section id="edit-profile-section" class="section hidden">
+                    <form id="edit-profile-form" class="edit-profile-form">
+                        <div class="edit-form-header">
+                            <h3 class="edit-form-title">Edit Profile</h3>
+                            <button type="button" id="cancel-edit-btn" class="cancel-edit-btn">Cancel</button>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-avatar">Profile Picture</label>
+                            <div id="edit-avatar-picker" class="avatar-picker-container">
+                                <!-- Avatar picker will be rendered here -->
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-fullname">Full Name</label>
+                            <input type="text" id="edit-fullname" placeholder="Your full name" maxlength="50">
+                            <small class="form-hint">Maximum 50 characters</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-bio">Bio</label>
+                            <textarea id="edit-bio" class="compose-textarea" placeholder="Tell us about yourself" maxlength="160"></textarea>
+                            <small class="form-hint">Maximum 160 characters</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <div class="error-message hidden" id="edit-profile-error"></div>
+                    </form>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Custom Alert Modal -->
+    <div id="custom-alert" class="hidden">
+        <div class="popup-overlay"></div>
+        <div class="popup-container">
+            <button class="popup-close">&times;</button>
+            <div class="popup-header">
+                <h3 id="popup-title" class="popup-title">Alert</h3>
+            </div>
+            <div class="popup-body">
+                <p id="popup-message"></p>
+            </div>
+            <div class="popup-footer">
+                <button id="popup-cancel" class="popup-btn popup-btn-secondary">Cancel</button>
+                <button id="popup-confirm" class="popup-btn popup-btn-primary">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Templates -->
+    <template id="chirp-template">
+        <div class="chirp">
+            <div class="chirp-header">
+                <img class="user-pic" src="/practice/chirper/images/default-avatar.svg" alt="User">
+                <div class="user-info">
+                    <div class="user-info-top">
+                        <a href="#" class="username"></a>
+                        <span class="fullname"></span>
+                        <span class="private-indicator hidden"><i class="fas fa-lock" title="Private chirp"></i></span>
+                    </div>
+                </div>
+                <span class="chirp-time"></span>
+                <div class="dropdown">
+                    <button class="dropdown-toggle"><i class="fas fa-ellipsis-h"></i></button>
+                    <div class="dropdown-menu hidden">
+                        <a href="#" class="dropdown-item delete-chirp">Delete</a>
+                    </div>
+                </div>
+            </div>
+            <div class="chirp-content"></div>
+            <div class="chirp-actions">
+                <div class="chirp-action like-btn">
+                    <i class="far fa-heart"></i> <span class="likes-count">0</span>
+                </div>
+                <div class="chirp-action reply-btn">
+                    <i class="far fa-comment"></i> <span class="replies-count">0</span>
+                </div>
+            </div>
+            <div class="reply-box hidden">
+                <input type="text" class="reply-input" placeholder="Write a reply..." maxlength="64">
+                <button class="btn btn-primary submit-reply">Reply</button>
+            </div>
+            <div class="replies-container hidden">
+                <!-- Replies will be loaded here -->
+            </div>
+        </div>
+    </template>
+
+    <template id="reply-template">
+        <div class="reply">
+            <div class="reply-header">
+                <a href="#" class="reply-username"></a>
+                <span class="reply-time"></span>
+            </div>
+            <div class="reply-content"></div>
+        </div>
+    </template>
+
+    <template id="search-result-template">
+        <div class="search-result">
+            <img class="search-result-pic" src="/practice/chirper/images/default-avatar.svg" alt="User">
+            <div>
+                <a href="#" class="search-result-username"></a>
+                <span class="search-result-fullname"></span>
+            </div>
+        </div>
+    </template>
+
+    <script src="app.js"></script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>

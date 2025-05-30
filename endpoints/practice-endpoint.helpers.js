@@ -19,6 +19,7 @@ const { handleGraphQLRequest } = require("./practice/weather-graphql-handlers");
 const { handleBooksGraphQLRequest } = require("./practice/books-graphql-handlers");
 const aiChat = require("./practice/nova/nova-chat-handlers");
 const testagram = require("./practice/testagram/testagram-handlers");
+const chirper = require("./practice/chirper/chirper-handlers");
 const {
   getDirectoryContents,
   getFileDetails,
@@ -688,6 +689,91 @@ function handlePractice(req, res) {
       }
 
       return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Testagram endpoint not found"));
+    }
+
+    // Chirper routes
+    if (req.url.includes("/api/practice/v1/chirper")) {
+      const url = req.url;
+
+      // Auth routes
+      if (url.includes("/api/practice/v1/chirper/auth")) {
+        const endpoint = url.split("/api/practice/v1/chirper/auth/")[1];
+
+        switch (true) {
+          case req.method === "POST" && endpoint === "register":
+            return chirper.register(req, res);
+          case req.method === "POST" && endpoint === "login":
+            return chirper.login(req, res);
+          case req.method === "POST" && endpoint === "logout":
+            return chirper.logout(req, res);
+          case req.method === "GET" && endpoint === "check":
+            return applyMiddleware([chirper.verifyToken], chirper.checkAuth)(req, res);
+          default:
+            return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Auth endpoint not found"));
+        }
+      }
+
+      // Chirps routes
+      if (url.includes("/api/practice/v1/chirper/chirps")) {
+        const parts = url.split("/api/practice/v1/chirper/chirps")[1]?.split("/");
+        const id = parts?.[1];
+        const action = parts?.[2];
+        switch (true) {
+          case req.method === "GET" && !isIdValid(id):
+            // Skip authentication middleware for GET requests to chirps endpoint to allow public view
+            return chirper.getChirps(req, res);
+          case req.method === "POST" && !isIdValid(id):
+            return applyMiddleware([chirper.verifyToken], chirper.createChirp)(req, res);
+          case req.method === "GET" && isIdValid(id):
+            req.params = { id };
+            return chirper.getChirpById(req, res);
+          case req.method === "DELETE" && isIdValid(id):
+            req.params = { id };
+            return applyMiddleware([chirper.verifyToken], chirper.deleteChirp)(req, res);
+          case req.method === "POST" && isIdValid(id) && action === "like":
+            req.params = { id };
+            return applyMiddleware([chirper.verifyToken], chirper.toggleLike)(req, res);
+          case req.method === "POST" && isIdValid(id) && action === "reply":
+            req.params = { id };
+            return applyMiddleware([chirper.verifyToken], chirper.addReply)(req, res);
+          default:
+            return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Chirps endpoint not found"));
+        }
+      }
+
+      // User profile routes
+      if (url.includes("/api/practice/v1/chirper/users")) {
+        const parts = url.split("/api/practice/v1/chirper/users")[1]?.split("/");
+        const username = parts?.[1]?.split("?")[0]; // Extract username before any query params
+        const action = parts?.[2]?.split("?")[0]; // Extract action before any query params
+
+        logDebug("handlePractice:chirper", { username, action, method: req.method });
+
+        switch (true) {
+          case req.method === "GET" && username !== undefined:
+            req.params = { username };
+            return chirper.getUserProfile(req, res);
+          case req.method === "PUT":
+            return applyMiddleware([chirper.verifyToken], chirper.updateProfile)(req, res);
+          case req.method === "POST" && username && action === "follow":
+            req.params = { username };
+            return applyMiddleware([chirper.verifyToken], chirper.toggleFollow)(req, res);
+          default:
+            return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Users endpoint not found"));
+        }
+      }
+
+      // Search users
+      if (url.includes("/api/practice/v1/chirper/search") && req.method === "GET") {
+        return applyMiddleware([chirper.verifyToken], chirper.searchUsers)(req, res);
+      }
+
+      // Debug endpoint - get all data (only for development)
+      if (url.endsWith("/api/practice/v1/chirper/_debug/data") && req.method === "GET") {
+        return chirper._getAllData(req, res);
+      }
+
+      return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Chirper endpoint not found"));
     }
 
     return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
