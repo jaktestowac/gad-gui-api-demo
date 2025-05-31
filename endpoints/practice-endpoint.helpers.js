@@ -27,6 +27,7 @@ const {
   updateFile,
   deleteItem,
 } = require("./practice/file-system-handlers");
+const hotelHandlers = require("./practice/hotel-handlers");
 
 function isIdValid(id) {
   return id !== undefined && id !== "";
@@ -573,6 +574,40 @@ function handlePractice(req, res) {
       // Admin endpoints
       if (req.method === "GET" && url.endsWith("/api/practice/v1/weather/admin/data")) {
         return applyMiddleware([weatherAppV1.authenticate, weatherAppV1.adminOnly], weatherAppV1.getAllData)(req, res);
+      }
+    } // Hotel Reservation API endpoints
+    if (req.url.includes("/api/practice/v1/hotels")) {
+      const url = req.url;
+
+      const hotelId = url.match(/\/api\/practice\/v1\/hotels\/([^/]+)\/?/)?.[1];
+      const configurationMatch = url.match(/\/api\/practice\/v1\/hotels\/([^/]+)\/configuration/);
+
+      logDebug("handlePractice:hotel", { url, hotelId, configurationMatch });
+
+      switch (true) {
+        // Get specific hotel configuration by hotel ID
+        case req.method === "GET" && configurationMatch?.length > 0: {
+          const configHotelId = configurationMatch[1];
+          req.params = { id: configHotelId };
+          return hotelHandlers.getHotelConfigurationById(req, res);
+        }
+
+        // Get all hotels
+        case req.method === "GET" && url.endsWith("/api/practice/v1/hotels"):
+          return hotelHandlers.getHotelsData(req, res);
+
+        // Get specific hotel by ID
+        case req.method === "GET" && hotelId && !url.includes("/configuration"):
+          req.params = { id: hotelId };
+          return hotelHandlers.getHotelById(req, res);
+
+        // Get all hotel configurations
+        case req.method === "GET" && url.endsWith("/api/practice/v1/hotels/configurations"):
+          return hotelHandlers.getHotelConfigurations(req, res);
+
+        // Get default hotel configuration
+        case req.method === "GET" && url.endsWith("/api/practice/v1/hotels/configuration/default"):
+          return hotelHandlers.getDefaultHotelConfiguration(req, res);
       }
     }
 
