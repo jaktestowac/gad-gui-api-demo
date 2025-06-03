@@ -510,7 +510,7 @@
 
 
                 <div class="mb-4">
-                    <div class="card">
+                    <div class="card" id="datePickerCard" aria-label="Select Date">
                         <div class="card-header bg-primary text-white">
                             <h5 class="card-title mb-0">Select Date</h5>
                         </div>
@@ -530,7 +530,7 @@
 
                 <div class="card weather-app-card">
                     <div class="card-body">
-                        <h3 class="card-title" id="weatherDate">Today's Weather</h3>
+                        <h3 class="card-title" id="weatherDate" aria-label="Weather Date">Today's Weather</h3>
 
                         <!-- Skeleton loading template (initially hidden) -->
                         <div id="weatherSkeleton" style="display: none;">
@@ -562,9 +562,9 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3" id="tempContainer">
                                     <div class="d-flex align-items-center"> <i id="temperatureIcon" class="fas fa-thermometer-half fa-2x me-2 text-light"></i>
-                                        <div>
+                                        <div id="temperatureContent" aria-label="Temperature">
                                             <h5 class="mb-0">Temperature</h5>
-                                            <h3 id="temperature">--°C</h3>
+                                            <h3 id="temperature" aria-label="Current Temperature">--°C</h3>
                                             <small id="tempCategory" class="text-light" style="display: none;"></small>
                                         </div>
                                     </div>
@@ -572,27 +572,27 @@
                                 <div class="col-md-6 mb-3" id="humidityContainer">
                                     <div class="d-flex align-items-center">
                                         <i class="fas fa-tint fa-2x me-2 text-light"></i>
-                                        <div>
+                                        <div id="humidityContent" aria-label="Humidity">
                                             <h5 class="mb-0">Humidity</h5>
-                                            <h3 id="humidity">--%</h3>
+                                            <h3 id="humidity" aria-label="Current Humidity">--%</h3>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-3" id="windDirContainer">
                                     <div class="d-flex align-items-center">
                                         <i id="windDirectionIcon" class="fas fa-location-arrow fa-2x me-2 text-light"></i>
-                                        <div>
+                                        <div id="windDirectionContent" aria-label="Wind Direction">
                                             <h5 class="mb-0">Wind Direction</h5>
-                                            <h3 id="windDirection">--</h3>
+                                            <h3 id="windDirection" aria-label="Current Wind Direction">--</h3>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-3" id="windSpeedContainer">
                                     <div class="d-flex align-items-center">
                                         <i class="fas fa-wind fa-2x me-2 text-light"></i>
-                                        <div>
+                                        <div id="windSpeedContent" aria-label="Wind Speed">
                                             <h5 class="mb-0">Wind Speed</h5>
-                                            <h3 id="windSpeed">-- km/h</h3>
+                                            <h3 id="windSpeed" aria-label="Current Wind Speed">-- km/h</h3>
                                             <small id="windCategory" class="text-light" style="display: none;"></small>
                                         </div>
                                     </div>
@@ -601,7 +601,7 @@
                         </div>
 
                         <button id="refreshWeatherBtn" class="btn btn-sm weather-app-refresh-btn" title="Refresh Weather Data">
-                            <i class="fas fa-sync-alt"></i>
+                            <i class="fas fa-sync-alt" id="refreshWeatherIcon" aria-label="Refresh Weather Data"></i>
                         </button>
                     </div>
                 </div>
