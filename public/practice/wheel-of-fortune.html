@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD - Simple Wheel of Fortune</title>
+    <meta charset="UTF-8">
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <style>
+        :root {
+            --wof-primary: #4361ee;
+            --wof-primary-dark: #3a56d4;
+            --wof-secondary: #ff5c8d;
+            --wof-light: #f8f9fa;
+            --wof-dark: #212529;
+            --wof-gray: #6c757d;
+            --wof-gray-light: #e9ecef;
+            --wof-success: #38b000;
+            --wof-danger: #ff5a5f;
+            --wof-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --wof-radius: 12px;
+        }
+
+        .wof-main-container {
+            position: relative;
+            text-align: center;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 30px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: var(--wof-light);
+            border-radius: var(--wof-radius);
+            box-shadow: var(--wof-shadow);
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin: 0;
+            background-color: #f0f8ff;
+            background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            flex-wrap: wrap;
+            color: var(--wof-dark);
+            line-height: 1.6;
+        }
+
+        .wof-wheel-section {
+            flex: 1;
+            min-width: 420px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: white;
+            padding: 20px;
+            border-radius: var(--wof-radius);
+            box-shadow: var(--wof-shadow);
+        }
+
+        .wof-controls-section {
+            flex: 1;
+            min-width: 320px;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            justify-content: flex-start;
+            background-color: white;
+            padding: 20px;
+            border-radius: var(--wof-radius);
+            box-shadow: var(--wof-shadow);
+        }
+
+        .wof-wheel-container {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            margin: 20px auto;
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2), inset 0 0 20px rgba(0, 0, 0, 0.1);
+            background: #f8f9fa;
+            padding: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .wof-wheel-container:hover {
+            transform: scale(1.02);
+        }
+
+        #wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+
+        .wof-pointer {
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 60px;
+            background-color: var(--wof-secondary);
+            clip-path: polygon(50% 100%, 0 0, 100% 0);
+            z-index: 10;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+            transition: transform 0.2s ease;
+        }
+
+        .wof-pointer:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 50%);
+            clip-path: polygon(50% 100%, 0 0, 100% 0);
+        }
+
+        .wof-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+            width: 100%;
+        }
+
+        .wof-input-group {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .wof-input-group input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid var(--wof-gray-light);
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .wof-input-group input:focus {
+            border-color: var(--wof-primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.3);
+        }
+
+        /* Custom button styles */
+        .wof-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .wof-btn-primary {
+            background: linear-gradient(45deg, var(--wof-primary), var(--wof-primary-dark));
+            color: white;
+            box-shadow: 0 4px 6px rgba(67, 97, 238, 0.3);
+        }
+
+        .wof-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(67, 97, 238, 0.4);
+        }
+
+        .wof-btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .wof-btn-secondary {
+            background-color: var(--wof-gray-light);
+            color: var(--wof-dark);
+        }
+
+        .wof-btn-secondary:hover {
+            background-color: #dee2e6;
+        }
+
+        .wof-btn-small {
+            padding: 8px 15px;
+            font-size: 14px;
+        }
+
+        .wof-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .wof-positions-list {
+            margin: 15px 0;
+            width: 100%;
+            text-align: left;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid var(--wof-gray-light);
+            border-radius: var(--wof-radius);
+            padding: 15px;
+            background-color: white;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .wof-positions-list h3 {
+            margin-top: 0;
+            color: var(--wof-primary-dark);
+            font-size: 18px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--wof-gray-light);
+            margin-bottom: 15px;
+        }
+
+        .wof-positions-list::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .wof-positions-list::-webkit-scrollbar-thumb {
+            background: var(--wof-gray-light);
+            border-radius: 4px;
+        }
+
+        .wof-positions-list::-webkit-scrollbar-thumb:hover {
+            background: var(--wof-gray);
+        }
+
+        .wof-position-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 8px 0;
+            padding: 12px;
+            background-color: var(--wof-light);
+            border-radius: 8px;
+            border: 1px solid var(--wof-gray-light);
+            transition: all 0.2s ease;
+        }
+
+        .wof-position-item:hover {
+            transform: translateX(3px);
+            border-left: 3px solid var(--wof-primary);
+        }
+
+        .wof-position-item span {
+            font-weight: 500;
+        }
+
+        .wof-result {
+            margin: 20px 0;
+            padding: 25px;
+            width: 100%;
+            background: linear-gradient(135deg, #f1f9ff 0%, #e8f4ff 100%);
+            border-radius: var(--wof-radius);
+            border: 1px solid var(--wof-primary-dark);
+            border-left: 5px solid var(--wof-success);
+            font-size: 18px;
+            font-weight: bold;
+            display: none;
+            box-shadow: var(--wof-shadow);
+            text-align: center;
+            animation: fadeIn 0.6s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .wof-result span {
+            color: var(--wof-primary);
+            font-size: 22px;
+            font-weight: 700;
+            display: inline-block;
+            margin: 5px 0;
+        }
+
+        .wof-btn-remove {
+            background-color: var(--wof-danger);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .wof-btn-remove:hover {
+            background-color: #ff3b40;
+            transform: scale(1.05);
+        }
+
+        .wof-header {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 10px;
+            top: 20px;
+        }
+
+        .wof-header h1 {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--wof-primary-dark);
+            margin-bottom: 10px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .wof-header h1:after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 4px;
+            background: var(--wof-secondary);
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        .wof-header p {
+            color: var(--wof-gray);
+            font-size: 18px;
+            max-width: 600px;
+            margin: 15px auto 0;
+        }
+
+        /* Modal styles */
+        .wof-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(3px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .wof-modal-overlay.active {
+            opacity: 1;
+        }
+
+        .wof-modal {
+            background-color: white;
+            padding: 25px;
+            border-radius: var(--wof-radius);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .wof-modal-overlay.active .wof-modal {
+            transform: scale(1);
+        }
+
+        .wof-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--wof-gray-light);
+        }
+
+        .wof-modal-header h3 {
+            margin: 0;
+            color: var(--wof-primary-dark);
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .wof-modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--wof-gray);
+            transition: all 0.2s ease;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .wof-modal-close:hover {
+            background-color: var(--wof-gray-light);
+            color: var(--wof-dark);
+        }
+
+        .wof-bulk-textarea {
+            width: 100%;
+            min-height: 150px;
+            margin: 15px 0;
+            padding: 15px;
+            border: 2px solid var(--wof-gray-light);
+            border-radius: 8px;
+            resize: vertical;
+            font-family: inherit;
+            font-size: 16px;
+            line-height: 1.5;
+            transition: all 0.3s ease;
+        }
+
+        .wof-bulk-textarea:focus {
+            border-color: var(--wof-primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+            outline: none;
+        }
+
+        .wof-modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .wof-main-container {
+                flex-direction: column;
+                align-items: center;
+                padding: 15px;
+            }
+
+            .wof-wheel-section,
+            .wof-controls-section {
+                min-width: 100%;
+            }
+
+            .wof-header h1 {
+                font-size: 28px;
+            }
+
+            .wof-header p {
+                font-size: 16px;
+            }
+        }
+
+        /* Animation for the spin button */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .spin-animation {
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        /* Animation for spinning wheel */
+        @keyframes spinning {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .spinning {
+            animation: spinning 0.5s linear infinite;
+        }
+
+        /* Error message styles */
+        .wof-error-message {
+            background-color: #fff0f0;
+            color: var(--wof-danger);
+            border: 1px solid var(--wof-danger);
+            border-left: 4px solid var(--wof-danger);
+            border-radius: var(--wof-radius);
+            padding: 12px 15px;
+            margin: 0 0 20px 0;
+            font-size: 15px;
+            font-weight: 500;
+            text-align: center;
+            animation: fadeIn 0.3s ease;
+            transition: opacity 0.5s ease;
+            box-shadow: 0 3px 8px rgba(255, 90, 95, 0.1);
+            position: absolute;
+            z-index: 10;
+            top: 50px;
+            right: 20px;
+        }
+
+        .wof-error-fade-out {
+            opacity: 0;
+        }
+
+        /* Fixed position on top of page */
+        #error-message-container {
+            position: absolute;
+            top: 50px;
+            left: 50px;
+            transform: translateX(-50%);
+            z-index: 2000;
+            width: 200px;
+            max-width: 200px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+    <br />
+    <br />
+    <div id="spinner-status"></div>
+    <div id="page">
+        <div class="wof-main-container">
+            <div class="wof-header">
+                <h1>Wheel of Fortune</h1>
+            </div>
+
+            <div class="wof-wheel-section">
+                <div class="wof-wheel-container">
+                    <div class="wof-pointer"></div>
+                    <canvas id="wheel" width="400" height="400"></canvas>
+                </div>
+                <button id="spin-wheel" class="button-primary">Spin the Wheel</button>
+            </div>
+
+            <div class="wof-controls-section">
+                <div class="wof-controls">
+                    <div class="wof-input-group">
+                        <input type="text" id="position-input" placeholder="Enter position name" class="inputField" maxlength="20">
+                        <button id="add-position" class="button-primary-small">Add</button>
+                        <button id="bulk-add-button" class="button-primary-small">Bulk Add</button>
+                    </div>
+                </div>
+
+                <div id="result" class="wof-result">
+                    And the winner is: <span id="winning-position"></span>!
+                </div>
+
+                <div id="positions-list" class="wof-positions-list">
+                    <h3>Wheel Positions:</h3>
+                    <div id="positions-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Add Modal -->
+    <div id="bulk-add-modal" class="wof-modal-overlay">
+        <div class="wof-modal">
+            <div class="wof-modal-header">
+                <h3>Bulk Add Positions</h3>
+                <button class="wof-modal-close" id="close-modal">&times;</button>
+            </div>
+            <p>Enter multiple positions, one per line or separated by commas:</p>
+            <textarea id="bulk-positions" class="wof-bulk-textarea" placeholder="Example:
+Position 1
+Position 2, Position 3
+Position 4"></textarea>
+            <div class="wof-modal-footer">
+                <button id="cancel-bulk-add" class="button-secondary-small">Cancel</button>
+                <button id="confirm-bulk-add" class="button-primary-small">Add Positions</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const canvas = document.getElementById('wheel');
+            const ctx = canvas.getContext('2d');
+            const addPositionBtn = document.getElementById('add-position');
+            const positionInput = document.getElementById('position-input');
+            const spinWheelBtn = document.getElementById('spin-wheel'); const positionsContainer = document.getElementById('positions-container');
+            const resultElement = document.getElementById('result');
+            const winningPositionElement = document.getElementById('winning-position');
+
+            // Bulk add elements
+            const bulkAddBtn = document.getElementById('bulk-add-button');
+            const bulkAddModal = document.getElementById('bulk-add-modal');
+            const closeModalBtn = document.getElementById('close-modal');
+            const cancelBulkAddBtn = document.getElementById('cancel-bulk-add');
+            const confirmBulkAddBtn = document.getElementById('confirm-bulk-add');
+            const bulkPositionsTextarea = document.getElementById('bulk-positions');
+
+            // Array to store wheel positions
+            let positions = [];
+            let isSpinning = false;
+            let currentRotation = 0;
+            let spinningSpeed = 0;
+            let lastTimestamp = 0;
+            let selectedPosition = null;
+
+            // Colors for the wheel segments
+            const colors = [
+                '#FF4136', '#0074D9', '#2ECC40', '#FFDC00', '#B10DC9',
+                '#FF851B', '#7FDBFF', '#3D9970', '#01FF70', '#F012BE',
+                '#39CCCC', '#85144b', '#AAAAAA', '#DDDDDD'
+            ];            // Function to add a position to the wheel
+            function addPosition() {
+                const position = positionInput.value.trim();
+                if (!position) return;                // Check if position already exists
+                if (positions.some(p => p.toLowerCase() === position.toLowerCase())) {
+                    showErrorMessage(`Position "${position}" already exists!`);
+                    return;
+                }
+
+                positions.push(position);
+                updatePositionsList();
+                drawWheel();
+                positionInput.value = '';
+            }            // Function to show an error message
+            function showErrorMessage(message) {
+                const errorElement = document.createElement('div');
+                errorElement.className = 'wof-error-message';
+                errorElement.innerHTML = `<i class="fas fa-exclamation-circle" style="margin-right: 8px;"></i>${message}`;
+
+                // Insert at the top of the page
+                const mainContainer = document.querySelector('.wof-main-container');
+                mainContainer.insertBefore(errorElement, mainContainer.firstChild);
+
+                // Auto-hide after 3 seconds
+                setTimeout(() => {
+                    errorElement.classList.add('wof-error-fade-out');
+                    setTimeout(() => {
+                        errorElement.remove();
+                    }, 500);
+                }, 3000);
+            }
+
+            // Function to update the displayed list of positions
+            function updatePositionsList() {
+                positionsContainer.innerHTML = ''; if (positions.length === 0) {
+                    positionsContainer.innerHTML = '<p>No positions added yet</p>';
+                    return;
+                }
+
+                positions.forEach((position, index) => {
+                    const positionItem = document.createElement('div');
+                    positionItem.className = 'wof-position-item';
+                    positionItem.innerHTML = `
+                        <span>${position}</span>
+                        <button class="wof-btn-remove" data-index="${index}">Remove</button>
+                    `;
+                    positionsContainer.appendChild(positionItem);
+                });
+
+                // Add event listeners to remove buttons
+                document.querySelectorAll('.wof-btn-remove').forEach(button => {
+                    button.addEventListener('click', function () {
+                        const index = parseInt(this.getAttribute('data-index'));
+                        positions.splice(index, 1);
+                        updatePositionsList();
+                        drawWheel();
+                    });
+                });
+
+                // Update the spin button state
+                spinWheelBtn.disabled = positions.length < 2;
+                spinWheelBtn.title = positions.length < 2 ? 'Add at least 2 positions to spin' : '';
+            }
+
+            function truncateText(text, maxLength) {
+                if (text.length <= maxLength) return text;
+                return text.substring(0, maxLength) + '...';
+            }
+
+            // Function to draw the wheel
+            function drawWheel() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+                const radius = Math.min(centerX, centerY) - 10;
+
+                if (positions.length === 0) {
+                    // Draw empty wheel
+                    ctx.beginPath();
+                    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+                    ctx.fillStyle = '#CCCCCC';
+                    ctx.fill();
+                    ctx.strokeStyle = '#333333';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+
+                    // Draw text
+                    ctx.fillStyle = '#555555';
+                    ctx.font = '16px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('Add positions to start', centerX, centerY);
+                    return;
+                }
+
+                const anglePerPosition = (2 * Math.PI) / positions.length;
+                // Character limit depends on number of segments
+                const maxTextLength = Math.max(10, Math.min(20, Math.floor(30 / Math.sqrt(positions.length))));
+
+                // Draw wheel segments
+                positions.forEach((position, index) => {
+                    const startAngle = index * anglePerPosition + currentRotation;
+                    const endAngle = (index + 1) * anglePerPosition + currentRotation;
+
+                    // Draw segment
+                    ctx.beginPath();
+                    ctx.moveTo(centerX, centerY);
+                    ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+                    ctx.closePath();
+                    ctx.fillStyle = colors[index % colors.length];
+                    ctx.fill();
+                    ctx.strokeStyle = '#FFFFFF';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+
+                    // Draw text with truncation
+                    ctx.save();
+                    ctx.translate(centerX, centerY);
+                    ctx.rotate(startAngle + anglePerPosition / 2);
+                    ctx.textAlign = 'right';
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.font = 'bold 14px Arial';
+                    const displayText = truncateText(position, maxTextLength);
+                    ctx.fillText(displayText, radius - 15, 0);
+                    ctx.restore();
+                });
+
+                // Draw center circle
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, 15, 0, 2 * Math.PI);
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fill();
+                ctx.strokeStyle = '#333333';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+
+            // Function to spin the wheel
+            function spinWheel() {
+                if (positions.length < 2 || isSpinning) return; isSpinning = true;
+                spinningSpeed = Math.random() * 0.1 + 0.15; // Random initial speed
+                resultElement.style.display = 'none';
+                selectedPosition = null;
+
+                // Start animation
+                lastTimestamp = performance.now();
+                requestAnimationFrame(animateSpin);
+            }
+
+            // Function to animate the spinning wheel
+            function animateSpin(timestamp) {
+                const deltaTime = timestamp - lastTimestamp;
+                lastTimestamp = timestamp;
+
+                // Update rotation
+                currentRotation += spinningSpeed * (deltaTime / 16); // Normalize for 60fps
+                currentRotation %= (2 * Math.PI); // Keep within 0-2π
+
+                // Slow down gradually
+                spinningSpeed *= 0.99;
+
+                // Draw the wheel
+                drawWheel();
+
+                // Check if spinning has stopped
+                if (spinningSpeed > 0.001) {
+                    requestAnimationFrame(animateSpin);
+                } else {
+                    isSpinning = false;
+                    determineWinner();
+                }
+            }
+
+            // Function to determine the winning position
+            function determineWinner() {
+                if (positions.length === 0) return;
+
+                const anglePerPosition = (2 * Math.PI) / positions.length;
+                // The pointer is at the top (3π/2), so we need to adjust the angle
+                const pointerAngle = 1.5 * Math.PI;                // Calculate which segment is at the pointer
+                // The modulo operation adjusts the angle to be positive
+                const normalizedAngle = (pointerAngle - currentRotation) % (2 * Math.PI);
+                const positionIndex = Math.floor(normalizedAngle / anglePerPosition) % positions.length;
+                selectedPosition = positions[positionIndex];                // Display the result
+                winningPositionElement.textContent = selectedPosition;
+                resultElement.style.display = 'block';
+
+                // Scroll to result if needed
+                resultElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }// Event listeners
+            addPositionBtn.addEventListener('click', addPosition);
+            positionInput.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    addPosition();
+                }
+            });
+            spinWheelBtn.addEventListener('click', spinWheel);
+
+            // Bulk add event listeners
+            bulkAddBtn.addEventListener('click', function () {
+                bulkAddModal.style.display = 'flex';
+                bulkPositionsTextarea.focus();
+            });
+
+            closeModalBtn.addEventListener('click', function () {
+                bulkAddModal.style.display = 'none';
+            });
+
+            cancelBulkAddBtn.addEventListener('click', function () {
+                bulkAddModal.style.display = 'none';
+            });
+
+            confirmBulkAddBtn.addEventListener('click', function () {
+                addBulkPositions();
+                bulkAddModal.style.display = 'none';
+            });
+
+            // Close modal when clicking outside
+            bulkAddModal.addEventListener('click', function (e) {
+                if (e.target === bulkAddModal) {
+                    bulkAddModal.style.display = 'none';
+                }
+            });            // Function to add multiple positions at once
+            function addBulkPositions() {
+                const text = bulkPositionsTextarea.value.trim();
+                if (!text) return;
+
+                // Split by newlines and commas
+                const positionsArray = text
+                    .split(/[\n,]+/)
+                    .map(pos => pos.trim())
+                    .filter(pos => pos.length > 0);
+
+                if (positionsArray.length === 0) return;
+
+                let duplicatesFound = 0;
+                let addedCount = 0;                // Add all positions to the wheel
+                positionsArray.forEach(position => {
+                    if (!positions.some(p => p.toLowerCase() === position.toLowerCase())) {
+                        positions.push(position);
+                        addedCount++;
+                    } else {
+                        duplicatesFound++;
+                    }
+                });
+
+                // Clear the textarea
+                bulkPositionsTextarea.value = '';
+
+                // Update the UI
+                updatePositionsList();
+                drawWheel();
+
+                // Show message about duplicates if any were found
+                if (duplicatesFound > 0) {
+                    const message = `Added ${addedCount} positions. Skipped ${duplicatesFound} duplicate position${duplicatesFound > 1 ? 's' : ''}.`;
+                    showErrorMessage(message);
+                }
+            }
+
+            // Initialize the wheel
+            updatePositionsList();
+            drawWheel();
+        });
+    </script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>

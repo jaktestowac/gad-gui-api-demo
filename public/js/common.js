@@ -899,7 +899,6 @@ function loadAdditionalFrontPageContent() {
   );
   changePixAfterClick("#copyright-sign", ".back-img");
   // eslint-disable-next-line no-console
-  console.log("The chickens are not what they seem");
 }
 
 function loadAdditionalContent() {

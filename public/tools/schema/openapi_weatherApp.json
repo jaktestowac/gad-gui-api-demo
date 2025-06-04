@@ -35,8 +35,13 @@
         "type": "object",
         "properties": {
           "error": {
-            "type": "string",
-            "description": "Error message"
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "description": "Error message"
+              }
+            }
           }
         }
       },
@@ -51,24 +56,6 @@
           "temp": {
             "type": "number",
             "description": "Temperature in Celsius"
-          },
-          "humidity": {
-            "type": "number",
-            "description": "Humidity percentage"
-          },
-          "wind": {
-            "type": "object",
-            "properties": {
-              "speed": {
-                "type": "number",
-                "description": "Wind speed in km/h"
-              },
-              "direction": {
-                "type": "string",
-                "enum": ["N", "NE", "E", "SE", "S", "SW", "W", "NW"],
-                "description": "Wind direction"
-              }
-            }
           }
         }
       },

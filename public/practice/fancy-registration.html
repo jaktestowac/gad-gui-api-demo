@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD Sphere - Fancy Registration Form</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <style>
+        :root {
+            --primary-color: #4fb848;
+            /* Lizard green */
+            --secondary-color: #8e732d;
+            /* Gold/amber for lizard eye color */
+            --success-color: #28a745;
+            --text-color: #333;
+            --form-bg: #ffffff;
+            --input-bg: #f8f9fa;
+            --input-border: #ced4da;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --glitch-color-1: rgba(79, 184, 72, 0.2);
+            /* Green */
+            --glitch-color-2: rgba(142, 115, 45, 0.2);
+            /* Gold */
+            --glitch-color-3: rgba(0, 95, 0, 0.2);
+            /* Dark green */
+        }
+
+        .body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            padding: 30px;
+            background-color: var(--form-bg);
+            border-radius: 10px;
+            box-shadow: 0 15px 30px var(--shadow-color);
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+
+        .glitch-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        /* Company branding styles - protected from glitches */
+        .company-branding,
+        .company-branding svg,
+        .company-branding path,
+        .company-branding span,
+        .company-branding .logo,
+        .company-branding .logo-text {
+            text-align: center;
+            position: relative;
+            z-index: 100 !important;
+            transform: none !important;
+            transition: none !important;
+            animation: none !important;
+            filter: none !important;
+            opacity: 1 !important;
+        }
+
+        .company-branding {
+            margin-bottom: 20px;
+        }
+
+        .company-branding .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .company-branding .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-left: 10px;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+        }
+
+        @keyframes lizardWiggle {
+
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+
+            25% {
+                transform: rotate(-10deg);
+            }
+
+            75% {
+                transform: rotate(10deg);
+            }
+        }
+
+        /* Ensure logo is not affected by any transforms or glitches */
+        .no-glitch {
+            transform: none !important;
+            transition: none !important;
+            animation: none !important;
+            filter: none !important;
+            position: relative !important;
+            z-index: 100 !important;
+            opacity: 1 !important;
+            /* Make sure no glitch effect is applied */
+            text-shadow: none !important;
+            letter-spacing: normal !important;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 700;
+            position: relative;
+            letter-spacing: 0.5px;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 4px;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 1rem;
+            border: 1px solid var(--input-border);
+            border-radius: 8px;
+            background-color: var(--input-bg);
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 0, 224, 0.2);
+        }
+
+        .form-icon {
+            position: absolute;
+            top: 46px;
+            right: 15px;
+            color: #adb5bd;
+        }
+
+        .password-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            position: absolute;
+            top: 5px;
+            right: 15px;
+            color: #adb5bd;
+            font-size: 1rem;
+        }
+
+        .btn {
+            display: inline-block;
+            font-weight: 600;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            user-select: none;
+            padding: 14px 30px;
+            font-size: 1rem;
+            line-height: 1.5;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 7px 20px rgba(74, 0, 224, 0.3);
+            transform: translateY(-3px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(74, 0, 224, 0.2);
+        }
+
+        .btn-ripple {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.4);
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 0.95rem;
+            color: #6c757d;
+        }
+
+        .form-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            background-color: rgba(40, 167, 69, 0.1);
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid var(--success-color);
+        }
+
+        .success-message h3 {
+            color: var(--success-color);
+            margin-bottom: 10px;
+        }
+
+        .input-with-validation {
+            position: relative;
+        }
+
+        .validation-icon {
+            position: absolute;
+            right: 16px;
+            top: 16px;
+            visibility: hidden;
+        }
+
+        .validation-icon.valid {
+            color: var(--success-color);
+            visibility: visible;
+        }
+
+        .validation-strength {
+            height: 5px;
+            margin-top: 8px;
+            border-radius: 3px;
+            background-color: #e9ecef;
+            overflow: hidden;
+        }
+
+        .strength-meter {
+            height: 100%;
+            width: 0;
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .weak {
+            background-color: #dc3545;
+            width: 30%;
+        }
+
+        .medium {
+            background-color: #ffc107;
+            width: 60%;
+        }
+
+        .strong {
+            background-color: var(--success-color);
+            width: 100%;
+        }
+
+        .shake {
+            animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
+        }
+
+
+        @keyframes glitch-effect {
+            0% {
+                transform: none;
+                opacity: 0.8;
+            }
+
+            7% {
+                transform: translate(2px, 3px);
+                opacity: 0.6;
+            }
+
+            10% {
+                transform: none;
+                opacity: 0.8;
+            }
+
+            27% {
+                transform: none;
+                opacity: 0.8;
+            }
+
+            30% {
+                transform: translate(-5px, -2px);
+                opacity: 0.6;
+            }
+
+            35% {
+                transform: none;
+                opacity: 0.8;
+            }
+
+            52% {
+                transform: none;
+                opacity: 0.8;
+            }
+
+            55% {
+                transform: translate(3px, -1px);
+                opacity: 0.6;
+            }
+
+            50% {
+                transform: none;
+                opacity: 0.8;
+            }
+
+            72% {
+                transform: none;
+                opacity: 0.8;
+            }
+
+            75% {
+                transform: translate(2px, 1px);
+                opacity: 0.6;
+            }
+
+            80% {
+                transform: none;
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: none;
+                opacity: 0.8;
+            }
+        }
+
+        /* Floating labels effect */
+        .form-floating {
+            position: relative;
+        }
+
+        .form-floating label {
+            position: absolute;
+            top: 14px;
+            left: 16px;
+            color: #6c757d;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            font-size: 1rem;
+        }
+
+        .form-floating input:focus~label,
+        .form-floating input:not(:placeholder-shown)~label {
+            top: -10px;
+            left: 10px;
+            font-size: 0.8rem;
+            background-color: white;
+            padding: 0 5px;
+            color: var(--primary-color);
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        @keyframes shake {
+
+            10%,
+            90% {
+                transform: translateX(-1px);
+            }
+
+            20%,
+            80% {
+                transform: translateX(2px);
+            }
+
+            30%,
+            50%,
+            70% {
+                transform: translateX(-4px);
+            }
+
+            40%,
+            60% {
+                transform: translateX(4px);
+            }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .btn {
+                padding: 12px 20px;
+            }
+        }
+
+        /* Chat specialist styles */
+        /* Company branding is protected from glitches, but chat button can have glitch effects */
+        .chat-specialist {
+            position: absolute !important;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .chat-button {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .chat-specialist {
+            position: absolute !important;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .chat-button {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .chat-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+        }
+
+        .chat-button i {
+            font-size: 1.2rem;
+            margin-right: 10px;
+        }
+
+        /* Chat window styles */
+        .chat-window {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 300px;
+            background-color: var(--form-bg);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+            overflow: hidden;
+            display: none;
+            transition: all 0.3s ease;
+        }
+
+        .chat-header {
+            padding: 15px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h4 {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .close-chat {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .chat-messages {
+            padding: 15px;
+            height: 450px;
+            max-height: 450px;
+            overflow-y: auto;
+        }
+
+        .message {
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            max-width: 80%;
+        }
+
+        .message p {
+            padding: 0px;
+            margin: 0px;
+        }
+
+        .user-message {
+            background-color: #e6f7ff;
+            margin-left: auto;
+            border-top-right-radius: 0;
+        }
+
+        .system-message {
+            background-color: #f0f0f0;
+            margin-right: auto;
+            border-top-left-radius: 0;
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .chat-input input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+        }
+
+        .chat-input button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .chat-input button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            margin-right: auto;
+            border-top-left-radius: 0;
+            max-width: 80%;
+        }
+
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            float: left;
+            margin: 0 1px;
+            background-color: #9E9EA1;
+            display: block;
+            border-radius: 50%;
+            opacity: 0.4;
+        }
+
+        .typing-indicator span:nth-of-type(1) {
+            animation: typing 1s infinite 0s;
+        }
+
+        .typing-indicator span:nth-of-type(2) {
+            animation: typing 1s infinite 0.2s;
+        }
+
+        .typing-indicator span:nth-of-type(3) {
+            animation: typing 1s infinite 0.4s;
+        }
+
+        @keyframes typing {
+            0% {
+                transform: translateY(0px);
+                background-color: #9E9EA1;
+            }
+
+            28% {
+                transform: translateY(-5px);
+                background-color: #4fb848;
+            }
+
+            44% {
+                transform: translateY(0px);
+                background-color: #9E9EA1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+    <span class="body">
+        <div class="container">
+            <div class="glitch-container" id="glitchContainer"></div>
+
+            <!-- Company logo that stays unaffected by glitches -->
+            <div class="company-branding">
+                <div class="logo"> <!-- Lizard logo for GAD -->
+                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Lizard head shape -->
+                        <path d="M24 4L4 14V34L24 44L44 34V14L24 4Z" fill="url(#paint0_linear)" />
+                        <path d="M24 4L4 14L24 24L44 14L24 4Z" fill="url(#paint1_linear)" />
+                        <path d="M24 44L24 24L4 14L4 34L24 44Z" fill="url(#paint2_linear)" />
+                        <path d="M44 34L44 14L24 24L24 44L44 34Z" fill="url(#paint3_linear)" />
+
+                        <!-- Lizard eyes -->
+                        <circle cx="18" cy="17" r="3" fill="#ffffff" />
+                        <circle cx="30" cy="17" r="3" fill="#ffffff" />
+                        <circle cx="18" cy="17" r="1.5" fill="#000000" />
+                        <circle cx="30" cy="17" r="1.5" fill="#000000" />
+
+                        <!-- Lizard mouth -->
+                        <path d="M24 28C21 28 18 26 17 25L19 29C21 30 27 30 29 29L31 25C30 26 27 28 24 28Z" fill="#ffffff" />
+
+                        <!-- Lizard tongue -->
+                        <path d="M24 27L22 32L24 30L26 32L24 27Z" fill="#ff3366" />
+                        <defs>
+                            <linearGradient id="paint0_linear" x1="24" y1="4" x2="24" y2="44" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#4fb848" /> <!-- Lizard green -->
+                                <stop offset="1" stop-color="#8e732d" /> <!-- Gold/amber -->
+                            </linearGradient>
+                            <linearGradient id="paint1_linear" x1="24" y1="4" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#4fb848" /> <!-- Lizard green -->
+                                <stop offset="1" stop-color="#6ea55e" /> <!-- Medium green -->
+                            </linearGradient>
+                            <linearGradient id="paint2_linear" x1="4" y1="29" x2="24" y2="44" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#6ea55e" /> <!-- Medium green -->
+                                <stop offset="1" stop-color="#8e732d" /> <!-- Gold/amber -->
+                            </linearGradient>
+                            <linearGradient id="paint3_linear" x1="44" y1="29" x2="24" y2="44" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#6ea55e" /> <!-- Medium green -->
+                                <stop offset="1" stop-color="#8e732d" /> <!-- Gold/amber -->
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <span class="logo-text">GAD Sphere</span>
+                </div>
+            </div>
+
+            <h1>Create Account</h1>
+            <form id="registrationForm">
+                <div class="form-group">
+                    <label for="fullName" class="form-label">Full Name</label>
+                    <div class="input-with-validation">
+                        <input type="text" class="form-control" id="fullName" required>
+                        <i class="fas fa-check validation-icon" id="nameValidIcon"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email" class="form-label">Email Address</label>
+                    <div class="input-with-validation">
+                        <input type="email" class="form-control" id="email" required>
+                        <i class="fas fa-check validation-icon" id="emailValidIcon"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <div class="input-with-validation">
+                        <input type="password" class="form-control" id="password" required>
+                        <button type="button" class="password-toggle" id="togglePassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="validation-strength">
+                        <div class="strength-meter" id="passwordStrength"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword" class="form-label">Confirm Password</label>
+                    <div class="input-with-validation">
+                        <input type="password" class="form-control" id="confirmPassword" required>
+                        <i class="fas fa-check validation-icon" id="confirmValidIcon"></i>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="submitBtn">Register Now</button>
+            </form>
+
+            <div class="success-message" id="successMessage">
+                <h3><i class="fas fa-check-circle"></i> Registration Successful!</h3>
+                <p>Your account has been created successfully. You can now login with your credentials.</p>
+            </div>
+            <div class="form-footer">
+                Already have an account? <a href="#">Sign In</a>
+            </div>
+
+        </div> <!-- Chat with specialist component that can have glitch effects -->
+        <div class="chat-specialist">
+            <button class="chat-button">
+                <i class="fas fa-comment-dots"></i>
+                <span>Chat with Specialist</span>
+            </button>
+        </div>
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <h4><i class="fas fa-headset"></i> Specialist Support</h4>
+                <button class="close-chat" id="closeChat"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message system-message">
+                    <p>Hi there! How can I help you today?</p>
+                </div>
+            </div>
+            <div class="chat-input">
+                <input type="text" placeholder="Type your message..." id="chatInput">
+                <button id="sendMessage"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+        <script>
+            // Modified glitch elements function - no random colored shapes
+            function createGlitchElements() {
+                const glitchContainer = document.getElementById('glitchContainer');
+                glitchContainer.innerHTML = ''; // Clear existing glitches
+
+                // Protect company branding from glitches (but allow chat button to have glitches)
+                document.querySelectorAll('.company-branding, .company-branding *').forEach(el => {
+                    el.classList.add('no-glitch');
+                    // Explicitly reset any transforms
+                    el.style.transform = 'none';
+                    el.style.filter = 'none';
+                    el.style.animation = 'none';
+                    // Set high z-index to ensure they stay on top
+                    el.style.position = 'relative';
+                    el.style.zIndex = '100';
+                });
+
+                // Add text distortion glitches
+                const labels = document.querySelectorAll('.form-label:not(.no-glitch)');
+                labels.forEach(label => {
+                    if (Math.random() > 0.9) {
+                        const letterSpacing = (Math.random() - 0.5) * 3;
+                        const skew = (Math.random() - 0.5) * 4;
+                        label.style.letterSpacing = `${letterSpacing}px`;
+                        label.style.transform = `skew(${skew}deg)`;
+                    } else {
+                        label.style.letterSpacing = 'normal';
+                        label.style.transform = 'none';
+                    }
+                });
+
+                // Random border glitches on inputs
+                const inputs = document.querySelectorAll('.form-control');
+                inputs.forEach(input => {
+                    if (Math.random() > 0.7) {
+                        const borderSide = Math.floor(Math.random() * 4);
+                        const borderWidth = Math.floor(Math.random() * 3) + 1;
+                        const borderStyle = Math.random() > 0.5 ? 'solid' : 'dashed';
+
+                        input.style.border = `1px solid var(--input-border)`;
+                        if (borderSide === 0) input.style.borderTop = `${borderWidth}px ${borderStyle} var(--primary-color)`;
+                        else if (borderSide === 1) input.style.borderRight = `${borderWidth}px ${borderStyle} var(--primary-color)`;
+                        else if (borderSide === 2) input.style.borderBottom = `${borderWidth}px ${borderStyle} var(--primary-color)`;
+                        else input.style.borderLeft = `${borderWidth}px ${borderStyle} var(--primary-color)`;
+                    }
+                });
+
+            }
+
+            // Call on page load
+            document.addEventListener('DOMContentLoaded', function () {
+                // Apply no-glitch protections first thing
+                document.querySelectorAll('.company-branding, .company-branding *').forEach(el => {
+                    el.classList.add('no-glitch');
+                    el.style.transform = 'none';
+                    el.style.filter = 'none';
+                    el.style.animation = 'none';
+                });
+
+                createGlitchElements();
+
+                // Toggle password visibility
+                const togglePassword = document.getElementById('togglePassword');
+                const password = document.getElementById('password');
+
+                togglePassword.addEventListener('click', function () {
+                    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                    password.setAttribute('type', type);
+                    this.querySelector('i').classList.toggle('fa-eye');
+                    this.querySelector('i').classList.toggle('fa-eye-slash');
+                });            // Password strength meter
+                const passwordInput = document.getElementById('password');
+                const strengthMeter = document.getElementById('passwordStrength');
+                const validationStrength = document.querySelector('.validation-strength');
+
+                // Add label to show password strength text
+                const strengthLabel = document.createElement('div');
+                strengthLabel.style.fontSize = '0.8rem';
+                strengthLabel.style.marginTop = '5px';
+                strengthLabel.style.textAlign = 'right';
+                validationStrength.parentNode.insertBefore(strengthLabel, validationStrength.nextSibling);
+
+                passwordInput.addEventListener('input', function () {
+                    const value = this.value;
+                    let strength = 0;
+                    let strengthText = '';
+
+                    // Empty password
+                    if (value.length === 0) {
+                        strengthMeter.className = '';
+                        strengthMeter.style.width = '0';
+                        strengthLabel.textContent = '';
+                        return;
+                    }
+
+                    // Length check
+                    if (value.length >= 8) strength += 1;
+
+                    // Uppercase check
+                    if (value.match(/[A-Z]/)) strength += 1;
+
+                    // Lowercase check
+                    if (value.match(/[a-z]/)) strength += 1;
+
+                    // Number check
+                    if (value.match(/[0-9]/)) strength += 1;
+
+                    // Special character check
+                    if (value.match(/[^A-Za-z0-9]/)) strength += 1;
+
+                    // Update UI based on strength score
+                    switch (true) {
+                        case (strength <= 1):
+                            strengthMeter.className = 'weak';
+                            strengthText = 'Weak';
+                            strengthLabel.style.color = '#dc3545';
+                            break;
+                        case (strength <= 3):
+                            strengthMeter.className = 'medium';
+                            strengthText = 'Medium';
+                            strengthLabel.style.color = '#ffc107';
+                            break;
+                        case (strength >= 4):
+                            strengthMeter.className = 'strong';
+                            strengthText = 'Strong';
+                            strengthLabel.style.color = '#28a745';
+                            break;
+                    }
+
+                    // Add tooltip text with requirements
+                    let requirements = [];
+                    if (value.length < 8) requirements.push('at least 8 characters');
+                    if (!value.match(/[A-Z]/)) requirements.push('uppercase letter');
+                    if (!value.match(/[a-z]/)) requirements.push('lowercase letter');
+                    if (!value.match(/[0-9]/)) requirements.push('number');
+                    if (!value.match(/[^A-Za-z0-9]/)) requirements.push('special character');
+
+                    if (requirements.length > 0) {
+                        strengthLabel.textContent = `${strengthText} - Add: ${requirements.join(', ')}`;
+                    } else {
+                        strengthLabel.textContent = `${strengthText} - Excellent password!`;
+                    }
+                });            // Real-time validation
+                const fullName = document.getElementById('fullName');
+                const email = document.getElementById('email');
+                const confirmPassword = document.getElementById('confirmPassword');
+
+                const nameValidIcon = document.getElementById('nameValidIcon');
+                const emailValidIcon = document.getElementById('emailValidIcon');
+                const confirmValidIcon = document.getElementById('confirmValidIcon');
+
+                // Create validation message containers
+                function createValidationMessage(inputElement, message) {
+                    let validationMsg = document.createElement('div');
+                    validationMsg.className = 'validation-message';
+                    validationMsg.style.fontSize = '0.8rem';
+                    validationMsg.style.marginTop = '5px';
+                    validationMsg.style.color = '#dc3545';
+                    validationMsg.style.display = 'none';
+                    validationMsg.textContent = message;
+
+                    // Insert after the input container
+                    inputElement.closest('.input-with-validation').after(validationMsg);
+                    return validationMsg;
+                }
+
+                // Create validation messages for each field
+                const nameValidMsg = createValidationMessage(fullName, 'Name must be at least 3 characters');
+                const emailValidMsg = createValidationMessage(email, 'Please enter a valid email address');
+                const confirmValidMsg = createValidationMessage(confirmPassword, 'Passwords do not match');
+
+                fullName.addEventListener('input', function () {
+                    if (this.value.length > 2) {
+                        nameValidIcon.classList.add('valid');
+                        nameValidMsg.style.display = 'none';
+                        this.style.borderColor = '#28a745';
+                    } else {
+                        nameValidIcon.classList.remove('valid');
+                        if (this.value.length > 0) {
+                            nameValidMsg.style.display = 'block';
+                            this.style.borderColor = '#dc3545';
+                        } else {
+                            nameValidMsg.style.display = 'none';
+                            this.style.borderColor = 'var(--input-border)';
+                        }
+                    }
+                });
+
+                email.addEventListener('input', function () {
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (emailRegex.test(this.value)) {
+                        emailValidIcon.classList.add('valid');
+                        emailValidMsg.style.display = 'none';
+                        this.style.borderColor = '#28a745';
+                    } else {
+                        emailValidIcon.classList.remove('valid');
+                        if (this.value.length > 0) {
+                            emailValidMsg.style.display = 'block';
+                            this.style.borderColor = '#dc3545';
+                        } else {
+                            emailValidMsg.style.display = 'none';
+                            this.style.borderColor = 'var(--input-border)';
+                        }
+                    }
+                });
+
+                confirmPassword.addEventListener('input', function () {
+                    if (this.value === passwordInput.value && this.value !== '') {
+                        confirmValidIcon.classList.add('valid');
+                        confirmValidMsg.style.display = 'none';
+                        this.style.borderColor = '#28a745';
+                    } else {
+                        confirmValidIcon.classList.remove('valid');
+                        if (this.value.length > 0) {
+                            confirmValidMsg.style.display = 'block';
+                            this.style.borderColor = '#dc3545';
+                        } else {
+                            confirmValidMsg.style.display = 'none';
+                            this.style.borderColor = 'var(--input-border)';
+                        }
+                    }
+                });
+
+                // Also check confirm password when main password changes
+                passwordInput.addEventListener('input', function () {
+                    if (confirmPassword.value.length > 0) {
+                        if (confirmPassword.value === this.value) {
+                            confirmValidIcon.classList.add('valid');
+                            confirmValidMsg.style.display = 'none';
+                            confirmPassword.style.borderColor = '#28a745';
+                        } else {
+                            confirmValidIcon.classList.remove('valid');
+                            confirmValidMsg.style.display = 'block';
+                            confirmPassword.style.borderColor = '#dc3545';
+                        }
+                    }
+                });
+
+                // Form submission
+                const form = document.getElementById('registrationForm');
+                const successMessage = document.getElementById('successMessage');
+
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                    // Basic validation
+                    let isValid = true;
+
+                    if (fullName.value.length < 3) {
+                        fullName.classList.add('shake');
+                        setTimeout(() => fullName.classList.remove('shake'), 500);
+                        isValid = false;
+                    }
+
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(email.value)) {
+                        email.classList.add('shake');
+                        setTimeout(() => email.classList.remove('shake'), 500);
+                        isValid = false;
+                    }
+
+                    if (passwordInput.value.length < 8) {
+                        passwordInput.classList.add('shake');
+                        setTimeout(() => passwordInput.classList.remove('shake'), 500);
+                        isValid = false;
+                    }
+
+                    if (confirmPassword.value !== passwordInput.value) {
+                        confirmPassword.classList.add('shake');
+                        setTimeout(() => confirmPassword.classList.remove('shake'), 500);
+                        isValid = false;
+                    } if (isValid) {
+                        // Show success message
+                        form.style.display = 'none';
+                        successMessage.style.display = 'block';
+
+                        // Store user info in sessionStorage (for demo purposes)
+                        sessionStorage.setItem('registeredUser', JSON.stringify({
+                            fullName: fullName.value,
+                            email: email.value
+                        }));
+
+                        // Add redirect button after a short delay to simulate server processing
+                        setTimeout(() => {
+                            const redirectBtn = document.createElement('button');
+                            redirectBtn.className = 'btn btn-primary';
+                            redirectBtn.style.marginTop = '20px';
+                            redirectBtn.textContent = 'Go to Dashboard';
+                            redirectBtn.addEventListener('click', function () {
+                                // In a real app, this would redirect to a dashboard page
+                                // For demo purposes, we'll just show an alert
+                                alert('In a production app, you would now be redirected to your dashboard.');
+                                window.location.reload(); // Reload the page for the demo
+                            });
+
+                            successMessage.appendChild(redirectBtn);
+                        }, 1500);
+                    }
+                });
+
+                // Button ripple effect
+                const btn = document.getElementById('submitBtn');
+
+                btn.addEventListener('click', function (e) {
+                    const x = e.clientX - e.target.getBoundingClientRect().left;
+                    const y = e.clientY - e.target.getBoundingClientRect().top;
+
+                    const ripple = document.createElement('span');
+                    ripple.className = 'btn-ripple';
+                    ripple.style.left = `${x}px`;
+                    ripple.style.top = `${y}px`;
+
+                    this.appendChild(ripple);
+
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });            // Chat functionality
+                const chatButton = document.querySelector('.chat-button');
+                const chatWindow = document.getElementById('chatWindow');
+                const closeChat = document.getElementById('closeChat');
+                const chatInput = document.getElementById('chatInput');
+                const sendButton = document.getElementById('sendMessage');
+                const chatMessages = document.getElementById('chatMessages');// Initialize chat window state and handling
+                function initChat() {
+                    // Set initial state for chat window - explicitly hide it on page load
+                    chatWindow.style.display = 'none';
+
+                    // Improve chat button click handler to ensure it works on first click
+                    chatButton.addEventListener('click', function () {
+                        if (chatWindow.style.display === 'none') {
+                            chatWindow.style.display = 'block';
+                        } else {
+                            chatWindow.style.display = 'none';
+                        }
+                    });
+
+                    // Close chat button handler
+                    closeChat.addEventListener('click', function () {
+                        chatWindow.style.display = 'none';
+                    });
+                }
+                // Function to show typing indicator
+                function showTypingIndicator() {
+                    // Remove any existing typing indicator first
+                    hideTypingIndicator();
+
+                    // Create new typing indicator
+                    const typingIndicator = document.createElement('div');
+                    typingIndicator.className = 'typing-indicator';
+                    typingIndicator.id = 'typingIndicator';
+                    typingIndicator.innerHTML = '<span></span><span></span><span></span>';
+
+                    // Make sure the indicator is visible
+                    typingIndicator.style.display = 'block';
+
+                    // Append it to chat messages
+                    chatMessages.appendChild(typingIndicator);
+
+                    // Scroll to bottom
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                    return typingIndicator;
+                }
+
+                // Function to hide typing indicator
+                function hideTypingIndicator() {
+                    const existingIndicator = document.getElementById('typingIndicator');
+                    if (existingIndicator) {
+                        existingIndicator.remove();
+                    }
+                }
+
+                // Call initialization function
+                initChat();            // Send message
+                function sendMessage() {
+                    const message = chatInput.value.trim();
+                    if (message !== '') {
+                        // Add user message
+                        const userMessageDiv = document.createElement('div');
+                        userMessageDiv.className = 'message user-message';
+                        userMessageDiv.innerHTML = `<p>${message}</p>`;
+                        chatMessages.appendChild(userMessageDiv);
+
+                        // Clear input
+                        chatInput.value = '';
+
+                        // Scroll to bottom
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                        // Show typing indicator as the last message
+                        showTypingIndicator();
+
+                        // Add system response after a short delay
+                        setTimeout(() => {
+                            // Hide typing indicator
+                            hideTypingIndicator();
+
+                            // Show system message
+                            const systemMessageDiv = document.createElement('div');
+                            systemMessageDiv.className = 'message system-message';
+                            systemMessageDiv.innerHTML = `<p>Thank you for your message. Our specialists are currently unavailable. Please try again during business hours or leave your contact information.</p>`;
+                            chatMessages.appendChild(systemMessageDiv);
+
+                            // Scroll to bottom again
+                            chatMessages.scrollTop = chatMessages.scrollHeight;
+                        }, 2000);
+                    }
+                }
+
+                // Send message on button click
+                sendButton.addEventListener('click', sendMessage);
+
+                // Send message on Enter key
+                chatInput.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') {
+                        sendMessage();
+                    }
+                });
+            });
+
+            // Regenerate glitches on page refresh
+            window.addEventListener('beforeunload', function () {
+                sessionStorage.setItem('refreshed', 'true');
+            });        // Add some more visual glitches randomly 
+            function addRandomGlitches() {            // First, ensure company branding and chat specialist elements are protected
+                document.querySelectorAll('.company-branding, .company-branding *').forEach(el => {
+                    el.classList.add('no-glitch');
+                    // Reset any transforms that might have been applied
+                    el.style.transform = 'none';
+                    el.style.filter = 'none';
+                    el.style.animation = 'none';
+                });
+
+                // Randomly offset more elements with increased intensity (explicitly excluding no-glitch elements)
+                const elements = document.querySelectorAll('.form-control:not(.no-glitch), .btn:not(.no-glitch), h1:not(.no-glitch), .form-label:not(.no-glitch), .validation-icon:not(.no-glitch)');
+                elements.forEach(element => {
+                    if (Math.random() > 0.6) { // Increased probability of glitches (from 0.7 to 0.6)
+                        const offsetX = (Math.random() - 0.5) * 12; // Increased offset range (from 8 to 12)
+                        const offsetY = (Math.random() - 0.5) * 12;
+                        const rotate = Math.random() > 0.8 ? `rotate(${(Math.random() - 0.5) * 3}deg)` : ''; // Small random rotation
+                        element.style.transform = `translate(${offsetX}px, ${offsetY}px) ${rotate}`;
+                    } else {
+                        element.style.transform = 'none';
+                    }
+                });
+
+                // Add glitch effect to chat button
+                const chatButton = document.querySelector('.chat-button');
+                if (chatButton && Math.random() > 0.6) {
+                    const offsetX = (Math.random() - 0.5) * 8;
+                    const offsetY = (Math.random() - 0.5) * 8;
+                    const rotate = Math.random() > 0.8 ? `rotate(${(Math.random() - 0.5) * 2}deg)` : '';
+                    chatButton.style.transform = `translate(${offsetX}px, ${offsetY}px) ${rotate}`;
+                }
+
+                // Special treatment for password toggle button (more pronounced glitches)
+                const passwordToggle = document.querySelector('.password-toggle');
+                if (passwordToggle && Math.random() > 0.7) {
+                    const toggleOffsetX = (Math.random() - 0.5) * 3;
+                    const toggleOffsetY = (Math.random() - 0.5) * 2;
+                    const toggleRotate = Math.random() > 0.9 ? `rotate(${(Math.random() - 0.5) * 8}deg)` : '';
+                    const toggleScale = Math.random() > 0.9 ? `scale(${0.9 + Math.random() * 0.3})` : '';
+                    passwordToggle.style.transform = `translate(${toggleOffsetX}px, ${toggleOffsetY}px) ${toggleRotate} ${toggleScale}`;
+                }
+
+                // Add random shadows
+                if (Math.random() > 0.7) {
+                    const container = document.querySelector('.container');
+                    const shadowX = Math.floor(Math.random() * 20) - 10;
+                    const shadowY = Math.floor(Math.random() * 20) - 10;
+                    const shadowBlur = Math.floor(Math.random() * 30) + 10;
+                    const shadowColor = Math.random() > 0.5 ? 'rgba(142, 45, 226, 0.4)' : 'rgba(74, 0, 224, 0.4)';
+                    container.style.boxShadow = `${shadowX}px ${shadowY}px ${shadowBlur}px ${shadowColor}`;
+                }
+
+
+                // Randomly distort validation icons
+                const validationIcons = document.querySelectorAll('.validation-icon');
+                validationIcons.forEach(icon => {
+                    if (Math.random() > 0.6) {
+                        const scaleAmount = 0.8 + Math.random() * 0.5;
+                        const rotateAmount = (Math.random() - 0.5) * 20;
+                        icon.style.transform = `scale(${scaleAmount}) rotate(${rotateAmount}deg)`;
+                    } else {
+                        icon.style.transform = 'none';
+                    }
+                });
+            }
+
+            // Initial glitch creation on page load only
+            createGlitchElements();
+            addRandomGlitches();
+
+            // Immediately protect elements from glitches
+            (function () {
+                // Ensure these elements are ALWAYS protected
+                document.querySelectorAll('.company-branding, .company-branding *').forEach(el => {
+                    el.classList.add('no-glitch');
+                    // Explicitly override any transforms
+                    el.style.transform = 'none';
+                    el.style.filter = 'none';
+                    el.style.animation = 'none';
+                    el.style.position = 'relative';
+                    el.style.zIndex = '100';
+                });
+            })();
+        </script>
+        <script type="text/javascript" src="/js/common.js"></script>
+        <script type="text/javascript" src="/js/header.js"></script>
+        <script type="text/javascript" src="/version.js"></script>
+    </span>
+</body>
+
+</html>

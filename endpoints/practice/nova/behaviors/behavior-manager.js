@@ -1,5 +1,5 @@
 /**
- * Behavior Manager - Initialize and manage all AI behaviors
+ * Behavior Manager - Initialize and manage all Nova behaviors
  *
  * This module initializes all behaviors and registers them with the registry.
  */
@@ -16,6 +16,15 @@ const SmallTalkBehavior = require("./small-talk-behavior");
 const RecommendationBehavior = require("./recommendation-behavior");
 const DefaultResponseBehavior = require("./default-response-behavior");
 
+// Import new behaviors for more realistic interactions
+const ProactiveBehavior = require("./proactive-behavior");
+const VariationBehavior = require("./variation-behavior");
+const ContextualMemoryBehavior = require("./contextual-memory-behavior");
+const PersonalityBehavior = require("./personality-behavior");
+const ConversationalFlowBehavior = require("./conversational-flow-behavior");
+const GADFeatureBehavior = require("./gad-feature-behavior");
+const CuriosityBehavior = require("./curiosity-behavior");
+
 /**
  * Initialize all behaviors
  */
@@ -23,16 +32,22 @@ function initializeBehaviors() {
   // Only initialize once
   if (behaviorRegistry.initialized) {
     return behaviorRegistry;
-  }
-  // Register behaviors in priority order
+  } // Register behaviors in priority order
   behaviorRegistry
     .register(new CommandBehavior())
     .register(new GameBehavior())
+    .register(new ProactiveBehavior()) // New behavior
     .register(new UtilityBehavior())
     .register(new SmallTalkBehavior())
+    .register(new ConversationalFlowBehavior()) // New behavior
+    .register(new ContextualMemoryBehavior()) // New behavior
     .register(new KnowledgeBaseBehavior(textProcessingUtils))
+    .register(new GADFeatureBehavior()) // GAD features behavior
     .register(new RecommendationBehavior())
-    .register(new DefaultResponseBehavior(textProcessingUtils));
+    .register(new PersonalityBehavior()) // New behavior
+    .register(new CuriosityBehavior()) // New behavior for better understanding and questioning
+    .register(new DefaultResponseBehavior(textProcessingUtils))
+    .register(new VariationBehavior()); // New behavior (lowest priority as it modifies other responses)
 
   behaviorRegistry.initialized = true;
   return behaviorRegistry;

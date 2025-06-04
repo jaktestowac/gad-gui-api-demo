@@ -1,0 +1,2346 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD - Complex Hotel Reservation</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/practice-controls.css" />
+    <script src="/js/libs/pdf/jspdf.umd.min.js"></script>
+
+    <style>
+        .reservation-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            margin: 15px 0;
+            padding: 20px;
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .form-control:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        }
+
+        .hotel-card {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .hotel-card:hover {
+            border-color: #007bff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .hotel-card.selected {
+            border-color: #28a745;
+            background-color: #f8fff9;
+        }
+
+        .hotel-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .hotel-rating {
+            color: #ffc107;
+            margin: 5px 0;
+        }
+
+        .hotel-price {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .room-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+
+        .room-type {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .room-type:hover {
+            border-color: #007bff;
+        }
+
+        .room-type.selected {
+            border-color: #28a745;
+            background-color: #f8fff9;
+        }
+
+        .amenities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        .amenity-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            background: #fff;
+        }
+
+        .amenity-item input[type="checkbox"] {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+
+        .activity-card {
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            background: #fff;
+        }
+
+        .discount-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .discount-input {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .discount-code {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .apply-discount {
+            padding: 10px 20px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .apply-discount:hover {
+            background: #218838;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: white;
+            border-radius: 8px;
+            padding: 20px;
+            position: sticky;
+            top: 75px;
+        }
+
+        .summary-line {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            padding: 5px 0;
+        }
+
+        .summary-total {
+            border-top: 2px solid rgba(255, 255, 255, 0.3);
+            margin-top: 15px;
+            padding-top: 15px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .guest-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        .reserve-button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        .reserve-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 184, 148, 0.3);
+        }
+
+        .reserve-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid #28a745;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e9ecef;
+            border-radius: 3px;
+            overflow: hidden;
+            position: fixed;
+            top: 60px;
+            left: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #007bff, #28a745);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                flex-direction: column;
+            }
+
+            .room-types {
+                grid-template-columns: 1fr;
+            }
+
+            .confirmation-details {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .confirmation-page {
+            display: none;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #e8f5e8 0%, #f0f8ff 100%);
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .confirmation-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border-radius: 10px;
+        }
+
+        .confirmation-number {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 10px 0;
+            letter-spacing: 2px;
+        }
+
+        .confirmation-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 20px 0;
+        }
+
+        .detail-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .detail-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            padding: 5px 0;
+        }
+
+        .new-reservation-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: all 0.3s;
+        }
+
+        .new-reservation-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+        }
+
+        .pdf-download-btn {
+            width: 48%;
+            padding: 15px;
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .pdf-download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+        }
+
+        .new-reservation-btn {
+            width: 48%;
+            padding: 15px;
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .booking-form-disabled {
+            pointer-events: none;
+            opacity: 0.6;
+            position: relative;
+        }
+
+        .booking-form-disabled::after {
+            content: "Reservation Complete - Form Disabled";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            z-index: 1000;
+        }
+
+        /* Hide sections until hotel is selected */
+        .hotel-dependent-section {
+            display: none;
+        }
+
+        /* Compact Hotel Selection Styles */
+        .hotel-search-controls {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #e9ecef;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .hotel-search-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .hotel-search-input:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+
+        .clear-search-btn {
+            padding: 12px 20px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .clear-search-btn:hover {
+            background: #5a6268;
+            transform: translateY(-1px);
+        }
+
+        .filter-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: white;
+            font-size: 14px;
+            min-width: 140px;
+        }
+
+        .reset-filters-btn {
+            padding: 8px 15px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .reset-filters-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+        }
+
+        .search-results-summary {
+            margin: 15px 0;
+            font-weight: 500;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .hotels-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 15px;
+            max-height: 600px;
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+
+        .hotels-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .hotels-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .hotels-container::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        .hotels-container::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        .hotel-card-compact {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .hotel-card-compact:hover {
+            border-color: #007bff;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 123, 255, 0.15);
+        }
+
+        .hotel-card-compact.selected {
+            border-color: #28a745;
+            background: linear-gradient(135deg, #f8fff9 0%, #e8f5e8 100%);
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.2);
+        }
+
+        .hotel-card-compact.selected::before {
+            content: "✓ SELECTED";
+            position: absolute;
+            top: -8px;
+            right: 10px;
+            background: #28a745;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            z-index: 2;
+        }
+
+        .hotel-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            z-index: 1;
+        }
+
+        .hotel-badge.luxury {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #333;
+        }
+
+        .hotel-badge.business {
+            background: linear-gradient(45deg, #4a90e2, #357abd);
+            color: white;
+        }
+
+        .hotel-badge.eco {
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+            color: white;
+        }
+
+        .hotel-badge.historic {
+            background: linear-gradient(45deg, #8e44ad, #9b59b6);
+            color: white;
+        }
+
+        .hotel-badge.beach {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .hotel-badge.boutique {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .hotel-badge.urban {
+            background: linear-gradient(45deg, #34495e, #2c3e50);
+            color: white;
+        }
+
+        .hotel-main-info {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+            padding-top: 5px;
+        }
+
+        .hotel-header {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin-bottom: 8px;
+            gap: 10px;
+        }
+
+        .hotel-name-compact {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #333;
+            line-height: 1.3;
+        }
+
+        .hotel-rating-compact {
+            color: #ffc107;
+            font-size: 0.85em;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .hotel-price-compact {
+            font-size: 1em;
+            font-weight: bold;
+            color: #007bff;
+            text-align: left;
+            margin-top: 2px;
+        }
+
+        .hotel-description-compact {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .hotel-amenities-preview {
+            font-size: 0.8em;
+            color: #888;
+            background: #f8f9fa;
+            padding: 8px;
+            border-radius: 5px;
+            border-left: 3px solid #007bff;
+        }
+
+        .no-results-message {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .no-results-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .no-results-text {
+            font-size: 1.2em;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .no-results-suggestion {
+            font-size: 0.9em;
+            opacity: 0.7;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .hotels-container {
+                grid-template-columns: 1fr;
+                max-height: 500px;
+            }
+
+            .filter-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-select {
+                min-width: 100%;
+            }
+
+            .hotel-header {
+                flex-direction: row;
+                align-items: flex-start;
+            }
+
+            .hotel-rating-compact {
+                margin-top: 5px;
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+    <br>
+    <br>
+
+    <div class="reservation-container">
+        <h1 style="text-align: center; color: #333; margin-bottom: 30px;">🏨 Complex Hotel Reservation System</h1>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="main-content">
+            <div class="left-panel">
+                <!-- Guest Information Section -->
+                <div class="section-card">
+                    <div class="section-title">👤 Guest Information</div>
+                    <div class="guest-info">
+                        <div class="form-group">
+                            <label for="firstName">First Name *</label>
+                            <input type="text" id="firstName" class="form-control" required>
+                            <div class="error-message" id="firstNameError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name *</label>
+                            <input type="text" id="lastName" class="form-control" required>
+                            <div class="error-message" id="lastNameError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" class="form-control" required>
+                            <div class="error-message" id="emailError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="specialRequests">Special Requests</label>
+                            <textarea id="specialRequests" class="form-control" rows="3" placeholder="Any special requirements or requests..."></textarea>
+                        </div>
+                    </div>
+                </div> <!-- Hotel Selection Section -->
+                <div class="section-card">
+                    <div class="section-title">🏨 Select Hotel</div>
+
+                    <!-- Hotel Search and Filter Section -->
+                    <div class="hotel-search-controls">
+                        <div class="search-bar">
+                            <input type="text" id="hotelSearchInput" class="hotel-search-input" placeholder="🔍 Search hotels by name, type, or amenities...">
+                            <button class="clear-search-btn" id="clearSearchBtn" onclick="clearHotelSearch()">Clear</button>
+                        </div>
+                        <div class="filter-controls"> <select id="priceRangeFilter" class="filter-select" onchange="filterHotels()">
+                                <option value="">All Price Ranges</option>
+                                <option value="0-200">$0 - $200</option>
+                                <option value="200-300">$200 - $300</option>
+                                <option value="300-400">$300 - $400</option>
+                                <option value="400-600">$400 - $600</option>
+                                <option value="600-1000">$600 - $1000</option>
+                                <option value="1000+">$1000+</option>
+                            </select>
+
+                            <select id="ratingFilter" class="filter-select" onchange="filterHotels()">
+                                <option value="">All Ratings</option>
+                                <option value="4.5+">4.5+ Stars</option>
+                                <option value="4.0+">4.0+ Stars</option>
+                                <option value="3.5+">3.5+ Stars</option>
+                            </select> <select id="typeFilter" class="filter-select" onchange="filterHotels()">
+                                <option value="">All Types</option>
+                                <option value="luxury">Luxury</option>
+                                <option value="business">Business</option>
+                                <option value="boutique">Boutique</option>
+                                <option value="eco">Eco-Friendly</option>
+                                <option value="historic">Historic</option>
+                                <option value="beach">Beach/Villa</option>
+                                <option value="urban">Urban/City</option>
+                                <option value="ski">Ski Resort</option>
+                                <option value="desert">Desert Resort</option>
+                                <option value="safari">Safari Lodge</option>
+                                <option value="wellness">Wellness/Spa</option>
+                                <option value="vineyard">Wine Country</option>
+                                <option value="unique">Unique/Adventure</option>
+                            </select>
+
+                            <button class="reset-filters-btn" onclick="resetAllFilters()">Reset Filters</button>
+                        </div>
+
+                        <!-- Quick Search Tips -->
+                        <div style="margin-top: 10px; font-size: 0.85em; color: #6c757d;">
+                            💡 <strong>Quick search tips:</strong> Try "spa", "business", "mountain", "eco", "pool", "beach", or "historic"
+                        </div>
+                    </div>
+
+                    <!-- Results Summary -->
+                    <div class="search-results-summary" id="searchResultsSummary">
+                        Showing 8 hotels
+                    </div> <!-- Compact Hotel Grid with Scrolling -->
+                    <div class="hotels-container" id="hotelSelection">
+                        <!-- Hotels will be populated dynamically from JSON data -->
+                    </div>
+
+                    <!-- No Results Message -->
+                    <div class="no-results-message" id="noResultsMessage" style="display: none;">
+                        <div class="no-results-icon">🔍</div>
+                        <div class="no-results-text">No hotels found matching your criteria</div>
+                        <div class="no-results-suggestion">Try adjusting your search terms or filters</div>
+                    </div>
+                </div>
+
+                <!-- Dates and Guests Section -->
+                <div class="section-card">
+                    <div class="section-title">📅 Dates & Guests</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="checkIn">Check-in Date *</label>
+                            <input type="date" id="checkIn" class="form-control" required>
+                            <div class="error-message" id="checkInError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="checkOut">Check-out Date *</label>
+                            <input type="date" id="checkOut" class="form-control" required>
+                            <div class="error-message" id="checkOutError"></div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="adults">Adults *</label>
+                            <select id="adults" class="form-control" required>
+                                <option value="1">1 Adult</option>
+                                <option value="2" selected>2 Adults</option>
+                                <option value="3">3 Adults</option>
+                                <option value="4">4 Adults</option>
+                                <option value="5">5+ Adults</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="children">Children (0-17)</label>
+                            <select id="children" class="form-control">
+                                <option value="0" selected>No Children</option>
+                                <option value="1">1 Child</option>
+                                <option value="2">2 Children</option>
+                                <option value="3">3 Children</option>
+                                <option value="4">4+ Children</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="rooms">Number of Rooms</label>
+                            <select id="rooms" class="form-control">
+                                <option value="1" selected>1 Room</option>
+                                <option value="2">2 Rooms</option>
+                                <option value="3">3 Rooms</option>
+                                <option value="4">4 Rooms</option>
+                                <option value="5">5+ Rooms</option>
+                            </select>
+                        </div>
+                    </div>
+                </div> <!-- Room Type Selection -->
+                <div class="section-card hotel-dependent-section" id="roomTypeSection">
+                    <div class="section-title">🛏️ Room Type</div>
+                    <div class="room-types" id="roomTypes">
+                        <div class="room-type" data-room="standard" data-price-modifier="0">
+                            <div style="font-weight: bold; margin-bottom: 10px;">🛏️ Standard Room</div>
+                            <div style="color: #666; margin-bottom: 10px;">Comfortable room with essential amenities</div>
+                            <div style="font-size: 0.9em; color: #888;">• Queen bed • City view • Free WiFi • AC</div>
+                            <div style="font-weight: bold; color: #007bff; margin-top: 10px;">Base Price</div>
+                        </div>
+
+                        <div class="room-type" data-room="deluxe" data-price-modifier="50">
+                            <div style="font-weight: bold; margin-bottom: 10px;">🌟 Deluxe Room</div>
+                            <div style="color: #666; margin-bottom: 10px;">Spacious room with premium amenities</div>
+                            <div style="font-size: 0.9em; color: #888;">• King bed • Garden view • Mini-bar • Balcony</div>
+                            <div style="font-weight: bold; color: #007bff; margin-top: 10px;">+$50/night</div>
+                        </div>
+
+                        <div class="room-type" data-room="suite" data-price-modifier="120">
+                            <div style="font-weight: bold; margin-bottom: 10px;">👑 Executive Suite</div>
+                            <div style="color: #666; margin-bottom: 10px;">Luxury suite with separate living area</div>
+                            <div style="font-size: 0.9em; color: #888;">• King bed • Ocean view • Kitchenette • Living room</div>
+                            <div style="font-weight: bold; color: #007bff; margin-top: 10px;">+$120/night</div>
+                        </div>
+
+                        <div class="room-type" data-room="presidential" data-price-modifier="300">
+                            <div style="font-weight: bold; margin-bottom: 10px;">💎 Presidential Suite</div>
+                            <div style="color: #666; margin-bottom: 10px;">Ultimate luxury with exclusive services</div>
+                            <div style="font-size: 0.9em; color: #888;">• King bed • Panoramic view • Butler service • Private terrace</div>
+                            <div style="font-weight: bold; color: #007bff; margin-top: 10px;">+$300/night</div>
+                        </div>
+
+                        <div class="room-type" data-room="family" data-price-modifier="80">
+                            <div style="font-weight: bold; margin-bottom: 10px;">👨‍👩‍👧‍👦 Family Room</div>
+                            <div style="color: #666; margin-bottom: 10px;">Spacious room perfect for families with children</div>
+                            <div style="font-size: 0.9em; color: #888;">• Two queen beds • Kids area • Family amenities • Extra space</div>
+                            <div style="font-weight: bold; color: #007bff; margin-top: 10px;">+$80/night</div>
+                        </div>
+
+                        <div class="room-type" data-room="accessible" data-price-modifier="30">
+                            <div style="font-weight: bold; margin-bottom: 10px;">♿ Accessible Room</div>
+                            <div style="color: #666; margin-bottom: 10px;">Fully accessible room with mobility-friendly features</div>
+                            <div style="font-size: 0.9em; color: #888;">• Wheelchair accessible • Grab bars • Visual alerts • Wide doorways</div>
+                            <div style="font-weight: bold; color: #007bff; margin-top: 10px;">+$30/night</div>
+                        </div>
+
+                        <div class="room-type" data-room="honeymoon" data-price-modifier="200">
+                            <div style="font-weight: bold; margin-bottom: 10px;">💕 Honeymoon Suite</div>
+                            <div style="color: #666; margin-bottom: 10px;">Romantic suite designed for special occasions</div>
+                            <div style="font-size: 0.9em; color: #888;">• King bed • Jacuzzi • Champagne • Rose petals • Special decor</div>
+                            <div style="font-weight: bold; color: #007bff; margin-top: 10px;">+$200/night</div>
+                        </div>
+                    </div>
+                </div> <!-- Hotel Amenities -->
+                <div class="section-card hotel-dependent-section" id="hotelAmenitiesSection">
+                    <div class="section-title">🏊‍♂️ Hotel Amenities (Included)</div>
+                    <div class="amenities-grid">
+                        <div class="amenity-item">
+                            <input type="checkbox" checked disabled>
+                            <span>🍽️ Restaurant & Bar</span>
+                        </div>
+                        <div class="amenity-item">
+                            <input type="checkbox" checked disabled>
+                            <span>🏊‍♂️ Swimming Pool</span>
+                        </div>
+                        <div class="amenity-item">
+                            <input type="checkbox" checked disabled>
+                            <span>💪 Fitness Center</span>
+                        </div>
+                        <div class="amenity-item">
+                            <input type="checkbox" checked disabled>
+                            <span>📶 Free WiFi</span>
+                        </div>
+                        <div class="amenity-item">
+                            <input type="checkbox" checked disabled>
+                            <span>🅿️ Parking</span>
+                        </div>
+                        <div class="amenity-item">
+                            <input type="checkbox" checked disabled>
+                            <span>🧳 Concierge Service</span>
+                        </div>
+                    </div>
+                </div> <!-- Additional Activities & Services -->
+                <div class="section-card hotel-dependent-section" id="activitiesServicesSection">
+                    <div class="section-title">🎯 Additional Activities & Services</div>
+                    <div id="activitiesSection">
+                        <div class="activity-card">
+                            <label style="display: flex; align-items: center; cursor: pointer;">
+                                <input type="checkbox" class="activity-checkbox" data-price="80" style="margin-right: 15px; transform: scale(1.3);">
+                                <div>
+                                    <div style="font-weight: bold;">🧖‍♀️ Spa & Wellness Package</div>
+                                    <div style="color: #666; font-size: 0.9em;">90-minute massage, sauna, and wellness consultation</div>
+                                    <div style="color: #007bff; font-weight: bold;">+$80 per person</div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="activity-card">
+                            <label style="display: flex; align-items: center; cursor: pointer;">
+                                <input type="checkbox" class="activity-checkbox" data-price="120" style="margin-right: 15px; transform: scale(1.3);">
+                                <div>
+                                    <div style="font-weight: bold;">🍽️ Fine Dining Experience</div>
+                                    <div style="color: #666; font-size: 0.9em;">7-course tasting menu at our Michelin-starred restaurant</div>
+                                    <div style="color: #007bff; font-weight: bold;">+$120 per person</div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="activity-card">
+                            <label style="display: flex; align-items: center; cursor: pointer;">
+                                <input type="checkbox" class="activity-checkbox" data-price="200" style="margin-right: 15px; transform: scale(1.3);">
+                                <div>
+                                    <div style="font-weight: bold;">🚁 Helicopter Tour</div>
+                                    <div style="color: #666; font-size: 0.9em;">30-minute scenic helicopter tour of the coastline</div>
+                                    <div style="color: #007bff; font-weight: bold;">+$200 per person</div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="activity-card">
+                            <label style="display: flex; align-items: center; cursor: pointer;">
+                                <input type="checkbox" class="activity-checkbox" data-price="60" style="margin-right: 15px; transform: scale(1.3);">
+                                <div>
+                                    <div style="font-weight: bold;">🚗 Airport Transfer</div>
+                                    <div style="color: #666; font-size: 0.9em;">Private luxury vehicle transfer to/from airport</div>
+                                    <div style="color: #007bff; font-weight: bold;">+$60 per trip</div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="activity-card">
+                            <label style="display: flex; align-items: center; cursor: pointer;">
+                                <input type="checkbox" class="activity-checkbox" data-price="45" style="margin-right: 15px; transform: scale(1.3);">
+                                <div>
+                                    <div style="font-weight: bold;">🍷 Wine Tasting</div>
+                                    <div style="color: #666; font-size: 0.9em;">Guided tasting of local wines with cheese pairings</div>
+                                    <div style="color: #007bff; font-weight: bold;">+$45 per person</div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="activity-card">
+                            <label style="display: flex; align-items: center; cursor: pointer;">
+                                <input type="checkbox" class="activity-checkbox" data-price="90" style="margin-right: 15px; transform: scale(1.3);">
+                                <div>
+                                    <div style="font-weight: bold;">🎣 Deep Sea Fishing</div>
+                                    <div style="color: #666; font-size: 0.9em;">Half-day fishing excursion with professional guide</div>
+                                    <div style="color: #007bff; font-weight: bold;">+$90 per person</div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="activity-card">
+                            <label style="display: flex; align-items: center; cursor: pointer;">
+                                <input type="checkbox" class="activity-checkbox" data-price="25" style="margin-right: 15px; transform: scale(1.3);">
+                                <div>
+                                    <div style="font-weight: bold;">👶 Childcare Service</div>
+                                    <div style="color: #666; font-size: 0.9em;">Professional babysitting service in your room</div>
+                                    <div style="color: #007bff; font-weight: bold;">+$25 per hour</div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="activity-card">
+                            <label style="display: flex; align-items: center; cursor: pointer;">
+                                <input type="checkbox" class="activity-checkbox" data-price="150" style="margin-right: 15px; transform: scale(1.3);">
+                                <div>
+                                    <div style="font-weight: bold;">⛳ Golf Package</div>
+                                    <div style="color: #666; font-size: 0.9em;">18-hole round at championship course with cart</div>
+                                    <div style="color: #007bff; font-weight: bold;">+$150 per person</div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="activity-card">
+                            <label style="display: flex; align-items: center; cursor: pointer;">
+                                <input type="checkbox" class="activity-checkbox" data-price="110" style="margin-right: 15px; transform: scale(1.3);">
+                                <div>
+                                    <div style="font-weight: bold;">🎯 Adventure Sports Package</div>
+                                    <div style="color: #666; font-size: 0.9em;">Full day of adventure activities including zip-lining and rock climbing</div>
+                                    <div style="color: #007bff; font-weight: bold;">+$110 per person</div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="activity-card">
+                            <label style="display: flex; align-items: center; cursor: pointer;">
+                                <input type="checkbox" class="activity-checkbox" data-price="85" style="margin-right: 15px; transform: scale(1.3);">
+                                <div>
+                                    <div style="font-weight: bold;">📸 Photography Workshop</div>
+                                    <div style="color: #666; font-size: 0.9em;">Professional photography lesson with stunning location shoots</div>
+                                    <div style="color: #007bff; font-weight: bold;">+$85 per person</div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="activity-card">
+                            <label style="display: flex; align-items: center; cursor: pointer;">
+                                <input type="checkbox" class="activity-checkbox" data-price="65" style="margin-right: 15px; transform: scale(1.3);">
+                                <div>
+                                    <div style="font-weight: bold;">🎨 Art & Craft Workshop</div>
+                                    <div style="color: #666; font-size: 0.9em;">Hands-on creative workshop with local artisans and materials</div>
+                                    <div style="color: #007bff; font-weight: bold;">+$65 per person</div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="activity-card">
+                            <label style="display: flex; align-items: center; cursor: pointer;">
+                                <input type="checkbox" class="activity-checkbox" data-price="75" style="margin-right: 15px; transform: scale(1.3);">
+                                <div>
+                                    <div style="font-weight: bold;">🌅 Sunrise/Sunset Experience</div>
+                                    <div style="color: #666; font-size: 0.9em;">Premium sunrise or sunset experience with champagne and snacks</div>
+                                    <div style="color: #007bff; font-weight: bold;">+$75 per person</div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="activity-card">
+                            <label style="display: flex; align-items: center; cursor: pointer;">
+                                <input type="checkbox" class="activity-checkbox" data-price="95" style="margin-right: 15px; transform: scale(1.3);">
+                                <div>
+                                    <div style="font-weight: bold;">🍳 Culinary Masterclass</div>
+                                    <div style="color: #666; font-size: 0.9em;">Learn to cook signature dishes with executive chef</div>
+                                    <div style="color: #007bff; font-weight: bold;">+$95 per person</div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="activity-card">
+                            <label style="display: flex; align-items: center; cursor: pointer;">
+                                <input type="checkbox" class="activity-checkbox" data-price="35" style="margin-right: 15px; transform: scale(1.3);">
+                                <div>
+                                    <div style="font-weight: bold;">🚴‍♂️ Bike Tour Adventure</div>
+                                    <div style="color: #666; font-size: 0.9em;">Guided bike tour through scenic routes and local attractions</div>
+                                    <div style="color: #007bff; font-weight: bold;">+$35 per person</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Discount Codes Section -->
+                <div class="section-card">
+                    <div class="discount-section">
+                        <div class="section-title" style="color: white; border-bottom: 2px solid rgba(255,255,255,0.3);">💰 Discount Codes</div>
+                        <div style="margin-bottom: 15px;">Have a promo code? Enter it below to save on your reservation!</div>
+                        <div class="discount-input">
+                            <input type="text" id="discountCode" class="discount-code" placeholder="Enter discount code" style="text-transform: uppercase;">
+                            <button class="apply-discount" onclick="applyDiscountCode()">Apply Code</button>
+                        </div>
+                        <div id="discountMessage" style="margin-top: 10px; font-weight: bold;"></div>
+                        <div style="margin-top: 15px; font-size: 0.9em; opacity: 0.8;">
+                            💡 Try these sample codes: WELCOME10, LUXURY20, FAMILY15, WEEKEND25, ECO25, HISTORIC35, BEACH40, HONEYMOON45
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel - Reservation Summary -->
+            <div class="right-panel">
+                <div class="summary-card">
+                    <h3 style="margin-top: 0; text-align: center;">📋 Reservation Summary</h3>
+
+                    <div id="summaryContent">
+                        <div style="text-align: center; padding: 20px; opacity: 0.7;">
+                            Select a hotel to see pricing details
+                        </div>
+                    </div>
+
+                    <button class="reserve-button" id="reserveButton" onclick="makeReservation()" disabled>
+                        Complete Reservation
+                    </button>
+                </div>
+            </div>
+        </div> <!-- Results Section -->
+        <div class="section-card" style="margin-top: 30px;">
+            <div class="section-title">📊 Reservation Status</div>
+            <div id="reservationResults"></div>
+        </div>
+    </div>
+
+    <!-- Confirmation Page (Hidden by default) -->
+    <div class="confirmation-page" id="confirmationPage">
+        <div class="confirmation-header">
+            <h1>🎉 Reservation Confirmed!</h1>
+            <div class="confirmation-number" id="confirmationNumber"></div>
+            <p>Your booking has been successfully completed!</p>
+        </div>
+        <div class="confirmation-details" id="confirmationDetails">
+            <!-- Details will be populated by JavaScript -->
+        </div>
+
+        <div style="text-align: center; margin: 30px 0;">
+            <button class="pdf-download-btn" onclick="downloadReservationPDF()">
+                📄 Download PDF Confirmation
+            </button>
+            <button class="new-reservation-btn" onclick="startNewReservation()">
+                🏨 Make Another Reservation
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-top: 50px;">
+        <a href="https://jaktestowac.pl" style="color: dimgray">
+            <span style="display: flex; align-items: center; justify-self: center; font-size: medium">
+                <img src="/data/icons/favicon.png" style="width: 25px !important; height: 25px !important; padding: 0; border: none" alt="" />&nbsp&nbspjaktestowac.pl
+            </span>
+        </a>
+    </div>
+
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+    <script type="text/javascript" src="./js/practice-common.js"></script>
+    <script>
+        // Global state
+        let reservationState = {
+            selectedHotel: null,
+            selectedRoom: null,
+            activities: [],
+            discountCode: null,
+            discountAmount: 0,
+            basePrice: 0,
+            roomModifier: 0,
+            totalNights: 0
+        };
+
+        // Global variable to store current reservation data for PDF generation
+        let currentReservationData = null;
+
+        let hotelsData = [];
+        let hotelConfigurations = {};
+        let defaultHotelConfiguration = null; // Will be fetched only if needed
+
+        // Fetch hotel data from API
+        async function fetchHotelData() {
+            // Only fetch hotels list at page load
+            const hotelsRes = await fetch('/api/practice/v1/hotels');
+            hotelsData = await hotelsRes.json();
+        }
+
+        // Fetch config for a specific hotel if not already loaded
+        async function fetchHotelConfiguration(hotelId) {
+            if (hotelConfigurations[hotelId]) return hotelConfigurations[hotelId];
+            const res = await fetch(`/api/practice/v1/hotels/${hotelId}/configuration`);
+            if (res.ok) {
+                const config = await res.json();
+                hotelConfigurations[hotelId] = config;
+                return config;
+            } else {
+                // fallback to default config
+                return getDefaultHotelConfiguration();
+            }
+        }
+
+        // Fetch default config only if needed
+        async function getDefaultHotelConfiguration() {
+            if (!defaultHotelConfiguration) {
+                const res = await fetch('/api/practice/v1/hotels/configuration/default');
+                defaultHotelConfiguration = await res.json();
+            }
+            return defaultHotelConfiguration;
+        }
+
+        // Initialize page after fetching data
+        async function initializePage() {
+            await fetchHotelData();
+            populateHotels();
+            setMinDate();
+            initializeEventListeners();
+            clearActivities();
+            updateProgress();
+            reservationState.selectedHotel = null;
+            reservationState.selectedRoom = null;
+            reservationState.discountCode = null;
+            reservationState.discountAmount = 0;
+            hideHotelDependentSections();
+            document.getElementById('discountCode').value = '';
+            document.getElementById('discountCode').disabled = false;
+            document.querySelector('.apply-discount').textContent = 'Apply Code';
+            document.querySelector('.apply-discount').disabled = false;
+            document.getElementById('discountMessage').textContent = '';
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            initializePage();
+        });
+
+        // Discount codes
+        const discountCodes = {
+            'WELCOME10': { percentage: 10, description: 'Welcome Discount' },
+            'LUXURY20': { percentage: 20, description: 'Luxury Package Discount' },
+            'FAMILY15': { percentage: 15, description: 'Family Vacation Discount' },
+            'WEEKEND25': { percentage: 25, description: 'Weekend Special' },
+            'STUDENT50': { percentage: 50, description: 'Student Discount' },
+            'SENIOR30': { percentage: 30, description: 'Senior Citizen Discount' },
+            'ECO25': { percentage: 25, description: 'Eco-Friendly Stay Discount' },
+            'HISTORIC35': { percentage: 35, description: 'Heritage Hotel Special' },
+            'BEACH40': { percentage: 40, description: 'Beach Villa Promotion' },
+            'URBAN20': { percentage: 20, description: 'Urban Explorer Discount' },
+            'HONEYMOON45': { percentage: 45, description: 'Honeymoon Package' },
+            'BUSINESS18': { percentage: 18, description: 'Corporate Travel Discount' },
+            'LASTMINUTE30': { percentage: 30, description: 'Last Minute Booking' },
+            'EXTENDED40': { percentage: 40, description: 'Extended Stay Discount' },
+            'RETURN25': { percentage: 25, description: 'Returning Guest Bonus' }
+        };
+
+        // Function to populate hotel cards from JSON data
+        function populateHotels() {
+            const hotelContainer = document.getElementById('hotelSelection');
+            hotelContainer.innerHTML = '';
+
+            hotelsData.forEach(hotel => {
+                const hotelCard = document.createElement('div');
+                hotelCard.className = 'hotel-card-compact';
+                hotelCard.setAttribute('data-hotel', hotel.id);
+                hotelCard.setAttribute('data-base-price', hotel.basePrice.toString());
+                hotelCard.setAttribute('data-rating', hotel.rating.toString());
+                hotelCard.setAttribute('data-type', hotel.type);
+
+                hotelCard.innerHTML = `
+                    <div class="hotel-badge ${hotel.badge.class}">${hotel.badge.text}</div>
+                    <div class="hotel-main-info">
+                        <div class="hotel-header">
+                            <div class="hotel-name-compact">${hotel.name}</div>
+                            <div class="hotel-rating-compact">${hotel.ratingStars} ${hotel.rating}/5</div>
+                        </div>
+                        <div class="hotel-price-compact">From $${hotel.basePrice}/night</div>
+                    </div>
+                    <div class="hotel-description-compact">${hotel.description}</div>
+                    <div class="hotel-amenities-preview">${hotel.amenitiesPreview}</div>
+                `;
+
+                hotelContainer.appendChild(hotelCard);
+            });
+
+            // Update results summary
+            updateSearchResultsSummary(hotelsData.length);
+
+            // Re-initialize event listeners for the newly created hotel cards
+            initializeHotelCardListeners();
+        }
+
+        // Function to initialize event listeners for hotel cards
+        function initializeHotelCardListeners() {
+            document.querySelectorAll('.hotel-card-compact').forEach(card => {
+                card.addEventListener('click', function () {
+                    selectHotel(this);
+                });
+            });
+        }
+
+        function setMinDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('checkIn').min = today;
+
+            // Set default check-in to tomorrow
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('checkIn').value = tomorrow.toISOString().split('T')[0];
+
+            // Set default check-out to day after tomorrow
+            const dayAfter = new Date();
+            dayAfter.setDate(dayAfter.getDate() + 2);
+            document.getElementById('checkOut').value = dayAfter.toISOString().split('T')[0];
+        } function initializeEventListeners() {
+            // Hotel search functionality
+            document.getElementById('hotelSearchInput').addEventListener('input', function () {
+                filterHotels();
+            });
+
+            // Room type selection
+            document.querySelectorAll('.room-type').forEach(room => {
+                room.addEventListener('click', function () {
+                    selectRoom(this);
+                });
+            });
+
+            // Activity checkboxes
+            document.querySelectorAll('.activity-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', updateActivities);
+            });// Date changes - ensure both validation and summary update
+            document.getElementById('checkIn').addEventListener('change', function () {
+                validateDates();
+                updateSummary();
+                updateProgress();
+            });
+            document.getElementById('checkOut').addEventListener('change', function () {
+                validateDates();
+                updateSummary();
+                updateProgress();
+            });
+
+            // Guest count changes
+            document.getElementById('adults').addEventListener('change', function () {
+                updateSummary();
+                updateProgress();
+            });
+            document.getElementById('children').addEventListener('change', function () {
+                updateSummary();
+                updateProgress();
+            });
+            document.getElementById('rooms').addEventListener('change', function () {
+                updateSummary();
+                updateProgress();
+            });            // Form validation on input - also trigger progress update
+            document.getElementById('firstName').addEventListener('input', function () {
+                validateForm();
+                updateProgress();
+            });
+            document.getElementById('lastName').addEventListener('input', function () {
+                validateForm();
+                updateProgress();
+            });
+            document.getElementById('email').addEventListener('input', function () {
+                validateForm();
+                updateProgress();
+            });
+        } function selectHotel(hotelElement) {
+            // Remove previous selection from all compact hotel cards
+            document.querySelectorAll('.hotel-card-compact').forEach(card => {
+                card.classList.remove('selected');
+            });
+
+            // Select new hotel
+            hotelElement.classList.add('selected');
+
+            const hotelId = hotelElement.dataset.hotel;
+            reservationState.selectedHotel = {
+                id: hotelId,
+                name: hotelElement.querySelector('.hotel-name-compact').textContent,
+                basePrice: parseInt(hotelElement.dataset.basePrice)
+            };
+
+            // Clear previous room selection when switching hotels
+            reservationState.selectedRoom = null;
+            document.querySelectorAll('.room-type').forEach(room => {
+                room.classList.remove('selected');
+            });            // Clear activities when switching hotels
+            clearActivities();
+
+            // Show hotel-dependent sections when a hotel is selected
+            showHotelDependentSections();
+
+            // Update hotel-specific content
+            updateHotelContent(hotelId);
+
+            updateSummary();
+            updateProgress();
+        } async function updateHotelContent(hotelId) {
+            let config = hotelConfigurations[hotelId];
+            if (!config) {
+                config = await fetchHotelConfiguration(hotelId);
+            }
+            renderHotelContent(config);
+        }
+
+        function renderHotelContent(config) {
+            // Update amenities
+            const amenitiesContainer = document.querySelector('.amenities-grid');
+            if (amenitiesContainer) {
+                amenitiesContainer.innerHTML = config.amenities.map(amenity =>
+                    `<div class="amenity-item">
+                        <input type="checkbox" checked disabled>
+                        <span>${amenity.icon} ${amenity.name}</span>
+                    </div>`
+                ).join('');
+            }
+
+            // Update room types
+            const roomsContainer = document.querySelector('.room-types');
+            if (roomsContainer) {
+                roomsContainer.innerHTML = config.rooms.map(room => `
+                    <div class="room-type" data-room="${room.type}" data-price-modifier="${room.modifier}" onclick="selectRoom(this)">
+                        <div style="font-weight: bold; margin-bottom: 5px;">${room.name}</div>
+                        <div style="font-size: 0.9em; color: #666; margin-bottom: 8px;">${room.description}</div>
+                        <div style="font-size: 0.8em; color: #888; margin-bottom: 10px;">${room.features}</div>
+                        <div style="color: #007bff; font-weight: bold;">
+                            ${room.modifier > 0 ? `+$${room.modifier}` : 'Base Rate'}
+                        </div>
+                    </div>
+                `).join('');
+            }// Update activities
+            const activitiesContainer = document.getElementById('activitiesSection');
+            activitiesContainer.innerHTML = config.activities.map(activity => `
+                <div class="activity-card">
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="checkbox" class="activity-checkbox" data-price="${activity.price}" style="margin-right: 15px; transform: scale(1.3);">
+                        <div>
+                            <div style="font-weight: bold;">${activity.name}</div>
+                            <div style="color: #666; font-size: 0.9em;">${activity.description}</div>
+                            <div style="color: #007bff; font-weight: bold;">+$${activity.price} per person</div>
+                        </div>
+                    </label>
+                </div>
+            `).join('');
+
+            // Re-initialize event listeners for new dynamic content
+            initializeDynamicEventListeners();
+        }
+
+        function initializeDynamicEventListeners() {
+            // Room type selection for dynamically created rooms
+            document.querySelectorAll('.room-type').forEach(room => {
+                room.addEventListener('click', function () {
+                    selectRoom(this);
+                });
+            });
+
+            // Activity checkboxes for dynamically created activities
+            document.querySelectorAll('.activity-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function () {
+                    updateActivities();
+                    updateProgress();
+                });
+            });
+        } function clearActivities() {
+            // Clear activities state
+            reservationState.activities = [];
+
+            // Uncheck all activity checkboxes
+            document.querySelectorAll('.activity-checkbox').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+        }
+
+        function showHotelDependentSections() {
+            // Show the three sections that depend on hotel selection
+            document.getElementById('roomTypeSection').style.display = 'block';
+            document.getElementById('hotelAmenitiesSection').style.display = 'block';
+            document.getElementById('activitiesServicesSection').style.display = 'block';
+        }
+
+        function hideHotelDependentSections() {
+            // Hide the three sections that depend on hotel selection
+            document.getElementById('roomTypeSection').style.display = 'none';
+            document.getElementById('hotelAmenitiesSection').style.display = 'none';
+            document.getElementById('activitiesServicesSection').style.display = 'none';
+        }
+
+        function selectRoom(roomElement) {
+            // Remove previous selection
+            document.querySelectorAll('.room-type').forEach(room => {
+                room.classList.remove('selected');
+            });
+
+            // Select new room
+            roomElement.classList.add('selected');
+
+            reservationState.selectedRoom = {
+                type: roomElement.dataset.room,
+                name: roomElement.querySelector('div').textContent,
+                priceModifier: parseInt(roomElement.dataset.priceModifier)
+            };
+
+            updateSummary();
+            updateProgress();
+        }
+
+        // Hotel Search and Filter Functions
+        function filterHotels() {
+            const searchInput = document.getElementById('hotelSearchInput').value.toLowerCase();
+            const priceRange = document.getElementById('priceRangeFilter').value;
+            const ratingFilter = document.getElementById('ratingFilter').value;
+            const typeFilter = document.getElementById('typeFilter').value;
+
+            const hotelCards = document.querySelectorAll('.hotel-card-compact');
+            let visibleCount = 0;
+
+            hotelCards.forEach(card => {
+                let visible = true;
+
+                // Search filter
+                if (searchInput) {
+                    const hotelName = card.querySelector('.hotel-name-compact').textContent.toLowerCase();
+                    const description = card.querySelector('.hotel-description-compact').textContent.toLowerCase();
+                    const amenities = card.querySelector('.hotel-amenities-preview').textContent.toLowerCase();
+
+                    visible = visible && (
+                        hotelName.includes(searchInput) ||
+                        description.includes(searchInput) ||
+                        amenities.includes(searchInput)
+                    );
+                }                // Price range filter
+                if (priceRange && visible) {
+                    const price = parseInt(card.dataset.basePrice);
+
+                    if (priceRange === '0-200') {
+                        visible = visible && price <= 200;
+                    } else if (priceRange === '200-300') {
+                        visible = visible && price > 200 && price <= 300;
+                    } else if (priceRange === '300-400') {
+                        visible = visible && price > 300 && price <= 400;
+                    } else if (priceRange === '400-600') {
+                        visible = visible && price > 400 && price <= 600;
+                    } else if (priceRange === '600-1000') {
+                        visible = visible && price > 600 && price <= 1000;
+                    } else if (priceRange === '1000+') {
+                        visible = visible && price > 1000;
+                    }
+                }
+
+                // Rating filter
+                if (ratingFilter && visible) {
+                    const rating = parseFloat(card.dataset.rating);
+
+                    if (ratingFilter === '4.5+') {
+                        visible = visible && rating >= 4.5;
+                    } else if (ratingFilter === '4.0+') {
+                        visible = visible && rating >= 4.0;
+                    } else if (ratingFilter === '3.5+') {
+                        visible = visible && rating >= 3.5;
+                    }
+                }
+
+                // Type filter
+                if (typeFilter && visible) {
+                    const type = card.dataset.type;
+                    visible = visible && type === typeFilter;
+                }
+
+                // Show/hide card
+                if (visible) {
+                    card.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // Update results summary
+            updateSearchResultsSummary(visibleCount);
+
+            // Show/hide no results message
+            const noResultsMessage = document.getElementById('noResultsMessage');
+            if (visibleCount === 0) {
+                noResultsMessage.style.display = 'block';
+            } else {
+                noResultsMessage.style.display = 'none';
+            }
+        }
+
+        function updateSearchResultsSummary(count) {
+            const summary = document.getElementById('searchResultsSummary');
+            if (count === 1) {
+                summary.textContent = 'Showing 1 hotel';
+            } else {
+                summary.textContent = `Showing ${count} hotels`;
+            }
+        }
+
+        function clearHotelSearch() {
+            document.getElementById('hotelSearchInput').value = '';
+            filterHotels();
+        }
+
+        function resetAllFilters() {
+            document.getElementById('hotelSearchInput').value = '';
+            document.getElementById('priceRangeFilter').value = '';
+            document.getElementById('ratingFilter').value = '';
+            document.getElementById('typeFilter').value = '';
+            filterHotels();
+        }
+
+        function updateActivities() {
+            reservationState.activities = [];
+
+            document.querySelectorAll('.activity-checkbox:checked').forEach(checkbox => {
+                const activityCard = checkbox.closest('.activity-card');
+                const name = activityCard.querySelector('div[style*="font-weight: bold"]').textContent;
+                const price = parseInt(checkbox.dataset.price);
+
+                reservationState.activities.push({
+                    name: name,
+                    price: price
+                });
+            });
+
+            updateSummary();
+            updateProgress();
+        }
+
+        function validateDates() {
+            const checkIn = new Date(document.getElementById('checkIn').value);
+            const checkOut = new Date(document.getElementById('checkOut').value);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const checkInError = document.getElementById('checkInError');
+            const checkOutError = document.getElementById('checkOutError');
+
+            // Clear previous errors
+            checkInError.textContent = '';
+            checkOutError.textContent = '';
+
+            if (checkIn < today) {
+                checkInError.textContent = 'Check-in date cannot be in the past';
+                return false;
+            }
+
+            if (checkOut <= checkIn) {
+                checkOutError.textContent = 'Check-out must be after check-in date';
+                return false;
+            }
+
+            // Update checkout minimum date
+            const minCheckOut = new Date(checkIn);
+            minCheckOut.setDate(minCheckOut.getDate() + 1);
+            document.getElementById('checkOut').min = minCheckOut.toISOString().split('T')[0];            // Calculate nights
+            const timeDiff = checkOut.getTime() - checkIn.getTime();
+            reservationState.totalNights = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+            return true;
+        }
+
+        function applyDiscountCode() {
+            const codeInput = document.getElementById('discountCode');
+            const code = codeInput.value.toUpperCase().trim();
+            const messageDiv = document.getElementById('discountMessage');
+
+            if (!code) {
+                messageDiv.textContent = 'Please enter a discount code';
+                messageDiv.style.color = '#ffcccc';
+                return;
+            }
+
+            if (discountCodes[code]) {
+                reservationState.discountCode = code;
+                reservationState.discountAmount = discountCodes[code].percentage;
+
+                messageDiv.textContent = `✅ ${discountCodes[code].description} applied! (${discountCodes[code].percentage}% off)`;
+                messageDiv.style.color = '#ccffcc';
+
+                codeInput.disabled = true;
+                document.querySelector('.apply-discount').textContent = 'Applied';
+                document.querySelector('.apply-discount').disabled = true;
+            } else {
+                messageDiv.textContent = '❌ Invalid discount code';
+                messageDiv.style.color = '#ffcccc';
+            } updateSummary();
+            updateProgress();
+        }
+
+        function updateSummary() {
+            const summaryContent = document.getElementById('summaryContent');
+
+            if (!reservationState.selectedHotel || !reservationState.selectedRoom) {
+                summaryContent.innerHTML = '<div style="text-align: center; padding: 20px; opacity: 0.7;">Select a hotel and room type to see pricing details</div>';
+                return;
+            }
+
+            if (!validateDates()) {
+                summaryContent.innerHTML = '<div style="text-align: center; padding: 20px; opacity: 0.7;">Please select valid dates</div>';
+                return;
+            }
+
+            const adults = parseInt(document.getElementById('adults').value);
+            const children = parseInt(document.getElementById('children').value);
+            const rooms = parseInt(document.getElementById('rooms').value);
+
+            // Calculate base price
+            const basePrice = reservationState.selectedHotel.basePrice;
+            const roomPrice = basePrice + reservationState.selectedRoom.priceModifier;
+            const roomTotal = roomPrice * reservationState.totalNights * rooms;
+
+            // Calculate activities total
+            let activitiesTotal = 0;
+            reservationState.activities.forEach(activity => {
+                activitiesTotal += activity.price * adults; // Activities are per person
+            });
+
+            // Calculate subtotal
+            const subtotal = roomTotal + activitiesTotal;
+
+            // Apply discount
+            const discountAmount = reservationState.discountAmount > 0 ?
+                (subtotal * reservationState.discountAmount / 100) : 0;
+
+            const total = subtotal - discountAmount;
+
+            // Generate summary HTML
+            let summaryHTML = `
+                <div class="summary-line">
+                    <span><strong>🏨 Hotel:</strong></span>
+                    <span>${reservationState.selectedHotel.name}</span>
+                </div>
+                <div class="summary-line">
+                    <span><strong>🛏️ Room:</strong></span>
+                    <span>${reservationState.selectedRoom.name}</span>
+                </div>
+                <div class="summary-line">
+                    <span><strong>📅 Dates:</strong></span>
+                    <span>${formatDate(document.getElementById('checkIn').value)} - ${formatDate(document.getElementById('checkOut').value)}</span>
+                </div>
+                <div class="summary-line">
+                    <span><strong>🌙 Nights:</strong></span>
+                    <span>${reservationState.totalNights}</span>
+                </div>
+                <div class="summary-line">
+                    <span><strong>👥 Guests:</strong></span>
+                    <span>${adults} Adults${children > 0 ? `, ${children} Children` : ''}</span>
+                </div>
+                <div class="summary-line">
+                    <span><strong>🏠 Rooms:</strong></span>
+                    <span>${rooms}</span>
+                </div>
+                
+                <hr style="border: 1px solid rgba(255,255,255,0.3); margin: 15px 0;">
+                
+                <div class="summary-line">
+                    <span>Room charges (${rooms} × ${reservationState.totalNights} nights):</span>
+                    <span>$${roomTotal.toLocaleString()}</span>
+                </div>
+            `;
+
+            if (reservationState.activities.length > 0) {
+                summaryHTML += '<div style="margin: 10px 0; font-weight: bold;">Activities & Services:</div>';
+                reservationState.activities.forEach(activity => {
+                    const activityTotal = activity.price * adults;
+                    summaryHTML += `
+                        <div class="summary-line" style="font-size: 0.9em; margin-left: 10px;">
+                            <span>${activity.name} (${adults} × $${activity.price}):</span>
+                            <span>$${activityTotal.toLocaleString()}</span>
+                        </div>
+                    `;
+                });
+            }
+
+            summaryHTML += `
+                <div class="summary-line">
+                    <span><strong>Subtotal:</strong></span>
+                    <span><strong>$${subtotal.toLocaleString()}</strong></span>
+                </div>
+            `;
+
+            if (discountAmount > 0) {
+                summaryHTML += `
+                    <div class="summary-line" style="color: #90EE90;">
+                        <span>Discount (${reservationState.discountCode} - ${reservationState.discountAmount}%):</span>
+                        <span>-$${discountAmount.toLocaleString()}</span>
+                    </div>
+                `;
+            }
+
+            summaryHTML += `
+                <div class="summary-total summary-line">
+                    <span><strong>Total Amount:</strong></span>
+                    <span><strong>$${total.toLocaleString()}</strong></span>
+                </div>
+            `;
+
+            summaryContent.innerHTML = summaryHTML;
+            validateForm();
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        function validateForm() {
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value.trim();
+
+            // Clear previous errors
+            document.getElementById('firstNameError').textContent = '';
+            document.getElementById('lastNameError').textContent = '';
+            document.getElementById('emailError').textContent = '';
+
+            let isValid = true;
+
+            if (!firstName) {
+                document.getElementById('firstNameError').textContent = 'First name is required';
+                isValid = false;
+            }
+
+            if (!lastName) {
+                document.getElementById('lastNameError').textContent = 'Last name is required';
+                isValid = false;
+            }
+
+            if (!email) {
+                document.getElementById('emailError').textContent = 'Email is required';
+                isValid = false;
+            } else if (!isValidEmail(email)) {
+                document.getElementById('emailError').textContent = 'Please enter a valid email address';
+                isValid = false;
+            }
+
+            const hasHotel = reservationState.selectedHotel !== null;
+            const hasRoom = reservationState.selectedRoom !== null;
+            const hasValidDates = validateDates();
+
+            const reserveButton = document.getElementById('reserveButton');
+            reserveButton.disabled = !(isValid && hasHotel && hasRoom && hasValidDates);
+
+            return isValid && hasHotel && hasRoom && hasValidDates;
+        }
+
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        function updateProgress() {
+            let progress = 0;
+            const progressFill = document.getElementById('progressFill');
+
+            // Guest info (20%)
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value.trim();
+
+            if (firstName && lastName && email && isValidEmail(email)) {
+                progress += 20;
+            }
+
+            // Hotel selected (25%)
+            if (reservationState.selectedHotel) {
+                progress += 25;
+            }
+
+            // Room selected (25%)
+            if (reservationState.selectedRoom) {
+                progress += 25;
+            }
+
+            // Valid dates (20%)
+            if (validateDates()) {
+                progress += 20;
+            }
+
+            // Activities or ready to book (10%)
+            if (reservationState.activities.length > 0 || validateForm()) {
+                progress += 10;
+            }
+
+            progressFill.style.width = progress + '%';
+        } function makeReservation() {
+            if (!validateForm()) {
+                return;
+            }
+
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const specialRequests = document.getElementById('specialRequests').value.trim();
+
+            const checkIn = document.getElementById('checkIn').value;
+            const checkOut = document.getElementById('checkOut').value;
+            const adults = document.getElementById('adults').value;
+            const children = document.getElementById('children').value;
+            const rooms = document.getElementById('rooms').value;
+
+            // Calculate final totals
+            const basePrice = reservationState.selectedHotel.basePrice;
+            const roomPrice = basePrice + reservationState.selectedRoom.priceModifier;
+            const roomTotal = roomPrice * reservationState.totalNights * parseInt(rooms);
+
+            let activitiesTotal = 0;
+            reservationState.activities.forEach(activity => {
+                activitiesTotal += activity.price * parseInt(adults);
+            });
+
+            const subtotal = roomTotal + activitiesTotal;
+            const discountAmount = reservationState.discountAmount > 0 ?
+                (subtotal * reservationState.discountAmount / 100) : 0;
+            const total = subtotal - discountAmount;
+
+            // Generate confirmation number
+            const confirmationNumber = 'HTL-' + Date.now().toString().slice(-8).toUpperCase();            // Store reservation data for confirmation page
+            const reservationData = {
+                confirmationNumber,
+                guest: { firstName, lastName, email, phone, specialRequests },
+                hotel: reservationState.selectedHotel,
+                room: reservationState.selectedRoom,
+                dates: { checkIn, checkOut, nights: reservationState.totalNights },
+                guests: { adults, children, rooms },
+                activities: reservationState.activities,
+                pricing: { roomTotal, activitiesTotal, subtotal, discountAmount, total },
+                discountCode: reservationState.discountCode
+            };
+
+            // Store reservation data globally for PDF generation
+            currentReservationData = reservationData;
+
+            // Show confirmation page
+            showConfirmationPage(reservationData);
+
+            // Disable the booking form
+            disableBookingForm();
+
+            // Update progress to 100%
+            document.getElementById('progressFill').style.width = '100%';            // Reservation data logged for debugging (removed for production)
+        }
+
+        function showConfirmationPage(data) {
+            // Hide the main reservation container
+            document.querySelector('.reservation-container').style.display = 'none';
+
+            // Show the confirmation page
+            const confirmationPage = document.getElementById('confirmationPage');
+            confirmationPage.style.display = 'block';
+
+            // Set confirmation number
+            document.getElementById('confirmationNumber').textContent = data.confirmationNumber;
+
+            // Populate confirmation details
+            const detailsContainer = document.getElementById('confirmationDetails');
+            detailsContainer.innerHTML = `
+                <div class="detail-section">
+                    <div class="detail-title">👤 Guest Information</div>
+                    <div class="detail-item">
+                        <span>Name:</span>
+                        <span>${data.guest.firstName} ${data.guest.lastName}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span>Email:</span>
+                        <span>${data.guest.email}</span>
+                    </div>
+                    ${data.guest.phone ? `
+                        <div class="detail-item">
+                            <span>Phone:</span>
+                            <span>${data.guest.phone}</span>
+                        </div>
+                    ` : ''}
+                    ${data.guest.specialRequests ? `
+                        <div class="detail-item">
+                            <span>Special Requests:</span>
+                            <span>${data.guest.specialRequests}</span>
+                        </div>
+                    ` : ''}
+                </div>
+
+                <div class="detail-section">
+                    <div class="detail-title">🏨 Booking Details</div>
+                    <div class="detail-item">
+                        <span>Hotel:</span>
+                        <span>${data.hotel.name}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span>Room Type:</span>
+                        <span>${data.room.name}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span>Check-in:</span>
+                        <span>${formatDate(data.dates.checkIn)}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span>Check-out:</span>
+                        <span>${formatDate(data.dates.checkOut)}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span>Duration:</span>
+                        <span>${data.dates.nights} nights</span>
+                    </div>
+                    <div class="detail-item">
+                        <span>Guests:</span>
+                        <span>${data.guests.adults} Adults${data.guests.children > 0 ? `, ${data.guests.children} Children` : ''}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span>Rooms:</span>
+                        <span>${data.guests.rooms}</span>
+                    </div>
+                </div>
+
+                ${data.activities.length > 0 ? `
+                    <div class="detail-section" style="grid-column: 1 / -1;">
+                        <div class="detail-title">🎯 Activities & Services</div>
+                        ${data.activities.map(activity => `
+                            <div class="detail-item">
+                                <span>${activity.name}:</span>
+                                <span>$${(activity.price * parseInt(data.guests.adults)).toLocaleString()}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+
+                <div class="detail-section" style="grid-column: 1 / -1;">
+                    <div class="detail-title">💰 Payment Summary</div>
+                    <div class="detail-item">
+                        <span>Room charges:</span>
+                        <span>$${data.pricing.roomTotal.toLocaleString()}</span>
+                    </div>
+                    ${data.pricing.activitiesTotal > 0 ? `
+                        <div class="detail-item">
+                            <span>Activities & Services:</span>
+                            <span>$${data.pricing.activitiesTotal.toLocaleString()}</span>
+                        </div>
+                    ` : ''}
+                    <div class="detail-item">
+                        <span>Subtotal:</span>
+                        <span>$${data.pricing.subtotal.toLocaleString()}</span>
+                    </div>
+                    ${data.pricing.discountAmount > 0 ? `
+                        <div class="detail-item" style="color: #28a745;">
+                            <span>Discount (${data.discountCode}):</span>
+                            <span>-$${data.pricing.discountAmount.toLocaleString()}</span>
+                        </div>
+                    ` : ''}
+                    <div class="detail-item" style="font-weight: bold; font-size: 1.2em; border-top: 2px solid #ddd; padding-top: 10px; margin-top: 10px;">
+                        <span>Total Amount:</span>
+                        <span>$${data.pricing.total.toLocaleString()}</span>
+                    </div>
+                </div>
+
+                <div class="detail-section" style="grid-column: 1 / -1; background: #e7f3ff; border-left: 4px solid #007bff;">
+                    <div class="detail-title">📞 Important Information</div>
+                    <div style="line-height: 1.6;">
+                        <p>• A confirmation email has been sent to ${data.guest.email}</p>
+                        <p>• Please arrive at the hotel after 3:00 PM on your check-in date</p>
+                        <p>• Check-out time is 11:00 AM</p>
+                        <p>• For any changes or cancellations, please contact us at least 24 hours before your arrival</p>
+                        <p>• Contact: reservations@hotel.com or +1-555-0123</p>
+                    </div>
+                </div>
+            `;
+
+            // Scroll to top of confirmation page
+            confirmationPage.scrollIntoView({ behavior: 'smooth' });
+        }        // Function to replace emojis with text equivalents for PDF
+        function replaceEmojisForPDF(text) {
+            const emojiMap = {
+                '🌟': '[Star]',
+                '🏨': 'Hotel:',
+                '🛏️': 'Room:',
+                '📅': 'Dates:',
+                '🌙': 'Nights:',
+                '👥': 'Guests:',
+                '🏖️': '[Beach]',
+                '🍽️': '[Dining]',
+                '🏊‍♂️': '[Pool]',
+                '🅿️': '[Parking]',
+                '📶': '[WiFi]',
+                '🧳': '[Concierge]',
+                '✅': '[Applied]',
+                '❌': '[Invalid]',
+                '🎉': '',
+                '📄': '',
+                '📋': '',
+                '💡': 'Tip:',
+                '🦎': 'GAD'
+            };
+
+            let cleanText = text;
+            for (const [emoji, replacement] of Object.entries(emojiMap)) {
+                cleanText = cleanText.replace(new RegExp(emoji, 'g'), replacement);
+            }
+
+            // Remove any remaining emojis (fallback)
+            cleanText = cleanText.replace(/[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, '');
+
+            return cleanText.trim();
+        }
+
+        function downloadReservationPDF() {
+            if (!currentReservationData) {
+                alert('No reservation data available for PDF generation.');
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Set font
+            doc.setFont('helvetica');            // Header
+            doc.setFontSize(20);
+            doc.setTextColor(220, 53, 69); // Red color
+            doc.text('Hotel Reservation Confirmation', 20, 30);
+
+            // Confirmation number
+            doc.setFontSize(14);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Confirmation Number: ${currentReservationData.confirmationNumber}`, 20, 45);
+
+            // Guest Information
+            let yPos = 65;
+            doc.setFontSize(16);
+            doc.setTextColor(220, 53, 69);
+            doc.text('Guest Information', 20, yPos);
+
+            yPos += 10;
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Name: ${currentReservationData.guest.firstName} ${currentReservationData.guest.lastName}`, 20, yPos);
+            yPos += 8;
+            doc.text(`Email: ${currentReservationData.guest.email}`, 20, yPos);
+
+            if (currentReservationData.guest.phone) {
+                yPos += 8;
+                doc.text(`Phone: ${currentReservationData.guest.phone}`, 20, yPos);
+            }
+
+            if (currentReservationData.guest.specialRequests) {
+                yPos += 8;
+                doc.text(`Special Requests: ${currentReservationData.guest.specialRequests}`, 20, yPos);
+            }
+
+            // Hotel Information
+            yPos += 20;
+            doc.setFontSize(16);
+            doc.setTextColor(220, 53, 69);
+            doc.text('Hotel Information', 20, yPos);
+
+            yPos += 10;
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Hotel: ${replaceEmojisForPDF(currentReservationData.hotel.name)}`, 20, yPos);
+            yPos += 8;
+            doc.text(`Location: ${currentReservationData.hotel.location}`, 20, yPos);
+            yPos += 8;
+            doc.text(`Room Type: ${replaceEmojisForPDF(currentReservationData.room.name)}`, 20, yPos);
+
+            // Booking Details
+            yPos += 20;
+            doc.setFontSize(16);
+            doc.setTextColor(220, 53, 69);
+            doc.text('Booking Details', 20, yPos);
+
+            yPos += 10;
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Check-in: ${formatDate(currentReservationData.dates.checkIn)}`, 20, yPos);
+            yPos += 8;
+            doc.text(`Check-out: ${formatDate(currentReservationData.dates.checkOut)}`, 20, yPos);
+            yPos += 8;
+            doc.text(`Duration: ${currentReservationData.dates.nights} nights`, 20, yPos);
+            yPos += 8;
+            doc.text(`Guests: ${currentReservationData.guests.adults} Adults${currentReservationData.guests.children > 0 ? `, ${currentReservationData.guests.children} Children` : ''}`, 20, yPos);
+            yPos += 8;
+            doc.text(`Rooms: ${currentReservationData.guests.rooms}`, 20, yPos);            // Activities (if any)
+            if (currentReservationData.activities.length > 0) {
+                yPos += 20;
+                doc.setFontSize(16);
+                doc.setTextColor(220, 53, 69);
+                doc.text('Activities & Services', 20, yPos);
+
+                yPos += 10;
+                doc.setFontSize(12);
+                doc.setTextColor(0, 0, 0);
+                currentReservationData.activities.forEach(activity => {
+                    doc.text(`${replaceEmojisForPDF(activity.name)}: $${(activity.price * parseInt(currentReservationData.guests.adults)).toLocaleString()}`, 20, yPos);
+                    yPos += 8;
+                });
+            }
+
+            // Payment Summary
+            yPos += 20;
+            doc.setFontSize(16);
+            doc.setTextColor(220, 53, 69);
+            doc.text('Payment Summary', 20, yPos);
+
+            yPos += 10;
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Room charges: $${currentReservationData.pricing.roomTotal.toLocaleString()}`, 20, yPos);
+
+            if (currentReservationData.pricing.activitiesTotal > 0) {
+                yPos += 8;
+                doc.text(`Activities & Services: $${currentReservationData.pricing.activitiesTotal.toLocaleString()}`, 20, yPos);
+            }
+
+            yPos += 8;
+            doc.text(`Subtotal: $${currentReservationData.pricing.subtotal.toLocaleString()}`, 20, yPos); if (currentReservationData.pricing.discountAmount > 0) {
+                yPos += 8;
+                doc.setTextColor(40, 167, 69); // Green color for discount
+                doc.text(`Discount (${currentReservationData.discountCode}): -$${currentReservationData.pricing.discountAmount.toLocaleString()}`, 20, yPos);
+                doc.setTextColor(0, 0, 0); // Back to black
+            }
+
+            yPos += 12;
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.text(`Total Amount: $${currentReservationData.pricing.total.toLocaleString()}`, 20, yPos);
+
+            // Important Information
+            yPos += 25;
+            doc.setFontSize(16);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(220, 53, 69);
+            doc.text('Important Information', 20, yPos);
+
+            yPos += 10;
+            doc.setFontSize(10);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`• A confirmation email has been sent to ${currentReservationData.guest.email}`, 20, yPos);
+            yPos += 6;
+            doc.text('• Please arrive at the hotel after 3:00 PM on your check-in date', 20, yPos);
+            yPos += 6;
+            doc.text('• Check-out time is 11:00 AM', 20, yPos);
+            yPos += 6;
+            doc.text('• For any changes or cancellations, please contact us at least 24 hours before your arrival', 20, yPos);
+            yPos += 6;
+            doc.text('• Contact: reservations@hotel.com or +1-555-0123', 20, yPos);
+
+            // Footer
+            yPos += 20;
+            doc.setFontSize(8);
+            doc.setTextColor(128, 128, 128);
+            doc.text(`Generated on: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}`, 20, yPos);
+
+            // Save the PDF
+            doc.save(`Hotel-Reservation-${currentReservationData.confirmationNumber}.pdf`);
+        }
+
+        function disableBookingForm() {
+            // Add disabled class to main content
+            document.querySelector('.reservation-container').classList.add('booking-form-disabled');
+        }
+
+        function startNewReservation() {
+            // Reload the page to reset everything
+            window.location.reload();
+        }
+
+        // Update progress when form fields change
+        setInterval(updateProgress, 1000);
+    </script>
+</body>
+
+</html>
+```

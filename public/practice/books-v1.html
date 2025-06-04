@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD - Books App (GraphQL)</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <meta charset="UTF-8">
+    <style>
+        :root {
+            --primary-color: #ff7b3a;
+            --primary-light: #ffeee6;
+            --secondary-color: #2c3e50;
+            --accent-color: #3498db;
+            --text-color: #333;
+            --text-light: #666;
+            --bg-gradient: linear-gradient(135deg, #f9f7fe 0%, #fffbf1 100%);
+            --card-bg: #ffffff;
+            --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.1);
+            --border-radius: 12px;
+            --transition-speed: 0.3s;
+            --error-color: #e74c3c;
+            --success-color: #2ecc71;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+        }
+
+        .graphqlbooks-container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            padding: 40px 32px;
+            transform: translateY(0);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .graphqlbooks-auth-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin: 8px;
+            font-weight: 600;
+            position: relative;
+            padding: 6px;
+        }
+
+        /* h1::after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 3px;
+            background: var(--primary-color);
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        } */
+
+        .graphqlbooks-list-section {
+            margin-bottom: 32px;
+        }
+
+        .graphqlbooks-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 24px;
+            padding: 24px;
+            transition: all var(--transition-speed) ease;
+            border-left: 4px solid transparent;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.5s ease-out forwards;
+            opacity: 0;
+        }
+
+        .graphqlbooks-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .graphqlbooks-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .graphqlbooks-card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .graphqlbooks-card:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .graphqlbooks-card:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .graphqlbooks-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 123, 58, 0.05) 0%, rgba(255, 255, 255, 0) 60%);
+            opacity: 0;
+            transition: opacity var(--transition-speed);
+        }
+
+        .graphqlbooks-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-3px);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .graphqlbooks-card:hover::before {
+            opacity: 1;
+        }
+
+        .graphqlbooks-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        .graphqlbooks-meta {
+            color: var(--text-light);
+            font-size: 0.9em;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .graphqlbooks-meta b {
+            color: var(--secondary-color);
+        }
+
+        .graphqlbooks-desc {
+            margin-top: 12px;
+            color: var(--text-color);
+            line-height: 1.5;
+            font-size: 0.95em;
+        }
+
+        .graphqlbooks-form-section {
+            margin-bottom: 20px;
+            background: rgba(255, 123, 58, 0.03);
+            border-radius: var(--border-radius);
+            padding: 20px 18px 18px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(255, 123, 58, 0.1);
+            transition: transform var(--transition-speed);
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .graphqlbooks-form-section:hover {
+            transform: translateY(-2px);
+        }
+
+        .graphqlbooks-form-section h3 {
+            margin-top: 0;
+            color: var(--secondary-color);
+            font-weight: 500;
+            font-size: 1.15em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .graphqlbooks-form-section h3::before {
+            content: '';
+            display: inline-block;
+            width: 5px;
+            height: 16px;
+            background: var(--primary-color);
+            margin-right: 10px;
+            border-radius: 3px;
+        }
+
+        .graphqlbooks-compact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 500;
+            color: var(--secondary-color);
+            font-size: 0.85em;
+            transition: color 0.2s;
+        }
+
+        .graphqlbooks-compact-form label {
+            margin-bottom: 2px;
+        }
+
+        form:focus-within label {
+            color: var(--primary-color);
+        }
+
+        input,
+        textarea {
+            padding: 12px 16px;
+            margin-bottom: 14px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 8px;
+            font-size: 0.95em;
+            background: #ffffff;
+            transition: all var(--transition-speed);
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02) inset;
+        }
+
+        .graphqlbooks-compact-form input {
+            padding: 10px 14px;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 123, 58, 0.15);
+            outline: none;
+        }
+
+        .graphqlbooks-button {
+            background: linear-gradient(90deg, var(--primary-color) 0%, #ff9a5f 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            margin-top: 8px;
+            box-shadow: var(--shadow-sm), 0 2px 8px rgba(255, 123, 58, 0.25);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.5px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .graphqlbooks-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.2));
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+
+        .graphqlbooks-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md), 0 4px 12px rgba(255, 123, 58, 0.3);
+        }
+
+        .graphqlbooks-button:hover::before {
+            transform: translateX(100%);
+        }
+
+        .graphqlbooks-button:active {
+            transform: translateY(1px);
+            box-shadow: var(--shadow-sm), 0 2px 4px rgba(255, 123, 58, 0.2);
+        }
+
+        .graphqlbooks-auth-status {
+            text-align: right;
+            margin-bottom: 15px;
+            color: var(--text-color);
+            font-size: 0.9em;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .graphqlbooks-auth-status button {
+            margin-left: 12px;
+            padding: 6px 14px;
+            font-size: 0.8em;
+        }
+
+        .graphqlbooks-action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .graphqlbooks-add-button-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .graphqlbooks-action-button {
+            padding: 10px 18px;
+            font-size: 0.9em;
+            min-width: 120px;
+        }
+
+        .graphqlbooks-error {
+            color: #e74c3c;
+            margin-bottom: 12px;
+            font-weight: 500;
+            font-size: 0.85em;
+            padding: 6px 10px;
+            background: rgba(231, 76, 60, 0.1);
+            border-radius: 6px;
+            display: none;
+        }
+
+        .graphqlbooks-error:not(:empty) {
+            display: block;
+        }
+
+        .graphqlbooks-success {
+            color: #2ecc71;
+            margin-bottom: 12px;
+            font-weight: 500;
+            font-size: 0.85em;
+            padding: 6px 10px;
+            background: rgba(46, 204, 113, 0.1);
+            border-radius: 6px;
+            display: none;
+        }
+
+        .graphqlbooks-success:not(:empty) {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .graphqlbooks-container {
+                margin: 20px 16px;
+                padding: 24px 16px;
+            }
+
+            .graphqlbooks-card {
+                padding: 18px;
+            }
+
+            .graphqlbooks-form-section {
+                padding: 16px 14px;
+            }
+
+            .graphqlbooks-auth-wrapper {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        /* Loading animations */
+        .graphqlbooks-loading {
+            position: relative;
+        }
+
+        .graphqlbooks-loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            margin: -10px 0 0 -10px;
+            border: 2px solid rgba(255, 123, 58, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Modal Styles */
+        .graphqlbooks-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .graphqlbooks-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .graphqlbooks-modal-overlay.closing {
+            opacity: 0;
+            transition: opacity 0.3s ease-out;
+        }
+
+        .graphqlbooks-modal-container {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: scale(0.8);
+            transition: transform 0.3s;
+            border-top: 4px solid var(--primary-color);
+        }
+
+        .graphqlbooks-modal-overlay.active .graphqlbooks-modal-container {
+            transform: scale(1);
+        }
+
+        .graphqlbooks-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px 0;
+        }
+
+        .graphqlbooks-modal-header h3 {
+            margin: 0;
+            color: var(--secondary-color);
+            font-weight: 500;
+            font-size: 1.25em;
+        }
+
+        .graphqlbooks-modal-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            color: var(--text-light);
+            padding: 0;
+            margin: 0;
+            box-shadow: none;
+            transition: background-color 0.2s;
+        }
+
+        .graphqlbooks-modal-close:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            color: var(--primary-color);
+            transform: none;
+            box-shadow: none;
+        }
+
+        .graphqlbooks-modal-content {
+            padding: 16px 24px 24px;
+        }
+
+        .graphqlbooks-modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #fda085, #f76b1c);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #f76b1c, #e65b08);
+        }
+
+        /* Form validation styles */
+        .graphqlbooks-input-group {
+            position: relative;
+            margin-bottom: 18px;
+        }
+
+        .graphqlbooks-input-group input,
+        .graphqlbooks-input-group textarea {
+            margin-bottom: 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .graphqlbooks-input-error {
+            color: var(--error-color);
+            font-size: 0.8em;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .graphqlbooks-input-error:not(:empty) {
+            display: block;
+        }
+
+        input.graphqlbooks-invalid {
+            border-color: var(--error-color);
+            box-shadow: 0 0 0 1px var(--error-color);
+        }
+
+        input.graphqlbooks-valid {
+            border-color: var(--success-color);
+            box-shadow: 0 0 0 1px var(--success-color);
+        }
+
+        textarea.graphqlbooks-invalid {
+            border-color: var(--error-color);
+            box-shadow: 0 0 0 1px var(--error-color);
+        }
+
+        textarea.graphqlbooks-valid {
+            border-color: var(--success-color);
+            box-shadow: 0 0 0 1px var(--success-color);
+        }
+
+        /* Notification Modal Styles */
+        .graphqlbooks-notification-container {
+            max-width: 400px;
+        }
+
+        .graphqlbooks-notification-icon {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 64px;
+        }
+
+        .graphqlbooks-notification-success-icon {
+            width: 64px;
+            height: 64px;
+            color: var(--success-color);
+        }
+
+        .graphqlbooks-notification-error-icon {
+            width: 64px;
+            height: 64px;
+            color: var(--error-color);
+        }
+
+        .graphqlbooks-notification-message {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+
+        /* Animation for notification modal */
+        @keyframes notification-bounce {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+
+            70% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .graphqlbooks-modal-overlay.active .graphqlbooks-notification-container {
+            animation: notification-bounce 0.5s ease-out forwards;
+        }
+
+        /* Loading button styles */
+        .graphqlbooks-loading-btn {
+            position: relative;
+            color: transparent !important;
+        }
+
+        .graphqlbooks-loading-btn .graphqlbooks-loader {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            margin: -10px 0 0 -10px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+        }
+
+        /* Loading indicator for book list */
+        .graphqlbooks-loading-indicator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            color: var(--text-light);
+        }
+
+        .graphqlbooks-loading-indicator .graphqlbooks-loader {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 15px;
+            border: 3px solid rgba(255, 123, 58, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 0.8s linear infinite;
+        }
+
+        .graphqlbooks-loading-indicator p {
+            font-size: 1.1em;
+            margin: 0;
+            color: var(--text-light);
+        }
+
+        /* Books stats styles */
+        .graphqlbooks-stats-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            background: rgba(255, 123, 58, 0.05);
+            border-radius: var(--border-radius);
+            font-size: 0.95em;
+            color: var(--text-color);
+            border-left: 3px solid var(--primary-color);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .graphqlbooks-stats-count {
+            font-weight: 500;
+        }
+
+        .graphqlbooks-stats-count b {
+            color: var(--primary-color);
+            font-size: 1.1em;
+            margin: 0 3px;
+        }
+
+        .graphqlbooks-stats-pages {
+            color: var(--text-light);
+            font-size: 0.9em;
+        }
+
+        .graphqlbooks-stats-pages b {
+            color: var(--secondary-color);
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <div class="graphqlbooks-container">
+        <h1>📚 Books App</h1>
+        <div class="graphqlbooks-auth-status" id="authStatus"></div>
+        <div class="graphqlbooks-action-buttons" id="actionButtons">
+            <button id="showRegisterBtn" class="graphqlbooks-action-button graphqlbooks-button">Register</button>
+            <button id="showLoginBtn" class="graphqlbooks-action-button graphqlbooks-button">Login</button>
+        </div>
+        <div id="addBookBtn" style="display:none;" class="graphqlbooks-add-button-container">
+            <button class="graphqlbooks-action-button graphqlbooks-button">Add New Book</button>
+        </div>
+        <div class="graphqlbooks-stats-container" id="booksStats"></div>
+        <div class="graphqlbooks-list-section" id="booksList"></div>
+    </div> <!-- Register Modal -->
+    <div class="graphqlbooks-modal-overlay" id="registerModal">
+        <div class="graphqlbooks-modal-container">
+            <div class="graphqlbooks-modal-header">
+                <h3>Register</h3>
+                <button class="graphqlbooks-modal-close" data-close-modal>&times;</button>
+            </div>
+            <div class="graphqlbooks-modal-content">
+                <div class="graphqlbooks-error" id="registerError"></div>
+                <form id="registerForm" class="graphqlbooks-compact-form">
+                    <div class="graphqlbooks-input-group">
+                        <label for="regUsername">Username</label>
+                        <input type="text" id="regUsername" placeholder="Choose a username" required>
+                        <div class="graphqlbooks-input-error" id="regUsernameError"></div>
+                    </div>
+                    <div class="graphqlbooks-input-group">
+                        <label for="regEmail">Email</label>
+                        <input type="email" id="regEmail" placeholder="Your email address" required>
+                        <div class="graphqlbooks-input-error" id="regEmailError"></div>
+                    </div>
+                    <div class="graphqlbooks-input-group">
+                        <label for="regPassword">Password</label>
+                        <input type="password" id="regPassword" placeholder="Create a password" required>
+                        <div class="graphqlbooks-input-error" id="regPasswordError"></div>
+                    </div>
+                    <div class="graphqlbooks-modal-actions">
+                        <button type="submit" class="graphqlbooks-button">Create Account</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div> <!-- Notification Modal -->
+    <div class="graphqlbooks-modal-overlay" id="notificationModal">
+        <div class="graphqlbooks-modal-container graphqlbooks-notification-container">
+            <div class="graphqlbooks-modal-header">
+                <h3 id="notificationTitle">Notification</h3>
+                <button class="graphqlbooks-modal-close" data-close-modal>&times;</button>
+            </div>
+            <div class="graphqlbooks-modal-content">
+                <div class="graphqlbooks-notification-icon" id="notificationIcon">
+                    <svg id="successIcon" class="graphqlbooks-notification-success-icon" viewBox="0 0 24 24" style="display:none;">
+                        <path fill="currentColor" d="M12,2C6.48,2 2,6.48 2,12C2,17.52 6.48,22 12,22C17.52,22 22,17.52 22,12C22,6.48 17.52,2 12,2ZM10,17L5,12L6.41,10.59L10,14.17L17.59,6.58L19,8L10,17Z"></path>
+                    </svg>
+                    <svg id="errorIcon" class="graphqlbooks-notification-error-icon" viewBox="0 0 24 24" style="display:none;">
+                        <path fill="currentColor" d="M12,2C6.48,2 2,6.48 2,12C2,17.52 6.48,22 12,22C17.52,22 22,17.52 22,12C22,6.48 17.52,2 12,2ZM13,17H11V15H13V17ZM13,13H11V7H13V13Z"></path>
+                    </svg>
+                </div>
+                <div class="graphqlbooks-notification-message" id="notificationMessage"></div>
+                <div class="graphqlbooks-modal-actions">
+                    <button type="button" id="notificationCloseBtn" class="graphqlbooks-button">OK</button>
+                </div>
+            </div>
+        </div>
+    </div> <!-- Login Modal -->
+    <div class="graphqlbooks-modal-overlay" id="loginModal">
+        <div class="graphqlbooks-modal-container">
+            <div class="graphqlbooks-modal-header">
+                <h3>Login</h3>
+                <button class="graphqlbooks-modal-close" data-close-modal>&times;</button>
+            </div>
+            <div class="graphqlbooks-modal-content">
+                <div class="graphqlbooks-error" id="loginError"></div>
+                <form id="loginForm" class="graphqlbooks-compact-form">
+                    <div class="graphqlbooks-input-group">
+                        <label for="loginUsername">Username</label>
+                        <input type="text" id="loginUsername" placeholder="Enter your username" required>
+                        <div class="graphqlbooks-input-error" id="loginUsernameError"></div>
+                    </div>
+                    <div class="graphqlbooks-input-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                        <div class="graphqlbooks-input-error" id="loginPasswordError"></div>
+                    </div>
+                    <div class="graphqlbooks-modal-actions">
+                        <button type="submit" class="graphqlbooks-button">Sign In</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div> <!-- Add Book Modal -->
+    <div class="graphqlbooks-modal-overlay" id="addBookModal">
+        <div class="graphqlbooks-modal-container">
+            <div class="graphqlbooks-modal-header">
+                <h3>Add Book</h3>
+                <button class="graphqlbooks-modal-close" data-close-modal>&times;</button>
+            </div>
+            <div class="graphqlbooks-modal-content">
+                <div class="graphqlbooks-error" id="addBookError"></div>
+                <div class="graphqlbooks-success" id="addBookSuccess"></div>
+                <form id="addBookForm">
+                    <div class="graphqlbooks-input-group">
+                        <label for="bookName">Book Title</label>
+                        <input type="text" id="bookName" placeholder="Enter book title" required>
+                        <div class="graphqlbooks-input-error" id="bookNameError"></div>
+                    </div>
+                    <div class="graphqlbooks-input-group">
+                        <label for="bookAuthor">Author</label>
+                        <input type="text" id="bookAuthor" placeholder="Enter author name" required>
+                        <div class="graphqlbooks-input-error" id="bookAuthorError"></div>
+                    </div>
+                    <div class="graphqlbooks-input-group">
+                        <label for="bookPublishedAt">Publication Date</label>
+                        <input type="date" id="bookPublishedAt">
+                        <div class="graphqlbooks-input-error" id="bookPublishedAtError"></div>
+                    </div>
+                    <div class="graphqlbooks-input-group">
+                        <label for="bookPages">Number of Pages</label>
+                        <input type="number" id="bookPages" min="1" placeholder="Number of pages">
+                        <div class="graphqlbooks-input-error" id="bookPagesError"></div>
+                    </div>
+                    <div class="graphqlbooks-input-group">
+                        <label for="bookDescription">Description</label>
+                        <textarea id="bookDescription" rows="3" placeholder="Brief description of the book"></textarea>
+                        <div class="graphqlbooks-input-error" id="bookDescriptionError"></div>
+                    </div>
+                    <div class="graphqlbooks-modal-actions">
+                        <button type="submit" class="graphqlbooks-button">Add to Library</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        const endpoint = '/api/practice/books/v1/graphql';
+        let token = localStorage.getItem('graphqlbooksToken') || '';
+        let currentUser = null;
+
+        // Validation utility functions
+        const validators = {
+            // Username: 3-20 characters, alphanumeric with underscores and hyphens
+            username: (value) => {
+                if (!value || value.length < 3 || value.length > 20) {
+                    return "Username must be between 3 and 20 characters";
+                }
+                if (!/^[a-zA-Z0-9_-]+$/.test(value)) {
+                    return "Username can only contain letters, numbers, underscores and hyphens";
+                }
+                return null; // No error
+            },
+
+            // Email validation
+            email: (value) => {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!value || !emailRegex.test(value)) {
+                    return "Please enter a valid email address";
+                }
+                return null;
+            },
+
+            // Password: minimum 6 chars, at least one letter and one number
+            password: (value) => {
+                if (!value || value.length < 2) {
+                    return "Password must be at least 2 characters long";
+                }
+                // if (!/[A-Za-z]/.test(value) || !/[0-9]/.test(value)) {
+                //     return "Password must contain at least one letter and one number";
+                // }
+                return null;
+            },
+
+            // Book title: 1-100 characters
+            bookTitle: (value) => {
+                if (!value) {
+                    return "Book title is required";
+                }
+                if (value.length > 100) {
+                    return "Book title cannot exceed 100 characters";
+                }
+                return null;
+            },
+
+            // Author: 1-50 characters
+            author: (value) => {
+                if (!value) {
+                    return "Author name is required";
+                }
+                if (value.length > 50) {
+                    return "Author name cannot exceed 50 characters";
+                }
+                return null;
+            },
+
+            // Pages: positive number only, max 10000
+            pages: (value) => {
+                if (value === "") return null; // Optional field
+                const numPages = parseInt(value, 10);
+                if (isNaN(numPages) || numPages <= 0) {
+                    return "Pages must be a positive number";
+                }
+                if (numPages > 10000) {
+                    return "Pages cannot exceed 10,000";
+                }
+                return null;
+            },
+
+            // Description: max 1000 characters
+            description: (value) => {
+                if (value && value.length > 1000) {
+                    return "Description cannot exceed 1000 characters";
+                }
+                return null;
+            },
+
+            // Publication date: must not be in the future
+            publishDate: (value) => {
+                if (!value) return null; // Optional field
+                const pubDate = new Date(value);
+                const today = new Date();
+                if (pubDate > today) {
+                    return "Publication date cannot be in the future";
+                }
+                return null;
+            }
+        };
+
+        // Form validation function
+        function validateForm(formData, fieldValidators) {
+            const errors = {};
+            let hasErrors = false;
+
+            for (const field in fieldValidators) {
+                const value = formData[field];
+                const error = fieldValidators[field](value);
+                if (error) {
+                    errors[field] = error;
+                    hasErrors = true;
+                }
+            }
+
+            return { isValid: !hasErrors, errors };
+        }
+
+        // Real-time form validation functions
+        function setupRealTimeValidation() {
+            // Register form validation
+            const regUsername = document.getElementById('regUsername');
+            const regEmail = document.getElementById('regEmail');
+            const regPassword = document.getElementById('regPassword');
+
+            regUsername.addEventListener('input', () => {
+                const error = validators.username(regUsername.value.trim());
+                document.getElementById('regUsernameError').textContent = error || '';
+                toggleValidationClass(regUsername, error);
+            });
+
+            regEmail.addEventListener('input', () => {
+                const error = validators.email(regEmail.value.trim());
+                document.getElementById('regEmailError').textContent = error || '';
+                toggleValidationClass(regEmail, error);
+            });
+
+            regPassword.addEventListener('input', () => {
+                const error = validators.password(regPassword.value);
+                document.getElementById('regPasswordError').textContent = error || '';
+                toggleValidationClass(regPassword, error);
+            });
+
+            // Login form validation
+            const loginUsername = document.getElementById('loginUsername');
+            const loginPassword = document.getElementById('loginPassword');
+
+            loginUsername.addEventListener('input', () => {
+                const error = !loginUsername.value.trim() ? 'Username is required' : null;
+                document.getElementById('loginUsernameError').textContent = error || '';
+                toggleValidationClass(loginUsername, error);
+            });
+
+            loginPassword.addEventListener('input', () => {
+                const error = !loginPassword.value ? 'Password is required' : null;
+                document.getElementById('loginPasswordError').textContent = error || '';
+                toggleValidationClass(loginPassword, error);
+            });
+
+            // Add book form validation
+            const bookName = document.getElementById('bookName');
+            const bookAuthor = document.getElementById('bookAuthor');
+            const bookPublishedAt = document.getElementById('bookPublishedAt');
+            const bookPages = document.getElementById('bookPages');
+            const bookDescription = document.getElementById('bookDescription');
+
+            bookName.addEventListener('input', () => {
+                const error = validators.bookTitle(bookName.value.trim());
+                document.getElementById('bookNameError').textContent = error || '';
+                toggleValidationClass(bookName, error);
+            });
+
+            bookAuthor.addEventListener('input', () => {
+                const error = validators.author(bookAuthor.value.trim());
+                document.getElementById('bookAuthorError').textContent = error || '';
+                toggleValidationClass(bookAuthor, error);
+            });
+
+            bookPublishedAt.addEventListener('change', () => {
+                const error = validators.publishDate(bookPublishedAt.value);
+                document.getElementById('bookPublishedAtError').textContent = error || '';
+                toggleValidationClass(bookPublishedAt, error);
+            });
+
+            bookPages.addEventListener('input', () => {
+                const error = validators.pages(bookPages.value);
+                document.getElementById('bookPagesError').textContent = error || '';
+                toggleValidationClass(bookPages, error);
+            });
+
+            bookDescription.addEventListener('input', () => {
+                const error = validators.description(bookDescription.value.trim());
+                document.getElementById('bookDescriptionError').textContent = error || '';
+                toggleValidationClass(bookDescription, error);
+            });
+        }        // Helper function to toggle validation classes
+        function toggleValidationClass(element, error) {
+            if (error) {
+                element.classList.add('graphqlbooks-invalid');
+                element.classList.remove('graphqlbooks-valid');
+            } else if (element.value) {
+                element.classList.add('graphqlbooks-valid');
+                element.classList.remove('graphqlbooks-invalid');
+            } else {
+                element.classList.remove('graphqlbooks-valid');
+                element.classList.remove('graphqlbooks-invalid');
+            }
+        }        // Helper function to reset a form's state including validation
+        function resetFormState(formId) {
+            // Reset the form
+            document.getElementById(formId).reset();
+
+            // Clear any error and success messages
+            const modalContent = document.getElementById(formId).closest('.graphqlbooks-modal-content');
+            if (modalContent) {
+                const errorElements = modalContent.querySelectorAll('.graphqlbooks-error');
+                const successElements = modalContent.querySelectorAll('.graphqlbooks-success');
+
+                errorElements.forEach(el => el.textContent = '');
+                successElements.forEach(el => el.textContent = '');
+            }
+
+            // Clear validation classes from all inputs
+            const inputs = document.getElementById(formId).querySelectorAll('input, textarea');
+            inputs.forEach(input => {
+                input.classList.remove('graphqlbooks-valid', 'graphqlbooks-invalid');
+
+                // Also clear individual error messages
+                const errorId = input.id + 'Error';
+                const errorElement = document.getElementById(errorId);
+                if (errorElement) {
+                    errorElement.textContent = '';
+                }
+            });
+        }
+
+        // Show notification modal with success or error message
+        function showNotification(type, message, title = null) {
+            // Set the title
+            document.getElementById('notificationTitle').textContent = title || (type === 'success' ? 'Success' : 'Error');
+
+            // Set the message
+            document.getElementById('notificationMessage').textContent = message;
+
+            // Show the appropriate icon
+            document.getElementById('successIcon').style.display = type === 'success' ? 'block' : 'none';
+            document.getElementById('errorIcon').style.display = type === 'error' ? 'block' : 'none';
+
+            // Open the modal
+            openModal('notificationModal');
+        }        // Set loading state for a button
+        function setButtonLoading(buttonEl, isLoading) {
+            if (!buttonEl) return;
+
+            if (isLoading) {
+                // Store original text
+                buttonEl.dataset.originalText = buttonEl.textContent;
+                buttonEl.disabled = true;
+                buttonEl.classList.add('graphqlbooks-loading-btn');
+                buttonEl.innerHTML = '<span class="graphqlbooks-loader"></span>';
+            } else {
+                // Restore original text
+                buttonEl.innerHTML = buttonEl.dataset.originalText || buttonEl.innerHTML;
+                buttonEl.disabled = false;
+                buttonEl.classList.remove('graphqlbooks-loading-btn');
+            }
+        }
+
+        // Modal functionality
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
+
+            // Reset form state when opening a modal
+            if (modalId === 'registerModal') {
+                resetFormState('registerForm');
+            } else if (modalId === 'loginModal') {
+                resetFormState('loginForm');
+            } else if (modalId === 'addBookModal') {
+                resetFormState('addBookForm');
+            }
+        } function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+
+            // Add closing animation
+            modal.classList.add('closing');
+
+            // Remove active class after a short delay to allow for animation
+            setTimeout(() => {
+                modal.classList.remove('active');
+                modal.classList.remove('closing');
+                document.body.style.overflow = ''; // Restore scrolling
+            }, 300);
+        }        // Close all modals - used for logout or when we need to close any open modal
+        function closeAllModals() {
+            document.querySelectorAll('.graphqlbooks-modal-overlay.active').forEach(modal => {
+                // Add closing animation
+                modal.classList.add('closing');
+
+                // Remove active class after a short delay to allow for animation
+                setTimeout(() => {
+                    modal.classList.remove('active');
+                    modal.classList.remove('closing');
+                }, 300);
+            });
+            document.body.style.overflow = '';
+        }
+
+        function setAuthStatus() {
+            const authStatus = document.getElementById('authStatus');
+            const actionButtons = document.getElementById('actionButtons');
+            const addBookBtn = document.getElementById('addBookBtn');
+
+            if (token && currentUser) {
+                authStatus.innerHTML = `Logged in as&nbsp;<b>${currentUser.username}</b> <button class="graphqlbooks-button" onclick="logout()">Sign Out</button>`;
+                actionButtons.style.display = 'none';
+                addBookBtn.style.display = 'flex';
+            } else {
+                authStatus.innerHTML = '<span>Not logged in</span>';
+                actionButtons.style.display = 'flex';
+                addBookBtn.style.display = 'none';
+            }
+        }
+
+        async function fetchGraphQL(query, variables = {}) {
+            const headers = { 'Content-Type': 'application/json' };
+            if (token) headers['Authorization'] = 'Bearer ' + token;
+            const res = await fetch(endpoint, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify({ query, variables })
+            });
+            return res.json();
+        } async function loadBooks() {
+            const booksList = document.getElementById('booksList');
+            const booksStats = document.getElementById('booksStats');            // Show loading state
+            booksList.innerHTML = '<div class="graphqlbooks-loading-indicator"><div class="graphqlbooks-loader"></div><p>Loading books...</p></div>';
+            booksStats.innerHTML = '';
+
+            const query = `query { books { id name author createdAt publishedAt createdBy pages description } }`;
+            const data = await fetchGraphQL(query);
+            const books = data.data?.books || [];
+
+            // Calculate statistics
+            if (books.length) {
+                const totalPages = books.reduce((sum, book) => sum + (book.pages || 0), 0);
+                const avgPages = books.length ? Math.round(totalPages / books.filter(book => book.pages).length) : 0; booksStats.innerHTML = `
+                    <div class="graphqlbooks-stats-count">
+                        Your library: <b>${books.length}</b> ${books.length === 1 ? 'book' : 'books'}
+                    </div>
+                    <div class="graphqlbooks-stats-pages">
+                        Total: <b>${totalPages}</b> pages | Average: <b>${avgPages || 'N/A'}</b> pages per book
+                    </div>
+                `;
+            } else {
+                booksStats.innerHTML = '';
+            } booksList.innerHTML = books.length ? books.map(book => `
+        <div class="graphqlbooks-card">
+          <div class="graphqlbooks-title">${book.name}</div>
+          <div class="graphqlbooks-meta"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="vertical-align: middle;"><path d="M18 4H6C4.89543 4 4 4.89543 4 6V18C4 19.1046 4.89543 20 6 20H18C19.1046 20 20 19.1046 20 18V6C20 4.89543 19.1046 4 18 4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 9C13.1046 9 14 8.10457 14 7C14 5.89543 13.1046 5 12 5C10.8954 5 10 5.89543 10 7C10 8.10457 10.8954 9 12 9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> by <b>${book.author}</b> &middot; ${book.pages ? book.pages + ' pages' : ''}</div>
+          <div class="graphqlbooks-meta"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="vertical-align: middle;"><path d="M3 5H21V21H3V5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 9H3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 5V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 5V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Published: ${book.publishedAt ? new Date(book.publishedAt).toLocaleDateString() : 'N/A'}</div>
+          <div class="graphqlbooks-meta"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="vertical-align: middle;"><path d="M12 8V12L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Created by: ${book.createdBy || 'N/A'} on ${new Date(book.createdAt).toLocaleDateString()}</div>
+          <div class="graphqlbooks-desc">${book.description || ''}</div>
+        </div>
+      `).join('') : '<div style="text-align: center; padding: 40px 20px; color: var(--text-light);">No books found. Add your first book!</div>';
+        }
+
+        async function checkMe() {
+            if (!token) { currentUser = null; setAuthStatus(); return; }
+            const query = `query { me { id username email } }`;
+            const data = await fetchGraphQL(query);
+            if (data.data && data.data.me) {
+                currentUser = data.data.me;
+            } else {
+                currentUser = null;
+                token = '';
+                localStorage.removeItem('graphqlbooksToken');
+            }
+            setAuthStatus();
+        } document.getElementById('registerForm').onsubmit = async (e) => {
+            e.preventDefault();
+            document.getElementById('registerError').textContent = '';
+
+            // Set button to loading state
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            setButtonLoading(submitButton, true);
+
+            const username = document.getElementById('regUsername').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value;
+
+            // Client-side validation
+            const validation = validateForm(
+                { username, email, password },
+                {
+                    username: validators.username,
+                    email: validators.email,
+                    password: validators.password
+                }
+            );
+
+            if (!validation.isValid) {
+                // Get the first error and display it
+                const firstError = Object.values(validation.errors)[0];
+                document.getElementById('registerError').textContent = firstError;
+                return;
+            }
+
+            const query = `mutation Register($input: UserInput!) { register(input: $input) { token user { id username email } } }`;
+            const variables = { input: { username, email, password } };
+            const data = await fetchGraphQL(query, variables); if (data.errors) {
+                // Reset loading state
+                setButtonLoading(submitButton, false);
+
+                // Show error notification
+                closeModal('registerModal');
+                showNotification('error', data.errors[0].message, 'Registration Failed');
+                return;
+            }            // Reset loading state
+            setButtonLoading(submitButton, false);
+
+            token = data.data.register.token;
+            localStorage.setItem('graphqlbooksToken', token);
+            currentUser = data.data.register.user;
+
+            // Close the register modal
+            closeModal('registerModal');
+
+            // Show success notification
+            showNotification('success', 'Your account has been created successfully!', 'Registration Complete');
+
+            setAuthStatus();
+            loadBooks();
+        }; document.getElementById('loginForm').onsubmit = async (e) => {
+            e.preventDefault();
+            document.getElementById('loginError').textContent = '';
+
+            // Set button to loading state
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            setButtonLoading(submitButton, true);
+
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            // Basic validation
+            if (!username) {
+                document.getElementById('loginError').textContent = 'Username is required';
+                return;
+            }
+
+            if (!password) {
+                document.getElementById('loginError').textContent = 'Password is required';
+                return;
+            }
+
+            const query = `mutation Login($input: LoginInput!) { login(input: $input) { token user { id username email } } }`;
+            const variables = { input: { username, password } };
+            const data = await fetchGraphQL(query, variables); if (data.errors) {
+                // Reset loading state
+                setButtonLoading(submitButton, false);
+
+                // Show error notification
+                closeModal('loginModal');
+                showNotification('error', data.errors[0].message, 'Login Failed');
+                return;
+            }            // Reset loading state
+            setButtonLoading(submitButton, false);
+
+            token = data.data.login.token;
+            localStorage.setItem('graphqlbooksToken', token);
+            currentUser = data.data.login.user;
+
+            // Close the login modal
+            closeModal('loginModal');
+
+            // Show success notification
+            showNotification('success', 'You have successfully logged in!', 'Welcome Back');
+
+            setAuthStatus();
+            loadBooks();
+        }; document.getElementById('addBookForm').onsubmit = async (e) => {
+            e.preventDefault();
+            document.getElementById('addBookError').textContent = '';
+            document.getElementById('addBookSuccess').textContent = '';
+
+            // Set button to loading state
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            setButtonLoading(submitButton, true);
+
+            const name = document.getElementById('bookName').value.trim();
+            const author = document.getElementById('bookAuthor').value.trim();
+            const publishedAt = document.getElementById('bookPublishedAt').value;
+            const pagesValue = document.getElementById('bookPages').value.trim();
+            const pages = pagesValue ? parseInt(pagesValue, 10) : null;
+            const description = document.getElementById('bookDescription').value.trim();
+
+            // Client-side validation
+            const validation = validateForm(
+                {
+                    bookTitle: name,
+                    author: author,
+                    pages: pagesValue,
+                    description: description,
+                    publishDate: publishedAt
+                },
+                {
+                    bookTitle: validators.bookTitle,
+                    author: validators.author,
+                    pages: validators.pages,
+                    description: validators.description,
+                    publishDate: validators.publishDate
+                }
+            );
+
+            if (!validation.isValid) {
+                // Get the first error and display it
+                const firstError = Object.values(validation.errors)[0];
+                document.getElementById('addBookError').textContent = firstError;
+                return;
+            }
+
+            const query = `mutation AddBook($input: BookInput!) { addBook(input: $input) { id name } }`;
+            const variables = { input: { name, author, publishedAt: publishedAt || null, pages, description } };
+            const data = await fetchGraphQL(query, variables); if (data.errors) {
+                // Reset loading state
+                setButtonLoading(submitButton, false);
+
+                // Show error notification
+                closeModal('addBookModal');
+                showNotification('error', data.errors[0].message, 'Add Book Failed');
+                return;
+            }
+
+            // Reset form and clear all validation states
+            resetFormState('addBookForm');
+
+            // Reset loading state
+            setButtonLoading(submitButton, false);
+
+            // Close the add book modal
+            closeModal('addBookModal');
+
+            // Show success notification
+            showNotification('success', 'Book successfully added to your library!', 'Book Added');
+
+            // Refresh the books list
+            loadBooks();
+        }; window.logout = function () {
+            token = '';
+            currentUser = null;
+            localStorage.removeItem('graphqlbooksToken');
+            closeAllModals(); // Close any open modals when logging out
+            setAuthStatus();
+        }// Event listeners for modals
+        document.addEventListener('DOMContentLoaded', () => {
+            // Setup real-time validation
+            setupRealTimeValidation();
+
+            // Setup modal open/close events
+            document.getElementById('showRegisterBtn').addEventListener('click', () => openModal('registerModal'));
+            document.getElementById('showLoginBtn').addEventListener('click', () => openModal('loginModal'));
+            document.getElementById('addBookBtn').querySelector('button').addEventListener('click', () => openModal('addBookModal'));
+
+            // Notification modal close button
+            document.getElementById('notificationCloseBtn').addEventListener('click', () => {
+                closeModal('notificationModal');
+            });            // Close buttons for modals
+            document.querySelectorAll('[data-close-modal]').forEach(button => {
+                button.addEventListener('click', () => {
+                    const modal = button.closest('.graphqlbooks-modal-overlay');
+                    if (modal) closeModal(modal.id);
+                });
+            });
+
+            // Close on clicking outside
+            document.querySelectorAll('.graphqlbooks-modal-overlay').forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) closeModal(modal.id);
+                });
+            });
+
+            // Check authentication status
+            checkMe();
+            loadBooks();
+        });
+    </script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>

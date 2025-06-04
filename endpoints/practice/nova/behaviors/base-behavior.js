@@ -1,5 +1,5 @@
 /**
- * Base Behavior - Abstract base class for all AI behaviors
+ * Base Behavior - Abstract base class for all Nova behaviors
  *
  * This class defines the interface that all behaviors must implement.
  * Each behavior is responsible for determining if it can handle a message

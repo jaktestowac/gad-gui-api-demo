@@ -78,8 +78,8 @@ const knowledgeBase = {
 
   // About the AI
   "who made you":
-    "I'm a simple AI assistant created as part of a demo application. I was built to demonstrate basic AI chat functionality.",
-  "what is your name": "I'm Nova, a simple AI assistant created for the GAD application demo.",
+    "I'm a simple assistant created as part of a demo application. I was built to demonstrate basic chat functionality.",
+  "what is your name": "I'm Nova, a simple assistant created for the GAD application demo.",
   "what can you do":
     "I can answer questions about programming concepts, help with calculations, remember information about you, play simple games like rock-paper-scissors, tell jokes and facts, and have basic conversations. Try typing 'help' for more information!",
 };
@@ -368,7 +368,8 @@ I'm always learning! Feel free to chat with me about anything.
 // Emotion/sentiment detection patterns
 const sentimentPatterns = [
   {
-    pattern: /(?:^|\s)(love|great|excellent|amazing|awesome|fantastic|wonderful|happy|excited|thankyou|thanks)/i,
+    pattern:
+      /(?:^|\s)(love|great|excellent|amazing|awesome|fantastic|wonderful|happy|excited|thankyou|thanks|help|assist|support|guide|advise)/i,
     sentiment: "positive",
   },
   { pattern: /(?:^|\s)(good|nice|cool|helpful|interesting|neat|okay|ok)/i, sentiment: "neutral-positive" },

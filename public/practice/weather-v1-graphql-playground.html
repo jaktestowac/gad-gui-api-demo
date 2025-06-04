@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD | Weather App GraphQL Playground</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .weather-app-body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            margin: 0;
+            padding: 0px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .weather-app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .weather-app-heading-h1,
+        .weather-app-heading-h2,
+        .weather-app-heading-h3 {
+            color: #2c3e50;
+        }
+
+        .weather-app-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .weather-app-flex {
+            display: flex;
+            gap: 20px;
+        }
+
+        .weather-app-column {
+            flex: 1;
+        }
+
+        .weather-app-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .weather-app-input {
+            font-family: monospace;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            width: 100%;
+        }
+
+        .weather-query-editor {
+            min-height: 200px;
+            resize: vertical;
+        }
+
+        .weather-variables-editor,
+        .weather-headers-editor {
+            min-height: 60px;
+            resize: vertical;
+        }
+
+        .weather-variables-editor {
+            min-height: 100px;
+        }
+
+        .weather-editor-section {
+            margin-bottom: 15px;
+        }
+
+        .weather-editor-section .weather-app-heading-h4 {
+            margin-top: 0;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+
+        .weather-app-button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        .weather-app-button:hover {
+            background-color: #2980b9;
+        }
+
+        .weather-app-output {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            white-space: pre-wrap;
+            font-family: monospace;
+            min-height: 300px;
+            height: 100%;
+            overflow: auto;
+        }
+
+        .weather-tab-buttons {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .weather-tab-button {
+            background-color: #ddd;
+            color: #333;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px 4px 0 0;
+            cursor: pointer;
+        }
+
+        .weather-tab-button-active {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .weather-auth-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .weather-auth-input {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .weather-auth-input .weather-app-label {
+            min-width: 80px;
+        }
+
+        .weather-example-button {
+            background-color: #2ecc71;
+            margin: 5px;
+        }
+
+        .weather-example-button:hover {
+            background-color: #27ae60;
+        }
+
+        .weather-status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-left: 8px;
+        }
+
+        .weather-status-authenticated {
+            background-color: #2ecc71;
+        }
+
+        .weather-status-unauthenticated {
+            background-color: #e74c3c;
+        }
+
+        /* Modal Styles */
+        .weather-modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .weather-modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 400px;
+            max-width: 90%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .weather-close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .weather-close-button:hover {
+            color: #333;
+        }
+
+        .weather-form-group {
+            margin-bottom: 15px;
+        }
+
+        .weather-form-group .weather-app-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .weather-form-group .weather-app-input-text,
+        .weather-form-group .weather-app-input-password {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        .weather-checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .weather-checkbox-group .weather-app-label {
+            margin-left: 8px;
+        }
+
+        /* Notification System */
+        .weather-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #333;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 4px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 1000;
+            max-width: 350px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+        }
+
+        .weather-notification-success {
+            background: #2ecc71;
+        }
+
+        .weather-notification-error {
+            background: #e74c3c;
+        }
+
+        .weather-notification-info {
+            background: #3498db;
+        }
+
+        .weather-notification-show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* History Panel Styles */
+        .weather-history-panel {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .weather-history-header {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 15px;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+
+        .weather-history-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .weather-history-content.expanded {
+            max-height: 800px;
+            overflow-y: auto;
+        }
+
+        .weather-history-item {
+            border-bottom: 1px solid #eee;
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+
+        .weather-history-item:hover {
+            background-color: #f9f9f9;
+        }
+
+        .weather-history-item-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .weather-history-item-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .weather-history-item-details.expanded {
+            max-height: 800px;
+        }
+
+        .weather-history-details-section {
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        .weather-history-details-section pre {
+            background: #f5f5f5;
+            padding: 8px;
+            border-radius: 4px;
+            margin: 5px 0;
+            max-height: 200px;
+            overflow: auto;
+        }
+
+        .weather-history-timestamp {
+            color: #666;
+            font-size: 0.8em;
+        }
+
+        .weather-history-operation {
+            color: #3498db;
+        }
+
+        .weather-history-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            margin-left: 8px;
+            background-color: #e0e0e0;
+        }
+
+        .weather-history-badge-success {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .weather-history-badge-error {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .weather-history-clear {
+            color: #e74c3c;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+
+<body class="weather-app-body">
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-practice" class="nav-menu">Weather App GraphQL Playground</h1>
+        </div>
+    </header>
+    <br />
+    <br />
+    <br />
+    <!-- Notification Element -->
+    <div class="weather-notification weather-notification-container"></div> <!-- Login Modal -->
+    <div class="weather-modal weather-login-modal" data-modal-id="loginModal" id="loginModal">
+        <div class="weather-modal-content">
+            <span class="weather-close-button" onclick="closeModal('loginModal')">&times;</span>
+            <h2 class="weather-app-heading-h2">Login</h2>
+            <div class="weather-form-group"> <label class="weather-app-label">Username:</label>
+                <input type="text" name="username" class="weather-app-input weather-app-input-text weather-login-username" id="loginUsername">
+            </div>
+            <div class="weather-form-group"> <label class="weather-app-label">Password:</label>
+                <input type="password" name="password" class="weather-app-input weather-app-input-password weather-login-password" id="loginPassword">
+            </div>
+            <div class="weather-app-flex" style="margin-top: 15px;">
+                <button onclick="generateLoginQuery()" class="weather-app-button">Generate Query</button>
+                <button onclick="generateLoginQueryAndLogin()" class="weather-app-button">Generate Query & Login</button>
+                <button onclick="submitLogin()" class="weather-app-button">Login</button>
+            </div>
+        </div>
+    </div> <!-- Register Modal -->
+    <div class="weather-modal weather-register-modal" data-modal-id="registerModal" id="registerModal">
+        <div class="weather-modal-content">
+            <span class="weather-close-button" onclick="closeModal('registerModal')">&times;</span>
+            <h2 class="weather-app-heading-h2">Register</h2>
+            <div class="weather-form-group"> <label class="weather-app-label">Username:</label>
+                <input type="text" name="username" class="weather-app-input weather-app-input-text weather-register-username" id="registerUsername">
+            </div>
+            <div class="weather-form-group">
+                <label for="registerPassword" class="weather-app-label">Password:</label>
+                <input type="password" id="registerPassword" name="password" class="weather-app-input weather-app-input-password weather-register-password" id="registerPassword">
+            </div>
+            <div class="weather-checkbox-group">
+                <input type="checkbox" id="isAdmin" name="isAdmin" class="weather-register-is-admin">
+                <label for="isAdmin" class="weather-app-label">Make this user an admin?</label>
+            </div>
+            <div class="weather-app-flex" style="margin-top: 15px;">
+                <button onclick="generateRegisterQuery()" class="weather-app-button">Generate Query</button>
+                <button onclick="generateRegisterQueryAndRegister()" class="weather-app-button">Generate Query & Register</button>
+                <button onclick="submitRegister()" class="weather-app-button">Register</button>
+            </div>
+        </div>
+    </div>
+    <div class="weather-app-container">
+        <div class="weather-app-card">
+            <h1 class="weather-app-heading-h1">Weather App GraphQL Playground</h1>
+            <p>Use this playground to interact with the Weather App GraphQL API.</p>
+        </div>
+
+        <div class="weather-app-card">
+            <h3 class="weather-app-heading-h3">Authentication <span id="auth-status" class="weather-status-indicator weather-status-unauthenticated weather-auth-status" title="Not authenticated"></span></h3>
+            <div class="weather-auth-container">
+                <div class="weather-auth-input"> <label class="weather-app-label">Token:</label>
+                    <input type="text" class="weather-app-input weather-auth-token" placeholder="Bearer token" id="token">
+                </div>
+                <div class="weather-app-flex">
+                    <button onclick="openModal('registerModal')" class="weather-app-button">Register</button>
+                    <button onclick="openModal('loginModal')" class="weather-app-button">Login</button>
+                    <button onclick="logout()" class="weather-app-button">Logout</button>
+                    <button onclick="generateLogoutQuery()" class="weather-app-button">Generate Logout Query</button>
+                    <button onclick="checkAuthStatus()" class="weather-app-button">Check Status</button>
+                </div>
+            </div>
+        </div>
+        <div class="weather-app-card weather-app-flex">
+            <div class="weather-app-column weather-app-panel">
+                <h3 class="weather-app-heading-h3">GraphQL Query</h3>
+                <div>
+                    <button onclick="executeQuery()" class="weather-app-button">Execute Query</button>
+                    <button onclick="formatQuery()" class="weather-app-button">Format Query</button>
+                </div>
+                <div class="weather-editor-container">
+                    <div class="weather-editor-section">
+                        <h4 class="weather-app-heading-h4">Query</h4>
+                        <textarea class="weather-app-input weather-query-editor" placeholder="Enter your GraphQL query here..."></textarea>
+                    </div>
+                    <div class="weather-editor-section">
+                        <h4 class="weather-app-heading-h4">Variables</h4>
+                        <textarea class="weather-app-input weather-variables-editor" placeholder='{"variable": "value"}'></textarea>
+                    </div>
+                    <div class="weather-editor-section">
+                        <h4 class="weather-app-heading-h4">Headers</h4>
+                        <textarea class="weather-app-input weather-headers-editor" placeholder='{"Authorization": "Bearer yourtoken"}'></textarea>
+                    </div>
+                </div>
+                <div>
+                    <button onclick="executeQuery()" class="weather-app-button">Execute Query</button>
+                    <button onclick="formatQuery()" class="weather-app-button">Format Query</button>
+                </div>
+            </div>
+            <div class="weather-app-column weather-app-panel">
+                <h3 class="weather-app-heading-h3">Response</h3>
+                <div class="weather-app-output weather-response-output">Response will appear here...</div>
+            </div>
+        </div>
+        <div class="weather-app-example-section">
+            <h4 class="weather-app-heading-h4">Example Queries</h4>
+            <button class="weather-app-button weather-example-button" onclick="loadExample('currentWeather')">Current Weather</button>
+            <button class="weather-app-button weather-example-button" onclick="loadExample('weatherByDay')">Weather By Day</button>
+            <button class="weather-app-button weather-example-button" onclick="loadExample('weatherEvents')">Weather Events</button>
+            <button class="weather-app-button weather-example-button" onclick="loadExample('weatherEvent')">Weather Event by ID</button>
+            <button class="weather-app-button weather-example-button" onclick="loadExample('createEvent')">Create Event</button>
+            <button class="weather-app-button weather-example-button" onclick="loadExample('updateEvent')">Update Event</button>
+            <button class="weather-app-button weather-example-button" onclick="loadExample('deleteEvent')">Delete Event</button>
+            <button class="weather-app-button weather-example-button" onclick="loadExample('register')">Register</button>
+            <button class="weather-app-button weather-example-button" onclick="loadExample('login')">Login</button>
+            <button class="weather-app-button weather-example-button" onclick="loadExample('currentUser')">Current User</button>
+            <button class="weather-app-button weather-example-button" onclick="loadExample('allData')">All Data (Admin)</button>
+            <button class="weather-app-button weather-example-button" onclick="loadFormattingExample()">Example of Formatted Query</button>
+            <button class="weather-app-button weather-example-button" onclick="loadFormattingExample(); testMultipleFormats()">Test Multiple Formats</button>
+        </div>
+
+        <!-- Query History Panel -->
+        <div class="weather-app-card weather-history-panel">
+            <div class="weather-history-header" id="history-header">
+                <h3 class="weather-app-heading-h3">Query History</h3>
+                <div>
+                    <span class="weather-history-clear" onclick="clearQueryHistory()">Clear History</span>
+                    <i class="fa fa-chevron-down" id="history-toggle-icon"></i>
+                </div>
+            </div>
+            <div class="weather-history-content" id="history-content">
+                <div id="history-items">
+                    <!-- History items will be inserted here dynamically -->
+                    <div class="weather-history-item-empty" style="padding: 15px; text-align: center; color: #999;">
+                        No query history yet. Execute a query to see it here.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Initialize query history from localStorage or create empty array
+        let queryHistory = JSON.parse(localStorage.getItem('weatherGraphQLQueryHistory') || '[]');
+        const MAX_HISTORY_ITEMS = 20;
+
+        // Function to toggle history panel visibility
+        function toggleHistoryPanel() {
+            const content = document.getElementById('history-content');
+            const icon = document.getElementById('history-toggle-icon');
+
+            if (content.classList.contains('expanded')) {
+                content.classList.remove('expanded');
+                icon.className = 'fa fa-chevron-down';
+            } else {
+                content.classList.add('expanded');
+                icon.className = 'fa fa-chevron-up';
+            }
+        }
+
+        // Function to toggle history item details
+        function toggleHistoryItem(id) {
+            const details = document.getElementById(`history-item-details-${id}`);
+            if (details.classList.contains('expanded')) {
+                details.classList.remove('expanded');
+            } else {
+                details.classList.add('expanded');
+            }
+        }
+
+        // Function to add a query to history
+        function addQueryToHistory(query, variables, headers, response) {
+            const timestamp = new Date().toISOString();
+            const id = `hist-${Date.now()}`;
+            const isError = response.errors && response.errors.length > 0;
+
+            // Extract operation type and name from query
+            let operationType = 'query';
+            let operationName = 'Anonymous';
+
+            const queryMatch = query.match(/(query|mutation|subscription)(?:\s+([A-Za-z0-9_]+))?/);
+            if (queryMatch) {
+                operationType = queryMatch[1];
+                operationName = queryMatch[2] || 'Anonymous';
+            }
+
+            // Create history entry
+            const historyEntry = {
+                id,
+                timestamp,
+                operationType,
+                operationName,
+                query,
+                variables,
+                headers,
+                response,
+                isError
+            };
+
+            // Add to beginning of array
+            queryHistory.unshift(historyEntry);
+
+            // Ensure we only keep MAX_HISTORY_ITEMS
+            if (queryHistory.length > MAX_HISTORY_ITEMS) {
+                queryHistory = queryHistory.slice(0, MAX_HISTORY_ITEMS);
+            }
+
+            // Save to localStorage
+            localStorage.setItem('weatherGraphQLQueryHistory', JSON.stringify(queryHistory));
+
+            // Update the UI
+            renderQueryHistory();
+        }
+
+        // Function to clear query history
+        function clearQueryHistory() {
+            queryHistory = [];
+            localStorage.removeItem('weatherGraphQLQueryHistory');
+            renderQueryHistory();
+            showNotification('Query history cleared', 'info');
+        }
+
+        // Function to load a query from history
+        function loadQueryFromHistory(id) {
+            const historyItem = queryHistory.find(item => item.id === id);
+            if (historyItem) {
+                document.querySelector('.weather-query-editor').value = historyItem.query;
+                document.querySelector('.weather-variables-editor').value = JSON.stringify(historyItem.variables, null, 2);
+                document.querySelector('.weather-headers-editor').value = JSON.stringify(historyItem.headers, null, 2);
+
+                showNotification('Query loaded from history', 'info');
+            }
+        }
+
+        // Function to render the query history in the UI
+        function renderQueryHistory() {
+            const historyItemsContainer = document.getElementById('history-items');
+
+            if (queryHistory.length === 0) {
+                historyItemsContainer.innerHTML = `
+                    <div class="weather-history-item-empty" style="padding: 15px; text-align: center; color: #999;">
+                        No query history yet. Execute a query to see it here.
+                    </div>
+                `;
+                return;
+            }
+
+            historyItemsContainer.innerHTML = queryHistory.map(item => {
+                const statusBadge = item.isError
+                    ? '<span class="weather-history-badge weather-history-badge-error">Error</span>'
+                    : '<span class="weather-history-badge weather-history-badge-success">Success</span>';
+
+                const formattedTime = new Date(item.timestamp).toLocaleString();
+
+                return `
+                    <div class="weather-history-item">
+                        <div class="weather-history-item-header" onclick="toggleHistoryItem('${item.id}')">
+                            <div>
+                                <span class="weather-history-operation">${item.operationType}: ${item.operationName}</span>
+                                ${statusBadge}
+                            </div>
+                            <div class="weather-history-timestamp">${formattedTime}</div>
+                        </div>
+                        <div id="history-item-details-${item.id}" class="weather-history-item-details">
+                            <div class="weather-history-details-section">
+                                <button class="weather-app-button" onclick="loadQueryFromHistory('${item.id}')">Load Query</button>
+                            </div>
+                            <div class="weather-history-details-section">
+                                <strong>Query:</strong>
+                                <pre>${item.query.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
+                            </div>
+                            <div class="weather-history-details-section">
+                                <strong>Variables:</strong>
+                                <pre>${JSON.stringify(item.variables, null, 2)}</pre>
+                            </div>
+                            <div class="weather-history-details-section">
+                                <strong>Headers:</strong>
+                                <pre>${JSON.stringify(item.headers, null, 2)}</pre>
+                            </div>
+                            <div class="weather-history-details-section">
+                                <strong>Response:</strong>
+                                <pre>${JSON.stringify(item.response, null, 2)}</pre>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Add event listener to toggle history panel visibility
+        document.addEventListener('DOMContentLoaded', function () {
+            const historyHeader = document.getElementById('history-header');
+            historyHeader.addEventListener('click', toggleHistoryPanel);
+
+            // Render the history
+            renderQueryHistory();
+        });
+
+        const examples = {
+            currentWeather: {
+                query: `query GetCurrentWeather {
+  currentWeather {
+    temp
+    date
+    wind
+  }
+}`,
+                variables: {},
+                headers: {}
+            },
+            weatherByDay: {
+                query: `query WeatherByDay($day: String!) {
+  weatherByDay(day: $day) {
+    temp
+    date
+    wind
+  }
+}`,
+                variables: {
+                    "day": "2025-05-14"
+                },
+                headers: {}
+            }, weatherEvents: {
+                query: `query GetWeatherEvents($day: String) {
+  weatherEvents(day: $day) {
+    id
+    day
+    event
+    userId
+    username
+    createdAt
+    updatedAt
+  }
+}`,
+                variables: { "day": null },
+                headers: {
+                    "Authorization": "Bearer {{token}}"
+                }
+            },
+            weatherEvent: {
+                query: `query GetWeatherEventById($id: Int!) {
+  weatherEvent(id: $id) {
+    id
+    day
+    event
+    userId
+    username
+    createdAt
+    updatedAt
+  }
+}`,
+                variables: {
+                    "id": 1
+                },
+                headers: {
+                    "Authorization": "Bearer {{token}}"
+                }
+            }, createEvent: {
+                query: `mutation CreateEvent($day: String!, $event: String!) {
+  createWeatherEvent(day: $day, event: $event) {
+    id
+    day
+    event
+    userId
+    username
+    createdAt
+    updatedAt
+  }
+}`,
+                variables: {
+                    "day": "2025-05-14",
+                    "event": "Sunny day with occasional clouds"
+                },
+                headers: {
+                    "Authorization": "Bearer {{token}}"
+                }
+            },
+            updateEvent: {
+                query: `mutation UpdateEvent($id: Int!, $event: String!) {
+  updateWeatherEvent(id: $id, event: $event) {
+    id
+    day
+    event
+    userId
+    username
+    createdAt
+    updatedAt
+  }
+}`,
+                variables: {
+                    "id": 1,
+                    "event": "Updated weather event description"
+                },
+                headers: {
+                    "Authorization": "Bearer {{token}}"
+                }
+            }, deleteEvent: {
+                query: `mutation DeleteEvent($id: Int!) {
+  deleteWeatherEvent(id: $id) {
+    message
+    event {
+      id
+      day
+      event
+      userId
+      username
+      createdAt
+      updatedAt
+    }
+  }
+}`,
+                variables: {
+                    "id": 1
+                },
+                headers: {
+                    "Authorization": "Bearer {{token}}"
+                }
+            },
+            register: {
+                query: `mutation Register($username: String!, $password: String!, $isAdmin: Boolean) {
+  register(username: $username, password: $password, isAdmin: $isAdmin) {
+    message
+    token
+    user {
+      id
+      username
+      isAdmin
+    }
+  }
+}`,
+                variables: {
+                    "username": "user123",
+                    "password": "pass123",
+                    "isAdmin": false
+                },
+                headers: {}
+            },
+            login: {
+                query: `mutation Login($username: String!, $password: String!) {
+  login(username: $username, password: $password) {
+    message
+    token
+    user {
+      id
+      username
+      isAdmin
+    }
+  }
+}`,
+                variables: {
+                    "username": "user123",
+                    "password": "pass123"
+                },
+                headers: {}
+            },
+            currentUser: {
+                query: `query GetCurrentUser {
+  currentUser {
+    id
+    username
+    isAdmin
+  }
+}`,
+                variables: {},
+                headers: {
+                    "Authorization": "Bearer {{token}}"
+                }
+            },
+            allData: {
+                query: `query GetAllData {
+  allData {
+    users {
+      id
+      username
+      isAdmin
+    }
+    events {
+      id
+      day
+      event
+      userId
+      username
+      createdAt
+      updatedAt
+    }
+  }
+}`,
+                variables: {},
+                headers: {
+                    "Authorization": "Bearer {{token}}"
+                }
+            }
+        };
+
+        function loadExample(name) {
+            const example = examples[name];
+            if (example) {
+                document.querySelector('.weather-query-editor').value = example.query;
+                document.querySelector('.weather-variables-editor').value = JSON.stringify(example.variables, null, 2);
+
+                // Replace token placeholder with actual token
+                const token = document.querySelector('.weather-auth-token').value;
+                const headers = { ...example.headers };
+                if (headers.Authorization && headers.Authorization.includes('{{token}}')) {
+                    headers.Authorization = headers.Authorization.replace('{{token}}', token);
+                }
+                document.querySelector('.weather-headers-editor').value = JSON.stringify(headers, null, 2);
+
+                // Show notification about loaded example
+                showNotification(`Loaded example: ${name}`, "info");
+            }
+        }
+
+        function formatQuery() {
+            try {
+                const queryEditor = document.querySelector('.weather-query-editor');
+                // First, normalize the query by removing excessive whitespace
+                let query = queryEditor.value.trim();
+
+                // First, strip out all existing whitespace to start fresh
+                query = query.replace(/\s+/g, ' ');
+
+                // Process the query
+                let result = '';
+                let indentLevel = 0;
+                let inString = false;
+                const indentSize = 2;
+                let inParentheses = 0;
+
+                // Parse character by character
+                let currentToken = '';
+
+                for (let i = 0; i < query.length; i++) {
+                    const char = query[i];
+
+                    // Handle strings (don't format inside strings)
+                    if (char === '"' && (i === 0 || query[i - 1] !== '\\')) {
+                        inString = !inString;
+                        currentToken += char;
+                        continue;
+                    }
+
+                    if (inString) {
+                        currentToken += char;
+                        continue;
+                    }
+
+                    // Track parentheses depth to keep arguments together
+                    if (char === '(') {
+                        inParentheses++;
+                        currentToken += char;
+                        continue;
+                    }
+
+                    if (char === ')') {
+                        inParentheses--;
+                        currentToken += char;
+                        continue;
+                    }
+
+                    // Handle opening braces - always start a new line after '{'
+                    if (char === '{') {
+                        // Add the current token and the opening brace
+                        if (currentToken.trim()) {
+                            result += currentToken.trim() + ' ';
+                        }
+                        result += '{\n';
+                        currentToken = '';
+                        indentLevel++;
+                        continue;
+                    }
+
+                    // Handle closing braces
+                    if (char === '}') {
+                        // If there's content before the closing brace, add it with indentation
+                        if (currentToken.trim()) {
+                            result += ' '.repeat(indentLevel * indentSize) + currentToken.trim() + '\n';
+                            currentToken = '';
+                        }
+                        indentLevel = Math.max(0, indentLevel - 1);
+                        result += ' '.repeat(indentLevel * indentSize) + '}';
+
+                        // Only add newline if not the end of query or if not followed by another closing brace
+                        if (i < query.length - 1 && query[i + 1] !== '}') {
+                            result += '\n';
+                        }
+                        continue;
+                    }
+
+                    // Handle field separators - create new lines between fields when outside parentheses
+                    if (char === ' ' && inParentheses === 0 && currentToken.trim()) {
+                        result += ' '.repeat(indentLevel * indentSize) + currentToken.trim() + '\n';
+                        currentToken = '';
+                        continue;
+                    }
+
+                    // Add character to current token
+                    currentToken += char;
+                }
+
+                // Add any remaining content
+                if (currentToken.trim()) {
+                    result += ' '.repeat(indentLevel * indentSize) + currentToken.trim();
+                }
+
+                // Special formatting for operation definitions and cleanup
+                result = result
+                    .replace(/(query|mutation|subscription|fragment)(\s+)([A-Za-z0-9_]+)?(\s*\()/g, '$1 $3$4')
+                    .replace(/{\s+}/g, '{}')
+                    .replace(/,\s+/g, ', ')
+                    .replace(/\(\s+/g, '(')
+                    .replace(/\s+\)/g, ')')
+                    .replace(/\n\s*\n/g, '\n'); // Remove duplicate newlines
+
+                queryEditor.value = result;
+                showNotification("Query formatted successfully", "info");
+            } catch (error) {
+                showNotification(`Could not format query: ${error.message}`, "error");
+            }
+        }
+
+
+        function showNotification(message, type = 'info') {
+            const notification = document.querySelector('.weather-notification');
+            if (notification) {
+                notification.textContent = message;
+                notification.className = `weather-notification weather-notification-${type}`;
+                notification.classList.add('weather-notification-show');
+
+                // Auto-hide after 3 seconds
+                setTimeout(() => {
+                    notification.classList.remove('weather-notification-show');
+                }, 3000);
+            } else {
+                // Fallback if notification element isn't found
+                console.log(`Notification: ${message}`);
+            }
+        }
+
+        function checkAuthStatus() {
+            const token = document.querySelector('.weather-auth-token').value;
+            const statusIndicator = document.getElementById('auth-status'); if (!token) {
+                statusIndicator.className = 'weather-status-indicator weather-status-unauthenticated';
+                statusIndicator.title = 'Not authenticated';
+                showNotification('Not authenticated - no token available', 'error');
+                return;
+            }
+
+            const query = `query {
+                currentUser {
+                    id
+                    username
+                }
+            }`;
+
+            executeGraphQLQuery(query, {}, { "Authorization": `Bearer ${token}` })
+                .then(response => {
+                    if (response.data && response.data.currentUser) {
+                        statusIndicator.className = 'weather-status-indicator weather-status-authenticated';
+                        statusIndicator.title = `Authenticated as ${response.data.currentUser.username}`;
+                        showNotification(`Authenticated as ${response.data.currentUser.username}`, 'success');
+                    } else {
+                        statusIndicator.className = 'weather-status-indicator weather-status-unauthenticated';
+                        statusIndicator.title = 'Authentication failed';
+                        showNotification('Authentication failed or token is invalid', 'error');
+                    }
+                });
+        }        // Modal functions
+
+
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = "block";
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = "none";
+        }        // Close modal if user clicks outside of it
+        window.onclick = function (event) {
+            if (event.target.classList.contains('weather-modal')) {
+                event.target.style.display = "none";
+            }
+        }
+
+        function submitRegister() {
+            const username = document.querySelector('.weather-register-username').value;
+            const password = document.querySelector('.weather-register-password').value;
+            const isAdmin = document.querySelector('.weather-register-is-admin').checked;
+
+            if (!username || !password) {
+                showNotification("Username and password are required!", "error");
+                return;
+            }
+
+            const variables = { username, password, isAdmin };
+            const query = `mutation Register($username: String!, $password: String!, $isAdmin: Boolean) {
+                register(username: $username, password: $password, isAdmin: $isAdmin) {
+                    message
+                    token
+                    user {
+                        id
+                        username
+                        isAdmin
+                    }
+                }
+            }`;
+
+            executeGraphQLQuery(query, variables, {})
+                .then(response => {
+                    if (response.data && response.data.register) {                        // If token is returned, store it
+                        if (response.data.register.token) {
+                            document.getElementById('token').value = response.data.register.token;
+                            document.getElementById('auth-status').className = 'weather-status-indicator weather-status-authenticated';
+                            document.getElementById('auth-status').title = `Authenticated as ${response.data.register.user.username}`;
+                        }
+                        closeModal('registerModal');
+                        showNotification(`User registered: ${response.data.register.message}`, "success");
+
+                        // Clear the form
+                        document.getElementById('registerUsername').value = '';
+                        document.getElementById('registerPassword').value = '';
+                        document.getElementById('isAdmin').checked = false;
+                    }
+                });
+        }
+
+        function submitLogin() {
+            const username = document.querySelector('.weather-login-username').value;
+            const password = document.querySelector('.weather-login-password').value;
+
+            if (!username || !password) {
+                showNotification("Username and password are required!", "error");
+                return;
+            }
+
+            const variables = { username, password };
+            const query = `mutation Login($username: String!, $password: String!) {
+                login(username: $username, password: $password) {
+                    message
+                    token
+                    user {
+                        id
+                        username
+                        isAdmin
+                    }
+                }
+            }`;
+
+            executeGraphQLQuery(query, variables, {})
+                .then(response => {
+                    if (response.data && response.data.login && response.data.login.token) {
+                        document.getElementById('token').value = response.data.login.token;
+                        document.getElementById('auth-status').className = 'weather-status-indicator weather-status-authenticated';
+                        document.getElementById('auth-status').title = `Authenticated as ${response.data.login.user.username}`;
+                        closeModal('loginModal');
+                        showNotification(`Login successful! Token saved.`, "success");
+
+                        // Clear the form
+                        document.getElementById('loginUsername').value = '';
+                        document.getElementById('loginPassword').value = '';
+                        document.getElementById('loginGenerateQuery').checked = false;
+                    }
+                });
+        }        // Query generation functions
+
+        function generateLoginQueryAndLogin() {
+            generateLoginQuery();
+            executeQuery()
+        }
+
+        function generateRegisterQueryAndRegister() {
+            generateRegisterQuery();
+            executeQuery()
+        }
+
+        function generateLoginQuery() {
+            const username = document.querySelector('.weather-login-username').value;
+            const password = document.querySelector('.weather-login-password').value;
+
+            // Create the query
+            const query = `mutation Login($username: String!, $password: String!) {
+  login(username: $username, password: $password) {
+    message
+    token
+    user {
+      id
+      username
+      isAdmin
+    }
+  }
+}`;            // Set variables
+            const variables = { username, password };
+
+            // Display in editor
+            document.querySelector('.weather-query-editor').value = query;
+            document.querySelector('.weather-variables-editor').value = JSON.stringify(variables, null, 2);
+            document.querySelector('.weather-headers-editor').value = JSON.stringify({}, null, 2);
+
+            // Close modal
+            closeModal('loginModal');
+
+            // Show notification
+            showNotification('Login query generated in editor', 'info');
+        }
+        function generateRegisterQuery() {
+            const username = document.querySelector('.weather-register-username').value;
+            const password = document.querySelector('.weather-register-password').value;
+            const isAdmin = document.querySelector('.weather-register-is-admin').checked;
+
+            // Create the query
+            const query = `mutation Register($username: String!, $password: String!, $isAdmin: Boolean) {
+  register(username: $username, password: $password, isAdmin: $isAdmin) {
+    message
+    token
+    user {
+      id
+      username
+      isAdmin
+    }
+  }
+}`;            // Set variables
+            const variables = { username, password, isAdmin };
+
+            // Display in editor
+            document.querySelector('.weather-query-editor').value = query;
+            document.querySelector('.weather-variables-editor').value = JSON.stringify(variables, null, 2);
+            document.querySelector('.weather-headers-editor').value = JSON.stringify({}, null, 2);
+
+            // Close modal
+            closeModal('registerModal');
+
+            // Show notification
+            showNotification('Register query generated in editor', 'info');
+        }
+        function generateLogoutQuery() {
+            const token = document.querySelector('.weather-auth-token').value;
+
+            // Create the query
+            const query = `mutation {
+  logout {
+    message
+  }
+}`;            // Set variables and headers
+            const variables = {};
+            const headers = token ? { "Authorization": `Bearer ${token}` } : {};
+
+            // Display in editor
+            document.querySelector('.weather-query-editor').value = query;
+            document.querySelector('.weather-variables-editor').value = JSON.stringify(variables, null, 2);
+            document.querySelector('.weather-headers-editor').value = JSON.stringify(headers, null, 2);
+
+            // Show notification
+            showNotification('Logout query generated in editor', 'info');
+        }
+
+        // Keep these functions for backward compatibility with the buttons
+        function register() {
+            openModal('registerModal');
+        }
+
+        function login() {
+            openModal('loginModal');
+        } function logout() {
+            const token = document.querySelector('.weather-auth-token').value;
+            if (!token) {
+                showNotification("No token available!", "error");
+                return;
+            }
+
+            const query = `mutation {
+                logout {
+                    message
+                }
+            }`;
+
+            executeGraphQLQuery(query, {}, { "Authorization": `Bearer ${token}` })
+                .then(response => {
+                    if (response.data && response.data.logout) {
+                        document.querySelector('.weather-auth-token').value = '';
+                        document.querySelector('.weather-status-indicator').className = 'weather-status-indicator weather-status-unauthenticated';
+                        document.querySelector('.weather-status-indicator').title = 'Not authenticated';
+                        showNotification(`Logout successful: ${response.data.logout.message}`, "success");
+                    }
+                });
+        } function executeQuery() {
+            const query = document.querySelector('.weather-query-editor').value;
+            let variables = {};
+            let headers = {};
+
+            try {
+                const variablesText = document.querySelector('.weather-variables-editor').value;
+                if (variablesText.trim()) {
+                    variables = JSON.parse(variablesText);
+                }
+
+                const headersText = document.querySelector('.weather-headers-editor').value;
+                if (headersText.trim()) {
+                    headers = JSON.parse(headersText);
+                }
+            } catch (error) {
+                showNotification(`JSON Parse Error: ${error.message}`, "error");
+                return;
+            }
+
+            executeGraphQLQuery(query, variables, headers);
+        } async function executeGraphQLQuery(query, variables, headers) {
+            const token = document.querySelector('.weather-auth-token').value;
+
+            // Add token to headers if available and not already set
+            if (token && !headers.Authorization) {
+                headers.Authorization = `Bearer ${token}`;
+            } try {
+                const response = await fetch('/api/practice/weather/v1/graphql', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...headers
+                    },
+                    body: JSON.stringify({
+                        query,
+                        variables
+                    })
+                });
+
+                const data = await response.json();
+                document.querySelector('.weather-response-output').textContent = JSON.stringify(data, null, 2);
+
+                // Add query to history
+                addQueryToHistory(query, variables, headers, data);
+
+                return data;
+            } catch (error) {
+                const errorData = { errors: [{ message: error.message }] };
+                document.querySelector('.weather-response-output').textContent = `Error: ${error.message}`;
+
+                // Add failed query to history too
+                addQueryToHistory(query, variables, headers, errorData);
+
+                return errorData;
+            }
+        } function loadFormattingExample() {
+            // A complex, unformatted query to demonstrate the formatter
+            const unformattedQuery = `query ComplexQueryExample($day: String, $id: Int, $includeDetails: Boolean = true) {currentWeather {temp date wind} weatherEvents(day: $day) {id day event userId username createdAt updatedAt} weatherEvent(id: $id) {id day event userId username createdAt updatedAt} nestedExample {level1 {level2 {level3 {deepField1 deepField2 deepField3} level2Field1 level2Field2} level1Field} rootField}}`;
+
+            // Set the unformatted query
+            document.querySelector('.weather-query-editor').value = unformattedQuery;
+            document.querySelector('.weather-variables-editor').value = JSON.stringify({
+                "day": "2025-05-14",
+                "id": 1,
+                "includeDetails": true
+            }, null, 2);
+
+            // Show a notification encouraging formatting
+            showNotification("This is a completely unformatted query. Click 'Format Query' once to properly format it. Click it multiple times to verify the indentation doesn't keep increasing.", "info");            // Add a helper function to test multiple formatting cycles
+            window.testMultipleFormats = function () {
+                formatQuery(); // Format once
+                setTimeout(() => {
+                    showNotification("First format completed. Formatting again to test indentation consistency...", "info");
+
+                    // Save formatted result after first format
+                    const firstFormatResult = document.querySelector('.weather-query-editor').value;
+
+                    // Format again after a delay
+                    setTimeout(() => {
+                        formatQuery(); // Format twice
+
+                        // Save formatted result after second format
+                        const secondFormatResult = document.querySelector('.weather-query-editor').value;
+
+                        // Compare the two formatted results
+                        if (firstFormatResult === secondFormatResult) {
+                            showNotification("SUCCESS: Formatting is consistent! The indentation doesn't increase when formatting multiple times.", "success");
+                        } else {
+                            showNotification("ISSUE: Formatting changed on second format. The indentation might still be accumulating.", "error");
+                        }
+                    }, 1000);
+                }, 1000);
+            };
+        }
+
+        // Initialize with currentWeather example
+        loadExample('currentWeather');
+    </script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>

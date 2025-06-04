@@ -15,7 +15,11 @@ const { verifyToken, hasPermission } = require("./practice/employee-management-s
 const twoFactor = require("./practice/2fa-handlers");
 const twoFactorV2 = require("./practice/2fa-handlers-v2");
 const weatherAppV1 = require("./practice/weather-app-handlers-v1");
+const { handleGraphQLRequest } = require("./practice/weather-graphql-handlers");
+const { handleBooksGraphQLRequest } = require("./practice/books-graphql-handlers");
 const aiChat = require("./practice/nova/nova-chat-handlers");
+const testagram = require("./practice/testagram/testagram-handlers");
+const chirper = require("./practice/chirper/chirper-handlers");
 const {
   getDirectoryContents,
   getFileDetails,
@@ -23,6 +27,7 @@ const {
   updateFile,
   deleteItem,
 } = require("./practice/file-system-handlers");
+const hotelHandlers = require("./practice/hotel-handlers");
 
 function isIdValid(id) {
   return id !== undefined && id !== "";
@@ -465,7 +470,7 @@ function handlePractice(req, res) {
       if (endpoint && endpoint.includes("?")) {
         endpoint = endpoint.split("?")[0];
       }
-
+      logDebug("--- --- handlePractice:aiChat", { endpoint, method: req.method });
       switch (true) {
         case req.method === "POST" && endpoint === "message":
           return aiChat.handleMessage(req, res);
@@ -502,15 +507,13 @@ function handlePractice(req, res) {
 
     // Weather App v1 endpoints
     if (req.url.includes("/api/practice/v1/weather")) {
-      const url = req.url;
-
-      // Weather data endpoints
+      const url = req.url; // Weather data endpoints
       if (req.method === "GET" && url.endsWith("/api/practice/v1/weather/current")) {
-        return weatherAppV1.getCurrentWeather(req, res);
+        return weatherAppV1.getCurrentWeather(req, res, 1); // Use scope 1
       }
 
       if (req.method === "POST" && url.endsWith("/api/practice/v1/weather/day")) {
-        return weatherAppV1.getWeatherByDay(req, res);
+        return weatherAppV1.getWeatherByDay(req, res, 1); // Use scope 1
       }
 
       // Weather events endpoints
@@ -572,6 +575,40 @@ function handlePractice(req, res) {
       if (req.method === "GET" && url.endsWith("/api/practice/v1/weather/admin/data")) {
         return applyMiddleware([weatherAppV1.authenticate, weatherAppV1.adminOnly], weatherAppV1.getAllData)(req, res);
       }
+    } // Hotel Reservation API endpoints
+    if (req.url.includes("/api/practice/v1/hotels")) {
+      const url = req.url;
+
+      const hotelId = url.match(/\/api\/practice\/v1\/hotels\/([^/]+)\/?/)?.[1];
+      const configurationMatch = url.match(/\/api\/practice\/v1\/hotels\/([^/]+)\/configuration/);
+
+      logDebug("handlePractice:hotel", { url, hotelId, configurationMatch });
+
+      switch (true) {
+        // Get specific hotel configuration by hotel ID
+        case req.method === "GET" && configurationMatch?.length > 0: {
+          const configHotelId = configurationMatch[1];
+          req.params = { id: configHotelId };
+          return hotelHandlers.getHotelConfigurationById(req, res);
+        }
+
+        // Get all hotels
+        case req.method === "GET" && url.endsWith("/api/practice/v1/hotels"):
+          return hotelHandlers.getHotelsData(req, res);
+
+        // Get specific hotel by ID
+        case req.method === "GET" && hotelId && !url.includes("/configuration"):
+          req.params = { id: hotelId };
+          return hotelHandlers.getHotelById(req, res);
+
+        // Get all hotel configurations
+        case req.method === "GET" && url.endsWith("/api/practice/v1/hotels/configurations"):
+          return hotelHandlers.getHotelConfigurations(req, res);
+
+        // Get default hotel configuration
+        case req.method === "GET" && url.endsWith("/api/practice/v1/hotels/configuration/default"):
+          return hotelHandlers.getDefaultHotelConfiguration(req, res);
+      }
     }
 
     if (req.url === "/api/practice/lang/v1/languages" && req.method === "GET") {
@@ -594,6 +631,184 @@ function handlePractice(req, res) {
         logDebug("handlePractice:translations", { error: e.message });
         return res.status(HTTP_NOT_FOUND).json({ error: "Translations not found" });
       }
+    }
+    if (req.url.includes("/api/practice/weather/v1/graphql")) {
+      // Handle Weather GraphQL requests
+      return handleGraphQLRequest(req, res);
+    }
+    if (req.url.includes("/api/practice/books/v1/graphql")) {
+      // Handle Books GraphQL requests
+      return handleBooksGraphQLRequest(req, res);
+    }
+
+    // Testagram routes
+    if (req.url.includes("/api/practice/v1/testagram")) {
+      const url = req.url;
+
+      // Auth routes
+      if (url.includes("/api/practice/v1/testagram/auth")) {
+        const endpoint = url.split("/api/practice/v1/testagram/auth/")[1];
+
+        switch (true) {
+          case req.method === "POST" && endpoint === "register":
+            return testagram.register(req, res);
+          case req.method === "POST" && endpoint === "login":
+            return testagram.login(req, res);
+          case req.method === "POST" && endpoint === "logout":
+            return testagram.logout(req, res);
+          case req.method === "GET" && endpoint === "check":
+            return applyMiddleware([testagram.verifyToken], testagram.checkAuth)(req, res);
+          default:
+            return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Auth endpoint not found"));
+        }
+      }
+
+      // Posts routes
+      if (url.includes("/api/practice/v1/testagram/posts")) {
+        const parts = url.split("/api/practice/v1/testagram/posts")[1]?.split("/");
+        const id = parts?.[1];
+        const action = parts?.[2];
+        switch (true) {
+          case req.method === "GET" && !isIdValid(id):
+            // Skip authentication middleware for GET requests to posts endpoint
+            return testagram.getPosts(req, res);
+          case req.method === "POST" && !isIdValid(id):
+            return applyMiddleware([testagram.verifyToken], testagram.createPost)(req, res);
+          case req.method === "GET" && isIdValid(id):
+            req.params = { id };
+            return applyMiddleware([testagram.verifyToken], testagram.getPostById)(req, res);
+          case req.method === "DELETE" && isIdValid(id):
+            req.params = { id };
+            return applyMiddleware([testagram.verifyToken], testagram.deletePost)(req, res);
+          case req.method === "POST" && isIdValid(id) && action === "like":
+            req.params = { id };
+            return applyMiddleware([testagram.verifyToken], testagram.toggleLike)(req, res);
+          case req.method === "POST" && isIdValid(id) && action === "comment":
+            req.params = { id };
+            return applyMiddleware([testagram.verifyToken], testagram.addComment)(req, res);
+          default:
+            return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Posts endpoint not found"));
+        }
+      }
+
+      // User profile routes
+      if (url.includes("/api/practice/v1/testagram/users")) {
+        const parts = url.split("/api/practice/v1/testagram/users")[1]?.split("/");
+        const username = parts?.[1];
+        const action = parts?.[2];
+
+        logDebug("handlePractice:testagram", { username, action, method: req.method });
+
+        switch (true) {
+          case req.method === "GET" && username !== undefined:
+            req.params = { username };
+            return applyMiddleware([testagram.verifyToken], testagram.getUserProfile)(req, res);
+          case req.method === "PUT":
+            return applyMiddleware([testagram.verifyToken], testagram.updateProfile)(req, res);
+          case req.method === "POST" && username && action === "follow":
+            req.params = { username };
+            return applyMiddleware([testagram.verifyToken], testagram.toggleFollow)(req, res);
+          default:
+            return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Users endpoint not found"));
+        }
+      }
+
+      // Search users
+      if (url.includes("/api/practice/v1/testagram/search") && req.method === "GET") {
+        return applyMiddleware([testagram.verifyToken], testagram.searchUsers)(req, res);
+      }
+
+      // Debug endpoint - get all data (only for development)
+      if (url.endsWith("/api/practice/v1/testagram/_debug/data") && req.method === "GET") {
+        return testagram._getAllData(req, res);
+      }
+
+      return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Testagram endpoint not found"));
+    }
+
+    // Chirper routes
+    if (req.url.includes("/api/practice/v1/chirper")) {
+      const url = req.url;
+
+      // Auth routes
+      if (url.includes("/api/practice/v1/chirper/auth")) {
+        const endpoint = url.split("/api/practice/v1/chirper/auth/")[1];
+
+        switch (true) {
+          case req.method === "POST" && endpoint === "register":
+            return chirper.register(req, res);
+          case req.method === "POST" && endpoint === "login":
+            return chirper.login(req, res);
+          case req.method === "POST" && endpoint === "logout":
+            return chirper.logout(req, res);
+          case req.method === "GET" && endpoint === "check":
+            return applyMiddleware([chirper.verifyToken], chirper.checkAuth)(req, res);
+          default:
+            return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Auth endpoint not found"));
+        }
+      }
+
+      // Chirps routes
+      if (url.includes("/api/practice/v1/chirper/chirps")) {
+        const parts = url.split("/api/practice/v1/chirper/chirps")[1]?.split("/");
+        const id = parts?.[1];
+        const action = parts?.[2];
+        switch (true) {
+          case req.method === "GET" && !isIdValid(id):
+            // Skip authentication middleware for GET requests to chirps endpoint to allow public view
+            return chirper.getChirps(req, res);
+          case req.method === "POST" && !isIdValid(id):
+            return applyMiddleware([chirper.verifyToken], chirper.createChirp)(req, res);
+          case req.method === "GET" && isIdValid(id):
+            req.params = { id };
+            return chirper.getChirpById(req, res);
+          case req.method === "DELETE" && isIdValid(id):
+            req.params = { id };
+            return applyMiddleware([chirper.verifyToken], chirper.deleteChirp)(req, res);
+          case req.method === "POST" && isIdValid(id) && action === "like":
+            req.params = { id };
+            return applyMiddleware([chirper.verifyToken], chirper.toggleLike)(req, res);
+          case req.method === "POST" && isIdValid(id) && action === "reply":
+            req.params = { id };
+            return applyMiddleware([chirper.verifyToken], chirper.addReply)(req, res);
+          default:
+            return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Chirps endpoint not found"));
+        }
+      }
+
+      // User profile routes
+      if (url.includes("/api/practice/v1/chirper/users")) {
+        const parts = url.split("/api/practice/v1/chirper/users")[1]?.split("/");
+        const username = parts?.[1]?.split("?")[0]; // Extract username before any query params
+        const action = parts?.[2]?.split("?")[0]; // Extract action before any query params
+
+        logDebug("handlePractice:chirper", { username, action, method: req.method });
+
+        switch (true) {
+          case req.method === "GET" && username !== undefined:
+            req.params = { username };
+            return chirper.getUserProfile(req, res);
+          case req.method === "PUT":
+            return applyMiddleware([chirper.verifyToken], chirper.updateProfile)(req, res);
+          case req.method === "POST" && username && action === "follow":
+            req.params = { username };
+            return applyMiddleware([chirper.verifyToken], chirper.toggleFollow)(req, res);
+          default:
+            return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Users endpoint not found"));
+        }
+      }
+
+      // Search users
+      if (url.includes("/api/practice/v1/chirper/search") && req.method === "GET") {
+        return applyMiddleware([chirper.verifyToken], chirper.searchUsers)(req, res);
+      }
+
+      // Debug endpoint - get all data (only for development)
+      if (url.endsWith("/api/practice/v1/chirper/_debug/data") && req.method === "GET") {
+        return chirper._getAllData(req, res);
+      }
+
+      return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Chirper endpoint not found"));
     }
 
     return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));

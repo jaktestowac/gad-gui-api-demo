@@ -25,7 +25,31 @@ class MessageContext {
     this.currentTopic = ""; // Will be set with detected topic
     this.smallTalkCategory = ""; // Category for small talk behavior
     this.handled = false; // Whether message has been handled by a behavior
-    this.response = ""; // Final response
+    this.response = ""; // Final response    // Properties needed for new behaviors
+    this.generatedResponse = ""; // Store generated response for variation behavior
+    this.responseType = ""; // Type of response (fact, opinion, greeting, help)
+    this.isInterruption = false; // Whether this is an interruption
+    this.isTopicChange = false; // Whether this is a topic change
+    this.relevantMemoryTopic = null; // Topic from memory relevant to current message
+    this.relevantMemoryPreference = null; // Preference from memory relevant to current message
+
+    // Properties for handling responses to proactive questions
+    this.isResponseToProactiveQuestion = false; // Whether this message is a response to a proactive question
+    this.proactiveResponseCategory = null; // Category of the proactive question this is responding to
+    this.proactiveResponseType = null; // Type of response detected (yes/no, game, etc.)    // For idle time prompts
+    this.isIdleTimePrompt = false; // Whether this response is for an idle time prompt
+
+    // Track consecutive unrecognized messages
+    this.unrecognizedCount = 0; // Count of consecutive unrecognized messages    // For handling unknown terms
+    this.unknownTerm = null; // Current unknown term being asked about
+    this.previousUnknownTerm = null; // Unknown term from the previous message
+    this.isDefiningUnknownTerm = false; // Whether the user is currently defining an unknown term
+    this.knownTerm = null; // A previously learned term recognized in the message
+
+    // Debug flag
+    this.debug = {
+      termDetection: true, // Enable detailed term detection debugging
+    };
   }
 
   /**
@@ -49,7 +73,11 @@ class MessageContext {
    * Prepare a message for processing
    * @param {string} message - The message to prepare
    * @param {object} textProcessingUtils - Text processing utility functions
-   */ prepareMessage(message, textProcessingUtils) {
+   */
+  prepareMessage(message, textProcessingUtils) {
+    // Note: isDefiningUnknownTerm might already be set by nova-chat-handlers.js before this is called,
+    // so we don't reset it here
+
     // Process message - convert to lowercase and remove apostrophes to improve matching
     this.lowerCaseMessage = textProcessingUtils.normalizeText(message);
 
@@ -57,6 +85,23 @@ class MessageContext {
     const cleanMessage = textProcessingUtils.removeApostrophes(message);
     this.normalizedCommand = textProcessingUtils.getNormalizedCommand(cleanMessage);
     this.currentTopic = textProcessingUtils.detectTopic(cleanMessage);
+
+    // Check for responses to previous proactive questions
+    if (this.userMemory && this.userMemory.lastProactiveQuestion) {
+      const lastProactiveTime = this.userMemory.lastProactiveQuestion.timestamp || 0;
+      const messageCount = this.conversationAnalytics?.messageCount || 0;
+      const lastProactiveMessageCount = this.userMemory.lastProactiveQuestion.messageCount || 0;
+
+      // Consider a response if it's within 2 messages of a proactive question and less than 5 minutes old
+      const isRecentProactive =
+        messageCount - lastProactiveMessageCount <= 2 && Date.now() - lastProactiveTime < 5 * 60 * 1000;
+
+      if (isRecentProactive) {
+        // Flag as potential response to proactive question - will be confirmed by ProactiveBehavior.canHandle
+        this.lastProactiveCategory = this.userMemory.lastProactiveQuestion.category;
+        this.lastProactiveQuestion = this.userMemory.lastProactiveQuestion.text;
+      }
+    }
 
     // Check for topic interests in the message and add to user memory
     // We use the extracted topic for better context awareness

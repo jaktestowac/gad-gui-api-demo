@@ -21,10 +21,10 @@ const conversations = {};
 const conversationAnalytics = {};
 
 /**
- * Simple AI that responds to user messages
+ * Simple that responds to user messages
  * @param {string} message - The user's message
  * @param {string} conversationId - Unique identifier for the conversation
- * @returns {string} The AI's response
+ * @returns {string} The response
  */
 function generateAIResponse(message, conversationId) {
   // Initialize conversation history and analytics if they don't exist
@@ -34,6 +34,7 @@ function generateAIResponse(message, conversationId) {
       startTime: Date.now(),
       messageCount: 0,
       lastActiveTime: Date.now(),
+      unknownTermContext: {}, // For tracking unknown term conversation state
     };
   }
 
@@ -52,7 +53,6 @@ function generateAIResponse(message, conversationId) {
 
   // Initialize or get user memory
   const userMem = initUserMemory(userId);
-
   // Create message context
   const context = new MessageContext(
     userId,
@@ -60,25 +60,79 @@ function generateAIResponse(message, conversationId) {
     conversations[conversationId],
     userMem,
     conversationAnalytics[conversationId]
-  );
-
+  ); // Restore the unknown term context if it exists and is recent (within 2 minutes)
+  const unknownTermContext = conversationAnalytics[conversationId].unknownTermContext || {};
+  if (unknownTermContext.term && Date.now() - unknownTermContext.timestamp < 2 * 60 * 1000) {
+    context.previousUnknownTerm = unknownTermContext.term;
+    // Set isDefiningUnknownTerm to true to indicate this message is likely a definition response
+    context.isDefiningUnknownTerm = true;
+    logDebug(`[Nova] Restored previous unknown term context: "${unknownTermContext.term}"`, {
+      userId,
+      message,
+      timestamp: unknownTermContext.timestamp,
+      timeSince: Date.now() - unknownTermContext.timestamp,
+      isDefiningUnknownTerm: context.isDefiningUnknownTerm,
+    });
+  }
   // Prepare message for processing
   context.prepareMessage(message, textProcessingUtils);
 
+  // Diagnostic log before behavior processing
+  if (context.previousUnknownTerm || context.unknownTerm) {
+    logDebug(`[Nova] Pre-processing message context for term learning:`, {
+      userId,
+      message: message.substring(0, 50) + (message.length > 50 ? "..." : ""),
+      previousUnknownTerm: context.previousUnknownTerm,
+      isDefiningUnknownTerm: context.isDefiningUnknownTerm,
+      knownTerm: context.knownTerm,
+      unknownTerm: context.unknownTerm,
+    });
+  }
+
   // Process message through behavior registry
   const response = behaviorRegistry.processMessage(message, context);
+  // Preserve unknown term context for the next message
+  if (context.unknownTerm) {
+    // Store the current unknown term for the next message
+    conversationAnalytics[conversationId].unknownTermContext = {
+      term: context.unknownTerm,
+      timestamp: Date.now(),
+    };
+    logDebug(`[Nova] Saved unknown term context for next message: "${context.unknownTerm}"`, {
+      userId,
+      conversationId,
+    });
+  } else if (context.previousUnknownTerm && context.isDefiningUnknownTerm) {
+    // Clear the context after the user has defined the term
+    conversationAnalytics[conversationId].unknownTermContext = {};
+    logDebug(`[Nova] Cleared unknown term context after definition was provided`, {
+      userId,
+      term: context.previousUnknownTerm,
+      isDefiningUnknownTerm: context.isDefiningUnknownTerm,
+      extractionAttempted: true,
+    });
+  } else if (context.knownTerm) {
+    // Log that we had a known term
+    logDebug(`[Nova] Known term detected: "${context.knownTerm}"`, {
+      userId,
+      message,
+    });
 
-  // Add AI response to history
+    // Clear any previous unknown term context
+    conversationAnalytics[conversationId].unknownTermContext = {};
+  }
+
+  // Add response to history
   conversations[conversationId].push({ role: "assistant", content: response });
 
   // Smart conversation history management
   // Keep most recent messages and important context
-  if (conversations[conversationId].length > 30) {
-    // Keep first 2 messages (initial context)
-    const initialMessages = conversations[conversationId].slice(0, 2);
-    // Keep last 18 messages (recent context)
-    const recentMessages = conversations[conversationId].slice(-18);
-    // Combine for a total of 20 messages maximum
+  if (conversations[conversationId].length > 50) {
+    // Keep first 10 messages (initial context)
+    const initialMessages = conversations[conversationId].slice(0, 10);
+    // Keep last 40 messages (recent context)
+    const recentMessages = conversations[conversationId].slice(-40);
+    // Combine for a total of 50 messages maximum
     conversations[conversationId] = [...initialMessages, ...recentMessages];
   }
 
@@ -102,7 +156,7 @@ function getUserAndConversationIdFromCookies(req) {
 }
 
 /**
- * Handle a user message and generate an AI response
+ * Handle a user message and generate a Nova response
  */
 function handleMessage(req, res) {
   try {
@@ -176,7 +230,7 @@ function handleMessage(req, res) {
       conversationName: conversationAnalytics[conversationId]?.name,
     });
   } catch (error) {
-    logDebug("AIChat:handleMessage", { error: error.message });
+    logDebug("[Nova] handleMessage", { error: error.message });
     return res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Failed to process message"));
   }
 }
@@ -199,7 +253,7 @@ function getConversationHistory(req, res) {
       conversationId,
     });
   } catch (error) {
-    logDebug("AIChat:getConversationHistory", { error: error.message });
+    logDebug("[Nova] getConversationHistory", { error: error.message });
     return res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Failed to retrieve conversation history"));
   }
 }
@@ -224,7 +278,7 @@ function clearConversation(req, res) {
       conversationId,
     });
   } catch (error) {
-    logDebug("AIChat:clearConversation", { error: error.message });
+    logDebug("[Nova] clearConversation", { error: error.message });
     return res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Failed to clear conversation"));
   }
 }
@@ -252,7 +306,7 @@ function renameConversation(req, res) {
       name,
     });
   } catch (error) {
-    logDebug("AIChat:renameConversation", { error: error.message });
+    logDebug("[Nova] renameConversation", { error: error.message });
     return res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Failed to rename conversation"));
   }
 }
@@ -284,13 +338,13 @@ function listConversations(req, res) {
       conversations: userConversations,
     });
   } catch (error) {
-    logDebug("AIChat:listConversations", { error: error.message });
+    logDebug("[Nova] listConversations", { error: error.message });
     return res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Failed to list conversations"));
   }
 }
 
 /**
- * Get statistics about the AI chat system
+ * Get statistics about the Nova chat system
  */
 function getStatistics(req, res) {
   try {
@@ -309,7 +363,7 @@ function getStatistics(req, res) {
 
     return res.status(HTTP_OK).json(stats);
   } catch (error) {
-    logDebug("AIChat:getStatistics", { error: error.message });
+    logDebug("[Nova] getStatistics", { error: error.message });
     return res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Failed to get statistics"));
   }
 }
@@ -332,7 +386,7 @@ function clearUserMemory(req, res) {
       userId,
     });
   } catch (error) {
-    logDebug("AIChat:clearUserMemory", { error: error.message });
+    logDebug("[Nova] clearUserMemory", { error: error.message });
     return res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Failed to clear user memory"));
   }
 }
@@ -376,7 +430,7 @@ function initSession(req, res) {
       userId,
     };
 
-    logDebug("AIChat:initSession", { userId, conversationId });
+    logDebug("[Nova] initSession", { userId, conversationId });
 
     return res.status(HTTP_OK).json({
       userId,
@@ -384,7 +438,7 @@ function initSession(req, res) {
       conversationName: "New Conversation",
     });
   } catch (error) {
-    logDebug("AIChat:initSession", { error: error.message });
+    logDebug("[Nova] initSession", { error: error.message });
     return res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Failed to initialize session"));
   }
 }
