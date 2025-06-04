@@ -17,8 +17,8 @@ function createMockWeatherAppData() {
   // create 2 users
   const user1 = {
     id: nextUserId++,
-    username: "ala",
-    password: "nowak",
+    username: "loggerUser",
+    password: "pass",
     isAdmin: true,
     createdAt: new Date().toISOString(),
   };
@@ -52,6 +52,8 @@ function createMockWeatherAppData() {
   weatherEvents.push(event1, event2);
   return { users, weatherEvents };
 }
+
+createMockWeatherAppData();
 
 // Authentication middleware
 function authenticate(req, res, next) {
