@@ -33,6 +33,11 @@ P.S. In addition, the application has some **serious design flaws** - I wonder i
   - [Deploy using Docker image](#deploy-using-docker-image)
     - [Prerequisites:](#prerequisites)
     - [Running](#running)
+- [Happy Automation!](#happy-automation)
+- [📞 Contact & Support](#-contact--support)
+- [Learning Resources](#learning-resources)
+  - [🇵🇱 Polish Resources](#-polish-resources)
+  - [🇬🇧 English Resources](#-english-resources)
 
 # Features
 
@@ -248,4 +253,39 @@ Your feedback helps make GAD better for everyone!
 
 [🔝 Back to top](#introduction)
 
-Powered by [jaktestowac.pl](https://www.jaktestowac.pl) team!
+## 📞 Contact & Support
+
+Feel free to reach out to us:
+
+- 🌐 **Website**: [jaktestowac.pl](https://jaktestowac.pl)
+- 💼 **LinkedIn**: [jaktestowac.pl](https://www.linkedin.com/company/jaktestowac/)
+- 💬 **Discord**: [Polish Playwright Community](https://discord.gg/mUAqQ7FUaZ)
+- 📧 **Support**: Check our website for contact details
+- 🐛 **Issues**: [GitHub Issues](https://github.com/jaktestowac/playwright-tools/issues)
+
+---
+
+## Learning Resources
+
+We have gathered a collection of resources to help you learn and master Playwright, both in Polish and English. Whether you're a beginner or an advanced user, these resources will help you enhance your skills and knowledge.
+
+### **🇵🇱 Polish Resources**
+
+- [Free Playwright Resources](https://jaktestowac.pl/darmowy-playwright/) - Comprehensive Polish learning materials
+- [Playwright Basics](https://www.youtube.com/playlist?list=PLfKhn9AcZ-cD2TCB__K7NP5XARaCzZYn7) - YouTube series (Polish)
+- [Playwright Elements](https://www.youtube.com/playlist?list=PLfKhn9AcZ-cAcpd-XN4pKeo-l4YK35FDA) - Advanced concepts (Polish)
+- [Playwright MCP](https://www.youtube.com/playlist?list=PLfKhn9AcZ-cCqD34AG5YRejujaBqCBgl4) - MCP course (Polish)
+- [Discord Community](https://discord.gg/mUAqQ7FUaZ) - First Polish Playwright community!
+- [Playwright Info](https://playwright.info/) - first and only Polish Playwright blog
+
+### **🇬🇧 English Resources**
+
+- [VS Code Extensions](https://marketplace.visualstudio.com/publishers/jaktestowac-pl) - Our free Playwright plugins
+- [Playwright Documentation](https://playwright.dev/docs/intro) - Official documentation
+- [Playwright GitHub](https://github.com/microsoft/playwright) - Source code and issues
+
+_PS. For more resources and updates, follow us on our [website](https://jaktestowac.pl) and [GitHub](https://github.com/jaktestowac)._
+
+---
+
+Powered by **[jaktestowac.pl](https://www.jaktestowac.pl) team!** 💚❤️
