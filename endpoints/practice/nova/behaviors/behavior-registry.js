@@ -213,7 +213,7 @@ class BehaviorRegistry {
           return context.generatedResponse;
         }
       }
-    } // If this is a potential term definition response, make sure the CuriosityBehavior handles it
+    }     // If this is a potential term definition response, make sure the CuriosityBehavior handles it
     if (context.isDefiningUnknownTerm && context.previousUnknownTerm) {
       logDebug("[Nova] BehaviorRegistry:processMessage:DefiningUnknownTerm", {
         previousUnknownTerm: context.previousUnknownTerm,
@@ -229,27 +229,6 @@ class BehaviorRegistry {
         context.handledBy = "curiosity";
         context.generatedResponse = curiosityBehavior.handle(message, context);
         this._setResponseType(context);
-
-        // Return the response directly
-        return context.generatedResponse;
-      }
-    }
-
-    // If this is a potential term definition response, make sure the CuriosityBehavior handles it
-    if (context.isDefiningUnknownTerm && context.previousUnknownTerm) {
-      logDebug("[Nova] BehaviorRegistry:processMessage:DefiningUnknownTerm", {
-        previousUnknownTerm: context.previousUnknownTerm,
-        message: message.substring(0, 50) + (message.length > 50 ? "..." : ""),
-        matchingBehaviors: matchingBehaviors.map((b) => b.id).join(", "),
-        isDefiningUnknownTerm: context.isDefiningUnknownTerm,
-      });
-
-      // Try to find the curiosity behavior
-      const curiosityBehavior = this.behaviors.find((b) => b.id === "curiosity");
-      if (curiosityBehavior) {
-        // Force the curiosity behavior to handle this definition
-        context.handledBy = "curiosity";
-        context.generatedResponse = curiosityBehavior.handle(message, context);
 
         // Return the response directly
         return context.generatedResponse;
@@ -395,7 +374,9 @@ How can I assist you today?`;
       case "curiosity":
         // Boost curiosity behavior significantly when unknown terms are detected
         if (context.unknownTerm || context.previousUnknownTerm || context.isDefiningUnknownTerm || context.knownTerm) {
-          score += 800; // Higher priority than any other behavior to ensure it handles unknown terms          // Log that we're boosting the curiosity behavior score due to terms
+          score += 1000; // Much higher priority than any other behavior to ensure it handles unknown terms
+          
+          // Log that we're boosting the curiosity behavior score due to terms
           logDebug("[Nova] BehaviorRegistry:boostCuriosityScore", {
             message: "Boosting curiosity behavior score for term handling",
             unknownTerm: context.unknownTerm || context.previousUnknownTerm || null,
@@ -407,7 +388,12 @@ How can I assist you today?`;
 
           // If the message starts with "what is" or similar patterns, prioritize curiosity even more
           if (/^what(?:'s| is)/i.test(message) || /^do you know/i.test(message) || /^tell me about/i.test(message)) {
-            score += 300; // Extra boost for direct questions about terms
+            score += 500; // Extra boost for direct questions about terms
+          }
+
+          // For single-word queries, give maximum priority
+          if (message.trim().split(/\s+/).length === 1) {
+            score += 200;
           }
         }
         break;

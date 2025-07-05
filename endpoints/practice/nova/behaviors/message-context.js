@@ -78,6 +78,9 @@ class MessageContext {
     // Note: isDefiningUnknownTerm might already be set by nova-chat-handlers.js before this is called,
     // so we don't reset it here
 
+    // EARLY TERM DETECTION - Do this before other processing
+    this._detectTermsEarly(message, textProcessingUtils);
+
     // Process message - convert to lowercase and remove apostrophes to improve matching
     this.lowerCaseMessage = textProcessingUtils.normalizeText(message);
 
@@ -111,6 +114,72 @@ class MessageContext {
 
     // Add user message to history
     this.addToConversationHistory("user", message);
+  }
+
+  /**
+   * Detect terms early in the processing pipeline
+   * @private
+   * @param {string} message - The message to analyze
+   * @param {object} textProcessingUtils - Text processing utilities
+   */
+  _detectTermsEarly(message, textProcessingUtils) {
+    if (!this.userId) return;
+
+    const lowerMessage = message.toLowerCase().trim();
+
+    // Check for single-word queries first
+    if (message.trim().split(/\s+/).length === 1) {
+      const term = lowerMessage.replace(/[?!.,;]/g, "");
+      
+      // Import the knowsTerm function
+      const { knowsTerm } = require("../user-memory");
+      
+      // Check if this is a known term
+      if (knowsTerm(term, this.userId)) {
+        this.knownTerm = term;
+        return;
+      }
+      
+      // Check if this could be an unknown term
+      const commonWords = [
+        "hi", "hello", "hey", "thanks", "thank", "you", "yes", "no", "maybe",
+        "the", "this", "that", "your", "these", "those", "their", "our", "your",
+        "ok", "okay", "help", "menu", "exit", "quit", "bye", "good", "great",
+        "nice", "cool", "fine", "what", "who", "where", "when", "why", "how"
+      ];
+      
+      if (!commonWords.includes(term) && term.length >= 2) {
+        this.unknownTerm = term;
+        return;
+      }
+    }
+
+    // Check for direct term questions
+    const termPatterns = [
+      /^what(?:'s| is)(?: a| an| the)? ([a-zA-Z0-9_-]+)\??$/i,
+      /^do you know ([a-zA-Z0-9_-]+)\??$/i,
+      /^tell me about ([a-zA-Z0-9_-]+)\??$/i,
+      /^what(?:'s| is) "(.*?)"\??$/i,
+      /^do you know "(.*?)"\??$/i,
+      /^tell me about "(.*?)"\??$/i,
+    ];
+
+    for (const pattern of termPatterns) {
+      const match = message.match(pattern);
+      if (match) {
+        const term = match[1].toLowerCase().trim();
+        
+        // Import the knowsTerm function
+        const { knowsTerm } = require("../user-memory");
+        
+        if (knowsTerm(term, this.userId)) {
+          this.knownTerm = term;
+        } else {
+          this.unknownTerm = term;
+        }
+        return;
+      }
+    }
   }
 
   /**

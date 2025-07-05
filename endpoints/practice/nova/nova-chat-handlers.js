@@ -136,6 +136,18 @@ function generateAIResponse(message, conversationId) {
     conversations[conversationId] = [...initialMessages, ...recentMessages];
   }
 
+  // Memory cleanup: Remove old conversations (older than 24 hours)
+  const now = Date.now();
+  const maxAge = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+  
+  Object.keys(conversationAnalytics).forEach(cid => {
+    if (now - conversationAnalytics[cid].lastActiveTime > maxAge) {
+      delete conversations[cid];
+      delete conversationAnalytics[cid];
+      logDebug(`[Nova] Cleaned up old conversation: ${cid}`);
+    }
+  });
+
   return response;
 }
 
@@ -160,6 +172,11 @@ function getUserAndConversationIdFromCookies(req) {
  */
 function handleMessage(req, res) {
   try {
+    // Validate request body
+    if (!req.body || typeof req.body !== 'object') {
+      return res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Invalid request body"));
+    }
+
     // Try to get userId and conversationId from cookies if not provided in body
     let { message, conversationId, conversationName } = req.body;
     const cookieIds = getUserAndConversationIdFromCookies(req);
@@ -175,8 +192,19 @@ function handleMessage(req, res) {
       userId = cookieIds.userId;
     }
 
-    if (!message) {
-      return res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Message is required"));
+    // Validate message
+    if (!message || typeof message !== 'string') {
+      return res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Message is required and must be a string"));
+    }
+
+    // Sanitize message to prevent potential issues
+    message = message.trim();
+    if (message.length === 0) {
+      return res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Message cannot be empty"));
+    }
+
+    if (message.length > 1000) {
+      return res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Message is too long (max 1000 characters)"));
     }
 
     // If conversationId is missing, create a new one and set cookies
@@ -222,7 +250,26 @@ function handleMessage(req, res) {
       conversationAnalytics[conversationId].name = conversationName;
     }
 
-    const response = generateAIResponse(message, conversationId);
+    // Generate AI response with error handling
+    let response;
+    try {
+      response = generateAIResponse(message, conversationId);
+    } catch (error) {
+      logDebug("[Nova] Error generating AI response", {
+        error: error.message,
+        stack: error.stack,
+        message: message.substring(0, 100),
+        conversationId,
+        userId
+      });
+      
+      response = "I'm sorry, I encountered an error while processing your message. Please try again.";
+    }
+
+    // Validate response
+    if (!response || typeof response !== 'string') {
+      response = "I'm sorry, I couldn't generate a proper response. Please try again.";
+    }
 
     return res.status(HTTP_OK).json({
       response,

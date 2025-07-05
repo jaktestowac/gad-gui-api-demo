@@ -304,9 +304,6 @@ class RecommendationBehavior extends BaseBehavior {
    * @private
    */
   _findClosestTopicMatch(message, availableTopics, context) {
-    // Import text processing utils from parent scope if available
-    const textProcessingUtils = require("../text-processing");
-
     // Extract keywords from message
     const words = message.split(/\s+/);
 
@@ -323,19 +320,18 @@ class RecommendationBehavior extends BaseBehavior {
       }
     }
 
-    // Try to match with Levenshtein distance if available
-    if (textProcessingUtils && textProcessingUtils.normalizeMessage) {
-      const normalizedTopic = textProcessingUtils.normalizeMessage(
-        message,
-        availableTopics,
-        0.4 // More lenient threshold for topic matching
-      );
+    // Try to match with Levenshtein distance using the text processing module
+    const textProcessingUtils = require("../text-processing");
+    const normalizedTopic = textProcessingUtils.normalizeMessage(
+      message,
+      availableTopics,
+      0.4 // More lenient threshold for topic matching
+    );
 
-      // If we got a normalized match from the available topics
-      if (normalizedTopic && availableTopics.includes(normalizedTopic)) {
-        this._saveTopicToUserMemory(normalizedTopic, context);
-        return normalizedTopic;
-      }
+    // If we got a normalized match from the available topics
+    if (normalizedTopic && availableTopics.includes(normalizedTopic)) {
+      this._saveTopicToUserMemory(normalizedTopic, context);
+      return normalizedTopic;
     }
 
     // Check topic keywords

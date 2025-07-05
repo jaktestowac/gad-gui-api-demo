@@ -73,29 +73,125 @@ class CuriosityBehavior extends BaseBehavior {
    * @param {string} message - The message to check
    * @param {object} context - Context for message processing
    * @returns {boolean} - True if this behavior should add curiosity
-   */ canHandle(message, context) {
+   */   canHandle(message, context) {
+    // Validate input parameters
+    if (!message || typeof message !== 'string') {
+      return false;
+    }
+
+    if (!context || typeof context !== 'object') {
+      return false;
+    }
+
     // Get the user ID from the conversation context
     const userId = context.userId || context.conversationId?.split("_")[0];
-    // Special case for single-word inputs that might be learned terms
-    // This allows simple term lookups by just typing the term
+
+    // PRIORITY 1: Handle term definition scenarios
+    if (context.isDefiningUnknownTerm && context.previousUnknownTerm) {
+      return true;
+    }
+
+    // PRIORITY 2: Handle known terms
+    if (context.knownTerm && userId) {
+      return true;
+    }
+
+    // PRIORITY 3: Handle unknown terms
+    if (context.unknownTerm) {
+      return true;
+    }
+
+    // PRIORITY 4: Handle single-word queries that might be terms
     if (message.trim().split(/\s+/).length === 1 && message.length > 1) {
-      const term = message.trim().toLowerCase();
-
-      // First clean the term to remove any punctuation
-      const cleanTerm = term.replace(/[?!.,;]/g, "").trim();
-
-      // Check if this is a known term
-      if (userId && knowsTerm(cleanTerm, userId)) {
-        context.knownTerm = cleanTerm;
-        logDebug("[Nova] CuriosityBehavior:canHandle:SingleWordKnownTerm", {
-          term: cleanTerm,
-          originalTerm: term,
-          userId,
-          message,
-          allAvailableTerms: userMemory[userId]?.learnedTerms ? Object.keys(userMemory[userId].learnedTerms) : [],
+      const term = message.trim().toLowerCase().replace(/[?!.,;]/g, "");
+      
+      // Skip commands that start with /
+      if (message.trim().startsWith('/')) {
+        return false;
+      }
+      
+      // Check if this is a known term (case-insensitive)
+      if (userId && knowsTerm(term, userId)) {
+        context.knownTerm = term;
+        logDebug("[Nova] CuriosityBehavior:canHandle:foundKnownTerm", {
+          term: term,
+          message: message,
+          userId: userId
         });
         return true;
       }
+      
+      // Also check the original message case for known terms
+      const originalTerm = message.trim().replace(/[?!.,;]/g, "");
+      if (userId && knowsTerm(originalTerm, userId)) {
+        context.knownTerm = originalTerm;
+        logDebug("[Nova] CuriosityBehavior:canHandle:foundKnownTermOriginalCase", {
+          term: originalTerm,
+          message: message,
+          userId: userId
+        });
+        return true;
+      }
+      
+      // Check if this could be an unknown term (not a common word)
+      const commonWords = [
+        "hi", "hello", "hey", "thanks", "thank", "you", "yes", "no", "maybe",
+        "the", "this", "that", "your", "these", "those", "their", "our", "your",
+        "ok", "okay", "help", "menu", "exit", "quit", "bye", "good", "great",
+        "nice", "cool", "fine", "what", "who", "where", "when", "why", "how"
+      ];
+      
+      if (!commonWords.includes(term) && term.length >= 2) {
+        // Double-check that this isn't actually a known term before marking as unknown
+        if (userId && knowsTerm(term, userId)) {
+          context.knownTerm = term;
+          logDebug("[Nova] CuriosityBehavior:canHandle:foundKnownTermInUnknownCheck", {
+            term: term,
+            message: message,
+            userId: userId
+          });
+          return true;
+        }
+        
+        context.unknownTerm = term;
+        return true;
+      }
+    }
+    // PRIORITY 5: Handle direct term questions with better pattern matching
+    const directTermPatterns = [
+      /^what(?:'s| is)(?: a| an| the)? ([a-zA-Z0-9_-]+)\??$/i,
+      /^do you know ([a-zA-Z0-9_-]+)\??$/i,
+      /^tell me about ([a-zA-Z0-9_-]+)\??$/i,
+      /^what(?:'s| is) "(.*?)"\??$/i,
+      /^do you know "(.*?)"\??$/i,
+      /^tell me about "(.*?)"\??$/i,
+    ];
+
+    for (const pattern of directTermPatterns) {
+      const match = message.match(pattern);
+      if (match) {
+        const term = match[1].toLowerCase().trim();
+        
+        // Check if this is a known term
+        if (userId && knowsTerm(term, userId)) {
+          context.knownTerm = term;
+          return true;
+        } else {
+          // Mark as unknown term
+          context.unknownTerm = term;
+          return true;
+        }
+      }
+    }
+
+    // Handle all commands that start with "/" (not just /list-terms)
+    // This prevents any command from being treated as an unknown term
+    if (message.trim().startsWith("/")) {
+      logDebug("[Nova] CuriosityBehavior:canHandle: Command detected", {
+        message: message,
+        command: message.trim()
+      });
+      return true;
     }
 
     // Debug check - see if there's a special debug command for terms
@@ -141,106 +237,19 @@ class CuriosityBehavior extends BaseBehavior {
         }`;
       }
       return true;
-    } // Check if this is a direct question about a known term
-    // Check special cases first for "do you know X" and "what is X" patterns
-    if (
-      /^do you know ([a-zA-Z0-9]+)\??$/i.test(message) ||
-      /^what(?:'?s|\s*is) ([a-zA-Z0-9]+)\??$/i.test(message) ||
-      /^tell me about ([a-zA-Z0-9]+)\??$/i.test(message)
-    ) {
-      // Extract the term from the message
-      let term = null;
-      const doYouKnowMatch = message.match(/^do you know ([a-zA-Z0-9]+)\??$/i);
-      const whatIsMatch = message.match(/^what(?:'?s|\s*is) ([a-zA-Z0-9]+)\??$/i);
-      const tellMeMatch = message.match(/^tell me about ([a-zA-Z0-9]+)\??$/i);
-
-      if (doYouKnowMatch) term = doYouKnowMatch[1];
-      else if (whatIsMatch) term = whatIsMatch[1];
-      else if (tellMeMatch) term = tellMeMatch[1];
-
-      if (term) {
-        term = term.toLowerCase();
-
-        // Check if we know this term specifically
-        if (userId && knowsTerm(term, userId)) {
-          context.knownTerm = term;
-          logDebug("[Nova] CuriosityBehavior:canHandle:DirectKnownTerm", {
-            term,
-            userId,
-            message,
-          });
-          return true;
-        } else {
-          // If not, mark as unknown
-          context.unknownTerm = term;
-          logDebug("[Nova] CuriosityBehavior:canHandle:DirectUnknownTerm", {
-            term,
-            userId,
-            message,
-          });
-          return true;
-        }
-      }
-    } // Check for questions about specific terms (whether known or unknown)
-    let detectedTerm = null;
-
-    // First try to handle special cases like "what is X?"
-    const preprocessedTerm = this._preprocessMessage(message, userId);
-    if (preprocessedTerm) {
-      detectedTerm = preprocessedTerm;
-    } else {
-      // Fall back to regular detection
-      detectedTerm = this._detectUnknownTerm(message);
-    }
-    if (detectedTerm) {
-      // Log the detected term for debugging
-      logDebug("[Nova] CuriosityBehavior:canHandle:termDetected", {
-        term: detectedTerm,
-        message: message,
-      });
-
-      // IMPORTANT: For single-word inputs, check if it's a known term first
-      // This is a critical path for users just typing a term to recall its definition
-      if (message.trim().split(/\s+/).length === 1 && userId) {
-        const isKnownTerm = knowsTerm(detectedTerm, userId);
-
-        if (isKnownTerm) {
-          // We know this term, so store it to use the definition
-          context.knownTerm = detectedTerm;
-
-          logDebug("[Nova] CuriosityBehavior:canHandle:singleWordKnownTerm", {
-            term: detectedTerm,
-            message: message,
-          });
-
-          return true;
-        }
-      }
-
-      // Check if this is already a term we know
-      if (userId && knowsTerm(detectedTerm, userId)) {
-        // We know this term, so store it to use the definition
-        context.knownTerm = detectedTerm;
-        logDebug("[Nova] CuriosityBehavior:canHandle:knownTerm", {
-          term: detectedTerm,
-          message: message,
-        });
-        return true;
-      }
-
-      // If we get here, it's an unknown term
-      // Store the detected unknown term for later use in handle()
-      context.unknownTerm = detectedTerm;
-
-      // Log that we're treating this as an unknown term
-      logDebug("[Nova] CuriosityBehavior:canHandle:unknownTerm", {
-        term: detectedTerm,
-        message: message,
-      });
-
+    }     
+    
+    // PRIORITY 6: Handle ambiguous or unclear messages that need clarification
+    const isShortMessage = message.trim().split(/\s+/).length <= 3;
+    const isQuestion = message.includes('?') || /^(what|who|where|when|why|how|can|could|would|will|should|is|are|am|do|does|did)/i.test(message);
+    const hasTooManyOrNoMatches = context.matchingBehaviorCount === 0 || context.matchingBehaviorCount > 3;
+    
+    // If it's a short question or unclear message, let curiosity handle it
+    if ((isShortMessage && isQuestion) || hasTooManyOrNoMatches) {
       return true;
     }
 
+    // PRIORITY 7: Handle ambiguous or unclear messages that need clarification
     // Only activate when Nova's understanding is limited
     // Check if no other behaviors matched (except default)
     const hasOnlyDefaultBehavior = context.matchingBehaviorCount <= 1;
@@ -249,7 +258,7 @@ class CuriosityBehavior extends BaseBehavior {
     const hasUnrecognizedMessages = context.unrecognizedCount > 0;
 
     // Check if message is very short (potential ambiguity)
-    const isShortMessage = message.length < 10;
+    const isVeryShortMessage = message.length < 10;
 
     // Check if message lacks clear topic
     const hasAmbiguousTopic = context.currentTopic === "ambiguous" || !context.currentTopic;
@@ -260,7 +269,7 @@ class CuriosityBehavior extends BaseBehavior {
     return (
       hasOnlyDefaultBehavior ||
       hasUnrecognizedMessages ||
-      (isShortMessage && hasAmbiguousTopic) ||
+      (isVeryShortMessage && hasAmbiguousTopic) ||
       hasLowConfidenceMatches
     );
   }
@@ -278,9 +287,22 @@ class CuriosityBehavior extends BaseBehavior {
       return context.debugResult;
     }
 
-    // Handle the list-terms command
-    if (message.trim().toLowerCase() === "/list-terms") {
-      return processListTermsCommand(userId);
+    // Handle all commands that start with "/"
+    if (message.trim().startsWith("/")) {
+      const command = message.trim().toLowerCase();
+      
+      // Handle specific commands
+      if (command === "/list-terms") {
+        return processListTermsCommand(userId);
+      }
+      
+      // For any other command, let the system handle it normally
+      // This prevents commands from being processed as unknown terms
+      logDebug("[Nova] CuriosityBehavior:handle: Command passed through", {
+        command: command,
+        userId: userId
+      });
+      return null; // Let other behaviors handle the command
     }
 
     // Log detailed debugging info
@@ -569,6 +591,16 @@ class CuriosityBehavior extends BaseBehavior {
    * @returns {string|null} - The detected unknown term or null
    */ _detectUnknownTerm(message) {
     const lowerMessage = message.toLowerCase();
+
+    // IMPORTANT: Skip processing if this is a command (starts with "/")
+    // This prevents commands like /help, /status, /debug, etc. from being treated as unknown terms
+    if (message.trim().startsWith("/")) {
+      logDebug("[Nova] CuriosityBehavior: Skipping unknown term detection for command", {
+        message: message,
+        reason: "Command detected (starts with '/')"
+      });
+      return null;
+    }
 
     // Check for direct questions about terms - matches patterns like:
     // "do you know delfin?" or "do you know what delfin is?"

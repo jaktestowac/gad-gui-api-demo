@@ -352,6 +352,21 @@ function learnNewTerm(term, definition, userId) {
     return false;
   }
 
+  // Validate input parameters
+  if (typeof term !== 'string' || typeof definition !== 'string' || typeof userId !== 'string') {
+    logDebug(`[Nova] ERROR: Invalid parameter types for learnNewTerm`, { 
+      term: typeof term, 
+      definition: typeof definition, 
+      userId: typeof userId 
+    });
+    return false;
+  }
+
+  if (term.trim().length === 0 || definition.trim().length === 0) {
+    logDebug(`[Nova] ERROR: Empty term or definition`, { term: term.trim(), definition: definition.trim() });
+    return false;
+  }
+
   logDebug(`[Nova] INVOKE: learnNewTerm called with term "${term}"`, { term, definition, userId });
 
   // Initialize or get user memory
@@ -518,62 +533,45 @@ function extractTermDefinition(message, term, userId) {
     userId,
     messageLength: message.length,
     timestamp: new Date().toISOString(),
-  }); // Try to extract a definition from various patterns in the message
+  });   // Try to extract a definition from various patterns in the message
   let definition = null;
 
-  // Simple pattern for very short definitions like "its X"
-  const simplePattern = /^its\s+(.+)$/i;
-  const simpleMatch = message.match(simplePattern);
-  if (simpleMatch && simpleMatch[1]) {
-    definition = simpleMatch[1].trim();
-    logDebug(`[Nova] EXTRACT: Found definition using simple pattern`, {
-      pattern: simplePattern.toString(),
-      definition,
-    });
-  }
-
-  // Escape special characters in the term for regex safety
-  const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  // Pattern 1: Direct definition patterns like "X is Y" or "X means Y"
-  const directPatterns = [
-    new RegExp(`${escapedTerm}\\s+(?:is|means|refers to|=)\\s+(.+)`, "i"),
-    new RegExp(`(?:the|a|an)\\s+${escapedTerm}\\s+(?:is|means|refers to|=)\\s+(.+)`, "i"),
-    new RegExp(`${escapedTerm}(?::|-)\\s*(.+)`, "i"), // For patterns like "term: definition" or "term - definition"
-    new RegExp(`${escapedTerm}\\s+(?:can be defined as|is defined as)\\s+(.+)`, "i"), // Add "defined as" pattern
+  // Enhanced pattern matching for better definition extraction
+  const definitionPatterns = [
+    // Simple patterns
+    { pattern: /^its\s+(.+)$/i, description: "simple 'its X' pattern" },
+    { pattern: /^it\s+is\s+(.+)$/i, description: "simple 'it is X' pattern" },
+    { pattern: /^that\s+is\s+(.+)$/i, description: "simple 'that is X' pattern" },
+    
+    // Direct definition patterns
+    { pattern: new RegExp(`^${term}\\s+(?:is|means|refers to|=)\\s+(.+)$`, "i"), description: "direct term definition" },
+    { pattern: new RegExp(`^(?:the|a|an)\\s+${term}\\s+(?:is|means|refers to|=)\\s+(.+)$`, "i"), description: "direct term with article" },
+    
+    // Quoted or parenthetical definitions
+    { pattern: new RegExp(`^${term}\\s*(?::|-)\\s*(.+)$`, "i"), description: "term with colon or dash" },
+    { pattern: new RegExp(`^${term}\\s+(?:can be defined as|is defined as)\\s+(.+)$`, "i"), description: "formal definition" },
+    
+    // Indirect patterns
+    { pattern: /^(?:it|that|this)\s+(?:is|means|refers to)\s+(.+)/i, description: "indirect 'it is' pattern" },
+    { pattern: /^(?:it'?s|that'?s|this is)\s+(.+)/i, description: "indirect contraction pattern" },
+    { pattern: /^(?:a|an)\s+(.+)/i, description: "indirect article pattern" },
+    { pattern: /^(?:basically|simply|just)\s+(?:a|an|the)?\s*(.+)/i, description: "indirect qualifier pattern" },
   ];
 
-  for (const pattern of directPatterns) {
+  // Try each pattern
+  for (const { pattern, description } of definitionPatterns) {
     const match = message.match(pattern);
     if (match && match[1]) {
       definition = match[1].trim();
-      logDebug(`[Nova] EXTRACT: Found definition using direct pattern`, { pattern: pattern.toString(), definition });
+      logDebug(`[Nova] EXTRACT: Found definition using ${description}`, {
+        pattern: pattern.toString(),
+        definition,
+      });
       break;
     }
   }
-  // Pattern 2: "It is X" or "That's X" patterns (when responding to a direct question)
-  if (!definition) {
-    const indirectPatterns = [
-      /^(?:it|that|this)\s+(?:is|means|refers to)\s+(.+)/i,
-      /^(?:it'?s|that'?s|this is)\s+(.+)/i,
-      /^(?:its|it is)\s+(.+)/i, // Added pattern for "its X" which is a common short form
-      /^(?:a|an)\s+(.+)/i,
-      /^(?:basically|simply|just)\s+(?:a|an|the)?\s*(.+)/i,
-      /^(?:something|a thing|an object|a concept)\s+(?:that|which|who)\s+(.+)/i,
-      /^(?:the|this|that)\s+(?:is|means|refers to)\s+(.+)/i,
-    ];
 
-    for (const pattern of indirectPatterns) {
-      const match = message.match(pattern);
-      if (match && match[1]) {
-        definition = match[1].trim();
-        logDebug(`[Nova] EXTRACT: Found definition using indirect pattern`, {
-          pattern: pattern.toString(),
-          definition,
-        });
-        break;
-      }
-    }
-  } // Pattern 3: Use the entire message if it's a simple response and nothing else matched
+  // If no pattern matched, try using the entire message for short responses
   if (!definition && message.trim().length > 2 && message.trim().length < 150) {
     definition = message.trim();
     logDebug(`[Nova] EXTRACT: Using entire message as definition`, { definition });
