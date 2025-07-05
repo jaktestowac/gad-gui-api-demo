@@ -73,13 +73,13 @@ class CuriosityBehavior extends BaseBehavior {
    * @param {string} message - The message to check
    * @param {object} context - Context for message processing
    * @returns {boolean} - True if this behavior should add curiosity
-   */   canHandle(message, context) {
+   */ canHandle(message, context) {
     // Validate input parameters
-    if (!message || typeof message !== 'string') {
+    if (!message || typeof message !== "string") {
       return false;
     }
 
-    if (!context || typeof context !== 'object') {
+    if (!context || typeof context !== "object") {
       return false;
     }
 
@@ -103,24 +103,27 @@ class CuriosityBehavior extends BaseBehavior {
 
     // PRIORITY 4: Handle single-word queries that might be terms
     if (message.trim().split(/\s+/).length === 1 && message.length > 1) {
-      const term = message.trim().toLowerCase().replace(/[?!.,;]/g, "");
-      
+      const term = message
+        .trim()
+        .toLowerCase()
+        .replace(/[?!.,;]/g, "");
+
       // Skip commands that start with /
-      if (message.trim().startsWith('/')) {
+      if (message.trim().startsWith("/")) {
         return false;
       }
-      
+
       // Check if this is a known term (case-insensitive)
       if (userId && knowsTerm(term, userId)) {
         context.knownTerm = term;
         logDebug("[Nova] CuriosityBehavior:canHandle:foundKnownTerm", {
           term: term,
           message: message,
-          userId: userId
+          userId: userId,
         });
         return true;
       }
-      
+
       // Also check the original message case for known terms
       const originalTerm = message.trim().replace(/[?!.,;]/g, "");
       if (userId && knowsTerm(originalTerm, userId)) {
@@ -128,19 +131,51 @@ class CuriosityBehavior extends BaseBehavior {
         logDebug("[Nova] CuriosityBehavior:canHandle:foundKnownTermOriginalCase", {
           term: originalTerm,
           message: message,
-          userId: userId
+          userId: userId,
         });
         return true;
       }
-      
+
       // Check if this could be an unknown term (not a common word)
       const commonWords = [
-        "hi", "hello", "hey", "thanks", "thank", "you", "yes", "no", "maybe",
-        "the", "this", "that", "your", "these", "those", "their", "our", "your",
-        "ok", "okay", "help", "menu", "exit", "quit", "bye", "good", "great",
-        "nice", "cool", "fine", "what", "who", "where", "when", "why", "how"
+        "hi",
+        "hello",
+        "hey",
+        "thanks",
+        "thank",
+        "you",
+        "yes",
+        "no",
+        "maybe",
+        "the",
+        "this",
+        "that",
+        "your",
+        "these",
+        "those",
+        "their",
+        "our",
+        "your",
+        "ok",
+        "okay",
+        "help",
+        "menu",
+        "exit",
+        "quit",
+        "bye",
+        "good",
+        "great",
+        "nice",
+        "cool",
+        "fine",
+        "what",
+        "who",
+        "where",
+        "when",
+        "why",
+        "how",
       ];
-      
+
       if (!commonWords.includes(term) && term.length >= 2) {
         // Double-check that this isn't actually a known term before marking as unknown
         if (userId && knowsTerm(term, userId)) {
@@ -148,11 +183,11 @@ class CuriosityBehavior extends BaseBehavior {
           logDebug("[Nova] CuriosityBehavior:canHandle:foundKnownTermInUnknownCheck", {
             term: term,
             message: message,
-            userId: userId
+            userId: userId,
           });
           return true;
         }
-        
+
         context.unknownTerm = term;
         return true;
       }
@@ -171,7 +206,7 @@ class CuriosityBehavior extends BaseBehavior {
       const match = message.match(pattern);
       if (match) {
         const term = match[1].toLowerCase().trim();
-        
+
         // Check if this is a known term
         if (userId && knowsTerm(term, userId)) {
           context.knownTerm = term;
@@ -189,7 +224,7 @@ class CuriosityBehavior extends BaseBehavior {
     if (message.trim().startsWith("/")) {
       logDebug("[Nova] CuriosityBehavior:canHandle: Command detected", {
         message: message,
-        command: message.trim()
+        command: message.trim(),
       });
       return true;
     }
@@ -237,13 +272,15 @@ class CuriosityBehavior extends BaseBehavior {
         }`;
       }
       return true;
-    }     
-    
+    }
+
     // PRIORITY 6: Handle ambiguous or unclear messages that need clarification
     const isShortMessage = message.trim().split(/\s+/).length <= 3;
-    const isQuestion = message.includes('?') || /^(what|who|where|when|why|how|can|could|would|will|should|is|are|am|do|does|did)/i.test(message);
+    const isQuestion =
+      message.includes("?") ||
+      /^(what|who|where|when|why|how|can|could|would|will|should|is|are|am|do|does|did)/i.test(message);
     const hasTooManyOrNoMatches = context.matchingBehaviorCount === 0 || context.matchingBehaviorCount > 3;
-    
+
     // If it's a short question or unclear message, let curiosity handle it
     if ((isShortMessage && isQuestion) || hasTooManyOrNoMatches) {
       return true;
@@ -290,17 +327,17 @@ class CuriosityBehavior extends BaseBehavior {
     // Handle all commands that start with "/"
     if (message.trim().startsWith("/")) {
       const command = message.trim().toLowerCase();
-      
+
       // Handle specific commands
       if (command === "/list-terms") {
         return processListTermsCommand(userId);
       }
-      
+
       // For any other command, let the system handle it normally
       // This prevents commands from being processed as unknown terms
       logDebug("[Nova] CuriosityBehavior:handle: Command passed through", {
         command: command,
-        userId: userId
+        userId: userId,
       });
       return null; // Let other behaviors handle the command
     }
@@ -339,6 +376,14 @@ class CuriosityBehavior extends BaseBehavior {
         /^i\s*don'?t\s*(?:know|care)$/i,
         /^not\s*important$/i,
         /^no\s*(?:thanks|thank\s*you)?$/i,
+        /^no$/i,
+        /^nope$/i,
+        /^nah$/i,
+        /^i\s*don'?t\s*want\s*to\s*define\s*it$/i,
+        /^i\s*don'?t\s*feel\s*like\s*explaining$/i,
+        /^i\s*don'?t\s*have\s*time$/i,
+        /^i\s*don'?t\s*want\s*to\s*talk\s*about\s*it$/i,
+        /^i\s*don'?t\s*feel\s*like\s*it$/i,
       ];
 
       // Check if the message matches any dismissive phrase
@@ -597,7 +642,7 @@ class CuriosityBehavior extends BaseBehavior {
     if (message.trim().startsWith("/")) {
       logDebug("[Nova] CuriosityBehavior: Skipping unknown term detection for command", {
         message: message,
-        reason: "Command detected (starts with '/')"
+        reason: "Command detected (starts with '/')",
       });
       return null;
     }

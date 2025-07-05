@@ -230,6 +230,14 @@ class BehaviorRegistry {
         context.generatedResponse = curiosityBehavior.handle(message, context);
         this._setResponseType(context);
 
+        // Check if the curiosity behavior cleared the context (indicating dismissal)
+        if (context.previousUnknownTerm === null && context.isDefiningUnknownTerm === false) {
+          logDebug("[Nova] BehaviorRegistry:processMessage:TermDefinitionDismissed", {
+            message: message.substring(0, 50),
+            response: context.generatedResponse.substring(0, 100),
+          });
+        }
+
         // Return the response directly
         return context.generatedResponse;
       }

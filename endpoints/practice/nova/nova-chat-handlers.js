@@ -60,9 +60,9 @@ function generateAIResponse(message, conversationId) {
     conversations[conversationId],
     userMem,
     conversationAnalytics[conversationId]
-  ); // Restore the unknown term context if it exists and is recent (within 2 minutes)
+  );   // Restore the unknown term context if it exists and is recent (within 2 minutes)
   const unknownTermContext = conversationAnalytics[conversationId].unknownTermContext || {};
-  if (unknownTermContext.term && Date.now() - unknownTermContext.timestamp < 2 * 60 * 1000) {
+  if (unknownTermContext.term && !unknownTermContext.cleared && Date.now() - unknownTermContext.timestamp < 2 * 60 * 1000) {
     context.previousUnknownTerm = unknownTermContext.term;
     // Set isDefiningUnknownTerm to true to indicate this message is likely a definition response
     context.isDefiningUnknownTerm = true;
@@ -104,7 +104,7 @@ function generateAIResponse(message, conversationId) {
     });
   } else if (context.previousUnknownTerm && context.isDefiningUnknownTerm) {
     // Clear the context after the user has defined the term
-    conversationAnalytics[conversationId].unknownTermContext = {};
+    conversationAnalytics[conversationId].unknownTermContext = { cleared: true };
     logDebug(`[Nova] Cleared unknown term context after definition was provided`, {
       userId,
       term: context.previousUnknownTerm,
@@ -119,7 +119,14 @@ function generateAIResponse(message, conversationId) {
     });
 
     // Clear any previous unknown term context
-    conversationAnalytics[conversationId].unknownTermContext = {};
+    conversationAnalytics[conversationId].unknownTermContext = { cleared: true };
+  } else if (context.previousUnknownTerm === null && context.isDefiningUnknownTerm === false) {
+    // Clear the context when the user dismisses the term definition request
+    conversationAnalytics[conversationId].unknownTermContext = { cleared: true };
+    logDebug(`[Nova] Cleared unknown term context after user dismissal`, {
+      userId,
+      message: message.substring(0, 50),
+    });
   }
 
   // Add response to history
