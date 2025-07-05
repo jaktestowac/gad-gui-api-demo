@@ -3,7 +3,12 @@
  */
 
 const BaseBehavior = require("./base-behavior");
-const { knowledgeBase } = require("../nova-base");
+const { 
+  knowledgeBase, 
+  extractConceptFromQuestion, 
+  isAskingAboutConcept, 
+  getKnowledgeForQuestion 
+} = require("../nova-base");
 const { logDebug } = require("../../../../helpers/logger-api");
 
 class KnowledgeBaseBehavior extends BaseBehavior {
@@ -15,6 +20,24 @@ class KnowledgeBaseBehavior extends BaseBehavior {
   /**
    * Check if this behavior can handle the message
    */ canHandle(message) {
+    // Handle single-word or short queries like "GAD?"
+    const trimmed = message.trim().replace(/\?+$/, "").toLowerCase();
+    if (trimmed.length > 0 && trimmed in knowledgeBase) {
+      logDebug("[Nova] KnowledgeBaseBehavior:canHandle:directMatch", {
+        message: message,
+        trimmed: trimmed,
+        found: true
+      });
+      return true;
+    }
+
+    // Use the new helper function to check if this is asking about a concept
+    if (isAskingAboutConcept(message)) {
+      const knowledge = getKnowledgeForQuestion(message);
+      return knowledge !== null;
+    }
+
+    // Fallback to the old method for backward compatibility
     const normalizedQuery = this.textProcessingUtils.getNormalizedKnowledgeQuery(message);
 
     // Direct match in knowledge base
@@ -34,6 +57,26 @@ class KnowledgeBaseBehavior extends BaseBehavior {
    * Handle the message
    */
   handle(message) {
+    // Handle single-word or short queries like "GAD?"
+    const trimmed = message.trim().replace(/\?+$/, "").toLowerCase();
+    if (trimmed.length > 0 && trimmed in knowledgeBase) {
+      return knowledgeBase[trimmed];
+    }
+
+    // Use the new helper function to get knowledge for questions
+    if (isAskingAboutConcept(message)) {
+      const knowledge = getKnowledgeForQuestion(message);
+      if (knowledge) {
+        const concept = extractConceptFromQuestion(message);
+        logDebug("[Nova] Knowledge base question match found", { 
+          query: message, 
+          concept 
+        });
+        return knowledge;
+      }
+    }
+
+    // Fallback to the old method for backward compatibility
     const normalizedQuery = this.textProcessingUtils.getNormalizedKnowledgeQuery(message);
 
     // Direct match in knowledge base
@@ -50,7 +93,7 @@ class KnowledgeBaseBehavior extends BaseBehavior {
       if (potentialMatches.length >= 2 && potentialMatches.length <= 5 && potentialMatches[0].distance > 0.15) {
         let response = "I'm not sure which topic you're asking about. Did you mean one of these?\n\n";
         potentialMatches.slice(0, 5).forEach((match, index) => {
-          const topic = match.key.replace(/what is /i, "").replace(/\?/g, "");
+          const topic = match.key.replace(/\?/g, "");
           response += `${index + 1}. ${topic}\n`;
         });
         response += "\nPlease specify which one you're interested in.";
@@ -62,6 +105,7 @@ class KnowledgeBaseBehavior extends BaseBehavior {
         return knowledgeBase[potentialMatches[0].key];
       }
     }
+    
     const dontKnowResponses = [
       "I'm not sure how to answer that question. Could you try rephrasing it?",
       "I don't have enough information to answer that. Can you provide more details?",

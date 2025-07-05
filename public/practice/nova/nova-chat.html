@@ -1815,6 +1815,21 @@
                 description: 'Show available commands',
                 help: 'Lists all available commands with brief descriptions. Type /help to see what NOVA can do.'
             },
+            '/topics': {
+                handler: async function () {
+                    const message = "/topics";
+
+                    // Send the command to the backend and wait for response
+                    const response = await sendMessageToApi(message);
+
+                    if (response) {
+                        addMessage(response, false);
+                    }
+                    return true;
+                },
+                description: 'Show all topics Nova can discuss',
+                help: 'Displays a comprehensive list of all topics and capabilities that Nova can talk about, organized by category.'
+            },
             '/clear': {
                 handler: function () {
                     clearCurrentConversation();

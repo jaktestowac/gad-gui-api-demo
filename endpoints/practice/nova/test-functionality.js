@@ -122,6 +122,7 @@ const validationTests = [
   { input: 'hello', type: 'text', expected: true },
   { input: '123', type: 'number', expected: true },
   { input: 'help', type: 'command', expected: true },
+  { input: 'topics', type: 'command', expected: true },
   { input: '', type: 'text', expected: false },
   { input: null, type: 'text', expected: false },
   { input: '<script>alert("xss")</script>', type: 'text', expected: true }, // Should be sanitized

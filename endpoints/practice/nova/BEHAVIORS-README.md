@@ -60,6 +60,7 @@ A sophisticated system for determining which behavior should handle a message:
 Handles explicit commands with the highest priority (1000):
 
 - `help` - Provides information about available commands
+- `topics` - Shows all topics Nova can discuss
 - `remember <information>` - Stores user-provided information
 - `forget <information>` - Removes previously stored information
 - `tell me a joke` - Delivers a random joke

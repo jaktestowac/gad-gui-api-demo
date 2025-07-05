@@ -390,7 +390,7 @@ class EnhancedTextProcessing {
     }
 
     // Extract potential commands
-    const commandMatches = message.match(/\b(help|show|tell|explain|define|calculate|convert|play|start|stop|quit|exit)\b/gi);
+    const commandMatches = message.match(/\b(help|topics|show|tell|explain|define|calculate|convert|play|start|stop|quit|exit)\b/gi);
     if (commandMatches) {
       entities.commands.push(...commandMatches);
     }

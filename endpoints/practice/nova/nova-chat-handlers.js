@@ -423,7 +423,7 @@ function getStatistics(req, res) {
 }
 
 /**
- * Clear all stored user memory
+ * Clear all stored user memory including learned terms
  */
 function clearUserMemory(req, res) {
   try {
@@ -433,10 +433,26 @@ function clearUserMemory(req, res) {
       return res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("User ID is required"));
     }
 
+    // Clear user memory (this includes learnedTerms)
     delete userMemory[userId];
 
+    // Also clear any conversation context that might contain term-related data
+    for (const conversationId in conversationAnalytics) {
+      if (conversationId.startsWith(`conv_${userId}`)) {
+        // Clear unknown term context
+        if (conversationAnalytics[conversationId].unknownTermContext) {
+          conversationAnalytics[conversationId].unknownTermContext = { cleared: true };
+        }
+      }
+    }
+
+    logDebug("[Nova] clearUserMemory", { 
+      userId, 
+      message: "User memory and learned terms cleared successfully" 
+    });
+
     return res.status(HTTP_OK).json({
-      message: "User memory cleared successfully",
+      message: "User memory and learned terms cleared successfully",
       userId,
     });
   } catch (error) {

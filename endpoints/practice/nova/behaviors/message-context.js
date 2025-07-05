@@ -131,12 +131,19 @@ class MessageContext {
     if (message.trim().split(/\s+/).length === 1) {
       const term = lowerMessage.replace(/[?!.,;]/g, "");
       
-      // Import the knowsTerm function
+      // Import the knowsTerm function and knowledge base
       const { knowsTerm } = require("../user-memory");
+      const { knowledgeBase } = require("../nova-base");
       
       // Check if this is a known term
       if (knowsTerm(term, this.userId)) {
         this.knownTerm = term;
+        return;
+      }
+      
+      // Check if this term exists in the knowledge base
+      if (term in knowledgeBase) {
+        // Don't mark as unknown if it exists in knowledge base
         return;
       }
       
@@ -169,11 +176,15 @@ class MessageContext {
       if (match) {
         const term = match[1].toLowerCase().trim();
         
-        // Import the knowsTerm function
+        // Import the knowsTerm function and knowledge base
         const { knowsTerm } = require("../user-memory");
+        const { knowledgeBase } = require("../nova-base");
         
         if (knowsTerm(term, this.userId)) {
           this.knownTerm = term;
+        } else if (term in knowledgeBase) {
+          // Don't mark as unknown if it exists in knowledge base
+          return;
         } else {
           this.unknownTerm = term;
         }

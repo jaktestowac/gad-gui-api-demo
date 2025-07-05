@@ -11,6 +11,7 @@ const { logDebug } = require("../../../../helpers/logger-api");
 const { knowsTerm, getLearnedTermDefinition, extractTermDefinition, userMemory } = require("../user-memory");
 const termDebug = require("../debug-terms");
 const { processListTermsCommand } = require("../debug-term-commands");
+const { knowledgeBase } = require("../nova-base");
 
 class CuriosityBehavior extends BaseBehavior {
   constructor() {
@@ -86,6 +87,23 @@ class CuriosityBehavior extends BaseBehavior {
     // Get the user ID from the conversation context
     const userId = context.userId || context.conversationId?.split("_")[0];
 
+    // PRIORITY 0: Handle commands - this must come BEFORE any term detection
+    // This prevents commands like /topics, /help, etc. from being treated as unknown terms
+    if (message.trim().startsWith("/")) {
+      // Only handle /list-terms command, let other behaviors handle other commands
+      if (message.trim() === "/list-terms") {
+        logDebug("[Nova] CuriosityBehavior:canHandle: /list-terms command detected", {
+          message: message,
+        });
+        return true;
+      }
+      logDebug("[Nova] CuriosityBehavior:canHandle: Command detected (not handling)", {
+        message: message,
+        command: message.trim(),
+      });
+      return false; // Don't include curiosity behavior for other commands
+    }
+
     // PRIORITY 1: Handle term definition scenarios
     if (context.isDefiningUnknownTerm && context.previousUnknownTerm) {
       return true;
@@ -111,6 +129,32 @@ class CuriosityBehavior extends BaseBehavior {
       // Skip commands that start with /
       if (message.trim().startsWith("/")) {
         return false;
+      }
+
+      // Skip if this looks like a question or knowledge base query
+      const questionPatterns = [
+        /^(what|who|where|when|why|how|can|could|would|will|should|is|are|am|do|does|did)/i,
+        /^(tell|explain|describe|define|show|give|provide)/i,
+      ];
+
+      for (const pattern of questionPatterns) {
+        if (pattern.test(message.trim())) {
+          logDebug("[Nova] CuriosityBehavior:canHandle:skippingQuestionPattern", {
+            message: message,
+            pattern: pattern.toString(),
+          });
+          return false; // Let knowledge base handle questions
+        }
+      }
+
+      // Skip if this is a knowledge base term (let knowledge base handle it)
+      const trimmed = message.trim().replace(/\?+$/, "").toLowerCase();
+      if (trimmed in knowledgeBase) {
+        logDebug("[Nova] CuriosityBehavior:canHandle:skippingKnowledgeBaseTerm", {
+          message: message,
+          term: trimmed,
+        });
+        return false; // Let knowledge base handle it
       }
 
       // Check if this is a known term (case-insensitive)
@@ -174,6 +218,7 @@ class CuriosityBehavior extends BaseBehavior {
         "when",
         "why",
         "how",
+        "gad", // Add GAD to common words since it's a known topic
       ];
 
       if (!commonWords.includes(term) && term.length >= 2) {
@@ -200,6 +245,10 @@ class CuriosityBehavior extends BaseBehavior {
       /^what(?:'s| is) "(.*?)"\??$/i,
       /^do you know "(.*?)"\??$/i,
       /^tell me about "(.*?)"\??$/i,
+      // Add more flexible patterns for knowledge base queries
+      /^(?:can you )?tell me about ([a-zA-Z0-9_-]+)\??$/i,
+      /^(?:can you )?explain ([a-zA-Z0-9_-]+)\??$/i,
+      /^(?:can you )?describe ([a-zA-Z0-9_-]+)\??$/i,
     ];
 
     for (const pattern of directTermPatterns) {
@@ -217,16 +266,6 @@ class CuriosityBehavior extends BaseBehavior {
           return true;
         }
       }
-    }
-
-    // Handle all commands that start with "/" (not just /list-terms)
-    // This prevents any command from being treated as an unknown term
-    if (message.trim().startsWith("/")) {
-      logDebug("[Nova] CuriosityBehavior:canHandle: Command detected", {
-        message: message,
-        command: message.trim(),
-      });
-      return true;
     }
 
     // Debug check - see if there's a special debug command for terms
@@ -324,22 +363,25 @@ class CuriosityBehavior extends BaseBehavior {
       return context.debugResult;
     }
 
-    // Handle all commands that start with "/"
-    if (message.trim().startsWith("/")) {
-      const command = message.trim().toLowerCase();
-
-      // Handle specific commands
-      if (command === "/list-terms") {
-        return processListTermsCommand(userId);
-      }
-
-      // For any other command, let the system handle it normally
-      // This prevents commands from being processed as unknown terms
-      logDebug("[Nova] CuriosityBehavior:handle: Command passed through", {
-        command: command,
-        userId: userId,
+    // Prevent term learning/definition for commands
+    if (
+      (context.previousUnknownTerm && context.previousUnknownTerm.startsWith("/")) ||
+      (context.unknownTerm && context.unknownTerm.startsWith("/"))
+    ) {
+      logDebug("[Nova] CuriosityBehavior: Skipping term learning for command", {
+        previousUnknownTerm: context.previousUnknownTerm,
+        unknownTerm: context.unknownTerm,
+        message,
       });
-      return null; // Let other behaviors handle the command
+      context.previousUnknownTerm = null;
+      context.unknownTerm = null;
+      context.isDefiningUnknownTerm = false;
+      return null;
+    }
+
+    // Handle specific commands that are related to term learning
+    if (message.trim().startsWith("/list-terms")) {
+      return processListTermsCommand(userId);
     }
 
     // Log detailed debugging info
@@ -634,7 +676,9 @@ class CuriosityBehavior extends BaseBehavior {
    * @private
    * @param {string} message - The message to analyze
    * @returns {string|null} - The detected unknown term or null
-   */ _detectUnknownTerm(message) {
+   */
+  _detectUnknownTerm(message) {
+    // Check if the term exists in knowledge base before treating as unknown
     const lowerMessage = message.toLowerCase();
 
     // IMPORTANT: Skip processing if this is a command (starts with "/")
@@ -675,6 +719,15 @@ class CuriosityBehavior extends BaseBehavior {
       const match = lowerMessage.match(pattern);
       if (match && match[1] && match[1].trim().length > 0) {
         const term = match[1].trim();
+        // Skip if term exists in knowledge base
+        if (term.toLowerCase() in knowledgeBase) {
+          logDebug("[Nova] CuriosityBehavior: Skipping quoted term (exists in knowledge base)", {
+            term: term,
+            pattern: pattern.toString(),
+            originalMessage: message,
+          });
+          continue;
+        }
         logDebug("[Nova] CuriosityBehavior: Detected quoted term", {
           term: term,
           pattern: pattern.toString(),
@@ -689,6 +742,15 @@ class CuriosityBehavior extends BaseBehavior {
       const match = lowerMessage.match(pattern);
       if (match) {
         const term = match[match.length - 1];
+        // Skip if term exists in knowledge base
+        if (term.toLowerCase() in knowledgeBase) {
+          logDebug("[Nova] CuriosityBehavior: Skipping 'do you know' term (exists in knowledge base)", {
+            term: term,
+            patternIndex: doYouKnowPatterns.indexOf(pattern),
+            originalMessage: message,
+          });
+          continue;
+        }
         logDebug("[Nova] CuriosityBehavior: Detected term from 'do you know' question", {
           term: term,
           patternIndex: doYouKnowPatterns.indexOf(pattern),
@@ -719,6 +781,16 @@ class CuriosityBehavior extends BaseBehavior {
           let cleanTerm = potentialTerm;
           if (cleanTerm.includes(" ")) {
             cleanTerm = cleanTerm.replace(/\s+(is|means|refers to|definition).*$/, "");
+          }
+
+          // Skip if term exists in knowledge base
+          if (cleanTerm.toLowerCase() in knowledgeBase) {
+            logDebug("[Nova] CuriosityBehavior: Skipping 'what is' term (exists in knowledge base)", {
+              term: cleanTerm,
+              patternIndex: whatIsPatterns.indexOf(pattern),
+              originalMessage: message,
+            });
+            continue;
           }
 
           logDebug("[Nova] CuriosityBehavior: Detected term from 'what is' question", {
@@ -752,6 +824,16 @@ class CuriosityBehavior extends BaseBehavior {
           let cleanTerm = term;
           if (cleanTerm.includes(" ")) {
             cleanTerm = cleanTerm.replace(/\s+(is|means|refers to|definition).*$/, "");
+          }
+
+          // Skip if term exists in knowledge base
+          if (cleanTerm.toLowerCase() in knowledgeBase) {
+            logDebug("[Nova] CuriosityBehavior: Skipping 'tell me about' term (exists in knowledge base)", {
+              term: cleanTerm,
+              patternIndex: tellMePatterns.indexOf(pattern),
+              originalMessage: message,
+            });
+            continue;
           }
 
           logDebug("[Nova] CuriosityBehavior: Detected term from 'tell me about' question", {
@@ -803,6 +885,16 @@ class CuriosityBehavior extends BaseBehavior {
         // Very important: single-word inputs could be previously defined terms
         // Detect them and let the caller determine if they're known or unknown
         const potentialTerm = words[0].toLowerCase();
+
+        // Skip if term exists in knowledge base
+        if (potentialTerm in knowledgeBase) {
+          logDebug("[Nova] CuriosityBehavior: Skipping single-word term (exists in knowledge base)", {
+            term: potentialTerm,
+            originalMessage: message,
+            wordLength: potentialTerm.length,
+          });
+          return null;
+        }
 
         logDebug("[Nova] CuriosityBehavior: Detected single-word potential term", {
           term: potentialTerm,
