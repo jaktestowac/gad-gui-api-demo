@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD - POC</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/practice-controls.css" />
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <br />
+    <div align="center">
+        <h1>POC Site</h1>
+        <div id="dicslaimer">
+            <p>
+                This is a proof of concept (POC) site for testing purposes.
+                Its for testing tests and prototyping new features.
+            </p>
+        </div>
+
+    </div>
+    <div align="center" style="display: flex; flex-direction: column; align-items: center;gap: 10px;">
+        <input id="latitude" type="number" formcontrolname="latitude" rsdisablewheel="" placeholder="-" class="abc">
+
+        <button id="submit" class="abc" onclick="displayValue()">Submit</button>
+        <label id="result" class="abc"></label>
+    </div>
+
+    <script>
+        function displayValue() {
+            var input = document.getElementById("latitude").value;
+            var display = document.getElementById("result");
+            display.innerHTML = "Value: " + input;
+        }
+
+    </script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>
