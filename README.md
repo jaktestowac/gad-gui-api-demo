@@ -176,23 +176,9 @@ Windows Cmd:
 set PORT=3001 && npm run start
 ```
 
-## Deploy to **Glitch**
-
-No account needed - but your project will be deleted in 5 days.
-
-After clicking button below wait a minute or two to finish deployment.
-
-[![Remix on Glitch](https://cdn.glitch.me/2703baf2-b643-4da7-ab91-7ee2a2d00b5b%2Fremix-button-v2.svg)](https://glitch.com/edit/#!/import/github/jaktestowac/gad-gui-api-demo)
-
-To see website:
-
-- go to bottom buttons
-- click `🔎PREVIEW`
-- choose `👯Preview in a new window`
-
-When deploying the GAD application on Glitch, please be aware that the application may not function fully due to the limitations of the Glitch platform. However, we are making every effort to ensure the highest possible compatibility.
-
 ## Deploy to **Render**
+
+Render - a popular Heroku-like PaaS with a free tier and a “Deploy to Render” button for one-click deploys.
 
 - Create free account on: https://dashboard.render.com/register
 - After successful registration hit the button:
@@ -213,6 +199,37 @@ This method can be used:
 
 - locally
 - in CI/CD services (GitHub Actions, GitLab CI etc.)
+
+## Deploy to **Koyeb**
+
+> **⚠️ Warning: This deployment method is experimental and may not work as expected.**
+
+Koyeb - a newer platform with a generous free Hobby plan.
+
+[![Deploy to Koyeb](https://www.koyeb.com/static/images/deploy/button.svg)](https://app.koyeb.com/deploy?repository=github.com/jaktestowac/gad-gui-api-demo)
+
+Doc:
+[Deploy to Koyeb Button](https://www.koyeb.com/docs/build-and-deploy/deploy-to-koyeb-button)
+
+## Deploy to **Glitch**
+
+> **⚠️ Warning: This deployment method is obsolete and no longer recommended.**
+>
+> Glitch has changed their [platform policies](https://blog.glitch.com/post/changes-are-coming-to-glitch/) and this deployment method may no longer work as expected. Please use one of the other deployment methods instead.
+
+~~No account needed - but your project will be deleted in 5 days.~~
+
+~~After clicking button below wait a minute or two to finish deployment.~~
+
+~~[![Remix on Glitch](https://cdn.glitch.me/2703baf2-b643-4da7-ab91-7ee2a2d00b5b%2Fremix-button-v2.svg)](https://glitch.com/edit/#!/import/github/jaktestowac/gad-gui-api-demo)~~
+
+~~To see website:~~
+
+~~- go to bottom buttons~~
+~~- click `🔎PREVIEW`~~
+~~- choose `👯Preview in a new window`~~
+
+~~When deploying the GAD application on Glitch, please be aware that the application may not function fully due to the limitations of the Glitch platform. However, we are making every effort to ensure the highest possible compatibility.~~
 
 ### Prerequisites:
 
