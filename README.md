@@ -231,9 +231,15 @@ Images are available at:
 
 Koyeb - a newer platform with a generous free Hobby plan.
 
-[![Deploy to Koyeb](https://www.koyeb.com/static/images/deploy/button.svg)](https://app.koyeb.com/deploy?repository=github.com/jaktestowac/gad-gui-api-demo)
+Steps:
 
-Doc:
+1. Create free account on: https://app.koyeb.com/signup
+2. After successful registration hit the button below
+
+[![Deploy to Koyeb](https://www.koyeb.com/static/images/deploy/button.svg)](https://app.koyeb.com/deploy?repository=https://github.com/jaktestowac/gad-gui-api-demo)
+
+Documentation:
+
 [Deploy to Koyeb Button](https://www.koyeb.com/docs/build-and-deploy/deploy-to-koyeb-button)
 
 ## Deploy to **Glitch**
