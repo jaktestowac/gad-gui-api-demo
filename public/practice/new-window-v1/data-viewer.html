@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD | Data Viewer</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <meta charset="UTF-8">
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <main>
+        <div class="container">
+            <div class="data-container">
+                <h2 id="windowHeader">New Window - Received Data</h2>
+
+                <div class="data-source-tabs">
+                    <button class="tab-btn active" data-source="url">URL Parameters</button>
+                    <button class="tab-btn" data-source="localStorage">Local Storage</button>
+                    <button class="tab-btn" data-source="sessionStorage">Session Storage</button>
+                    <button id="backBtn" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i>
+                        Back
+                    </button>
+                </div>
+
+                <div class="data-display">
+                    <div id="url-data" class="data-section active">
+                        <h3>Data from URL Parameters:</h3>
+                        <pre id="urlDataContent"></pre>
+                    </div>
+
+                    <div id="localStorage-data" class="data-section">
+                        <h3>Data from Local Storage:</h3>
+                        <pre id="localStorageDataContent"></pre>
+                    </div>
+
+                    <div id="sessionStorage-data" class="data-section">
+                        <h3>Data from Session Storage:</h3>
+                        <pre id="sessionStorageDataContent"></pre>
+                    </div>
+                </div>
+
+                <div class="data-actions">
+                    <button id="refreshBtn" class="btn btn-primary">
+                        <i class="fas fa-sync-alt"></i>
+                        Refresh Data
+                    </button>
+                    <button id="clearBtn" class="btn btn-warning">
+                        <i class="fas fa-trash"></i>
+                        Clear Storage
+                    </button>
+                    <button id="exportBtn" class="btn btn-success">
+                        <i class="fas fa-download"></i>
+                        Export Data
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        class DataViewer {
+            constructor() {
+                this.sessionDataReceived = false;
+                this.initializeEventListeners();
+                this.setupMessageListener();
+                this.loadAllData();
+                // Signal parent window that this window is ready
+                this.signalWindowReady();
+            }
+
+            signalWindowReady() {
+                // Signal to parent window that we're ready to receive data
+                if (window.opener) {
+                    setTimeout(() => {
+                        window.opener.postMessage({ type: 'WINDOW_READY' }, '*');
+                    }, 100);
+                }
+            }
+
+            setupMessageListener() {
+                // Listen for session data from parent window
+                window.addEventListener('message', (event) => {
+                    if (event.data && event.data.type === 'SESSION_DATA') {
+                        // Store the received session data
+                        try {
+                            sessionStorage.setItem('gad_data_viewer_session_data', JSON.stringify(event.data.data));
+                            this.sessionDataReceived = true;
+                            this.loadSessionStorageData();
+                        } catch (error) {
+                            // Handle error silently
+                        }
+                    }
+                });
+            }
+
+            initializeEventListeners() {
+                // Tab switching
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        this.switchTab(e.target.dataset.source);
+                    });
+                });
+
+                // Action buttons
+                document.getElementById('refreshBtn').addEventListener('click', () => this.loadAllData());
+                document.getElementById('clearBtn').addEventListener('click', () => this.clearStorage());
+                document.getElementById('exportBtn').addEventListener('click', () => this.exportData());
+                document.getElementById('backBtn').addEventListener('click', () => window.close());
+            }
+
+            loadAllData() {
+                this.loadURLData();
+                this.loadLocalStorageData();
+                this.loadSessionStorageData();
+            }
+
+            loadURLData() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const dataParam = urlParams.get('data');
+                const content = document.getElementById('urlDataContent');
+
+                if (dataParam) {
+                    try {
+                        const decodedData = JSON.parse(decodeURIComponent(dataParam));
+                        content.textContent = JSON.stringify(decodedData, null, 2);
+                        content.style.color = '#28a745';
+                    } catch (error) {
+                        content.textContent = `Error parsing URL data: ${error.message}`;
+                        content.style.color = '#dc3545';
+                    }
+                } else {
+                    content.textContent = 'No data found in URL parameters';
+                    content.style.color = '#6c757d';
+                }
+            }
+
+            loadLocalStorageData() {
+                const data = localStorage.getItem('gad_data_viewer_transferred_data');
+                const content = document.getElementById('localStorageDataContent');
+
+                if (data) {
+                    try {
+                        const parsedData = JSON.parse(data);
+                        content.textContent = JSON.stringify(parsedData, null, 2);
+                        content.style.color = '#28a745';
+                    } catch (error) {
+                        content.textContent = `Error parsing localStorage data: ${error.message}`;
+                        content.style.color = '#dc3545';
+                    }
+                } else {
+                    content.textContent = 'No data found in localStorage';
+                    content.style.color = '#6c757d';
+                }
+            }
+
+            loadSessionStorageData() {
+                const content = document.getElementById('sessionStorageDataContent');
+                let data = sessionStorage.getItem('gad_data_viewer_session_data');
+
+                // If no data in sessionStorage, try to get it from URL parameters
+                if (!data) {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const sessionDataParam = urlParams.get('sessionData');
+                    if (sessionDataParam) {
+                        try {
+                            const decodedData = JSON.parse(decodeURIComponent(sessionDataParam));
+                            // Store it in sessionStorage for consistency
+                            sessionStorage.setItem('gad_data_viewer_session_data', JSON.stringify(decodedData));
+                            data = JSON.stringify(decodedData);
+                        } catch (error) {
+                            content.textContent = `Error parsing sessionStorage data from URL: ${error.message}`;
+                            content.style.color = '#dc3545';
+                            return;
+                        }
+                    }
+                }
+
+                if (data) {
+                    try {
+                        const parsedData = JSON.parse(data);
+                        content.textContent = JSON.stringify(parsedData, null, 2);
+                        content.style.color = '#28a745';
+
+                        // Add note about how the data was received
+                        if (this.sessionDataReceived) {
+                            content.textContent += '\n\n/* Data received via postMessage from parent window */';
+                        } else {
+                            const urlParams = new URLSearchParams(window.location.search);
+                            if (urlParams.get('sessionData')) {
+                                content.textContent += '\n\n/* Data received via URL parameter (sessionStorage workaround) */';
+                            }
+                        }
+                    } catch (error) {
+                        content.textContent = `Error parsing sessionStorage data: ${error.message}`;
+                        content.style.color = '#dc3545';
+                    }
+                } else {
+                    content.textContent = 'No data found in sessionStorage\n\nNote: SessionStorage doesn\'t work across different browser windows.\nThis demo uses URL parameters and postMessage as workarounds.';
+                    content.style.color = '#6c757d';
+                }
+            }
+
+            switchTab(source) {
+                // Update tab buttons
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelector(`[data-source="${source}"]`).classList.add('active');
+
+                // Update data sections
+                document.querySelectorAll('.data-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                document.getElementById(`${source}-data`).classList.add('active');
+            }
+
+            clearStorage() {
+                if (confirm('Are you sure you want to clear all stored data?')) {
+                    localStorage.removeItem('gad_data_viewer_transferred_data');
+                    sessionStorage.removeItem('gad_data_viewer_session_data');
+                    this.loadAllData();
+                    alert('Storage cleared successfully!');
+                }
+            }
+
+            exportData() {
+                const allData = {
+                    urlData: this.getURLData(),
+                    localStorageData: this.getLocalStorageData(),
+                    sessionStorageData: this.getSessionStorageData(),
+                    exportedAt: new Date().toISOString()
+                };
+
+                const dataStr = JSON.stringify(allData, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(dataBlob);
+
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `data-export-${Date.now()}.json`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            }
+
+            getURLData() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const dataParam = urlParams.get('data');
+                try {
+                    return dataParam ? JSON.parse(decodeURIComponent(dataParam)) : null;
+                } catch {
+                    return null;
+                }
+            }
+
+            getLocalStorageData() {
+                const data = localStorage.getItem('gad_data_viewer_transferred_data');
+                try {
+                    return data ? JSON.parse(data) : null;
+                } catch {
+                    return null;
+                }
+            }
+
+            getSessionStorageData() {
+                const data = sessionStorage.getItem('gad_data_viewer_session_data');
+                try {
+                    return data ? JSON.parse(data) : null;
+                } catch {
+                    return null;
+                }
+            }
+        }
+
+        // Initialize the data viewer when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new DataViewer();
+        });
+    </script>
+
+    <style>
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .data-container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .data-source-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px 5px 0 0;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .tab-btn:hover {
+            background-color: #f8f9fa;
+        }
+
+        .tab-btn.active {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .data-section {
+            display: none;
+            min-height: 300px;
+        }
+
+        .data-section.active {
+            display: block;
+        }
+
+        .data-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .data-section pre {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 20px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .data-actions {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border: none;
+            padding: 12px 24px;
+            font-size: 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+
+        .btn-warning {
+            background-color: #ffc107;
+            color: #212529;
+        }
+
+        .btn-warning:hover {
+            background-color: #e0a800;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #1e7e34;
+        }
+
+        @media (max-width: 768px) {
+            .data-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .data-source-tabs {
+                flex-direction: column;
+            }
+
+            .container {
+                padding: 10px;
+            }
+
+            .data-container {
+                padding: 20px;
+            }
+        }
+    </style>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+</body>
+
+</html>

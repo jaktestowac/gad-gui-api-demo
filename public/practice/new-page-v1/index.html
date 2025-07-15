@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD | New page (tab) Demo</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./subpages/subpages.css" />
+    <script src="./subpages/nav-highlight.js" defer></script>
+    <script src="./subpages/components/navigation.js"></script>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+
+    <main>
+        <div class="container">
+            <h2>New page (tab) Demo</h2>
+            <p>Click the button below to open a new page with sample data:</p>
+
+            <button id="openNewPageBtn" class="btn btn-primary">
+                <i class="fas fa-external-link-alt"></i>
+                Open New Page (Tab) with Data
+            </button>
+
+            <div class="data-preview">
+                <h3>Sample Data to Send:</h3>
+                <pre id="dataPreview"></pre>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Sample data to send to the new page
+        const sampleData = {
+            timestamp: new Date().toISOString(),
+            user: {
+                id: 3456,
+                name: "Tab User",
+                email: "tab.user@test.test"
+            },
+            settings: {
+                theme: "light",
+                language: "en",
+                notifications: false
+            },
+            items: [
+                { id: 1, name: "Apple", quantity: 10 },
+                { id: 2, name: "Banana", quantity: 5 },
+                { id: 3, name: "Cherry", quantity: 20 }
+            ]
+        };
+
+        // Display the data preview
+        document.getElementById('dataPreview').textContent = JSON.stringify(sampleData, null, 2);
+
+        // Function to open new page with data
+        function openNewPageWithData() {
+            // Method 1: Using URL parameters (for small data)
+            const encodedData = encodeURIComponent(JSON.stringify(sampleData));
+            const newPageUrl = `data-viewer.html?data=${encodedData}`;
+
+            // Open in new tab/window
+            window.open(newPageUrl, '_blank');
+
+            // Method 2: Using localStorage (for larger data)
+            localStorage.setItem('gad_newpage_demo_transferredData', JSON.stringify(sampleData));
+
+            // Method 3: Using sessionStorage (data only available during session)
+            sessionStorage.setItem('gad_newpage_demo_sessionData', JSON.stringify(sampleData));
+        }
+
+        // Add event listener to button
+        document.getElementById('openNewPageBtn').addEventListener('click', openNewPageWithData);
+    </script>
+
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .data-preview {
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .data-preview h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .data-preview pre {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #495057;
+        }
+    </style>
+</body>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+
+</html>
