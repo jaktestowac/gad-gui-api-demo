@@ -1219,7 +1219,9 @@
               <span class="order-restaurant-compact">${rest ? (rest.image ? rest.image + ' ' : '') + rest.name : 'Unknown Restaurant'}</span>
               <span class="order-status-compact">${order.status}</span>
             </div>
-            <div class="order-customer-compact">#${order.id} - ${order.customerName}</div>
+            <div class="order-customer-compact">
+              <strong>Order ID: ${order.orderId || `#${order.id}`}</strong> - ${order.customerName}
+            </div>
             <div class="order-items-compact">
               ${order.items.map(item => `<div>• ${item.name} × ${item.quantity}</div>`).join('')}
             </div>
@@ -1274,8 +1276,9 @@
         return `
           <div class="restaurant-card clickable" onclick="showOrderDetails(${order.id})">
             <div class="restaurant-emoji">${rest ? rest.image : '🍽️'}</div>
-            <div class="restaurant-name">${rest ? rest.name : 'Unknown Restaurant'}</div>
-            <div class="restaurant-cuisine">👤 ${order.customerName}</div>
+            <div class="restaurant-name">Order ${order.orderId || `#${order.id}`}</div>
+            <div class="restaurant-cuisine">${rest ? rest.name : 'Unknown Restaurant'}</div>
+            <div class="restaurant-rating">👤 ${order.customerName}</div>
             <div class="restaurant-orders">${order.items.map(i => `${i.name} ×${i.quantity}`).join(', ')}</div>
             <div class="restaurant-desc">Status: ${order.status}</div>
             <div class="order-time">${new Date(order.createdAt).toLocaleString()}</div>
@@ -1310,6 +1313,7 @@
           body: JSON.stringify(order)
         });
         if (!res.ok) throw new Error('Failed to create order');
+        
         document.getElementById('orderForm').reset();
         // Remove extra item rows except the first
         const rows = document.querySelectorAll('.item-row');
@@ -1490,13 +1494,17 @@
         
         popupContent.innerHTML = `
           <div class="popup-header">
-            <h3 class="popup-title">📦 Order #${order.id}</h3>
+            <h3 class="popup-title">📦 Order ${order.orderId || `#${order.id}`}</h3>
             <p class="popup-subtitle">${restaurant.image || '🍽️'} ${restaurant.name} • ${order.customerName}</p>
           </div>
           
           <div class="popup-section">
             <h4 class="popup-section-title">📊 Order Statistics</h4>
             <div class="popup-grid">
+              <div class="popup-card">
+                <div class="popup-card-title">Order ID</div>
+                <div class="popup-card-value">${order.orderId || `#${order.id}`}</div>
+              </div>
               <div class="popup-card">
                 <div class="popup-card-title">Total Items</div>
                 <div class="popup-card-value">${totalItems}</div>
