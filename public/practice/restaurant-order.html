@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Restaurant Order</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #2d3748;
+      line-height: 1.5;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 1rem auto;
+      padding: 1.5rem;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+    }
+    h1 {
+      color: #2d3748;
+      margin: 0 0 1.5rem 0;
+      font-size: 2rem;
+      font-weight: 700;
+      text-align: center;
+    }
+    h2 {
+      color: #4a5568;
+      margin: 0 0 1rem 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .section {
+      background: #f7fafc;
+      padding: 1rem;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+    }
+    .popular-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.75rem;
+    }
+    .restaurant-card {
+      background: white;
+      border-radius: 8px;
+      padding: 0.75rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s ease;
+    }
+    .restaurant-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .restaurant-emoji {
+      font-size: 1.5rem;
+      margin-bottom: 0.25rem;
+    }
+    .restaurant-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 0.25rem;
+    }
+    .restaurant-cuisine {
+      font-size: 0.75rem;
+      color: #718096;
+      margin-bottom: 0.25rem;
+    }
+    .restaurant-rating {
+      font-size: 0.75rem;
+      color: #f6ad55;
+      margin-bottom: 0.25rem;
+    }
+    .restaurant-orders {
+      font-size: 0.75rem;
+      color: #4299e1;
+      margin-bottom: 0.25rem;
+    }
+    .restaurant-desc {
+      font-size: 0.7rem;
+      color: #a0aec0;
+      line-height: 1.3;
+    }
+    form {
+      background: #f7fafc;
+      padding: 1rem;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 1.5rem;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    .form-compact {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.25rem;
+      font-weight: 500;
+      color: #4a5568;
+      font-size: 0.875rem;
+    }
+    .label-compact {
+      margin-bottom: 0.15rem;
+      font-size: 0.8rem;
+    }
+    input[type="text"], input[type="number"], select {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      background: white;
+      transition: border-color 0.2s ease;
+    }
+    .input-compact {
+      padding: 0.35rem;
+      font-size: 0.8rem;
+    }
+    input[type="text"]:focus, input[type="number"]:focus, select:focus {
+      border-color: #4299e1;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+    }
+    .items-list {
+      margin-bottom: 0.75rem;
+    }
+    .items-list-compact {
+      margin-bottom: 0.5rem;
+    }
+    .item-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+      align-items: center;
+    }
+    .item-row-compact {
+      gap: 0.35rem;
+      margin-bottom: 0.35rem;
+    }
+    .item-row input {
+      margin: 0;
+    }
+    .item-row button {
+      background: #e53e3e;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 0.5rem;
+      cursor: pointer;
+      font-size: 0.75rem;
+      transition: background 0.2s ease;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .item-row-compact button {
+      width: 28px;
+      height: 28px;
+      padding: 0.35rem;
+      font-size: 0.7rem;
+    }
+    .item-row button:hover {
+      background: #c53030;
+    }
+    .add-item-btn {
+      background: #48bb78;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.2s ease;
+      margin-bottom: 0.75rem;
+    }
+    .add-item-btn-compact {
+      padding: 0.35rem 0.75rem;
+      font-size: 0.8rem;
+      margin-bottom: 0.5rem;
+    }
+    .add-item-btn:hover {
+      background: #38a169;
+    }
+    button[type="submit"] {
+      background: #4299e1;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 0.75rem 1.5rem;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: background 0.2s ease;
+      width: 100%;
+    }
+    .submit-compact {
+      padding: 0.5rem 1rem;
+      font-size: 0.8rem;
+    }
+    button[type="submit"]:hover {
+      background: #3182ce;
+    }
+    .orders {
+      background: #f7fafc;
+      padding: 1rem;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+    }
+    .orders-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 0.75rem;
+    }
+    .order {
+      background: white;
+      border-radius: 8px;
+      padding: 0.75rem;
+      margin-bottom: 0.75rem;
+      border: 1px solid #e2e8f0;
+    }
+    .order-compact {
+      background: white;
+      border-radius: 8px;
+      padding: 0.6rem;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      transition: all 0.2s ease;
+    }
+    .order-compact:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    .order:last-child {
+      margin-bottom: 0;
+    }
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    .order-header-compact {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.4rem;
+    }
+    .order-restaurant {
+      font-size: 0.875rem;
+      color: #4299e1;
+      font-weight: 600;
+    }
+    .order-restaurant-compact {
+      font-size: 0.8rem;
+      color: #4299e1;
+      font-weight: 600;
+    }
+    .order-status {
+      font-size: 0.75rem;
+      color: #718096;
+      padding: 0.25rem 0.5rem;
+      background: #edf2f7;
+      border-radius: 4px;
+    }
+    .order-status-compact {
+      font-size: 0.65rem;
+      color: #718096;
+      padding: 0.2rem 0.4rem;
+      background: #edf2f7;
+      border-radius: 3px;
+    }
+    .order-customer {
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 0.5rem;
+    }
+    .order-customer-compact {
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 0.3rem;
+      font-size: 0.85rem;
+    }
+    .order-items {
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+      color: #4a5568;
+    }
+    .order-items-compact {
+      margin-bottom: 0.3rem;
+      font-size: 0.75rem;
+      color: #4a5568;
+    }
+    .order-notes {
+      font-size: 0.75rem;
+      color: #718096;
+      font-style: italic;
+      margin-bottom: 0.5rem;
+    }
+    .order-notes-compact {
+      font-size: 0.65rem;
+      color: #718096;
+      font-style: italic;
+      margin-bottom: 0.3rem;
+    }
+    .order-time {
+      font-size: 0.7rem;
+      color: #a0aec0;
+    }
+    .order-time-compact {
+      font-size: 0.6rem;
+      color: #a0aec0;
+    }
+    @media (max-width: 768px) {
+      .container {
+        margin: 0.5rem;
+        padding: 1rem;
+      }
+      .grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      .form-grid, .form-compact {
+        grid-template-columns: 1fr;
+      }
+      .popular-list {
+        grid-template-columns: 1fr;
+      }
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🍽️ Restaurant Orders</h1>
+    
+    <div class="grid">
+      <div class="section">
+        <h2>🏆 Popular Restaurants</h2>
+        <div class="popular-list" id="popularRestaurants"></div>
+      </div>
+      <div class="section">
+        <h2>🔥 Popular Orders</h2>
+        <div class="popular-list" id="popularOrders"></div>
+      </div>
+    </div>
+
+    <form id="orderForm">
+      <h2>📝 Create New Order</h2>
+      <div class="form-compact">
+        <label class="label-compact">Customer
+          <input type="text" id="customerName" class="input-compact" required />
+        </label>
+        <label class="label-compact">Restaurant
+          <select id="restaurantSelect" class="input-compact" required></select>
+        </label>
+        <label class="label-compact">Notes
+          <input type="text" id="notes" class="input-compact" placeholder="Optional..." />
+        </label>
+      </div>
+      
+      <div class="items-list items-list-compact" id="itemsList">
+        <label class="label-compact">Order Items</label>
+        <div class="item-row item-row-compact">
+          <input type="text" placeholder="Item name" class="item-name input-compact" required />
+          <input type="number" placeholder="Qty" class="item-qty input-compact" min="1" value="1" required />
+          <button type="button" onclick="removeItemRow(this)">×</button>
+        </div>
+      </div>
+      <button type="button" class="add-item-btn add-item-btn-compact" onclick="addItemRow()">+ Add Item</button>
+      
+      <button type="submit" class="submit-compact">🚀 Submit Order</button>
+    </form>
+
+    <div class="orders">
+      <h2>📋 All Orders</h2>
+      <div class="orders-grid" id="ordersList"></div>
+    </div>
+  </div>
+
+  <script>
+    // --- UI helpers ---
+    function addItemRow() {
+      const row = document.createElement('div');
+      row.className = 'item-row item-row-compact';
+      row.innerHTML = `
+        <input type="text" placeholder="Item name" class="item-name input-compact" required />
+        <input type="number" placeholder="Qty" class="item-qty input-compact" min="1" value="1" required />
+        <button type="button" onclick="removeItemRow(this)">×</button>
+      `;
+      document.getElementById('itemsList').appendChild(row);
+    }
+    function removeItemRow(btn) {
+      const row = btn.parentElement;
+      if (document.querySelectorAll('.item-row').length > 1) {
+        row.remove();
+      }
+    }
+    // --- Data loading ---
+    let restaurants = [];
+    let items = [];
+    let orders = [];
+    let reviews = [];
+    let stats = {};
+
+    // Granular loading functions
+    async function loadRestaurants() {
+      const res = await fetch('/api/practice/restaurant-order/v1/restaurants');
+      restaurants = await res.json();
+      const select = document.getElementById('restaurantSelect');
+      select.innerHTML = restaurants.map(r => `<option value="${r.id}">${r.image ? r.image + ' ' : ''}${r.name}</option>`).join('');
+    }
+
+    async function loadRestaurantCount() {
+      const res = await fetch('/api/practice/restaurant-order/v1/restaurants/count');
+      const data = await res.json();
+      console.log('Restaurant count:', data.count);
+    }
+
+    async function loadRestaurantStats() {
+      const res = await fetch('/api/practice/restaurant-order/v1/restaurants/stats');
+      const data = await res.json();
+      console.log('Restaurant stats:', data);
+    }
+
+    async function loadRestaurantsByCuisine(cuisine) {
+      const res = await fetch(`/api/practice/restaurant-order/v1/restaurants/by-cuisine?cuisine=${cuisine}`);
+      const data = await res.json();
+      console.log(`${cuisine} restaurants:`, data);
+    }
+
+    async function loadItems() {
+      const res = await fetch('/api/practice/restaurant-order/v1/items');
+      items = await res.json();
+    }
+
+    async function loadItemCount() {
+      const res = await fetch('/api/practice/restaurant-order/v1/items/count');
+      const data = await res.json();
+      console.log('Item count:', data.count);
+    }
+
+    async function loadItemStats() {
+      const res = await fetch('/api/practice/restaurant-order/v1/items/stats');
+      const data = await res.json();
+      console.log('Item stats:', data);
+    }
+
+    async function loadItemsByPriceRange(min, max) {
+      const res = await fetch(`/api/practice/restaurant-order/v1/items/by-price-range?min=${min}&max=${max}`);
+      const data = await res.json();
+      console.log(`Items between $${min}-$${max}:`, data);
+    }
+
+    async function loadOrders() {
+      const res = await fetch('/api/practice/restaurant-order/v1/orders');
+      orders = await res.json();
+      renderOrders();
+      renderPopularOrders();
+    }
+
+    async function loadOrderCount() {
+      const res = await fetch('/api/practice/restaurant-order/v1/orders/count');
+      const data = await res.json();
+      console.log('Order count:', data.count);
+    }
+
+    async function loadOrderStats() {
+      const res = await fetch('/api/practice/restaurant-order/v1/orders/stats');
+      const data = await res.json();
+      console.log('Order stats:', data);
+    }
+
+    async function loadOrdersByStatus(status) {
+      const res = await fetch(`/api/practice/restaurant-order/v1/orders/by-status?status=${status}`);
+      const data = await res.json();
+      console.log(`${status} orders:`, data);
+    }
+
+    async function loadOrdersByRestaurant(restaurantId) {
+      const res = await fetch(`/api/practice/restaurant-order/v1/orders/by-restaurant?restaurantId=${restaurantId}`);
+      const data = await res.json();
+      console.log(`Orders for restaurant ${restaurantId}:`, data);
+    }
+
+    async function loadReviews() {
+      const res = await fetch('/api/practice/restaurant-order/v1/reviews');
+      reviews = await res.json();
+    }
+
+    async function loadReviewCount() {
+      const res = await fetch('/api/practice/restaurant-order/v1/reviews/count');
+      const data = await res.json();
+      console.log('Review count:', data.count);
+    }
+
+    async function loadReviewStats() {
+      const res = await fetch('/api/practice/restaurant-order/v1/reviews/stats');
+      const data = await res.json();
+      console.log('Review stats:', data);
+    }
+
+    async function loadReviewsByRating(rating) {
+      const res = await fetch(`/api/practice/restaurant-order/v1/reviews/by-rating?rating=${rating}`);
+      const data = await res.json();
+      console.log(`${rating}-star reviews:`, data);
+    }
+
+    async function loadPendingOrderCount() {
+      const res = await fetch('/api/practice/restaurant-order/v1/orders/pending-count');
+      const data = await res.json();
+      console.log('Pending order count:', data.pendingCount);
+    }
+    async function loadCompletedOrderCount() {
+      const res = await fetch('/api/practice/restaurant-order/v1/orders/completed-count');
+      const data = await res.json();
+      console.log('Completed order count:', data.completedCount);
+    }
+    async function loadAverageItemPrice() {
+      if (items.length === 0) {
+        console.log('No items available for average price calculation');
+        return;
+      }
+      const firstItemId = items[0].id;
+      const res = await fetch(`/api/practice/restaurant-order/v1/items/${firstItemId}/average-price`);
+      const data = await res.json();
+      console.log('Average item price:', data.averagePrice);
+    }
+    async function loadAverageReviewRating() {
+      if (reviews.length === 0) {
+        console.log('No reviews available for average rating calculation');
+        return;
+      }
+      const firstReviewId = reviews[0].id;
+      const res = await fetch(`/api/practice/restaurant-order/v1/reviews/${firstReviewId}/average-rating`);
+      const data = await res.json();
+      console.log('Average review rating:', data.averageRating);
+    }
+    async function loadFirstRestaurant() {
+      const res = await fetch('/api/practice/restaurant-order/v1/restaurants/first');
+      const data = await res.json();
+      console.log('First restaurant:', data);
+    }
+
+    // --- Rendering ---
+    function renderOrders() {
+      const list = document.getElementById('ordersList');
+      if (!Array.isArray(orders) || orders.length === 0) {
+        list.innerHTML = '<em>No orders yet.</em>';
+        return;
+      }
+      // Sort orders by creation date (latest first)
+      const sortedOrders = [...orders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      
+      list.innerHTML = sortedOrders.map(order => {
+        // Convert both IDs to numbers for comparison
+        const orderRestaurantId = Number(order.restaurantId);
+        const rest = restaurants.find(r => Number(r.id) === orderRestaurantId);
+        return `
+          <div class="order-compact">
+            <div class="order-header-compact">
+              <span class="order-restaurant-compact">${rest ? (rest.image ? rest.image + ' ' : '') + rest.name : 'Unknown Restaurant'}</span>
+              <span class="order-status-compact">${order.status}</span>
+            </div>
+            <div class="order-customer-compact">#${order.id} - ${order.customerName}</div>
+            <div class="order-items-compact">
+              ${order.items.map(item => `<div>• ${item.name} × ${item.quantity}</div>`).join('')}
+            </div>
+            ${order.notes ? `<div class="order-notes-compact">📝 ${order.notes}</div>` : ''}
+            <div class="order-time-compact">${new Date(order.createdAt).toLocaleString()}</div>
+          </div>
+        `;
+      }).join('');
+    }
+    function renderPopularRestaurants() {
+      // Popularity: by number of orders, then avg rating
+      const orderCounts = {};
+      orders.forEach(o => { orderCounts[o.restaurantId] = (orderCounts[o.restaurantId] || 0) + 1; });
+      const avgRatings = {};
+      restaurants.forEach(r => {
+        const revs = reviews.filter(rv => Number(rv.restaurantId) === Number(r.id));
+        avgRatings[r.id] = revs.length ? (revs.reduce((a, b) => a + b.rating, 0) / revs.length).toFixed(1) : 'N/A';
+      });
+      const sorted = [...restaurants].sort((a, b) => (orderCounts[b.id]||0) - (orderCounts[a.id]||0));
+      
+      // Get 2 random restaurants from top 5
+      const top5 = sorted.slice(0, 5);
+      const random2 = top5.sort(() => Math.random() - 0.5).slice(0, 2);
+      
+      document.getElementById('popularRestaurants').innerHTML = random2.map(r => `
+        <div class="restaurant-card">
+          <div class="restaurant-emoji">${r.image || '🍽️'}</div>
+          <div class="restaurant-name">${r.name}</div>
+          <div class="restaurant-cuisine">${r.cuisine} • ${r.location}</div>
+          <div class="restaurant-rating">⭐ ${avgRatings[r.id]} (${reviews.filter(rv => Number(rv.restaurantId) === Number(r.id)).length} reviews)</div>
+          <div class="restaurant-orders">📦 ${orderCounts[r.id]||0} orders</div>
+          <div class="restaurant-desc">${r.description || ''}</div>
+        </div>
+      `).join('');
+    }
+    function renderPopularOrders() {
+      // Most popular = most items ordered (by quantity sum)
+      const sorted = [...orders].sort((a, b) => {
+        const sumA = a.items.reduce((s, i) => s + i.quantity, 0);
+        const sumB = b.items.reduce((s, i) => s + i.quantity, 0);
+        return sumB - sumA;
+      });
+      
+      // Get 2 random orders from top 5
+      const top5 = sorted.slice(0, 5);
+      const random2 = top5.sort(() => Math.random() - 0.5).slice(0, 2);
+      
+      document.getElementById('popularOrders').innerHTML = random2.map(order => {
+        // Convert both IDs to numbers for comparison
+        const orderRestaurantId = Number(order.restaurantId);
+        const rest = restaurants.find(r => Number(r.id) === orderRestaurantId);
+        return `
+          <div class="restaurant-card">
+            <div class="restaurant-emoji">${rest ? rest.image : '🍽️'}</div>
+            <div class="restaurant-name">${rest ? rest.name : 'Unknown Restaurant'}</div>
+            <div class="restaurant-cuisine">👤 ${order.customerName}</div>
+            <div class="restaurant-orders">${order.items.map(i => `${i.name} ×${i.quantity}`).join(', ')}</div>
+            <div class="restaurant-desc">Status: ${order.status}</div>
+            <div class="order-time">${new Date(order.createdAt).toLocaleString()}</div>
+          </div>
+        `;
+      }).join('');
+    }
+    // --- Form logic ---
+    document.getElementById('orderForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const customerName = document.getElementById('customerName').value.trim();
+      const notes = document.getElementById('notes').value.trim();
+      const restaurantId = parseInt(document.getElementById('restaurantSelect').value, 10);
+      const itemRows = document.querySelectorAll('.item-row');
+      const itemsArr = [];
+      for (const row of itemRows) {
+        const name = row.querySelector('.item-name').value.trim();
+        const qty = parseInt(row.querySelector('.item-qty').value, 10);
+        if (name && qty > 0) {
+          itemsArr.push({ name, quantity: qty });
+        }
+      }
+      if (!customerName || itemsArr.length === 0 || !restaurantId) {
+        alert('Please enter customer name, select restaurant, and add at least one item.');
+        return;
+      }
+      const order = { customerName, items: itemsArr, notes, restaurantId };
+      try {
+        const res = await fetch('/api/practice/restaurant-order/v1/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(order)
+        });
+        if (!res.ok) throw new Error('Failed to create order');
+        document.getElementById('orderForm').reset();
+        // Remove extra item rows except the first
+        const rows = document.querySelectorAll('.item-row');
+        for (let i = 1; i < rows.length; ++i) rows[i].remove();
+        await loadOrders();
+        renderPopularRestaurants();
+       
+        // Trigger granular API calls after order creation (normal app flow)
+        await loadPendingOrderCount();
+        await loadCompletedOrderCount();
+        await loadOrderStats();
+        
+        // Trigger error testing after order creation (for testing robustness)
+      } catch (err) {
+        alert('Error: ' + err.message);
+      }
+    });
+    // --- Initial load ---
+    (async function() {
+      await loadRestaurants();
+      await loadItems();
+      await loadReviews();
+      await loadOrders();
+      renderPopularRestaurants();
+     
+      // Trigger some granular API calls during normal app initialization
+      await loadRestaurantCount();
+      await loadOrderCount();
+      await loadAverageItemPrice();
+      await loadAverageReviewRating();
+    })();
+  </script>
+</body>
+</html> 

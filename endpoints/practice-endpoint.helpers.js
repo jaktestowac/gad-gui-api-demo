@@ -28,6 +28,7 @@ const {
   deleteItem,
 } = require("./practice/file-system-handlers");
 const hotelHandlers = require("./practice/hotel-handlers");
+const { orderV1, restaurantV1, itemV1, reviewV1 } = require("./practice/order-handlers");
 
 function isIdValid(id) {
   return id !== undefined && id !== "";
@@ -608,6 +609,130 @@ function handlePractice(req, res) {
         // Get default hotel configuration
         case req.method === "GET" && url.endsWith("/api/practice/v1/hotels/configuration/default"):
           return hotelHandlers.getDefaultHotelConfiguration(req, res);
+      }
+    }
+
+    // Order v1 endpoints (path changed from /api/practice/v1/orders)
+    if (req.url.includes("/api/practice/restaurant-order/v1/orders")) {
+      const url = req.url;
+      const id = url.split("/api/practice/restaurant-order/v1/orders")[1]?.split("/")[1];
+      switch (true) {
+        case req.method === "GET" && req.url.endsWith("/pending-count"):
+          return orderV1.getPendingCount(req, res);
+        case req.method === "GET" && req.url.endsWith("/completed-count"):
+          return orderV1.getCompletedCount(req, res);
+        case req.method === "GET" && req.url.endsWith("/count"):
+          return orderV1.getCount(req, res);
+        case req.method === "GET" && req.url.endsWith("/stats"):
+          return orderV1.getStats(req, res);
+        case req.method === "GET" && req.url.includes("/by-status"):
+          return orderV1.getByStatus(req, res);
+        case req.method === "GET" && req.url.includes("/by-restaurant"):
+          return orderV1.getByRestaurant(req, res);
+        case req.method === "GET" && req.url.endsWith("/error"):
+          return orderV1.getWithError(req, res);
+        case req.method === "GET" && !isIdValid(id):
+          return orderV1.getAll(req, res);
+        case req.method === "POST" && req.url.endsWith("/error"):
+          return orderV1.createWithError(req, res);
+        case req.method === "POST" && !isIdValid(id):
+          return orderV1.create(req, res);
+        case req.method === "PUT" && isIdValid(id):
+          return orderV1.update(req, res, id);
+        case req.method === "DELETE" && isIdValid(id):
+          return orderV1.delete(req, res, id);
+        default:
+          return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
+      }
+    }
+
+    // Restaurant v1 endpoints (newly added, path changed from /api/practice/v1/restaurants)
+    if (req.url.includes("/api/practice/restaurant-order/v1/restaurants")) {
+      const url = req.url;
+      const id = url.split("/api/practice/restaurant-order/v1/restaurants")[1]?.split("/")[1];
+      switch (true) {
+        case req.method === "GET" && req.url.endsWith("/first"):
+          return restaurantV1.getFirst(req, res);
+        case req.method === "GET" && req.url.endsWith("/count"):
+          return restaurantV1.getCount(req, res);
+        case req.method === "GET" && req.url.endsWith("/stats"):
+          return restaurantV1.getStats(req, res);
+        case req.method === "GET" && req.url.includes("/by-cuisine"):
+          return restaurantV1.getByCuisine(req, res);
+        case req.method === "GET" && req.url.includes("/by-location"):
+          return restaurantV1.getByLocation(req, res);
+        case req.method === "GET" && req.url.endsWith("/error"):
+          return restaurantV1.getWithError(req, res);
+        case req.method === "GET" && !isIdValid(id):
+          return restaurantV1.getAll(req, res);
+        case req.method === "GET" && isIdValid(id):
+          return restaurantV1.getOne(req, res, id);
+        case req.method === "POST" && !isIdValid(id):
+          return restaurantV1.create(req, res);
+        case req.method === "PUT" && isIdValid(id):
+          return restaurantV1.update(req, res, id);
+        case req.method === "DELETE" && isIdValid(id):
+          return restaurantV1.delete(req, res, id);
+        default:
+          return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
+      }
+    }
+    // Item v1 endpoints (newly added, path changed from /api/practice/v1/items)
+    if (req.url.includes("/api/practice/restaurant-order/v1/items")) {
+      const url = req.url;
+      const id = url.split("/api/practice/restaurant-order/v1/items")[1]?.split("/")[1];
+      switch (true) {
+        case req.method === "GET" && isIdValid(id) && req.url.endsWith("/average-price"):
+          return itemV1.getAveragePrice(req, res, id);
+        case req.method === "GET" && req.url.endsWith("/count"):
+          return itemV1.getCount(req, res);
+        case req.method === "GET" && req.url.endsWith("/stats"):
+          return itemV1.getStats(req, res);
+        case req.method === "GET" && req.url.includes("/by-price-range"):
+          return itemV1.getByPriceRange(req, res);
+        case req.method === "GET" && req.url.endsWith("/error"):
+          return itemV1.getWithError(req, res);
+        case req.method === "GET" && !isIdValid(id):
+          return itemV1.getAll(req, res);
+        case req.method === "GET" && isIdValid(id):
+          return itemV1.getOne(req, res, id);
+        case req.method === "POST" && !isIdValid(id):
+          return itemV1.create(req, res);
+        case req.method === "PUT" && isIdValid(id):
+          return itemV1.update(req, res, id);
+        case req.method === "DELETE" && isIdValid(id):
+          return itemV1.delete(req, res, id);
+        default:
+          return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
+      }
+    }
+    // Review v1 endpoints (newly added, path changed from /api/practice/v1/reviews)
+    if (req.url.includes("/api/practice/restaurant-order/v1/reviews")) {
+      const url = req.url;
+      const id = url.split("/api/practice/restaurant-order/v1/reviews")[1]?.split("/")[1];
+      switch (true) {
+        case req.method === "GET" && isIdValid(id) && req.url.endsWith("/average-rating"):
+          return reviewV1.getAverageRating(req, res, id);
+        case req.method === "GET" && req.url.endsWith("/count"):
+          return reviewV1.getCount(req, res);
+        case req.method === "GET" && req.url.endsWith("/stats"):
+          return reviewV1.getStats(req, res);
+        case req.method === "GET" && req.url.includes("/by-rating"):
+          return reviewV1.getByRating(req, res);
+        case req.method === "GET" && req.url.endsWith("/error"):
+          return reviewV1.getWithError(req, res);
+        case req.method === "GET" && !isIdValid(id):
+          return reviewV1.getAll(req, res);
+        case req.method === "GET" && isIdValid(id):
+          return reviewV1.getOne(req, res, id);
+        case req.method === "POST" && !isIdValid(id):
+          return reviewV1.create(req, res);
+        case req.method === "PUT" && isIdValid(id):
+          return reviewV1.update(req, res, id);
+        case req.method === "DELETE" && isIdValid(id):
+          return reviewV1.delete(req, res, id);
+        default:
+          return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
       }
     }
 
