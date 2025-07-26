@@ -1,8 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Restaurant Order</title>
+    <title>🦎 GAD - Restaurant Order</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <meta charset="UTF-8">
   <style>
     * {
       box-sizing: border-box;
@@ -36,6 +42,61 @@
       margin: 0 0 1rem 0;
       font-size: 1.25rem;
       font-weight: 600;
+    }
+    
+    /* Enhanced styling for Create New Order heading */
+    .create-order-heading {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      margin: 0 0 1.5rem 0;
+      font-size: 1.4rem;
+      font-weight: 700;
+      text-align: center;
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .create-order-heading::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+    
+    .create-order-heading:hover::before {
+      left: 100%;
+    }
+    
+    .create-order-heading:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+    }
+    
+    .create-order-heading .emoji {
+      font-size: 1.6rem;
+      margin-right: 0.5rem;
+      display: inline-block;
+      animation: bounce 2s infinite;
+    }
+    
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-5px);
+      }
+      60% {
+        transform: translateY(-3px);
+      }
     }
     .grid {
       display: grid;
@@ -107,136 +168,265 @@
       color: #a0aec0;
       line-height: 1.3;
     }
+    /* Enhanced Form Design */
     form {
-      background: #f7fafc;
-      padding: 1rem;
-      border-radius: 12px;
-      border: 1px solid #e2e8f0;
-      margin-bottom: 1.5rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 2rem;
+      border-radius: 20px;
+      border: none;
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 40px rgba(102, 126, 234, 0.15);
+      position: relative;
+      overflow: hidden;
     }
+    
+    form::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+      border-radius: 20px;
+      pointer-events: none;
+    }
+    
+    form::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
+      animation: float 6s ease-in-out infinite;
+      pointer-events: none;
+    }
+    
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+      }
+      50% {
+        transform: translateY(-20px) rotate(180deg);
+      }
+    }
+    
     .form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
-      margin-bottom: 0.75rem;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+      position: relative;
+      z-index: 1;
     }
     .form-compact {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
-      gap: 0.5rem;
-      margin-bottom: 0.5rem;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+      position: relative;
+      z-index: 1;
     }
     label {
       display: block;
-      margin-bottom: 0.25rem;
-      font-weight: 500;
-      color: #4a5568;
-      font-size: 0.875rem;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: white;
+      font-size: 0.9rem;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      position: relative;
+      z-index: 1;
     }
     .label-compact {
-      margin-bottom: 0.15rem;
-      font-size: 0.8rem;
+      margin-bottom: 0.4rem;
+      font-size: 0.85rem;
     }
     input[type="text"], input[type="number"], select {
       width: 100%;
-      padding: 0.5rem;
-      border: 1px solid #e2e8f0;
-      border-radius: 6px;
-      font-size: 0.875rem;
-      background: white;
-      transition: border-color 0.2s ease;
+      padding: 0.75rem 1rem;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 12px;
+      font-size: 0.9rem;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      color: #2d3748;
+      font-weight: 500;
+      position: relative;
+      z-index: 1;
     }
     .input-compact {
-      padding: 0.35rem;
-      font-size: 0.8rem;
+      padding: 0.6rem 0.8rem;
+      font-size: 0.85rem;
     }
     input[type="text"]:focus, input[type="number"]:focus, select:focus {
-      border-color: #4299e1;
+      border-color: rgba(255, 255, 255, 0.8);
       outline: none;
-      box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+      box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 1);
+      transform: translateY(-1px);
+    }
+    input[type="text"]:hover, input[type="number"]:hover, select:hover {
+      border-color: rgba(255, 255, 255, 0.5);
+      background: rgba(255, 255, 255, 0.98);
+    }
+    
+    input::placeholder {
+      color: #a0aec0;
+      font-style: italic;
+    }
+    
+    select option {
+      background: white;
+      color: #2d3748;
+      padding: 0.5rem;
+    }
+    
+    /* Enhanced form section styling */
+    .form-section {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .form-section::before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      right: -10px;
+      bottom: -10px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
+      border-radius: 16px;
+      z-index: -1;
     }
     .items-list {
-      margin-bottom: 0.75rem;
+      margin-bottom: 1.5rem;
+      position: relative;
+      z-index: 1;
     }
     .items-list-compact {
-      margin-bottom: 0.5rem;
+      margin-bottom: 1rem;
     }
     .item-row {
       display: grid;
       grid-template-columns: 1fr auto auto;
-      gap: 0.5rem;
-      margin-bottom: 0.5rem;
+      gap: 1rem;
+      margin-bottom: 1rem;
       align-items: center;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 1rem;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(5px);
+      transition: all 0.3s ease;
     }
     .item-row-compact {
-      gap: 0.35rem;
-      margin-bottom: 0.35rem;
+      gap: 0.8rem;
+      margin-bottom: 0.8rem;
+      padding: 0.8rem;
+    }
+    .item-row:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-1px);
     }
     .item-row input {
       margin: 0;
     }
     .item-row button {
-      background: #e53e3e;
+      background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
       color: white;
       border: none;
-      border-radius: 4px;
+      border-radius: 8px;
       padding: 0.5rem;
       cursor: pointer;
-      font-size: 0.75rem;
-      transition: background 0.2s ease;
-      width: 32px;
-      height: 32px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      width: 36px;
+      height: 36px;
       display: flex;
       align-items: center;
       justify-content: center;
+      box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
     }
     .item-row-compact button {
-      width: 28px;
-      height: 28px;
-      padding: 0.35rem;
-      font-size: 0.7rem;
+      width: 32px;
+      height: 32px;
+      padding: 0.4rem;
+      font-size: 0.75rem;
     }
     .item-row button:hover {
-      background: #c53030;
+      background: linear-gradient(135deg, #ff5252 0%, #d32f2f 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(255, 107, 107, 0.4);
     }
     .add-item-btn {
-      background: #48bb78;
+      background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
       color: white;
       border: none;
-      border-radius: 6px;
-      padding: 0.5rem 1rem;
-      font-size: 0.875rem;
+      border-radius: 12px;
+      padding: 0.75rem 1.5rem;
+      font-size: 0.9rem;
       cursor: pointer;
-      font-weight: 500;
-      transition: background 0.2s ease;
-      margin-bottom: 0.75rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 12px rgba(74, 222, 128, 0.3);
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
     }
     .add-item-btn-compact {
-      padding: 0.35rem 0.75rem;
-      font-size: 0.8rem;
-      margin-bottom: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
     }
     .add-item-btn:hover {
-      background: #38a169;
+      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(74, 222, 128, 0.4);
+    }
+    .add-item-btn:active {
+      transform: translateY(0);
     }
     button[type="submit"] {
-      background: #4299e1;
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
       color: white;
       border: none;
-      border-radius: 6px;
-      padding: 0.75rem 1.5rem;
+      border-radius: 16px;
+      padding: 1rem 2rem;
       cursor: pointer;
-      font-size: 0.875rem;
-      font-weight: 600;
-      transition: background 0.2s ease;
+      font-size: 1rem;
+      font-weight: 700;
+      transition: all 0.3s ease;
       width: 100%;
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+      position: relative;
+      z-index: 1;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
     }
     .submit-compact {
-      padding: 0.5rem 1rem;
-      font-size: 0.8rem;
+      padding: 0.8rem 1.5rem;
+      font-size: 0.9rem;
     }
     button[type="submit"]:hover {
-      background: #3182ce;
+      background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 25px rgba(59, 130, 246, 0.4);
+    }
+    button[type="submit"]:active {
+      transform: translateY(-1px);
     }
     .orders {
       background: #f7fafc;
@@ -691,6 +881,14 @@
   </style>
 </head>
 <body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
   <div class="container">
     <h1>🍽️ Restaurant Orders</h1>
     
@@ -706,28 +904,33 @@
     </div>
 
     <form id="orderForm">
-      <h2>📝 Create New Order</h2>
-      <div class="form-compact">
-        <label class="label-compact">Customer
-          <input type="text" id="customerName" class="input-compact" required />
-        </label>
-        <label class="label-compact">Restaurant
-          <select id="restaurantSelect" class="input-compact" required></select>
-        </label>
-        <label class="label-compact">Notes
-          <input type="text" id="notes" class="input-compact" placeholder="Optional..." />
-        </label>
-      </div>
+      <h2 class="create-order-heading"><span class="emoji">📝</span>Create New Order</h2>
       
-      <div class="items-list items-list-compact" id="itemsList">
-        <label class="label-compact">Order Items</label>
-        <div class="item-row item-row-compact">
-          <input type="text" placeholder="Item name" class="item-name input-compact" required />
-          <input type="number" placeholder="Qty" class="item-qty input-compact" min="1" value="1" required />
-          <button type="button" onclick="removeItemRow(this)">×</button>
+      <div class="form-section">
+        <div class="form-compact">
+          <label class="label-compact">Customer
+            <input type="text" id="customerName" class="input-compact" required />
+          </label>
+          <label class="label-compact">Restaurant
+            <select id="restaurantSelect" class="input-compact" required></select>
+          </label>
+          <label class="label-compact">Notes
+            <input type="text" id="notes" class="input-compact" placeholder="Optional..." />
+          </label>
         </div>
       </div>
-      <button type="button" class="add-item-btn add-item-btn-compact" onclick="addItemRow()">+ Add Item</button>
+      
+      <div class="form-section">
+        <div class="items-list items-list-compact" id="itemsList">
+          <label class="label-compact">Order Items</label>
+          <div class="item-row item-row-compact">
+            <input type="text" placeholder="Item name" class="item-name input-compact" required />
+            <input type="number" placeholder="Qty" class="item-qty input-compact" min="1" value="1" required />
+            <button type="button" onclick="removeItemRow(this)">×</button>
+          </div>
+        </div>
+        <button type="button" class="add-item-btn add-item-btn-compact" onclick="addItemRow()">+ Add Item</button>
+      </div>
       
       <button type="submit" class="submit-compact">🚀 Submit Order</button>
     </form>
@@ -1140,6 +1343,14 @@
       const popupContent = document.getElementById('popupContent');
       popupContent.innerHTML = '<div class="popup-loading">Loading restaurant details...</div>';
       
+      // Make a background API request that will return 500 error (using invalid ID)
+      // This request won't affect the UI since we don't await it and handle errors silently
+      fetch('/api/practice/restaurant-order/v1/items/undefined', { method: 'GET' })
+        .catch(error => {
+          // Silently handle the error - this won't affect the UI
+          console.log('Background API request failed as expected:', error);
+        });
+      
       try {
         // Make multiple API calls to get comprehensive restaurant data
         const [restaurant, restaurantOrders, restaurantStats] = await Promise.all([
@@ -1242,6 +1453,14 @@
       const popupContent = document.getElementById('popupContent');
       popupContent.innerHTML = '<div class="popup-loading">Loading order details...</div>';
       
+      // Make a background API request that will return 500 error (using invalid ID)
+      // This request won't affect the UI since we don't await it and handle errors silently
+      fetch('/api/practice/restaurant-order/v1/items/null', { method: 'GET' })
+        .catch(error => {
+          // Silently handle the error - this won't affect the UI
+          console.log('Background API request failed as expected:', error);
+        });
+      
       try {
         // First fetch the order to get the restaurant ID
         const order = await fetch(`/api/practice/restaurant-order/v1/orders/${orderId}`).then(r => r.json());
@@ -1342,4 +1561,7 @@
     })();
   </script>
 </body>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
 </html> 
