@@ -72,6 +72,23 @@ let items = [
   { id: 8, restaurantId: 4, name: "Garlic Naan", price: 2.5 },
   { id: 9, restaurantId: 5, name: "Beef Taco", price: 3.0 },
   { id: 10, restaurantId: 5, name: "Chicken Burrito", price: 7.0 },
+  { id: 11, restaurantId: 1, name: "Penne Arrabbiata", price: 12.0 },
+  { id: 12, restaurantId: 2, name: "Eel Avocado Roll", price: 6.0 },
+  { id: 13, restaurantId: 3, name: "BBQ Bacon Burger", price: 10.0 },
+  { id: 14, restaurantId: 4, name: "Paneer Butter Masala", price: 11.0 },
+  { id: 15, restaurantId: 5, name: "Fish Tacos", price: 4.5 },
+  { id: 16, restaurantId: 1, name: "Fettuccine Alfredo", price: 13.5 },
+  { id: 17, restaurantId: 2, name: "Spicy Tuna Roll", price: 5.5 },
+  { id: 18, restaurantId: 3, name: "Veggie Burger", price: 8.0 },
+  { id: 19, restaurantId: 4, name: "Lamb Vindaloo", price: 14.0 },
+  { id: 20, restaurantId: 5, name: "Chili Con Carne", price: 6.0 },
+  { id: 21, restaurantId: 1, name: "Ravioli di Ricotta", price: 15.0 },
+  { id: 22, restaurantId: 2, name: "California Roll", price: 4.0 },
+  { id: 23, restaurantId: 3, name: "Mushroom Swiss Burger", price: 9.5 },
+  { id: 24, restaurantId: 4, name: "Vegetable Biryani", price: 10.0 },
+  { id: 25, restaurantId: 5, name: "Quesadilla", price: 5.0 },
+  { id: 26, restaurantId: 1, name: "Gnocchi al Pesto", price: 14.0 },
+  { id: 27, restaurantId: 2, name: "Tempura Udon", price: 7.0 },
 ];
 let reviews = [
   { id: 1, restaurantId: 1, user: "Alice", rating: 5, comment: "Amazing pasta!" },
@@ -81,6 +98,29 @@ let reviews = [
   { id: 5, restaurantId: 5, user: "Eve", rating: 5, comment: "Tacos are delicious!" },
   { id: 6, restaurantId: 1, user: "Frank", rating: 4, comment: "Nice ambiance." },
   { id: 7, restaurantId: 2, user: "Grace", rating: 5, comment: "Loved the rolls." },
+  { id: 8, restaurantId: 3, user: "Hank", rating: 3, comment: "Burger was okay." },
+  { id: 9, restaurantId: 4, user: "Ivy", rating: 5, comment: "Best naan ever!" },
+  { id: 10, restaurantId: 5, user: "Jack", rating: 4, comment: "Burrito was tasty." },
+  { id: 11, restaurantId: 1, user: "Liam", rating: 5, comment: "Loved the ravioli!" },
+  { id: 12, restaurantId: 2, user: "Mia", rating: 4, comment: "California roll was fresh." },
+  { id: 13, restaurantId: 3, user: "Noah", rating: 5, comment: "Mushroom Swiss burger is a must-try." },
+  { id: 14, restaurantId: 4, user: "Olivia", rating: 4, comment: "Vegetable biryani was flavorful." },
+  { id: 15, restaurantId: 5, user: "Liam", rating: 5, comment: "Quesadilla was cheesy and good." },
+  { id: 16, restaurantId: 1, user: "Emma", rating: 5, comment: "Gnocchi al pesto was heavenly." },
+  { id: 17, restaurantId: 2, user: "Oliver", rating: 5, comment: "Tempura udon was crispy and delicious." },
+  { id: 18, restaurantId: 3, user: "Ava", rating: 4, comment: "Veggie burger was tasty." },
+  { id: 19, restaurantId: 4, user: "Sophia", rating: 5, comment: "Lamb vindaloo was spicy and rich." },
+  { id: 20, restaurantId: 5, user: "James", rating: 4, comment: "Chili con carne was hearty." },
+  { id: 21, restaurantId: 1, user: "Isabella", rating: 5, comment: "Ravioli di ricotta was perfect." },
+  { id: 22, restaurantId: 2, user: "Lucas", rating: 3, comment: "California roll was average." },
+  { id: 23, restaurantId: 3, user: "Mason", rating: 2, comment: "Mushroom Swiss burger was bland." },
+  { id: 24, restaurantId: 4, user: "Amelia", rating: 3, comment: "Vegetable biryani was okay." },
+  { id: 25, restaurantId: 5, user: "Ethan", rating: 4, comment: "Quesadilla was good but could be better." },
+  { id: 26, restaurantId: 1, user: "Charlotte", rating: 3, comment: "Gnocchi al pesto was too oily." },
+  { id: 27, restaurantId: 2, user: "Aiden", rating: 2, comment: "Tempura udon was soggy." },
+  { id: 28, restaurantId: 3, user: "Harper", rating: 4, comment: "Veggie burger was decent." },
+  { id: 29, restaurantId: 4, user: "Ella", rating: 3, comment: "Lamb vindaloo was too spicy." },
+  { id: 30, restaurantId: 5, user: "Alexander", rating: 4, comment: "Chili con carne was flavorful." },
 ];
 let orders = [
   {
@@ -148,8 +188,8 @@ let orders = [
 ];
 let nextOrderId = 6;
 let nextRestaurantId = 6;
-let nextItemId = 11;
-let nextReviewId = 8;
+let nextItemId = 28;
+let nextReviewId = 31;
 
 const orderV1 = {
   getAll: (req, res) => {
