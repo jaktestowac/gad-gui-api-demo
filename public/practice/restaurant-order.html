@@ -239,6 +239,14 @@
       position: relative;
       z-index: 1;
     }
+    
+    /* Mandatory field indicator */
+    .required-field::before {
+      content: '* ';
+      color: #ff6b6b;
+      font-weight: 1000;
+      font-size: 1.1em;
+    }
     .label-compact {
       margin-bottom: 0.4rem;
       font-size: 0.85rem;
@@ -908,31 +916,31 @@
       
       <div class="form-section">
         <div class="form-compact">
-          <label class="label-compact">Customer
-            <input type="text" id="customerName" class="input-compact" required />
+          <label class="label-compact required-field">Customer
+            <input type="text" id="customerName" data-testid="customer-name-input" class="input-compact" required />
           </label>
-          <label class="label-compact">Restaurant
-            <select id="restaurantSelect" class="input-compact" required></select>
+          <label class="label-compact required-field">Restaurant
+            <select id="restaurantSelect" data-testid="restaurant-select" class="input-compact" required></select>
           </label>
           <label class="label-compact">Notes
-            <input type="text" id="notes" class="input-compact" placeholder="Optional..." />
+            <input type="text" id="notes" data-testid="notes-input" class="input-compact" placeholder="Optional..." />
           </label>
         </div>
       </div>
       
       <div class="form-section">
         <div class="items-list items-list-compact" id="itemsList">
-          <label class="label-compact">Order Items</label>
+          <label class="label-compact required-field">Order Items</label>
           <div class="item-row item-row-compact">
-            <input type="text" placeholder="Item name" class="item-name input-compact" required />
-            <input type="number" placeholder="Qty" class="item-qty input-compact" min="1" value="1" required />
-            <button type="button" onclick="removeItemRow(this)">×</button>
+            <input type="text" id="item-name-1" data-testid="item-name-input-1" placeholder="Item name" class="item-name input-compact" required />
+            <input type="number" id="item-qty-1" data-testid="item-qty-input-1" placeholder="Qty" class="item-qty input-compact" min="1" value="1" required />
+            <button type="button" id="remove-item-1" data-testid="remove-item-btn-1" onclick="removeItemRow(this)">×</button>
           </div>
         </div>
-        <button type="button" class="add-item-btn add-item-btn-compact" onclick="addItemRow()">+ Add Item</button>
+        <button type="button" id="add-item-btn" data-testid="add-item-btn" class="add-item-btn add-item-btn-compact" onclick="addItemRow()">+ Add Item</button>
       </div>
       
-      <button type="submit" class="submit-compact">🚀 Submit Order</button>
+      <button type="submit" id="submit-order-btn" data-testid="submit-order-btn" class="submit-compact">🚀 Submit Order</button>
     </form>
 
     <div class="orders">
@@ -944,7 +952,7 @@
   <!-- Popup Modal -->
   <div class="popup-overlay" id="popupOverlay">
     <div class="popup-content">
-      <button class="popup-close" onclick="closePopup()">×</button>
+      <button class="popup-close" id="popup-close-btn" data-testid="popup-close-btn" onclick="closePopup()">×</button>
       <div id="popupContent">
         <div class="popup-loading">Loading details...</div>
       </div>
@@ -956,10 +964,15 @@
     function addItemRow() {
       const row = document.createElement('div');
       row.className = 'item-row item-row-compact';
+      
+      // Count existing rows to generate unique IDs
+      const existingRows = document.querySelectorAll('.item-row');
+      const newRowNumber = existingRows.length + 1;
+      
       row.innerHTML = `
-        <input type="text" placeholder="Item name" class="item-name input-compact" required />
-        <input type="number" placeholder="Qty" class="item-qty input-compact" min="1" value="1" required />
-        <button type="button" onclick="removeItemRow(this)">×</button>
+        <input type="text" id="item-name-${newRowNumber}" data-testid="item-name-input-${newRowNumber}" placeholder="Item name" class="item-name input-compact" required />
+        <input type="number" id="item-qty-${newRowNumber}" data-testid="item-qty-input-${newRowNumber}" placeholder="Qty" class="item-qty input-compact" min="1" value="1" required />
+        <button type="button" id="remove-item-${newRowNumber}" data-testid="remove-item-btn-${newRowNumber}" onclick="removeItemRow(this)">×</button>
       `;
       document.getElementById('itemsList').appendChild(row);
     }
