@@ -1204,12 +1204,12 @@
       // Sort orders by creation date (latest first)
       const sortedOrders = [...orders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       
-      list.innerHTML = sortedOrders.map(order => {
+      list.innerHTML = sortedOrders.map((order, index) => {
         // Convert both IDs to numbers for comparison
         const orderRestaurantId = Number(order.restaurantId);
         const rest = restaurants.find(r => Number(r.id) === orderRestaurantId);
         return `
-          <div class="order-compact clickable" onclick="showOrderDetails(${order.id})">
+          <div class="order-compact clickable" id="order-card-${index + 1}" data-testid="order-card-${index + 1}" onclick="showOrderDetails(${order.id})">
             <div class="order-header-compact">
               <span class="order-restaurant-compact">${rest ? (rest.image ? rest.image + ' ' : '') + rest.name : 'Unknown Restaurant'}</span>
               <span class="order-status-compact">${order.status}</span>
@@ -1241,8 +1241,8 @@
       const top5 = sorted.slice(0, 5);
       const random2 = top5.sort(() => Math.random() - 0.5).slice(0, 2);
       
-      document.getElementById('popularRestaurants').innerHTML = random2.map(r => `
-        <div class="restaurant-card clickable" onclick="showRestaurantDetails(${r.id})">
+      document.getElementById('popularRestaurants').innerHTML = random2.map((r, index) => `
+        <div class="restaurant-card clickable" id="restaurant-card-${index + 1}" data-testid="restaurant-card-${index + 1}" onclick="showRestaurantDetails(${r.id})">
           <div class="restaurant-emoji">${r.image || '🍽️'}</div>
           <div class="restaurant-name">${r.name}</div>
           <div class="restaurant-cuisine">${r.cuisine} • ${r.location}</div>
@@ -1264,12 +1264,12 @@
       const top5 = sorted.slice(0, 5);
       const random2 = top5.sort(() => Math.random() - 0.5).slice(0, 2);
       
-      document.getElementById('popularOrders').innerHTML = random2.map(order => {
+      document.getElementById('popularOrders').innerHTML = random2.map((order, index) => {
         // Convert both IDs to numbers for comparison
         const orderRestaurantId = Number(order.restaurantId);
         const rest = restaurants.find(r => Number(r.id) === orderRestaurantId);
         return `
-          <div class="restaurant-card clickable" onclick="showOrderDetails(${order.id})">
+          <div class="restaurant-card clickable" id="popular-order-card-${index + 1}" data-testid="popular-order-card-${index + 1}" onclick="showOrderDetails(${order.id})">
             <div class="restaurant-emoji">${rest ? rest.image : '🍽️'}</div>
             <div class="restaurant-name">Order ${order.orderId || `#${order.id}`}</div>
             <div class="restaurant-cuisine">${rest ? rest.name : 'Unknown Restaurant'}</div>
@@ -1312,6 +1312,8 @@
         document.getElementById('orderForm').reset();
         // Remove extra item rows except the first
         const rows = document.querySelectorAll('.item-row');
+        const buggyReviewId = 'undefined';
+        const buggyReviewResponse = await fetch(`/api/practice/restaurant-order/v1/reviews/${buggyReviewId}`);
         for (let i = 1; i < rows.length; ++i) rows[i].remove();
         await loadOrders();
         renderPopularRestaurants();
@@ -1321,8 +1323,6 @@
         await loadCompletedOrderCount();
         await loadOrderStats();
         
-        const buggyReviewId = 'undefined';
-        const buggyReviewResponse = await fetch(`/api/practice/restaurant-order/v1/reviews/${buggyReviewId}`);
       } catch (err) {
         console.error('Error creating order:', err);
       }
@@ -1351,6 +1351,7 @@
     });
     
     async function showRestaurantDetails(restaurantId) {
+      console.error('Entering restaurant card details for restaurant ID:', restaurantId);
       showPopup();
       const popupContent = document.getElementById('popupContent');
       popupContent.innerHTML = '<div class="popup-loading">Loading restaurant details...</div>';
@@ -1461,6 +1462,7 @@
     }
     
     async function showOrderDetails(orderId) {
+      console.error('Entering order card details for order ID:', orderId);
       showPopup();
       const popupContent = document.getElementById('popupContent');
       popupContent.innerHTML = '<div class="popup-loading">Loading order details...</div>';
