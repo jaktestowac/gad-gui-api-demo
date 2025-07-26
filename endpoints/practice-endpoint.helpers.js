@@ -651,6 +651,26 @@ function handlePractice(req, res) {
       const url = req.url;
       const id = url.split("/api/practice/restaurant-order/v1/restaurants")[1]?.split("/")[1];
       switch (true) {
+        case req.method === "GET" && req.url.endsWith("/featured"):
+          return restaurantV1.getFeatured(req, res);
+        case req.method === "GET" && req.url.endsWith("/busy"):
+          return restaurantV1.getBusy(req, res);
+        case req.method === "GET" && req.url.endsWith("/expensive"):
+          return restaurantV1.getExpensive(req, res);
+        case req.method === "GET" && req.url.endsWith("/cheap"):
+          return restaurantV1.getCheap(req, res);
+        case req.method === "GET" && req.url.endsWith("/recent"):
+          return restaurantV1.getRecent(req, res);
+        case req.method === "GET" && req.url.endsWith("/popular-items"):
+          return restaurantV1.getPopularItems(req, res);
+        case req.method === "GET" && req.url.endsWith("/active"):
+          return restaurantV1.getActive(req, res);
+        case req.method === "GET" && req.url.endsWith("/trending"):
+          return restaurantV1.getTrending(req, res);
+        case req.method === "GET" && req.url.endsWith("/quiet"):
+          return restaurantV1.getQuiet(req, res);
+        case req.method === "GET" && req.url.endsWith("/summary"):
+          return restaurantV1.getSummary(req, res);
         case req.method === "GET" && req.url.endsWith("/first"):
           return restaurantV1.getFirst(req, res);
         case req.method === "GET" && req.url.endsWith("/count"):

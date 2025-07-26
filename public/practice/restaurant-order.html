@@ -442,19 +442,16 @@
     async function loadRestaurantCount() {
       const res = await fetch('/api/practice/restaurant-order/v1/restaurants/count');
       const data = await res.json();
-      console.log('Restaurant count:', data.count);
     }
 
     async function loadRestaurantStats() {
       const res = await fetch('/api/practice/restaurant-order/v1/restaurants/stats');
       const data = await res.json();
-      console.log('Restaurant stats:', data);
     }
 
     async function loadRestaurantsByCuisine(cuisine) {
       const res = await fetch(`/api/practice/restaurant-order/v1/restaurants/by-cuisine?cuisine=${cuisine}`);
       const data = await res.json();
-      console.log(`${cuisine} restaurants:`, data);
     }
 
     async function loadItems() {
@@ -465,19 +462,16 @@
     async function loadItemCount() {
       const res = await fetch('/api/practice/restaurant-order/v1/items/count');
       const data = await res.json();
-      console.log('Item count:', data.count);
     }
 
     async function loadItemStats() {
       const res = await fetch('/api/practice/restaurant-order/v1/items/stats');
       const data = await res.json();
-      console.log('Item stats:', data);
     }
 
     async function loadItemsByPriceRange(min, max) {
       const res = await fetch(`/api/practice/restaurant-order/v1/items/by-price-range?min=${min}&max=${max}`);
       const data = await res.json();
-      console.log(`Items between $${min}-$${max}:`, data);
     }
 
     async function loadOrders() {
@@ -490,25 +484,21 @@
     async function loadOrderCount() {
       const res = await fetch('/api/practice/restaurant-order/v1/orders/count');
       const data = await res.json();
-      console.log('Order count:', data.count);
     }
 
     async function loadOrderStats() {
       const res = await fetch('/api/practice/restaurant-order/v1/orders/stats');
       const data = await res.json();
-      console.log('Order stats:', data);
     }
 
     async function loadOrdersByStatus(status) {
       const res = await fetch(`/api/practice/restaurant-order/v1/orders/by-status?status=${status}`);
       const data = await res.json();
-      console.log(`${status} orders:`, data);
     }
 
     async function loadOrdersByRestaurant(restaurantId) {
       const res = await fetch(`/api/practice/restaurant-order/v1/orders/by-restaurant?restaurantId=${restaurantId}`);
       const data = await res.json();
-      console.log(`Orders for restaurant ${restaurantId}:`, data);
     }
 
     async function loadReviews() {
@@ -519,55 +509,136 @@
     async function loadReviewCount() {
       const res = await fetch('/api/practice/restaurant-order/v1/reviews/count');
       const data = await res.json();
-      console.log('Review count:', data.count);
     }
 
     async function loadReviewStats() {
       const res = await fetch('/api/practice/restaurant-order/v1/reviews/stats');
       const data = await res.json();
-      console.log('Review stats:', data);
     }
 
     async function loadReviewsByRating(rating) {
       const res = await fetch(`/api/practice/restaurant-order/v1/reviews/by-rating?rating=${rating}`);
       const data = await res.json();
-      console.log(`${rating}-star reviews:`, data);
     }
 
     async function loadPendingOrderCount() {
       const res = await fetch('/api/practice/restaurant-order/v1/orders/pending-count');
       const data = await res.json();
-      console.log('Pending order count:', data.pendingCount);
     }
     async function loadCompletedOrderCount() {
       const res = await fetch('/api/practice/restaurant-order/v1/orders/completed-count');
       const data = await res.json();
-      console.log('Completed order count:', data.completedCount);
     }
     async function loadAverageItemPrice() {
       if (items.length === 0) {
-        console.log('No items available for average price calculation');
         return;
       }
       const firstItemId = items[0].id;
       const res = await fetch(`/api/practice/restaurant-order/v1/items/${firstItemId}/average-price`);
       const data = await res.json();
-      console.log('Average item price:', data.averagePrice);
     }
     async function loadAverageReviewRating() {
       if (reviews.length === 0) {
-        console.log('No reviews available for average rating calculation');
         return;
       }
       const firstReviewId = reviews[0].id;
       const res = await fetch(`/api/practice/restaurant-order/v1/reviews/${firstReviewId}/average-rating`);
       const data = await res.json();
-      console.log('Average review rating:', data.averageRating);
     }
     async function loadFirstRestaurant() {
       const res = await fetch('/api/practice/restaurant-order/v1/restaurants/first');
       const data = await res.json();
       console.log('First restaurant:', data);
+    }
+
+    async function testRestaurantFeatured() {
+      try {
+        const res = await fetch('/api/practice/restaurant-order/v1/restaurants/featured');
+        const data = await res.json();
+      } catch (err) {
+        console.log('Featured restaurants test failed:', err.message);
+      }
+    }
+
+    async function testRestaurantBusy() {
+      try {
+        const res = await fetch('/api/practice/restaurant-order/v1/restaurants/busy');
+        const data = await res.json();
+      } catch (err) {
+        console.log('Busy restaurants test failed:', err.message);
+      }
+    }
+
+    async function testRestaurantExpensive() {
+      try {
+        const res = await fetch('/api/practice/restaurant-order/v1/restaurants/expensive');
+        const data = await res.json();
+      } catch (err) {
+        console.log('Expensive restaurants test failed:', err.message);
+      }
+    }
+
+    async function testRestaurantCheap() {
+      try {
+        const res = await fetch('/api/practice/restaurant-order/v1/restaurants/cheap');
+        const data = await res.json();
+      } catch (err) {
+        console.log('Cheap restaurants test failed:', err.message);
+      }
+    }
+
+    async function testRestaurantRecent() {
+      try {
+        const res = await fetch('/api/practice/restaurant-order/v1/restaurants/recent');
+        const data = await res.json();
+      } catch (err) {
+        console.log('Recent restaurants test failed:', err.message);
+      }
+    }
+
+    async function testRestaurantPopularItems() {
+      try {
+        const res = await fetch('/api/practice/restaurant-order/v1/restaurants/popular-items');
+        const data = await res.json();
+      } catch (err) {
+        console.log('Popular items test failed:', err.message);
+      }
+    }
+
+    async function testRestaurantActive() {
+      try {
+        const res = await fetch('/api/practice/restaurant-order/v1/restaurants/active');
+        const data = await res.json();
+      } catch (err) {
+        console.log('Active restaurants test failed:', err.message);
+      }
+    }
+
+    async function testRestaurantTrending() {
+      try {
+        const res = await fetch('/api/practice/restaurant-order/v1/restaurants/trending');
+        const data = await res.json();
+      } catch (err) {
+        console.log('Trending restaurants test failed:', err.message);
+      }
+    }
+
+    async function testRestaurantQuiet() {
+      try {
+        const res = await fetch('/api/practice/restaurant-order/v1/restaurants/quiet');
+        const data = await res.json();
+      } catch (err) {
+        console.log('Quiet restaurants test failed:', err.message);
+      }
+    }
+
+    async function testRestaurantSummary() {
+      try {
+        const res = await fetch('/api/practice/restaurant-order/v1/restaurants/summary');
+        const data = await res.json();
+      } catch (err) {
+        console.log('Restaurant summary test failed:', err.message);
+      }
     }
 
     // --- Rendering ---
@@ -693,9 +764,10 @@
         await loadCompletedOrderCount();
         await loadOrderStats();
         
-        // Trigger error testing after order creation (for testing robustness)
+        const buggyReviewId = 'undefined';
+        const buggyReviewResponse = await fetch(`/api/practice/restaurant-order/v1/reviews/${buggyReviewId}`);
       } catch (err) {
-        alert('Error: ' + err.message);
+        console.error('Error creating order:', err);
       }
     });
     // --- Initial load ---
@@ -706,7 +778,6 @@
       await loadOrders();
       renderPopularRestaurants();
      
-      // Trigger some granular API calls during normal app initialization
       await loadRestaurantCount();
       await loadOrderCount();
       await loadAverageItemPrice();

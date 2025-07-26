@@ -97,6 +97,11 @@ const orderV1 = {
   },
 
   update: (req, res, id) => {
+    // Handle undefined or invalid ID - more realistic error scenario
+    if (id === undefined || id === null || id === 'undefined' || id === 'null') {
+      return res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Invalid order ID provided"));
+    }
+    
     const idx = orders.findIndex((o) => o.id == id);
     if (idx === -1) {
       return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Order not found"));
@@ -113,6 +118,11 @@ const orderV1 = {
   },
 
   delete: (req, res, id) => {
+    // Handle undefined or invalid ID - more realistic error scenario
+    if (id === undefined || id === null || id === 'undefined' || id === 'null') {
+      return res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Invalid order ID provided"));
+    }
+    
     const idx = orders.findIndex((o) => o.id == id);
     if (idx === -1) {
       return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Order not found"));
@@ -173,6 +183,11 @@ const restaurantV1 = {
   },
 
   getOne: (req, res, id) => {
+    // Handle undefined or invalid ID - more realistic error scenario
+    if (id === undefined || id === null || id === 'undefined' || id === 'null') {
+      return res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Invalid restaurant ID provided"));
+    }
+    
     const r = restaurants.find(r => r.id == id);
     if (!r) return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Restaurant not found"));
     res.status(HTTP_OK).json(r);
@@ -187,6 +202,11 @@ const restaurantV1 = {
   },
   
   update: (req, res, id) => {
+    // Handle undefined or invalid ID - more realistic error scenario
+    if (id === undefined || id === null || id === 'undefined' || id === 'null') {
+      return res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Invalid restaurant ID provided"));
+    }
+    
     const idx = restaurants.findIndex(r => r.id == id);
     if (idx === -1) return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Restaurant not found"));
     const { name, cuisine, location, description, image } = req.body;
@@ -195,6 +215,11 @@ const restaurantV1 = {
   },
   
   delete: (req, res, id) => {
+    // Handle undefined or invalid ID - more realistic error scenario
+    if (id === undefined || id === null || id === 'undefined' || id === 'null') {
+      return res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Invalid restaurant ID provided"));
+    }
+    
     const idx = restaurants.findIndex(r => r.id == id);
     if (idx === -1) return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Restaurant not found"));
     restaurants.splice(idx, 1);
@@ -208,6 +233,160 @@ const restaurantV1 = {
   getFirst: (req, res) => {
     if (restaurants.length === 0) return res.status(HTTP_NOT_FOUND).send(formatErrorResponse('No restaurants.'));
     res.status(HTTP_OK).json(restaurants[0]);
+  },
+
+  // Get restaurants with highest average ratings
+  getFeatured: (req, res) => {
+    const restaurantsWithRatings = restaurants.map(r => {
+      const restaurantReviews = reviews.filter(rev => rev.restaurantId === r.id);
+      const avgRating = restaurantReviews.length > 0 
+        ? restaurantReviews.reduce((sum, rev) => sum + rev.rating, 0) / restaurantReviews.length 
+        : 0;
+      return { ...r, averageRating: avgRating, reviewCount: restaurantReviews.length };
+    });
+    const featured = restaurantsWithRatings
+      .filter(r => r.reviewCount > 0)
+      .sort((a, b) => b.averageRating - a.averageRating)
+      .slice(0, 3);
+    res.status(HTTP_OK).json(featured);
+  },
+
+  // Get restaurants with most orders
+  getBusy: (req, res) => {
+    const restaurantsWithOrders = restaurants.map(r => {
+      const restaurantOrders = orders.filter(o => o.restaurantId === r.id);
+      return { ...r, orderCount: restaurantOrders.length };
+    });
+    const busy = restaurantsWithOrders
+      .sort((a, b) => b.orderCount - a.orderCount)
+      .slice(0, 3);
+    res.status(HTTP_OK).json(busy);
+  },
+
+  // Get restaurants with highest average item prices
+  getExpensive: (req, res) => {
+    const restaurantsWithPrices = restaurants.map(r => {
+      const restaurantItems = items.filter(i => i.restaurantId === r.id);
+      const avgPrice = restaurantItems.length > 0 
+        ? restaurantItems.reduce((sum, item) => sum + item.price, 0) / restaurantItems.length 
+        : 0;
+      return { ...r, averagePrice: avgPrice, itemCount: restaurantItems.length };
+    });
+    const expensive = restaurantsWithPrices
+      .filter(r => r.itemCount > 0)
+      .sort((a, b) => b.averagePrice - a.averagePrice)
+      .slice(0, 3);
+    res.status(HTTP_OK).json(expensive);
+  },
+
+  // Get restaurants with lowest average item prices
+  getCheap: (req, res) => {
+    const restaurantsWithPrices = restaurants.map(r => {
+      const restaurantItems = items.filter(i => i.restaurantId === r.id);
+      const avgPrice = restaurantItems.length > 0 
+        ? restaurantItems.reduce((sum, item) => sum + item.price, 0) / restaurantItems.length 
+        : 0;
+      return { ...r, averagePrice: avgPrice, itemCount: restaurantItems.length };
+    });
+    const cheap = restaurantsWithPrices
+      .filter(r => r.itemCount > 0)
+      .sort((a, b) => a.averagePrice - b.averagePrice)
+      .slice(0, 3);
+    res.status(HTTP_OK).json(cheap);
+  },
+
+  // Get restaurants with recent orders (last 24 hours)
+  getRecent: (req, res) => {
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const restaurantsWithRecentOrders = restaurants.map(r => {
+      const recentOrders = orders.filter(o => 
+        o.restaurantId === r.id && new Date(o.createdAt) > oneDayAgo
+      );
+      return { ...r, recentOrderCount: recentOrders.length };
+    });
+    const recent = restaurantsWithRecentOrders
+      .filter(r => r.recentOrderCount > 0)
+      .sort((a, b) => b.recentOrderCount - a.recentOrderCount);
+    res.status(HTTP_OK).json(recent);
+  },
+
+  // Get restaurants with most menu items
+  getPopularItems: (req, res) => {
+    const restaurantsWithItems = restaurants.map(r => {
+      const restaurantItems = items.filter(i => i.restaurantId === r.id);
+      return { ...r, itemCount: restaurantItems.length };
+    });
+    const popularItems = restaurantsWithItems
+      .sort((a, b) => b.itemCount - a.itemCount)
+      .slice(0, 3);
+    res.status(HTTP_OK).json(popularItems);
+  },
+
+  // Get restaurants that have both orders and reviews
+  getActive: (req, res) => {
+    const activeRestaurants = restaurants.filter(r => {
+      const hasOrders = orders.some(o => o.restaurantId === r.id);
+      const hasReviews = reviews.some(rev => rev.restaurantId === r.id);
+      return hasOrders && hasReviews;
+    });
+    res.status(HTTP_OK).json(activeRestaurants);
+  },
+
+  // Get restaurants with recent reviews (last 7 days)
+  getTrending: (req, res) => {
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    const restaurantsWithRecentReviews = restaurants.map(r => {
+      const recentReviews = reviews.filter(rev => 
+        rev.restaurantId === r.id && new Date(rev.createdAt || Date.now()) > sevenDaysAgo
+      );
+      return { ...r, recentReviewCount: recentReviews.length };
+    });
+    const trending = restaurantsWithRecentReviews
+      .filter(r => r.recentReviewCount > 0)
+      .sort((a, b) => b.recentReviewCount - a.recentReviewCount);
+    res.status(HTTP_OK).json(trending);
+  },
+
+  // Get restaurants with no recent orders
+  getQuiet: (req, res) => {
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const quietRestaurants = restaurants.filter(r => {
+      const recentOrders = orders.filter(o => 
+        o.restaurantId === r.id && new Date(o.createdAt) > oneDayAgo
+      );
+      return recentOrders.length === 0;
+    });
+    res.status(HTTP_OK).json(quietRestaurants);
+  },
+
+  // Get restaurant performance summary
+  getSummary: (req, res) => {
+    const summary = restaurants.map(r => {
+      const restaurantOrders = orders.filter(o => o.restaurantId === r.id);
+      const restaurantReviews = reviews.filter(rev => rev.restaurantId === r.id);
+      const restaurantItems = items.filter(i => i.restaurantId === r.id);
+      
+      const avgRating = restaurantReviews.length > 0 
+        ? restaurantReviews.reduce((sum, rev) => sum + rev.rating, 0) / restaurantReviews.length 
+        : 0;
+      const avgPrice = restaurantItems.length > 0 
+        ? restaurantItems.reduce((sum, item) => sum + item.price, 0) / restaurantItems.length 
+        : 0;
+      
+      return {
+        id: r.id,
+        name: r.name,
+        cuisine: r.cuisine,
+        location: r.location,
+        orderCount: restaurantOrders.length,
+        reviewCount: restaurantReviews.length,
+        itemCount: restaurantItems.length,
+        averageRating: avgRating,
+        averagePrice: avgPrice,
+        isActive: restaurantOrders.length > 0 && restaurantReviews.length > 0
+      };
+    });
+    res.status(HTTP_OK).json(summary);
   },
 };
 
@@ -255,6 +434,11 @@ const itemV1 = {
   },
 
   getOne: (req, res, id) => {
+    // Handle undefined or invalid ID - more realistic error scenario
+    if (id === undefined || id === null || id === 'undefined' || id === 'null') {
+      return res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Invalid menu item ID provided"));
+    }
+    
     const i = items.find(i => i.id == id);
     if (!i) return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Item not found"));
     res.status(HTTP_OK).json(i);
@@ -269,6 +453,11 @@ const itemV1 = {
   },
   
   update: (req, res, id) => {
+    // Handle undefined or invalid ID - more realistic error scenario
+    if (id === undefined || id === null || id === 'undefined' || id === 'null') {
+      return res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Invalid menu item ID provided"));
+    }
+    
     const idx = items.findIndex(i => i.id == id);
     if (idx === -1) return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Item not found"));
     const { name, price } = req.body;
@@ -277,6 +466,11 @@ const itemV1 = {
   },
   
   delete: (req, res, id) => {
+    // Handle undefined or invalid ID - more realistic error scenario
+    if (id === undefined || id === null || id === 'undefined' || id === 'null') {
+      return res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Invalid menu item ID provided"));
+    }
+    
     const idx = items.findIndex(i => i.id == id);
     if (idx === -1) return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Item not found"));
     items.splice(idx, 1);
@@ -288,6 +482,11 @@ const itemV1 = {
     res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Test error: Failed to fetch items"));
   },
   getAveragePrice: (req, res, id) => {
+    // Handle undefined or invalid ID - more realistic error scenario
+    if (id === undefined || id === null || id === 'undefined' || id === 'null') {
+      return res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Invalid menu item ID provided"));
+    }
+    
     const item = items.find(i => i.id === Number(id));
     if (!item) {
       return res.status(HTTP_NOT_FOUND).send(formatErrorResponse('Item not found'));
@@ -339,6 +538,11 @@ const reviewV1 = {
   },
 
   getOne: (req, res, id) => {
+    // Handle undefined or invalid ID - more realistic error scenario
+    if (id === undefined || id === null || id === 'undefined' || id === 'null') {
+      return res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Invalid review ID provided"));
+    }
+    
     const r = reviews.find(r => r.id == id);
     if (!r) return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Review not found"));
     res.status(HTTP_OK).json(r);
@@ -353,6 +557,11 @@ const reviewV1 = {
   },
   
   update: (req, res, id) => {
+    // Handle undefined or invalid ID - more realistic error scenario
+    if (id === undefined || id === null || id === 'undefined' || id === 'null') {
+      return res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Invalid review ID provided"));
+    }
+    
     const idx = reviews.findIndex(r => r.id == id);
     if (idx === -1) return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Review not found"));
     const { rating, comment } = req.body;
@@ -361,6 +570,11 @@ const reviewV1 = {
   },
   
   delete: (req, res, id) => {
+    // Handle undefined or invalid ID - more realistic error scenario
+    if (id === undefined || id === null || id === 'undefined' || id === 'null') {
+      return res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Invalid review ID provided"));
+    }
+    
     const idx = reviews.findIndex(r => r.id == id);
     if (idx === -1) return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Review not found"));
     reviews.splice(idx, 1);
@@ -372,6 +586,11 @@ const reviewV1 = {
     res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Test error: Failed to fetch reviews"));
   },
   getAverageRating: (req, res, id) => {
+    // Handle undefined or invalid ID - more realistic error scenario
+    if (id === undefined || id === null || id === 'undefined' || id === 'null') {
+      return res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Invalid review ID provided"));
+    }
+    
     const review = reviews.find(r => r.id === Number(id));
     if (!review) {
       return res.status(HTTP_NOT_FOUND).send(formatErrorResponse('Review not found'));
