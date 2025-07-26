@@ -633,6 +633,8 @@ function handlePractice(req, res) {
           return orderV1.getWithError(req, res);
         case req.method === "GET" && !isIdValid(id):
           return orderV1.getAll(req, res);
+        case req.method === "GET" && isIdValid(id):
+          return orderV1.getOne(req, res, id);
         case req.method === "POST" && req.url.endsWith("/error"):
           return orderV1.createWithError(req, res);
         case req.method === "POST" && !isIdValid(id):

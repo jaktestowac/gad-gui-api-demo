@@ -148,6 +148,17 @@ const orderV1 = {
     const count = orders.filter(o => o.status === 'completed').length;
     res.status(HTTP_OK).json({ completedCount: count });
   },
+
+  getOne: (req, res, id) => {
+    // Handle undefined or invalid ID - more realistic error scenario
+    if (id === undefined || id === null || id === 'undefined' || id === 'null') {
+      return res.status(HTTP_INTERNAL_SERVER_ERROR).send(formatErrorResponse("Invalid order ID provided"));
+    }
+    
+    const order = orders.find(o => o.id == id);
+    if (!order) return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Order not found"));
+    res.status(HTTP_OK).json(order);
+  },
 };
 
 const restaurantV1 = {

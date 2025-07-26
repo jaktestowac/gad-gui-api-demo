@@ -65,6 +65,17 @@
     .restaurant-card:hover {
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+    }
+    .restaurant-card.clickable {
+      cursor: pointer;
+    }
+    .order-compact.clickable {
+      cursor: pointer;
+    }
+    .order-compact.clickable:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
     .restaurant-emoji {
       font-size: 1.5rem;
@@ -337,6 +348,287 @@
       font-size: 0.6rem;
       color: #a0aec0;
     }
+    /* Popup Styles - Modern & Fancy */
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .popup-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .popup-content {
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+      border-radius: 20px;
+      padding: 1.5rem;
+      max-width: 500px;
+      width: 90%;
+      max-height: 75vh;
+      overflow-y: auto;
+      box-shadow: 
+        0 32px 64px rgba(0, 0, 0, 0.3),
+        0 8px 16px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      transform: scale(0.7) translateY(30px) rotateX(10deg);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      
+      /* Custom Scrollbar Styling */
+      scrollbar-width: thin;
+      scrollbar-color: #cbd5e0 #f7fafc;
+    }
+    
+    /* Webkit Scrollbar Styling for .popup-content */
+    .popup-content::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    .popup-content::-webkit-scrollbar-track {
+      background: linear-gradient(180deg, #f7fafc 0%, #edf2f7 100%);
+      border-radius: 10px;
+      margin: 4px 0;
+    }
+    
+    .popup-content::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #cbd5e0 0%, #a0aec0 100%);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      transition: all 0.3s ease;
+    }
+    
+    .popup-content::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #a0aec0 0%, #718096 100%);
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+    
+    .popup-content::-webkit-scrollbar-corner {
+      background: transparent;
+    }
+    .popup-overlay.active .popup-content {
+      transform: scale(1) translateY(0) rotateX(0deg);
+    }
+    .popup-close {
+      position: absolute;
+      top: 0.75rem;
+      right: 1rem;
+      background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+      border: none;
+      font-size: 1.25rem;
+      cursor: pointer;
+      color: white;
+      transition: all 0.3s ease;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3);
+      font-weight: bold;
+    }
+    .popup-close:hover {
+      transform: scale(1.1) rotate(90deg);
+      box-shadow: 0 6px 16px rgba(229, 62, 62, 0.4);
+    }
+    .popup-header {
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid #e2e8f0;
+      position: relative;
+    }
+    .popup-header::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, #4299e1, #667eea);
+      border-radius: 1px;
+    }
+    .popup-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1a202c;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      line-height: 1.3;
+    }
+    .popup-subtitle {
+      font-size: 0.8rem;
+      color: #718096;
+      margin: 0.4rem 0 0 0;
+      font-weight: 500;
+    }
+    .popup-section {
+      margin-bottom: 1.25rem;
+    }
+    .popup-section-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #4a5568;
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .popup-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    .popup-card {
+      background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+      border-radius: 12px;
+      padding: 0.75rem;
+      border: 1px solid #e2e8f0;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .popup-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #4299e1, #667eea);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+    .popup-card:hover::before {
+      transform: scaleX(1);
+    }
+    .popup-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+    .popup-card-title {
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 0.4rem;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .popup-card-value {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #4299e1;
+      text-shadow: 0 1px 2px rgba(66, 153, 225, 0.1);
+    }
+    .popup-list {
+      max-height: 160px;
+      overflow-y: auto;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      background: #f8fafc;
+      
+      /* Custom Scrollbar Styling */
+      scrollbar-width: thin;
+      scrollbar-color: #a0aec0 #f1f5f9;
+    }
+    
+    /* Webkit Scrollbar Styling for .popup-list */
+    .popup-list::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .popup-list::-webkit-scrollbar-track {
+      background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%);
+      border-radius: 8px;
+      margin: 2px 0;
+    }
+    
+    .popup-list::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #a0aec0 0%, #718096 100%);
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      transition: all 0.3s ease;
+    }
+    
+    .popup-list::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #718096 0%, #4a5568 100%);
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15);
+    }
+    
+    .popup-list::-webkit-scrollbar-corner {
+      background: transparent;
+    }
+    .popup-list-item {
+      padding: 0.6rem 0.75rem;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.2s ease;
+      font-size: 0.8rem;
+    }
+    .popup-list-item:hover {
+      background: rgba(66, 153, 225, 0.05);
+    }
+    .popup-list-item:last-child {
+      border-bottom: none;
+    }
+    .popup-loading {
+      text-align: center;
+      padding: 1.5rem;
+      color: #718096;
+      font-weight: 500;
+    }
+    .popup-loading::after {
+      content: '';
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 50%;
+      border-top-color: #4299e1;
+      animation: spin 1s linear infinite;
+      margin-left: 0.5rem;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .popup-error {
+      background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
+      color: #c53030;
+      padding: 0.75rem;
+      border-radius: 8px;
+      margin-bottom: 0.75rem;
+      border: 1px solid #feb2b2;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    .popup-success {
+      background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%);
+      color: #2f855a;
+      padding: 0.75rem;
+      border-radius: 8px;
+      margin-bottom: 0.75rem;
+      border: 1px solid #9ae6b4;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
     @media (max-width: 768px) {
       .container {
         margin: 0.5rem;
@@ -354,6 +646,46 @@
       }
       h1 {
         font-size: 1.5rem;
+      }
+      .popup-content {
+        padding: 1rem;
+        width: 95%;
+        max-height: 85vh;
+        border-radius: 16px;
+      }
+      .popup-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+      }
+      .popup-card {
+        padding: 0.6rem;
+      }
+      .popup-card-title {
+        font-size: 0.7rem;
+      }
+      .popup-card-value {
+        font-size: 1rem;
+      }
+      .popup-title {
+        font-size: 1.1rem;
+      }
+      .popup-subtitle {
+        font-size: 0.75rem;
+      }
+      .popup-section-title {
+        font-size: 0.8rem;
+      }
+      .popup-list-item {
+        font-size: 0.75rem;
+      }
+      
+      /* Mobile Scrollbar Adjustments */
+      .popup-content::-webkit-scrollbar {
+        width: 6px;
+      }
+      
+      .popup-list::-webkit-scrollbar {
+        width: 4px;
       }
     }
   </style>
@@ -403,6 +735,16 @@
     <div class="orders">
       <h2>📋 All Orders</h2>
       <div class="orders-grid" id="ordersList"></div>
+    </div>
+  </div>
+
+  <!-- Popup Modal -->
+  <div class="popup-overlay" id="popupOverlay">
+    <div class="popup-content">
+      <button class="popup-close" onclick="closePopup()">×</button>
+      <div id="popupContent">
+        <div class="popup-loading">Loading details...</div>
+      </div>
     </div>
   </div>
 
@@ -656,7 +998,7 @@
         const orderRestaurantId = Number(order.restaurantId);
         const rest = restaurants.find(r => Number(r.id) === orderRestaurantId);
         return `
-          <div class="order-compact">
+          <div class="order-compact clickable" onclick="showOrderDetails(${order.id})">
             <div class="order-header-compact">
               <span class="order-restaurant-compact">${rest ? (rest.image ? rest.image + ' ' : '') + rest.name : 'Unknown Restaurant'}</span>
               <span class="order-status-compact">${order.status}</span>
@@ -687,7 +1029,7 @@
       const random2 = top5.sort(() => Math.random() - 0.5).slice(0, 2);
       
       document.getElementById('popularRestaurants').innerHTML = random2.map(r => `
-        <div class="restaurant-card">
+        <div class="restaurant-card clickable" onclick="showRestaurantDetails(${r.id})">
           <div class="restaurant-emoji">${r.image || '🍽️'}</div>
           <div class="restaurant-name">${r.name}</div>
           <div class="restaurant-cuisine">${r.cuisine} • ${r.location}</div>
@@ -714,7 +1056,7 @@
         const orderRestaurantId = Number(order.restaurantId);
         const rest = restaurants.find(r => Number(r.id) === orderRestaurantId);
         return `
-          <div class="restaurant-card">
+          <div class="restaurant-card clickable" onclick="showOrderDetails(${order.id})">
             <div class="restaurant-emoji">${rest ? rest.image : '🍽️'}</div>
             <div class="restaurant-name">${rest ? rest.name : 'Unknown Restaurant'}</div>
             <div class="restaurant-cuisine">👤 ${order.customerName}</div>
@@ -770,6 +1112,221 @@
         console.error('Error creating order:', err);
       }
     });
+    // --- Popup functionality ---
+    function showPopup() {
+      document.getElementById('popupOverlay').classList.add('active');
+    }
+    
+    function closePopup() {
+      document.getElementById('popupOverlay').classList.remove('active');
+    }
+    
+    // Close popup when clicking outside
+    document.getElementById('popupOverlay').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closePopup();
+      }
+    });
+    
+    // Close popup with Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closePopup();
+      }
+    });
+    
+    async function showRestaurantDetails(restaurantId) {
+      showPopup();
+      const popupContent = document.getElementById('popupContent');
+      popupContent.innerHTML = '<div class="popup-loading">Loading restaurant details...</div>';
+      
+      try {
+        // Make multiple API calls to get comprehensive restaurant data
+        const [restaurant, restaurantOrders, restaurantStats] = await Promise.all([
+          fetch(`/api/practice/restaurant-order/v1/restaurants/${restaurantId}`).then(r => r.json()),
+          fetch(`/api/practice/restaurant-order/v1/orders/by-restaurant?restaurantId=${restaurantId}`).then(r => r.json()),
+          fetch(`/api/practice/restaurant-order/v1/restaurants/${restaurantId}/stats`).then(r => r.json()).catch(() => null)
+        ]);
+        
+        // Filter reviews from the global reviews array instead of making a fetch call
+        const restaurantReviews = reviews.filter(review => review.restaurantId === restaurantId);
+        
+        // Calculate additional stats
+        const totalOrders = restaurantOrders.length;
+        const totalItems = restaurantOrders.reduce((sum, order) => sum + order.items.reduce((s, item) => s + item.quantity, 0), 0);
+        const avgRating = restaurantReviews.length > 0 ? 
+          (restaurantReviews.reduce((sum, review) => sum + review.rating, 0) / restaurantReviews.length).toFixed(1) : 'N/A';
+        const recentOrders = restaurantOrders.slice(0, 5);
+        
+        popupContent.innerHTML = `
+          <div class="popup-header">
+            <h3 class="popup-title">${restaurant.image || '🍽️'} ${restaurant.name}</h3>
+            <p class="popup-subtitle">${restaurant.cuisine} • ${restaurant.location}</p>
+          </div>
+          
+          <div class="popup-section">
+            <h4 class="popup-section-title">📊 Restaurant Statistics</h4>
+            <div class="popup-grid">
+              <div class="popup-card">
+                <div class="popup-card-title">Total Orders</div>
+                <div class="popup-card-value">${totalOrders}</div>
+              </div>
+              <div class="popup-card">
+                <div class="popup-card-title">Total Items Sold</div>
+                <div class="popup-card-value">${totalItems}</div>
+              </div>
+              <div class="popup-card">
+                <div class="popup-card-title">Average Rating</div>
+                <div class="popup-card-value">⭐ ${avgRating}</div>
+              </div>
+              <div class="popup-card">
+                <div class="popup-card-title">Total Reviews</div>
+                <div class="popup-card-value">${restaurantReviews.length}</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="popup-section">
+            <h4 class="popup-section-title">📝 Recent Orders</h4>
+            <div class="popup-list">
+              ${recentOrders.length > 0 ? recentOrders.map(order => `
+                <div class="popup-list-item">
+                  <div>
+                    <strong>#${order.id}</strong> - ${order.customerName}
+                    <br><small>${order.items.map(i => `${i.name} ×${i.quantity}`).join(', ')}</small>
+                  </div>
+                  <div>
+                    <span style="color: ${order.status === 'completed' ? '#38a169' : order.status === 'pending' ? '#d69e2e' : '#e53e3e'}">${order.status}</span>
+                  </div>
+                </div>
+              `).join('') : '<div class="popup-list-item">No recent orders</div>'}
+            </div>
+          </div>
+          
+          <div class="popup-section">
+            <h4 class="popup-section-title">⭐ Recent Reviews</h4>
+            <div class="popup-list">
+              ${restaurantReviews.slice(0, 5).length > 0 ? restaurantReviews.slice(0, 5).map(review => `
+                <div class="popup-list-item">
+                  <div>
+                    <strong>${'⭐'.repeat(review.rating)}</strong>
+                    <br><small>${review.comment || 'No comment'}</small>
+                  </div>
+                  <div>
+                    <small>${new Date(review.createdAt).toLocaleDateString()}</small>
+                  </div>
+                </div>
+              `).join('') : '<div class="popup-list-item">No reviews yet</div>'}
+            </div>
+          </div>
+          
+          ${restaurant.description ? `
+            <div class="popup-section">
+              <h4 class="popup-section-title">📖 Description</h4>
+              <p>${restaurant.description}</p>
+            </div>
+          ` : ''}
+        `;
+        
+      } catch (error) {
+        popupContent.innerHTML = `
+          <div class="popup-error">
+            ❌ Error loading restaurant details: ${error.message}
+          </div>
+        `;
+      }
+    }
+    
+    async function showOrderDetails(orderId) {
+      showPopup();
+      const popupContent = document.getElementById('popupContent');
+      popupContent.innerHTML = '<div class="popup-loading">Loading order details...</div>';
+      
+      try {
+        // First fetch the order to get the restaurant ID
+        const order = await fetch(`/api/practice/restaurant-order/v1/orders/${orderId}`).then(r => r.json());
+        
+        // Then fetch restaurant details and order stats
+        const [restaurant, orderStats] = await Promise.all([
+          fetch(`/api/practice/restaurant-order/v1/restaurants/${order.restaurantId}`).then(r => r.json()),
+          fetch(`/api/practice/restaurant-order/v1/orders/${orderId}/stats`).then(r => r.json()).catch(() => null)
+        ]);
+        
+        // Calculate order totals
+        const totalItems = order.items.reduce((sum, item) => sum + item.quantity, 0);
+        const estimatedTotal = order.items.reduce((sum, item) => sum + (item.quantity * (item.price || 10)), 0);
+        
+        popupContent.innerHTML = `
+          <div class="popup-header">
+            <h3 class="popup-title">📦 Order #${order.id}</h3>
+            <p class="popup-subtitle">${restaurant.image || '🍽️'} ${restaurant.name} • ${order.customerName}</p>
+          </div>
+          
+          <div class="popup-section">
+            <h4 class="popup-section-title">📊 Order Statistics</h4>
+            <div class="popup-grid">
+              <div class="popup-card">
+                <div class="popup-card-title">Total Items</div>
+                <div class="popup-card-value">${totalItems}</div>
+              </div>
+              <div class="popup-card">
+                <div class="popup-card-title">Order Status</div>
+                <div class="popup-card-value" style="color: ${order.status === 'completed' ? '#38a169' : order.status === 'pending' ? '#d69e2e' : '#e53e3e'}">${order.status}</div>
+              </div>
+              <div class="popup-card">
+                <div class="popup-card-title">Estimated Total</div>
+                <div class="popup-card-value">$${estimatedTotal.toFixed(2)}</div>
+              </div>
+              <div class="popup-card">
+                <div class="popup-card-title">Order Date</div>
+                <div class="popup-card-value">${new Date(order.createdAt).toLocaleDateString()}</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="popup-section">
+            <h4 class="popup-section-title">🍽️ Order Items</h4>
+            <div class="popup-list">
+              ${order.items.map(item => `
+                <div class="popup-list-item">
+                  <div>
+                    <strong>${item.name}</strong>
+                    <br><small>Quantity: ${item.quantity}</small>
+                  </div>
+                  <div>
+                    <strong>$${(item.price || 10).toFixed(2)}</strong>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+          
+          ${order.notes ? `
+            <div class="popup-section">
+              <h4 class="popup-section-title">📝 Order Notes</h4>
+              <p style="background: #f7fafc; padding: 1rem; border-radius: 6px; border-left: 4px solid #4299e1;">${order.notes}</p>
+            </div>
+          ` : ''}
+          
+          <div class="popup-section">
+            <h4 class="popup-section-title">🏪 Restaurant Details</h4>
+            <div class="popup-card">
+              <div class="popup-card-title">${restaurant.name}</div>
+              <div style="color: #718096; margin-bottom: 0.5rem;">${restaurant.cuisine} • ${restaurant.location}</div>
+              ${restaurant.description ? `<div style="font-size: 0.875rem; color: #a0aec0;">${restaurant.description}</div>` : ''}
+            </div>
+          </div>
+        `;
+        
+      } catch (error) {
+        popupContent.innerHTML = `
+          <div class="popup-error">
+            ❌ Error loading order details: ${error.message}
+          </div>
+        `;
+      }
+    }
+    
     // --- Initial load ---
     (async function() {
       await loadRestaurants();
