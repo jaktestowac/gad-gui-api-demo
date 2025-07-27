@@ -29,6 +29,7 @@ const {
 } = require("./practice/file-system-handlers");
 const hotelHandlers = require("./practice/hotel-handlers");
 const { orderV1, restaurantV1, itemV1, reviewV1 } = require("./practice/order-handlers");
+const { loanProcessingV1 } = require("./practice/loan-processing-handlers");
 
 function isIdValid(id) {
   return id !== undefined && id !== "";
@@ -956,6 +957,58 @@ function handlePractice(req, res) {
       }
 
       return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Chirper endpoint not found"));
+    }
+
+    // Loan processing endpoints
+    if (req.url.includes("/api/practice/v1/loan-processing")) {
+      const url = req.url;
+
+      // Get loan types
+      if (url.endsWith("/api/practice/v1/loan-processing/loan-types") && req.method === "GET") {
+        return loanProcessingV1.getLoanTypes(req, res);
+      }
+
+      // Create new loan application
+      if (url.endsWith("/api/practice/v1/loan-processing/applications") && req.method === "POST") {
+        return loanProcessingV1.createApplication(req, res);
+      }
+
+      // Get all applications (for testing)
+      if (url.endsWith("/api/practice/v1/loan-processing/applications") && req.method === "GET") {
+        return loanProcessingV1.getAllApplications(req, res);
+      }
+
+      // Application-specific endpoints
+      if (url.includes("/api/practice/v1/loan-processing/applications/")) {
+        const parts = url.split("/api/practice/v1/loan-processing/applications/")[1]?.split("/");
+        const id = parts?.[0];
+        const action = parts?.[1];
+
+        if (isIdValid(id)) {
+          req.params = { id };
+
+          switch (true) {
+            case req.method === "GET" && !action:
+              return loanProcessingV1.getApplication(req, res);
+            case req.method === "POST" && action === "start-processing":
+              return loanProcessingV1.startProcessing(req, res);
+            case req.method === "POST" && action === "credit-check":
+              return loanProcessingV1.processCreditCheck(req, res);
+            case req.method === "POST" && action === "income-verification":
+              return loanProcessingV1.processIncomeVerification(req, res);
+            case req.method === "POST" && action === "document-validation":
+              return loanProcessingV1.processDocumentValidation(req, res);
+            case req.method === "POST" && action === "risk-assessment":
+              return loanProcessingV1.processRiskAssessment(req, res);
+            case req.method === "POST" && action === "final-approval":
+              return loanProcessingV1.processFinalApproval(req, res);
+            default:
+              return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Loan processing action not found"));
+          }
+        }
+      }
+
+      return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Loan processing endpoint not found"));
     }
 
     return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
