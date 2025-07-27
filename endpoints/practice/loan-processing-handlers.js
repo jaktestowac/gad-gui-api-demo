@@ -31,24 +31,60 @@ const LOAN_TYPES = {
   business: { name: "Business Loan", maxAmount: 500000, minCreditScore: 650, interestRate: { min: 5.5, max: 15.99 } },
 };
 
-// Error simulation chances (0.0 to 1.0)
+// Create a deterministic "random" function based on application data
+function getDeterministicValue(applicationId, stepName, multiplier = 1) {
+  // Create a consistent seed based on application ID and step name
+  const seed = (applicationId * 31 + stepName.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0)) % 10000;
+  const value = ((seed * multiplier) % 10000) / 10000; // Returns 0-1
+  return value;
+}
+
+// Deterministic error checking
+function shouldSimulateError(applicationId, stepName, baseErrorRate) {
+  const deterministicValue = getDeterministicValue(applicationId, stepName, 997); // Use prime multiplier
+  return deterministicValue < baseErrorRate;
+}
+
+// Error simulation chances (0.0 to 1.0) - reduced for better user experience
 const ERROR_RATES = {
-  creditCheck: 0.35, // 35% chance of credit check failure
-  incomeVerification: 0.35, // 35% chance of income verification failure
-  documentValidation: 0.12, // 12% chance of document validation failure
-  riskAssessment: 0.06, // 6% chance of risk assessment failure
-  finalApproval: 0.25, // 25% chance of final approval failure
-  // Sub-step error rates (higher than main steps)
-  creditBureauA: 0.35, // 15% chance of Experian failure
-  creditBureauB: 0.35, // 15% chance of Equifax failure
-  creditBureauC: 0.35, // 15% chance of TransUnion failure
-  employerVerification: 0.38, // 38% chance of employer verification failure
-  paystubVerification: 0.33, // 33% chance of paystub verification failure
-  taxVerification: 0.38, // 18% chance of tax verification failure
+  creditCheck: 0.35, // 35% chance of credit check failure (reduced from 35%)
+  incomeVerification: 0.35, // 35% chance of income verification failure (reduced from 35%)
+  documentValidation: 0.35, // 35% chance of document validation failure (reduced from 12%)
+  riskAssessment: 0.35, // 35% chance of risk assessment failure (reduced from 6%)
+  finalApproval: 0.35, // 35% chance of final approval failure (reduced from 25%)
+  // Sub-step error rates (lower than main steps)
+  creditBureauA: 0.35, // 35% chance of Experian failure (reduced from 35%)
+  creditBureauB: 0.35, // 35% chance of Equifax failure (reduced from 35%)
+  creditBureauC: 0.35, // 35% chance of TransUnion failure (reduced from 35%)
+  employerVerification: 0.35, // 35% chance of employer verification failure (reduced from 38%)
+  paystubVerification: 0.35, // 35% chance of paystub verification failure (reduced from 33%)
+  taxVerification: 0.35, // 35% chance of tax verification failure (reduced from 38%)
 };
 
-function generateCreditScore() {
-  return Math.floor(Math.random() * (850 - 300) + 300);
+function generateCreditScore(firstName, lastName, monthlyIncome, employmentYears) {
+  // Create a deterministic seed based on applicant data
+  const nameHash = (firstName + lastName).split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const incomeHash = Math.floor(monthlyIncome / 1000);
+  const employmentHash = Math.floor(employmentYears * 10);
+
+  // Combine factors to create a deterministic but varied score
+  const seed = (nameHash + incomeHash + employmentHash) % 1000;
+
+  // Base score starts at 580 (fair credit minimum)
+  let baseScore = 580;
+
+  // Income factor: Higher income = better score (up to +150 points)
+  const incomeBonus = Math.min(Math.floor(monthlyIncome / 500), 150);
+
+  // Employment factor: Longer employment = better score (up to +50 points)
+  const employmentBonus = Math.min(Math.floor(employmentYears * 10), 50);
+
+  // Name-based variation: Creates some variety but stays consistent (+/-70 points)
+  const nameVariation = (seed % 140) - 70;
+
+  const finalScore = Math.max(300, Math.min(850, baseScore + incomeBonus + employmentBonus + nameVariation));
+
+  return finalScore;
 }
 
 function calculateInterestRate(loanType, creditScore, amount) {
@@ -205,7 +241,7 @@ const loanProcessingV1 = {
         return res.status(HTTP_BAD_REQUEST).json(formatErrorResponse("Application not found"));
       }
 
-      // Simulate random server errors (35% chance)
+      // Simulate deterministic server errors based on application data
       if (Math.random() < ERROR_RATES.creditCheck) {
         logError("Simulated credit check service failure", new Error("Credit bureau service unavailable"));
         return res
@@ -217,24 +253,29 @@ const loanProcessingV1 = {
       await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.creditCheck / 3));
 
       // Send intermediate progress update
-      if (Math.random() > 0.3) {
+      if (getDeterministicValue(parseInt(id), "creditCheckProgress1", 773) > 0.3) {
         // 70% chance of sending progress update
         // Note: In real app, this would be via WebSocket or Server-Sent Events
         // For demo, we'll just log it
-        console.log(`Credit check progress for application ${id}: Contacting credit bureaus...`);
+        logDebug(`Credit check progress for application ${id}: Contacting credit bureaus...`);
       }
 
       await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.creditCheck / 3));
 
       // Another progress update
-      if (Math.random() > 0.3) {
-        console.log(`Credit check progress for application ${id}: Analyzing credit history...`);
+      if (getDeterministicValue(parseInt(id), "creditCheckProgress2", 617) > 0.3) {
+        logDebug(`Credit check progress for application ${id}: Analyzing credit history...`);
       }
 
       await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.creditCheck / 3));
 
       // Generate credit score
-      const creditScore = generateCreditScore();
+      const creditScore = generateCreditScore(
+        application.firstName,
+        application.lastName,
+        application.monthlyIncome,
+        application.employmentYears
+      );
       application.creditScore = creditScore;
 
       const step = {
@@ -246,8 +287,8 @@ const loanProcessingV1 = {
           creditRating:
             creditScore >= 750 ? "Excellent" : creditScore >= 650 ? "Good" : creditScore >= 580 ? "Fair" : "Poor",
           bureauReports: 3,
-          accountsReviewed: Math.floor(Math.random() * 15) + 5,
-          inquiriesLast24Months: Math.floor(Math.random() * 5),
+          accountsReviewed: Math.floor(getDeterministicValue(parseInt(id), "accountsReviewed", 311) * 15) + 5,
+          inquiriesLast24Months: Math.floor(getDeterministicValue(parseInt(id), "inquiries", 421) * 5),
         },
       };
 
@@ -270,7 +311,7 @@ const loanProcessingV1 = {
     try {
       const { id } = req.params;
 
-      // Higher error rate for sub-steps (15% chance)
+      // Deterministic error rate for sub-steps
       if (Math.random() < ERROR_RATES.creditBureauA) {
         logError("Credit Bureau A service failure", new Error("Experian service timeout"));
         return res
@@ -284,7 +325,7 @@ const loanProcessingV1 = {
         success: true,
         bureau: "Experian",
         status: "completed",
-        score: Math.floor(Math.random() * (850 - 300) + 300),
+        score: Math.floor(getDeterministicValue(parseInt(id), "bureauAScore", 239) * (850 - 300) + 300),
         message: "Experian credit report retrieved",
       });
     } catch (error) {
@@ -297,7 +338,7 @@ const loanProcessingV1 = {
     try {
       const { id } = req.params;
 
-      // Higher error rate for sub-steps (15% chance)
+      // Deterministic error rate for sub-steps
       if (Math.random() < ERROR_RATES.creditBureauB) {
         logError("Credit Bureau B service failure", new Error("Equifax service overloaded"));
         return res
@@ -311,7 +352,7 @@ const loanProcessingV1 = {
         success: true,
         bureau: "Equifax",
         status: "completed",
-        score: Math.floor(Math.random() * (850 - 300) + 300),
+        score: Math.floor(getDeterministicValue(parseInt(id), "bureauBScore", 347) * (850 - 300) + 300),
         message: "Equifax credit report retrieved",
       });
     } catch (error) {
@@ -324,7 +365,7 @@ const loanProcessingV1 = {
     try {
       const { id } = req.params;
 
-      // Higher error rate for sub-steps (15% chance)
+      // Deterministic error rate for sub-steps
       if (Math.random() < ERROR_RATES.creditBureauC) {
         logError("Credit Bureau C service failure", new Error("TransUnion API error"));
         return res
@@ -338,7 +379,7 @@ const loanProcessingV1 = {
         success: true,
         bureau: "TransUnion",
         status: "completed",
-        score: Math.floor(Math.random() * (850 - 300) + 300),
+        score: Math.floor(getDeterministicValue(parseInt(id), "bureauCScore", 461) * (850 - 300) + 300),
         message: "TransUnion credit report retrieved",
       });
     } catch (error) {
@@ -357,7 +398,7 @@ const loanProcessingV1 = {
         return res.status(HTTP_BAD_REQUEST).json(formatErrorResponse("Application not found"));
       }
 
-      // Simulate random server errors (35% chance)
+      // Simulate deterministic server errors
       if (Math.random() < ERROR_RATES.incomeVerification) {
         logError("Simulated income verification service failure", new Error("Employment verification service timeout"));
         return res
@@ -367,20 +408,20 @@ const loanProcessingV1 = {
 
       // Simulate processing delay with intermediate updates
       await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.incomeVerification / 4));
-      console.log(`Income verification progress for application ${id}: Contacting employer...`);
+      logDebug(`Income verification progress for application ${id}: Contacting employer...`);
 
       await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.incomeVerification / 4));
-      console.log(`Income verification progress for application ${id}: Reviewing employment records...`);
+      logDebug(`Income verification progress for application ${id}: Reviewing employment records...`);
 
       await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.incomeVerification / 4));
-      console.log(`Income verification progress for application ${id}: Analyzing income consistency...`);
+      logDebug(`Income verification progress for application ${id}: Analyzing income consistency...`);
 
       await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.incomeVerification / 4));
 
-      // Simulate income verification (90% pass rate)
-      const verified = Math.random() > 0.1;
+      // Simulate income verification with deterministic results
+      const verified = getDeterministicValue(parseInt(id), "incomeVerified", 607) > 0.1; // 90% pass rate
       const verifiedIncome = verified ? application.monthlyIncome : application.monthlyIncome * 0.8;
-      const employmentConfirmed = Math.random() > 0.05;
+      const employmentConfirmed = getDeterministicValue(parseInt(id), "employmentConfirmed", 701) > 0.05; // 95% pass rate
 
       const step = {
         name: "Income Verification",
@@ -393,7 +434,8 @@ const loanProcessingV1 = {
           employmentConfirmed,
           employmentYears: application.employmentYears,
           discrepancy: !verified,
-          verificationMethod: Math.random() > 0.5 ? "Pay Stubs" : "Tax Returns",
+          verificationMethod:
+            getDeterministicValue(parseInt(id), "verificationMethod", 787) > 0.5 ? "Pay Stubs" : "Tax Returns",
           lastPayStub: verified ? "Current" : "Outdated",
         },
       };
@@ -422,7 +464,7 @@ const loanProcessingV1 = {
     try {
       const { id } = req.params;
 
-      // Higher error rate for sub-steps (18% chance)
+      // Deterministic error rate for sub-steps
       if (Math.random() < ERROR_RATES.employerVerification) {
         logError("Employer verification service failure", new Error("HR system unavailable"));
         return res
@@ -450,7 +492,7 @@ const loanProcessingV1 = {
     try {
       const { id } = req.params;
 
-      // Higher error rate for sub-steps (33% chance)
+      // Deterministic error rate for sub-steps
       if (Math.random() < ERROR_RATES.paystubVerification) {
         logError("Paystub verification service failure", new Error("Document parsing service down"));
         return res
@@ -465,7 +507,7 @@ const loanProcessingV1 = {
         service: "Paystub Verification",
         status: "completed",
         lastPaystub: "Current",
-        grossIncome: Math.floor(Math.random() * 2000) + 3000,
+        grossIncome: Math.floor(getDeterministicValue(parseInt(id), "grossIncome", 907) * 2000) + 3000,
         message: "Recent paystubs analyzed and verified",
       });
     } catch (error) {
@@ -478,7 +520,7 @@ const loanProcessingV1 = {
     try {
       const { id } = req.params;
 
-      // Higher error rate for sub-steps (18% chance)
+      // Deterministic error rate for sub-steps
       if (Math.random() < ERROR_RATES.taxVerification) {
         logError("Tax verification service failure", new Error("IRS API rate limit exceeded"));
         return res
@@ -493,7 +535,8 @@ const loanProcessingV1 = {
         service: "Tax Verification",
         status: "completed",
         taxYear: 2023,
-        adjustedGrossIncome: Math.floor(Math.random() * 50000) + 30000,
+        adjustedGrossIncome:
+          Math.floor(getDeterministicValue(parseInt(id), "adjustedGrossIncome", 997) * 50000) + 30000,
         message: "Tax returns verified with IRS database",
       });
     } catch (error) {
@@ -512,7 +555,7 @@ const loanProcessingV1 = {
         return res.status(HTTP_BAD_REQUEST).json(formatErrorResponse("Application not found"));
       }
 
-      // Simulate random server errors (12% chance - higher for document processing)
+      // Simulate deterministic server errors
       if (Math.random() < ERROR_RATES.documentValidation) {
         logError("Simulated document validation service failure", new Error("Document processing system overloaded"));
         return res
@@ -522,27 +565,47 @@ const loanProcessingV1 = {
 
       // Simulate processing delay with detailed progress
       await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.documentValidation / 5));
-      console.log(`Document validation progress for application ${id}: Scanning uploaded documents...`);
+      logDebug(`Document validation progress for application ${id}: Scanning uploaded documents...`);
 
       await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.documentValidation / 5));
-      console.log(`Document validation progress for application ${id}: Performing OCR analysis...`);
+      logDebug(`Document validation progress for application ${id}: Performing OCR analysis...`);
 
       await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.documentValidation / 5));
-      console.log(`Document validation progress for application ${id}: Cross-referencing data...`);
+      logDebug(`Document validation progress for application ${id}: Cross-referencing data...`);
 
       await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.documentValidation / 5));
-      console.log(`Document validation progress for application ${id}: Running fraud detection...`);
+      logDebug(`Document validation progress for application ${id}: Running fraud detection...`);
 
       await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.documentValidation / 5));
 
-      // Simulate document validation (85% pass rate - more realistic)
-      const allValid = Math.random() > 0.15;
+      // Simulate document validation with deterministic results
+      const allValid = getDeterministicValue(parseInt(id), "allDocumentsValid", 1087) > 0.15; // 85% pass rate
       const documents = [
-        { name: "ID Verification", status: Math.random() > 0.05 ? "valid" : "expired", confidence: 95 },
-        { name: "Income Documentation", status: Math.random() > 0.1 ? "valid" : "missing", confidence: 87 },
-        { name: "Employment Verification", status: Math.random() > 0.08 ? "valid" : "pending", confidence: 92 },
-        { name: "Bank Statements", status: Math.random() > 0.03 ? "valid" : "insufficient", confidence: 89 },
-        { name: "Address Verification", status: Math.random() > 0.07 ? "valid" : "outdated", confidence: 91 },
+        {
+          name: "ID Verification",
+          status: getDeterministicValue(parseInt(id), "idVerification", 1093) > 0.05 ? "valid" : "expired",
+          confidence: 95,
+        },
+        {
+          name: "Income Documentation",
+          status: getDeterministicValue(parseInt(id), "incomeDoc", 1103) > 0.1 ? "valid" : "missing",
+          confidence: 87,
+        },
+        {
+          name: "Employment Verification",
+          status: getDeterministicValue(parseInt(id), "employmentDoc", 1109) > 0.08 ? "valid" : "pending",
+          confidence: 92,
+        },
+        {
+          name: "Bank Statements",
+          status: getDeterministicValue(parseInt(id), "bankStatements", 1117) > 0.03 ? "valid" : "insufficient",
+          confidence: 89,
+        },
+        {
+          name: "Address Verification",
+          status: getDeterministicValue(parseInt(id), "addressDoc", 1123) > 0.07 ? "valid" : "outdated",
+          confidence: 91,
+        },
       ];
 
       const validDocs = documents.filter((d) => d.status === "valid").length;
@@ -592,7 +655,7 @@ const loanProcessingV1 = {
         return res.status(HTTP_BAD_REQUEST).json(formatErrorResponse("Application not found"));
       }
 
-      // Simulate random server errors (6% chance)
+      // Simulate deterministic server errors
       if (Math.random() < ERROR_RATES.riskAssessment) {
         logError("Simulated risk assessment service failure", new Error("Risk analysis engine temporarily down"));
         return res
@@ -602,19 +665,19 @@ const loanProcessingV1 = {
 
       // Simulate processing delay with detailed analysis steps
       await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.riskAssessment / 6));
-      console.log(`Risk assessment progress for application ${id}: Initializing risk models...`);
+      logDebug(`Risk assessment progress for application ${id}: Initializing risk models...`);
 
       await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.riskAssessment / 6));
-      console.log(`Risk assessment progress for application ${id}: Analyzing credit factors...`);
+      logDebug(`Risk assessment progress for application ${id}: Analyzing credit factors...`);
 
       await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.riskAssessment / 6));
-      console.log(`Risk assessment progress for application ${id}: Computing debt-to-income ratios...`);
+      logDebug(`Risk assessment progress for application ${id}: Computing debt-to-income ratios...`);
 
       await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.riskAssessment / 6));
-      console.log(`Risk assessment progress for application ${id}: Running machine learning models...`);
+      logDebug(`Risk assessment progress for application ${id}: Running machine learning models...`);
 
       await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.riskAssessment / 6));
-      console.log(`Risk assessment progress for application ${id}: Generating risk score...`);
+      logDebug(`Risk assessment progress for application ${id}: Generating risk score...`);
 
       await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.riskAssessment / 6));
 
@@ -654,7 +717,7 @@ const loanProcessingV1 = {
             `DTI Ratio: ${debtToIncomeRatio}%`,
           ],
           modelVersion: "v2.3.1",
-          confidenceLevel: Math.round(85 + Math.random() * 10),
+          confidenceLevel: Math.round(85 + getDeterministicValue(parseInt(id), "confidenceLevel", 1201) * 10),
         },
       };
 
@@ -685,7 +748,7 @@ const loanProcessingV1 = {
         return res.status(HTTP_BAD_REQUEST).json(formatErrorResponse("Application not found"));
       }
 
-      // Simulate random server errors (25% chance - lower for final step)
+      // Simulate deterministic server errors
       if (Math.random() < ERROR_RATES.finalApproval) {
         logError("Simulated final approval service failure", new Error("Loan approval system maintenance"));
         return res
@@ -695,16 +758,16 @@ const loanProcessingV1 = {
 
       // Simulate processing delay with final decision steps
       await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.finalApproval / 5));
-      console.log(`Final approval progress for application ${id}: Reviewing all assessment results...`);
+      logDebug(`Final approval progress for application ${id}: Reviewing all assessment results...`);
 
       await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.finalApproval / 5));
-      console.log(`Final approval progress for application ${id}: Calculating loan terms...`);
+      logDebug(`Final approval progress for application ${id}: Calculating loan terms...`);
 
       await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.finalApproval / 5));
-      console.log(`Final approval progress for application ${id}: Running final compliance checks...`);
+      logDebug(`Final approval progress for application ${id}: Running final compliance checks...`);
 
       await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.finalApproval / 5));
-      console.log(`Final approval progress for application ${id}: Preparing decision...`);
+      logDebug(`Final approval progress for application ${id}: Preparing decision...`);
 
       await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.finalApproval / 5));
 
