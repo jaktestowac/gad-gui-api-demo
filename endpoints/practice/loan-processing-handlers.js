@@ -31,6 +31,22 @@ const LOAN_TYPES = {
   business: { name: "Business Loan", maxAmount: 500000, minCreditScore: 650, interestRate: { min: 5.5, max: 15.99 } },
 };
 
+// Error simulation chances (0.0 to 1.0)
+const ERROR_RATES = {
+  creditCheck: 0.35, // 35% chance of credit check failure
+  incomeVerification: 0.35, // 35% chance of income verification failure
+  documentValidation: 0.12, // 12% chance of document validation failure
+  riskAssessment: 0.06, // 6% chance of risk assessment failure
+  finalApproval: 0.25, // 25% chance of final approval failure
+  // Sub-step error rates (higher than main steps)
+  creditBureauA: 0.35, // 15% chance of Experian failure
+  creditBureauB: 0.35, // 15% chance of Equifax failure
+  creditBureauC: 0.35, // 15% chance of TransUnion failure
+  employerVerification: 0.38, // 38% chance of employer verification failure
+  paystubVerification: 0.33, // 33% chance of paystub verification failure
+  taxVerification: 0.38, // 18% chance of tax verification failure
+};
+
 function generateCreditScore() {
   return Math.floor(Math.random() * (850 - 300) + 300);
 }
@@ -73,8 +89,7 @@ const loanProcessingV1 = {
   // Start loan application
   createApplication: async (req, res) => {
     try {
-      const { firstName, lastName, loanType, loanAmount, monthlyIncome, employmentYears, purpose } =
-        req.body;
+      const { firstName, lastName, loanType, loanAmount, monthlyIncome, employmentYears, purpose } = req.body;
 
       // Validation
       if (!firstName || !lastName || !loanType || !loanAmount || !monthlyIncome) {
@@ -190,8 +205,33 @@ const loanProcessingV1 = {
         return res.status(HTTP_BAD_REQUEST).json(formatErrorResponse("Application not found"));
       }
 
-      // Simulate processing delay
-      await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.creditCheck));
+      // Simulate random server errors (35% chance)
+      if (Math.random() < ERROR_RATES.creditCheck) {
+        logError("Simulated credit check service failure", new Error("Credit bureau service unavailable"));
+        return res
+          .status(HTTP_INTERNAL_SERVER_ERROR)
+          .json(formatErrorResponse("Credit bureau service temporarily unavailable. Please try again."));
+      }
+
+      // Simulate processing delay with intermediate updates
+      await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.creditCheck / 3));
+
+      // Send intermediate progress update
+      if (Math.random() > 0.3) {
+        // 70% chance of sending progress update
+        // Note: In real app, this would be via WebSocket or Server-Sent Events
+        // For demo, we'll just log it
+        console.log(`Credit check progress for application ${id}: Contacting credit bureaus...`);
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.creditCheck / 3));
+
+      // Another progress update
+      if (Math.random() > 0.3) {
+        console.log(`Credit check progress for application ${id}: Analyzing credit history...`);
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.creditCheck / 3));
 
       // Generate credit score
       const creditScore = generateCreditScore();
@@ -205,6 +245,9 @@ const loanProcessingV1 = {
           creditScore,
           creditRating:
             creditScore >= 750 ? "Excellent" : creditScore >= 650 ? "Good" : creditScore >= 580 ? "Fair" : "Poor",
+          bureauReports: 3,
+          accountsReviewed: Math.floor(Math.random() * 15) + 5,
+          inquiriesLast24Months: Math.floor(Math.random() * 5),
         },
       };
 
@@ -214,10 +257,92 @@ const loanProcessingV1 = {
         success: true,
         step,
         creditScore,
-        message: "Credit check completed",
+        message: `Credit check completed successfully. Score: ${creditScore}`,
       });
     } catch (error) {
       logError("Error processing credit check", error);
+      res.status(HTTP_INTERNAL_SERVER_ERROR).json(formatErrorResponse("Internal server error"));
+    }
+  },
+
+  // Credit Check Sub-steps
+  processCreditCheckBureauA: async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      // Higher error rate for sub-steps (15% chance)
+      if (Math.random() < ERROR_RATES.creditBureauA) {
+        logError("Credit Bureau A service failure", new Error("Experian service timeout"));
+        return res
+          .status(HTTP_INTERNAL_SERVER_ERROR)
+          .json(formatErrorResponse("Experian credit bureau service timeout. Retrying..."));
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 300));
+
+      res.status(HTTP_OK).json({
+        success: true,
+        bureau: "Experian",
+        status: "completed",
+        score: Math.floor(Math.random() * (850 - 300) + 300),
+        message: "Experian credit report retrieved",
+      });
+    } catch (error) {
+      logError("Error processing credit check bureau A", error);
+      res.status(HTTP_INTERNAL_SERVER_ERROR).json(formatErrorResponse("Internal server error"));
+    }
+  },
+
+  processCreditCheckBureauB: async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      // Higher error rate for sub-steps (15% chance)
+      if (Math.random() < ERROR_RATES.creditBureauB) {
+        logError("Credit Bureau B service failure", new Error("Equifax service overloaded"));
+        return res
+          .status(HTTP_INTERNAL_SERVER_ERROR)
+          .json(formatErrorResponse("Equifax credit bureau service overloaded. Retrying..."));
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 350));
+
+      res.status(HTTP_OK).json({
+        success: true,
+        bureau: "Equifax",
+        status: "completed",
+        score: Math.floor(Math.random() * (850 - 300) + 300),
+        message: "Equifax credit report retrieved",
+      });
+    } catch (error) {
+      logError("Error processing credit check bureau B", error);
+      res.status(HTTP_INTERNAL_SERVER_ERROR).json(formatErrorResponse("Internal server error"));
+    }
+  },
+
+  processCreditCheckBureauC: async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      // Higher error rate for sub-steps (15% chance)
+      if (Math.random() < ERROR_RATES.creditBureauC) {
+        logError("Credit Bureau C service failure", new Error("TransUnion API error"));
+        return res
+          .status(HTTP_INTERNAL_SERVER_ERROR)
+          .json(formatErrorResponse("TransUnion credit bureau API error. Retrying..."));
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 280));
+
+      res.status(HTTP_OK).json({
+        success: true,
+        bureau: "TransUnion",
+        status: "completed",
+        score: Math.floor(Math.random() * (850 - 300) + 300),
+        message: "TransUnion credit report retrieved",
+      });
+    } catch (error) {
+      logError("Error processing credit check bureau C", error);
       res.status(HTTP_INTERNAL_SERVER_ERROR).json(formatErrorResponse("Internal server error"));
     }
   },
@@ -232,36 +357,147 @@ const loanProcessingV1 = {
         return res.status(HTTP_BAD_REQUEST).json(formatErrorResponse("Application not found"));
       }
 
-      // Simulate processing delay
-      await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.incomeVerification));
+      // Simulate random server errors (35% chance)
+      if (Math.random() < ERROR_RATES.incomeVerification) {
+        logError("Simulated income verification service failure", new Error("Employment verification service timeout"));
+        return res
+          .status(HTTP_INTERNAL_SERVER_ERROR)
+          .json(formatErrorResponse("Employment verification service timeout. Please try again in a few moments."));
+      }
+
+      // Simulate processing delay with intermediate updates
+      await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.incomeVerification / 4));
+      console.log(`Income verification progress for application ${id}: Contacting employer...`);
+
+      await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.incomeVerification / 4));
+      console.log(`Income verification progress for application ${id}: Reviewing employment records...`);
+
+      await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.incomeVerification / 4));
+      console.log(`Income verification progress for application ${id}: Analyzing income consistency...`);
+
+      await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.incomeVerification / 4));
 
       // Simulate income verification (90% pass rate)
       const verified = Math.random() > 0.1;
       const verifiedIncome = verified ? application.monthlyIncome : application.monthlyIncome * 0.8;
+      const employmentConfirmed = Math.random() > 0.05;
 
       const step = {
         name: "Income Verification",
-        status: verified ? "completed" : "warning",
+        status: verified && employmentConfirmed ? "completed" : "warning",
         completedAt: new Date().toISOString(),
         result: {
           verified,
           declaredIncome: application.monthlyIncome,
           verifiedIncome,
+          employmentConfirmed,
+          employmentYears: application.employmentYears,
           discrepancy: !verified,
+          verificationMethod: Math.random() > 0.5 ? "Pay Stubs" : "Tax Returns",
+          lastPayStub: verified ? "Current" : "Outdated",
         },
       };
 
       application.processingSteps.push(step);
 
+      let message = "Income verification completed";
+      if (!verified) message += " with income discrepancies";
+      if (!employmentConfirmed) message += " - employment pending confirmation";
+
       res.status(HTTP_OK).json({
         success: true,
         step,
-        verified,
+        verified: verified && employmentConfirmed,
         verifiedIncome,
-        message: verified ? "Income verification passed" : "Income verification completed with discrepancies",
+        message,
       });
     } catch (error) {
       logError("Error processing income verification", error);
+      res.status(HTTP_INTERNAL_SERVER_ERROR).json(formatErrorResponse("Internal server error"));
+    }
+  },
+
+  // Income Verification Sub-steps
+  processIncomeEmployerVerification: async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      // Higher error rate for sub-steps (18% chance)
+      if (Math.random() < ERROR_RATES.employerVerification) {
+        logError("Employer verification service failure", new Error("HR system unavailable"));
+        return res
+          .status(HTTP_INTERNAL_SERVER_ERROR)
+          .json(formatErrorResponse("Employer HR system temporarily unavailable. Retrying..."));
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 400));
+
+      res.status(HTTP_OK).json({
+        success: true,
+        service: "Employer Verification",
+        status: "completed",
+        employmentStatus: "Active",
+        startDate: "2020-03-15",
+        message: "Employment status verified with employer",
+      });
+    } catch (error) {
+      logError("Error processing employer verification", error);
+      res.status(HTTP_INTERNAL_SERVER_ERROR).json(formatErrorResponse("Internal server error"));
+    }
+  },
+
+  processIncomePaystubVerification: async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      // Higher error rate for sub-steps (33% chance)
+      if (Math.random() < ERROR_RATES.paystubVerification) {
+        logError("Paystub verification service failure", new Error("Document parsing service down"));
+        return res
+          .status(HTTP_INTERNAL_SERVER_ERROR)
+          .json(formatErrorResponse("Document parsing service temporarily down. Retrying..."));
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 320));
+
+      res.status(HTTP_OK).json({
+        success: true,
+        service: "Paystub Verification",
+        status: "completed",
+        lastPaystub: "Current",
+        grossIncome: Math.floor(Math.random() * 2000) + 3000,
+        message: "Recent paystubs analyzed and verified",
+      });
+    } catch (error) {
+      logError("Error processing paystub verification", error);
+      res.status(HTTP_INTERNAL_SERVER_ERROR).json(formatErrorResponse("Internal server error"));
+    }
+  },
+
+  processIncomeTaxVerification: async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      // Higher error rate for sub-steps (18% chance)
+      if (Math.random() < ERROR_RATES.taxVerification) {
+        logError("Tax verification service failure", new Error("IRS API rate limit exceeded"));
+        return res
+          .status(HTTP_INTERNAL_SERVER_ERROR)
+          .json(formatErrorResponse("IRS verification service rate limit exceeded. Retrying..."));
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 450));
+
+      res.status(HTTP_OK).json({
+        success: true,
+        service: "Tax Verification",
+        status: "completed",
+        taxYear: 2023,
+        adjustedGrossIncome: Math.floor(Math.random() * 50000) + 30000,
+        message: "Tax returns verified with IRS database",
+      });
+    } catch (error) {
+      logError("Error processing tax verification", error);
       res.status(HTTP_INTERNAL_SERVER_ERROR).json(formatErrorResponse("Internal server error"));
     }
   },
@@ -276,17 +512,42 @@ const loanProcessingV1 = {
         return res.status(HTTP_BAD_REQUEST).json(formatErrorResponse("Application not found"));
       }
 
-      // Simulate processing delay
-      await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.documentValidation));
+      // Simulate random server errors (12% chance - higher for document processing)
+      if (Math.random() < ERROR_RATES.documentValidation) {
+        logError("Simulated document validation service failure", new Error("Document processing system overloaded"));
+        return res
+          .status(HTTP_INTERNAL_SERVER_ERROR)
+          .json(formatErrorResponse("Document processing system temporarily overloaded. Please retry."));
+      }
 
-      // Simulate document validation (95% pass rate)
-      const allValid = Math.random() > 0.05;
+      // Simulate processing delay with detailed progress
+      await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.documentValidation / 5));
+      console.log(`Document validation progress for application ${id}: Scanning uploaded documents...`);
+
+      await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.documentValidation / 5));
+      console.log(`Document validation progress for application ${id}: Performing OCR analysis...`);
+
+      await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.documentValidation / 5));
+      console.log(`Document validation progress for application ${id}: Cross-referencing data...`);
+
+      await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.documentValidation / 5));
+      console.log(`Document validation progress for application ${id}: Running fraud detection...`);
+
+      await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.documentValidation / 5));
+
+      // Simulate document validation (85% pass rate - more realistic)
+      const allValid = Math.random() > 0.15;
       const documents = [
-        { name: "ID Verification", status: "valid" },
-        { name: "Income Documentation", status: Math.random() > 0.1 ? "valid" : "missing" },
-        { name: "Employment Verification", status: Math.random() > 0.05 ? "valid" : "pending" },
-        { name: "Bank Statements", status: "valid" },
+        { name: "ID Verification", status: Math.random() > 0.05 ? "valid" : "expired", confidence: 95 },
+        { name: "Income Documentation", status: Math.random() > 0.1 ? "valid" : "missing", confidence: 87 },
+        { name: "Employment Verification", status: Math.random() > 0.08 ? "valid" : "pending", confidence: 92 },
+        { name: "Bank Statements", status: Math.random() > 0.03 ? "valid" : "insufficient", confidence: 89 },
+        { name: "Address Verification", status: Math.random() > 0.07 ? "valid" : "outdated", confidence: 91 },
       ];
+
+      const validDocs = documents.filter((d) => d.status === "valid").length;
+      const totalDocs = documents.length;
+      const validationScore = Math.round((validDocs / totalDocs) * 100);
 
       const step = {
         name: "Document Validation",
@@ -295,7 +556,11 @@ const loanProcessingV1 = {
         result: {
           allDocumentsValid: allValid,
           documents,
+          validationScore,
+          documentsProcessed: totalDocs,
+          documentsValid: validDocs,
           missingCount: documents.filter((d) => d.status !== "valid").length,
+          averageConfidence: Math.round(documents.reduce((sum, d) => sum + d.confidence, 0) / documents.length),
         },
       };
 
@@ -306,7 +571,10 @@ const loanProcessingV1 = {
         step,
         allValid,
         documents,
-        message: allValid ? "All documents validated" : "Document validation completed with issues",
+        validationScore,
+        message: allValid
+          ? `All ${totalDocs} documents validated successfully`
+          : `Document validation completed: ${validDocs}/${totalDocs} documents valid`,
       });
     } catch (error) {
       logError("Error processing document validation", error);
@@ -324,8 +592,31 @@ const loanProcessingV1 = {
         return res.status(HTTP_BAD_REQUEST).json(formatErrorResponse("Application not found"));
       }
 
-      // Simulate processing delay
-      await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.riskAssessment));
+      // Simulate random server errors (6% chance)
+      if (Math.random() < ERROR_RATES.riskAssessment) {
+        logError("Simulated risk assessment service failure", new Error("Risk analysis engine temporarily down"));
+        return res
+          .status(HTTP_INTERNAL_SERVER_ERROR)
+          .json(formatErrorResponse("Risk analysis engine is temporarily unavailable. Please try again."));
+      }
+
+      // Simulate processing delay with detailed analysis steps
+      await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.riskAssessment / 6));
+      console.log(`Risk assessment progress for application ${id}: Initializing risk models...`);
+
+      await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.riskAssessment / 6));
+      console.log(`Risk assessment progress for application ${id}: Analyzing credit factors...`);
+
+      await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.riskAssessment / 6));
+      console.log(`Risk assessment progress for application ${id}: Computing debt-to-income ratios...`);
+
+      await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.riskAssessment / 6));
+      console.log(`Risk assessment progress for application ${id}: Running machine learning models...`);
+
+      await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.riskAssessment / 6));
+      console.log(`Risk assessment progress for application ${id}: Generating risk score...`);
+
+      await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.riskAssessment / 6));
 
       // Calculate risk assessment
       const approvalProbability = calculateApprovalProbability(
@@ -341,6 +632,8 @@ const loanProcessingV1 = {
       application.interestRate = interestRate;
 
       const riskLevel = approvalProbability > 0.7 ? "Low" : approvalProbability > 0.4 ? "Medium" : "High";
+      const debtToIncomeRatio = Math.round((application.loanAmount / 12 / application.monthlyIncome) * 100);
+      const riskScore = Math.round((1 - approvalProbability) * 1000);
 
       const step = {
         name: "Risk Assessment",
@@ -348,15 +641,20 @@ const loanProcessingV1 = {
         completedAt: new Date().toISOString(),
         result: {
           riskLevel,
+          riskScore,
           approvalProbability: Math.round(approvalProbability * 100),
           interestRate,
-          debtToIncomeRatio: Math.round((application.loanAmount / 12 / application.monthlyIncome) * 100),
+          debtToIncomeRatio,
+          loanToValueRatio: Math.round((application.loanAmount / (application.monthlyIncome * 12)) * 100),
           factors: [
             `Credit Score: ${application.creditScore}`,
             `Employment: ${application.employmentYears} years`,
             `Loan Amount: $${application.loanAmount.toLocaleString()}`,
             `Monthly Income: $${application.monthlyIncome.toLocaleString()}`,
+            `DTI Ratio: ${debtToIncomeRatio}%`,
           ],
+          modelVersion: "v2.3.1",
+          confidenceLevel: Math.round(85 + Math.random() * 10),
         },
       };
 
@@ -366,9 +664,10 @@ const loanProcessingV1 = {
         success: true,
         step,
         riskLevel,
+        riskScore,
         approvalProbability: Math.round(approvalProbability * 100),
         interestRate,
-        message: "Risk assessment completed",
+        message: `Risk assessment completed. Risk level: ${riskLevel}, Score: ${riskScore}`,
       });
     } catch (error) {
       logError("Error processing risk assessment", error);
@@ -386,29 +685,84 @@ const loanProcessingV1 = {
         return res.status(HTTP_BAD_REQUEST).json(formatErrorResponse("Application not found"));
       }
 
-      // Simulate processing delay
-      await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.finalApproval));
+      // Simulate random server errors (25% chance - lower for final step)
+      if (Math.random() < ERROR_RATES.finalApproval) {
+        logError("Simulated final approval service failure", new Error("Loan approval system maintenance"));
+        return res
+          .status(HTTP_INTERNAL_SERVER_ERROR)
+          .json(formatErrorResponse("Loan approval system is under maintenance. Please try again shortly."));
+      }
+
+      // Simulate processing delay with final decision steps
+      await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.finalApproval / 5));
+      console.log(`Final approval progress for application ${id}: Reviewing all assessment results...`);
+
+      await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.finalApproval / 5));
+      console.log(`Final approval progress for application ${id}: Calculating loan terms...`);
+
+      await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.finalApproval / 5));
+      console.log(`Final approval progress for application ${id}: Running final compliance checks...`);
+
+      await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.finalApproval / 5));
+      console.log(`Final approval progress for application ${id}: Preparing decision...`);
+
+      await new Promise((resolve) => setTimeout(resolve, PROCESSING_DELAYS.finalApproval / 5));
 
       // Make final decision based on all factors
       const approved = application.approvalProbability > 0.3;
       const decision = approved ? "approved" : "declined";
 
       let reason = "";
+      let decisionDetails = {};
+
       if (approved) {
-        reason = "Application meets all lending criteria";
+        reason = "Application meets all lending criteria and risk parameters";
+        decisionDetails = {
+          approvalType:
+            application.approvalProbability > 0.8
+              ? "Excellent"
+              : application.approvalProbability > 0.6
+              ? "Standard"
+              : "Conditional",
+          reviewedBy: "Automated Underwriting System v3.2",
+          complianceChecks: ["Fair Credit Reporting Act", "Truth in Lending Act", "Equal Credit Opportunity Act"],
+          fundingTimeframe: "3-5 business days",
+        };
       } else {
         if (application.creditScore < LOAN_TYPES[application.loanType].minCreditScore) {
-          reason = "Credit score below minimum requirement";
+          reason = `Credit score ${application.creditScore} is below minimum requirement of ${
+            LOAN_TYPES[application.loanType].minCreditScore
+          }`;
         } else if (application.loanAmount / 12 / application.monthlyIncome > 0.5) {
-          reason = "Debt-to-income ratio too high";
+          reason = "Debt-to-income ratio exceeds 50% threshold";
         } else {
           reason = "Overall risk assessment indicates high default probability";
         }
+        decisionDetails = {
+          primaryReason: reason,
+          suggestedActions: approved
+            ? []
+            : [
+                "Improve credit score",
+                "Reduce requested loan amount",
+                "Increase income documentation",
+                "Consider a co-signer",
+              ],
+          reapplicationEligible: "90 days",
+        };
       }
 
       application.finalDecision = decision;
       application.decisionReason = reason;
       application.status = decision;
+
+      const monthlyPayment = approved
+        ? Math.round(
+            ((application.loanAmount * (application.interestRate / 100 / 12)) /
+              (1 - Math.pow(1 + application.interestRate / 100 / 12, -360))) *
+              100
+          ) / 100
+        : null;
 
       const step = {
         name: "Final Approval",
@@ -417,16 +771,15 @@ const loanProcessingV1 = {
         result: {
           decision,
           reason,
+          decisionDetails,
           loanAmount: approved ? application.loanAmount : 0,
           interestRate: approved ? application.interestRate : null,
-          monthlyPayment: approved
-            ? Math.round(
-                ((application.loanAmount * (application.interestRate / 100 / 12)) /
-                  (1 - Math.pow(1 + application.interestRate / 100 / 12, -360))) *
-                  100
-              ) / 100
-            : null,
+          monthlyPayment,
           termYears: approved ? 30 : null,
+          totalLoanCost: approved ? Math.round(monthlyPayment * 360) : null,
+          decisionScore: Math.round(application.approvalProbability * 1000),
+          processingTime: "4.2 seconds",
+          referenceNumber: `LN-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
         },
       };
 
@@ -438,7 +791,11 @@ const loanProcessingV1 = {
         decision,
         approved,
         reason,
-        message: approved ? "Loan application approved!" : "Loan application declined",
+        monthlyPayment,
+        referenceNumber: step.result.referenceNumber,
+        message: approved
+          ? `Loan application approved! Monthly payment: $${monthlyPayment}`
+          : `Loan application declined: ${reason}`,
       });
     } catch (error) {
       logError("Error processing final approval", error);

@@ -47,9 +47,12 @@
     
     .loan-section-title {
       color: #2d3748;
-      margin: 0 0 0.75rem 0;
-      font-size: 1rem;
+      margin: 0 0 0.5rem 0;
+      font-size: 0.95rem;
       font-weight: 600;
+      text-align: center;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid rgba(102, 126, 234, 0.2);
     }
     
     /* Loan Form Styles */
@@ -152,13 +155,14 @@
     
     /* Loan Processing Styles */
     .loan-processing-section {
-      background: rgba(255, 255, 255, 0.7);
-      padding: 1rem;
-      border-radius: 10px;
-      margin-bottom: 1rem;
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      backdrop-filter: blur(8px);
+      background: rgba(255, 255, 255, 0.8);
+      padding: 0.75rem;
+      border-radius: 8px;
+      margin-bottom: 0.75rem;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(12px);
       display: none;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
     }
     
     .loan-processing-section.active {
@@ -167,56 +171,100 @@
     
     .loan-processing-steps {
       display: grid;
-      gap: 0.5rem;
+      gap: 0.3rem;
+      margin-bottom: 0.75rem;
     }
     
     .loan-processing-step {
-      background: rgba(255, 255, 255, 0.85);
-      border-radius: 8px;
-      padding: 0.75rem;
-      border: 1px solid rgba(226, 232, 240, 0.6);
-      transition: all 0.3s ease;
-      backdrop-filter: blur(4px);
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 6px;
+      padding: 0.5rem;
+      border: 1px solid rgba(226, 232, 240, 0.4);
+      transition: all 0.2s ease;
+      backdrop-filter: blur(6px);
+      position: relative;
+      overflow: hidden;
     }
     
     .loan-processing-step.active {
       border-color: #667eea;
-      background: rgba(102, 126, 234, 0.08);
-      transform: scale(1.005);
+      background: rgba(102, 126, 234, 0.06);
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+    }
+    
+    .loan-processing-step.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
     }
     
     .loan-processing-step.completed {
       border-color: #48bb78;
-      background: rgba(72, 187, 120, 0.08);
+      background: rgba(72, 187, 120, 0.05);
+    }
+    
+    .loan-processing-step.completed::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: #48bb78;
     }
     
     .loan-processing-step.warning {
       border-color: #ed8936;
-      background: rgba(237, 137, 54, 0.08);
+      background: rgba(237, 137, 54, 0.05);
+    }
+    
+    .loan-processing-step.warning::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: #ed8936;
     }
     
     .loan-processing-step.declined {
       border-color: #f56565;
-      background: rgba(245, 101, 101, 0.08);
+      background: rgba(245, 101, 101, 0.05);
+    }
+    
+    .loan-processing-step.declined::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: #f56565;
     }
     
     .loan-step-header {
       display: flex;
       align-items: center;
-      gap: 0.6rem;
-      margin-bottom: 0.4rem;
+      gap: 0.5rem;
+      margin-bottom: 0.25rem;
     }
     
     .loan-step-icon {
-      width: 24px;
-      height: 24px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       font-weight: 600;
       flex-shrink: 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
     
     .loan-step-icon.pending {
@@ -251,34 +299,46 @@
     }
     
     .loan-step-title {
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 600;
       color: #1a202c;
+      line-height: 1.2;
     }
     
     .loan-step-status {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       color: #718096;
+      line-height: 1.2;
     }
     
     .loan-step-content {
-      margin-left: 32px;
+      margin-left: 26px;
+      margin-top: 0.1rem;
     }
     
     .loan-step-content p {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       color: #4a5568;
-      margin: 0 0 0.4rem 0;
-      line-height: 1.4;
+      margin: 0 0 0.25rem 0;
+      line-height: 1.3;
+      display: none; /* Hide description by default for compactness */
+    }
+    
+    .loan-processing-step.active .loan-step-content p,
+    .loan-processing-step.completed .loan-step-content p,
+    .loan-processing-step.warning .loan-step-content p,
+    .loan-processing-step.declined .loan-step-content p {
+      display: block; /* Show description when step is active or completed */
     }
     
     .loan-step-result {
       background: rgba(255, 255, 255, 0.95);
-      padding: 0.6rem;
-      border-radius: 5px;
-      margin-top: 0.4rem;
+      padding: 0.4rem;
+      border-radius: 4px;
+      margin-top: 0.25rem;
       border-left: 2px solid #667eea;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     }
     
     .loan-step-result.completed {
@@ -295,32 +355,40 @@
     
     .loan-result-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-      gap: 0.4rem;
-      margin: 0.4rem 0;
+      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+      gap: 0.25rem;
+      margin: 0.25rem 0;
     }
     
     .loan-result-card {
-      background: rgba(247, 250, 252, 0.9);
-      padding: 0.4rem;
-      border-radius: 4px;
+      background: rgba(247, 250, 252, 0.95);
+      padding: 0.3rem;
+      border-radius: 3px;
       text-align: center;
-      border: 1px solid rgba(226, 232, 240, 0.7);
+      border: 1px solid rgba(226, 232, 240, 0.5);
+      transition: all 0.2s ease;
+    }
+    
+    .loan-result-card:hover {
+      background: rgba(255, 255, 255, 1);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
     }
     
     .loan-result-label {
-      font-size: 0.6rem;
+      font-size: 0.55rem;
       color: #718096;
       text-transform: uppercase;
       letter-spacing: 0.3px;
-      margin-bottom: 0.2rem;
+      margin-bottom: 0.15rem;
       font-weight: 500;
+      line-height: 1;
     }
     
     .loan-result-value {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       font-weight: 600;
       color: #1a202c;
+      line-height: 1.1;
     }
     
     .loan-result-value.success {
@@ -446,8 +514,21 @@
         gap: 0.5rem;
       }
       
+      .loan-processing-section {
+        padding: 0.5rem;
+      }
+      
+      .loan-processing-steps {
+        gap: 0.25rem;
+      }
+      
+      .loan-processing-step {
+        padding: 0.4rem;
+      }
+      
       .loan-result-grid {
         grid-template-columns: 1fr 1fr;
+        gap: 0.2rem;
       }
       
       .loan-title {
@@ -455,12 +536,20 @@
       }
       
       .loan-step-content {
-        margin-left: 28px;
+        margin-left: 22px;
       }
       
       .loan-step-icon {
-        width: 22px;
-        height: 22px;
+        width: 18px;
+        height: 18px;
+        font-size: 0.6rem;
+      }
+      
+      .loan-step-title {
+        font-size: 0.75rem;
+      }
+      
+      .loan-step-status {
         font-size: 0.65rem;
       }
     }
@@ -546,6 +635,18 @@
     <!-- Processing Section -->
     <div class="loan-processing-section" id="processingSection">
       <h2 class="loan-section-title">⚡ Processing Your Application</h2>
+      
+      <!-- Processing Options -->
+      <div class="loan-form-group" style="margin-bottom: 0.75rem;">
+        <label class="loan-label" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <input type="checkbox" id="enableRetries" checked style="margin: 0; transform: scale(1.1);">
+          <span>Enable automatic retries on errors (recommended)</span>
+        </label>
+        <p style="font-size: 0.7rem; color: #718096; margin: 0; margin-left: 1.5rem; line-height: 1.3;">
+          When enabled, the system will automatically retry failed requests up to 3 times with exponential backoff.
+        </p>
+      </div>
+      
       <div class="loan-processing-steps" id="processingSteps">
         <!-- Steps will be dynamically added here -->
       </div>
@@ -581,11 +682,41 @@
     let currentApplicationId = null;
     let loanTypes = [];
     let processingSteps = [
-      { id: 'credit-check', name: 'Credit Check', description: 'Verifying your credit history and score' },
-      { id: 'income-verification', name: 'Income Verification', description: 'Confirming your income details' },
-      { id: 'document-validation', name: 'Document Validation', description: 'Validating required documents' },
-      { id: 'risk-assessment', name: 'Risk Assessment', description: 'Analyzing loan risk factors' },
-      { id: 'final-approval', name: 'Final Approval', description: 'Making final lending decision' }
+      { 
+        id: 'credit-check', 
+        name: 'Credit Check', 
+        description: 'Verifying your credit history and score',
+        subSteps: [
+          { id: 'credit-check-bureau-a', name: 'Experian Report', description: 'Fetching Experian credit report' },
+          { id: 'credit-check-bureau-b', name: 'Equifax Report', description: 'Fetching Equifax credit report' },
+          { id: 'credit-check-bureau-c', name: 'TransUnion Report', description: 'Fetching TransUnion credit report' }
+        ]
+      },
+      { 
+        id: 'income-verification', 
+        name: 'Income Verification', 
+        description: 'Confirming your income details',
+        subSteps: [
+          { id: 'income-employer-verification', name: 'Employer Verification', description: 'Contacting your employer' },
+          { id: 'income-paystub-verification', name: 'Paystub Analysis', description: 'Analyzing recent paystubs' },
+          { id: 'income-tax-verification', name: 'Tax Verification', description: 'Verifying tax returns' }
+        ]
+      },
+      { 
+        id: 'document-validation', 
+        name: 'Document Validation', 
+        description: 'Validating required documents'
+      },
+      { 
+        id: 'risk-assessment', 
+        name: 'Risk Assessment', 
+        description: 'Analyzing loan risk factors'
+      },
+      { 
+        id: 'final-approval', 
+        name: 'Final Approval', 
+        description: 'Making final lending decision'
+      }
     ];
     
     // Initialize page
@@ -619,6 +750,89 @@
     function setupEventListeners() {
       document.getElementById('loanForm').addEventListener('submit', handleFormSubmit);
       document.getElementById('startProcessingBtn').addEventListener('click', startProcessing);
+    }
+    
+    // Utility function for API requests with retry logic
+    async function makeRequestWithRetry(url, options = {}, maxRetries = 3) {
+      const enableRetries = document.getElementById('enableRetries').checked;
+      const retryLimit = enableRetries ? maxRetries : 0;
+      
+      for (let attempt = 0; attempt <= retryLimit; attempt++) {
+        try {
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            ...options
+          });
+          
+          if (response.status === 500 && attempt < retryLimit) {
+            // Log the retry attempt
+            console.log(`Request failed (500), retrying... (${attempt + 1}/${retryLimit})`);
+            
+            // Exponential backoff delay
+            const delay = Math.pow(2, attempt) * 500 + Math.random() * 500;
+            await new Promise(resolve => setTimeout(resolve, delay));
+            continue;
+          }
+          
+          return response;
+          
+        } catch (error) {
+          if (attempt < retryLimit) {
+            console.log(`Network error, retrying... (${attempt + 1}/${retryLimit})`);
+            const delay = Math.pow(2, attempt) * 500 + Math.random() * 500;
+            await new Promise(resolve => setTimeout(resolve, delay));
+            continue;
+          }
+          throw error;
+        }
+      }
+    }
+    
+    // Process sub-steps for detailed workflow
+    async function processSubSteps(stepId, subSteps, statusElement) {
+      const subResults = [];
+      
+      for (let i = 0; i < subSteps.length; i++) {
+        const subStep = subSteps[i];
+        
+        try {
+          statusElement.textContent = `Processing ${subStep.name}...`;
+          
+          const response = await makeRequestWithRetry(
+            `/api/practice/v1/loan-processing/applications/${currentApplicationId}/${subStep.id}`
+          );
+          
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`${subStep.name}: ${errorData.message || 'Failed'}`);
+          }
+          
+          const result = await response.json();
+          subResults.push({
+            name: subStep.name,
+            success: true,
+            result: result
+          });
+          
+          // Small delay between sub-steps
+          await delay(200);
+          
+        } catch (error) {
+          subResults.push({
+            name: subStep.name,
+            success: false,
+            error: error.message
+          });
+          
+          // Continue with other sub-steps even if one fails
+          console.warn(`Sub-step ${subStep.name} failed:`, error.message);
+        }
+      }
+      
+      return subResults;
     }
     
     // Handle form submission
@@ -727,6 +941,9 @@
       startBtn.disabled = true;
       startBtn.textContent = 'Processing...';
       
+      let completedSteps = 0;
+      const totalSteps = processingSteps.length;
+      
       try {
         // Start processing
         await fetch(`/api/practice/v1/loan-processing/applications/${currentApplicationId}/start-processing`, {
@@ -736,25 +953,54 @@
         // Process each step with delays
         for (let i = 0; i < processingSteps.length; i++) {
           const step = processingSteps[i];
-          await processStep(step.id, i);
           
-          // Small delay between steps for better UX
-          if (i < processingSteps.length - 1) {
-            await delay(500);
+          try {
+            await processStep(step.id, i);
+            completedSteps++;
+            
+            // Update progress
+            startBtn.textContent = `Processing... (${completedSteps}/${totalSteps})`;
+            
+            // Small delay between steps for better UX
+            if (i < processingSteps.length - 1) {
+              await delay(500);
+            }
+            
+          } catch (stepError) {
+            // If a step fails, we can either stop or continue with next steps
+            // For now, we'll stop on failure
+            startBtn.textContent = `Processing failed at step ${i + 1}`;
+            showError(`Processing failed at ${step.name}: ${stepError.message}`);
+            
+            // Show retry option
+            setTimeout(() => {
+              startBtn.disabled = false;
+              startBtn.textContent = 'Retry Processing';
+            }, 3000);
+            
+            return; // Exit processing
           }
         }
         
-        // Show final results
+        // All steps completed successfully
+        startBtn.textContent = 'Processing Complete';
         showFinalResults();
         
       } catch (error) {
-        showError('Processing failed: ' + error.message);
+        showError('Processing initialization failed: ' + error.message);
+        startBtn.disabled = false;
+        startBtn.textContent = 'Retry Processing';
       } finally {
-        startBtn.style.display = 'none';
+        // Hide the button after processing (successful or failed)
+        if (completedSteps === totalSteps) {
+          setTimeout(() => {
+            startBtn.style.display = 'none';
+          }, 1000);
+        }
       }
     }
     
-    // Process individual step
+    // Process individual step with sub-steps and retry logic
     async function processStep(stepId, index) {
       const stepElement = document.getElementById(`step-${stepId}`);
       const iconElement = document.getElementById(`icon-${stepId}`);
@@ -767,25 +1013,89 @@
       iconElement.innerHTML = '<div class="loan-loading-spinner"></div>';
       statusElement.textContent = 'Processing...';
       
+      const currentStep = processingSteps[index];
+      let subResults = [];
+      
       try {
-        const response = await fetch(`/api/practice/v1/loan-processing/applications/${currentApplicationId}/${stepId}`, {
-          method: 'POST'
-        });
+        // Process sub-steps if they exist
+        if (currentStep.subSteps && currentStep.subSteps.length > 0) {
+          statusElement.textContent = 'Running sub-processes...';
+          subResults = await processSubSteps(stepId, currentStep.subSteps, statusElement);
+          
+          // Check if any sub-steps failed
+          const failedSubSteps = subResults.filter(sr => !sr.success);
+          if (failedSubSteps.length > 0) {
+            console.warn(`${failedSubSteps.length} sub-steps failed for ${stepId}:`, failedSubSteps);
+          }
+        }
         
-        if (!response.ok) throw new Error('Step processing failed');
+        // Process main step
+        statusElement.textContent = 'Completing main process...';
+        
+        const response = await makeRequestWithRetry(
+          `/api/practice/v1/loan-processing/applications/${currentApplicationId}/${stepId}`
+        );
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Step processing failed');
+        }
         
         const result = await response.json();
+        
+        // Add sub-step results to the main result
+        if (subResults.length > 0) {
+          result.subStepResults = subResults;
+        }
         
         // Update step UI based on result
         updateStepResult(stepId, result, index);
         
       } catch (error) {
-        // Handle step error
+        // Handle final failure after all retries
         stepElement.classList.remove('active');
         stepElement.classList.add('declined');
         iconElement.className = 'loan-step-icon declined';
         iconElement.textContent = '✕';
         statusElement.textContent = 'Failed';
+        
+        // Show error details in result
+        resultElement.classList.remove('loan-hidden');
+        resultElement.className = 'loan-step-result declined';
+        
+        let errorHtml = `<p><strong>Processing Error:</strong> ${error.message}</p>`;
+        
+        // Show sub-step results if any
+        if (subResults.length > 0) {
+          const successfulSubs = subResults.filter(sr => sr.success).length;
+          const totalSubs = subResults.length;
+          errorHtml += `<p style="font-size: 0.7rem; margin-top: 0.5rem;"><strong>Sub-processes:</strong> ${successfulSubs}/${totalSubs} completed successfully</p>`;
+          
+          // Show failed sub-steps
+          const failedSubs = subResults.filter(sr => !sr.success);
+          if (failedSubs.length > 0) {
+            errorHtml += '<div style="margin-top: 0.5rem;"><div class="loan-result-grid">';
+            failedSubs.forEach(fs => {
+              errorHtml += `
+                <div class="loan-result-card">
+                  <div class="loan-result-label">${fs.name}</div>
+                  <div class="loan-result-value error">Failed</div>
+                </div>
+              `;
+            });
+            errorHtml += '</div></div>';
+          }
+        }
+        
+        const enableRetries = document.getElementById('enableRetries').checked;
+        errorHtml += `
+          <p style="font-size: 0.65rem; color: #718096; margin-top: 0.5rem; line-height: 1.3;">
+            ${enableRetries ? 'Automatic retries were attempted but failed.' : 'Automatic retries are disabled.'} 
+            You can try starting the process again or contact support if the issue persists.
+          </p>
+        `;
+        
+        resultElement.innerHTML = errorHtml;
         
         throw error;
       }
@@ -830,81 +1140,189 @@
       resultElement.innerHTML = formatStepResult(stepId, stepResult.result);
     }
     
-    // Format step result content (simplified)
+    // Format step result content with enhanced details and sub-step results
     function formatStepResult(stepId, resultData) {
+      let mainContent = '';
+      let subStepContent = '';
+      
+      // Generate sub-step results if available
+      if (resultData.subStepResults && resultData.subStepResults.length > 0) {
+        const successfulSubs = resultData.subStepResults.filter(sr => sr.success).length;
+        const totalSubs = resultData.subStepResults.length;
+        
+        subStepContent = `
+          <div style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid rgba(226, 232, 240, 0.5);">
+            <p style="font-size: 0.7rem; font-weight: 600; margin: 0 0 0.25rem 0;">Sub-processes: ${successfulSubs}/${totalSubs} completed</p>
+            <div class="loan-result-grid">
+        `;
+        
+        resultData.subStepResults.forEach(subResult => {
+          subStepContent += `
+            <div class="loan-result-card">
+              <div class="loan-result-label">${subResult.name}</div>
+              <div class="loan-result-value ${subResult.success ? 'success' : 'error'}">${subResult.success ? 'Success' : 'Failed'}</div>
+            </div>
+          `;
+        });
+        
+        subStepContent += '</div></div>';
+      }
+      
+      // Generate main step content based on step type
       switch (stepId) {
         case 'credit-check':
-          return `
+          mainContent = `
             <div class="loan-result-grid">
               <div class="loan-result-card">
                 <div class="loan-result-label">Credit Score</div>
-                <div class="loan-result-value ${resultData.creditScore >= 650 ? 'success' : 'warning'}">${resultData.creditScore}</div>
+                <div class="loan-result-value ${resultData.step?.result?.creditScore >= 650 ? 'success' : 'warning'}">${resultData.step?.result?.creditScore || resultData.creditScore || 'N/A'}</div>
               </div>
               <div class="loan-result-card">
                 <div class="loan-result-label">Credit Rating</div>
-                <div class="loan-result-value">${resultData.creditRating}</div>
+                <div class="loan-result-value">${resultData.step?.result?.creditRating || 'N/A'}</div>
+              </div>
+              <div class="loan-result-card">
+                <div class="loan-result-label">Accounts Reviewed</div>
+                <div class="loan-result-value">${resultData.step?.result?.accountsReviewed || 'N/A'}</div>
+              </div>
+              <div class="loan-result-card">
+                <div class="loan-result-label">Recent Inquiries</div>
+                <div class="loan-result-value">${resultData.step?.result?.inquiriesLast24Months || 0}</div>
               </div>
             </div>
           `;
+          break;
           
         case 'income-verification':
-          return `
+          const stepResult = resultData.step?.result || {};
+          mainContent = `
             <div class="loan-result-grid">
               <div class="loan-result-card">
-                <div class="loan-result-label">Verified</div>
-                <div class="loan-result-value ${resultData.verified ? 'success' : 'warning'}">${resultData.verified ? 'Yes' : 'No'}</div>
+                <div class="loan-result-label">Income Verified</div>
+                <div class="loan-result-value ${stepResult.verified ? 'success' : 'warning'}">${stepResult.verified ? 'Yes' : 'No'}</div>
               </div>
               <div class="loan-result-card">
                 <div class="loan-result-label">Verified Income</div>
-                <div class="loan-result-value">$${resultData.verifiedIncome.toLocaleString()}</div>
+                <div class="loan-result-value">$${stepResult.verifiedIncome ? stepResult.verifiedIncome.toLocaleString() : 'N/A'}</div>
+              </div>
+              <div class="loan-result-card">
+                <div class="loan-result-label">Employment</div>
+                <div class="loan-result-value ${stepResult.employmentConfirmed ? 'success' : 'warning'}">${stepResult.employmentConfirmed ? 'Confirmed' : 'Pending'}</div>
+              </div>
+              <div class="loan-result-card">
+                <div class="loan-result-label">Method</div>
+                <div class="loan-result-value">${stepResult.verificationMethod || 'Standard'}</div>
               </div>
             </div>
           `;
+          break;
           
         case 'document-validation':
-          return `
+          const docResult = resultData.step?.result || {};
+          const docCards = docResult.documents ? docResult.documents.map(doc => `
+            <div class="loan-result-card">
+              <div class="loan-result-label">${doc.name}</div>
+              <div class="loan-result-value ${doc.status === 'valid' ? 'success' : 'warning'}">${doc.status}</div>
+            </div>
+          `).join('') : '';
+          
+          mainContent = `
             <div class="loan-result-grid">
               <div class="loan-result-card">
-                <div class="loan-result-label">Documents Status</div>
-                <div class="loan-result-value ${resultData.allDocumentsValid ? 'success' : 'warning'}">${resultData.allDocumentsValid ? 'All Valid' : 'Issues Found'}</div>
+                <div class="loan-result-label">Validation Score</div>
+                <div class="loan-result-value ${docResult.validationScore >= 80 ? 'success' : 'warning'}">${docResult.validationScore || 'N/A'}%</div>
+              </div>
+              <div class="loan-result-card">
+                <div class="loan-result-label">Documents Valid</div>
+                <div class="loan-result-value">${docResult.documentsValid || 0}/${docResult.documentsProcessed || 0}</div>
+              </div>
+              <div class="loan-result-card">
+                <div class="loan-result-label">Confidence</div>
+                <div class="loan-result-value">${docResult.averageConfidence || 'N/A'}%</div>
               </div>
             </div>
+            ${docCards ? '<div style="margin-top: 0.5rem;"><div class="loan-result-grid">' + docCards + '</div></div>' : ''}
           `;
+          break;
           
         case 'risk-assessment':
-          return `
+          const riskResult = resultData.step?.result || {};
+          mainContent = `
             <div class="loan-result-grid">
               <div class="loan-result-card">
                 <div class="loan-result-label">Risk Level</div>
-                <div class="loan-result-value ${resultData.riskLevel === 'Low' ? 'success' : resultData.riskLevel === 'Medium' ? 'warning' : 'error'}">${resultData.riskLevel}</div>
+                <div class="loan-result-value ${riskResult.riskLevel === 'Low' ? 'success' : riskResult.riskLevel === 'Medium' ? 'warning' : 'error'}">${riskResult.riskLevel || 'N/A'}</div>
+              </div>
+              <div class="loan-result-card">
+                <div class="loan-result-label">Risk Score</div>
+                <div class="loan-result-value">${riskResult.riskScore || 'N/A'}</div>
               </div>
               <div class="loan-result-card">
                 <div class="loan-result-label">Interest Rate</div>
-                <div class="loan-result-value">${resultData.interestRate}%</div>
+                <div class="loan-result-value">${riskResult.interestRate || 'N/A'}%</div>
+              </div>
+              <div class="loan-result-card">
+                <div class="loan-result-label">DTI Ratio</div>
+                <div class="loan-result-value ${riskResult.debtToIncomeRatio <= 40 ? 'success' : 'warning'}">${riskResult.debtToIncomeRatio || 'N/A'}%</div>
+              </div>
+              <div class="loan-result-card">
+                <div class="loan-result-label">Confidence</div>
+                <div class="loan-result-value">${riskResult.confidenceLevel || 'N/A'}%</div>
+              </div>
+              <div class="loan-result-card">
+                <div class="loan-result-label">Model</div>
+                <div class="loan-result-value">${riskResult.modelVersion || 'v2.3.1'}</div>
               </div>
             </div>
           `;
+          break;
           
         case 'final-approval':
-          return `
+          const finalResult = resultData.step?.result || {};
+          const detailsSection = finalResult.decisionDetails ? `
+            <div style="margin-top: 0.5rem;">
+              <p style="margin: 0.25rem 0; font-size: 0.7rem;"><strong>Reference:</strong> ${finalResult.referenceNumber || 'N/A'}</p>
+              ${finalResult.decisionDetails.approvalType ? `<p style="margin: 0.25rem 0; font-size: 0.7rem;"><strong>Approval Type:</strong> ${finalResult.decisionDetails.approvalType}</p>` : ''}
+              ${finalResult.decisionDetails.fundingTimeframe ? `<p style="margin: 0.25rem 0; font-size: 0.7rem;"><strong>Funding:</strong> ${finalResult.decisionDetails.fundingTimeframe}</p>` : ''}
+            </div>
+          ` : '';
+          
+          mainContent = `
             <div class="loan-result-grid">
               <div class="loan-result-card">
                 <div class="loan-result-label">Decision</div>
-                <div class="loan-result-value ${resultData.decision === 'approved' ? 'success' : 'error'}">${resultData.decision.toUpperCase()}</div>
+                <div class="loan-result-value ${finalResult.decision === 'approved' ? 'success' : 'error'}">${finalResult.decision ? finalResult.decision.toUpperCase() : 'N/A'}</div>
               </div>
-              ${resultData.decision === 'approved' ? `
+              ${finalResult.decision === 'approved' ? `
                 <div class="loan-result-card">
                   <div class="loan-result-label">Monthly Payment</div>
-                  <div class="loan-result-value">$${resultData.monthlyPayment.toLocaleString()}</div>
+                  <div class="loan-result-value">$${finalResult.monthlyPayment ? finalResult.monthlyPayment.toLocaleString() : 'N/A'}</div>
                 </div>
-              ` : ''}
+                <div class="loan-result-card">
+                  <div class="loan-result-label">Total Cost</div>
+                  <div class="loan-result-value">$${finalResult.totalLoanCost ? finalResult.totalLoanCost.toLocaleString() : 'N/A'}</div>
+                </div>
+                <div class="loan-result-card">
+                  <div class="loan-result-label">Decision Score</div>
+                  <div class="loan-result-value">${finalResult.decisionScore || 'N/A'}</div>
+                </div>
+              ` : `
+                <div class="loan-result-card">
+                  <div class="loan-result-label">Reapply In</div>
+                  <div class="loan-result-value">${finalResult.decisionDetails?.reapplicationEligible || '90 days'}</div>
+                </div>
+              `}
             </div>
-            <p style="margin-top: 0.5rem;"><strong>Reason:</strong> ${resultData.reason}</p>
+            <p style="margin-top: 0.5rem;"><strong>Reason:</strong> ${finalResult.reason || 'N/A'}</p>
+            ${detailsSection}
           `;
+          break;
           
         default:
-          return '<p>Step completed successfully.</p>';
+          mainContent = '<p>Step completed successfully.</p>';
       }
+      
+      return mainContent + subStepContent;
     }
     
     // Show final results

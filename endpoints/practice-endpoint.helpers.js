@@ -994,8 +994,20 @@ function handlePractice(req, res) {
               return loanProcessingV1.startProcessing(req, res);
             case req.method === "POST" && action === "credit-check":
               return loanProcessingV1.processCreditCheck(req, res);
+            case req.method === "POST" && action === "credit-check-bureau-a":
+              return loanProcessingV1.processCreditCheckBureauA(req, res);
+            case req.method === "POST" && action === "credit-check-bureau-b":
+              return loanProcessingV1.processCreditCheckBureauB(req, res);
+            case req.method === "POST" && action === "credit-check-bureau-c":
+              return loanProcessingV1.processCreditCheckBureauC(req, res);
             case req.method === "POST" && action === "income-verification":
               return loanProcessingV1.processIncomeVerification(req, res);
+            case req.method === "POST" && action === "income-employer-verification":
+              return loanProcessingV1.processIncomeEmployerVerification(req, res);
+            case req.method === "POST" && action === "income-paystub-verification":
+              return loanProcessingV1.processIncomePaystubVerification(req, res);
+            case req.method === "POST" && action === "income-tax-verification":
+              return loanProcessingV1.processIncomeTaxVerification(req, res);
             case req.method === "POST" && action === "document-validation":
               return loanProcessingV1.processDocumentValidation(req, res);
             case req.method === "POST" && action === "risk-assessment":
