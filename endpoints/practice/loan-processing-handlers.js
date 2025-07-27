@@ -73,11 +73,11 @@ const loanProcessingV1 = {
   // Start loan application
   createApplication: async (req, res) => {
     try {
-      const { firstName, lastName, email, phone, loanType, loanAmount, monthlyIncome, employmentYears, purpose } =
+      const { firstName, lastName, loanType, loanAmount, monthlyIncome, employmentYears, purpose } =
         req.body;
 
       // Validation
-      if (!firstName || !lastName || !email || !loanType || !loanAmount || !monthlyIncome) {
+      if (!firstName || !lastName || !loanType || !loanAmount || !monthlyIncome) {
         return res.status(HTTP_BAD_REQUEST).json(formatErrorResponse("Missing required fields"));
       }
 
@@ -106,8 +106,6 @@ const loanProcessingV1 = {
         id: nextId++,
         firstName,
         lastName,
-        email,
-        phone: phone || "",
         loanType,
         loanAmount: amount,
         monthlyIncome: income,

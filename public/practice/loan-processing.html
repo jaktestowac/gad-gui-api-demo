@@ -21,20 +21,22 @@
       color: #1a202c;
       line-height: 1.6;
     }
-    .container {
-      max-width: 900px;
-      margin: 0.5rem auto;
-      padding: 1.5rem;
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 16px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+    /* Loan Processing Container */
+    .loan-container {
+      max-width: 800px;
+      margin: 0.25rem auto;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.98);
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
     }
-    h1 {
+    
+    .loan-title {
       color: #1a202c;
-      margin: 0 0 1.5rem 0;
-      font-size: 1.75rem;
+      margin: 0 0 1rem 0;
+      font-size: 1.5rem;
       font-weight: 700;
       text-align: center;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -42,325 +44,327 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
-    h2 {
+    
+    .loan-section-title {
       color: #2d3748;
-      margin: 0 0 1rem 0;
-      font-size: 1.1rem;
+      margin: 0 0 0.75rem 0;
+      font-size: 1rem;
       font-weight: 600;
     }
     
-    /* Form Styles */
-    .form-section {
-      background: rgba(255, 255, 255, 0.6);
-      padding: 1.5rem;
-      border-radius: 12px;
-      margin-bottom: 1.5rem;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      backdrop-filter: blur(5px);
+    /* Loan Form Styles */
+    .loan-form-section {
+      background: rgba(255, 255, 255, 0.7);
+      padding: 1rem;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(8px);
     }
     
-    .form-header {
+    .loan-form-header {
       color: #1a202c;
-      padding: 0 0 0.75rem 0;
-      margin: 0 0 1.25rem 0;
-      font-size: 1.2rem;
+      padding: 0 0 0.5rem 0;
+      margin: 0 0 1rem 0;
+      font-size: 1.1rem;
       font-weight: 600;
       text-align: center;
       border-bottom: 2px solid #667eea;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.5rem;
+      gap: 0.4rem;
     }
     
-    .form-grid {
+    .loan-form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin-bottom: 1rem;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
     }
     
-    .form-group {
-      margin-bottom: 1rem;
+    .loan-form-group {
+      margin-bottom: 0.75rem;
     }
     
-    label {
+    .loan-label {
       display: block;
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.3rem;
       font-weight: 500;
       color: #2d3748;
-      font-size: 0.875rem;
+      font-size: 0.8rem;
     }
     
-    .required::before {
+    .loan-label-required::before {
       content: '* ';
       color: #e53e3e;
       font-weight: bold;
     }
     
-    input[type="text"], input[type="email"], input[type="tel"], input[type="number"], select, textarea {
+    .loan-input, .loan-select, .loan-textarea {
       width: 100%;
-      padding: 0.625rem 0.75rem;
+      padding: 0.5rem 0.6rem;
       border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      font-size: 0.875rem;
-      background: rgba(255, 255, 255, 0.9);
+      border-radius: 6px;
+      font-size: 0.8rem;
+      background: rgba(255, 255, 255, 0.95);
       transition: all 0.2s ease;
       color: #1a202c;
     }
     
-    input:focus, select:focus, textarea:focus {
+    .loan-input:focus, .loan-select:focus, .loan-textarea:focus {
       border-color: #667eea;
       outline: none;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
       background: white;
     }
     
-    textarea {
-      min-height: 70px;
+    .loan-textarea {
+      min-height: 60px;
       resize: vertical;
     }
     
-    .submit-btn {
+    .loan-submit-btn {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
       border: none;
-      border-radius: 8px;
-      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      padding: 0.6rem 1.2rem;
       cursor: pointer;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       font-weight: 600;
       transition: all 0.3s ease;
       width: 100%;
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+      box-shadow: 0 3px 12px rgba(102, 126, 234, 0.25);
     }
     
-    .submit-btn:hover {
+    .loan-submit-btn:hover {
       transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+      box-shadow: 0 5px 16px rgba(102, 126, 234, 0.35);
     }
     
-    .submit-btn:disabled {
+    .loan-submit-btn:disabled {
       background: #a0aec0;
       cursor: not-allowed;
       transform: none;
       box-shadow: none;
     }
     
-    /* Processing Styles */
-    .processing-section {
-      background: rgba(255, 255, 255, 0.6);
-      padding: 1.25rem;
-      border-radius: 12px;
-      margin-bottom: 1.5rem;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      backdrop-filter: blur(5px);
+    /* Loan Processing Styles */
+    .loan-processing-section {
+      background: rgba(255, 255, 255, 0.7);
+      padding: 1rem;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(8px);
       display: none;
     }
     
-    .processing-section.active {
+    .loan-processing-section.active {
       display: block;
     }
     
-    .processing-steps {
+    .loan-processing-steps {
       display: grid;
-      gap: 0.75rem;
+      gap: 0.5rem;
     }
     
-    .processing-step {
-      background: rgba(255, 255, 255, 0.8);
-      border-radius: 10px;
-      padding: 1rem;
-      border: 1px solid rgba(226, 232, 240, 0.5);
+    .loan-processing-step {
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 8px;
+      padding: 0.75rem;
+      border: 1px solid rgba(226, 232, 240, 0.6);
       transition: all 0.3s ease;
-      backdrop-filter: blur(2px);
+      backdrop-filter: blur(4px);
     }
     
-    .processing-step.active {
+    .loan-processing-step.active {
       border-color: #667eea;
-      background: rgba(102, 126, 234, 0.05);
-      transform: scale(1.01);
+      background: rgba(102, 126, 234, 0.08);
+      transform: scale(1.005);
     }
     
-    .processing-step.completed {
+    .loan-processing-step.completed {
       border-color: #48bb78;
-      background: rgba(72, 187, 120, 0.05);
+      background: rgba(72, 187, 120, 0.08);
     }
     
-    .processing-step.warning {
+    .loan-processing-step.warning {
       border-color: #ed8936;
-      background: rgba(237, 137, 54, 0.05);
+      background: rgba(237, 137, 54, 0.08);
     }
     
-    .processing-step.declined {
+    .loan-processing-step.declined {
       border-color: #f56565;
-      background: rgba(245, 101, 101, 0.05);
+      background: rgba(245, 101, 101, 0.08);
     }
     
-    .step-header {
+    .loan-step-header {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 0.5rem;
+      gap: 0.6rem;
+      margin-bottom: 0.4rem;
     }
     
-    .step-icon {
-      width: 28px;
-      height: 28px;
+    .loan-step-icon {
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: 600;
       flex-shrink: 0;
     }
     
-    .step-icon.pending {
+    .loan-step-icon.pending {
       background: #e2e8f0;
       color: #718096;
     }
     
-    .step-icon.processing {
+    .loan-step-icon.processing {
       background: #667eea;
       color: white;
-      animation: pulse 2s infinite;
+      animation: loan-pulse 2s infinite;
     }
     
-    .step-icon.completed {
+    .loan-step-icon.completed {
       background: #48bb78;
       color: white;
     }
     
-    .step-icon.warning {
+    .loan-step-icon.warning {
       background: #ed8936;
       color: white;
     }
     
-    .step-icon.declined {
+    .loan-step-icon.declined {
       background: #f56565;
       color: white;
     }
     
-    @keyframes pulse {
+    @keyframes loan-pulse {
       0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.05); opacity: 0.8; }
+      50% { transform: scale(1.1); opacity: 0.7; }
     }
     
-    .step-title {
-      font-size: 0.95rem;
+    .loan-step-title {
+      font-size: 0.85rem;
       font-weight: 600;
       color: #1a202c;
     }
     
-    .step-status {
-      font-size: 0.8rem;
+    .loan-step-status {
+      font-size: 0.75rem;
       color: #718096;
     }
     
-    .step-content {
-      margin-left: 40px;
+    .loan-step-content {
+      margin-left: 32px;
     }
     
-    .step-content p {
-      font-size: 0.85rem;
+    .loan-step-content p {
+      font-size: 0.75rem;
       color: #4a5568;
-      margin: 0 0 0.5rem 0;
+      margin: 0 0 0.4rem 0;
+      line-height: 1.4;
     }
     
-    .step-result {
-      background: rgba(255, 255, 255, 0.9);
-      padding: 0.75rem;
-      border-radius: 6px;
-      margin-top: 0.5rem;
-      border-left: 3px solid #667eea;
-      font-size: 0.85rem;
+    .loan-step-result {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 0.6rem;
+      border-radius: 5px;
+      margin-top: 0.4rem;
+      border-left: 2px solid #667eea;
+      font-size: 0.75rem;
     }
     
-    .step-result.completed {
+    .loan-step-result.completed {
       border-left-color: #48bb78;
     }
     
-    .step-result.warning {
+    .loan-step-result.warning {
       border-left-color: #ed8936;
     }
     
-    .step-result.declined {
+    .loan-step-result.declined {
       border-left-color: #f56565;
     }
     
-    .result-grid {
+    .loan-result-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 0.5rem;
-      margin: 0.5rem 0;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 0.4rem;
+      margin: 0.4rem 0;
     }
     
-    .result-card {
-      background: rgba(247, 250, 252, 0.8);
-      padding: 0.5rem;
-      border-radius: 6px;
+    .loan-result-card {
+      background: rgba(247, 250, 252, 0.9);
+      padding: 0.4rem;
+      border-radius: 4px;
       text-align: center;
-      border: 1px solid rgba(226, 232, 240, 0.6);
+      border: 1px solid rgba(226, 232, 240, 0.7);
     }
     
-    .result-label {
-      font-size: 0.65rem;
+    .loan-result-label {
+      font-size: 0.6rem;
       color: #718096;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 0.25rem;
+      letter-spacing: 0.3px;
+      margin-bottom: 0.2rem;
       font-weight: 500;
     }
     
-    .result-value {
-      font-size: 0.9rem;
+    .loan-result-value {
+      font-size: 0.8rem;
       font-weight: 600;
       color: #1a202c;
     }
     
-    .result-value.success {
+    .loan-result-value.success {
       color: #48bb78;
     }
     
-    .result-value.warning {
+    .loan-result-value.warning {
       color: #ed8936;
     }
     
-    .result-value.error {
+    .loan-result-value.error {
       color: #f56565;
     }
     
-    /* Final Results */
-    .final-results {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.6));
-      border-radius: 15px;
-      padding: 1.5rem;
-      margin-top: 1.5rem;
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      backdrop-filter: blur(8px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    /* Loan Final Results */
+    .loan-final-results {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.7));
+      border-radius: 12px;
+      padding: 1rem;
+      margin-top: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
       display: none;
     }
     
-    .final-results.approved {
-      background: linear-gradient(135deg, rgba(72, 187, 120, 0.08), rgba(72, 187, 120, 0.04));
-      border-color: rgba(72, 187, 120, 0.3);
+    .loan-final-results.approved {
+      background: linear-gradient(135deg, rgba(72, 187, 120, 0.1), rgba(72, 187, 120, 0.05));
+      border-color: rgba(72, 187, 120, 0.35);
     }
     
-    .final-results.declined {
-      background: linear-gradient(135deg, rgba(245, 101, 101, 0.08), rgba(245, 101, 101, 0.04));
-      border-color: rgba(245, 101, 101, 0.3);
+    .loan-final-results.declined {
+      background: linear-gradient(135deg, rgba(245, 101, 101, 0.1), rgba(245, 101, 101, 0.05));
+      border-color: rgba(245, 101, 101, 0.35);
     }
     
-    .final-results.active {
+    .loan-final-results.active {
       display: block;
-      animation: slideInUp 0.6s ease-out;
+      animation: loan-slideInUp 0.5s ease-out;
     }
     
-    @keyframes slideInUp {
+    @keyframes loan-slideInUp {
       from {
-        transform: translateY(20px);
+        transform: translateY(15px);
         opacity: 0;
       }
       to {
@@ -369,93 +373,104 @@
       }
     }
     
-    .results-header {
+    .loan-results-header {
       text-align: center;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
     }
     
-    .results-title {
-      font-size: 1.4rem;
+    .loan-results-title {
+      font-size: 1.25rem;
       font-weight: 700;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.3rem;
       color: #1a202c;
     }
     
-    .results-title.approved {
+    .loan-results-title.approved {
       color: #38a169;
     }
     
-    .results-title.declined {
+    .loan-results-title.declined {
       color: #e53e3e;
     }
     
-    .results-subtitle {
-      font-size: 0.9rem;
+    .loan-results-subtitle {
+      font-size: 0.8rem;
       color: #718096;
       font-weight: 500;
     }
     
-    /* Loading Spinner */
-    .loading-spinner {
+    /* Loan Loading Spinner */
+    .loan-loading-spinner {
       display: inline-block;
-      width: 16px;
-      height: 16px;
+      width: 14px;
+      height: 14px;
       border: 2px solid #ffffff;
       border-radius: 50%;
       border-top-color: transparent;
-      animation: spin 1s ease-in-out infinite;
+      animation: loan-spin 1s ease-in-out infinite;
     }
     
-    @keyframes spin {
+    @keyframes loan-spin {
       to { transform: rotate(360deg); }
     }
     
-    /* Messages */
-    .error-message, .success-message {
-      padding: 1rem;
-      border-radius: 4px;
-      margin: 1rem 0;
-      font-size: 0.9rem;
+    /* Loan Messages */
+    .loan-error-message, .loan-success-message {
+      padding: 0.75rem;
+      border-radius: 6px;
+      margin: 0.75rem 0;
+      font-size: 0.8rem;
     }
     
-    .error-message {
+    .loan-error-message {
       background: #f8d7da;
       color: #721c24;
       border: 1px solid #f5c6cb;
     }
     
-    .success-message {
+    .loan-success-message {
       background: #d4edda;
       color: #155724;
       border: 1px solid #c3e6cb;
     }
     
-    /* Responsive */
+    /* Loan Responsive */
     @media (max-width: 768px) {
-      .container {
-        margin: 0.5rem;
-        padding: 1rem;
+      .loan-container {
+        margin: 0.25rem;
+        padding: 0.75rem;
       }
       
-      .form-grid {
+      .loan-form-grid {
         grid-template-columns: 1fr;
+        gap: 0.5rem;
       }
       
-      .result-grid {
-        grid-template-columns: 1fr;
+      .loan-result-grid {
+        grid-template-columns: 1fr 1fr;
       }
       
-      h1 {
-        font-size: 1.5rem;
+      .loan-title {
+        font-size: 1.3rem;
+      }
+      
+      .loan-step-content {
+        margin-left: 28px;
+      }
+      
+      .loan-step-icon {
+        width: 22px;
+        height: 22px;
+        font-size: 0.65rem;
       }
     }
     
-    /* Utility Classes */
-    .hidden {
+    /* Loan Utility Classes */
+    .loan-hidden {
       display: none !important;
     }
     
-    .text-center {
+    .loan-text-center {
       text-align: center;
     }
   </style>
@@ -470,94 +485,95 @@
 
     <br />
     <br />
-  <div class="container">
-    <h1>💰 Loan Processing System</h1>
+    <br />
+  <div class="loan-container">
+    <h1 class="loan-title">💰 Loan Processing System</h1>
     
     <!-- Application Form -->
-    <div class="form-section" id="applicationForm">
-      <div class="form-header">
+    <div class="loan-form-section" id="applicationForm">
+      <div class="loan-form-header">
         📋 Loan Application
       </div>
       
       <form id="loanForm">
-        <div class="form-grid">
-          <div class="form-group">
-            <label class="required">First Name</label>
-            <input type="text" id="firstName" data-testid="first-name-input" required />
+        <div class="loan-form-grid">
+          <div class="loan-form-group">
+            <label class="loan-label loan-label-required">First Name</label>
+            <input type="text" class="loan-input" id="firstName" data-testid="first-name-input" required />
           </div>
-          <div class="form-group">
-            <label class="required">Last Name</label>
-            <input type="text" id="lastName" data-testid="last-name-input" required />
+          <div class="loan-form-group">
+            <label class="loan-label loan-label-required">Last Name</label>
+            <input type="text" class="loan-input" id="lastName" data-testid="last-name-input" required />
           </div>
         </div>
         
-        <div class="form-grid">
-          <div class="form-group">
-            <label class="required">Loan Type</label>
-            <select id="loanType" data-testid="loan-type-select" required>
+        <div class="loan-form-grid">
+          <div class="loan-form-group">
+            <label class="loan-label loan-label-required">Loan Type</label>
+            <select class="loan-select" id="loanType" data-testid="loan-type-select" required>
               <option value="">Select loan type...</option>
             </select>
           </div>
-          <div class="form-group">
-            <label class="required">Loan Amount ($)</label>
-            <input type="number" id="loanAmount" data-testid="loan-amount-input" min="1000" max="1000000" step="1000" required />
+          <div class="loan-form-group">
+            <label class="loan-label loan-label-required">Loan Amount ($)</label>
+            <input type="number" class="loan-input" id="loanAmount" data-testid="loan-amount-input" min="1000" max="1000000" step="1000" required />
           </div>
         </div>
         
-        <div class="form-grid">
-          <div class="form-group">
-            <label class="required">Monthly Income ($)</label>
-            <input type="number" id="monthlyIncome" data-testid="monthly-income-input" min="1000" step="100" required />
+        <div class="loan-form-grid">
+          <div class="loan-form-group">
+            <label class="loan-label loan-label-required">Monthly Income ($)</label>
+            <input type="number" class="loan-input" id="monthlyIncome" data-testid="monthly-income-input" min="1000" step="100" required />
           </div>
-          <div class="form-group">
-            <label>Employment Years</label>
-            <input type="number" id="employmentYears" data-testid="employment-years-input" min="0" max="50" step="0.5" />
+          <div class="loan-form-group">
+            <label class="loan-label">Employment Years</label>
+            <input type="number" class="loan-input" id="employmentYears" data-testid="employment-years-input" min="0" max="50" step="0.5" />
           </div>
         </div>
         
-        <div class="form-group">
-          <label>Loan Purpose</label>
-          <textarea id="purpose" data-testid="purpose-input" placeholder="Briefly describe the purpose of the loan..."></textarea>
+        <div class="loan-form-group">
+          <label class="loan-label">Loan Purpose</label>
+          <textarea class="loan-textarea" id="purpose" data-testid="purpose-input" placeholder="Briefly describe the purpose of the loan..."></textarea>
         </div>
         
-        <button type="submit" class="submit-btn" id="submitBtn" data-testid="submit-btn">
+        <button type="submit" class="loan-submit-btn" id="submitBtn" data-testid="submit-btn">
           <span id="submitText">Submit Application</span>
-          <span id="submitSpinner" class="loading-spinner hidden"></span>
+          <span id="submitSpinner" class="loan-loading-spinner loan-hidden"></span>
         </button>
       </form>
     </div>
     
     <!-- Processing Section -->
-    <div class="processing-section" id="processingSection">
-      <h2>⚡ Processing Your Application</h2>
-      <div class="processing-steps" id="processingSteps">
+    <div class="loan-processing-section" id="processingSection">
+      <h2 class="loan-section-title">⚡ Processing Your Application</h2>
+      <div class="loan-processing-steps" id="processingSteps">
         <!-- Steps will be dynamically added here -->
       </div>
       
-      <div class="text-center">
-        <button type="button" class="submit-btn" id="startProcessingBtn" data-testid="start-processing-btn">
+      <div class="loan-text-center">
+        <button type="button" class="loan-submit-btn" id="startProcessingBtn" data-testid="start-processing-btn">
           Start Processing
         </button>
       </div>
     </div>
     
     <!-- Final Results -->
-    <div class="final-results" id="finalResults">
-      <div class="results-header">
-        <div class="results-title" id="resultsTitle">🎉 Congratulations!</div>
-        <div class="results-subtitle" id="resultsSubtitle">Your loan application has been approved</div>
+    <div class="loan-final-results" id="finalResults">
+      <div class="loan-results-header">
+        <div class="loan-results-title" id="resultsTitle">🎉 Congratulations!</div>
+        <div class="loan-results-subtitle" id="resultsSubtitle">Your loan application has been approved</div>
       </div>
       
-      <div class="result-grid" id="finalResultsGrid">
+      <div class="loan-result-grid" id="finalResultsGrid">
         <!-- Final results will be displayed here -->
       </div>
     </div>
     
     <!-- Error Message -->
-    <div id="errorMessage" class="error-message hidden"></div>
+    <div id="errorMessage" class="loan-error-message loan-hidden"></div>
     
     <!-- Success Message -->
-    <div id="successMessage" class="success-message hidden"></div>
+    <div id="successMessage" class="loan-success-message loan-hidden"></div>
   </div>
 
   <script>
@@ -616,7 +632,7 @@
       // Disable form and show loading
       submitBtn.disabled = true;
       submitText.textContent = 'Submitting...';
-      submitSpinner.classList.remove('hidden');
+      submitSpinner.classList.remove('loan-hidden');
       
       try {
         const formData = {
@@ -660,7 +676,7 @@
         // Reset button
         submitBtn.disabled = false;
         submitText.textContent = 'Submit Application';
-        submitSpinner.classList.add('hidden');
+        submitSpinner.classList.add('loan-hidden');
       }
     }
     
@@ -678,22 +694,22 @@
     // Create processing step element
     function createProcessingStepElement(step, index) {
       const stepDiv = document.createElement('div');
-      stepDiv.className = 'processing-step';
+      stepDiv.className = 'loan-processing-step';
       stepDiv.id = `step-${step.id}`;
       
       stepDiv.innerHTML = `
-        <div class="step-header">
-          <div class="step-icon pending" id="icon-${step.id}">
+        <div class="loan-step-header">
+          <div class="loan-step-icon pending" id="icon-${step.id}">
             ${index + 1}
           </div>
           <div>
-            <div class="step-title">${step.name}</div>
-            <div class="step-status" id="status-${step.id}">Pending</div>
+            <div class="loan-step-title">${step.name}</div>
+            <div class="loan-step-status" id="status-${step.id}">Pending</div>
           </div>
         </div>
-        <div class="step-content">
+        <div class="loan-step-content">
           <p>${step.description}</p>
-          <div class="step-result hidden" id="result-${step.id}"></div>
+          <div class="loan-step-result loan-hidden" id="result-${step.id}"></div>
         </div>
       `;
       
@@ -747,8 +763,8 @@
       
       // Set step as active/processing
       stepElement.classList.add('active');
-      iconElement.className = 'step-icon processing';
-      iconElement.innerHTML = '<div class="loading-spinner"></div>';
+      iconElement.className = 'loan-step-icon processing';
+      iconElement.innerHTML = '<div class="loan-loading-spinner"></div>';
       statusElement.textContent = 'Processing...';
       
       try {
@@ -767,7 +783,7 @@
         // Handle step error
         stepElement.classList.remove('active');
         stepElement.classList.add('declined');
-        iconElement.className = 'step-icon declined';
+        iconElement.className = 'loan-step-icon declined';
         iconElement.textContent = '✕';
         statusElement.textContent = 'Failed';
         
@@ -793,24 +809,24 @@
       
       if (isCompleted) {
         stepElement.classList.add('completed');
-        iconElement.className = 'step-icon completed';
+        iconElement.className = 'loan-step-icon completed';
         iconElement.textContent = '✓';
         statusElement.textContent = 'Completed';
       } else if (isWarning) {
         stepElement.classList.add('warning');
-        iconElement.className = 'step-icon warning';
+        iconElement.className = 'loan-step-icon warning';
         iconElement.textContent = '⚠';
         statusElement.textContent = 'Completed with warnings';
       } else if (isDeclined) {
         stepElement.classList.add('declined');
-        iconElement.className = 'step-icon declined';
+        iconElement.className = 'loan-step-icon declined';
         iconElement.textContent = '✕';
         statusElement.textContent = 'Declined';
       }
       
       // Show step result
-      resultElement.classList.remove('hidden');
-      resultElement.className = `step-result ${stepResult.status}`;
+      resultElement.classList.remove('loan-hidden');
+      resultElement.className = `loan-step-result ${stepResult.status}`;
       resultElement.innerHTML = formatStepResult(stepId, stepResult.result);
     }
     
@@ -819,67 +835,67 @@
       switch (stepId) {
         case 'credit-check':
           return `
-            <div class="result-grid">
-              <div class="result-card">
-                <div class="result-label">Credit Score</div>
-                <div class="result-value ${resultData.creditScore >= 650 ? 'success' : 'warning'}">${resultData.creditScore}</div>
+            <div class="loan-result-grid">
+              <div class="loan-result-card">
+                <div class="loan-result-label">Credit Score</div>
+                <div class="loan-result-value ${resultData.creditScore >= 650 ? 'success' : 'warning'}">${resultData.creditScore}</div>
               </div>
-              <div class="result-card">
-                <div class="result-label">Credit Rating</div>
-                <div class="result-value">${resultData.creditRating}</div>
+              <div class="loan-result-card">
+                <div class="loan-result-label">Credit Rating</div>
+                <div class="loan-result-value">${resultData.creditRating}</div>
               </div>
             </div>
           `;
           
         case 'income-verification':
           return `
-            <div class="result-grid">
-              <div class="result-card">
-                <div class="result-label">Verified</div>
-                <div class="result-value ${resultData.verified ? 'success' : 'warning'}">${resultData.verified ? 'Yes' : 'No'}</div>
+            <div class="loan-result-grid">
+              <div class="loan-result-card">
+                <div class="loan-result-label">Verified</div>
+                <div class="loan-result-value ${resultData.verified ? 'success' : 'warning'}">${resultData.verified ? 'Yes' : 'No'}</div>
               </div>
-              <div class="result-card">
-                <div class="result-label">Verified Income</div>
-                <div class="result-value">$${resultData.verifiedIncome.toLocaleString()}</div>
+              <div class="loan-result-card">
+                <div class="loan-result-label">Verified Income</div>
+                <div class="loan-result-value">$${resultData.verifiedIncome.toLocaleString()}</div>
               </div>
             </div>
           `;
           
         case 'document-validation':
           return `
-            <div class="result-grid">
-              <div class="result-card">
-                <div class="result-label">Documents Status</div>
-                <div class="result-value ${resultData.allDocumentsValid ? 'success' : 'warning'}">${resultData.allDocumentsValid ? 'All Valid' : 'Issues Found'}</div>
+            <div class="loan-result-grid">
+              <div class="loan-result-card">
+                <div class="loan-result-label">Documents Status</div>
+                <div class="loan-result-value ${resultData.allDocumentsValid ? 'success' : 'warning'}">${resultData.allDocumentsValid ? 'All Valid' : 'Issues Found'}</div>
               </div>
             </div>
           `;
           
         case 'risk-assessment':
           return `
-            <div class="result-grid">
-              <div class="result-card">
-                <div class="result-label">Risk Level</div>
-                <div class="result-value ${resultData.riskLevel === 'Low' ? 'success' : resultData.riskLevel === 'Medium' ? 'warning' : 'error'}">${resultData.riskLevel}</div>
+            <div class="loan-result-grid">
+              <div class="loan-result-card">
+                <div class="loan-result-label">Risk Level</div>
+                <div class="loan-result-value ${resultData.riskLevel === 'Low' ? 'success' : resultData.riskLevel === 'Medium' ? 'warning' : 'error'}">${resultData.riskLevel}</div>
               </div>
-              <div class="result-card">
-                <div class="result-label">Interest Rate</div>
-                <div class="result-value">${resultData.interestRate}%</div>
+              <div class="loan-result-card">
+                <div class="loan-result-label">Interest Rate</div>
+                <div class="loan-result-value">${resultData.interestRate}%</div>
               </div>
             </div>
           `;
           
         case 'final-approval':
           return `
-            <div class="result-grid">
-              <div class="result-card">
-                <div class="result-label">Decision</div>
-                <div class="result-value ${resultData.decision === 'approved' ? 'success' : 'error'}">${resultData.decision.toUpperCase()}</div>
+            <div class="loan-result-grid">
+              <div class="loan-result-card">
+                <div class="loan-result-label">Decision</div>
+                <div class="loan-result-value ${resultData.decision === 'approved' ? 'success' : 'error'}">${resultData.decision.toUpperCase()}</div>
               </div>
               ${resultData.decision === 'approved' ? `
-                <div class="result-card">
-                  <div class="result-label">Monthly Payment</div>
-                  <div class="result-value">$${resultData.monthlyPayment.toLocaleString()}</div>
+                <div class="loan-result-card">
+                  <div class="loan-result-label">Monthly Payment</div>
+                  <div class="loan-result-value">$${resultData.monthlyPayment.toLocaleString()}</div>
                 </div>
               ` : ''}
             </div>
@@ -917,17 +933,17 @@
         
         // Generate final results cards (simplified)
         let resultsHTML = `
-          <div class="result-card">
-            <div class="result-label">Application ID</div>
-            <div class="result-value">${application.id}</div>
+          <div class="loan-result-card">
+            <div class="loan-result-label">Application ID</div>
+            <div class="loan-result-value">${application.id}</div>
           </div>
-          <div class="result-card">
-            <div class="result-label">Applicant</div>
-            <div class="result-value">${application.firstName} ${application.lastName}</div>
+          <div class="loan-result-card">
+            <div class="loan-result-label">Applicant</div>
+            <div class="loan-result-value">${application.firstName} ${application.lastName}</div>
           </div>
-          <div class="result-card">
-            <div class="result-label">Credit Score</div>
-            <div class="result-value ${application.creditScore >= 650 ? 'success' : 'warning'}">${application.creditScore}</div>
+          <div class="loan-result-card">
+            <div class="loan-result-label">Credit Score</div>
+            <div class="loan-result-value ${application.creditScore >= 650 ? 'success' : 'warning'}">${application.creditScore}</div>
           </div>
         `;
         
@@ -935,25 +951,25 @@
           const finalStep = application.processingSteps.find(s => s.name === 'Final Approval');
           if (finalStep && finalStep.result) {
             resultsHTML += `
-              <div class="result-card">
-                <div class="result-label">Approved Amount</div>
-                <div class="result-value success">$${finalStep.result.loanAmount.toLocaleString()}</div>
+              <div class="loan-result-card">
+                <div class="loan-result-label">Approved Amount</div>
+                <div class="loan-result-value success">$${finalStep.result.loanAmount.toLocaleString()}</div>
               </div>
-              <div class="result-card">
-                <div class="result-label">Interest Rate</div>
-                <div class="result-value">${finalStep.result.interestRate}%</div>
+              <div class="loan-result-card">
+                <div class="loan-result-label">Interest Rate</div>
+                <div class="loan-result-value">${finalStep.result.interestRate}%</div>
               </div>
-              <div class="result-card">
-                <div class="result-label">Monthly Payment</div>
-                <div class="result-value">$${finalStep.result.monthlyPayment.toLocaleString()}</div>
+              <div class="loan-result-card">
+                <div class="loan-result-label">Monthly Payment</div>
+                <div class="loan-result-value">$${finalStep.result.monthlyPayment.toLocaleString()}</div>
               </div>
             `;
           }
         } else {
           resultsHTML += `
-            <div class="result-card">
-              <div class="result-label">Decline Reason</div>
-              <div class="result-value error">${application.decisionReason}</div>
+            <div class="loan-result-card">
+              <div class="loan-result-label">Decline Reason</div>
+              <div class="loan-result-value error">${application.decisionReason}</div>
             </div>
           `;
         }
@@ -973,15 +989,15 @@
     function showError(message) {
       const errorDiv = document.getElementById('errorMessage');
       errorDiv.textContent = message;
-      errorDiv.classList.remove('hidden');
-      setTimeout(() => errorDiv.classList.add('hidden'), 5000);
+      errorDiv.classList.remove('loan-hidden');
+      setTimeout(() => errorDiv.classList.add('loan-hidden'), 5000);
     }
     
     function showSuccess(message) {
       const successDiv = document.getElementById('successMessage');
       successDiv.textContent = message;
-      successDiv.classList.remove('hidden');
-      setTimeout(() => successDiv.classList.add('hidden'), 5000);
+      successDiv.classList.remove('loan-hidden');
+      setTimeout(() => successDiv.classList.add('loan-hidden'), 5000);
     }
   </script>
 </body>
