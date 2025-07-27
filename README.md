@@ -4,6 +4,11 @@
   <img src="https://github.com/jaktestowac/gad-gui-api-demo/assets/72373858/eadec2e8-229c-414f-81da-9ec4601b0972" alt="GAD" width="300" height="300">
 </p>
 
+> 💡 Choose your language:
+>
+> - 🇬🇧 [English](./README.md)
+> - 🇵🇱 [Polski](./README.pl.md)
+
 This application (called **🦎 GAD**) was prepared and developed **only for testing purposes**. It provides:
 
 - A graphical user interface (GUI)
@@ -86,7 +91,7 @@ Instructions how to deploy presented service to various free hosting sites.
 Requirements:
 
 - **node.js** installed in the system
-  - tested on node.js **v18** and **v20**
+  - tested on node.js **v20** and **v22**
 - **git** installed in the system
 
 ### First use
@@ -145,6 +150,8 @@ Steps:
    - to start GAD
 
 ### CLI options
+
+> CLI (Command Line Interface) is an interface that allows you to interact with the application using commands in the terminal.
 
 | Option       | Description                                                                                                                          |
 | ------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
@@ -224,23 +231,6 @@ Application should be running under http://localhost:3000/
 
 Images are available at:
 [🐋 hub.docker.com/repository/docker/jaktestowac](https://hub.docker.com/repository/docker/jaktestowac/gad/general)
-
-## Deploy to **Koyeb**
-
-> **⚠️ Warning: This deployment method is experimental and may not work as expected.**
-
-Koyeb - a newer platform with a generous free Hobby plan.
-
-Steps:
-
-1. Create free account on: https://app.koyeb.com/signup
-2. After successful registration hit the button below
-
-[![Deploy to Koyeb](https://www.koyeb.com/static/images/deploy/button.svg)](https://app.koyeb.com/deploy?repository=https://github.com/jaktestowac/gad-gui-api-demo)
-
-Documentation:
-
-[Deploy to Koyeb Button](https://www.koyeb.com/docs/build-and-deploy/deploy-to-koyeb-button)
 
 ## Deploy to **Glitch**
 
