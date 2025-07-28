@@ -1094,16 +1094,6 @@
           letter-spacing: 1px;
           text-transform: uppercase;
         ">
-          <div style="
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-size: 20px 20px;
-            opacity: 0.3;
-            pointer-events: none;
-          "></div>
           <div style="position: relative; z-index: 1;">
             💰 Total: $0.00
           </div>
@@ -1115,7 +1105,7 @@
 
     <div class="orders">
       <h2>📋 All User Orders</h2>
-      <div class="orders-grid" id="ordersList"></div>
+      <div class="orders-grid" id="ordersList" data-testid="orders-list" ></div>
     </div>
   </div>
 
@@ -1780,7 +1770,7 @@
 
         // Calculate order totals
         const totalItems = order.items.reduce((sum, item) => sum + item.quantity, 0);
-        
+
         // Calculate actual total using the items database for accurate pricing
         let actualTotal = 0;
         const itemsWithPrices = order.items.map(orderItem => {
