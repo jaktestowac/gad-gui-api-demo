@@ -607,6 +607,372 @@
             align-items: center;
         }
 
+        /* Copy chat functionality styles */
+        .message {
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+
+        .message:hover {
+            background-color: rgba(35, 78, 112, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .message.selected {
+            background-color: rgba(0, 194, 255, 0.15);
+            border: 2px solid var(--ai-blue);
+            box-shadow: 0 0 10px rgba(0, 194, 255, 0.3);
+        }
+
+        .message.selected::before {
+            content: "✓";
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: var(--ai-blue);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 10;
+        }
+
+        .message-timestamp {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            font-size: 0.7em;
+            color: var(--console-yellow);
+            opacity: 0.7;
+        }
+
+        .message-content {
+            margin-top: 5px;
+            word-wrap: break-word;
+            line-height: 1.4;
+        }
+
+        /* Improved copy controls */
+        .copy-controls {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: var(--space-panel);
+            border: 2px solid var(--ai-blue);
+            border-radius: 12px;
+            padding: 25px;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 0 30px rgba(0, 194, 255, 0.3);
+            min-width: 350px;
+            max-width: 90vw;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        .copy-controls h3 {
+            color: var(--console-yellow);
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 20px;
+        }
+
+        .copy-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .copy-option {
+            background-color: var(--panel-border);
+            color: var(--console-text);
+            border: 2px solid transparent;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .copy-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 194, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .copy-option:hover {
+            background-color: var(--button-active);
+            border-color: var(--ai-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 194, 255, 0.2);
+        }
+
+        .copy-option:hover::before {
+            left: 100%;
+        }
+
+        .copy-option.selected {
+            background-color: var(--ai-blue);
+            color: white;
+            border-color: var(--ai-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 194, 255, 0.4);
+        }
+
+        .copy-option strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .copy-option small {
+            opacity: 0.8;
+            font-size: 12px;
+        }
+
+        .copy-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .copy-button {
+            background-color: var(--console-blue);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            min-width: 120px;
+        }
+
+        .copy-button:hover {
+            background-color: var(--button-active);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .copy-button.secondary {
+            background-color: transparent;
+            border: 2px solid var(--panel-border);
+            color: var(--console-text);
+        }
+
+        .copy-button.secondary:hover {
+            border-color: var(--ai-blue);
+            color: var(--ai-blue);
+        }
+
+        .copy-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 999;
+            display: none;
+            backdrop-filter: blur(2px);
+        }
+
+        /* Enhanced selection info */
+        .selection-info {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--space-panel);
+            border: 3px solid var(--ai-blue);
+            border-radius: 12px;
+            padding: 20px 25px;
+            color: var(--console-text);
+            z-index: 1001;
+            display: none;
+            box-shadow: 0 8px 30px rgba(0, 194, 255, 0.4);
+            animation: slideUp 0.3s ease-out;
+            min-width: 300px;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .selection-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .selection-header i {
+            color: var(--ai-blue);
+        }
+
+        .selection-info .count {
+            color: var(--console-green);
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .selection-info .actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .selection-action {
+            background-color: var(--console-blue);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 120px;
+            justify-content: center;
+        }
+
+        .selection-action:hover {
+            background-color: var(--button-active);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .selection-action.primary {
+            background-color: var(--ai-blue);
+            color: white;
+        }
+
+        .selection-action.primary:hover {
+            background-color: #0099cc;
+        }
+
+        .selection-action.secondary {
+            background-color: transparent;
+            border: 2px solid var(--panel-border);
+            color: var(--console-text);
+        }
+
+        .selection-action.secondary:hover {
+            border-color: var(--ai-blue);
+            color: var(--ai-blue);
+        }
+
+        /* Copy mode indicator */
+        .copy-mode-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--ai-blue);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 1002;
+            display: none;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Mobile improvements */
+        @media (max-width: 768px) {
+            .copy-controls {
+                min-width: 90vw;
+                max-width: 95vw;
+                padding: 20px;
+            }
+
+            .copy-options {
+                grid-template-columns: 1fr;
+            }
+
+            .copy-buttons {
+                flex-direction: column;
+            }
+
+            .copy-button {
+                min-width: auto;
+            }
+
+            .selection-info {
+                bottom: 20px;
+                left: 20px;
+                right: 20px;
+                transform: none;
+                width: auto;
+                min-width: auto;
+                padding: 15px 20px;
+            }
+
+            .selection-info .actions {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .selection-action {
+                min-width: auto;
+                width: 100%;
+            }
+
+            .copy-mode-indicator {
+                top: 10px;
+                right: 10px;
+                font-size: 11px;
+                padding: 6px 12px;
+            }
+        }
+
         @media (max-width: 768px) {
             .chat-container {
                 flex-direction: column;
@@ -646,6 +1012,8 @@
                 <button class="control-button" id="new-conversation">New Conversation</button>
                 <button class="control-button" id="clear-conversation">Clear Current Conversation</button>
                 <button class="control-button" id="rename-conversation">Rename Conversation</button>
+                <button class="control-button" id="copy-chat">Copy Chat</button>
+                <button class="control-button" id="select-messages">Select Messages</button>
                 <button class="control-button" id="clear-memory">Clear My Information</button>
             </div>
             <div class="conversation-list" id="conversation-list">
@@ -699,6 +1067,58 @@
                 <button class="modal-button secondary" id="rename-cancel">Cancel</button>
                 <button class="modal-button primary" id="rename-confirm">Rename</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Copy Chat Controls -->
+    <div class="copy-overlay" id="copy-overlay"></div>
+    <div class="copy-controls" id="copy-controls">
+        <h3><i class="fas fa-copy"></i> Copy Chat</h3>
+        <div class="copy-options">
+            <div class="copy-option" data-option="all">
+                <strong><i class="fas fa-list"></i> Copy Entire Conversation</strong>
+                <small>Copy all messages from this conversation</small>
+            </div>
+            <div class="copy-option" data-option="last10">
+                <strong><i class="fas fa-clock"></i> Copy Last 10 Messages</strong>
+                <small>Copy the most recent 10 messages</small>
+            </div>
+            <div class="copy-option" data-option="user-only">
+                <strong><i class="fas fa-user"></i> Copy User Messages Only</strong>
+                <small>Copy only your messages from this conversation</small>
+            </div>
+        </div>
+        <div class="copy-buttons">
+            <button class="copy-button secondary" id="copy-cancel">
+                <i class="fas fa-times"></i> Cancel
+            </button>
+            <button class="copy-button" id="copy-confirm">
+                <i class="fas fa-clipboard"></i> Copy to Clipboard
+            </button>
+        </div>
+    </div>
+
+    <!-- Copy Mode Indicator -->
+    <div class="copy-mode-indicator" id="copy-mode-indicator">
+        <i class="fas fa-mouse-pointer"></i> Click Messages to Select
+    </div>
+
+    <!-- Selection Info -->
+    <div class="selection-info" id="selection-info">
+        <div class="selection-header">
+            <i class="fas fa-mouse-pointer"></i>
+            <span class="count">0</span> messages selected
+        </div>
+        <div class="actions">
+            <button class="selection-action primary" id="copy-selected-btn">
+                <i class="fas fa-copy"></i> Copy Selected
+            </button>
+            <button class="selection-action secondary" id="clear-selection-btn">
+                <i class="fas fa-eraser"></i> Clear All
+            </button>
+            <button class="selection-action secondary" id="exit-selection-btn">
+                <i class="fas fa-times"></i> Exit Mode
+            </button>
         </div>
     </div>
 
@@ -773,6 +1193,8 @@
         let currentConversationId = null;
         let conversations = [];
         let userId = null;
+        let selectedMessages = new Set();
+        let copyMode = false;
 
         // Escape HTML
         function escapeHtml(text) {
@@ -792,8 +1214,24 @@
             messageDiv.className = isUser ? 'user-message' : 'nova-message';
             messageDiv.classList.add('message');
 
-            // Escape HTML and replace newlines with <br>
-            messageDiv.innerHTML = escapeHtml(text).replace(/\n/g, '<br>');
+            // Add timestamp
+            const timestamp = new Date();
+            const timeString = timestamp.toLocaleTimeString();
+            const timestampDiv = document.createElement('div');
+            timestampDiv.className = 'message-timestamp';
+            timestampDiv.textContent = timeString;
+            messageDiv.appendChild(timestampDiv);
+
+            // Store timestamp and sender info as data attributes
+            messageDiv.dataset.timestamp = timestamp.toISOString();
+            messageDiv.dataset.sender = isUser ? 'User' : 'NOVA';
+
+            // Add content div with proper class
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.innerHTML = escapeHtml(text).replace(/\n/g, '<br>');
+            messageDiv.appendChild(contentDiv);
+            
             messagesContainer.appendChild(messageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
@@ -864,7 +1302,32 @@
 
                 // Add history messages
                 data.history.forEach(msg => {
-                    addMessage(msg.content, msg.role === 'user');
+                    // Create message element manually for history to preserve timestamps
+                    const messageDiv = document.createElement('div');
+                    messageDiv.className = msg.role === 'user' ? 'user-message' : 'nova-message';
+                    messageDiv.classList.add('message');
+
+                    // Use timestamp from history or create new one
+                    const timestamp = msg.timestamp ? new Date(msg.timestamp) : new Date();
+                    const timeString = timestamp.toLocaleTimeString();
+                    
+                    // Add timestamp
+                    const timestampDiv = document.createElement('div');
+                    timestampDiv.className = 'message-timestamp';
+                    timestampDiv.textContent = timeString;
+                    messageDiv.appendChild(timestampDiv);
+
+                    // Store timestamp and sender info as data attributes
+                    messageDiv.dataset.timestamp = timestamp.toISOString();
+                    messageDiv.dataset.sender = msg.role === 'user' ? 'User' : 'NOVA';
+
+                    // Add content div with proper class
+                    const contentDiv = document.createElement('div');
+                    contentDiv.className = 'message-content';
+                    contentDiv.innerHTML = escapeHtml(msg.content).replace(/\n/g, '<br>');
+                    messageDiv.appendChild(contentDiv);
+                    
+                    messagesContainer.appendChild(messageDiv);
                 });
 
                 // Scroll to bottom
@@ -1093,6 +1556,250 @@
             }
         }
 
+        // Copy chat functionality
+        function showCopyControls() {
+            document.getElementById('copy-overlay').style.display = 'block';
+            document.getElementById('copy-controls').style.display = 'block';
+            
+            // Auto-select first option for better UX
+            setTimeout(() => {
+                const firstOption = document.querySelector('.copy-option');
+                if (firstOption) {
+                    firstOption.classList.add('selected');
+                }
+            }, 100);
+        }
+
+        function hideCopyControls() {
+            document.getElementById('copy-overlay').style.display = 'none';
+            document.getElementById('copy-controls').style.display = 'none';
+            
+            // Clear any selected options
+            document.querySelectorAll('.copy-option.selected').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+        }
+
+        function enableMessageSelection() {
+            copyMode = true;
+            // Only add event listeners to actual messages (not system messages)
+            const messages = Array.from(document.querySelectorAll('.message')).filter(msg => {
+                return msg.dataset.sender && msg.dataset.timestamp;
+            });
+            messages.forEach(msg => {
+                msg.addEventListener('click', toggleMessageSelection);
+            });
+            showSelectionInfo();
+            showCopyModeIndicator();
+            
+            // Add visual feedback
+            addSystemMessage('🎯 Selection mode activated! Click on messages to select them, then use the buttons below to copy or manage selections.');
+        }
+
+        function disableMessageSelection() {
+            copyMode = false;
+            // Only clear actual messages (not system messages)
+            const messages = Array.from(document.querySelectorAll('.message')).filter(msg => {
+                return msg.dataset.sender && msg.dataset.timestamp;
+            });
+            messages.forEach(msg => {
+                msg.classList.remove('selected');
+                msg.removeEventListener('click', toggleMessageSelection);
+            });
+            selectedMessages.clear();
+            hideSelectionInfo();
+            hideCopyModeIndicator();
+        }
+
+        function showCopyModeIndicator() {
+            document.getElementById('copy-mode-indicator').style.display = 'block';
+        }
+
+        function hideCopyModeIndicator() {
+            document.getElementById('copy-mode-indicator').style.display = 'none';
+        }
+
+        function toggleMessageSelection(event) {
+            if (!copyMode) return;
+            
+            const message = event.currentTarget;
+            const messageId = message.dataset.timestamp;
+            
+            if (selectedMessages.has(messageId)) {
+                selectedMessages.delete(messageId);
+                message.classList.remove('selected');
+            } else {
+                selectedMessages.add(messageId);
+                message.classList.add('selected');
+            }
+            
+            updateSelectionInfo();
+            
+            // Add haptic feedback for mobile
+            if ('vibrate' in navigator) {
+                navigator.vibrate(50);
+            }
+        }
+
+        function showSelectionInfo() {
+            const selectionInfo = document.getElementById('selection-info');
+            selectionInfo.style.display = 'block';
+            updateSelectionInfo();
+        }
+
+        function hideSelectionInfo() {
+            document.getElementById('selection-info').style.display = 'none';
+        }
+
+        function updateSelectionInfo() {
+            const countElement = document.querySelector('#selection-info .count');
+            if (countElement) {
+                countElement.textContent = selectedMessages.size;
+            }
+            
+            // Update button states
+            const copyBtn = document.getElementById('copy-selected-btn');
+            const clearBtn = document.getElementById('clear-selection-btn');
+            
+            if (copyBtn) {
+                copyBtn.disabled = selectedMessages.size === 0;
+                copyBtn.style.opacity = selectedMessages.size === 0 ? '0.5' : '1';
+            }
+            
+            if (clearBtn) {
+                clearBtn.style.display = selectedMessages.size === 0 ? 'none' : 'inline-block';
+            }
+            
+            // Debug logging
+            console.log('Selected messages count:', selectedMessages.size);
+            console.log('Selected timestamps:', Array.from(selectedMessages));
+        }
+
+        function clearAllSelections() {
+            selectedMessages.clear();
+            // Only clear actual messages (not system messages)
+            Array.from(document.querySelectorAll('.message.selected')).forEach(msg => {
+                if (msg.dataset.sender && msg.dataset.timestamp) {
+                    msg.classList.remove('selected');
+                }
+            });
+            updateSelectionInfo();
+        }
+
+        function formatMessageForCopy(messageElement) {
+            const timestamp = new Date(messageElement.dataset.timestamp);
+            const sender = messageElement.dataset.sender;
+            
+            // Find the content div using the consistent class
+            const contentDiv = messageElement.querySelector('.message-content');
+            let content = '';
+            
+            if (contentDiv) {
+                // Get text content, preserving line breaks
+                content = contentDiv.innerText || contentDiv.textContent || '';
+            } else {
+                // Fallback: get all text content except timestamp
+                const timestampDiv = messageElement.querySelector('.message-timestamp');
+                if (timestampDiv) {
+                    content = messageElement.innerText.replace(timestampDiv.innerText, '').trim();
+                } else {
+                    content = messageElement.innerText || messageElement.textContent || '';
+                }
+            }
+            
+            const timeString = timestamp.toLocaleString();
+            return `[${timeString}] ${sender}: ${content}`;
+        }
+
+        function copyMessagesToClipboard(messages) {
+            if (messages.length === 0) {
+                addSystemMessage('No messages to copy');
+                return;
+            }
+
+            // Debug logging
+            console.log('Copying messages:', messages.length);
+            messages.forEach((msg, index) => {
+                console.log(`Message ${index + 1}:`, {
+                    sender: msg.dataset.sender,
+                    timestamp: msg.dataset.timestamp,
+                    content: msg.querySelector('.message-content')?.innerText || 'No content found'
+                });
+            });
+
+            const formattedMessages = messages.map(formatMessageForCopy);
+            const chatText = formattedMessages.join('\n\n');
+            
+            // Add header with conversation info
+            const conversationName = conversations.find(c => c.id === currentConversationId)?.name || 'NOVA Conversation';
+            const header = `NOVA Chat Conversation: ${conversationName}\n${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}\n${'='.repeat(60)}\n\n`;
+            const fullText = header + chatText;
+
+            // Debug: log the final text
+            console.log('Final text to copy:', fullText);
+
+            // Show loading feedback
+            addSystemMessage('Copying to clipboard...');
+
+            // Copy to clipboard
+            navigator.clipboard.writeText(fullText).then(() => {
+                addSystemMessage(`✅ Successfully copied ${messages.length} message${messages.length !== 1 ? 's' : ''} to clipboard`);
+                
+                // Add haptic feedback
+                if ('vibrate' in navigator) {
+                    navigator.vibrate([100, 50, 100]);
+                }
+                
+                // Exit selection mode if active
+                if (copyMode) {
+                    disableMessageSelection();
+                }
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = fullText;
+                textArea.style.position = 'fixed';
+                textArea.style.opacity = '0';
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                addSystemMessage(`✅ Successfully copied ${messages.length} message${messages.length !== 1 ? 's' : ''} to clipboard (fallback method)`);
+                
+                // Exit selection mode if active
+                if (copyMode) {
+                    disableMessageSelection();
+                }
+            });
+        }
+
+        function getMessagesByOption(option) {
+            // Get all messages, excluding system messages
+            const allMessages = Array.from(document.querySelectorAll('.message')).filter(msg => {
+                // Exclude system messages (they don't have sender data)
+                return msg.dataset.sender && msg.dataset.timestamp;
+            });
+            
+            switch (option) {
+                case 'all':
+                    return allMessages;
+                case 'selected':
+                    return allMessages.filter(msg => 
+                        selectedMessages.has(msg.dataset.timestamp)
+                    );
+                case 'last10':
+                    return allMessages.slice(-10);
+                case 'user-only':
+                    return allMessages.filter(msg => 
+                        msg.dataset.sender === 'User'
+                    );
+                default:
+                    return [];
+            }
+        }
+
         const chatCommands = {
             '/help': {
                 handler: function () {
@@ -1107,6 +1814,21 @@
                 },
                 description: 'Show available commands',
                 help: 'Lists all available commands with brief descriptions. Type /help to see what NOVA can do.'
+            },
+            '/topics': {
+                handler: async function () {
+                    const message = "/topics";
+
+                    // Send the command to the backend and wait for response
+                    const response = await sendMessageToApi(message);
+
+                    if (response) {
+                        addMessage(response, false);
+                    }
+                    return true;
+                },
+                description: 'Show all topics Nova can discuss',
+                help: 'Displays a comprehensive list of all topics and capabilities that Nova can talk about, organized by category.'
             },
             '/clear': {
                 handler: function () {
@@ -1237,6 +1959,51 @@ Time: ${new Date().toISOString()}
                 },
                 description: 'List all terms Nova has learned',
                 help: 'Displays all the terms and their definitions that you have taught Nova during your conversations.'
+            },
+            '/copy-selected': {
+                handler: function () {
+                    if (copyMode && selectedMessages.size > 0) {
+                        const messages = getMessagesByOption('selected');
+                        copyMessagesToClipboard(messages);
+                        disableMessageSelection();
+                        return true;
+                    } else if (copyMode) {
+                        addSystemMessage('No messages selected. Click on messages to select them.');
+                        return true;
+                    } else {
+                        addSystemMessage('Not in selection mode. Use "Copy Chat" button first.');
+                        return true;
+                    }
+                },
+                description: 'Copy selected messages (when in selection mode)',
+                help: 'Copies the messages you have selected while in copy selection mode.'
+            },
+            '/debug-copy': {
+                handler: function () {
+                    const allMessages = document.querySelectorAll('.message');
+                    const actualMessages = allMessages.filter(msg => msg.dataset.sender && msg.dataset.timestamp);
+                    const systemMessages = allMessages.filter(msg => !msg.dataset.sender || !msg.dataset.timestamp);
+                    
+                    const debugInfo = `
+Copy Debug Information:
+Total message elements: ${allMessages.length}
+Actual messages: ${actualMessages.length}
+System messages: ${systemMessages.length}
+Selected messages: ${selectedMessages.size}
+Copy mode active: ${copyMode}
+
+Selected timestamps: ${Array.from(selectedMessages).join(', ') || 'none'}
+
+Message structure check:
+${actualMessages.map((msg, i) => `${i + 1}. ${msg.dataset.sender} - ${msg.dataset.timestamp} - Has content: ${!!msg.querySelector('.message-content')}`).join('\n')}
+                    `.trim();
+                    
+                    addSystemMessage('Debug information logged to console');
+                    console.log(debugInfo);
+                    return true;
+                },
+                description: 'Debug copy functionality',
+                help: 'Shows debug information about the copy functionality in the console.'
             }
         };
 
@@ -1442,6 +2209,28 @@ Time: ${new Date().toISOString()}
                 // Hide commands menu on escape
                 if (e.key === 'Escape') {
                     hideCommandsMenu();
+                    // Also exit copy selection mode if active
+                    if (copyMode) {
+                        disableMessageSelection();
+                        addSystemMessage('Selection mode cancelled');
+                    }
+                    // Hide copy controls if open
+                    hideCopyControls();
+                }
+
+                // Keyboard shortcuts for copy functionality
+                if (e.key === 'c' && (e.ctrlKey || e.metaKey)) {
+                    e.preventDefault();
+                    if (copyMode && selectedMessages.size > 0) {
+                        const messages = getMessagesByOption('selected');
+                        copyMessagesToClipboard(messages);
+                    }
+                }
+
+                // Space bar to toggle selection mode
+                if (e.key === ' ' && copyMode) {
+                    e.preventDefault();
+                    // This could be used for quick actions in selection mode
                 }
 
                 // Navigate through commands with arrow keys
@@ -1583,6 +2372,16 @@ Time: ${new Date().toISOString()}
                 }
             });
 
+            // Copy chat button
+            document.getElementById('copy-chat').addEventListener('click', function () {
+                showCopyControls();
+            });
+
+            // Select messages button - direct selection mode
+            document.getElementById('select-messages').addEventListener('click', function () {
+                enableMessageSelection();
+            });
+
             // Modal cancel button
             document.getElementById('rename-cancel').addEventListener('click', function () {
                 document.getElementById('rename-modal').style.display = 'none';
@@ -1595,6 +2394,56 @@ Time: ${new Date().toISOString()}
                     renameConversation(newName);
                     document.getElementById('rename-modal').style.display = 'none';
                 }
+            });
+
+            // Copy controls event listeners
+            document.getElementById('copy-overlay').addEventListener('click', hideCopyControls);
+            
+            document.getElementById('copy-cancel').addEventListener('click', hideCopyControls);
+            
+            // Copy option selection
+            document.querySelectorAll('.copy-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remove selected class from all options
+                    document.querySelectorAll('.copy-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    // Add selected class to clicked option
+                    this.classList.add('selected');
+                });
+            });
+            
+            // Copy confirm button
+            document.getElementById('copy-confirm').addEventListener('click', function() {
+                const selectedOption = document.querySelector('.copy-option.selected');
+                if (!selectedOption) {
+                    addSystemMessage('Please select a copy option');
+                    return;
+                }
+                
+                const option = selectedOption.dataset.option;
+                
+                // Copy immediately
+                const messages = getMessagesByOption(option);
+                copyMessagesToClipboard(messages);
+                hideCopyControls();
+            });
+
+            // Selection action buttons
+            document.getElementById('copy-selected-btn').addEventListener('click', function() {
+                if (selectedMessages.size > 0) {
+                    const messages = getMessagesByOption('selected');
+                    copyMessagesToClipboard(messages);
+                }
+            });
+
+            document.getElementById('clear-selection-btn').addEventListener('click', function() {
+                clearAllSelections();
+            });
+
+            document.getElementById('exit-selection-btn').addEventListener('click', function() {
+                disableMessageSelection();
+                addSystemMessage('Selection mode cancelled');
             });
         });
     </script>

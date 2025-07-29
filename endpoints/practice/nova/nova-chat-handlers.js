@@ -60,9 +60,9 @@ function generateAIResponse(message, conversationId) {
     conversations[conversationId],
     userMem,
     conversationAnalytics[conversationId]
-  ); // Restore the unknown term context if it exists and is recent (within 2 minutes)
+  );   // Restore the unknown term context if it exists and is recent (within 2 minutes)
   const unknownTermContext = conversationAnalytics[conversationId].unknownTermContext || {};
-  if (unknownTermContext.term && Date.now() - unknownTermContext.timestamp < 2 * 60 * 1000) {
+  if (unknownTermContext.term && !unknownTermContext.cleared && Date.now() - unknownTermContext.timestamp < 2 * 60 * 1000) {
     context.previousUnknownTerm = unknownTermContext.term;
     // Set isDefiningUnknownTerm to true to indicate this message is likely a definition response
     context.isDefiningUnknownTerm = true;
@@ -104,7 +104,7 @@ function generateAIResponse(message, conversationId) {
     });
   } else if (context.previousUnknownTerm && context.isDefiningUnknownTerm) {
     // Clear the context after the user has defined the term
-    conversationAnalytics[conversationId].unknownTermContext = {};
+    conversationAnalytics[conversationId].unknownTermContext = { cleared: true };
     logDebug(`[Nova] Cleared unknown term context after definition was provided`, {
       userId,
       term: context.previousUnknownTerm,
@@ -119,7 +119,14 @@ function generateAIResponse(message, conversationId) {
     });
 
     // Clear any previous unknown term context
-    conversationAnalytics[conversationId].unknownTermContext = {};
+    conversationAnalytics[conversationId].unknownTermContext = { cleared: true };
+  } else if (context.previousUnknownTerm === null && context.isDefiningUnknownTerm === false) {
+    // Clear the context when the user dismisses the term definition request
+    conversationAnalytics[conversationId].unknownTermContext = { cleared: true };
+    logDebug(`[Nova] Cleared unknown term context after user dismissal`, {
+      userId,
+      message: message.substring(0, 50),
+    });
   }
 
   // Add response to history
@@ -135,6 +142,18 @@ function generateAIResponse(message, conversationId) {
     // Combine for a total of 50 messages maximum
     conversations[conversationId] = [...initialMessages, ...recentMessages];
   }
+
+  // Memory cleanup: Remove old conversations (older than 24 hours)
+  const now = Date.now();
+  const maxAge = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+  
+  Object.keys(conversationAnalytics).forEach(cid => {
+    if (now - conversationAnalytics[cid].lastActiveTime > maxAge) {
+      delete conversations[cid];
+      delete conversationAnalytics[cid];
+      logDebug(`[Nova] Cleaned up old conversation: ${cid}`);
+    }
+  });
 
   return response;
 }
@@ -160,6 +179,11 @@ function getUserAndConversationIdFromCookies(req) {
  */
 function handleMessage(req, res) {
   try {
+    // Validate request body
+    if (!req.body || typeof req.body !== 'object') {
+      return res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Invalid request body"));
+    }
+
     // Try to get userId and conversationId from cookies if not provided in body
     let { message, conversationId, conversationName } = req.body;
     const cookieIds = getUserAndConversationIdFromCookies(req);
@@ -175,8 +199,19 @@ function handleMessage(req, res) {
       userId = cookieIds.userId;
     }
 
-    if (!message) {
-      return res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Message is required"));
+    // Validate message
+    if (!message || typeof message !== 'string') {
+      return res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Message is required and must be a string"));
+    }
+
+    // Sanitize message to prevent potential issues
+    message = message.trim();
+    if (message.length === 0) {
+      return res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Message cannot be empty"));
+    }
+
+    if (message.length > 1000) {
+      return res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Message is too long (max 1000 characters)"));
     }
 
     // If conversationId is missing, create a new one and set cookies
@@ -222,7 +257,26 @@ function handleMessage(req, res) {
       conversationAnalytics[conversationId].name = conversationName;
     }
 
-    const response = generateAIResponse(message, conversationId);
+    // Generate AI response with error handling
+    let response;
+    try {
+      response = generateAIResponse(message, conversationId);
+    } catch (error) {
+      logDebug("[Nova] Error generating AI response", {
+        error: error.message,
+        stack: error.stack,
+        message: message.substring(0, 100),
+        conversationId,
+        userId
+      });
+      
+      response = "I'm sorry, I encountered an error while processing your message. Please try again.";
+    }
+
+    // Validate response
+    if (!response || typeof response !== 'string') {
+      response = "I'm sorry, I couldn't generate a proper response. Please try again.";
+    }
 
     return res.status(HTTP_OK).json({
       response,
@@ -369,7 +423,7 @@ function getStatistics(req, res) {
 }
 
 /**
- * Clear all stored user memory
+ * Clear all stored user memory including learned terms
  */
 function clearUserMemory(req, res) {
   try {
@@ -379,10 +433,26 @@ function clearUserMemory(req, res) {
       return res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("User ID is required"));
     }
 
+    // Clear user memory (this includes learnedTerms)
     delete userMemory[userId];
 
+    // Also clear any conversation context that might contain term-related data
+    for (const conversationId in conversationAnalytics) {
+      if (conversationId.startsWith(`conv_${userId}`)) {
+        // Clear unknown term context
+        if (conversationAnalytics[conversationId].unknownTermContext) {
+          conversationAnalytics[conversationId].unknownTermContext = { cleared: true };
+        }
+      }
+    }
+
+    logDebug("[Nova] clearUserMemory", { 
+      userId, 
+      message: "User memory and learned terms cleared successfully" 
+    });
+
     return res.status(HTTP_OK).json({
-      message: "User memory cleared successfully",
+      message: "User memory and learned terms cleared successfully",
       userId,
     });
   } catch (error) {

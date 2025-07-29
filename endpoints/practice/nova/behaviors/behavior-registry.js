@@ -55,6 +55,11 @@ class BehaviorRegistry {
     for (const behavior of this.behaviors) {
       if (behavior.canHandle(message, context)) {
         matchingBehaviors.push(behavior);
+        logDebug("[Nova] BehaviorRegistry:getBehaviorForMessage:behaviorCanHandle", {
+          behaviorId: behavior.id,
+          behaviorPriority: behavior.priority,
+          message: message
+        });
       }
     }
 
@@ -75,7 +80,15 @@ class BehaviorRegistry {
     }
 
     // Return the first matching behavior (highest priority) for backward compatibility
-    return matchingBehaviors.length > 0 ? matchingBehaviors[0] : null;
+    const selectedBehavior = matchingBehaviors.length > 0 ? matchingBehaviors[0] : null;
+    if (selectedBehavior) {
+      logDebug("[Nova] BehaviorRegistry:getBehaviorForMessage:selectedBehavior", {
+        behaviorId: selectedBehavior.id,
+        behaviorPriority: selectedBehavior.priority,
+        message: message
+      });
+    }
+    return selectedBehavior;
   }
   /**
    * Process a message using the registered behaviors
@@ -213,11 +226,11 @@ class BehaviorRegistry {
           return context.generatedResponse;
         }
       }
-    } // If this is a potential term definition response, make sure the CuriosityBehavior handles it
+    }     // If this is a potential term definition response, make sure the CuriosityBehavior handles it
     if (context.isDefiningUnknownTerm && context.previousUnknownTerm) {
       logDebug("[Nova] BehaviorRegistry:processMessage:DefiningUnknownTerm", {
         previousUnknownTerm: context.previousUnknownTerm,
-        message: message.substring(0, 50) + (message.length > 50 ? "..." : ""),
+        message: message ? message.substring(0, 50) + (message.length > 50 ? "..." : "") : "null",
         matchingBehaviors: matchingBehaviors.map((b) => b.id).join(", "),
         isDefiningUnknownTerm: context.isDefiningUnknownTerm,
       });
@@ -230,26 +243,13 @@ class BehaviorRegistry {
         context.generatedResponse = curiosityBehavior.handle(message, context);
         this._setResponseType(context);
 
-        // Return the response directly
-        return context.generatedResponse;
-      }
-    }
-
-    // If this is a potential term definition response, make sure the CuriosityBehavior handles it
-    if (context.isDefiningUnknownTerm && context.previousUnknownTerm) {
-      logDebug("[Nova] BehaviorRegistry:processMessage:DefiningUnknownTerm", {
-        previousUnknownTerm: context.previousUnknownTerm,
-        message: message.substring(0, 50) + (message.length > 50 ? "..." : ""),
-        matchingBehaviors: matchingBehaviors.map((b) => b.id).join(", "),
-        isDefiningUnknownTerm: context.isDefiningUnknownTerm,
-      });
-
-      // Try to find the curiosity behavior
-      const curiosityBehavior = this.behaviors.find((b) => b.id === "curiosity");
-      if (curiosityBehavior) {
-        // Force the curiosity behavior to handle this definition
-        context.handledBy = "curiosity";
-        context.generatedResponse = curiosityBehavior.handle(message, context);
+        // Check if the curiosity behavior cleared the context (indicating dismissal)
+        if (context.previousUnknownTerm === null && context.isDefiningUnknownTerm === false) {
+          logDebug("[Nova] BehaviorRegistry:processMessage:TermDefinitionDismissed", {
+            message: message ? message.substring(0, 50) : "null",
+            response: context.generatedResponse ? context.generatedResponse.substring(0, 100) : "null",
+          });
+        }
 
         // Return the response directly
         return context.generatedResponse;
@@ -283,6 +283,7 @@ class BehaviorRegistry {
 
         return `I'm having trouble understanding what you're looking for. Here are some things you can try:
 - Use /help to see available commands
+- Use /topics to see all topics I can discuss
 - Try asking a specific question
 - Ask me about a topic like "JavaScript" or "databases"
 - Start a game with "Let's play a game"
@@ -369,7 +370,11 @@ How can I assist you today?`;
    * @param {string} behaviorId - ID of the behavior
    * @param {object} context - Message context
    * @returns {number} - Score indicating how well this behavior matches the message
-   */ _calculateResponseScore(message, behaviorId, context) {
+   */   _calculateResponseScore(message, behaviorId, context) {
+    // Add null check for message
+    if (!message) {
+      return 0;
+    }
     const lowerMessage = message.toLowerCase();
     let score = 0;
 
@@ -395,25 +400,48 @@ How can I assist you today?`;
       case "curiosity":
         // Boost curiosity behavior significantly when unknown terms are detected
         if (context.unknownTerm || context.previousUnknownTerm || context.isDefiningUnknownTerm || context.knownTerm) {
-          score += 800; // Higher priority than any other behavior to ensure it handles unknown terms          // Log that we're boosting the curiosity behavior score due to terms
-          logDebug("[Nova] BehaviorRegistry:boostCuriosityScore", {
-            message: "Boosting curiosity behavior score for term handling",
-            unknownTerm: context.unknownTerm || context.previousUnknownTerm || null,
-            knownTerm: context.knownTerm || null,
-            isDefiningTerm: context.isDefiningUnknownTerm || false,
-            newScore: score,
-            originalMessage: message,
-          });
+          // Check if the unknown term actually exists in the knowledge base
+          const { knowledgeBase } = require("../nova-base");
+          const trimmed = message.trim().replace(/\?+$/, "").toLowerCase();
+          if (trimmed in knowledgeBase) {
+            // Don't boost curiosity if the term exists in knowledge base
+            score -= 500; // Penalize it to let knowledge base handle it
+          } else {
+            score += 1000; // Much higher priority than any other behavior to ensure it handles unknown terms
+            
+            // Log that we're boosting the curiosity behavior score due to terms
+            logDebug("[Nova] BehaviorRegistry:boostCuriosityScore", {
+              message: "Boosting curiosity behavior score for term handling",
+              unknownTerm: context.unknownTerm || context.previousUnknownTerm || null,
+              knownTerm: context.knownTerm || null,
+              isDefiningTerm: context.isDefiningUnknownTerm || false,
+              newScore: score,
+              originalMessage: message,
+            });
 
-          // If the message starts with "what is" or similar patterns, prioritize curiosity even more
-          if (/^what(?:'s| is)/i.test(message) || /^do you know/i.test(message) || /^tell me about/i.test(message)) {
-            score += 300; // Extra boost for direct questions about terms
+            // If the message starts with "what is" or similar patterns, prioritize curiosity even more
+            if (/^what(?:'s| is)/i.test(message) || /^do you know/i.test(message) || /^tell me about/i.test(message)) {
+              score += 500; // Extra boost for direct questions about terms
+            }
+
+            // For single-word queries, give maximum priority
+            if (message.trim().split(/\s+/).length === 1) {
+              score += 200;
+            }
           }
         }
         break;
       case "knowledge-base": // If an unknown term or known term is detected, heavily penalize the knowledge base behavior
         if (context.unknownTerm || context.knownTerm) {
-          score -= 300;
+          // Check if the unknown term actually exists in the knowledge base
+          const { knowledgeBase } = require("../nova-base");
+          const trimmed = message.trim().replace(/\?+$/, "").toLowerCase();
+          if (trimmed in knowledgeBase) {
+            // Don't penalize if the term exists in knowledge base
+            score += 200; // Actually boost it to ensure it handles known terms
+          } else {
+            score -= 300; // Only penalize if it's truly unknown
+          }
           break;
         }
 

@@ -20,10 +20,15 @@ class NumberGuessingGame {
       }. Type "play number guessing" to play again.`;
     }
 
+    // Validate input
+    if (!number || typeof number !== 'string' && typeof number !== 'number') {
+      return "Please enter a valid number.";
+    }
+
     const guessNum = parseInt(number, 10);
 
-    if (isNaN(guessNum)) {
-      return "Please enter a valid number.";
+    if (isNaN(guessNum) || guessNum < 1 || guessNum > 100) {
+      return "Please enter a valid number between 1 and 100.";
     }
 
     this.attempts++;

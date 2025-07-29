@@ -1,88 +1,194 @@
 // Knowledge base for common questions
 const knowledgeBase = {
+  // GAD
+  "gad": "GAD (GUI-API-DEMO) is a application to practice test automation and API testing skills. It provides a simulated environment for users to interact with various APIs, perform test automation tasks, and learn about software testing concepts. Created by the jaktestowac.pl team, GAD is designed to help users improve their testing skills through hands-on experience and practical exercises.",
+
   // Programming concepts
-  "what is javascript":
-    "JavaScript is a programming language that allows you to implement complex features on web pages. It's an essential part of web applications and most modern browsers support it without the need for plugins.",
-  "what is node.js":
-    "Node.js is a JavaScript runtime built on Chrome's V8 JavaScript engine that allows you to run JavaScript on the server side.",
-  "what is typescript":
-    "TypeScript is a strongly typed programming language that builds on JavaScript, giving you better tooling at any scale. It adds static types to JavaScript, helping catch errors early and making code more robust.",
-  "what is python":
-    "Python is a high-level, interpreted programming language known for its readability and simple syntax. It's widely used for web development, data analysis, AI, machine learning, automation, and many other applications.",
-  "what is java":
-    "Java is a class-based, object-oriented programming language designed to have minimal implementation dependencies. It follows the 'write once, run anywhere' principle, allowing code to run on all platforms that support Java.",
-  "what is c#":
-    "C# (C-Sharp) is a modern, object-oriented programming language developed by Microsoft. It's part of the .NET framework and is widely used for Windows applications, game development with Unity, and enterprise software.",
-  "what is react":
-    "React is a JavaScript library for building user interfaces, particularly single-page applications. It's maintained by Facebook and focuses on component-based architecture for building reusable UI components.",
-  "what is angular":
-    "Angular is a platform and framework for building single-page client applications using HTML and TypeScript. It's maintained by Google and offers features like two-way data binding, dependency injection, and modular development.",
-  "what is vue":
-    "Vue.js is a progressive JavaScript framework used for building user interfaces. It's designed to be incrementally adoptable and focuses on declarative rendering and component composition.",
+  "javascript": "JavaScript is a programming language that allows you to implement complex features on web pages. It's an essential part of web applications and most modern browsers support it without the need for plugins.",
+  "node.js": "Node.js is a JavaScript runtime built on Chrome's V8 JavaScript engine that allows you to run JavaScript on the server side.",
+  "typescript": "TypeScript is a strongly typed programming language that builds on JavaScript, giving you better tooling at any scale. It adds static types to JavaScript, helping catch errors early and making code more robust.",
+  "python": "Python is a high-level, interpreted programming language known for its readability and simple syntax. It's widely used for web development, data analysis, AI, machine learning, automation, and many other applications.",
+  "java": "Java is a class-based, object-oriented programming language designed to have minimal implementation dependencies. It follows the 'write once, run anywhere' principle, allowing code to run on all platforms that support Java.",
+  "c#": "C# (C-Sharp) is a modern, object-oriented programming language developed by Microsoft. It's part of the .NET framework and is widely used for Windows applications, game development with Unity, and enterprise software.",
+  "react": "React is a JavaScript library for building user interfaces, particularly single-page applications. It's maintained by Facebook and focuses on component-based architecture for building reusable UI components.",
+  "angular": "Angular is a platform and framework for building single-page client applications using HTML and TypeScript. It's maintained by Google and offers features like two-way data binding, dependency injection, and modular development.",
+  "vue": "Vue.js is a progressive JavaScript framework used for building user interfaces. It's designed to be incrementally adoptable and focuses on declarative rendering and component composition.",
 
   // Web development concepts
-  "what is api":
-    "API (Application Programming Interface) is a set of definitions and protocols for building and integrating application software. It lets your product or service communicate with other products and services without having to know how they're implemented.",
-  "what is rest api":
-    "REST (Representational State Transfer) API is an architectural style for an API that uses HTTP requests to access and use data. It can use those data to GET, PUT, POST and DELETE data types, which refers to reading, updating, creating and deleting operations.",
-  "what is graphql":
-    "GraphQL is a query language for APIs and a runtime for executing those queries with your existing data. It allows clients to request exactly the data they need, making it possible to get all required data in a single request.",
-  "what is json":
-    "JSON (JavaScript Object Notation) is a lightweight data-interchange format. It's easy for humans to read and write and easy for machines to parse and generate.",
-  "what is html":
-    "HTML (HyperText Markup Language) is the standard markup language for documents designed to be displayed in a web browser. It defines the structure and content of web pages.",
-  "what is css":
-    "CSS (Cascading Style Sheets) is a stylesheet language used to describe the presentation of a document written in HTML. It controls layout, formatting, and the visual appearance of web pages.",
-  "what is http":
-    "HTTP (Hypertext Transfer Protocol) is the foundation of data communication on the World Wide Web. It's an application layer protocol for distributed, collaborative, hypermedia information systems.",
-  "what is https":
-    "HTTPS (Hypertext Transfer Protocol Secure) is an extension of HTTP used for secure communication over a computer network. It encrypts the data exchanged between your browser and the website using TLS or SSL.",
-  "what is oauth":
-    "OAuth is an open standard authorization protocol that allows secure designated access to assets without sharing passwords. It's commonly used for allowing users to grant third-party applications access to their information.",
+  "api": "API (Application Programming Interface) is a set of definitions and protocols for building and integrating application software. It lets your product or service communicate with other products and services without having to know how they're implemented.",
+  "rest api": "REST (Representational State Transfer) API is an architectural style for an API that uses HTTP requests to access and use data. It can use those data to GET, PUT, POST and DELETE data types, which refers to reading, updating, creating and deleting operations.",
+  "graphql": "GraphQL is a query language for APIs and a runtime for executing those queries with your existing data. It allows clients to request exactly the data they need, making it possible to get all required data in a single request.",
+  "json": "JSON (JavaScript Object Notation) is a lightweight data-interchange format. It's easy for humans to read and write and easy for machines to parse and generate.",
+  "html": "HTML (HyperText Markup Language) is the standard markup language for documents designed to be displayed in a web browser. It defines the structure and content of web pages.",
+  "css": "CSS (Cascading Style Sheets) is a stylesheet language used to describe the presentation of a document written in HTML. It controls layout, formatting, and the visual appearance of web pages.",
+  "http": "HTTP (Hypertext Transfer Protocol) is the foundation of data communication on the World Wide Web. It's an application layer protocol for distributed, collaborative, hypermedia information systems.",
+  "https": "HTTPS (Hypertext Transfer Protocol Secure) is an extension of HTTP used for secure communication over a computer network. It encrypts the data exchanged between your browser and the website using TLS or SSL.",
+  "oauth": "OAuth is an open standard authorization protocol that allows secure designated access to assets without sharing passwords. It's commonly used for allowing users to grant third-party applications access to their information.",
 
   // Database concepts
-  "what is sql":
-    "SQL (Structured Query Language) is a programming language used to manage relational databases. It allows you to create, read, update, and delete data in database systems.",
-  "what is mongodb":
-    "MongoDB is a source-available cross-platform document-oriented database program. It uses JSON-like documents with optional schemas and is classified as a NoSQL database.",
-  "what is nosql":
-    "NoSQL (Not only SQL) refers to non-relational database management systems designed for distributed data stores. They can store and process large volumes of unstructured or semi-structured data.",
+  "sql": "SQL (Structured Query Language) is a programming language used to manage relational databases. It allows you to create, read, update, and delete data in database systems.",
+  "mongodb": "MongoDB is a source-available cross-platform document-oriented database program. It uses JSON-like documents with optional schemas and is classified as a NoSQL database.",
+  "nosql": "NoSQL (Not only SQL) refers to non-relational database management systems designed for distributed data stores. They can store and process large volumes of unstructured or semi-structured data.",
 
   // DevOps and tools
-  "what is git":
-    "Git is a distributed version control system for tracking changes in source code during software development. It's designed for coordinating work among programmers, but can be used to track changes in any set of files.",
-  "what is docker":
-    "Docker is a platform that uses OS-level virtualization to deliver software in packages called containers. Containers are isolated from one another and bundle their own software, libraries, and configuration files.",
-  "what is kubernetes":
-    "Kubernetes is an open-source container orchestration system for automating application deployment, scaling, and management. It groups containers into logical units for easy management and discovery.",
-  "what is ci/cd":
-    "CI/CD (Continuous Integration/Continuous Deployment) is a method to frequently deliver apps to customers by introducing automation into the stages of app development. It builds, tests, and deploys code changes automatically.",
+  "git": "Git is a distributed version control system for tracking changes in source code during software development. It's designed for coordinating work among programmers, but can be used to track changes in any set of files.",
+  "docker": "Docker is a platform that uses OS-level virtualization to deliver software in packages called containers. Containers are isolated from one another and bundle their own software, libraries, and configuration files.",
+  "kubernetes": "Kubernetes is an open-source container orchestration system for automating application deployment, scaling, and management. It groups containers into logical units for easy management and discovery.",
+  "ci/cd": "CI/CD (Continuous Integration/Continuous Deployment) is a method to frequently deliver apps to customers by introducing automation into the stages of app development. It builds, tests, and deploys code changes automatically.",
 
   // AI & ML concepts
-  "what is machine learning":
-    "Machine Learning is a subset of artificial intelligence that provides systems with the ability to automatically learn and improve from experience without being explicitly programmed.",
-  "what is deep learning":
-    "Deep Learning is a subset of machine learning based on artificial neural networks with representation learning. It can learn from large amounts of unstructured data and is behind many recent advances in AI.",
-  "what is natural language processing":
-    "Natural Language Processing (NLP) is a field of AI that gives machines the ability to read, understand, and derive meaning from human language. It's used in applications like chatbots, translation services, and sentiment analysis.",
+  "machine learning": "Machine Learning is a subset of artificial intelligence that provides systems with the ability to automatically learn and improve from experience without being explicitly programmed.",
+  "deep learning": "Deep Learning is a subset of machine learning based on artificial neural networks with representation learning. It can learn from large amounts of unstructured data and is behind many recent advances in AI.",
+  "natural language processing": "Natural Language Processing (NLP) is a field of AI that gives machines the ability to read, understand, and derive meaning from human language. It's used in applications like chatbots, translation services, and sentiment analysis.",
 
   // Security concepts
-  "what is encryption":
-    "Encryption is the process of converting information into a code to prevent unauthorized access. It ensures that only authorized parties can access the information.",
-  "what is two-factor authentication":
-    "Two-factor authentication (2FA) is a security process requiring users to provide two different authentication factors to verify their identity, making it harder for attackers to gain access to devices or online accounts.",
-  "what is xss":
-    "Cross-Site Scripting (XSS) is a type of security vulnerability typically found in web applications that allows attackers to inject client-side scripts into web pages viewed by other users.",
-  "what is sql injection":
-    "SQL Injection is a code injection technique used to attack data-driven applications by inserting malicious SQL statements into entry fields for execution.",
+  "encryption": "Encryption is the process of converting information into a code to prevent unauthorized access. It ensures that only authorized parties can access the information.",
+  "two-factor authentication": "Two-factor authentication (2FA) is a security process requiring users to provide two different authentication factors to verify their identity, making it harder for attackers to gain access to devices or online accounts.",
+  "xss": "Cross-Site Scripting (XSS) is a type of security vulnerability typically found in web applications that allows attackers to inject client-side scripts into web pages viewed by other users.",
+  "sql injection": "SQL Injection is a code injection technique used to attack data-driven applications by inserting malicious SQL statements into entry fields for execution.",
 
   // About the AI
-  "who made you":
-    "I'm a simple assistant created as part of a demo application. I was built to demonstrate basic chat functionality.",
+  "who made you": "I'm a simple assistant created as part of a demo application. I was built to demonstrate basic chat functionality.",
   "what is your name": "I'm Nova, a simple assistant created for the GAD application demo.",
-  "what can you do":
-    "I can answer questions about programming concepts, help with calculations, remember information about you, play simple games like rock-paper-scissors, tell jokes and facts, and have basic conversations. Try typing 'help' for more information!",
+  "what can you do": "I can answer questions about programming concepts, help with calculations, remember information about you, play simple games like rock-paper-scissors, tell jokes and facts, and have basic conversations. Try typing 'help' for more information!",
 };
+
+/**
+ * Helper functions for question detection and concept mapping
+ */
+
+/**
+ * Extract concept from a question
+ * @param {string} message - The user message
+ * @returns {string|null} - The extracted concept or null if not found
+ */
+function extractConceptFromQuestion(message) {
+  const lowerMessage = message.toLowerCase().trim();
+  
+  // Question patterns to extract concepts
+  const questionPatterns = [
+    /^what(?:'s| is)(?: a| an| the)? (.+?)(?:\?|$)/i,
+    /^do you know (.+?)(?:\?|$)/i,
+    /^tell me about (.+?)(?:\?|$)/i,
+    /^can you explain (.+?)(?:\?|$)/i,
+    /^describe (.+?)(?:\?|$)/i,
+    /^define (.+?)(?:\?|$)/i,
+    /^what does (.+?) mean(?:\?|$)/i,
+    /^what's the meaning of (.+?)(?:\?|$)/i,
+  ];
+
+  for (const pattern of questionPatterns) {
+    const match = lowerMessage.match(pattern);
+    if (match) {
+      const concept = match[1].trim();
+      // Remove common filler words
+      const cleanConcept = concept.replace(/\b(a|an|the)\b/g, '').trim();
+      return cleanConcept;
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Check if a message is asking about a concept
+ * @param {string} message - The user message
+ * @returns {boolean} - True if the message is asking about a concept
+ */
+function isAskingAboutConcept(message) {
+  const concept = extractConceptFromQuestion(message);
+  return concept !== null;
+}
+
+/**
+ * Get the best matching concept from the knowledge base
+ * @param {string} concept - The concept to search for
+ * @returns {string|null} - The best matching concept key or null if not found
+ */
+function findBestMatchingConcept(concept) {
+  const lowerConcept = concept.toLowerCase().trim();
+  
+  // Direct match
+  if (knowledgeBase[lowerConcept]) {
+    return lowerConcept;
+  }
+
+  // Check for partial matches
+  const conceptKeys = Object.keys(knowledgeBase);
+  let bestMatch = null;
+  let bestScore = 0;
+
+  for (const key of conceptKeys) {
+    const score = calculateSimilarity(lowerConcept, key);
+    if (score > bestScore && score > 0.7) { // 70% similarity threshold
+      bestScore = score;
+      bestMatch = key;
+    }
+  }
+
+  return bestMatch;
+}
+
+/**
+ * Calculate similarity between two strings using Levenshtein distance
+ * @param {string} str1 - First string
+ * @param {string} str2 - Second string
+ * @returns {number} - Similarity score (0-1, where 1 is identical)
+ */
+function calculateSimilarity(str1, str2) {
+  const distance = levenshteinDistance(str1, str2);
+  const maxLength = Math.max(str1.length, str2.length);
+  return 1 - (distance / maxLength);
+}
+
+/**
+ * Levenshtein distance calculation
+ * @param {string} str1 - First string
+ * @param {string} str2 - Second string
+ * @returns {number} - Edit distance
+ */
+function levenshteinDistance(str1, str2) {
+  const matrix = [];
+  
+  for (let i = 0; i <= str2.length; i++) {
+    matrix[i] = [i];
+  }
+  
+  for (let j = 0; j <= str1.length; j++) {
+    matrix[0][j] = j;
+  }
+  
+  for (let i = 1; i <= str2.length; i++) {
+    for (let j = 1; j <= str1.length; j++) {
+      if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
+        matrix[i][j] = matrix[i - 1][j - 1];
+      } else {
+        matrix[i][j] = Math.min(
+          matrix[i - 1][j - 1] + 1,
+          matrix[i][j - 1] + 1,
+          matrix[i - 1][j] + 1
+        );
+      }
+    }
+  }
+  
+  return matrix[str2.length][str1.length];
+}
+
+/**
+ * Get knowledge base entry for a question
+ * @param {string} message - The user message
+ * @returns {string|null} - The knowledge base entry or null if not found
+ */
+function getKnowledgeForQuestion(message) {
+  const concept = extractConceptFromQuestion(message);
+  if (!concept) {
+    return null;
+  }
+
+  const bestMatch = findBestMatchingConcept(concept);
+  return bestMatch ? knowledgeBase[bestMatch] : null;
+}
 
 // Fun facts to share
 const funFacts = [
@@ -337,6 +443,7 @@ Here are some things you can ask me:
 
 Basic Commands:
 - help: Show this help message
+- topics: Show all topics I can talk about
 - clear: Clear conversation history
 - remember [something]: I'll remember this information about you
 - forget [something]: I'll forget this specific information
@@ -387,4 +494,11 @@ module.exports = {
   codeExamples,
   sentimentPatterns,
   helpText,
+  // Helper functions for question detection and concept mapping
+  extractConceptFromQuestion,
+  isAskingAboutConcept,
+  findBestMatchingConcept,
+  calculateSimilarity,
+  levenshteinDistance,
+  getKnowledgeForQuestion,
 };

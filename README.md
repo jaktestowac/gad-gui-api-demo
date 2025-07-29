@@ -4,6 +4,11 @@
   <img src="https://github.com/jaktestowac/gad-gui-api-demo/assets/72373858/eadec2e8-229c-414f-81da-9ec4601b0972" alt="GAD" width="300" height="300">
 </p>
 
+> 💡 Choose your language:
+>
+> - 🇬🇧 [English](./README.md)
+> - 🇵🇱 [Polski](./README.pl.md)
+
 This application (called **🦎 GAD**) was prepared and developed **only for testing purposes**. It provides:
 
 - A graphical user interface (GUI)
@@ -33,6 +38,11 @@ P.S. In addition, the application has some **serious design flaws** - I wonder i
   - [Deploy using Docker image](#deploy-using-docker-image)
     - [Prerequisites:](#prerequisites)
     - [Running](#running)
+- [Happy Automation!](#happy-automation)
+- [📞 Contact & Support](#-contact--support)
+- [Learning Resources](#learning-resources)
+  - [🇵🇱 Polish Resources](#-polish-resources)
+  - [🇬🇧 English Resources](#-english-resources)
 
 # Features
 
@@ -81,7 +91,7 @@ Instructions how to deploy presented service to various free hosting sites.
 Requirements:
 
 - **node.js** installed in the system
-  - tested on node.js **v18** and **v20**
+  - tested on node.js **v20** and **v22**
 - **git** installed in the system
 
 ### First use
@@ -141,6 +151,8 @@ Steps:
 
 ### CLI options
 
+> CLI (Command Line Interface) is an interface that allows you to interact with the application using commands in the terminal.
+
 | Option       | Description                                                                                                                          |
 | ------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
 | READ_ONLY=1  | Run in Read Only mode. This disables all POST, PUT, and PATCH methods, besides login.                                                |
@@ -171,23 +183,9 @@ Windows Cmd:
 set PORT=3001 && npm run start
 ```
 
-## Deploy to **Glitch**
-
-No account needed - but your project will be deleted in 5 days.
-
-After clicking button below wait a minute or two to finish deployment.
-
-[![Remix on Glitch](https://cdn.glitch.me/2703baf2-b643-4da7-ab91-7ee2a2d00b5b%2Fremix-button-v2.svg)](https://glitch.com/edit/#!/import/github/jaktestowac/gad-gui-api-demo)
-
-To see website:
-
-- go to bottom buttons
-- click `🔎PREVIEW`
-- choose `👯Preview in a new window`
-
-When deploying the GAD application on Glitch, please be aware that the application may not function fully due to the limitations of the Glitch platform. However, we are making every effort to ensure the highest possible compatibility.
-
 ## Deploy to **Render**
+
+Render - a popular Heroku-like PaaS with a free tier and a “Deploy to Render” button for one-click deploys.
 
 - Create free account on: https://dashboard.render.com/register
 - After successful registration hit the button:
@@ -234,6 +232,26 @@ Application should be running under http://localhost:3000/
 Images are available at:
 [🐋 hub.docker.com/repository/docker/jaktestowac](https://hub.docker.com/repository/docker/jaktestowac/gad/general)
 
+## Deploy to **Glitch**
+
+> **⚠️ Warning: This deployment method is obsolete and no longer recommended.**
+>
+> Glitch has changed their [platform policies](https://blog.glitch.com/post/changes-are-coming-to-glitch/) and this deployment method may no longer work as expected. Please use one of the other deployment methods instead.
+
+~~No account needed - but your project will be deleted in 5 days.~~
+
+~~After clicking button below wait a minute or two to finish deployment.~~
+
+~~[![Remix on Glitch](https://cdn.glitch.me/2703baf2-b643-4da7-ab91-7ee2a2d00b5b%2Fremix-button-v2.svg)](https://glitch.com/edit/#!/import/github/jaktestowac/gad-gui-api-demo)~~
+
+~~To see website:~~
+
+~~- go to bottom buttons~~
+~~- click `🔎PREVIEW`~~
+~~- choose `👯Preview in a new window`~~
+
+~~When deploying the GAD application on Glitch, please be aware that the application may not function fully due to the limitations of the Glitch platform. However, we are making every effort to ensure the highest possible compatibility.~~
+
 ## Happy Automation!
 
 We hope you'll have a great time testing and automating this application!
@@ -248,4 +266,39 @@ Your feedback helps make GAD better for everyone!
 
 [🔝 Back to top](#introduction)
 
-Powered by [jaktestowac.pl](https://www.jaktestowac.pl) team!
+## 📞 Contact & Support
+
+Feel free to reach out to us:
+
+- 🌐 **Website**: [jaktestowac.pl](https://jaktestowac.pl)
+- 💼 **LinkedIn**: [jaktestowac.pl](https://www.linkedin.com/company/jaktestowac/)
+- 💬 **Discord**: [Polish Playwright Community](https://discord.gg/mUAqQ7FUaZ)
+- 📧 **Support**: Check our website for contact details
+- 🐛 **Issues**: [GitHub Issues](https://github.com/jaktestowac/playwright-tools/issues)
+
+---
+
+## Learning Resources
+
+We have gathered a collection of resources to help you learn and master Playwright, both in Polish and English. Whether you're a beginner or an advanced user, these resources will help you enhance your skills and knowledge.
+
+### **🇵🇱 Polish Resources**
+
+- [Free Playwright Resources](https://jaktestowac.pl/darmowy-playwright/) - Comprehensive Polish learning materials
+- [Playwright Basics](https://www.youtube.com/playlist?list=PLfKhn9AcZ-cD2TCB__K7NP5XARaCzZYn7) - YouTube series (Polish)
+- [Playwright Elements](https://www.youtube.com/playlist?list=PLfKhn9AcZ-cAcpd-XN4pKeo-l4YK35FDA) - Advanced concepts (Polish)
+- [Playwright MCP](https://www.youtube.com/playlist?list=PLfKhn9AcZ-cCqD34AG5YRejujaBqCBgl4) - MCP course (Polish)
+- [Discord Community](https://discord.gg/mUAqQ7FUaZ) - First Polish Playwright community!
+- [Playwright Info](https://playwright.info/) - first and only Polish Playwright blog
+
+### **🇬🇧 English Resources**
+
+- [VS Code Extensions](https://marketplace.visualstudio.com/publishers/jaktestowac-pl) - Our free Playwright plugins
+- [Playwright Documentation](https://playwright.dev/docs/intro) - Official documentation
+- [Playwright GitHub](https://github.com/microsoft/playwright) - Source code and issues
+
+_PS. For more resources and updates, follow us on our [website](https://jaktestowac.pl) and [GitHub](https://github.com/jaktestowac)._
+
+---
+
+Powered by **[jaktestowac.pl](https://www.jaktestowac.pl) team!** 💚❤️

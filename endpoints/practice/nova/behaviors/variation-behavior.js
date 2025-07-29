@@ -42,11 +42,15 @@ class VariationBehavior extends BaseBehavior {
 
     // Enhanced personality dimensions to vary responses
     this.personalityTraits = {
-      enthusiasm: [0.3, 0.8], // Range from calm (0) to enthusiastic (1)
-      formality: [0.2, 0.7], // Range from casual (0) to formal (1)
-      verbosity: [0.4, 0.8], // Range from concise (0) to verbose (1)
-      friendliness: [0.5, 1.0], // Range from neutral (0) to warm/friendly (1)
+      enthusiasm: [0.2, 0.9], // Range from calm (0) to enthusiastic (1)
+      formality: [0.1, 0.8], // Range from casual (0) to formal (1)
+      verbosity: [0.3, 0.9], // Range from concise (0) to verbose (1)
+      friendliness: [0.4, 1.0], // Range from neutral (0) to warm/friendly (1)
     };
+
+    // Add more variety to prevent repetitive responses
+    this.responseHistory = new Map(); // Track recent responses to avoid repetition
+    this.maxHistorySize = 10; // Keep last 10 responses in memory
 
     // Enhanced conversation starters for proactive engagement
     this.conversationStarters = [
@@ -96,23 +100,34 @@ class VariationBehavior extends BaseBehavior {
   /**
    * Add variations to the generated response
    * @param {string} message - The original user message
-   * @param {object} context - Context for message processing
+   * @param {string} context - Context for message processing
    * @returns {string} - The response with variations added
    */
   handle(message, context) {
     const response = context.generatedResponse;
     const responseType = context.responseType || "general";
 
+    // Check for repetitive responses
+    const userId = context.userId || context.conversationId?.split("_")[0];
+    if (userId && this._isRepetitiveResponse(response, userId)) {
+      // Force more variation for repetitive responses
+      return this._forceVariation(response, context, responseType);
+    }
+
     // Generate current personality dimensions for this response
     const personality = this._generatePersonalitySettings();
 
     // If we have a special handler for this response type, use it
     if (this.responsePatterns[responseType]) {
-      return this.responsePatterns[responseType](response, context, personality);
+      const variedResponse = this.responsePatterns[responseType](response, context, personality);
+      this._updateResponseHistory(variedResponse, userId);
+      return variedResponse;
     }
 
     // Default variation for general responses
-    return this._addGeneralVariation(response, context, personality);
+    const variedResponse = this._addGeneralVariation(response, context, personality);
+    this._updateResponseHistory(variedResponse, userId);
+    return variedResponse;
   }
 
   /**
@@ -130,6 +145,91 @@ class VariationBehavior extends BaseBehavior {
     }
 
     return personality;
+  }
+
+  /**
+   * Check if a response is repetitive for a user
+   * @private
+   * @param {string} response - The response to check
+   * @param {string} userId - The user ID
+   * @returns {boolean} - True if the response is repetitive
+   */
+  _isRepetitiveResponse(response, userId) {
+    if (!this.responseHistory.has(userId)) {
+      return false;
+    }
+
+    const userHistory = this.responseHistory.get(userId);
+    const normalizedResponse = response.toLowerCase().trim();
+    
+    // Check if this response is too similar to recent ones
+    return userHistory.some(histResponse => {
+      const similarity = this._calculateSimilarity(normalizedResponse, histResponse.toLowerCase().trim());
+      return similarity > 0.8; // 80% similarity threshold
+    });
+  }
+
+  /**
+   * Calculate similarity between two strings
+   * @private
+   * @param {string} str1 - First string
+   * @param {string} str2 - Second string
+   * @returns {number} - Similarity score (0-1)
+   */
+  _calculateSimilarity(str1, str2) {
+    if (str1 === str2) return 1.0;
+    
+    const words1 = str1.split(/\s+/);
+    const words2 = str2.split(/\s+/);
+    
+    const commonWords = words1.filter(word => words2.includes(word));
+    const totalWords = Math.max(words1.length, words2.length);
+    
+    return commonWords.length / totalWords;
+  }
+
+  /**
+   * Update response history for a user
+   * @private
+   * @param {string} response - The response to add
+   * @param {string} userId - The user ID
+   */
+  _updateResponseHistory(response, userId) {
+    if (!userId) return;
+    
+    if (!this.responseHistory.has(userId)) {
+      this.responseHistory.set(userId, []);
+    }
+    
+    const userHistory = this.responseHistory.get(userId);
+    userHistory.push(response);
+    
+    // Keep only the most recent responses
+    if (userHistory.length > this.maxHistorySize) {
+      userHistory.shift();
+    }
+  }
+
+  /**
+   * Force variation for repetitive responses
+   * @private
+   * @param {string} response - The original response
+   * @param {object} context - The context
+   * @param {string} responseType - The response type
+   * @returns {string} - The varied response
+   */
+  _forceVariation(response, context, responseType) {
+    // Add more aggressive variation for repetitive responses
+    const variations = [
+      `Well, ${response.charAt(0).toLowerCase() + response.slice(1)}`,
+      `You know, ${response.charAt(0).toLowerCase() + response.slice(1)}`,
+      `Actually, ${response.charAt(0).toLowerCase() + response.slice(1)}`,
+      `I should mention that ${response.charAt(0).toLowerCase() + response.slice(1)}`,
+      `Let me add that ${response.charAt(0).toLowerCase() + response.slice(1)}`,
+      `By the way, ${response.charAt(0).toLowerCase() + response.slice(1)}`,
+    ];
+    
+    return variations[Math.floor(Math.random() * variations.length)];
   }
 
   /**

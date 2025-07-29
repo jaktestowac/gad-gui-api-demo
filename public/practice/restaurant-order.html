@@ -1,0 +1,1888 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>🦎 GAD - Restaurant Order</title>
+  <link rel="icon" href="/data/icons/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+  <link href="/css/fonts/fonts.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/controls.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <meta charset="UTF-8">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #2d3748;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 1rem auto;
+      padding: 1.5rem;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    h1 {
+      color: #2d3748;
+      margin: 0 0 1.5rem 0;
+      font-size: 2rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    h2 {
+      color: #4a5568;
+      margin: 0 0 1rem 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    /* Enhanced styling for Create New Order heading */
+    .create-order-heading {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      margin: 0 0 1.5rem 0;
+      font-size: 1.4rem;
+      font-weight: 700;
+      text-align: center;
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .create-order-heading::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .create-order-heading:hover::before {
+      left: 100%;
+    }
+
+    .create-order-heading:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+    }
+
+    .create-order-heading .emoji {
+      font-size: 1.6rem;
+      margin-right: 0.5rem;
+      display: inline-block;
+    }
+
+    @keyframes bounce {
+
+      0%,
+      20%,
+      50%,
+      80%,
+      100% {
+        transform: translateY(0);
+      }
+
+      40% {
+        transform: translateY(-5px);
+      }
+
+      60% {
+        transform: translateY(-3px);
+      }
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .section {
+      background: #f7fafc;
+      padding: 1rem;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .popular-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .restaurant-card {
+      background: white;
+      border-radius: 8px;
+      padding: 0.75rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s ease;
+    }
+
+    .restaurant-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+    }
+
+    .restaurant-card.clickable {
+      cursor: pointer;
+    }
+
+    .order-compact.clickable {
+      cursor: pointer;
+    }
+
+    .order-compact.clickable:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .restaurant-emoji {
+      font-size: 1.5rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .restaurant-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 0.25rem;
+    }
+
+    .restaurant-cuisine {
+      font-size: 0.75rem;
+      color: #718096;
+      margin-bottom: 0.25rem;
+    }
+
+    .restaurant-rating {
+      font-size: 0.75rem;
+      color: #f6ad55;
+      margin-bottom: 0.25rem;
+    }
+
+    .restaurant-orders {
+      font-size: 0.75rem;
+      color: #4299e1;
+      margin-bottom: 0.25rem;
+    }
+
+    .restaurant-desc {
+      font-size: 0.7rem;
+      color: #a0aec0;
+      line-height: 1.3;
+    }
+
+    /* Enhanced Form Design */
+    form {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 2rem;
+      border-radius: 20px;
+      border: none;
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 40px rgba(102, 126, 234, 0.15);
+      position: relative;
+      overflow: hidden;
+    }
+
+    form::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+      border-radius: 20px;
+      pointer-events: none;
+    }
+
+    form::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0px) rotate(0deg);
+      }
+
+      50% {
+        transform: translateY(-20px) rotate(180deg);
+      }
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .form-compact {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: white;
+      font-size: 0.9rem;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Mandatory field indicator */
+    .required-field::before {
+      content: '* ';
+      color: #ff6b6b;
+      font-weight: 1000;
+      font-size: 1.1em;
+    }
+
+    .label-compact {
+      margin-bottom: 0.4rem;
+      font-size: 0.85rem;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 12px;
+      font-size: 0.9rem;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      color: #2d3748;
+      font-weight: 500;
+      position: relative;
+      z-index: 1;
+    }
+
+    .input-compact {
+      padding: 0.6rem 0.8rem;
+      font-size: 0.85rem;
+    }
+
+    .item-qty {
+      width: 200px !important;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    select:focus {
+      border-color: rgba(255, 255, 255, 0.8);
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 1);
+      transform: translateY(-1px);
+    }
+
+    input[type="text"]:hover,
+    input[type="number"]:hover,
+    select:hover {
+      border-color: rgba(255, 255, 255, 0.5);
+      background: rgba(255, 255, 255, 0.98);
+    }
+
+    input::placeholder {
+      color: #a0aec0;
+      font-style: italic;
+    }
+
+    select option {
+      background: white;
+      color: #2d3748;
+      padding: 0.5rem;
+    }
+
+    /* Enhanced form section styling */
+    .form-section {
+      position: relative;
+      z-index: 1;
+    }
+
+    .form-section::before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      right: -10px;
+      bottom: -10px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
+      border-radius: 16px;
+      z-index: -1;
+    }
+
+    .items-list {
+      margin-bottom: 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .items-list-compact {
+      margin-bottom: 1rem;
+    }
+
+    .item-row {
+      display: flex;
+      flex-direction: row;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 1rem;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(5px);
+      transition: all 0.3s ease;
+    }
+
+    .item-row-compact {
+      gap: 0.8rem;
+      margin-bottom: 0.8rem;
+      padding: 0.8rem;
+    }
+
+    .item-row:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .item-row input {
+      margin: 0;
+    }
+
+    .item-row button {
+      background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.5rem;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+    }
+
+    .item-row-compact button {
+      width: 32px;
+      height: 32px;
+      padding: 0.4rem;
+      font-size: 0.75rem;
+    }
+
+    .item-row button:hover {
+      background: linear-gradient(135deg, #ff5252 0%, #d32f2f 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(255, 107, 107, 0.4);
+    }
+
+    .add-item-btn {
+      background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 0.75rem 1.5rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 12px rgba(74, 222, 128, 0.3);
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .add-item-btn-compact {
+      padding: 0.6rem 1.2rem;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+    }
+
+    .add-item-btn:hover {
+      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(74, 222, 128, 0.4);
+    }
+
+    .add-item-btn:active {
+      transform: translateY(0);
+    }
+
+    button[type="submit"] {
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      color: white;
+      border: none;
+      border-radius: 16px;
+      padding: 1rem 2rem;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 700;
+      transition: all 0.3s ease;
+      width: 100%;
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+      position: relative;
+      z-index: 1;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .submit-compact {
+      padding: 0.8rem 1.5rem;
+      font-size: 0.9rem;
+    }
+
+    button[type="submit"]:hover {
+      background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 25px rgba(59, 130, 246, 0.4);
+    }
+
+    button[type="submit"]:active {
+      transform: translateY(-1px);
+    }
+
+    .orders {
+      background: #f7fafc;
+      padding: 1rem;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .orders-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .order {
+      background: white;
+      border-radius: 8px;
+      padding: 0.75rem;
+      margin-bottom: 0.75rem;
+      border: 1px solid #e2e8f0;
+    }
+
+    .order-compact {
+      background: white;
+      border-radius: 8px;
+      padding: 0.6rem;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      transition: all 0.2s ease;
+    }
+
+    .order-compact:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .order:last-child {
+      margin-bottom: 0;
+    }
+
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .order-header-compact {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.4rem;
+    }
+
+    .order-restaurant {
+      font-size: 0.875rem;
+      color: #4299e1;
+      font-weight: 600;
+    }
+
+    .order-restaurant-compact {
+      font-size: 0.8rem;
+      color: #4299e1;
+      font-weight: 600;
+    }
+
+    .order-status {
+      font-size: 0.75rem;
+      color: #718096;
+      padding: 0.25rem 0.5rem;
+      background: #edf2f7;
+      border-radius: 4px;
+    }
+
+    .order-status-compact {
+      font-size: 0.65rem;
+      color: #718096;
+      padding: 0.2rem 0.4rem;
+      background: #edf2f7;
+      border-radius: 3px;
+    }
+
+    .order-customer {
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 0.5rem;
+    }
+
+    .order-customer-compact {
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 0.3rem;
+      font-size: 0.85rem;
+    }
+
+    .order-items {
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+      color: #4a5568;
+    }
+
+    .order-items-compact {
+      margin-bottom: 0.3rem;
+      font-size: 0.75rem;
+      color: #4a5568;
+    }
+
+    .order-notes {
+      font-size: 0.75rem;
+      color: #718096;
+      font-style: italic;
+      margin-bottom: 0.5rem;
+    }
+
+    .order-notes-compact {
+      font-size: 0.65rem;
+      color: #718096;
+      font-style: italic;
+      margin-bottom: 0.3rem;
+    }
+
+    .order-time {
+      font-size: 0.7rem;
+      color: #a0aec0;
+    }
+
+    .order-time-compact {
+      font-size: 0.6rem;
+      color: #a0aec0;
+    }
+
+    /* Popup Styles - Modern & Fancy */
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .popup-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .popup-content {
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+      border-radius: 20px;
+      padding: 1.5rem;
+      max-width: 500px;
+      width: 90%;
+      max-height: 75vh;
+      overflow-y: auto;
+      box-shadow:
+        0 32px 64px rgba(0, 0, 0, 0.3),
+        0 8px 16px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      transform: scale(0.7) translateY(30px) rotateX(10deg);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+
+      /* Custom Scrollbar Styling */
+      scrollbar-width: thin;
+      scrollbar-color: #cbd5e0 #f7fafc;
+    }
+
+    /* Webkit Scrollbar Styling for .popup-content */
+    .popup-content::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .popup-content::-webkit-scrollbar-track {
+      background: linear-gradient(180deg, #f7fafc 0%, #edf2f7 100%);
+      border-radius: 10px;
+      margin: 4px 0;
+    }
+
+    .popup-content::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #cbd5e0 0%, #a0aec0 100%);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .popup-content::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #a0aec0 0%, #718096 100%);
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .popup-content::-webkit-scrollbar-corner {
+      background: transparent;
+    }
+
+    .popup-overlay.active .popup-content {
+      transform: scale(1) translateY(0) rotateX(0deg);
+    }
+
+    .popup-close {
+      position: absolute;
+      top: 0.75rem;
+      right: 1rem;
+      background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+      border: none;
+      font-size: 1.25rem;
+      cursor: pointer;
+      color: white;
+      transition: all 0.3s ease;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3);
+      font-weight: bold;
+    }
+
+    .popup-close:hover {
+      transform: scale(1.1) rotate(90deg);
+      box-shadow: 0 6px 16px rgba(229, 62, 62, 0.4);
+    }
+
+    .popup-header {
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid #e2e8f0;
+      position: relative;
+    }
+
+    .popup-header::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, #4299e1, #667eea);
+      border-radius: 1px;
+    }
+
+    .popup-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1a202c;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      line-height: 1.3;
+    }
+
+    .popup-subtitle {
+      font-size: 0.8rem;
+      color: #718096;
+      margin: 0.4rem 0 0 0;
+      font-weight: 500;
+    }
+
+    .popup-section {
+      margin-bottom: 1.25rem;
+    }
+
+    .popup-section-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #4a5568;
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .popup-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .popup-card {
+      background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+      border-radius: 12px;
+      padding: 0.75rem;
+      border: 1px solid #e2e8f0;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .popup-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #4299e1, #667eea);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    .popup-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .popup-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .popup-card-title {
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 0.4rem;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .popup-card-value {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #4299e1;
+      text-shadow: 0 1px 2px rgba(66, 153, 225, 0.1);
+    }
+
+    .popup-list {
+      max-height: 160px;
+      overflow-y: auto;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      background: #f8fafc;
+
+      /* Custom Scrollbar Styling */
+      scrollbar-width: thin;
+      scrollbar-color: #a0aec0 #f1f5f9;
+    }
+
+    /* Webkit Scrollbar Styling for .popup-list */
+    .popup-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .popup-list::-webkit-scrollbar-track {
+      background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%);
+      border-radius: 8px;
+      margin: 2px 0;
+    }
+
+    .popup-list::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #a0aec0 0%, #718096 100%);
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      transition: all 0.3s ease;
+    }
+
+    .popup-list::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #718096 0%, #4a5568 100%);
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15);
+    }
+
+    .popup-list::-webkit-scrollbar-corner {
+      background: transparent;
+    }
+
+    .popup-list-item {
+      padding: 0.6rem 0.75rem;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.2s ease;
+      font-size: 0.8rem;
+    }
+
+    .popup-list-item:hover {
+      background: rgba(66, 153, 225, 0.05);
+    }
+
+    .popup-list-item:last-child {
+      border-bottom: none;
+    }
+
+    .popup-loading {
+      text-align: center;
+      padding: 1.5rem;
+      color: #718096;
+      font-weight: 500;
+    }
+
+    .popup-loading::after {
+      content: '';
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 50%;
+      border-top-color: #4299e1;
+      margin-left: 0.5rem;
+    }
+
+    .popup-error {
+      background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
+      color: #c53030;
+      padding: 0.75rem;
+      border-radius: 8px;
+      margin-bottom: 0.75rem;
+      border: 1px solid #feb2b2;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .popup-success {
+      background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%);
+      color: #2f855a;
+      padding: 0.75rem;
+      border-radius: 8px;
+      margin-bottom: 0.75rem;
+      border: 1px solid #9ae6b4;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        margin: 0.5rem;
+        padding: 1rem;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .form-grid,
+      .form-compact {
+        grid-template-columns: 1fr;
+      }
+
+      .popular-list {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .popup-content {
+        padding: 1rem;
+        width: 95%;
+        max-height: 85vh;
+        border-radius: 16px;
+      }
+
+      .popup-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+      }
+
+      .popup-card {
+        padding: 0.6rem;
+      }
+
+      .popup-card-title {
+        font-size: 0.7rem;
+      }
+
+      .popup-card-value {
+        font-size: 1rem;
+      }
+
+      .popup-title {
+        font-size: 1.1rem;
+      }
+
+      .popup-subtitle {
+        font-size: 0.75rem;
+      }
+
+      .popup-section-title {
+        font-size: 0.8rem;
+      }
+
+      .popup-list-item {
+        font-size: 0.75rem;
+      }
+
+      /* Mobile Scrollbar Adjustments */
+      .popup-content::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .popup-list::-webkit-scrollbar {
+        width: 4px;
+      }
+    }
+
+    .item-subtotal {
+      min-width: 80px;
+      text-align: right;
+      font-weight: bold;
+      color: #ffffff !important;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .remove-btn {
+      width: 52px !important;
+      height: 36px !important;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+      <h1 id="menu-practice" class="nav-menu"></h1>
+    </div>
+  </header>
+
+  <br />
+  <br />
+  <div class="container">
+    <h1>🍽️ Restaurant Orders</h1>
+
+    <div class="grid">
+      <div class="section">
+        <h2>🏆 Popular Restaurants</h2>
+        <div class="popular-list" id="popularRestaurants"></div>
+      </div>
+      <div class="section">
+        <h2>🔥 Popular Orders</h2>
+        <div class="popular-list" id="popularOrders"></div>
+      </div>
+    </div>
+
+    <form id="orderForm">
+      <h2 class="create-order-heading"><span class="emoji">📝</span>Create New Order</h2>
+
+      <div class="form-section">
+        <div class="form-compact">
+          <label class="label-compact required-field">Customer
+            <input type="text" id="customerName" data-testid="customer-name-input" class="input-compact" required />
+          </label>
+          <label class="label-compact required-field">Restaurant
+            <select id="restaurantSelect" data-testid="restaurant-select" class="input-compact" required></select>
+          </label>
+          <label class="label-compact">Notes
+            <input type="text" id="notes" data-testid="notes-input" class="input-compact" placeholder="Optional..." />
+          </label>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="items-list items-list-compact" id="itemsList">
+          <label class="label-compact required-field">Order Items</label>
+          <div class="item-row item-row-compact">
+            <select id="item-name-1" data-testid="item-name-input-1" class="item-name input-compact" required>
+              <option value="">Select an item...</option>
+            </select>
+            <input type="number" id="item-qty-1" data-testid="item-qty-input-1" placeholder="Qty" class="item-qty input-compact" min="1" value="1" max="99" required />
+            <span class="item-subtotal" id="item-subtotal-1" style="min-width: 80px; text-align: right; font-weight: bold; color: #2d3748; display: flex; align-items: center; justify-content: flex-end;">$0.00</span>
+            <button class="remove-btn" type="button" id="remove-item-1" data-testid="remove-item-btn-1" onclick="removeItemRow(this)">×</button>
+          </div>
+        </div>
+        <button type="button" id="add-item-btn" data-testid="add-item-btn" class="add-item-btn add-item-btn-compact" onclick="addItemRow()">+ Add Item</button>
+      </div>
+
+      <div class="form-section">
+        <div class="order-total" id="orderTotal" style="
+          text-align: center; 
+          font-size: 1.2em; 
+          font-weight: 600; 
+          color: white;
+          border-radius: 16px; 
+          padding: 1rem;
+          position: relative;
+          overflow: hidden;
+          transition: all 0.3s ease;
+          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+          letter-spacing: 1px;
+          text-transform: uppercase;
+        ">
+          <div style="position: relative; z-index: 1;">
+            💰 Total: $0.00
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" id="submit-order-btn" data-testid="submit-order-btn" class="submit-compact">🚀 Submit Order</button>
+    </form>
+
+    <div class="orders">
+      <h2>📋 All User Orders</h2>
+      <div class="orders-grid" id="ordersList" data-testid="orders-list" ></div>
+    </div>
+  </div>
+
+  <!-- Popup Modal -->
+  <div class="popup-overlay" id="popupOverlay">
+    <div class="popup-content">
+      <button class="popup-close" id="popup-close-btn" data-testid="popup-close-btn" onclick="closePopup()">×</button>
+      <div id="popupContent">
+        <div class="popup-loading">Loading details...</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- UI helpers ---
+    function addItemRow() {
+      const row = document.createElement('div');
+      row.className = 'item-row item-row-compact';
+
+      // Count existing rows to generate unique IDs
+      const existingRows = document.querySelectorAll('.item-row');
+      const newRowNumber = existingRows.length + 1;
+
+      row.innerHTML = `
+        <select id="item-name-${newRowNumber}" data-testid="item-name-input-${newRowNumber}" class="item-name input-compact" required>
+          <option value="">Select an item...</option>
+        </select>
+        <input type="number" id="item-qty-${newRowNumber}" data-testid="item-qty-input-${newRowNumber}" placeholder="Qty" class="item-qty input-compact" min="1" value="1" max="99" required />
+        <span class="item-subtotal" id="item-subtotal-${newRowNumber}" >$0.00</span>
+        <button type="button" class="remove-btn" id="remove-item-${newRowNumber}" data-testid="remove-item-btn-${newRowNumber}" onclick="removeItemRow(this)">×</button>
+      `;
+      document.getElementById('itemsList').appendChild(row);
+
+      // Populate the new select dropdown with items
+      populateItemSelects();
+
+      // Add event listener to the quantity input to update total
+      const qtyInput = row.querySelector('.item-qty');
+      qtyInput.addEventListener('input', updateOrderTotal);
+    }
+    function removeItemRow(btn) {
+      const row = btn.parentElement;
+      if (document.querySelectorAll('.item-row').length > 1) {
+        row.remove();
+        updateOrderTotal();
+      }
+    }
+    // --- Data loading ---
+    let restaurants = [];
+    let items = [];
+    let orders = [];
+    let reviews = [];
+    let stats = {};
+
+    // Granular loading functions
+    async function loadRestaurants() {
+      const res = await fetch('/api/practice/restaurant-order/v1/restaurants');
+      restaurants = await res.json();
+      const select = document.getElementById('restaurantSelect');
+      select.innerHTML = restaurants.map(r => `<option value="${r.id}">${r.image ? r.image + ' ' : ''}${r.name}</option>`).join('');
+    }
+
+    async function loadRestaurantCount() {
+      const res = await fetch('/api/practice/restaurant-order/v1/restaurants/count');
+      const data = await res.json();
+    }
+
+    async function loadRestaurantStats() {
+      const res = await fetch('/api/practice/restaurant-order/v1/restaurants/stats');
+      const data = await res.json();
+    }
+
+    async function loadRestaurantsByCuisine(cuisine) {
+      const res = await fetch(`/api/practice/restaurant-order/v1/restaurants/by-cuisine?cuisine=${cuisine}`);
+      const data = await res.json();
+    }
+
+    async function loadItems() {
+      const res = await fetch('/api/practice/restaurant-order/v1/items');
+      items = await res.json();
+      populateItemSelects();
+    }
+
+    function populateItemSelects() {
+      const itemSelects = document.querySelectorAll('.item-name');
+      const itemOptions = items.map(item => `<option value="${item.name}" data-price="${item.price}">${item.name} - $${item.price.toFixed(2)}</option>`).join('');
+
+      itemSelects.forEach(select => {
+        const currentValue = select.value;
+        select.innerHTML = `<option value="">Select an item...</option>${itemOptions}`;
+        // Restore the selected value if it was set
+        if (currentValue) {
+          select.value = currentValue;
+        }
+
+        // Add event listener to update total when item selection changes
+        select.addEventListener('change', updateOrderTotal);
+      });
+    }
+
+    function updateOrderTotal() {
+      let total = 0;
+      const itemRows = document.querySelectorAll('.item-row');
+
+      itemRows.forEach(row => {
+        const select = row.querySelector('.item-name');
+        const qtyInput = row.querySelector('.item-qty');
+        const subtotalSpan = row.querySelector('.item-subtotal');
+
+        if (select.value && qtyInput.value) {
+          const selectedOption = select.options[select.selectedIndex];
+          const price = parseFloat(selectedOption.dataset.price || 0);
+          const quantity = parseInt(qtyInput.value || 0);
+          const subtotal = price * quantity;
+          total += subtotal;
+
+          // Update individual item subtotal
+          if (subtotalSpan) {
+            subtotalSpan.textContent = `$${subtotal.toFixed(2)}`;
+          }
+        } else {
+          // Clear subtotal if no item selected or quantity
+          if (subtotalSpan) {
+            subtotalSpan.textContent = '$0.00';
+          }
+        }
+      });
+
+      document.getElementById('orderTotal').innerHTML = `
+        <div style="
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.1) 75%);
+          background-size: 20px 20px;
+          opacity: 0.3;
+          pointer-events: none;
+        "></div>
+        <div style="position: relative; z-index: 1;">
+          💰 Total: $${total.toFixed(2)}
+        </div>
+      `;
+    } async function loadItemCount() {
+      const res = await fetch('/api/practice/restaurant-order/v1/items/count');
+      const data = await res.json();
+    }
+
+    async function loadItemStats() {
+      const res = await fetch('/api/practice/restaurant-order/v1/items/stats');
+      const data = await res.json();
+    }
+
+    async function loadItemsByPriceRange(min, max) {
+      const res = await fetch(`/api/practice/restaurant-order/v1/items/by-price-range?min=${min}&max=${max}`);
+      const data = await res.json();
+    }
+
+    async function loadOrders() {
+      const res = await fetch('/api/practice/restaurant-order/v1/orders');
+      orders = await res.json();
+      renderOrders();
+      renderPopularOrders();
+    }
+
+    async function loadOrderCount() {
+      const res = await fetch('/api/practice/restaurant-order/v1/orders/count');
+      const data = await res.json();
+    }
+
+    async function loadOrderStats() {
+      const res = await fetch('/api/practice/restaurant-order/v1/orders/stats');
+      const data = await res.json();
+    }
+
+    async function loadOrdersByStatus(status) {
+      const res = await fetch(`/api/practice/restaurant-order/v1/orders/by-status?status=${status}`);
+      const data = await res.json();
+    }
+
+    async function loadOrdersByRestaurant(restaurantId) {
+      const res = await fetch(`/api/practice/restaurant-order/v1/orders/by-restaurant?restaurantId=${restaurantId}`);
+      const data = await res.json();
+    }
+
+    async function loadReviews() {
+      const res = await fetch('/api/practice/restaurant-order/v1/reviews');
+      reviews = await res.json();
+    }
+
+    async function loadReviewCount() {
+      const res = await fetch('/api/practice/restaurant-order/v1/reviews/count');
+      const data = await res.json();
+    }
+
+    async function loadReviewStats() {
+      const res = await fetch('/api/practice/restaurant-order/v1/reviews/stats');
+      const data = await res.json();
+    }
+
+    async function loadReviewsByRating(rating) {
+      const res = await fetch(`/api/practice/restaurant-order/v1/reviews/by-rating?rating=${rating}`);
+      const data = await res.json();
+    }
+
+    async function loadPendingOrderCount() {
+      const res = await fetch('/api/practice/restaurant-order/v1/orders/pending-count');
+      const data = await res.json();
+    }
+    async function loadCompletedOrderCount() {
+      const res = await fetch('/api/practice/restaurant-order/v1/orders/completed-count');
+      const data = await res.json();
+    }
+    async function loadAverageItemPrice() {
+      if (items.length === 0) {
+        return;
+      }
+      const firstItemId = items[0].id;
+      const res = await fetch(`/api/practice/restaurant-order/v1/items/${firstItemId}/average-price`);
+      const data = await res.json();
+    }
+    async function loadAverageReviewRating() {
+      if (reviews.length === 0) {
+        return;
+      }
+      const firstReviewId = reviews[0].id;
+      const res = await fetch(`/api/practice/restaurant-order/v1/reviews/${firstReviewId}/average-rating`);
+      const data = await res.json();
+    }
+    async function loadFirstRestaurant() {
+      const res = await fetch('/api/practice/restaurant-order/v1/restaurants/first');
+      const data = await res.json();
+      console.log('First restaurant:', data);
+    }
+
+    async function testRestaurantFeatured() {
+      try {
+        const res = await fetch('/api/practice/restaurant-order/v1/restaurants/featured');
+        const data = await res.json();
+      } catch (err) {
+        console.log('Featured restaurants test failed:', err.message);
+      }
+    }
+
+    async function testRestaurantBusy() {
+      try {
+        const res = await fetch('/api/practice/restaurant-order/v1/restaurants/busy');
+        const data = await res.json();
+      } catch (err) {
+        console.log('Busy restaurants test failed:', err.message);
+      }
+    }
+
+    async function testRestaurantExpensive() {
+      try {
+        const res = await fetch('/api/practice/restaurant-order/v1/restaurants/expensive');
+        const data = await res.json();
+      } catch (err) {
+        console.log('Expensive restaurants test failed:', err.message);
+      }
+    }
+
+    async function testRestaurantCheap() {
+      try {
+        const res = await fetch('/api/practice/restaurant-order/v1/restaurants/cheap');
+        const data = await res.json();
+      } catch (err) {
+        console.log('Cheap restaurants test failed:', err.message);
+      }
+    }
+
+    async function testRestaurantRecent() {
+      try {
+        const res = await fetch('/api/practice/restaurant-order/v1/restaurants/recent');
+        const data = await res.json();
+      } catch (err) {
+        console.log('Recent restaurants test failed:', err.message);
+      }
+    }
+
+    async function testRestaurantPopularItems() {
+      try {
+        const res = await fetch('/api/practice/restaurant-order/v1/restaurants/popular-items');
+        const data = await res.json();
+      } catch (err) {
+        console.log('Popular items test failed:', err.message);
+      }
+    }
+
+    async function testRestaurantActive() {
+      try {
+        const res = await fetch('/api/practice/restaurant-order/v1/restaurants/active');
+        const data = await res.json();
+      } catch (err) {
+        console.log('Active restaurants test failed:', err.message);
+      }
+    }
+
+    async function testRestaurantTrending() {
+      try {
+        const res = await fetch('/api/practice/restaurant-order/v1/restaurants/trending');
+        const data = await res.json();
+      } catch (err) {
+        console.log('Trending restaurants test failed:', err.message);
+      }
+    }
+
+    async function testRestaurantQuiet() {
+      try {
+        const res = await fetch('/api/practice/restaurant-order/v1/restaurants/quiet');
+        const data = await res.json();
+      } catch (err) {
+        console.log('Quiet restaurants test failed:', err.message);
+      }
+    }
+
+    async function testRestaurantSummary() {
+      try {
+        const res = await fetch('/api/practice/restaurant-order/v1/restaurants/summary');
+        const data = await res.json();
+      } catch (err) {
+        console.log('Restaurant summary test failed:', err.message);
+      }
+    }
+
+    // --- Rendering ---
+    function renderOrders() {
+      const list = document.getElementById('ordersList');
+      if (!Array.isArray(orders) || orders.length === 0) {
+        list.innerHTML = '<em>No orders yet.</em>';
+        return;
+      }
+      // Sort orders by creation date (latest first)
+      const sortedOrders = [...orders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+      list.innerHTML = sortedOrders.map((order, index) => {
+        // Convert both IDs to numbers for comparison
+        const orderRestaurantId = Number(order.restaurantId);
+        const rest = restaurants.find(r => Number(r.id) === orderRestaurantId);
+
+        // Calculate order total
+        let orderTotal = 0;
+        const itemsWithPrices = order.items.map(orderItem => {
+          const item = items.find(i => i.name === orderItem.name);
+          const price = item ? item.price : 10; // fallback price
+          orderTotal += price * orderItem.quantity;
+          return {
+            ...orderItem,
+            price: price,
+            subtotal: price * orderItem.quantity
+          };
+        });
+
+        return `
+          <div class="order-compact clickable" id="order-card-${index + 1}" data-testid="order-card-${index + 1}" onclick="showOrderDetails(${order.id})">
+            <div class="order-header-compact">
+              <span class="order-restaurant-compact">${rest ? (rest.image ? rest.image + ' ' : '') + rest.name : 'Unknown Restaurant'}</span>
+              <span class="order-status-compact">${order.status}</span>
+            </div>
+            <div class="order-customer-compact">
+              <strong>Order ID: ${order.orderId || `#${order.id}`}</strong> - ${order.customerName}
+            </div>
+            <div class="order-items-compact">
+              ${itemsWithPrices.map(item => `<div>• ${item.name} × ${item.quantity} - $${item.subtotal.toFixed(2)}</div>`).join('')}
+            </div>
+            <div class="order-total-compact" style="font-weight: bold; color: #2d3748; margin-top: 0.5rem;">
+              💰 Total: $${orderTotal.toFixed(2)}
+            </div>
+            ${order.notes ? `<div class="order-notes-compact">📝 ${order.notes}</div>` : ''}
+            <div class="order-time-compact">${new Date(order.createdAt).toLocaleString()}</div>
+          </div>
+        `;
+      }).join('');
+    }
+    function renderPopularRestaurants() {
+      // Popularity: by number of orders, then avg rating
+      const orderCounts = {};
+      orders.forEach(o => { orderCounts[o.restaurantId] = (orderCounts[o.restaurantId] || 0) + 1; });
+      const avgRatings = {};
+      restaurants.forEach(r => {
+        const revs = reviews.filter(rv => Number(rv.restaurantId) === Number(r.id));
+        avgRatings[r.id] = revs.length ? (revs.reduce((a, b) => a + b.rating, 0) / revs.length).toFixed(1) : 'N/A';
+      });
+      const sorted = [...restaurants].sort((a, b) => (orderCounts[b.id] || 0) - (orderCounts[a.id] || 0));
+
+      // Get 2 random restaurants from top 5
+      const top5 = sorted.slice(0, 5);
+      const random2 = top5.sort(() => Math.random() - 0.5).slice(0, 2);
+
+      document.getElementById('popularRestaurants').innerHTML = random2.map((r, index) => `
+        <div class="restaurant-card clickable" id="restaurant-card-${index + 1}" data-testid="restaurant-card-${index + 1}" onclick="showRestaurantDetails(${r.id})">
+          <div class="restaurant-emoji">${r.image || '🍽️'}</div>
+          <div class="restaurant-name">${r.name}</div>
+          <div class="restaurant-cuisine">${r.cuisine} • ${r.location}</div>
+          <div class="restaurant-rating">⭐ ${avgRatings[r.id]} (${reviews.filter(rv => Number(rv.restaurantId) === Number(r.id)).length} reviews)</div>
+          <div class="restaurant-orders">📦 ${orderCounts[r.id] || 0} orders</div>
+          <div class="restaurant-desc">${r.description || ''}</div>
+        </div>
+      `).join('');
+    }
+    function renderPopularOrders() {
+      // Most popular = most items ordered (by quantity sum)
+      const sorted = [...orders].sort((a, b) => {
+        const sumA = a.items.reduce((s, i) => s + i.quantity, 0);
+        const sumB = b.items.reduce((s, i) => s + i.quantity, 0);
+        return sumB - sumA;
+      });
+
+      // Get 2 random orders from top 5
+      const top5 = sorted.slice(0, 5);
+      const random2 = top5.sort(() => Math.random() - 0.5).slice(0, 2);
+
+      document.getElementById('popularOrders').innerHTML = random2.map((order, index) => {
+        // Convert both IDs to numbers for comparison
+        const orderRestaurantId = Number(order.restaurantId);
+        const rest = restaurants.find(r => Number(r.id) === orderRestaurantId);
+        return `
+          <div class="restaurant-card clickable" id="popular-order-card-${index + 1}" data-testid="popular-order-card-${index + 1}" onclick="showOrderDetails(${order.id})">
+            <div class="restaurant-emoji">${rest ? rest.image : '🍽️'}</div>
+            <div class="restaurant-name">Order ${order.orderId || `#${order.id}`}</div>
+            <div class="restaurant-cuisine">${rest ? rest.name : 'Unknown Restaurant'}</div>
+            <div class="restaurant-rating">👤 ${order.customerName}</div>
+            <div class="restaurant-orders">${order.items.map(i => `${i.name} ×${i.quantity}`).join(', ')}</div>
+            <div class="restaurant-desc">Status: ${order.status}</div>
+            <div class="order-time">${new Date(order.createdAt).toLocaleString()}</div>
+          </div>
+        `;
+      }).join('');
+    }
+    // --- Form logic ---
+    document.getElementById('orderForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const customerName = document.getElementById('customerName').value.trim();
+      const notes = document.getElementById('notes').value.trim();
+      const restaurantId = parseInt(document.getElementById('restaurantSelect').value, 10);
+      const itemRows = document.querySelectorAll('.item-row');
+      const itemsArr = [];
+      for (const row of itemRows) {
+        const name = row.querySelector('.item-name').value.trim();
+        const qty = parseInt(row.querySelector('.item-qty').value, 10);
+        if (name && qty > 0) {
+          itemsArr.push({ name, quantity: qty });
+        }
+      }
+      if (!customerName || itemsArr.length === 0 || !restaurantId) {
+        alert('Please enter customer name, select restaurant, and add at least one item.');
+        return;
+      }
+      const order = { customerName, items: itemsArr, notes, restaurantId };
+      try {
+        const res = await fetch('/api/practice/restaurant-order/v1/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(order)
+        });
+        if (!res.ok) throw new Error('Failed to create order');
+
+        document.getElementById('orderForm').reset();
+        // Remove extra item rows except the first
+        const rows = document.querySelectorAll('.item-row');
+        const buggyReviewId = 'undefined';
+        const buggyReviewResponse = await fetch(`/api/practice/restaurant-order/v1/reviews/${buggyReviewId}`);
+        for (let i = 1; i < rows.length; ++i) rows[i].remove();
+
+        // Clear all subtotals and reset total
+        const remainingSubtotals = document.querySelectorAll('.item-subtotal');
+        remainingSubtotals.forEach(subtotal => {
+          subtotal.textContent = '$0.00';
+        });
+
+        // Reset order total
+        document.getElementById('orderTotal').innerHTML = `
+          <div style="
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.1) 75%);
+            background-size: 20px 20px;
+            opacity: 0.3;
+            pointer-events: none;
+          "></div>
+          <div style="position: relative; z-index: 1;">
+            💰 Total: $0.00
+          </div>
+        `;
+
+        // Repopulate item selects to restore options
+        populateItemSelects();
+
+        await loadOrders();
+        renderPopularRestaurants();
+
+        // Trigger granular API calls after order creation (normal app flow)
+        await loadPendingOrderCount();
+        await loadCompletedOrderCount();
+        await loadOrderStats();
+
+      } catch (err) {
+        console.error('Error creating order:', err);
+      }
+    });
+    // --- Popup functionality ---
+    function showPopup() {
+      document.getElementById('popupOverlay').classList.add('active');
+    }
+
+    function closePopup() {
+      document.getElementById('popupOverlay').classList.remove('active');
+    }
+
+    // Close popup when clicking outside
+    document.getElementById('popupOverlay').addEventListener('click', function (e) {
+      if (e.target === this) {
+        closePopup();
+      }
+    });
+
+    // Close popup with Escape key
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        closePopup();
+      }
+    });
+
+    async function showRestaurantDetails(restaurantId) {
+      console.error('Entering restaurant card details for restaurant ID:', restaurantId);
+      showPopup();
+      const popupContent = document.getElementById('popupContent');
+      popupContent.innerHTML = '<div class="popup-loading">Loading restaurant details...</div>';
+
+      // Make a background API request that will return 500 error (using invalid ID)
+      // This request won't affect the UI since we don't await it and handle errors silently
+      fetch('/api/practice/restaurant-order/v1/items/undefined', { method: 'GET' })
+        .catch(error => {
+          // Silently handle the error - this won't affect the UI
+          console.log('Background API request failed as expected:', error);
+        });
+
+      try {
+        // Make multiple API calls to get comprehensive restaurant data
+        const [restaurant, restaurantOrders, restaurantStats] = await Promise.all([
+          fetch(`/api/practice/restaurant-order/v1/restaurants/${restaurantId}`).then(r => r.json()),
+          fetch(`/api/practice/restaurant-order/v1/orders/by-restaurant?restaurantId=${restaurantId}`).then(r => r.json()),
+          fetch(`/api/practice/restaurant-order/v1/restaurants/${restaurantId}/stats`).then(r => r.json()).catch(() => null)
+        ]);
+
+        // Filter reviews from the global reviews array instead of making a fetch call
+        const restaurantReviews = reviews.filter(review => review.restaurantId === restaurantId);
+
+        // Calculate additional stats
+        const totalOrders = restaurantOrders.length;
+        const totalItems = restaurantOrders.reduce((sum, order) => sum + order.items.reduce((s, item) => s + item.quantity, 0), 0);
+        const avgRating = restaurantReviews.length > 0 ?
+          (restaurantReviews.reduce((sum, review) => sum + review.rating, 0) / restaurantReviews.length).toFixed(1) : 'N/A';
+        const recentOrders = restaurantOrders.slice(0, 5);
+
+        popupContent.innerHTML = `
+          <div class="popup-header">
+            <h3 class="popup-title">${restaurant.image || '🍽️'} ${restaurant.name}</h3>
+            <p class="popup-subtitle">${restaurant.cuisine} • ${restaurant.location}</p>
+          </div>
+          
+          <div class="popup-section">
+            <h4 class="popup-section-title">📊 Restaurant Statistics</h4>
+            <div class="popup-grid">
+              <div class="popup-card">
+                <div class="popup-card-title">Total Orders</div>
+                <div class="popup-card-value">${totalOrders}</div>
+              </div>
+              <div class="popup-card">
+                <div class="popup-card-title">Total Items Sold</div>
+                <div class="popup-card-value">${totalItems}</div>
+              </div>
+              <div class="popup-card">
+                <div class="popup-card-title">Average Rating</div>
+                <div class="popup-card-value">⭐ ${avgRating}</div>
+              </div>
+              <div class="popup-card">
+                <div class="popup-card-title">Total Reviews</div>
+                <div class="popup-card-value">${restaurantReviews.length}</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="popup-section">
+            <h4 class="popup-section-title">📝 Recent Orders</h4>
+            <div class="popup-list">
+              ${recentOrders.length > 0 ? recentOrders.map(order => `
+                <div class="popup-list-item">
+                  <div>
+                    <strong>#${order.id}</strong> - ${order.customerName}
+                    <br><small>${order.items.map(i => `${i.name} ×${i.quantity}`).join(', ')}</small>
+                  </div>
+                  <div>
+                    <span style="color: ${order.status === 'completed' ? '#38a169' : order.status === 'pending' ? '#d69e2e' : '#e53e3e'}">${order.status}</span>
+                  </div>
+                </div>
+              `).join('') : '<div class="popup-list-item">No recent orders</div>'}
+            </div>
+          </div>
+          
+          <div class="popup-section">
+            <h4 class="popup-section-title">⭐ Recent Reviews</h4>
+            <div class="popup-list">
+              ${restaurantReviews.slice(0, 5).length > 0 ? restaurantReviews.slice(0, 5).map(review => `
+                <div class="popup-list-item">
+                  <div>
+                    <strong>${'⭐'.repeat(review.rating)}</strong>
+                    <br><small>${review.comment || 'No comment'}</small>
+                  </div>
+                  <div>
+                    <small>${new Date(review.createdAt).toLocaleDateString()}</small>
+                  </div>
+                </div>
+              `).join('') : '<div class="popup-list-item">No reviews yet</div>'}
+            </div>
+          </div>
+          
+          ${restaurant.description ? `
+            <div class="popup-section">
+              <h4 class="popup-section-title">📖 Description</h4>
+              <p>${restaurant.description}</p>
+            </div>
+          ` : ''}
+        `;
+
+      } catch (error) {
+        popupContent.innerHTML = `
+          <div class="popup-error">
+            ❌ Error loading restaurant details: ${error.message}
+          </div>
+        `;
+      }
+    }
+
+    async function showOrderDetails(orderId) {
+      console.error('Entering order card details for order ID:', orderId);
+      showPopup();
+      const popupContent = document.getElementById('popupContent');
+      popupContent.innerHTML = '<div class="popup-loading">Loading order details...</div>';
+
+      // Make a background API request that will return 500 error (using invalid ID)
+      // This request won't affect the UI since we don't await it and handle errors silently
+      fetch('/api/practice/restaurant-order/v1/items/null', { method: 'GET' })
+        .catch(error => {
+          // Silently handle the error - this won't affect the UI
+          console.log('Background API request failed as expected:', error);
+        });
+
+      try {
+        // First fetch the order to get the restaurant ID
+        const order = await fetch(`/api/practice/restaurant-order/v1/orders/${orderId}`).then(r => r.json());
+
+        // Then fetch restaurant details and order stats
+        const [restaurant, orderStats] = await Promise.all([
+          fetch(`/api/practice/restaurant-order/v1/restaurants/${order.restaurantId}`).then(r => r.json()),
+          fetch(`/api/practice/restaurant-order/v1/orders/${orderId}/stats`).then(r => r.json()).catch(() => null)
+        ]);
+
+        // Calculate order totals
+        const totalItems = order.items.reduce((sum, item) => sum + item.quantity, 0);
+
+        // Calculate actual total using the items database for accurate pricing
+        let actualTotal = 0;
+        const itemsWithPrices = order.items.map(orderItem => {
+          const menuItem = items.find(i => i.name === orderItem.name);
+          const price = menuItem ? menuItem.price : 10; // fallback price
+          const subtotal = price * orderItem.quantity;
+          actualTotal += subtotal;
+          return {
+            ...orderItem,
+            price: price,
+            subtotal: subtotal
+          };
+        });
+
+        popupContent.innerHTML = `
+          <div class="popup-header">
+            <h3 class="popup-title">📦 Order ${order.orderId || `#${order.id}`}</h3>
+            <p class="popup-subtitle">${restaurant.image || '🍽️'} ${restaurant.name} • ${order.customerName}</p>
+          </div>
+          
+          <div class="popup-section">
+            <h4 class="popup-section-title">📊 Order Statistics</h4>
+            <div class="popup-grid">
+              <div class="popup-card">
+                <div class="popup-card-title">Order ID</div>
+                <div class="popup-card-value">${order.orderId || `#${order.id}`}</div>
+              </div>
+              <div class="popup-card">
+                <div class="popup-card-title">Total Items</div>
+                <div class="popup-card-value">${totalItems}</div>
+              </div>
+              <div class="popup-card">
+                <div class="popup-card-title">Order Status</div>
+                <div class="popup-card-value" style="color: ${order.status === 'completed' ? '#38a169' : order.status === 'pending' ? '#d69e2e' : '#e53e3e'}">${order.status}</div>
+              </div>
+              <div class="popup-card">
+                <div class="popup-card-title">Estimated Total</div>
+                <div class="popup-card-value">$${actualTotal.toFixed(2)}</div>
+              </div>
+              <div class="popup-card">
+                <div class="popup-card-title">Order Date</div>
+                <div class="popup-card-value">${new Date(order.createdAt).toLocaleDateString()}</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="popup-section">
+            <h4 class="popup-section-title">🍽️ Order Items</h4>
+            <div class="popup-list">
+              ${itemsWithPrices.map(item => `
+                <div class="popup-list-item">
+                  <div>
+                    <strong>${item.name}</strong>
+                    <br><small>Quantity: ${item.quantity} × $${item.price.toFixed(2)}</small>
+                  </div>
+                  <div>
+                    <strong>$${item.subtotal.toFixed(2)}</strong>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+          
+          ${order.notes ? `
+            <div class="popup-section">
+              <h4 class="popup-section-title">📝 Order Notes</h4>
+              <p style="background: #f7fafc; padding: 1rem; border-radius: 6px; border-left: 4px solid #4299e1;">${order.notes}</p>
+            </div>
+          ` : ''}
+          
+          <div class="popup-section">
+            <h4 class="popup-section-title">🏪 Restaurant Details</h4>
+            <div class="popup-card">
+              <div class="popup-card-title">${restaurant.name}</div>
+              <div style="color: #718096; margin-bottom: 0.5rem;">${restaurant.cuisine} • ${restaurant.location}</div>
+              ${restaurant.description ? `<div style="font-size: 0.875rem; color: #a0aec0;">${restaurant.description}</div>` : ''}
+            </div>
+          </div>
+        `;
+
+      } catch (error) {
+        popupContent.innerHTML = `
+          <div class="popup-error">
+            ❌ Error loading order details: ${error.message}
+          </div>
+        `;
+      }
+    }
+
+    // --- Initial load ---
+    (async function () {
+      await loadRestaurants();
+      await loadItems();
+      await loadReviews();
+      await loadOrders();
+      renderPopularRestaurants();
+
+      await loadRestaurantCount();
+      await loadOrderCount();
+      await loadAverageItemPrice();
+      await loadAverageReviewRating();
+
+      // Add event listeners to existing quantity inputs
+      const initialQtyInput = document.getElementById('item-qty-1');
+      if (initialQtyInput) {
+        initialQtyInput.addEventListener('input', updateOrderTotal);
+      }
+    })();
+  </script>
+</body>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+
+</html>

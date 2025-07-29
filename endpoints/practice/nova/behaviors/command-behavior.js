@@ -3,6 +3,7 @@
  */
 
 const BaseBehavior = require("./base-behavior");
+const { logDebug } = require("../../../../helpers/logger-api");
 
 class CommandBehavior extends BaseBehavior {
   constructor() {
@@ -12,6 +13,7 @@ class CommandBehavior extends BaseBehavior {
     // Map of commands and their handlers
     this.commands = {
       help: this._handleHelp.bind(this),
+      topics: this._handleTopics.bind(this),
       remember: this._handleRemember.bind(this),
       forget: this._handleForget.bind(this),
       "tell me a joke": this._handleJoke.bind(this),
@@ -24,6 +26,11 @@ class CommandBehavior extends BaseBehavior {
    * Check if this behavior can handle the message
    */
   canHandle(message, context) {
+    // Debug log for command normalization
+    logDebug("[Nova] CommandBehavior:canHandle", {
+      message,
+      normalizedCommand: context.normalizedCommand,
+    });
     // Check if the normalized command is one we can handle
     const command = context.normalizedCommand;
 
@@ -76,6 +83,69 @@ class CommandBehavior extends BaseBehavior {
   }
 
   /**
+   * Handle the topics command
+   */
+  _handleTopics(message, context) {
+    const topicsText = `
+🎯 **Topics I Can Talk About:**
+
+🤖 **Programming & Technology:**
+• JavaScript, Node.js, React, Python, HTML, CSS
+• APIs, REST, GraphQL, Web Development
+• Database concepts, SQL, NoSQL
+• Testing, Test Automation, QA practices
+• DevOps, CI/CD, Docker, Cloud Computing
+• Mobile Development, iOS, Android
+• Machine Learning, AI, Data Science
+
+🎮 **Games & Entertainment:**
+• Rock Paper Scissors - Classic strategy game
+• Number Guessing - Adaptive difficulty with hints
+• Hangman - Word guessing with various categories
+• Interactive challenges and puzzles
+
+🧮 **Utilities & Calculations:**
+• Mathematical expressions and calculations
+• Unit conversions (temperature, distance, weight, etc.)
+• Digital storage conversions (MB, GB, TB)
+• Time conversions and calculations
+• Currency conversions (when available)
+
+📚 **Knowledge & Learning:**
+• Programming concepts and definitions
+• Code examples and tutorials
+• Best practices and design patterns
+• Technology trends and news
+• Learning resources and recommendations
+
+🗣️ **Conversation & Personality:**
+• Small talk and casual conversation
+• Personal questions about my capabilities
+• Emotional support and encouragement
+• Humor and jokes
+• Interesting facts and trivia
+
+🎯 **Special Features:**
+• Memory management (remember/forget information)
+• Contextual conversations (remembers past chats)
+• Personalized recommendations
+• Proactive conversation starters
+• Multi-language support (basic)
+
+🔧 **Commands & Tools:**
+• /help - Show available commands
+• /topics - Show this topics list
+• /list-terms - Show learned terms
+• /debug-terms - Debug term learning system
+• clear - Clear conversation history
+• remember/forget - Manage personal information
+
+💡 **Ask me about anything!** I'm constantly learning and can discuss a wide range of topics. If I don't know something, I'll be honest about it and try to help you find the information you need.
+`;
+    return topicsText;
+  }
+
+  /**
    * Handle the remember command
    */
   _handleRemember(info, context) {
@@ -92,10 +162,16 @@ class CommandBehavior extends BaseBehavior {
   _handleForget(info, context) {
     // Handle "forget all" command
     if (info === "all") {
-      // Reset user memory
+      // Reset user memory including learned terms
       // We use the userId from the context
-      // Note: This doesn't actually delete the memory completely,
-      // it just clears the current instance
+
+      // Clear all user memory including learned terms
+      const userId = context.userId || context.conversationId?.split("_")[0];
+      if (userId) {
+        // Import the user memory module to clear learned terms
+        const { userMemory } = require("../user-memory");
+        delete userMemory[userId];
+      }
 
       // Re-initialize user memory (shallow reset)
       Object.keys(context.userMemory).forEach((key) => {
@@ -106,7 +182,7 @@ class CommandBehavior extends BaseBehavior {
         }
       });
 
-      return "I've forgotten all information about you.";
+      return "I've forgotten all information about you, including any terms I learned from you.";
     } else {
       // Try to forget specific information
       let found = false;

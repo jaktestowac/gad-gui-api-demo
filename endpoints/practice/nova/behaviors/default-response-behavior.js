@@ -182,8 +182,7 @@ class DefaultResponseBehavior extends BaseBehavior {
     }
 
     // Check if the message might be a misspelled command
-    const suggestCommandCorrection = this.textProcessingUtils.suggestCommandCorrection;
-    const commandSuggestion = suggestCommandCorrection(message);
+    const commandSuggestion = this.textProcessingUtils.suggestCommandCorrection(message);
 
     if (commandSuggestion) {
       return commandSuggestion;

@@ -25,6 +25,12 @@ const ConversationalFlowBehavior = require("./conversational-flow-behavior");
 const GADFeatureBehavior = require("./gad-feature-behavior");
 const CuriosityBehavior = require("./curiosity-behavior");
 
+// Import new enhanced behaviors
+const ContextAwarenessBehavior = require("./context-awareness-behavior");
+const LearningBehavior = require("./learning-behavior");
+const EmotionAwarenessBehavior = require("./emotion-awareness-behavior");
+const ResponseQualityBehavior = require("./response-quality-behavior");
+
 /**
  * Initialize all behaviors
  */
@@ -32,13 +38,19 @@ function initializeBehaviors() {
   // Only initialize once
   if (behaviorRegistry.initialized) {
     return behaviorRegistry;
-  } // Register behaviors in priority order
+  }
+
+  // Register behaviors in priority order
   behaviorRegistry
     .register(new CommandBehavior())
     .register(new GameBehavior())
     .register(new ProactiveBehavior()) // New behavior
     .register(new UtilityBehavior())
     .register(new SmallTalkBehavior())
+    .register(new ResponseQualityBehavior()) // New response quality behavior
+    .register(new ContextAwarenessBehavior()) // New enhanced behavior
+    .register(new LearningBehavior()) // New enhanced behavior
+    .register(new EmotionAwarenessBehavior()) // New enhanced behavior
     .register(new ConversationalFlowBehavior()) // New behavior
     .register(new ContextualMemoryBehavior()) // New behavior
     .register(new KnowledgeBaseBehavior(textProcessingUtils))

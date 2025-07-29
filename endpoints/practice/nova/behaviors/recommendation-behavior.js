@@ -200,6 +200,11 @@ class RecommendationBehavior extends BaseBehavior {
    * @private
    */
   _extractRequestedTopic(message, context) {
+    // Safety check for null/undefined message
+    if (!message || typeof message !== 'string') {
+      return null;
+    }
+
     // List of topics we have recommendations for
     const availableTopics = Object.keys(this.recommendations);
 
@@ -264,7 +269,9 @@ class RecommendationBehavior extends BaseBehavior {
       for (let i = recentMessages.length - 1; i >= 0; i--) {
         const msg = recentMessages[i];
         if (
+          msg && 
           msg.role === "assistant" &&
+          msg.content &&
           (msg.content.includes("Do you have a specific topic you're interested in?") ||
             msg.content.includes("Would you like more specific recommendations?") ||
             msg.content.includes("Would you like me to help you find resources for a different topic?"))
@@ -304,8 +311,10 @@ class RecommendationBehavior extends BaseBehavior {
    * @private
    */
   _findClosestTopicMatch(message, availableTopics, context) {
-    // Import text processing utils from parent scope if available
-    const textProcessingUtils = require("../text-processing");
+    // Safety check for null/undefined message
+    if (!message || typeof message !== 'string') {
+      return null;
+    }
 
     // Extract keywords from message
     const words = message.split(/\s+/);
@@ -316,26 +325,25 @@ class RecommendationBehavior extends BaseBehavior {
 
       for (const topic of availableTopics) {
         // Check if topic contains this word or word contains topic
-        if (topic.includes(word) || word.includes(topic)) {
+        if (topic && topic.includes(word) || word.includes(topic)) {
           this._saveTopicToUserMemory(topic, context);
           return topic;
         }
       }
     }
 
-    // Try to match with Levenshtein distance if available
-    if (textProcessingUtils && textProcessingUtils.normalizeMessage) {
-      const normalizedTopic = textProcessingUtils.normalizeMessage(
-        message,
-        availableTopics,
-        0.4 // More lenient threshold for topic matching
-      );
+    // Try to match with Levenshtein distance using the text processing module
+    const textProcessingUtils = require("../text-processing");
+    const normalizedTopic = textProcessingUtils.normalizeMessage(
+      message,
+      availableTopics,
+      0.4 // More lenient threshold for topic matching
+    );
 
-      // If we got a normalized match from the available topics
-      if (normalizedTopic && availableTopics.includes(normalizedTopic)) {
-        this._saveTopicToUserMemory(normalizedTopic, context);
-        return normalizedTopic;
-      }
+    // If we got a normalized match from the available topics
+    if (normalizedTopic && availableTopics.includes(normalizedTopic)) {
+      this._saveTopicToUserMemory(normalizedTopic, context);
+      return normalizedTopic;
     }
 
     // Check topic keywords
@@ -351,7 +359,7 @@ class RecommendationBehavior extends BaseBehavior {
     // Check if any keyword matches a known topic
     for (const [topic, keywords] of Object.entries(topicKeywords)) {
       for (const keyword of keywords) {
-        if (message.includes(keyword)) {
+        if (message && message.includes(keyword)) {
           this._saveTopicToUserMemory(topic, context);
           return topic;
         }

@@ -1,4 +1,46 @@
 const { dictionary, unitConversions, codeExamples } = require("./nova-base");
+const { logDebug } = require("../../../helpers/logger-api");
+
+/**
+ * Validate and sanitize user input
+ * @param {string} input - User input to validate
+ * @param {string} type - Type of validation ('text', 'number', 'command')
+ * @returns {object} - Validation result with sanitized input and error message
+ */
+function validateInput(input, type = "text") {
+  if (!input || typeof input !== "string") {
+    return { valid: false, sanitized: "", error: "Invalid input type" };
+  }
+
+  const sanitized = input.trim();
+
+  if (sanitized.length === 0) {
+    return { valid: false, sanitized: "", error: "Input cannot be empty" };
+  }
+
+  switch (type) {
+    case "number": {
+      const num = parseFloat(sanitized);
+      if (isNaN(num)) {
+        return { valid: false, sanitized: "", error: "Input must be a valid number" };
+      }
+      return { valid: true, sanitized: num.toString(), error: null };
+    }
+    case "command":
+      // Basic command validation - no special characters that could cause issues
+      if (/[<>"'&]/.test(sanitized)) {
+        return { valid: false, sanitized: "", error: "Command contains invalid characters" };
+      }
+      return { valid: true, sanitized: sanitized.toLowerCase(), error: null };
+
+    case "text":
+    default: {
+      // Basic text sanitization - remove potentially dangerous characters
+      const cleanText = sanitized.replace(/[<>"'&]/g, "");
+      return { valid: true, sanitized: cleanText, error: null };
+    }
+  }
+}
 
 /**
  * Simple word definition lookup
@@ -102,6 +144,7 @@ function calculateExpression(expression) {
 
 // Export utility functions
 module.exports = {
+  validateInput,
   getDefinition,
   convertUnits,
   getCodeExample,

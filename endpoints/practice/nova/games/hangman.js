@@ -41,7 +41,17 @@ class HangmanGame {
   }
 
   guess(letter) {
+    // Validate input
+    if (!letter || typeof letter !== 'string') {
+      return "Please enter a valid letter.";
+    }
+
     letter = letter.toLowerCase();
+
+    // Check if it's a single letter
+    if (letter.length !== 1 || !/[a-z]/.test(letter)) {
+      return "Please enter a single letter (a-z).";
+    }
 
     if (this.gameStatus !== "in-progress") {
       return `Game is over. ${this.gameStatus === "won" ? "You won!" : "You lost!"} The word was "${

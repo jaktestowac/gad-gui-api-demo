@@ -65,6 +65,11 @@ function levenshteinDistance(a, b) {
 function normalizeMessage(message, validTerms, threshold = 0.3) {
   if (!message || !validTerms || validTerms.length === 0) return message;
 
+  // Validate threshold parameter
+  if (typeof threshold !== 'number' || threshold < 0 || threshold > 1) {
+    threshold = 0.3; // Default to safe value
+  }
+
   const lowerMessage = normalizeText(message.trim());
 
   // First check for exact match
@@ -149,6 +154,7 @@ function suggestCommandCorrection(message) {
   // List of common commands to check against
   const commonCommands = [
     "help",
+    "topics",
     "tell me a joke",
     "tell me a fact",
     "play rock paper scissors",
@@ -227,6 +233,7 @@ function getNormalizedCommand(message) {
   // Define common commands and their variations
   const commonCommands = [
     "help",
+    "topics",
     "tell me a joke",
     "tell me a fact",
     "play rock paper scissors",

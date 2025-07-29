@@ -18,6 +18,14 @@ const { logDebug } = require("../../../helpers/logger-api");
  * @returns {string|null} - A response if this handler processed the message, otherwise null
  */
 function prioritizeTermDefinition(message, context, behaviors) {
+  // Don't force curiosity behavior for commands
+  if (message.trim().startsWith("/")) {
+    logDebug("[Nova] DEBUG_TERM_LEARNING: Skipping term definition for command", {
+      message,
+      reason: "Command detected",
+    });
+    return null;
+  }
   const userId = context.userId || context.conversationId?.split("_")[0];
   // First check if this is a question about a term in Nova's memory
   if (
@@ -91,6 +99,16 @@ function prioritizeTermDefinition(message, context, behaviors) {
 
   // Check if this is a term definition scenario
   if (context.isDefiningUnknownTerm && context.previousUnknownTerm) {
+    // Don't force curiosity behavior for commands
+    if (message.trim().startsWith("/")) {
+      logDebug("[Nova] DEBUG_TERM_LEARNING: Skipping term definition for command", {
+        previousUnknownTerm: context.previousUnknownTerm,
+        message: message,
+        reason: "Command detected",
+      });
+      return null;
+    }
+
     logDebug("[Nova] DEBUG_TERM_LEARNING: Detected term definition scenario", {
       previousUnknownTerm: context.previousUnknownTerm,
       message: message.substring(0, 50) + (message.length > 50 ? "..." : ""),
