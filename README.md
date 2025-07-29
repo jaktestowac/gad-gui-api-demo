@@ -4,6 +4,7 @@
   <img src="https://github.com/jaktestowac/gad-gui-api-demo/assets/72373858/eadec2e8-229c-414f-81da-9ec4601b0972" alt="GAD" width="300" height="300">
 </p>
 
+> [!TIP]
 > 💡 Choose your language:
 >
 > - 🇬🇧 [English](./README.md)
@@ -20,6 +21,15 @@ The application includes features such as simple logic, statistics, charts, game
 **🦎 GAD** is ideal for learning test automation, refining QA techniques, and practicing with scenarios encountered in diverse, **real-world projects** with diverse real-world scenarios.
 
 P.S. In addition, the application has some **serious design flaws** - I wonder if you will notice them?😉
+
+> [!IMPORTANT]  
+> Want to quickly test the application?
+>
+> - clone or download the repository
+> - run `npm i`
+> - run `npm run start`
+> - open [http://localhost:3000](http://localhost:3000) in your browser
+> - enjoy testing and automating **🦎 GAD**!
 
 # Table of Contents
 
@@ -151,6 +161,7 @@ Steps:
 
 ### CLI options
 
+> [!TIP]
 > CLI (Command Line Interface) is an interface that allows you to interact with the application using commands in the terminal.
 
 | Option       | Description                                                                                                                          |
@@ -159,7 +170,8 @@ Steps:
 | PORT=3001    | Run on selected port. GAD runs on default port `3000`.                                                                               |
 | DB="db_name" | Use selected database file. GAD uses `db.json` as default database. Example (for PowerShell): `$env:DB="db-base-big"; npm run start` |
 
-⚠️ Warning: Any environment variables set in the terminal will be used by the application. If you want to run the application without any options, make sure to clear the environment variables.
+> [!WARNING]
+> ⚠️ Warning: Any environment variables set in the terminal will be used by the application. If you want to run the application without any options, make sure to clear the environment variables.
 
 #### Running CLI options
 
@@ -234,7 +246,7 @@ Images are available at:
 
 ## Deploy to **Glitch**
 
-> **⚠️ Warning: This deployment method is obsolete and no longer recommended.**
+> [!WARNING] > **⚠️ Warning: This deployment method is obsolete and no longer recommended.**
 >
 > Glitch has changed their [platform policies](https://blog.glitch.com/post/changes-are-coming-to-glitch/) and this deployment method may no longer work as expected. Please use one of the other deployment methods instead.
 

@@ -21,6 +21,15 @@ Aplikacja zawiera funkcje takie jak prosta logika, statystyki, wykresy, gry oraz
 
 P.S. Dodatkowo, aplikacja ma pewne **poważne wady architektury** - ciekawe czy je zauważysz?😉
 
+> [!IMPORTANT]  
+> Chcesz szybko uruchomić aplikację?
+>
+> - sklonuj lub pobierz repozytorium
+> - uruchom `npm i`
+> - uruchom `npm run start`
+> - otwórz [http://localhost:3000](http://localhost:3000) w przeglądarce
+> - ciesz się działającą aplikacją **🦎 GAD**!
+
 # Spis treści
 
 - [Funkcje](#funkcje)
