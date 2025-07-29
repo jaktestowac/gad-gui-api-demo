@@ -230,7 +230,7 @@ docker run -p 3000:3000 -d jaktestowac/gad:2.5.5
 Application should be running under http://localhost:3000/
 
 Images are available at:
-[🐋 hub.docker.com/repository/docker/jaktestowac](https://hub.docker.com/repository/docker/jaktestowac/gad/general)
+[🐋 https://hub.docker.com/r/jaktestowac/gad](https://hub.docker.com/r/jaktestowac/gad)
 
 ## Deploy to **Glitch**
 

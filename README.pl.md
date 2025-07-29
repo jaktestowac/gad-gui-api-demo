@@ -1,6 +1,5 @@
 # Wprowadzenie
 
-
 <p align="center">
   <img src="https://github.com/jaktestowac/gad-gui-api-demo/assets/72373858/eadec2e8-229c-414f-81da-9ec4601b0972" alt="GAD" width="300" height="300">
 </p>
@@ -233,7 +232,7 @@ docker run -p 3000:3000 -d jaktestowac/gad:2.5.5
 Aplikacja powinna działać pod adresem http://localhost:3000/
 
 Obrazy są dostępne na:
-[🐋 hub.docker.com/repository/docker/jaktestowac](https://hub.docker.com/repository/docker/jaktestowac/gad/general)
+[🐋 https://hub.docker.com/r/jaktestowac/gad](https://hub.docker.com/r/jaktestowac/gad)
 
 ## Wdrożenie na **Glitch**
 
