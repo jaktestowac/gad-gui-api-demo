@@ -4,6 +4,7 @@
   <img src="https://github.com/jaktestowac/gad-gui-api-demo/assets/72373858/eadec2e8-229c-414f-81da-9ec4601b0972" alt="GAD" width="300" height="300">
 </p>
 
+> [!TIP]
 > 💡 Wybierz swój język:
 >
 > - 🇬🇧 [English](./README.md)
@@ -170,7 +171,8 @@ Kroki:
 | PORT=3001    | Uruchom na wybranym porcie. GAD działa domyślnie na porcie `3000`.                                                                                  |
 | DB="db_name" | Użyj wybranego pliku bazy danych. GAD używa `db.json` jako domyślnej bazy danych. Przykład (dla PowerShell): `$env:DB="db-base-big"; npm run start` |
 
-⚠️ Ostrzeżenie: Wszystkie zmienne środowiskowe ustawione w terminalu będą używane przez aplikację. Jeśli chcesz uruchomić aplikację bez żadnych opcji, upewnij się, że wyczyściłeś zmienne środowiskowe.
+> [!WARNING] 
+> ⚠️ Ostrzeżenie: Wszystkie zmienne środowiskowe ustawione w terminalu będą używane przez aplikację. Jeśli chcesz uruchomić aplikację bez żadnych opcji, upewnij się, że wyczyściłeś zmienne środowiskowe.
 
 #### Uruchamianie z CLI
 
@@ -245,6 +247,7 @@ Obrazy są dostępne na:
 
 ## Wdrożenie na **Glitch**
 
+> [!WARNING] 
 > **⚠️ Ostrzeżenie: Ta metoda wdrażania jest przestarzała i nie jest już zalecana.**
 >
 > Glitch zmienił swoje [zasady platformy](https://blog.glitch.com/post/changes-are-coming-to-glitch/) i ta metoda wdrażania może już nie działać zgodnie z oczekiwaniami. Proszę użyć jednej z innych metod wdrażania.
