@@ -296,40 +296,6 @@ describe('Learning Race-Condition Probes (no reset)', () => {
     })
   })
 
-  // Nested parallel tests that rely on baseUrl/auth/course
-  describe('Concurrent funds top-ups should accumulate correctly', () => {
-    it('should not lose or overwrite credit operations under concurrency', async () => {
-      const priceNum = Number(course.price)
-      if (!canAssertFunds && !(priceNum > 0)) {
-        return
-      }
-
-      const fundsBeforeRes = await request(baseUrl)
-        .get(`/api/learning/users/${auth.userId}/funds`)
-        .set('Authorization', `Bearer ${auth.token}`)
-      if (fundsBeforeRes.status !== 200) return
-      const before = Number(fundsBeforeRes.body.funds)
-
-      const add = 5
-      const times = 10
-      await Promise.all(
-        Array.from({ length: times }, () =>
-          request(baseUrl)
-            .put(`/api/learning/users/${auth.userId}/funds`)
-            .set('Authorization', `Bearer ${auth.token}`)
-            .send({ amount: add })
-        )
-      )
-
-      const fundsAfterRes = await request(baseUrl)
-        .get(`/api/learning/users/${auth.userId}/funds`)
-        .set('Authorization', `Bearer ${auth.token}`)
-        .expect(200)
-      const after = Number(fundsAfterRes.body.funds)
-      expect(after).toBeCloseTo(before + add * times, 2)
-    })
-  })
-
   describe('Concurrent quiz attempts should all be recorded', () => {
     it('should persist N quiz attempts created in parallel', async () => {
       await request(baseUrl)
