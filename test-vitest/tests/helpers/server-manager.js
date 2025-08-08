@@ -1,8 +1,10 @@
+/* eslint-disable no-console */
 import { spawn } from 'child_process'
+import { existsSync } from 'fs'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 import request from 'supertest'
-import config, { getConfig, updateConfig } from '../../config.js'
+import { getConfig, updateConfig } from '../../config.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -54,8 +56,21 @@ class ServerManager {
       const startServerProcess = async () => {
         try {
           // Start the server process
-          this.serverProcess = spawn('node', ['server.js'], {
-            cwd: join(__dirname, '..', '..', '..'),
+          const projectRoot = join(__dirname, '..', '..', '..')
+          const serverScriptPath = join(projectRoot, 'server.js')
+
+          // Extra diagnostics for missing entry file
+          if (!existsSync(serverScriptPath)) {
+            this.isStarting = false
+            clearTimeout(timeout)
+            return reject(new Error(`Cannot find server entry at ${serverScriptPath}. Check your project structure or update the spawn path.`))
+          }
+
+          const nodeExec = process.execPath || 'node'
+          console.log(`🧰 Spawning server process:\n  cmd: ${nodeExec} ${serverScriptPath}\n  cwd: ${projectRoot}\n  env overrides: PORT=${this.port} HOST=${this.host}`)
+
+          this.serverProcess = spawn(nodeExec, [serverScriptPath], {
+            cwd: projectRoot,
             env: { 
               ...process.env, 
               PORT: this.port.toString(),
@@ -64,8 +79,40 @@ class ServerManager {
             stdio: 'pipe'
           })
 
+          if (!this.serverProcess || !this.serverProcess.pid) {
+            throw new Error('Failed to spawn server process')
+          }
+
+          console.log(`🆔 Server PID: ${this.serverProcess.pid}`)
+
+          // Stream child process output for debugging
+          const prefix = (type) => `[server ${type}]`
+          const logChunk = (type, chunk) => {
+            const text = chunk.toString()
+            // Split to keep line prefixes readable
+            text.split(/\r?\n/).forEach((line) => {
+              if (line.trim().length === 0) return
+              // Always show stderr; stdout only in debug mode
+              if (type === 'stderr' || this.debug) {
+                console.log(`${prefix(type)} ${line}`)
+              }
+            })
+          }
+
+          this.serverProcess.stdout?.on('data', (chunk) => logChunk('stdout', chunk))
+          this.serverProcess.stderr?.on('data', (chunk) => logChunk('stderr', chunk))
+          this.serverProcess.on('error', (err) => {
+            console.log(`❌ Server process error: ${err.message}`)
+          })
+          this.serverProcess.on('exit', (code, signal) => {
+            console.log(`⚠️ Server process exited (code=${code}, signal=${signal})`)
+          })
+          this.serverProcess.on('close', (code, signal) => {
+            console.log(`ℹ️ Server process closed (code=${code}, signal=${signal})`)
+          })
+
           // Wait for server to be ready
-          const response = await this.waitForServerReady()
+          await this.waitForServerReady()
           
           clearTimeout(timeout)
           this.isStarting = false
@@ -91,10 +138,12 @@ class ServerManager {
     return new Promise((resolve, reject) => {
       const maxAttempts = Math.floor(this.startTimeout / 1000) // Convert timeout to seconds
       let attempts = 0
+      let lastErrorMessage = null
 
       const checkServer = async () => {
         attempts++
         console.log(`⏳ Checking server readiness... (attempt ${attempts}/${maxAttempts})`)
+        console.log(`🔎 GET ${this.baseUrl}/api/about`)
         
         try {
           const response = await request(this.baseUrl).get('/api/about')
@@ -105,8 +154,14 @@ class ServerManager {
             throw new Error(`Server responded with status ${response.status}`)
           }
         } catch (error) {
+          lastErrorMessage = error?.message || String(error)
+          if (error?.code) {
+            console.log(`❌ Readiness error: ${error.code} - ${lastErrorMessage}`)
+          } else {
+            console.log(`❌ Readiness error: ${lastErrorMessage}`)
+          }
           if (attempts >= maxAttempts) {
-            reject(new Error(`Server failed to become ready after ${maxAttempts} attempts`))
+            reject(new Error(`Server failed to become ready after ${maxAttempts} attempts. Last error: ${lastErrorMessage || 'unknown'}`))
             return
           }
           // Wait 1 second before next attempt

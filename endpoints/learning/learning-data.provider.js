@@ -363,11 +363,11 @@ function roundSecondsToHours(seconds) {
 function recalculateStudentsCount() {
   data.courses.forEach((course) => {
     course.students =
-      data.userEnrollments.filter((e) => areIdsEqual(e.courseId, course.id) && !isInactive(e)).length || 0;
+      data.userEnrollments.filter((e) => areIdsEqual(e?.courseId, course.id) && !isInactive(e)).length || 0;
   });
 
   [...data.courses].forEach((course) => {
-    replaceCourse(course.id, course);
+    replaceCourse(course?.id, course);
   });
 }
 
