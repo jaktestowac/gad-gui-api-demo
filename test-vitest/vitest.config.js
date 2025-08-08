@@ -8,6 +8,7 @@ export default defineConfig({
     globals: true,
     globalSetup: './tests/setup.js',
     teardownTimeout: 10000, // 10 seconds timeout for teardown
-    isolate: false // Don't isolate tests to keep server running
+    isolate: false, // Don't isolate tests to keep server running
+    silent: false 
   }
 }) 
