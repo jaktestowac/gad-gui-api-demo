@@ -36,7 +36,6 @@ class DataProxy {
         if (fileContent && fileContent.trim() !== '') {
           const savedData = JSON.parse(fileContent);
           this.memoryData = this.mergeWithMockData(savedData);
-          console.log("Loaded data from file:", this.dbPath);
         } else {
           this.memoryData = { ...this.mockDataSource };
           console.log("File was empty, using mock data");

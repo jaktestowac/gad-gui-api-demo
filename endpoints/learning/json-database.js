@@ -141,7 +141,6 @@ class JSONDatabase {
         if (fileContent && fileContent.trim() !== '') {
           try {
             this.data = JSON.parse(fileContent);
-            logDebug(`Reloaded data from disk: ${this.filePath}`);
           } catch (parseError) {
             logError(`JSON parsing error on reload for ${this.filePath}:`, parseError);
             this.data = Array.isArray(this.defaultData) ? [...this.defaultData] : this.defaultData;
