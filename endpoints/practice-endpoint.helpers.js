@@ -31,6 +31,7 @@ const {
 const hotelHandlers = require("./practice/hotel-handlers");
 const { orderV1, restaurantV1, itemV1, reviewV1 } = require("./practice/order-handlers");
 const { loanProcessingV1 } = require("./practice/loan-processing-handlers");
+const chibi = require("./practice/chibi/chibi-handlers");
 
 function isIdValid(id) {
   return id !== undefined && id !== "";
@@ -1067,6 +1068,35 @@ function handlePractice(req, res) {
       return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Loan processing endpoint not found"));
     }
 
+    // --- New: Chibi v1 endpoints ---
+    if (req.url.includes("/api/practice/chibi/v1/")) {
+      const base = "/api/practice/chibi/v1/";
+      let endpoint = req.url.split(base)[1];
+      if (endpoint && endpoint.includes("?")) endpoint = endpoint.split("?")[0];
+
+      switch (true) {
+        case req.method === "GET" && endpoint === "info":
+          return chibi.info(req, res);
+        case req.method === "POST" && endpoint === "solve":
+          return chibi.solve(req, res);
+        case req.method === "GET" && endpoint === "hint":
+          return chibi.getHint(req, res);
+        case req.method === "POST" && endpoint === "teach/save":
+          return chibi.teachSave(req, res);
+        case req.method === "POST" && endpoint === "teach/clear":
+          return chibi.teachClear(req, res);
+        case req.method === "GET" && endpoint === "teach/list":
+          return chibi.listMethods(req, res);
+        case req.method === "POST" && endpoint === "check":
+          return chibi.checkAnswer(req, res);
+        case req.method === "GET" && endpoint === "sample":
+          return chibi.sample(req, res);
+        case req.method === "GET" && endpoint === "detect":
+          return chibi.detect(req, res);
+        default:
+          return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
+      }
+    }
     return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
   }
 }

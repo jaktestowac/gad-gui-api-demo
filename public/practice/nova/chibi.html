@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Interactive Math Tutor – Chibi</title>
+    <style>
+        :root {
+            --bg: radial-gradient(1800px 900px at 80% -10%, #1a2b52 0%, transparent 60%), #0b1220;
+            --panel: #0f1626;
+            --panel-2: #0b1220;
+            --text: #e8eefc;
+            --muted: #a9b5d1;
+            --accent: #6aa6ff;
+            --accent-2: #7ae3a1;
+            --accent-3: #e67aff;
+            --warn: #ffcc66;
+            --error: #ff8787;
+            --ok: #79e0a8;
+            --border: #1f2a44;
+            --shadow: 0 10px 30px rgba(0, 0, 0, .35), inset 0 1px 0 rgba(255, 255, 255, .03);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Inter, ui-sans-serif, system-ui, Segoe UI, Roboto, Arial;
+            color: var(--text);
+            background: var(--bg);
+        }
+
+        a {
+            color: var(--accent);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 28px;
+        }
+
+        header {
+            position: relative;
+            padding: 16px 0 24px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            background: linear-gradient(180deg, rgba(255, 255, 255, .04), rgba(255, 255, 255, 0));
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        header h1 {
+            margin: 0 0 4px;
+            font-weight: 900;
+            letter-spacing: .3px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-3));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        header p {
+            margin: 0;
+            color: var(--muted);
+        }
+
+        .status {
+            position: absolute;
+            right: 0;
+            top: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #666;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, .02);
+        }
+
+        .dot.ok {
+            background: #3ee089;
+        }
+
+        .dot.warn {
+            background: #ffcc66;
+        }
+
+        .dot.err {
+            background: #ff6b6b;
+        }
+
+        .status .muted {
+            font-size: 12px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1.25fr .75fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 980px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.00));
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            backdrop-filter: blur(6px);
+            box-shadow: var(--shadow);
+        }
+
+        .card h2,
+        .card h3 {
+            margin: 0 0 10px;
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .mb-8 {
+            margin-bottom: 8px;
+        }
+
+        .mb-12 {
+            margin-bottom: 12px;
+        }
+
+        .mb-16 {
+            margin-bottom: 16px;
+        }
+
+        .small {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            background: var(--panel);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 14px;
+            outline: none;
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        textarea {
+            min-height: 72px;
+            resize: vertical;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(106, 166, 255, .14);
+        }
+
+        button {
+            background: linear-gradient(180deg, #2a3f70, #1f2f56);
+            color: #fff;
+            border: 1px solid #2b3e6a;
+            padding: 10px 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            letter-spacing: .2px;
+            transition: transform .05s ease, filter .2s ease, box-shadow .2s ease;
+            box-shadow: var(--shadow);
+        }
+
+        button:hover {
+            filter: brightness(1.08);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        button.secondary {
+            background: linear-gradient(180deg, #21402e, #1a3325);
+            border-color: #20442f;
+        }
+
+        button.warn {
+            background: linear-gradient(180deg, #5a3b13, #462f0f);
+            border-color: #6b4b1b;
+        }
+
+        button.ghost {
+            background: transparent;
+            border-color: var(--border);
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: #0e1629;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .steps {
+            counter-reset: step;
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .steps li {
+            position: relative;
+            margin: 8px 0;
+            padding: 12px 14px 12px 44px;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+
+        .steps li::before {
+            counter-increment: step;
+            content: counter(step);
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            width: 22px;
+            height: 22px;
+            display: grid;
+            place-items: center;
+            background: #19305a;
+            border: 1px solid #28426f;
+            color: #cfe0ff;
+            border-radius: 50%;
+            font-weight: 800;
+            font-size: 12px;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06);
+        }
+
+        .hint {
+            background: #122036;
+            border: 1px dashed #2a3d68;
+            color: #c9d7fb;
+            padding: 10px 12px;
+            border-radius: 12px;
+        }
+
+        .hint+.hint {
+            margin-top: 8px;
+        }
+
+        .hint.warn {
+            background: #2a210f;
+            border-color: #5a4314;
+            color: #ffe2aa;
+        }
+
+        .hint.ok {
+            background: #10261b;
+            border-color: #1f4a33;
+            color: #b6f1d0;
+        }
+
+        .hint.error {
+            background: #2b171a;
+            border-color: #6b2a31;
+            color: #ffd1d6;
+        }
+
+        .viz {
+            display: flex;
+            align-items: stretch;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .node {
+            min-width: 140px;
+            flex: 0 0 auto;
+            padding: 10px 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: linear-gradient(180deg, #111a2d, #0e1727);
+            position: relative;
+        }
+
+        .arrow {
+            align-self: center;
+            color: var(--muted);
+            font-size: 22px;
+            padding: 0 4px;
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        .result {
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--accent-2);
+        }
+
+        .footer {
+            margin-top: 20px;
+            color: var(--muted);
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .toast {
+            position: fixed;
+            right: 16px;
+            bottom: 16px;
+            background: #0e1727;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            padding: 10px 14px;
+            box-shadow: var(--shadow);
+            opacity: 0;
+            transform: translateY(8px);
+            transition: all .25s ease;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .loading {
+            opacity: .7;
+            pointer-events: none;
+        }
+
+        /* Collapsible tutorial */
+        summary.h2-like {
+            list-style: none;
+            font-size: 1.25rem;
+            font-weight: 800;
+            margin: 0 0 10px;
+            padding: 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        summary.h2-like::after {
+            content: '▾';
+            margin-left: auto;
+            color: var(--muted);
+            transition: transform .2s ease;
+        }
+
+        details[open] summary.h2-like::after {
+            transform: rotate(180deg);
+        }
+
+        summary::-webkit-details-marker {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="title">
+                <span class="badge">AI Demo</span>
+                <h1>Interactive Math Tutor — Chibi</h1>
+            </div>
+            <p>Learn and solve math problems interactively with AI. Get step-by-step explanations, hints, and teach new methods.
+            </p>
+            <div class="status"><span class="dot" id="statusDot"></span><span class="muted" id="statusText">Checking service…</span>
+            </div>
+        </header>
+
+        <div class="grid">
+            <!-- Left: Problem + Output -->
+            <section class="card">
+                <h2>Math Problem</h2>
+                <div class="row mb-8">
+                    <div style="flex:1">
+                        <textarea id="problem" placeholder="Examples: 2 + 2, 3x + 5 = 11, x^2 - 5x + 6 = 0"></textarea>
+                        <div class="small">Supports: arithmetic (+ − × ÷), linear equations in x, basic quadratics in x.</div>
+                    </div>
+                </div>
+                <div class="row mb-16">
+                    <label class="pill">Difficulty
+                        <select id="difficulty" style="margin-left:8px">
+                            <option value="easy">Easy</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="hard">Hard</option>
+                        </select>
+                    </label>
+                    <span class="pill" id="problemTypePill">Type: —</span>
+                    <button id="generate" class="ghost" title="Generate sample problem">Generate sample</button>
+                </div>
+                <div class="row mb-16">
+                    <button id="solve">Submit</button>
+                    <button id="getHint" class="secondary">Get hint</button>
+                    <button id="clear" class="warn">Clear</button>
+                </div>
+
+                <div class="card mb-16" style="background:transparent">
+                    <h3>Check your answer (optional)</h3>
+                    <div class="row mb-8">
+                        <input id="userAnswer" type="text" placeholder="For equations: x=2 or x=2,3 • For arithmetic: 4" />
+                        <button id="checkAnswer" class="secondary">Check</button>
+                    </div>
+                    <div id="checkFeedback" class="small"></div>
+                </div>
+
+                <div class="card mb-16" style="background:transparent">
+                    <h3>AI Output</h3>
+                    <div id="result" class="result mb-12"></div>
+                    <ol id="steps" class="steps"></ol>
+                    <div id="hints" class="mb-12"></div>
+                    <div>
+                        <h3>Reasoning visualization</h3>
+                        <div id="viz" class="viz"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right: Tutorial + Teach -->
+            <aside class="card">
+                <details id="howItWorks">
+                    <summary class="h2-like">How it works</summary>
+                    <div class="small mb-12">Solve problems, get hints, check answers, and teach Chibi new methods.</div>
+
+                    <h3>Quick start</h3>
+                    <ol class="steps mb-12">
+                        <li>Check the status dot (green = ready).</li>
+                        <li>Enter a problem or click “Generate sample”. The type pill updates automatically.</li>
+                        <li>Pick Difficulty (Easy = more steps, Hard = more compact).</li>
+                        <li>Click “Submit” to see Result, Steps, and Reasoning visualization.</li>
+                        <li>Click “Get hint” for tips. Click again to cycle hints.</li>
+                        <li>Optional: type your answer and click “Check”. Formats: 4 • x=9 • x=2,3</li>
+                        <li>Teach Chibi: save a Method (name, type, brief steps). It appears as extra hints and steps for that type.</li>
+                    </ol>
+
+                    <h3>Examples</h3>
+                    <div class="row mb-12">
+                        <span class="pill" data-example="12 / (3 + 1) * 5">Arithmetic: 12 / (3 + 1) * 5</span>
+                        <span class="pill" data-example="3x + 5 = 11">Linear: 3x + 5 = 11</span>
+                        <span class="pill" data-example="x^2 - 5x + 6 = 0">Quadratic: x^2 - 5x + 6 = 0</span>
+                    </div>
+                    <div class="small muted mb-16">Learned methods are demo-only and reset on server restart.</div>
+                </details>
+
+                <hr style="border-color: var(--border); opacity:.4; margin: 12px 0 16px;" />
+
+                <h2>Teach Chibi</h2>
+                <div class="small mb-12">Add a method Chibi can use for certain problem types. Your methods are inserted into solution steps and hints for that type.
+                </div>
+                <div class="mb-8">
+                    <label class="small">Method name</label>
+                    <input id="teachName" type="text" placeholder="e.g., Completing the Square" />
+                </div>
+                <div class="row mb-8">
+                    <label class="small" style="min-width:150px">Applies to</label>
+                    <select id="teachType" style="flex:1">
+                        <option value="arithmetic">Arithmetic</option>
+                        <option value="linear">Linear equation</option>
+                        <option value="quadratic">Quadratic equation</option>
+                    </select>
+                </div>
+                <div class="mb-8">
+                    <label class="small">Explanation / steps (brief)</label>
+                    <textarea id="teachDesc" placeholder="Explain the idea or outline steps."></textarea>
+                </div>
+                <div class="row mb-12">
+                    <button id="teachSave">Save method</button>
+                    <button id="teachClear" class="ghost">Clear saved</button>
+                </div>
+                <div id="teachFeedback" class="small"></div>
+
+                <details class="mb-16" id="teachDetails">
+                    <summary class="h2-like">Teach Chibi — details</summary>
+                    <div class="small mb-12">What it is</div>
+                    <ul class="small mb-12">
+                        <li>You add your own method for a type (arithmetic, linear, quadratic): a name + brief step outline.</li>
+                        <li>Chibi augments explanations and hints with your method; the solver remains correct and unchanged.</li>
+                    </ul>
+
+                    <div class="small mb-12">What changes after you save a method</div>
+                    <ul class="small mb-12">
+                        <li>During Solve: your method is inserted into the numbered steps (and the reasoning visualization).</li>
+                        <li>Hints: learned methods are shown first when you click “Get hint,” then built‑in hints.</li>
+                        <li>Detail scales with Difficulty: Easy = all lines; Medium = first 1–2; Hard = a short note.</li>
+                        <li>One method per type is featured in steps; all saved methods for that type contribute to hints.</li>
+                    </ul>
+
+                    <div class="small mb-8">How to write a good method</div>
+                    <ul class="small mb-12">
+                        <li>Put one action per line (or separate with semicolons).</li>
+                        <li>Use short, actionable phrasing (Move…, Add…, Divide…).</li>
+                        <li>Pick the right Applies to (arithmetic, linear, quadratic).</li>
+                    </ul>
+
+                    <div class="small mb-8">Examples (click to load into the form)</div>
+                    <div class="row mb-12">
+                        <span class="pill" data-method-name="Isolate x (move constants, then divide)" data-method-type="linear" data-method-desc="Move constants to the right side; Move all x-terms to the left side; Divide both sides by the x coefficient">Linear — Isolate x</span>
+                        <span class="pill" data-method-name="Completing the Square" data-method-type="quadratic" data-method-desc="Move the constant term to the other side; Add (b/2)^2 to both sides; Factor as a perfect square; Solve by taking square roots">Quadratic — Completing the Square</span>
+                        <span class="pill" data-method-name="Try factoring first" data-method-type="quadratic" data-method-desc="Find two numbers that multiply to a·c and sum to b; Factor into (px + q)(rx + s) = 0; Set each factor to 0 and solve">Quadratic — Try factoring first</span>
+                    </div>
+
+                    <div class="small mb-8">Limitations</div>
+                    <ul class="small mb-12">
+                        <li>Methods guide explanations and hints, not the numeric solver.</li>
+                        <li>Methods are demo-only and reset on server restart.</li>
+                    </ul>
+
+                    <div class="small mb-8">Tips</div>
+                    <ul class="small">
+                        <li>Use Hard difficulty for compact method notes; Easy for full guidance.</li>
+                        <li>Use “Clear saved” to reset and change focus.</li>
+                    </ul>
+                </details>
+
+                <div class="mb-16" style="margin-top:16px">
+                    <h3>Learned methods</h3>
+                    <div id="methodsList" class="small muted">None yet.</div>
+                </div>
+
+                <div class="hint">
+                    Tip: Chibi focuses on clarity. For hard problems, it may compress steps and add advanced notes.
+                </div>
+            </aside>
+        </div>
+
+        <div class="footer">Demo page – backed by API. No external services.</div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const API_BASE = '/api/practice/chibi/v1';
+        function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2200); }
+        async function apiGet(path) { const res = await fetch(API_BASE + path, { method: 'GET' }); const data = await res.json().catch(() => ({})); if (!res.ok) throw new Error(data?.error || 'Request failed'); return data; }
+        async function apiPost(path, payload) { const res = await fetch(API_BASE + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload || {}) }); const data = await res.json().catch(() => ({})); if (!res.ok) throw new Error(data?.error || 'Request failed'); return data; }
+
+        const els = {
+            problem: document.getElementById('problem'),
+            difficulty: document.getElementById('difficulty'),
+            problemTypePill: document.getElementById('problemTypePill'),
+            generate: document.getElementById('generate'),
+            solve: document.getElementById('solve'),
+            clear: document.getElementById('clear'),
+            getHint: document.getElementById('getHint'),
+            result: document.getElementById('result'),
+            steps: document.getElementById('steps'),
+            hints: document.getElementById('hints'),
+            viz: document.getElementById('viz'),
+            userAnswer: document.getElementById('userAnswer'),
+            checkAnswer: document.getElementById('checkAnswer'),
+            checkFeedback: document.getElementById('checkFeedback'),
+            teachName: document.getElementById('teachName'),
+            teachType: document.getElementById('teachType'),
+            teachDesc: document.getElementById('teachDesc'),
+            teachSave: document.getElementById('teachSave'),
+            teachClear: document.getElementById('teachClear'),
+            teachFeedback: document.getElementById('teachFeedback'),
+            methodsList: document.getElementById('methodsList'),
+            statusDot: document.getElementById('statusDot'),
+            statusText: document.getElementById('statusText')
+        };
+        function escapeHtml(str = '') { const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }; return str.replace(/[&<>"']/g, s => map[s]); }
+        function setTypePill(t) { els.problemTypePill.textContent = 'Type: ' + (t || '—'); }
+        function clearOutput() { els.result.textContent = ''; els.steps.innerHTML = ''; els.hints.innerHTML = ''; els.viz.innerHTML = ''; els.checkFeedback.textContent = ''; }
+        function addStep(text) { const li = document.createElement('li'); li.innerHTML = escapeHtml(text); els.steps.appendChild(li); const node = document.createElement('div'); node.className = 'node'; node.innerHTML = escapeHtml(text); if (els.viz.children.length) { const arrow = document.createElement('div'); arrow.className = 'arrow'; arrow.textContent = '➜'; els.viz.appendChild(arrow); } els.viz.appendChild(node); }
+        function addHint(text, kind = '') { const div = document.createElement('div'); div.className = 'hint' + (kind ? ' ' + kind : ''); div.innerHTML = escapeHtml(text); els.hints.appendChild(div); }
+
+        async function renderMethods() { try { const data = await apiGet('/teach/list'); const methods = data.methods || []; if (!methods.length) { els.methodsList.textContent = 'None yet.'; return; } els.methodsList.innerHTML = methods.map(m => `• <b>${escapeHtml(m.name)}</b> <span class="muted">(${m.type})</span><br /><span>${escapeHtml(m.desc)}</span>`).join('<hr style="border-color: var(--border)">'); } catch (e) { els.methodsList.textContent = 'Failed to load methods.'; } }
+
+        let detectTimer; function debounceDetect() { clearTimeout(detectTimer); detectTimer = setTimeout(async () => { const input = els.problem.value.trim(); if (!input) { setTypePill('—'); return; } try { const { type } = await apiGet('/detect?input=' + encodeURIComponent(input)); setTypePill(type); } catch (e) { setTypePill('—'); } }, 300); }
+
+        async function checkService() { try { const info = await apiGet('/info'); els.statusDot.classList.remove('warn', 'err'); els.statusDot.classList.add('ok'); els.statusText.textContent = `Chibi ${info.version} • ${info.status} • uptime ${info.uptimeSec}s • methods ${info.methodsCount}`; } catch (e) { els.statusDot.classList.remove('ok'); els.statusDot.classList.add('err'); els.statusText.textContent = 'Service unavailable'; } }
+
+        async function generateSample() { clearOutput(); try { const { problem, type } = await apiGet('/sample?difficulty=' + encodeURIComponent(els.difficulty.value)); els.problem.value = problem; setTypePill(type); } catch (e) { addHint('Failed to generate sample.', 'error'); } }
+
+        async function solveCurrent() { const input = els.problem.value.trim(); clearOutput(); if (!input) { addHint('Enter a problem to begin.', 'warn'); return; } try { els.solve.classList.add('loading'); const { type, result, steps, hints } = await apiPost('/solve', { problem: input, difficulty: els.difficulty.value }); setTypePill(type); els.result.textContent = result; (steps || []).forEach(addStep); (hints || []).forEach(h => addHint(h, 'ok')); } catch (e) { addHint(e.message || 'Failed to solve.', 'error'); } finally { els.solve.classList.remove('loading'); } }
+
+        async function provideHint() { const input = els.problem.value.trim(); if (!input) { addHint('Enter a problem first.', 'warn'); return; } try { const { type, hint } = await apiGet('/hint?problem=' + encodeURIComponent(input)); setTypePill(type); addHint(hint); } catch (e) { addHint('No hints available.', 'warn'); } }
+
+        async function onCheckAnswer() { try { const { ok, msg } = await apiPost('/check', { problem: els.problem.value, userAnswer: els.userAnswer.value }); els.checkFeedback.textContent = msg; els.checkFeedback.style.color = ok ? 'var(--ok)' : 'var(--error)'; } catch (e) { els.checkFeedback.textContent = e.message || 'Could not check'; els.checkFeedback.style.color = 'var(--error)'; } }
+
+        async function onTeachSave() { const name = els.teachName.value.trim(); const type = els.teachType.value; const desc = els.teachDesc.value.trim(); if (!name || !desc) { els.teachFeedback.textContent = 'Provide name and description.'; els.teachFeedback.style.color = 'var(--warn)'; return; } try { await apiPost('/teach/save', { name, type, desc }); els.teachFeedback.textContent = 'Learned successfully!'; els.teachFeedback.style.color = 'var(--ok)'; els.teachName.value = ''; els.teachDesc.value = ''; renderMethods(); showToast('Method saved'); } catch (e) { els.teachFeedback.textContent = e.message || 'Failed to save method.'; els.teachFeedback.style.color = 'var(--error)'; } }
+
+        async function onTeachClear() { try { await apiPost('/teach/clear', {}); renderMethods(); els.teachFeedback.textContent = 'Cleared learned methods.'; els.teachFeedback.style.color = 'var(--warn)'; showToast('All methods cleared'); } catch (e) { els.teachFeedback.textContent = e.message || 'Failed to clear methods.'; els.teachFeedback.style.color = 'var(--error)'; } }
+
+        // Load example from tutorial pills
+        document.addEventListener('click', (e) => {
+            const pill = e.target.closest('[data-example]');
+            if (!pill) return;
+            const ex = pill.getAttribute('data-example') || '';
+            els.problem.value = ex;
+            debounceDetect();
+            showToast('Example loaded');
+        });
+
+        // Load example method into Teach form
+        document.addEventListener('click', (e) => {
+            const node = e.target.closest('[data-method-name]');
+            if (!node) return;
+            els.teachName.value = node.getAttribute('data-method-name') || '';
+            els.teachType.value = node.getAttribute('data-method-type') || 'linear';
+            const desc = (node.getAttribute('data-method-desc') || '').replace(/;\s*/g, '\n');
+            els.teachDesc.value = desc;
+            els.teachName.focus();
+            showToast('Loaded method into form');
+        });
+
+        // Wire events
+        els.solve.addEventListener('click', solveCurrent);
+        els.getHint.addEventListener('click', provideHint);
+        els.generate.addEventListener('click', generateSample);
+        els.clear.addEventListener('click', () => { els.problem.value = ''; els.userAnswer.value = ''; clearOutput(); setTypePill('—'); });
+        els.problem.addEventListener('input', debounceDetect);
+        els.checkAnswer.addEventListener('click', onCheckAnswer);
+        els.teachSave.addEventListener('click', onTeachSave);
+        els.teachClear.addEventListener('click', onTeachClear);
+
+        // init
+        renderMethods();
+        setTypePill('—');
+        checkService();
+        setInterval(checkService, 30000);
+    </script>
+</body>
+
+</html>
