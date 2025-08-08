@@ -87,6 +87,13 @@ describe('Learning Endpoints (core flows)', () => {
     })
 
     it('GET /api/learning/courses/3/progress should return progress for enrolled user', async () => {
+      // ensure enrollment
+      await request(baseUrl)
+        .post('/api/learning/courses/3/enroll')
+        .set('Authorization', `Bearer ${auth.token}`)
+        .send({ userId: auth.userId })
+        .then(() => {})
+        .catch(() => {})
       const response = await request(baseUrl)
         .get('/api/learning/courses/3/progress')
         .set('Authorization', `Bearer ${auth.token}`)
@@ -97,6 +104,13 @@ describe('Learning Endpoints (core flows)', () => {
     })
 
     it('POST /api/learning/courses/3/progress should update progress', async () => {
+      // ensure enrollment
+      await request(baseUrl)
+        .post('/api/learning/courses/3/enroll')
+        .set('Authorization', `Bearer ${auth.token}`)
+        .send({ userId: auth.userId })
+        .then(() => {})
+        .catch(() => {})
       const response = await request(baseUrl)
         .post('/api/learning/courses/3/progress')
         .set('Authorization', `Bearer ${auth.token}`)

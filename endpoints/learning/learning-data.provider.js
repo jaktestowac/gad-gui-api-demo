@@ -31,6 +31,24 @@ function getBackupData() {
   return dataProxy.getAllData();
 }
 
+function resetDataProxy() {
+  DataProxy.resetInstance();
+  // Reinitialize with fresh data
+  const newDataProxy = new DataProxy();
+  // Force initialization of memory data
+  newDataProxy.getMemoryData();
+  // Update the global data reference
+  Object.assign(data, newDataProxy.getData());
+  return newDataProxy;
+}
+
+function clearAndReinitializeData() {
+  dataProxy.clearAndReinitialize();
+  // Update the global data reference
+  Object.assign(data, dataProxy.getData());
+  return dataProxy;
+}
+
 function isInactive(obj) {
   return obj?._inactive === true;
 }
@@ -130,7 +148,8 @@ function getFundsHistory(userId) {
 function updateUserFunds(userId, newAmount) {
   const user = getUserById(userId);
   if (user) {
-    user.funds = newAmount;
+    const oldAmount = user.funds;
+    user.funds = oldAmount + newAmount;
     return true;
   }
   return false;
@@ -537,6 +556,8 @@ module.exports = {
   restoreDefaultDatabase,
   restoreDatabase,
   getBackupData,
+  resetDataProxy,
+  clearAndReinitializeData,
   getRoleRequests,
   getUserRoleRequests,
   addRoleRequest,
