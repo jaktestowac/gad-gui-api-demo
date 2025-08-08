@@ -1,0 +1,723 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Askio Chat – Tiny AI Demo</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            /* slate-900 */
+            --panel: #111827;
+            /* gray-900 */
+            --muted: #94a3b8;
+            /* slate-400 */
+            --text: #e5e7eb;
+            /* gray-200 */
+            --accent: #22d3ee;
+            /* cyan-400 */
+            --accent-2: #a78bfa;
+            /* violet-400 */
+            --ok: #34d399;
+            /* emerald-400 */
+            --warn: #f59e0b;
+            /* amber-500 */
+            --err: #f87171;
+            /* red-400 */
+            --chip: #1f2937;
+            /* gray-800 */
+            --border: #334155;
+            /* slate-700 */
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            background: radial-gradient(1200px 800px at 100% -10%, rgba(167, 139, 250, 0.15), transparent 60%),
+                radial-gradient(1000px 700px at -10% 110%, rgba(34, 211, 238, 0.15), transparent 60%),
+                var(--bg);
+            color: var(--text);
+            font: 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        }
+
+        .wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        header .logo {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+            color: #0b1020;
+        }
+
+        header h1 {
+            font-size: 22px;
+            margin: 0;
+            letter-spacing: 0.3px;
+        }
+
+        header .subtitle {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1.3fr 0.7fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 960px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            backdrop-filter: blur(6px);
+        }
+
+        .card h3 {
+            margin: 0;
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.02);
+            font-size: 14px;
+            letter-spacing: .2px;
+        }
+
+        /* Chat */
+        .chat {
+            height: 64vh;
+            min-height: 420px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-log {
+            padding: 12px;
+            overflow-y: auto;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .msg {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .msg .avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            flex: 0 0 auto;
+            display: grid;
+            place-items: center;
+            font-size: 12px;
+        }
+
+        .msg.user .avatar {
+            background: #0ea5e9;
+        }
+
+        .msg.bot .avatar {
+            background: #8b5cf6;
+        }
+
+        .bubble {
+            max-width: 80%;
+            padding: 10px 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: #0b1224;
+        }
+
+        .msg.user .bubble {
+            background: #0a1a27;
+        }
+
+        .bubble p {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 8px;
+            border-top: 1px solid var(--border);
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .chat-input input {
+            flex: 1;
+            background: #0b1224;
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 12px;
+            outline: none;
+        }
+
+        .chat-input button {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: #0b1020;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .chips {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .chip {
+            background: var(--chip);
+            border: 1px solid var(--border);
+            padding: 6px 10px;
+            border-radius: 999px;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        /* Side */
+        .side {
+            display: grid;
+            gap: 16px;
+        }
+
+        .kv {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .kv input,
+        .kv textarea,
+        .kv select {
+            background: #0b1224;
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 8px 10px;
+            outline: none;
+            width: 100%;
+        }
+
+        .kv textarea {
+            min-height: 64px;
+            resize: vertical;
+        }
+
+        .row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        /* New: compact grids for controls */
+        .ids {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 8px;
+        }
+
+        .btn {
+            background: #0b1224;
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 8px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .btn.primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: #0b1020;
+            border: none;
+            font-weight: 700;
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        .mono {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+
+        /* Inspector */
+        .trace {
+            padding: 12px;
+            display: grid;
+            gap: 8px;
+            max-height: 280px;
+            overflow: auto;
+        }
+
+        .trace .step {
+            border-left: 3px solid var(--border);
+            padding: 8px 10px;
+            background: #0b1224;
+            border: 1px solid var(--border);
+            border-left-color: var(--accent);
+            border-radius: 8px;
+        }
+
+        .trace .ok {
+            color: var(--ok);
+        }
+
+        .trace .warn {
+            color: var(--warn);
+        }
+
+        .trace .err {
+            color: var(--err);
+        }
+
+        .list {
+            padding: 12px;
+            max-height: 200px;
+            overflow: auto;
+            display: grid;
+            gap: 6px;
+        }
+
+        .list .item {
+            display: flex;
+            gap: 8px;
+            border: 1px solid var(--border);
+            background: #0b1224;
+            border-radius: 8px;
+            padding: 8px;
+            align-items: flex-start;
+        }
+
+        .list .item .grow {
+            flex: 1;
+        }
+
+        a.link {
+            color: var(--accent);
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <header>
+            <div class="logo">A</div>
+            <div>
+                <h1>Askio – Tiny AI Demo</h1>
+                <div class="subtitle">Shows learning, reasoning and answering – all in your browser.</div>
+            </div>
+        </header>
+
+        <div class="grid">
+            <!-- Chat Panel -->
+            <section class="card chat" aria-label="Chat">
+                <h3>Chat</h3>
+                <div class="chips" id="chips">
+                    <span class="chip" data-prompt="hello">hello</span>
+                    <span class="chip" data-prompt="what is your name?">what is your name?</span>
+                    <span class="chip" data-prompt="learn: API = Application Programming Interface">teach: API</span>
+                    <span class="chip" data-prompt="what is API?">test: what is API?</span>
+                    <span class="chip" data-prompt="calc: (2 + 2) * 3">calc: (2 + 2) * 3</span>
+                    <span class="chip" data-prompt="sort: 9, 3, 2, 1 asc">sort asc: 9, 3, 2, 1</span>
+                    <span class="chip" data-prompt="sort: [pear, apple, kiwi] desc">sort desc: [pear, apple, kiwi]</span>
+                    <span class="chip" data-prompt="I get error: Cannot read properties of undefined (reading 'x')">troubleshoot: error reading 'x'</span>
+                </div>
+                <div class="chat-log" id="log" aria-live="polite"></div>
+                <div class="chat-input">
+                    <input id="input" placeholder="Ask something… (math, sort, or teach me on the right)" />
+                    <button id="send">Send</button>
+                </div>
+            </section>
+
+            <!-- Side: Controls + Inspector (replacing Learn panel) -->
+            <aside class="side">
+                <section class="card" aria-label="Controls">
+                    <h3>Session & Controls (API-backed)</h3>
+                    <div class="list" style="grid-auto-rows:min-content">
+                        <div class="item ids">
+                            <div class="grow">
+                                <div class="muted">User ID</div>
+                                <div class="mono" id="uid">–</div>
+                            </div>
+                            <div class="grow">
+                                <div class="muted">Conversation ID</div>
+                                <div class="mono" id="cid">–</div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="grow">
+                                <div class="muted">Conversation name</div>
+                                <div class="row">
+                                    <input id="cname" placeholder="New Conversation" style="flex:1" />
+                                    <button class="btn" id="rename">Rename</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item actions">
+                            <button class="btn" id="historyBtn">Show history</button>
+                            <button class="btn" id="statsBtn">Show stats</button>
+                            <button class="btn" id="clearBtn">Clear chat</button>
+                        </div>
+                        <div class="item actions">
+                            <button class="btn" id="clearMemBtn">Clear my memory</button>
+                            <button class="btn" id="clearAllBtn">Reset all my conversations</button>
+                        </div>
+                        <div class="item">
+                            <div class="muted" style="margin-top:6px;">
+                                Teaching: if Askio says it doesn't know a term, reply with a short definition (e.g. "It's a small CLI tool..."). Askio will learn it for your user ID.
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card" aria-label="Teach Askio">
+                    <h3>Teach Askio</h3>
+                    <div class="list" style="grid-auto-rows:min-content">
+                        <div class="item">
+                            <div class="grow">
+                                <div class="row">
+                                    <input id="teachTerm" placeholder="term (e.g., API)" style="flex:1" />
+                                    <input id="teachDef" placeholder="definition (e.g., Application Programming Interface)" style="flex:2" />
+                                    <button class="btn primary" id="teachBtn">Teach</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="muted">Tips: You can also type: "learn: TERM = DEFINITION", "define TERM as DEFINITION" or "TERM means DEFINITION".</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card" aria-label="Askio Knowledge">
+                    <h3>Askio Knowledge</h3>
+                    <div class="list" id="knowledgeList"></div>
+                    <div class="row" style="padding: 0 12px 12px;">
+                        <button class="btn" id="refreshKnowledge">Refresh</button>
+                        <span class="muted">Click Ask to quiz me about a term.</span>
+                    </div>
+                </section>
+
+                <!-- Reasoning Inspector stays -->
+                <section class="card" aria-label="Reasoning Inspector">
+                    <h3>Reasoning Inspector</h3>
+                    <div class="trace" id="trace"></div>
+                    <div class="muted" style="padding: 0 12px 12px;">
+                        This panel shows API steps (session → request → response) to Askio endpoints.
+                        Memory and learning are handled server-side (Askio) within this app; no external APIs are called.
+                    </div>
+                </section>
+            </aside>
+        </div>
+
+        <footer class="muted" style="margin-top:16px;">
+            Tip: Teach me a term (e.g., API) then ask again to see learning in action. Learning is stored per-user on the server (in-memory for this demo).
+            • Demo page in this repo: <span class="mono">public/practice/nova/askio-chat.html</span>
+        </footer>
+    </div>
+
+    <script>
+        const API = '/api/practice/v1/askio-chat';
+
+        // Elements
+        const el = (id) => document.getElementById(id);
+        const logEl = el('log');
+        const inputEl = el('input');
+        const sendBtn = el('send');
+        const traceEl = el('trace');
+        const uidEl = el('uid');
+        const cidEl = el('cid');
+        const cnameEl = el('cname');
+        const knowledgeListEl = el('knowledgeList');
+
+        // Small trace helpers
+        function step(tag, msg, level = 'ok') { return { tag, msg, level }; }
+        function setTrace(steps) {
+            traceEl.innerHTML = steps.map(s => `<div class="step"><div><span class="mono ${s.level}">[${escapeHtml(s.tag)}]</span> ${escapeHtml(s.msg)}</div></div>`).join('');
+        }
+        function addTrace(steps, s) { steps.push(s); setTrace(steps); }
+
+        // Chat UI
+        function addMsg(role, text) {
+            const row = document.createElement('div');
+            row.className = `msg ${role}`;
+            const avatar = document.createElement('div');
+            avatar.className = 'avatar';
+            avatar.textContent = role === 'user' ? 'U' : 'A';
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            bubble.innerHTML = `<p>${escapeHtml(text)}</p>`;
+            row.append(avatar, bubble);
+            logEl.appendChild(row);
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        // Utils
+        function escapeHtml(s = '') { return s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+        function getCookie(name) {
+            const safe = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const m = document.cookie.match(new RegExp('(?:^|; )' + safe + '=([^;]*)'));
+            return m ? decodeURIComponent(m[1]) : null;
+        }
+
+        // State
+        let userId = null;
+        let conversationId = null;
+
+        function refreshIdsFromCookies() {
+            userId = getCookie('novaUserId');
+            conversationId = getCookie('novaConversationId');
+            if (userId) uidEl.textContent = userId; else uidEl.textContent = '–';
+            if (conversationId) cidEl.textContent = conversationId; else cidEl.textContent = '–';
+        }
+
+        async function fetchJson(url, options = {}, traceSteps) {
+            try {
+                const res = await fetch(url, { headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin', ...options });
+                const isJson = res.headers.get('content-type')?.includes('application/json');
+                const data = isJson ? await res.json() : await res.text();
+                if (!res.ok) throw new Error(typeof data === 'string' ? data : (data.error || res.statusText));
+                return data;
+            } catch (e) {
+                if (traceSteps) addTrace(traceSteps, step('api:error', e.message, 'err'));
+                throw e;
+            }
+        }
+
+        async function ensureSession(traceSteps = []) {
+            refreshIdsFromCookies();
+            if (userId && conversationId) {
+                addTrace(traceSteps, step('session', 'Using existing cookies'));
+                return;
+            }
+            addTrace(traceSteps, step('session', 'Initializing session'));
+            const data = await fetchJson(`${API}/session`, { method: 'GET' }, traceSteps);
+            refreshIdsFromCookies();
+            if (data?.conversationName) cnameEl.value = data.conversationName;
+            addTrace(traceSteps, step('session', 'Session ready'));
+        }
+
+        async function sendMessage(q) {
+            const trace = [];
+            setTrace(trace);
+            await ensureSession(trace);
+            addTrace(trace, step('api:request', 'POST /message'));
+            const body = JSON.stringify({ message: q, conversationId });
+            const data = await fetchJson(`${API}/message`, { method: 'POST', body }, trace);
+            // Server may set cookies or return ids
+            refreshIdsFromCookies();
+            if (data?.conversationName && !cnameEl.value) cnameEl.value = data.conversationName;
+            addTrace(trace, step('api:response', 'OK'));
+            addMsg('bot', data.response || '(no response)');
+        }
+
+        // Actions
+        async function showHistory() {
+            const trace = []; setTrace(trace);
+            await ensureSession(trace);
+            addTrace(trace, step('api:request', 'GET /history'));
+            const qs = new URLSearchParams({ conversationId }).toString();
+            const data = await fetchJson(`${API}/history?${qs}`, { method: 'GET' }, trace);
+            addTrace(trace, step('api:response', `History ${data.history?.length || 0} messages`));
+            // Render last few assistant messages
+            const last = (data.history || []).slice(-6);
+            if (last.length) addMsg('bot', `Recent history:
+${last.map(m => `${m.role}: ${m.content}`).join('\n')}`);
+        }
+
+        async function showStats() {
+            const trace = []; setTrace(trace);
+            addTrace(trace, step('api:request', 'GET /stats'));
+            const stats = await fetchJson(`${API}/stats`, { method: 'GET' }, trace);
+            addTrace(trace, step('api:response', `Conversations: ${stats.totalConversations}, Messages: ${stats.totalMessages}`));
+            addMsg('bot', `Stats: ${JSON.stringify(stats, null, 2)}`);
+        }
+
+        async function clearChat() {
+            const trace = []; setTrace(trace);
+            await ensureSession(trace);
+            addTrace(trace, step('api:request', 'POST /clear'));
+            await fetchJson(`${API}/clear`, { method: 'POST', body: JSON.stringify({ conversationId }) }, trace);
+            addTrace(trace, step('api:response', 'Cleared'));
+            addMsg('bot', 'Conversation cleared. You can start fresh.');
+        }
+
+        async function renameConversation() {
+            const name = cnameEl.value.trim() || 'New Conversation';
+            const trace = []; setTrace(trace);
+            await ensureSession(trace);
+            addTrace(trace, step('api:request', 'POST /rename'));
+            await fetchJson(`${API}/rename`, { method: 'POST', body: JSON.stringify({ conversationId, name }) }, trace);
+            addTrace(trace, step('api:response', `Renamed to "${name}"`));
+            addMsg('bot', `Conversation renamed to "${name}".`);
+        }
+
+        async function clearMemory() {
+            const trace = []; setTrace(trace);
+            await ensureSession(trace);
+            addTrace(trace, step('api:request', 'POST /clear-memory'));
+            await fetchJson(`${API}/clear-memory`, { method: 'POST', body: JSON.stringify({ userId }) }, trace);
+            addTrace(trace, step('api:response', 'Memory cleared'));
+            addMsg('bot', 'Your learned terms and memory were cleared.');
+            renderKnowledge([]);
+        }
+
+        async function clearAll() {
+            const trace = []; setTrace(trace);
+            await ensureSession(trace);
+            addTrace(trace, step('api:request', 'POST /clear-all'));
+            await fetchJson(`${API}/clear-all`, { method: 'POST', body: JSON.stringify({ userId }) }, trace);
+            addTrace(trace, step('api:response', 'All conversations cleared'));
+            addMsg('bot', 'All your conversations were cleared. A new session will be created on next message.');
+            renderKnowledge([]);
+        }
+
+        function renderKnowledge(terms = []) {
+            if (!knowledgeListEl) return;
+            if (!terms.length) {
+                knowledgeListEl.innerHTML = '<div class="item"><div class="muted">No learned terms yet. Teach me on the left.</div></div>';
+                return;
+            }
+            knowledgeListEl.innerHTML = terms.map(t => `
+                <div class="item">
+                    <div class="grow">
+                        <div class="mono">${escapeHtml(t.term)}</div>
+                        <div class="muted">${escapeHtml(t.definition)}</div>
+                    </div>
+                    <button class="btn" data-ask="${escapeHtml(t.term)}">Ask</button>
+                </div>
+            `).join('');
+        }
+
+        async function loadKnowledge() {
+            const trace = []; setTrace(trace);
+            try {
+                await ensureSession(trace);
+                addTrace(trace, step('api:request', 'GET /knowledge'));
+                const data = await fetchJson(`${API}/knowledge`, { method: 'GET' }, trace);
+                addTrace(trace, step('api:response', `Knowledge terms: ${data.terms?.length || 0}`));
+                renderKnowledge(data.terms || []);
+            } catch (e) {
+                addTrace(trace, step('api:error', e.message, 'err'));
+            }
+        }
+
+        // Teach via UI
+        const teachBtn = document.getElementById('teachBtn');
+        if (teachBtn) {
+            teachBtn.addEventListener('click', () => {
+                const term = (document.getElementById('teachTerm')?.value || '').trim();
+                const def = (document.getElementById('teachDef')?.value || '').trim();
+                if (!term || !def) return;
+                const msg = `learn: ${term} = ${def}`;
+                addMsg('user', msg);
+                sendMessage(msg)
+                    .then(() => setTimeout(loadKnowledge, 200))
+                    .catch(err => addMsg('bot', `Error: ${err.message}`));
+            });
+        }
+
+        // Knowledge Ask buttons
+        if (knowledgeListEl) {
+            knowledgeListEl.addEventListener('click', (e) => {
+                const btn = e.target.closest('[data-ask]');
+                if (!btn) return;
+                const term = btn.getAttribute('data-ask');
+                const q = `what is ${term}?`;
+                addMsg('user', q);
+                sendMessage(q).catch(err => addMsg('bot', `Error: ${err.message}`));
+            });
+        }
+
+        // Wire UI
+        sendBtn.addEventListener('click', () => {
+            const q = inputEl.value.trim();
+            if (!q) return;
+            addMsg('user', q);
+            inputEl.value = '';
+            sendMessage(q).catch(err => addMsg('bot', `Error: ${err.message}`));
+        });
+        inputEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendBtn.click(); });
+
+        document.getElementById('chips').addEventListener('click', (e) => {
+            const t = e.target;
+            if (t.classList.contains('chip')) {
+                inputEl.value = t.getAttribute('data-prompt') || t.textContent || '';
+                inputEl.focus();
+            }
+        });
+
+        document.getElementById('historyBtn').addEventListener('click', () => showHistory().catch(err => addMsg('bot', `Error: ${err.message}`)));
+        document.getElementById('statsBtn').addEventListener('click', () => showStats().catch(err => addMsg('bot', `Error: ${err.message}`)));
+        document.getElementById('clearBtn').addEventListener('click', () => clearChat().catch(err => addMsg('bot', `Error: ${err.message}`)));
+        document.getElementById('rename').addEventListener('click', () => renameConversation().catch(err => addMsg('bot', `Error: ${err.message}`)));
+        document.getElementById('clearMemBtn').addEventListener('click', () => clearMemory().catch(err => addMsg('bot', `Error: ${err.message}`)));
+        document.getElementById('clearAllBtn').addEventListener('click', () => clearAll().catch(err => addMsg('bot', `Error: ${err.message}`)));
+        document.getElementById('refreshKnowledge').addEventListener('click', () => loadKnowledge());
+
+        // Init
+        (async function init() {
+            const trace = []; setTrace(trace);
+            try {
+                await ensureSession(trace);
+                addMsg('bot', "Hi, I'm Askio. I'm backed by /api/practice/v1/askio-chat. Ask me things, and if I don't know a term, teach me by replying with a short definition.");
+                loadKnowledge();
+            } catch (e) {
+                addMsg('bot', `Failed to init session: ${e.message}`);
+            }
+        })();
+    </script>
+</body>
+
+</html>
