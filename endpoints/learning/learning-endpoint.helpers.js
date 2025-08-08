@@ -482,7 +482,7 @@ function handleLearning(req, res) {
           dataProvider.updateUserRole(user.id, request.requestedRole);
         }
 
-        console.log(`Role request ${requestId} updated to status: ${status}`);
+        logDebug(`Role request ${requestId} updated to status: ${status}`);
         res.status(HTTP_OK).send({ success: true, status });
         return;
       }
@@ -563,7 +563,11 @@ function handleLearning(req, res) {
 
         const userId = findUserIdByEmail(verifyTokenResult.email);
 
-        const courseId = parseInt(urlParts[3]);
+        const courseId = safeParseInt(urlParts[3]);
+        if (!courseId) {
+          res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Invalid course ID"));
+          return;
+        }
         const canAccess = checkIfUserCanAccessCourse(userId, courseId);
 
         if (!canAccess) {
@@ -571,7 +575,11 @@ function handleLearning(req, res) {
           return;
         }
 
-        const lessonId = parseInt(urlParts[5]);
+        const lessonId = safeParseInt(urlParts[5]);
+        if (!lessonId) {
+          res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Invalid lesson ID"));
+          return;
+        }
         const lessons = dataProvider.getCourseLessons(courseId);
         const lesson = lessons?.find((l) => areIdsEqual(l.id, lessonId));
 
@@ -2406,6 +2414,11 @@ function calculateInstructorStats(instructorId) {
 function isValidId(id) {
   const parsedId = parseInt(id);
   return !isNaN(parsedId) && parsedId > 0;
+}
+
+function safeParseInt(value, defaultValue = 0) {
+  const parsed = parseInt(value);
+  return !isNaN(parsed) ? parsed : defaultValue;
 }
 
 function validateNewUser(userData) {
