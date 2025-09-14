@@ -246,8 +246,7 @@ Images are available at:
 
 ## Deploy to **Glitch**
 
-> [!WARNING] 
-> **⚠️ Warning: This deployment method is obsolete and no longer recommended.**
+> [!WARNING] > **⚠️ Warning: This deployment method is obsolete and no longer recommended.**
 >
 > Glitch has changed their [platform policies](https://blog.glitch.com/post/changes-are-coming-to-glitch/) and this deployment method may no longer work as expected. Please use one of the other deployment methods instead.
 
@@ -295,20 +294,22 @@ Feel free to reach out to us:
 
 We have gathered a collection of resources to help you learn and master Playwright, both in Polish and English. Whether you're a beginner or an advanced user, these resources will help you enhance your skills and knowledge.
 
-### **🇵🇱 Polish Resources**
+## 🇵🇱 Polish Resources
 
-- [Free Playwright Resources](https://jaktestowac.pl/darmowy-playwright/) - Comprehensive Polish learning materials
+- [TypeScript for Testers - Express Introduction](https://jaktestowac.pl/tsx/) - Free (4h+) course on TypeScript for Testers
+- [JavaScript and TypeScript for Testers](https://jaktestowac.pl/js-ts/) - Comprehensive (13h+) course on JavaScript and TypeScript for testers, with practical examples and exercises
+- [Professional Test Automation with Playwright](https://jaktestowac.pl/playwright/) - Comprehensive (100h+) course on Playwright, test automation, CI/CD and test architecture
+- [Back-end Test Automation](https://jaktestowac.pl/api/) - Comprehensive (45h+) course on Back-end Test Automation with Postman, Mocha, Chai, and Supertest
+- [Free Playwright Resources](https://jaktestowac.pl/darmowy-playwright/) - Comprehensive and Free Polish learning materials
 - [Playwright Basics](https://www.youtube.com/playlist?list=PLfKhn9AcZ-cD2TCB__K7NP5XARaCzZYn7) - YouTube series (Polish)
 - [Playwright Elements](https://www.youtube.com/playlist?list=PLfKhn9AcZ-cAcpd-XN4pKeo-l4YK35FDA) - Advanced concepts (Polish)
 - [Playwright MCP](https://www.youtube.com/playlist?list=PLfKhn9AcZ-cCqD34AG5YRejujaBqCBgl4) - MCP course (Polish)
 - [Discord Community](https://discord.gg/mUAqQ7FUaZ) - First Polish Playwright community!
 - [Playwright Info](https://playwright.info/) - first and only Polish Playwright blog
 
-### **🇬🇧 English Resources**
+## 🇬🇧 English Resources
 
 - [VS Code Extensions](https://marketplace.visualstudio.com/publishers/jaktestowac-pl) - Our free Playwright plugins
-- [Playwright Documentation](https://playwright.dev/docs/intro) - Official documentation
-- [Playwright GitHub](https://github.com/microsoft/playwright) - Source code and issues
 
 _PS. For more resources and updates, follow us on our [website](https://jaktestowac.pl) and [GitHub](https://github.com/jaktestowac)._
 
