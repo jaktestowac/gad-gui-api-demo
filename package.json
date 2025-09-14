@@ -1,6 +1,6 @@
 {
   "name": "gad-gui-api-demo-v2",
-  "version": "2.8.5",
+  "version": "2.8.6",
   "description": "Simple application with GUI and API to deploy to Heroku, Glitch, Railway, Vercel etc.",
   "main": "server.js",
   "scripts": {
@@ -15,7 +15,12 @@
     "pretty": "npx prettier --write .",
     "eslint": "npx eslint .",
     "start:readonly": "set READ_ONLY=1 && node server.js",
-    "start:ssl": "set SSL_ENABLED=1 && node server.js"
+    "start:ssl": "set SSL_ENABLED=1 && node server.js",
+    "version:patch": "node tools/release/update-version.js patch",
+    "version:minor": "node tools/release/update-version.js minor",
+    "version:major": "node tools/release/update-version.js major",
+    "version:custom": "node tools/release/update-version.js custom",
+    "version:help": "node tools/release/update-version.js"
   },
   "keywords": [
     "json-server, node, REST API"

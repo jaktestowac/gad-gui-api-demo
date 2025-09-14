@@ -4,6 +4,7 @@
   <img src="https://github.com/jaktestowac/gad-gui-api-demo/assets/72373858/eadec2e8-229c-414f-81da-9ec4601b0972" alt="GAD" width="300" height="300">
 </p>
 
+> [!TIP]
 > 💡 Choose your language:
 >
 > - 🇬🇧 [English](./README.md)
@@ -20,6 +21,15 @@ The application includes features such as simple logic, statistics, charts, game
 **🦎 GAD** is ideal for learning test automation, refining QA techniques, and practicing with scenarios encountered in diverse, **real-world projects** with diverse real-world scenarios.
 
 P.S. In addition, the application has some **serious design flaws** - I wonder if you will notice them?😉
+
+> [!IMPORTANT]  
+> Want to quickly test the application?
+>
+> - clone or download the repository
+> - run `npm i`
+> - run `npm run start`
+> - open [http://localhost:3000](http://localhost:3000) in your browser
+> - enjoy testing and automating **🦎 GAD**!
 
 # Table of Contents
 
@@ -151,6 +161,7 @@ Steps:
 
 ### CLI options
 
+> [!TIP]
 > CLI (Command Line Interface) is an interface that allows you to interact with the application using commands in the terminal.
 
 | Option       | Description                                                                                                                          |
@@ -159,7 +170,8 @@ Steps:
 | PORT=3001    | Run on selected port. GAD runs on default port `3000`.                                                                               |
 | DB="db_name" | Use selected database file. GAD uses `db.json` as default database. Example (for PowerShell): `$env:DB="db-base-big"; npm run start` |
 
-⚠️ Warning: Any environment variables set in the terminal will be used by the application. If you want to run the application without any options, make sure to clear the environment variables.
+> [!WARNING]
+> ⚠️ Warning: Any environment variables set in the terminal will be used by the application. If you want to run the application without any options, make sure to clear the environment variables.
 
 #### Running CLI options
 
@@ -230,11 +242,11 @@ docker run -p 3000:3000 -d jaktestowac/gad:2.5.5
 Application should be running under http://localhost:3000/
 
 Images are available at:
-[🐋 hub.docker.com/repository/docker/jaktestowac](https://hub.docker.com/repository/docker/jaktestowac/gad/general)
+[🐋 https://hub.docker.com/r/jaktestowac/gad](https://hub.docker.com/r/jaktestowac/gad)
 
 ## Deploy to **Glitch**
 
-> **⚠️ Warning: This deployment method is obsolete and no longer recommended.**
+> [!WARNING] > **⚠️ Warning: This deployment method is obsolete and no longer recommended.**
 >
 > Glitch has changed their [platform policies](https://blog.glitch.com/post/changes-are-coming-to-glitch/) and this deployment method may no longer work as expected. Please use one of the other deployment methods instead.
 
@@ -282,20 +294,22 @@ Feel free to reach out to us:
 
 We have gathered a collection of resources to help you learn and master Playwright, both in Polish and English. Whether you're a beginner or an advanced user, these resources will help you enhance your skills and knowledge.
 
-### **🇵🇱 Polish Resources**
+## 🇵🇱 Polish Resources
 
-- [Free Playwright Resources](https://jaktestowac.pl/darmowy-playwright/) - Comprehensive Polish learning materials
+- [TypeScript for Testers - Express Introduction](https://jaktestowac.pl/tsx/) - Free (4h+) course on TypeScript for Testers
+- [JavaScript and TypeScript for Testers](https://jaktestowac.pl/js-ts/) - Comprehensive (13h+) course on JavaScript and TypeScript for testers, with practical examples and exercises
+- [Professional Test Automation with Playwright](https://jaktestowac.pl/playwright/) - Comprehensive (100h+) course on Playwright, test automation, CI/CD and test architecture
+- [Back-end Test Automation](https://jaktestowac.pl/api/) - Comprehensive (45h+) course on Back-end Test Automation with Postman, Mocha, Chai, and Supertest
+- [Free Playwright Resources](https://jaktestowac.pl/darmowy-playwright/) - Comprehensive and Free Polish learning materials
 - [Playwright Basics](https://www.youtube.com/playlist?list=PLfKhn9AcZ-cD2TCB__K7NP5XARaCzZYn7) - YouTube series (Polish)
 - [Playwright Elements](https://www.youtube.com/playlist?list=PLfKhn9AcZ-cAcpd-XN4pKeo-l4YK35FDA) - Advanced concepts (Polish)
 - [Playwright MCP](https://www.youtube.com/playlist?list=PLfKhn9AcZ-cCqD34AG5YRejujaBqCBgl4) - MCP course (Polish)
 - [Discord Community](https://discord.gg/mUAqQ7FUaZ) - First Polish Playwright community!
 - [Playwright Info](https://playwright.info/) - first and only Polish Playwright blog
 
-### **🇬🇧 English Resources**
+## 🇬🇧 English Resources
 
 - [VS Code Extensions](https://marketplace.visualstudio.com/publishers/jaktestowac-pl) - Our free Playwright plugins
-- [Playwright Documentation](https://playwright.dev/docs/intro) - Official documentation
-- [Playwright GitHub](https://github.com/microsoft/playwright) - Source code and issues
 
 _PS. For more resources and updates, follow us on our [website](https://jaktestowac.pl) and [GitHub](https://github.com/jaktestowac)._
 

@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD | Game: FindGad — Pixel Lizard Hunt</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <meta charset="UTF-8" />
+    <style>
+        :root {
+            --bg: #0e0e12;
+            --panel: #1a1a22;
+            --text: #e7e7ee;
+            --muted: #a9a9b2;
+            --accent: #6ee7b7;
+            --accent-2: #60a5fa;
+            --danger: #f87171;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            background: radial-gradient(1200px 800px at 20% -10%, #1d2030 0%, #0c0d14 60%, #07070b 100%);
+            color: var(--text);
+            font-family: ui-rounded, system-ui, -apple-system, Segoe UI, Roboto, Cantarell, Noto Sans, Ubuntu, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            gap: 12px;
+            padding-top: 0;
+            /* use spacer below header to prevent overlap */
+        }
+
+        /* Fixed, styled header */
+        .fg-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            background: linear-gradient(180deg, rgba(10, 12, 20, 0.85), rgba(10, 12, 20, 0.65));
+            border-bottom: 1px solid #2a2d3a;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+            padding: 6px clamp(8px, 2vw, 16px);
+        }
+
+        /* Spacer element height matches header to avoid overlap */
+        .fg-header-spacer {
+            height: var(--fg-header-h, 88px);
+        }
+
+        header,
+        footer {
+            padding: 12px clamp(10px, 3vw, 24px);
+        }
+
+        /* Make header compact: override the generic header padding */
+        .fg-header {
+            /* ...existing fixed styles... */
+            padding: 6px clamp(8px, 2vw, 16px);
+        }
+
+        /* Slightly smaller title in header (override inline with !important) */
+        .fg-header .fg-title {
+            gap: 8px;
+        }
+
+        .fg-header .fg-title>div>span {
+            font-size: clamp(18px, 2.2vw, 22px) !important;
+        }
+
+        .fg-badge {
+            font-size: 11px;
+            padding: 1px 6px;
+        }
+
+        /* Panels */
+        .fg-panel {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0.06)), var(--panel);
+            border: 1px solid #2a2d3a;
+            border-radius: 14px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25) inset, 0 10px 18px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Controls bar (compact + centered) */
+        .fg-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 6px;
+            align-items: center;
+            padding: 6px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .fg-controls>* {
+            margin: 1px 0;
+        }
+
+        .fg-title {
+            grid-column: 1 / -1;
+        }
+
+        .fg-controls .fg-btn {
+            grid-column: auto;
+            min-width: 0;
+        }
+
+        .fg-controls label {
+            grid-column: auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        @media (max-width: 900px) {
+            .fg-controls .fg-btn {
+                grid-column: auto;
+            }
+
+            .fg-controls label {
+                grid-column: auto;
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .fg-controls .fg-btn,
+            .fg-controls label {
+                grid-column: auto;
+            }
+        }
+
+        /* Inputs & buttons */
+        .fg-btn {
+            background: #11131b;
+            color: var(--text);
+            border: 1px solid #2a2d3a;
+            border-radius: 8px;
+            padding: 8px 10px;
+            cursor: pointer;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            transition: transform .1s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
+        }
+
+        .fg-btn:hover {
+            transform: translateY(-1px);
+            background: #151827;
+            border-color: #3a3e52;
+        }
+
+        .fg-btn--primary {
+            background: #132016;
+            border-color: #224b34;
+            color: #c1f2de;
+            box-shadow: 0 0 0 0 rgba(34, 106, 79, 0.0);
+        }
+
+        .fg-btn--primary:hover {
+            background: #0f1b12;
+            border-color: #2d6a4f;
+            box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.25);
+        }
+
+        .fg-btn--danger {
+            background: #241214;
+            border-color: #4c1d1d;
+            color: #ffd5d8;
+        }
+
+        .fg-input,
+        select {
+            background: #0f1120;
+            color: var(--text);
+            border: 1px solid #2a2d3a;
+            border-radius: 8px;
+            padding: 7px 8px;
+        }
+
+        label {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        main {
+            display: grid;
+            grid-template-columns: 1fr;
+            place-items: center;
+            overflow: hidden;
+        }
+
+        .fg-canvas-wrap {
+            position: relative;
+            display: inline-block;
+        }
+
+        canvas {
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            background: #1b1f2a;
+            border-radius: 12px;
+            border: 1px solid #2a2d3a;
+        }
+
+        .fg-hud {
+            position: absolute;
+            left: 8px;
+            top: 8px;
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 6px 8px;
+            border-radius: 8px;
+            font-size: 12px;
+            backdrop-filter: blur(6px);
+        }
+
+        .fg-toast {
+            position: fixed;
+            inset: auto 0 20px 0;
+            display: grid;
+            place-items: center;
+            pointer-events: none;
+        }
+
+        .fg-toast>div {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px 14px;
+            border-radius: 12px;
+        }
+
+        .fg-legend {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding: 8px 10px;
+            border-top: 1px dashed #2a2d3a;
+        }
+
+        .fg-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #0d0f1a;
+            border: 1px solid #2a2d3a;
+            border-radius: 999px;
+            padding: 4px 8px;
+            font-size: 11px;
+            color: var(--muted)
+        }
+
+        /* Ensure swatches render */
+        .fg-swatch {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .fg-chip canvas {
+            image-rendering: pixelated;
+            width: 48px;
+            height: 32px;
+            display: inline-block;
+            vertical-align: middle;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+        }
+
+        footer {
+            color: var(--muted);
+            text-align: center;
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .fg-kbd {
+            border: 1px solid #3a3e52;
+            border-bottom-width: 2px;
+            background: #0f1120;
+            padding: 1px 6px;
+            border-radius: 6px;
+            font-weight: 700;
+            color: #d7defa;
+        }
+
+        /* Results overlay */
+        .fg-result {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(4px);
+            z-index: 50;
+        }
+
+        .fg-result .fg-card {
+            background: #0f1120;
+            border: 1px solid #2a2d3a;
+            border-radius: 14px;
+            padding: 18px;
+            width: min(520px, 92vw);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+        }
+
+        .fg-result .fg-card h2 {
+            margin: 0 0 8px 0;
+            font-size: 18px;
+        }
+
+        .fg-result .fg-card p {
+            margin: 0 0 10px 0;
+            color: var(--muted);
+        }
+
+        .fg-result .fg-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 10px 0 14px;
+        }
+
+        .fg-result .fg-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="fg-header" id="fgHeader">
+        <div class="fg-panel fg-controls">
+            <div class="fg-title">
+                <div><span style="font-size:clamp(20px,3vw,28px)">🦎 Find<span style="color:var(--accent); font-weight: 700;">Gad</span></span>&nbsp; <a href="/practice/" style="color: white;"><i class="fas fa-home"></i> Back to Practice</a></div>
+            </div>
+            <span id="fgTimer" class="fg-chip">⏱ <strong>0.0s</strong></span>
+            <button id="btnNew" class="fg-btn fg-btn--primary">🎲 New Puzzle</button>
+            <label>Seed <input id="seedInput" class="fg-input" size="10" placeholder="random" /></label>
+            <label>Density
+                <select id="density" class="fg-input">
+                    <option value="low">Low</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="high">High</option>
+                    <option value="crowded">Crowded</option>
+                </select>
+            </label>
+            <label>Theme
+                <select id="theme" class="fg-input">
+                    <option value="day" selected>Day</option>
+                    <option value="dusk">Dusk</option>
+                    <option value="night">Night</option>
+                    <option value="desert">Desert</option>
+                    <option value="forest">Forest</option>
+                    <option value="ocean">Ocean</option>
+                    <option value="city">City</option>
+                </select>
+            </label>
+            <label><input id="outlines" type="checkbox" /> Show hitboxes</label>
+            <button id="btnHint" class="fg-btn">💡 Hint</button>
+            <button id="btnResetZoom" class="fg-btn">🔍 Reset View</button>
+            <button id="btnAbout" class="fg-btn">❔ About</button>
+            <label style="visibility: collapse;">Scale
+                <input style="visibility: collapse;" id="scale" type="range" min="2" max="6" step="1" value="4" />
+            </label>
+        </div>
+    </header>
+    <div class="fg-header-spacer" aria-hidden="true"></div>
+
+    <main>
+        <div class="fg-canvas-wrap fg-panel" style="padding:10px">
+            <div class="fg-hud" id="hud">—</div>
+            <canvas id="view" width="960" height="640"></canvas>
+        </div>
+        <div class="fg-panel fg-legend">
+            <div class="fg-chip">Find: <canvas id="lizPreview" width="60" height="40" aria-label="Lizard preview"></canvas></div>
+            <div class="fg-chip"><span class="fg-swatch" style="background:#6ee7b7"></span> Target: lizard (Gad)</div>
+            <div class="fg-chip"><span class="fg-swatch" style="background:#60a5fa"></span> Characters & props</div>
+            <div class="fg-chip"><span class="fg-swatch" style="background:#fbbf24"></span> Terrain & decor</div>
+            <div class="fg-chip"><span class="fg-swatch" style="background:#ef4444"></span> Rare items</div>
+            <div class="fg-chip">Controls: <span class="fg-kbd">Click</span> to inspect · <span class="fg-kbd">Drag</span> to pan · <span class="fg-kbd">Wheel</span> to zoom</div>
+        </div>
+    </main>
+
+    <footer>
+        Each scene is generated from scratch using a large library of predefined pixel-art shapes. Find the lizard to win!
+    </footer>
+
+    <div class="fg-toast" id="toast" style="display:none">
+        <div id="toastText"></div>
+    </div>
+
+    <!-- Results overlay -->
+    <div id="fgResult" class="fg-result" aria-hidden="true">
+        <div class="fg-card">
+            <h2>🎉 You found Gad!</h2>
+            <p>Great job. Here are your results:</p>
+            <div class="fg-stats">
+                <span class="fg-chip">Time: <strong id="resTime">0.0s</strong></span>
+                <span class="fg-chip">Clicks: <strong id="resClicks">0</strong></span>
+                <span class="fg-chip">Penalty: <strong id="resPenalty">0.0s</strong></span>
+                <span class="fg-chip">Seed: <strong id="resSeed">—</strong></span>
+            </div>
+            <div class="fg-actions">
+                <button id="resCopyLink" class="fg-btn">🔗 Copy link</button>
+                <button id="resClose" class="fg-btn">Close</button>
+                <button id="resPlayAgain" class="fg-btn fg-btn--primary">▶ Play again</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ============================
+         *  Utility: seeded RNG & helpers
+         * ============================ */
+        function xmur3(str) { let h = 1779033703 ^ str.length; for (let i = 0; i < str.length; i++) { h = Math.imul(h ^ str.charCodeAt(i), 3432918353); h = h << 13 | h >>> 19 } return function () { h = Math.imul(h ^ h >>> 16, 2246822507); h = Math.imul(h ^ h >>> 13, 3266489909); return (h ^ h >>> 16) >>> 0 } }
+        function mulberry32(a) { return function () { let t = a += 0x6D2B79F5; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296 } }
+        function makeRng(seed) { const h = xmur3(seed); return mulberry32(h()); }
+        const randInt = (rng, a, b) => Math.floor(rng() * (b - a + 1)) + a;
+        const choice = (rng, arr) => arr[Math.floor(rng() * arr.length)];
+        const PENALTY_PER_MISS = 2.0; // seconds per wrong click
+
+        /* ============================
+         *  Pixel palettes (NES/GB-like)
+         * ============================ */
+        const PALETTES = {
+            day: { bg: '#9ad1ff', g1: '#6dbb57', g2: '#3c7f3a', b1: '#6c7aa0', b2: '#3a4769', s: '#fbbf24' },
+            dusk: { bg: '#8ea0d8', g1: '#5da66e', g2: '#2f5e50', b1: '#7a6489', b2: '#43324f', s: '#f59e0b' },
+            night: { bg: '#1b1f2a', g1: '#2c3e50', g2: '#18222d', b1: '#94a3b8', b2: '#475569', s: '#eab308' },
+            desert: { bg: '#e8cf9e', g1: '#d9a066', g2: '#8f563b', b1: '#c57b57', b2: '#5d4037', s: '#f59e0b' },
+            forest: { bg: '#96c291', g1: '#6fb56f', g2: '#2b6b3f', b1: '#5a7e5c', b2: '#2e4b33', s: '#eab308' },
+            ocean: { bg: '#7fc8e9', g1: '#58a6c2', g2: '#2b6aa3', b1: '#6ac1d0', b2: '#276678', s: '#22d3ee' },
+            city: { bg: '#c7d2fe', g1: '#a3a3a3', g2: '#737373', b1: '#334155', b2: '#0f172a', s: '#ef4444' },
+        };
+
+        /* ============================
+         *  Shape library: predefined pixel sprites
+         * ============================ */
+        const SHAPES = {
+            // --- fauna & target ---
+            lizard: {
+                w: 12,
+                h: 8,
+                p: [
+                    "....gggg....",
+                    "...gggggg...",
+                    "..gggxxggg..",
+                    ".gggxxxxggg.",
+                    ".gggxxoxggg.",
+                    "..gggggggg..",
+                    "...g....g...",
+                    "..g......g..",
+                ],
+                c: { g: '#23c562', x: '#157a3f', o: '#eab308' }
+            },
+            snake: {
+                w: 10,
+                h: 8,
+                p: [
+                    "..sssss...",
+                    ".ssssssss.",
+                    "ssssssssss",
+                    ".ssssssss.",
+                    "..sssss..o",
+                    "....s.....",
+                    "...s......",
+                    "..s.......",
+                ],
+                c: { s: '#3bbf6b', o: '#fbbf24' }
+            },
+            turtle: {
+                w: 10,
+                h: 8,
+                p: [
+                    "..tttttt..",
+                    ".tTTTTTTt.",
+                    "tTTTTTTTTt",
+                    "tTTTTTTTTt",
+                    ".tTTTTTTt.",
+                    "..tttttt..",
+                    "....tt....",
+                    "...t..t...",
+                ],
+                c: { t: '#2b8742', T: '#4caf50' }
+            },
+            frog: {
+                w: 8,
+                h: 8,
+                p: [
+                    "..ff..ff",
+                    ".ffffffF",
+                    ".fFffFfF",
+                    ".ffffffF",
+                    ".fFffFfF",
+                    ".ffffffF",
+                    "..f..f..",
+                    "..f..f..",
+                ],
+                c: { f: '#28a745', F: '#3bd16a' }
+            },
+            bird: {
+                w: 8,
+                h: 6,
+                p: [
+                    "..bbbbb.",
+                    ".bbbbbbb",
+                    "bbbbbbbb",
+                    ".bbbbbbb",
+                    "..bbbb..",
+                    "...b....",
+                ],
+                c: { b: '#60a5fa' }
+            },
+            cat: {
+                w: 8,
+                h: 8,
+                p: [
+                    "..cc..cc",
+                    ".ccccccc",
+                    "cccccccc",
+                    "cCccccCc",
+                    ".ccccccc",
+                    "..c..c..",
+                    ".c....c.",
+                    "c......c",
+                ],
+                c: { c: '#7c4a2d', C: '#a66a3a' }
+            },
+            dog: {
+                w: 10,
+                h: 8,
+                p: [
+                    "..ddddd..",
+                    ".dddddddd.",
+                    "dddddddddd",
+                    "dDdDDdDDdd",
+                    ".dddddddd.",
+                    "..dd..dd..",
+                    "..d....d..",
+                    "..d....d..",
+                ],
+                c: { d: '#7f5539', D: '#b08968' }
+            },
+            // --- flora & terrain ---
+            treeTall: {
+                w: 10,
+                h: 16,
+                p: [
+                    ".....LL...",
+                    "....LLLL..",
+                    "...LLLLLL.",
+                    "..LLLLLLLL",
+                    ".LLLLLLLLL",
+                    ".LLLLLLLLL",
+                    "..LLLLLLLL",
+                    "...LLLLLL.",
+                    "....LLLL..",
+                    ".....LL...",
+                    "....tt....",
+                    "....tt....",
+                    "....tt....",
+                    "....tt....",
+                    "....tt....",
+                    "....tt....",
+                ],
+                c: { L: '#3fa34d', t: '#8d5524' }
+            },
+            treeRound: {
+                w: 10,
+                h: 12,
+                p: [
+                    "...LLL...",
+                    "..LLLLL..",
+                    ".LLLLLLL.",
+                    ".LLLLLLL.",
+                    ".LLLLLLL.",
+                    "..LLLLL..",
+                    "...LLL...",
+                    "....t....",
+                    "....t....",
+                    "....t....",
+                    "....t....",
+                    "....t....",
+                ],
+                c: { L: '#4ecb71', t: '#8d5524' }
+            },
+            bush: {
+                w: 10,
+                h: 6,
+                p: [
+                    ".gggggggg.",
+                    "gggggggggg",
+                    "gggggggggg",
+                    ".gggggggg.",
+                    "..gggggg..",
+                    "...gggg...",
+                ],
+                c: { g: '#3fa34d' }
+            },
+            cactus: {
+                w: 8,
+                h: 12,
+                p: [
+                    "...c....",
+                    "..ccc...",
+                    "..ccc...",
+                    "cccCcccc",
+                    "..ccc...",
+                    "..ccc...",
+                    "..ccc...",
+                    "..ccc...",
+                    "..ccc...",
+                    "..ccc...",
+                    "..ccc...",
+                    "..ccc...",
+                ],
+                c: { c: '#2e7d32', C: '#54b35a' }
+            },
+            rock: {
+                w: 8,
+                h: 6,
+                p: [
+                    "..rrrr..",
+                    ".rrrrrr.",
+                    "rrrrrrrr",
+                    ".rrrrrr.",
+                    "..rrrr..",
+                    "...rr...",
+                ],
+                c: { r: '#6b7280' }
+            },
+            flower: {
+                w: 6,
+                h: 8,
+                p: [
+                    "..p..",
+                    ".pppp",
+                    "ppppp",
+                    ".pppp",
+                    "..s..",
+                    "..s..",
+                    "..s..",
+                    "..s..",
+                ],
+                c: { p: '#ef4444', s: '#3fa34d' }
+            },
+            mushroom: {
+                w: 8,
+                h: 8,
+                p: [
+                    "..MMMM..",
+                    ".MMMMMM.",
+                    "MMMMMMMM",
+                    ".MMMMMM.",
+                    "..WWWW..",
+                    "..WWWW..",
+                    "...WW...",
+                    "...WW...",
+                ],
+                c: { M: '#ef4444', W: '#f8fafc' }
+            },
+            // --- architecture & decor ---
+            house: {
+                w: 16,
+                h: 16,
+                p: [
+                    ".....RRRRR.....",
+                    "....RRRRRRR....",
+                    "...RRRRRRRRR...",
+                    "..rrrrrrrrrrr..",
+                    ".rrrrrrrrrrrrr.",
+                    "rrrrrrrrrrrrrrr",
+                    "rrrrwwrrrwwrrrr",
+                    "rrrrwwrrrwwrrrr",
+                    "rrrrrrrrrrrrrrr",
+                    "rrrr..dddd..rrr",
+                    "rrrr..dddd..rrr",
+                    "rrrr..dddd..rrr",
+                    "rrrr..dddd..rrr",
+                    "rrrrrrrrrrrrrrr",
+                    "rrrrrrrrrrrrrrr",
+                    "rrrrrrrrrrrrrrr",
+                ],
+                c: { R: '#b45309', r: '#d97706', w: '#f8fafc', d: '#111827' }
+            },
+            tent: {
+                w: 12,
+                h: 10,
+                p: [
+                    "....T.....",
+                    "...TTT....",
+                    "..TTTTT...",
+                    ".TTTTTTT..",
+                    "TTTTTTTTT.",
+                    "TtTTTTTTTt",
+                    "TtTTTTTTTt",
+                    "..tttttt..",
+                    "..tt..tt..",
+                    "..tt..tt..",
+                ],
+                c: { T: '#a78bfa', t: '#6b21a8' }
+            },
+            sign: {
+                w: 8,
+                h: 8,
+                p: [
+                    "..pppp..",
+                    "..pppp..",
+                    ".pppppp.",
+                    ".pppppp.",
+                    "..pppp..",
+                    "...ss...",
+                    "...ss...",
+                    "...ss...",
+                ],
+                c: { p: '#f59e0b', s: '#8d5524' }
+            },
+            lamp: {
+                w: 6,
+                h: 12,
+                p: [
+                    "..l..",
+                    "..l..",
+                    "..l..",
+                    "..l..",
+                    "..l..",
+                    "..l..",
+                    "..l..",
+                    ".LLL.",
+                    ".LXL.",
+                    ".LLL.",
+                    "..l..",
+                    "..l..",
+                ],
+                c: { l: '#374151', L: '#f59e0b', X: '#fde68a' }
+            },
+            bench: {
+                w: 12,
+                h: 6,
+                p: [
+                    "bbbbbbbbbbbb",
+                    "bbbbbbbbbbbb",
+                    "bbbbbbbbbbbb",
+                    "..s......s..",
+                    "..s......s..",
+                    "..s......s..",
+                ],
+                c: { b: '#a16207', s: '#6b7280' }
+            },
+            fence: {
+                w: 16,
+                h: 6,
+                p: [
+                    "s..s..s..s..s..",
+                    "wwwwwwwwwwwwwww",
+                    "wwwwwwwwwwwwwww",
+                    "wwwwwwwwwwwwwww",
+                    "s..s..s..s..s..",
+                    "s..s..s..s..s..",
+                ],
+                c: { w: '#a16207', s: '#6b7280' }
+            },
+            // --- vehicles & misc big props ---
+            car: {
+                w: 16,
+                h: 8,
+                p: [
+                    "...BBBBBBBB...",
+                    "..BBBBBBBBBB..",
+                    ".BBByyyBBBBBB.",
+                    "BBByyyyyyBBBBy",
+                    "BBBBBBBBBBBBBB",
+                    ".oo......oo..",
+                    ".oo......oo..",
+                    ".............",
+                ],
+                c: { B: '#3b82f6', y: '#93c5fd', o: '#0f172a' }
+            },
+            truck: {
+                w: 18,
+                h: 10,
+                p: [
+                    "...RRRRRRRRRRR...",
+                    "..RRRRRRRRRRRRR..",
+                    ".RRRRRyyyyyRRRRR.",
+                    "RRRRRyyyyyyyRRRRR",
+                    "RRRRRRRRRRRRRRRRR",
+                    "RRRRRRRRRRRRRRRRR",
+                    ".oo..........oo..",
+                    ".oo..........oo..",
+                    "................",
+                    "................",
+                ],
+                c: { R: '#ef4444', y: '#fecaca', o: '#0f172a' }
+            },
+            // --- tiny items / collectibles ---
+            coin: {
+                w: 6,
+                h: 6,
+                p: [
+                    ".yyyy.",
+                    "yyyyyy",
+                    "yyyyyy",
+                    "yyyyyy",
+                    "yyyyyy",
+                    ".yyyy.",
+                ],
+                c: { y: '#fbbf24' }
+            },
+            gem: {
+                w: 6,
+                h: 6,
+                p: [
+                    "..g..",
+                    ".ggg.",
+                    "ggggg",
+                    ".ggg.",
+                    "..g..",
+                    "..g..",
+                ],
+                c: { g: '#22d3ee' }
+            },
+            heart: {
+                w: 8,
+                h: 6,
+                p: [
+                    ".rr..rr.",
+                    "rrrrrrrr",
+                    "rrrrrrrr",
+                    ".rrrrrr.",
+                    "..rrrr..",
+                    "...rr...",
+                ],
+                c: { r: '#ef4444' }
+            },
+            key: {
+                w: 8,
+                h: 6,
+                p: [
+                    "..yy..",
+                    ".yyyy.",
+                    "yyyyyy",
+                    "..yy..",
+                    "..yy..",
+                    "..yy..",
+                ],
+                c: { y: '#f59e0b' }
+            },
+            chest: {
+                w: 10,
+                h: 8,
+                p: [
+                    "..bbbbbb..",
+                    ".bbbbbbbb.",
+                    "bbbbbbbbbb",
+                    "bbbbYYbbbb",
+                    "bbbbYYbbbb",
+                    "bbbbbbbbbb",
+                    ".bbbbbbbb.",
+                    "..bbbbbb..",
+                ],
+                c: { b: '#a16207', Y: '#fde68a' }
+            },
+            // --- characters ---
+            personA: {
+                w: 8,
+                h: 10,
+                p: [
+                    "..HH..",
+                    ".HccH.",
+                    "..HH..",
+                    "..TT..",
+                    ".TTTT.",
+                    ".TTTT.",
+                    ".BB..B",
+                    ".B....",
+                    ".B....",
+                    "B.....",
+                ],
+                c: { H: '#eab308', c: '#ef4444', T: '#60a5fa', B: '#0f172a' }
+            },
+            personB: {
+                w: 8,
+                h: 10,
+                p: [
+                    "..HH..",
+                    ".HccH.",
+                    "..HH..",
+                    "..TT..",
+                    ".TTTT.",
+                    ".TTTT.",
+                    ".BB..B",
+                    ".B....",
+                    ".B....",
+                    "B.....",
+                ],
+                c: { H: '#eab308', c: '#60a5fa', T: '#a78bfa', B: '#0f172a' }
+            },
+            personC: {
+                w: 8,
+                h: 10,
+                p: [
+                    "..HH..",
+                    ".HccH.",
+                    "..HH..",
+                    "..TT..",
+                    ".TTTT.",
+                    ".TTTT.",
+                    ".BB..B",
+                    ".B....",
+                    ".B....",
+                    "B.....",
+                ],
+                c: { H: '#eab308', c: '#22d3ee', T: '#10b981', B: '#0f172a' }
+            },
+            // --- nautical / sky ---
+            boat: {
+                w: 12,
+                h: 8,
+                p: [
+                    "....f....",
+                    "....f....",
+                    "..ffff..",
+                    "..ffff..",
+                    "ssssssss",
+                    "ssssssss",
+                    ".ssssss.",
+                    "..ssss..",
+                ],
+                c: { f: '#e5e7eb', s: '#7c3f00' }
+            },
+            fish: {
+                w: 8,
+                h: 6,
+                p: [
+                    "..FF...",
+                    ".FFFF..",
+                    "FFFFFf.",
+                    ".FFFF..",
+                    "..FF...",
+                    "..F....",
+                ],
+                c: { F: '#38bdf8', f: '#eab308' }
+            },
+            cloud: {
+                w: 12,
+                h: 6,
+                p: [
+                    "..cccccccc..",
+                    ".cccccccccc.",
+                    "cccccccccccc",
+                    ".cccccccccc.",
+                    "..cccccccc..",
+                    "...cccccc...",
+                ],
+                c: { c: '#f1f5f9' }
+            },
+            star: {
+                w: 6,
+                h: 6,
+                p: [
+                    "..y..",
+                    ".yyy.",
+                    "yyyyy",
+                    ".yyy.",
+                    "..y..",
+                    "..y..",
+                ],
+                c: { y: '#fde68a' }
+            },
+            // --- urban clutter ---
+            barrel: {
+                w: 6,
+                h: 8,
+                p: [
+                    ".BBBB.",
+                    "BBBBBB",
+                    "BBBBBB",
+                    ".BBBB.",
+                    "BBBBBB",
+                    "BBBBBB",
+                    ".BBBB.",
+                    ".BBBB.",
+                ],
+                c: { B: '#8b5e34' }
+            },
+            crate: {
+                w: 8,
+                h: 8,
+                p: [
+                    "bbbbbbbb",
+                    "b......b",
+                    "b.//\\.b",
+                    "b.\\//.b",
+                    "b.//\\.b",
+                    "b.\\//.b",
+                    "b......b",
+                    "bbbbbbbb",
+                ],
+                c: { b: '#8b5e34', '/': '#a97a50', '\\': '#a97a50', '.': '#a97a50' }
+            },
+            cone: {
+                w: 6,
+                h: 8,
+                p: [
+                    "..o..",
+                    ".ooo.",
+                    "ooooo",
+                    "ooooo",
+                    ".yyy.",
+                    ".yyy.",
+                    ".yyy.",
+                    ".yyy.",
+                ],
+                c: { o: '#ef4444', y: '#fde68a' }
+            },
+            hydrant: {
+                w: 6,
+                h: 8,
+                p: [
+                    "..r..",
+                    ".rrr.",
+                    "rrrrr",
+                    ".rrr.",
+                    ".rrr.",
+                    ".rrr.",
+                    ".rrr.",
+                    "..r..",
+                ],
+                c: { r: '#ef4444' }
+            },
+            // --- fantasy / fun ---
+            robot: {
+                w: 8,
+                h: 10,
+                p: [
+                    "..MM..",
+                    ".MccM.",
+                    "..MM..",
+                    ".MMMM.",
+                    ".MMMM.",
+                    ".MMMM.",
+                    ".M..M.",
+                    ".M..M.",
+                    ".M..M.",
+                    "M....M",
+                ],
+                c: { M: '#94a3b8', c: '#22d3ee' }
+            },
+            statue: {
+                w: 8,
+                h: 12,
+                p: [
+                    "..SS..",
+                    ".SccS.",
+                    "..SS..",
+                    ".SSSS.",
+                    ".SSSS.",
+                    ".SSSS.",
+                    ".S..S.",
+                    ".S..S.",
+                    ".S..S.",
+                    "SS..SS",
+                    "SS..SS",
+                    "SSSSSS",
+                ],
+                c: { S: '#6b7280', c: '#9ca3af' }
+            },
+            umbrella: {
+                w: 10,
+                h: 10,
+                p: [
+                    "..uuuuuu..",
+                    ".uuuuuuuu.",
+                    "uuuuuuuuuu",
+                    ".uuuuuuuu.",
+                    "..uuuuuu..",
+                    "....s.....",
+                    "....s.....",
+                    "....s.....",
+                    "....s.....",
+                    "....s.....",
+                ],
+                c: { u: '#a78bfa', s: '#374151' }
+            },
+            balloon: {
+                w: 6,
+                h: 10,
+                p: [
+                    ".rrrr.",
+                    "rrrrrr",
+                    "rrrrrr",
+                    "rrrrrr",
+                    ".rrrr.",
+                    "..s...",
+                    "..s...",
+                    "..s...",
+                    "..s...",
+                    "..s...",
+                ],
+                c: { r: '#ef4444', s: '#475569' }
+            },
+        };
+
+        /* ============================
+         *  Shape library helpers
+         * ============================ */
+        function colorSwap(pattern, cmap) { const out = pattern.map(row => row.split('').map(ch => cmap[ch] || ch).join('')); return out; }
+        function mirror(sprite) { const p = sprite.p.map(row => row.split('').reverse().join('')); return { ...sprite, p }; }
+        // New variants
+        function vmirror(sprite) { const p = sprite.p.slice().reverse(); return { ...sprite, p }; }
+        function rotate90(sprite) {
+            const h = sprite.h,
+                w = sprite.w;
+            const out = Array.from({ length: w }, () => Array(h).fill('.'));
+            for (let y = 0; y < h; y++) {
+                const row = sprite.p[y];
+                for (let x = 0; x < w; x++) { out[x][h - 1 - y] = row[x]; }
+            }
+            const p = out.map(r => r.join(''));
+            return { w: h, h: w, p, c: { ...sprite.c } };
+        }
+
+        // Build a large registry programmatically (existing)
+        const LIBRARY = [];
+        (function buildLibrary() {
+            const baseKeys = Object.keys(SHAPES);
+            for (const k of baseKeys) { LIBRARY.push({ id: k, sprite: SHAPES[k] }); }
+            // Add mirrored variants for many
+            const mirrorKeys = ['lizard', 'snake', 'turtle', 'frog', 'cat', 'dog', 'personA', 'personB', 'personC', 'robot', 'statue', 'umbrella', 'balloon', 'car', 'truck', 'boat', 'fish'];
+            for (const k of mirrorKeys) { LIBRARY.push({ id: k + ':mir', sprite: mirror(SHAPES[k]) }); }
+            // Color variants for some props to expand the set greatly
+            const recolorSets = [
+                ['flower', [{ p: '#ef4444' }, { p: '#22c55e' }, { p: '#60a5fa' }, { p: '#a78bfa' }, { p: '#f59e0b' }]],
+                ['mushroom', [{ M: '#ef4444' }, { M: '#10b981' }, { M: '#60a5fa' }, { M: '#eab308' }]],
+                ['house', [{ r: '#d97706' }, { r: '#10b981' }, { r: '#3b82f6' }, { r: '#ef4444' }]],
+                ['car', [{ B: '#3b82f6' }, { B: '#10b981' }, { B: '#ef4444' }, { B: '#f59e0b' }, { B: '#a78bfa' }]],
+                ['robot', [{ M: '#94a3b8' }, { M: '#64748b' }, { M: '#d1d5db' }]],
+                ['treeRound', [{ L: '#3fa34d' }, { L: '#22c55e' }, { L: '#16a34a' }]],
+                ['bush', [{ g: '#3fa34d' }, { g: '#22c55e' }, { g: '#16a34a' }]],
+                ['rock', [{ r: '#6b7280' }, { r: '#9ca3af' }, { r: '#475569' }]],
+            ];
+            for (const [key, maps] of recolorSets) {
+                for (const m of maps) {
+                    const base = SHAPES[key];
+                    const p = colorSwap(base.p, m);
+                    LIBRARY.push({ id: key + ':var' + JSON.stringify(m), sprite: { ...base, p } });
+                }
+            }
+        })();
+        // Expand with many more variants and recolors
+        (function expandLibrary() {
+            const vm = ['lizard', 'snake', 'turtle', 'frog', 'cat', 'dog', 'personA', 'personB', 'personC', 'robot', 'statue', 'umbrella', 'balloon', 'car', 'truck', 'boat', 'fish'];
+            for (const k of vm) { LIBRARY.push({ id: k + ':vmir', sprite: vmirror(SHAPES[k]) }); }
+            const rotKeys = ['bench', 'fence', 'sign', 'lamp'];
+            for (const k of rotKeys) { LIBRARY.push({ id: k + ':rot90', sprite: rotate90(SHAPES[k]) }); }
+            const recolorSets = [
+                ['bench', [{ b: '#a16207' }, { b: '#92400e' }, { b: '#6b7280' }]],
+                ['fence', [{ w: '#a16207' }, { w: '#92400e' }, { w: '#6b7280' }]],
+                ['sign', [{ p: '#f59e0b' }, { p: '#a78bfa' }, { p: '#60a5fa' }]],
+                ['lamp', [{ L: '#f59e0b' }, { L: '#a78bfa' }, { L: '#22d3ee' }, { l: '#64748b' }]],
+                ['personA', [{ T: '#60a5fa' }, { T: '#ef4444' }, { T: '#10b981' }, { c: '#a78bfa' }]],
+                ['personB', [{ T: '#a78bfa' }, { T: '#60a5fa' }, { T: '#f59e0b' }, { c: '#ef4444' }]],
+                ['personC', [{ T: '#10b981' }, { T: '#22d3ee' }, { T: '#3b82f6' }, { c: '#f59e0b' }]],
+            ];
+            for (const [key, maps] of recolorSets) { const base = SHAPES[key]; if (!base) continue; for (const m of maps) { const p = colorSwap(base.p, m); LIBRARY.push({ id: key + ':var' + JSON.stringify(m), sprite: { ...base, p } }); } }
+        })();
+
+        /* ============================
+         *  Renderer & world
+         * ============================ */
+        const CANVAS = document.getElementById('view');
+        const CTX = CANVAS.getContext('2d');
+        CTX.imageSmoothingEnabled = false;
+
+        const UI = {
+            seed: document.getElementById('seedInput'),
+            density: document.getElementById('density'),
+            theme: document.getElementById('theme'),
+            scale: document.getElementById('scale'),
+            outlines: document.getElementById('outlines'),
+            btnNew: document.getElementById('btnNew'),
+            btnHint: document.getElementById('btnHint'),
+            btnResetZoom: document.getElementById('btnResetZoom'),
+            btnAbout: document.getElementById('btnAbout'),
+            hud: document.getElementById('hud'),
+            toast: document.getElementById('toast'),
+            toastText: document.getElementById('toastText'),
+            // Results overlay
+            res: document.getElementById('fgResult'),
+            resTime: document.getElementById('resTime'),
+            resClicks: document.getElementById('resClicks'),
+            resSeed: document.getElementById('resSeed'),
+            resPlayAgain: document.getElementById('resPlayAgain'),
+            resCopyLink: document.getElementById('resCopyLink'),
+            resClose: document.getElementById('resClose'),
+            // Timer elements
+            timerEl: document.getElementById('fgTimer'),
+            timerVal: document.querySelector('#fgTimer strong'),
+        };
+
+        const WORLD = { W: 240, H: 160, px: 1, tiles: [], objects: [], targetIdx: -1, seed: '', theme: 'day', clicks: 0, penalty: 0 };
+        const CAMERA = { x: 0, y: 0, z: parseInt(UI.scale.value, 10), minZ: 2, maxZ: 6, dragging: false, lastX: 0, lastY: 0, moved: false, suppressClick: false };
+
+        function setTheme(theme) { WORLD.theme = theme; const P = PALETTES[theme] || PALETTES.day; document.body.style.setProperty('--accent', P.g1); document.body.style.setProperty('--accent-2', P.b1); }
+        function clear() { CTX.clearRect(0, 0, CANVAS.width, CANVAS.height); }
+        function worldToScreen(wx, wy) { return { x: Math.floor((wx - CAMERA.x) * CAMERA.z), y: Math.floor((wy - CAMERA.y) * CAMERA.z) }; }
+        function screenToWorld(sx, sy) { return { x: Math.floor(sx / CAMERA.z + CAMERA.x), y: Math.floor(sy / CAMERA.z + CAMERA.y) }; }
+        function drawRect(wx, wy, w, h, color) { const { x, y } = worldToScreen(wx, wy); CTX.fillStyle = color; CTX.fillRect(x, y, w * CAMERA.z, h * CAMERA.z); }
+        function drawSprite(wx, wy, sprite, tint = null) { const palOver = tint || {}; for (let j = 0; j < sprite.h; j++) { const row = sprite.p[j]; for (let i = 0; i < sprite.w; i++) { const ch = row[i]; if (ch === '.') { continue; } const color = sprite.c[ch] || palOver[ch] || '#000'; const { x, y } = worldToScreen(wx + i, wy + j); CTX.fillStyle = color; CTX.fillRect(x, y, CAMERA.z, CAMERA.z); } } }
+        // Draw sprite to a provided 2D context (preview)
+        function drawSpriteToContext(ctx, sprite, ox, oy, scale = 4) {
+            for (let j = 0; j < sprite.h; j++) {
+                const row = sprite.p[j];
+                for (let i = 0; i < sprite.w; i++) {
+                    const ch = row[i];
+                    if (ch === '.') continue;
+                    const color = sprite.c[ch] || '#000';
+                    ctx.fillStyle = color;
+                    ctx.fillRect(ox + i * scale, oy + j * scale, scale, scale);
+                }
+            }
+        }
+
+        function drawBackground() {
+            const P = PALETTES[WORLD.theme] || PALETTES.day;
+            drawRect(0, 0, WORLD.W, WORLD.H, P.bg);
+            const bands = 6;
+            const h = Math.floor(WORLD.H / bands);
+            for (let i = 0; i < bands; i++) { const color = i % 2 ? P.g1 : P.g2; drawRect(0, WORLD.H - (i + 1) * h, WORLD.W, h, color); }
+            if (WORLD.theme === 'ocean') {
+                drawRect(0, 30, WORLD.W, 20, '#94e2ff'); for (let x = 0; x < WORLD.W; x += 4) { drawRect(x, 48, 2, 2, '#dff6ff'); }
+            } else if (WORLD.theme === 'city') {
+                for (let x = 0; x < WORLD.W; x += 20) { const h = randInt(WORLD.rng, 20, 60); drawRect(x, 20, 12, h, '#475569'); drawRect(x + 3, 20, 6, h - 6, '#64748b'); }
+            }
+            if (WORLD.theme === 'night') {
+                for (let i = 0; i < 80; i++) { drawRect(randInt(WORLD.rng, 0, WORLD.W), randInt(WORLD.rng, 0, 60), 1, 1, '#e5e7eb'); }
+            } else {
+                for (let i = 0; i < 12; i++) { drawSprite(randInt(WORLD.rng, 0, WORLD.W - 12), randInt(WORLD.rng, 4, 40), SHAPES.cloud); }
+            }
+        }
+
+        function rectsOverlap(a, b) { return !(a.x + a.w <= b.x || b.x + b.w <= a.x || a.y + a.h <= b.y || b.y + b.h <= a.y); }
+
+        function placeObjects() {
+            WORLD.objects.length = 0;
+            const densityMap = { low: 150, medium: 260, high: 380, crowded: 520 }; // increased variety
+            const count = densityMap[UI.density.value] || 200;
+
+            const liz = SHAPES.lizard;
+            const lx = randInt(WORLD.rng, 0, WORLD.W - liz.w - 1);
+            const ly = randInt(WORLD.rng, 30, WORLD.H - liz.h - 10);
+            WORLD.objects.push({ kind: 'lizard', x: lx, y: ly, w: liz.w, h: liz.h, sprite: liz });
+            WORLD.targetIdx = 0;
+
+            const bounds = [];
+            bounds.push({ x: lx, y: ly, w: liz.w, h: liz.h });
+
+            let attempts = 0;
+            const maxAttempts = count * 20;
+            while (WORLD.objects.length < count && attempts < maxAttempts) {
+                attempts++;
+                const entry = choice(WORLD.rng, LIBRARY);
+                if (entry.id.startsWith('lizard')) continue;
+                const sp = entry.sprite;
+                const x = randInt(WORLD.rng, 0, WORLD.W - sp.w);
+                const y = randInt(WORLD.rng, 18, WORLD.H - sp.h);
+                const r = { x, y, w: sp.w, h: sp.h };
+                if (bounds.some(b => rectsOverlap(b, r))) continue;
+                bounds.push(r);
+                WORLD.objects.push({ kind: entry.id.split(':')[0], x, y, w: sp.w, h: sp.h, sprite: sp });
+            }
+        }
+
+        function drawObjects() {
+            const arr = WORLD.objects.slice().sort((a, b) => a.y - b.y);
+            for (const o of arr) {
+                drawSprite(o.x, o.y, o.sprite);
+                if (UI.outlines.checked) {
+                    const { x, y } = worldToScreen(o.x, o.y);
+                    CTX.strokeStyle = 'rgba(0,0,0,0.5)'; CTX.strokeRect(x + 0.5, y + 0.5, o.w * CAMERA.z - 1, o.h * CAMERA.z - 1);
+                    CTX.strokeStyle = 'rgba(255,255,255,0.3)'; CTX.strokeRect(x + 1.5, y + 1.5, o.w * CAMERA.z - 3, o.h * CAMERA.z - 3);
+                }
+            }
+        }
+
+        function draw() { clear(); drawBackground(); drawObjects(); }
+
+        function toast(msg, ms = 1600) { UI.toastText.textContent = msg; UI.toast.style.display = 'grid'; setTimeout(() => { UI.toast.style.display = 'none'; }, ms); }
+
+        function updateHUD() {
+            const base = (performance.now() - WORLD.start) / 1000;
+            const total = Math.max(0, base + WORLD.penalty);
+            const rem = WORLD.objects.length - 1;
+            const penaltyTxt = WORLD.penalty > 0 ? ` (+${WORLD.penalty.toFixed(1)}s)` : '';
+            UI.hud.textContent = `Time ${total.toFixed(1)}s${penaltyTxt} • Objects ${WORLD.objects.length} • Variants ${LIBRARY.length} • Remaining distractions ${rem}`;
+            if (UI.timerVal) UI.timerVal.textContent = `${total.toFixed(1)}s`;
+        }
+
+        // Timer lifecycle
+        let FG_TIMER = null;
+        function startTimer() { if (FG_TIMER) clearInterval(FG_TIMER); FG_TIMER = setInterval(updateHUD, 200); }
+        function stopTimer() { if (FG_TIMER) { clearInterval(FG_TIMER); FG_TIMER = null; } }
+
+        // Draw preview of lizard in legend
+        function drawLizardPreview() {
+            const c = document.getElementById('lizPreview'); if (!c) return;
+            const ctx = c.getContext('2d'); ctx.imageSmoothingEnabled = false; ctx.clearRect(0, 0, c.width, c.height);
+            const scale = 4;
+            const ox = Math.floor((c.width - SHAPES.lizard.w * scale) / 2);
+            const oy = Math.floor((c.height - SHAPES.lizard.h * scale) / 2);
+            drawSpriteToContext(ctx, SHAPES.lizard, ox, oy, scale);
+        }
+
+        /* ============================
+         *  Interactions: pan, zoom, click with penalties (toast)
+         * ============================ */
+        function clamp(val, min, max) { return Math.max(min, Math.min(max, val)); }
+        function clampCamera() { const maxX = Math.max(0, WORLD.W - CANVAS.width / CAMERA.z); const maxY = Math.max(0, WORLD.H - CANVAS.height / CAMERA.z); CAMERA.x = clamp(CAMERA.x, 0, maxX); CAMERA.y = clamp(CAMERA.y, 0, maxY); }
+        CANVAS.addEventListener('mousedown', (e) => { CAMERA.dragging = true; CAMERA.moved = false; CAMERA.lastX = e.offsetX; CAMERA.lastY = e.offsetY; });
+        document.addEventListener('mousemove', (e) => {
+            if (!CAMERA.dragging) return;
+            const rect = CANVAS.getBoundingClientRect();
+            const mx = e.clientX - rect.left;
+            const my = e.clientY - rect.top;
+            const dx = mx - CAMERA.lastX;
+            const dy = my - CAMERA.lastY;
+            if (dx !== 0 || dy !== 0) CAMERA.moved = true;
+            CAMERA.lastX = mx;
+            CAMERA.lastY = my;
+            CAMERA.x -= dx / CAMERA.z;
+            CAMERA.y -= dy / CAMERA.z;
+            clampCamera();
+            draw();
+        });
+        document.addEventListener('mouseup', (e) => {
+            if (!CAMERA.dragging) return;
+            const moved = CAMERA.moved;
+            CAMERA.dragging = false;
+            const rect = CANVAS.getBoundingClientRect();
+            const mx = e.clientX - rect.left;
+            const my = e.clientY - rect.top;
+            if (moved) { return; }
+            // treat as click
+            WORLD.clicks++;
+            const w = screenToWorld(mx, my);
+            const t = WORLD.objects[WORLD.targetIdx];
+            if (w.x >= t.x && w.x < t.x + t.w && w.y >= t.y && w.y < t.y + t.h) {
+                showResults();
+                return;
+            }
+            // wrong click -> add penalty
+            WORLD.penalty += PENALTY_PER_MISS;
+            updateHUD();
+            toast(`Miss! +${PENALTY_PER_MISS.toFixed(1)}s penalty`);
+        });
+        CANVAS.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const dir = e.deltaY > 0 ? -1 : 1;
+            let nz = clamp(CAMERA.z + dir, CAMERA.minZ, CAMERA.maxZ);
+            if (nz === CAMERA.z) return;
+            const before = screenToWorld(e.offsetX, e.offsetY);
+            CAMERA.z = nz;
+            UI.scale.value = String(nz);
+            const after = screenToWorld(e.offsetX, e.offsetY);
+            CAMERA.x += before.x - after.x;
+            CAMERA.y += before.y - after.y;
+            clampCamera();
+            draw();
+        }, { passive: false });
+
+        // Controls wiring
+        UI.btnNew.addEventListener('click', regenerate);
+        UI.btnResetZoom.addEventListener('click', () => {
+            CAMERA.z = 4;
+            UI.scale.value = '4';
+            const t = WORLD.objects[WORLD.targetIdx];
+            CAMERA.x = clamp(t.x - CANVAS.width / CAMERA.z / 2, 0, WORLD.W);
+            CAMERA.y = clamp(t.y - CANVAS.height / CAMERA.z / 2, 0, WORLD.H);
+            clampCamera();
+            draw();
+        });
+        UI.btnHint.addEventListener('click', () => {
+            const t = WORLD.objects[WORLD.targetIdx];
+            const horiz = t.x < WORLD.W / 2 ? 'W' : 'E';
+            const vert = t.y < WORLD.H / 2 ? 'N' : 'S';
+            toast(`Hint: Gad is in quadrant ${vert}${horiz}`);
+        });
+        UI.btnAbout.addEventListener('click', () => {
+            toast('Click to inspect · Drag to pan · Wheel to zoom. Wrong clicks add time penalties.');
+        });
+        UI.outlines.addEventListener('change', draw);
+        UI.theme.addEventListener('change', regenerate);
+        UI.density.addEventListener('change', regenerate);
+        UI.scale.addEventListener('input', () => {
+            const nz = clamp(parseInt(UI.scale.value, 10) || CAMERA.z, CAMERA.minZ, CAMERA.maxZ);
+            const before = screenToWorld(CANVAS.width / 2, CANVAS.height / 2);
+            CAMERA.z = nz;
+            const after = screenToWorld(CANVAS.width / 2, CANVAS.height / 2);
+            CAMERA.x += before.x - after.x;
+            CAMERA.y += before.y - after.y;
+            clampCamera();
+            draw();
+        });
+
+        /* ============================
+         *  Main game logic & layout helpers
+         * ============================ */
+        function showResults() {
+            stopTimer();
+            const total = Math.max(0, (performance.now() - WORLD.start) / 1000 + WORLD.penalty).toFixed(1);
+            toast(`🎉 You found Gad! Time ${total}s • Clicks ${WORLD.clicks} • Penalty ${WORLD.penalty.toFixed(1)}s • Seed ${WORLD.seed}`, 3200);
+        }
+
+        function regenerate() {
+            const seed = (UI.seed.value && UI.seed.value.trim()) || Math.random().toString(36).slice(2);
+            WORLD.seed = seed; WORLD.rng = makeRng(seed);
+            WORLD.clicks = 0; WORLD.penalty = 0;
+            setTheme(UI.theme.value);
+            placeObjects();
+            const t = WORLD.objects[WORLD.targetIdx];
+            CAMERA.z = parseInt(UI.scale.value, 10) || CAMERA.z;
+            CAMERA.x = Math.max(0, Math.min(WORLD.W - CANVAS.width / CAMERA.z, t.x - 40 + Math.floor(WORLD.rng() * 40)));
+            CAMERA.y = Math.max(0, Math.min(WORLD.H - CANVAS.height / CAMERA.z, t.y - 30 + Math.floor(WORLD.rng() * 40)));
+            WORLD.start = performance.now();
+            draw(); updateHUD(); startTimer(); drawLizardPreview(); syncHeaderOffset();
+        }
+
+        function syncHeaderOffset() { const h = document.getElementById('fgHeader'); if (!h) return; const hh = h.offsetHeight; document.documentElement.style.setProperty('--fg-header-h', hh + 'px'); }
+        window.addEventListener('resize', syncHeaderOffset);
+        if (document.fonts && document.fonts.addEventListener) { document.fonts.addEventListener('loadingdone', syncHeaderOffset); }
+
+        // First run
+        regenerate();
+        syncHeaderOffset();
+    </script>
+</body>
+
+</html>

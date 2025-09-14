@@ -1,0 +1,1343 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD | Game: Dungeon Crawler</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <meta charset="utf-8" />
+    <style>
+        :root {
+            --bg: #0b0f14;
+            --fg: #e6eef7;
+            --muted: #94a3b8;
+            --accent: #60a5fa;
+            --panel: #0f172a;
+            --glass: rgba(15, 23, 42, .55);
+            --hp: #34d399;
+            --danger: #f87171;
+            --amber: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            background: radial-gradient(1200px 700px at 60% -10%, #101828 5%, #0b0f14 55%, #070a0f 100%);
+            color: var(--fg);
+            font: 14px/1.35 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+        }
+
+        .wrap {
+            position: relative;
+            max-width: min(100vw, 1100px);
+            width: 100%;
+            padding: 12px;
+        }
+
+        canvas#game {
+            width: 100%;
+            height: auto;
+            display: block;
+            aspect-ratio: 16/9;
+            border-radius: 16px;
+            box-shadow: 0 20px 70px rgba(0, 0, 0, .45), 0 0 0 1px rgba(255, 255, 255, .03) inset;
+            background: #000;
+            outline: none;
+        }
+
+        .hud {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .hud.hidden {
+            display: none;
+        }
+
+        /* HUD BAR */
+        .hudbar {
+            position: absolute;
+            left: 14px;
+            right: 14px;
+            top: 14px;
+            display: flex;
+            gap: 10px;
+            align-items: stretch;
+            pointer-events: none;
+        }
+
+        .card {
+            background: var(--glass);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 12px;
+            padding: 8px 10px;
+            backdrop-filter: blur(8px);
+            pointer-events: auto;
+        }
+
+        .grow {
+            flex: 1;
+        }
+
+        .row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .kv {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .kv .k {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .kv .v {
+            font-weight: 600;
+            letter-spacing: .2px;
+        }
+
+        .hpbar {
+            position: relative;
+            height: 12px;
+            width: 160px;
+            background: rgba(255, 255, 255, .05);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .hpbar>i {
+            position: absolute;
+            inset: 0;
+            width: 50%;
+            background: linear-gradient(90deg, var(--hp), #10b981);
+        }
+
+        .badge.right {
+            position: absolute;
+            right: 14px;
+            top: 14px;
+        }
+
+        .toast {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 14px;
+            background: var(--glass);
+            border: 1px solid rgba(255, 255, 255, .08);
+            padding: 10px 14px;
+            border-radius: 12px;
+            backdrop-filter: blur(8px);
+            max-width: 80%;
+            text-align: center;
+            top: 50px;
+        }
+
+        /* Help panel */
+        .help {
+            position: absolute;
+            right: 14px;
+            bottom: 14px;
+            width: 380px;
+            max-width: calc(100% - 28px);
+            background: var(--glass);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 12px;
+            padding: 10px 12px;
+            pointer-events: auto;
+        }
+
+        .help h3 {
+            margin: 0 0 6px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--fg);
+        }
+
+        .help .legend {
+            margin-top: 6px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .btnbar {
+            margin-top: 8px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        button.small {
+            pointer-events: auto;
+            padding: 6px 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, .12);
+            background: #0f172a;
+            color: #dbe7ff;
+            cursor: pointer;
+        }
+
+        button.small[disabled] {
+            opacity: .5;
+            cursor: not-allowed;
+        }
+
+        button.small:hover {
+            filter: brightness(1.2);
+        }
+
+        /* Touch controls */
+        .touch {
+            position: absolute;
+            left: 14px;
+            bottom: 14px;
+            display: grid;
+            grid-template-columns: repeat(3, 54px);
+            grid-template-rows: repeat(2, 54px);
+            gap: 8px;
+            pointer-events: auto;
+            opacity: .9;
+        }
+
+        .touch button {
+            width: 54px;
+            height: 54px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, .12);
+            background: var(--panel);
+            color: #bcd0f3;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .touch .wide {
+            grid-column: span 3;
+        }
+
+        @media (pointer: fine) {
+            .touch {
+                display: none;
+            }
+        }
+
+        /* INIT OVERLAY */
+        .overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(3, 6, 12, .6);
+            backdrop-filter: blur(6px);
+        }
+
+        .modal {
+            width: min(520px, 92vw);
+            background: rgba(11, 17, 30, .9);
+            border: 1px solid rgba(255, 255, 255, .12);
+            border-radius: 16px;
+            padding: 16px;
+            color: #e6eef7;
+        }
+
+        .modal h2 {
+            margin: 0 0 10px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .field label {
+            font-size: 12px;
+            color: #9fb2d3;
+        }
+
+        .field input[type="range"] {
+            width: 100%;
+        }
+
+        .field input,
+        .field select {
+            padding: 8px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, .12);
+            background: #0f172a;
+            color: #e6eef7;
+        }
+
+        .modal .row {
+            justify-content: space-between;
+        }
+
+        /* Help collapsible */
+        .help .toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            user-select: none;
+            padding: 2px 0;
+        }
+
+        .help .chev {
+            transition: transform .18s ease;
+            opacity: .9;
+        }
+
+        .help.collapsed .chev {
+            transform: rotate(-90deg);
+        }
+
+        .help.collapsed .legend,
+        .help.collapsed .btnbar {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <canvas id="game" width="960" height="540" aria-label="Dungeon crawler view" tabindex="0"></canvas>
+
+        <!-- HUD -->
+        <div class="hud" aria-hidden="true" id="hud">
+            <div class="hudbar">
+                <div class="card row grow" id="hudMain">
+                    <div class="kv"><span class="k">Hero</span><span class="v" id="heroName">Delver</span></div>
+                    <div class="kv"><span class="k">HP</span>
+                        <span class="hpbar"><i id="hpFill" style="width:100%"></i></span>
+                        <span class="v" id="hpText">100</span>
+                    </div>
+                    <div class="kv"><span class="k">Moves</span><span class="v" id="moves">0</span></div>
+                    <div class="kv"><span class="k">Explored</span><span class="v" id="explored">1</span></div>
+                    <div class="kv"><span class="k">Time</span><span class="v" id="time">0:00</span></div>
+                    <div class="kv"><span class="k">Maze</span><span class="v" id="mazeSize">21×21</span></div>
+                    <div class="kv"><span class="k">FOV</span><span class="v" id="fovVal">85°</span></div>
+                </div>
+                <div class="card" id="fps" style="min-width:70px; text-align:center;">FPS: —</div>
+            </div>
+
+            <div class="toast" id="toast" style="display:none"></div>
+
+            <div class="help" id="helpPanel">
+                <div class="toggle" id="helpToggle" title="Collapse/expand">
+                    <h3 style="margin:0">Controls</h3>
+                    <span class="chev">▾</span>
+                </div>
+                <div class="legend" id="legend">
+                    W/S: forward/back • Q/E: strafe • A/D: turn • M: minimap • R: new maze • P: pointer-lock (may be blocked) • Drag to look • [ / ]: FOV − / + • H: hide UI • Esc: Settings
+                </div>
+                <div class="btnbar">
+                    <button class="small" id="btnMaze">New Maze (R)</button>
+                    <button class="small" id="btnMap">Toggle Map (M)</button>
+                    <button class="small" id="btnMouse">Mouse-look (P)</button>
+                    <button class="small" id="btnFovDec">FOV −</button>
+                    <button class="small" id="btnFovInc">FOV +</button>
+                    <button class="small" id="btnTests">Run Self-tests</button>
+                    <button class="small" id="btnSettings">Settings</button>
+                    <button class="small" id="btnHideUI">Hide UI (H)</button>
+                </div>
+            </div>
+
+            <div class="card" id="logPanel" style="
+  position:absolute; left:14px; bottom:14px; width:360px; max-height:160px;
+  display:flex; flex-direction:column; gap:6px; font-size: 12px;">
+                <div class="row" style="justify-content:space-between;">
+                    <div class="kv"><span class="k">Log</span><span class="v">Events</span></div>
+                    <button class="small" id="btnClearLog" style="pointer-events:auto;">Clear</button>
+                </div>
+                <div id="logBody" style="overflow:auto; flex:1; padding:6px; border-radius:8px;
+    background:rgba(15,23,42,.45); border:1px solid rgba(255,255,255,.06);"></div>
+            </div>
+
+            <div class="touch">
+                <button id="tTurnL">⟲</button>
+                <button id="tFwd">▲</button>
+                <button id="tTurnR">⟳</button>
+                <button id="tStrafeL">◀</button>
+                <button id="tBack">▼</button>
+                <button id="tStrafeR">▶</button>
+                <button id="tNew" class="wide">New Maze</button>
+            </div>
+        </div>
+
+        <!-- INIT / SETTINGS OVERLAY -->
+        <div class="overlay" id="menu">
+            <div class="modal">
+                <h2>Dungeon Setup</h2>
+                <div class="grid">
+                    <div class="field">
+                        <label for="sizeInput">Maze size (odd, 11–51)</label>
+                        <input id="sizeInput" type="number" min="11" max="51" step="2" value="21" />
+                    </div>
+                    <div class="field">
+                        <label for="fovRange">Field of View: <strong id="fovLabel">85°</strong></label>
+                        <input id="fovRange" type="range" min="60" max="110" step="1" value="85" />
+                    </div>
+                    <div class="field">
+                        <label for="fogRange">Distance dimming: <strong id="fogLabel">0.22</strong></label>
+                        <input id="fogRange" type="range" min="0" max="1" step="0.01" value="0.22" />
+                    </div>
+                    <div class="field">
+                        <label for="fowSelect">Minimap fog of war</label>
+                        <select id="fowSelect">
+                            <option value="0">Off</option>
+                            <option value="1" selected>Explored only</option>
+                            <option value="2">Explored + neighbors hint</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row" style="margin-top:12px;">
+                    <div class="kv"><span class="k">Tip</span><span class="v">Use [ / ] to tweak FOV in‑game</span></div>
+                    <div class="row">
+                        <button class="small" id="startBtn">Start Game</button>
+                        <button class="small" id="closeMenuBtn">Close</button>
+                        <button class="small" id="exitBtn">Exit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        (() => {
+            // ====== CONFIG ======
+            const CANVAS = document.getElementById('game');
+            const CTX = CANVAS.getContext('2d');
+            const W = CANVAS.width, H = CANVAS.height;
+            let FOV = (85 * Math.PI) / 180; // default 85° (user‑adjustable)
+            const RAYS = W; // one ray per column
+            const MAX_RENDER_DIST = 24; // cells
+            const MOVE_TIME = 180; // ms to move one cell
+            const TURN_TIME = 140; // ms to rotate 90°
+            let MAZE_SIZE = 21; // odd number, configurable
+            const SKY = CTX.createLinearGradient(0, 0, 0, H / 2);
+            SKY.addColorStop(0, '#0a1324');
+            SKY.addColorStop(1, '#0b0f14');
+            const FLOOR = CTX.createLinearGradient(0, H / 2, 0, H);
+            FLOOR.addColorStop(0, '#0d1320');
+            FLOOR.addColorStop(1, '#0b0f14');
+            let FOG_STRENGTH = 0.22; // higher -> faster fade with distance
+            let FPS_CAP = 30;
+            let FRAME_TIME = 1000 / FPS_CAP;
+            let lastRender = 0;
+            let MAP_FOW_MODE = 1;
+            function setFogStrength(v, toast = true) {
+                FOG_STRENGTH = clamp(+v, 0, 1); // 0 = no dimming, 1 = very strong
+                if (toast) flash(`Distance dimming set to <strong>${FOG_STRENGTH.toFixed(2)}</strong>`);
+            }
+
+            function setFpsCap(n) {
+                FPS_CAP = Math.max(10, Math.min(120, Math.floor(n)));
+                FRAME_TIME = 1000 / FPS_CAP;
+            }
+
+            // ====== STATE ======
+            const ENEMY_TYPES = [
+                { kind: 'slime', hp: 10, dmg: 10, scale: 0.90, alpha: 1.00, bob: 0.06 },
+                { kind: 'ghost', hp: 8, dmg: 8, scale: 0.95, alpha: 0.70, bob: 0.10 },
+                { kind: 'crawler', hp: 12, dmg: 12, scale: 0.85, alpha: 1.00, bob: 0.03 },
+                { kind: 'eye', hp: 6, dmg: 15, scale: 0.80, alpha: 1.00, bob: 0.00 },
+            ];
+            let map = [];
+            let mapW = MAZE_SIZE, mapH = MAZE_SIZE;
+            let player = { x: 1.5, y: 1.5, ang: 0 };
+            let moving = null; // {from:{x,y}, to:{x,y}, t0, dir:[dx,dy]}
+            let turning = null; // {from:ang, to:ang, t0}
+            let showMap = false;
+            let showHUD = true;
+            let exitCell = { x: mapW - 2, y: mapH - 2 };
+            let pointerLocked = false;
+            let pointerLockBlocked = false;
+
+            // Entities
+            const traps = new Set(); // key: "x,y"
+            const monsters = new Map(); // key: "x,y" -> {hp:10}
+            const items = new Map();     // key → { kind:'potion', value: +hp }
+            const specials = new Map();  // key → { kind:'exit' }
+
+            // Heuristic: detect sandboxed iframe (cannot request pointer lock)
+            const SANDBOXED = (() => { try { return window.top !== window; } catch (e) { return true; } })();
+
+            // HUD stats
+            let hp = 100;
+            let moves = 0;
+            let explored = new Set(['1,1']);
+            let startTimeMs = performance.now();
+
+            // ====== UTILS ======
+            const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
+            const lerp = (a, b, t) => a + (b - a) * t;
+            const now = () => performance.now();
+            const modPI2 = a => { a = a % (Math.PI * 2); if (a < 0) a += Math.PI * 2; return a; };
+            const keyXY = (x, y) => `${x},${y}`;
+            const isMapValid = (m) => Array.isArray(m) && m.length > 0 && Array.isArray(m[0]) && m[0].length > 0;
+            function choose(arr) { return arr[(Math.random() * arr.length) | 0]; }
+
+            // ====== EVENT LOG ======
+            const logBody = document.getElementById('logBody');
+            const MAX_LOG = 120;
+            const eventLog = [];
+
+            function tsClock() {
+                const secs = Math.floor((performance.now() - startTimeMs) / 1000);
+                const m = Math.floor(secs / 60), s = String(secs % 60).padStart(2, '0');
+                return `${m}:${s}`;
+            }
+            function pushLog(text) {
+                const entry = `<div class="logline"><span style="color:var(--muted)">[${tsClock()}]</span> ${text}</div>`;
+                eventLog.push(entry);
+                while (eventLog.length > MAX_LOG) eventLog.shift();
+                if (logBody) { logBody.innerHTML = eventLog.slice(-40).join(''); logBody.scrollTop = logBody.scrollHeight; }
+            }
+            document.getElementById('btnClearLog')?.addEventListener('click', () => {
+                eventLog.length = 0; if (logBody) logBody.innerHTML = '';
+            });
+
+            // ====== SPRITES (pre-rendered to avoid per-pixel loops) ======
+            const SPRITES = { slime: null, trap: null, ghost: null, crawler: null, eye: null };
+
+            function makeCircleSprite(size, innerColor, outerColor, eye = false) {
+                const c = document.createElement('canvas');
+                c.width = c.height = size;
+                const x = c.getContext('2d');
+
+                // soft circular blob
+                const g = x.createRadialGradient(size / 2, size / 2, size * 0.2, size / 2, size / 2, size * 0.5);
+                g.addColorStop(0, innerColor);
+                g.addColorStop(1, outerColor);
+                x.fillStyle = g;
+                x.beginPath(); x.arc(size / 2, size / 2, size * 0.48, 0, Math.PI * 2); x.fill();
+
+                // slimy highlight
+                x.fillStyle = 'rgba(255,255,255,0.18)';
+                x.beginPath(); x.ellipse(size * 0.38, size * 0.34, size * 0.16, size * 0.10, -0.5, 0, Math.PI * 2); x.fill();
+
+                if (eye) {
+                    // one goofy eye
+                    x.fillStyle = 'rgba(0,0,0,0.85)';
+                    x.beginPath(); x.arc(size * 0.62, size * 0.48, size * 0.07, 0, Math.PI * 2); x.fill();
+                    x.fillStyle = '#fff';
+                    x.beginPath(); x.arc(size * 0.60, size * 0.46, size * 0.03, 0, Math.PI * 2); x.fill();
+                }
+                return c;
+            }
+
+            function placeEntities(trapCountFactor = 0.04, monsterCountFactor = 0.04, itemCountFactor = 0.02) {
+                traps.clear(); monsters.clear(); items.clear(); specials.clear();
+                const openCells = [];
+                for (let y = 1; y < mapH - 1; y++) {
+                    for (let x = 1; x < mapW - 1; x++) {
+                        if (map[y][x] === 0 && !(x === 1 && y === 1) && !(x === exitCell.x && y === exitCell.y)) {
+                            openCells.push({ x, y });
+                        }
+                    }
+                }
+                const trapCount = Math.max(1, Math.floor(openCells.length * trapCountFactor));
+                for (let i = 0; i < trapCount; i++) {
+                    const pick = openCells.splice((Math.random() * openCells.length) | 0, 1)[0];
+                    if (pick) traps.add(keyXY(pick.x, pick.y));
+                }
+
+                const monsterCount = Math.max(1, Math.floor(openCells.length * monsterCountFactor));
+                for (let i = 0; i < monsterCount; i++) {
+                    const cell = openCells.splice((Math.random() * openCells.length) | 0, 1)[0];
+                    if (!cell) continue;
+                    const type = ENEMY_TYPES[(Math.random() * ENEMY_TYPES.length) | 0];
+                    monsters.set(keyXY(cell.x, cell.y), { ...type });
+                }
+
+                // items: potions ~2% of open cells
+                const potionCount = Math.max(1, Math.floor(openCells.length * itemCountFactor));
+                for (let i = 0; i < potionCount; i++) {
+                    const cell = openCells.splice((Math.random() * openCells.length) | 0, 1)[0];
+                    if (cell) items.set(keyXY(cell.x, cell.y), { kind: 'potion', value: 20 });
+                }
+
+                // specials: exit object
+                specials.set(keyXY(exitCell.x, exitCell.y), { kind: 'exit' });
+                console.log(`Placed ${traps.size} traps and ${monsters.size} monsters.`);
+            }
+
+            function makeTriangleSprite(size, fill = '#ef4444', stroke = '#fff') {
+                const c = document.createElement('canvas');
+                c.width = c.height = size;
+                const x = c.getContext('2d');
+
+                x.lineJoin = 'round';
+                x.lineWidth = Math.max(2, size * 0.06);
+
+                // glow
+                const g = x.createRadialGradient(size / 2, size * 0.55, size * 0.1, size / 2, size * 0.55, size * 0.55);
+                g.addColorStop(0, 'rgba(255,90,90,0.3)');
+                g.addColorStop(1, 'rgba(255,90,90,0)');
+                x.fillStyle = g;
+                x.fillRect(0, 0, size, size);
+
+                // triangle
+                x.beginPath();
+                x.moveTo(size * 0.50, size * 0.10);
+                x.lineTo(size * 0.90, size * 0.80);
+                x.lineTo(size * 0.10, size * 0.80);
+                x.closePath();
+                x.fillStyle = fill;
+                x.fill();
+                x.strokeStyle = stroke;
+                x.stroke();
+
+                // exclamation mark
+                x.fillStyle = '#0b0f14';
+                x.fillRect(size * 0.48, size * 0.38, size * 0.04, size * 0.22);
+                x.beginPath(); x.arc(size * 0.50, size * 0.68, size * 0.035, 0, Math.PI * 2); x.fill();
+                return c;
+            }
+
+            // Build once after context is ready
+            function buildSpriteCache() {
+                const slime = makeCircleSprite(96, '#b789ff', '#7c3aed', true);
+                const ghost = makeCircleSprite(96, '#99f6e4', '#22d3ee');   // cyan
+                const crawler = makeCircleSprite(96, '#86efac', '#10b981');   // green
+                const eye = makeCircleSprite(96, '#fecaca', '#ef4444', true); // reddish
+                const potion = makeCircleSprite(96, '#fef08a', '#facc15'); // goldish
+                const exit = makeCircleSprite(96, '#38bdf8', '#0284c7'); // bright blue portal
+
+                const trap = makeTriangleSprite(96, '#ef4444', '#ffd7d7');
+
+                if ('createImageBitmap' in window) {
+                    Promise.all([
+                        createImageBitmap(slime),
+                        createImageBitmap(ghost),
+                        createImageBitmap(crawler),
+                        createImageBitmap(eye),
+                        createImageBitmap(trap),
+                        createImageBitmap(potion),
+                        createImageBitmap(exit),
+                    ]).then(([s, g, c, e, t, p, x]) => {
+                        SPRITES.slime = s; SPRITES.ghost = g; SPRITES.crawler = c; SPRITES.eye = e; SPRITES.trap = t; SPRITES.potion = p; SPRITES.exit = x;
+                    });
+                } else {
+                    SPRITES.slime = slime; SPRITES.ghost = ghost; SPRITES.crawler = crawler; SPRITES.eye = eye; SPRITES.trap = trap; SPRITES.potion = potion; SPRITES.exit = exit;
+                }
+            }
+
+
+            // ====== PROXIMITY SCANNER ======
+            const PROX_RADIUS = 1.6;  // cells (center-to-center)
+            const PROX_COOLDOWN_MS = 3000;
+            let lastProxScan = 0;
+            const seenNear = new Map(); // key -> lastNotifiedMs
+
+            function distToCell(cx, cy) {
+                const dx = (cx + 0.5) - player.x;
+                const dy = (cy + 0.5) - player.y;
+                return Math.hypot(dx, dy);
+            }
+            function maybeNotify(key, label) {
+                const t = performance.now();
+                const last = seenNear.get(key) || 0;
+                if (t - last > PROX_COOLDOWN_MS) {
+                    pushLog(label);
+                    seenNear.set(key, t);
+                }
+            }
+            function scanProximity() {
+                const t = performance.now();
+                if (t - lastProxScan < 200) return; // throttle ~5Hz
+                lastProxScan = t;
+
+                // monsters
+                monsters.forEach((m, k) => {
+                    const [x, y] = k.split(',').map(Number);
+                    if (distToCell(x, y) <= PROX_RADIUS) maybeNotify(`m:${k}`, `You sense a ${m.kind || 'monster'} nearby!`);
+                });
+                // traps
+                traps.forEach(k => {
+                    const [x, y] = k.split(',').map(Number);
+                    if (distToCell(x, y) <= PROX_RADIUS) maybeNotify(`t:${k}`, `Careful! Trap nearby!`);
+                });
+                // items
+                items.forEach((it, k) => {
+                    const [x, y] = k.split(',').map(Number);
+                    if (distToCell(x, y) <= PROX_RADIUS) {
+                        const name = it.kind === 'potion' ? 'potion' : it.kind;
+                        maybeNotify(`i:${k}`, `Something glows nearby (${name}).`);
+                    }
+                });
+                // exit
+                if (distToCell(exitCell.x, exitCell.y) <= PROX_RADIUS) {
+                    maybeNotify(`exit:${exitCell.x},${exitCell.y}`, `You feel a breeze - the exit is close.`);
+                }
+            }
+
+            // ====== MAZE GENERATION (recursive backtracker) ======
+            function generateMaze(w, h) {
+                if (w % 2 === 0 || h % 2 === 0) throw new Error('Maze size must be odd');
+                if (w < 3 || h < 3) throw new Error('Maze size must be at least 3×3');
+                const grid = Array.from({ length: h }, () => Array.from({ length: w }, () => 1)); // 1=wall, 0=space
+                function carve(cx, cy) {
+                    grid[cy][cx] = 0;
+                    const dirs = [[2, 0], [-2, 0], [0, 2], [0, -2]];
+                    for (let i = 0; i < dirs.length; i++) {
+                        const j = (Math.random() * dirs.length) | 0;[dirs[i], dirs[j]] = [dirs[j], dirs[i]];
+                    }
+                    for (const [dx, dy] of dirs) {
+                        const nx = cx + dx, ny = cy + dy; if (nx <= 0 || ny <= 0 || nx >= w - 1 || ny >= h - 1) continue;
+                        if (grid[ny][nx] === 1) {
+                            grid[cy + dy / 2][cx + dx / 2] = 0; // knock wall
+                            carve(nx, ny);
+                        }
+                    }
+                }
+                carve(1, 1);
+
+                // Ensure exit is reachable far from start
+                let far = { x: 1, y: 1, dist: 0 };
+                for (let y = 1; y < h - 1; y++)for (let x = 1; x < w - 1; x++) {
+                    if (grid[y][x] === 0) {
+                        const d = (x - 1) ** 2 + (y - 1) ** 2;
+                        if (d > far.dist) { far = { x, y, dist: d }; }
+                    }
+                }
+                return { grid, exit: { x: far.x, y: far.y } };
+            }
+
+
+            function newGame() {
+                mapW = MAZE_SIZE; mapH = MAZE_SIZE;
+                const { grid, exit } = generateMaze(mapW, mapH);
+                map = grid; exitCell = exit;
+                player.x = 1.5; player.y = 1.5; player.ang = 0; moving = null; turning = null;
+                moves = 0; explored = new Set(['1,1']); startTimeMs = performance.now(); hp = 100;
+                placeEntities();
+                // clear log
+                eventLog.length = 0; if (logBody) logBody.innerHTML = '';
+
+                pushLog(`New maze ${mapW}×${mapH}. Find the exit!`);
+                flash(`New maze ${mapW}×${mapH}. Reach the <strong>exit portal</strong>! Watch for traps and slimes.`);
+                updateHUD();
+            }
+
+            // ====== INPUT (grid-based) ======
+            function forwardVec(ang) { return { x: Math.cos(ang), y: Math.sin(ang) }; }
+            function rightVec(ang) { return { x: Math.cos(ang + Math.PI / 2), y: Math.sin(ang + Math.PI / 2) }; }
+
+            function tryMove(dx, dy) {
+                if (moving || turning) return;
+                const cx = Math.floor(player.x), cy = Math.floor(player.y);
+                const tx = cx + dx, ty = cy + dy;
+                if (tx < 0 || ty < 0 || tx >= mapW || ty >= mapH) return;
+                if (!isMapValid(map) || !map[ty] || map[ty][tx] !== 0) return; // blocked or invalid
+                moving = { from: { x: player.x, y: player.y }, to: { x: tx + 0.5, y: ty + 0.5 }, t0: now(), dx, dy };
+                moves++;
+            }
+            function turn(dir) { // dir = -1 or +1 (±90°)
+                if (moving || turning) return;
+                turning = { from: player.ang, to: modPI2(player.ang + dir * Math.PI / 2), t0: now() };
+            }
+
+            // Keyboard
+            window.addEventListener('keydown', (e) => {
+                const k = e.key.toLowerCase();
+                if (['w', 'a', 's', 'd', 'q', 'e', 'm', 'r', 'p', '[', ']', 'escape', 'h'].includes(k)) e.preventDefault();
+                if (k === 'w') { const v = forwardVec(player.ang); tryMove(Math.round(v.x), Math.round(v.y)); }
+                else if (k === 's') { const v = forwardVec(player.ang); tryMove(-Math.round(v.x), -Math.round(v.y)); }
+                else if (k === 'q') { const v = rightVec(player.ang); tryMove(-Math.round(v.x), -Math.round(v.y)); }
+                else if (k === 'e') { const v = rightVec(player.ang); tryMove(Math.round(v.x), Math.round(v.y)); }
+                else if (k === 'a') turn(-1);
+                else if (k === 'd') turn(1);
+                else if (k === 'm') showMap = !showMap;
+                else if (k === 'r') newGame();
+                else if (k === 'p') safeTogglePointerLock();
+                else if (k === '[') setFOV(degFromRad(FOV) - 5);
+                else if (k === ']') setFOV(degFromRad(FOV) + 5);
+                else if (k === 'h') toggleHUD();
+                else if (k === 'escape') toggleMenu(true);
+                else if (k === ';') setFogStrength(FOG_STRENGTH - 0.05);
+                else if (k === '\'') setFogStrength(FOG_STRENGTH + 0.05);
+                else if (k === 'f') { MAP_FOW_MODE = (MAP_FOW_MODE + 1) % 3; flash(`Minimap FoW: ${['Off', 'Explored', 'Explored+hint'][MAP_FOW_MODE]}`); }
+
+            });
+
+            // Touch buttons map
+            function bindBtn(id, fn) { const el = document.getElementById(id); if (el) el.addEventListener('click', fn); }
+            bindBtn('tTurnL', () => turn(-1));
+            bindBtn('tTurnR', () => turn(1));
+            bindBtn('tFwd', () => { const v = forwardVec(player.ang); tryMove(Math.round(v.x), Math.round(v.y)); });
+            bindBtn('tBack', () => { const v = forwardVec(player.ang); tryMove(-Math.round(v.x), -Math.round(v.y)); });
+            bindBtn('tStrafeL', () => { const v = rightVec(player.ang); tryMove(-Math.round(v.x), -Math.round(v.y)); });
+            bindBtn('tStrafeR', () => { const v = rightVec(player.ang); tryMove(Math.round(v.x), Math.round(v.y)); });
+            bindBtn('tNew', () => newGame());
+
+            bindBtn('btnMaze', () => newGame());
+            bindBtn('btnMap', () => showMap = !showMap);
+            bindBtn('btnMouse', () => safeTogglePointerLock());
+            bindBtn('btnTests', () => runSelfTests(true));
+            bindBtn('btnFovDec', () => setFOV(degFromRad(FOV) - 5));
+            bindBtn('btnFovInc', () => setFOV(degFromRad(FOV) + 5));
+            bindBtn('btnSettings', () => toggleMenu(true));
+            bindBtn('btnHideUI', () => toggleHUD());
+
+            // Settings overlay
+            const menu = document.getElementById('menu');
+            const hudEl = document.getElementById('hud');
+            const sizeInput = document.getElementById('sizeInput');
+            const fovRange = document.getElementById('fovRange');
+            const fovLabel = document.getElementById('fovLabel');
+            const fogRange = document.getElementById('fogRange');
+            const fogLabel = document.getElementById('fogLabel');
+            const fowSelect = document.getElementById('fowSelect');
+
+            fogRange?.addEventListener('input', () => {
+                fogLabel.textContent = fogRange.value;
+                setFogStrength(fogRange.value, false);
+            });
+
+            bindBtn('startBtn', () => { applySettings(); toggleMenu(false); newGame(); });
+            bindBtn('exitBtn', () => {
+                window.location.href = '/games.html';
+            });
+            bindBtn('closeMenuBtn', () => toggleMenu(false));
+            fovRange.addEventListener('input', () => { fovLabel.textContent = `${fovRange.value}°`; setFOV(+fovRange.value, false); });
+
+            function toggleMenu(show) { menu.style.display = show ? 'flex' : 'none'; }
+            function toggleHUD() { showHUD = !showHUD; hudEl.classList.toggle('hidden', !showHUD); flash(showHUD ? 'UI shown' : 'UI hidden'); }
+            function applySettings() {
+                const s = parseInt(sizeInput.value, 10);
+                const clamped = clamp(s, 11, 51);
+                MAZE_SIZE = (clamped % 2 === 0) ? clamped + 1 : clamped; // force odd
+                setFOV(+fovRange.value, false);
+                if (fogRange) setFogStrength(fogRange.value, false);
+                if (fowSelect) MAP_FOW_MODE = +fowSelect.value;
+            }
+
+            // ====== Pointer lock (guarded) + drag-to-look fallback ======
+            function disableMouseLookUI(reason) {
+                const btn = document.getElementById('btnMouse');
+                if (btn) { btn.disabled = true; btn.textContent = 'Mouse‑look unavailable'; btn.title = reason || 'Blocked by browser/sandbox'; }
+                const legend = document.getElementById('legend');
+                if (legend) legend.textContent = 'W/S: forward/back • Q/E: strafe • A/D: turn • M: minimap • R: new maze • Drag on canvas to look (fallback) • [ / ]: FOV − / + • H: hide UI • Esc: Settings';
+            }
+            function safeTogglePointerLock() {
+                if (SANDBOXED || pointerLockBlocked || !CANVAS.requestPointerLock) {
+                    pointerLockBlocked = true;
+                    disableMouseLookUI(!CANVAS.requestPointerLock ? 'Pointer lock not supported in this browser' : 'Blocked by sandbox (no allow-pointer-lock)');
+                    flash('Mouse‑look not available here. Use drag‑to‑look instead.');
+                    return;
+                }
+                try {
+                    if (document.pointerLockElement === CANVAS) { document.exitPointerLock(); }
+                    else { CANVAS.requestPointerLock({ unadjustedMovement: true }); }
+                } catch (err) {
+                    pointerLockBlocked = true;
+                    disableMouseLookUI(err && err.name === 'SecurityError' ? 'Blocked by sandbox (missing allow-pointer-lock)' : (err?.message || 'Unavailable'));
+                    flash('Mouse‑look blocked by environment. Drag the canvas to look.');
+                }
+            }
+            document.addEventListener('pointerlockchange', () => {
+                pointerLocked = document.pointerLockElement === CANVAS;
+                flash(pointerLocked ? 'Mouse‑look <strong>enabled</strong>' : 'Mouse‑look <strong>disabled</strong>');
+            });
+            document.addEventListener('pointerlockerror', () => { pointerLockBlocked = true; disableMouseLookUI('Pointer‑lock error'); flash('Mouse‑look blocked. Drag to look.'); });
+
+            // Drag-to-look fallback (works without pointer‑lock)
+            let dragging = false, lastX = 0;
+            CANVAS.addEventListener('mousedown', (e) => { if (e.button === 0) { dragging = true; lastX = e.clientX; CANVAS.focus(); } });
+            window.addEventListener('mouseup', () => dragging = false);
+            CANVAS.addEventListener('mouseleave', () => dragging = false);
+            CANVAS.addEventListener('mousemove', (e) => {
+                if (pointerLocked) { if (moving || turning) return; const sens = 0.0025; player.ang = modPI2(player.ang + e.movementX * sens); }
+                else if (dragging && !moving && !turning) { const dx = e.clientX - lastX; lastX = e.clientX; const sens = 0.0025; player.ang = modPI2(player.ang + dx * sens); }
+            });
+            CANVAS.addEventListener('click', () => { /* focus only */ CANVAS.focus(); });
+
+            // ====== RENDERING: simple raycaster (DDA) with sprites & fog ======
+            function castRay(px, py, rayDirX, rayDirY) {
+                if (!isMapValid(map)) return { dist: MAX_RENDER_DIST, side: 0, cellX: 0, cellY: 0, type: 1 };
+                const EPS = 1e-9; rayDirX = Math.abs(rayDirX) < EPS ? (rayDirX < 0 ? -EPS : EPS) : rayDirX; rayDirY = Math.abs(rayDirY) < EPS ? (rayDirY < 0 ? -EPS : EPS) : rayDirY;
+                let mapX = Math.floor(px), mapY = Math.floor(py);
+                const deltaDistX = Math.abs(1 / rayDirX), deltaDistY = Math.abs(1 / rayDirY);
+                let stepX, stepY, sideDistX, sideDistY;
+                if (rayDirX < 0) { stepX = -1; sideDistX = (px - mapX) * deltaDistX; } else { stepX = 1; sideDistX = (mapX + 1.0 - px) * deltaDistX; }
+                if (rayDirY < 0) { stepY = -1; sideDistY = (py - mapY) * deltaDistY; } else { stepY = 1; sideDistY = (mapY + 1.0 - py) * deltaDistY; }
+                let hit = 0, side = 0, safety = 0;
+                while (!hit && safety < 4096) {
+                    if (sideDistX < sideDistY) { sideDistX += deltaDistX; mapX += stepX; side = 0; }
+                    else { sideDistY += deltaDistY; mapY += stepY; side = 1; }
+                    if (mapY < 0 || mapX < 0 || mapY >= mapH || mapX >= mapW) { hit = 2; break; }
+                    if (!map[mapY]) { hit = 2; break; }
+                    if (map[mapY][mapX] !== 0) hit = 1; safety++;
+                }
+                let perpWallDist; if (hit === 2) { perpWallDist = MAX_RENDER_DIST; } else if (side === 0) { perpWallDist = sideDistX - deltaDistX; } else { perpWallDist = sideDistY - deltaDistY; }
+                return { dist: perpWallDist, side, cellX: mapX, cellY: mapY, type: hit ? map[mapY]?.[mapX] ?? 1 : 0 };
+            }
+
+            function shade(col, factor) { const r = parseInt(col.slice(1, 3), 16), g = parseInt(col.slice(3, 5), 16), b = parseInt(col.slice(5, 7), 16); const s = (v) => clamp(Math.round(v * factor), 0, 255).toString(16).padStart(2, '0'); return `#${s(r)}${s(g)}${s(b)}`; }
+            const WALL_COLORS = ['#000000', '#64748b', '#7dd3fc', '#c084fc', '#fca5a5', '#a7f3d0'];
+
+            function wallDecoFactor(x, y) {
+                // Deterministic pseudo-random [0.8..1.2] based on cell, adds subtle texture/decoration variance
+                const n = Math.sin((x * 73856093 ^ y * 19349663) & 0xffffffff) * 43758.5453;
+                return 1.0 + ((n - Math.floor(n)) - 0.5) * 0.4;
+            }
+
+            function fogFactor(distance) {
+                // Exponential fog for stronger distance dimming
+                const f = Math.exp(-FOG_STRENGTH * distance);
+                return clamp(f, 0.05, 1);
+            }
+
+            function renderScene() {
+                if (!isMapValid(map)) { renderWaitingScreen(); return; }
+                // Sky & floor
+                CTX.fillStyle = SKY; CTX.fillRect(0, 0, W, H / 2); CTX.fillStyle = FLOOR; CTX.fillRect(0, H / 2, W, H / 2);
+                const planeDist = (W / 2) / Math.tan(FOV / 2); const angleStep = FOV / RAYS;
+
+                // Walls pass + zbuffer
+                const z = new Float32Array(RAYS);
+                for (let x = 0; x < RAYS; x++) {
+                    const rayAngle = modPI2(player.ang - FOV / 2 + x * angleStep); const dirX = Math.cos(rayAngle), dirY = Math.sin(rayAngle);
+                    const { dist, side, type, cellX, cellY } = castRay(player.x, player.y, dirX, dirY);
+                    const d = Math.min(dist, MAX_RENDER_DIST); z[x] = d;
+                    const sliceH = Math.min(H, Math.max(2, Math.floor((1 / d) * planeDist)));
+                    const y0 = (H - sliceH) / 2;
+                    let base = WALL_COLORS[type % WALL_COLORS.length] || '#9ca3af';
+                    let factor = fogFactor(d) * (side ? 0.78 : 1.0) * wallDecoFactor(cellX, cellY);
+                    CTX.fillStyle = shade(base, factor);
+                    CTX.fillRect(x, y0, 1, sliceH);
+                    // occasional vertical seam
+                    if (((cellX * 31 + cellY * 17 + x) & 7) === 0) { CTX.fillStyle = `rgba(255,255,255,${0.06 * factor})`; CTX.fillRect(x, y0, 1, sliceH); }
+                }
+
+                // Sprites (monsters, traps). Simple billboards rendered back-to-front using z-buffer
+                renderSprites(z, planeDist);
+
+                // Exit portal halo in view
+                const exitVec = { x: (exitCell.x + 0.5) - player.x, y: (exitCell.y + 0.5) - player.y }; const exitDist = Math.hypot(exitVec.x, exitVec.y);
+                if (exitDist < 6) { const gl = clamp(1 - (exitDist / 6), 0, 1); CTX.fillStyle = `rgba(80,200,255,${0.12 * gl})`; CTX.fillRect(0, 0, W, H); }
+
+                // Minimap
+                if (showMap) drawMinimap();
+            }
+
+            function renderSprites(zBuffer, planeDist) {
+                if (!monsters.size && !traps.size) return;
+
+                // Collect & sort (painter's algorithm: far -> near)
+                const sprites = [];
+                monsters.forEach((m, k) => {
+                    const [sx, sy] = k.split(',').map(Number);
+                    sprites.push({ x: sx + 0.5, y: sy + 0.5, kind: m.kind || 'slime', scale: 0.9 });
+                });
+                traps.forEach(k => {
+                    const [sx, sy] = k.split(',').map(Number);
+                    sprites.push({ x: sx + 0.5, y: sy + 0.5, kind: 'trap', scale: 0.55 });
+                });
+                items.forEach((it, k) => {
+                    const [sx, sy] = k.split(',').map(Number);
+                    sprites.push({ x: sx + 0.5, y: sy + 0.5, kind: it.kind, scale: 0.6 });
+                });
+                specials.forEach((sp, k) => {
+                    const [sx, sy] = k.split(',').map(Number);
+                    sprites.push({ x: sx + 0.5, y: sy + 0.5, kind: sp.kind, scale: 1.0 });
+                });
+
+                if (!sprites.length) return;
+
+                const dirX = Math.cos(player.ang), dirY = Math.sin(player.ang);
+                const planeX = -Math.sin(player.ang), planeY = Math.cos(player.ang);
+                const invDet = 1.0 / (planeX * dirY - dirX * planeY);
+
+                // Slight bob for life + variety without per-pixel work
+                const t = performance.now() * 0.001;
+
+                // sort far -> near
+                sprites.sort((a, b) => {
+                    const da = (a.x - player.x) ** 2 + (a.y - player.y) ** 2;
+                    const db = (b.x - player.x) ** 2 + (b.y - player.y) ** 2;
+                    return db - da;
+                });
+
+                // Draw
+                const BASE_SCALE = { slime: 0.90, trap: 0.55 };
+                for (const s of sprites) {
+                    // camera-space transform
+                    const relX = s.x - player.x;
+                    const relY = s.y - player.y;
+                    const tx = invDet * (dirY * relX - dirX * relY);
+                    const ty = invDet * (-planeY * relX + planeX * relY);
+                    if (ty <= 0.0001) continue; // behind camera
+
+                    // projected size & screen position
+                    const spriteScreenX = Math.floor((W / 2) * (1 + tx / ty));
+                    const scale = BASE_SCALE[s.kind] || 0.8;
+
+                    // tiny vertical bob for monsters only
+                    const t = performance.now() * 0.001;
+                    const bob = s.bob ? Math.sin(t * 2.4 + (s.x * 3.1 + s.y * 2.7)) * s.bob : 0;
+
+                    const spriteH = Math.abs(Math.floor((planeDist / ty) * scale));
+                    const spriteW = spriteH;
+                    let drawStartY = Math.max(0, Math.floor(-spriteH / 2 + H / 2 + spriteH * bob));
+                    let drawEndY = Math.min(H, Math.floor(spriteH / 2 + H / 2 + spriteH * bob));
+                    let drawStartX = Math.max(0, Math.floor(-spriteW / 2 + spriteScreenX));
+                    let drawEndX = Math.min(W, Math.floor(spriteW / 2 + spriteScreenX));
+
+                    if (drawEndX <= drawStartX || drawEndY <= drawStartY) continue;
+
+                    // cheap occlusion test: sample a few columns — if all behind walls, skip draw
+                    const samples = 4;
+                    let visible = false;
+                    for (let i = 0; i < samples; i++) {
+                        const cx = Math.floor(lerp(drawStartX, drawEndX - 1, i / (samples - 1)));
+                        if (ty < zBuffer[cx] - 0.0001) { visible = true; break; }
+                    }
+                    if (!visible) continue;
+
+                    // choose sprite
+                    const img = SPRITES[s.kind] || SPRITES.slime;
+                    const fog = fogFactor(ty);
+                    const oldAlpha = CTX.globalAlpha;
+                    CTX.globalAlpha = Math.max(0.25, Math.min(1, fog + 0.15)) * (s.alpha ?? 1);
+
+                    // draw
+                    const dw = drawEndX - drawStartX;
+                    const dh = drawEndY - drawStartY;
+                    CTX.drawImage(img, 0, 0, img.width, img.height, drawStartX, drawStartY, dw, dh);
+
+                    CTX.globalAlpha = oldAlpha;
+                }
+            }
+
+
+            function hudBarHeight() { const el = document.querySelector('.hudbar'); return el ? Math.ceil(el.getBoundingClientRect().height) : 0; }
+
+            function renderWaitingScreen() {
+                CTX.fillStyle = SKY; CTX.fillRect(0, 0, W, H / 2); CTX.fillStyle = FLOOR; CTX.fillRect(0, H / 2, W, H / 2);
+                CTX.fillStyle = 'rgba(255,255,255,0.85)';
+                CTX.font = '600 24px system-ui, Segoe UI, Roboto, Arial';
+                CTX.textAlign = 'center';
+                CTX.fillText('Open Settings and press Start Game', W / 2, H / 2 - 10);
+                CTX.fillStyle = 'rgba(255,255,255,0.55)';
+                CTX.font = '14px system-ui, Segoe UI, Roboto, Arial';
+                CTX.fillText('Tip: Adjust maze size and FOV first.', W / 2, H / 2 + 16);
+            }
+
+            function drawMinimap() {
+                if (!isMapValid(map)) return;
+
+                const scale = 6;
+                const padX = 12;
+                const padY = 12 + (showHUD ? hudBarHeight() : 0); // avoid covering HUD
+
+                CTX.save();
+                CTX.translate(padX, padY);
+
+                // background
+                CTX.fillStyle = 'rgba(15,23,42,0.72)';
+                CTX.fillRect(-4, -4, mapW * scale + 8, mapH * scale + 8);
+
+                // map tiles
+                for (let y = 0; y < mapH; y++) {
+                    const row = map[y];
+                    if (!row) continue;
+                    for (let x = 0; x < mapW; x++) {
+                        const t = row[x];
+                        CTX.fillStyle = t === 0 ? '#0b1220' : (t === 2 ? '#3abff8' : '#2a3a58');
+                        CTX.fillRect(x * scale, y * scale, scale, scale);
+                    }
+                }
+
+                // traps
+                CTX.fillStyle = 'rgba(248,113,113,0.8)';
+                traps.forEach(k => {
+                    const [x, y] = k.split(',').map(Number);
+                    CTX.fillRect(x * scale + 2, y * scale + 2, 2, 2);
+                });
+
+                // monsters
+                CTX.fillStyle = 'rgba(168,85,247,0.95)';
+                monsters.forEach((_, k) => {
+                    const [x, y] = k.split(',').map(Number);
+                    CTX.fillRect(x * scale + 1, y * scale + 1, 4, 4);
+                });
+
+                // 💊 potions
+                CTX.fillStyle = 'rgba(253,224,71,0.95)'; // bright yellow
+                items.forEach((it, k) => {
+                    if (it.kind === 'potion') {
+                        const [x, y] = k.split(',').map(Number);
+                        CTX.beginPath();
+                        CTX.arc(x * scale + scale / 2, y * scale + scale / 2, 2, 0, Math.PI * 2);
+                        CTX.fill();
+                    }
+                });
+
+                // 🌀 exit portal
+                specials.forEach((sp, k) => {
+                    if (sp.kind === 'exit') {
+                        const [x, y] = k.split(',').map(Number);
+                        CTX.strokeStyle = '#38bdf8'; // cyan border
+                        CTX.lineWidth = 1.2;
+                        CTX.beginPath();
+                        CTX.arc(x * scale + scale / 2, y * scale + scale / 2, 2.5, 0, Math.PI * 2);
+                        CTX.stroke();
+                    }
+                });
+
+                // player
+                CTX.fillStyle = '#f8fafc';
+                CTX.beginPath();
+                CTX.arc(player.x * scale, player.y * scale, 2.2, 0, Math.PI * 2);
+                CTX.fill();
+
+                // facing direction
+                CTX.strokeStyle = '#93c5fd';
+                CTX.lineWidth = 1;
+                CTX.beginPath();
+                CTX.moveTo(player.x * scale, player.y * scale);
+                CTX.lineTo(
+                    player.x * scale + Math.cos(player.ang) * 6,
+                    player.y * scale + Math.sin(player.ang) * 6
+                );
+                CTX.stroke();
+
+                CTX.restore();
+            }
+
+
+            // ====== HUD ======
+            const hpFill = document.getElementById('hpFill');
+            const hpText = document.getElementById('hpText');
+            const movesEl = document.getElementById('moves');
+            const exploredEl = document.getElementById('explored');
+            const timeEl = document.getElementById('time');
+            const mazeSizeEl = document.getElementById('mazeSize');
+            const fovValEl = document.getElementById('fovVal');
+            function updateHUD() {
+                hpFill.style.width = `${clamp(hp, 0, 100)}%`; hpText.textContent = `${clamp(hp, 0, 100)}`;
+                hpFill.style.background = hp <= 25 ? `linear-gradient(90deg,var(--danger),#ef4444)` : `linear-gradient(90deg,var(--hp),#10b981)`;
+                movesEl.textContent = `${moves}`; exploredEl.textContent = `${explored.size}`;
+                const secs = Math.floor((performance.now() - startTimeMs) / 1000); const m = Math.floor(secs / 60); const s = secs % 60; timeEl.textContent = `${m}:${String(s).padStart(2, '0')}`;
+                mazeSizeEl.textContent = `${mapW}×${mapH}`; fovValEl.textContent = `${degFromRad(FOV)}°`;
+            }
+            function setFOV(deg, toast = true) { const d = Math.round(clamp(deg, 50, 120)); FOV = (d * Math.PI) / 180; fovValEl.textContent = `${d}°`; if (toast) flash(`FOV set to <strong>${d}°</strong>`); if (fovRange) { fovRange.value = String(d); fovLabel.textContent = `${d}°`; } }
+            function degFromRad(rad) { return Math.round(rad * 180 / Math.PI); }
+
+            // ====== GAME LOGIC: traps & monsters ======
+            function applyCellEffects(cx, cy) {
+                const k = keyXY(cx, cy);
+
+                if (traps.has(k)) {
+                    traps.delete(k);
+                    hp = Math.max(0, hp - 15);
+                    flash('Ouch! You stepped on a trap (−15 HP)');
+                }
+
+                if (monsters.has(k)) {
+                    const m = monsters.get(k);
+                    monsters.delete(k);
+                    hp = Math.max(0, hp - 10);
+                    flash(`You fought a ${m?.kind || 'slime'} (−${m?.dmg ?? 10} HP).`);
+                }
+
+                if (items.has(k)) {
+                    const it = items.get(k); items.delete(k);
+                    if (it.kind === 'potion') {
+                        hp = Math.min(100, hp + it.value);
+                        flash(`You drank a potion (+${it.value} HP)`);
+                    }
+                }
+
+                if (specials.has(k)) {
+                    const sp = specials.get(k);
+                    if (sp.kind === 'exit') {
+                        flash('You reached the exit portal! Generating new maze…');
+                        setTimeout(newGame, 600);
+                    }
+                }
+
+                if (hp <= 0) {
+                    flash('You collapsed in the dungeon. Restarting…');
+                    setTimeout(newGame, 800);
+                }
+            }
+
+            function onCellArrival() {
+                const cx = Math.floor(player.x), cy = Math.floor(player.y);
+                explored.add(keyXY(cx, cy));
+                applyCellEffects(cx, cy);
+                if (cx === exitCell.x && cy === exitCell.y) { flash('You found the exit! Generating a new maze…'); setTimeout(newGame, 600); }
+
+                if (MAP_FOW_MODE === 2) {
+                    const neigh = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+                    for (const [dx, dy] of neigh) {
+                        const nx = cx + dx, ny = cy + dy;
+                        if (nx > 0 && ny > 0 && nx < mapW - 1 && ny < mapH - 1 && map[ny][nx] === 0) {
+                            explored.add(keyXY(nx, ny)); // “peek” adjacent corridors
+                        }
+                    }
+                }
+            }
+
+            // ====== SELF-TESTS ======
+            function runSelfTests(showToast) {
+                const t0 = performance.now();
+                const results = [];
+                const log = (name, pass, info) => { results.push({ name, pass, info }); };
+
+                try { let threw = false; try { generateMaze(10, 9); } catch (e) { threw = true; } log('generateMaze rejects even width', threw); } catch (e) { log('generateMaze rejects even width', false, e.message); }
+                try { const { grid, exit } = generateMaze(21, 21); const ok = grid[1][1] === 0 && exit.x > 0 && exit.y > 0 && grid[exit.y][exit.x] === 0; log('Start & exit open', ok); } catch (e) { log('Start & exit open', false, e.message); }
+                try { const { grid, exit } = generateMaze(21, 21); const reachable = bfs({ x: 1, y: 1 }, exit, grid); log('Exit reachable from start', reachable); } catch (e) { log('Exit reachable from start', false, e.message); }
+                try { const { grid } = generateMaze(21, 21); const px = 1.5, py = 1.5, dirX = 1, dirY = 0; const { dist } = castRay(px, py, dirX, dirY); const ok = Number.isFinite(dist) && dist > 0; log('Raycast finite distance', ok); } catch (e) { log('Raycast finite distance', false, e.message); }
+                try { setFOV(85, false); log('FOV setter clamps & updates', degFromRad(FOV) === 85); } catch (e) { log('FOV setter clamps & updates', false, e.message); }
+
+                // Additional tests
+                try { setFOV(30, false); log('FOV clamps low bound (>=50°)', degFromRad(FOV) === 50); } catch (e) { log('FOV clamps low bound (>=50°)', false, e.message); }
+                try { setFOV(200, false); log('FOV clamps high bound (<=120°)', degFromRad(FOV) === 120); } catch (e) { log('FOV clamps high bound (<=120°)', false, e.message); }
+                try { const v = degFromRad((Math.PI / 180) * 85); log('degFromRad basic', v === 85); } catch (e) { log('degFromRad basic', false, e.message); }
+                try { sizeInput.value = '20'; applySettings(); log('applySettings enforces odd maze size', (MAZE_SIZE % 2) === 1 && MAZE_SIZE >= 11 && MAZE_SIZE <= 51); } catch (e) { log('applySettings enforces odd maze size', false, e.message); }
+                try { let ok = true; for (let i = 0; i < 5; i++) { const { grid } = generateMaze(11, 11); const open = grid.flat().filter(c => c === 0).length; if (open <= 0) ok = false; } log('generateMaze creates open tiles', ok); } catch (e) { log('generateMaze creates open tiles', false, e.message); }
+                try { let threw = false; try { safeTogglePointerLock(); } catch (e) { threw = true; } log('safeTogglePointerLock does not throw', !threw); } catch (e) { log('safeTogglePointerLock does not throw', false, e.message); }
+                try { log('Sandbox flag is boolean', typeof SANDBOXED === 'boolean'); } catch (e) { log('Sandbox flag is boolean', false, e.message); }
+                try { log('Pointer‑lock disabled when sandboxed', (!SANDBOXED) || (pointerLockBlocked === true)); } catch (e) { log('Pointer‑lock disabled when sandboxed', false, e.message); }
+                try { const backup = map; map = []; let ok = true; try { renderScene(); } catch (e) { ok = false; } map = backup; log('renderScene tolerates empty map', ok); } catch (e) { log('renderScene tolerates empty map', false, e.message); }
+                try { const { grid } = generateMaze(13, 13); const dims = Array.isArray(grid) && grid.length === 13 && grid.every(r => Array.isArray(r) && r.length === 13); const vals = grid.flat().every(v => v === 0 || v === 1); log('generateMaze dimensions & values valid', dims && vals); } catch (e) { log('generateMaze dimensions & values valid', false, e.message); }
+                try { // entities placement is valid
+                    const { grid, exit } = generateMaze(15, 15); map = grid; mapW = 15; mapH = 15; exitCell = exit; placeEntities();
+                    let ok = true; traps.forEach(k => { const [x, y] = k.split(',').map(Number); if (grid[y][x] !== 0) ok = false; });
+                    monsters.forEach((v, k) => { const [x, y] = k.split(',').map(Number); if (grid[y][x] !== 0) ok = false; });
+                    log('Entities placed on floor tiles', ok);
+                } catch (e) { log('Entities placed on floor tiles', false, e.message); }
+                try { // cell effects reduce HP but not below 0
+                    const was = hp; hp = 5; applyCellEffects(2, 2); traps.add('2,2'); applyCellEffects(2, 2); log('Trap damage clamps at 0', hp === 0); hp = was;
+                } catch (e) { log('Trap damage clamps at 0', false, e.message); }
+                try { // HUD toggle safe
+                    const before = showHUD; toggleHUD(); toggleHUD(); log('HUD toggle flips and restores', showHUD === before);
+                } catch (e) { log('HUD toggle flips and restores', false, e.message); }
+                try { // NEW: sprite renderer stability
+                    const backupMap = map, backupW = mapW, backupH = mapH; const { grid, exit } = generateMaze(11, 11); map = grid; mapW = 11; mapH = 11; exitCell = exit; traps.clear(); monsters.clear(); traps.add('3,3'); monsters.set('4,4', { hp: 10 });
+                    let ok = true; try { renderScene(); } catch (e) { ok = false; } map = backupMap; mapW = backupW; mapH = backupH; log('Sprite rendering does not throw', ok);
+                } catch (e) { log('Sprite rendering does not throw', false, e.message); }
+
+                const passed = results.every(r => r.pass); const ms = Math.round(performance.now() - t0);
+                console.groupCollapsed('%cSelf-tests', 'color:#60a5fa'); console.table(results); console.groupEnd();
+                if (showToast) flash(passed ? `Self‑tests passed in ${ms}ms` : `Self‑tests failed (${results.filter(r => !r.pass).length} failing)`);
+                return { passed, results, ms };
+            }
+
+            function bfs(start, goal, grid) {
+                const H = grid.length, W = grid[0].length; const key = (x, y) => `${x},${y}`; const q = [{ x: start.x, y: start.y }]; const vis = new Set([key(start.x, start.y)]); const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+                while (q.length) { const { x, y } = q.shift(); if (x === goal.x && y === goal.y) return true; for (const [dx, dy] of dirs) { const nx = x + dx, ny = y + dy; if (nx > 0 && ny > 0 && nx < W - 1 && ny < H - 1 && grid[ny][nx] === 0) { const k = key(nx, ny); if (!vis.has(k)) { vis.add(k); q.push({ x: nx, y: ny }); } } } }
+                return false;
+            }
+
+            // ====== GAME LOOP ======
+            let last = performance.now(), frames = 0, fps = 0, lastFps = performance.now();
+            function step(ts) {
+                if (ts - lastRender < FRAME_TIME) {
+                    requestAnimationFrame(step);
+                    return;
+                }
+                const dt = ts - lastRender || FRAME_TIME; // ms
+                lastRender = ts;
+                frames++;
+                if (ts - lastFps > 500) {
+                    fps = Math.round(1000 / dt); // simple
+                    lastFps = ts;
+                    document.getElementById('fps').textContent = `FPS: ${fps}`;
+                }
+
+                const t = ts;
+                if (t - lastFps > 500) {
+                    fps = Math.round((frames * 1000) / (t - lastFps));
+                    frames = 0; lastFps = t; document.getElementById('fps').textContent = `FPS: ${fps}`;
+
+                }
+                if (moving) { const p = clamp((t - moving.t0) / MOVE_TIME, 0, 1); player.x = lerp(moving.from.x, moving.to.x, p); player.y = lerp(moving.from.y, moving.to.y, p); if (p >= 1) { moving = null; onCellArrival(); } }
+                if (turning) { const p = clamp((t - turning.t0) / TURN_TIME, 0, 1); let da = turning.to - turning.from; if (da > Math.PI) da -= Math.PI * 2; if (da < -Math.PI) da += Math.PI * 2; player.ang = modPI2(turning.from + da * p); if (p >= 1) { turning = null; } }
+                // simple monster wiggle: occasionally move a monster one step to a free neighbor
+                if (Math.random() < 0.02 && monsters.size) {
+                    const [k, m] = monsters.entries().next().value || [];
+                    if (k) {
+                        const [x, y] = k.split(',').map(Number); const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]]; const [dx, dy] = choose(dirs);
+                        const nx = x + dx, ny = y + dy; const nk = keyXY(nx, ny);
+                        if (nx > 0 && ny > 0 && nx < mapW - 1 && ny < mapH - 1 && map[ny][nx] === 0 && !monsters.has(nk) && keyXY(Math.floor(player.x), Math.floor(player.y)) !== nk) {
+                            monsters.delete(k); monsters.set(nk, m);
+                        }
+                    }
+                }
+                buildSpriteCache();
+                scanProximity();
+                renderScene();
+                updateHUD();
+                requestAnimationFrame(step);
+            }
+
+            // ====== UI helpers ======
+            let toastTimer = null;
+            function flash(html) {
+                const plain = html.replace(/<[^>]*>/g, '');
+                pushLog(plain);
+
+                const el = document.getElementById('toast');
+                el.innerHTML = html;
+                el.style.display = 'block';
+                el.style.opacity = '1';
+                if (toastTimer) clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => {
+                    el.style.transition = 'opacity .4s';
+                    el.style.opacity = '0';
+                    setTimeout(() => {
+                        el.style.display = 'none';
+                        el.style.transition = '';
+                    }, 420);
+                }, 1500);
+            }
+
+            // Boot
+            if (SANDBOXED) { pointerLockBlocked = true; disableMouseLookUI('Blocked by sandbox (no allow-pointer-lock)'); }
+            runSelfTests(false); // quiet
+            updateHUD();
+            requestAnimationFrame(step);
+
+            // Help collapse
+            document.getElementById('helpToggle')?.addEventListener('click', () => {
+                const hp = document.getElementById('helpPanel');
+                hp.classList.toggle('collapsed');
+            });
+        })();
+    </script>
+</body>
+
+</html>

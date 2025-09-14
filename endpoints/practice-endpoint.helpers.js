@@ -20,6 +20,7 @@ const { handleBooksGraphQLRequest } = require("./practice/books-graphql-handlers
 const aiChat = require("./practice/nova/nova-chat-handlers");
 const testagram = require("./practice/testagram/testagram-handlers");
 const chirper = require("./practice/chirper/chirper-handlers");
+const askioChat = require("./practice/askio/askio-chat-handlers");
 const {
   getDirectoryContents,
   getFileDetails,
@@ -30,6 +31,7 @@ const {
 const hotelHandlers = require("./practice/hotel-handlers");
 const { orderV1, restaurantV1, itemV1, reviewV1 } = require("./practice/order-handlers");
 const { loanProcessingV1 } = require("./practice/loan-processing-handlers");
+const chibi = require("./practice/chibi/chibi-handlers");
 
 function isIdValid(id) {
   return id !== undefined && id !== "";
@@ -507,6 +509,49 @@ function handlePractice(req, res) {
       }
     }
 
+    // Askio Chat endpoints (separate module, independent from Nova)
+    if (req.url.includes("/api/practice/v1/askio-chat")) {
+      let endpoint = req.url.split("/api/practice/v1/askio-chat/")[1];
+      if (endpoint && endpoint.includes("?")) {
+        endpoint = endpoint.split("?")[0];
+      }
+      logDebug("--- --- handlePractice:askioChat", { endpoint, method: req.method });
+      switch (true) {
+        case req.method === "POST" && endpoint === "message":
+          return askioChat.handleMessage(req, res);
+        case req.method === "GET" && endpoint === "history":
+          return askioChat.getConversationHistory(req, res);
+        case req.method === "POST" && endpoint === "clear":
+          return askioChat.clearConversation(req, res);
+        case req.method === "POST" && endpoint === "rename":
+          return askioChat.renameConversation(req, res);
+        case req.method === "GET" && endpoint === "list":
+          return askioChat.listConversations(req, res);
+        case req.method === "GET" && endpoint === "stats":
+          return askioChat.getStatistics(req, res);
+        case req.method === "GET" && endpoint === "session":
+          return askioChat.initSession(req, res);
+        case req.method === "GET" && endpoint === "knowledge":
+          return askioChat.getUserKnowledge(req, res);
+        case req.method === "POST" && endpoint === "clear-memory":
+          return askioChat.clearUserMemory(req, res);
+        case req.method === "POST" && endpoint === "clear-all": {
+          const userId = req.body && req.body.userId;
+          if (!userId) {
+            return res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Missing userId"));
+          }
+          const result = askioChat.clearAllConversations(userId);
+          if (result) {
+            return res.status(HTTP_OK).json({ success: true });
+          } else {
+            return res.status(HTTP_OK).json({ success: false, message: "No conversations found for user" });
+          }
+        }
+        default:
+          return res.status(HTTP_NOT_FOUND).send(formatErrorResponse(`Not Found! ${req.url}`));
+      }
+    }
+
     // Weather App v1 endpoints
     if (req.url.includes("/api/practice/v1/weather")) {
       const url = req.url; // Weather data endpoints
@@ -525,7 +570,7 @@ function handlePractice(req, res) {
 
       if (req.method === "GET" && url.includes("/api/practice/v1/weather/event")) {
         // Check if this is the get single event by ID endpoint
-        const eventIdMatch = url.match(/\/api\/practice\/v1\/weather\/event\/([^\/]+)$/);
+        const eventIdMatch = url.match(/\/api\/practice\/v1\/weather\/event\/([^/]+)$/);
         if (eventIdMatch) {
           const id = eventIdMatch[1];
           req.params = { id };
@@ -537,7 +582,7 @@ function handlePractice(req, res) {
       }
 
       // Fixed PUT endpoint to extract ID from URL instead of body
-      const updateEventIdMatch = url.match(/\/api\/practice\/v1\/weather\/event\/([^\/]+)$/);
+      const updateEventIdMatch = url.match(/\/api\/practice\/v1\/weather\/event\/([^/]+)$/);
       if (req.method === "PUT" && updateEventIdMatch) {
         const id = updateEventIdMatch[1];
         req.params = { id };
@@ -549,7 +594,7 @@ function handlePractice(req, res) {
         return applyMiddleware([weatherAppV1.authenticate], weatherAppV1.updateWeatherEvent)(req, res);
       }
 
-      const deleteEventIdMatch = url.match(/\/api\/practice\/v1\/weather\/event\/([^\/]+)$/);
+      const deleteEventIdMatch = url.match(/\/api\/practice\/v1\/weather\/event\/([^/]+)$/);
       if (req.method === "DELETE" && deleteEventIdMatch) {
         const id = deleteEventIdMatch[1];
         req.params = { id };
@@ -1023,6 +1068,35 @@ function handlePractice(req, res) {
       return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Loan processing endpoint not found"));
     }
 
+    // --- New: Chibi v1 endpoints ---
+    if (req.url.includes("/api/practice/chibi/v1/")) {
+      const base = "/api/practice/chibi/v1/";
+      let endpoint = req.url.split(base)[1];
+      if (endpoint && endpoint.includes("?")) endpoint = endpoint.split("?")[0];
+
+      switch (true) {
+        case req.method === "GET" && endpoint === "info":
+          return chibi.info(req, res);
+        case req.method === "POST" && endpoint === "solve":
+          return chibi.solve(req, res);
+        case req.method === "GET" && endpoint === "hint":
+          return chibi.getHint(req, res);
+        case req.method === "POST" && endpoint === "teach/save":
+          return chibi.teachSave(req, res);
+        case req.method === "POST" && endpoint === "teach/clear":
+          return chibi.teachClear(req, res);
+        case req.method === "GET" && endpoint === "teach/list":
+          return chibi.listMethods(req, res);
+        case req.method === "POST" && endpoint === "check":
+          return chibi.checkAnswer(req, res);
+        case req.method === "GET" && endpoint === "sample":
+          return chibi.sample(req, res);
+        case req.method === "GET" && endpoint === "detect":
+          return chibi.detect(req, res);
+        default:
+          return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
+      }
+    }
     return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
   }
 }

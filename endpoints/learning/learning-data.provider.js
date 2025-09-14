@@ -31,6 +31,24 @@ function getBackupData() {
   return dataProxy.getAllData();
 }
 
+function resetDataProxy() {
+  DataProxy.resetInstance();
+  // Reinitialize with fresh data
+  const newDataProxy = new DataProxy();
+  // Force initialization of memory data
+  newDataProxy.getMemoryData();
+  // Update the global data reference
+  Object.assign(data, newDataProxy.getData());
+  return newDataProxy;
+}
+
+function clearAndReinitializeData() {
+  dataProxy.clearAndReinitialize();
+  // Update the global data reference
+  Object.assign(data, dataProxy.getData());
+  return dataProxy;
+}
+
 function isInactive(obj) {
   return obj?._inactive === true;
 }
@@ -130,7 +148,8 @@ function getFundsHistory(userId) {
 function updateUserFunds(userId, newAmount) {
   const user = getUserById(userId);
   if (user) {
-    user.funds = newAmount;
+    const oldAmount = user.funds;
+    user.funds = oldAmount + newAmount;
     return true;
   }
   return false;
@@ -363,11 +382,11 @@ function roundSecondsToHours(seconds) {
 function recalculateStudentsCount() {
   data.courses.forEach((course) => {
     course.students =
-      data.userEnrollments.filter((e) => areIdsEqual(e.courseId, course.id) && !isInactive(e)).length || 0;
+      data.userEnrollments.filter((e) => areIdsEqual(e?.courseId, course.id) && !isInactive(e)).length || 0;
   });
 
   [...data.courses].forEach((course) => {
-    replaceCourse(course.id, course);
+    replaceCourse(course?.id, course);
   });
 }
 
@@ -537,6 +556,8 @@ module.exports = {
   restoreDefaultDatabase,
   restoreDatabase,
   getBackupData,
+  resetDataProxy,
+  clearAndReinitializeData,
   getRoleRequests,
   getUserRoleRequests,
   addRoleRequest,

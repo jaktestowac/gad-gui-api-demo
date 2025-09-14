@@ -1,10 +1,10 @@
 # Wprowadzenie
 
-
 <p align="center">
   <img src="https://github.com/jaktestowac/gad-gui-api-demo/assets/72373858/eadec2e8-229c-414f-81da-9ec4601b0972" alt="GAD" width="300" height="300">
 </p>
 
+> [!TIP]
 > 💡 Wybierz swój język:
 >
 > - 🇬🇧 [English](./README.md)
@@ -21,6 +21,15 @@ Aplikacja zawiera funkcje takie jak prosta logika, statystyki, wykresy, gry oraz
 **🦎 GAD** jest idealny do nauki automatyzacji testów, doskonalenia technik QA oraz praktykowania scenariuszy spotykanych w różnorodnych, **rzeczywistych projektach** z różnorodnymi scenariuszami, które odwzorowują rzeczywiste projekty.
 
 P.S. Dodatkowo, aplikacja ma pewne **poważne wady architektury** - ciekawe czy je zauważysz?😉
+
+> [!IMPORTANT]  
+> Chcesz szybko uruchomić aplikację?
+>
+> - sklonuj lub pobierz repozytorium
+> - uruchom `npm i`
+> - uruchom `npm run start`
+> - otwórz [http://localhost:3000](http://localhost:3000) w przeglądarce
+> - ciesz się działającą aplikacją **🦎 GAD**!
 
 # Spis treści
 
@@ -162,7 +171,8 @@ Kroki:
 | PORT=3001    | Uruchom na wybranym porcie. GAD działa domyślnie na porcie `3000`.                                                                                  |
 | DB="db_name" | Użyj wybranego pliku bazy danych. GAD używa `db.json` jako domyślnej bazy danych. Przykład (dla PowerShell): `$env:DB="db-base-big"; npm run start` |
 
-⚠️ Ostrzeżenie: Wszystkie zmienne środowiskowe ustawione w terminalu będą używane przez aplikację. Jeśli chcesz uruchomić aplikację bez żadnych opcji, upewnij się, że wyczyściłeś zmienne środowiskowe.
+> [!WARNING]
+> ⚠️ Ostrzeżenie: Wszystkie zmienne środowiskowe ustawione w terminalu będą używane przez aplikację. Jeśli chcesz uruchomić aplikację bez żadnych opcji, upewnij się, że wyczyściłeś zmienne środowiskowe.
 
 #### Uruchamianie z CLI
 
@@ -233,11 +243,11 @@ docker run -p 3000:3000 -d jaktestowac/gad:2.5.5
 Aplikacja powinna działać pod adresem http://localhost:3000/
 
 Obrazy są dostępne na:
-[🐋 hub.docker.com/repository/docker/jaktestowac](https://hub.docker.com/repository/docker/jaktestowac/gad/general)
+[🐋 https://hub.docker.com/r/jaktestowac/gad](https://hub.docker.com/r/jaktestowac/gad)
 
 ## Wdrożenie na **Glitch**
 
-> **⚠️ Ostrzeżenie: Ta metoda wdrażania jest przestarzała i nie jest już zalecana.**
+> [!WARNING] > **⚠️ Ostrzeżenie: Ta metoda wdrażania jest przestarzała i nie jest już zalecana.**
 >
 > Glitch zmienił swoje [zasady platformy](https://blog.glitch.com/post/changes-are-coming-to-glitch/) i ta metoda wdrażania może już nie działać zgodnie z oczekiwaniami. Proszę użyć jednej z innych metod wdrażania.
 
@@ -285,20 +295,22 @@ Zapraszamy do kontaktu:
 
 Zebraliśmy kolekcję zasobów, które pomogą ci nauczyć się i opanować Playwright, zarówno po polsku, jak i po angielsku. Niezależnie od tego, czy jesteś początkującym, czy zaawansowanym użytkownikiem, te zasoby pomogą ci udoskonalić umiejętności i wiedzę.
 
-### **🇵🇱 Zasoby polskie**
+## 🇵🇱 Polish Resources
 
-- [Darmowe zasoby Playwright](https://jaktestowac.pl/darmowy-playwright/) - Kompleksowe materiały edukacyjne po polsku
-- [Podstawy Playwright](https://www.youtube.com/playlist?list=PLfKhn9AcZ-cD2TCB__K7NP5XARaCzZYn7) - Seria YouTube (po polsku)
-- [Elementy Playwright](https://www.youtube.com/playlist?list=PLfKhn9AcZ-cAcpd-XN4pKeo-l4YK35FDA) - Zaawansowane koncepcje (po polsku)
-- [Playwright MCP](https://www.youtube.com/playlist?list=PLfKhn9AcZ-cCqD34AG5YRejujaBqCBgl4) - Kurs MCP (po polsku)
-- [Społeczność Discord](https://discord.gg/mUAqQ7FUaZ) - Pierwsza polska społeczność Playwright!
-- [Playwright Info](https://playwright.info/) - pierwszy i jedyny polski blog o Playwright
+- [TypeScript for Testers - Ekspresowe Wprowadzenie](https://jaktestowac.pl/tsx/) - Darmowy (4h+) kurs o TypeScript dla testerów
+- [JavaScript and TypeScript for Testers](https://jaktestowac.pl/js-ts/) - Kompleksowy (13h+) kurs o JavaScript i TypeScript dla testerów, z praktycznymi przykładami i ćwiczeniami
+- [Professional Test Automation with Playwright](https://jaktestowac.pl/playwright/) - Kompleksowy (100h+) kurs na temat Playwright, automatyzacji testów, CI/CD i architektury testów
+- [Back-end Test Automation](https://jaktestowac.pl/api/) - Kompleksowy (45h+) kurs na temat automatyzacji testów back-endowych z Postman, Mocha, Chai i Supertest
+- [Free Playwright Resources](https://jaktestowac.pl/darmowy-playwright/) - Kompleksowe i darmowe materiały edukacyjne po polsku
+- [Playwright Basics](https://www.youtube.com/playlist?list=PLfKhn9AcZ-cD2TCB__K7NP5XARaCzZYn7) - Seria YouTube
+- [Playwright Elements](https://www.youtube.com/playlist?list=PLfKhn9AcZ-cAcpd-XN4pKeo-l4YK35FDA) - Zaawansowane koncepcje
+- [Playwright MCP](https://www.youtube.com/playlist?list=PLfKhn9AcZ-cCqD34AG5YRejujaBqCBgl4) - Kurs o Playwright MCP i AI
+- [Discord Community](https://discord.gg/mUAqQ7FUaZ) - Pierwsza polska społeczność Playwright
+- [Playwright Info](https://playwright.info/) - Pierwszy i jedyny polski blog o Playwright
 
-### **🇬🇧 Zasoby angielskie**
+## 🇬🇧 English Resources
 
-- [Rozszerzenia VS Code](https://marketplace.visualstudio.com/publishers/jaktestowac-pl) - Nasze darmowe wtyczki Playwright
-- [Dokumentacja Playwright](https://playwright.dev/docs/intro) - Oficjalna dokumentacja
-- [Playwright GitHub](https://github.com/microsoft/playwright) - Kod źródłowy i problemy
+- [VS Code Extensions](https://marketplace.visualstudio.com/publishers/jaktestowac-pl) - Nasze darmowe wtyczki Playwright do VS Code
 
 _PS. Aby uzyskać więcej zasobów i aktualizacji, śledź nas na naszej [stronie internetowej](https://jaktestowac.pl) i [GitHub](https://github.com/jaktestowac)._
 

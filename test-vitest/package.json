@@ -1,0 +1,27 @@
+{
+  "name": "learning-vitest-tests",
+  "version": "1.0.0",
+  "description": "Vitest tests for Learning endpoints",
+  "type": "module",
+  "scripts": {
+    "test": "vitest",
+    "test:run": "vitest run",
+    "cleanup": "node -e \"import('./tests/cleanup.js')\"",
+    "start-server": "node start-server.js",
+    "test:port-3003": "cross-env TEST_SERVER_PORT=3003 npm test",
+    "test:port-3004": "cross-env TEST_SERVER_PORT=3004 npm test",
+    "test:debug": "cross-env TEST_SERVER_DEBUG=true npm test",
+    "test:custom-host": "cross-env TEST_SERVER_HOST=127.0.0.1 TEST_SERVER_PORT=3003 npm test",
+    "start-server:debug": "cross-env TEST_SERVER_DEBUG=true npm run start-server",
+    "start-server:port-3003": "cross-env TEST_SERVER_PORT=3003 npm run start-server"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^1.0.0",
+    "@vitest/ui": "^1.0.0",
+    "chai": "^4.3.8",
+    "cross-env": "^7.0.3",
+    "supertest": "^6.3.3",
+    "vitest": "^1.0.0",
+    "dotenv": "^17.2.1"
+  }
+}
