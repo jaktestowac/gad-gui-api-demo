@@ -420,6 +420,57 @@ app.listen(PORT, () => {
   console.log(`- POST /api/templates: Create template`);
   console.log(`- PUT /api/templates/:id: Update template`);
   console.log(`- DELETE /api/templates/:id: Delete template`);
+  console.log(`- GET /api/openapi: List all API endpoints`);
 });
 
 app.use("/api", apiRouter);
+
+/* ===== Simplified OpenAPI (endpoints listing) ===== */
+function listEndpointsFromRouter(router) {
+  const eps = [];
+  const stack = router && router.stack ? router.stack : [];
+  stack.forEach((layer) => {
+    if (layer.route && layer.route.path) {
+      const path = layer.route.path;
+      const methods = Object.keys(layer.route.methods || {}).filter((m) => layer.route.methods[m]);
+      methods.forEach((m) => eps.push({ method: m.toUpperCase(), path }));
+    }
+  });
+  return eps;
+}
+
+apiRouter.get("/openapi", (_req, res) => {
+  const endpoints = listEndpointsFromRouter(apiRouter)
+    .filter((e) => typeof e.path === "string")
+    .map((e) => ({ method: e.method, path: `/api${e.path}` }));
+  const paths = endpoints.reduce((acc, e) => {
+    acc[e.path] = acc[e.path] || [];
+    if (!acc[e.path].includes(e.method)) acc[e.path].push(e.method);
+    return acc;
+  }, {});
+  // Add example bodies
+  const enhancedEndpoints = endpoints.map((ep) => {
+    let exampleBody = null;
+    if (ep.method === "POST" && ep.path === "/api/jobs") {
+      exampleBody = {
+        templateId: "welcome-email",
+        params: { user: { name: "John" }, org: { name: "GAD" } },
+      };
+    } else if (ep.method === "PUT" && ep.path.startsWith("/api/templates/")) {
+      exampleBody = {
+        description: "Updated template",
+        template: "Hello {{user.name}}!",
+        sampleParams: { user: { name: "Jane" } },
+      };
+    } else if (ep.method === "POST" && ep.path === "/api/templates") {
+      exampleBody = {
+        id: "new-template",
+        description: "A new template",
+        template: "Welcome {{name}}!",
+        sampleParams: { name: "Alice" },
+      };
+    }
+    return { ...ep, exampleBody };
+  });
+  res.json({ name: "MiniTemplate", basePath: "/api", endpoints: enhancedEndpoints, paths });
+});

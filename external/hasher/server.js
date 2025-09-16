@@ -161,6 +161,44 @@ app.get("/api/history", (req, res) => {
   res.json({ history: historyJobs });
 });
 
+// Simplified OpenAPI-like endpoint listing
+function listEndpoints(app) {
+  const endpoints = [];
+  if (!app || !app._router || !app._router.stack) return endpoints;
+  app._router.stack.forEach((layer) => {
+    if (layer.route && layer.route.path) {
+      const path = layer.route.path;
+      const methods = Object.keys(layer.route.methods || {}).filter((m) => layer.route.methods[m]);
+      methods.forEach((m) => endpoints.push({ method: m.toUpperCase(), path }));
+    }
+  });
+  // Keep only /api/* endpoints for clarity
+  return endpoints.filter((e) => typeof e.path === "string" && e.path.startsWith("/api"));
+}
+
+app.get("/api/openapi", (_req, res) => {
+  const endpoints = listEndpoints(app);
+  const paths = endpoints.reduce((acc, e) => {
+    acc[e.path] = acc[e.path] || [];
+    if (!acc[e.path].includes(e.method)) acc[e.path].push(e.method);
+    return acc;
+  }, {});
+  // Add example bodies for relevant endpoints
+  const enhancedEndpoints = endpoints.map((ep) => {
+    let exampleBody = null;
+    if (ep.method === "POST" && ep.path === "/api/jobs") {
+      exampleBody = { algorithm: "sha256", input: "hello world" };
+    }
+    return { ...ep, exampleBody };
+  });
+  res.json({
+    name: "Hasher",
+    basePath: "/api",
+    endpoints: enhancedEndpoints,
+    paths,
+  });
+});
+
 const port = process.env.PORT || 3002;
 app.listen(port, () => {
   console.log(`Hasher service running on port ${port}`);
@@ -177,4 +215,5 @@ app.listen(port, () => {
   console.log(`- GET /api/health: Check service health`);
   console.log(`- GET /api/capabilities: Get service capabilities`);
   console.log(`- GET /api/status: Get service status`);
+  console.log(`- GET /api/openapi: List all API endpoints`);
 });

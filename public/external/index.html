@@ -206,6 +206,56 @@
         .close:hover {
             color: #000;
         }
+
+        /* Endpoints Modal specific */
+        .endpoint-list {
+            max-height: 260px;
+            overflow: auto;
+            background: #f8f9fa;
+            border: 1px solid #eee;
+            padding: 8px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 0.8em;
+        }
+
+        .endpoint-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            margin-right: 6px;
+            border-radius: 3px;
+            color: #fff;
+            font-size: 0.7em;
+        }
+
+        .method-get {
+            background: #28a745;
+        }
+
+        .method-post {
+            background: #007bff;
+        }
+
+        .method-put {
+            background: #6f42c1;
+        }
+
+        .method-patch {
+            background: #17a2b8;
+        }
+
+        .method-delete {
+            background: #dc3545;
+        }
+
+        .endpoint-row {
+            cursor: pointer;
+            padding: 2px 0;
+        }
+
+        .endpoint-row:hover {
+            background: #e9ecef;
+        }
     </style>
 </head>
 
@@ -262,10 +312,84 @@
                 </div>
             </div>
         </div>
+
+        <!-- Endpoints Modal -->
+        <div id="endpointsModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="endpointsModalTitle">Available Endpoints</h3>
+                    <span class="close" onclick="closeEndpointsModal()">&times;</span>
+                </div>
+                <div id="endpointsModalBody">
+                    <div class="loading" id="endpointsLoading">Loading endpoints...</div>
+                    <div id="endpointsList" class="endpoint-list"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
         const baseUrl = 'http://localhost:3000';
+
+        // Common health endpoints to probe
+        const HEALTH_ENDPOINTS = ['health'];
+
+        // Fetch and merge services (server + locally stored), removing duplicates by name
+        async function getAllServices() {
+            const res = await fetch(baseUrl + '/api/external/list');
+            const data = await res.json();
+
+            let allServices = [];
+            if (data.services) {
+                allServices = allServices.concat(data.services);
+            }
+
+            const storedServices = getStoredServices();
+            allServices = allServices.concat(storedServices);
+
+            // Remove duplicates (prefer first occurrence)
+            const uniqueServices = allServices.filter((service, index, self) =>
+                index === self.findIndex(s => s.name === service.name)
+            );
+
+            return uniqueServices;
+        }
+
+        // Map probe status to UI indicator class
+        function statusToUi(status) {
+            return status === 'OK' ? 'ok' : (status === 'TIMEOUT' ? 'timeout' : 'error');
+        }
+
+        // Probe a service's health by trying common endpoints; returns a concise result
+        async function probeServiceHealth(serviceName, endpoints = HEALTH_ENDPOINTS, timeoutMs = 5000) {
+            let lastStatus = 'UNKNOWN';
+            let responseTime = 0;
+
+            for (const endpoint of endpoints) {
+                try {
+                    const start = Date.now();
+                    const res = await fetch(baseUrl + `/api/external/${serviceName}/${endpoint}`, {
+                        method: 'GET',
+                        signal: AbortSignal.timeout(timeoutMs)
+                    });
+                    responseTime = Date.now() - start;
+
+                    if (res.ok) {
+                        return { status: 'OK', responseTime, endpoint };
+                    } else {
+                        lastStatus = `HTTP ${res.status}`;
+                    }
+                } catch (err) {
+                    if (err.name === 'TimeoutError') {
+                        lastStatus = 'TIMEOUT';
+                    } else {
+                        lastStatus = 'ERROR';
+                    }
+                }
+            }
+
+            return { status: lastStatus, responseTime, endpoint: undefined };
+        }
 
         async function loadServices() {
             const loading = document.getElementById('loading');
@@ -310,6 +434,7 @@
                         <div class="service-buttons">
                             <button onclick="testService('${service.name}')" title="Test service">Test</button>
                             <button onclick="checkServiceHealth('${service.name}')" title="Check health">Health</button>
+                            <button onclick="showEndpoints('${service.name}', '${service.displayName || service.name}')" title="Show endpoints">Endpoints</button>
                             ${removeButton}
                         </div>
                     `;
@@ -319,6 +444,58 @@
                 document.getElementById('response').value = JSON.stringify(data, null, 2);
             } catch (err) {
                 document.getElementById('response').value = 'Error loading services: ' + err.message;
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+        // Endpoints Modal logic
+        function closeEndpointsModal() {
+            document.getElementById('endpointsModal').style.display = 'none';
+            document.getElementById('endpointsList').innerHTML = '';
+        }
+
+        async function showEndpoints(serviceName, displayName) {
+            const modal = document.getElementById('endpointsModal');
+            const title = document.getElementById('endpointsModalTitle');
+            const list = document.getElementById('endpointsList');
+            const loading = document.getElementById('endpointsLoading');
+
+            title.textContent = `Available Endpoints — ${displayName}`;
+            list.innerHTML = '';
+            loading.style.display = 'block';
+            modal.style.display = 'block';
+
+            try {
+                const res = await fetch(baseUrl + `/api/external/${serviceName}/openapi`);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+
+                const endpoints = Array.isArray(data.endpoints) ? data.endpoints : [];
+                if (endpoints.length === 0) {
+                    list.innerHTML = '<div style="color:#666">No endpoints returned.</div>';
+                } else {
+                    const frag = document.createDocumentFragment();
+                    endpoints.sort((a, b) => (a.path.localeCompare(b.path)) || (a.method.localeCompare(b.method)));
+                    endpoints.forEach(ep => {
+                        const row = document.createElement('div');
+                        const methodClass = `method-${(ep.method || '').toLowerCase()}`;
+                        row.className = 'endpoint-row';
+                        const hasBody = ep.exampleBody ? ' (has body)' : '';
+                        row.innerHTML = `<span class="endpoint-badge ${methodClass}">${ep.method}</span><code>${ep.path}</code><small style="color:#666">${hasBody}</small>`;
+                        row.onclick = () => {
+                            document.getElementById('method').value = ep.method;
+                            document.getElementById('endpoint').value = `/api/external/${serviceName}${ep.path}`;
+                            if (ep.exampleBody) {
+                                document.getElementById('body').value = JSON.stringify(ep.exampleBody, null, 2);
+                            }
+                            closeEndpointsModal();
+                        };
+                        frag.appendChild(row);
+                    });
+                    list.appendChild(frag);
+                }
+            } catch (err) {
+                list.innerHTML = `<div style="color:#dc3545">Failed to load endpoints: ${err.message}</div>`;
             } finally {
                 loading.style.display = 'none';
             }
@@ -348,38 +525,12 @@
         async function checkServiceHealth(serviceName) {
             updateServiceStatus(serviceName, 'checking');
 
-            // Try common health endpoints
-            const healthEndpoints = ['health', 'healthcheck', 'status', 'ping'];
-            let found = false;
-            let status = 'error';
+            const result = await probeServiceHealth(serviceName);
+            updateServiceStatus(serviceName, statusToUi(result.status));
 
-            for (const endpoint of healthEndpoints) {
-                try {
-                    const res = await fetch(baseUrl + `/api/external/${serviceName}/${endpoint}`, {
-                        method: 'GET',
-                        signal: AbortSignal.timeout(5000)
-                    });
-
-                    if (res.ok) {
-                        status = 'ok';
-                        found = true;
-                        await makeRequest('GET', `/api/external/${serviceName}/${endpoint}`, null, `Checking ${serviceName} health via /${endpoint}`);
-                        break;
-                    } else {
-                        status = 'error';
-                    }
-                } catch (err) {
-                    if (err.name === 'TimeoutError') {
-                        status = 'timeout';
-                    } else {
-                        status = 'error';
-                    }
-                }
-            }
-
-            updateServiceStatus(serviceName, status);
-
-            if (!found) {
+            if (result.status === 'OK' && result.endpoint) {
+                await makeRequest('GET', `/api/external/${serviceName}/${result.endpoint}`, null, `Checking ${serviceName} health via /${result.endpoint}`);
+            } else if (result.status === 'UNKNOWN' || !result.endpoint) {
                 document.getElementById('response').value = `No health endpoint found for ${serviceName}. Try manual testing.`;
             }
         }
@@ -437,23 +588,8 @@
             btn.textContent = 'Checking...';
 
             try {
-                // Get all services (server + custom)
-                const servicesRes = await fetch(baseUrl + '/api/external/list');
-                const servicesData = await servicesRes.json();
-
-                let allServices = [];
-                if (servicesData.services) {
-                    allServices = allServices.concat(servicesData.services);
-                }
-
-                // Add locally stored custom services
-                const storedServices = getStoredServices();
-                allServices = allServices.concat(storedServices);
-
-                // Remove duplicates
-                const uniqueServices = allServices.filter((service, index, self) =>
-                    index === self.findIndex(s => s.name === service.name)
-                );
+                // Get all services (server + custom, deduped)
+                const uniqueServices = await getAllServices();
 
                 if (uniqueServices.length === 0) {
                     document.getElementById('response').value = 'No services available to check.';
@@ -461,42 +597,12 @@
                 }
 
                 const results = [];
-                const healthEndpoints = ['health', 'healthcheck', 'status', 'ping'];
 
                 for (const service of uniqueServices) {
                     updateServiceStatus(service.name, 'checking');
-
-                    let status = 'UNKNOWN';
-                    let responseTime = 0;
-
-                    for (const endpoint of healthEndpoints) {
-                        try {
-                            const start = Date.now();
-                            const res = await fetch(baseUrl + `/api/external/${service.name}/${endpoint}`, {
-                                method: 'GET',
-                                signal: AbortSignal.timeout(5000) // 5 second timeout per check
-                            });
-                            responseTime = Date.now() - start;
-
-                            if (res.ok) {
-                                status = 'OK';
-                                break;
-                            } else {
-                                status = `HTTP ${res.status}`;
-                            }
-                        } catch (err) {
-                            if (err.name === 'TimeoutError') {
-                                status = 'TIMEOUT';
-                            } else {
-                                status = 'ERROR';
-                            }
-                        }
-                    }
-
+                    const { status, responseTime } = await probeServiceHealth(service.name);
                     // Update UI indicator
-                    const uiStatus = status === 'OK' ? 'ok' :
-                        status === 'TIMEOUT' ? 'timeout' : 'error';
-                    updateServiceStatus(service.name, uiStatus);
+                    updateServiceStatus(service.name, statusToUi(status));
 
                     results.push({
                         name: service.displayName || service.name,
@@ -556,6 +662,10 @@
             const modal = document.getElementById('addServiceModal');
             if (event.target === modal) {
                 closeAddServiceModal();
+            }
+            const endpointsModal = document.getElementById('endpointsModal');
+            if (event.target === endpointsModal) {
+                closeEndpointsModal();
             }
         }
 

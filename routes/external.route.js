@@ -213,7 +213,7 @@ router.use("/:serviceName/:endpoint(*)", async (req, res) => {
     requestedService = serviceName;
 
     // Add /api prefix for services that need it
-    if (serviceNeedsApiPrefix(serviceName)) {
+    if (serviceNeedsApiPrefix(serviceName) && !targetPath.startsWith("/api")) {
       targetPath = "/api" + targetPath;
     }
 
@@ -266,7 +266,7 @@ router.use("/:endpoint(*)", async (req, res) => {
     let targetPath = "/" + endpoint;
 
     // Add /api prefix for default service (miniTemplate)
-    if (serviceNeedsApiPrefix("default")) {
+    if (serviceNeedsApiPrefix("default") && !targetPath.startsWith("/api")) {
       targetPath = "/api" + targetPath;
     }
 
