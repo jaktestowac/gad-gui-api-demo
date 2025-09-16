@@ -449,6 +449,7 @@
                         </div>
                     `;
                     container.appendChild(card);
+                    updateServiceStatus(service.name, 'unknown');
                 });
 
                 document.getElementById('response').value = JSON.stringify(data, null, 2);
@@ -510,7 +511,7 @@
                 loading.style.display = 'none';
             }
         }
-        
+
         async function checkServiceHealth(serviceName) {
             updateServiceStatus(serviceName, 'checking');
 
@@ -556,6 +557,7 @@
                 const text = await res.text();
 
                 let displayText = description ? `${description}\n\n` : '';
+                displayText += `URL: ${baseUrl + endpoint}\n`;
                 displayText += `Status: ${res.status} ${res.statusText}\n\n`;
 
                 try {
