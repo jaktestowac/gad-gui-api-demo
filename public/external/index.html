@@ -2,17 +2,18 @@
 <html lang="en">
 
 <head>
+    <title>🦎 GAD | External Services</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>External Services Checker</title>
+    <title></title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 5px;
-            background-color: #f5f5f5;
-        }
-
-        .container {
+        .ex-container {
             max-width: 1000px;
             margin: 0 auto;
             background: white;
@@ -260,7 +261,17 @@
 </head>
 
 <body>
-    <div class="container">
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-gui" class="nav-menu"></h1>
+        </div>
+    </header>
+    <div id="container"></div>
+    <div id="containerComments"></div>
+    <br />
+    <br />
+    <br />
+    <div class="ex-container">
         <h1>External Services Health & Requests</h1>
 
         <div class="section">
@@ -752,5 +763,9 @@
         }
     </script>
 </body>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="/username.js"></script>
 
 </html>
