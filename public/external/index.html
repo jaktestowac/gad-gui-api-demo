@@ -441,9 +441,8 @@
                         <div class="service-status" id="status-${service.name}"></div>
                         <div class="service-name">${service.displayName || service.name} ${isCustom ? '<small style="color: #17a2b8;">(custom)</small>' : ''}</div>
                         <div class="service-url">${service.url}</div>
-                        <div class="service-resource" style="font-size: 0.7em; color: #666; margin-bottom: 6px;">Available at: /api/external/${service.name}/</div>
+                        <div class="service-resource" style="font-size: 0.7em; color: #666; margin-bottom: 6px;">Available at:<br>/api/external/${service.name}/</div>
                         <div class="service-buttons">
-                            <button onclick="testService('${service.name}')" title="Test service">Test</button>
                             <button onclick="checkServiceHealth('${service.name}')" title="Check health">Health</button>
                             <button onclick="showEndpoints('${service.name}', '${service.displayName || service.name}')" title="Show endpoints">Endpoints</button>
                             ${removeButton}
@@ -511,28 +510,7 @@
                 loading.style.display = 'none';
             }
         }
-
-        async function testService(serviceName) {
-            // Try common test endpoints
-            const testEndpoints = ['', 'test', 'ping', 'status', 'info', 'version'];
-            let found = false;
-
-            for (const endpoint of testEndpoints) {
-                try {
-                    const testEndpoint = endpoint ? `/${endpoint}` : '';
-                    await makeRequest('GET', `/api/external/${serviceName}${testEndpoint}`, null, `Testing ${serviceName}${testEndpoint}`);
-                    found = true;
-                    break;
-                } catch (err) {
-                    // Continue to next endpoint
-                }
-            }
-
-            if (!found) {
-                document.getElementById('response').value = `No accessible endpoint found for ${serviceName}. Service may be down or require authentication.`;
-            }
-        }
-
+        
         async function checkServiceHealth(serviceName) {
             updateServiceStatus(serviceName, 'checking');
 
