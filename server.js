@@ -57,6 +57,7 @@ const { bookShopCoverUploadRoutes, multerUpload, multerErrorHandling } = require
 const WebSocket = require("ws");
 const { websocketRoute } = require("./routes/websocket.route");
 const { assertFreePorts } = require("./helpers/port.checker");
+const { externalRoutes } = require("./routes/external.route");
 
 const middlewares = jsonServer.defaults();
 
@@ -276,6 +277,8 @@ server.use(function (req, res, next) {
 
   next();
 });
+
+server.use("/api/external", externalRoutes);
 
 server.use("/api", router);
 
