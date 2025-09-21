@@ -116,6 +116,37 @@
   gap: 15px;
 }
 
+.hamburger-menu {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 5px;
+  padding: 10px 15px;
+  border-radius: 8px;
+  color: var(--text-dark);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.hamburger-menu.active {
+  display: flex;
+}
+
+.learning-hamburger-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+.learning-hamburger-link:hover {
+  background: var(--primary-color);
+  color: white;
+}
+
 .course-card {
   border: none;
   border-radius: 12px;
