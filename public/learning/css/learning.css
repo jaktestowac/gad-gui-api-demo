@@ -36,6 +36,12 @@
   height: 60px;
 }
 
+@media (max-width: 600px) {
+  .hero-absolute {
+    left: 30%;
+  }
+}
+
 .main-header {
   color: var(--text-dark);
   font-size: 2em;
