@@ -4,6 +4,7 @@
 const express = require("express");
 const app = express();
 app.use(express.json({ limit: "512kb" }));
+const PORT = process.env.PORT || 3113;
 
 const apiRouter = express.Router();
 
@@ -16,12 +17,40 @@ let nextJobId = 1;
 
 /* ===== Configuration ===== */
 const CONFIG = {
+  serviceName: "MiniTemplate",
+  version: "1.0.0",
   processingDelay: { min: 2000, max: 3000 },
   maxQueue: MAX_QUEUE,
   maxHistory: 500,
   maxTemplateLength: 100_000,
   enableDiagnostics: false,
 };
+
+// Service State
+const STATE = {
+  startTime: new Date(),
+  requestCount: 0,
+  errorCount: 0,
+  lastError: null,
+};
+
+// Request counter middleware
+app.use((req, res, next) => {
+  STATE.requestCount++;
+  next();
+});
+
+// Error handler middleware
+app.use((err, req, res, next) => {
+  STATE.errorCount++;
+  STATE.lastError = {
+    message: err.message,
+    timestamp: new Date(),
+    path: req.path,
+  };
+  console.error("Error:", err);
+  res.status(500).json({ error: "Internal server error" });
+});
 
 /* ===== Enums ===== */
 const JOB_STATUSES = {
@@ -56,18 +85,34 @@ const TEMPLATES = {
   },
 };
 
-const CAPABILITIES = {
-  name: "MiniTemplate",
-  version: "1.0.0",
-  features: {
-    templatesRegistry: true,
-    dottedPaths: true,
-    defaultPipe: true,
-    delayedProcessingMs: CONFIG.processingDelay,
-  },
-  limits: { maxQueue: CONFIG.maxQueue, maxHistory: CONFIG.maxHistory, maxTemplateLength: CONFIG.maxTemplateLength },
-  jobStatuses: Object.values(JOB_STATUSES),
-};
+function getCapabilities() {
+  const endpoints = listEndpoints(app);
+  const endpointStrings = endpoints.map((ep) => `${ep.method} ${ep.path}`);
+
+  return {
+    service: "MiniTemplate",
+    version: "1.0.0",
+    features: [
+      "template-processing",
+      "queue-management",
+      "delayed-processing",
+      "job-tracking",
+      "configuration-management",
+      "openapi-documentation",
+    ],
+    templateFeatures: {
+      templatesRegistry: true,
+      dottedPaths: true,
+      defaultPipe: true,
+      delayedProcessingMs: CONFIG.processingDelay,
+    },
+    limits: { maxQueue: CONFIG.maxQueue, maxHistory: CONFIG.maxHistory, maxTemplateLength: CONFIG.maxTemplateLength },
+    jobStatuses: Object.values(JOB_STATUSES),
+    endpoints: endpointStrings,
+    supportedFormats: ["json"],
+    timestamp: new Date().toISOString(),
+  };
+}
 
 /* ===== Helpers ===== */
 function now() {
@@ -307,12 +352,54 @@ apiRouter.get("/history", (_req, res) => {
   res.json(HISTORY);
 });
 
-apiRouter.get("/health", (_req, res) => {
-  const processing = Array.from(JOBS.values()).filter((j) => j.status === JOB_STATUSES.PROCESSING).length;
-  res.json({ status: "ok", queueDepth: QUEUE.length, capacity: MAX_QUEUE, processing });
+apiRouter.get("/ping", (_req, res) => {
+  res.json({
+    message: "pong",
+    timestamp: new Date().toISOString(),
+    service: CONFIG.serviceName,
+  });
 });
 
-apiRouter.get("/capabilities", (_req, res) => res.json(CAPABILITIES));
+apiRouter.get("/health", (_req, res) => {
+  const uptime = Date.now() - STATE.startTime.getTime();
+  const status = STATE.errorCount > 10 ? "degraded" : "ok";
+
+  res.json({
+    status,
+    uptime: Math.floor(uptime / 1000), // seconds
+    timestamp: new Date().toISOString(),
+    service: CONFIG.serviceName,
+    version: CONFIG.version,
+  });
+});
+
+apiRouter.get("/status", (_req, res) => {
+  const uptime = Date.now() - STATE.startTime.getTime();
+  const processing = Array.from(JOBS.values()).filter((j) => j.status === JOB_STATUSES.PROCESSING).length;
+
+  res.json({
+    service: CONFIG.serviceName,
+    version: CONFIG.version,
+    status: "running",
+    uptime: {
+      seconds: Math.floor(uptime / 1000),
+      human: formatUptime(uptime),
+    },
+    metrics: {
+      requestCount: STATE.requestCount,
+      errorCount: STATE.errorCount,
+      errorRate: STATE.requestCount > 0 ? ((STATE.errorCount / STATE.requestCount) * 100).toFixed(2) + "%" : "0%",
+      queueDepth: QUEUE.length,
+      capacity: MAX_QUEUE,
+      processing,
+      jobsCount: JOBS.size,
+    },
+    lastError: STATE.lastError,
+    timestamp: new Date().toISOString(),
+  });
+});
+
+apiRouter.get("/capabilities", (_req, res) => res.json(getCapabilities()));
 
 /* ===== Configuration endpoints ===== */
 apiRouter.get("/config", (_req, res) => {
@@ -354,6 +441,19 @@ apiRouter.put("/config", (req, res) => {
 app.get("/", (_req, res) => {
   res.sendFile(__dirname + "/index.html");
 });
+
+/* ===== Utility Functions ===== */
+function formatUptime(uptimeMs) {
+  const seconds = Math.floor(uptimeMs / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+
+  if (days > 0) return `${days}d ${hours % 24}h ${minutes % 60}m`;
+  if (hours > 0) return `${hours}h ${minutes % 60}m ${seconds % 60}s`;
+  if (minutes > 0) return `${minutes}m ${seconds % 60}s`;
+  return `${seconds}s`;
+}
 
 /* ===== Worker: dequeue → process after 2–3s delay ===== */
 function scheduleProcess(job) {
@@ -402,30 +502,87 @@ setInterval(() => {
 }, 50);
 
 /* ===== Start ===== */
-const PORT = process.env.PORT || 4002;
-app.listen(PORT, () => {
-  console.log(`Visit http://localhost:${PORT}/ to try the server via HTML page`);
-  console.log(`Visit http://localhost:${PORT}/api/jobs to get all jobs`);
-  // List all available endpoints
-  console.log(`Available endpoints:`);
-  console.log(`- GET /api/: HTML interface`);
-  console.log(`- POST /api/jobs: Create a new job`);
-  console.log(`- GET /api/jobs/:id: Get job status`);
-  console.log(`- GET /api/jobs: Get all jobs`);
-  console.log(`- GET /api/history: Get job history`);
-  console.log(`- GET /api/health: Check service health`);
-  console.log(`- GET /api/capabilities: Get service capabilities`);
-  console.log(`- GET /api/config: Get configuration`);
-  console.log(`- PUT /api/config: Update configuration`);
-  console.log(`- POST /api/templates: Create template`);
-  console.log(`- PUT /api/templates/:id: Update template`);
-  console.log(`- DELETE /api/templates/:id: Delete template`);
-  console.log(`- GET /api/openapi: List all API endpoints`);
-});
 
 app.use("/api", apiRouter);
 
-/* ===== Simplified OpenAPI (endpoints listing) ===== */
+app.listen(PORT, () => {
+  console.log(`🚀 ${CONFIG.serviceName} v${CONFIG.version} running on port ${PORT}`);
+  console.log(`📊 Visit http://localhost:${PORT}/api/status for service status`);
+  console.log(`🏥 Visit http://localhost:${PORT}/api/health for health check`);
+  console.log(`📖 Visit http://localhost:${PORT}/api/openapi for API documentation`);
+  console.log(`🌐 Visit http://localhost:${PORT}/ for HTML interface`);
+  console.log("");
+
+  // Dynamically list all available endpoints
+  const endpoints = listEndpoints(app);
+  const standardEndpoints = endpoints.filter((ep) =>
+    ["/api/ping", "/api/health", "/api/status", "/api/capabilities", "/api/config", "/api/openapi"].includes(ep.path)
+  );
+  const customEndpoints = endpoints.filter(
+    (ep) =>
+      !["/api/ping", "/api/health", "/api/status", "/api/capabilities", "/api/config", "/api/openapi"].includes(ep.path)
+  );
+
+  if (standardEndpoints.length > 0) {
+    console.log("Standard endpoints:");
+    standardEndpoints.forEach((ep) => {
+      console.log(`  - ${ep.method.padEnd(4)} ${ep.path.padEnd(15)} - ${ep.description}`);
+    });
+    console.log("");
+  }
+
+  if (customEndpoints.length > 0) {
+    console.log("Service endpoints:");
+    customEndpoints.forEach((ep) => {
+      console.log(`  - ${ep.method.padEnd(4)} ${ep.path.padEnd(15)} - ${ep.description}`);
+    });
+    console.log("");
+  }
+
+  console.log("🎯 Ready to serve requests!");
+});
+
+// Graceful shutdown
+process.on("SIGTERM", () => {
+  console.log("🛑 SIGTERM received, shutting down gracefully");
+  process.exit(0);
+});
+
+process.on("SIGINT", () => {
+  console.log("🛑 SIGINT received, shutting down gracefully");
+  process.exit(0);
+});
+
+/* ===== Utility Functions ===== */
+
+function listEndpoints(app) {
+  const endpoints = [];
+
+  if (!app || !app._router || !app._router.stack) return endpoints;
+
+  app._router.stack.forEach((layer) => {
+    if (layer.route && layer.route.path) {
+      const path = layer.route.path;
+      const methods = Object.keys(layer.route.methods || {}).filter((m) => layer.route.methods[m]);
+
+      methods.forEach((method) => {
+        const upperMethod = method.toUpperCase();
+        let description = "";
+        let exampleBody = null;
+        endpoints.push({
+          method: upperMethod,
+          path,
+          description,
+          exampleBody,
+        });
+      });
+    }
+  });
+
+  // Filter to only include /api/* endpoints
+  return endpoints.filter((ep) => typeof ep.path === "string" && ep.path.startsWith("/api"));
+}
+
 function listEndpointsFromRouter(router) {
   const eps = [];
   const stack = router && router.stack ? router.stack : [];
@@ -433,24 +590,36 @@ function listEndpointsFromRouter(router) {
     if (layer.route && layer.route.path) {
       const path = layer.route.path;
       const methods = Object.keys(layer.route.methods || {}).filter((m) => layer.route.methods[m]);
-      methods.forEach((m) => eps.push({ method: m.toUpperCase(), path }));
+      methods.forEach((method) => {
+        const upperMethod = method.toUpperCase();
+        let description = "";
+        let exampleBody = null;
+        eps.push({
+          method: upperMethod,
+          path,
+          description,
+          exampleBody,
+        });
+      });
     }
   });
   return eps;
 }
 
-apiRouter.get("/openapi", (_req, res) => {
+apiRouter.get("/openapi", (req, res) => {
   const endpoints = listEndpointsFromRouter(apiRouter)
     .filter((e) => typeof e.path === "string")
-    .map((e) => ({ method: e.method, path: `/api${e.path}` }));
-  const paths = endpoints.reduce((acc, e) => {
-    acc[e.path] = acc[e.path] || [];
-    if (!acc[e.path].includes(e.method)) acc[e.path].push(e.method);
+    .map((e) => ({ method: e.method, path: `/api${e.path}`, description: e.description, exampleBody: e.exampleBody }));
+
+  const paths = endpoints.reduce((acc, ep) => {
+    if (!acc[ep.path]) acc[ep.path] = [];
+    if (!acc[ep.path].includes(ep.method)) acc[ep.path].push(ep.method);
     return acc;
   }, {});
-  // Add example bodies
+
+  // Add example bodies for relevant endpoints
   const enhancedEndpoints = endpoints.map((ep) => {
-    let exampleBody = null;
+    let exampleBody = ep.exampleBody;
     if (ep.method === "POST" && ep.path === "/api/jobs") {
       exampleBody = {
         templateId: "welcome-email",
@@ -469,8 +638,25 @@ apiRouter.get("/openapi", (_req, res) => {
         template: "Welcome {{name}}!",
         sampleParams: { name: "Alice" },
       };
+    } else if (ep.method === "PUT" && ep.path === "/api/config") {
+      exampleBody = {
+        processingDelay: { min: 2000, max: 3000 },
+        maxQueue: 100,
+      };
     }
     return { ...ep, exampleBody };
   });
-  res.json({ name: "MiniTemplate", basePath: "/api", endpoints: enhancedEndpoints, paths });
+
+  res.json({
+    openapi: "3.0.0",
+    info: {
+      title: CONFIG.serviceName,
+      version: CONFIG.version,
+      description: "Template processing service with queue management",
+    },
+    basePath: "/api",
+    endpoints: enhancedEndpoints,
+    paths,
+    timestamp: new Date().toISOString(),
+  });
 });

@@ -20,7 +20,10 @@
     "version:minor": "node tools/release/update-version.js minor",
     "version:major": "node tools/release/update-version.js major",
     "version:custom": "node tools/release/update-version.js custom",
-    "version:help": "node tools/release/update-version.js"
+    "version:help": "node tools/release/update-version.js",
+    "ex:template": "node external/_template/server.js",
+    "ex:hasher": "node external/hasher/server.js",
+    "ex:mini": "node external/miniTemplate/server.js"
   },
   "keywords": [
     "json-server, node, REST API"

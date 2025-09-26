@@ -5,6 +5,40 @@ const app = express();
 app.use(express.json());
 
 const config = { interval: 1000, maxQueue: 100 };
+const port = process.env.PORT || 3112;
+
+// Service Configuration
+const CONFIG = {
+  serviceName: "Hasher",
+  version: "1.0.0",
+  enableDiagnostics: false,
+};
+
+// Service State
+const STATE = {
+  startTime: new Date(),
+  requestCount: 0,
+  errorCount: 0,
+  lastError: null,
+};
+
+// Request counter middleware
+app.use((req, res, next) => {
+  STATE.requestCount++;
+  next();
+});
+
+// Error handler middleware
+app.use((err, req, res, next) => {
+  STATE.errorCount++;
+  STATE.lastError = {
+    message: err.message,
+    timestamp: new Date(),
+    path: req.path,
+  };
+  console.error("Error:", err);
+  res.status(500).json({ error: "Internal server error" });
+});
 
 const jobs = {};
 const queue = [];
@@ -117,20 +151,78 @@ app.get("/api/config", (req, res) => {
   res.json(config);
 });
 
+app.get("/api/ping", (req, res) => {
+  res.json({
+    message: "pong",
+    timestamp: new Date().toISOString(),
+    service: CONFIG.serviceName,
+  });
+});
+
 app.get("/api/health", (req, res) => {
-  res.json({ status: "ok", queueDepth: queue.length });
+  const uptime = Date.now() - STATE.startTime.getTime();
+  const status = STATE.errorCount > 10 ? "degraded" : "ok";
+
+  res.json({
+    status,
+    uptime: Math.floor(uptime / 1000), // seconds
+    timestamp: new Date().toISOString(),
+    service: CONFIG.serviceName,
+    version: CONFIG.version,
+  });
 });
 
 app.get("/api/capabilities", (req, res) => {
-  res.json({ maxQueue: config.maxQueue, supportedAlgorithms: ["sha256", "md5"] });
+  const endpoints = listEndpoints(app);
+  const endpointStrings = endpoints.map((ep) => `${ep.method} ${ep.path}`);
+
+  res.json({
+    service: CONFIG.serviceName,
+    version: CONFIG.version,
+    features: [
+      "hash-generation",
+      "queue-processing",
+      "job-tracking",
+      "configuration-management",
+      "openapi-documentation",
+    ],
+    supportedAlgorithms: ["sha256", "md5"],
+    limits: {
+      maxQueue: config.maxQueue,
+    },
+    endpoints: endpointStrings,
+    supportedFormats: ["json"],
+    timestamp: new Date().toISOString(),
+  });
 });
 
 app.get("/api/status", (req, res) => {
+  const uptime = Date.now() - STATE.startTime.getTime();
   const statusCounts = {};
   Object.values(jobs).forEach((job) => {
     statusCounts[job.status] = (statusCounts[job.status] || 0) + 1;
   });
-  res.json({ queueLength: queue.length, jobsCount: Object.keys(jobs).length, statusCounts, config });
+
+  res.json({
+    service: CONFIG.serviceName,
+    version: CONFIG.version,
+    status: "running",
+    uptime: {
+      seconds: Math.floor(uptime / 1000),
+      human: formatUptime(uptime),
+    },
+    metrics: {
+      requestCount: STATE.requestCount,
+      errorCount: STATE.errorCount,
+      errorRate: STATE.requestCount > 0 ? ((STATE.errorCount / STATE.requestCount) * 100).toFixed(2) + "%" : "0%",
+      queueLength: queue.length,
+      jobsCount: Object.keys(jobs).length,
+      statusCounts,
+    },
+    lastError: STATE.lastError,
+    config,
+    timestamp: new Date().toISOString(),
+  });
 });
 
 app.get("/api/jobs", (req, res) => {
@@ -161,59 +253,126 @@ app.get("/api/history", (req, res) => {
   res.json({ history: historyJobs });
 });
 
-// Simplified OpenAPI-like endpoint listing
+// Utility function to format uptime
+function formatUptime(uptimeMs) {
+  const seconds = Math.floor(uptimeMs / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+
+  if (days > 0) return `${days}d ${hours % 24}h ${minutes % 60}m`;
+  if (hours > 0) return `${hours}h ${minutes % 60}m ${seconds % 60}s`;
+  if (minutes > 0) return `${minutes}m ${seconds % 60}s`;
+  return `${seconds}s`;
+}
+
 function listEndpoints(app) {
   const endpoints = [];
+
   if (!app || !app._router || !app._router.stack) return endpoints;
+
   app._router.stack.forEach((layer) => {
     if (layer.route && layer.route.path) {
       const path = layer.route.path;
       const methods = Object.keys(layer.route.methods || {}).filter((m) => layer.route.methods[m]);
-      methods.forEach((m) => endpoints.push({ method: m.toUpperCase(), path }));
+
+      methods.forEach((method) => {
+        const upperMethod = method.toUpperCase();
+        let description = "";
+        let exampleBody = null;
+        endpoints.push({
+          method: upperMethod,
+          path,
+          description,
+          exampleBody,
+        });
+      });
     }
   });
-  // Keep only /api/* endpoints for clarity
-  return endpoints.filter((e) => typeof e.path === "string" && e.path.startsWith("/api"));
+
+  // Filter to only include /api/* endpoints
+  return endpoints.filter((ep) => typeof ep.path === "string" && ep.path.startsWith("/api"));
 }
 
-app.get("/api/openapi", (_req, res) => {
+app.get("/api/openapi", (req, res) => {
   const endpoints = listEndpoints(app);
-  const paths = endpoints.reduce((acc, e) => {
-    acc[e.path] = acc[e.path] || [];
-    if (!acc[e.path].includes(e.method)) acc[e.path].push(e.method);
+
+  const paths = endpoints.reduce((acc, ep) => {
+    if (!acc[ep.path]) acc[ep.path] = [];
+    if (!acc[ep.path].includes(ep.method)) acc[ep.path].push(ep.method);
     return acc;
   }, {});
+
   // Add example bodies for relevant endpoints
   const enhancedEndpoints = endpoints.map((ep) => {
     let exampleBody = null;
     if (ep.method === "POST" && ep.path === "/api/jobs") {
       exampleBody = { algorithm: "sha256", input: "hello world" };
+    } else if (ep.method === "POST" && ep.path === "/api/config") {
+      exampleBody = { interval: 1000, maxQueue: 100 };
     }
     return { ...ep, exampleBody };
   });
+
   res.json({
-    name: "Hasher",
+    openapi: "3.0.0",
+    info: {
+      title: CONFIG.serviceName,
+      version: CONFIG.version,
+      description: "Hash generation service with queue processing",
+    },
     basePath: "/api",
     endpoints: enhancedEndpoints,
     paths,
+    timestamp: new Date().toISOString(),
   });
 });
 
-const port = process.env.PORT || 3002;
 app.listen(port, () => {
-  console.log(`Hasher service running on port ${port}`);
-  console.log(`Visit http://localhost:${port}/api/jobs to get jobs`);
-  // list all available endpoints
-  console.log(`Available endpoints:`);
-  console.log(`- GET /api/jobs: Get all active jobs`);
-  console.log(`- GET /api/history: Get job history`);
-  console.log(`- POST /api/jobs: Submit a new job`);
-  console.log(`- POST /api/jobs/dummy: Submit a random dummy job`);
-  console.log(`- GET /api/jobs/:id: Get job status`);
-  console.log(`- POST /api/config: Update configuration`);
-  console.log(`- GET /api/config: Get current configuration`);
-  console.log(`- GET /api/health: Check service health`);
-  console.log(`- GET /api/capabilities: Get service capabilities`);
-  console.log(`- GET /api/status: Get service status`);
-  console.log(`- GET /api/openapi: List all API endpoints`);
+  console.log(`🚀 ${CONFIG.serviceName} v${CONFIG.version} running on port ${port}`);
+  console.log(`📊 Visit http://localhost:${port}/api/status for service status`);
+  console.log(`🏥 Visit http://localhost:${port}/api/health for health check`);
+  console.log(`📖 Visit http://localhost:${port}/api/openapi for API documentation`);
+  console.log("");
+
+  // Dynamically list all available endpoints
+  const endpoints = listEndpoints(app);
+  const standardEndpoints = endpoints.filter((ep) =>
+    ["/api/ping", "/api/health", "/api/status", "/api/capabilities", "/api/config", "/api/openapi"].includes(ep.path)
+  );
+  const customEndpoints = endpoints.filter(
+    (ep) =>
+      !["/api/ping", "/api/health", "/api/status", "/api/capabilities", "/api/config", "/api/openapi"].includes(ep.path)
+  );
+
+  if (standardEndpoints.length > 0) {
+    console.log("Standard endpoints:");
+    standardEndpoints.forEach((ep) => {
+      console.log(`  - ${ep.method.padEnd(4)} ${ep.path.padEnd(15)} - ${ep.description}`);
+    });
+    console.log("");
+  }
+
+  if (customEndpoints.length > 0) {
+    console.log("Service endpoints:");
+    customEndpoints.forEach((ep) => {
+      console.log(`  - ${ep.method.padEnd(4)} ${ep.path.padEnd(15)} - ${ep.description}`);
+    });
+    console.log("");
+  }
+
+  console.log("🎯 Ready to serve requests!");
+});
+
+// Graceful shutdown
+process.on("SIGTERM", () => {
+  console.log("🛑 SIGTERM received, shutting down gracefully");
+  clearInterval(intervalId);
+  process.exit(0);
+});
+
+process.on("SIGINT", () => {
+  console.log("🛑 SIGINT received, shutting down gracefully");
+  clearInterval(intervalId);
+  process.exit(0);
 });

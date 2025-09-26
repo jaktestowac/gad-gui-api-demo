@@ -21,8 +21,9 @@ const getServiceUrl = (serviceName) => {
 
   // Default services - always available (use lowercase keys for lookups)
   const defaultServices = {
-    minitemplate: process.env.MINI_TEMPLATE_URL || "http://localhost:4002",
-    hasher: "http://localhost:4003",
+    templateservice: "http://localhost:3111",
+    minitemplate: process.env.MINI_TEMPLATE_URL || "http://localhost:3113",
+    hasher: "http://localhost:3112",
   };
 
   const key = String(serviceName || "").toLowerCase();
@@ -34,7 +35,7 @@ const getServiceUrl = (serviceName) => {
 
   // Fallback for backward compatibility
   if (key === "default") {
-    return process.env.MINI_TEMPLATE_URL || "http://localhost:4002";
+    return process.env.MINI_TEMPLATE_URL || "http://localhost:3111";
   }
 
   return null;
@@ -43,7 +44,7 @@ const getServiceUrl = (serviceName) => {
 // Check if a service needs /api prefix in the target path
 const serviceNeedsApiPrefix = (serviceName) => {
   const key = String(serviceName || "").toLowerCase();
-  const servicesNeedingApi = ["minitemplate", "hasher", "default"]; // treat default (MiniTemplate) as needing /api
+  const servicesNeedingApi = ["templateservice", "minitemplate", "hasher", "default"]; // treat default (MiniTemplate) as needing /api
   return servicesNeedingApi.includes(key);
 };
 
@@ -53,14 +54,20 @@ const getAvailableServices = () => {
 
   // Default services - always available
   const defaultServices = {
+    templateservice: {
+      url: "http://localhost:3111",
+      name: "TemplateService",
+      description: "External service template with standard endpoints",
+      default: true,
+    },
     miniTemplate: {
-      url: "http://localhost:4002",
+      url: "http://localhost:3113",
       name: "MiniTemplate",
       description: "Template rendering and job processing service",
       default: true,
     },
     hasher: {
-      url: "http://localhost:4003",
+      url: "http://localhost:3112",
       name: "Hasher",
       description: "Data hashing service",
       default: true,
