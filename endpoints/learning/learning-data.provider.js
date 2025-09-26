@@ -497,6 +497,10 @@ function updateRoleRequest(requestId, updates, adminId) {
   return true;
 }
 
+function getRoleRequestById(requestId) {
+  return data.roleRequests.find((r) => areIdsEqual(r.id, requestId));
+}
+
 module.exports = {
   getUserByEmail,
   getAllUserEnrollments,
@@ -562,4 +566,5 @@ module.exports = {
   getUserRoleRequests,
   addRoleRequest,
   updateRoleRequest,
+  getRoleRequestById,
 };
