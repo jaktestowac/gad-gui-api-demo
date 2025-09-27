@@ -84,6 +84,12 @@ const getAvailableServices = () => {
       description: "Performs text analysis and natural language processing",
       default: true,
     },
+    qrGenerator: {
+      url: "http://localhost:3116",
+      name: "QR Code Generator",
+      description: "Generates QR codes from text input",
+      default: true,
+    },
   };
 
   // Add default services

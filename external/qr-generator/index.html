@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator Service - Generate QR Codes</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 15px;
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 3px solid #3b82f6;
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 1.2em;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: bold;
+            color: #555;
+            font-size: 0.9em;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .form-row-three {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .result-box {
+            background: #eff6ff;
+            border: 1px solid #3b82f6;
+            border-radius: 4px;
+            padding: 12px;
+            margin-top: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .error-box {
+            background: #fef2f2;
+            border: 1px solid #ef4444;
+            border-radius: 4px;
+            padding: 12px;
+            margin-top: 8px;
+            color: #b91c1c;
+            font-size: 12px;
+        }
+
+        .success-box {
+            background: #f0fdf4;
+            border: 1px solid #10b981;
+            border-radius: 4px;
+            padding: 12px;
+            margin-top: 8px;
+            color: #065f46;
+            font-size: 12px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .stats-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .stats-card h3 {
+            color: #3b82f6;
+            margin-bottom: 6px;
+            font-size: 0.9em;
+        }
+
+        .stats-card .value {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .qr-preview {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin: 15px 0;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .qr-preview img {
+            max-width: 100%;
+            max-height: 300px;
+            border: 1px solid #eee;
+        }
+
+        .qr-preview .ascii-qr {
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+            line-height: 1;
+            white-space: pre;
+            background: white;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            max-width: 100%;
+            overflow: auto;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .batch-items {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 12px;
+            margin-top: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .batch-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .batch-item:last-child {
+            border-bottom: none;
+        }
+
+        .batch-item input {
+            flex: 1;
+            margin-right: 8px;
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+
+        .batch-item button {
+            padding: 4px 8px;
+            font-size: 11px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .sample-data {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .sample-item {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px;
+            cursor: pointer;
+            transition: border-color 0.2s ease;
+            font-size: 12px;
+        }
+
+        .sample-item:hover {
+            border-color: #3b82f6;
+        }
+
+        .sample-item strong {
+            color: #3b82f6;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .format-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .format-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 12px;
+        }
+
+        .format-card h4 {
+            color: #3b82f6;
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+
+        .format-card p {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 6px;
+        }
+
+        .format-card .features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 6px;
+        }
+
+        .feature-tag {
+            background: #e0e7ff;
+            color: #3730a3;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📱 QR Code Generator Service</h1>
+            <p>Generate QR codes in multiple formats with customization options</p>
+        </div>
+
+        <div class="main-content">
+            <!-- Single QR Code Generation -->
+            <div class="section">
+                <h2>🎯 Generate QR Code</h2>
+                <div class="form-group">
+                    <label for="qrData">Data to Encode:</label>
+                    <textarea id="qrData" placeholder="Enter text, URL, or data to encode..."></textarea>
+                </div>
+                
+                <div class="form-row-three">
+                    <div class="form-group">
+                        <label for="qrFormat">Format:</label>
+                        <select id="qrFormat">
+                            <option value="png">PNG (Image)</option>
+                            <option value="svg" selected>SVG (Vector)</option>
+                            <option value="ascii">ASCII (Text)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="qrSize">Size (pixels):</label>
+                        <input type="number" id="qrSize" min="50" max="1000" value="200">
+                    </div>
+                    <div class="form-group">
+                        <label for="errorCorrection">Error Correction:</label>
+                        <select id="errorCorrection">
+                            <option value="L">Low (~7%)</option>
+                            <option value="M" selected>Medium (~15%)</option>
+                            <option value="Q">Quartile (~25%)</option>
+                            <option value="H">High (~30%)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="btn" onclick="generateQRCode()">Generate QR Code</button>
+                <button class="btn btn-secondary" onclick="validateData()">Validate Data</button>
+                <button class="btn btn-info" onclick="showSampleData()">Load Sample</button>
+                <button class="btn btn-warning" onclick="clearQRResult()">Clear</button>
+                
+                <div id="qrResult"></div>
+                <div class="qr-preview" id="qrPreview" style="display: none;">
+                    <div id="qrDisplay"></div>
+                </div>
+            </div>
+
+            <!-- Sample Data -->
+            <div class="section" id="sampleDataSection" style="display: none;">
+                <h2>📝 Sample Data</h2>
+                <div class="sample-data">
+                    <div class="sample-item" onclick="loadSample('Hello World!')">
+                        <strong>Simple Text</strong>
+                        Hello World!
+                    </div>
+                    <div class="sample-item" onclick="loadSample('https://github.com')">
+                        <strong>Website URL</strong>
+                        https://github.com
+                    </div>
+                    <div class="sample-item" onclick="loadSample('mailto:contact@example.com')">
+                        <strong>Email</strong>
+                        mailto:contact@example.com
+                    </div>
+                    <div class="sample-item" onclick="loadSample('tel:+1234567890')">
+                        <strong>Phone Number</strong>
+                        tel:+1234567890
+                    </div>
+                    <div class="sample-item" onclick="loadSample('wifi:T:WPA;S:MyNetwork;P:password123;;')">
+                        <strong>WiFi Network</strong>
+                        WiFi credentials
+                    </div>
+                    <div class="sample-item" onclick="loadSample('BEGIN:VCARD\\nVERSION:3.0\\nFN:John Doe\\nORG:Example Corp\\nTEL:+1234567890\\nEMAIL:john@example.com\\nEND:VCARD')">
+                        <strong>Contact Card</strong>
+                        vCard format
+                    </div>
+                </div>
+            </div>
+
+            <!-- Batch Generation -->
+            <div class="section">
+                <h2>📦 Batch Generation</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="batchFormat">Batch Format:</label>
+                        <select id="batchFormat">
+                            <option value="png">PNG</option>
+                            <option value="svg" selected>SVG</option>
+                            <option value="ascii">ASCII</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="batchSize">Batch Size:</label>
+                        <input type="number" id="batchSize" min="50" max="500" value="150">
+                    </div>
+                </div>
+
+                <button class="btn btn-success" onclick="addBatchItem()">Add Item</button>
+                <button class="btn" onclick="generateBatch()">Generate Batch</button>
+                <button class="btn btn-secondary" onclick="clearBatch()">Clear All</button>
+                
+                <div class="batch-items" id="batchItems">
+                    <div class="batch-item">
+                        <input type="text" placeholder="Data to encode..." value="Sample QR 1">
+                        <input type="text" placeholder="ID (optional)" value="qr1">
+                        <button onclick="removeBatchItem(this)">Remove</button>
+                    </div>
+                    <div class="batch-item">
+                        <input type="text" placeholder="Data to encode..." value="https://example.com">
+                        <input type="text" placeholder="ID (optional)" value="qr2">
+                        <button onclick="removeBatchItem(this)">Remove</button>
+                    </div>
+                </div>
+                
+                <div id="batchResult"></div>
+            </div>
+
+            <!-- Service Status -->
+            <div class="section">
+                <h2>📊 Service Status</h2>
+                <button class="btn btn-info" onclick="refreshStatus(true)">Refresh Status</button>
+                <button class="btn btn-secondary" onclick="getFormats()">Get Formats</button>
+                <div id="statusResult"></div>
+            </div>
+
+            <!-- Format Information -->
+            <div class="section" id="formatInfoSection" style="display: none;">
+                <h2>📋 Format Information</h2>
+                <div id="formatInfo"></div>
+            </div>
+
+            <!-- Configuration -->
+            <div class="section">
+                <h2>⚙️ Configuration</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="configDefaultSize">Default Size:</label>
+                        <input type="number" id="configDefaultSize" min="50" max="1000" value="200">
+                    </div>
+                    <div class="form-group">
+                        <label for="configMaxBatch">Max Batch Size:</label>
+                        <input type="number" id="configMaxBatch" min="1" max="1000" value="100">
+                    </div>
+                </div>
+                <button class="btn" onclick="updateConfig()">Update Configuration</button>
+                <button class="btn btn-secondary" onclick="getConfig()">Get Current Config</button>
+                <div id="configResult"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+
+        async function apiCall(endpoint, options = {}) {
+            try {
+                const response = await fetch(`${API_BASE}${endpoint}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    },
+                    ...options
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error('API call failed:', error);
+                throw error;
+            }
+        }
+
+        function showResult(elementId, content, type = 'info') {
+            const element = document.getElementById(elementId);
+            const className = type === 'error' ? 'error-box' : type === 'success' ? 'success-box' : 'result-box';
+            element.innerHTML = `<div class="${className}">${content}</div>`;
+        }
+
+        function showLoading(elementId) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = '<div class="loading"></div> Processing...';
+        }
+
+        function showSampleData() {
+            const section = document.getElementById('sampleDataSection');
+            section.style.display = section.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function loadSample(data) {
+            document.getElementById('qrData').value = data;
+            document.getElementById('sampleDataSection').style.display = 'none';
+        }
+
+        async function generateQRCode() {
+            const data = document.getElementById('qrData').value.trim();
+            const format = document.getElementById('qrFormat').value;
+            const size = parseInt(document.getElementById('qrSize').value);
+            const errorCorrection = document.getElementById('errorCorrection').value;
+
+            if (!data) {
+                showResult('qrResult', 'Please enter data to encode.', 'error');
+                return;
+            }
+
+            showLoading('qrResult');
+            document.getElementById('qrPreview').style.display = 'none';
+
+            try {
+                const result = await apiCall('/api/generate', {
+                    method: 'POST',
+                    body: JSON.stringify({ data, format, size, errorCorrection })
+                });
+
+                displayQRResult(result);
+            } catch (error) {
+                showResult('qrResult', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function displayQRResult(result) {
+            const resultText = `QR Code Generated Successfully!
+
+Format: ${result.qrCode.format.toUpperCase()}
+Size: ${result.qrCode.size}px
+Error Correction: ${result.input.errorCorrection}
+
+Data Analysis:
+- Type: ${result.analysis.type}
+- Length: ${result.analysis.length} characters
+- Encoding: ${result.analysis.encoding}
+- Estimated Matrix Size: ${result.analysis.estimatedSize}x${result.analysis.estimatedSize}
+
+Generated: ${new Date(result.generatedAt).toLocaleString()}`;
+
+            showResult('qrResult', resultText, 'success');
+
+            // Display QR code
+            const preview = document.getElementById('qrPreview');
+            const display = document.getElementById('qrDisplay');
+            
+            if (result.qrCode.format === 'png') {
+                display.innerHTML = `<img src="${result.qrCode.data}" alt="QR Code" />`;
+            } else if (result.qrCode.format === 'svg') {
+                display.innerHTML = result.qrCode.data;
+            } else if (result.qrCode.format === 'ascii') {
+                display.innerHTML = `<div class="ascii-qr">${result.qrCode.data}</div>`;
+            }
+            
+            preview.style.display = 'flex';
+        }
+
+        async function validateData() {
+            const data = document.getElementById('qrData').value.trim();
+
+            if (!data) {
+                showResult('qrResult', 'Please enter data to validate.', 'error');
+                return;
+            }
+
+            showLoading('qrResult');
+
+            try {
+                const result = await apiCall('/api/validate', {
+                    method: 'POST',
+                    body: JSON.stringify({ data })
+                });
+
+                const resultText = `Data Validation Results:
+
+Validation: ${result.validation.valid ? 'VALID' : 'INVALID'}
+${result.validation.error ? `Error: ${result.validation.error}` : ''}
+
+Analysis:
+- Type: ${result.analysis.type}
+- Length: ${result.analysis.length} characters
+- Encoding: ${result.analysis.encoding}
+- Estimated Size: ${result.analysis.estimatedSize}x${result.analysis.estimatedSize}
+
+Recommendations:
+- Optimal Error Correction: ${result.recommendations.optimalErrorCorrection}
+- Small Size: ${result.recommendations.estimatedSizes.small}px
+- Medium Size: ${result.recommendations.estimatedSizes.medium}px
+- Large Size: ${result.recommendations.estimatedSizes.large}px`;
+
+                showResult('qrResult', resultText, result.validation.valid ? 'success' : 'error');
+            } catch (error) {
+                showResult('qrResult', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function addBatchItem() {
+            const container = document.getElementById('batchItems');
+            const itemCount = container.children.length + 1;
+            
+            const div = document.createElement('div');
+            div.className = 'batch-item';
+            div.innerHTML = `
+                <input type="text" placeholder="Data to encode..." value="Sample QR ${itemCount}">
+                <input type="text" placeholder="ID (optional)" value="qr${itemCount}">
+                <button onclick="removeBatchItem(this)">Remove</button>
+            `;
+            
+            container.appendChild(div);
+        }
+
+        function removeBatchItem(button) {
+            button.parentElement.remove();
+        }
+
+        function clearBatch() {
+            document.getElementById('batchItems').innerHTML = '';
+        }
+
+        async function generateBatch() {
+            const items = [];
+            const container = document.getElementById('batchItems');
+            const format = document.getElementById('batchFormat').value;
+            const size = parseInt(document.getElementById('batchSize').value);
+
+            for (const item of container.children) {
+                const inputs = item.querySelectorAll('input');
+                const data = inputs[0].value.trim();
+                const id = inputs[1].value.trim();
+                
+                if (data) {
+                    items.push({ data, id: id || `qr${items.length + 1}` });
+                }
+            }
+
+            if (items.length === 0) {
+                showResult('batchResult', 'Please add items to generate.', 'error');
+                return;
+            }
+
+            showLoading('batchResult');
+
+            try {
+                const result = await apiCall('/api/batch', {
+                    method: 'POST',
+                    body: JSON.stringify({ items, format, size })
+                });
+
+                displayBatchResult(result);
+            } catch (error) {
+                showResult('batchResult', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function displayBatchResult(result) {
+            let resultText = `Batch Generation Completed!
+
+Job ID: ${result.jobId}
+Status: ${result.status.toUpperCase()}
+
+Summary:
+- Total Items: ${result.summary.total}
+- Successfully Generated: ${result.summary.completed}
+- Errors: ${result.summary.errors}
+- Duration: ${result.summary.duration}
+
+Completed: ${new Date(result.completedAt).toLocaleString()}`;
+
+            if (result.errors.length > 0) {
+                resultText += `\n\nErrors:`;
+                result.errors.forEach(error => {
+                    resultText += `\n- Item ${error.index} (${error.id}): ${error.error}`;
+                });
+            }
+
+            if (result.results.length > 0) {
+                resultText += `\n\nResults:`;
+                result.results.slice(0, 5).forEach(item => {
+                    resultText += `\n- ${item.id}: ${item.analysis.type} (${item.analysis.length} chars)`;
+                });
+                
+                if (result.results.length > 5) {
+                    resultText += `\n... and ${result.results.length - 5} more items`;
+                }
+            }
+
+            showResult('batchResult', resultText, result.summary.errors > 0 ? 'error' : 'success');
+        }
+
+        async function refreshStatus(showLoadingIndicator = true) {
+            if (showLoadingIndicator) {
+                showLoading('statusResult');
+            }
+
+            try {
+                const status = await apiCall('/api/status');
+                
+                const statusHtml = `
+                    <div class="stats-grid">
+                        <div class="stats-card">
+                            <h3>Service Status</h3>
+                            <div class="value">${status.status}</div>
+                        </div>
+                        <div class="stats-card">
+                            <h3>Uptime</h3>
+                            <div class="value">${status.uptime.human}</div>
+                        </div>
+                        <div class="stats-card">
+                            <h3>Total Requests</h3>
+                            <div class="value">${status.metrics.requestCount}</div>
+                        </div>
+                        <div class="stats-card">
+                            <h3>Generated QR Codes</h3>
+                            <div class="value">${status.metrics.generatedQRCodes}</div>
+                        </div>
+                        <div class="stats-card">
+                            <h3>Active Batch Jobs</h3>
+                            <div class="value">${status.metrics.activeBatchJobs}</div>
+                        </div>
+                        <div class="stats-card">
+                            <h3>Error Rate</h3>
+                            <div class="value">${status.metrics.errorRate}</div>
+                        </div>
+                    </div>
+                    <div class="result-box">
+                        <strong>Format Statistics:</strong>
+                        PNG: ${status.metrics.formatStats.png} generated
+                        SVG: ${status.metrics.formatStats.svg} generated
+                        ASCII: ${status.metrics.formatStats.ascii} generated
+                    </div>
+                `;
+
+                document.getElementById('statusResult').innerHTML = statusHtml;
+            } catch (error) {
+                if (showLoadingIndicator) {
+                    showResult('statusResult', `Error: ${error.message}`, 'error');
+                }
+            }
+        }
+
+        async function getFormats() {
+            showLoading('formatInfo');
+            
+            try {
+                const result = await apiCall('/api/formats');
+                displayFormatInfo(result);
+                document.getElementById('formatInfoSection').style.display = 'block';
+            } catch (error) {
+                showResult('formatInfo', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function displayFormatInfo(result) {
+            let html = '<div class="format-info">';
+            
+            // Format details
+            Object.entries(result.formatDetails).forEach(([format, details]) => {
+                html += `
+                    <div class="format-card">
+                        <h4>${format.toUpperCase()}</h4>
+                        <p>${details.description}</p>
+                        <p><strong>Output:</strong> ${details.outputType}</p>
+                        <p><strong>Use Cases:</strong> ${details.useCases.join(', ')}</p>
+                        <div class="features">
+                            ${details.features.map(feature => `<span class="feature-tag">${feature}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            // Error correction info
+            html += `
+                <div class="format-card">
+                    <h4>Error Correction Levels</h4>
+                    ${Object.entries(result.errorCorrectionLevels).map(([level, info]) => 
+                        `<p><strong>${level}:</strong> ${info.description} - ${info.dataCapacity} data capacity</p>`
+                    ).join('')}
+                </div>
+            `;
+            
+            // Size constraints
+            html += `
+                <div class="format-card">
+                    <h4>Size Constraints</h4>
+                    <p><strong>Range:</strong> ${result.sizeConstraints.minimum}px - ${result.sizeConstraints.maximum}px</p>
+                    <p><strong>Default:</strong> ${result.sizeConstraints.default}px</p>
+                    <p><strong>Recommended:</strong></p>
+                    <p>Mobile: ${result.sizeConstraints.recommended.mobile}px</p>
+                    <p>Web: ${result.sizeConstraints.recommended.web}px</p>
+                    <p>Print: ${result.sizeConstraints.recommended.print}px</p>
+                </div>
+            `;
+            
+            html += '</div>';
+            document.getElementById('formatInfo').innerHTML = html;
+        }
+
+        async function updateConfig() {
+            const defaultSize = parseInt(document.getElementById('configDefaultSize').value);
+            const maxBatch = parseInt(document.getElementById('configMaxBatch').value);
+
+            showLoading('configResult');
+
+            try {
+                const result = await apiCall('/api/config', {
+                    method: 'POST',
+                    body: JSON.stringify({ 
+                        defaultSize: defaultSize,
+                        maxBatchSize: maxBatch 
+                    })
+                });
+
+                showResult('configResult', `Configuration updated:\nDefault Size: ${result.config.defaultSize}px\nMax Batch Size: ${result.config.maxBatchSize}`, 'success');
+            } catch (error) {
+                showResult('configResult', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function getConfig() {
+            showLoading('configResult');
+
+            try {
+                const config = await apiCall('/api/config');
+                
+                document.getElementById('configDefaultSize').value = config.config.defaultSize;
+                document.getElementById('configMaxBatch').value = config.config.maxBatchSize;
+                
+                showResult('configResult', `Current configuration:\nService: ${config.config.serviceName}\nVersion: ${config.config.version}\nDefault Size: ${config.config.defaultSize}px\nMax Data Length: ${config.config.maxDataLength} chars\nMax Batch Size: ${config.config.maxBatchSize}`);
+            } catch (error) {
+                showResult('configResult', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function clearQRResult() {
+            document.getElementById('qrResult').innerHTML = '';
+            document.getElementById('qrPreview').style.display = 'none';
+            document.getElementById('qrData').value = '';
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            refreshStatus(true);
+            getConfig();
+
+            // Auto-refresh status every 30 seconds
+            setInterval(() => {
+                refreshStatus(false);
+            }, 30000);
+        });
+    </script>
+</body>
+</html>
