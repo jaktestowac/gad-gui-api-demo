@@ -78,6 +78,12 @@ const getAvailableServices = () => {
       description: "Generates unique identifiers (UUIDs) in various formats",
       default: true,
     },
+    textAnalytics: {
+      url: "http://localhost:3115",
+      name: "Text Analytics",
+      description: "Performs text analysis and natural language processing",
+      default: true,
+    },
   };
 
   // Add default services

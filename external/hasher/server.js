@@ -482,6 +482,7 @@ app.listen(port, () => {
   console.log(`📊 Visit http://localhost:${port}/api/status for service status`);
   console.log(`🏥 Visit http://localhost:${port}/api/health for health check`);
   console.log(`📖 Visit http://localhost:${port}/api/openapi for API documentation`);
+  console.log(`📜 Visit http://localhost:${port}/ for HTML interface`);
   console.log("");
 
   // Dynamically list all available endpoints
