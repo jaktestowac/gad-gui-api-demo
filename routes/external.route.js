@@ -24,6 +24,9 @@ const getServiceUrl = (serviceName) => {
     templateservice: "http://localhost:3111",
     minitemplate: process.env.MINI_TEMPLATE_URL || "http://localhost:3113",
     hasher: "http://localhost:3112",
+    uuidgenerator: "http://localhost:3114",
+    textanalytics: "http://localhost:3115",
+    qrgenerator: "http://localhost:3116",
   };
 
   const key = String(serviceName || "").toLowerCase();
@@ -44,7 +47,15 @@ const getServiceUrl = (serviceName) => {
 // Check if a service needs /api prefix in the target path
 const serviceNeedsApiPrefix = (serviceName) => {
   const key = String(serviceName || "").toLowerCase();
-  const servicesNeedingApi = ["templateservice", "minitemplate", "hasher", "default"]; // treat default (MiniTemplate) as needing /api
+  const servicesNeedingApi = [
+    "templateservice",
+    "minitemplate",
+    "hasher",
+    "uuidgenerator",
+    "textanalytics",
+    "qrgenerator",
+    "default",
+  ]; // treat default (MiniTemplate) as needing /api
   return servicesNeedingApi.includes(key);
 };
 
@@ -219,7 +230,13 @@ router.get("/list", (req, res) => {
       message: "Available external services",
       instructions: {
         usage: "Use /api/external/{serviceName}/{endpoint} to access services",
-        examples: ["/api/external/miniTemplate/jobs", "/api/external/hasher/hash"],
+        examples: [
+          "/api/external/miniTemplate/jobs",
+          "/api/external/hasher/hash",
+          "/api/external/uuidGenerator/generate",
+          "/api/external/textAnalytics/analyze",
+          "/api/external/qrGenerator/generate",
+        ],
         addService: "Set EXTERNAL_SERVICE_{NAME}_URL=https://api.example.com",
       },
     });
