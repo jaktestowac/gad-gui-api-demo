@@ -1,10 +1,14 @@
 const express = require("express");
 const crypto = require("crypto");
+const path = require("path");
 
 const app = express();
 app.use(express.json());
 
-const config = { interval: 1000, maxQueue: 100 };
+// Serve static files (including our HTML page)
+app.use(express.static(path.join(__dirname)));
+
+const config = { interval: 1000, maxQueue: 100, maxParallelJobs: 3 };
 const port = process.env.PORT || 3112;
 
 // Service Configuration
@@ -43,36 +47,167 @@ app.use((err, req, res, next) => {
 const jobs = {};
 const queue = [];
 const history = [];
+const processingJobs = new Set(); // Track currently processing job IDs
+
+// Algorithm processing functions
+const algorithmProcessors = {
+  sha256: processSha256,
+  md5: processMd5,
+  "slow-sha256": processSlowSha256,
+};
+
+function processSha256(job) {
+  return new Promise((resolve, reject) => {
+    try {
+      if (!job.input) {
+        throw new Error("No input provided");
+      }
+
+      const input = typeof job.input === "string" ? job.input : JSON.stringify(job.input);
+      const hash = crypto.createHash("sha256");
+      hash.update(input);
+      const buffer = hash.digest();
+      const hex = buffer.toString("hex");
+      const bytes = buffer.length;
+      const inputSize = input.length;
+
+      const result = {
+        algorithm: job.algorithm,
+        hex,
+        bytes,
+        inputSize,
+      };
+
+      resolve(result);
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+function processMd5(job) {
+  return new Promise((resolve, reject) => {
+    try {
+      if (!job.input) {
+        throw new Error("No input provided");
+      }
+
+      const input = typeof job.input === "string" ? job.input : JSON.stringify(job.input);
+      const hash = crypto.createHash("md5");
+      hash.update(input);
+      const buffer = hash.digest();
+      const hex = buffer.toString("hex");
+      const bytes = buffer.length;
+      const inputSize = input.length;
+
+      const result = {
+        algorithm: job.algorithm,
+        hex,
+        bytes,
+        inputSize,
+      };
+
+      resolve(result);
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+function processSlowSha256(job) {
+  return new Promise((resolve, reject) => {
+    // Simulate slow processing with a 3-6 second delay
+    const processingTime = Math.floor(Math.random() * 3000) + 3000;
+
+    setTimeout(() => {
+      try {
+        if (!job.input) {
+          throw new Error("No input provided");
+        }
+
+        const input = typeof job.input === "string" ? job.input : JSON.stringify(job.input);
+
+        // Perform multiple iterations of hashing to simulate slow processing
+        let hash = crypto.createHash("sha256");
+        hash.update(input);
+        let result = hash.digest();
+
+        // Perform additional iterations for "slow" effect
+        const iterations = Math.floor(input.length / 10) + 100;
+        for (let i = 0; i < iterations; i++) {
+          hash = crypto.createHash("sha256");
+          hash.update(result);
+          result = hash.digest();
+        }
+
+        const hex = result.toString("hex");
+        const bytes = result.length;
+        const inputSize = input.length;
+
+        const hashResult = {
+          algorithm: job.algorithm,
+          hex,
+          bytes,
+          inputSize,
+          iterations: iterations,
+          processingTime: processingTime,
+        };
+
+        resolve(hashResult);
+      } catch (error) {
+        reject(error);
+      }
+    }, processingTime);
+  });
+}
+
+function completeJob(job, result) {
+  job.result = result;
+  job.status = "done";
+  job.completedAt = new Date();
+  history.push(job);
+  processingJobs.delete(job.id); // Remove from processing set
+  delete jobs[job.id];
+  if (history.length > 500) history.shift();
+}
+
+function failJob(job, error) {
+  job.status = "failed";
+  job.error = error.message;
+  job.failedAt = new Date();
+  history.push(job);
+  processingJobs.delete(job.id); // Remove from processing set
+  delete jobs[job.id];
+  if (history.length > 500) history.shift();
+}
 
 function processQueue() {
-  if (queue.length === 0) return;
-  const id = queue.shift();
-  const job = jobs[id];
-  if (!job) return; // Safety check
-  job.status = "processing";
-  job.startedAt = new Date();
-  try {
-    if (!job.input) throw new Error("No input provided");
-    const input = typeof job.input === "string" ? job.input : JSON.stringify(job.input);
-    const hash = crypto.createHash(job.algorithm);
-    hash.update(input);
-    const buffer = hash.digest();
-    const hex = buffer.toString("hex");
-    const bytes = buffer.length;
-    const inputSize = input.length;
-    job.result = { algorithm: job.algorithm, hex, bytes, inputSize };
-    job.status = "done";
-    job.completedAt = new Date();
-    history.push(job);
-    delete jobs[id];
-    if (history.length > 500) history.shift();
-  } catch (e) {
-    job.status = "failed";
-    job.error = e.message;
-    job.failedAt = new Date();
-    history.push(job);
-    delete jobs[id];
-    if (history.length > 500) history.shift();
+  // Process multiple jobs up to the parallel limit
+  while (queue.length > 0 && processingJobs.size < config.maxParallelJobs) {
+    const id = queue.shift();
+    const job = jobs[id];
+    if (!job) continue; // Safety check
+
+    job.status = "processing";
+    job.startedAt = new Date();
+    processingJobs.add(job.id); // Add to processing set
+
+    // Get the appropriate processor function for the algorithm
+    const processor = algorithmProcessors[job.algorithm];
+
+    if (!processor) {
+      failJob(job, new Error(`Unsupported algorithm: ${job.algorithm}`));
+      continue;
+    }
+
+    // Process the job using the algorithm-specific function
+    processor(job)
+      .then((result) => {
+        completeJob(job, result);
+      })
+      .catch((error) => {
+        failJob(job, error);
+      });
   }
 }
 
@@ -81,7 +216,8 @@ let intervalId = setInterval(processQueue, config.interval);
 
 app.post("/api/jobs", (req, res) => {
   const { algorithm, input } = req.body;
-  if (!["sha256", "md5"].includes(algorithm)) {
+  const supportedAlgorithms = Object.keys(algorithmProcessors);
+  if (!supportedAlgorithms.includes(algorithm)) {
     return res.status(400).json({ error: "Invalid algorithm" });
   }
   if (typeof input !== "string" && typeof input !== "object") {
@@ -97,7 +233,7 @@ app.post("/api/jobs", (req, res) => {
 });
 
 app.get("/api/jobs/dummy", (req, res) => {
-  const algorithms = ["sha256", "md5"];
+  const algorithms = Object.keys(algorithmProcessors);
   const algorithm = algorithms[Math.floor(Math.random() * algorithms.length)];
   const input = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15); // random string
   if (queue.length >= config.maxQueue) {
@@ -129,7 +265,7 @@ app.get("/api/jobs/:id", (req, res) => {
 });
 
 app.post("/api/config", (req, res) => {
-  const { interval, maxQueue } = req.body;
+  const { interval, maxQueue, maxParallelJobs } = req.body;
   if (interval !== undefined) {
     if (typeof interval !== "number" || interval < 10) {
       return res.status(400).json({ error: "Invalid interval" });
@@ -143,6 +279,12 @@ app.post("/api/config", (req, res) => {
       return res.status(400).json({ error: "Invalid maxQueue" });
     }
     config.maxQueue = maxQueue;
+  }
+  if (maxParallelJobs !== undefined) {
+    if (typeof maxParallelJobs !== "number" || maxParallelJobs < 1) {
+      return res.status(400).json({ error: "Invalid maxParallelJobs" });
+    }
+    config.maxParallelJobs = maxParallelJobs;
   }
   res.json(config);
 });
@@ -186,9 +328,10 @@ app.get("/api/capabilities", (req, res) => {
       "configuration-management",
       "openapi-documentation",
     ],
-    supportedAlgorithms: ["sha256", "md5"],
+    supportedAlgorithms: Object.keys(algorithmProcessors),
     limits: {
       maxQueue: config.maxQueue,
+      maxParallelJobs: config.maxParallelJobs,
     },
     endpoints: endpointStrings,
     supportedFormats: ["json"],
@@ -217,6 +360,7 @@ app.get("/api/status", (req, res) => {
       errorRate: STATE.requestCount > 0 ? ((STATE.errorCount / STATE.requestCount) * 100).toFixed(2) + "%" : "0%",
       queueLength: queue.length,
       jobsCount: Object.keys(jobs).length,
+      processingJobsCount: processingJobs.size,
       statusCounts,
     },
     lastError: STATE.lastError,
@@ -309,7 +453,7 @@ app.get("/api/openapi", (req, res) => {
     if (ep.method === "POST" && ep.path === "/api/jobs") {
       exampleBody = { algorithm: "sha256", input: "hello world" };
     } else if (ep.method === "POST" && ep.path === "/api/config") {
-      exampleBody = { interval: 1000, maxQueue: 100 };
+      exampleBody = { interval: 1000, maxQueue: 100, maxParallelJobs: 3 };
     }
     return { ...ep, exampleBody };
   });
@@ -326,6 +470,11 @@ app.get("/api/openapi", (req, res) => {
     paths,
     timestamp: new Date().toISOString(),
   });
+});
+
+// Serve the HTML page as the default route
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 
 app.listen(port, () => {
