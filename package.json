@@ -23,7 +23,8 @@
     "version:help": "node tools/release/update-version.js",
     "ex:template": "node external/_template/server.js",
     "ex:hasher": "node external/hasher/server.js",
-    "ex:mini": "node external/miniTemplate/server.js"
+    "ex:mini": "node external/miniTemplate/server.js",
+    "ex:uuid": "node external/uuid-generator/server.js"
   },
   "keywords": [
     "json-server, node, REST API"

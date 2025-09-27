@@ -72,6 +72,12 @@ const getAvailableServices = () => {
       description: "Data hashing service",
       default: true,
     },
+    uuidGenerator: {
+      url: "http://localhost:3114",
+      name: "UUID Generator",
+      description: "Generates unique identifiers (UUIDs) in various formats",
+      default: true,
+    },
   };
 
   // Add default services

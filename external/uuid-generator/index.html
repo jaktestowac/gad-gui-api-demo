@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UUID Generator Service - Unique Identifier Generator</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 15px;
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 3px solid #6366f1;
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 1.2em;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: bold;
+            color: #555;
+            font-size: 0.9em;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #6366f1;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .result-box {
+            background: #eff6ff;
+            border: 1px solid #6366f1;
+            border-radius: 4px;
+            padding: 12px;
+            margin-top: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .error-box {
+            background: #fef2f2;
+            border: 1px solid #ef4444;
+            border-radius: 4px;
+            padding: 12px;
+            margin-top: 8px;
+            color: #b91c1c;
+            font-size: 12px;
+        }
+
+        .success-box {
+            background: #f0fdf4;
+            border: 1px solid #10b981;
+            border-radius: 4px;
+            padding: 12px;
+            margin-top: 8px;
+            color: #065f46;
+            font-size: 12px;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .status-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .status-card h3 {
+            color: #6366f1;
+            margin-bottom: 6px;
+            font-size: 0.9em;
+        }
+
+        .status-card .value {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .uuid-display {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 12px;
+            margin: 8px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            word-break: break-all;
+            position: relative;
+        }
+
+        .uuid-display.valid {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+
+        .uuid-display.invalid {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: #6366f1;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            padding: 4px 8px;
+            font-size: 10px;
+            cursor: pointer;
+        }
+
+        .copy-btn:hover {
+            background: #4f46e5;
+        }
+
+        .format-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .format-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 12px;
+        }
+
+        .format-card h4 {
+            color: #6366f1;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        .format-card .details {
+            font-size: 11px;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #6366f1;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .batch-results {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            margin-top: 8px;
+        }
+
+        .batch-item {
+            padding: 6px 10px;
+            border-bottom: 1px solid #eee;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            position: relative;
+        }
+
+        .batch-item:last-child {
+            border-bottom: none;
+        }
+
+        .batch-item:hover {
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🆔 UUID Generator Service</h1>
+            <p>Generate unique identifiers with multiple formats and validation</p>
+        </div>
+
+        <div class="main-content">
+            <!-- UUID Generation Section -->
+            <div class="section">
+                <h2>🎲 Generate Single UUID</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="uuidVersion">UUID Version:</label>
+                        <select id="uuidVersion">
+                            <option value="v4">UUID v4 (Random)</option>
+                            <option value="v1">UUID v1 (Timestamp + MAC)</option>
+                            <option value="v7">UUID v7 (Unix Timestamp + Random)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="customFormat">Custom Format:</label>
+                        <select id="customFormat">
+                            <option value="uuid">Standard UUID</option>
+                            <option value="alphanumeric">Alphanumeric</option>
+                            <option value="hex">Hexadecimal</option>
+                            <option value="base32">Base32</option>
+                            <option value="numeric">Numeric Only</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group" id="customLengthGroup" style="display: none;">
+                    <label for="customLength">Custom Length (1-100):</label>
+                    <input type="number" id="customLength" min="1" max="100" value="16">
+                </div>
+                <button class="btn" onclick="generateSingle()">Generate UUID</button>
+                <button class="btn btn-secondary" onclick="clearSingleResult()">Clear</button>
+                <div id="singleResult"></div>
+            </div>
+
+            <!-- Batch Generation Section -->
+            <div class="section">
+                <h2>📦 Batch Generation</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="batchCount">Count (1-1000):</label>
+                        <input type="number" id="batchCount" min="1" max="1000" value="10">
+                    </div>
+                    <div class="form-group">
+                        <label for="batchFormat">Format:</label>
+                        <select id="batchFormat">
+                            <option value="uuid">Standard UUID v4</option>
+                            <option value="uuid-v1">UUID v1</option>
+                            <option value="uuid-v7">UUID v7</option>
+                            <option value="alphanumeric">Alphanumeric</option>
+                            <option value="hex">Hexadecimal</option>
+                            <option value="base32">Base32</option>
+                            <option value="numeric">Numeric Only</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn-success" onclick="generateBatch()">Generate Batch</button>
+                <button class="btn btn-info" onclick="copyBatchResults()">Copy All</button>
+                <button class="btn btn-secondary" onclick="clearBatchResult()">Clear</button>
+                <div id="batchResult"></div>
+            </div>
+
+            <!-- UUID Validation Section -->
+            <div class="section">
+                <h2>✅ UUID Validation</h2>
+                <div class="form-group">
+                    <label for="validateInput">UUID to Validate:</label>
+                    <input type="text" id="validateInput" placeholder="Enter UUID to validate..." value="550e8400-e29b-41d4-a716-446655440000">
+                </div>
+                <button class="btn btn-warning" onclick="validateUUID()">Validate UUID</button>
+                <button class="btn btn-secondary" onclick="generateSampleUUID()">Use Sample UUID</button>
+                <div id="validateResult"></div>
+            </div>
+
+            <!-- Format Information Section -->
+            <div class="section">
+                <h2>📋 Supported Formats</h2>
+                <button class="btn btn-info" onclick="loadFormats()">Load Format Info</button>
+                <div id="formatInfo"></div>
+            </div>
+
+            <!-- Service Status Section -->
+            <div class="section">
+                <h2>📊 Service Status</h2>
+                <button class="btn btn-info" onclick="refreshStatus(true)">Refresh Status</button>
+                <div id="statusResult"></div>
+            </div>
+
+            <!-- Configuration Section -->
+            <div class="section">
+                <h2>⚙️ Configuration</h2>
+                <div class="form-group">
+                    <label for="maxBatchSize">Max Batch Size:</label>
+                    <input type="number" id="maxBatchSize" min="1" max="10000" value="1000">
+                </div>
+                <button class="btn" onclick="updateConfig()">Update Configuration</button>
+                <button class="btn btn-secondary" onclick="getConfig()">Get Current Config</button>
+                <div id="configResult"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+
+        // Update custom format visibility
+        document.getElementById('customFormat').addEventListener('change', function() {
+            const customLengthGroup = document.getElementById('customLengthGroup');
+            if (this.value === 'uuid') {
+                customLengthGroup.style.display = 'none';
+            } else {
+                customLengthGroup.style.display = 'block';
+            }
+        });
+
+        async function apiCall(endpoint, options = {}) {
+            try {
+                const response = await fetch(`${API_BASE}${endpoint}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    },
+                    ...options
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error('API call failed:', error);
+                throw error;
+            }
+        }
+
+        function showResult(elementId, content, type = 'info') {
+            const element = document.getElementById(elementId);
+            const className = type === 'error' ? 'error-box' : type === 'success' ? 'success-box' : 'result-box';
+            element.innerHTML = `<div class="${className}">${content}</div>`;
+        }
+
+        function showLoading(elementId) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = '<div class="loading"></div> Processing...';
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                // Visual feedback could be added here
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+            });
+        }
+
+        async function generateSingle() {
+            const format = document.getElementById('customFormat').value;
+            const version = document.getElementById('uuidVersion').value;
+            const length = parseInt(document.getElementById('customLength').value) || undefined;
+
+            showLoading('singleResult');
+
+            try {
+                const requestBody = { format };
+                if (format === 'uuid') {
+                    requestBody.version = version;
+                } else if (length) {
+                    requestBody.length = length;
+                }
+
+                const result = await apiCall('/api/generate', {
+                    method: 'POST',
+                    body: JSON.stringify(requestBody)
+                });
+
+                const displayHtml = `
+                    <div class="uuid-display valid">
+                        <button class="copy-btn" onclick="copyToClipboard('${result.id}')">Copy</button>
+                        <strong>Generated ID:</strong><br>
+                        ${result.id}
+                    </div>
+                    <div class="result-box">
+                        <strong>Details:</strong>
+                        Format: ${result.format}
+                        ${result.version ? `\nVersion: ${result.version}` : ''}
+                        Length: ${result.length} characters
+                        Generated: ${new Date(result.generatedAt).toLocaleString()}
+                    </div>
+                `;
+
+                document.getElementById('singleResult').innerHTML = displayHtml;
+            } catch (error) {
+                showResult('singleResult', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function generateBatch() {
+            const count = parseInt(document.getElementById('batchCount').value);
+            const formatOption = document.getElementById('batchFormat').value;
+
+            if (!count || count < 1 || count > 1000) {
+                showResult('batchResult', 'Count must be between 1 and 1000', 'error');
+                return;
+            }
+
+            showLoading('batchResult');
+
+            try {
+                let requestBody = { count };
+
+                if (formatOption.startsWith('uuid')) {
+                    requestBody.format = 'uuid';
+                    if (formatOption === 'uuid-v1') {
+                        requestBody.version = 'v1';
+                    } else if (formatOption === 'uuid-v7') {
+                        requestBody.version = 'v7';
+                    } else {
+                        requestBody.version = 'v4';
+                    }
+                } else {
+                    requestBody.format = formatOption;
+                }
+
+                const result = await apiCall('/api/batch', {
+                    method: 'POST',
+                    body: JSON.stringify(requestBody)
+                });
+
+                let batchHtml = `
+                    <div class="result-box">
+                        <strong>Batch Generated:</strong>
+                        Count: ${result.count}
+                        Format: ${result.format}
+                        ${result.version ? `\nVersion: ${result.version}` : ''}
+                        Generated: ${new Date(result.generatedAt).toLocaleString()}
+                    </div>
+                    <div class="batch-results">
+                `;
+
+                result.ids.forEach((id, index) => {
+                    batchHtml += `
+                        <div class="batch-item" onclick="copyToClipboard('${id}')">
+                            ${index + 1}. ${id}
+                        </div>
+                    `;
+                });
+
+                batchHtml += '</div>';
+                document.getElementById('batchResult').innerHTML = batchHtml;
+            } catch (error) {
+                showResult('batchResult', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function validateUUID() {
+            const id = document.getElementById('validateInput').value.trim();
+
+            if (!id) {
+                showResult('validateResult', 'Please enter a UUID to validate', 'error');
+                return;
+            }
+
+            showLoading('validateResult');
+
+            try {
+                const result = await apiCall('/api/validate', {
+                    method: 'POST',
+                    body: JSON.stringify({ id })
+                });
+
+                const displayClass = result.isValid ? 'valid' : 'invalid';
+                const displayHtml = `
+                    <div class="uuid-display ${displayClass}">
+                        <button class="copy-btn" onclick="copyToClipboard('${result.id}')">Copy</button>
+                        <strong>UUID:</strong><br>
+                        ${result.id}
+                    </div>
+                    <div class="result-box">
+                        <strong>Validation Result:</strong>
+                        Status: ${result.isValid ? '✅ Valid' : '❌ Invalid'}
+                        ${result.version ? `\nVersion: ${result.version}` : ''}
+                        ${result.variant ? `\nVariant: ${result.variant}` : ''}
+                        Format: ${result.format}
+                        Validated: ${new Date(result.timestamp).toLocaleString()}
+                    </div>
+                `;
+
+                document.getElementById('validateResult').innerHTML = displayHtml;
+            } catch (error) {
+                showResult('validateResult', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function loadFormats() {
+            showLoading('formatInfo');
+
+            try {
+                const result = await apiCall('/api/formats');
+
+                let formatHtml = '<div class="format-info">';
+
+                // UUID formats
+                formatHtml += `
+                    <div class="format-card">
+                        <h4>UUID Formats</h4>
+                        <div class="details">
+                            <strong>Format:</strong> ${result.uuid.format}<br>
+                            <strong>Versions:</strong> ${result.uuid.versions.join(', ')}<br>
+                            <strong>Description:</strong> ${result.uuid.description}
+                        </div>
+                    </div>
+                `;
+
+                // Custom formats
+                Object.entries(result.custom).forEach(([format, info]) => {
+                    formatHtml += `
+                        <div class="format-card">
+                            <h4>${format.toUpperCase()}</h4>
+                            <div class="details">
+                                <strong>Characters:</strong> ${info.characters.length} unique chars<br>
+                                <strong>Default Length:</strong> ${info.defaultLength}<br>
+                                <strong>Max Length:</strong> ${info.maxLength}<br>
+                                <strong>Sample chars:</strong> ${info.characters.substring(0, 20)}...
+                            </div>
+                        </div>
+                    `;
+                });
+
+                formatHtml += '</div>';
+                document.getElementById('formatInfo').innerHTML = formatHtml;
+            } catch (error) {
+                showResult('formatInfo', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function refreshStatus(showLoadingIndicator = true) {
+            if (showLoadingIndicator) {
+                showLoading('statusResult');
+            }
+
+            try {
+                const status = await apiCall('/api/status');
+                
+                const statusHtml = `
+                    <div class="status-grid">
+                        <div class="status-card">
+                            <h3>Service Status</h3>
+                            <div class="value">${status.status}</div>
+                        </div>
+                        <div class="status-card">
+                            <h3>Uptime</h3>
+                            <div class="value">${status.uptime.human}</div>
+                        </div>
+                        <div class="status-card">
+                            <h3>Total Requests</h3>
+                            <div class="value">${status.metrics.requestCount}</div>
+                        </div>
+                        <div class="status-card">
+                            <h3>Generated IDs</h3>
+                            <div class="value">${status.metrics.generatedCount}</div>
+                        </div>
+                        <div class="status-card">
+                            <h3>Error Rate</h3>
+                            <div class="value">${status.metrics.errorRate}</div>
+                        </div>
+                    </div>
+                    ${Object.keys(status.metrics.formatStats).length > 0 ? `
+                        <div class="result-box">
+                            <strong>Format Statistics:</strong>
+                            ${Object.entries(status.metrics.formatStats).map(([format, count]) => 
+                                `${format}: ${count}`
+                            ).join('\n')}
+                        </div>
+                    ` : ''}
+                `;
+
+                document.getElementById('statusResult').innerHTML = statusHtml;
+            } catch (error) {
+                if (showLoadingIndicator) {
+                    showResult('statusResult', `Error: ${error.message}`, 'error');
+                }
+            }
+        }
+
+        async function updateConfig() {
+            const maxBatchSize = parseInt(document.getElementById('maxBatchSize').value);
+
+            if (maxBatchSize < 1 || maxBatchSize > 10000) {
+                showResult('configResult', 'Max batch size must be between 1 and 10000', 'error');
+                return;
+            }
+
+            showLoading('configResult');
+
+            try {
+                const result = await apiCall('/api/config', {
+                    method: 'POST',
+                    body: JSON.stringify({ maxBatchSize })
+                });
+
+                showResult('configResult', `Configuration updated:\nMax Batch Size: ${result.config.maxBatchSize}`, 'success');
+            } catch (error) {
+                showResult('configResult', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function getConfig() {
+            showLoading('configResult');
+
+            try {
+                const config = await apiCall('/api/config');
+                
+                document.getElementById('maxBatchSize').value = config.config.maxBatchSize;
+                
+                showResult('configResult', `Current configuration:\nMax Batch Size: ${config.config.maxBatchSize}\nDiagnostics: ${config.config.enableDiagnostics ? 'Enabled' : 'Disabled'}`);
+            } catch (error) {
+                showResult('configResult', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function generateSampleUUID() {
+            document.getElementById('validateInput').value = '550e8400-e29b-41d4-a716-446655440000';
+        }
+
+        function clearSingleResult() {
+            document.getElementById('singleResult').innerHTML = '';
+        }
+
+        function clearBatchResult() {
+            document.getElementById('batchResult').innerHTML = '';
+        }
+
+        function copyBatchResults() {
+            const batchItems = document.querySelectorAll('.batch-item');
+            if (batchItems.length === 0) {
+                showResult('batchResult', 'No batch results to copy', 'error');
+                return;
+            }
+
+            const ids = Array.from(batchItems).map(item => 
+                item.textContent.substring(item.textContent.indexOf('.') + 2)
+            );
+            
+            copyToClipboard(ids.join('\n'));
+            showResult('batchResult', `Copied ${ids.length} IDs to clipboard!`, 'success');
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load initial status
+            refreshStatus(true);
+            loadFormats();
+            getConfig();
+
+            // Auto-refresh status every 5 seconds
+            setInterval(() => {
+                refreshStatus(false);
+            }, 5000);
+        });
+    </script>
+</body>
+</html>
