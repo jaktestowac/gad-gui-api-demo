@@ -26,7 +26,8 @@
     "ex:mini": "node external/miniTemplate/server.js",
     "ex:uuid": "node external/uuid-generator/server.js",
     "ex:text": "node external/text-analytics/server.js",
-    "ex:qr": "node external/qr-generator/server.js"
+    "ex:qr": "node external/qr-generator/server.js",
+    "ex:url": "node external/url-shortener/server.js"
   },
   "keywords": [
     "json-server, node, REST API"

@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URL Shortener Service</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #4a5568;
+      margin-bottom: 10px;
+      font-size: 2.5em;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #718096;
+      margin-bottom: 40px;
+      font-size: 1.1em;
+    }
+
+    .tabs {
+      display: flex;
+      background: #f7fafc;
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 30px;
+      overflow-x: auto;
+    }
+
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 12px 20px;
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      min-width: 120px;
+    }
+
+    .tab.active {
+      background: #667eea;
+      color: white;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .tab:not(.active):hover {
+      background: #e2e8f0;
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.3s ease-in;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .form-row .form-group {
+      flex: 1;
+      margin-bottom: 0;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #4a5568;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      background: white;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-secondary {
+      background: #718096;
+    }
+
+    .btn-danger {
+      background: #e53e3e;
+    }
+
+    .btn-small {
+      padding: 8px 16px;
+      font-size: 14px;
+    }
+
+    .result {
+      background: #f0fff4;
+      border: 2px solid #9ae6b4;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+      animation: slideDown 0.3s ease-out;
+    }
+
+    .error {
+      background: #fed7d7;
+      border: 2px solid #feb2b2;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+      color: #c53030;
+      animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .url-card {
+      background: white;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 15px;
+      transition: all 0.3s ease;
+    }
+
+    .url-card:hover {
+      border-color: #667eea;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+    }
+
+    .url-title {
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #2d3748;
+    }
+
+    .url-links {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .url-link {
+      color: #667eea;
+      text-decoration: none;
+      padding: 4px 8px;
+      background: #edf2f7;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: all 0.2s ease;
+    }
+
+    .url-link:hover {
+      background: #667eea;
+      color: white;
+    }
+
+    .url-stats {
+      display: flex;
+      gap: 20px;
+      margin-top: 10px;
+      font-size: 14px;
+      color: #718096;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 20px;
+      color: #718096;
+    }
+
+    .loading.show {
+      display: block;
+    }
+
+    .spinner {
+      border: 2px solid #e2e8f0;
+      border-top: 2px solid #667eea;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      margin-right: 10px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .analytics-card {
+      background: white;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .analytics-title {
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #2d3748;
+    }
+
+    .metric {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .metric:last-child {
+      border-bottom: none;
+    }
+
+    .metric-value {
+      font-weight: 600;
+      color: #667eea;
+    }
+
+    .bulk-urls {
+      background: #f7fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 15px;
+      margin-top: 10px;
+    }
+
+    .bulk-url-item {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+      align-items: center;
+    }
+
+    .bulk-url-item input {
+      flex: 2;
+      margin-bottom: 0;
+    }
+
+    .bulk-url-item input:last-child {
+      flex: 1;
+    }
+
+    .bulk-url-item button {
+      flex: 0 0 auto;
+      padding: 8px;
+      background: #e53e3e;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .api-endpoints {
+      background: #f7fafc;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    .endpoint {
+      background: white;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-left: 4px solid #667eea;
+    }
+
+    .endpoint-method {
+      display: inline-block;
+      background: #667eea;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-right: 10px;
+    }
+
+    .endpoint-path {
+      font-family: 'Courier New', monospace;
+      font-weight: 600;
+      color: #2d3748;
+    }
+
+    .endpoint-desc {
+      color: #718096;
+      margin-top: 5px;
+      font-size: 14px;
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .status-card {
+      background: white;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .status-number {
+      font-size: 2em;
+      font-weight: 700;
+      color: #667eea;
+      margin-bottom: 5px;
+    }
+
+    .status-label {
+      color: #718096;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 1px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+        margin: 10px;
+      }
+
+      h1 {
+        font-size: 2em;
+      }
+
+      .form-row {
+        flex-direction: column;
+      }
+
+      .url-links, .url-stats {
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .tabs {
+        flex-direction: column;
+      }
+
+      .tab {
+        min-width: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔗 URL Shortener</h1>
+    <p class="subtitle">Create short URLs with analytics, custom aliases, and QR codes</p>
+
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('shorten')">🔗 Shorten</button>
+      <button class="tab" onclick="showTab('bulk')">📦 Bulk</button>
+      <button class="tab" onclick="showTab('analytics')">📊 Analytics</button>
+      <button class="tab" onclick="showTab('preview')">🔍 Preview</button>
+      <button class="tab" onclick="showTab('list')">📋 List URLs</button>
+      <button class="tab" onclick="showTab('status')">⚡ Status</button>
+      <button class="tab" onclick="showTab('api')">📖 API</button>
+    </div>
+
+    <!-- Shorten Tab -->
+    <div id="shorten" class="tab-content active">
+      <h2>Create Short URL</h2>
+      <form id="shortenForm">
+        <div class="form-group">
+          <label for="url">Original URL *</label>
+          <input type="url" id="url" placeholder="https://example.com" required>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="alias">Custom Alias (optional)</label>
+            <input type="text" id="alias" placeholder="my-custom-link">
+          </div>
+          <div class="form-group">
+            <label for="expiration">Expiration (days)</label>
+            <input type="number" id="expiration" placeholder="365" min="1" max="3650">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="extractMetadata" checked> Extract metadata (title, description)
+          </label>
+        </div>
+
+        <button type="submit" class="btn">🔗 Shorten URL</button>
+      </form>
+
+      <div class="loading" id="shortenLoading">
+        <div class="spinner"></div>
+        Processing your URL...
+      </div>
+
+      <div id="shortenResult"></div>
+    </div>
+
+    <!-- Bulk Tab -->
+    <div id="bulk" class="tab-content">
+      <h2>Bulk URL Shortening</h2>
+      <form id="bulkForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="bulkExpiration">Expiration (days, optional)</label>
+            <input type="number" id="bulkExpiration" placeholder="365" min="1" max="3650">
+          </div>
+          <div class="form-group">
+            <label>
+              <input type="checkbox" id="bulkExtractMetadata"> Extract metadata
+            </label>
+          </div>
+        </div>
+
+        <div class="bulk-urls" id="bulkUrls">
+          <div class="bulk-url-item">
+            <input type="url" placeholder="https://example.com" required>
+            <input type="text" placeholder="Custom alias (optional)">
+            <button type="button" onclick="removeBulkUrl(this)">✕</button>
+          </div>
+        </div>
+
+        <button type="button" onclick="addBulkUrl()" class="btn btn-secondary">➕ Add URL</button>
+        <button type="submit" class="btn">📦 Process Bulk URLs</button>
+      </form>
+
+      <div class="loading" id="bulkLoading">
+        <div class="spinner"></div>
+        Processing your URLs...
+      </div>
+
+      <div id="bulkResult"></div>
+    </div>
+
+    <!-- Analytics Tab -->
+    <div id="analytics" class="tab-content">
+      <h2>URL Analytics</h2>
+      <form id="analyticsForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="analyticsShortCode">Short Code *</label>
+            <input type="text" id="analyticsShortCode" placeholder="abc123" required>
+          </div>
+          <div class="form-group">
+            <label for="analyticsDays">Days to analyze</label>
+            <input type="number" id="analyticsDays" value="30" min="1" max="365">
+          </div>
+        </div>
+
+        <button type="submit" class="btn">📊 Get Analytics</button>
+      </form>
+
+      <div class="loading" id="analyticsLoading">
+        <div class="spinner"></div>
+        Loading analytics...
+      </div>
+
+      <div id="analyticsResult"></div>
+    </div>
+
+    <!-- Preview Tab -->
+    <div id="preview" class="tab-content">
+      <h2>Link Preview</h2>
+      <form id="previewForm">
+        <div class="form-group">
+          <label for="previewUrl">URL or Short Code *</label>
+          <input type="text" id="previewUrl" placeholder="https://example.com or abc123" required>
+        </div>
+
+        <button type="submit" class="btn">🔍 Get Preview</button>
+      </form>
+
+      <div class="loading" id="previewLoading">
+        <div class="spinner"></div>
+        Loading preview...
+      </div>
+
+      <div id="previewResult"></div>
+    </div>
+
+    <!-- List URLs Tab -->
+    <div id="list" class="tab-content">
+      <h2>All Short URLs</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="listPage">Page</label>
+          <input type="number" id="listPage" value="1" min="1">
+        </div>
+        <div class="form-group">
+          <label for="listLimit">Items per page</label>
+          <input type="number" id="listLimit" value="20" min="1" max="100">
+        </div>
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="includeExpired"> Include expired URLs
+          </label>
+        </div>
+      </div>
+
+      <button onclick="loadUrlList()" class="btn">📋 Load URLs</button>
+
+      <div class="loading" id="listLoading">
+        <div class="spinner"></div>
+        Loading URLs...
+      </div>
+
+      <div id="listResult"></div>
+    </div>
+
+    <!-- Status Tab -->
+    <div id="status" class="tab-content">
+      <h2>Service Status</h2>
+      <button onclick="loadStatus()" class="btn">⚡ Refresh Status</button>
+
+      <div class="loading" id="statusLoading">
+        <div class="spinner"></div>
+        Loading status...
+      </div>
+
+      <div id="statusResult"></div>
+    </div>
+
+    <!-- API Tab -->
+    <div id="api" class="tab-content">
+      <h2>API Documentation</h2>
+      <div class="api-endpoints">
+        <div class="endpoint">
+          <span class="endpoint-method">POST</span>
+          <span class="endpoint-path">/api/shorten</span>
+          <div class="endpoint-desc">Create a short URL with optional custom alias and expiration</div>
+        </div>
+        <div class="endpoint">
+          <span class="endpoint-method">GET</span>
+          <span class="endpoint-path">/api/analytics/:shortCode</span>
+          <div class="endpoint-desc">Get click analytics and statistics for a short URL</div>
+        </div>
+        <div class="endpoint">
+          <span class="endpoint-method">GET</span>
+          <span class="endpoint-path">/api/preview</span>
+          <div class="endpoint-desc">Get metadata preview for a URL or short code</div>
+        </div>
+        <div class="endpoint">
+          <span class="endpoint-method">POST</span>
+          <span class="endpoint-path">/api/bulk</span>
+          <div class="endpoint-desc">Process multiple URLs at once with bulk shortening</div>
+        </div>
+        <div class="endpoint">
+          <span class="endpoint-method">GET</span>
+          <span class="endpoint-path">/api/qr/:shortCode</span>
+          <div class="endpoint-desc">Generate QR code for a short URL</div>
+        </div>
+        <div class="endpoint">
+          <span class="endpoint-method">GET</span>
+          <span class="endpoint-path">/api/list</span>
+          <div class="endpoint-desc">List all short URLs with pagination</div>
+        </div>
+        <div class="endpoint">
+          <span class="endpoint-method">GET</span>
+          <span class="endpoint-path">/:shortCode</span>
+          <div class="endpoint-desc">Redirect to original URL and track analytics</div>
+        </div>
+      </div>
+
+      <h3>Standard Endpoints</h3>
+      <div class="api-endpoints">
+        <div class="endpoint">
+          <span class="endpoint-method">GET</span>
+          <span class="endpoint-path">/api/status</span>
+          <div class="endpoint-desc">Get service status and metrics</div>
+        </div>
+        <div class="endpoint">
+          <span class="endpoint-method">GET</span>
+          <span class="endpoint-path">/api/health</span>
+          <div class="endpoint-desc">Health check endpoint</div>
+        </div>
+        <div class="endpoint">
+          <span class="endpoint-method">GET</span>
+          <span class="endpoint-path">/api/capabilities</span>
+          <div class="endpoint-desc">List service features and endpoints</div>
+        </div>
+        <div class="endpoint">
+          <span class="endpoint-method">GET</span>
+          <span class="endpoint-path">/api/openapi</span>
+          <div class="endpoint-desc">OpenAPI specification</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tab switching
+    function showTab(tabName) {
+      // Hide all tab contents
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+      });
+      
+      // Remove active class from all tabs
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      // Show selected tab content
+      document.getElementById(tabName).classList.add('active');
+      
+      // Add active class to clicked tab
+      event.target.classList.add('active');
+    }
+
+    // Utility functions
+    function showLoading(id) {
+      document.getElementById(id).classList.add('show');
+    }
+
+    function hideLoading(id) {
+      document.getElementById(id).classList.remove('show');
+    }
+
+    function showResult(elementId, content, isError = false) {
+      const element = document.getElementById(elementId);
+      element.innerHTML = content;
+      element.className = isError ? 'error' : 'result';
+    }
+
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Copied to clipboard!');
+      });
+    }
+
+    // Shorten form handler
+    document.getElementById('shortenForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const url = document.getElementById('url').value;
+      const alias = document.getElementById('alias').value;
+      const expiration = document.getElementById('expiration').value;
+      const extractMetadata = document.getElementById('extractMetadata').checked;
+
+      showLoading('shortenLoading');
+      document.getElementById('shortenResult').innerHTML = '';
+
+      try {
+        const response = await fetch('/api/shorten', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            url,
+            alias: alias || undefined,
+            expirationDays: expiration ? parseInt(expiration) : undefined,
+            extractMetadata
+          })
+        });
+
+        const data = await response.json();
+        hideLoading('shortenLoading');
+
+        if (response.ok) {
+          const result = `
+            <h3>✅ URL Shortened Successfully!</h3>
+            <div class="url-card">
+              <div class="url-title">Short URL</div>
+              <div class="url-links">
+                <a href="${data.data.shortUrl}" target="_blank" class="url-link">${data.data.shortUrl}</a>
+                <button onclick="copyToClipboard('${data.data.shortUrl}')" class="btn btn-small">📋 Copy</button>
+                <a href="${data.data.qrCode}" target="_blank" class="btn btn-small">🔲 QR Code</a>
+              </div>
+              <div class="url-stats">
+                <div class="stat">📅 Created: ${new Date(data.data.createdAt).toLocaleDateString()}</div>
+                ${data.data.expiresAt ? `<div class="stat">⏰ Expires: ${new Date(data.data.expiresAt).toLocaleDateString()}</div>` : ''}
+                <div class="stat">🆔 Code: ${data.data.shortCode}</div>
+              </div>
+              ${data.data.metadata ? `
+                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #e2e8f0;">
+                  <strong>Title:</strong> ${data.data.metadata.title || 'N/A'}<br>
+                  <strong>Description:</strong> ${data.data.metadata.description || 'N/A'}
+                </div>
+              ` : ''}
+            </div>
+          `;
+          showResult('shortenResult', result);
+        } else {
+          showResult('shortenResult', `<h3>❌ Error</h3><p>${data.error}</p>`, true);
+        }
+      } catch (error) {
+        hideLoading('shortenLoading');
+        showResult('shortenResult', `<h3>❌ Network Error</h3><p>${error.message}</p>`, true);
+      }
+    });
+
+    // Bulk URL management
+    function addBulkUrl() {
+      const container = document.getElementById('bulkUrls');
+      const newItem = document.createElement('div');
+      newItem.className = 'bulk-url-item';
+      newItem.innerHTML = `
+        <input type="url" placeholder="https://example.com" required>
+        <input type="text" placeholder="Custom alias (optional)">
+        <button type="button" onclick="removeBulkUrl(this)">✕</button>
+      `;
+      container.appendChild(newItem);
+    }
+
+    function removeBulkUrl(button) {
+      const container = document.getElementById('bulkUrls');
+      if (container.children.length > 1) {
+        button.parentElement.remove();
+      }
+    }
+
+    // Bulk form handler
+    document.getElementById('bulkForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const expirationDays = document.getElementById('bulkExpiration').value;
+      const extractMetadata = document.getElementById('bulkExtractMetadata').checked;
+      
+      const urlItems = Array.from(document.querySelectorAll('.bulk-url-item')).map(item => {
+        const inputs = item.querySelectorAll('input');
+        return {
+          url: inputs[0].value,
+          alias: inputs[1].value || undefined
+        };
+      }).filter(item => item.url);
+
+      if (urlItems.length === 0) {
+        showResult('bulkResult', '<h3>❌ Error</h3><p>Please add at least one URL</p>', true);
+        return;
+      }
+
+      showLoading('bulkLoading');
+      document.getElementById('bulkResult').innerHTML = '';
+
+      try {
+        const response = await fetch('/api/bulk', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            urls: urlItems,
+            expirationDays: expirationDays ? parseInt(expirationDays) : undefined,
+            extractMetadata
+          })
+        });
+
+        const data = await response.json();
+        hideLoading('bulkLoading');
+
+        if (response.ok) {
+          let result = `
+            <h3>✅ Bulk Processing Complete!</h3>
+            <div class="url-card">
+              <div class="url-stats">
+                <div class="stat">📊 Total: ${data.summary.total}</div>
+                <div class="stat">✅ Completed: ${data.summary.completed}</div>
+                <div class="stat">❌ Errors: ${data.summary.errors}</div>
+                <div class="stat">⏱️ Duration: ${data.summary.duration}</div>
+              </div>
+            </div>
+          `;
+
+          if (data.results.length > 0) {
+            result += '<h4>Successfully created URLs:</h4>';
+            data.results.forEach(item => {
+              result += `
+                <div class="url-card">
+                  <div class="url-title">${item.originalUrl}</div>
+                  <div class="url-links">
+                    <a href="${item.shortUrl}" target="_blank" class="url-link">${item.shortUrl}</a>
+                    <button onclick="copyToClipboard('${item.shortUrl}')" class="btn btn-small">📋 Copy</button>
+                  </div>
+                </div>
+              `;
+            });
+          }
+
+          if (data.errors.length > 0) {
+            result += '<h4 style="color: #e53e3e;">Errors:</h4>';
+            data.errors.forEach(error => {
+              result += `<div class="error">${error.url}: ${error.error}</div>`;
+            });
+          }
+
+          showResult('bulkResult', result);
+        } else {
+          showResult('bulkResult', `<h3>❌ Error</h3><p>${data.error}</p>`, true);
+        }
+      } catch (error) {
+        hideLoading('bulkLoading');
+        showResult('bulkResult', `<h3>❌ Network Error</h3><p>${error.message}</p>`, true);
+      }
+    });
+
+    // Analytics form handler
+    document.getElementById('analyticsForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const shortCode = document.getElementById('analyticsShortCode').value;
+      const days = document.getElementById('analyticsDays').value;
+
+      showLoading('analyticsLoading');
+      document.getElementById('analyticsResult').innerHTML = '';
+
+      try {
+        const url = `/api/analytics/${shortCode}?days=${days}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        hideLoading('analyticsLoading');
+
+        if (response.ok) {
+          const result = `
+            <h3>📊 Analytics for ${shortCode}</h3>
+            <div class="url-card">
+              <div class="url-title">${data.originalUrl}</div>
+              <div class="url-stats">
+                <div class="stat">🎯 Total Clicks: ${data.analytics.totalClicks}</div>
+                <div class="stat">📅 Recent Clicks (${data.analytics.period}): ${data.analytics.recentClicks}</div>
+                <div class="stat">📅 Created: ${new Date(data.createdAt).toLocaleDateString()}</div>
+                ${data.expiresAt ? `<div class="stat">⏰ Expires: ${new Date(data.expiresAt).toLocaleDateString()}</div>` : ''}
+                ${data.isExpired ? '<div class="stat" style="color: #e53e3e;">❌ Expired</div>' : ''}
+              </div>
+            </div>
+
+            <div class="analytics-grid">
+              <div class="analytics-card">
+                <div class="analytics-title">📈 Daily Statistics</div>
+                ${Object.entries(data.analytics.dailyStats).map(([date, count]) => 
+                  `<div class="metric">
+                    <span>${date}</span>
+                    <span class="metric-value">${count} clicks</span>
+                  </div>`
+                ).join('')}
+              </div>
+
+              <div class="analytics-card">
+                <div class="analytics-title">🔗 Top Referrers</div>
+                ${data.analytics.topReferrers.map(ref => 
+                  `<div class="metric">
+                    <span>${ref.domain}</span>
+                    <span class="metric-value">${ref.count}</span>
+                  </div>`
+                ).join('')}
+              </div>
+
+              <div class="analytics-card">
+                <div class="analytics-title">🌐 Browsers</div>
+                ${data.analytics.browserStats.map(browser => 
+                  `<div class="metric">
+                    <span>${browser.browser}</span>
+                    <span class="metric-value">${browser.count}</span>
+                  </div>`
+                ).join('')}
+              </div>
+            </div>
+          `;
+          showResult('analyticsResult', result);
+        } else {
+          showResult('analyticsResult', `<h3>❌ Error</h3><p>${data.error}</p>`, true);
+        }
+      } catch (error) {
+        hideLoading('analyticsLoading');
+        showResult('analyticsResult', `<h3>❌ Network Error</h3><p>${error.message}</p>`, true);
+      }
+    });
+
+    // Preview form handler
+    document.getElementById('previewForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const input = document.getElementById('previewUrl').value;
+      const isUrl = input.startsWith('http');
+      const params = isUrl ? `url=${encodeURIComponent(input)}` : `shortCode=${input}`;
+
+      showLoading('previewLoading');
+      document.getElementById('previewResult').innerHTML = '';
+
+      try {
+        const response = await fetch(`/api/preview?${params}`);
+        const data = await response.json();
+        hideLoading('previewLoading');
+
+        if (response.ok) {
+          const result = `
+            <h3>🔍 Link Preview</h3>
+            <div class="url-card">
+              <div class="url-title">${data.preview.title}</div>
+              <div class="url-links">
+                <a href="${data.url}" target="_blank" class="url-link">${data.url}</a>
+                ${data.shortCode ? `<span class="url-link">Short: ${data.shortCode}</span>` : ''}
+              </div>
+              <p style="margin-top: 10px; color: #718096;">${data.preview.description}</p>
+              <div class="url-stats">
+                <div class="stat">🌐 Domain: ${data.preview.domain}</div>
+                <div class="stat">🔒 Protocol: ${data.preview.protocol}</div>
+                <div class="stat">📅 Extracted: ${new Date(data.preview.extractedAt).toLocaleDateString()}</div>
+                <div class="stat">💾 Cached: ${data.cached ? 'Yes' : 'No'}</div>
+              </div>
+              ${data.preview.ogImage ? `
+                <div style="margin-top: 15px;">
+                  <img src="${data.preview.ogImage}" alt="Preview" style="max-width: 100%; max-height: 200px; border-radius: 8px;">
+                </div>
+              ` : ''}
+            </div>
+          `;
+          showResult('previewResult', result);
+        } else {
+          showResult('previewResult', `<h3>❌ Error</h3><p>${data.error}</p>`, true);
+        }
+      } catch (error) {
+        hideLoading('previewLoading');
+        showResult('previewResult', `<h3>❌ Network Error</h3><p>${error.message}</p>`, true);
+      }
+    });
+
+    // Load URL list
+    async function loadUrlList() {
+      const page = document.getElementById('listPage').value;
+      const limit = document.getElementById('listLimit').value;
+      const includeExpired = document.getElementById('includeExpired').checked;
+
+      showLoading('listLoading');
+      document.getElementById('listResult').innerHTML = '';
+
+      try {
+        const url = `/api/list?page=${page}&limit=${limit}&includeExpired=${includeExpired}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        hideLoading('listLoading');
+
+        if (response.ok) {
+          let result = `
+            <h3>📋 URL List (Page ${data.pagination.currentPage} of ${data.pagination.totalPages})</h3>
+            <div class="url-card">
+              <div class="url-stats">
+                <div class="stat">📊 Total URLs: ${data.pagination.totalItems}</div>
+                <div class="stat">📄 Page Size: ${data.pagination.pageSize}</div>
+                <div class="stat">◀️ Has Previous: ${data.pagination.hasPrev ? 'Yes' : 'No'}</div>
+                <div class="stat">▶️ Has Next: ${data.pagination.hasNext ? 'Yes' : 'No'}</div>
+              </div>
+            </div>
+          `;
+
+          data.urls.forEach(url => {
+            result += `
+              <div class="url-card">
+                <div class="url-title">${url.originalUrl}</div>
+                <div class="url-links">
+                  <a href="${url.shortUrl}" target="_blank" class="url-link">${url.shortUrl}</a>
+                  <button onclick="copyToClipboard('${url.shortUrl}')" class="btn btn-small">📋 Copy</button>
+                  <button onclick="document.getElementById('analyticsShortCode').value='${url.shortCode}'; showTab('analytics')" class="btn btn-small">📊 Analytics</button>
+                </div>
+                <div class="url-stats">
+                  <div class="stat">🎯 Clicks: ${url.totalClicks}</div>
+                  <div class="stat">📅 Created: ${new Date(url.createdAt).toLocaleDateString()}</div>
+                  ${url.expiresAt ? `<div class="stat">⏰ Expires: ${new Date(url.expiresAt).toLocaleDateString()}</div>` : ''}
+                  ${url.isExpired ? '<div class="stat" style="color: #e53e3e;">❌ Expired</div>' : '<div class="stat" style="color: #38a169;">✅ Active</div>'}
+                </div>
+                ${url.metadata ? `
+                  <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #e2e8f0; font-size: 14px; color: #718096;">
+                    ${url.metadata.title || 'No title'}
+                  </div>
+                ` : ''}
+              </div>
+            `;
+          });
+
+          showResult('listResult', result);
+        } else {
+          showResult('listResult', `<h3>❌ Error</h3><p>${data.error}</p>`, true);
+        }
+      } catch (error) {
+        hideLoading('listLoading');
+        showResult('listResult', `<h3>❌ Network Error</h3><p>${error.message}</p>`, true);
+      }
+    }
+
+    // Load service status
+    async function loadStatus() {
+      showLoading('statusLoading');
+      document.getElementById('statusResult').innerHTML = '';
+
+      try {
+        const response = await fetch('/api/status');
+        const data = await response.json();
+        hideLoading('statusLoading');
+
+        if (response.ok) {
+          const result = `
+            <h3>⚡ Service Status</h3>
+            <div class="status-grid">
+              <div class="status-card">
+                <div class="status-number">${data.metrics.totalUrls}</div>
+                <div class="status-label">Total URLs</div>
+              </div>
+              <div class="status-card">
+                <div class="status-number">${data.metrics.totalClicks}</div>
+                <div class="status-label">Total Clicks</div>
+              </div>
+              <div class="status-card">
+                <div class="status-number">${data.metrics.requestCount}</div>
+                <div class="status-label">Requests</div>
+              </div>
+              <div class="status-card">
+                <div class="status-number">${data.uptime.human}</div>
+                <div class="status-label">Uptime</div>
+              </div>
+              <div class="status-card">
+                <div class="status-number">${data.metrics.errorRate}</div>
+                <div class="status-label">Error Rate</div>
+              </div>
+              <div class="status-card">
+                <div class="status-number">${data.metrics.activeBulkJobs}</div>
+                <div class="status-label">Active Jobs</div>
+              </div>
+            </div>
+
+            <div class="url-card" style="margin-top: 20px;">
+              <div class="url-title">Service Information</div>
+              <div class="url-stats">
+                <div class="stat">📦 Service: ${data.service}</div>
+                <div class="stat">🏷️ Version: ${data.version}</div>
+                <div class="stat">🟢 Status: ${data.status}</div>
+                <div class="stat">📅 Started: ${new Date().toLocaleDateString()}</div>
+              </div>
+              ${data.lastError ? `
+                <div style="margin-top: 10px; padding: 10px; background: #fed7d7; border-radius: 6px; color: #c53030;">
+                  <strong>Last Error:</strong> ${data.lastError.message} (${new Date(data.lastError.timestamp).toLocaleString()})
+                </div>
+              ` : ''}
+            </div>
+          `;
+          showResult('statusResult', result);
+        } else {
+          showResult('statusResult', `<h3>❌ Error</h3><p>Failed to load status</p>`, true);
+        }
+      } catch (error) {
+        hideLoading('statusLoading');
+        showResult('statusResult', `<h3>❌ Network Error</h3><p>${error.message}</p>`, true);
+      }
+    }
+
+    // Load status on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      loadStatus();
+    });
+  </script>
+</body>
+</html>

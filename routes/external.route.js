@@ -27,6 +27,7 @@ const getServiceUrl = (serviceName) => {
     uuidgenerator: "http://localhost:3114",
     textanalytics: "http://localhost:3115",
     qrgenerator: "http://localhost:3116",
+    urlshortener: "http://localhost:3117",
   };
 
   const key = String(serviceName || "").toLowerCase();
@@ -54,6 +55,7 @@ const serviceNeedsApiPrefix = (serviceName) => {
     "uuidgenerator",
     "textanalytics",
     "qrgenerator",
+    "urlshortener",
     "default",
   ]; // treat default (MiniTemplate) as needing /api
   return servicesNeedingApi.includes(key);
@@ -99,6 +101,12 @@ const getAvailableServices = () => {
       url: "http://localhost:3116",
       name: "QR Code Generator",
       description: "Generates QR codes from text input",
+      default: true,
+    },
+    urlShortener: {
+      url: "http://localhost:3117",
+      name: "URL Shortener",
+      description: "Shortens URLs and provides analytics",
       default: true,
     },
   };
