@@ -29,6 +29,7 @@ const getServiceUrl = (serviceName) => {
     qrgenerator: "http://localhost:3116",
     urlshortener: "http://localhost:3117",
     passwordgenerator: "http://localhost:3118",
+    webmetadata: "http://localhost:3119",
   };
 
   const key = String(serviceName || "").toLowerCase();
@@ -58,6 +59,7 @@ const serviceNeedsApiPrefix = (serviceName) => {
     "qrgenerator",
     "urlshortener",
     "passwordgenerator",
+    "webmetadata",
     "default",
   ]; // treat default (MiniTemplate) as needing /api
   return servicesNeedingApi.includes(key);
@@ -115,6 +117,12 @@ const getAvailableServices = () => {
       url: "http://localhost:3118",
       name: "Password Generator",
       description: "Generates secure passwords",
+      default: true,
+    },
+    webMetadata: {
+      url: "http://localhost:3119",
+      name: "Web Metadata Service",
+      description: "Extract metadata, Open Graph tags, SSL info, and performance metrics from web pages",
       default: true,
     },
   };
@@ -252,6 +260,7 @@ router.get("/list", (req, res) => {
           "/api/external/uuidGenerator/generate",
           "/api/external/textAnalytics/analyze",
           "/api/external/qrGenerator/generate",
+          "/api/external/webMetadata/metadata",
         ],
         addService: "Set EXTERNAL_SERVICE_{NAME}_URL=https://api.example.com",
       },

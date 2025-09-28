@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Metadata Service - GAD External Services</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tab:hover {
+            background: #e9ecef;
+        }
+
+        .nav-tab.active {
+            background: white;
+            border-bottom: 3px solid #3498db;
+            font-weight: bold;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input[type="url"], input[type="text"], textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+        }
+
+        .result-container {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #f8f9fa;
+        }
+
+        .result-header {
+            background: #e9ecef;
+            padding: 10px 15px;
+            border-bottom: 1px solid #ddd;
+            font-weight: bold;
+        }
+
+        .result-content {
+            padding: 15px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .result-json {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .batch-url {
+            display: flex;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+
+        .batch-url input {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 0.9em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .metadata-section {
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .metadata-header {
+            background: #f8f9fa;
+            padding: 10px 15px;
+            border-bottom: 1px solid #ddd;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .metadata-content {
+            padding: 15px;
+            display: none;
+        }
+
+        .metadata-content.expanded {
+            display: block;
+        }
+
+        .expand-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .expanded .expand-icon {
+            transform: rotate(90deg);
+        }
+
+        .url-examples {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+        }
+
+        .url-examples h4 {
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        .url-examples button {
+            background: none;
+            border: 1px solid #ddd;
+            padding: 4px 8px;
+            margin: 2px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8em;
+        }
+
+        .url-examples button:hover {
+            background: #e9ecef;
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 350px;
+        }
+
+        .toast {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            margin-bottom: 10px;
+            padding: 16px;
+            border-left: 4px solid #3498db;
+            transform: translateX(400px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            max-width: 100%;
+            word-wrap: break-word;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            border-left-color: #2ecc71;
+        }
+
+        .toast.warning {
+            border-left-color: #f39c12;
+        }
+
+        .toast.error {
+            border-left-color: #e74c3c;
+        }
+
+        .toast-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .toast-title {
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #999;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toast-close:hover {
+            color: #666;
+        }
+
+        .toast-message {
+            font-size: 0.85em;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        /* Image Preview */
+        .image-preview {
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .preview-image:hover {
+            transform: scale(1.02);
+        }
+
+        .image-info {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* Image Modal */
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            cursor: pointer;
+        }
+
+        .image-modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-image {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 8px;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-close:hover {
+            opacity: 0.7;
+        }
+
+        /* Image grid for multiple images */
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .image-grid .preview-image {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+
+        /* Enhanced metadata sections */
+        .metadata-with-images {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+
+        .image-section-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #555;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .container {
+                margin: 10px;
+            }
+
+            .toast-container {
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
+
+            .toast {
+                transform: translateY(-100px);
+            }
+
+            .toast.show {
+                transform: translateY(0);
+            }
+
+            .modal-close {
+                top: 10px;
+                right: 15px;
+                font-size: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌐 Web Metadata Service</h1>
+            <p>Extract metadata, Open Graph tags, SSL info, and performance metrics from web pages</p>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('metadata')">📄 Metadata</button>
+            <button class="nav-tab" onclick="showTab('batch')">📋 Batch</button>
+            <button class="nav-tab" onclick="showTab('opengraph')">🔗 Open Graph</button>
+            <button class="nav-tab" onclick="showTab('ssl')">🔒 SSL Info</button>
+            <button class="nav-tab" onclick="showTab('performance')">⚡ Performance</button>
+            <button class="nav-tab" onclick="showTab('cache')">💾 Cache</button>
+            <button class="nav-tab" onclick="showTab('status')">📊 Status</button>
+        </div>
+
+        <!-- Metadata Tab -->
+        <div id="metadata" class="tab-content active">
+            <h2>Extract Website Metadata</h2>
+            <p>Get comprehensive metadata including basic info, Open Graph tags, Twitter cards, and technical details.</p>
+            
+            <div class="url-examples">
+                <h4>Try these examples:</h4>
+                <button onclick="setUrl('metadata-url', 'https://github.com')">GitHub</button>
+                <button onclick="setUrl('metadata-url', 'https://stackoverflow.com')">Stack Overflow</button>
+                <button onclick="setUrl('metadata-url', 'https://dev.to')">Dev.to</button>
+                <button onclick="setUrl('metadata-url', 'https://medium.com')">Medium</button>
+                <button onclick="setUrl('metadata-url', 'https://www.youtube.com')">YouTube</button>
+            </div>
+
+            <div class="form-group">
+                <label for="metadata-url">Website URL:</label>
+                <input type="url" id="metadata-url" placeholder="https://example.com" />
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="ignore-cache"> Ignore cache (force fresh extraction)
+                </label>
+            </div>
+
+            <button class="btn" onclick="extractMetadata()">🔍 Extract Metadata</button>
+
+            <div id="metadata-result" class="result-container" style="display: none;">
+                <div class="result-header">Extraction Results</div>
+                <div id="metadata-content" class="result-content"></div>
+            </div>
+        </div>
+
+        <!-- Batch Tab -->
+        <div id="batch" class="tab-content">
+            <h2>Batch Metadata Extraction</h2>
+            <p>Extract metadata from multiple URLs at once (max 10 URLs).</p>
+
+            <div class="form-group">
+                <label>URLs to process:</label>
+                <div id="batch-urls">
+                    <div class="batch-url">
+                        <input type="url" placeholder="https://example1.com" />
+                        <button class="btn btn-small btn-danger" onclick="removeBatchUrl(this)">Remove</button>
+                    </div>
+                    <div class="batch-url">
+                        <input type="url" placeholder="https://example2.com" />
+                        <button class="btn btn-small btn-danger" onclick="removeBatchUrl(this)">Remove</button>
+                    </div>
+                </div>
+                <button class="btn btn-small btn-success" onclick="addBatchUrl()">+ Add URL</button>
+            </div>
+
+            <button class="btn" onclick="extractBatchMetadata()">🔍 Extract All Metadata</button>
+
+            <div id="batch-result" class="result-container" style="display: none;">
+                <div class="result-header">Batch Results</div>
+                <div id="batch-content" class="result-content"></div>
+            </div>
+        </div>
+
+        <!-- Open Graph Tab -->
+        <div id="opengraph" class="tab-content">
+            <h2>Open Graph Tags</h2>
+            <p>Extract only Open Graph meta tags used for social media sharing.</p>
+
+            <div class="url-examples">
+                <h4>Try these examples:</h4>
+                <button onclick="setUrl('og-url', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ')">YouTube Video</button>
+                <button onclick="setUrl('og-url', 'https://github.com/torvalds/linux')">GitHub Repo</button>
+                <button onclick="setUrl('og-url', 'https://www.imdb.com/title/tt0111161/')">IMDB Movie</button>
+            </div>
+
+            <div class="form-group">
+                <label for="og-url">Website URL:</label>
+                <input type="url" id="og-url" placeholder="https://example.com" />
+            </div>
+
+            <button class="btn" onclick="extractOpenGraph()">🔗 Extract Open Graph</button>
+
+            <div id="og-result" class="result-container" style="display: none;">
+                <div class="result-header">Open Graph Tags</div>
+                <div id="og-content" class="result-content"></div>
+            </div>
+        </div>
+
+        <!-- SSL Tab -->
+        <div id="ssl" class="tab-content">
+            <h2>SSL Certificate Information</h2>
+            <p>Get SSL certificate details for HTTPS websites.</p>
+
+            <div class="url-examples">
+                <h4>Try these examples:</h4>
+                <button onclick="setUrl('ssl-url', 'https://github.com')">GitHub</button>
+                <button onclick="setUrl('ssl-url', 'https://google.com')">Google</button>
+                <button onclick="setUrl('ssl-url', 'https://stackoverflow.com')">Stack Overflow</button>
+            </div>
+
+            <div class="form-group">
+                <label for="ssl-url">HTTPS URL:</label>
+                <input type="url" id="ssl-url" placeholder="https://example.com" />
+            </div>
+
+            <button class="btn" onclick="getSSLInfo()">🔒 Get SSL Info</button>
+
+            <div id="ssl-result" class="result-container" style="display: none;">
+                <div class="result-header">SSL Certificate Information</div>
+                <div id="ssl-content" class="result-content"></div>
+            </div>
+        </div>
+
+        <!-- Performance Tab -->
+        <div id="performance" class="tab-content">
+            <h2>Performance Monitoring</h2>
+            <p>Measure response time and content size for websites.</p>
+
+            <div class="form-group">
+                <label for="perf-url">Website URL:</label>
+                <input type="url" id="perf-url" placeholder="https://example.com" />
+            </div>
+
+            <button class="btn" onclick="measurePerformance()">⚡ Measure Performance</button>
+
+            <div id="perf-result" class="result-container" style="display: none;">
+                <div class="result-header">Performance Metrics</div>
+                <div id="perf-content" class="result-content"></div>
+            </div>
+        </div>
+
+        <!-- Cache Tab -->
+        <div id="cache" class="tab-content">
+            <h2>Cache Management</h2>
+            <p>View and manage the metadata extraction cache.</p>
+
+            <div class="stats-grid" id="cache-stats">
+                <!-- Stats will be loaded here -->
+            </div>
+
+            <button class="btn" onclick="loadCacheStats()">📊 Load Cache Stats</button>
+            <button class="btn btn-danger" onclick="clearCache()">🗑️ Clear All Cache</button>
+
+            <div id="cache-result" class="result-container" style="display: none;">
+                <div class="result-header">Cache Information</div>
+                <div id="cache-content" class="result-content"></div>
+            </div>
+        </div>
+
+        <!-- Status Tab -->
+        <div id="status" class="tab-content">
+            <h2>Service Status</h2>
+            <p>View service health, statistics, and configuration.</p>
+
+            <div class="stats-grid" id="status-stats">
+                <!-- Stats will be loaded here -->
+            </div>
+
+            <button class="btn" onclick="loadStatus()">📊 Load Status</button>
+            <button class="btn" onclick="loadCapabilities()">🔧 Load Capabilities</button>
+
+            <div id="status-result" class="result-container" style="display: none;">
+                <div class="result-header">Service Information</div>
+                <div id="status-content" class="result-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Image Modal -->
+    <div id="image-modal" class="image-modal" onclick="closeImageModal()">
+        <span class="modal-close" onclick="closeImageModal()">&times;</span>
+        <img id="modal-image" class="modal-image" onclick="event.stopPropagation()" />
+    </div>
+
+    <script>
+        let currentTab = 'metadata';
+
+        // Toast notification system
+        function showToast(message, type = 'info', title = null) {
+            const toastContainer = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const toastId = 'toast-' + Date.now();
+            toast.id = toastId;
+            
+            const toastTitle = title || {
+                'success': '✅ Success',
+                'error': '❌ Error',
+                'warning': '⚠️ Warning',
+                'info': 'ℹ️ Info'
+            }[type] || 'ℹ️ Info';
+            
+            toast.innerHTML = `
+                <div class="toast-header">
+                    <div class="toast-title">${toastTitle}</div>
+                    <button class="toast-close" onclick="hideToast('${toastId}')">&times;</button>
+                </div>
+                <div class="toast-message">${message}</div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Show toast with animation
+            setTimeout(() => toast.classList.add('show'), 100);
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => hideToast(toastId), 5000);
+            
+            return toastId;
+        }
+        
+        function hideToast(toastId) {
+            const toast = document.getElementById(toastId);
+            if (toast) {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 300);
+            }
+        }
+
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all nav tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            currentTab = tabName;
+        }
+
+        function setUrl(inputId, url) {
+            document.getElementById(inputId).value = url;
+        }
+
+        // Image preview functions
+        function openImageModal(imageUrl) {
+            const modal = document.getElementById('image-modal');
+            const modalImage = document.getElementById('modal-image');
+            
+            modalImage.src = imageUrl;
+            modal.classList.add('show');
+            
+            // Prevent body scroll when modal is open
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeImageModal() {
+            const modal = document.getElementById('image-modal');
+            modal.classList.remove('show');
+            
+            // Restore body scroll
+            document.body.style.overflow = 'unset';
+        }
+        
+        function createImagePreview(imageUrl, alt = '', info = '') {
+            if (!imageUrl || typeof imageUrl !== 'string') {
+                return '';
+            }
+            
+            // Check if it's a valid image URL (basic check)
+            const imageExtensions = /\.(jpg|jpeg|png|gif|webp|svg|bmp|ico)(\?.*)?$/i;
+            const isImageUrl = imageExtensions.test(imageUrl) || imageUrl.includes('image') || imageUrl.startsWith('data:image');
+            
+            if (!isImageUrl) {
+                return `<div class="image-info">📷 <a href="${imageUrl}" target="_blank" rel="noopener">${imageUrl}</a></div>`;
+            }
+            
+            return `
+                <div class="image-preview">
+                    <img src="${imageUrl}" 
+                         alt="${alt}" 
+                         class="preview-image" 
+                         onclick="openImageModal('${imageUrl}')"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                    <div class="image-info" style="display: none;">
+                        ❌ Failed to load: <a href="${imageUrl}" target="_blank" rel="noopener">${imageUrl}</a>
+                    </div>
+                    ${info ? `<div class="image-info">${info}</div>` : ''}
+                    <div class="image-info">📷 <a href="${imageUrl}" target="_blank" rel="noopener">Open original</a></div>
+                </div>
+            `;
+        }
+        
+        function extractImagesFromMetadata(data) {
+            const images = [];
+            
+            // Extract from Open Graph
+            if (data.openGraph) {
+                if (data.openGraph.image) {
+                    images.push({
+                        url: data.openGraph.image,
+                        type: 'Open Graph Image',
+                        alt: data.openGraph.title || 'Open Graph Image'
+                    });
+                }
+                
+                // Handle multiple OG images
+                Object.keys(data.openGraph).forEach(key => {
+                    if (key.startsWith('image') && key !== 'image' && data.openGraph[key]) {
+                        images.push({
+                            url: data.openGraph[key],
+                            type: 'Open Graph Image',
+                            alt: `OG ${key}`
+                        });
+                    }
+                });
+            }
+            
+            // Extract from Twitter
+            if (data.twitter && data.twitter.image) {
+                images.push({
+                    url: data.twitter.image,
+                    type: 'Twitter Card Image',
+                    alt: data.twitter.title || 'Twitter Image'
+                });
+            }
+            
+            // Extract from favicon
+            if (data.favicon && data.favicon.urls && data.favicon.urls.length > 0) {
+                data.favicon.urls.forEach(url => {
+                    images.push({
+                        url: url,
+                        type: 'Favicon',
+                        alt: 'Site Favicon'
+                    });
+                });
+            }
+            
+            return images;
+        }
+
+        function showLoading(containerId) {
+            const container = document.getElementById(containerId);
+            container.style.display = 'block';
+            container.innerHTML = `
+                <div class="result-header">Processing...</div>
+                <div class="result-content">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <div>Extracting metadata...</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showResult(containerId, title, data) {
+            const container = document.getElementById(containerId);
+            const content = container.querySelector('.result-content') || container;
+            
+            container.style.display = 'block';
+            container.innerHTML = `
+                <div class="result-header">${title}</div>
+                <div class="result-content">
+                    ${formatResult(data)}
+                </div>
+            `;
+        }
+
+        function formatResult(data) {
+            if (typeof data === 'object') {
+                // For metadata results, create expandable sections
+                if (data.basic || data.openGraph || data.twitter) {
+                    return formatMetadataResult(data);
+                }
+                
+                return `<div class="result-json">${JSON.stringify(data, null, 2)}</div>`;
+            }
+            return `<div class="result-json">${data}</div>`;
+        }
+
+        function formatMetadataResult(data) {
+            let html = '';
+            
+            // Extract and display images first in a collapsible section
+            const images = extractImagesFromMetadata(data);
+            if (images.length > 0) {
+                let imageContent = '<div class="image-grid">';
+                images.forEach(img => {
+                    imageContent += createImagePreview(img.url, img.alt, img.type);
+                });
+                imageContent += '</div>';
+                
+                html += `
+                    <div class="metadata-section">
+                        <div class="metadata-header" onclick="toggleSection('images')">
+                            <span>🖼️ Extracted Images (${images.length})</span>
+                            <span class="expand-icon">▶</span>
+                        </div>
+                        <div id="section-images" class="metadata-content">
+                            ${imageContent}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            const sections = [
+                { key: 'basic', title: '📄 Basic Metadata', data: data.basic },
+                { key: 'openGraph', title: '🔗 Open Graph Tags', data: data.openGraph },
+                { key: 'twitter', title: '🐦 Twitter Cards', data: data.twitter },
+                { key: 'technical', title: '⚙️ Technical Info', data: data.technical },
+                { key: 'favicon', title: '🎯 Favicon', data: data.favicon },
+                { key: 'ssl', title: '🔒 SSL Information', data: data.ssl },
+                { key: 'performance', title: '⚡ Performance', data: data.performance }
+            ];
+
+            sections.forEach(section => {
+                if (section.data && Object.keys(section.data).length > 0) {
+                    let sectionContent = '';
+                    
+                    // Use standard JSON display for all sections now that images have their own section
+                    sectionContent = `<div class="result-json">${JSON.stringify(section.data, null, 2)}</div>`;
+                    
+                    html += `
+                        <div class="metadata-section">
+                            <div class="metadata-header" onclick="toggleSection('${section.key}')">
+                                <span>${section.title}</span>
+                                <span class="expand-icon">▶</span>
+                            </div>
+                            <div id="section-${section.key}" class="metadata-content">
+                                ${sectionContent}
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            // Add full JSON at the end
+            html += `
+                <div class="metadata-section">
+                    <div class="metadata-header" onclick="toggleSection('full')">
+                        <span>📋 Full Response</span>
+                        <span class="expand-icon">▶</span>
+                    </div>
+                    <div id="section-full" class="metadata-content">
+                        <div class="result-json">${JSON.stringify(data, null, 2)}</div>
+                    </div>
+                </div>
+            `;
+
+            return html;
+        }
+        
+
+
+        function toggleSection(sectionId) {
+            const content = document.getElementById(`section-${sectionId}`);
+            const header = content.previousElementSibling;
+            
+            if (content.classList.contains('expanded')) {
+                content.classList.remove('expanded');
+                header.classList.remove('expanded');
+            } else {
+                content.classList.add('expanded');
+                header.classList.add('expanded');
+            }
+        }
+
+        async function extractMetadata() {
+            const url = document.getElementById('metadata-url').value;
+            const ignoreCache = document.getElementById('ignore-cache').checked;
+
+            if (!url) {
+                showToast('Please enter a valid URL to extract metadata', 'warning');
+                return;
+            }
+
+            showLoading('metadata-result');
+
+            try {
+                const response = await fetch('/api/metadata', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        url, 
+                        options: { ignoreCache } 
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('metadata-result', 'Metadata Extraction Results', data);
+                    showToast('Metadata extracted successfully!', 'success');
+                } else {
+                    showResult('metadata-result', 'Error', data);
+                    showToast(`Failed to extract metadata: ${data.error || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                showResult('metadata-result', 'Error', { error: error.message });
+                showToast(`Request failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function extractBatchMetadata() {
+            const urlInputs = document.querySelectorAll('#batch-urls input[type="url"]');
+            const urls = Array.from(urlInputs)
+                .map(input => input.value.trim())
+                .filter(url => url);
+
+            if (urls.length === 0) {
+                showToast('Please enter at least one URL for batch processing', 'warning');
+                return;
+            }
+
+            showLoading('batch-result');
+
+            try {
+                const response = await fetch('/api/metadata/batch', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ urls })
+                });
+
+                const data = await response.json();
+                showResult('batch-result', 'Batch Extraction Results', data);
+                showToast(`Batch processing completed: ${data.successful}/${data.totalUrls} URLs processed successfully`, 'success');
+            } catch (error) {
+                showResult('batch-result', 'Error', { error: error.message });
+                showToast(`Batch processing failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function extractOpenGraph() {
+            const url = document.getElementById('og-url').value;
+
+            if (!url) {
+                showToast('Please enter a URL to extract Open Graph tags', 'warning');
+                return;
+            }
+
+            showLoading('og-result');
+
+            try {
+                const response = await fetch('/api/og-tags', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url })
+                });
+
+                const data = await response.json();
+                showResult('og-result', 'Open Graph Tags', data);
+                showToast('Open Graph tags extracted successfully!', 'success');
+            } catch (error) {
+                showResult('og-result', 'Error', { error: error.message });
+                showToast(`Failed to extract Open Graph tags: ${error.message}`, 'error');
+            }
+        }
+
+        async function getSSLInfo() {
+            const url = document.getElementById('ssl-url').value;
+
+            if (!url) {
+                showToast('Please enter a URL to get SSL information', 'warning');
+                return;
+            }
+
+            if (!url.startsWith('https://')) {
+                showToast('SSL information is only available for HTTPS URLs', 'warning');
+                return;
+            }
+
+            showLoading('ssl-result');
+
+            try {
+                const response = await fetch('/api/ssl-info', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url })
+                });
+
+                const data = await response.json();
+                showResult('ssl-result', 'SSL Certificate Information', data);
+                showToast('SSL certificate information retrieved successfully!', 'success');
+            } catch (error) {
+                showResult('ssl-result', 'Error', { error: error.message });
+                showToast(`Failed to get SSL information: ${error.message}`, 'error');
+            }
+        }
+
+        async function measurePerformance() {
+            const url = document.getElementById('perf-url').value;
+
+            if (!url) {
+                showToast('Please enter a URL to measure performance', 'warning');
+                return;
+            }
+
+            showLoading('perf-result');
+
+            try {
+                const response = await fetch('/api/performance', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url })
+                });
+
+                const data = await response.json();
+                showResult('perf-result', 'Performance Metrics', data);
+                const responseTime = data.performance?.responseTime || 'unknown';
+                showToast(`Performance measured successfully! Response time: ${responseTime}ms`, 'success');
+            } catch (error) {
+                showResult('perf-result', 'Error', { error: error.message });
+                showToast(`Failed to measure performance: ${error.message}`, 'error');
+            }
+        }
+
+        async function loadCacheStats() {
+            showLoading('cache-result');
+
+            try {
+                const response = await fetch('/api/cache');
+                const data = await response.json();
+                
+                // Update stats grid
+                const statsContainer = document.getElementById('cache-stats');
+                statsContainer.innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-value">${data.totalEntries}</div>
+                        <div class="stat-label">Total Entries</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${data.hits}</div>
+                        <div class="stat-label">Cache Hits</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${data.misses}</div>
+                        <div class="stat-label">Cache Misses</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${data.hitRate}</div>
+                        <div class="stat-label">Hit Rate</div>
+                    </div>
+                `;
+
+                showResult('cache-result', 'Cache Information', data);
+                showToast(`Cache stats loaded: ${data.totalEntries} entries, ${data.hitRate} hit rate`, 'info');
+            } catch (error) {
+                showResult('cache-result', 'Error', { error: error.message });
+                showToast(`Failed to load cache stats: ${error.message}`, 'error');
+            }
+        }
+
+        async function clearCache() {
+            // Create custom confirmation toast
+            const confirmToast = showToast(
+                'Are you sure you want to clear all cache entries? This action cannot be undone. <br>' +
+                '<button onclick="performClearCache(); hideToast(\'confirm-clear\')" style="margin: 5px 5px 0 0; padding: 5px 10px; background: #e74c3c; color: white; border: none; border-radius: 3px; cursor: pointer;">Clear Cache</button>' +
+                '<button onclick="hideToast(\'confirm-clear\')" style="margin: 5px 0 0 0; padding: 5px 10px; background: #95a5a6; color: white; border: none; border-radius: 3px; cursor: pointer;">Cancel</button>',
+                'warning',
+                '⚠️ Confirm Action'
+            );
+            
+            // Set custom ID for the confirmation toast
+            document.getElementById(confirmToast).id = 'confirm-clear';
+        }
+        
+        async function performClearCache() {
+            try {
+                const response = await fetch('/api/cache', { method: 'DELETE' });
+                const data = await response.json();
+                
+                showToast(`Cache cleared successfully! Removed ${data.entriesRemoved} entries`, 'success');
+                loadCacheStats(); // Refresh stats
+            } catch (error) {
+                showToast(`Failed to clear cache: ${error.message}`, 'error');
+            }
+        }
+
+        async function loadStatus() {
+            showLoading('status-result');
+
+            try {
+                const response = await fetch('/api/status');
+                const data = await response.json();
+                
+                // Update stats grid
+                const statsContainer = document.getElementById('status-stats');
+                statsContainer.innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-value">${data.status}</div>
+                        <div class="stat-label">Status</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${data.uptime.human}</div>
+                        <div class="stat-label">Uptime</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${data.metrics.requestCount}</div>
+                        <div class="stat-label">Requests</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${data.metrics.errorRate}</div>
+                        <div class="stat-label">Error Rate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${data.metrics.extractedMetadata}</div>
+                        <div class="stat-label">Extracted</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${data.metrics.cacheEntries}</div>
+                        <div class="stat-label">Cache Size</div>
+                    </div>
+                `;
+
+                showResult('status-result', 'Service Status', data);
+                showToast(`Service status loaded: ${data.status} (${data.uptime.human} uptime)`, 'info');
+            } catch (error) {
+                showResult('status-result', 'Error', { error: error.message });
+                showToast(`Failed to load service status: ${error.message}`, 'error');
+            }
+        }
+
+        async function loadCapabilities() {
+            showLoading('status-result');
+
+            try {
+                const response = await fetch('/api/capabilities');
+                const data = await response.json();
+                showResult('status-result', 'Service Capabilities', data);
+                showToast(`Service capabilities loaded: ${data.features.length} features available`, 'info');
+            } catch (error) {
+                showResult('status-result', 'Error', { error: error.message });
+                showToast(`Failed to load service capabilities: ${error.message}`, 'error');
+            }
+        }
+
+        function addBatchUrl() {
+            const container = document.getElementById('batch-urls');
+            const urlCount = container.querySelectorAll('.batch-url').length;
+            
+            if (urlCount >= 10) {
+                showToast('Maximum 10 URLs allowed for batch processing', 'warning');
+                return;
+            }
+
+            const div = document.createElement('div');
+            div.className = 'batch-url';
+            div.innerHTML = `
+                <input type="url" placeholder="https://example${urlCount + 1}.com" />
+                <button class="btn btn-small btn-danger" onclick="removeBatchUrl(this)">Remove</button>
+            `;
+            container.appendChild(div);
+        }
+
+        function removeBatchUrl(button) {
+            const container = document.getElementById('batch-urls');
+            if (container.querySelectorAll('.batch-url').length > 1) {
+                button.parentElement.remove();
+                showToast('URL field removed from batch list', 'info');
+            } else {
+                showToast('At least one URL field is required for batch processing', 'warning');
+            }
+        }
+
+        // Keyboard support for image modal
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closeImageModal();
+            }
+        });
+
+        // Load initial status
+        window.addEventListener('load', () => {
+            loadStatus();
+            showToast('Web Metadata Service loaded successfully! 🌐', 'success', '🚀 Welcome');
+        });
+    </script>
+</body>
+</html>
