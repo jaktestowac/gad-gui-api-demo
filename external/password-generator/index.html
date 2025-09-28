@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Generator Service</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .main-content {
+            padding: 30px;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #ecf0f1;
+            margin-bottom: 30px;
+        }
+
+        .tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 16px;
+            font-weight: 500;
+            color: #7f8c8d;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            color: #3498db;
+            border-bottom-color: #3498db;
+        }
+
+        .tab:hover {
+            color: #2980b9;
+            background: #f8f9fa;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-group input, 
+        .form-group select, 
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, 
+        .form-group select:focus, 
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn.secondary {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+        }
+
+        .btn.danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .result-section {
+            margin-top: 30px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 5px solid #3498db;
+        }
+
+        .result-section.hidden {
+            display: none;
+        }
+
+        .password-result {
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 15px;
+            background: white;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            margin: 15px 0;
+            word-break: break-all;
+            position: relative;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .strength-meter {
+            margin: 15px 0;
+        }
+
+        .strength-bar {
+            height: 10px;
+            background: #ecf0f1;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .strength-fill {
+            height: 100%;
+            transition: all 0.3s ease;
+            border-radius: 5px;
+        }
+
+        .strength-weak { background: #e74c3c; }
+        .strength-fair { background: #f39c12; }
+        .strength-good { background: #f1c40f; }
+        .strength-strong { background: #27ae60; }
+
+        .strength-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .strength-check {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            background: white;
+            border-radius: 6px;
+        }
+
+        .check-icon {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: white;
+        }
+
+        .check-pass { background: #27ae60; }
+        .check-fail { background: #e74c3c; }
+
+        .batch-results {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .batch-item {
+            padding: 15px;
+            border-bottom: 1px solid #ecf0f1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .batch-item:last-child {
+            border-bottom: none;
+        }
+
+        .batch-password {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            flex: 1;
+            margin-right: 15px;
+            word-break: break-all;
+        }
+
+        .batch-strength {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-right: 10px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #ecf0f1;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #ffe6e6;
+            color: #c0392b;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid #e74c3c;
+            margin: 15px 0;
+        }
+
+        .success {
+            background: #e6ffe6;
+            color: #27ae60;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid #27ae60;
+            margin: 15px 0;
+        }
+
+        .info-box {
+            background: #e8f4fd;
+            border: 1px solid #bee5eb;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .info-box h4 {
+            color: #0c5460;
+            margin-bottom: 10px;
+        }
+
+        .info-box ul {
+            color: #0c5460;
+            margin-left: 20px;
+        }
+
+        .pattern-examples {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .pattern-examples code {
+            background: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .tabs {
+                flex-wrap: wrap;
+            }
+            
+            .tab {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+            
+            .checkbox-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .strength-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 Password Generator Service</h1>
+            <div class="subtitle">Generate secure passwords with customizable rules and patterns</div>
+        </div>
+
+        <div class="main-content">
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('generate')">Generate</button>
+                <button class="tab" onclick="showTab('batch')">Batch</button>
+                <button class="tab" onclick="showTab('strength')">Strength Test</button>
+                <button class="tab" onclick="showTab('patterns')">Patterns</button>
+                <button class="tab" onclick="showTab('api')">API</button>
+            </div>
+
+            <!-- Generate Tab -->
+            <div id="generate" class="tab-content active">
+                <div class="form-group">
+                    <label for="passwordType">Password Type:</label>
+                    <select id="passwordType" onchange="toggleOptions()">
+                        <option value="secure">Secure (Random)</option>
+                        <option value="memorable">Memorable (Words)</option>
+                        <option value="pin">PIN (Numbers)</option>
+                        <option value="passphrase">Passphrase (Multi-word)</option>
+                        <option value="pattern">Pattern-based</option>
+                    </select>
+                </div>
+
+                <!-- Secure Password Options -->
+                <div id="secureOptions" class="options-section">
+                    <div class="form-group">
+                        <label for="passwordLength">Length:</label>
+                        <input type="number" id="passwordLength" min="4" max="128" value="12">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Character Sets:</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="includeLower" checked>
+                                <label for="includeLower">Lowercase (a-z)</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="includeUpper" checked>
+                                <label for="includeUpper">Uppercase (A-Z)</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="includeNumbers" checked>
+                                <label for="includeNumbers">Numbers (0-9)</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="includeSymbols" checked>
+                                <label for="includeSymbols">Symbols (!@#$%)</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="excludeSimilar">
+                                <label for="excludeSimilar">Exclude Similar (il1Lo0O)</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customCharset">Custom Character Set (optional):</label>
+                        <input type="text" id="customCharset" placeholder="Leave empty to use checkboxes above">
+                    </div>
+                </div>
+
+                <!-- Memorable Password Options -->
+                <div id="memorableOptions" class="options-section" style="display: none;">
+                    <div class="form-group">
+                        <label for="wordCount">Number of Words:</label>
+                        <input type="number" id="wordCount" min="2" max="8" value="3">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="separator">Separator:</label>
+                        <input type="text" id="separator" value="-" maxlength="5">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="wordList">Word List:</label>
+                        <select id="wordList">
+                            <option value="common">Common Words</option>
+                            <option value="animals">Animals</option>
+                            <option value="colors">Colors</option>
+                        </select>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="memorableNumbers" checked>
+                            <label for="memorableNumbers">Include Numbers</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="capitalize" checked>
+                            <label for="capitalize">Capitalize Words</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PIN Options -->
+                <div id="pinOptions" class="options-section" style="display: none;">
+                    <div class="form-group">
+                        <label for="pinLength">PIN Length:</label>
+                        <input type="number" id="pinLength" min="3" max="20" value="4">
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="excludeSequential" checked>
+                            <label for="excludeSequential">Exclude Sequential (123, 987)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="excludeRepeating" checked>
+                            <label for="excludeRepeating">Exclude Repeating (111, 777)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Passphrase Options -->
+                <div id="passphraseOptions" class="options-section" style="display: none;">
+                    <div class="form-group">
+                        <label for="passphraseWordCount">Number of Words:</label>
+                        <input type="number" id="passphraseWordCount" min="3" max="10" value="5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="minWordLength">Min Word Length:</label>
+                        <input type="number" id="minWordLength" min="3" max="15" value="4">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="maxWordLength">Max Word Length:</label>
+                        <input type="number" id="maxWordLength" min="4" max="20" value="8">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="passphraseSeparator">Separator:</label>
+                        <input type="text" id="passphraseSeparator" value=" " maxlength="5">
+                    </div>
+
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="passphraseNumbers">
+                            <label for="passphraseNumbers">Include Numbers</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pattern Options -->
+                <div id="patternOptions" class="options-section" style="display: none;">
+                    <div class="form-group">
+                        <label for="customPattern">Pattern:</label>
+                        <input type="text" id="customPattern" placeholder="e.g., Wn# (Word + Number + Symbol)" value="Wn#">
+                    </div>
+
+                    <div class="pattern-examples">
+                        <h4>Pattern Guide:</h4>
+                        <ul>
+                            <li><code>l</code> = lowercase letter</li>
+                            <li><code>u</code> or <code>L</code> = uppercase letter</li>
+                            <li><code>n</code> or <code>N</code> = number</li>
+                            <li><code>#</code> = symbol</li>
+                            <li><code>w</code> = word (lowercase)</li>
+                            <li><code>W</code> = word (capitalized)</li>
+                            <li><code>a</code> = any letter</li>
+                            <li><code>x</code> = any character</li>
+                            <li>Other characters are used literally</li>
+                        </ul>
+                        <p><strong>Examples:</strong> <code>Lllnnn</code>, <code>W-W-nn</code>, <code>lun#lun</code></p>
+                    </div>
+                </div>
+
+                <button class="btn" onclick="generatePassword()">Generate Password</button>
+                <button class="btn secondary" onclick="clearResults()">Clear</button>
+
+                <div id="generateResult" class="result-section hidden">
+                    <h3>Generated Password</h3>
+                    <div id="passwordOutput" class="password-result">
+                        <button class="copy-btn" onclick="copyPassword()">Copy</button>
+                    </div>
+                    
+                    <div class="strength-meter">
+                        <h4>Strength Analysis</h4>
+                        <div class="strength-bar">
+                            <div id="strengthFill" class="strength-fill"></div>
+                        </div>
+                        <div id="strengthLabel"></div>
+                        <div id="strengthDetails" class="strength-details"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Batch Tab -->
+            <div id="batch" class="tab-content">
+                <div class="form-group">
+                    <label for="batchCount">Number of Passwords:</label>
+                    <input type="number" id="batchCount" min="1" max="100" value="5">
+                </div>
+
+                <div class="form-group">
+                    <label for="batchType">Password Type:</label>
+                    <select id="batchType">
+                        <option value="secure">Secure (Random)</option>
+                        <option value="memorable">Memorable (Words)</option>
+                        <option value="pin">PIN (Numbers)</option>
+                        <option value="passphrase">Passphrase (Multi-word)</option>
+                    </select>
+                </div>
+
+                <button class="btn" onclick="generateBatch()">Generate Batch</button>
+
+                <div id="batchResult" class="result-section hidden">
+                    <h3>Generated Passwords</h3>
+                    <div id="batchOutput" class="batch-results"></div>
+                    <button class="btn secondary" onclick="copyAllPasswords()">Copy All</button>
+                </div>
+            </div>
+
+            <!-- Strength Test Tab -->
+            <div id="strength" class="tab-content">
+                <div class="form-group">
+                    <label for="testPassword">Enter Password to Test:</label>
+                    <input type="password" id="testPassword" placeholder="Your password">
+                    <div style="margin-top: 10px;">
+                        <input type="checkbox" id="showPassword" onchange="togglePasswordVisibility()">
+                        <label for="showPassword">Show password</label>
+                    </div>
+                </div>
+
+                <button class="btn" onclick="testStrength()">Test Strength</button>
+
+                <div id="strengthResult" class="result-section hidden">
+                    <h3>Strength Analysis</h3>
+                    <div class="strength-meter">
+                        <div class="strength-bar">
+                            <div id="testStrengthFill" class="strength-fill"></div>
+                        </div>
+                        <div id="testStrengthLabel"></div>
+                        <div id="testStrengthDetails" class="strength-details"></div>
+                        <div id="testStrengthInfo" style="margin-top: 15px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Patterns Tab -->
+            <div id="patterns" class="tab-content">
+                <div class="info-box">
+                    <h4>Available Patterns</h4>
+                    <p>Click the button below to load available patterns from the server.</p>
+                </div>
+
+                <button class="btn" onclick="loadPatterns()">Load Patterns</button>
+
+                <div id="patternsResult" class="result-section hidden">
+                    <div id="patternsOutput"></div>
+                </div>
+
+                <hr style="margin: 30px 0;">
+
+                <h3>Create Custom Pattern</h3>
+                <div class="form-group">
+                    <label for="newPatternName">Pattern Name:</label>
+                    <input type="text" id="newPatternName" placeholder="my-custom-pattern">
+                </div>
+
+                <div class="form-group">
+                    <label for="newPatternCode">Pattern Code:</label>
+                    <input type="text" id="newPatternCode" placeholder="Wn#W">
+                </div>
+
+                <div class="form-group">
+                    <label for="newPatternDesc">Description (optional):</label>
+                    <input type="text" id="newPatternDesc" placeholder="Word + Number + Symbol + Word">
+                </div>
+
+                <button class="btn" onclick="createPattern()">Create Pattern</button>
+            </div>
+
+            <!-- API Tab -->
+            <div id="api" class="tab-content">
+                <div class="info-box">
+                    <h4>API Endpoints</h4>
+                    <p>This service provides a REST API for password generation. Here are the main endpoints:</p>
+                </div>
+
+                <h3>Generate Single Password</h3>
+                <div class="pattern-examples">
+                    <p><strong>POST</strong> <code>/api/generate</code></p>
+                    <pre>{
+  "type": "secure",
+  "options": {
+    "length": 12,
+    "includeLowercase": true,
+    "includeUppercase": true,
+    "includeNumbers": true,
+    "includeSymbols": true
+  }
+}</pre>
+                </div>
+
+                <h3>Generate Batch</h3>
+                <div class="pattern-examples">
+                    <p><strong>POST</strong> <code>/api/batch</code></p>
+                    <pre>{
+  "count": 5,
+  "type": "memorable",
+  "options": {
+    "wordCount": 3,
+    "separator": "-"
+  }
+}</pre>
+                </div>
+
+                <h3>Test Strength</h3>
+                <div class="pattern-examples">
+                    <p><strong>POST</strong> <code>/api/strength</code></p>
+                    <pre>{
+  "password": "MyPassword123!"
+}</pre>
+                </div>
+
+                <h3>Other Endpoints</h3>
+                <ul>
+                    <li><code>GET /api/patterns</code> - Get available patterns</li>
+                    <li><code>POST /api/patterns</code> - Create custom pattern</li>
+                    <li><code>GET /api/statistics</code> - Get generation statistics</li>
+                    <li><code>GET /api/status</code> - Service status</li>
+                    <li><code>GET /api/health</code> - Health check</li>
+                </ul>
+
+                <button class="btn" onclick="window.open('/api/openapi', '_blank')">View Full API Documentation</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPassword = '';
+
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function toggleOptions() {
+            const type = document.getElementById('passwordType').value;
+            
+            // Hide all options
+            document.querySelectorAll('.options-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Show relevant options
+            switch(type) {
+                case 'secure':
+                    document.getElementById('secureOptions').style.display = 'block';
+                    break;
+                case 'memorable':
+                    document.getElementById('memorableOptions').style.display = 'block';
+                    break;
+                case 'pin':
+                    document.getElementById('pinOptions').style.display = 'block';
+                    break;
+                case 'passphrase':
+                    document.getElementById('passphraseOptions').style.display = 'block';
+                    break;
+                case 'pattern':
+                    document.getElementById('patternOptions').style.display = 'block';
+                    break;
+            }
+        }
+
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('testPassword');
+            const showCheckbox = document.getElementById('showPassword');
+            
+            passwordInput.type = showCheckbox.checked ? 'text' : 'password';
+        }
+
+        async function generatePassword() {
+            const type = document.getElementById('passwordType').value;
+            const options = getOptionsForType(type);
+
+            try {
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ type, options })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                displayPassword(result);
+            } catch (error) {
+                showError('Failed to generate password: ' + error.message);
+            }
+        }
+
+        function getOptionsForType(type) {
+            switch(type) {
+                case 'secure':
+                    return {
+                        length: parseInt(document.getElementById('passwordLength').value),
+                        includeLowercase: document.getElementById('includeLower').checked,
+                        includeUppercase: document.getElementById('includeUpper').checked,
+                        includeNumbers: document.getElementById('includeNumbers').checked,
+                        includeSymbols: document.getElementById('includeSymbols').checked,
+                        excludeSimilar: document.getElementById('excludeSimilar').checked,
+                        customCharset: document.getElementById('customCharset').value
+                    };
+                case 'memorable':
+                    return {
+                        wordCount: parseInt(document.getElementById('wordCount').value),
+                        separator: document.getElementById('separator').value,
+                        wordList: document.getElementById('wordList').value,
+                        includeNumbers: document.getElementById('memorableNumbers').checked,
+                        capitalize: document.getElementById('capitalize').checked
+                    };
+                case 'pin':
+                    return {
+                        length: parseInt(document.getElementById('pinLength').value),
+                        excludeSequential: document.getElementById('excludeSequential').checked,
+                        excludeRepeating: document.getElementById('excludeRepeating').checked
+                    };
+                case 'passphrase':
+                    return {
+                        wordCount: parseInt(document.getElementById('passphraseWordCount').value),
+                        minWordLength: parseInt(document.getElementById('minWordLength').value),
+                        maxWordLength: parseInt(document.getElementById('maxWordLength').value),
+                        separator: document.getElementById('passphraseSeparator').value,
+                        includeNumbers: document.getElementById('passphraseNumbers').checked
+                    };
+                case 'pattern':
+                    return {
+                        pattern: document.getElementById('customPattern').value
+                    };
+                default:
+                    return {};
+            }
+        }
+
+        function displayPassword(result) {
+            currentPassword = result.password;
+            
+            const resultSection = document.getElementById('generateResult');
+            const passwordOutput = document.getElementById('passwordOutput');
+            const strengthFill = document.getElementById('strengthFill');
+            const strengthLabel = document.getElementById('strengthLabel');
+            const strengthDetails = document.getElementById('strengthDetails');
+
+            // Show password
+            passwordOutput.innerHTML = `${result.password}<button class="copy-btn" onclick="copyPassword()">Copy</button>`;
+            
+            // Show strength
+            const strength = result.strength;
+            const percentage = strength.score;
+            
+            strengthFill.style.width = percentage + '%';
+            strengthFill.className = `strength-fill strength-${strength.label}`;
+            strengthLabel.innerHTML = `<strong>${strength.label.toUpperCase()}</strong> (${strength.score}/100) - ${strength.crackTime}`;
+
+            // Show strength details
+            strengthDetails.innerHTML = '';
+            Object.entries(strength.checks).forEach(([check, passed]) => {
+                const div = document.createElement('div');
+                div.className = 'strength-check';
+                div.innerHTML = `
+                    <div class="check-icon ${passed ? 'check-pass' : 'check-fail'}">
+                        ${passed ? '✓' : '✗'}
+                    </div>
+                    <span>${formatCheckName(check)}</span>
+                `;
+                strengthDetails.appendChild(div);
+            });
+
+            resultSection.classList.remove('hidden');
+        }
+
+        function formatCheckName(check) {
+            const names = {
+                length: 'Sufficient Length',
+                lowercase: 'Lowercase Letters',
+                uppercase: 'Uppercase Letters',
+                numbers: 'Numbers',
+                symbols: 'Symbols',
+                noSequential: 'No Sequential Characters',
+                noRepeating: 'No Repeating Characters',
+                noCommon: 'No Common Patterns'
+            };
+            return names[check] || check;
+        }
+
+        async function generateBatch() {
+            const count = parseInt(document.getElementById('batchCount').value);
+            const type = document.getElementById('batchType').value;
+
+            try {
+                const response = await fetch('/api/batch', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ count, type })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                displayBatchResults(result);
+            } catch (error) {
+                showError('Failed to generate batch: ' + error.message);
+            }
+        }
+
+        function displayBatchResults(result) {
+            const resultSection = document.getElementById('batchResult');
+            const batchOutput = document.getElementById('batchOutput');
+
+            batchOutput.innerHTML = '';
+            
+            result.results.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'batch-item';
+                div.innerHTML = `
+                    <div class="batch-password">${item.password}</div>
+                    <div class="batch-strength strength-${item.strength.label}">${item.strength.label}</div>
+                    <button class="copy-btn" onclick="copyText('${item.password}')">Copy</button>
+                `;
+                batchOutput.appendChild(div);
+            });
+
+            resultSection.classList.remove('hidden');
+        }
+
+        async function testStrength() {
+            const password = document.getElementById('testPassword').value;
+            
+            if (!password) {
+                showError('Please enter a password to test');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/strength', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ password })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                displayStrengthResults(result);
+            } catch (error) {
+                showError('Failed to test strength: ' + error.message);
+            }
+        }
+
+        function displayStrengthResults(result) {
+            const resultSection = document.getElementById('strengthResult');
+            const strengthFill = document.getElementById('testStrengthFill');
+            const strengthLabel = document.getElementById('testStrengthLabel');
+            const strengthDetails = document.getElementById('testStrengthDetails');
+            const strengthInfo = document.getElementById('testStrengthInfo');
+
+            const strength = result.strength;
+            const percentage = strength.score;
+            
+            strengthFill.style.width = percentage + '%';
+            strengthFill.className = `strength-fill strength-${strength.label}`;
+            strengthLabel.innerHTML = `<strong>${strength.label.toUpperCase()}</strong> (${strength.score}/100)`;
+
+            // Show strength details
+            strengthDetails.innerHTML = '';
+            Object.entries(strength.checks).forEach(([check, passed]) => {
+                const div = document.createElement('div');
+                div.className = 'strength-check';
+                div.innerHTML = `
+                    <div class="check-icon ${passed ? 'check-pass' : 'check-fail'}">
+                        ${passed ? '✓' : '✗'}
+                    </div>
+                    <span>${formatCheckName(check)}</span>
+                `;
+                strengthDetails.appendChild(div);
+            });
+
+            // Additional info
+            strengthInfo.innerHTML = `
+                <p><strong>Length:</strong> ${result.length} characters</p>
+                <p><strong>Entropy:</strong> ${strength.entropy.toFixed(1)} bits</p>
+                <p><strong>Estimated crack time:</strong> ${strength.crackTime}</p>
+            `;
+
+            resultSection.classList.remove('hidden');
+        }
+
+        async function loadPatterns() {
+            try {
+                const response = await fetch('/api/patterns');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                displayPatterns(result);
+            } catch (error) {
+                showError('Failed to load patterns: ' + error.message);
+            }
+        }
+
+        function displayPatterns(result) {
+            const resultSection = document.getElementById('patternsResult');
+            const patternsOutput = document.getElementById('patternsOutput');
+
+            let html = '<h3>Predefined Patterns</h3>';
+            
+            Object.entries(result.predefined).forEach(([name, pattern]) => {
+                html += `
+                    <div class="pattern-examples">
+                        <h4>${name}</h4>
+                        <p><strong>Pattern:</strong> <code>${pattern.pattern}</code></p>
+                        <p><strong>Description:</strong> ${pattern.description}</p>
+                        ${pattern.sample ? `<p><strong>Sample:</strong> <code>${pattern.sample}</code></p>` : ''}
+                    </div>
+                `;
+            });
+
+            html += '<h3>Pattern Guide</h3><div class="pattern-examples">';
+            Object.entries(result.patternGuide).forEach(([symbol, description]) => {
+                html += `<p><code>${symbol}</code> = ${description}</p>`;
+            });
+            html += '</div>';
+
+            patternsOutput.innerHTML = html;
+            resultSection.classList.remove('hidden');
+        }
+
+        async function createPattern() {
+            const name = document.getElementById('newPatternName').value;
+            const pattern = document.getElementById('newPatternCode').value;
+            const description = document.getElementById('newPatternDesc').value;
+
+            if (!name || !pattern) {
+                showError('Please provide pattern name and code');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/patterns', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name, pattern, description })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                showSuccess('Pattern created successfully: ' + result.name);
+                
+                // Clear form
+                document.getElementById('newPatternName').value = '';
+                document.getElementById('newPatternCode').value = '';
+                document.getElementById('newPatternDesc').value = '';
+            } catch (error) {
+                showError('Failed to create pattern: ' + error.message);
+            }
+        }
+
+        function copyPassword() {
+            copyText(currentPassword);
+        }
+
+        function copyAllPasswords() {
+            const passwords = Array.from(document.querySelectorAll('.batch-password'))
+                .map(el => el.textContent)
+                .join('\n');
+            copyText(passwords);
+        }
+
+        function copyText(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showSuccess('Copied to clipboard!');
+            }).catch(() => {
+                showError('Failed to copy to clipboard');
+            });
+        }
+
+        function clearResults() {
+            document.getElementById('generateResult').classList.add('hidden');
+            currentPassword = '';
+        }
+
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.textContent = message;
+            
+            document.querySelector('.main-content').insertBefore(errorDiv, document.querySelector('.tabs').nextSibling);
+            
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 5000);
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success';
+            successDiv.textContent = message;
+            
+            document.querySelector('.main-content').insertBefore(successDiv, document.querySelector('.tabs').nextSibling);
+            
+            setTimeout(() => {
+                successDiv.remove();
+            }, 3000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            toggleOptions();
+        });
+    </script>
+</body>
+</html>

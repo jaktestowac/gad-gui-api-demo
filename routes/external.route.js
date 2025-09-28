@@ -28,6 +28,7 @@ const getServiceUrl = (serviceName) => {
     textanalytics: "http://localhost:3115",
     qrgenerator: "http://localhost:3116",
     urlshortener: "http://localhost:3117",
+    passwordgenerator: "http://localhost:3118",
   };
 
   const key = String(serviceName || "").toLowerCase();
@@ -56,6 +57,7 @@ const serviceNeedsApiPrefix = (serviceName) => {
     "textanalytics",
     "qrgenerator",
     "urlshortener",
+    "passwordgenerator",
     "default",
   ]; // treat default (MiniTemplate) as needing /api
   return servicesNeedingApi.includes(key);
@@ -107,6 +109,12 @@ const getAvailableServices = () => {
       url: "http://localhost:3117",
       name: "URL Shortener",
       description: "Shortens URLs and provides analytics",
+      default: true,
+    },
+    passwordGenerator: {
+      url: "http://localhost:3118",
+      name: "Password Generator",
+      description: "Generates secure passwords",
       default: true,
     },
   };

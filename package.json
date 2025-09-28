@@ -21,13 +21,15 @@
     "version:major": "node tools/release/update-version.js major",
     "version:custom": "node tools/release/update-version.js custom",
     "version:help": "node tools/release/update-version.js",
+    "EXTERNAL": "------",
     "ex:template": "node external/_template/server.js",
     "ex:hasher": "node external/hasher/server.js",
     "ex:mini": "node external/miniTemplate/server.js",
     "ex:uuid": "node external/uuid-generator/server.js",
     "ex:text": "node external/text-analytics/server.js",
     "ex:qr": "node external/qr-generator/server.js",
-    "ex:url": "node external/url-shortener/server.js"
+    "ex:url": "node external/url-shortener/server.js",
+    "ex:password": "node external/password-generator/server.js"
   },
   "keywords": [
     "json-server, node, REST API"
