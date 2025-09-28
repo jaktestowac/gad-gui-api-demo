@@ -30,7 +30,8 @@
     "ex:qr": "node external/qr-generator/server.js",
     "ex:url": "node external/url-shortener/server.js",
     "ex:password": "node external/password-generator/server.js",
-    "ex:meta": "node external/web-metadata/server.js"
+    "ex:meta": "node external/web-metadata/server.js",
+    "ex:apimock": "node external/api-mock-generator/server.js"
   },
   "keywords": [
     "json-server, node, REST API"

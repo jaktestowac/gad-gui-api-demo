@@ -30,6 +30,7 @@ const getServiceUrl = (serviceName) => {
     urlshortener: "http://localhost:3117",
     passwordgenerator: "http://localhost:3118",
     webmetadata: "http://localhost:3119",
+    apimockgenerator: "http://localhost:3120",
   };
 
   const key = String(serviceName || "").toLowerCase();
@@ -60,6 +61,7 @@ const serviceNeedsApiPrefix = (serviceName) => {
     "urlshortener",
     "passwordgenerator",
     "webmetadata",
+    "apimockgenerator",
     "default",
   ]; // treat default (MiniTemplate) as needing /api
   return servicesNeedingApi.includes(key);
@@ -123,6 +125,12 @@ const getAvailableServices = () => {
       url: "http://localhost:3119",
       name: "Web Metadata Service",
       description: "Extract metadata, Open Graph tags, SSL info, and performance metrics from web pages",
+      default: true,
+    },
+    apiMockGenerator: {
+      url: "http://localhost:3120",
+      name: "API Mock Generator",
+      description: "Generate mock API responses for testing with dynamic endpoint creation",
       default: true,
     },
   };
@@ -261,6 +269,7 @@ router.get("/list", (req, res) => {
           "/api/external/textAnalytics/analyze",
           "/api/external/qrGenerator/generate",
           "/api/external/webMetadata/metadata",
+          "/api/external/apiMockGenerator/mocks",
         ],
         addService: "Set EXTERNAL_SERVICE_{NAME}_URL=https://api.example.com",
       },
