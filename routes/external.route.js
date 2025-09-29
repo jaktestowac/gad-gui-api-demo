@@ -31,6 +31,7 @@ const getServiceUrl = (serviceName) => {
     passwordgenerator: "http://localhost:3118",
     webmetadata: "http://localhost:3119",
     apimockgenerator: "http://localhost:3120",
+    locationservice: "http://localhost:3121",
   };
 
   const key = String(serviceName || "").toLowerCase();
@@ -62,6 +63,7 @@ const serviceNeedsApiPrefix = (serviceName) => {
     "passwordgenerator",
     "webmetadata",
     "apimockgenerator",
+    "locationservice",
     "default",
   ]; // treat default (MiniTemplate) as needing /api
   return servicesNeedingApi.includes(key);
@@ -131,6 +133,12 @@ const getAvailableServices = () => {
       url: "http://localhost:3120",
       name: "API Mock Generator",
       description: "Generate mock API responses for testing with dynamic endpoint creation",
+      default: true,
+    },
+    locationService: {
+      url: "http://localhost:3121",
+      name: "Location Service",
+      description: "Provides location-based services and data",
       default: true,
     },
   };
