@@ -1,7 +1,8 @@
 node_modules
 .idea
 uploads
-.vscode
+.vscode/*
+!.vscode/extensions.json
 reports
 results
 logs
