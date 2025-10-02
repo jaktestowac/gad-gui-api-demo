@@ -13,7 +13,6 @@
     <link rel="stylesheet" href="/css/controls.css" />
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/infoBoxes.css" />
-    <link rel="stylesheet" href="./css/practice-controls.css" />
     <style>
         /* Design tokens (scoped) */
         :root {
@@ -36,6 +35,88 @@
             --ai-radius-lg: 18px;
             --ai-focus: 3px solid var(--ai-ring);
         }
+
+        /* Ensure the page fills the viewport height and content stretches properly */
+        html {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            /* Fallback for older browsers */
+            min-height: 100vh;
+            /* Modern dynamic viewport unit for mobile */
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Let main content take the available vertical space */
+        main.ai-page {
+            flex: 1 0 auto;
+        }
+
+        /* Ensure footer link is distinguishable and has sufficient contrast vs body text */
+        #footer-container a {
+            color: #0b3a82 !important;
+            /* darker blue for >=3:1 vs #444 and >=4.5:1 vs light bg */
+            text-decoration: underline !important;
+            text-underline-offset: 2px !important;
+        }
+
+        #footer-container a:hover {
+            color: #072a61 !important;
+        }
+
+        .button-primary-thin:hover {
+            color: #fff;
+            background-color: #19368f;
+            /* darker hover for sufficient contrast */
+            border: none;
+        }
+
+        .button-primary-thin {
+            color: #fff;
+            background-color: #1e40af;
+            /* accessible blue (AA with white) */
+            border: none;
+            padding: 6px;
+            font-size: 14px;
+            margin: 2px;
+        }
+
+        .button-primary:hover {
+            color: #fff;
+            background-color: #19368f;
+            /* hover darkens from base */
+            border: none;
+        }
+
+        .button-primary {
+            color: #fff;
+            background-color: #1e40af;
+            /* accessible blue (AA with white) */
+            border: none;
+            cursor: pointer;
+        }
+
+        .button-primary-small:hover {
+            color: #fff;
+            background-color: #19368f;
+            /* hover darkens from base */
+            border: none;
+            cursor: pointer;
+        }
+
+        .button-primary-small {
+            color: #fff;
+            background-color: #1e40af;
+            /* accessible blue (AA with white) */
+            border: none;
+            padding: 5px;
+            font-size: 12px;
+        }
+
 
         @media (prefers-color-scheme: dark) {
             :root {
@@ -122,10 +203,10 @@
             letter-spacing: .04em;
             text-transform: uppercase;
             color: var(--ai-primary);
-            /* Fallback */
-            background-color: #e8f1ff;
-            /* Modern */
-            background: color-mix(in oklab, var(--ai-primary) 14%, transparent);
+            /* Ensure sufficient contrast: use white surface with subtle border */
+            background-color: #ffffff;
+            border: 1px solid #dbeafe;
+            /* light blue border for definition */
             border-radius: 999px;
             padding: 6px 10px;
         }
@@ -336,7 +417,6 @@
                         <li>Build mini projects you can show in your portfolio</li>
                     </ul>
                     <div class="ai-cta-row" aria-label="Primary actions">
-                        <a href="https://aitesters.pl" class="button-primary" aria-label="Start a free AI lesson">Start free lesson</a>
                         <a href="https://aitesters.pl" target="_blank" rel="noopener noreferrer" class="button-secondary" aria-label="See full AI curriculum">See curriculum</a>
                     </div>
                     <p class="ai-note" id="ai-cta-note">No credit card needed. Beginner friendly.</p>

@@ -36,87 +36,6 @@
             --ai-focus: 3px solid var(--ai-ring);
         }
 
-        /* Ensure footer link is distinguishable and has sufficient contrast vs body text */
-        #footer-container a {
-            color: #0b3a82 !important;
-            /* darker blue for >=3:1 vs #444 and >=4.5:1 vs light bg */
-            text-decoration: underline !important;
-            text-underline-offset: 2px !important;
-        }
-
-        #footer-container a:hover {
-            color: #072a61 !important;
-        }
-
-        .button-primary-thin:hover {
-            color: #fff;
-            background-color: #19368f;
-            /* darker hover for sufficient contrast */
-            border: none;
-        }
-
-        .button-primary-thin {
-            color: #fff;
-            background-color: #1e40af;
-            /* accessible blue (AA with white) */
-            border: none;
-            padding: 6px;
-            font-size: 14px;
-            margin: 2px;
-        }
-
-        .button-primary:hover {
-            color: #fff;
-            background-color: #19368f;
-            /* hover darkens from base */
-            border: none;
-        }
-
-        .button-primary {
-            color: #fff;
-            background-color: #1e40af;
-            /* accessible blue (AA with white) */
-            border: none;
-            cursor: pointer;
-        }
-
-        .button-primary-small:hover {
-            color: #fff;
-            background-color: #19368f;
-            /* hover darkens from base */
-            border: none;
-            cursor: pointer;
-        }
-
-        .button-primary-small {
-            color: #fff;
-            background-color: #1e40af;
-            /* accessible blue (AA with white) */
-            border: none;
-            padding: 5px;
-            font-size: 12px;
-        }
-
-        /* Ensure the page fills the viewport height and content stretches properly */
-        html {
-            height: 100%;
-        }
-
-        body {
-            margin: 0;
-            /* Fallback for older browsers */
-            min-height: 100vh;
-            /* Modern dynamic viewport unit for mobile */
-            min-height: 100dvh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Let main content take the available vertical space */
-        main.ai-page {
-            flex: 1 0 auto;
-        }
-
         @media (prefers-color-scheme: dark) {
             :root {
                 --ai-bg: #0b1220;
@@ -193,6 +112,26 @@
             align-items: center;
         }
 
+        /* Ensure the page fills the viewport height and content stretches properly */
+        html {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            /* Fallback for older browsers */
+            min-height: 100vh;
+            /* Modern dynamic viewport unit for mobile */
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Let main content take the available vertical space */
+        main.ai-page {
+            flex: 1 0 auto;
+        }
+
         .ai-eyebrow {
             display: inline-flex;
             align-items: center;
@@ -202,10 +141,10 @@
             letter-spacing: .04em;
             text-transform: uppercase;
             color: var(--ai-primary);
-            /* Ensure sufficient contrast: use white surface with subtle border */
-            background-color: #ffffff;
-            border: 1px solid #dbeafe;
-            /* light blue border for definition */
+            /* Fallback */
+            background-color: #e8f1ff;
+            /* Modern */
+            background: color-mix(in oklab, var(--ai-primary) 14%, transparent);
             border-radius: 999px;
             padding: 6px 10px;
         }
@@ -402,7 +341,7 @@
     <br />
 
     <main id="main" class="ai-page" role="main">
-        <section class="ai-hero" aria-labelledby="ai-hero-title">
+        <section class="ai-hero">
             <div class="ai-hero-grid">
                 <div class="ai-copy">
                     <span class="ai-eyebrow" aria-hidden="true">
@@ -415,18 +354,18 @@
                         <li>Prompting, automation, and evaluation best practices</li>
                         <li>Build mini projects you can show in your portfolio</li>
                     </ul>
-                    <div class="ai-cta-row" aria-label="Primary actions">
-                        <a href="https://aitesters.pl" target="_blank" rel="noopener noreferrer" class="button-secondary" aria-label="See full AI curriculum">See curriculum</a>
+                    <div class="ai-cta-row">
+                        <a href="https://aitesters.pl" target="_blank" rel="noopener noreferrer" class="button-secondary">See curriculum</a>
                     </div>
                     <p class="ai-note" id="ai-cta-note">No credit card needed. Beginner friendly.</p>
                 </div>
-                <figure class="ai-graphic" aria-label="Graphic illustration representing AI learning">
-                    <img src="/images/aitesters-main-photo-2.jpg" alt="AI learning illustration placeholder" onerror="this.replaceWith(document.querySelector('#ai-img-fallback').content.cloneNode(true))" />
+                <figure class="ai-graphic">
+                    <img src="/images/aitesters-main-photo-1.jpg" onerror="this.replaceWith(document.querySelector('#ai-img-fallback').content.cloneNode(true))" />
                 </figure>
             </div>
         </section>
 
-        <section class="ai-highlights" aria-labelledby="highlights-heading">
+        <section class="ai-highlights">
             <h2 id="highlights-heading" class="visually-hidden">Highlights</h2>
             <div class="ai-card">
                 <h3><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> Real-world projects</h3>
@@ -443,7 +382,7 @@
         </section>
 
         <div style="margin-top: 18px; display:flex; justify-content:center; font-size: 14px; color: dimgray">
-            <a href="https://jaktestowac.pl" style="color: #4b5563; text-underline-offset: 2px;" target="_blank" rel="noopener noreferrer" aria-label="Visit jaktestowac.pl (opens in a new tab)">
+            <a href="https://jaktestowac.pl" style="color: #4b5563; text-underline-offset: 2px;" target="_blank" rel="noopener noreferrer">
                 <span style="display: inline-flex; align-items: center; gap: 8px;">
                     <img src="/data/icons/favicon.png" style="width: 20px !important; height: 20px !important; padding: 0; border: none" alt="" />
                     jaktestowac.pl

@@ -178,26 +178,27 @@ const rightMenu = (path = "", withUserMenu = true, customHtmlCode = "") => {
     <span id="languageSelect"></span>
     ${userMenu}
     ${customHtmlCode}
-    <a href="/tools/backoffice.html" style="text-decoration: none; color: white; margin-right: 15px; " >
-   
-    <div class="hovertext" data-hover="Visit Backoffice Tools">
+  <a href="/tools/backoffice.html" style="text-decoration: none; color: white; margin-right: 15px; " aria-label="Visit Backoffice Tools">
+
+  <div class="hovertext" data-hover="Visit Backoffice Tools">
       <img
         src="${path}/data/icons/gear.png"
         style="width: 30px !important; height: 30px !important; padding: 0"
-        alt=""
+    alt="Backoffice Tools"
     /></div></a>
-    <a href="https://jaktestowac.pl" style="text-decoration: none; color: white" target="_blank" rel="noopener">
-    <div class="hovertext" data-hover="Visit jaktestowac.pl">
+  <a href="https://jaktestowac.pl" style="text-decoration: none; color: white" target="_blank" rel="noopener" aria-label="Visit jaktestowac.pl (opens in a new tab)">
+  <div class="hovertext" data-hover="Visit jaktestowac.pl">
       <img
         src="${path}/data/icons/favicon.png"
         style="width: 30px !important; height: 30px !important; padding: 0"
-        alt=""
+        alt="jaktestowac.pl"
     /></div></a>
     <a
       href="https://jaktestowac.pl"
       style="text-decoration: none; color: white; padding: 10px"
       target="_blank"
       rel="noopener"
+      aria-label="Visit jaktestowac.pl (opens in a new tab)"
       ></a
     >
   </span>
