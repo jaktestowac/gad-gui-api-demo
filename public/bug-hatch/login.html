@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - BugHatch</title>
+    <link rel="stylesheet" href="/bug-hatch/css/tailwind.css">
+    <!-- New organized theme layers -->
+    <link rel="stylesheet" href="/bug-hatch/css/variables.css">
+    <link rel="stylesheet" href="/bug-hatch/css/utilities.css">
+    <link rel="stylesheet" href="/bug-hatch/css/components.css">
+    <link rel="stylesheet" href="/bug-hatch/css/pages.css">
+    <style></style>
+</head>
+
+<body class="bh-font-sans bh-auth-shell">
+    <div class="bh-card bh-card-glow bh-auth-panel bh-mx-auto">
+        <div class="logo bh-text-center">
+            <a href="/bug-hatch/">
+                <div class="bh-brand-badge" style="margin:0 auto var(--bh-space-sm);"><span class="bh-logo-icon">🐛</span><span>BugHatch</span></div>
+            </a>
+            <p class="bh-logo-sub">Issue Tracker for Teams</p>
+        </div>
+
+        <div id="error-message" class="bh-alert bh-alert-danger bh-hidden"></div>
+        <div id="success-message" class="bh-alert bh-alert-success bh-hidden"></div>
+
+        <form id="login-form" class="bh-form">
+            <div class="form-group bh-field">
+                <label for="email" class="bh-label">Email</label>
+                <input class="bh-input" type="email" id="email" name="email" data-testid="email-input" required placeholder="your@email.com" autocomplete="email">
+            </div>
+
+            <div class="form-group bh-field">
+                <label for="password" class="bh-label">Password</label>
+                <input class="bh-input" type="password" id="password" name="password" data-testid="password-input" required placeholder="••••••••" autocomplete="current-password">
+            </div>
+
+            <div class="checkbox-group bh-checkbox-row">
+                <input type="checkbox" id="keepSignIn" name="keepSignIn" data-testid="keep-signin-checkbox">
+                <label for="keepSignIn">Keep me signed in</label>
+            </div>
+
+            <button type="submit" class="bh-btn bh-btn-primary bh-w-full" data-testid="login-button">
+                Sign In
+            </button>
+        </form>
+
+        <div class="bh-text-center bh-mt-xl bh-pt-lg bh-border-top bh-text-sm">
+            <span class="bh-text-muted">Don't have an account?</span> <a class="bh-link" href="/bug-hatch/signup.html" data-testid="signup-link">Sign up</a>
+        </div>
+    </div>
+
+    <script src="/bug-hatch/js/auth.js"></script>
+</body>
+
+</html>

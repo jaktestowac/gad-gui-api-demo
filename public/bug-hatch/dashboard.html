@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BugHatch - Issue Tracker</title>
+    <link rel="stylesheet" href="/bug-hatch/css/tailwind.css">
+    <!-- New organized theme layers -->
+    <link rel="stylesheet" href="/bug-hatch/css/variables.css">
+    <link rel="stylesheet" href="/bug-hatch/css/utilities.css">
+    <link rel="stylesheet" href="/bug-hatch/css/components.css">
+    <link rel="stylesheet" href="/bug-hatch/css/pages.css">
+    <style></style>
+</head>
+
+<body class="bh-font-sans bh-bg">
+    <!-- Demo Mode Banner -->
+    <div class="bh-demo-banner" id="demo-banner">
+        <span class="demo-banner-icon">🎯</span>
+        <div class="demo-banner-text">
+            <strong>Demo Mode:</strong> You're exploring BugHatch in read-only mode. All features are visible, but you cannot create, edit, or delete items.
+        </div>
+        <a href="/bug-hatch/signup.html" class="bh-demo-cta">Sign Up Free</a>
+    </div>
+    <nav class="bh-navbar">
+        <a href="/bug-hatch/dashboard.html" class="bh-navbar-brand bh-brand-badge" data-testid="navbar-brand"><span class="bh-logo-icon">🐛</span><span>BugHatch</span></a>
+        <div class="bh-flex bh-gap-md bh-items-center">
+            <span class="bh-badge" id="user-info" data-testid="user-info">Loading...</span>
+            <button class="bh-btn bh-btn-danger bh-text-xs" id="logout-btn" data-testid="logout-button">Logout</button>
+        </div>
+    </nav>
+
+    <div class="bh-max-w-screen bh-mx-auto bh-p-xl">
+        <div class="bh-card bh-card-glow bh-mb-xl bh-text-center">
+            <h1 id="welcome-message" data-testid="welcome-message" class="bh-heading-display bh-heading-gradient bh-mb-sm">Welcome to BugHatch</h1>
+            <p class="bh-text-dim bh-text-sm">Lightweight issue tracking for teams</p>
+        </div>
+
+        <div id="error-message" class="bh-alert bh-alert-error bh-hidden" style="display: none;"></div>
+
+        <div class="bh-stat-grid bh-mb-xl">
+            <div class="bh-stat-card">
+                <h3>Projects</h3>
+                <div class="bh-stat-value" data-testid="projects-count">0</div>
+            </div>
+            <div class="bh-stat-card">
+                <h3>Open Issues</h3>
+                <div class="bh-stat-value" data-testid="open-issues-count">0</div>
+            </div>
+            <div class="bh-stat-card">
+                <h3>Closed Issues</h3>
+                <div class="bh-stat-value" data-testid="closed-issues-count">0</div>
+            </div>
+        </div>
+
+        <div class="bh-card bh-card-glow">
+            <h2 class="bh-heading-gradient bh-text-xl bh-mb-lg">Quick Actions</h2>
+            <div class="bh-flex bh-gap-sm bh-wrap bh-mb-lg">
+                <button class="bh-btn bh-btn-secondary" disabled data-testid="create-project-button">📁 Create Project</button>
+                <button class="bh-btn bh-btn-secondary" disabled data-testid="create-issue-button">🐛 Create Issue</button>
+                <button class="bh-btn bh-btn-secondary" disabled data-testid="view-projects-button">📋 View All Projects</button>
+            </div>
+            <div class="bh-alert bh-alert-info">
+                💡 <strong>Coming Soon:</strong> Quick actions will be enabled in Phase 2 of the implementation.
+            </div>
+        </div>
+    </div>
+
+    <script src="/bug-hatch/js/auth.js"></script>
+    <script>
+        // Initialize the landing page
+        document.addEventListener('DOMContentLoaded', async () => {
+            const userInfoEl = document.getElementById('user-info');
+            const welcomeMessageEl = document.getElementById('welcome-message');
+            const logoutBtn = document.getElementById('logout-btn');
+            const demoBanner = document.getElementById('demo-banner');
+
+            // Check authentication
+            const user = await window.bugHatchAuth.checkAuth();
+            if (!user) {
+                window.location.href = '/bug-hatch/login.html';
+                return;
+            }
+
+            // Check if demo mode is active
+            if (user.isDemo) {
+                // Show demo banner
+                demoBanner.classList.add('visible');
+
+                // Update welcome message
+                welcomeMessageEl.textContent = `Welcome to BugHatch Demo!`;
+
+                // Update logout button text
+                logoutBtn.textContent = 'Exit Demo';
+            }
+
+            // Display user info
+            userInfoEl.textContent = user.name || user.email;
+            if (!user.isDemo) {
+                welcomeMessageEl.textContent = `Welcome, ${user.name || 'User'}!`;
+            }
+
+            // Setup logout
+            logoutBtn.addEventListener('click', async () => {
+                await window.bugHatchAuth.handleLogout();
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,7 +1,7 @@
 const { formatErrorResponse, getIdFromUrl, formatInvalidTokenErrorResponse, sleep } = require("../helpers/helpers");
 const { logDebug, logError, logTrace, logWarn, logInsane } = require("../helpers/logger-api");
-const { getConfigValue, isBugEnabled } = require("../config/config-manager");
-const { ConfigKeys, BugConfigKeys } = require("../config/enums");
+const { getConfigValue, isBugEnabled, getFeatureFlagConfigValue } = require("../config/config-manager");
+const { ConfigKeys, BugConfigKeys, FeatureFlagConfigKeys } = require("../config/enums");
 
 const { verifyAccessToken } = require("../helpers/validation.helpers");
 const { searchForUser, searchForUserWithOnlyToken } = require("../helpers/db-operation.helpers");
@@ -61,6 +61,9 @@ const { handleBookShopPaymentHistory } = require("../endpoints/book-shop/book-sh
 const { handleMaze } = require("../endpoints/maze-endpoint.helpers");
 const { handleLearning } = require("../endpoints/learning/learning-endpoint.helpers");
 const { handlePractice } = require("../endpoints/practice-endpoint.helpers");
+const { handleBugHatchAuth } = require("../endpoints/bug-hatch/auth-endpoint.helpers");
+const { handleBugHatchAdmin } = require("../endpoints/bug-hatch/admin-endpoint.helpers");
+const { initializeAllBugHatchDatabases } = require("../endpoints/bug-hatch/db-bug-hatch.operations");
 
 const validationsRoutes = (req, res, next) => {
   let userAuth = userBaseAuth;
@@ -290,6 +293,24 @@ const validationsRoutes = (req, res, next) => {
     }
     if (req.url.includes("/api/book-shop-payment-history")) {
       handleBookShopPaymentHistory(req, res);
+    }
+
+    const isBugHatchEnabled = getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_BUG_HATCH_MODULE);
+    // bug-hatch endpoints
+    if (req.url.includes("/api/bug-hatch/") && isBugHatchEnabled === true) {
+      // run only once:
+
+      // BugHatch admin endpoints
+      if (req.url.includes("/api/bug-hatch/admin")) {
+        handleBugHatchAdmin(req, res);
+        return;
+      }
+
+      // BugHatch auth endpoints
+      if (req.url.includes("/api/bug-hatch/auth")) {
+        handleBugHatchAuth(req, res);
+        return;
+      }
     }
 
     logTrace("validationsRoutes: Returning:", {

@@ -1,0 +1,182 @@
+/* BugHatch Page-Level Styles
+   Page-specific layout & animation not suited for generic components.
+   Order: variables.css -> utilities.css -> components.css -> pages.css */
+
+/* Landing / Hero */
+.bh-landing-hero {
+  text-align: center;
+  padding: var(--bh-space-3xl) var(--bh-space-xl);
+  max-width: var(--bh-container-max);
+  margin: 0 auto;
+  position: relative;
+}
+.bh-landing-title {
+  font-size: clamp(2.5rem, 6vw, 3.25rem);
+  font-weight: 800;
+  line-height: 1.1;
+  margin: 0 0 var(--bh-space-lg);
+  letter-spacing: -0.02em;
+}
+.bh-landing-sub {
+  font-size: var(--bh-text-lg);
+  max-width: 760px;
+  margin: 0 auto var(--bh-space-2xl);
+  color: var(--bh-color-text-dim);
+}
+.bh-landing-ctas {
+  display: flex;
+  gap: var(--bh-space-md);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Particles (reusable) */
+.bh-particle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  animation: bh-float 18s linear infinite;
+}
+@keyframes bh-float {
+  0% {
+    transform: translateY(0) translateX(0);
+  }
+  25% {
+    transform: translateY(-80px) translateX(40px);
+  }
+  50% {
+    transform: translateY(-160px) translateX(-40px);
+  }
+  75% {
+    transform: translateY(-80px) translateX(80px);
+  }
+  100% {
+    transform: translateY(0) translateX(0);
+  }
+}
+
+/* Slide / Fade Animations */
+.bh-animate-slide-down {
+  animation: bh-slide-down 0.8s var(--bh-ease-out);
+}
+.bh-animate-slide-up {
+  animation: bh-slide-up 0.8s var(--bh-ease-out);
+}
+@keyframes bh-slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes bh-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Feature Cards Entrance */
+.bh-feature-seq > .bh-feature-card {
+  animation: bh-fade-in-up 0.8s var(--bh-ease-out) both;
+}
+.bh-feature-seq > .bh-feature-card:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.bh-feature-seq > .bh-feature-card:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.bh-feature-seq > .bh-feature-card:nth-child(3) {
+  animation-delay: 0.15s;
+}
+.bh-feature-seq > .bh-feature-card:nth-child(4) {
+  animation-delay: 0.2s;
+}
+.bh-feature-seq > .bh-feature-card:nth-child(5) {
+  animation-delay: 0.25s;
+}
+.bh-feature-seq > .bh-feature-card:nth-child(6) {
+  animation-delay: 0.3s;
+}
+@keyframes bh-fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Auth Pages */
+.bh-auth-bg {
+  background: radial-gradient(circle at 25% 20%, #1d232c, #0f1115 60%);
+}
+.bh-auth-gradient {
+  background: linear-gradient(135deg, #5d6bff, #8f5dff 45%, #ff3fa4);
+}
+
+/* Dashboard */
+.bh-dashboard-container {
+  max-width: var(--bh-container-max);
+  margin: 0 auto;
+  padding: var(--bh-space-xl);
+}
+.bh-dashboard-welcome {
+  background: var(--bh-gradient-primary);
+  color: #fff;
+  border-radius: var(--bh-radius-xl);
+  padding: var(--bh-space-3xl) var(--bh-space-2xl);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  position: relative;
+  overflow: hidden;
+}
+.bh-dashboard-welcome::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.18), transparent 60%);
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* Stat card override (light dashboard variant) */
+[data-theme="light"] .bh-stat-card {
+  background: linear-gradient(145deg, #ffffff, #f0f3f7);
+}
+
+/* Demo Banner refinements */
+.bh-demo-banner {
+  font-size: var(--bh-text-sm);
+}
+
+/* Utility Helpers */
+.bh-inset-layer {
+  position: absolute;
+  inset: 0;
+}
+.bh-blur-bg {
+  backdrop-filter: var(--bh-backdrop-strong);
+}
+
+/* Progressive Enhancement Hooks */
+.no-js .bh-js-only {
+  display: none !important;
+}
+
+/* Accessibility Tweaks */
+@media (prefers-reduced-motion: reduce) {
+  .bh-feature-seq > .bh-feature-card,
+  .bh-animate-slide-down,
+  .bh-animate-slide-up {
+    animation: none !important;
+  }
+}

@@ -58,6 +58,7 @@ const WebSocket = require("ws");
 const { websocketRoute } = require("./routes/websocket.route");
 const { assertFreePorts } = require("./helpers/port.checker");
 const { externalRoutes } = require("./routes/external.route");
+const { initializeAllBugHatchDatabases } = require("./endpoints/bug-hatch/db-bug-hatch.operations");
 
 const middlewares = jsonServer.defaults();
 
@@ -73,6 +74,14 @@ overwriteDbIfDefined();
 simpleMigrator(getDbPath(getConfigValue(ConfigKeys.DB_PATH)), getDbPath(getConfigValue(ConfigKeys.DB_RESTORE_PATH)));
 checkDatabase();
 initVisits();
+
+const isBugHatchEnabled = getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_BUG_HATCH_MODULE);
+if (isBugHatchEnabled === true) {
+  logDebug("> BugHatch Module is ENABLED");
+  initializeAllBugHatchDatabases().catch((err) => {
+    logError("Failed to initialize BugHatch Module databases:", err);
+  });
+}
 
 const server = jsonServer.create();
 const router = jsonServer.router(getDbPath(getConfigValue(ConfigKeys.DB_PATH)));

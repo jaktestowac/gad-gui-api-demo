@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Preview - BugHatch</title>
+    <link rel="stylesheet" href="/bug-hatch/css/tailwind.css">
+    <!-- New organized theme layers -->
+    <link rel="stylesheet" href="/bug-hatch/css/variables.css">
+    <link rel="stylesheet" href="/bug-hatch/css/utilities.css">
+    <link rel="stylesheet" href="/bug-hatch/css/components.css">
+    <link rel="stylesheet" href="/bug-hatch/css/pages.css">
+    <style></style>
+</head>
+
+<body class="bh-demo-shell bh-font-sans">
+    <div class="bh-demo-container">
+        <a href="/bug-hatch/">
+            <div class="bh-brand-badge" style="margin:0 auto var(--bh-space-md);"><span class="bh-logo-icon">🐛</span><span>BugHatch</span></div>
+        </a>
+        <h1 class="bh-demo-title">Demo Preview Mode</h1>
+        <p class="bh-demo-sub">Loading demo environment...</p>
+
+        <div class="bh-demo-info">
+            <div class="bh-demo-info-title">ℹ️ <span>What you can do in demo mode:</span></div>
+            <ul class="bh-demo-info-list">
+                <li>Explore pre-populated projects and issues</li>
+                <li>View comments, attachments, and activity feeds</li>
+                <li>Test filters and search functionality</li>
+                <li>Navigate through the complete interface</li>
+            </ul>
+        </div>
+
+        <div class="bh-demo-info alt">
+            <div class="bh-demo-info-title">🔒 <span>Demo Limitations:</span></div>
+            <ul class="bh-demo-info-list">
+                <li>Read-only mode - no data modifications allowed</li>
+                <li>Cannot create, edit, or delete items</li>
+                <li>All mutation attempts will be blocked</li>
+                <li>Sign up for a free account to get full access</li>
+            </ul>
+        </div>
+
+        <div class="bh-spinner"></div>
+        <p class="bh-status-msg" id="status">Initializing demo session...</p>
+
+        <a href="/bug-hatch/" class="bh-btn bh-btn-secondary bh-mt-md bh-hidden" style="display: none;" id="backBtn">← Back to Home</a>
+    </div>
+
+    <script>
+        // Auto-login to demo account
+        async function loginToDemo() {
+            const statusEl = document.getElementById('status');
+            const backBtn = document.getElementById('backBtn');
+
+            try {
+                statusEl.textContent = 'Connecting to demo account...';
+
+                const response = await fetch('/api/bug-hatch/auth/demo-login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                });
+
+                if (response.ok) {
+                    statusEl.textContent = 'Demo session ready! Redirecting...';
+                    setTimeout(() => {
+                        window.location.href = '/bug-hatch/dashboard.html?demo=true';
+                    }, 1000);
+                } else {
+                    const data = await response.json();
+                    statusEl.textContent = 'Error loading demo: ' + (data.error || 'Unknown error');
+                    statusEl.style.color = '#dc2626';
+                    backBtn.style.display = 'inline-block';
+                }
+            } catch (error) {
+                console.error('Demo login error:', error);
+                statusEl.textContent = 'Failed to connect to demo. Please try again later.';
+                statusEl.style.color = '#dc2626';
+                backBtn.style.display = 'inline-block';
+            }
+        }
+
+        // Start demo login on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(loginToDemo, 1500);
+        });
+    </script>
+</body>
+
+</html>

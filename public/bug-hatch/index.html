@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BugHatch - Modern Issue Tracker</title>
+    <link rel="stylesheet" href="/bug-hatch/css/tailwind.css">
+    <!-- New organized theme layers -->
+    <link rel="stylesheet" href="/bug-hatch/css/variables.css">
+    <link rel="stylesheet" href="/bug-hatch/css/utilities.css">
+    <link rel="stylesheet" href="/bug-hatch/css/components.css">
+    <link rel="stylesheet" href="/bug-hatch/css/pages.css">
+    <style></style>
+</head>
+
+<body class="bh-font-sans bh-bg">
+    <!-- Animated background (new class) -->
+    <div class="bh-hero-bg"></div>
+
+    <!-- Floating particles -->
+    <div class="bh-particle" style="width: 100px; height: 100px; top: 10%; left: 10%; animation-delay: 0s;"></div>
+    <div class="bh-particle" style="width: 150px; height: 150px; top: 60%; right: 10%; animation-delay: 5s;"></div>
+    <div class="bh-particle" style="width: 80px; height: 80px; top: 30%; right: 30%; animation-delay: 10s;"></div>
+    <div class="bh-particle" style="width: 120px; height: 120px; bottom: 20%; left: 20%; animation-delay: 15s;"></div>
+
+    <!-- Header -->
+    <header class="bh-header bh-header--compact">
+        <a href="/bug-hatch/">
+            <div class="bh-brand-badge"><span class="bh-logo-icon">🐛</span><span>BugHatch</span></div>
+        </a>
+        <a href="/bug-hatch/login.html" class="bh-btn bh-btn-glass bh-text-sm" data-testid="login-link">Login</a>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="bh-hero">
+        <h1 class="bh-hero-title">Track Issues.<br />Ship Faster.<br />Stay Organized.</h1>
+        <p class="bh-hero-subtitle">BugHatch is a modern, lightweight issue tracker designed for teams who want simplicity without sacrificing power. Manage projects, track bugs, collaborate seamlessly.</p>
+        <div class="bh-flex bh-gap-md bh-center">
+            <a href="/bug-hatch/demo-login.html" class="bh-btn" data-testid="try-demo-button">🚀 Try Demo</a>
+            <a href="/bug-hatch/signup.html" class="bh-btn bh-btn-glass" data-testid="sign-up-button">✨ Sign Up Free</a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="bh-feature-grid">
+        <div class="bh-feature-card">
+            <div class="bh-feature-icon">📋</div>
+            <h3 class="bh-feature-title">Project Management</h3>
+            <p class="bh-feature-desc">Organize work into projects with custom workflows, team members, and configurable status transitions.</p>
+        </div>
+        <div class="bh-feature-card">
+            <div class="bh-feature-icon">🐞</div>
+            <h3 class="bh-feature-title">Issue Tracking</h3>
+            <p class="bh-feature-desc">Create and manage bugs, features, and tasks with priorities, labels, story points, and rich descriptions.</p>
+        </div>
+        <div class="bh-feature-card">
+            <div class="bh-feature-icon">💬</div>
+            <h3 class="bh-feature-title">Collaboration</h3>
+            <p class="bh-feature-desc">Thread comments, mention teammates, attach files, and keep everyone in the loop with activity feeds.</p>
+        </div>
+        <div class="bh-feature-card">
+            <div class="bh-feature-icon">🔍</div>
+            <h3 class="bh-feature-title">Advanced Filters</h3>
+            <p class="bh-feature-desc">Search and filter issues with powerful queries. Save your favorite filters for quick access.</p>
+        </div>
+        <div class="bh-feature-card">
+            <div class="bh-feature-icon">📊</div>
+            <h3 class="bh-feature-title">Reports & Metrics</h3>
+            <p class="bh-feature-desc">Export data to CSV, view activity logs, and track team performance with built-in metrics.</p>
+        </div>
+        <div class="bh-feature-card">
+            <div class="bh-feature-icon">🔒</div>
+            <h3 class="bh-feature-title">Secure & Private</h3>
+            <p class="bh-feature-desc">Role-based access control, audit logs, and secure authentication keep your data safe.</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 BugHatch. A lightweight issue tracker for modern teams.</p>
+    </footer>
+</body>
+
+</html>
