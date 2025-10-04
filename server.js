@@ -59,6 +59,7 @@ const { websocketRoute } = require("./routes/websocket.route");
 const { assertFreePorts } = require("./helpers/port.checker");
 const { externalRoutes } = require("./routes/external.route");
 const { initializeAllBugHatchDatabases } = require("./endpoints/bug-hatch/db-bug-hatch.operations");
+const { injectDemoContext, blockDemoMutations } = require("./endpoints/bug-hatch/bug-hatch-demo.middleware");
 
 const middlewares = jsonServer.defaults();
 
@@ -75,6 +76,7 @@ simpleMigrator(getDbPath(getConfigValue(ConfigKeys.DB_PATH)), getDbPath(getConfi
 checkDatabase();
 initVisits();
 
+// Enable BugHatch module & demo middlewares early so later routers see req.isDemo
 const isBugHatchEnabled = getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_BUG_HATCH_MODULE);
 if (isBugHatchEnabled === true) {
   logDebug("> BugHatch Module is ENABLED");
@@ -232,6 +234,13 @@ server.use(visitsRoutes);
 server.use(queryRoutes);
 server.use(customRoutes);
 server.use(randomErrorsRoutes);
+
+// Attach demo middlewares BEFORE validationsRoutes so handlers see demo context
+if (isBugHatchEnabled === true) {
+  server.use(injectDemoContext);
+  server.use(blockDemoMutations);
+}
+
 server.use(validationsRoutes);
 
 server.use(fileUploadRoutes);
@@ -290,6 +299,8 @@ server.use(function (req, res, next) {
 server.use("/api/external", externalRoutes);
 
 server.use("/api", router);
+
+// (BugHatch enable block moved earlier)
 
 router.render = renderResponse;
 

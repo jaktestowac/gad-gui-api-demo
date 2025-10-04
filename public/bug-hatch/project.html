@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BugHatch – Project</title>
+    <link rel="stylesheet" href="/bug-hatch/css/tailwind.css" />
+    <link rel="stylesheet" href="/bug-hatch/css/variables.css" />
+    <link rel="stylesheet" href="/bug-hatch/css/utilities.css" />
+    <link rel="stylesheet" href="/bug-hatch/css/components.css" />
+    <link rel="stylesheet" href="/bug-hatch/css/pages.css" />
+</head>
+
+<body class="bh-bg-dark bh-text-light bh-dashboard-compact">
+    <div class="bh-demo-banner" id="demo-banner">
+        <span class="demo-banner-icon">🎯</span>
+        <div class="demo-banner-text">
+            <strong>Demo Mode:</strong> Read-only preview. Create/edit actions are disabled.
+        </div>
+        <a href="/bug-hatch/signup.html" class="bh-demo-cta">Sign Up Free</a>
+    </div>
+    <nav class="bh-navbar">
+        <a href="/bug-hatch/dashboard.html" class="bh-navbar-brand bh-brand-badge"><span class="bh-logo-icon">🐛</span><span>BugHatch</span></a>
+        <div class="bh-flex bh-gap-sm">
+            <a id="issuesLink" href="/bug-hatch/issues.html" class="bh-btn bh-btn-secondary bh-btn-xs">Issues</a>
+            <button id="logoutBtn" class="bh-btn bh-btn-danger bh-btn-xs">Logout</button>
+        </div>
+    </nav>
+    <main class="bh-max-w-screen bh-mx-auto bh-p-lg bh-flex bh-gap-lg bh-flex-wrap">
+        <section class="bh-flex-1 bh-min-w-0">
+            <div class="bh-flex bh-items-start bh-justify-between bh-mb-md bh-flex-wrap bh-gap-sm">
+                <div>
+                    <h1 id="projectName" class="bh-text-lg bh-font-semibold">Loading...</h1>
+                    <div id="projectMeta" class="bh-text-dim bh-text-3xs bh-mt-2xs"></div>
+                </div>
+                <div class="bh-flex bh-gap-xs bh-items-center">
+                    <span id="projectKey" class="bh-badge bh-badge-outline bh-text-2xs"></span>
+                    <span id="viewModeBadge" class="bh-badge bh-badge-dim bh-text-2xs bh-hidden">Demo</span>
+                </div>
+            </div>
+            <div class="bh-card bh-card-glow">
+                <div class="bh-flex bh-justify-between bh-items-center bh-mb-sm">
+                    <h2 class="bh-text-sm bh-font-medium">Board</h2>
+                    <div id="issuesMeta" class="bh-text-dim bh-text-2xs"></div>
+                </div>
+                <div id="kanbanBoard" class="bh-flex bh-gap-sm bh-overflow-auto" style="min-height:320px;">
+                    <div class="bh-text-dim bh-text-xs">Loading board...</div>
+                </div>
+            </div>
+        </section>
+        <!-- Issue preview modal -->
+        <div id="issuePreviewModal" class="bh-modal-backdrop bh-hidden">
+            <div class="bh-modal" role="dialog" aria-modal="true">
+                <div class="bh-modal-header">
+                    <h3 id="pvIssueKey" class="bh-text-sm bh-m-0"></h3>
+                    <button id="pvCloseBtn" class="bh-btn bh-btn-ghost bh-btn-xs" aria-label="Close">✕</button>
+                </div>
+                <div id="pvBody" class="bh-preview-layout">
+                    <div class="bh-preview-main bh-text-2xs bh-space-y-xs">
+                        <div id="pvIssueTitle" class="bh-text-xs bh-font-medium"></div>
+                        <div class="bh-flex bh-gap-2xs bh-flex-wrap bh-text-3xs" id="pvMeta"></div>
+                        <div id="pvLabels" class="bh-flex bh-gap-2xs bh-flex-wrap bh-mt-xs"></div>
+                        <div id="pvDescription" class="bh-text-2xs bh-mt-xs bh-preline"></div>
+                    </div>
+                    <aside class="bh-preview-aside">
+                        <h4 class="bh-preview-aside-title">Actions</h4>
+                        <div id="pvTransitions" class="bh-preview-transitions"></div>
+                        <div class="bh-preview-tools" id="pvToolsPlaceholder">
+                            <!-- future tools (attachments, comments, quick edit, etc.) -->
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="/bug-hatch/js/auth.js"></script>
+    <script src="/bug-hatch/js/demo-propagate.js"></script>
+    <script src="/bug-hatch/js/toast.js"></script>
+    <script src="/bug-hatch/js/project-detail.js"></script>
+</body>
+
+</html>

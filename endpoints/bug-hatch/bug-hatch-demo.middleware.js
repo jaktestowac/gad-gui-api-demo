@@ -1,8 +1,8 @@
-const { verifyToken } = require("../../helpers/jwtauth");
-const { formatErrorResponse } = require("../../helpers");
 const { HTTP_FORBIDDEN } = require("../../helpers/response.helpers");
-const { readDemoDb } = require("./db-bug-hatch.operations");
+const { readBugHatchDemoDb } = require("./db-bug-hatch.operations");
 const { logError, logTrace } = require("../../helpers/logger-api");
+const { verifyToken } = require("../../helpers/jwtauth");
+const { formatErrorResponse } = require("../../helpers/helpers");
 
 /**
  * Middleware to check if the request is in demo mode
@@ -66,7 +66,7 @@ function injectDemoContext(req, res, next) {
   if (isDemoMode(req)) {
     // Add demo flag to request
     req.isDemo = true;
-    req.demoDb = readDemoDb();
+    req.demoDb = readBugHatchDemoDb();
     logTrace("Demo mode: Context injected");
   } else {
     req.isDemo = false;

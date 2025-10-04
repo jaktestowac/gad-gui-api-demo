@@ -298,6 +298,19 @@ const validationsRoutes = (req, res, next) => {
     const isBugHatchEnabled = getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_BUG_HATCH_MODULE);
     // bug-hatch endpoints
     if (req.url.includes("/api/bug-hatch/") && isBugHatchEnabled === true) {
+      // Centralize demo forcing: allow ?demo=true or ?forceDemo=true to emulate demo mode for read-only exploration
+      try {
+        if (req.method === "GET") {
+          const q = req.query || {};
+          if (q.demo === "true" || q.forceDemo === "true") {
+            // store flag so downstream handlers/services can treat user as demo (without mutating token payload)
+            req.bugHatchForceDemo = true;
+          }
+        }
+      } catch (e) {
+        // ignore query parsing issues
+      }
+
       // run only once:
 
       // BugHatch admin endpoints
@@ -309,6 +322,20 @@ const validationsRoutes = (req, res, next) => {
       // BugHatch auth endpoints
       if (req.url.includes("/api/bug-hatch/auth")) {
         handleBugHatchAuth(req, res);
+        return;
+      }
+
+      // BugHatch issue endpoints (check before generic project handler so /projects/:id/issues is not swallowed)
+      if (req.url.includes("/api/bug-hatch/issues") || /\/api\/bug-hatch\/projects\/[^/]+\/issues/.test(req.url)) {
+        const { handleBugHatchIssues } = require("../endpoints/bug-hatch/issues-endpoint.helpers");
+        handleBugHatchIssues(req, res);
+        return;
+      }
+
+      // BugHatch project endpoints
+      if (req.url.includes("/api/bug-hatch/projects")) {
+        const { handleBugHatchProjects } = require("../endpoints/bug-hatch/projects-endpoint.helpers");
+        handleBugHatchProjects(req, res);
         return;
       }
     }

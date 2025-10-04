@@ -361,6 +361,117 @@ body.bh-no-scroll {
 .bh-card:hover::before {
   opacity: 1;
 }
+.bh-issue-card {
+  background: var(--bh-color-surface-alt);
+  border: 1px solid var(--bh-color-border);
+  border-radius: var(--bh-radius-md);
+  padding: var(--bh-space-sm) var(--bh-space-sm) var(--bh-space-xs);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--bh-space-2xs);
+  cursor: pointer;
+  transition: background var(--bh-duration-2), box-shadow var(--bh-duration-2), transform var(--bh-duration-2);
+}
+.bh-issue-card:hover {
+  background: var(--bh-color-surface);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+.bh-issue-card:active {
+  transform: translateY(1px);
+}
+.bh-issue-card .bh-issue-card-title {
+  font-size: var(--bh-text-2xs);
+  line-height: 1.25;
+  font-weight: 500;
+  color: var(--bh-color-text);
+}
+.bh-issue-card .bh-issue-card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--bh-text-3xs);
+  color: var(--bh-color-text-dim);
+}
+.bh-issue-card-labels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+/* =====================
+   Kanban Board Layout
+   ===================== */
+/* Column wrapper already uses inline style min-width; ensure vertical stack for cards */
+.bh-kanban-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bh-space-xs);
+}
+
+/* Dropzone: force vertical flow, prevent wrapping, allow scrolling if overflow */
+.bh-kanban-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--bh-space-xs);
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 2px;
+}
+
+/* Improve scroll aesthetics inside columns */
+.bh-kanban-dropzone::-webkit-scrollbar {
+  width: 6px;
+}
+.bh-kanban-dropzone::-webkit-scrollbar-thumb {
+  background: var(--bh-color-surface-alt);
+  border-radius: 8px;
+}
+
+/* Cards should span full column width */
+.bh-kanban-dropzone .bh-issue-card {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Visual cue when dragging over */
+.bh-kanban-dropzone.bh-ring {
+  outline: 2px dashed var(--bh-color-primary);
+  outline-offset: 2px;
+  background: rgba(255, 255, 255, 0.03);
+}
+.bh-issue-label {
+  font-size: 10px;
+  line-height: 1;
+  padding: 3px 6px;
+  border-radius: 4px;
+  background: linear-gradient(135deg, var(--bh-color-primary), var(--bh-color-primary-accent));
+  color: #fff;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+.bh-issue-label[data-shade="1"] {
+  filter: brightness(1.15) saturate(1.1);
+}
+.bh-issue-label[data-shade="2"] {
+  filter: brightness(0.9) saturate(1.05);
+}
+.bh-issue-label[data-shade="3"] {
+  filter: brightness(0.75);
+}
+.bh-issue-card-priority-high {
+  color: #f87171;
+  font-weight: 600;
+}
+.bh-issue-card-priority-medium {
+  color: #fbbf24;
+  font-weight: 600;
+}
+.bh-issue-card-priority-low {
+  color: #60a5fa;
+  font-weight: 600;
+}
 .bh-card-glow::after {
   content: "";
   position: absolute;
@@ -737,6 +848,62 @@ body.bh-no-scroll {
   gap: var(--bh-space-sm);
   align-items: flex-start;
   min-width: 260px;
+  top: 50px;
+}
+.bh-toast-info {
+  border-color: var(--bh-color-info-border);
+}
+.bh-toast-success {
+  border-color: var(--bh-color-success-border);
+}
+.bh-toast-warn {
+  border-color: var(--bh-color-warning-border);
+}
+.bh-toast-error {
+  border-color: var(--bh-color-error-border);
+}
+.bh-toast-info {
+  background: linear-gradient(145deg, var(--bh-color-surface-alt), rgba(0, 184, 255, 0.12));
+}
+.bh-toast-success {
+  background: linear-gradient(145deg, var(--bh-color-surface-alt), rgba(16, 185, 129, 0.12));
+}
+.bh-toast-warn {
+  background: linear-gradient(145deg, var(--bh-color-surface-alt), rgba(251, 191, 36, 0.18));
+}
+.bh-toast-error {
+  background: linear-gradient(145deg, var(--bh-color-surface-alt), rgba(239, 68, 68, 0.18));
+}
+.bh-toast {
+  animation: bh-toast-in 0.25s var(--bh-ease-out);
+  position: relative;
+}
+.bh-toast-hide {
+  animation: bh-toast-out 0.25s var(--bh-ease-in) forwards;
+}
+@keyframes bh-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes bh-toast-out {
+  to {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.95);
+  }
+}
+.bh-toast-msg {
+  flex: 1;
+  font-size: var(--bh-text-2xs);
+  line-height: 1.3;
+}
+.bh-toast-close {
+  margin-left: auto;
 }
 
 /* Modal (skeleton) */
@@ -765,6 +932,73 @@ body.bh-no-scroll {
   justify-content: space-between;
   align-items: center;
   margin-bottom: var(--bh-space-lg);
+}
+/* Issue preview layout */
+.bh-preview-layout {
+  display: grid;
+  grid-template-columns: 1fr 190px;
+  gap: var(--bh-space-lg);
+  align-items: start;
+}
+@media (max-width: 760px) {
+  .bh-preview-layout {
+    grid-template-columns: 1fr;
+  }
+  .bh-preview-aside { order: -1; display: flex; flex-direction: row; flex-wrap: wrap; gap: var(--bh-space-xs); }
+  .bh-preview-aside-title { width: 100%; }
+}
+.bh-preview-aside {
+  background: var(--bh-color-surface-alt);
+  border: 1px solid var(--bh-color-border);
+  border-radius: var(--bh-radius-md);
+  padding: var(--bh-space-md) var(--bh-space-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--bh-space-sm);
+  position: relative;
+  min-height: 160px;
+}
+.bh-preview-aside-title {
+  font-size: var(--bh-text-3xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0 0 var(--bh-space-xs);
+  font-weight: 600;
+  color: var(--bh-color-text-dim);
+}
+.bh-preview-transitions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bh-space-2xs);
+}
+.bh-preview-transitions button.bh-btn {
+  width: 100%;
+  justify-content: flex-start;
+}
+.bh-preview-transitions button.bh-btn:not(:last-child) {
+  position: relative;
+}
+.bh-preview-transitions button.bh-btn:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: -4px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--bh-color-border), transparent);
+  opacity: .5;
+}
+.bh-preview-tools {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--bh-space-xs);
+  opacity: .6;
+  font-size: var(--bh-text-3xs);
+  text-align: center;
+}
+.bh-preview-tools::before {
+  content: "(more soon)";
 }
 
 /* Quick Stats / Cards (dashboard) */

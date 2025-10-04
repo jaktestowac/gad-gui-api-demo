@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BugHatch – Issues</title>
+    <link rel="stylesheet" href="/bug-hatch/css/tailwind.css" />
+    <link rel="stylesheet" href="/bug-hatch/css/variables.css" />
+    <link rel="stylesheet" href="/bug-hatch/css/utilities.css" />
+    <link rel="stylesheet" href="/bug-hatch/css/components.css" />
+    <link rel="stylesheet" href="/bug-hatch/css/pages.css" />
+</head>
+
+<body class="bh-bg-dark bh-text-light bh-dashboard-compact">
+    <nav class="bh-navbar">
+        <a href="/bug-hatch/dashboard.html" class="bh-navbar-brand bh-brand-badge"><span class="bh-logo-icon">🐛</span><span>BugHatch</span></a>
+        <div class="bh-flex bh-gap-sm">
+            <a href="/bug-hatch/dashboard.html" class="bh-btn bh-btn-secondary bh-btn-xs">Dashboard</a>
+            <button id="logoutBtn" class="bh-btn bh-btn-danger bh-btn-xs">Logout</button>
+        </div>
+    </nav>
+    <main class="bh-max-w-screen bh-mx-auto bh-p-lg bh-flex bh-gap-lg bh-flex-wrap">
+        <!-- Filters Panel -->
+        <aside class="bh-card bh-card-glow bh-flex-grow-0 bh-flex-shrink-0" style="min-width:260px;max-width:300px;">
+            <h2 class="bh-heading-section bh-mb-sm bh-text-sm">Filters</h2>
+            <form id="filtersForm" class="bh-stack bh-gap-sm bh-text-xs">
+                <label class="bh-field"><span class="bh-label">Project (ID or Key)</span><input id="filterProject" class="bh-input" placeholder="proj-demo-core or CORE" /></label>
+                <label class="bh-field"><span class="bh-label">Search</span><input id="filterSearch" class="bh-input" placeholder="text..." /></label>
+                <label class="bh-field"><span class="bh-label">Status</span>
+                    <select id="filterStatus" class="bh-input">
+                        <option value="">Any</option>
+                    </select>
+                </label>
+                <label class="bh-field"><span class="bh-label">Type</span>
+                    <select id="filterType" class="bh-input">
+                        <option value="">Any</option>
+                        <option value="task">Task</option>
+                        <option value="bug">Bug</option>
+                        <option value="story">Story</option>
+                    </select>
+                </label>
+                <label class="bh-field"><span class="bh-label">Assignee</span><input id="filterAssignee" class="bh-input" placeholder="user id" /></label>
+                <label class="bh-field"><span class="bh-label">Labels (comma)</span><input id="filterLabels" class="bh-input" placeholder="ui,api" /></label>
+                <div class="bh-flex bh-gap-xs">
+                    <button type="submit" class="bh-btn bh-btn-primary bh-btn-xs bh-flex-1">Apply</button>
+                    <button type="button" id="resetFilters" class="bh-btn bh-btn-secondary bh-btn-xs">Reset</button>
+                </div>
+            </form>
+            <hr class="bh-separator bh-my-sm" />
+            <button id="createIssueBtn" class="bh-btn bh-btn-success bh-btn-xs" data-testid="create-issue-btn">＋ Create Issue</button>
+            <div id="filtersInfo" class="bh-text-dim bh-text-2xs bh-mt-sm"></div>
+        </aside>
+
+        <!-- Main Issues Content -->
+        <section class="bh-flex-1 bh-min-w-0">
+            <div class="bh-card bh-card-glow bh-mb-md">
+                <h1 class="bh-heading-section bh-mb-xs bh-text-md">Issues</h1>
+                <div id="issuesMeta" class="bh-text-dim bh-text-2xs"></div>
+            </div>
+            <div class="bh-card bh-card-glow bh-overflow-auto">
+                <table class="bh-table bh-text-xs" id="issuesTable">
+                    <thead>
+                        <tr>
+                            <th>Key</th>
+                            <th>Title</th>
+                            <th>Status</th>
+                            <th>Type</th>
+                            <th>Priority</th>
+                            <th>Assignee</th>
+                            <th>Updated</th>
+                        </tr>
+                    </thead>
+                    <tbody id="issuesTbody">
+                        <tr>
+                            <td colspan="7" class="bh-text-center bh-text-dim">Enter a project above and apply filters</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Create Issue Modal -->
+        <div id="createIssueModal" class="bh-modal" aria-hidden="true">
+            <div class="bh-modal-backdrop" data-modal-close></div>
+            <div class="bh-modal-dialog bh-card bh-card-glow" role="dialog" aria-modal="true" aria-labelledby="createIssueTitle">
+                <div class="bh-modal-header">
+                    <h3 id="createIssueTitle" class="bh-heading-section bh-text-sm">Create Issue</h3>
+                    <button class="bh-modal-close" data-modal-close>&times;</button>
+                </div>
+                <form id="createIssueForm" class="bh-stack bh-gap-sm bh-text-xs">
+                    <label class="bh-field"><span class="bh-label">Project ID</span><input id="createProjectId" class="bh-input" required /></label>
+                    <label class="bh-field"><span class="bh-label">Title</span><input id="createTitle" class="bh-input" minlength="3" required /></label>
+                    <label class="bh-field"><span class="bh-label">Type</span>
+                        <select id="createType" class="bh-input">
+                            <option value="task">Task</option>
+                            <option value="bug">Bug</option>
+                            <option value="story">Story</option>
+                        </select>
+                    </label>
+                    <label class="bh-field"><span class="bh-label">Priority</span>
+                        <select id="createPriority" class="bh-input">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </label>
+                    <label class="bh-field"><span class="bh-label">Assignee Id (optional)</span><input id="createAssignee" class="bh-input" /></label>
+                    <label class="bh-field"><span class="bh-label">Labels (comma)</span><input id="createLabels" class="bh-input" /></label>
+                    <label class="bh-field"><span class="bh-label">Description</span><textarea id="createDescription" class="bh-input" rows="4"></textarea></label>
+                    <div id="createIssueError" class="bh-alert bh-alert-error bh-hidden" style="display:none;"></div>
+                    <div class="bh-flex bh-gap-sm bh-justify-end">
+                        <button type="button" class="bh-btn bh-btn-secondary bh-btn-xs" data-modal-close>Cancel</button>
+                        <button type="submit" class="bh-btn bh-btn-primary bh-btn-xs">Create</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+    <script src="/bug-hatch/js/auth.js"></script>
+    <script src="/bug-hatch/js/demo-propagate.js"></script>
+    <script src="/bug-hatch/js/issues.js"></script>
+</body>
+
+</html>

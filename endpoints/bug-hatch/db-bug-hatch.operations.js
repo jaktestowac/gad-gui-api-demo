@@ -79,6 +79,9 @@ function readBugHatchDb() {
   }
 }
 
+// ==================== ID GENERATION ====================
+// note: generateBugHatchId implementation lives near bottom (single definition)
+
 /**
  * Write to BugHatch database atomically (using temp file + rename)
  * @param {Object} data - Complete database object
@@ -109,23 +112,34 @@ async function writeBugHatchDb(data) {
  */
 function readBugHatchDemoDb() {
   try {
+    const seed = require("./bug-hatch-demo-data.js");
+    let shouldWrite = false;
+    let demoDb;
     if (!fs.existsSync(DEMO_DB_PATH)) {
-      logError("Demo BugHatch DB file not found");
-      return {
-        users: [],
-        projects: [],
-        issues: [],
-        comments: [],
-        attachments: [],
-        filters: [],
-        outbox: [],
-      };
+      // seed file
+      demoDb = { ...seed };
+      shouldWrite = true;
+    } else {
+      const data = fs.readFileSync(DEMO_DB_PATH, "utf8");
+      demoDb = JSON.parse(data);
+      // if empty or missing core arrays, re-seed
+      if (!Array.isArray(demoDb.projects) || demoDb.projects.length === 0) {
+        demoDb = { ...seed };
+        shouldWrite = true;
+      }
     }
-    const data = fs.readFileSync(DEMO_DB_PATH, "utf8");
-    return JSON.parse(data);
+    if (shouldWrite) {
+      try {
+        fs.writeFileSync(DEMO_DB_PATH, JSON.stringify(demoDb, null, 2));
+        logTrace("> Demo DB seeded from bug-hatch-demo-data.js");
+      } catch (e) {
+        logError("Failed to write demo DB seed", e);
+      }
+    }
+    return demoDb;
   } catch (error) {
     logError("Error reading Demo BugHatch DB:", error);
-    throw error;
+    return { users: [], projects: [], issues: [], comments: [], attachments: [], filters: [], outbox: [] };
   }
 }
 
@@ -220,21 +234,45 @@ async function initializeBugHatchDb() {
       return readBugHatchDb();
     }
 
-    logTrace("Initializing BugHatch database with demo data...");
+    logTrace("Initializing BugHatch database (preferring init dataset)...");
 
-    // Read demo database as template
-    const demoDb = readBugHatchDemoDb();
+    // Try loading init dataset (non-demo canonical starter data)
+    let initData;
+    try {
+      // Use fresh require to allow edits during dev (delete cache)
+      const initPath = require.resolve("./bug-hatch-init-data.js");
+      delete require.cache[initPath];
+      initData = require("./bug-hatch-init-data.js");
+    } catch (e) {
+      logTrace("No explicit init dataset or failed to load, will fallback to demo dataset", { error: e.message });
+      initData = null;
+    }
 
-    // Create initial database with demo data
+    const hasInitContent =
+      initData &&
+      ((Array.isArray(initData.users) && initData.users.length) ||
+        (Array.isArray(initData.projects) && initData.projects.length) ||
+        (Array.isArray(initData.issues) && initData.issues.length));
+
+    let seedSourceName = "init";
+    let seed = initData;
+    if (!hasInitContent) {
+      seedSourceName = "demo";
+      const demoDb = readBugHatchDemoDb();
+      seed = demoDb;
+    }
+
+    logTrace(`> Using ${seedSourceName} dataset for initial BugHatch DB seeding`);
+
     const initialDb = {
-      users: demoDb.users || [],
-      projects: demoDb.projects || [],
-      issues: demoDb.issues || [],
-      comments: demoDb.comments || [],
-      attachments: demoDb.attachments || [],
-      filters: demoDb.filters || [],
-      audit: [], // Start with empty audit (will be in separate file)
-      outbox: demoDb.outbox || [],
+      users: (seed && seed.users) || [],
+      projects: (seed && seed.projects) || [],
+      issues: (seed && seed.issues) || [],
+      comments: (seed && seed.comments) || [],
+      attachments: (seed && seed.attachments) || [],
+      filters: (seed && seed.filters) || [],
+      audit: [],
+      outbox: (seed && seed.outbox) || [],
     };
 
     // Write to database
@@ -413,6 +451,141 @@ async function createBugHatchUser(userData) {
   return newUser;
 }
 
+// ==================== PROJECT OPERATIONS ====================
+
+/**
+ * Get all projects
+ * @returns {Array}
+ */
+function bugHatchProjectsDb() {
+  return readBugHatchDb().projects || [];
+}
+
+/**
+ * Find project by id
+ * @param {string} projectId
+ */
+function findBugHatchProjectById(projectId) {
+  const projects = bugHatchProjectsDb();
+  return projects.find((p) => areIdsEqual(p.id, projectId));
+}
+
+/**
+ * Find project by key (case-insensitive)
+ * @param {string} key
+ */
+function findBugHatchProjectByKey(key) {
+  const projects = bugHatchProjectsDb();
+  return projects.find((p) => areStringsEqualIgnoringCase(p.key, key));
+}
+
+/**
+ * Persist updated db helper
+ * @param {Function} mutator receives db and should modify
+ */
+async function mutateAndWriteDb(mutator) {
+  const db = readBugHatchDb();
+  await mutator(db);
+  await writeBugHatchDb(db);
+  return db;
+}
+
+/**
+ * Create project
+ * @param {Object} data {key,name,createdBy, workflow?}
+ */
+async function createBugHatchProject(data) {
+  const id = data.id || generateBugHatchId("proj");
+  const project = {
+    id,
+    key: data.key,
+    name: data.name,
+    members: data.members || (data.createdBy ? [data.createdBy] : []),
+    archived: false,
+    workflow: data.workflow || {
+      statuses: ["Backlog", "In Progress", "Review", "Done"],
+      transitions: {
+        Backlog: ["In Progress"],
+        "In Progress": ["Review", "Backlog"],
+        Review: ["Done", "In Progress"],
+        Done: [],
+      },
+    },
+    createdAt: new Date().toISOString(),
+  };
+
+  await mutateAndWriteDb((db) => {
+    // unique constraints: key
+    if (db.projects.find((p) => areStringsEqualIgnoringCase(p.key, project.key))) {
+      throw new Error("Project key already exists");
+    }
+    db.projects.push(project);
+  });
+  return project;
+}
+
+/**
+ * Update project basic fields (name, archived, workflow)
+ */
+async function updateBugHatchProject(projectId, patch) {
+  let updated;
+  await mutateAndWriteDb((db) => {
+    const idx = db.projects.findIndex((p) => areIdsEqual(p.id, projectId));
+    if (idx === -1) throw new Error("Project not found");
+    const current = db.projects[idx];
+    updated = { ...current };
+    if (patch.name !== undefined) {
+      updated.name = patch.name;
+    }
+    if (patch.archived !== undefined) {
+      updated.archived = !!patch.archived;
+    }
+    if (patch.workflow) {
+      // basic validation: ensure statuses array and transitions object
+      if (
+        !Array.isArray(patch.workflow.statuses) ||
+        typeof patch.workflow.transitions !== "object" ||
+        patch.workflow.statuses.length === 0
+      ) {
+        throw new Error("Invalid workflow structure");
+      }
+      updated.workflow = patch.workflow;
+    }
+    db.projects[idx] = updated;
+  });
+  return updated;
+}
+
+/**
+ * Add member to project
+ */
+async function addBugHatchProjectMember(projectId, userId) {
+  let project;
+  await mutateAndWriteDb((db) => {
+    project = db.projects.find((p) => areIdsEqual(p.id, projectId));
+    if (!project) throw new Error("Project not found");
+    if (!project.members.includes(userId)) {
+      project.members.push(userId);
+    }
+  });
+  return project;
+}
+
+/**
+ * Remove member
+ */
+async function removeBugHatchProjectMember(projectId, userId) {
+  let project;
+  await mutateAndWriteDb((db) => {
+    project = db.projects.find((p) => areIdsEqual(p.id, projectId));
+    if (!project) throw new Error("Project not found");
+    project.members = project.members.filter((m) => m !== userId);
+  });
+  return project;
+}
+
+// (exports consolidated at bottom module.exports object)
+
 /**
  * Update BugHatch user's last login time
  * @param {string} userId - User ID
@@ -458,29 +631,7 @@ async function updateBugHatchUser(userId, updates) {
  * Get all BugHatch projects
  * @returns {Array} Array of projects
  */
-function bugHatchProjectsDb() {
-  return readBugHatchDb().projects || [];
-}
-
-/**
- * Find project by ID
- * @param {string} projectId - Project ID
- * @returns {Object|undefined} Project object or undefined
- */
-function findBugHatchProjectById(projectId) {
-  const projects = bugHatchProjectsDb();
-  return projects.find((project) => areIdsEqual(project.id, projectId));
-}
-
-/**
- * Find project by key
- * @param {string} key - Project key
- * @returns {Object|undefined} Project object or undefined
- */
-function findBugHatchProjectByKey(key) {
-  const projects = bugHatchProjectsDb();
-  return projects.find((project) => areStringsEqualIgnoringCase(project.key, key));
-}
+// (duplicate project retrieval functions removed - defined earlier in file)
 
 // ==================== AUDIT OPERATIONS ====================
 
@@ -544,6 +695,100 @@ function generateBugHatchId(prefix = "bh") {
   return `${prefix}-${timestamp}-${random}`;
 }
 
+// ==================== ISSUE OPERATIONS (Phase 3) ====================
+
+function bugHatchIssuesDb() {
+  return readBugHatchDb().issues || [];
+}
+
+function findBugHatchIssueById(issueId) {
+  return bugHatchIssuesDb().find((i) => areIdsEqual(i.id, issueId));
+}
+
+function findBugHatchIssuesByProjectId(projectId) {
+  return bugHatchIssuesDb().filter((i) => areIdsEqual(i.projectId, projectId));
+}
+
+// Generate next issue key number for a project (e.g., PROJ-1)
+function generateNextIssueKey(project) {
+  const projectIssues = bugHatchIssuesDb().filter((i) => areIdsEqual(i.projectId, project.id));
+  // Extract trailing number part after dash
+  let max = 0;
+  for (const issue of projectIssues) {
+    const parts = issue.key.split("-");
+    const n = parseInt(parts[1], 10);
+    if (!isNaN(n) && n > max) max = n;
+  }
+  return `${project.key}-${max + 1}`;
+}
+
+async function createBugHatchIssue(data) {
+  let created;
+  await mutateAndWriteDb((db) => {
+    const project = db.projects.find((p) => areIdsEqual(p.id, data.projectId));
+    if (!project) throw new Error("Project not found");
+    const issueKey = generateNextIssueKey(project);
+    const now = new Date().toISOString();
+    created = {
+      id: data.id || generateBugHatchId("iss"),
+      key: issueKey,
+      projectId: project.id,
+      type: data.type || "task",
+      title: data.title,
+      description: data.description || "",
+      status: data.status || project.workflow.statuses[0],
+      priority: data.priority || "medium",
+      assigneeId: data.assigneeId || null,
+      labels: Array.isArray(data.labels) ? data.labels : [],
+      storyPoints: data.storyPoints || null,
+      attachments: [],
+      createdBy: data.createdBy,
+      createdAt: now,
+      updatedAt: now,
+      archived: false,
+    };
+    db.issues.push(created);
+  });
+  return created;
+}
+
+async function updateBugHatchIssue(issueId, patch) {
+  let updated;
+  await mutateAndWriteDb((db) => {
+    const idx = db.issues.findIndex((i) => areIdsEqual(i.id, issueId));
+    if (idx === -1) throw new Error("Issue not found");
+    const current = db.issues[idx];
+    updated = { ...current };
+    const mutableFields = [
+      "title",
+      "description",
+      "priority",
+      "assigneeId",
+      "labels",
+      "storyPoints",
+      "archived",
+      "status",
+    ];
+    for (const f of mutableFields) {
+      if (patch[f] !== undefined) {
+        updated[f] = patch[f];
+      }
+    }
+    updated.updatedAt = new Date().toISOString();
+    db.issues[idx] = updated;
+  });
+  return updated;
+}
+
+async function archiveBugHatchIssue(issueId) {
+  return updateBugHatchIssue(issueId, { archived: true });
+}
+
+// Transition only adjusts status + updatedAt; validation happens in service layer
+async function transitionBugHatchIssue(issueId, toStatus) {
+  return updateBugHatchIssue(issueId, { status: toStatus });
+}
+
 module.exports = {
   // Database core
   readBugHatchDb,
@@ -569,6 +814,21 @@ module.exports = {
   bugHatchProjectsDb,
   findBugHatchProjectById,
   findBugHatchProjectByKey,
+  createBugHatchProject,
+  updateBugHatchProject,
+  addBugHatchProjectMember,
+  removeBugHatchProjectMember,
+  // internal helper (exported for services/tests)
+  mutateAndWriteDb,
+
+  // Issues
+  bugHatchIssuesDb,
+  findBugHatchIssueById,
+  findBugHatchIssuesByProjectId,
+  createBugHatchIssue,
+  updateBugHatchIssue,
+  archiveBugHatchIssue,
+  transitionBugHatchIssue,
 
   // Audit
   createBugHatchAuditLog,

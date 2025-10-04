@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BugHatch – Issue</title>
+    <link rel="stylesheet" href="/bug-hatch/css/tailwind.css" />
+    <link rel="stylesheet" href="/bug-hatch/css/variables.css" />
+    <link rel="stylesheet" href="/bug-hatch/css/utilities.css" />
+    <link rel="stylesheet" href="/bug-hatch/css/components.css" />
+    <link rel="stylesheet" href="/bug-hatch/css/pages.css" />
+</head>
+
+<body class="bh-bg-dark bh-text-light bh-dashboard-compact">
+    <nav class="bh-navbar">
+        <a href="/bug-hatch/dashboard.html" class="bh-navbar-brand bh-brand-badge"><span class="bh-logo-icon">🐛</span><span>BugHatch</span></a>
+        <div class="bh-flex bh-gap-sm">
+            <a href="/bug-hatch/issues.html" class="bh-btn bh-btn-secondary bh-btn-xs">Issues</a>
+            <button id="logoutBtn" class="bh-btn bh-btn-danger bh-btn-xs">Logout</button>
+        </div>
+    </nav>
+    <main class="bh-max-w-screen bh-mx-auto bh-p-lg bh-flex bh-gap-lg bh-flex-wrap">
+        <section class="bh-flex-1 bh-min-w-0">
+            <div class="bh-card bh-card-glow bh-mb-md">
+                <h1 id="issueTitle" class="bh-heading-section bh-mb-xs bh-text-md">Loading...</h1>
+                <div id="issueKey" class="bh-text-dim bh-text-xs"></div>
+            </div>
+            <div class="bh-card bh-card-glow bh-mb-md" id="issueMetaCard">
+                <h2 class="bh-heading-section bh-text-sm bh-mb-sm">Details</h2>
+                <form id="issueEditForm" class="bh-stack bh-gap-sm bh-text-xs">
+                    <label class="bh-field"><span class="bh-label">Title</span><input id="fieldTitle" class="bh-input" required minlength="3" /></label>
+                    <label class="bh-field"><span class="bh-label">Type</span>
+                        <select id="fieldType" class="bh-input">
+                            <option value="task">Task</option>
+                            <option value="bug">Bug</option>
+                            <option value="story">Story</option>
+                        </select>
+                    </label>
+                    <label class="bh-field"><span class="bh-label">Priority</span>
+                        <select id="fieldPriority" class="bh-input">
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </label>
+                    <label class="bh-field"><span class="bh-label">Assignee Id</span><input id="fieldAssignee" class="bh-input" /></label>
+                    <label class="bh-field"><span class="bh-label">Labels (comma)</span><input id="fieldLabels" class="bh-input" /></label>
+                    <label class="bh-field"><span class="bh-label">Description</span><textarea id="fieldDescription" class="bh-input" rows="6"></textarea></label>
+                    <div id="editError" class="bh-alert bh-alert-error bh-hidden" style="display:none;"></div>
+                    <div class="bh-flex bh-gap-sm bh-justify-end">
+                        <button type="submit" class="bh-btn bh-btn-primary bh-btn-xs">Save</button>
+                    </div>
+                </form>
+            </div>
+            <div class="bh-card bh-card-glow" id="transitionsCard">
+                <h2 class="bh-heading-section bh-text-sm bh-mb-sm">Status & Transitions</h2>
+                <div class="bh-flex bh-gap-sm bh-items-center bh-mb-sm">
+                    <span class="bh-badge" id="currentStatus">—</span>
+                    <div id="transitionButtons" class="bh-flex bh-gap-xs"></div>
+                </div>
+                <div id="transitionError" class="bh-alert bh-alert-error bh-hidden" style="display:none;"></div>
+            </div>
+        </section>
+    </main>
+    <script src="/bug-hatch/js/auth.js"></script>
+    <script src="/bug-hatch/js/demo-propagate.js"></script>
+    <script src="/bug-hatch/js/issue-detail.js"></script>
+</body>
+
+</html>

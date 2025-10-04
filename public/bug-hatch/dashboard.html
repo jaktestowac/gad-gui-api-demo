@@ -14,7 +14,7 @@
     <style></style>
 </head>
 
-<body class="bh-font-sans bh-bg">
+<body class="bh-bg-dark bh-text-light bh-dashboard-compact">
     <!-- Demo Mode Banner -->
     <div class="bh-demo-banner" id="demo-banner">
         <span class="demo-banner-icon">🎯</span>
@@ -42,7 +42,7 @@
         <div class="bh-stat-grid bh-mb-xl">
             <div class="bh-stat-card">
                 <h3>Projects</h3>
-                <div class="bh-stat-value" data-testid="projects-count">0</div>
+                <div class="bh-stat-value" data-testid="projects-count" id="projects-count">0</div>
             </div>
             <div class="bh-stat-card">
                 <h3>Open Issues</h3>
@@ -52,6 +52,12 @@
                 <h3>Closed Issues</h3>
                 <div class="bh-stat-value" data-testid="closed-issues-count">0</div>
             </div>
+        </div>
+
+        <div class="bh-card bh-card-glow bh-mb-xl" id="projects-list-card" style="display:none;">
+            <h2 class="bh-heading-gradient bh-text-lg bh-mb-md">Projects</h2>
+            <div id="projects-empty" class="bh-text-dim bh-text-sm" style="display:none;">No projects found.</div>
+            <ul id="projects-list" class="bh-list"></ul>
         </div>
 
         <div class="bh-card bh-card-glow">
@@ -68,6 +74,7 @@
     </div>
 
     <script src="/bug-hatch/js/auth.js"></script>
+    <script src="/bug-hatch/js/demo-propagate.js"></script>
     <script>
         // Initialize the landing page
         document.addEventListener('DOMContentLoaded', async () => {
@@ -75,6 +82,14 @@
             const welcomeMessageEl = document.getElementById('welcome-message');
             const logoutBtn = document.getElementById('logout-btn');
             const demoBanner = document.getElementById('demo-banner');
+            const projectsCountEl = document.getElementById('projects-count');
+            const projectsListCard = document.getElementById('projects-list-card');
+            const projectsListEl = document.getElementById('projects-list');
+            const projectsEmptyEl = document.getElementById('projects-empty');
+
+            // Query param forced demo
+            const urlObj = new URL(window.location.href);
+            const forceDemo = urlObj.searchParams.get('demo') === 'true';
 
             // Check authentication
             const user = await window.bugHatchAuth.checkAuth();
@@ -84,7 +99,7 @@
             }
 
             // Check if demo mode is active
-            if (user.isDemo) {
+            if (user.isDemo || forceDemo) {
                 // Show demo banner
                 demoBanner.classList.add('visible');
 
@@ -105,6 +120,48 @@
             logoutBtn.addEventListener('click', async () => {
                 await window.bugHatchAuth.handleLogout();
             });
+
+            async function loadProjectsAndIssueStats() {
+                try {
+                    const resp = await fetch('/api/bug-hatch/projects' + (forceDemo ? '?demo=true' : ''), { credentials: 'include' });
+                    if (!resp.ok) return;
+                    const data = await resp.json();
+                    const projects = data?.data?.projects || [];
+                    projectsCountEl.textContent = projects.length;
+                    projectsListCard.style.display = 'block';
+                    if (projects.length === 0) {
+                        projectsEmptyEl.style.display = 'block';
+                        return;
+                    }
+                    // render list
+                    projects.forEach(p => {
+                        const li = document.createElement('li');
+                        li.className = 'bh-list-item';
+                        const link = `/bug-hatch/project.html?id=${encodeURIComponent(p.id)}${forceDemo ? '&demo=true' : ''}`;
+                        li.innerHTML = `<strong><a class="bh-link" href="${link}">${p.key}</a></strong> – ${p.name}${p.archived ? ' <span class="bh-badge bh-badge-warn">Archived</span>' : ''}`;
+                        projectsListEl.appendChild(li);
+                    });
+                    // aggregate issue stats (lightweight; sequential to avoid burst)
+                    let open = 0; let closed = 0;
+                    for (const p of projects) {
+                        try {
+                            const ir = await fetch(`/api/bug-hatch/projects/${encodeURIComponent(p.id)}/issues?limit=200${forceDemo ? '&demo=true' : ''}`, { credentials: 'include' });
+                            if (!ir.ok) continue;
+                            const idata = await ir.json();
+                            const issues = idata?.data?.issues || [];
+                            issues.forEach(i => {
+                                if (i.status === 'Done') closed++; else open++;
+                            });
+                        } catch (e) { /* ignore per project */ }
+                    }
+                    const openEl = document.querySelector('[data-testid="open-issues-count"]');
+                    const closedEl = document.querySelector('[data-testid="closed-issues-count"]');
+                    if (openEl) openEl.textContent = open;
+                    if (closedEl) closedEl.textContent = closed;
+                } catch (err) { /* silent */ }
+            }
+
+            await loadProjectsAndIssueStats();
         });
     </script>
 </body>
