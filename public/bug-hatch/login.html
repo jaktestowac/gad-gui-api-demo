@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - BugHatch</title>
     <link rel="stylesheet" href="/bug-hatch/css/tailwind.css">
-    <!-- New organized theme layers -->
     <link rel="stylesheet" href="/bug-hatch/css/variables.css">
     <link rel="stylesheet" href="/bug-hatch/css/utilities.css">
     <link rel="stylesheet" href="/bug-hatch/css/components.css">
@@ -27,14 +26,14 @@
         <div id="success-message" class="bh-alert bh-alert-success bh-hidden"></div>
 
         <form id="login-form" class="bh-form">
-            <div class="form-group bh-field">
-                <label for="email" class="bh-label">Email</label>
-                <input class="bh-input" type="email" id="email" name="email" data-testid="email-input" required placeholder="your@email.com" autocomplete="email">
+            <div class="space-y-1">
+                <label for="email" class="block text-xs font-medium text-neutral-300">Email</label>
+                <input type="email" id="email" name="email" data-testid="email-input" required autocomplete="email" class="block w-full rounded-md bg-neutral-800/60 border border-neutral-600 focus:border-bh.primary focus:ring-2 focus:ring-bh.primary/60 text-sm px-3 py-2 placeholder-neutral-500 transition" placeholder="your@email.com">
             </div>
 
-            <div class="form-group bh-field">
-                <label for="password" class="bh-label">Password</label>
-                <input class="bh-input" type="password" id="password" name="password" data-testid="password-input" required placeholder="••••••••" autocomplete="current-password">
+            <div class="space-y-1">
+                <label for="password" class="block text-xs font-medium text-neutral-300">Password</label>
+                <input type="password" id="password" name="password" data-testid="password-input" required autocomplete="current-password" class="block w-full rounded-md bg-neutral-800/60 border border-neutral-600 focus:border-bh.primary focus:ring-2 focus:ring-bh.primary/60 text-sm px-3 py-2 placeholder-neutral-500 transition" placeholder="••••••••">
             </div>
 
             <div class="checkbox-group bh-checkbox-row">
@@ -42,13 +41,13 @@
                 <label for="keepSignIn">Keep me signed in</label>
             </div>
 
-            <button type="submit" class="bh-btn bh-btn-primary bh-w-full" data-testid="login-button">
+            <button type="submit" data-testid="login-button" class="bh-btn bh-btn-primary bh-btn-block bh-btn-md">
                 Sign In
             </button>
         </form>
 
         <div class="bh-text-center bh-mt-xl bh-pt-lg bh-border-top bh-text-sm">
-            <span class="bh-text-muted">Don't have an account?</span> <a class="bh-link" href="/bug-hatch/signup.html" data-testid="signup-link">Sign up</a>
+            <span class="text-xs text-neutral-400">Don't have an account?</span> <a class="text-bh.primary hover:underline font-medium" href="/bug-hatch/signup.html" data-testid="signup-link">Sign up</a>
         </div>
     </div>
 

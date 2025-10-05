@@ -5,8 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up - BugHatch</title>
+    <!-- Tailwind CDN utilities -->
     <link rel="stylesheet" href="/bug-hatch/css/tailwind.css">
-    <!-- New organized theme layers -->
+    <!-- Custom theme layers -->
     <link rel="stylesheet" href="/bug-hatch/css/variables.css">
     <link rel="stylesheet" href="/bug-hatch/css/utilities.css">
     <link rel="stylesheet" href="/bug-hatch/css/components.css">
@@ -27,34 +28,34 @@
         <div id="success-message" class="bh-alert bh-alert-success bh-hidden"></div>
 
         <form id="signup-form" class="bh-form">
-            <div class="form-group bh-field">
-                <label for="name" class="bh-label">Full Name</label>
-                <input class="bh-input" type="text" id="name" name="name" data-testid="name-input" required placeholder="John Doe" autocomplete="name">
+            <div class="space-y-1">
+                <label for="name" class="block text-xs font-medium text-neutral-300">Full Name</label>
+                <input type="text" id="name" name="name" data-testid="name-input" required autocomplete="name" placeholder="John Doe" class="block w-full rounded-md bg-neutral-800/60 border border-neutral-600 focus:border-bh.primary focus:ring-2 focus:ring-bh.primary/60 text-sm px-3 py-2 placeholder-neutral-500 transition" />
             </div>
 
-            <div class="form-group bh-field">
-                <label for="email" class="bh-label">Email</label>
-                <input class="bh-input" type="email" id="email" name="email" data-testid="email-input" required placeholder="your@email.com" autocomplete="email">
+            <div class="space-y-1">
+                <label for="email" class="block text-xs font-medium text-neutral-300">Email</label>
+                <input type="email" id="email" name="email" data-testid="email-input" required autocomplete="email" placeholder="your@email.com" class="block w-full rounded-md bg-neutral-800/60 border border-neutral-600 focus:border-bh.primary focus:ring-2 focus:ring-bh.primary/60 text-sm px-3 py-2 placeholder-neutral-500 transition" />
             </div>
 
-            <div class="form-group bh-field">
-                <label for="password" class="bh-label">Password</label>
-                <input class="bh-input" type="password" id="password" name="password" data-testid="password-input" required placeholder="••••••••" autocomplete="new-password" minlength="2" maxlength="100">
-                <small class="bh-text-muted bh-text-xs">At least 2 characters</small>
+            <div class="space-y-1">
+                <label for="password" class="block text-xs font-medium text-neutral-300">Password</label>
+                <input type="password" id="password" name="password" data-testid="password-input" required autocomplete="new-password" minlength="2" maxlength="100" placeholder="••••••••" class="block w-full rounded-md bg-neutral-800/60 border border-neutral-600 focus:border-bh.primary focus:ring-2 focus:ring-bh.primary/60 text-sm px-3 py-2 placeholder-neutral-500 transition" />
+                <small class="text-neutral-500 text-[10px] tracking-wide">At least 2 characters</small>
             </div>
 
-            <div class="form-group bh-field">
-                <label for="confirmPassword" class="bh-label">Confirm Password</label>
-                <input class="bh-input" type="password" id="confirmPassword" name="confirmPassword" data-testid="confirm-password-input" required placeholder="••••••••" autocomplete="new-password" minlength="2" maxlength="100">
+            <div class="space-y-1">
+                <label for="confirmPassword" class="block text-xs font-medium text-neutral-300">Confirm Password</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" data-testid="confirm-password-input" required autocomplete="new-password" minlength="2" maxlength="100" placeholder="••••••••" class="block w-full rounded-md bg-neutral-800/60 border border-neutral-600 focus:border-bh.primary focus:ring-2 focus:ring-bh.primary/60 text-sm px-3 py-2 placeholder-neutral-500 transition" />
             </div>
 
-            <button type="submit" class="bh-btn bh-btn-primary bh-w-full" data-testid="signup-button">
+            <button type="submit" data-testid="signup-button" class="bh-btn bh-btn-primary bh-btn-block bh-btn-md">
                 Create Account
             </button>
         </form>
 
         <div class="bh-text-center bh-mt-xl bh-pt-lg bh-border-top bh-text-sm">
-            <span class="bh-text-muted">Already have an account?</span> <a class="bh-link" href="/bug-hatch/login.html" data-testid="login-link">Sign in</a>
+            <span class="text-xs text-neutral-400">Already have an account?</span> <a class="text-bh.primary hover:underline font-medium" href="/bug-hatch/login.html" data-testid="login-link">Sign in</a>
         </div>
     </div>
 

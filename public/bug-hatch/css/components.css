@@ -486,6 +486,108 @@ body.bh-no-scroll {
   opacity: 0.45;
 }
 
+/* ==============================
+   Quick Create Issue Form (Project Page)
+   Redesigned for consistent alignment & responsiveness
+   ============================== */
+#quickCreateWrap {
+  --qc-gap: var(--bh-space-sm);
+  --qc-gap-y: var(--bh-space-xs);
+  padding: var(--bh-space-lg) var(--bh-space-xl) var(--bh-space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--qc-gap-y);
+}
+
+/* Form container uses CSS grid for alignment; switches to single column on narrow widths */
+#quickCreateIssueForm {
+  display: grid !important; /* override previous flex utility classes */
+  grid-template-columns: minmax(200px, 1.6fr) repeat(2, minmax(120px, 0.8fr)) minmax(170px, 1fr) auto;
+  gap: var(--qc-gap-y) var(--qc-gap);
+  align-items: end;
+  width: 100%;
+}
+
+/* Field wrapper normalization */
+#quickCreateIssueForm .bh-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bh-space-2xs);
+  min-width: 0; /* allow shrinking */
+}
+
+#quickCreateIssueForm .bh-label {
+  font-size: var(--bh-text-3xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--bh-color-text-dim);
+}
+
+#quickCreateIssueForm .bh-input {
+  font-size: var(--bh-text-2xs);
+  padding: var(--bh-space-2xs) var(--bh-space-sm);
+  line-height: 1.3;
+}
+
+/* Create button alignment */
+#quickCreateIssueForm #qcCreateBtn {
+  align-self: stretch;
+  height: 100%;
+  display: inline-flex;
+  align-items: center;
+  padding-inline: var(--bh-space-md);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Error message spans full row below grid */
+#quickCreateIssueForm #qcError {
+  grid-column: 1 / -1;
+  margin-top: var(--bh-space-xs);
+}
+
+/* Responsive: collapse to 2 columns then 1 column */
+@media (max-width: 980px) {
+  #quickCreateIssueForm {
+    grid-template-columns: minmax(200px, 1.4fr) repeat(2, minmax(120px, 1fr)) auto;
+  }
+  #quickCreateIssueForm #qcLabels {
+    grid-column: 1 / span 2;
+  }
+}
+@media (max-width: 780px) {
+  #quickCreateIssueForm {
+    grid-template-columns: 1fr 1fr;
+  }
+  #quickCreateIssueForm #qcCreateBtn {
+    grid-column: 2;
+    justify-self: end;
+    align-self: center;
+    height: auto;
+  }
+  #quickCreateIssueForm #qcLabels {
+    grid-column: 1 / -1;
+  }
+  #quickCreateIssueForm #qcError {
+    grid-column: 1 / -1;
+  }
+}
+@media (max-width: 520px) {
+  #quickCreateIssueForm {
+    grid-template-columns: 1fr;
+  }
+  #quickCreateIssueForm #qcCreateBtn {
+    grid-column: 1;
+    width: 100%;
+  }
+}
+
+/* Subtle separation from board */
+#quickCreateWrap + .board-container {
+  margin-top: var(--bh-space-lg);
+}
+
 /* Skeleton Loaders */
 .bh-skeleton {
   background: linear-gradient(90deg, var(--bh-neutral-200) 25%, var(--bh-neutral-300) 50%, var(--bh-neutral-200) 75%);
@@ -684,6 +786,242 @@ body.bh-no-scroll {
   height: 18px;
   accent-color: var(--bh-color-primary);
   cursor: pointer;
+}
+
+/* =============================================
+   Buttons (Base + Variants)
+   ============================================= */
+/* Base button token mapping via CSS custom props so variants can override */
+.bh-btn {
+  --_bg: var(--bh-color-primary);
+  --_bg-hover: var(--bh-color-primary-hover);
+  --_bg-active: var(--bh-color-primary-active);
+  --_fg: #fff;
+  --_ring: var(--bh-color-focus-ring);
+  --_radius: var(--bh-radius-md);
+  --_pad-y: var(--bh-space-xs);
+  --_pad-x: var(--bh-space-md);
+  --_font-size: var(--bh-text-xs);
+  --_gap: var(--bh-space-xs);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--_gap);
+  font-weight: 600;
+  font-size: var(--_font-size);
+  line-height: 1.2;
+  background: var(--_bg);
+  color: var(--_fg);
+  padding: var(--_pad-y) var(--_pad-x);
+  border: 1px solid transparent;
+  border-radius: var(--_radius);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background var(--bh-duration-2) var(--bh-ease-out), color var(--bh-duration-2) var(--bh-ease-out),
+    box-shadow var(--bh-duration-2), transform var(--bh-duration-1), border-color var(--bh-duration-2),
+    opacity var(--bh-duration-2);
+}
+.bh-btn:hover {
+  background: var(--_bg-hover);
+  text-decoration: none;
+}
+.bh-btn:active {
+  background: var(--_bg-active, var(--_bg-hover));
+  transform: translateY(1px);
+}
+.bh-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--_ring), 0 0 0 4px rgba(255, 255, 255, 0.08);
+}
+.bh-btn:disabled,
+.bh-btn[aria-disabled="true"] {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Size modifiers */
+.bh-btn-xs {
+  --_pad-y: var(--bh-space-2xs);
+  --_pad-x: var(--bh-space-sm);
+  --_font-size: var(--bh-text-3xs);
+}
+.bh-btn-sm {
+  --_pad-y: var(--bh-space-2xs);
+  --_pad-x: var(--bh-space-md);
+  --_font-size: var(--bh-text-2xs);
+}
+.bh-btn-md {
+  --_pad-y: var(--bh-space-xs);
+  --_pad-x: var(--bh-space-lg);
+  --_font-size: var(--bh-text-xs);
+}
+.bh-btn-lg {
+  --_pad-y: var(--bh-space-sm);
+  --_pad-x: var(--bh-space-xl);
+  --_font-size: var(--bh-text-sm);
+}
+.bh-btn-block {
+  width: 100%;
+}
+
+/* Shape modifiers */
+.bh-btn-pill {
+  --_radius: var(--bh-radius-pill);
+}
+.bh-btn-square {
+  --_pad-x: var(--_pad-y);
+  width: auto;
+}
+
+/* Tonal / style variants built on base using custom props */
+.bh-btn-outline {
+  --_bg: transparent;
+  --_bg-hover: rgba(255, 255, 255, 0.06);
+  --_bg-active: rgba(255, 255, 255, 0.12);
+  --_fg: var(--bh-color-text);
+  border-color: var(--bh-color-border);
+}
+.bh-btn-outline-primary {
+  /* defined later also for semantic alias */
+}
+.bh-btn-ghost {
+  --_bg: transparent;
+  --_bg-hover: rgba(255, 255, 255, 0.08);
+  --_bg-active: rgba(255, 255, 255, 0.14);
+  --_fg: var(--bh-color-text-dim);
+}
+.bh-btn-subtle {
+  --_bg: var(--bh-color-surface-alt);
+  --_bg-hover: var(--bh-color-surface);
+  --_bg-active: var(--bh-neutral-200);
+  --_fg: var(--bh-color-text);
+  border-color: var(--bh-color-border);
+}
+
+/* Color semantic helpers */
+.bh-btn-accent {
+  --_bg: var(--bh-color-accent);
+  --_bg-hover: var(--bh-color-primary-hover);
+}
+.bh-btn-danger {
+  --_bg: var(--bh-color-error-border);
+  --_bg-hover: var(--bh-color-error-text);
+}
+.bh-btn-success {
+  --_bg: var(--bh-color-success-border);
+  --_bg-hover: var(--bh-color-success-text);
+}
+.bh-btn-warning {
+  --_bg: var(--bh-color-warning-border);
+  --_bg-hover: var(--bh-color-warning-text);
+  --_fg: #000;
+}
+.bh-btn-info {
+  --_bg: var(--bh-color-info-border);
+  --_bg-hover: var(--bh-color-info-text);
+}
+
+/* Ghost semantic variants piggyback on .bh-btn-ghost */
+.bh-btn-ghost-primary {
+  color: var(--bh-color-primary);
+}
+.bh-btn-ghost-primary:hover {
+  background: hsla(var(--bh-color-primary-glow-hsl) / 0.12);
+}
+.bh-btn-ghost-accent {
+  color: var(--bh-color-accent);
+}
+.bh-btn-ghost-accent:hover {
+  background: hsla(var(--bh-hue-accent) 100% 63% / 0.15);
+}
+.bh-btn-ghost-danger {
+  color: var(--bh-color-error-text);
+}
+.bh-btn-ghost-danger:hover {
+  background: rgba(255, 107, 107, 0.12);
+}
+.bh-btn-ghost-success {
+  color: var(--bh-color-success-text);
+}
+.bh-btn-ghost-success:hover {
+  background: hsla(var(--bh-hue-green) 70% 48% / 0.12);
+}
+.bh-btn-ghost-warning {
+  color: var(--bh-color-warning-text);
+}
+.bh-btn-ghost-warning:hover {
+  background: hsla(var(--bh-hue-amber) 100% 60% / 0.18);
+}
+.bh-btn-ghost-info {
+  color: var(--bh-color-info-text);
+}
+.bh-btn-ghost-info:hover {
+  background: hsla(var(--bh-hue-cyan) 90% 56% / 0.18);
+}
+
+/* Glass / frosted variant */
+.bh-btn-glass {
+  --_bg: rgba(255, 255, 255, 0.08);
+  --_bg-hover: rgba(255, 255, 255, 0.14);
+  --_bg-active: rgba(255, 255, 255, 0.22);
+  --_fg: #fff;
+  backdrop-filter: blur(6px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+}
+.bh-btn-glass:focus-visible {
+  box-shadow: 0 0 0 2px var(--_ring), 0 0 0 4px rgba(255, 255, 255, 0.25);
+}
+
+/* Elevated / glow variant (alias) */
+.bh-btn-elevated {
+  box-shadow: 0 4px 14px -4px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+.bh-btn-elevated:hover {
+  box-shadow: 0 6px 18px -6px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+/* Icon-only button helper */
+.bh-btn-icon {
+  --_pad-x: var(--bh-space-xs);
+  --_pad-y: var(--bh-space-xs);
+  font-size: var(--bh-text-sm);
+}
+.bh-btn-icon.bh-btn-sm {
+  --_pad-x: var(--bh-space-2xs);
+  --_pad-y: var(--bh-space-2xs);
+}
+
+/* Loading state */
+.bh-btn[data-loading="true"] {
+  position: relative;
+  pointer-events: none;
+}
+.bh-btn[data-loading="true"] {
+  opacity: 0.8;
+}
+.bh-btn[data-loading="true"]::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  animation: bh-btn-spin 0.65s linear infinite;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+@keyframes bh-btn-spin {
+  to {
+    transform: translateY(-50%) rotate(360deg);
+  }
 }
 
 /* Buttons - semantic variants built on .bh-btn */

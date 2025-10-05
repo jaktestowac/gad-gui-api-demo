@@ -22,9 +22,9 @@
     </div>
     <nav class="bh-navbar">
         <a href="/bug-hatch/dashboard.html" class="bh-navbar-brand bh-brand-badge"><span class="bh-logo-icon">🐛</span><span>BugHatch</span></a>
-        <div class="bh-flex bh-gap-sm">
-            <a id="issuesLink" href="/bug-hatch/issues.html" class="bh-btn bh-btn-secondary bh-btn-xs">Issues</a>
-            <button id="logoutBtn" class="bh-btn bh-btn-danger bh-btn-xs">Logout</button>
+        <div class="flex gap-2">
+            <a id="issuesLink" href="/bug-hatch/issues.html" class="bh-btn bh-btn-ghost bh-btn-sm">Issues</a>
+            <button id="logoutBtn" class="bh-btn bh-btn-danger bh-btn-sm">Logout</button>
         </div>
     </nav>
     <main class="bh-max-w-screen bh-mx-auto bh-p-lg bh-flex bh-gap-lg bh-flex-wrap">
@@ -40,33 +40,33 @@
                 <div id="projectMeta" class="bh-skeleton bh-skeleton-text bh-mt-2xs"></div>
             </div>
             <div class="bh-card bh-card-glow bh-mb-md bh-qc-area" id="quickCreateWrap" data-role="quick-create-issue">
-                <form id="quickCreateIssueForm" class="bh-flex bh-gap-xs bh-flex-wrap bh-items-end bh-text-2xs" data-form="quick-create-issue">
-                    <div class="bh-field bh-flex-1" style="min-width:200px;">
-                        <span class="bh-label">New Issue Title</span>
-                        <input id="qcTitle" class="bh-input" placeholder="e.g. Refine auth flow" minlength="3" />
+                <form id="quickCreateIssueForm" data-form="quick-create-issue">
+                    <div class="bh-field">
+                        <label for="qcTitle" class="bh-label">New Issue Title</label>
+                        <input id="qcTitle" name="title" class="bh-input" placeholder="e.g. Refine auth flow" minlength="3" required />
                     </div>
                     <div class="bh-field">
-                        <span class="bh-label">Type</span>
-                        <select id="qcType" class="bh-input">
+                        <label for="qcType" class="bh-label">Type</label>
+                        <select id="qcType" name="type" class="bh-input">
                             <option value="task">Task</option>
                             <option value="bug">Bug</option>
                             <option value="story">Story</option>
                         </select>
                     </div>
                     <div class="bh-field">
-                        <span class="bh-label">Priority</span>
-                        <select id="qcPriority" class="bh-input">
+                        <label for="qcPriority" class="bh-label">Priority</label>
+                        <select id="qcPriority" name="priority" class="bh-input">
                             <option value="low">Low</option>
                             <option value="medium" selected>Medium</option>
                             <option value="high">High</option>
                         </select>
                     </div>
-                    <div class="bh-field" style="min-width:160px;">
-                        <span class="bh-label">Labels (comma)</span>
-                        <input id="qcLabels" class="bh-input" placeholder="ui,api" />
+                    <div class="bh-field">
+                        <label for="qcLabels" class="bh-label">Labels (comma)</label>
+                        <input id="qcLabels" name="labels" class="bh-input" placeholder="ui,api" />
                     </div>
-                    <button class="bh-btn bh-btn-primary bh-btn-xs" id="qcCreateBtn" type="submit">Create</button>
-                    <div id="qcError" class="bh-alert bh-alert-error bh-hidden" style="flex:1 1 100%;"></div>
+                    <button class="bh-btn bh-btn-primary bh-btn-sm" id="qcCreateBtn" type="submit">Create</button>
+                    <div id="qcError" class="bh-alert bh-alert-error bh-hidden" role="alert"></div>
                 </form>
             </div>
             <div id="boardContainer" class="bh-card bh-card-glow board-container">
