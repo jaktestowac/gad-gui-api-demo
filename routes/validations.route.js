@@ -1,12 +1,11 @@
-const { formatErrorResponse, getIdFromUrl, formatInvalidTokenErrorResponse, sleep } = require("../helpers/helpers");
-const { logDebug, logError, logTrace, logWarn, logInsane } = require("../helpers/logger-api");
+const { formatErrorResponse, getIdFromUrl, sleep } = require("../helpers/helpers");
+const { logDebug, logError, logTrace, logInsane } = require("../helpers/logger-api");
 const { getConfigValue, isBugEnabled, getFeatureFlagConfigValue } = require("../config/config-manager");
 const { ConfigKeys, BugConfigKeys, FeatureFlagConfigKeys } = require("../config/enums");
 
 const { verifyAccessToken } = require("../helpers/validation.helpers");
 const { searchForUser, searchForUserWithOnlyToken } = require("../helpers/db-operation.helpers");
 const {
-  HTTP_UNAUTHORIZED,
   HTTP_INTERNAL_SERVER_ERROR,
   HTTP_BAD_REQUEST,
   HTTP_METHOD_NOT_ALLOWED,
@@ -63,7 +62,6 @@ const { handleLearning } = require("../endpoints/learning/learning-endpoint.help
 const { handlePractice } = require("../endpoints/practice-endpoint.helpers");
 const { handleBugHatchAuth } = require("../endpoints/bug-hatch/auth-endpoint.helpers");
 const { handleBugHatchAdmin } = require("../endpoints/bug-hatch/admin-endpoint.helpers");
-const { initializeAllBugHatchDatabases } = require("../endpoints/bug-hatch/db-bug-hatch.operations");
 
 const validationsRoutes = (req, res, next) => {
   let userAuth = userBaseAuth;
@@ -329,6 +327,30 @@ const validationsRoutes = (req, res, next) => {
       if (req.url.includes("/api/bug-hatch/issues") || /\/api\/bug-hatch\/projects\/[^/]+\/issues/.test(req.url)) {
         const { handleBugHatchIssues } = require("../endpoints/bug-hatch/issues-endpoint.helpers");
         handleBugHatchIssues(req, res);
+        return;
+      }
+
+      // BugHatch comments endpoints
+      if (req.url.includes("/api/bug-hatch/comments") || /\/api\/bug-hatch\/issues\/[^/]+\/comments/.test(req.url)) {
+        const { handleBugHatchComments } = require("../endpoints/bug-hatch/comments-endpoint.helpers");
+        handleBugHatchComments(req, res);
+        return;
+      }
+
+      // BugHatch attachments endpoints
+      if (
+        req.url.includes("/api/bug-hatch/attachments") ||
+        /\/api\/bug-hatch\/issues\/[^/]+\/attachments/.test(req.url)
+      ) {
+        const { handleBugHatchAttachments } = require("../endpoints/bug-hatch/attachments-endpoint.helpers");
+        handleBugHatchAttachments(req, res);
+        return;
+      }
+
+      // BugHatch activity endpoint
+      if (/\/api\/bug-hatch\/issues\/[^/]+\/activity/.test(req.url)) {
+        const { handleBugHatchActivity } = require("../endpoints/bug-hatch/activity-endpoint.helpers");
+        handleBugHatchActivity(req, res);
         return;
       }
 

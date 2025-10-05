@@ -100,7 +100,17 @@ function listIssuesService(projectId, query, currentUser) {
         return { success: false, error: "Project not found", errorType: "notfound" };
       }
     }
-    return { success: false, error: "Project not found", errorType: "notfound" };
+    try {
+      const allReal = bugHatchProjectsDb();
+      const keysReal = allReal.map((p) => p.key).join(", ");
+      return {
+        success: false,
+        error: keysReal ? `Project not found (tried id or key). Existing keys: ${keysReal}` : "Project not found",
+        errorType: "notfound",
+      };
+    } catch (e) {
+      return { success: false, error: "Project not found", errorType: "notfound" };
+    }
   }
 
   // Load issues

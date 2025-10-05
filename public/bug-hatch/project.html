@@ -29,23 +29,77 @@
     </nav>
     <main class="bh-max-w-screen bh-mx-auto bh-p-lg bh-flex bh-gap-lg bh-flex-wrap">
         <section class="bh-flex-1 bh-min-w-0">
-            <div class="bh-flex bh-items-start bh-justify-between bh-mb-md bh-flex-wrap bh-gap-sm">
-                <div>
-                    <h1 id="projectName" class="bh-text-lg bh-font-semibold">Loading...</h1>
-                    <div id="projectMeta" class="bh-text-dim bh-text-3xs bh-mt-2xs"></div>
+            <div id="projectHeader" class="bh-flex bh-col bh-flex-col bh-gap-sm bh-mb-xl">
+                <div class="bh-flex bh-items-center bh-justify-between bh-flex-wrap bh-gap-sm">
+                    <div id="projectName" class="bh-skeleton bh-skeleton-text" style="height: 32px; width: 200px;"></div>
+                    <div id="projectInfo" class="bh-flex bh-gap-xs bh-items-center">
+                        <div id="projectKey" class="bh-skeleton" style="height: 20px; width: 50px; border-radius: var(--bh-radius-pill);"></div>
+                        <span id="viewModeBadge" class="bh-badge bh-badge-dim bh-text-2xs bh-hidden">Demo</span>
+                    </div>
                 </div>
-                <div class="bh-flex bh-gap-xs bh-items-center">
-                    <span id="projectKey" class="bh-badge bh-badge-outline bh-text-2xs"></span>
-                    <span id="viewModeBadge" class="bh-badge bh-badge-dim bh-text-2xs bh-hidden">Demo</span>
-                </div>
+                <div id="projectMeta" class="bh-skeleton bh-skeleton-text bh-mt-2xs"></div>
             </div>
-            <div class="bh-card bh-card-glow">
+            <div class="bh-card bh-card-glow bh-mb-md bh-qc-area" id="quickCreateWrap" data-role="quick-create-issue">
+                <form id="quickCreateIssueForm" class="bh-flex bh-gap-xs bh-flex-wrap bh-items-end bh-text-2xs" data-form="quick-create-issue">
+                    <div class="bh-field bh-flex-1" style="min-width:200px;">
+                        <span class="bh-label">New Issue Title</span>
+                        <input id="qcTitle" class="bh-input" placeholder="e.g. Refine auth flow" minlength="3" />
+                    </div>
+                    <div class="bh-field">
+                        <span class="bh-label">Type</span>
+                        <select id="qcType" class="bh-input">
+                            <option value="task">Task</option>
+                            <option value="bug">Bug</option>
+                            <option value="story">Story</option>
+                        </select>
+                    </div>
+                    <div class="bh-field">
+                        <span class="bh-label">Priority</span>
+                        <select id="qcPriority" class="bh-input">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                    <div class="bh-field" style="min-width:160px;">
+                        <span class="bh-label">Labels (comma)</span>
+                        <input id="qcLabels" class="bh-input" placeholder="ui,api" />
+                    </div>
+                    <button class="bh-btn bh-btn-primary bh-btn-xs" id="qcCreateBtn" type="submit">Create</button>
+                    <div id="qcError" class="bh-alert bh-alert-error bh-hidden" style="flex:1 1 100%;"></div>
+                </form>
+            </div>
+            <div id="boardContainer" class="bh-card bh-card-glow board-container">
                 <div class="bh-flex bh-justify-between bh-items-center bh-mb-sm">
                     <h2 class="bh-text-sm bh-font-medium">Board</h2>
-                    <div id="issuesMeta" class="bh-text-dim bh-text-2xs"></div>
+                    <div id="issuesMeta" class="bh-skeleton bh-skeleton-text" style="height: 14px; width: 100px;"></div>
                 </div>
                 <div id="kanbanBoard" class="bh-flex bh-gap-sm bh-overflow-auto" style="min-height:320px;">
-                    <div class="bh-text-dim bh-text-xs">Loading board...</div>
+                    <!-- Skeleton columns -->
+                    <div class="bh-kanban-col" style="min-width: 280px;">
+                        <h3 class="bh-skeleton bh-skeleton-text" style="height: 20px; width: 80px; margin-bottom: var(--bh-space-sm);"></h3>
+                        <div class="bh-kanban-dropzone">
+                            <div class="bh-skeleton bh-skeleton-card"></div>
+                            <div class="bh-skeleton bh-skeleton-card"></div>
+                            <div class="bh-skeleton bh-skeleton-card"></div>
+                        </div>
+                    </div>
+                    <div class="bh-kanban-col" style="min-width: 280px;">
+                        <h3 class="bh-skeleton bh-skeleton-text" style="height: 20px; width: 90px; margin-bottom: var(--bh-space-sm);"></h3>
+                        <div class="bh-kanban-dropzone">
+                            <div class="bh-skeleton bh-skeleton-card"></div>
+                            <div class="bh-skeleton bh-skeleton-card"></div>
+                        </div>
+                    </div>
+                    <div class="bh-kanban-col" style="min-width: 280px;">
+                        <h3 class="bh-skeleton bh-skeleton-text" style="height: 20px; width: 85px; margin-bottom: var(--bh-space-sm);"></h3>
+                        <div class="bh-kanban-dropzone">
+                            <div class="bh-skeleton bh-skeleton-card"></div>
+                            <div class="bh-skeleton bh-skeleton-card"></div>
+                            <div class="bh-skeleton bh-skeleton-card"></div>
+                            <div class="bh-skeleton bh-skeleton-card"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>

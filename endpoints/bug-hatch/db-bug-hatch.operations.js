@@ -837,3 +837,128 @@ module.exports = {
   // Helpers
   generateBugHatchId,
 };
+
+// ==================== PHASE 4: COMMENTS & ATTACHMENTS ====================
+// Placed after module.exports intentionally to keep previous export block stable; we append new exports below.
+
+/** COMMENT OPERATIONS **/
+
+function bugHatchCommentsDb() {
+  return readBugHatchDb().comments || [];
+}
+
+function findBugHatchCommentsByIssueId(issueId) {
+  return bugHatchCommentsDb().filter((c) => areIdsEqual(c.issueId, issueId));
+}
+
+function findBugHatchCommentById(commentId) {
+  return bugHatchCommentsDb().find((c) => areIdsEqual(c.id, commentId));
+}
+
+async function createBugHatchComment(data) {
+  let created;
+  await mutateAndWriteDb((db) => {
+    const now = new Date().toISOString();
+    created = {
+      id: data.id || generateBugHatchId("com"),
+      issueId: data.issueId,
+      authorId: data.authorId,
+      parentId: data.parentId || null,
+      body: data.body || "",
+      createdAt: now,
+      updatedAt: now,
+      deleted: false,
+    };
+    db.comments.push(created);
+  });
+  return created;
+}
+
+async function updateBugHatchComment(commentId, patch) {
+  let updated;
+  await mutateAndWriteDb((db) => {
+    const idx = db.comments.findIndex((c) => areIdsEqual(c.id, commentId));
+    if (idx === -1) throw new Error("Comment not found");
+    const current = db.comments[idx];
+    updated = { ...current };
+    if (patch.body !== undefined) updated.body = patch.body;
+    if (patch.deleted !== undefined) updated.deleted = !!patch.deleted;
+    updated.updatedAt = new Date().toISOString();
+    db.comments[idx] = updated;
+  });
+  return updated;
+}
+
+async function softDeleteBugHatchComment(commentId) {
+  return updateBugHatchComment(commentId, { deleted: true, body: "" });
+}
+
+/** ATTACHMENT OPERATIONS **/
+
+function bugHatchAttachmentsDb() {
+  return readBugHatchDb().attachments || [];
+}
+
+function findBugHatchAttachmentById(attachmentId) {
+  return bugHatchAttachmentsDb().find((a) => areIdsEqual(a.id, attachmentId));
+}
+
+function findBugHatchAttachmentsByIssueId(issueId) {
+  return bugHatchAttachmentsDb().filter((a) => areIdsEqual(a.issueId, issueId));
+}
+
+async function createBugHatchAttachment(data) {
+  let created;
+  await mutateAndWriteDb((db) => {
+    const now = new Date().toISOString();
+    created = {
+      id: data.id || generateBugHatchId("att"),
+      issueId: data.issueId,
+      filename: data.filename,
+      storedFilename: data.storedFilename, // actual stored file name on disk
+      path: data.path, // absolute or relative path
+      size: data.size,
+      mime: data.mime,
+      uploadedBy: data.uploadedBy,
+      createdAt: now,
+      deleted: false,
+    };
+    db.attachments.push(created);
+    // also push id into issue.attachments array for quick association
+    const issueIdx = db.issues.findIndex((i) => areIdsEqual(i.id, data.issueId));
+    if (issueIdx !== -1) {
+      if (!Array.isArray(db.issues[issueIdx].attachments)) db.issues[issueIdx].attachments = [];
+      db.issues[issueIdx].attachments.push(created.id);
+    }
+  });
+  return created;
+}
+
+async function markBugHatchAttachmentDeleted(attachmentId) {
+  let updated;
+  await mutateAndWriteDb((db) => {
+    const idx = db.attachments.findIndex((a) => areIdsEqual(a.id, attachmentId));
+    if (idx === -1) throw new Error("Attachment not found");
+    const current = db.attachments[idx];
+    updated = { ...current, deleted: true };
+    db.attachments[idx] = updated;
+  });
+  return updated;
+}
+
+// Re-export with new functions (node caches previous module.exports; we extend in place)
+Object.assign(module.exports, {
+  // Comments
+  bugHatchCommentsDb,
+  findBugHatchCommentsByIssueId,
+  findBugHatchCommentById,
+  createBugHatchComment,
+  updateBugHatchComment,
+  softDeleteBugHatchComment,
+  // Attachments
+  bugHatchAttachmentsDb,
+  findBugHatchAttachmentById,
+  findBugHatchAttachmentsByIssueId,
+  createBugHatchAttachment,
+  markBugHatchAttachmentDeleted,
+});

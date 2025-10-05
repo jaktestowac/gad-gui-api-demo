@@ -58,11 +58,23 @@
   function renderProject(p) {
     if (!p) return;
     projectCache = p;
-    qs("#projectName").textContent = p.name;
-    qs("#projectKey").textContent = p.key;
-    qs("#projectMeta").textContent = `${p.members.length} member(s) • Created ${formatTime(p.createdAt)}${
+    const nameEl = qs("#projectName");
+    const h1 = document.createElement("h1");
+    h1.id = "projectName";
+    h1.className = "bh-text-lg bh-font-semibold";
+    h1.textContent = p.name;
+    nameEl.parentNode.replaceChild(h1, nameEl);
+    const keyEl = qs("#projectKey");
+    const span = document.createElement("span");
+    span.id = "projectKey";
+    span.className = "bh-badge bh-badge-outline bh-text-2xs";
+    span.textContent = p.key;
+    keyEl.parentNode.replaceChild(span, keyEl);
+    const metaEl = qs("#projectMeta");
+    metaEl.textContent = `${p.members.length} member(s) • Created ${formatTime(p.createdAt)}${
       p.archived ? " • Archived" : ""
     }`;
+    metaEl.className = "bh-text-dim bh-text-3xs bh-mt-2xs";
     const badge = qs("#viewModeBadge");
     if (badge) {
       if (forceDemo || currentUser.isDemo) {
@@ -104,7 +116,9 @@
     const statuses = projectCache.workflow?.statuses || [];
     const transitions = projectCache.workflow?.transitions || {};
     const readOnly = forceDemo || currentUser.isDemo || currentUser.role === "viewer";
-    qs("#issuesMeta").textContent = `${issuesCache.length} issue(s)`;
+    const metaEl = qs("#issuesMeta");
+    metaEl.textContent = `${issuesCache.length} issue(s)`;
+    metaEl.className = "bh-text-dim bh-text-2xs";
     if (!statuses.length) {
       board.innerHTML = '<div class="bh-text-dim bh-text-xs">No workflow statuses configured.</div>';
       return;
@@ -323,6 +337,7 @@
     renderProject(project);
     const issues = await fetchIssues(project);
     renderIssues(issues);
+    setupQuickCreate();
   }
 
   document.addEventListener("DOMContentLoaded", async () => {
@@ -332,7 +347,90 @@
     const demoBannerEl = document.getElementById("demo-banner");
     if (demoBannerEl && (forceDemo || currentUser.isDemo)) {
       demoBannerEl.classList.add("visible");
+      // hide quick create in demo
+      const qcWrap = document.getElementById("quickCreateWrap");
+      if (qcWrap) qcWrap.style.display = "none";
     }
     load();
   });
+
+  function setupQuickCreate() {
+    const form = document.getElementById("quickCreateIssueForm");
+    if (!form || !projectCache) return;
+    const errorEl = document.getElementById("qcError"); // retained but hidden; we now use toast
+    if (errorEl) {
+      errorEl.classList.add("bh-hidden");
+      errorEl.setAttribute("aria-hidden", "true");
+    }
+    const readOnly = forceDemo || currentUser.isDemo || currentUser.role === "viewer";
+    if (readOnly) {
+      form.querySelectorAll("input,select,button").forEach((el) => (el.disabled = true));
+      return;
+    }
+    function qcToast(msg) {
+      if (window.bhToast && typeof window.bhToast.show === "function") {
+        window.bhToast.show(msg, { type: "error", timeout: 6000 });
+        return;
+      }
+      // fallback path (no toast lib loaded)
+      if (errorEl) {
+        errorEl.textContent = msg;
+        errorEl.classList.remove("bh-hidden");
+      } else if (typeof alert === "function") {
+        alert(msg);
+      }
+    }
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!projectCache) return;
+      if (errorEl) errorEl.classList.add("bh-hidden");
+      const title = document.getElementById("qcTitle").value.trim();
+      if (title.length < 3) {
+        qcToast("Title too short");
+        return;
+      }
+      const body = {
+        projectId: projectCache.id,
+        title,
+        type: document.getElementById("qcType").value,
+        priority: document.getElementById("qcPriority").value,
+        labels: (document.getElementById("qcLabels").value || "")
+          .split(",")
+          .map((l) => l.trim())
+          .filter(Boolean),
+      };
+      try {
+        const resp = await fetch(`/api/bug-hatch/projects/${encodeURIComponent(projectCache.id)}/issues`, {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        const data = await resp.json().catch(() => ({}));
+        if (!resp.ok) {
+          qcToast(data.error || "Create failed");
+          return;
+        }
+        document.getElementById("qcTitle").value = "";
+        document.getElementById("qcLabels").value = "";
+        // push new issue and re-render board for its status column
+        issuesCache.push(data.data); // service returns issue object as data
+        renderBoard();
+        // Subtle success feedback
+        const wrap = document.getElementById("quickCreateWrap");
+        if (wrap) {
+          wrap.classList.remove("bh-qc-flash");
+          // force reflow to restart animation if already applied
+          void wrap.offsetWidth;
+          wrap.classList.add("bh-qc-flash");
+          setTimeout(() => wrap.classList.remove("bh-qc-flash"), 1300);
+        }
+        if (window.bhToast && typeof window.bhToast.show === "function") {
+          window.bhToast.show("Issue created", { type: "success", timeout: 3000 });
+        }
+      } catch (err) {
+        qcToast(err.message || "Network error");
+      }
+    });
+  }
 })();

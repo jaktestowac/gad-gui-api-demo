@@ -486,6 +486,57 @@ body.bh-no-scroll {
   opacity: 0.45;
 }
 
+/* Skeleton Loaders */
+.bh-skeleton {
+  background: linear-gradient(90deg, var(--bh-neutral-200) 25%, var(--bh-neutral-300) 50%, var(--bh-neutral-200) 75%);
+  background-size: 200% 100%;
+  animation: bh-skeleton-loading 1.5s infinite;
+  border-radius: var(--bh-radius-sm);
+}
+@keyframes bh-skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+.bh-skeleton-card {
+  height: 80px;
+  margin-bottom: var(--bh-space-xs);
+  border-radius: var(--bh-radius-md);
+}
+.bh-skeleton-text {
+  height: 1em;
+  margin-bottom: var(--bh-space-2xs);
+}
+.bh-skeleton-text:last-child {
+  width: 60%;
+  margin-bottom: 0;
+}
+
+/* Board Container */
+.board-container {
+  background: var(--bh-gradient-surface);
+  border: 1px solid var(--bh-color-border-accent);
+  border-radius: var(--bh-radius-xl);
+  padding: var(--bh-space-lg);
+  box-shadow: var(--bh-shadow-lg);
+  position: relative;
+  overflow: hidden;
+  margin-top: var(--bh-space-md);
+}
+.board-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--bh-gradient-primary);
+  border-radius: var(--bh-radius-xl) var(--bh-radius-xl) 0 0;
+}
+
 /* Auth Container */
 .bh-auth-shell {
   min-height: 100vh;
@@ -1172,4 +1223,69 @@ body.bh-no-scroll {
   .bh-demo-container {
     padding: var(--bh-space-2xl) var(--bh-space-xl);
   }
+}
+
+/* =============================================
+   Modal Components
+   ============================================= */
+
+.bh-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+}
+
+.bh-modal.open {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bh-modal-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  z-index: 1;
+}
+
+.bh-modal-dialog {
+  position: relative;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  z-index: 2;
+  margin: var(--bh-space-md);
+}
+
+.bh-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--bh-space-lg);
+  border-bottom: 1px solid var(--bh-color-surface-alt);
+}
+
+.bh-modal-close {
+  background: none;
+  border: none;
+  font-size: var(--bh-text-xl);
+  color: var(--bh-color-text-muted);
+  cursor: pointer;
+  padding: var(--bh-space-xs);
+  border-radius: var(--bh-radius-sm);
+  transition: all 0.2s ease;
+}
+
+.bh-modal-close:hover {
+  background: var(--bh-color-surface-alt);
+  color: var(--bh-color-text);
 }

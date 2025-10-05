@@ -53,6 +53,23 @@
     </div>
 
     <script src="/bug-hatch/js/auth.js"></script>
+    <script>
+        // Check if user is already logged in and redirect to dashboard
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const user = await window.bugHatchAuth.checkAuth();
+                if (user) {
+                    // User is already logged in, redirect to dashboard
+                    const url = new URL(window.location.href);
+                    const demo = url.searchParams.get('demo') === 'true';
+                    window.location.href = `/bug-hatch/dashboard.html${demo ? '?demo=true' : ''}`;
+                    return;
+                }
+            } catch (error) {
+                // Continue to show login form if auth check fails
+            }
+        });
+    </script>
 </body>
 
 </html>

@@ -132,6 +132,7 @@
 }
 .bh-dashboard-compact {
   --bh-space-scale: 0.65;
+  margin: 0px;
 }
 .bh-dashboard-compact .bh-stat-grid {
   gap: var(--bh-space-md);
@@ -242,5 +243,97 @@
   .bh-animate-slide-down,
   .bh-animate-slide-up {
     animation: none !important;
+  }
+}
+
+/* =============================
+   Project Page: Quick Create Issue Bar
+   ============================= */
+#quickCreateWrap {
+  position: relative;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
+  border: 1px solid var(--bh-color-border);
+  border-radius: var(--bh-radius-lg);
+  padding: var(--bh-space-sm) var(--bh-space-md) var(--bh-space-xs);
+  overflow: hidden;
+}
+#quickCreateWrap::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.08), transparent 60%);
+  pointer-events: none;
+  opacity: 0.65;
+}
+#quickCreateWrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(111, 92, 255, 0.18), rgba(255, 63, 164, 0.12));
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+#quickCreateWrap:hover {
+  border-color: var(--bh-color-accent);
+  box-shadow: 0 0 0 1px var(--bh-color-accent-fade), 0 4px 18px -6px rgba(0, 0, 0, 0.55);
+}
+#quickCreateWrap form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--bh-space-xs);
+  align-items: flex-end;
+}
+#quickCreateWrap .bh-field {
+  margin: 0;
+}
+#quickCreateWrap input.bh-input,
+#quickCreateWrap select.bh-input,
+#quickCreateWrap textarea.bh-input {
+  font-size: var(--bh-text-2xs);
+  padding: var(--bh-space-2xs) var(--bh-space-xs);
+  min-height: 30px;
+}
+#quickCreateWrap .bh-label {
+  font-size: var(--bh-text-3xs);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+#quickCreateWrap #qcCreateBtn {
+  margin-top: calc(var(--bh-space-sm) - var(--bh-space-2xs));
+  white-space: nowrap;
+}
+#quickCreateWrap #qcError {
+  margin-top: var(--bh-space-2xs);
+  font-size: var(--bh-text-3xs);
+}
+@media (max-width: 900px) {
+  #quickCreateWrap {
+    padding: var(--bh-space-xs) var(--bh-space-sm);
+  }
+  #quickCreateWrap input.bh-input {
+    width: 100%;
+  }
+  #quickCreateWrap form {
+    gap: var(--bh-space-2xs);
+  }
+  #quickCreateWrap #qcCreateBtn {
+    width: 100%;
+  }
+}
+
+/* Subtle success flash when an issue is created (applied by JS) */
+.bh-qc-flash {
+  animation: bh-qc-flash 1.2s ease-out;
+}
+@keyframes bh-qc-flash {
+  0% {
+    box-shadow: 0 0 0 0 rgba(111, 92, 255, 0.6);
+  }
+  40% {
+    box-shadow: 0 0 0 6px rgba(111, 92, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(111, 92, 255, 0);
   }
 }

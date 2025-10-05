@@ -63,13 +63,76 @@
         <div class="bh-card bh-card-glow">
             <h2 class="bh-heading-gradient bh-text-xl bh-mb-lg">Quick Actions</h2>
             <div class="bh-flex bh-gap-sm bh-wrap bh-mb-lg">
-                <button class="bh-btn bh-btn-secondary" disabled data-testid="create-project-button">📁 Create Project</button>
-                <button class="bh-btn bh-btn-secondary" disabled data-testid="create-issue-button">🐛 Create Issue</button>
-                <button class="bh-btn bh-btn-secondary" disabled data-testid="view-projects-button">📋 View All Projects</button>
+                <button class="bh-btn bh-btn-secondary" id="create-project-btn" data-testid="create-project-button">📁 Create Project</button>
+                <button class="bh-btn bh-btn-secondary" id="create-issue-btn" data-testid="create-issue-button">🐛 Create Issue</button>
+                <button class="bh-btn bh-btn-secondary" id="view-projects-btn" data-testid="view-projects-button">📋 View All Projects</button>
+                <button class="bh-btn bh-btn-secondary" id="view-issues-btn" data-testid="view-issues-button">🔍 View Issues</button>
             </div>
-            <div class="bh-alert bh-alert-info">
-                💡 <strong>Coming Soon:</strong> Quick actions will be enabled in Phase 2 of the implementation.
+            <div class="bh-alert bh-alert-info bh-hidden" id="quick-actions-info">
+                💡 <strong>Quick Actions:</strong> Use these buttons to quickly perform common tasks.
             </div>
+        </div>
+    </div>
+
+    <!-- Create Project Modal -->
+    <div id="createProjectModal" class="bh-modal" aria-hidden="true">
+        <div class="bh-modal-backdrop" data-modal-close></div>
+        <div class="bh-modal-dialog bh-card bh-card-glow" role="dialog" aria-modal="true" aria-labelledby="createProjectTitle">
+            <div class="bh-modal-header">
+                <h3 id="createProjectTitle" class="bh-heading-section bh-text-sm">Create New Project</h3>
+                <button class="bh-modal-close" data-modal-close>&times;</button>
+            </div>
+            <form id="createProjectForm" class="bh-stack bh-gap-sm bh-text-xs" style="padding: var(--bh-space-lg);">
+                <label class="bh-field"><span class="bh-label">Project Key</span><input id="createProjectKey" class="bh-input" placeholder="e.g., CORE, DEMO" maxlength="10" required /></label>
+                <label class="bh-field"><span class="bh-label">Project Name</span><input id="createProjectName" class="bh-input" placeholder="e.g., Core Platform" required /></label>
+                <label class="bh-field"><span class="bh-label">Description (optional)</span><textarea id="createProjectDescription" class="bh-input" rows="3" placeholder="Project description..."></textarea></label>
+                <div class="bh-flex bh-gap-xs">
+                    <button type="submit" class="bh-btn bh-btn-primary bh-flex-1">Create Project</button>
+                    <button type="button" class="bh-btn bh-btn-secondary" data-modal-close>Cancel</button>
+                </div>
+            </form>
+            <div id="createProjectError" class="bh-alert bh-alert-error bh-hidden bh-mt-sm"></div>
+        </div>
+    </div>
+
+    <!-- Create Issue Modal -->
+    <div id="createIssueModal" class="bh-modal" aria-hidden="true">
+        <div class="bh-modal-backdrop" data-modal-close></div>
+        <div class="bh-modal-dialog bh-card bh-card-glow" role="dialog" aria-modal="true" aria-labelledby="createIssueTitle">
+            <div class="bh-modal-header">
+                <h3 id="createIssueTitle" class="bh-heading-section bh-text-sm">Create Issue</h3>
+                <button class="bh-modal-close" data-modal-close>&times;</button>
+            </div>
+            <form id="createIssueForm" class="bh-stack bh-gap-sm bh-text-xs" style="padding: var(--bh-space-lg);">
+                <label class="bh-field"><span class="bh-label">Project</span>
+                    <select id="createIssueProject" class="bh-input" required></select>
+                </label>
+                <label class="bh-field"><span class="bh-label">Title</span><input id="createIssueTitleInput" class="bh-input" minlength="3" required /></label>
+                <div class="bh-flex bh-gap-xs">
+                    <label class="bh-field bh-flex-1"><span class="bh-label">Type</span>
+                        <select id="createIssueType" class="bh-input">
+                            <option value="task">Task</option>
+                            <option value="bug">Bug</option>
+                            <option value="story">Story</option>
+                        </select>
+                    </label>
+                    <label class="bh-field bh-flex-1"><span class="bh-label">Priority</span>
+                        <select id="createIssuePriority" class="bh-input">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </label>
+                </div>
+                <label class="bh-field"><span class="bh-label">Assignee (optional user id)</span><input id="createIssueAssignee" class="bh-input" /></label>
+                <label class="bh-field"><span class="bh-label">Labels (comma)</span><input id="createIssueLabels" class="bh-input" placeholder="ui,api" /></label>
+                <label class="bh-field"><span class="bh-label">Description</span><textarea id="createIssueDescription" class="bh-input" rows="4"></textarea></label>
+                <div id="createIssueErrorDash" class="bh-alert bh-alert-error bh-hidden"></div>
+                <div class="bh-flex bh-gap-xs">
+                    <button type="submit" class="bh-btn bh-btn-primary bh-flex-1">Create</button>
+                    <button type="button" class="bh-btn bh-btn-secondary" data-modal-close>Cancel</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -99,7 +162,8 @@
             }
 
             // Check if demo mode is active
-            if (user.isDemo || forceDemo) {
+            const isDemo = user.isDemo || forceDemo;
+            if (isDemo) {
                 // Show demo banner
                 demoBanner.classList.add('visible');
 
@@ -162,6 +226,230 @@
             }
 
             await loadProjectsAndIssueStats();
+
+            // Quick Actions functionality
+            function setupQuickActions() {
+                const createProjectBtn = document.getElementById('create-project-btn');
+                const createIssueBtn = document.getElementById('create-issue-btn');
+                const viewProjectsBtn = document.getElementById('view-projects-btn');
+                const viewIssuesBtn = document.getElementById('view-issues-btn');
+                const quickActionsInfo = document.getElementById('quick-actions-info');
+
+                // Show quick actions info
+                quickActionsInfo.classList.remove('bh-hidden');
+
+                // Create Project - disabled in demo mode
+                createProjectBtn.addEventListener('click', () => {
+                    if (isDemo) {
+                        showToast('Demo mode: Project creation is disabled', 'warning');
+                        return;
+                    }
+                    showModal('createProjectModal');
+                });
+
+                // Create Issue - disabled in demo mode
+                createIssueBtn.addEventListener('click', () => {
+                    if (isDemo) {
+                        showToast('Demo mode: Issue creation is disabled', 'warning');
+                        return;
+                    }
+                    populateIssueProjectSelect();
+                    showModal('createIssueModal');
+                });
+
+                // View All Projects
+                viewProjectsBtn.addEventListener('click', () => {
+                    // Scroll to projects section or navigate to projects page
+                    const projectsCard = document.getElementById('projects-list-card');
+                    if (projectsCard && projectsCard.style.display !== 'none') {
+                        projectsCard.scrollIntoView({ behavior: 'smooth' });
+                    } else {
+                        showToast('No projects available. Create a project first!', 'info');
+                    }
+                });
+
+                // View Issues
+                viewIssuesBtn.addEventListener('click', () => {
+                    // Navigate to issues page
+                    window.location.href = `/bug-hatch/issues.html${forceDemo ? '?demo=true' : ''}`;
+                });
+            }
+
+            setupQuickActions();
+
+            // Create Project form handler
+            const createProjectForm = document.getElementById('createProjectForm');
+            createProjectForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const projectKey = document.getElementById('createProjectKey').value.trim().toUpperCase();
+                const projectName = document.getElementById('createProjectName').value.trim();
+                const description = document.getElementById('createProjectDescription').value.trim();
+
+                if (!projectKey || !projectName) {
+                    showCreateProjectError('Project key and name are required');
+                    return;
+                }
+
+                if (!/^[A-Z0-9]{1,10}$/.test(projectKey)) {
+                    showCreateProjectError('Project key must be 1-10 uppercase letters/numbers');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/api/bug-hatch/projects', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({
+                            key: projectKey,
+                            name: projectName,
+                            description: description || null
+                        })
+                    });
+
+                    const data = await response.json();
+                    if (!response.ok) {
+                        showCreateProjectError(data.error || 'Failed to create project');
+                        return;
+                    }
+
+                    // Success
+                    const modal = document.getElementById('createProjectModal');
+                    closeModal(modal);
+                    createProjectForm.reset();
+                    const projName = data?.data?.name || data?.data?.project?.name || 'Project';
+                    showToast(`Project "${projName}" created successfully!`, 'info');
+
+                    // Reload projects
+                    await loadProjectsAndIssueStats();
+                } catch (error) {
+                    showCreateProjectError('Network error. Please try again.');
+                }
+            });
+
+            function showCreateProjectError(message) {
+                const errorEl = document.getElementById('createProjectError');
+                errorEl.textContent = message;
+                errorEl.classList.remove('bh-hidden');
+            }
+
+            // Populate project select for issue creation
+            async function populateIssueProjectSelect() {
+                const sel = document.getElementById('createIssueProject');
+                if (!sel) return;
+                sel.innerHTML = '<option value="" disabled selected>Loading...</option>';
+                try {
+                    const resp = await fetch('/api/bug-hatch/projects' + (forceDemo ? '?demo=true' : ''), { credentials: 'include' });
+                    if (!resp.ok) { sel.innerHTML = '<option value="" disabled>Error</option>'; return; }
+                    const data = await resp.json();
+                    const projects = data?.data?.projects || [];
+                    if (!projects.length) { sel.innerHTML = '<option value="" disabled>No projects</option>'; return; }
+                    sel.innerHTML = projects.map(p => `<option value="${p.id}">${p.key} – ${p.name}</option>`).join('');
+                } catch (e) { sel.innerHTML = '<option value="" disabled>Error</option>'; }
+            }
+
+            // Handle issue creation from dashboard modal
+            const createIssueForm = document.getElementById('createIssueForm');
+            createIssueForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (isDemo) { return; }
+                const projectId = document.getElementById('createIssueProject').value;
+                const title = document.getElementById('createIssueTitleInput').value.trim();
+                const errorEl = document.getElementById('createIssueErrorDash');
+                errorEl.classList.add('bh-hidden');
+                if (!projectId || !title) {
+                    errorEl.textContent = 'Project & Title required';
+                    errorEl.classList.remove('bh-hidden');
+                    return;
+                }
+                const body = {
+                    projectId,
+                    title,
+                    type: document.getElementById('createIssueType').value,
+                    priority: document.getElementById('createIssuePriority').value,
+                    assigneeId: document.getElementById('createIssueAssignee').value.trim() || null,
+                    labels: (document.getElementById('createIssueLabels').value || '').split(',').map(l => l.trim()).filter(Boolean),
+                    description: document.getElementById('createIssueDescription').value.trim()
+                };
+                try {
+                    const resp = await fetch(`/api/bug-hatch/projects/${encodeURIComponent(projectId)}/issues`, {
+                        method: 'POST',
+                        credentials: 'include',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(body)
+                    });
+                    const data = await resp.json().catch(() => ({}));
+                    if (!resp.ok) {
+                        errorEl.textContent = data.error || 'Create failed';
+                        errorEl.classList.remove('bh-hidden');
+                        return;
+                    }
+                    // success
+                    closeModal(document.getElementById('createIssueModal'));
+                    createIssueForm.reset();
+                    showToast(`Issue ${data.data.key || data.data.id} created`, 'info');
+                } catch (err) {
+                    errorEl.textContent = err.message || 'Network error';
+                    errorEl.classList.remove('bh-hidden');
+                }
+            });
+
+            function showToast(message, type = 'info') {
+                // Simple toast implementation
+                const toast = document.createElement('div');
+                toast.className = `bh-alert bh-alert-${type === 'warning' ? 'warn' : type === 'error' ? 'error' : 'info'} bh-fixed bh-top-4 bh-right-4 bh-z-50 bh-max-w-sm`;
+                toast.style.cssText = 'position: fixed; top: 1rem; right: 1rem; z-index: 50; max-width: 24rem;';
+                toast.innerHTML = `
+                    <div class="bh-flex bh-items-center bh-gap-sm">
+                        <span>${message}</span>
+                        <button class="bh-btn bh-btn-xs bh-btn-ghost" onclick="this.parentElement.parentElement.remove()">×</button>
+                    </div>
+                `;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 5000);
+            }
+
+            // Modal functions
+            function showModal(id) {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.setAttribute("aria-hidden", "false");
+                el.classList.add("open");
+            }
+
+            function closeModal(el) {
+                el.setAttribute("aria-hidden", "true");
+                el.classList.remove("open");
+            }
+
+            // Bind modal events
+            function bindModalEvents() {
+                document.addEventListener('click', (e) => {
+                    if (e.target.matches('[data-modal-close]')) {
+                        const modal = e.target.closest('.bh-modal');
+                        if (modal) closeModal(modal);
+                    }
+                });
+                document.addEventListener("keydown", (e) => {
+                    if (e.key === "Escape") {
+                        document.querySelectorAll(".bh-modal.open").forEach((m) => closeModal(m));
+                    }
+                });
+            }
+
+            bindModalEvents();
+
+            // Modal close behavior
+            document.querySelectorAll('[data-modal-close]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const modal = btn.closest('.bh-modal');
+                    if (modal) {
+                        modal.classList.remove('bh-modal-open');
+                        modal.setAttribute('aria-hidden', 'true');
+                        document.body.style.overflow = '';
+                    }
+                });
+            });
         });
     </script>
 </body>
