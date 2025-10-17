@@ -286,7 +286,7 @@ Feel free to reach out to us:
 - 💼 **LinkedIn**: [jaktestowac.pl](https://www.linkedin.com/company/jaktestowac/)
 - 💬 **Discord**: [Polish Playwright Community](https://discord.gg/mUAqQ7FUaZ)
 - 📧 **Support**: Check our website for contact details
-- 🐛 **Issues**: [GitHub Issues](https://github.com/jaktestowac/playwright-tools/issues)
+- 🐛 **Issues**: [GitHub Issues](https://github.com/jaktestowac/gad-gui-api-demo/issues)
 
 ---
 
