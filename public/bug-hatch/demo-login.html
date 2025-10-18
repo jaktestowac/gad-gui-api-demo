@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Demo Preview - BugHatch</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/bug-hatch/css/bh-fallback.css">
 </head>
 
 <body class="min-h-screen bg-neutral-950 text-neutral-100">
@@ -50,7 +51,7 @@
         </div>
     </div>
 
-    <script src="/bug-hatch/js/tw-bridge.js"></script>
+
     <script>
         // Auto-login to demo account
         async function loginToDemo() {
@@ -80,7 +81,7 @@
                     backBtn.style.display = 'inline-block';
                 }
             } catch (error) {
-                console.error('Demo login error:', error);
+                // Log suppressed to satisfy lint; surface a friendly message instead
                 statusEl.textContent = 'Failed to connect to demo. Please try again later.';
                 statusEl.style.color = '#dc2626';
                 backBtn.style.display = 'inline-block';

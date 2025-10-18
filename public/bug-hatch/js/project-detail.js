@@ -410,6 +410,7 @@
     const issues = await fetchIssues(project);
     renderIssues(issues);
     setupQuickCreate();
+    setupQuickCreateToggle();
   }
 
   document.addEventListener("DOMContentLoaded", async () => {
@@ -501,6 +502,25 @@
       } catch (err) {
         qcToast(err.message || "Network error");
       }
+    });
+  }
+
+  function setupQuickCreateToggle() {
+    const btn = document.getElementById("toggleQuickCreateBtn");
+    const wrap = document.getElementById("quickCreateWrap");
+    if (!btn || !wrap) return;
+    const readOnly = forceDemo || (currentUser && (currentUser.isDemo || currentUser.role === "viewer"));
+    // collapsed by default (wrap has display:none inline); ensure button text reflects it
+    const setBtn = (open) => {
+      btn.textContent = open ? "− Hide quick create" : "＋ Quick create issue";
+      btn.disabled = readOnly && open; // in read-only keep it closed and disabled when would open
+    };
+    setBtn(false);
+    btn.addEventListener("click", () => {
+      if (readOnly) return; // do not toggle in demo/viewer
+      const isHidden = wrap.style.display === "none";
+      wrap.style.display = isHidden ? "block" : "none";
+      setBtn(isHidden);
     });
   }
 })();

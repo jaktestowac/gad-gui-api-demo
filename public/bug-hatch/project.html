@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BugHatch – Project</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/bug-hatch/css/bh-fallback.css">
 </head>
 
 <body class="bh-bg-dark bh-text-light bg-neutral-950 text-neutral-100">
@@ -37,7 +38,13 @@
                 </div>
                 <div id="projectMeta" class="bh-skeleton bh-skeleton-text h-4 rounded bg-neutral-800/60 animate-pulse mt-1"></div>
             </div>
-            <div class="bh-card bh-card-glow bh-mb-md bh-qc-area rounded-xl border border-neutral-800 bg-neutral-900/40 p-4" id="quickCreateWrap" data-role="quick-create-issue">
+            <!-- Quick Create Toggle -->
+            <div class="mb-2 flex items-center justify-end">
+                <button id="toggleQuickCreateBtn" type="button" class="bh-btn bh-btn-ghost bh-btn-sm inline-flex items-center gap-1">
+                    ＋ Quick create issue
+                </button>
+            </div>
+            <div class="bh-card bh-card-glow bh-mb-md bh-qc-area rounded-xl border border-neutral-800 bg-neutral-900/40 p-4" id="quickCreateWrap" data-role="quick-create-issue" style="display:none;">
                 <form id="quickCreateIssueForm" data-form="quick-create-issue">
                     <div class="bh-field space-y-1">
                         <label for="qcTitle" class="bh-label block text-xs font-medium text-neutral-300 mb-1">New Issue Title</label>
@@ -67,6 +74,7 @@
                     <div id="qcError" class="bh-alert bh-alert-error bh-hidden rounded-md border border-red-500/40 bg-red-500/10 text-red-200 text-sm px-3 py-2" role="alert"></div>
                 </form>
             </div>
+            <div id="boardErrors" class="bh-alert bh-alert-error bh-hidden rounded-md border border-red-500/40 bg-red-500/10 text-red-200 text-sm px-3 py-2 mb-2" role="alert"></div>
             <div id="boardContainer" class="bh-card bh-card-glow rounded-xl border border-neutral-800 bg-neutral-900/40 p-4">
                 <div class="bh-flex bh-justify-between bh-items-center bh-mb-sm flex items-center justify-between mb-2">
                     <h2 class="bh-text-sm bh-font-medium text-sm font-medium">Board</h2>
@@ -144,7 +152,7 @@
             </div>
         </div>
     </main>
-    <script src="/bug-hatch/js/tw-bridge.js"></script>
+
     <script src="/bug-hatch/js/auth.js"></script>
     <script src="/bug-hatch/js/demo-propagate.js"></script>
     <script src="/bug-hatch/js/toast.js"></script>
