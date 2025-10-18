@@ -8,8 +8,8 @@ const {
   createBugHatchAuditLog,
   bugHatchUsersDb,
   readBugHatchDemoDb,
-} = require("../../endpoints/bug-hatch/db-bug-hatch.operations");
-const { areStringsEqualIgnoringCase } = require("../../helpers/compare.helpers");
+} = require("../db-bug-hatch.operations");
+const { areStringsEqualIgnoringCase } = require("../../../helpers/compare.helpers");
 
 // ==================== VALIDATION ====================
 function validateProjectKey(key) {

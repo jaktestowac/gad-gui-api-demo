@@ -3,8 +3,8 @@ const {
   resetDatabaseWithDemoData,
   readBugHatchDb,
   readBugHatchAuditDb,
-} = require("../../endpoints/bug-hatch/db-bug-hatch.operations");
-const { logDebug, logError } = require("../../helpers/logger-api");
+} = require("../db-bug-hatch.operations");
+const { logDebug, logError } = require("../../../helpers/logger-api");
 
 // ==================== DATABASE INITIALIZATION ====================
 

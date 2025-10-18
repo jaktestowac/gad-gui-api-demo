@@ -2,51 +2,55 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Demo Preview - BugHatch</title>
-    <link rel="stylesheet" href="/bug-hatch/css/tailwind.css">
-    <link rel="stylesheet" href="/bug-hatch/css/variables.css">
-    <link rel="stylesheet" href="/bug-hatch/css/utilities.css">
-    <link rel="stylesheet" href="/bug-hatch/css/components.css">
-    <link rel="stylesheet" href="/bug-hatch/css/pages.css">
-    <style></style>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bh-demo-shell bh-font-sans">
-    <div class="bh-demo-container">
-        <a href="/bug-hatch/">
-            <div class="bh-brand-badge" style="margin:0 auto var(--bh-space-md);"><span class="bh-logo-icon">🐛</span><span>BugHatch</span></div>
-        </a>
-        <h1 class="bh-demo-title">Demo Preview Mode</h1>
-        <p class="bh-demo-sub">Loading demo environment...</p>
+<body class="min-h-screen bg-neutral-950 text-neutral-100">
+    <div class="mx-auto max-w-2xl px-4 py-12">
+        <div class="rounded-xl border border-neutral-800 bg-neutral-900/40 p-6 shadow-lg">
+            <a href="/bug-hatch/" class="flex items-center gap-2 justify-center mb-4 text-lg font-semibold">
+                <span class="text-2xl">🐛</span>
+                <span>BugHatch</span>
+            </a>
+            <h1 class="text-2xl font-bold text-center">Demo Preview Mode</h1>
+            <p class="text-sm text-neutral-400 text-center">Loading demo environment...</p>
 
-        <div class="bh-demo-info">
-            <div class="bh-demo-info-title">ℹ️ <span>What you can do in demo mode:</span></div>
-            <ul class="bh-demo-info-list">
-                <li>Explore pre-populated projects and issues</li>
-                <li>View comments, attachments, and activity feeds</li>
-                <li>Test filters and search functionality</li>
-                <li>Navigate through the complete interface</li>
-            </ul>
+            <div class="mt-6 grid gap-4 md:grid-cols-2">
+                <div class="rounded-lg border border-blue-500/30 bg-blue-500/10 p-4">
+                    <div class="font-medium">ℹ️ <span>What you can do in demo mode:</span></div>
+                    <ul class="mt-2 list-disc pl-5 text-sm text-neutral-300 space-y-1">
+                        <li>Explore pre-populated projects and issues</li>
+                        <li>View comments, attachments, and activity feeds</li>
+                        <li>Test filters and search functionality</li>
+                        <li>Navigate through the complete interface</li>
+                    </ul>
+                </div>
+                <div class="rounded-lg border border-amber-500/30 bg-amber-500/10 p-4">
+                    <div class="font-medium">🔒 <span>Demo Limitations:</span></div>
+                    <ul class="mt-2 list-disc pl-5 text-sm text-neutral-300 space-y-1">
+                        <li>Read-only mode - no data modifications allowed</li>
+                        <li>Cannot create, edit, or delete items</li>
+                        <li>All mutation attempts will be blocked</li>
+                        <li>Sign up for a free account to get full access</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mt-6 flex items-center justify-center">
+                <div class="h-5 w-5 animate-spin rounded-full border-2 border-emerald-500 border-t-transparent"></div>
+            </div>
+            <p class="mt-2 text-center text-sm text-neutral-300" id="status">Initializing demo session...</p>
+
+            <div class="text-center">
+                <a href="/bug-hatch/" id="backBtn" class="mt-4 inline-flex items-center rounded-md border border-neutral-700/70 px-3 py-1.5 text-sm text-neutral-100 hover:bg-neutral-800 hidden">← Back to Home</a>
+            </div>
         </div>
-
-        <div class="bh-demo-info alt">
-            <div class="bh-demo-info-title">🔒 <span>Demo Limitations:</span></div>
-            <ul class="bh-demo-info-list">
-                <li>Read-only mode - no data modifications allowed</li>
-                <li>Cannot create, edit, or delete items</li>
-                <li>All mutation attempts will be blocked</li>
-                <li>Sign up for a free account to get full access</li>
-            </ul>
-        </div>
-
-        <div class="bh-spinner"></div>
-        <p class="bh-status-msg" id="status">Initializing demo session...</p>
-
-        <a href="/bug-hatch/" id="backBtn" style="display:none;" class="bh-btn bh-btn-outline bh-btn-sm mt-4 hidden">← Back to Home</a>
     </div>
 
+    <script src="/bug-hatch/js/tw-bridge.js"></script>
     <script>
         // Auto-login to demo account
         async function loginToDemo() {

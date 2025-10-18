@@ -2,84 +2,119 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BugHatch - Modern Issue Tracker</title>
-    <!-- Compiled Tailwind build (generated) -->
-    <link rel="stylesheet" href="/bug-hatch/css/tailwind.css">
-    <!-- Custom theme layers -->
-    <link rel="stylesheet" href="/bug-hatch/css/variables.css">
-    <link rel="stylesheet" href="/bug-hatch/css/utilities.css">
-    <link rel="stylesheet" href="/bug-hatch/css/components.css">
-    <link rel="stylesheet" href="/bug-hatch/css/pages.css">
-    <style></style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            DEFAULT: '#22c55e',
+                            dark: '#16a34a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <meta name="color-scheme" content="dark light">
+    <style>
+        html {
+            scroll-behavior: smooth
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"
+        }
+    </style>
+    <meta name="description" content="BugHatch is a modern, lightweight issue tracker for teams.">
+    <meta name="robots" content="index, follow">
 </head>
 
-<body class="bh-font-sans bh-bg">
-    <!-- Animated background (new class) -->
-    <div class="bh-hero-bg"></div>
-
-    <!-- Floating particles -->
-    <div class="bh-particle" style="width: 100px; height: 100px; top: 10%; left: 10%; animation-delay: 0s;"></div>
-    <div class="bh-particle" style="width: 150px; height: 150px; top: 60%; right: 10%; animation-delay: 5s;"></div>
-    <div class="bh-particle" style="width: 80px; height: 80px; top: 30%; right: 30%; animation-delay: 10s;"></div>
-    <div class="bh-particle" style="width: 120px; height: 120px; bottom: 20%; left: 20%; animation-delay: 15s;"></div>
-
+<body class="min-h-screen bg-neutral-950 text-neutral-100">
     <!-- Header -->
-    <header class="bh-header bh-header--compact">
-        <a href="/bug-hatch/">
-            <div class="bh-brand-badge"><span class="bh-logo-icon">🐛</span><span>BugHatch</span></div>
-        </a>
-        <a href="/bug-hatch/login.html" class="bh-btn bh-btn-glass bh-btn-sm" data-testid="login-link">Login</a>
+    <header class="sticky top-0 z-30 border-b border-neutral-800/80 bg-neutral-950/70 backdrop-blur supports-[backdrop-filter]:bg-neutral-950/60">
+        <div class="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between">
+            <a href="/bug-hatch/" class="flex items-center gap-2 text-lg font-semibold">
+                <span class="text-2xl">🐛</span>
+                <span>BugHatch</span>
+            </a>
+            <a href="/bug-hatch/login.html" data-testid="login-link" class="inline-flex items-center gap-2 rounded-md border border-neutral-700/70 bg-neutral-900 px-3 py-1.5 text-sm font-medium text-neutral-100 shadow-sm hover:bg-neutral-800 hover:border-neutral-600 focus:outline-none focus:ring-2 focus:ring-brand/40">
+                Login
+            </a>
+        </div>
     </header>
 
-    <!-- Hero Section -->
-    <section class="bh-hero">
-        <h1 class="bh-hero-title">Track Issues.<br />Ship Faster.<br />Stay Organized.</h1>
-        <p class="bh-hero-subtitle">BugHatch is a modern, lightweight issue tracker designed for teams who want simplicity without sacrificing power. Manage projects, track bugs, collaborate seamlessly.</p>
-        <div class="flex gap-4 justify-center mt-8">
-            <a href="/bug-hatch/demo-login.html" data-testid="try-demo-button" class="bh-btn bh-btn-primary bh-btn-lg">🚀 Try Demo</a>
-            <a href="/bug-hatch/signup.html" data-testid="sign-up-button" class="bh-btn bh-btn-outline bh-btn-lg">✨ Sign Up Free</a>
+    <!-- Hero -->
+    <section class="relative overflow-hidden">
+        <div class="absolute inset-0 -z-10 bg-[radial-gradient(1200px_600px_at_50%_-20%,rgba(34,197,94,0.25),transparent_60%)]"></div>
+        <div class="mx-auto max-w-7xl px-4 py-20 text-center">
+            <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight">
+                Track Issues. <span class="text-neutral-300">Ship Faster.</span> Stay Organized.
+            </h1>
+            <p class="mt-4 text-neutral-400 max-w-2xl mx-auto">
+                BugHatch is a modern, lightweight issue tracker designed for teams who want simplicity without sacrificing power.
+                Manage projects, track bugs, collaborate seamlessly.
+            </p>
+            <div class="mt-8 flex items-center justify-center gap-4">
+                <a href="/bug-hatch/demo-login.html" data-testid="try-demo-button" class="inline-flex items-center gap-2 rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-neutral-900 shadow hover:bg-brand-dark focus:outline-none focus:ring-2 focus:ring-brand/40">
+                    🚀 Try Demo
+                </a>
+                <a href="/bug-hatch/signup.html" data-testid="sign-up-button" class="inline-flex items-center gap-2 rounded-md border border-neutral-700/60 px-5 py-2.5 text-sm font-semibold text-neutral-100 hover:bg-neutral-900/50 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                    ✨ Sign Up Free
+                </a>
+            </div>
         </div>
     </section>
 
-    <!-- Features Section -->
-    <section class="bh-feature-grid">
-        <div class="bh-feature-card">
-            <div class="bh-feature-icon">📋</div>
-            <h3 class="bh-feature-title">Project Management</h3>
-            <p class="bh-feature-desc">Organize work into projects with custom workflows, team members, and configurable status transitions.</p>
-        </div>
-        <div class="bh-feature-card">
-            <div class="bh-feature-icon">🐞</div>
-            <h3 class="bh-feature-title">Issue Tracking</h3>
-            <p class="bh-feature-desc">Create and manage bugs, features, and tasks with priorities, labels, story points, and rich descriptions.</p>
-        </div>
-        <div class="bh-feature-card">
-            <div class="bh-feature-icon">💬</div>
-            <h3 class="bh-feature-title">Collaboration</h3>
-            <p class="bh-feature-desc">Thread comments, mention teammates, attach files, and keep everyone in the loop with activity feeds.</p>
-        </div>
-        <div class="bh-feature-card">
-            <div class="bh-feature-icon">🔍</div>
-            <h3 class="bh-feature-title">Advanced Filters</h3>
-            <p class="bh-feature-desc">Search and filter issues with powerful queries. Save your favorite filters for quick access.</p>
-        </div>
-        <div class="bh-feature-card">
-            <div class="bh-feature-icon">📊</div>
-            <h3 class="bh-feature-title">Reports & Metrics</h3>
-            <p class="bh-feature-desc">Export data to CSV, view activity logs, and track team performance with built-in metrics.</p>
-        </div>
-        <div class="bh-feature-card">
-            <div class="bh-feature-icon">🔒</div>
-            <h3 class="bh-feature-title">Secure & Private</h3>
-            <p class="bh-feature-desc">Role-based access control, audit logs, and secure authentication keep your data safe.</p>
+    <!-- Features -->
+    <section class="mx-auto max-w-7xl px-4 pb-20">
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div class="rounded-xl border border-neutral-800 bg-neutral-900/40 p-6">
+                <div class="text-2xl">📋</div>
+                <h3 class="mt-3 text-lg font-semibold">Project Management</h3>
+                <p class="mt-1 text-sm text-neutral-400">Organize work into projects with custom workflows, team members, and configurable status transitions.</p>
+            </div>
+            <div class="rounded-xl border border-neutral-800 bg-neutral-900/40 p-6">
+                <div class="text-2xl">🐞</div>
+                <h3 class="mt-3 text-lg font-semibold">Issue Tracking</h3>
+                <p class="mt-1 text-sm text-neutral-400">Create and manage bugs, features, and tasks with priorities, labels, story points, and rich descriptions.</p>
+            </div>
+            <div class="rounded-xl border border-neutral-800 bg-neutral-900/40 p-6">
+                <div class="text-2xl">💬</div>
+                <h3 class="mt-3 text-lg font-semibold">Collaboration</h3>
+                <p class="mt-1 text-sm text-neutral-400">Thread comments, mention teammates, attach files, and keep everyone in the loop with activity feeds.</p>
+            </div>
+            <div class="rounded-xl border border-neutral-800 bg-neutral-900/40 p-6">
+                <div class="text-2xl">🔍</div>
+                <h3 class="mt-3 text-lg font-semibold">Advanced Filters</h3>
+                <p class="mt-1 text-sm text-neutral-400">Search and filter issues with powerful queries. Save your favorite filters for quick access.</p>
+            </div>
+            <div class="rounded-xl border border-neutral-800 bg-neutral-900/40 p-6">
+                <div class="text-2xl">📊</div>
+                <h3 class="mt-3 text-lg font-semibold">Reports & Metrics</h3>
+                <p class="mt-1 text-sm text-neutral-400">Export data to CSV, view activity logs, and track team performance with built-in metrics.</p>
+            </div>
+            <div class="rounded-xl border border-neutral-800 bg-neutral-900/40 p-6">
+                <div class="text-2xl">🔒</div>
+                <h3 class="mt-3 text-lg font-semibold">Secure & Private</h3>
+                <p class="mt-1 text-sm text-neutral-400">Role-based access control, audit logs, and secure authentication keep your data safe.</p>
+            </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="footer">
-        <p>&copy; 2025 BugHatch. A lightweight issue tracker for modern teams.</p>
+    <footer class="border-t border-neutral-800/80">
+        <div class="mx-auto max-w-7xl px-4 py-6 text-center text-sm text-neutral-500">
+            &copy; 2025 BugHatch. A lightweight issue tracker for modern teams.
+        </div>
     </footer>
 </body>
 

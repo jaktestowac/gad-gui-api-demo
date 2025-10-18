@@ -5,6 +5,13 @@
     const hasDemo = url.searchParams.get("demo") === "true";
     if (!hasDemo) return;
 
+    // Toggle demo banner visibility when demo=true is present
+    const banner = document.getElementById("demo-banner");
+    if (banner) {
+      banner.classList.remove("hidden", "bh-hidden");
+      banner.classList.add("visible");
+    }
+
     // Adjust logout buttons (different ids on different pages)
     const btns = [document.getElementById("logoutBtn"), document.getElementById("logout-btn")].filter(Boolean);
     btns.forEach((b) => {

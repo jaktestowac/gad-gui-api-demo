@@ -8,8 +8,8 @@ const {
   createBugHatchAuditLog,
   readBugHatchDemoDb,
   findBugHatchCommentById,
-} = require("../../endpoints/bug-hatch/db-bug-hatch.operations");
-const { areIdsEqual } = require("../../helpers/compare.helpers");
+} = require("../db-bug-hatch.operations");
+const { areIdsEqual } = require("../../../helpers/compare.helpers");
 
 // RBAC Helpers (reused conceptually from issue.service)
 function userCanSeeProject(project, user) {

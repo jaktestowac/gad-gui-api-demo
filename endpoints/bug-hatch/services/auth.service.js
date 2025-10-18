@@ -1,6 +1,5 @@
-const { createToken, prepareCookieMaxAge, verifyToken } = require("../../helpers/jwtauth");
-const { getCurrentDateTimeISO } = require("../../helpers/datetime.helpers");
-const { logDebug, logTrace } = require("../../helpers/logger-api");
+const { getCurrentDateTimeISO } = require("../../../helpers/datetime.helpers");
+const { logDebug, logTrace } = require("../../../helpers/logger-api");
 const {
   findBugHatchUserByEmail,
   findBugHatchUserById,
@@ -8,7 +7,8 @@ const {
   updateBugHatchUserLastLogin,
   generateBugHatchId,
   createBugHatchAuditLog,
-} = require("../../endpoints/bug-hatch/db-bug-hatch.operations");
+} = require("../db-bug-hatch.operations");
+const { createToken, prepareCookieMaxAge, verifyToken } = require("../../../helpers/jwtauth");
 
 // ==================== VALIDATION ====================
 

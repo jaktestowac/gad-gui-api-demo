@@ -9,8 +9,8 @@ const {
   transitionBugHatchIssue,
   createBugHatchAuditLog,
   readBugHatchDemoDb,
-} = require("../../endpoints/bug-hatch/db-bug-hatch.operations");
-const { areIdsEqual } = require("../../helpers/compare.helpers");
+} = require("../db-bug-hatch.operations");
+const { areIdsEqual } = require("../../../helpers/compare.helpers");
 
 // ================= Validation Helpers =================
 function validateIssueCreate(data) {

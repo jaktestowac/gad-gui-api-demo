@@ -22,8 +22,10 @@
   }
 
   async function ensureAuth() {
-    currentUser = await window.bugHatchAuth.checkAuth();
+    currentUser = await window.bugHatchAuth.checkAuth().catch(() => null);
     if (!currentUser) {
+      // Allow anonymous demo mode when demo is explicitly requested
+      if (forceDemo) return true;
       window.location.href = "/bug-hatch/login.html";
       return false;
     }
@@ -47,7 +49,7 @@
 
   async function fetchIssues(project) {
     const params = new URLSearchParams({ limit: "200" });
-    if (forceDemo || currentUser.isDemo) params.set("demo", "true");
+    if (forceDemo || (currentUser && currentUser.isDemo)) params.set("demo", "true");
     const url = `/api/bug-hatch/projects/${encodeURIComponent(project.id)}/issues?${params.toString()}`;
     const resp = await fetch(url, { credentials: "include" });
     const data = await resp.json().catch(() => ({}));
@@ -61,28 +63,32 @@
     const nameEl = qs("#projectName");
     const h1 = document.createElement("h1");
     h1.id = "projectName";
-    h1.className = "bh-text-lg bh-font-semibold";
+    h1.className = "text-lg font-semibold text-neutral-100";
     h1.textContent = p.name;
     nameEl.parentNode.replaceChild(h1, nameEl);
     const keyEl = qs("#projectKey");
     const span = document.createElement("span");
     span.id = "projectKey";
-    span.className = "bh-badge bh-badge-outline bh-text-2xs";
+    span.className =
+      "inline-flex items-center rounded-full border border-neutral-600 bg-neutral-900/60 px-2 py-0.5 text-[11px] text-neutral-300";
     span.textContent = p.key;
     keyEl.parentNode.replaceChild(span, keyEl);
     const metaEl = qs("#projectMeta");
     metaEl.textContent = `${p.members.length} member(s) • Created ${formatTime(p.createdAt)}${
       p.archived ? " • Archived" : ""
     }`;
-    metaEl.className = "bh-text-dim bh-text-3xs bh-mt-2xs";
+    metaEl.className = "text-neutral-400 text-xs mt-1";
     const badge = qs("#viewModeBadge");
     if (badge) {
-      if (forceDemo || currentUser.isDemo) {
-        badge.classList.remove("bh-hidden");
+      // Show Demo only for anonymous demo view; show Read-only for logged-in viewers.
+      if (!currentUser && forceDemo) {
+        badge.classList.remove("bh-hidden", "hidden");
         badge.textContent = "Demo";
-      } else if (currentUser.role === "viewer") {
-        badge.classList.remove("bh-hidden");
+      } else if (currentUser && currentUser.role === "viewer") {
+        badge.classList.remove("bh-hidden", "hidden");
         badge.textContent = "Read-only";
+      } else {
+        badge.classList.add("bh-hidden", "hidden");
       }
     }
     const issuesLink = qs("#issuesLink");
@@ -95,7 +101,7 @@
     const e = qs("#boardErrors");
     if (e) {
       e.textContent = "";
-      e.classList.add("bh-hidden");
+      e.classList.add("bh-hidden", "hidden");
     }
   }
   function showBoardError(msg) {
@@ -103,7 +109,7 @@
     const e = qs("#boardErrors");
     if (e) {
       e.textContent = msg;
-      e.classList.remove("bh-hidden");
+      e.classList.remove("bh-hidden", "hidden");
     }
     if (window.bhToast && typeof window.bhToast.show === "function") {
       window.bhToast.show(msg, { type: "error", timeout: 6000 });
@@ -115,23 +121,23 @@
     if (!board || !projectCache) return;
     const statuses = projectCache.workflow?.statuses || [];
     const transitions = projectCache.workflow?.transitions || {};
-    const readOnly = forceDemo || currentUser.isDemo || currentUser.role === "viewer";
+    const readOnly = forceDemo || (currentUser && (currentUser.isDemo || currentUser.role === "viewer"));
     const metaEl = qs("#issuesMeta");
     metaEl.textContent = `${issuesCache.length} issue(s)`;
-    metaEl.className = "bh-text-dim bh-text-2xs";
+    metaEl.className = "text-neutral-400 text-[11px]";
     if (!statuses.length) {
-      board.innerHTML = '<div class="bh-text-dim bh-text-xs">No workflow statuses configured.</div>';
+      board.innerHTML = '<div class="text-neutral-400 text-xs">No workflow statuses configured.</div>';
       return;
     }
     board.innerHTML = statuses
       .map(
         (s) => `
-      <div class="bh-kanban-col" data-status="${s}" style="min-width:200px;flex:0 0 200px;">
-        <div class="bh-flex bh-justify-between bh-items-center bh-mb-2xs">
-          <h3 class="bh-text-3xs bh-uppercase bh-letter-tight bh-text-dim">${s}</h3>
-          <span class="bh-badge bh-badge-dim bh-text-3xs" data-count-for="${s}">0</span>
+      <div class="rounded-lg border border-neutral-800 bg-neutral-900/40 p-3" data-status="${s}" style="min-width:200px;flex:0 0 200px;">
+        <div class="flex items-center justify-between mb-1">
+          <h3 class="text-[10px] tracking-tight uppercase text-neutral-400">${s}</h3>
+          <span class="inline-flex items-center rounded-full border border-neutral-700/60 bg-neutral-900/60 px-2 py-0.5 text-[10px] text-neutral-400" data-count-for="${s}">0</span>
         </div>
-        <div class="bh-kanban-dropzone bh-flex bh-flex-col bh-gap-2xs" data-dropzone-for="${s}" style="min-height:260px;">
+        <div class="flex flex-col gap-1" data-dropzone-for="${s}" style="min-height:260px;">
         </div>
       </div>`
       )
@@ -144,40 +150,62 @@
       const dz = board.querySelector(`[data-dropzone-for="${issue.status}"]`);
       if (!dz) return;
       const card = document.createElement("div");
-      card.className = "bh-issue-card";
+      const accent =
+        issue.priority === "high"
+          ? "border-l-2 border-l-red-500/60"
+          : issue.priority === "low"
+          ? "border-l-2 border-l-emerald-500/60"
+          : "border-l-2 border-l-amber-400/60";
+      card.className = `bh-issue-card rounded-lg border border-neutral-800 bg-neutral-900/60 p-3 shadow-sm hover:shadow-md hover:bg-neutral-900 transition duration-150 ease-out cursor-pointer ring-1 ring-transparent hover:ring-emerald-500/20 hover:border-neutral-700 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 ${accent}`;
       card.setAttribute("draggable", !readOnly);
       card.dataset.issueId = issue.id;
       card.dataset.status = issue.status;
       const labelsArr = issue.labels || [];
       const labelsHtml = labelsArr
         .slice(0, 4)
-        .map((l, i) => `<span class="bh-issue-label" data-shade="${i % 3}">${l}</span>`)
+        .map((l, i) => {
+          const shade = i % 3;
+          const palette =
+            shade === 0
+              ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
+              : shade === 1
+              ? "border-sky-500/30 bg-sky-500/10 text-sky-300"
+              : "border-fuchsia-500/30 bg-fuchsia-500/10 text-fuchsia-300";
+          return `<span class="inline-flex items-center rounded-md border ${palette} px-1.5 py-0 text-[10px]" data-shade="${shade}">${l}</span>`;
+        })
         .join("");
-      const more = labelsArr.length > 4 ? `<span class="bh-badge bh-badge-tiny">+${labelsArr.length - 4}</span>` : "";
-      const priorityClass =
-        issue.priority === "high"
-          ? "bh-issue-card-priority-high"
-          : issue.priority === "low"
-          ? "bh-issue-card-priority-low"
-          : "bh-issue-card-priority-medium";
+      const more =
+        labelsArr.length > 4
+          ? `<span class="inline-flex items-center rounded-full border border-neutral-700/60 bg-neutral-900/60 px-1.5 py-0 text-[10px] text-neutral-300">+${
+              labelsArr.length - 4
+            }</span>`
+          : "";
       card.innerHTML = `
-        <div class="bh-flex bh-justify-between bh-items-start">
-          <span class="bh-text-2xs bh-font-medium" title="${issue.key}">${issue.key}</span>
-          <span class="bh-badge bh-badge-tiny">${issue.type}</span>
+        <div class="flex items-start justify-between">
+          <span class="text-[11px] font-medium text-neutral-300" title="${issue.key}">${issue.key}</span>
+          <span class="inline-flex items-center rounded-full border border-neutral-700/60 bg-neutral-900/60 px-1.5 py-0 text-[10px] text-neutral-300">${
+            issue.type
+          }</span>
         </div>
-        <div class="bh-issue-card-title" title="${issue.title}">${issue.title}</div>
-        <div class="bh-issue-card-labels">${labelsHtml}${more}</div>
-        <div class="bh-issue-card-meta">
-          <span class="${priorityClass}">${issue.priority}</span>
+        <div class="mt-1 text-xs text-neutral-200 line-clamp-2 font-medium" title="${issue.title}">${issue.title}</div>
+        <div class="mt-1 flex flex-wrap gap-1">${labelsHtml}${more}</div>
+        <div class="mt-2 flex items-center justify-between text-[11px] text-neutral-400">
+          <span class="${
+            issue.priority === "high"
+              ? "border border-red-500/40 bg-red-500/10 text-red-300 rounded px-2 py-0.5"
+              : issue.priority === "low"
+              ? "border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 rounded px-2 py-0.5"
+              : "border border-amber-500/40 bg-amber-500/10 text-amber-300 rounded px-2 py-0.5"
+          }">${issue.priority}</span>
           <span>${new Date(issue.updatedAt).toLocaleDateString()}</span>
         </div>`;
       if (!readOnly) {
         card.addEventListener("dragstart", (ev) => {
           ev.dataTransfer.setData("text/issue-id", issue.id);
           ev.dataTransfer.setData("text/from-status", issue.status);
-          card.classList.add("bh-opacity-50");
+          card.classList.add("opacity-50");
         });
-        card.addEventListener("dragend", () => card.classList.remove("bh-opacity-50"));
+        card.addEventListener("dragend", () => card.classList.remove("opacity-50"));
       }
       card.addEventListener("click", () => openPreview(issue.id));
       dz.appendChild(card);
@@ -193,12 +221,12 @@
     board.querySelectorAll("[data-dropzone-for]").forEach((zone) => {
       zone.addEventListener("dragover", (e) => {
         e.preventDefault();
-        zone.classList.add("bh-ring");
+        zone.classList.add("ring-2", "ring-emerald-500/40");
       });
-      zone.addEventListener("dragleave", () => zone.classList.remove("bh-ring"));
+      zone.addEventListener("dragleave", () => zone.classList.remove("ring-2", "ring-emerald-500/40"));
       zone.addEventListener("drop", async (e) => {
         e.preventDefault();
-        zone.classList.remove("bh-ring");
+        zone.classList.remove("ring-2", "ring-emerald-500/40");
         clearBoardError();
         const issueId = e.dataTransfer.getData("text/issue-id");
         const fromStatus = e.dataTransfer.getData("text/from-status");
@@ -250,46 +278,90 @@
     const modal = qs("#issuePreviewModal");
     if (!modal) return;
     qs("#pvIssueKey").textContent = `${issue.key}`;
+    const openFull = qs("#pvOpenFull");
+    if (openFull) {
+      const qp = new URLSearchParams({ id: issue.id });
+      if (forceDemo) qp.set("demo", "true");
+      openFull.href = `/bug-hatch/issue.html?${qp.toString()}`;
+    }
     qs("#pvIssueTitle").textContent = issue.title;
     qs("#pvDescription").textContent = issue.description || "(no description)";
     const meta = qs("#pvMeta");
+    const statusChip = `
+      <span class="inline-flex items-center rounded-md border ${
+        issue.status === "Done"
+          ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-300"
+          : "border-sky-500/40 bg-sky-500/10 text-sky-300"
+      } px-2 py-0.5 text-[10px]">${issue.status}</span>`;
     meta.innerHTML = `
-      <span class="bh-badge bh-badge-tiny">${issue.type}</span>
-      <span class="bh-badge bh-badge-outline bh-badge-tiny">${issue.priority}</span>
-      <span class="bh-text-dim">${issue.status}</span>
-      <span class="bh-text-dim">Updated: ${formatTime(issue.updatedAt)}</span>
+      <span class="inline-flex items-center rounded-full border border-neutral-700/60 bg-neutral-900/60 px-1.5 py-0 text-[10px] text-neutral-300">${
+        issue.type
+      }</span>
+      <span class="inline-flex items-center rounded-full ${
+        issue.priority === "high"
+          ? "border border-red-500/40 bg-red-500/10 text-red-300"
+          : issue.priority === "low"
+          ? "border border-emerald-500/40 bg-emerald-500/10 text-emerald-300"
+          : "border border-amber-500/40 bg-amber-500/10 text-amber-300"
+      } px-2 py-0.5">${issue.priority}</span>
+      ${statusChip}
+      <span class="text-neutral-400 text-[10px]">Updated: ${formatTime(issue.updatedAt)}</span>
     `;
     renderPreviewTransitions(issue);
     // Labels in modal
     const lblWrap = qs("#pvLabels");
     if (lblWrap) {
       const all = issue.labels || [];
-      if (!all.length) lblWrap.innerHTML = '<span class="bh-text-dim bh-text-3xs">No labels</span>';
+      if (!all.length) lblWrap.innerHTML = '<span class="text-neutral-400 text-[10px]">No labels</span>';
       else
         lblWrap.innerHTML = all
-          .map((l) => `<span class="bh-badge bh-badge-outline bh-badge-tiny" data-label="${l}">${l}</span>`)
+          .map(
+            (l) =>
+              `<span class="inline-flex items-center rounded-full border border-neutral-600 px-1.5 py-0 text-[10px] text-neutral-300" data-label="${l}">${l}</span>`
+          )
           .join("");
     }
-    modal.classList.remove("bh-hidden");
+    modal.classList.remove("bh-hidden", "hidden");
+    // Animate panel in
+    const panel = modal.querySelector(".bh-modal");
+    if (panel) {
+      panel.classList.add("opacity-0", "translate-y-1", "scale-95");
+      requestAnimationFrame(() => {
+        panel.classList.add("transition", "duration-150");
+        panel.classList.remove("opacity-0", "translate-y-1", "scale-95");
+        panel.classList.add("opacity-100", "translate-y-0", "scale-100");
+      });
+    }
   }
   function closePreview() {
     const modal = qs("#issuePreviewModal");
-    if (modal) modal.classList.add("bh-hidden");
+    if (!modal) return;
+    const panel = modal.querySelector(".bh-modal");
+    if (panel) {
+      panel.classList.add("transition", "duration-150", "opacity-0", "translate-y-1", "scale-95");
+      setTimeout(() => {
+        modal.classList.add("bh-hidden", "hidden");
+        panel.classList.remove("opacity-0", "translate-y-1", "scale-95", "opacity-100", "translate-y-0", "scale-100");
+      }, 150);
+    } else {
+      modal.classList.add("bh-hidden", "hidden");
+    }
   }
   function renderPreviewTransitions(issue) {
     const wrap = qs("#pvTransitions");
     if (!wrap) return;
     wrap.innerHTML = "";
-    const readOnly = forceDemo || currentUser.isDemo || currentUser.role === "viewer";
+    const readOnly = forceDemo || (currentUser && (currentUser.isDemo || currentUser.role === "viewer"));
     const transitions = projectCache?.workflow?.transitions || {};
     const allowed = transitions[issue.status] || [];
     if (!allowed.length) {
-      wrap.innerHTML = '<span class="bh-text-dim bh-text-3xs">No transitions</span>';
+      wrap.innerHTML = '<span class="text-neutral-400 text-[10px]">No transitions</span>';
       return;
     }
     allowed.forEach((to) => {
       const btn = document.createElement("button");
-      btn.className = "bh-btn bh-btn-secondary bh-btn-2xs"; // width 100% via CSS in aside
+      btn.className =
+        "w-full inline-flex items-center justify-start gap-1 text-[11px] rounded-md border border-neutral-700 bg-neutral-900/60 px-2 py-1 text-neutral-200 hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 disabled:opacity-50 disabled:cursor-not-allowed"; // full width in aside
       btn.textContent = `→ ${to}`;
       if (readOnly) btn.disabled = true;
       btn.addEventListener("click", async () => {
@@ -345,11 +417,9 @@
     if (!(await ensureAuth())) return;
     // Show demo banner if forced or real demo user
     const demoBannerEl = document.getElementById("demo-banner");
-    if (demoBannerEl && (forceDemo || currentUser.isDemo)) {
+    if (demoBannerEl && forceDemo) {
+      demoBannerEl.classList.remove("hidden", "bh-hidden");
       demoBannerEl.classList.add("visible");
-      // hide quick create in demo
-      const qcWrap = document.getElementById("quickCreateWrap");
-      if (qcWrap) qcWrap.style.display = "none";
     }
     load();
   });
@@ -359,10 +429,10 @@
     if (!form || !projectCache) return;
     const errorEl = document.getElementById("qcError"); // retained but hidden; we now use toast
     if (errorEl) {
-      errorEl.classList.add("bh-hidden");
+      errorEl.classList.add("bh-hidden", "hidden");
       errorEl.setAttribute("aria-hidden", "true");
     }
-    const readOnly = forceDemo || currentUser.isDemo || currentUser.role === "viewer";
+    const readOnly = forceDemo || (currentUser && (currentUser.isDemo || currentUser.role === "viewer"));
     if (readOnly) {
       form.querySelectorAll("input,select,button").forEach((el) => (el.disabled = true));
       return;
@@ -375,7 +445,7 @@
       // fallback path (no toast lib loaded)
       if (errorEl) {
         errorEl.textContent = msg;
-        errorEl.classList.remove("bh-hidden");
+        errorEl.classList.remove("bh-hidden", "hidden");
       } else if (typeof alert === "function") {
         alert(msg);
       }
@@ -383,7 +453,7 @@
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       if (!projectCache) return;
-      if (errorEl) errorEl.classList.add("bh-hidden");
+      if (errorEl) errorEl.classList.add("bh-hidden", "hidden");
       const title = document.getElementById("qcTitle").value.trim();
       if (title.length < 3) {
         qcToast("Title too short");

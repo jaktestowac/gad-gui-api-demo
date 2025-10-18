@@ -14,7 +14,7 @@ const {
   patchIssueService,
   transitionIssueService,
   archiveIssueService,
-} = require("../../services/bug-hatch/issue.service");
+} = require("./services/issue.service");
 
 function getCurrentUser(req) {
   const token = req.cookies["bug-hatch-token"]; // cookie-based

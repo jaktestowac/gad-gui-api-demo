@@ -11,11 +11,32 @@
     const el = qs(id);
     if (!el) return;
     el.setAttribute("aria-hidden", "false");
+    el.classList.remove("hidden");
     el.classList.add("open");
+    const panel = el.querySelector(".bh-modal-dialog");
+    if (panel) {
+      panel.classList.add("opacity-0", "translate-y-1", "scale-95");
+      requestAnimationFrame(() => {
+        panel.classList.add("transition", "duration-150");
+        panel.classList.remove("opacity-0", "translate-y-1", "scale-95");
+        panel.classList.add("opacity-100", "translate-y-0", "scale-100");
+      });
+    }
   }
   function closeModal(el) {
     el.setAttribute("aria-hidden", "true");
-    el.classList.remove("open");
+    const panel = el.querySelector(".bh-modal-dialog");
+    if (panel) {
+      panel.classList.add("transition", "duration-150", "opacity-0", "translate-y-1", "scale-95");
+      setTimeout(() => {
+        el.classList.add("hidden");
+        el.classList.remove("open");
+        panel.classList.remove("opacity-0", "translate-y-1", "scale-95", "opacity-100", "translate-y-0", "scale-100");
+      }, 150);
+    } else {
+      el.classList.add("hidden");
+      el.classList.remove("open");
+    }
   }
 
   function bindModalEvents() {

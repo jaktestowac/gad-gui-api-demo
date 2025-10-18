@@ -8,13 +8,7 @@ const {
   HTTP_UNPROCESSABLE_ENTITY,
   HTTP_BAD_REQUEST,
 } = require("../../helpers/response.helpers");
-const {
-  signupUser,
-  loginUser,
-  loginDemoUser,
-  logoutUser,
-  getCurrentUser,
-} = require("../../services/bug-hatch/auth.service");
+const { signupUser, loginUser, loginDemoUser, logoutUser, getCurrentUser } = require("./services/auth.service");
 
 // ==================== AUTH HANDLERS ====================
 

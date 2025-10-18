@@ -2,55 +2,60 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login - BugHatch</title>
-    <link rel="stylesheet" href="/bug-hatch/css/tailwind.css">
-    <link rel="stylesheet" href="/bug-hatch/css/variables.css">
-    <link rel="stylesheet" href="/bug-hatch/css/utilities.css">
-    <link rel="stylesheet" href="/bug-hatch/css/components.css">
-    <link rel="stylesheet" href="/bug-hatch/css/pages.css">
-    <style></style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial
+        }
+    </style>
 </head>
 
-<body class="bh-font-sans bh-auth-shell">
-    <div class="bh-card bh-card-glow bh-auth-panel bh-mx-auto">
-        <div class="logo bh-text-center">
-            <a href="/bug-hatch/">
-                <div class="bh-brand-badge" style="margin:0 auto var(--bh-space-sm);"><span class="bh-logo-icon">🐛</span><span>BugHatch</span></div>
-            </a>
-            <p class="bh-logo-sub">Issue Tracker for Teams</p>
-        </div>
-
-        <div id="error-message" class="bh-alert bh-alert-danger bh-hidden"></div>
-        <div id="success-message" class="bh-alert bh-alert-success bh-hidden"></div>
-
-        <form id="login-form" class="bh-form">
-            <div class="space-y-1">
-                <label for="email" class="block text-xs font-medium text-neutral-300">Email</label>
-                <input type="email" id="email" name="email" data-testid="email-input" required autocomplete="email" class="block w-full rounded-md bg-neutral-800/60 border border-neutral-600 focus:border-bh.primary focus:ring-2 focus:ring-bh.primary/60 text-sm px-3 py-2 placeholder-neutral-500 transition" placeholder="your@email.com">
+<body class="min-h-screen bg-neutral-950 text-neutral-100">
+    <div class="mx-auto max-w-md px-4 py-12">
+        <div class="bh-card bh-card-glow">
+            <div class="text-center">
+                <a href="/bug-hatch/" class="inline-flex items-center gap-2 justify-center mb-2">
+                    <span class="bh-logo-icon">🐛</span><span class="text-base font-semibold">BugHatch</span>
+                </a>
+                <p class="text-sm text-neutral-400">Issue Tracker for Teams</p>
             </div>
 
-            <div class="space-y-1">
-                <label for="password" class="block text-xs font-medium text-neutral-300">Password</label>
-                <input type="password" id="password" name="password" data-testid="password-input" required autocomplete="current-password" class="block w-full rounded-md bg-neutral-800/60 border border-neutral-600 focus:border-bh.primary focus:ring-2 focus:ring-bh.primary/60 text-sm px-3 py-2 placeholder-neutral-500 transition" placeholder="••••••••">
+            <div id="error-message" class="bh-alert bh-alert-error bh-hidden mt-4"></div>
+            <div id="success-message" class="bh-alert bh-alert-info bh-hidden mt-2"></div>
+
+            <form id="login-form" class="mt-6 space-y-4">
+                <div class="bh-field">
+                    <label for="email" class="bh-label">Email</label>
+                    <input type="email" id="email" name="email" data-testid="email-input" required autocomplete="email" class="bh-input" placeholder="your@email.com" />
+                </div>
+
+                <div class="bh-field">
+                    <label for="password" class="bh-label">Password</label>
+                    <input type="password" id="password" name="password" data-testid="password-input" required autocomplete="current-password" class="bh-input" placeholder="••••••••" />
+                </div>
+
+                <div class="flex items-center gap-2 text-sm text-neutral-300">
+                    <input type="checkbox" id="keepSignIn" name="keepSignIn" data-testid="keep-signin-checkbox" class="h-4 w-4 rounded border-neutral-700 bg-neutral-900" />
+                    <label for="keepSignIn">Keep me signed in</label>
+                </div>
+
+                <button type="submit" data-testid="login-button" class="bh-btn bh-btn-primary bh-btn-block bh-btn-md">Sign In</button>
+            </form>
+
+            <div class="text-center mt-8 pt-6 border-t border-neutral-800 text-sm">
+                <span class="text-xs text-neutral-400">Don't have an account?</span>
+                <a class="text-emerald-400 hover:underline font-medium" href="/bug-hatch/signup.html" data-testid="signup-link">Sign up</a>
             </div>
-
-            <div class="checkbox-group bh-checkbox-row">
-                <input type="checkbox" id="keepSignIn" name="keepSignIn" data-testid="keep-signin-checkbox">
-                <label for="keepSignIn">Keep me signed in</label>
-            </div>
-
-            <button type="submit" data-testid="login-button" class="bh-btn bh-btn-primary bh-btn-block bh-btn-md">
-                Sign In
-            </button>
-        </form>
-
-        <div class="bh-text-center bh-mt-xl bh-pt-lg bh-border-top bh-text-sm">
-            <span class="text-xs text-neutral-400">Don't have an account?</span> <a class="text-bh.primary hover:underline font-medium" href="/bug-hatch/signup.html" data-testid="signup-link">Sign up</a>
         </div>
     </div>
 
+    <script src="/bug-hatch/js/tw-bridge.js"></script>
     <script src="/bug-hatch/js/auth.js"></script>
     <script>
         // Check if user is already logged in and redirect to dashboard

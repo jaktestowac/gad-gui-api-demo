@@ -5,129 +5,146 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BugHatch – Project</title>
-    <link rel="stylesheet" href="/bug-hatch/css/tailwind.css" />
-    <link rel="stylesheet" href="/bug-hatch/css/variables.css" />
-    <link rel="stylesheet" href="/bug-hatch/css/utilities.css" />
-    <link rel="stylesheet" href="/bug-hatch/css/components.css" />
-    <link rel="stylesheet" href="/bug-hatch/css/pages.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bh-bg-dark bh-text-light bh-dashboard-compact">
-    <div class="bh-demo-banner" id="demo-banner">
+<body class="bh-bg-dark bh-text-light bg-neutral-950 text-neutral-100">
+    <div class="bh-demo-banner hidden flex items-center justify-between gap-3 px-4 py-2 text-sm border border-amber-500/30 bg-amber-500/10 text-amber-100" id="demo-banner">
         <span class="demo-banner-icon">🎯</span>
         <div class="demo-banner-text">
             <strong>Demo Mode:</strong> Read-only preview. Create/edit actions are disabled.
         </div>
-        <a href="/bug-hatch/signup.html" class="bh-demo-cta">Sign Up Free</a>
+        <a href="/bug-hatch/signup.html" class="bh-demo-cta inline-flex items-center rounded-md border border-amber-500/40 px-3 py-1.5 text-amber-100 hover:bg-amber-500/10">Sign Up Free</a>
     </div>
-    <nav class="bh-navbar">
-        <a href="/bug-hatch/dashboard.html" class="bh-navbar-brand bh-brand-badge"><span class="bh-logo-icon">🐛</span><span>BugHatch</span></a>
-        <div class="flex gap-2">
-            <a id="issuesLink" href="/bug-hatch/issues.html" class="bh-btn bh-btn-ghost bh-btn-sm">Issues</a>
-            <button id="logoutBtn" class="bh-btn bh-btn-danger bh-btn-sm">Logout</button>
+    <nav class="bh-navbar px-4 py-3 sticky top-0 z-20 border-b border-neutral-800 bg-neutral-950/70 backdrop-blur">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <a href="/bug-hatch/dashboard.html" class="bh-navbar-brand bh-brand-badge inline-flex items-center gap-2 text-lg font-semibold"><span class="bh-logo-icon text-2xl">🐛</span><span>BugHatch</span></a>
+            <div class="flex gap-2">
+                <a id="issuesLink" href="/bug-hatch/issues.html" class="bh-btn bh-btn-ghost bh-btn-sm inline-flex items-center justify-center rounded-md text-sm font-medium text-neutral-200 hover:bg-neutral-800 px-2.5 py-1.5">Issues</a>
+                <button id="logoutBtn" class="bh-btn bh-btn-danger bh-btn-sm inline-flex items-center justify-center rounded-md text-sm font-medium bg-red-600 hover:bg-red-500 text-white px-2.5 py-1.5">Logout</button>
+            </div>
         </div>
     </nav>
-    <main class="bh-max-w-screen bh-mx-auto bh-p-lg bh-flex bh-gap-lg bh-flex-wrap">
+    <main class="bh-max-w-screen bh-mx-auto bh-p-lg bh-flex bh-gap-lg bh-flex-wrap max-w-7xl mx-auto px-4 py-6 flex gap-6 flex-wrap">
         <section class="bh-flex-1 bh-min-w-0">
-            <div id="projectHeader" class="bh-flex bh-col bh-flex-col bh-gap-sm bh-mb-xl">
-                <div class="bh-flex bh-items-center bh-justify-between bh-flex-wrap bh-gap-sm">
-                    <div id="projectName" class="bh-skeleton bh-skeleton-text" style="height: 32px; width: 200px;"></div>
-                    <div id="projectInfo" class="bh-flex bh-gap-xs bh-items-center">
-                        <div id="projectKey" class="bh-skeleton" style="height: 20px; width: 50px; border-radius: var(--bh-radius-pill);"></div>
-                        <span id="viewModeBadge" class="bh-badge bh-badge-dim bh-text-2xs bh-hidden">Demo</span>
+            <div id="projectHeader" class="bh-flex bh-col bh-flex-col bh-gap-sm bh-mb-xl flex flex-col gap-2 mb-8">
+                <div class="bh-flex bh-items-center bh-justify-between bh-flex-wrap bh-gap-sm flex items-center justify-between flex-wrap gap-2">
+                    <div id="projectName" class="bh-skeleton bh-skeleton-text h-8 w-[200px] rounded bg-neutral-800/60 animate-pulse"></div>
+                    <div id="projectInfo" class="bh-flex bh-gap-xs bh-items-center flex items-center gap-1">
+                        <div id="projectKey" class="bh-skeleton h-5 w-[50px] rounded-full bg-neutral-800/60 animate-pulse"></div>
+                        <span id="viewModeBadge" class="bh-badge bh-badge-dim bh-text-2xs bh-hidden inline-flex items-center rounded-full border border-neutral-700/60 bg-neutral-900/60 px-2 py-0.5 text-[11px] text-neutral-400">Demo</span>
                     </div>
                 </div>
-                <div id="projectMeta" class="bh-skeleton bh-skeleton-text bh-mt-2xs"></div>
+                <div id="projectMeta" class="bh-skeleton bh-skeleton-text h-4 rounded bg-neutral-800/60 animate-pulse mt-1"></div>
             </div>
-            <div class="bh-card bh-card-glow bh-mb-md bh-qc-area" id="quickCreateWrap" data-role="quick-create-issue">
+            <div class="bh-card bh-card-glow bh-mb-md bh-qc-area rounded-xl border border-neutral-800 bg-neutral-900/40 p-4" id="quickCreateWrap" data-role="quick-create-issue">
                 <form id="quickCreateIssueForm" data-form="quick-create-issue">
-                    <div class="bh-field">
-                        <label for="qcTitle" class="bh-label">New Issue Title</label>
-                        <input id="qcTitle" name="title" class="bh-input" placeholder="e.g. Refine auth flow" minlength="3" required />
+                    <div class="bh-field space-y-1">
+                        <label for="qcTitle" class="bh-label block text-xs font-medium text-neutral-300 mb-1">New Issue Title</label>
+                        <input id="qcTitle" name="title" class="bh-input block w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 placeholder-neutral-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none" placeholder="e.g. Refine auth flow" minlength="3" required />
                     </div>
-                    <div class="bh-field">
-                        <label for="qcType" class="bh-label">Type</label>
-                        <select id="qcType" name="type" class="bh-input">
+                    <div class="bh-field space-y-1">
+                        <label for="qcType" class="bh-label block text-xs font-medium text-neutral-300 mb-1">Type</label>
+                        <select id="qcType" name="type" class="bh-input block w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none">
                             <option value="task">Task</option>
                             <option value="bug">Bug</option>
                             <option value="story">Story</option>
                         </select>
                     </div>
-                    <div class="bh-field">
-                        <label for="qcPriority" class="bh-label">Priority</label>
-                        <select id="qcPriority" name="priority" class="bh-input">
+                    <div class="bh-field space-y-1">
+                        <label for="qcPriority" class="bh-label block text-xs font-medium text-neutral-300 mb-1">Priority</label>
+                        <select id="qcPriority" name="priority" class="bh-input block w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none">
                             <option value="low">Low</option>
                             <option value="medium" selected>Medium</option>
                             <option value="high">High</option>
                         </select>
                     </div>
-                    <div class="bh-field">
-                        <label for="qcLabels" class="bh-label">Labels (comma)</label>
-                        <input id="qcLabels" name="labels" class="bh-input" placeholder="ui,api" />
+                    <div class="bh-field space-y-1">
+                        <label for="qcLabels" class="bh-label block text-xs font-medium text-neutral-300 mb-1">Labels (comma)</label>
+                        <input id="qcLabels" name="labels" class="bh-input block w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 placeholder-neutral-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none" placeholder="ui,api" />
                     </div>
-                    <button class="bh-btn bh-btn-primary bh-btn-sm" id="qcCreateBtn" type="submit">Create</button>
-                    <div id="qcError" class="bh-alert bh-alert-error bh-hidden" role="alert"></div>
+                    <button class="bh-btn bh-btn-primary bh-btn-sm inline-flex items-center justify-center rounded-md text-sm font-medium bg-emerald-500 text-neutral-900 hover:bg-emerald-600 px-2.5 py-1.5" id="qcCreateBtn" type="submit">Create</button>
+                    <div id="qcError" class="bh-alert bh-alert-error bh-hidden rounded-md border border-red-500/40 bg-red-500/10 text-red-200 text-sm px-3 py-2" role="alert"></div>
                 </form>
             </div>
-            <div id="boardContainer" class="bh-card bh-card-glow board-container">
-                <div class="bh-flex bh-justify-between bh-items-center bh-mb-sm">
-                    <h2 class="bh-text-sm bh-font-medium">Board</h2>
-                    <div id="issuesMeta" class="bh-skeleton bh-skeleton-text" style="height: 14px; width: 100px;"></div>
+            <div id="boardContainer" class="bh-card bh-card-glow rounded-xl border border-neutral-800 bg-neutral-900/40 p-4">
+                <div class="bh-flex bh-justify-between bh-items-center bh-mb-sm flex items-center justify-between mb-2">
+                    <h2 class="bh-text-sm bh-font-medium text-sm font-medium">Board</h2>
+                    <div id="issuesMeta" class="bh-skeleton bh-skeleton-text h-3 w-[100px] rounded bg-neutral-800/60 animate-pulse"></div>
                 </div>
-                <div id="kanbanBoard" class="bh-flex bh-gap-sm bh-overflow-auto" style="min-height:320px;">
+                <div id="kanbanBoard" class="bh-flex bh-gap-sm bh-overflow-auto flex gap-2 overflow-auto" style="min-height:320px;">
                     <!-- Skeleton columns -->
-                    <div class="bh-kanban-col" style="min-width: 280px;">
-                        <h3 class="bh-skeleton bh-skeleton-text" style="height: 20px; width: 80px; margin-bottom: var(--bh-space-sm);"></h3>
-                        <div class="bh-kanban-dropzone">
-                            <div class="bh-skeleton bh-skeleton-card"></div>
-                            <div class="bh-skeleton bh-skeleton-card"></div>
-                            <div class="bh-skeleton bh-skeleton-card"></div>
+                    <div class="bh-kanban-col rounded-lg border border-neutral-800 bg-neutral-900/40 p-3" style="min-width: 280px;">
+                        <h3 class="bh-skeleton bh-skeleton-text h-5 w-20 rounded bg-neutral-800/60 animate-pulse mb-2"></h3>
+                        <div class="bh-kanban-dropzone flex flex-col gap-2 min-h-[240px]">
+                            <div class="bh-skeleton bh-skeleton-card h-20 rounded bg-neutral-800/60 animate-pulse"></div>
+                            <div class="bh-skeleton bh-skeleton-card h-20 rounded bg-neutral-800/60 animate-pulse"></div>
+                            <div class="bh-skeleton bh-skeleton-card h-20 rounded bg-neutral-800/60 animate-pulse"></div>
                         </div>
                     </div>
-                    <div class="bh-kanban-col" style="min-width: 280px;">
-                        <h3 class="bh-skeleton bh-skeleton-text" style="height: 20px; width: 90px; margin-bottom: var(--bh-space-sm);"></h3>
-                        <div class="bh-kanban-dropzone">
-                            <div class="bh-skeleton bh-skeleton-card"></div>
-                            <div class="bh-skeleton bh-skeleton-card"></div>
+                    <div class="bh-kanban-col rounded-lg border border-neutral-800 bg-neutral-900/40 p-3" style="min-width: 280px;">
+                        <h3 class="bh-skeleton bh-skeleton-text h-5 w-24 rounded bg-neutral-800/60 animate-pulse mb-2"></h3>
+                        <div class="bh-kanban-dropzone flex flex-col gap-2 min-h-[240px]">
+                            <div class="bh-skeleton bh-skeleton-card h-20 rounded bg-neutral-800/60 animate-pulse"></div>
+                            <div class="bh-skeleton bh-skeleton-card h-20 rounded bg-neutral-800/60 animate-pulse"></div>
                         </div>
                     </div>
-                    <div class="bh-kanban-col" style="min-width: 280px;">
-                        <h3 class="bh-skeleton bh-skeleton-text" style="height: 20px; width: 85px; margin-bottom: var(--bh-space-sm);"></h3>
-                        <div class="bh-kanban-dropzone">
-                            <div class="bh-skeleton bh-skeleton-card"></div>
-                            <div class="bh-skeleton bh-skeleton-card"></div>
-                            <div class="bh-skeleton bh-skeleton-card"></div>
-                            <div class="bh-skeleton bh-skeleton-card"></div>
+                    <div class="bh-kanban-col rounded-lg border border-neutral-800 bg-neutral-900/40 p-3" style="min-width: 280px;">
+                        <h3 class="bh-skeleton bh-skeleton-text h-5 w-20 rounded bg-neutral-800/60 animate-pulse mb-2"></h3>
+                        <div class="bh-kanban-dropzone flex flex-col gap-2 min-h-[240px]">
+                            <div class="bh-skeleton bh-skeleton-card h-20 rounded bg-neutral-800/60 animate-pulse"></div>
+                            <div class="bh-skeleton bh-skeleton-card h-20 rounded bg-neutral-800/60 animate-pulse"></div>
+                            <div class="bh-skeleton bh-skeleton-card h-20 rounded bg-neutral-800/60 animate-pulse"></div>
+                            <div class="bh-skeleton bh-skeleton-card h-20 rounded bg-neutral-800/60 animate-pulse"></div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
         <!-- Issue preview modal -->
-        <div id="issuePreviewModal" class="bh-modal-backdrop bh-hidden">
-            <div class="bh-modal" role="dialog" aria-modal="true">
-                <div class="bh-modal-header">
-                    <h3 id="pvIssueKey" class="bh-text-sm bh-m-0"></h3>
-                    <button id="pvCloseBtn" class="bh-btn bh-btn-ghost bh-btn-xs" aria-label="Close">✕</button>
-                </div>
-                <div id="pvBody" class="bh-preview-layout">
-                    <div class="bh-preview-main bh-text-2xs bh-space-y-xs">
-                        <div id="pvIssueTitle" class="bh-text-xs bh-font-medium"></div>
-                        <div class="bh-flex bh-gap-2xs bh-flex-wrap bh-text-3xs" id="pvMeta"></div>
-                        <div id="pvLabels" class="bh-flex bh-gap-2xs bh-flex-wrap bh-mt-xs"></div>
-                        <div id="pvDescription" class="bh-text-2xs bh-mt-xs bh-preline"></div>
+        <div id="issuePreviewModal" class="bh-modal-backdrop bh-hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <div class="bh-modal relative z-10 w-full max-w-3xl rounded-xl border border-neutral-800 bg-neutral-900/95 p-0 shadow-2xl ring-1 ring-neutral-800" role="dialog" aria-modal="true">
+                <!-- Header -->
+                <div class="flex items-start justify-between gap-3 border-b border-neutral-800 px-4 py-3">
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-2 text-[11px] text-neutral-400">
+                            <h3 id="pvIssueKey" class="m-0 font-medium tracking-tight text-neutral-300"></h3>
+                            <a id="pvOpenFull" href="#" class="inline-flex items-center gap-1 rounded-md border border-neutral-700/70 px-2 py-0.5 text-[10px] text-neutral-300 hover:bg-neutral-800" title="Open full view">↗ Open</a>
+                        </div>
+                        <div id="pvIssueTitle" class="mt-1 text-base font-semibold text-neutral-100"></div>
+                        <div id="pvMeta" class="mt-2 flex flex-wrap gap-1 text-[10px]"></div>
                     </div>
-                    <aside class="bh-preview-aside">
-                        <h4 class="bh-preview-aside-title">Actions</h4>
-                        <div id="pvTransitions" class="bh-preview-transitions"></div>
-                        <div class="bh-preview-tools" id="pvToolsPlaceholder">
-                            <!-- future tools (attachments, comments, quick edit, etc.) -->
+                    <button id="pvCloseBtn" class="text-neutral-300 hover:bg-neutral-800 rounded-md px-2 py-1 text-sm" aria-label="Close">✕</button>
+                </div>
+                <!-- Body -->
+                <div id="pvBody" class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
+                    <!-- Main content -->
+                    <div class="md:col-span-2 space-y-3">
+                        <div>
+                            <h4 class="text-xs font-semibold text-neutral-300">Labels</h4>
+                            <div id="pvLabels" class="mt-1 flex flex-wrap gap-1"></div>
+                        </div>
+                        <div class="rounded-lg border border-neutral-800 bg-neutral-900/60 p-3">
+                            <h4 class="text-xs font-semibold text-neutral-300">Description</h4>
+                            <div id="pvDescription" class="prose prose-invert max-w-none text-[13px] leading-relaxed prose-p:m-0 prose-li:m-0 whitespace-pre-line"></div>
+                        </div>
+                    </div>
+                    <!-- Aside -->
+                    <aside class="md:col-span-1 space-y-3">
+                        <div class="rounded-lg border border-neutral-800 bg-neutral-900/60 p-3">
+                            <h4 class="text-xs font-semibold text-neutral-300">Workflow</h4>
+                            <div id="pvTransitions" class="mt-2 space-y-2"></div>
+                        </div>
+                        <div class="rounded-lg border border-neutral-800 bg-neutral-900/60 p-3 hidden" id="pvToolsPlaceholder">
+                            <h4 class="text-xs font-semibold text-neutral-300">Tools</h4>
+                            <div class="mt-2 text-[11px] text-neutral-400">Coming soon</div>
                         </div>
                     </aside>
                 </div>
             </div>
         </div>
     </main>
+    <script src="/bug-hatch/js/tw-bridge.js"></script>
     <script src="/bug-hatch/js/auth.js"></script>
     <script src="/bug-hatch/js/demo-propagate.js"></script>
     <script src="/bug-hatch/js/toast.js"></script>

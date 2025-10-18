@@ -1,7 +1,7 @@
 const { logError } = require("../../helpers/logger-api");
 const { formatErrorResponse } = require("../../helpers/helpers");
 const { HTTP_OK, HTTP_INTERNAL_SERVER_ERROR, HTTP_FORBIDDEN } = require("../../helpers/response.helpers");
-const { initializeDatabases, resetDatabase, getDatabaseStatus } = require("../../services/bug-hatch/database.service");
+const { initializeDatabases, resetDatabase, getDatabaseStatus } = require("./services/database.service");
 
 // ==================== ADMIN HANDLERS ====================
 

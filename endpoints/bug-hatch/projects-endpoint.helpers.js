@@ -14,7 +14,7 @@ const {
   patchProjectService,
   addMemberService,
   removeMemberService,
-} = require("../../services/bug-hatch/project.service");
+} = require("./services/project.service");
 const { logError } = require("../../helpers/logger-api");
 
 function getCurrentUserFromReq(req) {

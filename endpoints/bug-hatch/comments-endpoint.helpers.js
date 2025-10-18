@@ -12,7 +12,7 @@ const {
   createCommentService,
   patchCommentService,
   deleteCommentService,
-} = require("../../services/bug-hatch/comment.service");
+} = require("./services/comment.service");
 
 function getCurrentUser(req) {
   const token = req.cookies["bug-hatch-token"]; // cookie-based

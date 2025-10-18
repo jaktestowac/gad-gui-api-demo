@@ -16,7 +16,7 @@ const {
   getAttachmentService,
   deleteAttachmentService,
   UPLOAD_DIR,
-} = require("../../services/bug-hatch/attachment.service");
+} = require("./services/attachment.service");
 
 // Multer storage config (store original name separately)
 const storage = multer.diskStorage({

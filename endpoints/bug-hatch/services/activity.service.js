@@ -5,7 +5,7 @@ const {
   findBugHatchAttachmentsByIssueId,
   getBugHatchAuditLogs,
   readBugHatchDemoDb,
-} = require("../../endpoints/bug-hatch/db-bug-hatch.operations");
+} = require("../db-bug-hatch.operations");
 
 function userCanSeeProject(project, user) {
   if (!user) return false;

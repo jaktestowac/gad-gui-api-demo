@@ -9,10 +9,10 @@ const {
   createBugHatchAuditLog,
   readBugHatchDemoDb,
   findBugHatchAttachmentById,
-} = require("../../endpoints/bug-hatch/db-bug-hatch.operations");
-const { areIdsEqual } = require("../../helpers/compare.helpers");
+} = require("../endpoints/bug-hatch/db-bug-hatch.operations");
+const { areIdsEqual } = require("../../../helpers/compare.helpers");
 
-const UPLOAD_DIR = path.join(__dirname, "../../uploads/bug-hatch");
+const UPLOAD_DIR = path.join(__dirname, "../../../uploads/bug-hatch");
 if (!fs.existsSync(UPLOAD_DIR)) {
   try {
     fs.mkdirSync(UPLOAD_DIR, { recursive: true });
