@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>🦎 GAD</title>
+  <link rel="icon" href="/data/icons/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+  <link href="/css/fonts/fonts.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/controls.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/infoBoxes.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+      color: #ffffff;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background:
+        radial-gradient(circle at 20% 80%, rgba(0, 255, 157, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(0, 255, 157, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(0, 255, 157, 0.05) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      backdrop-filter: blur(10px);
+      background: rgba(0, 0, 0, 0.8);
+      border-bottom: 1px solid rgba(0, 255, 157, 0.3);
+    }
+
+    .hero-section {
+      padding: 80px 1rem 10px;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero-title .text-h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+      background: linear-gradient(45deg, #00ff9d, #00b4d8, #00ff9d);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      /* animation: gradientShift 3s ease-in-out infinite; */
+    }
+
+    @keyframes gradientShift {
+
+      0%,
+      100% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+    }
+
+    .hero-subtitle {
+      font-size: 1rem;
+      color: #b8c5d6;
+      margin-bottom: 1rem;
+      opacity: 0.9;
+    }
+
+    .logo-container {
+      margin: 1.5rem 0;
+      position: relative;
+    }
+
+    .logo-glow {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, #00ff9d, #00b4d8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow:
+        0 0 25px rgba(0, 255, 157, 0.5),
+        0 0 50px rgba(0, 255, 157, 0.3),
+        0 0 75px rgba(0, 255, 157, 0.1);
+      /* animation: pulse 2s ease-in-out infinite; */
+      margin: 0 auto;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    .logo-glow img {
+      width: 108px;
+      height: 108px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .status-container {
+      margin: 0.5rem 0;
+      display: none;
+    }
+
+    .modules-section {
+      padding: 1rem 0.25rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .modules-title {
+      text-align: center;
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+      color: #00ff9d;
+      text-shadow: 0 0 12px rgba(0, 255, 157, 0.5);
+    }
+
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.75rem;
+      padding: 0;
+    }
+
+    .module-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 1rem;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      height: 100%;
+    }
+
+    .module-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 157, 0.1), transparent);
+      transition: left 0.5s;
+    }
+
+    .module-card:hover::before {
+      left: 100%;
+    }
+
+    .module-card:hover {
+      transform: translateY(-10px);
+      box-shadow:
+        0 20px 40px rgba(0, 255, 157, 0.1),
+        0 0 50px rgba(0, 255, 157, 0.2);
+      border-color: rgba(0, 255, 157, 0.3);
+    }
+
+    .module-icon {
+      font-size: 1.8rem;
+      color: #00ff9d;
+      text-align: center;
+      margin-bottom: 0.6rem;
+      filter: drop-shadow(0 0 6px rgba(0, 255, 157, 0.5));
+    }
+
+    .module-title {
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 0.5rem;
+      color: #ffffff;
+    }
+
+    .module-description {
+      color: #b8c5d6;
+      text-align: center;
+      line-height: 1.3;
+      font-size: 0.75rem;
+    }
+
+    .new-badge {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: linear-gradient(135deg, #ffd700 0%, #ffed4e 25%, #ffffff 50%, #ffed4e 75%, #ffd700 100%);
+      background-size: 200% 200%;
+      color: #000;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      font-size: 0.65rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow:
+        0 0 10px rgba(255, 215, 0, 0.8),
+        0 0 20px rgba(255, 215, 0, 0.6),
+        0 0 30px rgba(255, 215, 0, 0.4),
+        inset 0 1px 2px rgba(255, 255, 255, 0.3);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(5px);
+      overflow: hidden;
+      z-index: 10;
+    }
+
+    .new-badge::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+      pointer-events: none;
+    }
+
+    @keyframes futuristicPulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+        box-shadow:
+          0 0 10px rgba(255, 215, 0, 0.8),
+          0 0 20px rgba(255, 215, 0, 0.6),
+          0 0 30px rgba(255, 215, 0, 0.4),
+          inset 0 1px 2px rgba(255, 255, 255, 0.3);
+      }
+
+      50% {
+        transform: scale(1.05);
+        box-shadow:
+          0 0 15px rgba(255, 215, 0, 1),
+          0 0 30px rgba(255, 215, 0, 0.8),
+          0 0 45px rgba(255, 215, 0, 0.6),
+          inset 0 1px 2px rgba(255, 255, 255, 0.4);
+      }
+    }
+
+    @keyframes shimmer {
+      0% {
+        transform: translateX(-100%) translateY(-100%) rotate(45deg);
+      }
+
+      100% {
+        transform: translateX(100%) translateY(100%) rotate(45deg);
+      }
+    }
+
+    #footer-container {
+      margin-top: 0rem;
+      padding-top: 0rem;
+    }
+
+    .footer {
+      padding: 0.5rem 0.5rem;
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      max-width: 900px;
+      margin: 0 auto;
+      gap: 1rem;
+      position: relative;
+    }
+
+    .footer-link {
+      grid-column: 1;
+      justify-self: center;
+    }
+
+    .footer-link {
+      color: #00ff9d;
+      text-decoration: none;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.3s ease;
+    }
+
+    .footer-link:hover {
+      color: #00b4d8;
+      text-shadow: 0 0 20px rgba(0, 255, 157, 0.5);
+    }
+
+    .footer-link img {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+    }
+
+    .animation-toggle-btn {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      color: #b8c5d6;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      position: absolute;
+    }
+
+    .animation-toggle-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(0, 255, 157, 0.3);
+      color: #00ff9d;
+    }
+
+    .animation-toggle-btn.active {
+      background: rgba(0, 255, 157, 0.1);
+      border-color: rgba(0, 255, 157, 0.5);
+      color: #00ff9d;
+      box-shadow: 0 0 15px rgba(0, 255, 157, 0.3);
+    }
+
+    .animation-toggle-btn i {
+      font-size: 0.9rem;
+    }
+
+    /* Animation control classes */
+    .animations-enabled .hero-title .text-h1 {
+      animation: gradientShift 3s ease-in-out infinite;
+    }
+
+    .animations-enabled .logo-glow {
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .animations-enabled .new-badge {
+      animation: futuristicPulse 2.5s ease-in-out infinite, gradientShift 4s ease-in-out infinite;
+    }
+
+    .animations-enabled .new-badge::before {
+      animation: shimmer 3s ease-in-out infinite;
+    }
+
+    @media (max-width: 768px) {
+      .hero-title .text-h1 {
+        font-size: 1.8rem;
+      }
+
+      .hero-subtitle {
+        font-size: 0.9rem;
+      }
+
+      .modules-grid {
+        grid-template-columns: 1fr;
+        gap: 0.8rem;
+      }
+
+      .module-card {
+        padding: 1rem;
+      }
+
+      .footer-content {
+        flex-direction: column;
+        gap: 1rem;
+        grid-template-columns: 1fr;
+      }
+
+      .footer-link {
+        grid-column: 1;
+        justify-self: center;
+      }
+
+      .animation-toggle-btn {
+        position: static;
+        transform: none;
+        justify-self: center;
+        margin-top: 0.5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-section {
+        padding: 60px 0.5rem 20px;
+      }
+
+      .hero-title .text-h1 {
+        font-size: 1.5rem;
+      }
+
+      .modules-section {
+        padding: 1rem 0.25rem;
+      }
+
+      .modules-title {
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+      }
+
+      .footer-content {
+        flex-direction: column;
+        gap: 0.8rem;
+        grid-template-columns: 1fr;
+      }
+
+      .animation-toggle-btn {
+        font-size: 0.7rem;
+        padding: 0.25rem 0.5rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div style="display: grid; grid-template-columns: 4fr 1fr">
+      <h1 id="menu-main"></h1>
+    </div>
+  </header>
+
+  <section class="hero-section">
+    <h1 class="hero-title">
+      <span class="text-h1">Welcome to</span> <span aria-label="GAD">🦎</span> <span class="text-h1">GAD</span>
+    </h1>
+    <p class="hero-subtitle">Practice your test automation skills!</p>
+
+    <div class="logo-container">
+      <div class="logo-glow">
+        <img src="./data/gad-front-banner.png" id="frontbanner" aria-label="Front banner of GAD application" alt="GAD Logo" />
+      </div>
+    </div>
+
+    <div class="status-container" id="dbStatusContainer">
+      <div id="dbStatusInfoBox" class="simpleErrorBox" style="display: none"></div>
+    </div>
+  </section>
+
+  <section class="modules-section">
+    <h2 class="modules-title">Choose Your Module</h2>
+    <div class="modules-grid">
+      <a href="./articles.html" class="module-card">
+        <div class="module-icon">
+          <i class="fa-regular fa-newspaper"></i>
+        </div>
+        <h3 class="module-title">Articles</h3>
+        <p class="module-description">
+          Explore and create testing content! Manage articles, comments, users, flashposts and games.
+        </p>
+      </a>
+
+      <a href="./practice" class="module-card">
+        <div class="module-icon">
+          <i class="fa-solid fa-flask-vial"></i>
+        </div>
+        <h3 class="module-title">Practice Pages</h3>
+        <p class="module-description">
+          Special pages to test! Practice on elements states, tables, dynamic IDs, API, popups, charts, iframes and more!
+        </p>
+      </a>
+
+      <a href="./games" class="module-card">
+        <div class="module-icon">
+          <i class="fa-solid fa-table-tennis-paddle-ball"></i>
+        </div>
+        <h3 class="module-title">Games</h3>
+        <p class="module-description">
+          Special pages to test! Practice automation on non-standard elements, animations, games, and more!
+        </p>
+      </a>
+
+      <a href="./book-shop/dashboard.html" class="module-card">
+        <div class="module-icon">
+          <i class="fa-solid fa-book"></i>
+        </div>
+        <h3 class="module-title">Book Shop</h3>
+        <p class="module-description">
+          Discover and manage bookstore! Handle books, items, orders, accounts, payments, and roles.
+        </p>
+      </a>
+
+      <a href="./learning/welcome.html" class="module-card">
+        <span class="new-badge">NEW</span>
+        <div class="module-icon">
+          <i class="fa-solid fa-graduation-cap"></i>
+        </div>
+        <h3 class="module-title">Learning</h3>
+        <p class="module-description">
+          Explore courses! Handle courses, users, questions, progress, and learning paths.
+        </p>
+      </a>
+
+      <!-- <a href="./bug-hatch/" class="module-card">
+        <span class="new-badge"><i class="fa-solid fa-star"></i></span>
+        <div class="module-icon">
+          <i class="fa-solid fa-bug"></i>
+        </div>
+        <h3 class="module-title">Bug Hatch</h3>
+        <p class="module-description">
+          Track issues like a pro! Manage projects, issues, users, comments, and workflows.
+        </p>
+      </a> -->
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <a href="https://jaktestowac.pl" class="footer-link">
+        <img src="/data/icons/favicon.png" alt="jaktestowac.pl" />
+        jaktestowac.pl
+      </a>
+      <button id="animation-toggle" class="animation-toggle-btn" title="Toggle Animations">
+        <i class="fa-solid fa-play"></i>
+        <span>Animations: OFF</span>
+      </button>
+    </div>
+  </footer>
+
+  <img class="back-img opaq" style="display: none;" alt="Background image"></img>
+
+  <script type="text/javascript" src="/js/common.js"></script>
+  <script type="text/javascript" src="/js/header.js"></script>
+  <script type="text/javascript" src="/js/dbcheck.js"></script>
+  <script type="text/javascript" src="/version.js"></script>
+  <script type="text/javascript" src="/username.js"></script>
+  <script type="text/javascript" src="/js/darkmode.js"></script>
+  <script type="text/javascript" src="/js/message-notifier.js"></script>
+  <script type="text/javascript">
+    // Animation toggle functionality
+    class AnimationToggle {
+      constructor() {
+        this.toggleBtn = document.getElementById('animation-toggle');
+        this.body = document.body;
+        this.isEnabled = false;
+        this.init();
+      }
+
+      init() {
+        // Load saved state from cookies
+        this.loadState();
+
+        // Set initial state
+        this.updateUI();
+        this.updateAnimations();
+
+        // Add event listener
+        this.toggleBtn.addEventListener('click', () => this.toggle());
+      }
+
+      loadState() {
+        const saved = this.getCookie('gad_animations_enabled');
+        this.isEnabled = saved === 'true';
+      }
+
+      saveState() {
+        this.setCookie('gad_animations_enabled', this.isEnabled, 30); // 30 days
+      }
+
+      toggle() {
+        this.isEnabled = !this.isEnabled;
+        this.saveState();
+        this.updateUI();
+        this.updateAnimations();
+      }
+
+      updateUI() {
+        const icon = this.toggleBtn.querySelector('i');
+        const text = this.toggleBtn.querySelector('span');
+
+        if (this.isEnabled) {
+          this.toggleBtn.classList.add('active');
+          icon.className = 'fa-solid fa-pause';
+          text.textContent = 'Animations: ON';
+        } else {
+          this.toggleBtn.classList.remove('active');
+          icon.className = 'fa-solid fa-play';
+          text.textContent = 'Animations: OFF';
+        }
+      }
+
+      updateAnimations() {
+        if (this.isEnabled) {
+          this.body.classList.add('animations-enabled');
+        } else {
+          this.body.classList.remove('animations-enabled');
+        }
+      }
+
+      setCookie(name, value, days) {
+        const expires = new Date();
+        expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+        document.cookie = name + '=' + value + ';expires=' + expires.toUTCString() + ';path=/';
+      }
+
+      getCookie(name) {
+        const nameEQ = name + '=';
+        const ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+          let c = ca[i];
+          while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+          if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+      }
+    }
+
+    // Initialize animation toggle when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function () {
+      new AnimationToggle();
+    });
+
+    loadAdditionalFrontPageContent();
+  </script>
+</body>
+
+</html>
