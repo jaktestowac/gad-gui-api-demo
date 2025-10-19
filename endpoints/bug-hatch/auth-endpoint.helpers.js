@@ -166,6 +166,8 @@ function handleGetMe(req, res) {
 
     if (!result.success) {
       const statusCode = result.errorType === "unauthorized" ? HTTP_UNAUTHORIZED : HTTP_BAD_REQUEST;
+      // log endpoint, and other details for debugging
+      logError(`BugHatch get me error: ${result.error}`, { user: result.user, token, endpoint: req.url });
       res.status(statusCode).send(formatErrorResponse(result.error));
       return;
     }

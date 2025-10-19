@@ -196,12 +196,12 @@ async function createIssueService(data, currentUser) {
 }
 
 function getIssueService(issueId, currentUser) {
-  if (!currentUser) return { success: false, error: "Not authenticated", errorType: "unauthorized" };
   let issue = findBugHatchIssueById(issueId);
   if (!issue) return { success: false, error: "Issue not found", errorType: "notfound" };
   let project = findBugHatchProjectById(issue.projectId);
   if (!project) return { success: false, error: "Project not found", errorType: "notfound" };
-  if (currentUser.isDemo) {
+
+  if (currentUser && currentUser.isDemo) {
     try {
       const demo = readBugHatchDemoDb();
       issue = (demo.issues || []).find((i) => i.id === issueId) || issue;
@@ -210,7 +210,15 @@ function getIssueService(issueId, currentUser) {
       /* ignore */
     }
   }
+
+  // Allow access to demo projects without requiring a user
+  if (!currentUser && project.demo) {
+    return { success: true, issue };
+  }
+
+  if (!currentUser) return { success: false, error: "Not authenticated", errorType: "unauthorized" };
   if (!userCanSeeProject(project, currentUser)) return { success: false, error: "Forbidden", errorType: "forbidden" };
+
   return { success: true, issue };
 }
 

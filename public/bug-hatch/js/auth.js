@@ -199,7 +199,7 @@ async function handleLogout() {
   try {
     await apiRequest(`${API_BASE}/auth/logout`, { method: "POST" });
   } catch (error) {
-    console.error("Logout error:", error);
+    // console.error("Logout error:", error);
     // proceed with redirect regardless
   } finally {
     // If exiting demo mode, send user to public welcome/landing page

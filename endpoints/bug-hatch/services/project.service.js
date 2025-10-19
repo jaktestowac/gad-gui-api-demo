@@ -73,12 +73,10 @@ async function createProjectService(data, currentUser) {
 }
 
 function listProjectsService(query, currentUser) {
-  if (!currentUser) return { success: false, error: "Not authenticated", errorType: "unauthorized" };
-
   const { search, archived, limit = 25, offset = 0, sort = "createdAt", order = "desc" } = query || {};
 
   let projects = bugHatchProjectsDb();
-  if (currentUser.isDemo) {
+  if (currentUser && currentUser.isDemo) {
     // Use demo DB snapshot for listing
     try {
       const demo = readBugHatchDemoDb();
@@ -89,12 +87,17 @@ function listProjectsService(query, currentUser) {
     }
   }
 
+  // Allow listing demo projects without requiring a user
+  if (!currentUser) {
+    projects = projects.filter((p) => p.demo);
+  }
+
   // RBAC Visibility:
   // - admin: all
   // - viewer: all (read-only role)
   // - demo: all (demo snapshot)
   // - member: only their projects
-  if (currentUser.role !== "admin" && currentUser.role !== "viewer" && !currentUser.isDemo) {
+  if (currentUser && currentUser.role !== "admin" && currentUser.role !== "viewer" && !currentUser.isDemo) {
     projects = projects.filter((p) => p.members.includes(currentUser.id));
   }
 
@@ -124,7 +127,6 @@ function listProjectsService(query, currentUser) {
 }
 
 function getProjectService(projectId, currentUser) {
-  if (!currentUser) return { success: false, error: "Not authenticated", errorType: "unauthorized" };
   let project = findBugHatchProjectById(projectId);
   // Fallback: allow using project KEY
   if (!project) {
@@ -135,7 +137,7 @@ function getProjectService(projectId, currentUser) {
       /* ignore */
     }
   }
-  if (currentUser.isDemo) {
+  if (currentUser && currentUser.isDemo) {
     try {
       const demo = readBugHatchDemoDb();
       project =
@@ -146,17 +148,26 @@ function getProjectService(projectId, currentUser) {
       // ignore
     }
   }
+  // Allow access to demo projects without requiring a user
+  if (!currentUser && project && project.demo) {
+    return { success: true, project };
+  }
   if (!project) return { success: false, error: "Project not found", errorType: "notfound" };
-  if (currentUser.role !== "admin" && currentUser.role !== "viewer" && !currentUser.isDemo) {
+  if (currentUser && currentUser.role !== "admin" && currentUser.role !== "viewer" && !currentUser.isDemo) {
     if (!project.members.includes(currentUser.id)) {
       return { success: false, error: "Forbidden", errorType: "forbidden" };
     }
   }
+  if (!currentUser) return { success: false, error: "Not authenticated", errorType: "unauthorized" };
   return { success: true, project };
 }
 
 async function patchProjectService(projectId, patch, currentUser) {
   if (!currentUser) return { success: false, error: "Not authenticated", errorType: "unauthorized" };
+  const project = findBugHatchProjectById(projectId);
+  if (project && project.demo) {
+    return { success: false, error: "Cannot modify demo projects", errorType: "forbidden" };
+  }
   if (currentUser.role !== "admin") {
     return { success: false, error: "Only admin can update project", errorType: "forbidden" };
   }

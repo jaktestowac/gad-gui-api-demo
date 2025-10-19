@@ -14,6 +14,7 @@ const {
   patchIssueService,
   transitionIssueService,
   archiveIssueService,
+  userCanMutateProject,
 } = require("./services/issue.service");
 
 function getCurrentUser(req) {
@@ -74,6 +75,12 @@ async function handleGetIssue(req, res, issueId) {
 
 async function handlePatchIssue(req, res, issueId) {
   const user = getCurrentUser(req);
+  const issue = await getIssueService(issueId, user); // Pass user to getIssueService
+
+  if (!userCanMutateIssue(issue, user)) {
+    return res.status(HTTP_FORBIDDEN).send({ error: "Forbidden: Cannot modify demo issues." });
+  }
+
   const result = await patchIssueService(issueId, req.body || {}, user);
   if (!result.success) {
     let status = HTTP_BAD_REQUEST;
@@ -88,6 +95,12 @@ async function handlePatchIssue(req, res, issueId) {
 
 async function handleArchiveIssue(req, res, issueId) {
   const user = getCurrentUser(req);
+  const issue = await getIssueService(issueId, user); // Pass user to getIssueService
+
+  if (!userCanMutateIssue(issue, user)) {
+    return res.status(HTTP_FORBIDDEN).send({ error: "Forbidden: Cannot archive demo issues." });
+  }
+
   const result = await archiveIssueService(issueId, user);
   if (!result.success) {
     let status = HTTP_BAD_REQUEST;
@@ -117,6 +130,11 @@ async function handleTransitionIssue(req, res, issueId) {
     return;
   }
   res.status(HTTP_OK).send({ ok: true, data: result.issue });
+}
+
+function userCanMutateIssue(issue, user) {
+  if (issue.demo) return false; // Prevent modification of demo issues
+  return userCanMutateProject(issue.project, user);
 }
 
 function handleBugHatchIssues(req, res) {

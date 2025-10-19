@@ -28,26 +28,19 @@ async function initializeDatabases() {
  * @returns {Promise<object>} { success: boolean, message?: string, stats?: object, error?: string }
  */
 async function resetDatabase(force) {
-  try {
-    if (force !== true) {
-      return {
-        success: false,
-        error: "Force reset flag is required. Set force: true in request body to proceed.",
-      };
-    }
-
-    const result = await resetDatabaseWithDemoData(force);
-    logDebug("Database reset completed:", result);
-
+  if (force !== true) {
     return {
-      success: true,
-      message: "Database reset with demo data successfully",
-      stats: result,
+      success: false,
+      error: "Force reset flag is required. Set force: true in request body to proceed.",
     };
-  } catch (error) {
-    logError("Failed to reset database:", error);
-    return { success: false, error: error.message || "Database reset failed" };
   }
+
+  const result = await resetDatabaseWithDemoData(force);
+  if (result.demo) {
+    return { success: false, error: "Cannot reset demo data" };
+  }
+  logDebug("Database reset completed:", result);
+  return result;
 }
 
 /**

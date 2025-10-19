@@ -106,7 +106,13 @@
     }
     if (!metaResp.ok) return null;
     const metaData = await metaResp.json();
-    return metaData?.data?.project || null;
+    const project = metaData?.data?.project || null;
+    // Toggle demo banner if project is a demo
+    if (project?.demo) {
+      window.toggleDemoBanner(project);
+    }
+
+    return project;
   }
 
   function renderStatusesSelect(statuses) {

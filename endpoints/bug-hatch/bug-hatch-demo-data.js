@@ -7,7 +7,7 @@ module.exports = {
     {
       id: "user-demo-001",
       email: "demo@bughatch.local",
-      name: "Demo User",
+      name: "Demo User (DEMO)",
       password: "demo", // plain per current auth logic
       role: "member",
       createdAt: new Date().toISOString(),
@@ -16,7 +16,7 @@ module.exports = {
     {
       id: "user-demo-002",
       email: "qa@bughatch.local",
-      name: "QA Analyst",
+      name: "QA Analyst (DEMO)",
       password: "demo",
       role: "member",
       createdAt: new Date().toISOString(),
@@ -25,7 +25,7 @@ module.exports = {
     {
       id: "user-demo-003",
       email: "lead@bughatch.local",
-      name: "Team Lead",
+      name: "Team Lead (DEMO)",
       password: "demo",
       role: "admin",
       createdAt: new Date().toISOString(),
@@ -34,7 +34,7 @@ module.exports = {
     {
       id: "user-demo-004",
       email: "viewer@bughatch.local",
-      name: "Viewer Observer",
+      name: "Viewer Observer (DEMO)",
       password: "demo",
       role: "viewer",
       createdAt: new Date().toISOString(),
@@ -45,9 +45,10 @@ module.exports = {
     {
       id: "proj-demo-core",
       key: "CORE",
-      name: "Core Platform",
+      name: "Core Platform (DEMO)",
       members: ["user-demo-001", "user-demo-002", "user-demo-003"],
       archived: false,
+      demo: true,
       workflow: {
         statuses: ["Backlog", "In Progress", "Review", "Done"],
         transitions: {
@@ -62,7 +63,7 @@ module.exports = {
     {
       id: "proj-demo-web",
       key: "WEB",
-      name: "Web App",
+      name: "Web App (DEMO)",
       members: ["user-demo-001", "user-demo-003"],
       archived: false,
       workflow: {
@@ -83,7 +84,7 @@ module.exports = {
       key: "CORE-1",
       projectId: "proj-demo-core",
       type: "task",
-      title: "Set up project skeleton",
+      title: "Set up project skeleton (DEMO)",
       description: "Initialize repository structure, lint config and CI stub.",
       status: "Done",
       priority: "high",
@@ -95,13 +96,14 @@ module.exports = {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       archived: false,
+      demo: true,
     },
     {
       id: "iss-demo-002",
       key: "CORE-2",
       projectId: "proj-demo-core",
       type: "bug",
-      title: "Fix authentication edge case",
+      title: "Fix authentication edge case (DEMO)",
       description: "Login fails when password contains trailing spaces—trim inputs.",
       status: "Review",
       priority: "medium",
@@ -113,13 +115,14 @@ module.exports = {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       archived: false,
+      demo: true,
     },
     {
       id: "iss-demo-003",
       key: "CORE-3",
       projectId: "proj-demo-core",
       type: "story",
-      title: "Add issue transition API",
+      title: "Add issue transition API (DEMO)",
       description: "Implement status workflow transitions with validation.",
       status: "In Progress",
       priority: "high",
@@ -131,13 +134,14 @@ module.exports = {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       archived: false,
+      demo: true,
     },
     {
       id: "iss-demo-004",
       key: "WEB-1",
       projectId: "proj-demo-web",
       type: "task",
-      title: "Landing page hero section",
+      title: "Landing page hero section (DEMO)",
       description: "Create compact, modern hero with CTA buttons.",
       status: "Backlog",
       priority: "low",

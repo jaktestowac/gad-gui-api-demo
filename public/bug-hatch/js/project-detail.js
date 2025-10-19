@@ -43,6 +43,14 @@
       qs("#projectName").textContent = data.error || "Project not found";
       return null;
     }
+
+    // if demo mode forced, ensure project is marked demo
+    // Toggle demo banner if project is a demo
+    console.log("Project data:", data);
+    if (data?.data?.demo) {
+      window.toggleDemoBanner(data.data);
+    }
+
     // Backend returns { ok: true, data: <projectObject> }
     return data.data; // project object directly
   }
