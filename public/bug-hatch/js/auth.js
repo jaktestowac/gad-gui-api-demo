@@ -203,7 +203,17 @@ async function handleLogout() {
     // proceed with redirect regardless
   } finally {
     // If exiting demo mode, send user to public welcome/landing page
-    window.location.href = isDemoExit ? "/bug-hatch/" : "/bug-hatch/login.html";
+    if (isDemoExit) {
+      window.location.href = "/bug-hatch/";
+    } else {
+      // If on main page, stay on main page; otherwise go to login
+      const currentPath = window.location.pathname;
+      if (currentPath === "/bug-hatch/" || currentPath === "/bug-hatch/index.html") {
+        window.location.reload(); // Stay on main page and refresh to update UI
+      } else {
+        window.location.href = "/bug-hatch/login.html";
+      }
+    }
   }
 }
 

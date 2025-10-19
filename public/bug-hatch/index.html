@@ -20,6 +20,7 @@
             }
         }
     </script>
+    <link rel="stylesheet" href="./css/tailwind.css" />
     <meta name="color-scheme" content="dark light">
     <style>
         html {
@@ -36,20 +37,22 @@
     </style>
     <meta name="description" content="BugHatch is a modern, lightweight issue tracker for teams.">
     <meta name="robots" content="index, follow">
+    <script src="/bug-hatch/js/auth.js"></script>
 </head>
 
 <body class="min-h-screen bg-neutral-950 text-neutral-100">
     <!-- Header -->
     <header class="sticky top-0 z-30 border-b border-neutral-800/80 bg-neutral-950/70 backdrop-blur supports-[backdrop-filter]:bg-neutral-950/60">
         <div class="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between">
+            <a href="/" class="gad-link inline-flex items-center gap-2 rounded-md border border-neutral-700/70 bg-neutral-900 px-3 py-1.5 text-sm font-medium text-neutral-100 shadow-sm hover:bg-neutral-800 hover:border-neutral-600 focus:outline-none focus:ring-2 focus:ring-brand/40">
+                🦎 GAD
+            </a>
             <a href="/bug-hatch/" class="flex items-center gap-2 text-lg font-semibold">
                 <span class="text-2xl">🐛</span>
                 <span>BugHatch</span>
             </a>
-            <div class="flex gap-2">
-                <a href="/" class="gad-link inline-flex items-center gap-2 rounded-md border border-neutral-700/70 bg-neutral-900 px-3 py-1.5 text-sm font-medium text-neutral-100 shadow-sm hover:bg-neutral-800 hover:border-neutral-600 focus:outline-none focus:ring-2 focus:ring-brand/40">
-                    🦎 GAD
-                </a>
+            <div class="flex items-center gap-2" id="auth-section">
+                <!-- Auth content will be dynamically inserted here -->
                 <a href="/bug-hatch/login.html" data-testid="login-link" class="inline-flex items-center gap-2 rounded-md border border-neutral-700/70 bg-neutral-900 px-3 py-1.5 text-sm font-medium text-neutral-100 shadow-sm hover:bg-neutral-800 hover:border-neutral-600 focus:outline-none focus:ring-2 focus:ring-brand/40">
                     Login
                 </a>
@@ -121,6 +124,47 @@
             &copy; 2025 BugHatch. A lightweight issue tracker for modern teams.
         </div>
     </footer>
+
+    <script>
+        // Check authentication and update header accordingly
+        document.addEventListener('DOMContentLoaded', async () => {
+            const authSection = document.getElementById('auth-section');
+
+            try {
+                const user = await window.bugHatchAuth.checkAuth();
+
+                if (user) {
+                    // User is logged in - show user info and dashboard/logout options
+                    authSection.innerHTML = `
+                        <span class="text-sm text-neutral-300">Welcome, ${user.name || user.email}!</span>
+                        <a href="/bug-hatch/dashboard.html" class="inline-flex items-center gap-2 rounded-md border border-neutral-700/70 bg-neutral-900 px-3 py-1.5 text-sm font-medium text-neutral-100 shadow-sm hover:bg-neutral-800 hover:border-neutral-600 focus:outline-none focus:ring-2 focus:ring-brand/40">
+                            Dashboard
+                        </a>
+                        <button id="logout-btn" class="inline-flex items-center gap-2 rounded-md border border-red-700/70 bg-red-900 px-3 py-1.5 text-sm font-medium text-red-100 shadow-sm hover:bg-red-800 hover:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-500/40">
+                            Logout
+                        </button>
+                    `;
+
+                    // Hide the "Sign Up Free" button for logged-in users
+                    const signUpButton = document.querySelector('[data-testid="sign-up-button"]');
+                    if (signUpButton) {
+                        signUpButton.style.display = 'none';
+                    }
+
+                    // Add logout functionality
+                    document.getElementById('logout-btn').addEventListener('click', async () => {
+                        await window.bugHatchAuth.handleLogout();
+                    });
+                } else {
+                    // User is not logged in - show login button (already in HTML)
+                    // The existing login button is already there
+                }
+            } catch (error) {
+                console.error('Error checking authentication:', error);
+                // Keep the default login button
+            }
+        });
+    </script>
 </body>
 
 </html>

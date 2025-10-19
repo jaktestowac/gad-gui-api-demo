@@ -46,7 +46,6 @@
 
     // if demo mode forced, ensure project is marked demo
     // Toggle demo banner if project is a demo
-    console.log("Project data:", data);
     if (data?.data?.demo) {
       window.toggleDemoBanner(data.data);
     }
@@ -331,7 +330,7 @@
     }
     modal.classList.remove("bh-hidden", "hidden");
     // Animate panel in
-    const panel = modal.querySelector(".bh-modal");
+    const panel = modal.querySelector(".bh-modal-content");
     if (panel) {
       panel.classList.add("opacity-0", "translate-y-1", "scale-95");
       requestAnimationFrame(() => {
@@ -344,7 +343,7 @@
   function closePreview() {
     const modal = qs("#issuePreviewModal");
     if (!modal) return;
-    const panel = modal.querySelector(".bh-modal");
+    const panel = modal.querySelector(".bh-modal-content");
     if (panel) {
       panel.classList.add("transition", "duration-150", "opacity-0", "translate-y-1", "scale-95");
       setTimeout(() => {

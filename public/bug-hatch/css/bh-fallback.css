@@ -468,6 +468,9 @@
   inset: 0;
   background-color: rgba(0, 0, 0, 0.6);
 }
+.bh-modal-content {
+  /* Modal content is visible by default, styled by Tailwind classes */
+}
 .bh-modal-dialog {
   position: relative;
   z-index: 10;
@@ -566,4 +569,101 @@ hr.bh-separator {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+/* Toast notifications */
+.bh-toast-layer {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 400px;
+  pointer-events: none;
+}
+
+.bh-toast {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+  border: 1px solid;
+  font-size: 0.875rem;
+  font-weight: 500;
+  pointer-events: auto;
+  animation: bh-toast-slide-in 0.3s ease-out;
+  backdrop-filter: blur(8px);
+  top: 26px !important;
+  margin-top: 26px !important;
+}
+
+.bh-toast-info {
+  background-color: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: #dbeafe;
+}
+
+.bh-toast-success {
+  background-color: rgba(34, 197, 94, 0.1);
+  border-color: rgba(34, 197, 94, 0.3);
+  color: #dcfce7;
+}
+
+.bh-toast-warn {
+  background-color: rgba(245, 158, 11, 0.1);
+  border-color: rgba(245, 158, 11, 0.3);
+  color: #fef3c7;
+}
+
+.bh-toast-error {
+  background-color: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #fee2e2;
+}
+
+.bh-toast-msg {
+  flex: 1;
+  line-height: 1.4;
+}
+
+.bh-toast-close {
+  flex-shrink: 0;
+  color: currentColor;
+  opacity: 0.7;
+  transition: opacity 0.15s ease;
+}
+
+.bh-toast-close:hover {
+  opacity: 1;
+}
+
+.bh-toast-hide {
+  animation: bh-toast-slide-out 0.3s ease-in forwards;
+}
+
+@keyframes bh-toast-slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes bh-toast-slide-out {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
 }

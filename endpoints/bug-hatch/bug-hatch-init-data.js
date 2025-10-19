@@ -9,7 +9,7 @@ module.exports = {
   users: [
     {
       id: "seed-user-001",
-      email: "founder@example.local",
+      email: "founder@example.gad",
       name: "Founder",
       password: "changeme", // plain stored per current simple auth approach
       role: "admin",
@@ -18,7 +18,7 @@ module.exports = {
     },
     {
       id: "seed-user-002",
-      email: "dev@example.local",
+      email: "dev@example.gad",
       name: "Developer",
       password: "changeme",
       role: "member",
@@ -27,7 +27,7 @@ module.exports = {
     },
     {
       id: "seed-user-003",
-      email: "viewer@example.local",
+      email: "viewer@example.gad",
       name: "Viewer",
       password: "changeme",
       role: "viewer",
